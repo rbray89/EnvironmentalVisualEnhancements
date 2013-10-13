@@ -49,8 +49,8 @@ namespace Clouds
                 Vector2 fadeOff = cloudMaterial.GetTextureOffset("_Fader");
 
                 cloudMaterial.SetTextureOffset("_MainTex", new Vector2(mainOff.x+(offset), 0));
-                cloudMaterial.SetTextureOffset("_Mixer", new Vector2(mixOff.x - (offset / 4.0f), mixOff.y + (offset/4.0f));
-                cloudMaterial.SetTextureOffset("_Fader", new Vector2(fadeOff.x + (offset/4.0f), fadeOff.y - (offset/4.0f)));
+                cloudMaterial.SetTextureOffset("_Mixer", new Vector2(mixOff.x - (offset / 4.0f), mixOff.y + (offset/3.0f)));
+                cloudMaterial.SetTextureOffset("_Fader", new Vector2(fadeOff.x + (offset/5.0f), fadeOff.y - (offset/4.0f)));
                 timeDelta = Time.time;
             }
         }

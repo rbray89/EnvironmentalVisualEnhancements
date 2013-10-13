@@ -1,7 +1,7 @@
 ﻿Shader "CityLightShader" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
-		_MainTex ("SelfIllum Color (RGB) Alpha (A)", 2D) = "white"
+		_MainTex ("Base (RGB) Gloss (A)", 2D) = "white" {}
 	}
 	Category {
 	   Lighting On
@@ -25,20 +25,19 @@
 	 float distAlpha;
 	 };
 	
-	inline half4 LightingNone (SurfaceOutput s, half3 lightDir, half atten)
-          {
-			half NdotL = dot (s.Normal, lightDir);
-			half diff = NdotL;//(NdotL - 0.02) / 0.98;
-			float lightIntensity = _LightColor0.a * (diff * atten * 16);
-			float satLight = saturate(lightIntensity);
-			float invlight = 1-satLight;
-			//invlight = invlight*invlight;
-            
-            half4 c;
-			c.a = s.Alpha * invlight;
-            c.rgb = s.Emission;//* invlight;// s.Emission*s.Alpha;
-            return c;
-          }
+	half4 LightingNone (SurfaceOutput s, half3 lightDir, half atten)
+      {
+		half NdotL = dot (s.Normal, lightDir);
+		half diff = (NdotL - 0.01) / 0.99;
+		float lightIntensity = _LightColor0.a * (diff * atten * 16);
+		float satLight = saturate(lightIntensity);
+		float invlight = 1-satLight;
+        
+        fixed4 c;
+		c.a = s.Alpha * invlight;
+        c.rgb = 0;
+        return c;
+      }
 	
 	 void vert (inout appdata_full v, out Input o) {
 	 	UNITY_INITIALIZE_OUTPUT(Input, o);
@@ -59,6 +58,7 @@
 	   o.Alpha = min(c.a, IN.distAlpha);
 	   o.Emission = c.rgb;
 	 }
+	 	 
 	 ENDCG
 	 	 
 	 } 

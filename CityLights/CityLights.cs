@@ -24,7 +24,6 @@ namespace CityLights
             lightMaterial.mainTexture = GameDatabase.Instance.GetTexture("BoulderCo/CityLights/Textures/main", false);
             lightMaterial.mainTextureScale = new Vector2(1f, 1f);
             lightMaterial.mainTextureOffset = new Vector2(-.25f, 0f);
-            lightMaterial.SetColor("_Color", new Color(.996f, .996f, .396f));
             Log("Textures initialized");
         }
 
