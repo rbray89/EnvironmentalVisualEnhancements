@@ -1,0 +1,66 @@
+﻿Shader "CityLightShader" {
+	Properties {
+		_Color ("Color Tint", Color) = (1,1,1,1)
+		_MainTex ("SelfIllum Color (RGB) Alpha (A)", 2D) = "white"
+	}
+	Category {
+	   Lighting On
+	   ZWrite Off
+	   Cull Back
+	   Blend SrcAlpha OneMinusSrcAlpha
+	   Tags {
+	   "Queue"="Transparent"
+	   "RenderMode"="Transparent"
+	   }
+	   SubShader {  	
+        
+		CGPROGRAM
+	 #pragma surface surf None vertex:vert noforwardadd noambient novertexlights nolightmap nodirlightmap 
+		
+	 sampler2D _MainTex;
+	 fixed4 _Color;
+	
+	 struct Input {
+	 float2 uv_MainTex;
+	 float distAlpha;
+	 };
+	
+	inline half4 LightingNone (SurfaceOutput s, half3 lightDir, half atten)
+          {
+			half NdotL = dot (s.Normal, lightDir);
+			half diff = NdotL;//(NdotL - 0.02) / 0.98;
+			float lightIntensity = _LightColor0.a * (diff * atten * 16);
+			float satLight = saturate(lightIntensity);
+			float invlight = 1-satLight;
+			//invlight = invlight*invlight;
+            
+            half4 c;
+			c.a = s.Alpha * invlight;
+            c.rgb = s.Emission;//* invlight;// s.Emission*s.Alpha;
+            return c;
+          }
+	
+	 void vert (inout appdata_full v, out Input o) {
+	 	UNITY_INITIALIZE_OUTPUT(Input, o);
+	   // Transform to camera space
+	   float3 vect = mul(UNITY_MATRIX_MVP, v.vertex);
+	   float dist = distance(float3(0,0,0), vect);
+	   float alpha = dist * .01;
+	   alpha*=alpha;
+	   alpha = min(.85,alpha);
+	   o.distAlpha = alpha;
+	 }
+	
+	 void surf (Input IN, inout SurfaceOutput o) {
+	   fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+	   o.Albedo = 0;
+	   o.Gloss = 0;
+	   o.Specular = 0;
+	   o.Alpha = min(c.a, IN.distAlpha);
+	   o.Emission = c.rgb;
+	 }
+	 ENDCG
+	 	 
+	 } 
+    }
+}

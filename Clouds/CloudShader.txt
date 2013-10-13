@@ -1,0 +1,41 @@
+﻿Shader "CloudShader" {
+	Properties {
+		_MainTex ("Main (RGB)", 2D) = "white" {}
+		_Mixer ("Mixer (RGB)", 2D) = "white" {}
+		_Fader ("Fader (RGB)", 2D) = "white" {}
+	}
+	SubShader {
+		Tags { "Queue"="Transparent"
+	   "RenderMode"="Transparent" }
+		Lighting On
+		Cull Back
+	   ZWrite Off
+
+		Blend SrcAlpha OneMinusSrcAlpha
+		
+		CGPROGRAM
+		#pragma surface surf Lambert
+
+		sampler2D _MainTex;
+		sampler2D _Mixer;
+		sampler2D _Fader;
+		
+		struct Input {
+			float2 uv_MainTex;
+			float2 uv_Mixer;
+			float2 uv_Fader;
+		};
+
+		void surf (Input IN, inout SurfaceOutput o) {
+			half4 main = tex2D (_MainTex, IN.uv_MainTex);
+			half4 mixer = tex2D (_Mixer, IN.uv_Mixer);
+			half4 fader = tex2D (_Fader, IN.uv_Fader);
+			o.Albedo = (main.rgb)*(fader.rgb);
+			half3 avg = mixer.rgb*(o.Albedo.rgb*2);
+			avg = (avg.r+avg.g+avg.b)/3;
+			o.Alpha = avg;
+		}
+		ENDCG
+	} 
+	FallBack "Diffuse"
+}

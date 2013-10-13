@@ -1,0 +1,5259 @@
+﻿Shader "CityLightShader" {
+	Properties {
+		_Color ("Color Tint", Color) = (1,1,1,1)
+		_MainTex ("SelfIllum Color (RGB) Alpha (A)", 2D) = "white"
+	}
+	Category {
+	   Lighting On
+	   ZWrite Off
+	   Cull Back
+	   Blend SrcAlpha OneMinusSrcAlpha
+	   Tags {
+	   "Queue"="Transparent"
+	   "RenderMode"="Transparent"
+	   }
+	   SubShader {  	
+        
+			
+	Pass {
+		Name "FORWARD"
+		Tags { "LightMode" = "ForwardBase" }
+Program "vp" {
+// Vertex combos: 6
+//   opengl - ALU: 17 to 21
+//   d3d9 - ALU: 17 to 21
+//   d3d11 - ALU: 9 to 12, TEX: 0 to 0, FLOW: 1 to 1
+//   d3d11_9x - ALU: 9 to 12, TEX: 0 to 0, FLOW: 1 to 1
+SubProgram "opengl " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Matrix 5 [_Object2World]
+Vector 9 [unity_Scale]
+Vector 10 [_MainTex_ST]
+"!!ARBvp1.0
+# 17 ALU
+PARAM c[11] = { { 0.85000002, 0.0099999998, 0 },
+		state.matrix.mvp,
+		program.local[5..10] };
+TEMP R0;
+TEMP R1;
+DP4 R0.x, vertex.position, c[1];
+DP4 R0.z, vertex.position, c[3];
+DP4 R0.y, vertex.position, c[2];
+DP3 R0.w, R0, R0;
+RSQ R0.w, R0.w;
+RCP R1.x, R0.w;
+DP4 R0.w, vertex.position, c[4];
+MUL R1.x, R1, c[0].y;
+MOV result.position, R0;
+MUL R0.x, R1, R1;
+MUL R1.xyz, vertex.normal, c[9].w;
+MIN result.texcoord[1].x, R0, c[0];
+DP3 result.texcoord[2].z, R1, c[7];
+DP3 result.texcoord[2].y, R1, c[6];
+DP3 result.texcoord[2].x, R1, c[5];
+MOV result.texcoord[3].xyz, c[0].z;
+MAD result.texcoord[0].xy, vertex.texcoord[0], c[10], c[10].zwzw;
+END
+# 17 instructions, 2 R-regs
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Matrix 0 [glstate_matrix_mvp]
+Matrix 4 [_Object2World]
+Vector 8 [unity_Scale]
+Vector 9 [_MainTex_ST]
+"vs_2_0
+; 17 ALU
+def c10, 0.01000000, 0.85000002, 0.00000000, 0
+dcl_position0 v0
+dcl_normal0 v1
+dcl_texcoord0 v2
+dp4 r0.x, v0, c0
+dp4 r0.z, v0, c2
+dp4 r0.y, v0, c1
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+rcp r1.x, r0.w
+dp4 r0.w, v0, c3
+mul r1.x, r1, c10
+mov oPos, r0
+mul r0.x, r1, r1
+mul r1.xyz, v1, c8.w
+min oT1.x, r0, c10.y
+dp3 oT2.z, r1, c6
+dp3 oT2.y, r1, c5
+dp3 oT2.x, r1, c4
+mov oT3.xyz, c10.z
+mad oT0.xy, v2, c9, c9.zwzw
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Bind "color" Color
+ConstBuffer "$Globals" 80 // 80 used size, 5 vars
+Vector 64 [_MainTex_ST] 4
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 192 [_Object2World] 4
+Vector 320 [unity_Scale] 4
+BindCB "$Globals" 0
+BindCB "UnityPerDraw" 1
+// 20 instructions, 2 temp regs, 0 temp arrays:
+// ALU 9 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0
+eefiecednebodplinikohnfgfkhgockjcfldcgijabaaaaaammaeaaaaadaaaaaa
+cmaaaaaapeaaaaaajeabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaapaaaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahahaaaalaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaadaaaaaaapadaaaalaaaaaaa
+abaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaljaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaafaaaaaaapaaaaaafaepfdejfeejepeoaafeebeoehefeofeaaeoepfc
+enebemaafeeffiedepepfceeaaedepemepfcaaklepfdeheojiaaaaaaafaaaaaa
+aiaaaaaaiaaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaaimaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaaealaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahaiaaaaimaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaafdfgfpfa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcdaadaaaaeaaaabaa
+mmaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
+bfaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaad
+dcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaaddccabaaa
+abaaaaaagfaaaaadeccabaaaabaaaaaagfaaaaadhccabaaaacaaaaaagfaaaaad
+hccabaaaadaaaaaagiaaaaacacaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaa
+aaaaaaaaegiocaaaabaaaaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+abaaaaaaaaaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaa
+aaaaaaaaegiocaaaabaaaaaaacaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaa
+dcaaaaakpccabaaaaaaaaaaaegiocaaaabaaaaaaadaaaaaapgbpbaaaaaaaaaaa
+egaobaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiccaaa
+abaaaaaaabaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaabaaaaaaaaaaaaaa
+agbabaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
+abaaaaaaacaaaaaakgbkbaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaabaaaaaaadaaaaaapgbpbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaajbcaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegacbaiaebaaaaaa
+aaaaaaaaelaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaabeaaaaaaknhcddmdiaaaaahbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaaheccabaaaabaaaaaaakaabaaa
+aaaaaaaaabeaaaaajkjjfjdpdcaaaaaldccabaaaabaaaaaaegbabaaaadaaaaaa
+egiacaaaaaaaaaaaaeaaaaaaogikcaaaaaaaaaaaaeaaaaaadiaaaaaihcaabaaa
+aaaaaaaaegbcbaaaacaaaaaapgipcaaaabaaaaaabeaaaaaadiaaaaaihcaabaaa
+abaaaaaafgafbaaaaaaaaaaaegiccaaaabaaaaaaanaaaaaadcaaaaaklcaabaaa
+aaaaaaaaegiicaaaabaaaaaaamaaaaaaagaabaaaaaaaaaaaegaibaaaabaaaaaa
+dcaaaaakhccabaaaacaaaaaaegiccaaaabaaaaaaaoaaaaaakgakbaaaaaaaaaaa
+egadbaaaaaaaaaaadgaaaaaihccabaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaadoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying lowp vec3 xlv_TEXCOORD3;
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp vec4 _MainTex_ST;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+attribute vec4 _glesMultiTexCoord0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesVertex;
+void main ()
+{
+  lowp vec3 tmpvar_1;
+  highp vec3 p_2;
+  p_2 = -((glstate_matrix_mvp * _glesVertex).xyz);
+  highp float tmpvar_3;
+  tmpvar_3 = (sqrt(dot (p_2, p_2)) * 0.01);
+  mat3 tmpvar_4;
+  tmpvar_4[0] = _Object2World[0].xyz;
+  tmpvar_4[1] = _Object2World[1].xyz;
+  tmpvar_4[2] = _Object2World[2].xyz;
+  highp vec3 tmpvar_5;
+  tmpvar_5 = (tmpvar_4 * (normalize(_glesNormal) * unity_Scale.w));
+  tmpvar_1 = tmpvar_5;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  xlv_TEXCOORD1 = min (0.85, (tmpvar_3 * tmpvar_3));
+  xlv_TEXCOORD2 = tmpvar_1;
+  xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform lowp vec4 _Color;
+uniform sampler2D _MainTex;
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _WorldSpaceLightPos0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float tmpvar_2;
+  lowp vec4 tmpvar_3;
+  tmpvar_3 = (texture2D (_MainTex, xlv_TEXCOORD0) * _Color);
+  highp float tmpvar_4;
+  tmpvar_4 = min (tmpvar_3.w, xlv_TEXCOORD1);
+  tmpvar_2 = tmpvar_4;
+  lowp vec3 tmpvar_5;
+  tmpvar_5 = tmpvar_3.xyz;
+  mediump vec3 lightDir_6;
+  lightDir_6 = _WorldSpaceLightPos0.xyz;
+  mediump vec4 c_7;
+  highp float lightIntensity_8;
+  mediump float tmpvar_9;
+  tmpvar_9 = (_LightColor0.w * (dot (xlv_TEXCOORD2, lightDir_6) * 16.0));
+  lightIntensity_8 = tmpvar_9;
+  highp float tmpvar_10;
+  tmpvar_10 = (tmpvar_2 * (1.0 - clamp (lightIntensity_8, 0.0, 1.0)));
+  c_7.w = tmpvar_10;
+  c_7.xyz = tmpvar_5;
+  c_1 = c_7;
+  c_1.xyz = c_1.xyz;
+  c_1.xyz = (c_1.xyz + tmpvar_3.xyz);
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying lowp vec3 xlv_TEXCOORD3;
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp vec4 _MainTex_ST;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+attribute vec4 _glesMultiTexCoord0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesVertex;
+void main ()
+{
+  lowp vec3 tmpvar_1;
+  highp vec3 p_2;
+  p_2 = -((glstate_matrix_mvp * _glesVertex).xyz);
+  highp float tmpvar_3;
+  tmpvar_3 = (sqrt(dot (p_2, p_2)) * 0.01);
+  mat3 tmpvar_4;
+  tmpvar_4[0] = _Object2World[0].xyz;
+  tmpvar_4[1] = _Object2World[1].xyz;
+  tmpvar_4[2] = _Object2World[2].xyz;
+  highp vec3 tmpvar_5;
+  tmpvar_5 = (tmpvar_4 * (normalize(_glesNormal) * unity_Scale.w));
+  tmpvar_1 = tmpvar_5;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  xlv_TEXCOORD1 = min (0.85, (tmpvar_3 * tmpvar_3));
+  xlv_TEXCOORD2 = tmpvar_1;
+  xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform lowp vec4 _Color;
+uniform sampler2D _MainTex;
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _WorldSpaceLightPos0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float tmpvar_2;
+  lowp vec4 tmpvar_3;
+  tmpvar_3 = (texture2D (_MainTex, xlv_TEXCOORD0) * _Color);
+  highp float tmpvar_4;
+  tmpvar_4 = min (tmpvar_3.w, xlv_TEXCOORD1);
+  tmpvar_2 = tmpvar_4;
+  lowp vec3 tmpvar_5;
+  tmpvar_5 = tmpvar_3.xyz;
+  mediump vec3 lightDir_6;
+  lightDir_6 = _WorldSpaceLightPos0.xyz;
+  mediump vec4 c_7;
+  highp float lightIntensity_8;
+  mediump float tmpvar_9;
+  tmpvar_9 = (_LightColor0.w * (dot (xlv_TEXCOORD2, lightDir_6) * 16.0));
+  lightIntensity_8 = tmpvar_9;
+  highp float tmpvar_10;
+  tmpvar_10 = (tmpvar_2 * (1.0 - clamp (lightIntensity_8, 0.0, 1.0)));
+  c_7.w = tmpvar_10;
+  c_7.xyz = tmpvar_5;
+  c_1 = c_7;
+  c_1.xyz = c_1.xyz;
+  c_1.xyz = (c_1.xyz + tmpvar_3.xyz);
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "flash " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Matrix 0 [glstate_matrix_mvp]
+Matrix 4 [_Object2World]
+Vector 8 [unity_Scale]
+Vector 9 [_MainTex_ST]
+"agal_vs
+c10 0.01 0.85 0.0 0.0
+[bc]
+bdaaaaaaaaaaabacaaaaaaoeaaaaaaaaaaaaaaoeabaaaaaa dp4 r0.x, a0, c0
+bdaaaaaaaaaaaeacaaaaaaoeaaaaaaaaacaaaaoeabaaaaaa dp4 r0.z, a0, c2
+bdaaaaaaaaaaacacaaaaaaoeaaaaaaaaabaaaaoeabaaaaaa dp4 r0.y, a0, c1
+bcaaaaaaaaaaaiacaaaaaakeacaaaaaaaaaaaakeacaaaaaa dp3 r0.w, r0.xyzz, r0.xyzz
+akaaaaaaaaaaaiacaaaaaappacaaaaaaaaaaaaaaaaaaaaaa rsq r0.w, r0.w
+afaaaaaaabaaabacaaaaaappacaaaaaaaaaaaaaaaaaaaaaa rcp r1.x, r0.w
+bdaaaaaaaaaaaiacaaaaaaoeaaaaaaaaadaaaaoeabaaaaaa dp4 r0.w, a0, c3
+adaaaaaaabaaabacabaaaaaaacaaaaaaakaaaaoeabaaaaaa mul r1.x, r1.x, c10
+aaaaaaaaaaaaapadaaaaaaoeacaaaaaaaaaaaaaaaaaaaaaa mov o0, r0
+adaaaaaaaaaaabacabaaaaaaacaaaaaaabaaaaaaacaaaaaa mul r0.x, r1.x, r1.x
+adaaaaaaabaaahacabaaaaoeaaaaaaaaaiaaaappabaaaaaa mul r1.xyz, a1, c8.w
+agaaaaaaabaaabaeaaaaaaaaacaaaaaaakaaaaffabaaaaaa min v1.x, r0.x, c10.y
+bcaaaaaaacaaaeaeabaaaakeacaaaaaaagaaaaoeabaaaaaa dp3 v2.z, r1.xyzz, c6
+bcaaaaaaacaaacaeabaaaakeacaaaaaaafaaaaoeabaaaaaa dp3 v2.y, r1.xyzz, c5
+bcaaaaaaacaaabaeabaaaakeacaaaaaaaeaaaaoeabaaaaaa dp3 v2.x, r1.xyzz, c4
+aaaaaaaaadaaahaeakaaaakkabaaaaaaaaaaaaaaaaaaaaaa mov v3.xyz, c10.z
+adaaaaaaaaaaadacadaaaaoeaaaaaaaaajaaaaoeabaaaaaa mul r0.xy, a3, c9
+abaaaaaaaaaaadaeaaaaaafeacaaaaaaajaaaaooabaaaaaa add v0.xy, r0.xyyy, c9.zwzw
+aaaaaaaaaaaaamaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v0.zw, c0
+aaaaaaaaabaaaoaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v1.yzw, c0
+aaaaaaaaacaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v2.w, c0
+aaaaaaaaadaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v3.w, c0
+"
+}
+
+SubProgram "d3d11_9x " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Bind "color" Color
+ConstBuffer "$Globals" 80 // 80 used size, 5 vars
+Vector 64 [_MainTex_ST] 4
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 192 [_Object2World] 4
+Vector 320 [unity_Scale] 4
+BindCB "$Globals" 0
+BindCB "UnityPerDraw" 1
+// 20 instructions, 2 temp regs, 0 temp arrays:
+// ALU 9 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0_level_9_1
+eefiecedikeehcpmabnodjggbdegaldmalbalpakabaaaaaaomagaaaaaeaaaaaa
+daaaaaaaemacaaaaieafaaaaemagaaaaebgpgodjbeacaaaabeacaaaaaaacpopp
+lmabaaaafiaaaaaaaeaaceaaaaaafeaaaaaafeaaaaaaceaaabaafeaaaaaaaeaa
+abaaabaaaaaaaaaaabaaaaaaaeaaacaaaaaaaaaaabaaamaaadaaagaaaaaaaaaa
+abaabeaaabaaajaaaaaaaaaaaaaaaaaaaaacpoppfbaaaaafakaaapkaaknhcddm
+jkjjfjdpaaaaaaaaaaaaaaaabpaaaaacafaaaaiaaaaaapjabpaaaaacafaaacia
+acaaapjabpaaaaacafaaadiaadaaapjaafaaaaadaaaaahiaaaaaffjaadaaoeka
+aeaaaaaeaaaaahiaacaaoekaaaaaaajaaaaaoeiaaeaaaaaeaaaaahiaaeaaoeka
+aaaakkjaaaaaoeiaaeaaaaaeaaaaahiaafaaoekaaaaappjaaaaaoeiaaiaaaaad
+aaaaabiaaaaaoeibaaaaoeibahaaaaacaaaaabiaaaaaaaiaagaaaaacaaaaabia
+aaaaaaiaafaaaaadaaaaabiaaaaaaaiaakaaaakaafaaaaadaaaaabiaaaaaaaia
+aaaaaaiaakaaaaadaaaaaeoaaaaaaaiaakaaffkaaeaaaaaeaaaaadoaadaaoeja
+abaaoekaabaaookaafaaaaadaaaaahiaacaaoejaajaappkaafaaaaadabaaahia
+aaaaffiaahaaoekaaeaaaaaeaaaaaliaagaakekaaaaaaaiaabaakeiaaeaaaaae
+abaaahoaaiaaoekaaaaakkiaaaaapeiaafaaaaadaaaaapiaaaaaffjaadaaoeka
+aeaaaaaeaaaaapiaacaaoekaaaaaaajaaaaaoeiaaeaaaaaeaaaaapiaaeaaoeka
+aaaakkjaaaaaoeiaaeaaaaaeaaaaapiaafaaoekaaaaappjaaaaaoeiaaeaaaaae
+aaaaadmaaaaappiaaaaaoekaaaaaoeiaabaaaaacaaaaammaaaaaoeiaabaaaaac
+acaaahoaakaakkkappppaaaafdeieefcdaadaaaaeaaaabaammaaaaaafjaaaaae
+egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaabfaaaaaafpaaaaad
+pcbabaaaaaaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaaddcbabaaaadaaaaaa
+ghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaaddccabaaaabaaaaaagfaaaaad
+eccabaaaabaaaaaagfaaaaadhccabaaaacaaaaaagfaaaaadhccabaaaadaaaaaa
+giaaaaacacaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaa
+abaaaaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaa
+agbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+abaaaaaaacaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaa
+aaaaaaaaegiocaaaabaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaa
+diaaaaaihcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiccaaaabaaaaaaabaaaaaa
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaabaaaaaaaaaaaaaaagbabaaaaaaaaaaa
+egacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaabaaaaaaacaaaaaa
+kgbkbaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
+abaaaaaaadaaaaaapgbpbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaajbcaabaaa
+aaaaaaaaegacbaiaebaaaaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaelaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaabeaaaaaaknhcddmdiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+akaabaaaaaaaaaaaddaaaaaheccabaaaabaaaaaaakaabaaaaaaaaaaaabeaaaaa
+jkjjfjdpdcaaaaaldccabaaaabaaaaaaegbabaaaadaaaaaaegiacaaaaaaaaaaa
+aeaaaaaaogikcaaaaaaaaaaaaeaaaaaadiaaaaaihcaabaaaaaaaaaaaegbcbaaa
+acaaaaaapgipcaaaabaaaaaabeaaaaaadiaaaaaihcaabaaaabaaaaaafgafbaaa
+aaaaaaaaegiccaaaabaaaaaaanaaaaaadcaaaaaklcaabaaaaaaaaaaaegiicaaa
+abaaaaaaamaaaaaaagaabaaaaaaaaaaaegaibaaaabaaaaaadcaaaaakhccabaaa
+acaaaaaaegiccaaaabaaaaaaaoaaaaaakgakbaaaaaaaaaaaegadbaaaaaaaaaaa
+dgaaaaaihccabaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+doaaaaabejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+apaaaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaalaaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaadaaaaaaapadaaaalaaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaaeaaaaaaapaaaaaaljaaaaaaaaaaaaaaaaaaaaaaadaaaaaaafaaaaaa
+apaaaaaafaepfdejfeejepeoaafeebeoehefeofeaaeoepfcenebemaafeeffied
+epepfceeaaedepemepfcaaklepfdeheojiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadamaaaaimaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+aealaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaahaiaaaaimaaaaaa
+adaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
+feeffiedepepfceeaaklklkl"
+}
+
+SubProgram "gles3 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+"!!GLES3#version 300 es
+
+
+#ifdef VERTEX
+
+#define gl_Vertex _glesVertex
+in vec4 _glesVertex;
+#define gl_Color _glesColor
+in vec4 _glesColor;
+#define gl_Normal (normalize(_glesNormal))
+in vec3 _glesNormal;
+#define gl_MultiTexCoord0 _glesMultiTexCoord0
+in vec4 _glesMultiTexCoord0;
+#define gl_MultiTexCoord1 _glesMultiTexCoord1
+in vec4 _glesMultiTexCoord1;
+#define TANGENT vec4(normalize(_glesTANGENT.xyz), _glesTANGENT.w)
+in vec4 _glesTANGENT;
+
+#line 150
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 186
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 180
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 306
+struct SurfaceOutput {
+    lowp vec3 Albedo;
+    lowp vec3 Normal;
+    lowp vec3 Emission;
+    mediump float Specular;
+    lowp float Gloss;
+    lowp float Alpha;
+};
+#line 66
+struct appdata_full {
+    highp vec4 vertex;
+    highp vec4 tangent;
+    highp vec3 normal;
+    highp vec4 texcoord;
+    highp vec4 texcoord1;
+    lowp vec4 color;
+};
+#line 384
+struct Input {
+    highp vec2 uv_MainTex;
+    highp float distAlpha;
+};
+#line 421
+struct v2f_surf {
+    highp vec4 pos;
+    highp vec2 pack0;
+    highp float cust_distAlpha;
+    lowp vec3 normal;
+    lowp vec3 vlight;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform lowp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[4];
+uniform highp vec4 unity_LightPosition[4];
+uniform highp vec4 unity_LightAtten[4];
+#line 19
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+uniform highp vec4 unity_SHBr;
+#line 23
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+#line 27
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+uniform highp vec4 _LightSplitsNear;
+#line 31
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+#line 35
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+uniform highp mat4 _Object2World;
+#line 39
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+uniform highp mat4 glstate_matrix_texture0;
+#line 43
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+uniform highp mat4 glstate_matrix_projection;
+#line 47
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 76
+#line 81
+#line 86
+#line 90
+#line 95
+#line 119
+#line 136
+#line 157
+#line 165
+#line 192
+#line 205
+#line 214
+#line 219
+#line 228
+#line 233
+#line 242
+#line 259
+#line 264
+#line 290
+#line 298
+#line 302
+#line 316
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _SpecColor;
+#line 329
+#line 337
+#line 351
+uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
+#line 390
+#line 402
+#line 430
+uniform highp vec4 _MainTex_ST;
+#line 402
+void vert( inout appdata_full v, out Input o ) {
+    highp vec3 vect = vec3( (glstate_matrix_mvp * v.vertex));
+    #line 406
+    highp float dist = distance( vec3( 0.0, 0.0, 0.0), vect);
+    highp float alpha = (dist * 0.01);
+    alpha *= alpha;
+    alpha = min( 0.85, alpha);
+    #line 410
+    o.distAlpha = alpha;
+}
+#line 431
+v2f_surf vert_surf( in appdata_full v ) {
+    v2f_surf o;
+    #line 434
+    Input customInputData;
+    vert( v, customInputData);
+    o.cust_distAlpha = customInputData.distAlpha;
+    o.pos = (glstate_matrix_mvp * v.vertex);
+    #line 438
+    o.pack0.xy = ((v.texcoord.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+    highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
+    o.normal = worldN;
+    o.vlight = vec3( 0.0);
+    #line 443
+    return o;
+}
+
+out highp vec2 xlv_TEXCOORD0;
+out highp float xlv_TEXCOORD1;
+out lowp vec3 xlv_TEXCOORD2;
+out lowp vec3 xlv_TEXCOORD3;
+void main() {
+    v2f_surf xl_retval;
+    appdata_full xlt_v;
+    xlt_v.vertex = vec4(gl_Vertex);
+    xlt_v.tangent = vec4(TANGENT);
+    xlt_v.normal = vec3(gl_Normal);
+    xlt_v.texcoord = vec4(gl_MultiTexCoord0);
+    xlt_v.texcoord1 = vec4(gl_MultiTexCoord1);
+    xlt_v.color = vec4(gl_Color);
+    xl_retval = vert_surf( xlt_v);
+    gl_Position = vec4(xl_retval.pos);
+    xlv_TEXCOORD0 = vec2(xl_retval.pack0);
+    xlv_TEXCOORD1 = float(xl_retval.cust_distAlpha);
+    xlv_TEXCOORD2 = vec3(xl_retval.normal);
+    xlv_TEXCOORD3 = vec3(xl_retval.vlight);
+}
+
+
+#endif
+#ifdef FRAGMENT
+
+#define gl_FragData _glesFragData
+layout(location = 0) out mediump vec4 _glesFragData[4];
+float xll_saturate_f( float x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec2 xll_saturate_vf2( vec2 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec3 xll_saturate_vf3( vec3 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec4 xll_saturate_vf4( vec4 x) {
+  return clamp( x, 0.0, 1.0);
+}
+mat2 xll_saturate_mf2x2(mat2 m) {
+  return mat2( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0));
+}
+mat3 xll_saturate_mf3x3(mat3 m) {
+  return mat3( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0));
+}
+mat4 xll_saturate_mf4x4(mat4 m) {
+  return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
+}
+#line 150
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 186
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 180
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 306
+struct SurfaceOutput {
+    lowp vec3 Albedo;
+    lowp vec3 Normal;
+    lowp vec3 Emission;
+    mediump float Specular;
+    lowp float Gloss;
+    lowp float Alpha;
+};
+#line 66
+struct appdata_full {
+    highp vec4 vertex;
+    highp vec4 tangent;
+    highp vec3 normal;
+    highp vec4 texcoord;
+    highp vec4 texcoord1;
+    lowp vec4 color;
+};
+#line 384
+struct Input {
+    highp vec2 uv_MainTex;
+    highp float distAlpha;
+};
+#line 421
+struct v2f_surf {
+    highp vec4 pos;
+    highp vec2 pack0;
+    highp float cust_distAlpha;
+    lowp vec3 normal;
+    lowp vec3 vlight;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform lowp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[4];
+uniform highp vec4 unity_LightPosition[4];
+uniform highp vec4 unity_LightAtten[4];
+#line 19
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+uniform highp vec4 unity_SHBr;
+#line 23
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+#line 27
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+uniform highp vec4 _LightSplitsNear;
+#line 31
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+#line 35
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+uniform highp mat4 _Object2World;
+#line 39
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+uniform highp mat4 glstate_matrix_texture0;
+#line 43
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+uniform highp mat4 glstate_matrix_projection;
+#line 47
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 76
+#line 81
+#line 86
+#line 90
+#line 95
+#line 119
+#line 136
+#line 157
+#line 165
+#line 192
+#line 205
+#line 214
+#line 219
+#line 228
+#line 233
+#line 242
+#line 259
+#line 264
+#line 290
+#line 298
+#line 302
+#line 316
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _SpecColor;
+#line 329
+#line 337
+#line 351
+uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
+#line 390
+#line 402
+#line 430
+uniform highp vec4 _MainTex_ST;
+#line 390
+mediump vec4 LightingNone( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
+    mediump float NdotL = dot( s.Normal, lightDir);
+    mediump float diff = NdotL;
+    #line 394
+    highp float lightIntensity = (_LightColor0.w * ((diff * atten) * 16.0));
+    highp float satLight = xll_saturate_f(lightIntensity);
+    highp float invlight = (1.0 - satLight);
+    mediump vec4 c;
+    #line 398
+    c.w = (s.Alpha * invlight);
+    c.xyz = s.Emission;
+    return c;
+}
+#line 412
+void surf( in Input IN, inout SurfaceOutput o ) {
+    #line 414
+    lowp vec4 c = (texture( _MainTex, IN.uv_MainTex) * _Color);
+    o.Albedo = vec3( 0.0);
+    o.Gloss = 0.0;
+    o.Specular = 0.0;
+    #line 418
+    o.Alpha = min( c.w, IN.distAlpha);
+    o.Emission = c.xyz;
+}
+#line 445
+lowp vec4 frag_surf( in v2f_surf IN ) {
+    #line 447
+    Input surfIN;
+    surfIN.uv_MainTex = IN.pack0.xy;
+    surfIN.distAlpha = IN.cust_distAlpha;
+    SurfaceOutput o;
+    #line 451
+    o.Albedo = vec3( 0.0);
+    o.Emission = vec3( 0.0);
+    o.Specular = 0.0;
+    o.Alpha = 0.0;
+    #line 455
+    o.Gloss = 0.0;
+    o.Normal = IN.normal;
+    surf( surfIN, o);
+    lowp float atten = 1.0;
+    #line 459
+    lowp vec4 c = vec4( 0.0);
+    c = LightingNone( o, _WorldSpaceLightPos0.xyz, atten);
+    c.xyz += (o.Albedo * IN.vlight);
+    c.xyz += o.Emission;
+    #line 463
+    return c;
+}
+in highp vec2 xlv_TEXCOORD0;
+in highp float xlv_TEXCOORD1;
+in lowp vec3 xlv_TEXCOORD2;
+in lowp vec3 xlv_TEXCOORD3;
+void main() {
+    lowp vec4 xl_retval;
+    v2f_surf xlt_IN;
+    xlt_IN.pos = vec4(0.0);
+    xlt_IN.pack0 = vec2(xlv_TEXCOORD0);
+    xlt_IN.cust_distAlpha = float(xlv_TEXCOORD1);
+    xlt_IN.normal = vec3(xlv_TEXCOORD2);
+    xlt_IN.vlight = vec3(xlv_TEXCOORD3);
+    xl_retval = frag_surf( xlt_IN);
+    gl_FragData[0] = vec4(xl_retval);
+}
+
+
+#endif"
+}
+
+SubProgram "opengl " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Vector 9 [_ProjectionParams]
+Matrix 5 [_Object2World]
+Vector 10 [unity_Scale]
+Vector 11 [_MainTex_ST]
+"!!ARBvp1.0
+# 21 ALU
+PARAM c[12] = { { 0.85000002, 0.0099999998, 0.5, 0 },
+		state.matrix.mvp,
+		program.local[5..11] };
+TEMP R0;
+TEMP R1;
+DP4 R0.x, vertex.position, c[1];
+DP4 R0.w, vertex.position, c[4];
+DP4 R0.y, vertex.position, c[2];
+DP4 R0.z, vertex.position, c[3];
+MUL R1.xyz, R0.xyww, c[0].z;
+DP3 R1.w, R0, R0;
+MUL R1.y, R1, c[9].x;
+ADD result.texcoord[4].xy, R1, R1.z;
+RSQ R1.w, R1.w;
+RCP R1.x, R1.w;
+MOV result.position, R0;
+MUL R0.x, R1, c[0].y;
+MUL R1.xyz, vertex.normal, c[10].w;
+MUL R0.x, R0, R0;
+MOV result.texcoord[4].zw, R0;
+MIN result.texcoord[1].x, R0, c[0];
+DP3 result.texcoord[2].z, R1, c[7];
+DP3 result.texcoord[2].y, R1, c[6];
+DP3 result.texcoord[2].x, R1, c[5];
+MOV result.texcoord[3].xyz, c[0].w;
+MAD result.texcoord[0].xy, vertex.texcoord[0], c[11], c[11].zwzw;
+END
+# 21 instructions, 2 R-regs
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Matrix 0 [glstate_matrix_mvp]
+Vector 8 [_ProjectionParams]
+Vector 9 [_ScreenParams]
+Matrix 4 [_Object2World]
+Vector 10 [unity_Scale]
+Vector 11 [_MainTex_ST]
+"vs_2_0
+; 21 ALU
+def c12, 0.01000000, 0.85000002, 0.50000000, 0.00000000
+dcl_position0 v0
+dcl_normal0 v1
+dcl_texcoord0 v2
+dp4 r0.x, v0, c0
+dp4 r0.w, v0, c3
+dp4 r0.y, v0, c1
+dp4 r0.z, v0, c2
+mul r1.xyz, r0.xyww, c12.z
+dp3 r1.w, r0, r0
+mul r1.y, r1, c8.x
+mad oT4.xy, r1.z, c9.zwzw, r1
+rsq r1.w, r1.w
+rcp r1.x, r1.w
+mov oPos, r0
+mul r0.x, r1, c12
+mul r1.xyz, v1, c10.w
+mul r0.x, r0, r0
+mov oT4.zw, r0
+min oT1.x, r0, c12.y
+dp3 oT2.z, r1, c6
+dp3 oT2.y, r1, c5
+dp3 oT2.x, r1, c4
+mov oT3.xyz, c12.w
+mad oT0.xy, v2, c11, c11.zwzw
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Bind "color" Color
+ConstBuffer "$Globals" 144 // 144 used size, 6 vars
+Vector 128 [_MainTex_ST] 4
+ConstBuffer "UnityPerCamera" 128 // 96 used size, 8 vars
+Vector 80 [_ProjectionParams] 4
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 192 [_Object2World] 4
+Vector 320 [unity_Scale] 4
+BindCB "$Globals" 0
+BindCB "UnityPerCamera" 1
+BindCB "UnityPerDraw" 2
+// 25 instructions, 3 temp regs, 0 temp arrays:
+// ALU 12 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0
+eefiecedpnknfjmgjojoobnfnbcgbmeplafhmnjcabaaaaaaimafaaaaadaaaaaa
+cmaaaaaapeaaaaaakmabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaapaaaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahahaaaalaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaadaaaaaaapadaaaalaaaaaaa
+abaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaljaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaafaaaaaaapaaaaaafaepfdejfeejepeoaafeebeoehefeofeaaeoepfc
+enebemaafeeffiedepepfceeaaedepemepfcaaklepfdeheolaaaaaaaagaaaaaa
+aiaaaaaajiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaakeaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaaealaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahaiaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaakeaaaaaa
+aeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
+feeffiedepepfceeaaklklklfdeieefcniadaaaaeaaaabaapgaaaaaafjaaaaae
+egiocaaaaaaaaaaaajaaaaaafjaaaaaeegiocaaaabaaaaaaagaaaaaafjaaaaae
+egiocaaaacaaaaaabfaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadhcbabaaa
+acaaaaaafpaaaaaddcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaa
+gfaaaaaddccabaaaabaaaaaagfaaaaadeccabaaaabaaaaaagfaaaaadhccabaaa
+acaaaaaagfaaaaadhccabaaaadaaaaaagfaaaaadpccabaaaaeaaaaaagiaaaaac
+adaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaacaaaaaa
+abaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaagbabaaa
+aaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaa
+acaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaa
+egiocaaaacaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadgaaaaaf
+pccabaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaafgbfbaaa
+aaaaaaaaegiccaaaacaaaaaaabaaaaaadcaaaaakhcaabaaaabaaaaaaegiccaaa
+acaaaaaaaaaaaaaaagbabaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhcaabaaa
+abaaaaaaegiccaaaacaaaaaaacaaaaaakgbkbaaaaaaaaaaaegacbaaaabaaaaaa
+dcaaaaakhcaabaaaabaaaaaaegiccaaaacaaaaaaadaaaaaapgbpbaaaaaaaaaaa
+egacbaaaabaaaaaabaaaaaajbcaabaaaabaaaaaaegacbaiaebaaaaaaabaaaaaa
+egacbaiaebaaaaaaabaaaaaaelaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaa
+diaaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaknhcddmdiaaaaah
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaaaabaaaaaaddaaaaaheccabaaa
+abaaaaaaakaabaaaabaaaaaaabeaaaaajkjjfjdpdcaaaaaldccabaaaabaaaaaa
+egbabaaaadaaaaaaegiacaaaaaaaaaaaaiaaaaaaogikcaaaaaaaaaaaaiaaaaaa
+diaaaaaihcaabaaaabaaaaaaegbcbaaaacaaaaaapgipcaaaacaaaaaabeaaaaaa
+diaaaaaihcaabaaaacaaaaaafgafbaaaabaaaaaaegiccaaaacaaaaaaanaaaaaa
+dcaaaaaklcaabaaaabaaaaaaegiicaaaacaaaaaaamaaaaaaagaabaaaabaaaaaa
+egaibaaaacaaaaaadcaaaaakhccabaaaacaaaaaaegiccaaaacaaaaaaaoaaaaaa
+kgakbaaaabaaaaaaegadbaaaabaaaaaadgaaaaaihccabaaaadaaaaaaaceaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadiaaaaaiccaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakiacaaaabaaaaaaafaaaaaadiaaaaakncaabaaaabaaaaaaagahbaaa
+aaaaaaaaaceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaa
+aeaaaaaakgaobaaaaaaaaaaaaaaaaaahdccabaaaaeaaaaaakgakbaaaabaaaaaa
+mgaabaaaabaaaaaadoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying highp vec4 xlv_TEXCOORD4;
+varying lowp vec3 xlv_TEXCOORD3;
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp vec4 _MainTex_ST;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 unity_World2Shadow[4];
+attribute vec4 _glesMultiTexCoord0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesVertex;
+void main ()
+{
+  lowp vec3 tmpvar_1;
+  highp vec3 p_2;
+  p_2 = -((glstate_matrix_mvp * _glesVertex).xyz);
+  highp float tmpvar_3;
+  tmpvar_3 = (sqrt(dot (p_2, p_2)) * 0.01);
+  mat3 tmpvar_4;
+  tmpvar_4[0] = _Object2World[0].xyz;
+  tmpvar_4[1] = _Object2World[1].xyz;
+  tmpvar_4[2] = _Object2World[2].xyz;
+  highp vec3 tmpvar_5;
+  tmpvar_5 = (tmpvar_4 * (normalize(_glesNormal) * unity_Scale.w));
+  tmpvar_1 = tmpvar_5;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  xlv_TEXCOORD1 = min (0.85, (tmpvar_3 * tmpvar_3));
+  xlv_TEXCOORD2 = tmpvar_1;
+  xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
+  xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying highp vec4 xlv_TEXCOORD4;
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform lowp vec4 _Color;
+uniform sampler2D _MainTex;
+uniform sampler2D _ShadowMapTexture;
+uniform lowp vec4 _LightColor0;
+uniform highp vec4 _LightShadowData;
+uniform lowp vec4 _WorldSpaceLightPos0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float tmpvar_2;
+  lowp vec4 tmpvar_3;
+  tmpvar_3 = (texture2D (_MainTex, xlv_TEXCOORD0) * _Color);
+  highp float tmpvar_4;
+  tmpvar_4 = min (tmpvar_3.w, xlv_TEXCOORD1);
+  tmpvar_2 = tmpvar_4;
+  lowp vec3 tmpvar_5;
+  tmpvar_5 = tmpvar_3.xyz;
+  lowp float tmpvar_6;
+  mediump float lightShadowDataX_7;
+  highp float dist_8;
+  lowp float tmpvar_9;
+  tmpvar_9 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x;
+  dist_8 = tmpvar_9;
+  highp float tmpvar_10;
+  tmpvar_10 = _LightShadowData.x;
+  lightShadowDataX_7 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = max (float((dist_8 > (xlv_TEXCOORD4.z / xlv_TEXCOORD4.w))), lightShadowDataX_7);
+  tmpvar_6 = tmpvar_11;
+  mediump vec3 lightDir_12;
+  lightDir_12 = _WorldSpaceLightPos0.xyz;
+  mediump float atten_13;
+  atten_13 = tmpvar_6;
+  mediump vec4 c_14;
+  highp float lightIntensity_15;
+  mediump float tmpvar_16;
+  tmpvar_16 = (_LightColor0.w * ((dot (xlv_TEXCOORD2, lightDir_12) * atten_13) * 16.0));
+  lightIntensity_15 = tmpvar_16;
+  highp float tmpvar_17;
+  tmpvar_17 = (tmpvar_2 * (1.0 - clamp (lightIntensity_15, 0.0, 1.0)));
+  c_14.w = tmpvar_17;
+  c_14.xyz = tmpvar_5;
+  c_1 = c_14;
+  c_1.xyz = c_1.xyz;
+  c_1.xyz = (c_1.xyz + tmpvar_3.xyz);
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying highp vec4 xlv_TEXCOORD4;
+varying lowp vec3 xlv_TEXCOORD3;
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp vec4 _MainTex_ST;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp vec4 _ProjectionParams;
+attribute vec4 _glesMultiTexCoord0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesVertex;
+void main ()
+{
+  lowp vec3 tmpvar_1;
+  highp vec3 p_2;
+  p_2 = -((glstate_matrix_mvp * _glesVertex).xyz);
+  highp float tmpvar_3;
+  tmpvar_3 = (sqrt(dot (p_2, p_2)) * 0.01);
+  highp vec4 tmpvar_4;
+  tmpvar_4 = (glstate_matrix_mvp * _glesVertex);
+  mat3 tmpvar_5;
+  tmpvar_5[0] = _Object2World[0].xyz;
+  tmpvar_5[1] = _Object2World[1].xyz;
+  tmpvar_5[2] = _Object2World[2].xyz;
+  highp vec3 tmpvar_6;
+  tmpvar_6 = (tmpvar_5 * (normalize(_glesNormal) * unity_Scale.w));
+  tmpvar_1 = tmpvar_6;
+  highp vec4 o_7;
+  highp vec4 tmpvar_8;
+  tmpvar_8 = (tmpvar_4 * 0.5);
+  highp vec2 tmpvar_9;
+  tmpvar_9.x = tmpvar_8.x;
+  tmpvar_9.y = (tmpvar_8.y * _ProjectionParams.x);
+  o_7.xy = (tmpvar_9 + tmpvar_8.w);
+  o_7.zw = tmpvar_4.zw;
+  gl_Position = tmpvar_4;
+  xlv_TEXCOORD0 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  xlv_TEXCOORD1 = min (0.85, (tmpvar_3 * tmpvar_3));
+  xlv_TEXCOORD2 = tmpvar_1;
+  xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
+  xlv_TEXCOORD4 = o_7;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying highp vec4 xlv_TEXCOORD4;
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform lowp vec4 _Color;
+uniform sampler2D _MainTex;
+uniform sampler2D _ShadowMapTexture;
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _WorldSpaceLightPos0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float tmpvar_2;
+  lowp vec4 tmpvar_3;
+  tmpvar_3 = (texture2D (_MainTex, xlv_TEXCOORD0) * _Color);
+  highp float tmpvar_4;
+  tmpvar_4 = min (tmpvar_3.w, xlv_TEXCOORD1);
+  tmpvar_2 = tmpvar_4;
+  lowp vec3 tmpvar_5;
+  tmpvar_5 = tmpvar_3.xyz;
+  lowp float tmpvar_6;
+  tmpvar_6 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x;
+  mediump vec3 lightDir_7;
+  lightDir_7 = _WorldSpaceLightPos0.xyz;
+  mediump float atten_8;
+  atten_8 = tmpvar_6;
+  mediump vec4 c_9;
+  highp float lightIntensity_10;
+  mediump float tmpvar_11;
+  tmpvar_11 = (_LightColor0.w * ((dot (xlv_TEXCOORD2, lightDir_7) * atten_8) * 16.0));
+  lightIntensity_10 = tmpvar_11;
+  highp float tmpvar_12;
+  tmpvar_12 = (tmpvar_2 * (1.0 - clamp (lightIntensity_10, 0.0, 1.0)));
+  c_9.w = tmpvar_12;
+  c_9.xyz = tmpvar_5;
+  c_1 = c_9;
+  c_1.xyz = c_1.xyz;
+  c_1.xyz = (c_1.xyz + tmpvar_3.xyz);
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "flash " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Matrix 0 [glstate_matrix_mvp]
+Vector 8 [_ProjectionParams]
+Matrix 4 [_Object2World]
+Vector 9 [unity_Scale]
+Vector 10 [unity_NPOTScale]
+Vector 11 [_MainTex_ST]
+"agal_vs
+c12 0.01 0.85 0.5 0.0
+[bc]
+bdaaaaaaaaaaabacaaaaaaoeaaaaaaaaaaaaaaoeabaaaaaa dp4 r0.x, a0, c0
+bdaaaaaaaaaaaiacaaaaaaoeaaaaaaaaadaaaaoeabaaaaaa dp4 r0.w, a0, c3
+bdaaaaaaaaaaacacaaaaaaoeaaaaaaaaabaaaaoeabaaaaaa dp4 r0.y, a0, c1
+bdaaaaaaaaaaaeacaaaaaaoeaaaaaaaaacaaaaoeabaaaaaa dp4 r0.z, a0, c2
+adaaaaaaabaaahacaaaaaapeacaaaaaaamaaaakkabaaaaaa mul r1.xyz, r0.xyww, c12.z
+adaaaaaaabaaacacabaaaaffacaaaaaaaiaaaaaaabaaaaaa mul r1.y, r1.y, c8.x
+abaaaaaaabaaadacabaaaafeacaaaaaaabaaaakkacaaaaaa add r1.xy, r1.xyyy, r1.z
+bcaaaaaaabaaaiacaaaaaakeacaaaaaaaaaaaakeacaaaaaa dp3 r1.w, r0.xyzz, r0.xyzz
+akaaaaaaabaaaeacabaaaappacaaaaaaaaaaaaaaaaaaaaaa rsq r1.z, r1.w
+adaaaaaaaeaaadaeabaaaafeacaaaaaaakaaaaoeabaaaaaa mul v4.xy, r1.xyyy, c10
+afaaaaaaabaaabacabaaaakkacaaaaaaaaaaaaaaaaaaaaaa rcp r1.x, r1.z
+aaaaaaaaaaaaapadaaaaaaoeacaaaaaaaaaaaaaaaaaaaaaa mov o0, r0
+adaaaaaaaaaaabacabaaaaaaacaaaaaaamaaaaoeabaaaaaa mul r0.x, r1.x, c12
+adaaaaaaabaaahacabaaaaoeaaaaaaaaajaaaappabaaaaaa mul r1.xyz, a1, c9.w
+adaaaaaaaaaaabacaaaaaaaaacaaaaaaaaaaaaaaacaaaaaa mul r0.x, r0.x, r0.x
+aaaaaaaaaeaaamaeaaaaaaopacaaaaaaaaaaaaaaaaaaaaaa mov v4.zw, r0.wwzw
+agaaaaaaabaaabaeaaaaaaaaacaaaaaaamaaaaffabaaaaaa min v1.x, r0.x, c12.y
+bcaaaaaaacaaaeaeabaaaakeacaaaaaaagaaaaoeabaaaaaa dp3 v2.z, r1.xyzz, c6
+bcaaaaaaacaaacaeabaaaakeacaaaaaaafaaaaoeabaaaaaa dp3 v2.y, r1.xyzz, c5
+bcaaaaaaacaaabaeabaaaakeacaaaaaaaeaaaaoeabaaaaaa dp3 v2.x, r1.xyzz, c4
+aaaaaaaaadaaahaeamaaaappabaaaaaaaaaaaaaaaaaaaaaa mov v3.xyz, c12.w
+adaaaaaaaaaaadacadaaaaoeaaaaaaaaalaaaaoeabaaaaaa mul r0.xy, a3, c11
+abaaaaaaaaaaadaeaaaaaafeacaaaaaaalaaaaooabaaaaaa add v0.xy, r0.xyyy, c11.zwzw
+aaaaaaaaaaaaamaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v0.zw, c0
+aaaaaaaaabaaaoaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v1.yzw, c0
+aaaaaaaaacaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v2.w, c0
+aaaaaaaaadaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v3.w, c0
+"
+}
+
+SubProgram "d3d11_9x " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Bind "color" Color
+ConstBuffer "$Globals" 144 // 144 used size, 6 vars
+Vector 128 [_MainTex_ST] 4
+ConstBuffer "UnityPerCamera" 128 // 96 used size, 8 vars
+Vector 80 [_ProjectionParams] 4
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 192 [_Object2World] 4
+Vector 320 [unity_Scale] 4
+BindCB "$Globals" 0
+BindCB "UnityPerCamera" 1
+BindCB "UnityPerDraw" 2
+// 25 instructions, 3 temp regs, 0 temp arrays:
+// ALU 12 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0_level_9_1
+eefiecedplngibhhdihocigodanihcopmpnmpefbabaaaaaaaeaiaaaaaeaaaaaa
+daaaaaaakeacaaaaieagaaaaemahaaaaebgpgodjgmacaaaagmacaaaaaaacpopp
+aiacaaaageaaaaaaafaaceaaaaaagaaaaaaagaaaaaaaceaaabaagaaaaaaaaiaa
+abaaabaaaaaaaaaaabaaafaaabaaacaaaaaaaaaaacaaaaaaaeaaadaaaaaaaaaa
+acaaamaaadaaahaaaaaaaaaaacaabeaaabaaakaaaaaaaaaaaaaaaaaaaaacpopp
+fbaaaaafalaaapkaaknhcddmjkjjfjdpaaaaaadpaaaaaaaabpaaaaacafaaaaia
+aaaaapjabpaaaaacafaaaciaacaaapjabpaaaaacafaaadiaadaaapjaafaaaaad
+aaaaahiaaaaaffjaaeaaoekaaeaaaaaeaaaaahiaadaaoekaaaaaaajaaaaaoeia
+aeaaaaaeaaaaahiaafaaoekaaaaakkjaaaaaoeiaaeaaaaaeaaaaahiaagaaoeka
+aaaappjaaaaaoeiaaiaaaaadaaaaabiaaaaaoeibaaaaoeibahaaaaacaaaaabia
+aaaaaaiaagaaaaacaaaaabiaaaaaaaiaafaaaaadaaaaabiaaaaaaaiaalaaaaka
+afaaaaadaaaaabiaaaaaaaiaaaaaaaiaakaaaaadaaaaaeoaaaaaaaiaalaaffka
+aeaaaaaeaaaaadoaadaaoejaabaaoekaabaaookaafaaaaadaaaaahiaacaaoeja
+akaappkaafaaaaadabaaahiaaaaaffiaaiaaoekaaeaaaaaeaaaaaliaahaakeka
+aaaaaaiaabaakeiaaeaaaaaeabaaahoaajaaoekaaaaakkiaaaaapeiaafaaaaad
+aaaaapiaaaaaffjaaeaaoekaaeaaaaaeaaaaapiaadaaoekaaaaaaajaaaaaoeia
+aeaaaaaeaaaaapiaafaaoekaaaaakkjaaaaaoeiaaeaaaaaeaaaaapiaagaaoeka
+aaaappjaaaaaoeiaafaaaaadabaaabiaaaaaffiaacaaaakaafaaaaadabaaaiia
+abaaaaiaalaakkkaafaaaaadabaaafiaaaaapeiaalaakkkaacaaaaadadaaadoa
+abaakkiaabaaomiaaeaaaaaeaaaaadmaaaaappiaaaaaoekaaaaaoeiaabaaaaac
+aaaaammaaaaaoeiaabaaaaacadaaamoaaaaaoeiaabaaaaacacaaahoaalaappka
+ppppaaaafdeieefcniadaaaaeaaaabaapgaaaaaafjaaaaaeegiocaaaaaaaaaaa
+ajaaaaaafjaaaaaeegiocaaaabaaaaaaagaaaaaafjaaaaaeegiocaaaacaaaaaa
+bfaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaad
+dcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaaddccabaaa
+abaaaaaagfaaaaadeccabaaaabaaaaaagfaaaaadhccabaaaacaaaaaagfaaaaad
+hccabaaaadaaaaaagfaaaaadpccabaaaaeaaaaaagiaaaaacadaaaaaadiaaaaai
+pcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaacaaaaaaabaaaaaadcaaaaak
+pcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaagbabaaaaaaaaaaaegaobaaa
+aaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaacaaaaaakgbkbaaa
+aaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaa
+adaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadgaaaaafpccabaaaaaaaaaaa
+egaobaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaafgbfbaaaaaaaaaaaegiccaaa
+acaaaaaaabaaaaaadcaaaaakhcaabaaaabaaaaaaegiccaaaacaaaaaaaaaaaaaa
+agbabaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhcaabaaaabaaaaaaegiccaaa
+acaaaaaaacaaaaaakgbkbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhcaabaaa
+abaaaaaaegiccaaaacaaaaaaadaaaaaapgbpbaaaaaaaaaaaegacbaaaabaaaaaa
+baaaaaajbcaabaaaabaaaaaaegacbaiaebaaaaaaabaaaaaaegacbaiaebaaaaaa
+abaaaaaaelaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaahbcaabaaa
+abaaaaaaakaabaaaabaaaaaaabeaaaaaaknhcddmdiaaaaahbcaabaaaabaaaaaa
+akaabaaaabaaaaaaakaabaaaabaaaaaaddaaaaaheccabaaaabaaaaaaakaabaaa
+abaaaaaaabeaaaaajkjjfjdpdcaaaaaldccabaaaabaaaaaaegbabaaaadaaaaaa
+egiacaaaaaaaaaaaaiaaaaaaogikcaaaaaaaaaaaaiaaaaaadiaaaaaihcaabaaa
+abaaaaaaegbcbaaaacaaaaaapgipcaaaacaaaaaabeaaaaaadiaaaaaihcaabaaa
+acaaaaaafgafbaaaabaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaaklcaabaaa
+abaaaaaaegiicaaaacaaaaaaamaaaaaaagaabaaaabaaaaaaegaibaaaacaaaaaa
+dcaaaaakhccabaaaacaaaaaaegiccaaaacaaaaaaaoaaaaaakgakbaaaabaaaaaa
+egadbaaaabaaaaaadgaaaaaihccabaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaadiaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaaakiacaaa
+abaaaaaaafaaaaaadiaaaaakncaabaaaabaaaaaaagahbaaaaaaaaaaaaceaaaaa
+aaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaaaeaaaaaakgaobaaa
+aaaaaaaaaaaaaaahdccabaaaaeaaaaaakgakbaaaabaaaaaamgaabaaaabaaaaaa
+doaaaaabejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+apaaaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaalaaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaadaaaaaaapadaaaalaaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaaeaaaaaaapaaaaaaljaaaaaaaaaaaaaaaaaaaaaaadaaaaaaafaaaaaa
+apaaaaaafaepfdejfeejepeoaafeebeoehefeofeaaeoepfcenebemaafeeffied
+epepfceeaaedepemepfcaaklepfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadamaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+aealaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaahaiaaaakeaaaaaa
+adaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaakeaaaaaaaeaaaaaaaaaaaaaa
+adaaaaaaaeaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
+aaklklkl"
+}
+
+SubProgram "gles3 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+"!!GLES3#version 300 es
+
+
+#ifdef VERTEX
+
+#define gl_Vertex _glesVertex
+in vec4 _glesVertex;
+#define gl_Color _glesColor
+in vec4 _glesColor;
+#define gl_Normal (normalize(_glesNormal))
+in vec3 _glesNormal;
+#define gl_MultiTexCoord0 _glesMultiTexCoord0
+in vec4 _glesMultiTexCoord0;
+#define gl_MultiTexCoord1 _glesMultiTexCoord1
+in vec4 _glesMultiTexCoord1;
+#define TANGENT vec4(normalize(_glesTANGENT.xyz), _glesTANGENT.w)
+in vec4 _glesTANGENT;
+
+#line 150
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 186
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 180
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 306
+struct SurfaceOutput {
+    lowp vec3 Albedo;
+    lowp vec3 Normal;
+    lowp vec3 Emission;
+    mediump float Specular;
+    lowp float Gloss;
+    lowp float Alpha;
+};
+#line 66
+struct appdata_full {
+    highp vec4 vertex;
+    highp vec4 tangent;
+    highp vec3 normal;
+    highp vec4 texcoord;
+    highp vec4 texcoord1;
+    lowp vec4 color;
+};
+#line 392
+struct Input {
+    highp vec2 uv_MainTex;
+    highp float distAlpha;
+};
+#line 429
+struct v2f_surf {
+    highp vec4 pos;
+    highp vec2 pack0;
+    highp float cust_distAlpha;
+    lowp vec3 normal;
+    lowp vec3 vlight;
+    highp vec4 _ShadowCoord;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform lowp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[4];
+uniform highp vec4 unity_LightPosition[4];
+uniform highp vec4 unity_LightAtten[4];
+#line 19
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+uniform highp vec4 unity_SHBr;
+#line 23
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+#line 27
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+uniform highp vec4 _LightSplitsNear;
+#line 31
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+#line 35
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+uniform highp mat4 _Object2World;
+#line 39
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+uniform highp mat4 glstate_matrix_texture0;
+#line 43
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+uniform highp mat4 glstate_matrix_projection;
+#line 47
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 76
+#line 81
+#line 86
+#line 90
+#line 95
+#line 119
+#line 136
+#line 157
+#line 165
+#line 192
+#line 205
+#line 214
+#line 219
+#line 228
+#line 233
+#line 242
+#line 259
+#line 264
+#line 290
+#line 298
+#line 302
+#line 316
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _SpecColor;
+#line 329
+#line 337
+#line 351
+uniform highp vec4 _ShadowOffsets[4];
+uniform sampler2D _ShadowMapTexture;
+#line 384
+uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
+#line 398
+#line 410
+#line 439
+uniform highp vec4 _MainTex_ST;
+#line 455
+#line 410
+void vert( inout appdata_full v, out Input o ) {
+    highp vec3 vect = vec3( (glstate_matrix_mvp * v.vertex));
+    #line 414
+    highp float dist = distance( vec3( 0.0, 0.0, 0.0), vect);
+    highp float alpha = (dist * 0.01);
+    alpha *= alpha;
+    alpha = min( 0.85, alpha);
+    #line 418
+    o.distAlpha = alpha;
+}
+#line 440
+v2f_surf vert_surf( in appdata_full v ) {
+    v2f_surf o;
+    #line 443
+    Input customInputData;
+    vert( v, customInputData);
+    o.cust_distAlpha = customInputData.distAlpha;
+    o.pos = (glstate_matrix_mvp * v.vertex);
+    #line 447
+    o.pack0.xy = ((v.texcoord.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+    highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
+    o.normal = worldN;
+    o.vlight = vec3( 0.0);
+    #line 451
+    o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
+    return o;
+}
+
+out highp vec2 xlv_TEXCOORD0;
+out highp float xlv_TEXCOORD1;
+out lowp vec3 xlv_TEXCOORD2;
+out lowp vec3 xlv_TEXCOORD3;
+out highp vec4 xlv_TEXCOORD4;
+void main() {
+    v2f_surf xl_retval;
+    appdata_full xlt_v;
+    xlt_v.vertex = vec4(gl_Vertex);
+    xlt_v.tangent = vec4(TANGENT);
+    xlt_v.normal = vec3(gl_Normal);
+    xlt_v.texcoord = vec4(gl_MultiTexCoord0);
+    xlt_v.texcoord1 = vec4(gl_MultiTexCoord1);
+    xlt_v.color = vec4(gl_Color);
+    xl_retval = vert_surf( xlt_v);
+    gl_Position = vec4(xl_retval.pos);
+    xlv_TEXCOORD0 = vec2(xl_retval.pack0);
+    xlv_TEXCOORD1 = float(xl_retval.cust_distAlpha);
+    xlv_TEXCOORD2 = vec3(xl_retval.normal);
+    xlv_TEXCOORD3 = vec3(xl_retval.vlight);
+    xlv_TEXCOORD4 = vec4(xl_retval._ShadowCoord);
+}
+
+
+#endif
+#ifdef FRAGMENT
+
+#define gl_FragData _glesFragData
+layout(location = 0) out mediump vec4 _glesFragData[4];
+float xll_saturate_f( float x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec2 xll_saturate_vf2( vec2 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec3 xll_saturate_vf3( vec3 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec4 xll_saturate_vf4( vec4 x) {
+  return clamp( x, 0.0, 1.0);
+}
+mat2 xll_saturate_mf2x2(mat2 m) {
+  return mat2( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0));
+}
+mat3 xll_saturate_mf3x3(mat3 m) {
+  return mat3( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0));
+}
+mat4 xll_saturate_mf4x4(mat4 m) {
+  return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
+}
+#line 150
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 186
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 180
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 306
+struct SurfaceOutput {
+    lowp vec3 Albedo;
+    lowp vec3 Normal;
+    lowp vec3 Emission;
+    mediump float Specular;
+    lowp float Gloss;
+    lowp float Alpha;
+};
+#line 66
+struct appdata_full {
+    highp vec4 vertex;
+    highp vec4 tangent;
+    highp vec3 normal;
+    highp vec4 texcoord;
+    highp vec4 texcoord1;
+    lowp vec4 color;
+};
+#line 392
+struct Input {
+    highp vec2 uv_MainTex;
+    highp float distAlpha;
+};
+#line 429
+struct v2f_surf {
+    highp vec4 pos;
+    highp vec2 pack0;
+    highp float cust_distAlpha;
+    lowp vec3 normal;
+    lowp vec3 vlight;
+    highp vec4 _ShadowCoord;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform lowp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[4];
+uniform highp vec4 unity_LightPosition[4];
+uniform highp vec4 unity_LightAtten[4];
+#line 19
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+uniform highp vec4 unity_SHBr;
+#line 23
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+#line 27
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+uniform highp vec4 _LightSplitsNear;
+#line 31
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+#line 35
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+uniform highp mat4 _Object2World;
+#line 39
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+uniform highp mat4 glstate_matrix_texture0;
+#line 43
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+uniform highp mat4 glstate_matrix_projection;
+#line 47
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 76
+#line 81
+#line 86
+#line 90
+#line 95
+#line 119
+#line 136
+#line 157
+#line 165
+#line 192
+#line 205
+#line 214
+#line 219
+#line 228
+#line 233
+#line 242
+#line 259
+#line 264
+#line 290
+#line 298
+#line 302
+#line 316
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _SpecColor;
+#line 329
+#line 337
+#line 351
+uniform highp vec4 _ShadowOffsets[4];
+uniform sampler2D _ShadowMapTexture;
+#line 384
+uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
+#line 398
+#line 410
+#line 439
+uniform highp vec4 _MainTex_ST;
+#line 455
+#line 398
+mediump vec4 LightingNone( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
+    mediump float NdotL = dot( s.Normal, lightDir);
+    mediump float diff = NdotL;
+    #line 402
+    highp float lightIntensity = (_LightColor0.w * ((diff * atten) * 16.0));
+    highp float satLight = xll_saturate_f(lightIntensity);
+    highp float invlight = (1.0 - satLight);
+    mediump vec4 c;
+    #line 406
+    c.w = (s.Alpha * invlight);
+    c.xyz = s.Emission;
+    return c;
+}
+#line 420
+void surf( in Input IN, inout SurfaceOutput o ) {
+    #line 422
+    lowp vec4 c = (texture( _MainTex, IN.uv_MainTex) * _Color);
+    o.Albedo = vec3( 0.0);
+    o.Gloss = 0.0;
+    o.Specular = 0.0;
+    #line 426
+    o.Alpha = min( c.w, IN.distAlpha);
+    o.Emission = c.xyz;
+}
+#line 384
+lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
+    highp float dist = textureProj( _ShadowMapTexture, shadowCoord).x;
+    mediump float lightShadowDataX = _LightShadowData.x;
+    #line 388
+    return max( float((dist > (shadowCoord.z / shadowCoord.w))), lightShadowDataX);
+}
+#line 455
+lowp vec4 frag_surf( in v2f_surf IN ) {
+    Input surfIN;
+    surfIN.uv_MainTex = IN.pack0.xy;
+    #line 459
+    surfIN.distAlpha = IN.cust_distAlpha;
+    SurfaceOutput o;
+    o.Albedo = vec3( 0.0);
+    o.Emission = vec3( 0.0);
+    #line 463
+    o.Specular = 0.0;
+    o.Alpha = 0.0;
+    o.Gloss = 0.0;
+    o.Normal = IN.normal;
+    #line 467
+    surf( surfIN, o);
+    lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    lowp vec4 c = vec4( 0.0);
+    c = LightingNone( o, _WorldSpaceLightPos0.xyz, atten);
+    #line 471
+    c.xyz += (o.Albedo * IN.vlight);
+    c.xyz += o.Emission;
+    return c;
+}
+in highp vec2 xlv_TEXCOORD0;
+in highp float xlv_TEXCOORD1;
+in lowp vec3 xlv_TEXCOORD2;
+in lowp vec3 xlv_TEXCOORD3;
+in highp vec4 xlv_TEXCOORD4;
+void main() {
+    lowp vec4 xl_retval;
+    v2f_surf xlt_IN;
+    xlt_IN.pos = vec4(0.0);
+    xlt_IN.pack0 = vec2(xlv_TEXCOORD0);
+    xlt_IN.cust_distAlpha = float(xlv_TEXCOORD1);
+    xlt_IN.normal = vec3(xlv_TEXCOORD2);
+    xlt_IN.vlight = vec3(xlv_TEXCOORD3);
+    xlt_IN._ShadowCoord = vec4(xlv_TEXCOORD4);
+    xl_retval = frag_surf( xlt_IN);
+    gl_FragData[0] = vec4(xl_retval);
+}
+
+
+#endif"
+}
+
+SubProgram "opengl " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" "VERTEXLIGHT_ON" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Matrix 5 [_Object2World]
+Vector 9 [unity_Scale]
+Vector 10 [_MainTex_ST]
+"!!ARBvp1.0
+# 17 ALU
+PARAM c[11] = { { 0.85000002, 0.0099999998, 0 },
+		state.matrix.mvp,
+		program.local[5..10] };
+TEMP R0;
+TEMP R1;
+DP4 R0.x, vertex.position, c[1];
+DP4 R0.z, vertex.position, c[3];
+DP4 R0.y, vertex.position, c[2];
+DP3 R0.w, R0, R0;
+RSQ R0.w, R0.w;
+RCP R1.x, R0.w;
+DP4 R0.w, vertex.position, c[4];
+MUL R1.x, R1, c[0].y;
+MOV result.position, R0;
+MUL R0.x, R1, R1;
+MUL R1.xyz, vertex.normal, c[9].w;
+MIN result.texcoord[1].x, R0, c[0];
+DP3 result.texcoord[2].z, R1, c[7];
+DP3 result.texcoord[2].y, R1, c[6];
+DP3 result.texcoord[2].x, R1, c[5];
+MOV result.texcoord[3].xyz, c[0].z;
+MAD result.texcoord[0].xy, vertex.texcoord[0], c[10], c[10].zwzw;
+END
+# 17 instructions, 2 R-regs
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" "VERTEXLIGHT_ON" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Matrix 0 [glstate_matrix_mvp]
+Matrix 4 [_Object2World]
+Vector 8 [unity_Scale]
+Vector 9 [_MainTex_ST]
+"vs_2_0
+; 17 ALU
+def c10, 0.01000000, 0.85000002, 0.00000000, 0
+dcl_position0 v0
+dcl_normal0 v1
+dcl_texcoord0 v2
+dp4 r0.x, v0, c0
+dp4 r0.z, v0, c2
+dp4 r0.y, v0, c1
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+rcp r1.x, r0.w
+dp4 r0.w, v0, c3
+mul r1.x, r1, c10
+mov oPos, r0
+mul r0.x, r1, r1
+mul r1.xyz, v1, c8.w
+min oT1.x, r0, c10.y
+dp3 oT2.z, r1, c6
+dp3 oT2.y, r1, c5
+dp3 oT2.x, r1, c4
+mov oT3.xyz, c10.z
+mad oT0.xy, v2, c9, c9.zwzw
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" "VERTEXLIGHT_ON" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Bind "color" Color
+ConstBuffer "$Globals" 80 // 80 used size, 5 vars
+Vector 64 [_MainTex_ST] 4
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 192 [_Object2World] 4
+Vector 320 [unity_Scale] 4
+BindCB "$Globals" 0
+BindCB "UnityPerDraw" 1
+// 20 instructions, 2 temp regs, 0 temp arrays:
+// ALU 9 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0
+eefiecednebodplinikohnfgfkhgockjcfldcgijabaaaaaammaeaaaaadaaaaaa
+cmaaaaaapeaaaaaajeabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaapaaaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahahaaaalaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaadaaaaaaapadaaaalaaaaaaa
+abaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaljaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaafaaaaaaapaaaaaafaepfdejfeejepeoaafeebeoehefeofeaaeoepfc
+enebemaafeeffiedepepfceeaaedepemepfcaaklepfdeheojiaaaaaaafaaaaaa
+aiaaaaaaiaaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaaimaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaaealaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahaiaaaaimaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaafdfgfpfa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcdaadaaaaeaaaabaa
+mmaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
+bfaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaad
+dcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaaddccabaaa
+abaaaaaagfaaaaadeccabaaaabaaaaaagfaaaaadhccabaaaacaaaaaagfaaaaad
+hccabaaaadaaaaaagiaaaaacacaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaa
+aaaaaaaaegiocaaaabaaaaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+abaaaaaaaaaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaa
+aaaaaaaaegiocaaaabaaaaaaacaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaa
+dcaaaaakpccabaaaaaaaaaaaegiocaaaabaaaaaaadaaaaaapgbpbaaaaaaaaaaa
+egaobaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiccaaa
+abaaaaaaabaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaabaaaaaaaaaaaaaa
+agbabaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
+abaaaaaaacaaaaaakgbkbaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaabaaaaaaadaaaaaapgbpbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaajbcaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegacbaiaebaaaaaa
+aaaaaaaaelaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaabeaaaaaaknhcddmdiaaaaahbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaaheccabaaaabaaaaaaakaabaaa
+aaaaaaaaabeaaaaajkjjfjdpdcaaaaaldccabaaaabaaaaaaegbabaaaadaaaaaa
+egiacaaaaaaaaaaaaeaaaaaaogikcaaaaaaaaaaaaeaaaaaadiaaaaaihcaabaaa
+aaaaaaaaegbcbaaaacaaaaaapgipcaaaabaaaaaabeaaaaaadiaaaaaihcaabaaa
+abaaaaaafgafbaaaaaaaaaaaegiccaaaabaaaaaaanaaaaaadcaaaaaklcaabaaa
+aaaaaaaaegiicaaaabaaaaaaamaaaaaaagaabaaaaaaaaaaaegaibaaaabaaaaaa
+dcaaaaakhccabaaaacaaaaaaegiccaaaabaaaaaaaoaaaaaakgakbaaaaaaaaaaa
+egadbaaaaaaaaaaadgaaaaaihccabaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaadoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" "VERTEXLIGHT_ON" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying lowp vec3 xlv_TEXCOORD3;
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp vec4 _MainTex_ST;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+attribute vec4 _glesMultiTexCoord0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesVertex;
+void main ()
+{
+  lowp vec3 tmpvar_1;
+  highp vec3 p_2;
+  p_2 = -((glstate_matrix_mvp * _glesVertex).xyz);
+  highp float tmpvar_3;
+  tmpvar_3 = (sqrt(dot (p_2, p_2)) * 0.01);
+  mat3 tmpvar_4;
+  tmpvar_4[0] = _Object2World[0].xyz;
+  tmpvar_4[1] = _Object2World[1].xyz;
+  tmpvar_4[2] = _Object2World[2].xyz;
+  highp vec3 tmpvar_5;
+  tmpvar_5 = (tmpvar_4 * (normalize(_glesNormal) * unity_Scale.w));
+  tmpvar_1 = tmpvar_5;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  xlv_TEXCOORD1 = min (0.85, (tmpvar_3 * tmpvar_3));
+  xlv_TEXCOORD2 = tmpvar_1;
+  xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform lowp vec4 _Color;
+uniform sampler2D _MainTex;
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _WorldSpaceLightPos0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float tmpvar_2;
+  lowp vec4 tmpvar_3;
+  tmpvar_3 = (texture2D (_MainTex, xlv_TEXCOORD0) * _Color);
+  highp float tmpvar_4;
+  tmpvar_4 = min (tmpvar_3.w, xlv_TEXCOORD1);
+  tmpvar_2 = tmpvar_4;
+  lowp vec3 tmpvar_5;
+  tmpvar_5 = tmpvar_3.xyz;
+  mediump vec3 lightDir_6;
+  lightDir_6 = _WorldSpaceLightPos0.xyz;
+  mediump vec4 c_7;
+  highp float lightIntensity_8;
+  mediump float tmpvar_9;
+  tmpvar_9 = (_LightColor0.w * (dot (xlv_TEXCOORD2, lightDir_6) * 16.0));
+  lightIntensity_8 = tmpvar_9;
+  highp float tmpvar_10;
+  tmpvar_10 = (tmpvar_2 * (1.0 - clamp (lightIntensity_8, 0.0, 1.0)));
+  c_7.w = tmpvar_10;
+  c_7.xyz = tmpvar_5;
+  c_1 = c_7;
+  c_1.xyz = c_1.xyz;
+  c_1.xyz = (c_1.xyz + tmpvar_3.xyz);
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" "VERTEXLIGHT_ON" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying lowp vec3 xlv_TEXCOORD3;
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp vec4 _MainTex_ST;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+attribute vec4 _glesMultiTexCoord0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesVertex;
+void main ()
+{
+  lowp vec3 tmpvar_1;
+  highp vec3 p_2;
+  p_2 = -((glstate_matrix_mvp * _glesVertex).xyz);
+  highp float tmpvar_3;
+  tmpvar_3 = (sqrt(dot (p_2, p_2)) * 0.01);
+  mat3 tmpvar_4;
+  tmpvar_4[0] = _Object2World[0].xyz;
+  tmpvar_4[1] = _Object2World[1].xyz;
+  tmpvar_4[2] = _Object2World[2].xyz;
+  highp vec3 tmpvar_5;
+  tmpvar_5 = (tmpvar_4 * (normalize(_glesNormal) * unity_Scale.w));
+  tmpvar_1 = tmpvar_5;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  xlv_TEXCOORD1 = min (0.85, (tmpvar_3 * tmpvar_3));
+  xlv_TEXCOORD2 = tmpvar_1;
+  xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform lowp vec4 _Color;
+uniform sampler2D _MainTex;
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _WorldSpaceLightPos0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float tmpvar_2;
+  lowp vec4 tmpvar_3;
+  tmpvar_3 = (texture2D (_MainTex, xlv_TEXCOORD0) * _Color);
+  highp float tmpvar_4;
+  tmpvar_4 = min (tmpvar_3.w, xlv_TEXCOORD1);
+  tmpvar_2 = tmpvar_4;
+  lowp vec3 tmpvar_5;
+  tmpvar_5 = tmpvar_3.xyz;
+  mediump vec3 lightDir_6;
+  lightDir_6 = _WorldSpaceLightPos0.xyz;
+  mediump vec4 c_7;
+  highp float lightIntensity_8;
+  mediump float tmpvar_9;
+  tmpvar_9 = (_LightColor0.w * (dot (xlv_TEXCOORD2, lightDir_6) * 16.0));
+  lightIntensity_8 = tmpvar_9;
+  highp float tmpvar_10;
+  tmpvar_10 = (tmpvar_2 * (1.0 - clamp (lightIntensity_8, 0.0, 1.0)));
+  c_7.w = tmpvar_10;
+  c_7.xyz = tmpvar_5;
+  c_1 = c_7;
+  c_1.xyz = c_1.xyz;
+  c_1.xyz = (c_1.xyz + tmpvar_3.xyz);
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "flash " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" "VERTEXLIGHT_ON" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Matrix 0 [glstate_matrix_mvp]
+Matrix 4 [_Object2World]
+Vector 8 [unity_Scale]
+Vector 9 [_MainTex_ST]
+"agal_vs
+c10 0.01 0.85 0.0 0.0
+[bc]
+bdaaaaaaaaaaabacaaaaaaoeaaaaaaaaaaaaaaoeabaaaaaa dp4 r0.x, a0, c0
+bdaaaaaaaaaaaeacaaaaaaoeaaaaaaaaacaaaaoeabaaaaaa dp4 r0.z, a0, c2
+bdaaaaaaaaaaacacaaaaaaoeaaaaaaaaabaaaaoeabaaaaaa dp4 r0.y, a0, c1
+bcaaaaaaaaaaaiacaaaaaakeacaaaaaaaaaaaakeacaaaaaa dp3 r0.w, r0.xyzz, r0.xyzz
+akaaaaaaaaaaaiacaaaaaappacaaaaaaaaaaaaaaaaaaaaaa rsq r0.w, r0.w
+afaaaaaaabaaabacaaaaaappacaaaaaaaaaaaaaaaaaaaaaa rcp r1.x, r0.w
+bdaaaaaaaaaaaiacaaaaaaoeaaaaaaaaadaaaaoeabaaaaaa dp4 r0.w, a0, c3
+adaaaaaaabaaabacabaaaaaaacaaaaaaakaaaaoeabaaaaaa mul r1.x, r1.x, c10
+aaaaaaaaaaaaapadaaaaaaoeacaaaaaaaaaaaaaaaaaaaaaa mov o0, r0
+adaaaaaaaaaaabacabaaaaaaacaaaaaaabaaaaaaacaaaaaa mul r0.x, r1.x, r1.x
+adaaaaaaabaaahacabaaaaoeaaaaaaaaaiaaaappabaaaaaa mul r1.xyz, a1, c8.w
+agaaaaaaabaaabaeaaaaaaaaacaaaaaaakaaaaffabaaaaaa min v1.x, r0.x, c10.y
+bcaaaaaaacaaaeaeabaaaakeacaaaaaaagaaaaoeabaaaaaa dp3 v2.z, r1.xyzz, c6
+bcaaaaaaacaaacaeabaaaakeacaaaaaaafaaaaoeabaaaaaa dp3 v2.y, r1.xyzz, c5
+bcaaaaaaacaaabaeabaaaakeacaaaaaaaeaaaaoeabaaaaaa dp3 v2.x, r1.xyzz, c4
+aaaaaaaaadaaahaeakaaaakkabaaaaaaaaaaaaaaaaaaaaaa mov v3.xyz, c10.z
+adaaaaaaaaaaadacadaaaaoeaaaaaaaaajaaaaoeabaaaaaa mul r0.xy, a3, c9
+abaaaaaaaaaaadaeaaaaaafeacaaaaaaajaaaaooabaaaaaa add v0.xy, r0.xyyy, c9.zwzw
+aaaaaaaaaaaaamaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v0.zw, c0
+aaaaaaaaabaaaoaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v1.yzw, c0
+aaaaaaaaacaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v2.w, c0
+aaaaaaaaadaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v3.w, c0
+"
+}
+
+SubProgram "d3d11_9x " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" "VERTEXLIGHT_ON" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Bind "color" Color
+ConstBuffer "$Globals" 80 // 80 used size, 5 vars
+Vector 64 [_MainTex_ST] 4
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 192 [_Object2World] 4
+Vector 320 [unity_Scale] 4
+BindCB "$Globals" 0
+BindCB "UnityPerDraw" 1
+// 20 instructions, 2 temp regs, 0 temp arrays:
+// ALU 9 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0_level_9_1
+eefiecedikeehcpmabnodjggbdegaldmalbalpakabaaaaaaomagaaaaaeaaaaaa
+daaaaaaaemacaaaaieafaaaaemagaaaaebgpgodjbeacaaaabeacaaaaaaacpopp
+lmabaaaafiaaaaaaaeaaceaaaaaafeaaaaaafeaaaaaaceaaabaafeaaaaaaaeaa
+abaaabaaaaaaaaaaabaaaaaaaeaaacaaaaaaaaaaabaaamaaadaaagaaaaaaaaaa
+abaabeaaabaaajaaaaaaaaaaaaaaaaaaaaacpoppfbaaaaafakaaapkaaknhcddm
+jkjjfjdpaaaaaaaaaaaaaaaabpaaaaacafaaaaiaaaaaapjabpaaaaacafaaacia
+acaaapjabpaaaaacafaaadiaadaaapjaafaaaaadaaaaahiaaaaaffjaadaaoeka
+aeaaaaaeaaaaahiaacaaoekaaaaaaajaaaaaoeiaaeaaaaaeaaaaahiaaeaaoeka
+aaaakkjaaaaaoeiaaeaaaaaeaaaaahiaafaaoekaaaaappjaaaaaoeiaaiaaaaad
+aaaaabiaaaaaoeibaaaaoeibahaaaaacaaaaabiaaaaaaaiaagaaaaacaaaaabia
+aaaaaaiaafaaaaadaaaaabiaaaaaaaiaakaaaakaafaaaaadaaaaabiaaaaaaaia
+aaaaaaiaakaaaaadaaaaaeoaaaaaaaiaakaaffkaaeaaaaaeaaaaadoaadaaoeja
+abaaoekaabaaookaafaaaaadaaaaahiaacaaoejaajaappkaafaaaaadabaaahia
+aaaaffiaahaaoekaaeaaaaaeaaaaaliaagaakekaaaaaaaiaabaakeiaaeaaaaae
+abaaahoaaiaaoekaaaaakkiaaaaapeiaafaaaaadaaaaapiaaaaaffjaadaaoeka
+aeaaaaaeaaaaapiaacaaoekaaaaaaajaaaaaoeiaaeaaaaaeaaaaapiaaeaaoeka
+aaaakkjaaaaaoeiaaeaaaaaeaaaaapiaafaaoekaaaaappjaaaaaoeiaaeaaaaae
+aaaaadmaaaaappiaaaaaoekaaaaaoeiaabaaaaacaaaaammaaaaaoeiaabaaaaac
+acaaahoaakaakkkappppaaaafdeieefcdaadaaaaeaaaabaammaaaaaafjaaaaae
+egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaabfaaaaaafpaaaaad
+pcbabaaaaaaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaaddcbabaaaadaaaaaa
+ghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaaddccabaaaabaaaaaagfaaaaad
+eccabaaaabaaaaaagfaaaaadhccabaaaacaaaaaagfaaaaadhccabaaaadaaaaaa
+giaaaaacacaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaa
+abaaaaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaa
+agbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+abaaaaaaacaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaa
+aaaaaaaaegiocaaaabaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaa
+diaaaaaihcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiccaaaabaaaaaaabaaaaaa
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaabaaaaaaaaaaaaaaagbabaaaaaaaaaaa
+egacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaabaaaaaaacaaaaaa
+kgbkbaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
+abaaaaaaadaaaaaapgbpbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaajbcaabaaa
+aaaaaaaaegacbaiaebaaaaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaelaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaabeaaaaaaknhcddmdiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+akaabaaaaaaaaaaaddaaaaaheccabaaaabaaaaaaakaabaaaaaaaaaaaabeaaaaa
+jkjjfjdpdcaaaaaldccabaaaabaaaaaaegbabaaaadaaaaaaegiacaaaaaaaaaaa
+aeaaaaaaogikcaaaaaaaaaaaaeaaaaaadiaaaaaihcaabaaaaaaaaaaaegbcbaaa
+acaaaaaapgipcaaaabaaaaaabeaaaaaadiaaaaaihcaabaaaabaaaaaafgafbaaa
+aaaaaaaaegiccaaaabaaaaaaanaaaaaadcaaaaaklcaabaaaaaaaaaaaegiicaaa
+abaaaaaaamaaaaaaagaabaaaaaaaaaaaegaibaaaabaaaaaadcaaaaakhccabaaa
+acaaaaaaegiccaaaabaaaaaaaoaaaaaakgakbaaaaaaaaaaaegadbaaaaaaaaaaa
+dgaaaaaihccabaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+doaaaaabejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+apaaaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaalaaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaadaaaaaaapadaaaalaaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaaeaaaaaaapaaaaaaljaaaaaaaaaaaaaaaaaaaaaaadaaaaaaafaaaaaa
+apaaaaaafaepfdejfeejepeoaafeebeoehefeofeaaeoepfcenebemaafeeffied
+epepfceeaaedepemepfcaaklepfdeheojiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadamaaaaimaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+aealaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaahaiaaaaimaaaaaa
+adaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
+feeffiedepepfceeaaklklkl"
+}
+
+SubProgram "gles3 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" "VERTEXLIGHT_ON" }
+"!!GLES3#version 300 es
+
+
+#ifdef VERTEX
+
+#define gl_Vertex _glesVertex
+in vec4 _glesVertex;
+#define gl_Color _glesColor
+in vec4 _glesColor;
+#define gl_Normal (normalize(_glesNormal))
+in vec3 _glesNormal;
+#define gl_MultiTexCoord0 _glesMultiTexCoord0
+in vec4 _glesMultiTexCoord0;
+#define gl_MultiTexCoord1 _glesMultiTexCoord1
+in vec4 _glesMultiTexCoord1;
+#define TANGENT vec4(normalize(_glesTANGENT.xyz), _glesTANGENT.w)
+in vec4 _glesTANGENT;
+
+#line 150
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 186
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 180
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 306
+struct SurfaceOutput {
+    lowp vec3 Albedo;
+    lowp vec3 Normal;
+    lowp vec3 Emission;
+    mediump float Specular;
+    lowp float Gloss;
+    lowp float Alpha;
+};
+#line 66
+struct appdata_full {
+    highp vec4 vertex;
+    highp vec4 tangent;
+    highp vec3 normal;
+    highp vec4 texcoord;
+    highp vec4 texcoord1;
+    lowp vec4 color;
+};
+#line 384
+struct Input {
+    highp vec2 uv_MainTex;
+    highp float distAlpha;
+};
+#line 421
+struct v2f_surf {
+    highp vec4 pos;
+    highp vec2 pack0;
+    highp float cust_distAlpha;
+    lowp vec3 normal;
+    lowp vec3 vlight;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform lowp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[4];
+uniform highp vec4 unity_LightPosition[4];
+uniform highp vec4 unity_LightAtten[4];
+#line 19
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+uniform highp vec4 unity_SHBr;
+#line 23
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+#line 27
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+uniform highp vec4 _LightSplitsNear;
+#line 31
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+#line 35
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+uniform highp mat4 _Object2World;
+#line 39
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+uniform highp mat4 glstate_matrix_texture0;
+#line 43
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+uniform highp mat4 glstate_matrix_projection;
+#line 47
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 76
+#line 81
+#line 86
+#line 90
+#line 95
+#line 119
+#line 136
+#line 157
+#line 165
+#line 192
+#line 205
+#line 214
+#line 219
+#line 228
+#line 233
+#line 242
+#line 259
+#line 264
+#line 290
+#line 298
+#line 302
+#line 316
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _SpecColor;
+#line 329
+#line 337
+#line 351
+uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
+#line 390
+#line 402
+#line 430
+uniform highp vec4 _MainTex_ST;
+#line 402
+void vert( inout appdata_full v, out Input o ) {
+    highp vec3 vect = vec3( (glstate_matrix_mvp * v.vertex));
+    #line 406
+    highp float dist = distance( vec3( 0.0, 0.0, 0.0), vect);
+    highp float alpha = (dist * 0.01);
+    alpha *= alpha;
+    alpha = min( 0.85, alpha);
+    #line 410
+    o.distAlpha = alpha;
+}
+#line 431
+v2f_surf vert_surf( in appdata_full v ) {
+    v2f_surf o;
+    #line 434
+    Input customInputData;
+    vert( v, customInputData);
+    o.cust_distAlpha = customInputData.distAlpha;
+    o.pos = (glstate_matrix_mvp * v.vertex);
+    #line 438
+    o.pack0.xy = ((v.texcoord.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+    highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
+    o.normal = worldN;
+    o.vlight = vec3( 0.0);
+    #line 443
+    return o;
+}
+
+out highp vec2 xlv_TEXCOORD0;
+out highp float xlv_TEXCOORD1;
+out lowp vec3 xlv_TEXCOORD2;
+out lowp vec3 xlv_TEXCOORD3;
+void main() {
+    v2f_surf xl_retval;
+    appdata_full xlt_v;
+    xlt_v.vertex = vec4(gl_Vertex);
+    xlt_v.tangent = vec4(TANGENT);
+    xlt_v.normal = vec3(gl_Normal);
+    xlt_v.texcoord = vec4(gl_MultiTexCoord0);
+    xlt_v.texcoord1 = vec4(gl_MultiTexCoord1);
+    xlt_v.color = vec4(gl_Color);
+    xl_retval = vert_surf( xlt_v);
+    gl_Position = vec4(xl_retval.pos);
+    xlv_TEXCOORD0 = vec2(xl_retval.pack0);
+    xlv_TEXCOORD1 = float(xl_retval.cust_distAlpha);
+    xlv_TEXCOORD2 = vec3(xl_retval.normal);
+    xlv_TEXCOORD3 = vec3(xl_retval.vlight);
+}
+
+
+#endif
+#ifdef FRAGMENT
+
+#define gl_FragData _glesFragData
+layout(location = 0) out mediump vec4 _glesFragData[4];
+float xll_saturate_f( float x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec2 xll_saturate_vf2( vec2 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec3 xll_saturate_vf3( vec3 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec4 xll_saturate_vf4( vec4 x) {
+  return clamp( x, 0.0, 1.0);
+}
+mat2 xll_saturate_mf2x2(mat2 m) {
+  return mat2( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0));
+}
+mat3 xll_saturate_mf3x3(mat3 m) {
+  return mat3( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0));
+}
+mat4 xll_saturate_mf4x4(mat4 m) {
+  return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
+}
+#line 150
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 186
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 180
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 306
+struct SurfaceOutput {
+    lowp vec3 Albedo;
+    lowp vec3 Normal;
+    lowp vec3 Emission;
+    mediump float Specular;
+    lowp float Gloss;
+    lowp float Alpha;
+};
+#line 66
+struct appdata_full {
+    highp vec4 vertex;
+    highp vec4 tangent;
+    highp vec3 normal;
+    highp vec4 texcoord;
+    highp vec4 texcoord1;
+    lowp vec4 color;
+};
+#line 384
+struct Input {
+    highp vec2 uv_MainTex;
+    highp float distAlpha;
+};
+#line 421
+struct v2f_surf {
+    highp vec4 pos;
+    highp vec2 pack0;
+    highp float cust_distAlpha;
+    lowp vec3 normal;
+    lowp vec3 vlight;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform lowp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[4];
+uniform highp vec4 unity_LightPosition[4];
+uniform highp vec4 unity_LightAtten[4];
+#line 19
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+uniform highp vec4 unity_SHBr;
+#line 23
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+#line 27
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+uniform highp vec4 _LightSplitsNear;
+#line 31
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+#line 35
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+uniform highp mat4 _Object2World;
+#line 39
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+uniform highp mat4 glstate_matrix_texture0;
+#line 43
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+uniform highp mat4 glstate_matrix_projection;
+#line 47
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 76
+#line 81
+#line 86
+#line 90
+#line 95
+#line 119
+#line 136
+#line 157
+#line 165
+#line 192
+#line 205
+#line 214
+#line 219
+#line 228
+#line 233
+#line 242
+#line 259
+#line 264
+#line 290
+#line 298
+#line 302
+#line 316
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _SpecColor;
+#line 329
+#line 337
+#line 351
+uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
+#line 390
+#line 402
+#line 430
+uniform highp vec4 _MainTex_ST;
+#line 390
+mediump vec4 LightingNone( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
+    mediump float NdotL = dot( s.Normal, lightDir);
+    mediump float diff = NdotL;
+    #line 394
+    highp float lightIntensity = (_LightColor0.w * ((diff * atten) * 16.0));
+    highp float satLight = xll_saturate_f(lightIntensity);
+    highp float invlight = (1.0 - satLight);
+    mediump vec4 c;
+    #line 398
+    c.w = (s.Alpha * invlight);
+    c.xyz = s.Emission;
+    return c;
+}
+#line 412
+void surf( in Input IN, inout SurfaceOutput o ) {
+    #line 414
+    lowp vec4 c = (texture( _MainTex, IN.uv_MainTex) * _Color);
+    o.Albedo = vec3( 0.0);
+    o.Gloss = 0.0;
+    o.Specular = 0.0;
+    #line 418
+    o.Alpha = min( c.w, IN.distAlpha);
+    o.Emission = c.xyz;
+}
+#line 445
+lowp vec4 frag_surf( in v2f_surf IN ) {
+    #line 447
+    Input surfIN;
+    surfIN.uv_MainTex = IN.pack0.xy;
+    surfIN.distAlpha = IN.cust_distAlpha;
+    SurfaceOutput o;
+    #line 451
+    o.Albedo = vec3( 0.0);
+    o.Emission = vec3( 0.0);
+    o.Specular = 0.0;
+    o.Alpha = 0.0;
+    #line 455
+    o.Gloss = 0.0;
+    o.Normal = IN.normal;
+    surf( surfIN, o);
+    lowp float atten = 1.0;
+    #line 459
+    lowp vec4 c = vec4( 0.0);
+    c = LightingNone( o, _WorldSpaceLightPos0.xyz, atten);
+    c.xyz += (o.Albedo * IN.vlight);
+    c.xyz += o.Emission;
+    #line 463
+    return c;
+}
+in highp vec2 xlv_TEXCOORD0;
+in highp float xlv_TEXCOORD1;
+in lowp vec3 xlv_TEXCOORD2;
+in lowp vec3 xlv_TEXCOORD3;
+void main() {
+    lowp vec4 xl_retval;
+    v2f_surf xlt_IN;
+    xlt_IN.pos = vec4(0.0);
+    xlt_IN.pack0 = vec2(xlv_TEXCOORD0);
+    xlt_IN.cust_distAlpha = float(xlv_TEXCOORD1);
+    xlt_IN.normal = vec3(xlv_TEXCOORD2);
+    xlt_IN.vlight = vec3(xlv_TEXCOORD3);
+    xl_retval = frag_surf( xlt_IN);
+    gl_FragData[0] = vec4(xl_retval);
+}
+
+
+#endif"
+}
+
+SubProgram "opengl " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" "VERTEXLIGHT_ON" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Vector 9 [_ProjectionParams]
+Matrix 5 [_Object2World]
+Vector 10 [unity_Scale]
+Vector 11 [_MainTex_ST]
+"!!ARBvp1.0
+# 21 ALU
+PARAM c[12] = { { 0.85000002, 0.0099999998, 0.5, 0 },
+		state.matrix.mvp,
+		program.local[5..11] };
+TEMP R0;
+TEMP R1;
+DP4 R0.x, vertex.position, c[1];
+DP4 R0.w, vertex.position, c[4];
+DP4 R0.y, vertex.position, c[2];
+DP4 R0.z, vertex.position, c[3];
+MUL R1.xyz, R0.xyww, c[0].z;
+DP3 R1.w, R0, R0;
+MUL R1.y, R1, c[9].x;
+ADD result.texcoord[4].xy, R1, R1.z;
+RSQ R1.w, R1.w;
+RCP R1.x, R1.w;
+MOV result.position, R0;
+MUL R0.x, R1, c[0].y;
+MUL R1.xyz, vertex.normal, c[10].w;
+MUL R0.x, R0, R0;
+MOV result.texcoord[4].zw, R0;
+MIN result.texcoord[1].x, R0, c[0];
+DP3 result.texcoord[2].z, R1, c[7];
+DP3 result.texcoord[2].y, R1, c[6];
+DP3 result.texcoord[2].x, R1, c[5];
+MOV result.texcoord[3].xyz, c[0].w;
+MAD result.texcoord[0].xy, vertex.texcoord[0], c[11], c[11].zwzw;
+END
+# 21 instructions, 2 R-regs
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" "VERTEXLIGHT_ON" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Matrix 0 [glstate_matrix_mvp]
+Vector 8 [_ProjectionParams]
+Vector 9 [_ScreenParams]
+Matrix 4 [_Object2World]
+Vector 10 [unity_Scale]
+Vector 11 [_MainTex_ST]
+"vs_2_0
+; 21 ALU
+def c12, 0.01000000, 0.85000002, 0.50000000, 0.00000000
+dcl_position0 v0
+dcl_normal0 v1
+dcl_texcoord0 v2
+dp4 r0.x, v0, c0
+dp4 r0.w, v0, c3
+dp4 r0.y, v0, c1
+dp4 r0.z, v0, c2
+mul r1.xyz, r0.xyww, c12.z
+dp3 r1.w, r0, r0
+mul r1.y, r1, c8.x
+mad oT4.xy, r1.z, c9.zwzw, r1
+rsq r1.w, r1.w
+rcp r1.x, r1.w
+mov oPos, r0
+mul r0.x, r1, c12
+mul r1.xyz, v1, c10.w
+mul r0.x, r0, r0
+mov oT4.zw, r0
+min oT1.x, r0, c12.y
+dp3 oT2.z, r1, c6
+dp3 oT2.y, r1, c5
+dp3 oT2.x, r1, c4
+mov oT3.xyz, c12.w
+mad oT0.xy, v2, c11, c11.zwzw
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" "VERTEXLIGHT_ON" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Bind "color" Color
+ConstBuffer "$Globals" 144 // 144 used size, 6 vars
+Vector 128 [_MainTex_ST] 4
+ConstBuffer "UnityPerCamera" 128 // 96 used size, 8 vars
+Vector 80 [_ProjectionParams] 4
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 192 [_Object2World] 4
+Vector 320 [unity_Scale] 4
+BindCB "$Globals" 0
+BindCB "UnityPerCamera" 1
+BindCB "UnityPerDraw" 2
+// 25 instructions, 3 temp regs, 0 temp arrays:
+// ALU 12 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0
+eefiecedpnknfjmgjojoobnfnbcgbmeplafhmnjcabaaaaaaimafaaaaadaaaaaa
+cmaaaaaapeaaaaaakmabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaapaaaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahahaaaalaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaadaaaaaaapadaaaalaaaaaaa
+abaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaljaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaafaaaaaaapaaaaaafaepfdejfeejepeoaafeebeoehefeofeaaeoepfc
+enebemaafeeffiedepepfceeaaedepemepfcaaklepfdeheolaaaaaaaagaaaaaa
+aiaaaaaajiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaakeaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaaealaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahaiaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaakeaaaaaa
+aeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
+feeffiedepepfceeaaklklklfdeieefcniadaaaaeaaaabaapgaaaaaafjaaaaae
+egiocaaaaaaaaaaaajaaaaaafjaaaaaeegiocaaaabaaaaaaagaaaaaafjaaaaae
+egiocaaaacaaaaaabfaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadhcbabaaa
+acaaaaaafpaaaaaddcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaa
+gfaaaaaddccabaaaabaaaaaagfaaaaadeccabaaaabaaaaaagfaaaaadhccabaaa
+acaaaaaagfaaaaadhccabaaaadaaaaaagfaaaaadpccabaaaaeaaaaaagiaaaaac
+adaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaacaaaaaa
+abaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaagbabaaa
+aaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaa
+acaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaa
+egiocaaaacaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadgaaaaaf
+pccabaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaafgbfbaaa
+aaaaaaaaegiccaaaacaaaaaaabaaaaaadcaaaaakhcaabaaaabaaaaaaegiccaaa
+acaaaaaaaaaaaaaaagbabaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhcaabaaa
+abaaaaaaegiccaaaacaaaaaaacaaaaaakgbkbaaaaaaaaaaaegacbaaaabaaaaaa
+dcaaaaakhcaabaaaabaaaaaaegiccaaaacaaaaaaadaaaaaapgbpbaaaaaaaaaaa
+egacbaaaabaaaaaabaaaaaajbcaabaaaabaaaaaaegacbaiaebaaaaaaabaaaaaa
+egacbaiaebaaaaaaabaaaaaaelaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaa
+diaaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaknhcddmdiaaaaah
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaaaabaaaaaaddaaaaaheccabaaa
+abaaaaaaakaabaaaabaaaaaaabeaaaaajkjjfjdpdcaaaaaldccabaaaabaaaaaa
+egbabaaaadaaaaaaegiacaaaaaaaaaaaaiaaaaaaogikcaaaaaaaaaaaaiaaaaaa
+diaaaaaihcaabaaaabaaaaaaegbcbaaaacaaaaaapgipcaaaacaaaaaabeaaaaaa
+diaaaaaihcaabaaaacaaaaaafgafbaaaabaaaaaaegiccaaaacaaaaaaanaaaaaa
+dcaaaaaklcaabaaaabaaaaaaegiicaaaacaaaaaaamaaaaaaagaabaaaabaaaaaa
+egaibaaaacaaaaaadcaaaaakhccabaaaacaaaaaaegiccaaaacaaaaaaaoaaaaaa
+kgakbaaaabaaaaaaegadbaaaabaaaaaadgaaaaaihccabaaaadaaaaaaaceaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadiaaaaaiccaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakiacaaaabaaaaaaafaaaaaadiaaaaakncaabaaaabaaaaaaagahbaaa
+aaaaaaaaaceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaa
+aeaaaaaakgaobaaaaaaaaaaaaaaaaaahdccabaaaaeaaaaaakgakbaaaabaaaaaa
+mgaabaaaabaaaaaadoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" "VERTEXLIGHT_ON" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying highp vec4 xlv_TEXCOORD4;
+varying lowp vec3 xlv_TEXCOORD3;
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp vec4 _MainTex_ST;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 unity_World2Shadow[4];
+attribute vec4 _glesMultiTexCoord0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesVertex;
+void main ()
+{
+  lowp vec3 tmpvar_1;
+  highp vec3 p_2;
+  p_2 = -((glstate_matrix_mvp * _glesVertex).xyz);
+  highp float tmpvar_3;
+  tmpvar_3 = (sqrt(dot (p_2, p_2)) * 0.01);
+  mat3 tmpvar_4;
+  tmpvar_4[0] = _Object2World[0].xyz;
+  tmpvar_4[1] = _Object2World[1].xyz;
+  tmpvar_4[2] = _Object2World[2].xyz;
+  highp vec3 tmpvar_5;
+  tmpvar_5 = (tmpvar_4 * (normalize(_glesNormal) * unity_Scale.w));
+  tmpvar_1 = tmpvar_5;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  xlv_TEXCOORD1 = min (0.85, (tmpvar_3 * tmpvar_3));
+  xlv_TEXCOORD2 = tmpvar_1;
+  xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
+  xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying highp vec4 xlv_TEXCOORD4;
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform lowp vec4 _Color;
+uniform sampler2D _MainTex;
+uniform sampler2D _ShadowMapTexture;
+uniform lowp vec4 _LightColor0;
+uniform highp vec4 _LightShadowData;
+uniform lowp vec4 _WorldSpaceLightPos0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float tmpvar_2;
+  lowp vec4 tmpvar_3;
+  tmpvar_3 = (texture2D (_MainTex, xlv_TEXCOORD0) * _Color);
+  highp float tmpvar_4;
+  tmpvar_4 = min (tmpvar_3.w, xlv_TEXCOORD1);
+  tmpvar_2 = tmpvar_4;
+  lowp vec3 tmpvar_5;
+  tmpvar_5 = tmpvar_3.xyz;
+  lowp float tmpvar_6;
+  mediump float lightShadowDataX_7;
+  highp float dist_8;
+  lowp float tmpvar_9;
+  tmpvar_9 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x;
+  dist_8 = tmpvar_9;
+  highp float tmpvar_10;
+  tmpvar_10 = _LightShadowData.x;
+  lightShadowDataX_7 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = max (float((dist_8 > (xlv_TEXCOORD4.z / xlv_TEXCOORD4.w))), lightShadowDataX_7);
+  tmpvar_6 = tmpvar_11;
+  mediump vec3 lightDir_12;
+  lightDir_12 = _WorldSpaceLightPos0.xyz;
+  mediump float atten_13;
+  atten_13 = tmpvar_6;
+  mediump vec4 c_14;
+  highp float lightIntensity_15;
+  mediump float tmpvar_16;
+  tmpvar_16 = (_LightColor0.w * ((dot (xlv_TEXCOORD2, lightDir_12) * atten_13) * 16.0));
+  lightIntensity_15 = tmpvar_16;
+  highp float tmpvar_17;
+  tmpvar_17 = (tmpvar_2 * (1.0 - clamp (lightIntensity_15, 0.0, 1.0)));
+  c_14.w = tmpvar_17;
+  c_14.xyz = tmpvar_5;
+  c_1 = c_14;
+  c_1.xyz = c_1.xyz;
+  c_1.xyz = (c_1.xyz + tmpvar_3.xyz);
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" "VERTEXLIGHT_ON" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying highp vec4 xlv_TEXCOORD4;
+varying lowp vec3 xlv_TEXCOORD3;
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp vec4 _MainTex_ST;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp vec4 _ProjectionParams;
+attribute vec4 _glesMultiTexCoord0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesVertex;
+void main ()
+{
+  lowp vec3 tmpvar_1;
+  highp vec3 p_2;
+  p_2 = -((glstate_matrix_mvp * _glesVertex).xyz);
+  highp float tmpvar_3;
+  tmpvar_3 = (sqrt(dot (p_2, p_2)) * 0.01);
+  highp vec4 tmpvar_4;
+  tmpvar_4 = (glstate_matrix_mvp * _glesVertex);
+  mat3 tmpvar_5;
+  tmpvar_5[0] = _Object2World[0].xyz;
+  tmpvar_5[1] = _Object2World[1].xyz;
+  tmpvar_5[2] = _Object2World[2].xyz;
+  highp vec3 tmpvar_6;
+  tmpvar_6 = (tmpvar_5 * (normalize(_glesNormal) * unity_Scale.w));
+  tmpvar_1 = tmpvar_6;
+  highp vec4 o_7;
+  highp vec4 tmpvar_8;
+  tmpvar_8 = (tmpvar_4 * 0.5);
+  highp vec2 tmpvar_9;
+  tmpvar_9.x = tmpvar_8.x;
+  tmpvar_9.y = (tmpvar_8.y * _ProjectionParams.x);
+  o_7.xy = (tmpvar_9 + tmpvar_8.w);
+  o_7.zw = tmpvar_4.zw;
+  gl_Position = tmpvar_4;
+  xlv_TEXCOORD0 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  xlv_TEXCOORD1 = min (0.85, (tmpvar_3 * tmpvar_3));
+  xlv_TEXCOORD2 = tmpvar_1;
+  xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
+  xlv_TEXCOORD4 = o_7;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying highp vec4 xlv_TEXCOORD4;
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform lowp vec4 _Color;
+uniform sampler2D _MainTex;
+uniform sampler2D _ShadowMapTexture;
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _WorldSpaceLightPos0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float tmpvar_2;
+  lowp vec4 tmpvar_3;
+  tmpvar_3 = (texture2D (_MainTex, xlv_TEXCOORD0) * _Color);
+  highp float tmpvar_4;
+  tmpvar_4 = min (tmpvar_3.w, xlv_TEXCOORD1);
+  tmpvar_2 = tmpvar_4;
+  lowp vec3 tmpvar_5;
+  tmpvar_5 = tmpvar_3.xyz;
+  lowp float tmpvar_6;
+  tmpvar_6 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x;
+  mediump vec3 lightDir_7;
+  lightDir_7 = _WorldSpaceLightPos0.xyz;
+  mediump float atten_8;
+  atten_8 = tmpvar_6;
+  mediump vec4 c_9;
+  highp float lightIntensity_10;
+  mediump float tmpvar_11;
+  tmpvar_11 = (_LightColor0.w * ((dot (xlv_TEXCOORD2, lightDir_7) * atten_8) * 16.0));
+  lightIntensity_10 = tmpvar_11;
+  highp float tmpvar_12;
+  tmpvar_12 = (tmpvar_2 * (1.0 - clamp (lightIntensity_10, 0.0, 1.0)));
+  c_9.w = tmpvar_12;
+  c_9.xyz = tmpvar_5;
+  c_1 = c_9;
+  c_1.xyz = c_1.xyz;
+  c_1.xyz = (c_1.xyz + tmpvar_3.xyz);
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "flash " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" "VERTEXLIGHT_ON" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Matrix 0 [glstate_matrix_mvp]
+Vector 8 [_ProjectionParams]
+Matrix 4 [_Object2World]
+Vector 9 [unity_Scale]
+Vector 10 [unity_NPOTScale]
+Vector 11 [_MainTex_ST]
+"agal_vs
+c12 0.01 0.85 0.5 0.0
+[bc]
+bdaaaaaaaaaaabacaaaaaaoeaaaaaaaaaaaaaaoeabaaaaaa dp4 r0.x, a0, c0
+bdaaaaaaaaaaaiacaaaaaaoeaaaaaaaaadaaaaoeabaaaaaa dp4 r0.w, a0, c3
+bdaaaaaaaaaaacacaaaaaaoeaaaaaaaaabaaaaoeabaaaaaa dp4 r0.y, a0, c1
+bdaaaaaaaaaaaeacaaaaaaoeaaaaaaaaacaaaaoeabaaaaaa dp4 r0.z, a0, c2
+adaaaaaaabaaahacaaaaaapeacaaaaaaamaaaakkabaaaaaa mul r1.xyz, r0.xyww, c12.z
+adaaaaaaabaaacacabaaaaffacaaaaaaaiaaaaaaabaaaaaa mul r1.y, r1.y, c8.x
+abaaaaaaabaaadacabaaaafeacaaaaaaabaaaakkacaaaaaa add r1.xy, r1.xyyy, r1.z
+bcaaaaaaabaaaiacaaaaaakeacaaaaaaaaaaaakeacaaaaaa dp3 r1.w, r0.xyzz, r0.xyzz
+akaaaaaaabaaaeacabaaaappacaaaaaaaaaaaaaaaaaaaaaa rsq r1.z, r1.w
+adaaaaaaaeaaadaeabaaaafeacaaaaaaakaaaaoeabaaaaaa mul v4.xy, r1.xyyy, c10
+afaaaaaaabaaabacabaaaakkacaaaaaaaaaaaaaaaaaaaaaa rcp r1.x, r1.z
+aaaaaaaaaaaaapadaaaaaaoeacaaaaaaaaaaaaaaaaaaaaaa mov o0, r0
+adaaaaaaaaaaabacabaaaaaaacaaaaaaamaaaaoeabaaaaaa mul r0.x, r1.x, c12
+adaaaaaaabaaahacabaaaaoeaaaaaaaaajaaaappabaaaaaa mul r1.xyz, a1, c9.w
+adaaaaaaaaaaabacaaaaaaaaacaaaaaaaaaaaaaaacaaaaaa mul r0.x, r0.x, r0.x
+aaaaaaaaaeaaamaeaaaaaaopacaaaaaaaaaaaaaaaaaaaaaa mov v4.zw, r0.wwzw
+agaaaaaaabaaabaeaaaaaaaaacaaaaaaamaaaaffabaaaaaa min v1.x, r0.x, c12.y
+bcaaaaaaacaaaeaeabaaaakeacaaaaaaagaaaaoeabaaaaaa dp3 v2.z, r1.xyzz, c6
+bcaaaaaaacaaacaeabaaaakeacaaaaaaafaaaaoeabaaaaaa dp3 v2.y, r1.xyzz, c5
+bcaaaaaaacaaabaeabaaaakeacaaaaaaaeaaaaoeabaaaaaa dp3 v2.x, r1.xyzz, c4
+aaaaaaaaadaaahaeamaaaappabaaaaaaaaaaaaaaaaaaaaaa mov v3.xyz, c12.w
+adaaaaaaaaaaadacadaaaaoeaaaaaaaaalaaaaoeabaaaaaa mul r0.xy, a3, c11
+abaaaaaaaaaaadaeaaaaaafeacaaaaaaalaaaaooabaaaaaa add v0.xy, r0.xyyy, c11.zwzw
+aaaaaaaaaaaaamaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v0.zw, c0
+aaaaaaaaabaaaoaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v1.yzw, c0
+aaaaaaaaacaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v2.w, c0
+aaaaaaaaadaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v3.w, c0
+"
+}
+
+SubProgram "d3d11_9x " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" "VERTEXLIGHT_ON" }
+Bind "vertex" Vertex
+Bind "normal" Normal
+Bind "texcoord" TexCoord0
+Bind "color" Color
+ConstBuffer "$Globals" 144 // 144 used size, 6 vars
+Vector 128 [_MainTex_ST] 4
+ConstBuffer "UnityPerCamera" 128 // 96 used size, 8 vars
+Vector 80 [_ProjectionParams] 4
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 192 [_Object2World] 4
+Vector 320 [unity_Scale] 4
+BindCB "$Globals" 0
+BindCB "UnityPerCamera" 1
+BindCB "UnityPerDraw" 2
+// 25 instructions, 3 temp regs, 0 temp arrays:
+// ALU 12 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0_level_9_1
+eefiecedplngibhhdihocigodanihcopmpnmpefbabaaaaaaaeaiaaaaaeaaaaaa
+daaaaaaakeacaaaaieagaaaaemahaaaaebgpgodjgmacaaaagmacaaaaaaacpopp
+aiacaaaageaaaaaaafaaceaaaaaagaaaaaaagaaaaaaaceaaabaagaaaaaaaaiaa
+abaaabaaaaaaaaaaabaaafaaabaaacaaaaaaaaaaacaaaaaaaeaaadaaaaaaaaaa
+acaaamaaadaaahaaaaaaaaaaacaabeaaabaaakaaaaaaaaaaaaaaaaaaaaacpopp
+fbaaaaafalaaapkaaknhcddmjkjjfjdpaaaaaadpaaaaaaaabpaaaaacafaaaaia
+aaaaapjabpaaaaacafaaaciaacaaapjabpaaaaacafaaadiaadaaapjaafaaaaad
+aaaaahiaaaaaffjaaeaaoekaaeaaaaaeaaaaahiaadaaoekaaaaaaajaaaaaoeia
+aeaaaaaeaaaaahiaafaaoekaaaaakkjaaaaaoeiaaeaaaaaeaaaaahiaagaaoeka
+aaaappjaaaaaoeiaaiaaaaadaaaaabiaaaaaoeibaaaaoeibahaaaaacaaaaabia
+aaaaaaiaagaaaaacaaaaabiaaaaaaaiaafaaaaadaaaaabiaaaaaaaiaalaaaaka
+afaaaaadaaaaabiaaaaaaaiaaaaaaaiaakaaaaadaaaaaeoaaaaaaaiaalaaffka
+aeaaaaaeaaaaadoaadaaoejaabaaoekaabaaookaafaaaaadaaaaahiaacaaoeja
+akaappkaafaaaaadabaaahiaaaaaffiaaiaaoekaaeaaaaaeaaaaaliaahaakeka
+aaaaaaiaabaakeiaaeaaaaaeabaaahoaajaaoekaaaaakkiaaaaapeiaafaaaaad
+aaaaapiaaaaaffjaaeaaoekaaeaaaaaeaaaaapiaadaaoekaaaaaaajaaaaaoeia
+aeaaaaaeaaaaapiaafaaoekaaaaakkjaaaaaoeiaaeaaaaaeaaaaapiaagaaoeka
+aaaappjaaaaaoeiaafaaaaadabaaabiaaaaaffiaacaaaakaafaaaaadabaaaiia
+abaaaaiaalaakkkaafaaaaadabaaafiaaaaapeiaalaakkkaacaaaaadadaaadoa
+abaakkiaabaaomiaaeaaaaaeaaaaadmaaaaappiaaaaaoekaaaaaoeiaabaaaaac
+aaaaammaaaaaoeiaabaaaaacadaaamoaaaaaoeiaabaaaaacacaaahoaalaappka
+ppppaaaafdeieefcniadaaaaeaaaabaapgaaaaaafjaaaaaeegiocaaaaaaaaaaa
+ajaaaaaafjaaaaaeegiocaaaabaaaaaaagaaaaaafjaaaaaeegiocaaaacaaaaaa
+bfaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaad
+dcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaaddccabaaa
+abaaaaaagfaaaaadeccabaaaabaaaaaagfaaaaadhccabaaaacaaaaaagfaaaaad
+hccabaaaadaaaaaagfaaaaadpccabaaaaeaaaaaagiaaaaacadaaaaaadiaaaaai
+pcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaacaaaaaaabaaaaaadcaaaaak
+pcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaagbabaaaaaaaaaaaegaobaaa
+aaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaacaaaaaakgbkbaaa
+aaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaa
+adaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadgaaaaafpccabaaaaaaaaaaa
+egaobaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaafgbfbaaaaaaaaaaaegiccaaa
+acaaaaaaabaaaaaadcaaaaakhcaabaaaabaaaaaaegiccaaaacaaaaaaaaaaaaaa
+agbabaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhcaabaaaabaaaaaaegiccaaa
+acaaaaaaacaaaaaakgbkbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhcaabaaa
+abaaaaaaegiccaaaacaaaaaaadaaaaaapgbpbaaaaaaaaaaaegacbaaaabaaaaaa
+baaaaaajbcaabaaaabaaaaaaegacbaiaebaaaaaaabaaaaaaegacbaiaebaaaaaa
+abaaaaaaelaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaahbcaabaaa
+abaaaaaaakaabaaaabaaaaaaabeaaaaaaknhcddmdiaaaaahbcaabaaaabaaaaaa
+akaabaaaabaaaaaaakaabaaaabaaaaaaddaaaaaheccabaaaabaaaaaaakaabaaa
+abaaaaaaabeaaaaajkjjfjdpdcaaaaaldccabaaaabaaaaaaegbabaaaadaaaaaa
+egiacaaaaaaaaaaaaiaaaaaaogikcaaaaaaaaaaaaiaaaaaadiaaaaaihcaabaaa
+abaaaaaaegbcbaaaacaaaaaapgipcaaaacaaaaaabeaaaaaadiaaaaaihcaabaaa
+acaaaaaafgafbaaaabaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaaklcaabaaa
+abaaaaaaegiicaaaacaaaaaaamaaaaaaagaabaaaabaaaaaaegaibaaaacaaaaaa
+dcaaaaakhccabaaaacaaaaaaegiccaaaacaaaaaaaoaaaaaakgakbaaaabaaaaaa
+egadbaaaabaaaaaadgaaaaaihccabaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaadiaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaaakiacaaa
+abaaaaaaafaaaaaadiaaaaakncaabaaaabaaaaaaagahbaaaaaaaaaaaaceaaaaa
+aaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaaaeaaaaaakgaobaaa
+aaaaaaaaaaaaaaahdccabaaaaeaaaaaakgakbaaaabaaaaaamgaabaaaabaaaaaa
+doaaaaabejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+apaaaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaalaaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaadaaaaaaapadaaaalaaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaaeaaaaaaapaaaaaaljaaaaaaaaaaaaaaaaaaaaaaadaaaaaaafaaaaaa
+apaaaaaafaepfdejfeejepeoaafeebeoehefeofeaaeoepfcenebemaafeeffied
+epepfceeaaedepemepfcaaklepfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadamaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+aealaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaahaiaaaakeaaaaaa
+adaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaakeaaaaaaaeaaaaaaaaaaaaaa
+adaaaaaaaeaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
+aaklklkl"
+}
+
+SubProgram "gles3 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" "VERTEXLIGHT_ON" }
+"!!GLES3#version 300 es
+
+
+#ifdef VERTEX
+
+#define gl_Vertex _glesVertex
+in vec4 _glesVertex;
+#define gl_Color _glesColor
+in vec4 _glesColor;
+#define gl_Normal (normalize(_glesNormal))
+in vec3 _glesNormal;
+#define gl_MultiTexCoord0 _glesMultiTexCoord0
+in vec4 _glesMultiTexCoord0;
+#define gl_MultiTexCoord1 _glesMultiTexCoord1
+in vec4 _glesMultiTexCoord1;
+#define TANGENT vec4(normalize(_glesTANGENT.xyz), _glesTANGENT.w)
+in vec4 _glesTANGENT;
+
+#line 150
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 186
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 180
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 306
+struct SurfaceOutput {
+    lowp vec3 Albedo;
+    lowp vec3 Normal;
+    lowp vec3 Emission;
+    mediump float Specular;
+    lowp float Gloss;
+    lowp float Alpha;
+};
+#line 66
+struct appdata_full {
+    highp vec4 vertex;
+    highp vec4 tangent;
+    highp vec3 normal;
+    highp vec4 texcoord;
+    highp vec4 texcoord1;
+    lowp vec4 color;
+};
+#line 392
+struct Input {
+    highp vec2 uv_MainTex;
+    highp float distAlpha;
+};
+#line 429
+struct v2f_surf {
+    highp vec4 pos;
+    highp vec2 pack0;
+    highp float cust_distAlpha;
+    lowp vec3 normal;
+    lowp vec3 vlight;
+    highp vec4 _ShadowCoord;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform lowp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[4];
+uniform highp vec4 unity_LightPosition[4];
+uniform highp vec4 unity_LightAtten[4];
+#line 19
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+uniform highp vec4 unity_SHBr;
+#line 23
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+#line 27
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+uniform highp vec4 _LightSplitsNear;
+#line 31
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+#line 35
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+uniform highp mat4 _Object2World;
+#line 39
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+uniform highp mat4 glstate_matrix_texture0;
+#line 43
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+uniform highp mat4 glstate_matrix_projection;
+#line 47
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 76
+#line 81
+#line 86
+#line 90
+#line 95
+#line 119
+#line 136
+#line 157
+#line 165
+#line 192
+#line 205
+#line 214
+#line 219
+#line 228
+#line 233
+#line 242
+#line 259
+#line 264
+#line 290
+#line 298
+#line 302
+#line 316
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _SpecColor;
+#line 329
+#line 337
+#line 351
+uniform highp vec4 _ShadowOffsets[4];
+uniform sampler2D _ShadowMapTexture;
+#line 384
+uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
+#line 398
+#line 410
+#line 439
+uniform highp vec4 _MainTex_ST;
+#line 455
+#line 410
+void vert( inout appdata_full v, out Input o ) {
+    highp vec3 vect = vec3( (glstate_matrix_mvp * v.vertex));
+    #line 414
+    highp float dist = distance( vec3( 0.0, 0.0, 0.0), vect);
+    highp float alpha = (dist * 0.01);
+    alpha *= alpha;
+    alpha = min( 0.85, alpha);
+    #line 418
+    o.distAlpha = alpha;
+}
+#line 440
+v2f_surf vert_surf( in appdata_full v ) {
+    v2f_surf o;
+    #line 443
+    Input customInputData;
+    vert( v, customInputData);
+    o.cust_distAlpha = customInputData.distAlpha;
+    o.pos = (glstate_matrix_mvp * v.vertex);
+    #line 447
+    o.pack0.xy = ((v.texcoord.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+    highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
+    o.normal = worldN;
+    o.vlight = vec3( 0.0);
+    #line 451
+    o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
+    return o;
+}
+
+out highp vec2 xlv_TEXCOORD0;
+out highp float xlv_TEXCOORD1;
+out lowp vec3 xlv_TEXCOORD2;
+out lowp vec3 xlv_TEXCOORD3;
+out highp vec4 xlv_TEXCOORD4;
+void main() {
+    v2f_surf xl_retval;
+    appdata_full xlt_v;
+    xlt_v.vertex = vec4(gl_Vertex);
+    xlt_v.tangent = vec4(TANGENT);
+    xlt_v.normal = vec3(gl_Normal);
+    xlt_v.texcoord = vec4(gl_MultiTexCoord0);
+    xlt_v.texcoord1 = vec4(gl_MultiTexCoord1);
+    xlt_v.color = vec4(gl_Color);
+    xl_retval = vert_surf( xlt_v);
+    gl_Position = vec4(xl_retval.pos);
+    xlv_TEXCOORD0 = vec2(xl_retval.pack0);
+    xlv_TEXCOORD1 = float(xl_retval.cust_distAlpha);
+    xlv_TEXCOORD2 = vec3(xl_retval.normal);
+    xlv_TEXCOORD3 = vec3(xl_retval.vlight);
+    xlv_TEXCOORD4 = vec4(xl_retval._ShadowCoord);
+}
+
+
+#endif
+#ifdef FRAGMENT
+
+#define gl_FragData _glesFragData
+layout(location = 0) out mediump vec4 _glesFragData[4];
+float xll_saturate_f( float x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec2 xll_saturate_vf2( vec2 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec3 xll_saturate_vf3( vec3 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec4 xll_saturate_vf4( vec4 x) {
+  return clamp( x, 0.0, 1.0);
+}
+mat2 xll_saturate_mf2x2(mat2 m) {
+  return mat2( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0));
+}
+mat3 xll_saturate_mf3x3(mat3 m) {
+  return mat3( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0));
+}
+mat4 xll_saturate_mf4x4(mat4 m) {
+  return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
+}
+#line 150
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 186
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 180
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 306
+struct SurfaceOutput {
+    lowp vec3 Albedo;
+    lowp vec3 Normal;
+    lowp vec3 Emission;
+    mediump float Specular;
+    lowp float Gloss;
+    lowp float Alpha;
+};
+#line 66
+struct appdata_full {
+    highp vec4 vertex;
+    highp vec4 tangent;
+    highp vec3 normal;
+    highp vec4 texcoord;
+    highp vec4 texcoord1;
+    lowp vec4 color;
+};
+#line 392
+struct Input {
+    highp vec2 uv_MainTex;
+    highp float distAlpha;
+};
+#line 429
+struct v2f_surf {
+    highp vec4 pos;
+    highp vec2 pack0;
+    highp float cust_distAlpha;
+    lowp vec3 normal;
+    lowp vec3 vlight;
+    highp vec4 _ShadowCoord;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform lowp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[4];
+uniform highp vec4 unity_LightPosition[4];
+uniform highp vec4 unity_LightAtten[4];
+#line 19
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+uniform highp vec4 unity_SHBr;
+#line 23
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+#line 27
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+uniform highp vec4 _LightSplitsNear;
+#line 31
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+#line 35
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+uniform highp mat4 _Object2World;
+#line 39
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+uniform highp mat4 glstate_matrix_texture0;
+#line 43
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+uniform highp mat4 glstate_matrix_projection;
+#line 47
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 76
+#line 81
+#line 86
+#line 90
+#line 95
+#line 119
+#line 136
+#line 157
+#line 165
+#line 192
+#line 205
+#line 214
+#line 219
+#line 228
+#line 233
+#line 242
+#line 259
+#line 264
+#line 290
+#line 298
+#line 302
+#line 316
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _SpecColor;
+#line 329
+#line 337
+#line 351
+uniform highp vec4 _ShadowOffsets[4];
+uniform sampler2D _ShadowMapTexture;
+#line 384
+uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
+#line 398
+#line 410
+#line 439
+uniform highp vec4 _MainTex_ST;
+#line 455
+#line 398
+mediump vec4 LightingNone( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
+    mediump float NdotL = dot( s.Normal, lightDir);
+    mediump float diff = NdotL;
+    #line 402
+    highp float lightIntensity = (_LightColor0.w * ((diff * atten) * 16.0));
+    highp float satLight = xll_saturate_f(lightIntensity);
+    highp float invlight = (1.0 - satLight);
+    mediump vec4 c;
+    #line 406
+    c.w = (s.Alpha * invlight);
+    c.xyz = s.Emission;
+    return c;
+}
+#line 420
+void surf( in Input IN, inout SurfaceOutput o ) {
+    #line 422
+    lowp vec4 c = (texture( _MainTex, IN.uv_MainTex) * _Color);
+    o.Albedo = vec3( 0.0);
+    o.Gloss = 0.0;
+    o.Specular = 0.0;
+    #line 426
+    o.Alpha = min( c.w, IN.distAlpha);
+    o.Emission = c.xyz;
+}
+#line 384
+lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
+    highp float dist = textureProj( _ShadowMapTexture, shadowCoord).x;
+    mediump float lightShadowDataX = _LightShadowData.x;
+    #line 388
+    return max( float((dist > (shadowCoord.z / shadowCoord.w))), lightShadowDataX);
+}
+#line 455
+lowp vec4 frag_surf( in v2f_surf IN ) {
+    Input surfIN;
+    surfIN.uv_MainTex = IN.pack0.xy;
+    #line 459
+    surfIN.distAlpha = IN.cust_distAlpha;
+    SurfaceOutput o;
+    o.Albedo = vec3( 0.0);
+    o.Emission = vec3( 0.0);
+    #line 463
+    o.Specular = 0.0;
+    o.Alpha = 0.0;
+    o.Gloss = 0.0;
+    o.Normal = IN.normal;
+    #line 467
+    surf( surfIN, o);
+    lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    lowp vec4 c = vec4( 0.0);
+    c = LightingNone( o, _WorldSpaceLightPos0.xyz, atten);
+    #line 471
+    c.xyz += (o.Albedo * IN.vlight);
+    c.xyz += o.Emission;
+    return c;
+}
+in highp vec2 xlv_TEXCOORD0;
+in highp float xlv_TEXCOORD1;
+in lowp vec3 xlv_TEXCOORD2;
+in lowp vec3 xlv_TEXCOORD3;
+in highp vec4 xlv_TEXCOORD4;
+void main() {
+    lowp vec4 xl_retval;
+    v2f_surf xlt_IN;
+    xlt_IN.pos = vec4(0.0);
+    xlt_IN.pack0 = vec2(xlv_TEXCOORD0);
+    xlt_IN.cust_distAlpha = float(xlv_TEXCOORD1);
+    xlt_IN.normal = vec3(xlv_TEXCOORD2);
+    xlt_IN.vlight = vec3(xlv_TEXCOORD3);
+    xlt_IN._ShadowCoord = vec4(xlv_TEXCOORD4);
+    xl_retval = frag_surf( xlt_IN);
+    gl_FragData[0] = vec4(xl_retval);
+}
+
+
+#endif"
+}
+
+SubProgram "gles " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" "SHADOWS_NATIVE" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+#extension GL_EXT_shadow_samplers : enable
+varying highp vec4 xlv_TEXCOORD4;
+varying lowp vec3 xlv_TEXCOORD3;
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp vec4 _MainTex_ST;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 unity_World2Shadow[4];
+attribute vec4 _glesMultiTexCoord0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesVertex;
+void main ()
+{
+  lowp vec3 tmpvar_1;
+  highp vec3 p_2;
+  p_2 = -((glstate_matrix_mvp * _glesVertex).xyz);
+  highp float tmpvar_3;
+  tmpvar_3 = (sqrt(dot (p_2, p_2)) * 0.01);
+  mat3 tmpvar_4;
+  tmpvar_4[0] = _Object2World[0].xyz;
+  tmpvar_4[1] = _Object2World[1].xyz;
+  tmpvar_4[2] = _Object2World[2].xyz;
+  highp vec3 tmpvar_5;
+  tmpvar_5 = (tmpvar_4 * (normalize(_glesNormal) * unity_Scale.w));
+  tmpvar_1 = tmpvar_5;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  xlv_TEXCOORD1 = min (0.85, (tmpvar_3 * tmpvar_3));
+  xlv_TEXCOORD2 = tmpvar_1;
+  xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
+  xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+#extension GL_EXT_shadow_samplers : enable
+varying highp vec4 xlv_TEXCOORD4;
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform lowp vec4 _Color;
+uniform sampler2D _MainTex;
+uniform lowp sampler2DShadow _ShadowMapTexture;
+uniform lowp vec4 _LightColor0;
+uniform highp vec4 _LightShadowData;
+uniform lowp vec4 _WorldSpaceLightPos0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float tmpvar_2;
+  lowp vec4 tmpvar_3;
+  tmpvar_3 = (texture2D (_MainTex, xlv_TEXCOORD0) * _Color);
+  highp float tmpvar_4;
+  tmpvar_4 = min (tmpvar_3.w, xlv_TEXCOORD1);
+  tmpvar_2 = tmpvar_4;
+  lowp vec3 tmpvar_5;
+  tmpvar_5 = tmpvar_3.xyz;
+  lowp float shadow_6;
+  lowp float tmpvar_7;
+  tmpvar_7 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD4.xyz);
+  highp float tmpvar_8;
+  tmpvar_8 = (_LightShadowData.x + (tmpvar_7 * (1.0 - _LightShadowData.x)));
+  shadow_6 = tmpvar_8;
+  mediump vec3 lightDir_9;
+  lightDir_9 = _WorldSpaceLightPos0.xyz;
+  mediump float atten_10;
+  atten_10 = shadow_6;
+  mediump vec4 c_11;
+  highp float lightIntensity_12;
+  mediump float tmpvar_13;
+  tmpvar_13 = (_LightColor0.w * ((dot (xlv_TEXCOORD2, lightDir_9) * atten_10) * 16.0));
+  lightIntensity_12 = tmpvar_13;
+  highp float tmpvar_14;
+  tmpvar_14 = (tmpvar_2 * (1.0 - clamp (lightIntensity_12, 0.0, 1.0)));
+  c_11.w = tmpvar_14;
+  c_11.xyz = tmpvar_5;
+  c_1 = c_11;
+  c_1.xyz = c_1.xyz;
+  c_1.xyz = (c_1.xyz + tmpvar_3.xyz);
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "gles3 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" "SHADOWS_NATIVE" }
+"!!GLES3#version 300 es
+
+
+#ifdef VERTEX
+
+#define gl_Vertex _glesVertex
+in vec4 _glesVertex;
+#define gl_Color _glesColor
+in vec4 _glesColor;
+#define gl_Normal (normalize(_glesNormal))
+in vec3 _glesNormal;
+#define gl_MultiTexCoord0 _glesMultiTexCoord0
+in vec4 _glesMultiTexCoord0;
+#define gl_MultiTexCoord1 _glesMultiTexCoord1
+in vec4 _glesMultiTexCoord1;
+#define TANGENT vec4(normalize(_glesTANGENT.xyz), _glesTANGENT.w)
+in vec4 _glesTANGENT;
+
+#line 150
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 186
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 180
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 306
+struct SurfaceOutput {
+    lowp vec3 Albedo;
+    lowp vec3 Normal;
+    lowp vec3 Emission;
+    mediump float Specular;
+    lowp float Gloss;
+    lowp float Alpha;
+};
+#line 66
+struct appdata_full {
+    highp vec4 vertex;
+    highp vec4 tangent;
+    highp vec3 normal;
+    highp vec4 texcoord;
+    highp vec4 texcoord1;
+    lowp vec4 color;
+};
+#line 392
+struct Input {
+    highp vec2 uv_MainTex;
+    highp float distAlpha;
+};
+#line 429
+struct v2f_surf {
+    highp vec4 pos;
+    highp vec2 pack0;
+    highp float cust_distAlpha;
+    lowp vec3 normal;
+    lowp vec3 vlight;
+    highp vec4 _ShadowCoord;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform lowp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[4];
+uniform highp vec4 unity_LightPosition[4];
+uniform highp vec4 unity_LightAtten[4];
+#line 19
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+uniform highp vec4 unity_SHBr;
+#line 23
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+#line 27
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+uniform highp vec4 _LightSplitsNear;
+#line 31
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+#line 35
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+uniform highp mat4 _Object2World;
+#line 39
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+uniform highp mat4 glstate_matrix_texture0;
+#line 43
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+uniform highp mat4 glstate_matrix_projection;
+#line 47
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 76
+#line 81
+#line 86
+#line 90
+#line 95
+#line 119
+#line 136
+#line 157
+#line 165
+#line 192
+#line 205
+#line 214
+#line 219
+#line 228
+#line 233
+#line 242
+#line 259
+#line 264
+#line 290
+#line 298
+#line 302
+#line 316
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _SpecColor;
+#line 329
+#line 337
+#line 351
+uniform highp vec4 _ShadowOffsets[4];
+uniform lowp sampler2DShadow _ShadowMapTexture;
+#line 384
+uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
+#line 398
+#line 410
+#line 439
+uniform highp vec4 _MainTex_ST;
+#line 455
+#line 410
+void vert( inout appdata_full v, out Input o ) {
+    highp vec3 vect = vec3( (glstate_matrix_mvp * v.vertex));
+    #line 414
+    highp float dist = distance( vec3( 0.0, 0.0, 0.0), vect);
+    highp float alpha = (dist * 0.01);
+    alpha *= alpha;
+    alpha = min( 0.85, alpha);
+    #line 418
+    o.distAlpha = alpha;
+}
+#line 440
+v2f_surf vert_surf( in appdata_full v ) {
+    v2f_surf o;
+    #line 443
+    Input customInputData;
+    vert( v, customInputData);
+    o.cust_distAlpha = customInputData.distAlpha;
+    o.pos = (glstate_matrix_mvp * v.vertex);
+    #line 447
+    o.pack0.xy = ((v.texcoord.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+    highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
+    o.normal = worldN;
+    o.vlight = vec3( 0.0);
+    #line 451
+    o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
+    return o;
+}
+
+out highp vec2 xlv_TEXCOORD0;
+out highp float xlv_TEXCOORD1;
+out lowp vec3 xlv_TEXCOORD2;
+out lowp vec3 xlv_TEXCOORD3;
+out highp vec4 xlv_TEXCOORD4;
+void main() {
+    v2f_surf xl_retval;
+    appdata_full xlt_v;
+    xlt_v.vertex = vec4(gl_Vertex);
+    xlt_v.tangent = vec4(TANGENT);
+    xlt_v.normal = vec3(gl_Normal);
+    xlt_v.texcoord = vec4(gl_MultiTexCoord0);
+    xlt_v.texcoord1 = vec4(gl_MultiTexCoord1);
+    xlt_v.color = vec4(gl_Color);
+    xl_retval = vert_surf( xlt_v);
+    gl_Position = vec4(xl_retval.pos);
+    xlv_TEXCOORD0 = vec2(xl_retval.pack0);
+    xlv_TEXCOORD1 = float(xl_retval.cust_distAlpha);
+    xlv_TEXCOORD2 = vec3(xl_retval.normal);
+    xlv_TEXCOORD3 = vec3(xl_retval.vlight);
+    xlv_TEXCOORD4 = vec4(xl_retval._ShadowCoord);
+}
+
+
+#endif
+#ifdef FRAGMENT
+
+#define gl_FragData _glesFragData
+layout(location = 0) out mediump vec4 _glesFragData[4];
+float xll_shadow2D(mediump sampler2DShadow s, vec3 coord) { return texture (s, coord); }
+float xll_saturate_f( float x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec2 xll_saturate_vf2( vec2 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec3 xll_saturate_vf3( vec3 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec4 xll_saturate_vf4( vec4 x) {
+  return clamp( x, 0.0, 1.0);
+}
+mat2 xll_saturate_mf2x2(mat2 m) {
+  return mat2( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0));
+}
+mat3 xll_saturate_mf3x3(mat3 m) {
+  return mat3( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0));
+}
+mat4 xll_saturate_mf4x4(mat4 m) {
+  return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
+}
+#line 150
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 186
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 180
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 306
+struct SurfaceOutput {
+    lowp vec3 Albedo;
+    lowp vec3 Normal;
+    lowp vec3 Emission;
+    mediump float Specular;
+    lowp float Gloss;
+    lowp float Alpha;
+};
+#line 66
+struct appdata_full {
+    highp vec4 vertex;
+    highp vec4 tangent;
+    highp vec3 normal;
+    highp vec4 texcoord;
+    highp vec4 texcoord1;
+    lowp vec4 color;
+};
+#line 392
+struct Input {
+    highp vec2 uv_MainTex;
+    highp float distAlpha;
+};
+#line 429
+struct v2f_surf {
+    highp vec4 pos;
+    highp vec2 pack0;
+    highp float cust_distAlpha;
+    lowp vec3 normal;
+    lowp vec3 vlight;
+    highp vec4 _ShadowCoord;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform lowp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[4];
+uniform highp vec4 unity_LightPosition[4];
+uniform highp vec4 unity_LightAtten[4];
+#line 19
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+uniform highp vec4 unity_SHBr;
+#line 23
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+#line 27
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+uniform highp vec4 _LightSplitsNear;
+#line 31
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+#line 35
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+uniform highp mat4 _Object2World;
+#line 39
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+uniform highp mat4 glstate_matrix_texture0;
+#line 43
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+uniform highp mat4 glstate_matrix_projection;
+#line 47
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 76
+#line 81
+#line 86
+#line 90
+#line 95
+#line 119
+#line 136
+#line 157
+#line 165
+#line 192
+#line 205
+#line 214
+#line 219
+#line 228
+#line 233
+#line 242
+#line 259
+#line 264
+#line 290
+#line 298
+#line 302
+#line 316
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _SpecColor;
+#line 329
+#line 337
+#line 351
+uniform highp vec4 _ShadowOffsets[4];
+uniform lowp sampler2DShadow _ShadowMapTexture;
+#line 384
+uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
+#line 398
+#line 410
+#line 439
+uniform highp vec4 _MainTex_ST;
+#line 455
+#line 398
+mediump vec4 LightingNone( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
+    mediump float NdotL = dot( s.Normal, lightDir);
+    mediump float diff = NdotL;
+    #line 402
+    highp float lightIntensity = (_LightColor0.w * ((diff * atten) * 16.0));
+    highp float satLight = xll_saturate_f(lightIntensity);
+    highp float invlight = (1.0 - satLight);
+    mediump vec4 c;
+    #line 406
+    c.w = (s.Alpha * invlight);
+    c.xyz = s.Emission;
+    return c;
+}
+#line 420
+void surf( in Input IN, inout SurfaceOutput o ) {
+    #line 422
+    lowp vec4 c = (texture( _MainTex, IN.uv_MainTex) * _Color);
+    o.Albedo = vec3( 0.0);
+    o.Gloss = 0.0;
+    o.Specular = 0.0;
+    #line 426
+    o.Alpha = min( c.w, IN.distAlpha);
+    o.Emission = c.xyz;
+}
+#line 384
+lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
+    lowp float shadow = xll_shadow2D( _ShadowMapTexture, shadowCoord.xyz.xyz);
+    shadow = (_LightShadowData.x + (shadow * (1.0 - _LightShadowData.x)));
+    #line 388
+    return shadow;
+}
+#line 455
+lowp vec4 frag_surf( in v2f_surf IN ) {
+    Input surfIN;
+    surfIN.uv_MainTex = IN.pack0.xy;
+    #line 459
+    surfIN.distAlpha = IN.cust_distAlpha;
+    SurfaceOutput o;
+    o.Albedo = vec3( 0.0);
+    o.Emission = vec3( 0.0);
+    #line 463
+    o.Specular = 0.0;
+    o.Alpha = 0.0;
+    o.Gloss = 0.0;
+    o.Normal = IN.normal;
+    #line 467
+    surf( surfIN, o);
+    lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    lowp vec4 c = vec4( 0.0);
+    c = LightingNone( o, _WorldSpaceLightPos0.xyz, atten);
+    #line 471
+    c.xyz += (o.Albedo * IN.vlight);
+    c.xyz += o.Emission;
+    return c;
+}
+in highp vec2 xlv_TEXCOORD0;
+in highp float xlv_TEXCOORD1;
+in lowp vec3 xlv_TEXCOORD2;
+in lowp vec3 xlv_TEXCOORD3;
+in highp vec4 xlv_TEXCOORD4;
+void main() {
+    lowp vec4 xl_retval;
+    v2f_surf xlt_IN;
+    xlt_IN.pos = vec4(0.0);
+    xlt_IN.pack0 = vec2(xlv_TEXCOORD0);
+    xlt_IN.cust_distAlpha = float(xlv_TEXCOORD1);
+    xlt_IN.normal = vec3(xlv_TEXCOORD2);
+    xlt_IN.vlight = vec3(xlv_TEXCOORD3);
+    xlt_IN._ShadowCoord = vec4(xlv_TEXCOORD4);
+    xl_retval = frag_surf( xlt_IN);
+    gl_FragData[0] = vec4(xl_retval);
+}
+
+
+#endif"
+}
+
+SubProgram "gles " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" "SHADOWS_NATIVE" "VERTEXLIGHT_ON" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+#extension GL_EXT_shadow_samplers : enable
+varying highp vec4 xlv_TEXCOORD4;
+varying lowp vec3 xlv_TEXCOORD3;
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp vec4 _MainTex_ST;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 unity_World2Shadow[4];
+attribute vec4 _glesMultiTexCoord0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesVertex;
+void main ()
+{
+  lowp vec3 tmpvar_1;
+  highp vec3 p_2;
+  p_2 = -((glstate_matrix_mvp * _glesVertex).xyz);
+  highp float tmpvar_3;
+  tmpvar_3 = (sqrt(dot (p_2, p_2)) * 0.01);
+  mat3 tmpvar_4;
+  tmpvar_4[0] = _Object2World[0].xyz;
+  tmpvar_4[1] = _Object2World[1].xyz;
+  tmpvar_4[2] = _Object2World[2].xyz;
+  highp vec3 tmpvar_5;
+  tmpvar_5 = (tmpvar_4 * (normalize(_glesNormal) * unity_Scale.w));
+  tmpvar_1 = tmpvar_5;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = ((_glesMultiTexCoord0.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+  xlv_TEXCOORD1 = min (0.85, (tmpvar_3 * tmpvar_3));
+  xlv_TEXCOORD2 = tmpvar_1;
+  xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
+  xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+#extension GL_EXT_shadow_samplers : enable
+varying highp vec4 xlv_TEXCOORD4;
+varying lowp vec3 xlv_TEXCOORD2;
+varying highp float xlv_TEXCOORD1;
+varying highp vec2 xlv_TEXCOORD0;
+uniform lowp vec4 _Color;
+uniform sampler2D _MainTex;
+uniform lowp sampler2DShadow _ShadowMapTexture;
+uniform lowp vec4 _LightColor0;
+uniform highp vec4 _LightShadowData;
+uniform lowp vec4 _WorldSpaceLightPos0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float tmpvar_2;
+  lowp vec4 tmpvar_3;
+  tmpvar_3 = (texture2D (_MainTex, xlv_TEXCOORD0) * _Color);
+  highp float tmpvar_4;
+  tmpvar_4 = min (tmpvar_3.w, xlv_TEXCOORD1);
+  tmpvar_2 = tmpvar_4;
+  lowp vec3 tmpvar_5;
+  tmpvar_5 = tmpvar_3.xyz;
+  lowp float shadow_6;
+  lowp float tmpvar_7;
+  tmpvar_7 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD4.xyz);
+  highp float tmpvar_8;
+  tmpvar_8 = (_LightShadowData.x + (tmpvar_7 * (1.0 - _LightShadowData.x)));
+  shadow_6 = tmpvar_8;
+  mediump vec3 lightDir_9;
+  lightDir_9 = _WorldSpaceLightPos0.xyz;
+  mediump float atten_10;
+  atten_10 = shadow_6;
+  mediump vec4 c_11;
+  highp float lightIntensity_12;
+  mediump float tmpvar_13;
+  tmpvar_13 = (_LightColor0.w * ((dot (xlv_TEXCOORD2, lightDir_9) * atten_10) * 16.0));
+  lightIntensity_12 = tmpvar_13;
+  highp float tmpvar_14;
+  tmpvar_14 = (tmpvar_2 * (1.0 - clamp (lightIntensity_12, 0.0, 1.0)));
+  c_11.w = tmpvar_14;
+  c_11.xyz = tmpvar_5;
+  c_1 = c_11;
+  c_1.xyz = c_1.xyz;
+  c_1.xyz = (c_1.xyz + tmpvar_3.xyz);
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "gles3 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" "SHADOWS_NATIVE" "VERTEXLIGHT_ON" }
+"!!GLES3#version 300 es
+
+
+#ifdef VERTEX
+
+#define gl_Vertex _glesVertex
+in vec4 _glesVertex;
+#define gl_Color _glesColor
+in vec4 _glesColor;
+#define gl_Normal (normalize(_glesNormal))
+in vec3 _glesNormal;
+#define gl_MultiTexCoord0 _glesMultiTexCoord0
+in vec4 _glesMultiTexCoord0;
+#define gl_MultiTexCoord1 _glesMultiTexCoord1
+in vec4 _glesMultiTexCoord1;
+#define TANGENT vec4(normalize(_glesTANGENT.xyz), _glesTANGENT.w)
+in vec4 _glesTANGENT;
+
+#line 150
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 186
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 180
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 306
+struct SurfaceOutput {
+    lowp vec3 Albedo;
+    lowp vec3 Normal;
+    lowp vec3 Emission;
+    mediump float Specular;
+    lowp float Gloss;
+    lowp float Alpha;
+};
+#line 66
+struct appdata_full {
+    highp vec4 vertex;
+    highp vec4 tangent;
+    highp vec3 normal;
+    highp vec4 texcoord;
+    highp vec4 texcoord1;
+    lowp vec4 color;
+};
+#line 392
+struct Input {
+    highp vec2 uv_MainTex;
+    highp float distAlpha;
+};
+#line 429
+struct v2f_surf {
+    highp vec4 pos;
+    highp vec2 pack0;
+    highp float cust_distAlpha;
+    lowp vec3 normal;
+    lowp vec3 vlight;
+    highp vec4 _ShadowCoord;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform lowp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[4];
+uniform highp vec4 unity_LightPosition[4];
+uniform highp vec4 unity_LightAtten[4];
+#line 19
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+uniform highp vec4 unity_SHBr;
+#line 23
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+#line 27
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+uniform highp vec4 _LightSplitsNear;
+#line 31
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+#line 35
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+uniform highp mat4 _Object2World;
+#line 39
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+uniform highp mat4 glstate_matrix_texture0;
+#line 43
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+uniform highp mat4 glstate_matrix_projection;
+#line 47
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 76
+#line 81
+#line 86
+#line 90
+#line 95
+#line 119
+#line 136
+#line 157
+#line 165
+#line 192
+#line 205
+#line 214
+#line 219
+#line 228
+#line 233
+#line 242
+#line 259
+#line 264
+#line 290
+#line 298
+#line 302
+#line 316
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _SpecColor;
+#line 329
+#line 337
+#line 351
+uniform highp vec4 _ShadowOffsets[4];
+uniform lowp sampler2DShadow _ShadowMapTexture;
+#line 384
+uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
+#line 398
+#line 410
+#line 439
+uniform highp vec4 _MainTex_ST;
+#line 455
+#line 410
+void vert( inout appdata_full v, out Input o ) {
+    highp vec3 vect = vec3( (glstate_matrix_mvp * v.vertex));
+    #line 414
+    highp float dist = distance( vec3( 0.0, 0.0, 0.0), vect);
+    highp float alpha = (dist * 0.01);
+    alpha *= alpha;
+    alpha = min( 0.85, alpha);
+    #line 418
+    o.distAlpha = alpha;
+}
+#line 440
+v2f_surf vert_surf( in appdata_full v ) {
+    v2f_surf o;
+    #line 443
+    Input customInputData;
+    vert( v, customInputData);
+    o.cust_distAlpha = customInputData.distAlpha;
+    o.pos = (glstate_matrix_mvp * v.vertex);
+    #line 447
+    o.pack0.xy = ((v.texcoord.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
+    highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
+    o.normal = worldN;
+    o.vlight = vec3( 0.0);
+    #line 451
+    o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
+    return o;
+}
+
+out highp vec2 xlv_TEXCOORD0;
+out highp float xlv_TEXCOORD1;
+out lowp vec3 xlv_TEXCOORD2;
+out lowp vec3 xlv_TEXCOORD3;
+out highp vec4 xlv_TEXCOORD4;
+void main() {
+    v2f_surf xl_retval;
+    appdata_full xlt_v;
+    xlt_v.vertex = vec4(gl_Vertex);
+    xlt_v.tangent = vec4(TANGENT);
+    xlt_v.normal = vec3(gl_Normal);
+    xlt_v.texcoord = vec4(gl_MultiTexCoord0);
+    xlt_v.texcoord1 = vec4(gl_MultiTexCoord1);
+    xlt_v.color = vec4(gl_Color);
+    xl_retval = vert_surf( xlt_v);
+    gl_Position = vec4(xl_retval.pos);
+    xlv_TEXCOORD0 = vec2(xl_retval.pack0);
+    xlv_TEXCOORD1 = float(xl_retval.cust_distAlpha);
+    xlv_TEXCOORD2 = vec3(xl_retval.normal);
+    xlv_TEXCOORD3 = vec3(xl_retval.vlight);
+    xlv_TEXCOORD4 = vec4(xl_retval._ShadowCoord);
+}
+
+
+#endif
+#ifdef FRAGMENT
+
+#define gl_FragData _glesFragData
+layout(location = 0) out mediump vec4 _glesFragData[4];
+float xll_shadow2D(mediump sampler2DShadow s, vec3 coord) { return texture (s, coord); }
+float xll_saturate_f( float x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec2 xll_saturate_vf2( vec2 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec3 xll_saturate_vf3( vec3 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec4 xll_saturate_vf4( vec4 x) {
+  return clamp( x, 0.0, 1.0);
+}
+mat2 xll_saturate_mf2x2(mat2 m) {
+  return mat2( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0));
+}
+mat3 xll_saturate_mf3x3(mat3 m) {
+  return mat3( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0));
+}
+mat4 xll_saturate_mf4x4(mat4 m) {
+  return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
+}
+#line 150
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 186
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 180
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 306
+struct SurfaceOutput {
+    lowp vec3 Albedo;
+    lowp vec3 Normal;
+    lowp vec3 Emission;
+    mediump float Specular;
+    lowp float Gloss;
+    lowp float Alpha;
+};
+#line 66
+struct appdata_full {
+    highp vec4 vertex;
+    highp vec4 tangent;
+    highp vec3 normal;
+    highp vec4 texcoord;
+    highp vec4 texcoord1;
+    lowp vec4 color;
+};
+#line 392
+struct Input {
+    highp vec2 uv_MainTex;
+    highp float distAlpha;
+};
+#line 429
+struct v2f_surf {
+    highp vec4 pos;
+    highp vec2 pack0;
+    highp float cust_distAlpha;
+    lowp vec3 normal;
+    lowp vec3 vlight;
+    highp vec4 _ShadowCoord;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform lowp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[4];
+uniform highp vec4 unity_LightPosition[4];
+uniform highp vec4 unity_LightAtten[4];
+#line 19
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+uniform highp vec4 unity_SHBr;
+#line 23
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+#line 27
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+uniform highp vec4 _LightSplitsNear;
+#line 31
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+#line 35
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+uniform highp mat4 _Object2World;
+#line 39
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+uniform highp mat4 glstate_matrix_texture0;
+#line 43
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+uniform highp mat4 glstate_matrix_projection;
+#line 47
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 76
+#line 81
+#line 86
+#line 90
+#line 95
+#line 119
+#line 136
+#line 157
+#line 165
+#line 192
+#line 205
+#line 214
+#line 219
+#line 228
+#line 233
+#line 242
+#line 259
+#line 264
+#line 290
+#line 298
+#line 302
+#line 316
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _SpecColor;
+#line 329
+#line 337
+#line 351
+uniform highp vec4 _ShadowOffsets[4];
+uniform lowp sampler2DShadow _ShadowMapTexture;
+#line 384
+uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
+#line 398
+#line 410
+#line 439
+uniform highp vec4 _MainTex_ST;
+#line 455
+#line 398
+mediump vec4 LightingNone( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
+    mediump float NdotL = dot( s.Normal, lightDir);
+    mediump float diff = NdotL;
+    #line 402
+    highp float lightIntensity = (_LightColor0.w * ((diff * atten) * 16.0));
+    highp float satLight = xll_saturate_f(lightIntensity);
+    highp float invlight = (1.0 - satLight);
+    mediump vec4 c;
+    #line 406
+    c.w = (s.Alpha * invlight);
+    c.xyz = s.Emission;
+    return c;
+}
+#line 420
+void surf( in Input IN, inout SurfaceOutput o ) {
+    #line 422
+    lowp vec4 c = (texture( _MainTex, IN.uv_MainTex) * _Color);
+    o.Albedo = vec3( 0.0);
+    o.Gloss = 0.0;
+    o.Specular = 0.0;
+    #line 426
+    o.Alpha = min( c.w, IN.distAlpha);
+    o.Emission = c.xyz;
+}
+#line 384
+lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
+    lowp float shadow = xll_shadow2D( _ShadowMapTexture, shadowCoord.xyz.xyz);
+    shadow = (_LightShadowData.x + (shadow * (1.0 - _LightShadowData.x)));
+    #line 388
+    return shadow;
+}
+#line 455
+lowp vec4 frag_surf( in v2f_surf IN ) {
+    Input surfIN;
+    surfIN.uv_MainTex = IN.pack0.xy;
+    #line 459
+    surfIN.distAlpha = IN.cust_distAlpha;
+    SurfaceOutput o;
+    o.Albedo = vec3( 0.0);
+    o.Emission = vec3( 0.0);
+    #line 463
+    o.Specular = 0.0;
+    o.Alpha = 0.0;
+    o.Gloss = 0.0;
+    o.Normal = IN.normal;
+    #line 467
+    surf( surfIN, o);
+    lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    lowp vec4 c = vec4( 0.0);
+    c = LightingNone( o, _WorldSpaceLightPos0.xyz, atten);
+    #line 471
+    c.xyz += (o.Albedo * IN.vlight);
+    c.xyz += o.Emission;
+    return c;
+}
+in highp vec2 xlv_TEXCOORD0;
+in highp float xlv_TEXCOORD1;
+in lowp vec3 xlv_TEXCOORD2;
+in lowp vec3 xlv_TEXCOORD3;
+in highp vec4 xlv_TEXCOORD4;
+void main() {
+    lowp vec4 xl_retval;
+    v2f_surf xlt_IN;
+    xlt_IN.pos = vec4(0.0);
+    xlt_IN.pack0 = vec2(xlv_TEXCOORD0);
+    xlt_IN.cust_distAlpha = float(xlv_TEXCOORD1);
+    xlt_IN.normal = vec3(xlv_TEXCOORD2);
+    xlt_IN.vlight = vec3(xlv_TEXCOORD3);
+    xlt_IN._ShadowCoord = vec4(xlv_TEXCOORD4);
+    xl_retval = frag_surf( xlt_IN);
+    gl_FragData[0] = vec4(xl_retval);
+}
+
+
+#endif"
+}
+
+}
+Program "fp" {
+// Fragment combos: 2
+//   opengl - ALU: 9 to 11, TEX: 1 to 2
+//   d3d9 - ALU: 9 to 10, TEX: 1 to 2
+//   d3d11 - ALU: 8 to 10, TEX: 1 to 2, FLOW: 1 to 1
+//   d3d11_9x - ALU: 8 to 10, TEX: 1 to 2, FLOW: 1 to 1
+SubProgram "opengl " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightColor0]
+Vector 2 [_Color]
+SetTexture 0 [_MainTex] 2D
+"!!ARBfp1.0
+OPTION ARB_precision_hint_fastest;
+# 9 ALU, 1 TEX
+PARAM c[4] = { program.local[0..2],
+		{ 1, 16 } };
+TEMP R0;
+TEMP R1;
+TEX R0, fragment.texcoord[0], texture[0], 2D;
+MUL R0, R0, c[2];
+ADD result.color.xyz, R0, R0;
+DP3 R1.x, fragment.texcoord[2], c[0];
+MUL R1.x, R1, c[1].w;
+MUL_SAT R1.x, R1, c[3].y;
+ADD R0.y, -R1.x, c[3].x;
+MIN R0.x, R0.w, fragment.texcoord[1];
+MUL result.color.w, R0.x, R0.y;
+END
+# 9 instructions, 2 R-regs
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightColor0]
+Vector 2 [_Color]
+SetTexture 0 [_MainTex] 2D
+"ps_2_0
+; 9 ALU, 1 TEX
+dcl_2d s0
+def c3, 16.00000000, 1.00000000, 0, 0
+dcl t0.xy
+dcl t1.x
+dcl t2.xyz
+texld r1, t0, s0
+mul r2, r1, c2
+dp3_pp r0.x, t2, c0
+mul_pp r0.x, r0, c1.w
+mul_pp_sat r0.x, r0, c3
+add r0.x, -r0, c3.y
+min_pp r1.x, r2.w, t1
+mul r0.w, r1.x, r0.x
+add_pp r0.xyz, r2, r2
+mov_pp oC0, r0
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+ConstBuffer "$Globals" 80 // 64 used size, 5 vars
+Vector 16 [_LightColor0] 4
+Vector 48 [_Color] 4
+ConstBuffer "UnityLighting" 400 // 16 used size, 16 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+BindCB "$Globals" 0
+BindCB "UnityLighting" 1
+SetTexture 0 [_MainTex] 2D 0
+// 10 instructions, 2 temp regs, 0 temp arrays:
+// ALU 8 float, 0 int, 0 uint
+// TEX 1 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0
+eefiecedgacajeamjgdndacadodbjjcjamghlhkhabaaaaaajmacaaaaadaaaaaa
+cmaaaaaammaaaaaaaaabaaaaejfdeheojiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadadaaaaimaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+aeaeaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaaimaaaaaa
+adaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaaaaaafdfgfpfaepfdejfeejepeoaa
+feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
+fdeieefcjeabaaaaeaaaaaaagfaaaaaafjaaaaaeegiocaaaaaaaaaaaaeaaaaaa
+fjaaaaaeegiocaaaabaaaaaaabaaaaaafkaaaaadaagabaaaaaaaaaaafibiaaae
+aahabaaaaaaaaaaaffffaaaagcbaaaaddcbabaaaabaaaaaagcbaaaadecbabaaa
+abaaaaaagcbaaaadhcbabaaaacaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
+acaaaaaabaaaaaaibcaabaaaaaaaaaaaegbcbaaaacaaaaaaegiccaaaabaaaaaa
+aaaaaaaadiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaa
+abaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaeb
+aaaaaaaibcaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
+efaaaaajpcaabaaaabaaaaaaegbabaaaabaaaaaaeghobaaaaaaaaaaaaagabaaa
+aaaaaaaadiaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegiocaaaaaaaaaaa
+adaaaaaaddaaaaahccaabaaaaaaaaaaadkaabaaaabaaaaaackbabaaaabaaaaaa
+aaaaaaahhccabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaadiaaaaah
+iccabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaadoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "flash " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightColor0]
+Vector 2 [_Color]
+SetTexture 0 [_MainTex] 2D
+"agal_ps
+c3 16.0 1.0 0.0 0.0
+[bc]
+ciaaaaaaabaaapacaaaaaaoeaeaaaaaaaaaaaaaaafaababb tex r1, v0, s0 <2d wrap linear point>
+adaaaaaaacaaapacabaaaaoeacaaaaaaacaaaaoeabaaaaaa mul r2, r1, c2
+bcaaaaaaaaaaabacacaaaaoeaeaaaaaaaaaaaaoeabaaaaaa dp3 r0.x, v2, c0
+adaaaaaaaaaaabacaaaaaaaaacaaaaaaabaaaappabaaaaaa mul r0.x, r0.x, c1.w
+adaaaaaaaaaaabacaaaaaaaaacaaaaaaadaaaaoeabaaaaaa mul r0.x, r0.x, c3
+bgaaaaaaaaaaabacaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaa sat r0.x, r0.x
+bfaaaaaaaaaaabacaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaa neg r0.x, r0.x
+abaaaaaaaaaaabacaaaaaaaaacaaaaaaadaaaaffabaaaaaa add r0.x, r0.x, c3.y
+agaaaaaaabaaabacacaaaappacaaaaaaabaaaaoeaeaaaaaa min r1.x, r2.w, v1
+adaaaaaaaaaaaiacabaaaaaaacaaaaaaaaaaaaaaacaaaaaa mul r0.w, r1.x, r0.x
+abaaaaaaaaaaahacacaaaakeacaaaaaaacaaaakeacaaaaaa add r0.xyz, r2.xyzz, r2.xyzz
+aaaaaaaaaaaaapadaaaaaaoeacaaaaaaaaaaaaaaaaaaaaaa mov o0, r0
+"
+}
+
+SubProgram "d3d11_9x " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+ConstBuffer "$Globals" 80 // 64 used size, 5 vars
+Vector 16 [_LightColor0] 4
+Vector 48 [_Color] 4
+ConstBuffer "UnityLighting" 400 // 16 used size, 16 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+BindCB "$Globals" 0
+BindCB "UnityLighting" 1
+SetTexture 0 [_MainTex] 2D 0
+// 10 instructions, 2 temp regs, 0 temp arrays:
+// ALU 8 float, 0 int, 0 uint
+// TEX 1 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0_level_9_1
+eefiecedbnfhplblmniioeobmjciogolikmimendabaaaaaaneadaaaaaeaaaaaa
+daaaaaaageabaaaaaaadaaaakaadaaaaebgpgodjcmabaaaacmabaaaaaaacpppp
+oaaaaaaaemaaaaaaadaaciaaaaaaemaaaaaaemaaabaaceaaaaaaemaaaaaaaaaa
+aaaaabaaabaaaaaaaaaaaaaaaaaaadaaabaaabaaaaaaaaaaabaaaaaaabaaacaa
+aaaaaaaaaaacppppfbaaaaafadaaapkaaaaaiaebaaaaiadpaaaaaaaaaaaaaaaa
+bpaaaaacaaaaaaiaaaaaahlabpaaaaacaaaaaaiaabaachlabpaaaaacaaaaaaja
+aaaiapkaecaaaaadaaaaapiaaaaaoelaaaaioekaaiaaaaadabaaciiaabaaoela
+acaaoekaafaaaaadabaacbiaabaappiaaaaappkaafaaaaadabaabbiaabaaaaia
+adaaaakaacaaaaadabaaabiaabaaaaibadaaffkaafaaaaadaaaacpiaaaaaoeia
+abaaoekaakaaaaadabaacciaaaaakklaaaaappiaacaaaaadaaaachiaaaaaoeia
+aaaaoeiaafaaaaadaaaaciiaabaaaaiaabaaffiaabaaaaacaaaicpiaaaaaoeia
+ppppaaaafdeieefcjeabaaaaeaaaaaaagfaaaaaafjaaaaaeegiocaaaaaaaaaaa
+aeaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafkaaaaadaagabaaaaaaaaaaa
+fibiaaaeaahabaaaaaaaaaaaffffaaaagcbaaaaddcbabaaaabaaaaaagcbaaaad
+ecbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaagfaaaaadpccabaaaaaaaaaaa
+giaaaaacacaaaaaabaaaaaaibcaabaaaaaaaaaaaegbcbaaaacaaaaaaegiccaaa
+abaaaaaaaaaaaaaadiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaa
+aaaaaaaaabaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
+aaaaiaebaaaaaaaibcaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaabeaaaaa
+aaaaiadpefaaaaajpcaabaaaabaaaaaaegbabaaaabaaaaaaeghobaaaaaaaaaaa
+aagabaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegiocaaa
+aaaaaaaaadaaaaaaddaaaaahccaabaaaaaaaaaaadkaabaaaabaaaaaackbabaaa
+abaaaaaaaaaaaaahhccabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
+diaaaaahiccabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaadoaaaaab
+ejfdeheojiaaaaaaafaaaaaaaiaaaaaaiaaaaaaaaaaaaaaaabaaaaaaadaaaaaa
+aaaaaaaaapaaaaaaimaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadadaaaa
+imaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaaaeaeaaaaimaaaaaaacaaaaaa
+aaaaaaaaadaaaaaaacaaaaaaahahaaaaimaaaaaaadaaaaaaaaaaaaaaadaaaaaa
+adaaaaaaahaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklkl
+epfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
+aaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl"
+}
+
+SubProgram "gles3 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightColor0]
+Vector 2 [_Color]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_ShadowMapTexture] 2D
+"!!ARBfp1.0
+OPTION ARB_precision_hint_fastest;
+# 11 ALU, 2 TEX
+PARAM c[4] = { program.local[0..2],
+		{ 1, 16 } };
+TEMP R0;
+TEMP R1;
+TEX R0, fragment.texcoord[0], texture[0], 2D;
+TXP R1.x, fragment.texcoord[4], texture[1], 2D;
+MUL R0, R0, c[2];
+ADD result.color.xyz, R0, R0;
+DP3 R1.y, fragment.texcoord[2], c[0];
+MUL R1.x, R1.y, R1;
+MUL R1.x, R1, c[1].w;
+MUL_SAT R1.x, R1, c[3].y;
+ADD R0.y, -R1.x, c[3].x;
+MIN R0.x, R0.w, fragment.texcoord[1];
+MUL result.color.w, R0.x, R0.y;
+END
+# 11 instructions, 2 R-regs
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightColor0]
+Vector 2 [_Color]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_ShadowMapTexture] 2D
+"ps_2_0
+; 10 ALU, 2 TEX
+dcl_2d s0
+dcl_2d s1
+def c3, 16.00000000, 1.00000000, 0, 0
+dcl t0.xy
+dcl t1.x
+dcl t2.xyz
+dcl t4
+texldp r2, t4, s1
+texld r1, t0, s0
+dp3_pp r0.x, t2, c0
+mul_pp r0.x, r0, r2
+mul r2, r1, c2
+mul_pp r0.x, r0, c1.w
+mul_pp_sat r0.x, r0, c3
+add r0.x, -r0, c3.y
+min_pp r1.x, r2.w, t1
+mul r0.w, r1.x, r0.x
+add_pp r0.xyz, r2, r2
+mov_pp oC0, r0
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+ConstBuffer "$Globals" 144 // 128 used size, 6 vars
+Vector 16 [_LightColor0] 4
+Vector 112 [_Color] 4
+ConstBuffer "UnityLighting" 400 // 16 used size, 16 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+BindCB "$Globals" 0
+BindCB "UnityLighting" 1
+SetTexture 0 [_MainTex] 2D 1
+SetTexture 1 [_ShadowMapTexture] 2D 0
+// 13 instructions, 2 temp regs, 0 temp arrays:
+// ALU 10 float, 0 int, 0 uint
+// TEX 2 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0
+eefiecedbfmgpfcfaechkgfojiklkoegefnhlgkdabaaaaaadiadaaaaadaaaaaa
+cmaaaaaaoeaaaaaabiabaaaaejfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadadaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+aeaeaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaakeaaaaaa
+adaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaaaaaakeaaaaaaaeaaaaaaaaaaaaaa
+adaaaaaaaeaaaaaaapalaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
+aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcbiacaaaa
+eaaaaaaaigaaaaaafjaaaaaeegiocaaaaaaaaaaaaiaaaaaafjaaaaaeegiocaaa
+abaaaaaaabaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
+fibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaa
+gcbaaaaddcbabaaaabaaaaaagcbaaaadecbabaaaabaaaaaagcbaaaadhcbabaaa
+acaaaaaagcbaaaadlcbabaaaaeaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
+acaaaaaaaoaaaaahdcaabaaaaaaaaaaaegbabaaaaeaaaaaapgbpbaaaaeaaaaaa
+efaaaaajpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaa
+aaaaaaaabaaaaaaiccaabaaaaaaaaaaaegbcbaaaacaaaaaaegiccaaaabaaaaaa
+aaaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaa
+diaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaaabaaaaaa
+dicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaebaaaaaaai
+bcaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpefaaaaaj
+pcaabaaaabaaaaaaegbabaaaabaaaaaaeghobaaaaaaaaaaaaagabaaaabaaaaaa
+diaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegiocaaaaaaaaaaaahaaaaaa
+ddaaaaahccaabaaaaaaaaaaadkaabaaaabaaaaaackbabaaaabaaaaaaaaaaaaah
+hccabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaadiaaaaahiccabaaa
+aaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaadoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+"!!GLES"
+}
+
+SubProgram "flash " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightColor0]
+Vector 2 [_Color]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_ShadowMapTexture] 2D
+"agal_ps
+c3 16.0 1.0 0.0 0.0
+[bc]
+aeaaaaaaaaaaapacaeaaaaoeaeaaaaaaaeaaaappaeaaaaaa div r0, v4, v4.w
+ciaaaaaaacaaapacaaaaaafeacaaaaaaabaaaaaaafaababb tex r2, r0.xyyy, s1 <2d wrap linear point>
+ciaaaaaaabaaapacaaaaaaoeaeaaaaaaaaaaaaaaafaababb tex r1, v0, s0 <2d wrap linear point>
+bcaaaaaaaaaaabacacaaaaoeaeaaaaaaaaaaaaoeabaaaaaa dp3 r0.x, v2, c0
+adaaaaaaaaaaabacaaaaaaaaacaaaaaaacaaaaaaacaaaaaa mul r0.x, r0.x, r2.x
+adaaaaaaacaaapacabaaaaoeacaaaaaaacaaaaoeabaaaaaa mul r2, r1, c2
+adaaaaaaaaaaabacaaaaaaaaacaaaaaaabaaaappabaaaaaa mul r0.x, r0.x, c1.w
+adaaaaaaaaaaabacaaaaaaaaacaaaaaaadaaaaoeabaaaaaa mul r0.x, r0.x, c3
+bgaaaaaaaaaaabacaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaa sat r0.x, r0.x
+bfaaaaaaaaaaabacaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaa neg r0.x, r0.x
+abaaaaaaaaaaabacaaaaaaaaacaaaaaaadaaaaffabaaaaaa add r0.x, r0.x, c3.y
+agaaaaaaabaaabacacaaaappacaaaaaaabaaaaoeaeaaaaaa min r1.x, r2.w, v1
+adaaaaaaaaaaaiacabaaaaaaacaaaaaaaaaaaaaaacaaaaaa mul r0.w, r1.x, r0.x
+abaaaaaaaaaaahacacaaaakeacaaaaaaacaaaakeacaaaaaa add r0.xyz, r2.xyzz, r2.xyzz
+aaaaaaaaaaaaapadaaaaaaoeacaaaaaaaaaaaaaaaaaaaaaa mov o0, r0
+"
+}
+
+SubProgram "d3d11_9x " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+ConstBuffer "$Globals" 144 // 128 used size, 6 vars
+Vector 16 [_LightColor0] 4
+Vector 112 [_Color] 4
+ConstBuffer "UnityLighting" 400 // 16 used size, 16 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+BindCB "$Globals" 0
+BindCB "UnityLighting" 1
+SetTexture 0 [_MainTex] 2D 1
+SetTexture 1 [_ShadowMapTexture] 2D 0
+// 13 instructions, 2 temp regs, 0 temp arrays:
+// ALU 10 float, 0 int, 0 uint
+// TEX 2 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0_level_9_1
+eefiecedobiodaiidaeghpoghafcfepdobbpjnmiabaaaaaamiaeaaaaaeaaaaaa
+daaaaaaalmabaaaanmadaaaajeaeaaaaebgpgodjieabaaaaieabaaaaaaacpppp
+deabaaaafaaaaaaaadaacmaaaaaafaaaaaaafaaaacaaceaaaaaafaaaabaaaaaa
+aaababaaaaaaabaaabaaaaaaaaaaaaaaaaaaahaaabaaabaaaaaaaaaaabaaaaaa
+abaaacaaaaaaaaaaaaacppppfbaaaaafadaaapkaaaaaiaebaaaaiadpaaaaaaaa
+aaaaaaaabpaaaaacaaaaaaiaaaaaahlabpaaaaacaaaaaaiaabaachlabpaaaaac
+aaaaaaiaadaaaplabpaaaaacaaaaaajaaaaiapkabpaaaaacaaaaaajaabaiapka
+agaaaaacaaaaaiiaadaapplaafaaaaadaaaaadiaaaaappiaadaaoelaecaaaaad
+aaaacpiaaaaaoeiaaaaioekaecaaaaadabaaapiaaaaaoelaabaioekaaiaaaaad
+aaaacciaabaaoelaacaaoekaafaaaaadaaaacbiaaaaaaaiaaaaaffiaafaaaaad
+aaaacbiaaaaaaaiaaaaappkaafaaaaadaaaabbiaaaaaaaiaadaaaakaacaaaaad
+aaaaabiaaaaaaaibadaaffkaafaaaaadabaacpiaabaaoeiaabaaoekaakaaaaad
+aaaacciaaaaakklaabaappiaacaaaaadabaachiaabaaoeiaabaaoeiaafaaaaad
+abaaciiaaaaaaaiaaaaaffiaabaaaaacaaaicpiaabaaoeiappppaaaafdeieefc
+biacaaaaeaaaaaaaigaaaaaafjaaaaaeegiocaaaaaaaaaaaaiaaaaaafjaaaaae
+egiocaaaabaaaaaaabaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaa
+abaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
+ffffaaaagcbaaaaddcbabaaaabaaaaaagcbaaaadecbabaaaabaaaaaagcbaaaad
+hcbabaaaacaaaaaagcbaaaadlcbabaaaaeaaaaaagfaaaaadpccabaaaaaaaaaaa
+giaaaaacacaaaaaaaoaaaaahdcaabaaaaaaaaaaaegbabaaaaeaaaaaapgbpbaaa
+aeaaaaaaefaaaaajpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaabaaaaaa
+aagabaaaaaaaaaaabaaaaaaiccaabaaaaaaaaaaaegbcbaaaacaaaaaaegiccaaa
+abaaaaaaaaaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaa
+aaaaaaaadiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaa
+abaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaeb
+aaaaaaaibcaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
+efaaaaajpcaabaaaabaaaaaaegbabaaaabaaaaaaeghobaaaaaaaaaaaaagabaaa
+abaaaaaadiaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegiocaaaaaaaaaaa
+ahaaaaaaddaaaaahccaabaaaaaaaaaaadkaabaaaabaaaaaackbabaaaabaaaaaa
+aaaaaaahhccabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaadiaaaaah
+iccabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaadoaaaaabejfdeheo
+laaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaa
+apaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadadaaaakeaaaaaa
+abaaaaaaaaaaaaaaadaaaaaaabaaaaaaaeaeaaaakeaaaaaaacaaaaaaaaaaaaaa
+adaaaaaaacaaaaaaahahaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
+ahaaaaaakeaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapalaaaafdfgfpfa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
+aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
+gbhcghgfheaaklkl"
+}
+
+SubProgram "gles3 " {
+Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+"!!GLES3"
+}
+
+}
+	}
+
+#LINE 62
+
+	 	 
+	 } 
+    }
+}
