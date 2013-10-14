@@ -1,5 +1,6 @@
 ﻿Shader "CloudShader" {
 	Properties {
+		_Color ("Color Tint", Color) = (1,1,1,1)
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_Mixer ("Mixer (RGB)", 2D) = "white" {}
 		_Fader ("Fader (RGB)", 2D) = "white" {}
@@ -19,6 +20,7 @@
 		sampler2D _MainTex;
 		sampler2D _Mixer;
 		sampler2D _Fader;
+		fixed4 _Color;
 		
 		struct Input {
 			float2 uv_MainTex;
@@ -30,8 +32,9 @@
 			half4 main = tex2D (_MainTex, IN.uv_MainTex);
 			half4 mixer = tex2D (_Mixer, IN.uv_Mixer);
 			half4 fader = tex2D (_Fader, IN.uv_Fader);
-			o.Albedo = (main.rgb)*(fader.rgb);
-			half3 avg = mixer.rgb*(o.Albedo.rgb*2);
+			half3 albedo = (main.rgb)*(fader.rgb);
+			o.Albedo = albedo * _Color;
+			half3 avg = mixer.rgb*(albedo.rgb*2);
 			avg = (avg.r+avg.g+avg.b)/3;
 			o.Alpha = avg;
 		}

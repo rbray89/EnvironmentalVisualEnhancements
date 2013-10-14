@@ -44,8 +44,7 @@
 	   // Transform to camera space
 	   float3 vect = mul(UNITY_MATRIX_MVP, v.vertex);
 	   float dist = distance(float3(0,0,0), vect);
-	   float alpha = dist * .01;
-	   alpha*=alpha;
+	   float alpha = (5000000 / ((pow(dist-1000,2))+dist))-1;
 	   alpha = min(.85,alpha);
 	   o.distAlpha = alpha;
 	 }
