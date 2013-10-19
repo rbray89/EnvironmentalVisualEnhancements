@@ -5,7 +5,7 @@
 		_Mixer ("Mixer (RGB)", 2D) = "white" {}
 		_Fader ("Fader (RGB)", 2D) = "white" {}
 	}
-	SubShader {
+SubShader {
 		Tags { "Queue"="Transparent"
 	   "RenderMode"="Transparent" }
 		Lighting On
@@ -34,11 +34,69 @@
 			half4 fader = tex2D (_Fader, IN.uv_Fader);
 			half3 albedo = (main.rgb)*(fader.rgb);
 			o.Albedo = albedo * _Color;
-			half3 avg = mixer.rgb*(albedo.rgb*2);
-			avg = (avg.r+avg.g+avg.b)/3;
+			half avg = mixer.r*(albedo.r*2);
 			o.Alpha = avg;
 		}
 		ENDCG
-	} 
+	
+		Tags { "Queue"="Transparent"
+	   "RenderMode"="Transparent" }
+		Lighting On
+		Cull Front
+	   ZWrite Off
+
+		Blend SrcAlpha OneMinusSrcAlpha
+		
+		CGPROGRAM
+		#pragma surface surf None vertex:vert
+
+		
+		sampler2D _MainTex;
+		sampler2D _Mixer;
+		sampler2D _Fader;
+		fixed4 _Color;
+		
+		half4 LightingNone (SurfaceOutput s, half3 lightDir, half3 viewDir, half atten)
+      {
+		half angle = saturate(dot(-normalize(s.Normal), normalize(viewDir)));
+        fixed4 c;
+		c.a = s.Alpha*angle;
+        c.rgb = 0;
+        return c;
+      }
+		
+				
+		struct Input {
+			float2 uv_MainTex;
+			float2 uv_Mixer;
+			float2 uv_Fader;
+			float distAlpha;
+		};
+
+	void vert (inout appdata_full v, out Input o) {
+	 	UNITY_INITIALIZE_OUTPUT(Input, o);
+	   // Transform to camera space
+	   float3 vect = mul(UNITY_MATRIX_MVP, v.vertex);
+	   float dist = distance(float3(0,0,0), vect);
+	   float alpha = dist / 1000;
+	   alpha = saturate(alpha);
+	   o.distAlpha = alpha;
+	 }
+
+		void surf (Input IN, inout SurfaceOutput o) {
+			half4 main = tex2D (_MainTex, IN.uv_MainTex);
+			half4 mixer = tex2D (_Mixer, IN.uv_Mixer);
+			half4 fader = tex2D (_Fader, IN.uv_Fader);
+			half3 albedo = (main.rgb)*2;//*(fader.rgb);
+			o.Albedo = albedo * _Color;
+			half avg = mixer.r*(albedo.r*2);
+
+			o.Alpha = avg;//avg;
+		}
+		ENDCG
+	
+	}
+	
+	 
 	FallBack "Diffuse"
 }

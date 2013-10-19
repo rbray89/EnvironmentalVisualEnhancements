@@ -122,7 +122,6 @@ namespace CommonUtils
             mr.enabled = true;
 
             gameObject.renderer.enabled = true;
-
             
             gameObject.layer = 10;
             gameObject.transform.parent = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == planet);
@@ -130,6 +129,11 @@ namespace CommonUtils
             gameObject.transform.localPosition = Vector3.zero;
             gameObject.transform.localRotation = Quaternion.identity;
 
+        }
+
+        public static void Log(String message)
+        {
+            UnityEngine.Debug.Log("Utils: " + message);
         }
 
     }

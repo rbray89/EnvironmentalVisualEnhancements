@@ -9,98 +9,172 @@ using CommonUtils;
 
 namespace Clouds
 {
-    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
-    public class KerbinCloud : MonoBehaviour
+    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
+    public class Clouds : MonoBehaviour
     {
-        Clouds cloud = new Clouds("Kerbin");
-        protected void Awake()
+        static List<CloudLayer> CloudLayers = new List<CloudLayer>();
+        static Dictionary<String, Texture2D> TextureDictionary = new Dictionary<string,Texture2D>();
+        static ConfigNode config;
+        static bool Loaded = false;
+
+        private void initTextures(String mainTexture, String mixerTexture, String faderTexture)
         {
-            cloud.Init(gameObject, new Color(1, 1, 1));
+            if (!TextureDictionary.ContainsKey(mainTexture))
+            {
+                TextureDictionary.Add(mainTexture, GameDatabase.Instance.GetTexture(mainTexture, false));
+            }
+
+            if (!TextureDictionary.ContainsKey(mixerTexture))
+            {
+                TextureDictionary.Add(mixerTexture, GameDatabase.Instance.GetTexture(mixerTexture, false));
+            }
+
+            if (!TextureDictionary.ContainsKey(faderTexture))
+            {
+                TextureDictionary.Add(faderTexture, GameDatabase.Instance.GetTexture(faderTexture, false));
+            }
         }
 
-        void Update()
+        private void loadCloudLayers()
         {
-            cloud.PerformUpdate();
+
+            config = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/cloudLayers.cfg");
+            ConfigNode[] cloudLayersConfigs = config.GetNodes("CLOUD_LAYER");
+
+            foreach (ConfigNode node in cloudLayersConfigs)
+            {
+                String body = node.GetValue("body");
+                float radius = float.Parse(node.GetValue("radius"));
+                ConfigNode textureNode = node.GetNode("textures");
+                String mainTexture = textureNode.GetValue("main");
+                String mixerTexture = textureNode.GetValue("mixer");
+                String faderTexture = textureNode.GetValue("fader");
+                initTextures(mainTexture, mixerTexture, faderTexture);
+                ConfigNode offsetNode = textureNode.GetNode("offset");
+                Vector2 offset = new Vector2(float.Parse(offsetNode.GetValue("x")), float.Parse(offsetNode.GetValue("y")));
+                ConfigNode colorNode = node.GetNode("color");
+                Color color = new Color(
+                    float.Parse(colorNode.GetValue("r")),
+                    float.Parse(colorNode.GetValue("g")),
+                    float.Parse(colorNode.GetValue("b")));
+                float speed = float.Parse(node.GetValue("speed"));
+                CloudLayer.Log("body: " + body);
+                CloudLayer.Log("radius: " + radius);
+                CloudLayer.Log("speed: " + speed);
+                CloudLayers.Add(
+                    new CloudLayer(body, color, radius, 
+                    TextureDictionary[mainTexture], TextureDictionary[mixerTexture], TextureDictionary[faderTexture],
+                    offset,
+                    speed));
+            }
+        }
+
+        protected void Awake()
+        {
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU && !Loaded)
+            {
+                //update camera to avoid clipping when camera is facing cloud layer
+                PlanetariumCamera.Camera.nearClipPlane = .01f;
+
+                loadCloudLayers();
+                Loaded = true;
+            }
+        }
+
+        protected void Update()
+        {
+
+            foreach (CloudLayer layer in CloudLayers)
+            {
+                layer.PerformUpdate();
+            }
         }
     }
 
-    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
-    public class JoolCloud : MonoBehaviour
+    public class CloudLayer
     {
-        Clouds cloud = new Clouds("Jool");
-        protected void Awake()
-        {
-            cloud.Init(gameObject, new Color(.1333f, .6941f, .2980f));
-        }
-
-        void Update()
-        {
-            cloud.PerformUpdate();
-        }
-    }
-
-    public class Clouds
-    {
-        public String name;
         public Material CloudMaterial;
-        public float timeDelta = 0;
+        private float timeDelta = 0;
+        private String body;
+        private Color color;
+        private float radius;
+        private Texture2D mainTexture;
+        private Texture2D mixerTexture;
+        private Texture2D faderTexture;
+        private Vector2 mainOff;
+        private Vector2 mixOff;
+        private Vector2 fadeOff;
+        private float speed;
 
-        public Clouds(String name)
+        public CloudLayer(String body, Color color, float radius, 
+            Texture2D mainTexture, Texture2D mixerTexture, Texture2D faderTexture,
+            Vector2 offset,
+            float speed)
         {
-            this.name = name;
+            this.body = body;
+            this.color = color;
+            this.radius = radius;
+            this.mainTexture = mainTexture;
+            this.mixerTexture = mixerTexture;
+            this.faderTexture = faderTexture;
+            this.speed = speed;
+
+            mainOff = new Vector2(offset.x, offset.y);
+            mixOff = new Vector2(offset.x, offset.y);
+            fadeOff = new Vector2(offset.x, offset.y);
+            Init();
         }
 
-        public void InitTexture(Material material, String location, Color color)
+        private void InitTexture()
         {
-            material.SetTexture("_MainTex", GameDatabase.Instance.GetTexture(location + "/main", false));
-            material.SetTexture("_Mixer", GameDatabase.Instance.GetTexture(location + "/mixer", false));
-            material.SetTexture("_Fader", GameDatabase.Instance.GetTexture(location + "/fader", false));
-            material.SetTextureScale("_MainTex", new Vector2(1f, 1f));
-            material.SetTextureScale("_Mixer", new Vector2(1f, 1f));
-            material.SetTextureScale("_Fader", new Vector2(1f, 1f));
-            material.SetColor("_Color", color);
+            CloudMaterial.SetTexture("_MainTex", mainTexture);
+            CloudMaterial.SetTexture("_Mixer", mixerTexture);
+            CloudMaterial.SetTexture("_Fader", faderTexture);
+            CloudMaterial.SetTextureScale("_MainTex", new Vector2(1f, 1f));
+            CloudMaterial.SetTextureScale("_Mixer", new Vector2(1f, 1f));
+            CloudMaterial.SetTextureScale("_Fader", new Vector2(1f, 1f));
+            CloudMaterial.SetColor("_Color", color);
         }
 
-        public void Init(GameObject gameObject, Color color)
+        public void Init()
         {
             Log("Initializing Textures");
             Assembly assembly = Assembly.GetExecutingAssembly();
             StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.CompiledCloudShader.txt"));
-            Log("read stream");
+            Log("reading stream...");
             String shaderTxt = shaderStreamReader.ReadToEnd();
             CloudMaterial = new Material(shaderTxt);
-
-            InitTexture(CloudMaterial, "BoulderCo/Clouds/" + name, color);
-
-            Utils.GeneratePlanetOverlay(name, 1.0055f, gameObject, CloudMaterial);
+            Log("Cloud Material initialized");
+            InitTexture();
+            Log("Generating Overlay...");
+            Utils.GeneratePlanetOverlay(body, radius, new GameObject(), CloudMaterial);
             Log("Textures initialized");
         }
 
 
 
-        public void updateOffset(Material material, float time, float rate)
+        private void updateOffset(float time)
         {
-            float rateOffset = time * rate;
-            Vector2 mainOff = material.GetTextureOffset("_MainTex");
-            Vector2 mixOff = material.GetTextureOffset("_Mixer");
-            Vector2 fadeOff = material.GetTextureOffset("_Fader");
+            float rateOffset = time * speed;
+            mainOff.x += rateOffset;
+            mixOff.x += -(rateOffset / 4.0f);
+            mixOff.y += rateOffset / 3.0f;
+            fadeOff.x += rateOffset / 5.0f;
+            fadeOff.y += -(rateOffset / 4.0f);
 
-            material.SetTextureOffset("_MainTex", new Vector2(mainOff.x + (rateOffset), 0));
-            material.SetTextureOffset("_Mixer", new Vector2(mixOff.x - (rateOffset / 4.0f), mixOff.y + (rateOffset / 3.0f)));
-            material.SetTextureOffset("_Fader", new Vector2(fadeOff.x + (rateOffset / 5.0f), fadeOff.y - (rateOffset / 4.0f)));
+            CloudMaterial.SetTextureOffset("_MainTex", mainOff);
+            CloudMaterial.SetTextureOffset("_Mixer", mixOff);
+            CloudMaterial.SetTextureOffset("_Fader", fadeOff);
         }
 
         public void PerformUpdate()
         {
-            if (CloudMaterial != null)
-            {
-                timeDelta = Time.time - timeDelta;
-                float timeOffset = timeDelta * TimeWarp.CurrentRate;
+            timeDelta = Time.time - timeDelta;
+            float timeOffset = timeDelta * TimeWarp.CurrentRate;
 
-                updateOffset(CloudMaterial, timeOffset, .000025f);
+            updateOffset(timeOffset);
 
-                timeDelta = Time.time;
-            }
+            timeDelta = Time.time;
         }
 
         public static void Log(String message)
