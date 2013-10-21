@@ -112,7 +112,7 @@ namespace CommonUtils
 
             mesh.RecalculateBounds();
             mesh.Optimize();
-
+            mesh.RecalculateNormals();
             //filter.mesh = mesh;
 
             mr.renderer.sharedMaterial = overlayMaterial;

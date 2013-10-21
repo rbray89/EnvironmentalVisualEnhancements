@@ -16,6 +16,7 @@ namespace Clouds
         static Dictionary<String, Texture2D> TextureDictionary = new Dictionary<string,Texture2D>();
         static ConfigNode config;
         static bool Loaded = false;
+        static Camera overlayCamera;
 
         private void initTextures(String mainTexture, String mixerTexture, String faderTexture)
         {
@@ -69,14 +70,32 @@ namespace Clouds
             }
         }
 
+        protected void spawnVolumeClouds()
+        {
+            
+        }
+
         protected void Awake()
         {
             if (HighLogic.LoadedScene == GameScenes.MAINMENU && !Loaded)
             {
+                /*
                 //update camera to avoid clipping when camera is facing cloud layer
-                PlanetariumCamera.Camera.nearClipPlane = .01f;
-
+                //overlayCamera = PlanetariumCamera.Camera.gameObject.AddComponent<Camera>();
+                overlayCamera = (Camera)Camera.Instantiate(
+                   PlanetariumCamera.Camera,
+                    new Vector3(0, 0, 0),
+                    Quaternion.FromToRotation(new Vector3(0, 0, 0), new Vector3(0, 0, 1)));
+                overlayCamera.depth = PlanetariumCamera.Camera.depth + 1f;
+                //overlayCamera.cullingMask &= ~(1 << 10);
+                overlayCamera.cullingMask |= (1 << 18);
+                overlayCamera.nearClipPlane = .1f;
+                //overlayCamera.clearFlags = CameraClearFlags.Depth;
+                */
+                PlanetariumCamera.Camera.nearClipPlane = .1f;
+                
                 loadCloudLayers();
+                spawnVolumeClouds();
                 Loaded = true;
             }
         }
