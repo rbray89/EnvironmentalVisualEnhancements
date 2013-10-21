@@ -33,7 +33,7 @@ namespace CityLights
         protected void Awake()
         {
             InitTextures();
-            Utils.GeneratePlanetOverlay("Kerbin", 1.002f, gameObject, lightMaterial);
+            Utils.GeneratePlanetOverlay("Kerbin", 1.003f, gameObject, lightMaterial);
         }
 
         public static void Log(String message)
