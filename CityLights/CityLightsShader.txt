@@ -1,7 +1,8 @@
 ﻿Shader "CityLightShader" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
-		_MainTex ("Base (RGB) Gloss (A)", 2D) = "white" {}
+		_MainTex ("Base (RGB) (A)", 2D) = "white" {}
+		_DetailTex ("Detail (RGB) (A)", 2D) = "white" {}
 	}
 	Category {
 	   Lighting On
@@ -18,10 +19,13 @@
 	 #pragma surface surf None vertex:vert noforwardadd noambient novertexlights nolightmap nodirlightmap 
 		
 	 sampler2D _MainTex;
+	 sampler2D _DetailTex;
 	 fixed4 _Color;
+	 float _ExtraLight;
 	
 	 struct Input {
 	 float2 uv_MainTex;
+	 float2 uv_DetailTex;
 	 float distAlpha;
 	 };
 	
@@ -41,20 +45,21 @@
 	
 	 void vert (inout appdata_full v, out Input o) {
 	 	UNITY_INITIALIZE_OUTPUT(Input, o);
-	   // Transform to camera space
-	   float3 vect = mul(UNITY_MATRIX_MVP, v.vertex);
-	   float dist = distance(float3(0,0,0), vect);
-	   float alpha = (5000000 / ((pow(dist-1000,2))+dist))-1;
-	   alpha = min(.85,alpha);
+	   float3 vertexPos = mul((float3x3)_Object2World, v.vertex.xyz);
+	   float4 origin = mul(_Object2World, float4(0,0,0,2));
+	   float dist = distance(origin,_WorldSpaceCameraPos.xyz)-distance(origin, vertexPos);
+	   float alpha = saturate(10 - .00001*pow(dist-1000,2));
+	   alpha = min(.95,alpha);
 	   o.distAlpha = alpha;
 	 }
 	
 	 void surf (Input IN, inout SurfaceOutput o) {
 	   fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+	   fixed4 d = tex2D(_DetailTex, IN.uv_DetailTex);
 	   o.Albedo = 0;
 	   o.Gloss = 0;
 	   o.Specular = 0;
-	   o.Alpha = min(c.a, IN.distAlpha);
+	   o.Alpha = min(c.a, IN.distAlpha)*d.a;
 	   o.Emission = c.rgb;
 	 }
 	 	 

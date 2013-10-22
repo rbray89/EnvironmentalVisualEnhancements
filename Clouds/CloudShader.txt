@@ -5,16 +5,17 @@
 		_Mixer ("Mixer (RGB)", 2D) = "white" {}
 		_BumpMap ("Bumpmap", 2D) = "bump" {}
 		_FalloffPow ("Falloff Power", Range(0,5)) = 1.8
-		_FalloffScale ("Falloff Scale", Range(0,50)) = 10
-		_DetailScale ("Falloff Scale", Range(1,500)) = 200
+		_FalloffScale ("Falloff Scale", Range(0,20)) = 10
+		_DetailScale ("Detail Scale", Range(1,400)) = 200
 	}
+
 SubShader {
 		Tags {  "Queue"="Transparent"
 	   			"RenderMode"="Transparent" }
 		Lighting On
 		Cull Back
 	    ZWrite Off
-
+		
 		Blend SrcAlpha OneMinusSrcAlpha
 		
 		CGPROGRAM
@@ -32,7 +33,7 @@ SubShader {
 			float2 uv_MainTex;
 			float2 uv_Mixer;
 			float2 uv_BumpMap;
-			float2 viewAngle;
+			float viewAngle;
 		};
 
 		void vert (inout appdata_full v, out Input o) {
@@ -41,18 +42,16 @@ SubShader {
 		   float3 modelCam = _WorldSpaceCameraPos;
 		   float3 vertePos = mul(_Object2World, v.vertex).xyz;
 		   float3 viewPos = normalize( vertePos - modelCam);
-		   o.viewAngle.x = dot (normalDir, -viewPos);
-//		   float3 vect = mul(UNITY_MATRIX_MVP, v.vertex);
-//	   	   o.viewAngle.y = 1-saturate(distance(float3(0,0,0), vect)/500);
+		   o.viewAngle = dot (normalDir, -viewPos);
 	 	}
 
 		void surf (Input IN, inout SurfaceOutput o) {
 			half4 main = tex2D (_MainTex, IN.uv_MainTex);
 			half4 mixer = tex2D (_Mixer, .01*_DetailScale*IN.uv_Mixer);
-			half3 albedo = main.rgb * mixer.rgb*1.5;//((1-IN.viewAngle.y)+(mixer.rgb*IN.viewAngle.y));
+			half3 albedo = main.rgb * mixer.rgb*1.5;
 			o.Albedo = albedo * _Color;
 			half avg = mixer.r*(albedo.r);
-          	o.Alpha = avg * saturate(pow(_FalloffScale*IN.viewAngle.x,_FalloffPow));
+          	o.Alpha = avg * saturate(pow(_FalloffScale*IN.viewAngle,_FalloffPow));
           	o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
 		}
 		ENDCG
@@ -74,7 +73,7 @@ SubShader {
 			float2 uv_MainTex;
 			float2 uv_Mixer;
 			float2 uv_BumpMap;
-			float2 viewAngle;
+			float viewAngle;
 		};
 
 		void vert (inout appdata_full v, out Input o) {
@@ -83,9 +82,10 @@ SubShader {
 		   float3 modelCam = _WorldSpaceCameraPos;
 		   float3 vertePos = mul(_Object2World, v.vertex).xyz;
 		   float3 viewPos = normalize( vertePos - modelCam);
-		   o.viewAngle.x = dot (normalDir, -viewPos);
-//		   float3 vect = mul(UNITY_MATRIX_MVP, v.vertex);
-//	   	   o.viewAngle.y = 1-saturate(distance(float3(0,0,0), vect)/500);
+			float3 vertexPos = mul((float3x3)_Object2World, v.vertex.xyz);
+			float4 origin = mul(_Object2World, float4(0,0,0,2));
+		   float diff = distance(origin, vertexPos)-(distance(origin,_WorldSpaceCameraPos.xyz));
+	   	   o.viewAngle = saturate(diff)*saturate(pow(.8*_FalloffScale*dot(normalDir, -viewPos),_FalloffPow));
 	 	}
 
 		void surf (Input IN, inout SurfaceOutput o) {
@@ -94,7 +94,7 @@ SubShader {
 			half3 albedo = main.rgb * mixer.rgb * 1.5;//((1-IN.viewAngle.y)+(mixer.rgb*IN.viewAngle.y));
 			o.Albedo = albedo * _Color;
 			half avg = mixer.r*(albedo.r);
-          	o.Alpha = avg * saturate(pow(_FalloffScale*IN.viewAngle.x,_FalloffPow));
+          	o.Alpha = avg * IN.viewAngle;
           	o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
 		}
 		ENDCG

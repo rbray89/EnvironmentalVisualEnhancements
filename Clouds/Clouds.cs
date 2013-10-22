@@ -92,7 +92,7 @@ namespace Clouds
                 overlayCamera.nearClipPlane = .1f;
                 //overlayCamera.clearFlags = CameraClearFlags.Depth;
                 */
-                PlanetariumCamera.Camera.nearClipPlane = .1f;
+                ScaledCamera.Instance.camera.nearClipPlane = .05f;
                 
                 loadCloudLayers();
                 spawnVolumeClouds();
@@ -124,6 +124,7 @@ namespace Clouds
         private Vector2 mixOff;
         private Vector2 fadeOff;
         private float speed;
+        private GameObject gameObject;
 
         public CloudLayer(String body, Color color, float radius, 
             Texture2D mainTexture, Texture2D mixerTexture, Texture2D faderTexture,
@@ -166,7 +167,8 @@ namespace Clouds
             Log("Cloud Material initialized");
             InitTexture();
             Log("Generating Overlay...");
-            Utils.GeneratePlanetOverlay(body, radius, new GameObject(), CloudMaterial);
+            gameObject = new GameObject();
+            Utils.GeneratePlanetOverlay(body, radius, gameObject, CloudMaterial);
             Log("Textures initialized");
         }
 
