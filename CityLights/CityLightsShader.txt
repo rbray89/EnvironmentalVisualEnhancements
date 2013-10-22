@@ -48,7 +48,7 @@
 	   float3 vertexPos = mul((float3x3)_Object2World, v.vertex.xyz);
 	   float4 origin = mul(_Object2World, float4(0,0,0,2));
 	   float dist = distance(origin,_WorldSpaceCameraPos.xyz)-distance(origin, vertexPos);
-	   float alpha = saturate(100 - .00001*pow(dist-1000,2));
+	   float alpha = saturate(100 - .00001*pow(dist-5000,2));
 	   alpha = min(.95,alpha);
 	   o.distAlpha = alpha;
 	 }
