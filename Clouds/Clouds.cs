@@ -16,7 +16,7 @@ namespace Clouds
         static Dictionary<String, Texture2D> TextureDictionary = new Dictionary<string,Texture2D>();
         static ConfigNode config;
         static bool Loaded = false;
-        static Camera overlayCamera;
+        
 
         private void initTextures(String mainTexture, String mixerTexture, String faderTexture)
         {
@@ -79,20 +79,6 @@ namespace Clouds
         {
             if (HighLogic.LoadedScene == GameScenes.MAINMENU && !Loaded)
             {
-                /*
-                //update camera to avoid clipping when camera is facing cloud layer
-                //overlayCamera = PlanetariumCamera.Camera.gameObject.AddComponent<Camera>();
-                overlayCamera = (Camera)Camera.Instantiate(
-                   PlanetariumCamera.Camera,
-                    new Vector3(0, 0, 0),
-                    Quaternion.FromToRotation(new Vector3(0, 0, 0), new Vector3(0, 0, 1)));
-                overlayCamera.depth = PlanetariumCamera.Camera.depth + 1f;
-                //overlayCamera.cullingMask &= ~(1 << 10);
-                overlayCamera.cullingMask |= (1 << 18);
-                overlayCamera.nearClipPlane = .1f;
-                //overlayCamera.clearFlags = CameraClearFlags.Depth;
-                */
-                ScaledCamera.Instance.camera.nearClipPlane = .05f;
                 
                 loadCloudLayers();
                 spawnVolumeClouds();
@@ -113,6 +99,7 @@ namespace Clouds
     public class CloudLayer
     {
         public Material CloudMaterial;
+        public Material UndersideCloudMaterial;
         private float timeDelta = 0;
         private String body;
         private Color color;
@@ -124,7 +111,8 @@ namespace Clouds
         private Vector2 mixOff;
         private Vector2 fadeOff;
         private float speed;
-        private GameObject gameObject;
+        private GameObject OverlayGameObject;
+        private GameObject UndersideGameObject;
 
         public CloudLayer(String body, Color color, float radius, 
             Texture2D mainTexture, Texture2D mixerTexture, Texture2D faderTexture,
@@ -154,6 +142,13 @@ namespace Clouds
             CloudMaterial.SetTextureScale("_Mixer", new Vector2(1f, 1f));
             CloudMaterial.SetTextureScale("_Fader", new Vector2(1f, 1f));
             CloudMaterial.SetColor("_Color", color);
+            UndersideCloudMaterial.SetTexture("_MainTex", mainTexture);
+            UndersideCloudMaterial.SetTexture("_Mixer", mixerTexture);
+            UndersideCloudMaterial.SetTexture("_Fader", faderTexture);
+            UndersideCloudMaterial.SetTextureScale("_MainTex", new Vector2(1f, 1f));
+            UndersideCloudMaterial.SetTextureScale("_Mixer", new Vector2(1f, 1f));
+            UndersideCloudMaterial.SetTextureScale("_Fader", new Vector2(1f, 1f));
+            UndersideCloudMaterial.SetColor("_Color", color);
         }
 
         public void Init()
@@ -164,11 +159,18 @@ namespace Clouds
             Log("reading stream...");
             String shaderTxt = shaderStreamReader.ReadToEnd();
             CloudMaterial = new Material(shaderTxt);
+            shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.undersideCompiledCloudShader.txt"));
+            Log("reading stream...");
+            shaderTxt = shaderStreamReader.ReadToEnd();
+            UndersideCloudMaterial = new Material(shaderTxt);
+            
             Log("Cloud Material initialized");
             InitTexture();
             Log("Generating Overlay...");
-            gameObject = new GameObject();
-            Utils.GeneratePlanetOverlay(body, radius, gameObject, CloudMaterial);
+            OverlayGameObject = new GameObject();
+            UndersideGameObject = new GameObject();
+            Utils.GeneratePlanetOverlay(body, radius, OverlayGameObject, CloudMaterial, Utils.OVER_LAYER);
+            Utils.GeneratePlanetOverlay(body, radius, UndersideGameObject, UndersideCloudMaterial, Utils.UNDER_LAYER);
             Log("Textures initialized");
         }
 
@@ -186,6 +188,9 @@ namespace Clouds
             CloudMaterial.SetTextureOffset("_MainTex", mainOff);
             CloudMaterial.SetTextureOffset("_Mixer", mixOff);
             CloudMaterial.SetTextureOffset("_Fader", fadeOff);
+            UndersideCloudMaterial.SetTextureOffset("_MainTex", mainOff);
+            UndersideCloudMaterial.SetTextureOffset("_Mixer", mixOff);
+            UndersideCloudMaterial.SetTextureOffset("_Fader", fadeOff);
         }
 
         public void PerformUpdate()

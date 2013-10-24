@@ -6,10 +6,59 @@ using UnityEngine;
 
 namespace CommonUtils
 {
-    public static class Utils
+    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
+    public class Utils : MonoBehaviour
     {
+        public static int OVER_LAYER = 31;
+        public static int UNDER_LAYER = 30;
 
-        public static void GeneratePlanetOverlay(String planet, float radi, GameObject gameObject, Material overlayMaterial )
+        static Camera overlayCamera;
+        static Camera underlayCamera;
+        static bool setup = false;
+
+        protected void Awake()
+        {
+            if (!setup)
+            {
+                GameObject Ogo = new GameObject();
+                overlayCamera = Ogo.AddComponent<Camera>();
+                overlayCamera.transform.parent = ScaledCamera.Instance.camera.transform;
+                overlayCamera.transform.localPosition = new Vector3(0, 0, 0);
+                overlayCamera.transform.localRotation = Quaternion.FromToRotation(new Vector3(0, 0, 0), new Vector3(0, 0, 1));
+                overlayCamera.depth = ScaledCamera.Instance.camera.depth + 2f;
+                overlayCamera.fieldOfView = ScaledCamera.Instance.camera.fieldOfView;
+                overlayCamera.farClipPlane = ScaledCamera.Instance.camera.farClipPlane;
+                overlayCamera.cullingMask = (1 << OVER_LAYER); //-10,-9,-18,-23,-29
+                overlayCamera.eventMask = 0;
+                overlayCamera.nearClipPlane = .05f;
+                overlayCamera.layerCullDistances = new float[32];
+                overlayCamera.layerCullSpherical = true;
+                overlayCamera.clearFlags = CameraClearFlags.Depth;
+
+                
+                //for underside of clouds, etc.
+                GameObject Ugo = new GameObject();
+                underlayCamera = Ugo.AddComponent<Camera>();
+                underlayCamera.transform.parent = ScaledCamera.Instance.camera.transform;
+                underlayCamera.transform.localPosition = new Vector3(0, 0, 0);
+                underlayCamera.transform.localRotation = Quaternion.FromToRotation(new Vector3(0, 0, 0), new Vector3(0, 0, 1));
+                underlayCamera.depth = ScaledCamera.Instance.camera.depth + .1f;
+                underlayCamera.fieldOfView = ScaledCamera.Instance.camera.fieldOfView;
+                underlayCamera.farClipPlane = ScaledCamera.Instance.camera.farClipPlane;
+                underlayCamera.cullingMask = (1 << UNDER_LAYER); //-10,-9,-18,-23,-29
+                underlayCamera.eventMask = 0;
+                underlayCamera.nearClipPlane = .05f;
+                underlayCamera.layerCullDistances = new float[32];
+                underlayCamera.layerCullSpherical = true;
+                underlayCamera.clearFlags = CameraClearFlags.Depth;
+                
+
+                Sun.Instance.light.cullingMask |= (1 << OVER_LAYER) | (1 << UNDER_LAYER);
+                setup = true;
+            }
+        }
+
+        public static void GeneratePlanetOverlay(String planet, float radi, GameObject gameObject, Material overlayMaterial, int layer, int nbLong = 48, int nbLat = 32)
         {
                         
             var mesh = gameObject.AddComponent<MeshFilter>().mesh;
@@ -19,10 +68,6 @@ namespace CommonUtils
 
 
             float radius = 1f;
-            // Longitude |||
-            int nbLong = 48;
-            // Latitude ---
-            int nbLat = 32;
 
             #region Vertices
             Vector3[] vertices = new Vector3[(nbLong + 1) * nbLat + 2];
@@ -122,8 +167,8 @@ namespace CommonUtils
             mr.enabled = true;
 
             gameObject.renderer.enabled = true;
-            
-            gameObject.layer = 10;
+
+            gameObject.layer = layer;
             gameObject.transform.parent = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == planet);
             gameObject.transform.localScale = Vector3.one * 1000f * (float)radi;
             gameObject.transform.localPosition = Vector3.zero;

@@ -55,49 +55,6 @@ SubShader {
           	o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
 		}
 		ENDCG
-
-		Cull Front
-
-		CGPROGRAM
-		#pragma surface surf BlinnPhong vertex:vert noforwardadd noambient novertexlights nolightmap nodirlightmap
-
-		sampler2D _MainTex;
-		sampler2D _Mixer;
-		sampler2D _BumpMap;
-		fixed4 _Color;
-		float _FalloffPow;
-		float _FalloffScale;
-		float _DetailScale;
-		
-		struct Input {
-			float2 uv_MainTex;
-			float2 uv_Mixer;
-			float2 uv_BumpMap;
-			float viewAngle;
-		};
-
-		void vert (inout appdata_full v, out Input o) {
-			UNITY_INITIALIZE_OUTPUT(Input, o);
-		   float3 normalDir = normalize(mul(_Object2World, v.normal.xyzz).xyz);
-		   float3 modelCam = _WorldSpaceCameraPos;
-		   float3 vertePos = mul(_Object2World, v.vertex).xyz;
-		   float3 viewPos = normalize( vertePos - modelCam);
-			float3 vertexPos = mul((float3x3)_Object2World, v.vertex.xyz);
-			float4 origin = mul(_Object2World, float4(0,0,0,2));
-		   float diff = distance(origin, vertexPos)-(distance(origin,_WorldSpaceCameraPos.xyz));
-	   	   o.viewAngle = saturate(diff)*saturate(pow(.8*_FalloffScale*dot(normalDir, -viewPos),_FalloffPow));
-	 	}
-
-		void surf (Input IN, inout SurfaceOutput o) {
-			half4 main = tex2D (_MainTex, IN.uv_MainTex);
-			half4 mixer = tex2D (_Mixer, _DetailScale*IN.uv_Mixer);
-			half3 albedo = main.rgb * mixer.rgb * 1.5;//((1-IN.viewAngle.y)+(mixer.rgb*IN.viewAngle.y));
-			o.Albedo = albedo * _Color;
-			half avg = mixer.r*(albedo.r);
-          	o.Alpha = avg * IN.viewAngle;
-          	o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
-		}
-		ENDCG
 	
 	}
 	
