@@ -9,10 +9,11 @@ using UnityEngine;
 
 namespace CityLights
 {
-    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
+    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class CityLights: MonoBehaviour
     {
-        public static Material lightMaterial;
+        static Material lightMaterial;
+        static bool setup = false;
 
         public static void InitTextures()
         {
@@ -29,14 +30,18 @@ namespace CityLights
             lightMaterial.mainTextureScale = new Vector2(1f, 1f);
             lightMaterial.mainTextureOffset = new Vector2(-.25f, 0f);
             lightMaterial.SetTexture("_DetailTex", detail);
-            lightMaterial.SetTextureScale("_DetailTex", new Vector2(100f, 100f));
+            lightMaterial.SetTextureScale("_DetailTex", new Vector2(140f, 140f));
             Log("Textures initialized");
         }
 
         protected void Awake()
         {
-            InitTextures();
-            Utils.GeneratePlanetOverlay("Kerbin", 1.001f, gameObject, lightMaterial, Utils.OVER_LAYER);
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU && !setup)
+            {
+                InitTextures();
+                Utils.GeneratePlanetOverlay("Kerbin", 1.001f, gameObject, lightMaterial, Utils.OVER_LAYER);
+                setup = true;
+            }
         }
 
         public static void Log(String message)
@@ -44,6 +49,34 @@ namespace CityLights
             UnityEngine.Debug.Log("CityLights: " + message);
         }
 
+        protected void Start()
+        {
+            if (setup && HighLogic.LoadedScene != GameScenes.FLIGHT && HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
+                gameObject.transform.localScale = Vector3.one * 1002f;
+            }
+            else if (setup)
+            {
+                gameObject.transform.localScale = Vector3.one * 1000f;
+            }
+        }
+
+        public void Update()
+        {
+            updateMapView();
+        }
+
+        private void updateMapView()
+        {
+            if (MapView.MapIsEnabled && MapView.MapCamera != null)
+            {
+                gameObject.transform.localScale = Vector3.one * 1002f;
+            }
+            else
+            {
+                gameObject.transform.localScale = Vector3.one * 1000f;
+            }
+        }
                 
     }
 }

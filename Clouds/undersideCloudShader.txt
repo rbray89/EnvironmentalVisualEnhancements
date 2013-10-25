@@ -6,7 +6,6 @@
 		_BumpMap ("Bumpmap", 2D) = "bump" {}
 		_FalloffPow ("Falloff Power", Range(0,5)) = 1.8
 		_FalloffScale ("Falloff Scale", Range(0,20)) = 10
-		_DetailScale ("Detail Scale", Range(1,400)) = 200
 	}
 
 SubShader {
@@ -27,7 +26,6 @@ SubShader {
 		fixed4 _Color;
 		float _FalloffPow;
 		float _FalloffScale;
-		float _DetailScale;
 		
 		struct Input {
 			float2 uv_MainTex;
@@ -50,7 +48,7 @@ SubShader {
 
 		void surf (Input IN, inout SurfaceOutput o) {
 			half4 main = tex2D (_MainTex, IN.uv_MainTex);
-			half4 mixer = tex2D (_Mixer, _DetailScale*IN.uv_Mixer);
+			half4 mixer = tex2D (_Mixer, IN.uv_Mixer);
 			half3 albedo = main.rgb * mixer.rgb * 1.5;//((1-IN.viewAngle.y)+(mixer.rgb*IN.viewAngle.y));
 			o.Albedo = albedo * _Color;
 			half avg = mixer.r*(albedo.r);

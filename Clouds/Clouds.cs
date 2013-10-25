@@ -18,7 +18,7 @@ namespace Clouds
         static bool Loaded = false;
         
 
-        private void initTextures(String mainTexture, String mixerTexture, String faderTexture)
+        private void initTextures(String mainTexture, String mixerTexture)
         {
             if (!TextureDictionary.ContainsKey(mainTexture))
             {
@@ -30,10 +30,6 @@ namespace Clouds
                 TextureDictionary.Add(mixerTexture, GameDatabase.Instance.GetTexture(mixerTexture, false));
             }
 
-            if (!TextureDictionary.ContainsKey(faderTexture))
-            {
-                TextureDictionary.Add(faderTexture, GameDatabase.Instance.GetTexture(faderTexture, false));
-            }
         }
 
         private void loadCloudLayers()
@@ -49,8 +45,7 @@ namespace Clouds
                 ConfigNode textureNode = node.GetNode("textures");
                 String mainTexture = textureNode.GetValue("main");
                 String mixerTexture = textureNode.GetValue("mixer");
-                String faderTexture = textureNode.GetValue("fader");
-                initTextures(mainTexture, mixerTexture, faderTexture);
+                initTextures(mainTexture, mixerTexture);
                 ConfigNode offsetNode = textureNode.GetNode("offset");
                 Vector2 offset = new Vector2(float.Parse(offsetNode.GetValue("x")), float.Parse(offsetNode.GetValue("y")));
                 ConfigNode colorNode = node.GetNode("color");
@@ -64,7 +59,7 @@ namespace Clouds
                 CloudLayer.Log("speed: " + speed);
                 CloudLayers.Add(
                     new CloudLayer(body, color, radius, 
-                    TextureDictionary[mainTexture], TextureDictionary[mixerTexture], TextureDictionary[faderTexture],
+                    TextureDictionary[mainTexture], TextureDictionary[mixerTexture],
                     offset,
                     speed));
             }
@@ -106,16 +101,14 @@ namespace Clouds
         private float radius;
         private Texture2D mainTexture;
         private Texture2D mixerTexture;
-        private Texture2D faderTexture;
         private Vector2 mainOff;
         private Vector2 mixOff;
-        private Vector2 fadeOff;
         private float speed;
         private GameObject OverlayGameObject;
         private GameObject UndersideGameObject;
 
         public CloudLayer(String body, Color color, float radius, 
-            Texture2D mainTexture, Texture2D mixerTexture, Texture2D faderTexture,
+            Texture2D mainTexture, Texture2D mixerTexture,
             Vector2 offset,
             float speed)
         {
@@ -124,12 +117,10 @@ namespace Clouds
             this.radius = radius;
             this.mainTexture = mainTexture;
             this.mixerTexture = mixerTexture;
-            this.faderTexture = faderTexture;
             this.speed = speed;
 
             mainOff = new Vector2(offset.x, offset.y);
             mixOff = new Vector2(offset.x, offset.y);
-            fadeOff = new Vector2(offset.x, offset.y);
             Init();
         }
 
@@ -137,17 +128,13 @@ namespace Clouds
         {
             CloudMaterial.SetTexture("_MainTex", mainTexture);
             CloudMaterial.SetTexture("_Mixer", mixerTexture);
-            CloudMaterial.SetTexture("_Fader", faderTexture);
             CloudMaterial.SetTextureScale("_MainTex", new Vector2(1f, 1f));
-            CloudMaterial.SetTextureScale("_Mixer", new Vector2(1f, 1f));
-            CloudMaterial.SetTextureScale("_Fader", new Vector2(1f, 1f));
+            CloudMaterial.SetTextureScale("_Mixer", new Vector2(7f, 7f));
             CloudMaterial.SetColor("_Color", color);
             UndersideCloudMaterial.SetTexture("_MainTex", mainTexture);
             UndersideCloudMaterial.SetTexture("_Mixer", mixerTexture);
-            UndersideCloudMaterial.SetTexture("_Fader", faderTexture);
             UndersideCloudMaterial.SetTextureScale("_MainTex", new Vector2(1f, 1f));
-            UndersideCloudMaterial.SetTextureScale("_Mixer", new Vector2(1f, 1f));
-            UndersideCloudMaterial.SetTextureScale("_Fader", new Vector2(1f, 1f));
+            UndersideCloudMaterial.SetTextureScale("_Mixer", new Vector2(100f, 100f));
             UndersideCloudMaterial.SetColor("_Color", color);
         }
 
@@ -180,17 +167,13 @@ namespace Clouds
         {
             float rateOffset = time * speed;
             mainOff.x += rateOffset;
-            mixOff.x += -(rateOffset / 4.0f);
-            mixOff.y += rateOffset / 3.0f;
-            fadeOff.x += rateOffset / 5.0f;
-            fadeOff.y += -(rateOffset / 4.0f);
+            mixOff.x += rateOffset / 1.1f;
+            mixOff.y += rateOffset / 1.2f;
 
             CloudMaterial.SetTextureOffset("_MainTex", mainOff);
             CloudMaterial.SetTextureOffset("_Mixer", mixOff);
-            CloudMaterial.SetTextureOffset("_Fader", fadeOff);
             UndersideCloudMaterial.SetTextureOffset("_MainTex", mainOff);
             UndersideCloudMaterial.SetTextureOffset("_Mixer", mixOff);
-            UndersideCloudMaterial.SetTextureOffset("_Fader", fadeOff);
         }
 
         public void PerformUpdate()
