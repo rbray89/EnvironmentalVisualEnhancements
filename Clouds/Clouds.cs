@@ -146,6 +146,7 @@ namespace Clouds
             Log("reading stream...");
             String shaderTxt = shaderStreamReader.ReadToEnd();
             CloudMaterial = new Material(shaderTxt);
+//            CloudMaterial = new Material(Shader.Find("Transparent/VertexLit"));
             shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.undersideCompiledCloudShader.txt"));
             Log("reading stream...");
             shaderTxt = shaderStreamReader.ReadToEnd();
@@ -156,8 +157,8 @@ namespace Clouds
             Log("Generating Overlay...");
             OverlayGameObject = new GameObject();
             UndersideGameObject = new GameObject();
-            Utils.GeneratePlanetOverlay(body, radius, OverlayGameObject, CloudMaterial, Utils.OVER_LAYER);
-            Utils.GeneratePlanetOverlay(body, radius, UndersideGameObject, UndersideCloudMaterial, Utils.UNDER_LAYER);
+            Utils.GeneratePlanetOverlay(body, radius, OverlayGameObject, CloudMaterial, Utils.OVER_LAYER,64,48);
+            Utils.GeneratePlanetOverlay(body, radius, UndersideGameObject, UndersideCloudMaterial, Utils.UNDER_LAYER, 64, 48);
             Log("Textures initialized");
         }
 

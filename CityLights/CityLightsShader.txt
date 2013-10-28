@@ -46,11 +46,10 @@
 	 void vert (inout appdata_full v, out Input o) {
 	 	UNITY_INITIALIZE_OUTPUT(Input, o);
 	   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
-	   float3 origin = mul(_Object2World, float4(0,0,0,1));
-	   float dist = distance(origin,_WorldSpaceCameraPos.xyz)-distance(origin, vertexPos);
-	   float alpha = saturate(100 - .00001*pow(dist-1000,2));
-	   alpha = min(.95,alpha);
-	   o.distAlpha = alpha;
+	   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
+	   float dist = distance(vertexPos,_WorldSpaceCameraPos.xyz);
+	   float alpha = saturate(250 - .00001*pow(dist-5000,2));
+	   o.distAlpha = alpha*saturate((distance(origin,_WorldSpaceCameraPos)-1.0015*distance(origin, vertexPos)));
 	 }
 	
 	 void surf (Input IN, inout SurfaceOutput o) {

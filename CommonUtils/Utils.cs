@@ -9,13 +9,14 @@ namespace CommonUtils
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class Utils : MonoBehaviour
     {
-        public static int OVER_LAYER = 28;//28;
-        public static int UNDER_LAYER = 31;//31;
+        public static int OVER_LAYER = 3;//28;
+        public static int UNDER_LAYER = 2;//31;
 
         static Camera overlayCamera;
         static Camera underlayCamera;
         static bool setup = false;
         static bool enabled = false;
+       
 
         protected void Awake()
         {

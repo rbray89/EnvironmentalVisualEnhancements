@@ -4,8 +4,8 @@
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_Mixer ("Mixer (RGB)", 2D) = "white" {}
 		_BumpMap ("Bumpmap", 2D) = "bump" {}
-		_FalloffPow ("Falloff Power", Range(0,5)) = 1.8
-		_FalloffScale ("Falloff Scale", Range(0,20)) = 10
+		_FalloffPow ("Falloff Power", Range(0,5)) = 2
+		_FalloffScale ("Falloff Scale", Range(0,10)) = 3
 	}
 
 SubShader {
@@ -18,7 +18,8 @@ SubShader {
 		Blend SrcAlpha OneMinusSrcAlpha
 		
 		CGPROGRAM
-		#pragma surface surf BlinnPhong vertex:vert noforwardadd noambient novertexlights nolightmap nodirlightmap
+		#pragma surface surf Lambert vertex:vert
+		// vertex:vert
 
 		sampler2D _MainTex;
 		sampler2D _Mixer;
@@ -27,29 +28,40 @@ SubShader {
 		float _FalloffPow;
 		float _FalloffScale;
 		
+		half4 LightingSimpleLambert (SurfaceOutput s, half3 lightDir, half atten) {
+          half NdotL = dot (s.Normal, lightDir);
+          half4 c;
+          c.rgb = s.Albedo * _LightColor0.rgb * (NdotL * atten * 2);
+          c.a = s.Alpha;
+          return c;
+      	}
+		
 		struct Input {
 			float2 uv_MainTex;
 			float2 uv_Mixer;
 			float2 uv_BumpMap;
-			float viewAngle;
+			float3 viewDir;
+			float2 viewDist;
 		};
 
 		void vert (inout appdata_full v, out Input o) {
 			UNITY_INITIALIZE_OUTPUT(Input, o);
-		   float3 normalDir = normalize(mul(_Object2World, v.normal.xyzz).xyz);
-		   float3 modelCam = _WorldSpaceCameraPos;
-		   float3 vertePos = mul(_Object2World, v.vertex).xyz;
-		   float3 viewPos = normalize( vertePos - modelCam);
-		   o.viewAngle = dot (normalDir, -viewPos);
+		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
+		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
+		   float diff = distance(origin, vertexPos) - (.8*(distance(origin,_WorldSpaceCameraPos)));
+	   	   o.viewDist.x = saturate(diff);
+	   	   o.viewDist.y = saturate((distance(origin,_WorldSpaceCameraPos)-1.0015*distance(origin, vertexPos)));
 	 	}
 
 		void surf (Input IN, inout SurfaceOutput o) {
 			half4 main = tex2D (_MainTex, IN.uv_MainTex);
 			half4 mixer = tex2D (_Mixer, IN.uv_Mixer);
 			half3 albedo = main.rgb * mixer.rgb*1.5;
+			o.Normal = float3(0,0,1);
 			o.Albedo = albedo * _Color;
 			half avg = mixer.r*(albedo.r);
-          	o.Alpha = avg * saturate(pow(_FalloffScale*IN.viewAngle,_FalloffPow));
+			half rim = saturate(dot(normalize(IN.viewDir), o.Normal));
+          	o.Alpha = avg * IN.viewDist.y * saturate(IN.viewDist.x +(saturate(pow(_FalloffScale*rim,_FalloffPow))));
           	o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
 		}
 		ENDCG
