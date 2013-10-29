@@ -2,7 +2,7 @@
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_MainTex ("Main (RGB)", 2D) = "white" {}
-		_Mixer ("Mixer (RGB)", 2D) = "white" {}
+		_DetailTex ("Detail (RGB)", 2D) = "white" {}
 		_BumpMap ("Bumpmap", 2D) = "bump" {}
 		_FalloffPow ("Falloff Power", Range(0,5)) = 1.8
 		_FalloffScale ("Falloff Scale", Range(0,20)) = 10
@@ -18,10 +18,10 @@ SubShader {
 		Blend SrcAlpha OneMinusSrcAlpha
 		
 		CGPROGRAM
-		#pragma surface surf Lambert vertex:vert
+		#pragma surface surf SimpleLambert vertex:vert noforwardadd novertexlights nolightmap nodirlightmap
 
 		sampler2D _MainTex;
-		sampler2D _Mixer;
+		sampler2D _DetailTex;
 		sampler2D _BumpMap;
 		fixed4 _Color;
 		float _FalloffPow;
@@ -37,7 +37,7 @@ SubShader {
 		
 		struct Input {
 			float2 uv_MainTex;
-			float2 uv_Mixer;
+			float2 uv_DetailTex;
 			float2 uv_BumpMap;
 			float2 viewDist;
 		};
@@ -56,10 +56,10 @@ SubShader {
 
 		void surf (Input IN, inout SurfaceOutput o) {
 			half4 main = tex2D (_MainTex, IN.uv_MainTex);
-			half4 mixer = tex2D (_Mixer, IN.uv_Mixer);
-			half3 albedo = main.rgb * mixer.rgb * 1.5;
+			half4 detail = tex2D (_DetailTex, IN.uv_DetailTex);
+			half3 albedo = main.rgb * detail.rgb * 1.5;
 			o.Albedo = albedo * _Color;
-			half avg = mixer.r*(albedo.r);
+			half avg = detail.r*(albedo.r);
           	o.Alpha = avg * IN.viewDist.y * IN.viewDist.x;
           	o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
 		}

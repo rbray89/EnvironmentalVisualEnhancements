@@ -39,7 +39,7 @@ namespace CityLights
             if (HighLogic.LoadedScene == GameScenes.MAINMENU && !setup)
             {
                 InitTextures();
-                Utils.GeneratePlanetOverlay("Kerbin", 1.001f, gameObject, lightMaterial, Utils.OVER_LAYER);
+                Utils.Overlay.GeneratePlanetOverlay("Kerbin", 1.001f, gameObject, lightMaterial, Utils.OVER_LAYER, true);
                 setup = true;
             }
         }
@@ -49,34 +49,5 @@ namespace CityLights
             UnityEngine.Debug.Log("CityLights: " + message);
         }
 
-        protected void Start()
-        {
-            if (setup && HighLogic.LoadedScene != GameScenes.FLIGHT && HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                gameObject.transform.localScale = Vector3.one * 1002f;
-            }
-            else if (setup)
-            {
-                gameObject.transform.localScale = Vector3.one * 1000f;
-            }
-        }
-
-        public void Update()
-        {
-            updateMapView();
-        }
-
-        private void updateMapView()
-        {
-            if (MapView.MapIsEnabled && MapView.MapCamera != null)
-            {
-                gameObject.transform.localScale = Vector3.one * 1002f;
-            }
-            else
-            {
-                gameObject.transform.localScale = Vector3.one * 1000f;
-            }
-        }
-                
     }
 }

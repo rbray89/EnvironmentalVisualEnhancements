@@ -9,47 +9,22 @@ namespace CommonUtils
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class Utils : MonoBehaviour
     {
+        public static int IGNORE_LAYER = 4;//28;
         public static int OVER_LAYER = 3;//28;
         public static int UNDER_LAYER = 2;//31;
+        public static int MAP_LAYER = 10;//31;
+        public static float MAP_SWITCH_DISTANCE = 200.0f;
 
         static Camera overlayCamera;
         static Camera underlayCamera;
         static bool setup = false;
-        static bool enabled = false;
-       
+        static String CurrentBodyName;
+        static bool isTracking = false;
+        static bool bodyOverlayEnabled = false;
 
         protected void Awake()
         {
-            if (HighLogic.LoadedScene == GameScenes.TRACKSTATION)
-            {
-                UnityEngine.Debug.Log("Cameras");
-                var goArray = FindObjectsOfType(typeof(GameObject));
-                List<GameObject>[] goLayerArray = new List<GameObject>[32];
-                for (int i = 0; i < 32; i++)
-                {
-                    goLayerArray[i] = new List<GameObject>();
-                }
 
-                foreach (GameObject go in goArray)
-                {
-                    goLayerArray[go.layer].Add(go);
-                }
-
-                foreach (Camera cam in Camera.allCameras)
-                {
-                    UnityEngine.Debug.Log("Camera["+cam.name+"] "+cam.cullingMask);
-                    for (int i = 0; i < 32; i++)
-                    {
-                        if (((1 << i) & cam.cullingMask) == (1 << i))
-                        {
-                            foreach(GameObject go in goLayerArray[i])
-                            {
-                                UnityEngine.Debug.Log(i.ToString() + " : " + go.name);
-                            }
-                        }
-                    }
-                }
-            }
             if (HighLogic.LoadedScene == GameScenes.MAINMENU && !setup)
             {
                 Camera referenceCam = ScaledCamera.Instance.camera;
@@ -68,7 +43,7 @@ namespace CommonUtils
                 overlayCamera.layerCullDistances = new float[32];
                 overlayCamera.layerCullSpherical = true;
                 overlayCamera.clearFlags = CameraClearFlags.Depth;
-                
+
                 //for underside of clouds, etc.
                 GameObject Ugo = new GameObject();
                 underlayCamera = Ugo.AddComponent<Camera>();
@@ -87,9 +62,13 @@ namespace CommonUtils
 
                 Sun.Instance.light.cullingMask |= (1 << OVER_LAYER) | (1 << UNDER_LAYER);
                 setup = true;
-                enabled = true;
             }
-            
+
+            GameEvents.onDominantBodyChange.Add(OnDominantBodyChangeCallback);
+            GameEvents.onFlightReady.Add(OnFlightReadyCallback);
+            MapView.OnEnterMapView += new Callback(EnterMapView);
+            MapView.OnExitMapView += new Callback(ExitMapView);
+
         }
 
         protected void Start()
@@ -98,173 +77,115 @@ namespace CommonUtils
             {
                 disableCamera();
             }
+            else if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
+            {
+                disablePlanetOverlay(CurrentBodyName);
+                enablePlanetOverlay("Kerbin");
+                enableCamera();
+            }
             else if (setup)
             {
                 enableCamera();
             }
         }
 
-         public void Update()
+        private void EnterMapView()
+        {
+            disableCamera();
+            isTracking = true;
+        }
+
+        private void ExitMapView()
+        {
+            enableCamera();
+            isTracking = false;
+        }
+
+        private void OnDominantBodyChangeCallback(GameEvents.FromToAction<CelestialBody, CelestialBody> data)
+        {
+            disablePlanetOverlay(CurrentBodyName);
+            CurrentBodyName = data.to.bodyName;
+            enablePlanetOverlay(CurrentBodyName);
+        }
+
+        private void OnFlightReadyCallback()
+        {
+            disablePlanetOverlay(CurrentBodyName);
+            CurrentBodyName = FlightGlobals.currentMainBody.bodyName;
+            enablePlanetOverlay(CurrentBodyName);
+        }
+
+
+        public void Update()
         {
             if (HighLogic.LoadedScene != GameScenes.FLIGHT)
             {
                 return;
             }
+            if (!MapView.MapIsEnabled || MapView.MapCamera == null)
+            {
+                float distanceFromCamera = Vector3.Distance(
+                    overlayCamera.transform.position,
+                    ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == CurrentBodyName).position);
 
-            updateMapView();
+                if (distanceFromCamera >= MAP_SWITCH_DISTANCE && bodyOverlayEnabled)
+                {
+                    disablePlanetOverlay(CurrentBodyName);
+                }
+                else if (!bodyOverlayEnabled)
+                {
+                    enablePlanetOverlay(CurrentBodyName);
+                }
+            }
+
         }
 
-         private void updateMapView()
-         {
-             if (MapView.MapIsEnabled && MapView.MapCamera != null)
-             {
-                 disableCamera();
-             }
-             else
-             {
-                 enableCamera();
-             }
-         }
-
-
-         private void enableCamera()
-         {
-             if (!enabled)
-             {
-                 ScaledCamera.Instance.camera.cullingMask &= ~((1 << OVER_LAYER) | (1 << UNDER_LAYER));
-                 overlayCamera.cullingMask = (1 << OVER_LAYER);
-                 underlayCamera.cullingMask = (1 << UNDER_LAYER);
-                 enabled = true;
-             }
-         }
-
-         private void disableCamera()
-         {
-             if (enabled)
-             {
-                 ScaledCamera.Instance.camera.cullingMask |= (1 << OVER_LAYER);// | (1 << UNDER_LAYER);
-                 overlayCamera.cullingMask = 0;
-                 underlayCamera.cullingMask = 0;
-                 enabled = false;
-             }
-         }
-
-        public static void GeneratePlanetOverlay(String planet, float radius, GameObject gameObject, Material overlayMaterial, int layer, int nbLong = 48, int nbLat = 32)
+        private void disablePlanetOverlay(String body)
         {
-                        
-            var mesh = gameObject.AddComponent<MeshFilter>().mesh;
-            var mr = gameObject.AddComponent<MeshRenderer>();
-           
-            GameObject generatedMap = gameObject;
-
-
-            //float radius = radi;
-
-            #region Vertices
-            Vector3[] vertices = new Vector3[(nbLong + 1) * nbLat + 2];
-            float _pi = Mathf.PI;
-            float _2pi = _pi * 2f;
-
-            vertices[0] = Vector3.up * radius;
-            for (int lat = 0; lat < nbLat; lat++)
+            if (body != null && Overlay.OverlayDatabase.ContainsKey(body))
             {
-                float a1 = _pi * (float)(lat + 1) / (nbLat + 1);
-                float sin1 = Mathf.Sin(a1);
-                float cos1 = Mathf.Cos(a1);
-
-                for (int lon = 0; lon <= nbLong; lon++)
+                List<Overlay> overlayList = Overlay.OverlayDatabase[body];
+                foreach (Overlay overlay in overlayList)
                 {
-                    float a2 = _2pi * (float)(lon == nbLong ? 0 : lon) / nbLong;
-                    float sin2 = Mathf.Sin(a2);
-                    float cos2 = Mathf.Cos(a2);
-
-                    vertices[lon + lat * (nbLong + 1) + 1] = new Vector3(sin1 * cos2, cos1, sin1 * sin2) * radius;
+                    overlay.PushToMapLayer();
                 }
+                bodyOverlayEnabled = false;
             }
-            vertices[vertices.Length - 1] = Vector3.up * -radius;
-            #endregion
+        }
 
-            #region Normales
-            Vector3[] normales = new Vector3[vertices.Length];
-            for (int n = 0; n < vertices.Length; n++)
-                normales[n] = vertices[n].normalized;
-            #endregion
-
-            #region UVs
-            Vector2[] uvs = new Vector2[vertices.Length];
-            uvs[0] = Vector2.up;
-            uvs[uvs.Length - 1] = Vector2.zero;
-            for (int lat = 0; lat < nbLat; lat++)
-                for (int lon = 0; lon <= nbLong; lon++)
-                    uvs[lon + lat * (nbLong + 1) + 1] = new Vector2((float)lon / nbLong, 1f - (float)(lat + 1) / (nbLat + 1));
-            #endregion
-
-            #region Triangles
-            int nbFaces = vertices.Length;
-            int nbTriangles = nbFaces * 2;
-            int nbIndexes = nbTriangles * 3;
-            int[] triangles = new int[nbIndexes];
-
-            //Top Cap
-            int i = 0;
-            for (int lon = 0; lon < nbLong; lon++)
+        private void enablePlanetOverlay(String body)
+        {
+            if (body != null && Overlay.OverlayDatabase.ContainsKey(body))
             {
-                triangles[i++] = lon + 2;
-                triangles[i++] = lon + 1;
-                triangles[i++] = 0;
-            }
-
-            //Middle
-            for (int lat = 0; lat < nbLat - 1; lat++)
-            {
-                for (int lon = 0; lon < nbLong; lon++)
+                List<Overlay> overlayList = Overlay.OverlayDatabase[body];
+                foreach (Overlay overlay in overlayList)
                 {
-                    int current = lon + lat * (nbLong + 1) + 1;
-                    int next = current + nbLong + 1;
-
-                    triangles[i++] = current;
-                    triangles[i++] = current + 1;
-                    triangles[i++] = next + 1;
-
-                    triangles[i++] = current;
-                    triangles[i++] = next + 1;
-                    triangles[i++] = next;
+                    overlay.PopLayer();
                 }
+                bodyOverlayEnabled = true;
             }
+        }
 
-            //Bottom Cap
-            for (int lon = 0; lon < nbLong; lon++)
+        private void enableCamera()
+        {
+            ScaledCamera.Instance.camera.cullingMask &= ~((1 << OVER_LAYER) | (1 << UNDER_LAYER));
+            overlayCamera.cullingMask = (1 << OVER_LAYER);
+            underlayCamera.cullingMask = (1 << UNDER_LAYER);
+            foreach (Overlay overlay in Overlay.ZFightList)
             {
-                triangles[i++] = vertices.Length - 1;
-                triangles[i++] = vertices.Length - (lon + 2) - 1;
-                triangles[i++] = vertices.Length - (lon + 1) - 1;
+                overlay.FixZFighting(false);
             }
-            #endregion
+        }
 
-            mesh.vertices = vertices;
-            mesh.normals = normales;
-            mesh.uv = uvs;
-            mesh.triangles = triangles;
-
-            mesh.RecalculateBounds();
-            //mesh.Optimize();
-            //mesh.RecalculateNormals();
-            //filter.mesh = mesh;
-
-            mr.renderer.sharedMaterial = overlayMaterial;
-
-            mr.castShadows = false;
-            mr.receiveShadows = false;
-            mr.enabled = true;
-
-            gameObject.renderer.enabled = true;
-
-            gameObject.layer = layer;
-            gameObject.transform.parent = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == planet);
-            gameObject.transform.localScale = Vector3.one * 1000f;
-            gameObject.transform.localPosition = Vector3.zero;
-            gameObject.transform.localRotation = Quaternion.identity;
-
+        private void disableCamera()
+        {
+            ScaledCamera.Instance.camera.cullingMask |= (1 << OVER_LAYER);
+            overlayCamera.cullingMask = 0;
+            underlayCamera.cullingMask = 0;
+            foreach (Overlay overlay in Overlay.ZFightList)
+            {
+                overlay.FixZFighting(true);
+            }
         }
 
         public static void Log(String message)
@@ -272,5 +193,175 @@ namespace CommonUtils
             UnityEngine.Debug.Log("Utils: " + message);
         }
 
+        public class Overlay
+        {
+            public static Dictionary<String, List<Overlay>> OverlayDatabase = new Dictionary<string, List<Overlay>>();
+            public static List<Overlay> ZFightList = new List<Overlay>();
+
+            string Body;
+            GameObject GameObject;
+            bool AvoidZFighting;
+            int OriginalLayer;
+
+            public Overlay(string body, GameObject gameObject, bool avoidZFighting, int originalLayer)
+            {
+                Body = body;
+                GameObject = gameObject;
+                AvoidZFighting = avoidZFighting;
+                OriginalLayer = originalLayer;
+            }
+
+            internal void PushToMapLayer()
+            {
+                if (OriginalLayer != UNDER_LAYER)
+                {
+                    GameObject.layer = MAP_LAYER;
+                }
+                else
+                {
+                    GameObject.layer = IGNORE_LAYER;
+                }
+            }
+
+            internal void PopLayer()
+            {
+                GameObject.layer = OriginalLayer;
+            }
+
+            internal void FixZFighting(bool enable)
+            {
+                if (enable)
+                {
+                    GameObject.transform.localScale = Vector3.one * 1002f;
+                }
+                else
+                {
+                    GameObject.transform.localScale = Vector3.one * 1000f;
+                }
+            }
+
+            public static void GeneratePlanetOverlay(String planet, float radius, GameObject gameObject, Material overlayMaterial, int layer, bool avoidZFighting = false, int nbLong = 48, int nbLat = 48)
+            {
+                if (!OverlayDatabase.ContainsKey(planet))
+                {
+                    OverlayDatabase.Add(planet, new List<Overlay>());
+                }
+                Overlay overlay = new Overlay(planet, gameObject, avoidZFighting, layer);
+                OverlayDatabase[planet].Add(overlay);
+
+                if (avoidZFighting)
+                {
+                    ZFightList.Add(overlay);
+                }
+
+                var mesh = gameObject.AddComponent<MeshFilter>().mesh;
+                var mr = gameObject.AddComponent<MeshRenderer>();
+
+                GameObject generatedMap = gameObject;
+
+                #region Vertices
+                Vector3[] vertices = new Vector3[(nbLong + 1) * nbLat + 2];
+                float _pi = Mathf.PI;
+                float _2pi = _pi * 2f;
+
+                vertices[0] = Vector3.up * radius;
+                for (int lat = 0; lat < nbLat; lat++)
+                {
+                    float a1 = _pi * (float)(lat + 1) / (nbLat + 1);
+                    float sin1 = Mathf.Sin(a1);
+                    float cos1 = Mathf.Cos(a1);
+
+                    for (int lon = 0; lon <= nbLong; lon++)
+                    {
+                        float a2 = _2pi * (float)(lon == nbLong ? 0 : lon) / nbLong;
+                        float sin2 = Mathf.Sin(a2);
+                        float cos2 = Mathf.Cos(a2);
+
+                        vertices[lon + lat * (nbLong + 1) + 1] = new Vector3(sin1 * cos2, cos1, sin1 * sin2) * radius;
+                    }
+                }
+                vertices[vertices.Length - 1] = Vector3.up * -radius;
+                #endregion
+
+                #region Normales
+                Vector3[] normales = new Vector3[vertices.Length];
+                for (int n = 0; n < vertices.Length; n++)
+                    normales[n] = vertices[n].normalized;
+                #endregion
+
+                #region UVs
+                Vector2[] uvs = new Vector2[vertices.Length];
+                uvs[0] = Vector2.up;
+                uvs[uvs.Length - 1] = Vector2.zero;
+                for (int lat = 0; lat < nbLat; lat++)
+                    for (int lon = 0; lon <= nbLong; lon++)
+                        uvs[lon + lat * (nbLong + 1) + 1] = new Vector2((float)lon / nbLong, 1f - (float)(lat + 1) / (nbLat + 1));
+                #endregion
+
+                #region Triangles
+                int nbFaces = vertices.Length;
+                int nbTriangles = nbFaces * 2;
+                int nbIndexes = nbTriangles * 3;
+                int[] triangles = new int[nbIndexes];
+
+                //Top Cap
+                int i = 0;
+                for (int lon = 0; lon < nbLong; lon++)
+                {
+                    triangles[i++] = lon + 2;
+                    triangles[i++] = lon + 1;
+                    triangles[i++] = 0;
+                }
+
+                //Middle
+                for (int lat = 0; lat < nbLat - 1; lat++)
+                {
+                    for (int lon = 0; lon < nbLong; lon++)
+                    {
+                        int current = lon + lat * (nbLong + 1) + 1;
+                        int next = current + nbLong + 1;
+
+                        triangles[i++] = current;
+                        triangles[i++] = current + 1;
+                        triangles[i++] = next + 1;
+
+                        triangles[i++] = current;
+                        triangles[i++] = next + 1;
+                        triangles[i++] = next;
+                    }
+                }
+
+                //Bottom Cap
+                for (int lon = 0; lon < nbLong; lon++)
+                {
+                    triangles[i++] = vertices.Length - 1;
+                    triangles[i++] = vertices.Length - (lon + 2) - 1;
+                    triangles[i++] = vertices.Length - (lon + 1) - 1;
+                }
+                #endregion
+
+                mesh.vertices = vertices;
+                mesh.normals = normales;
+                mesh.uv = uvs;
+                mesh.triangles = triangles;
+
+                mesh.RecalculateBounds();
+
+                mr.renderer.sharedMaterial = overlayMaterial;
+
+                mr.castShadows = false;
+                mr.receiveShadows = false;
+                mr.enabled = true;
+
+                gameObject.renderer.enabled = true;
+
+                gameObject.layer = MAP_LAYER;
+                gameObject.transform.parent = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == planet);
+                gameObject.transform.localScale = Vector3.one * 1000f;
+                gameObject.transform.localPosition = Vector3.zero;
+                gameObject.transform.localRotation = Quaternion.identity;
+                
+            }
+        }
     }
 }
