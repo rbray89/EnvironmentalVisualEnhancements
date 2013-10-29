@@ -55,10 +55,10 @@ SubShader {
 		void surf (Input IN, inout SurfaceOutput o) {
 			half4 main = tex2D (_MainTex, IN.uv_MainTex);
 			half4 detail = tex2D (_DetailTex, IN.uv_DetailTex);
-			half3 albedo = main.rgb * detail.rgb*1.5;
+			half3 albedo = main.rgb * detail.rgb;//*1.5;
 			o.Normal = float3(0,0,1);
 			o.Albedo = albedo * _Color;
-			half avg = detail.r*(albedo.r);
+			half avg = detail.a*main.a;
 			half rim = saturate(dot(normalize(IN.viewDir), o.Normal));
           	o.Alpha = avg * IN.viewDist.y * saturate(IN.viewDist.x +(saturate(pow(_FalloffScale*rim,_FalloffPow))));
           	o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));

@@ -57,9 +57,9 @@ SubShader {
 		void surf (Input IN, inout SurfaceOutput o) {
 			half4 main = tex2D (_MainTex, IN.uv_MainTex);
 			half4 detail = tex2D (_DetailTex, IN.uv_DetailTex);
-			half3 albedo = main.rgb * detail.rgb * 1.5;
+			half3 albedo = main.rgb * detail.rgb;// * 1.5;
 			o.Albedo = albedo * _Color;
-			half avg = detail.r*(albedo.r);
+			half avg = detail.a*main.a;
           	o.Alpha = avg * IN.viewDist.y * IN.viewDist.x;
           	o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
 		}
