@@ -150,7 +150,7 @@ namespace Clouds
             CloudMaterial.SetTexture("_MainTex", mainTexture);
             CloudMaterial.SetTexture("_DetailTex", detailTexture);
             CloudMaterial.SetTextureScale("_MainTex", new Vector2(1f, 1f));
-            CloudMaterial.SetTextureScale("_DetailTex", new Vector2(7f, 7f));
+            CloudMaterial.SetTextureScale("_DetailTex", new Vector2(10f, 10f));
             CloudMaterial.SetColor("_Color", color);
            
             UndersideCloudMaterial.SetTexture("_MainTex", mainTexture);
@@ -162,7 +162,7 @@ namespace Clouds
             if (bumpTexture != null)
             {
                 CloudMaterial.SetTexture("_BumpMap", bumpTexture);
-                CloudMaterial.SetTextureScale("_BumpMap", new Vector2(7f, 7f));
+                CloudMaterial.SetTextureScale("_BumpMap", new Vector2(10f, 10f));
                 UndersideCloudMaterial.SetTexture("_BumpMap", bumpTexture);
                 UndersideCloudMaterial.SetTextureScale("_BumpMap", new Vector2(100f, 100f));
             }

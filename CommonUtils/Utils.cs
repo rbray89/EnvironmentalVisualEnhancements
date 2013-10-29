@@ -132,7 +132,7 @@ namespace CommonUtils
                 {
                     disablePlanetOverlay(CurrentBodyName);
                 }
-                else if (!bodyOverlayEnabled)
+                else if (distanceFromCamera < MAP_SWITCH_DISTANCE && !bodyOverlayEnabled)
                 {
                     enablePlanetOverlay(CurrentBodyName);
                 }
@@ -221,11 +221,19 @@ namespace CommonUtils
                 {
                     GameObject.layer = IGNORE_LAYER;
                 }
+                if (AvoidZFighting)
+                {
+                    FixZFighting(true);
+                }
             }
 
             internal void PopLayer()
             {
                 GameObject.layer = OriginalLayer;
+                if (AvoidZFighting)
+                {
+                    FixZFighting(false);
+                }
             }
 
             internal void FixZFighting(bool enable)
