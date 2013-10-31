@@ -50,17 +50,17 @@ SubShader {
 		   float3 viewVect = normalize( vertexPos - modelCam);
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 		   float diff = distance(origin, vertexPos) - (distance(origin,_WorldSpaceCameraPos));
-	   	   o.viewDist.x =  saturate(saturate(.085*distance(vertexPos,_WorldSpaceCameraPos))+ saturate(pow(.8*_FalloffScale*dot(normalDir, -viewVect),_FalloffPow)));
-	   	   o.viewDist.y = saturate(diff);
+	   	   o.viewDist.x = saturate(.035*distance(vertexPos,_WorldSpaceCameraPos));
+	   	   o.viewDist.y = saturate(diff) * saturate(saturate(.085*distance(vertexPos,_WorldSpaceCameraPos))+ saturate(pow(.8*_FalloffScale*dot(normalDir, -viewVect),_FalloffPow)));;
 	 	}
 
 		void surf (Input IN, inout SurfaceOutput o) {
 			half4 main = tex2D (_MainTex, IN.uv_MainTex);
 			half4 detail = tex2D (_DetailTex, IN.uv_DetailTex);
-			half3 albedo = main.rgb * detail.rgb;// * 1.5;
+			half3 albedo = main.rgb * (IN.viewDist.x + ((1-IN.viewDist.x)*detail.rgb));// * 1.5;
 			o.Albedo = albedo * _Color;
-			half avg = detail.a*main.a;
-          	o.Alpha = avg * IN.viewDist.y * IN.viewDist.x;
+			half avg = (IN.viewDist.x + ((1-IN.viewDist.x)*detail.a))*main.a;
+          	o.Alpha = avg * IN.viewDist.y;
           	o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
 		}
 		ENDCG

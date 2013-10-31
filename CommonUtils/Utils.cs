@@ -13,7 +13,7 @@ namespace CommonUtils
         public static int OVER_LAYER = 3;//28;
         public static int UNDER_LAYER = 2;//31;
         public static int MAP_LAYER = 10;//31;
-        public static float MAP_SWITCH_DISTANCE = 200.0f;
+        public static float MAP_SWITCH_DISTANCE = 400.0f;
 
         static Camera overlayCamera;
         static Camera underlayCamera;
@@ -187,7 +187,32 @@ namespace CommonUtils
                 overlay.FixZFighting(true);
             }
         }
+        /*
+        private GUISkin _mySkin;
+        private Rect _mainWindowRect = new Rect(20, 20, 200, 100);
+        private void OnGUI()
+        {
 
+            GUI.skin = _mySkin;
+
+            // Main Window
+            _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "CityGen");
+
+
+        }
+
+        private void DrawMainWindow(int windowID)
+        {
+            if (ScaledSpace.Instance != null && ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == CurrentBodyName) != null && overlayCamera != null)
+            {
+                float distanceFromCamera = Vector3.Distance(
+                        overlayCamera.transform.position,
+                        ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == CurrentBodyName).position);
+                GUI.Label(new Rect(70, 10, 100, 25), distanceFromCamera.ToString());
+            }
+            GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+        }
+        */
         public static void Log(String message)
         {
             UnityEngine.Debug.Log("Utils: " + message);
