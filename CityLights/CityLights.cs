@@ -38,6 +38,7 @@ namespace CityLights
         {
             if (HighLogic.LoadedScene == GameScenes.MAINMENU && !setup)
             {
+                Utils.Init();
                 InitTextures();
                 Utils.Overlay.GeneratePlanetOverlay("Kerbin", 1.001f, gameObject, lightMaterial, Utils.OVER_LAYER, true);
                 setup = true;

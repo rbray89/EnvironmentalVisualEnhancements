@@ -13,21 +13,86 @@ namespace CommonUtils
         public static int OVER_LAYER = 3;//28;
         public static int UNDER_LAYER = 2;//31;
         public static int MAP_LAYER = 10;//31;
-        public static float MAP_SWITCH_DISTANCE = 400.0f;
-
+        
+        static Dictionary<String, float> MAP_SWITCH_DISTANCE = new Dictionary<string,float>();
+        static ConfigNode config;
         static Camera overlayCamera;
         static Camera underlayCamera;
         static bool setup = false;
+        static bool setupCallbacks = false;
         static String CurrentBodyName;
-        static bool isTracking = false;
         static bool bodyOverlayEnabled = false;
 
         protected void Awake()
         {
 
-            if (HighLogic.LoadedScene == GameScenes.MAINMENU && !setup)
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
+                Init();
+            }
+            else if (HighLogic.LoadedScene == GameScenes.FLIGHT && !setupCallbacks)
+            {
+                Log("Initializing Callbacks...");
+                GameEvents.onDominantBodyChange.Add(OnDominantBodyChangeCallback);
+                GameEvents.onFlightReady.Add(OnFlightReadyCallback);
+                MapView.OnEnterMapView += new Callback(EnterMapView);
+                MapView.OnExitMapView += new Callback(ExitMapView);
+                Log("Initialized Callbacks");
+                setupCallbacks = true;
+            }
+
+        }
+
+        public static void Init()
+        {
+            if (!setup)
+            {
+                
+                UnityEngine.Object[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody));
+                config = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/BoulderCo/common.cfg");
+                ConfigNode cameraSwapConfig = config.GetNode("CAMERA_SWAP_DISTANCES");
+
+                foreach (CelestialBody cb in celestialBodies)
+                {
+                    string name = cb.bodyName;
+                    string val = cameraSwapConfig.GetValue(name);
+                    float dist = 0;
+                    if (val != null && val != "")
+                    {
+                        dist = float.Parse(val);
+                    }
+                    Log("loading " + name + " distance " + dist);
+                    MAP_SWITCH_DISTANCE.Add(name, dist);
+                }
+
+                ConfigNode cameraLayers = config.GetNode("CAMERA_LAYERS");
+                if (cameraLayers != null)
+                {
+                    string value = cameraLayers.GetValue("IGNORE_LAYER");
+                    if (value != null && value != "")
+                    {
+                        IGNORE_LAYER = int.Parse(value);
+                    }
+                    value = cameraLayers.GetValue("OVER_LAYER");
+                    if (value != null && value != "")
+                    {
+                        OVER_LAYER = int.Parse(value);
+                    }
+                    value = cameraLayers.GetValue("UNDER_LAYER");
+                    if (value != null && value != "")
+                    {
+                        UNDER_LAYER = int.Parse(value);
+                    }
+                    value = cameraLayers.GetValue("MAP_LAYER");
+                    if (value != null && value != "")
+                    {
+                        MAP_LAYER = int.Parse(value);
+                    }
+                }
+                Log("Camera Layers Parsed.");
+
                 Camera referenceCam = ScaledCamera.Instance.camera;
+
 
                 GameObject Ogo = new GameObject();
                 overlayCamera = Ogo.AddComponent<Camera>();
@@ -44,6 +109,8 @@ namespace CommonUtils
                 overlayCamera.layerCullSpherical = true;
                 overlayCamera.clearFlags = CameraClearFlags.Depth;
 
+                Log("Initialized Overlay Camera.");
+
                 //for underside of clouds, etc.
                 GameObject Ugo = new GameObject();
                 underlayCamera = Ugo.AddComponent<Camera>();
@@ -59,16 +126,13 @@ namespace CommonUtils
                 underlayCamera.layerCullDistances = new float[32];
                 underlayCamera.layerCullSpherical = true;
                 underlayCamera.clearFlags = CameraClearFlags.Depth;
+                Log("Initialized Underlay Camera.");
 
                 Sun.Instance.light.cullingMask |= (1 << OVER_LAYER) | (1 << UNDER_LAYER);
+                Log("Initialized Light mask.");
+
                 setup = true;
             }
-
-            GameEvents.onDominantBodyChange.Add(OnDominantBodyChangeCallback);
-            GameEvents.onFlightReady.Add(OnFlightReadyCallback);
-            MapView.OnEnterMapView += new Callback(EnterMapView);
-            MapView.OnExitMapView += new Callback(ExitMapView);
-
         }
 
         protected void Start()
@@ -77,7 +141,7 @@ namespace CommonUtils
             {
                 disableCamera();
             }
-            else if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
+            else if (setup && HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
                 disablePlanetOverlay(CurrentBodyName);
                 enablePlanetOverlay("Kerbin");
@@ -92,13 +156,11 @@ namespace CommonUtils
         private void EnterMapView()
         {
             disableCamera();
-            isTracking = true;
         }
 
         private void ExitMapView()
         {
             enableCamera();
-            isTracking = false;
         }
 
         private void OnDominantBodyChangeCallback(GameEvents.FromToAction<CelestialBody, CelestialBody> data)
@@ -118,29 +180,40 @@ namespace CommonUtils
 
         public void Update()
         {
-            if (HighLogic.LoadedScene != GameScenes.FLIGHT)
+
+            if (HighLogic.LoadedScene != GameScenes.FLIGHT || !setup || !FlightGlobals.ready)
             {
                 return;
             }
             if (!MapView.MapIsEnabled || MapView.MapCamera == null)
             {
+                
+                overlayCamera.fov = ScaledCamera.Instance.camera.fov;
                 float distanceFromCamera = Vector3.Distance(
                     overlayCamera.transform.position,
                     ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == CurrentBodyName).position);
 
-                if (distanceFromCamera >= MAP_SWITCH_DISTANCE && bodyOverlayEnabled)
+                if (distanceFromCamera >= MAP_SWITCH_DISTANCE[CurrentBodyName] && bodyOverlayEnabled)
                 {
                     disablePlanetOverlay(CurrentBodyName);
                 }
-                else if (distanceFromCamera < MAP_SWITCH_DISTANCE && !bodyOverlayEnabled)
+                else if (distanceFromCamera < MAP_SWITCH_DISTANCE[CurrentBodyName])
                 {
-                    enablePlanetOverlay(CurrentBodyName);
+                    //update FOV in case of IVA
+                    overlayCamera.fov = ScaledCamera.Instance.camera.fov;
+                    underlayCamera.fov = ScaledCamera.Instance.camera.fov;
+                    if (!bodyOverlayEnabled)
+                    {
+                        enablePlanetOverlay(CurrentBodyName);
+                    }
                 }
             }
+            
+
 
         }
 
-        private void disablePlanetOverlay(String body)
+        private static void disablePlanetOverlay(String body)
         {
             if (body != null && Overlay.OverlayDatabase.ContainsKey(body))
             {
@@ -153,7 +226,7 @@ namespace CommonUtils
             }
         }
 
-        private void enablePlanetOverlay(String body)
+        private static void enablePlanetOverlay(String body)
         {
             if (body != null && Overlay.OverlayDatabase.ContainsKey(body))
             {
@@ -166,7 +239,7 @@ namespace CommonUtils
             }
         }
 
-        private void enableCamera()
+        private static void enableCamera()
         {
             ScaledCamera.Instance.camera.cullingMask &= ~((1 << OVER_LAYER) | (1 << UNDER_LAYER));
             overlayCamera.cullingMask = (1 << OVER_LAYER);
@@ -177,7 +250,7 @@ namespace CommonUtils
             }
         }
 
-        private void disableCamera()
+        private static void disableCamera()
         {
             ScaledCamera.Instance.camera.cullingMask |= (1 << OVER_LAYER);
             overlayCamera.cullingMask = 0;
@@ -189,7 +262,7 @@ namespace CommonUtils
         }
         /*
         private GUISkin _mySkin;
-        private Rect _mainWindowRect = new Rect(20, 20, 200, 100);
+        private Rect _mainWindowRect = new Rect(20, 20, 200, 200);
         private void OnGUI()
         {
 
@@ -203,12 +276,14 @@ namespace CommonUtils
 
         private void DrawMainWindow(int windowID)
         {
-            if (ScaledSpace.Instance != null && ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == CurrentBodyName) != null && overlayCamera != null)
+            if (ScaledCamera.Instance != null)
             {
-                float distanceFromCamera = Vector3.Distance(
-                        overlayCamera.transform.position,
-                        ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == CurrentBodyName).position);
-                GUI.Label(new Rect(70, 10, 100, 25), distanceFromCamera.ToString());
+                GUI.Label(new Rect(10, 15, 200, 25), "FOV: " + ScaledCamera.Instance.camera.fov.ToString());
+                GUI.Label(new Rect(10, 40, 200, 25), "POS: " + ScaledCamera.Instance.camera.transform.position.ToString());
+                GUI.Label(new Rect(10, 65, 200, 25), "Rot: " + ScaledCamera.Instance.camera.transform.rotation.ToString());
+                GUI.Label(new Rect(10, 90, 200, 25), "FOV: " + overlayCamera.fov.ToString());
+                GUI.Label(new Rect(10, 115, 200, 25), "POS: " + overlayCamera.transform.position.ToString());
+                GUI.Label(new Rect(10, 140, 200, 25), "Rot: " + overlayCamera.transform.rotation.ToString());
             }
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
         }

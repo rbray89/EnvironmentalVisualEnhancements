@@ -55,7 +55,7 @@ namespace Clouds
         {
             if (HighLogic.LoadedScene == GameScenes.MAINMENU && !Loaded)
             {
-                
+                Utils.Init();
                 loadCloudLayers();
                 spawnVolumeClouds();
                 Loaded = true;
@@ -110,6 +110,10 @@ namespace Clouds
                 ConfigNode scaleNode = textureNode.GetNode("scale");
                 Scale = new Vector2(float.Parse(scaleNode.GetValue("x")), float.Parse(scaleNode.GetValue("y")));
             }
+            else
+            {
+                Texture = null;
+            }
         }
 
     }
@@ -137,25 +141,42 @@ namespace Clouds
             this.color = color;
             this.radius = radius;
             this.mainTexture = mainTexture;
-            this.detailTexture = detailTexture;
-            this.bumpTexture = bumpTexture;
-
+            if (detailTexture.Texture != null)
+            {
+                this.detailTexture = detailTexture;
+            }
+            else
+            {
+                this.detailTexture = null;
+            }
+            if (bumpTexture.Texture != null)
+            {
+                this.bumpTexture = bumpTexture;
+            }
+            else
+            {
+                this.bumpTexture = null;
+            }
             Init();
         }
 
         private void InitTexture()
         {
             CloudMaterial.SetTexture("_MainTex", mainTexture.Texture);
-            CloudMaterial.SetTexture("_DetailTex", detailTexture.Texture);
             CloudMaterial.SetTextureScale("_MainTex", mainTexture.Scale);
-            CloudMaterial.SetTextureScale("_DetailTex", detailTexture.Scale);
             CloudMaterial.SetColor("_Color", color);
 
             UndersideCloudMaterial.SetTexture("_MainTex", mainTexture.Texture);
-            UndersideCloudMaterial.SetTexture("_DetailTex", detailTexture.Texture);
             UndersideCloudMaterial.SetTextureScale("_MainTex", mainTexture.Scale);
-            UndersideCloudMaterial.SetTextureScale("_DetailTex", detailTexture.Scale);
             UndersideCloudMaterial.SetColor("_Color", color);
+
+            if (detailTexture != null)
+            {
+                CloudMaterial.SetTexture("_DetailTex", detailTexture.Texture);
+                CloudMaterial.SetTextureScale("_DetailTex", detailTexture.Scale);
+                UndersideCloudMaterial.SetTexture("_DetailTex", detailTexture.Texture);
+                UndersideCloudMaterial.SetTextureScale("_DetailTex", detailTexture.Scale);
+            }
 
             if (bumpTexture != null)
             {
@@ -194,19 +215,28 @@ namespace Clouds
         private void updateOffset(float time)
         {
             float rateOffset = time;
+
             mainTexture.Offset.x += rateOffset * mainTexture.Speed.x;
             mainTexture.Offset.y += rateOffset * mainTexture.Speed.y;
-            detailTexture.Offset.x += rateOffset * detailTexture.Speed.x;
-            detailTexture.Offset.y += rateOffset * detailTexture.Speed.y;
-            bumpTexture.Offset.x += rateOffset * bumpTexture.Speed.x;
-            bumpTexture.Offset.y += rateOffset * bumpTexture.Speed.y;
-
             CloudMaterial.SetTextureOffset("_MainTex", mainTexture.Offset);
-            CloudMaterial.SetTextureOffset("_DetailTex", detailTexture.Offset);
-            CloudMaterial.SetTextureOffset("_BumpMap", bumpTexture.Offset);
             UndersideCloudMaterial.SetTextureOffset("_MainTex", mainTexture.Offset);
-            UndersideCloudMaterial.SetTextureOffset("_DetailTex", detailTexture.Offset);
-            UndersideCloudMaterial.SetTextureOffset("_BumpMap", bumpTexture.Offset);
+
+            if(detailTexture != null)
+            {
+                detailTexture.Offset.x += rateOffset * detailTexture.Speed.x;
+                detailTexture.Offset.y += rateOffset * detailTexture.Speed.y;
+                CloudMaterial.SetTextureOffset("_DetailTex", detailTexture.Offset);
+                UndersideCloudMaterial.SetTextureOffset("_DetailTex", detailTexture.Offset);
+            }
+
+            if (bumpTexture != null)
+            {
+                bumpTexture.Offset.x += rateOffset * bumpTexture.Speed.x;
+                bumpTexture.Offset.y += rateOffset * bumpTexture.Speed.y;
+                CloudMaterial.SetTextureOffset("_BumpMap", bumpTexture.Offset);
+                UndersideCloudMaterial.SetTextureOffset("_BumpMap", bumpTexture.Offset);
+            }
+
         }
 
         public void PerformUpdate()
