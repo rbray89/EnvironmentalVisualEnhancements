@@ -144,7 +144,8 @@ namespace CommonUtils
             else if (setup && HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
                 disablePlanetOverlay(CurrentBodyName);
-                enablePlanetOverlay("Kerbin");
+                CurrentBodyName = "Kerbin";
+                enablePlanetOverlay(CurrentBodyName);
                 enableCamera();
             }
             else if (setup)
@@ -260,7 +261,7 @@ namespace CommonUtils
                 overlay.FixZFighting(true);
             }
         }
-        /*
+        
         private GUISkin _mySkin;
         private Rect _mainWindowRect = new Rect(20, 20, 200, 200);
         private void OnGUI()
@@ -276,18 +277,12 @@ namespace CommonUtils
 
         private void DrawMainWindow(int windowID)
         {
-            if (ScaledCamera.Instance != null)
-            {
-                GUI.Label(new Rect(10, 15, 200, 25), "FOV: " + ScaledCamera.Instance.camera.fov.ToString());
-                GUI.Label(new Rect(10, 40, 200, 25), "POS: " + ScaledCamera.Instance.camera.transform.position.ToString());
-                GUI.Label(new Rect(10, 65, 200, 25), "Rot: " + ScaledCamera.Instance.camera.transform.rotation.ToString());
-                GUI.Label(new Rect(10, 90, 200, 25), "FOV: " + overlayCamera.fov.ToString());
-                GUI.Label(new Rect(10, 115, 200, 25), "POS: " + overlayCamera.transform.position.ToString());
-                GUI.Label(new Rect(10, 140, 200, 25), "Rot: " + overlayCamera.transform.rotation.ToString());
-            }
+
+                GUI.Label(new Rect(10, 15, 200, 25), "Body: " + CurrentBodyName);
+
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
         }
-        */
+        
         public static void Log(String message)
         {
             UnityEngine.Debug.Log("Utils: " + message);
