@@ -261,7 +261,7 @@ namespace CommonUtils
                 overlay.FixZFighting(true);
             }
         }
-        
+        /*
         private GUISkin _mySkin;
         private Rect _mainWindowRect = new Rect(20, 20, 200, 200);
         private void OnGUI()
@@ -282,7 +282,7 @@ namespace CommonUtils
 
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
         }
-        
+        */
         public static void Log(String message)
         {
             UnityEngine.Debug.Log("Utils: " + message);
