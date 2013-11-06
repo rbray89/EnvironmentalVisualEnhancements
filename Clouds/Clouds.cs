@@ -27,22 +27,29 @@ namespace Clouds
             foreach (ConfigNode node in cloudLayersConfigs)
             {
                 String body = node.GetValue("body");
-                float radius = float.Parse(node.GetValue("radius"));
+                if (ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == body) != null)
+                {
+                    float radius = float.Parse(node.GetValue("radius"));
 
-                TextureSet mTexture = new TextureSet(node.GetNode("main_texture"));
-                TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"));
-                TextureSet bTexture = new TextureSet(node.GetNode("bump_texture"));
-               
-                
-                ConfigNode colorNode = node.GetNode("color");
-                Color color = new Color(
-                    float.Parse(colorNode.GetValue("r")),
-                    float.Parse(colorNode.GetValue("g")),
-                    float.Parse(colorNode.GetValue("b")));
-               
-                CloudLayers.Add(
-                    new CloudLayer(body, color, radius, 
-                    mTexture, dTexture, bTexture));
+                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false);
+                    TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false);
+                    TextureSet bTexture = new TextureSet(node.GetNode("bump_texture"), true);
+
+
+                    ConfigNode colorNode = node.GetNode("color");
+                    Color color = new Color(
+                        float.Parse(colorNode.GetValue("r")),
+                        float.Parse(colorNode.GetValue("g")),
+                        float.Parse(colorNode.GetValue("b")));
+
+                    CloudLayers.Add(
+                        new CloudLayer(body, color, radius,
+                        mTexture, dTexture, bTexture));
+                }
+                else
+                {
+                    CloudLayer.Log("body "+body+" does not exist!");
+                }
             }
         }
 
@@ -72,52 +79,6 @@ namespace Clouds
         }
     }
 
-    public class TextureSet
-    {
-        static Dictionary<String, Texture2D> TextureDictionary = new Dictionary<string, Texture2D>();
-        public Vector2 Offset;
-        public Vector2 Speed;
-        public Vector2 Scale;
-        public Texture2D Texture;
-
-        private void initTextures(String textureString)
-        {
-            if (!TextureDictionary.ContainsKey(textureString))
-            {
-                TextureDictionary.Add(textureString, GameDatabase.Instance.GetTexture(textureString, false));
-            }
-        }
-
-        public TextureSet(Texture2D texture, Vector2 offset, Vector2 speed, Vector2 scale)
-        {
-            Texture = texture;
-            Offset = offset;
-            Speed = speed;
-            Scale = scale;
-        }
-
-        public TextureSet(ConfigNode textureNode)
-        {
-            if (textureNode != null)
-            {
-                String textureString = textureNode.GetValue("file");
-                initTextures(textureString);
-                Texture = TextureDictionary[textureString];
-                ConfigNode offsetNode = textureNode.GetNode("offset");
-                Offset = new Vector2(float.Parse(offsetNode.GetValue("x")), float.Parse(offsetNode.GetValue("y")));
-                ConfigNode speedNode = textureNode.GetNode("speed");
-                Speed = new Vector2(float.Parse(speedNode.GetValue("x")), float.Parse(speedNode.GetValue("y")));
-                ConfigNode scaleNode = textureNode.GetNode("scale");
-                Scale = new Vector2(float.Parse(scaleNode.GetValue("x")), float.Parse(scaleNode.GetValue("y")));
-            }
-            else
-            {
-                Texture = null;
-            }
-        }
-
-    }
-
     public class CloudLayer
     {
         public Material CloudMaterial;
@@ -129,8 +90,6 @@ namespace Clouds
         private TextureSet mainTexture;
         private TextureSet detailTexture;
         private TextureSet bumpTexture;
-        private GameObject OverlayGameObject;
-        private GameObject UndersideGameObject;
 
         public CloudLayer(String body, Color color, float radius,
             TextureSet mainTexture,
@@ -203,10 +162,8 @@ namespace Clouds
             Log("Cloud Material initialized");
             InitTexture();
             Log("Generating Overlay...");
-            OverlayGameObject = new GameObject();
-            UndersideGameObject = new GameObject();
-            Utils.Overlay.GeneratePlanetOverlay(body, radius, OverlayGameObject, CloudMaterial, Utils.OVER_LAYER, false, 64,64);
-            Utils.Overlay.GeneratePlanetOverlay(body, radius, UndersideGameObject, UndersideCloudMaterial, Utils.UNDER_LAYER, false, 64, 64);
+            Overlay.GeneratePlanetOverlay(body, radius, CloudMaterial, Utils.OVER_LAYER, false, 64,64);
+            Overlay.GeneratePlanetOverlay(body, radius, UndersideCloudMaterial, Utils.UNDER_LAYER, false, 64, 64);
             Log("Textures initialized");
         }
 
@@ -216,23 +173,20 @@ namespace Clouds
         {
             float rateOffset = time;
 
-            mainTexture.Offset.x += rateOffset * mainTexture.Speed.x;
-            mainTexture.Offset.y += rateOffset * mainTexture.Speed.y;
+            mainTexture.UpdateOffset(rateOffset);
             CloudMaterial.SetTextureOffset("_MainTex", mainTexture.Offset);
             UndersideCloudMaterial.SetTextureOffset("_MainTex", mainTexture.Offset);
 
             if(detailTexture != null)
             {
-                detailTexture.Offset.x += rateOffset * detailTexture.Speed.x;
-                detailTexture.Offset.y += rateOffset * detailTexture.Speed.y;
+                detailTexture.UpdateOffset(rateOffset);
                 CloudMaterial.SetTextureOffset("_DetailTex", detailTexture.Offset);
                 UndersideCloudMaterial.SetTextureOffset("_DetailTex", detailTexture.Offset);
             }
 
             if (bumpTexture != null)
             {
-                bumpTexture.Offset.x += rateOffset * bumpTexture.Speed.x;
-                bumpTexture.Offset.y += rateOffset * bumpTexture.Speed.y;
+                bumpTexture.UpdateOffset(rateOffset);
                 CloudMaterial.SetTextureOffset("_BumpMap", bumpTexture.Offset);
                 UndersideCloudMaterial.SetTextureOffset("_BumpMap", bumpTexture.Offset);
             }

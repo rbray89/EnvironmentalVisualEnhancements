@@ -22,6 +22,12 @@ namespace CommonUtils
         static bool setupCallbacks = false;
         static String CurrentBodyName;
         static bool bodyOverlayEnabled = false;
+        static bool mainMenuOverlay = false;
+        public static bool MainMenuOverlay
+        {
+            get{return mainMenuOverlay;}
+        }
+
 
         protected void Awake()
         {
@@ -48,6 +54,7 @@ namespace CommonUtils
             if (!setup)
             {
                 
+
                 UnityEngine.Object[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody));
                 config = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/BoulderCo/common.cfg");
                 ConfigNode cameraSwapConfig = config.GetNode("CAMERA_SWAP_DISTANCES");
@@ -137,12 +144,23 @@ namespace CommonUtils
 
         protected void Start()
         {
+            
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU)
+            {
+                EnableMainOverlay();
+            }
+            else
+            {
+                 DisableMainOverlay();
+            }
+            
             if (setup && HighLogic.LoadedScene != GameScenes.FLIGHT && HighLogic.LoadedScene != GameScenes.SPACECENTER)
             {
                 disableCamera();
             }
             else if (setup && HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
+               
                 disablePlanetOverlay(CurrentBodyName);
                 CurrentBodyName = "Kerbin";
                 enablePlanetOverlay(CurrentBodyName);
@@ -151,6 +169,35 @@ namespace CommonUtils
             else if (setup)
             {
                 enableCamera();
+            }
+        }
+
+        private void DisableMainOverlay()
+        {
+            //nothing to do here...
+        }
+
+        private void EnableMainOverlay()
+        {
+            if (!mainMenuOverlay)
+            {
+                var objects = GameObject.FindSceneObjectsOfType(typeof(GameObject));
+                if (objects.Any(o => o.name == "LoadingBuffer")) { return; }
+                var kerbin = objects.OfType<GameObject>().Where(b => b.name == "Kerbin").LastOrDefault();
+                if (kerbin == null)
+                {
+                    Log("Couldn't find Kerbin!");
+                    return;
+                }
+                List<Overlay> overlayList = Overlay.OverlayDatabase["Kerbin"];
+                if (overlayList != null)
+                {
+                    foreach (Overlay kerbinOverlay in overlayList)
+                    {
+                        kerbinOverlay.CloneForMainMenu();
+                    }
+                }
+                mainMenuOverlay = true;
             }
         }
 
@@ -287,184 +334,311 @@ namespace CommonUtils
         {
             UnityEngine.Debug.Log("Utils: " + message);
         }
+     
+    }
 
-        public class Overlay
+    public class Overlay
+    {
+        public static Dictionary<String, List<Overlay>> OverlayDatabase = new Dictionary<string, List<Overlay>>();
+        public static List<Overlay> ZFightList = new List<Overlay>();
+
+        private string Body;
+        GameObject OverlayGameObject;
+        private float radius;
+        private Material overlayMaterial;
+        private int OriginalLayer;
+        private bool AvoidZFighting;
+        private int nbLong;
+        private int nbLat;
+        private Transform celestialTransform;
+
+
+        public Overlay(string planet, float radius, Material overlayMaterial, int layer, bool avoidZFighting, int nbLong, int nbLat, Transform celestialTransform)
         {
-            public static Dictionary<String, List<Overlay>> OverlayDatabase = new Dictionary<string, List<Overlay>>();
-            public static List<Overlay> ZFightList = new List<Overlay>();
+            // TODO: Complete member initialization
+            this.OverlayGameObject = new GameObject();
+            this.Body = planet;
+            this.radius = radius;
+            this.overlayMaterial = overlayMaterial;
+            this.OriginalLayer = layer;
+            this.AvoidZFighting = avoidZFighting;
+            this.nbLong = nbLong;
+            this.nbLat = nbLat;
+            this.celestialTransform = celestialTransform;
+        }
 
-            string Body;
-            GameObject GameObject;
-            bool AvoidZFighting;
-            int OriginalLayer;
-
-            public Overlay(string body, GameObject gameObject, bool avoidZFighting, int originalLayer)
+        public void PushToMapLayer()
+        {
+            if (OriginalLayer != Utils.UNDER_LAYER)
             {
-                Body = body;
-                GameObject = gameObject;
-                AvoidZFighting = avoidZFighting;
-                OriginalLayer = originalLayer;
+                OverlayGameObject.layer = Utils.MAP_LAYER;
             }
-
-            internal void PushToMapLayer()
+            else
             {
-                if (OriginalLayer != UNDER_LAYER)
-                {
-                    GameObject.layer = MAP_LAYER;
-                }
-                else
-                {
-                    GameObject.layer = IGNORE_LAYER;
-                }
-                if (AvoidZFighting)
-                {
-                    FixZFighting(true);
-                }
+                OverlayGameObject.layer = Utils.IGNORE_LAYER;
             }
+            FixZFighting(true);
+        }
 
-            internal void PopLayer()
-            {
-                GameObject.layer = OriginalLayer;
-                if (AvoidZFighting)
-                {
-                    FixZFighting(false);
-                }
-            }
+        public void PopLayer()
+        {
+            OverlayGameObject.layer = OriginalLayer;
+            FixZFighting(false);
+        }
 
-            internal void FixZFighting(bool enable)
+        public void FixZFighting(bool enable)
+        {
+            if (AvoidZFighting)
             {
                 if (enable)
                 {
-                    GameObject.transform.localScale = Vector3.one * 1002f;
+                    OverlayGameObject.transform.localScale = Vector3.one * 1002f;
                 }
                 else
                 {
-                    GameObject.transform.localScale = Vector3.one * 1000f;
+                    OverlayGameObject.transform.localScale = Vector3.one * 1000f;
                 }
             }
+        }
 
-            public static void GeneratePlanetOverlay(String planet, float radius, GameObject gameObject, Material overlayMaterial, int layer, bool avoidZFighting = false, int nbLong = 48, int nbLat = 48)
+        public void EnableMainMenu(bool p)
+        {
+            if (p)
+            {
+                var objects = GameObject.FindSceneObjectsOfType(typeof(GameObject));
+                if (objects.Any(o => o.name == "LoadingBuffer")) { return; }
+                var body = objects.OfType<GameObject>().Where(b => b.name == this.Body).LastOrDefault();
+                if (body == null)
+                {
+                    Utils.Log("Couldn't find Kerbin!");
+                    return;
+                }
+                OverlayGameObject.layer = body.layer;
+                OverlayGameObject.transform.parent = body.transform;
+                OverlayGameObject.transform.localScale = Vector3.one * 1008f;
+                OverlayGameObject.transform.localPosition = Vector3.zero;
+                OverlayGameObject.transform.localRotation = Quaternion.identity;
+            }
+            else
+            {
+                OverlayGameObject.layer = Utils.MAP_LAYER;
+                OverlayGameObject.transform.parent = celestialTransform;
+                OverlayGameObject.transform.localScale = Vector3.one * 1000f;
+                OverlayGameObject.transform.localPosition = Vector3.zero;
+                OverlayGameObject.transform.localRotation = Quaternion.identity;
+            }
+            
+            FixZFighting(p);
+        }
+
+        public void CloneForMainMenu()
+        {
+            GeneratePlanetOverlay(this.Body, this.radius, this.overlayMaterial, this.OriginalLayer, false, this.nbLong, this.nbLat, true);
+        }
+
+        public static void GeneratePlanetOverlay(String planet, float radius, Material overlayMaterial, int layer, bool avoidZFighting = false, int nbLong = 48, int nbLat = 48, bool mainMenu = false)
+        {
+            
+            Transform celestialTransform = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == planet);
+            Overlay overlay = new Overlay(planet, radius, overlayMaterial, layer, avoidZFighting, nbLong, nbLat, celestialTransform);
+            if (!mainMenu)
             {
                 if (!OverlayDatabase.ContainsKey(planet))
                 {
                     OverlayDatabase.Add(planet, new List<Overlay>());
                 }
-                Overlay overlay = new Overlay(planet, gameObject, avoidZFighting, layer);
                 OverlayDatabase[planet].Add(overlay);
 
                 if (avoidZFighting)
                 {
                     ZFightList.Add(overlay);
                 }
+            }
+            var mesh = overlay.OverlayGameObject.AddComponent<MeshFilter>().mesh;
+            var mr = overlay.OverlayGameObject.AddComponent<MeshRenderer>();
 
-                var mesh = gameObject.AddComponent<MeshFilter>().mesh;
-                var mr = gameObject.AddComponent<MeshRenderer>();
+            GameObject generatedMap = overlay.OverlayGameObject;
 
-                GameObject generatedMap = gameObject;
+            #region Vertices
+            Vector3[] vertices = new Vector3[(nbLong + 1) * nbLat + 2];
+            float _pi = Mathf.PI;
+            float _2pi = _pi * 2f;
 
-                #region Vertices
-                Vector3[] vertices = new Vector3[(nbLong + 1) * nbLat + 2];
-                float _pi = Mathf.PI;
-                float _2pi = _pi * 2f;
+            vertices[0] = Vector3.up * radius;
+            for (int lat = 0; lat < nbLat; lat++)
+            {
+                float a1 = _pi * (float)(lat + 1) / (nbLat + 1);
+                float sin1 = Mathf.Sin(a1);
+                float cos1 = Mathf.Cos(a1);
 
-                vertices[0] = Vector3.up * radius;
-                for (int lat = 0; lat < nbLat; lat++)
+                for (int lon = 0; lon <= nbLong; lon++)
                 {
-                    float a1 = _pi * (float)(lat + 1) / (nbLat + 1);
-                    float sin1 = Mathf.Sin(a1);
-                    float cos1 = Mathf.Cos(a1);
+                    float a2 = _2pi * (float)(lon == nbLong ? 0 : lon) / nbLong;
+                    float sin2 = Mathf.Sin(a2);
+                    float cos2 = Mathf.Cos(a2);
 
-                    for (int lon = 0; lon <= nbLong; lon++)
-                    {
-                        float a2 = _2pi * (float)(lon == nbLong ? 0 : lon) / nbLong;
-                        float sin2 = Mathf.Sin(a2);
-                        float cos2 = Mathf.Cos(a2);
-
-                        vertices[lon + lat * (nbLong + 1) + 1] = new Vector3(sin1 * cos2, cos1, sin1 * sin2) * radius;
-                    }
+                    vertices[lon + lat * (nbLong + 1) + 1] = new Vector3(sin1 * cos2, cos1, sin1 * sin2) * radius;
                 }
-                vertices[vertices.Length - 1] = Vector3.up * -radius;
-                #endregion
+            }
+            vertices[vertices.Length - 1] = Vector3.up * -radius;
+            #endregion
 
-                #region Normales
-                Vector3[] normales = new Vector3[vertices.Length];
-                for (int n = 0; n < vertices.Length; n++)
-                    normales[n] = vertices[n].normalized;
-                #endregion
+            #region Normales
+            Vector3[] normales = new Vector3[vertices.Length];
+            for (int n = 0; n < vertices.Length; n++)
+                normales[n] = vertices[n].normalized;
+            #endregion
 
-                #region UVs
-                Vector2[] uvs = new Vector2[vertices.Length];
-                uvs[0] = Vector2.up;
-                uvs[uvs.Length - 1] = Vector2.zero;
-                for (int lat = 0; lat < nbLat; lat++)
-                    for (int lon = 0; lon <= nbLong; lon++)
-                        uvs[lon + lat * (nbLong + 1) + 1] = new Vector2((float)lon / nbLong, 1f - (float)(lat + 1) / (nbLat + 1));
-                #endregion
+            #region UVs
+            Vector2[] uvs = new Vector2[vertices.Length];
+            uvs[0] = Vector2.up;
+            uvs[uvs.Length - 1] = Vector2.zero;
+            for (int lat = 0; lat < nbLat; lat++)
+                for (int lon = 0; lon <= nbLong; lon++)
+                    uvs[lon + lat * (nbLong + 1) + 1] = new Vector2((float)lon / nbLong, 1f - (float)(lat + 1) / (nbLat + 1));
+            #endregion
 
-                #region Triangles
-                int nbFaces = vertices.Length;
-                int nbTriangles = nbFaces * 2;
-                int nbIndexes = nbTriangles * 3;
-                int[] triangles = new int[nbIndexes];
+            #region Triangles
+            int nbFaces = vertices.Length;
+            int nbTriangles = nbFaces * 2;
+            int nbIndexes = nbTriangles * 3;
+            int[] triangles = new int[nbIndexes];
 
-                //Top Cap
-                int i = 0;
+            //Top Cap
+            int i = 0;
+            for (int lon = 0; lon < nbLong; lon++)
+            {
+                triangles[i++] = lon + 2;
+                triangles[i++] = lon + 1;
+                triangles[i++] = 0;
+            }
+
+            //Middle
+            for (int lat = 0; lat < nbLat - 1; lat++)
+            {
                 for (int lon = 0; lon < nbLong; lon++)
                 {
-                    triangles[i++] = lon + 2;
-                    triangles[i++] = lon + 1;
-                    triangles[i++] = 0;
-                }
+                    int current = lon + lat * (nbLong + 1) + 1;
+                    int next = current + nbLong + 1;
 
-                //Middle
-                for (int lat = 0; lat < nbLat - 1; lat++)
+                    triangles[i++] = current;
+                    triangles[i++] = current + 1;
+                    triangles[i++] = next + 1;
+
+                    triangles[i++] = current;
+                    triangles[i++] = next + 1;
+                    triangles[i++] = next;
+                }
+            }
+
+            //Bottom Cap
+            for (int lon = 0; lon < nbLong; lon++)
+            {
+                triangles[i++] = vertices.Length - 1;
+                triangles[i++] = vertices.Length - (lon + 2) - 1;
+                triangles[i++] = vertices.Length - (lon + 1) - 1;
+            }
+            #endregion
+
+            mesh.vertices = vertices;
+            mesh.normals = normales;
+            mesh.uv = uvs;
+            mesh.triangles = triangles;
+
+            mesh.RecalculateBounds();
+
+            mr.renderer.sharedMaterial = overlayMaterial;
+
+            mr.castShadows = false;
+            mr.receiveShadows = false;
+            mr.enabled = true;
+
+            overlay.OverlayGameObject.renderer.enabled = true;
+
+            overlay.EnableMainMenu(mainMenu);
+
+        }
+
+
+    }
+
+    public class TextureSet
+    {
+        static Dictionary<String, Texture2D> TextureDictionary = new Dictionary<string, Texture2D>();
+        public Vector2 Offset;
+        public Vector2 Speed;
+        public Vector2 Scale;
+        public Texture2D Texture;
+
+        private void initTextures(String textureString, bool bump)
+        {
+            if (!TextureDictionary.ContainsKey(textureString))
+            {
+                Texture2D tex =  GameDatabase.Instance.GetTexture(textureString, false);
+                if(bump)
                 {
-                    for (int lon = 0; lon < nbLong; lon++)
-                    {
-                        int current = lon + lat * (nbLong + 1) + 1;
-                        int next = current + nbLong + 1;
-
-                        triangles[i++] = current;
-                        triangles[i++] = current + 1;
-                        triangles[i++] = next + 1;
-
-                        triangles[i++] = current;
-                        triangles[i++] = next + 1;
-                        triangles[i++] = next;
-                    }
+                    tex = GameDatabase.BitmapToUnityNormalMap(tex);
                 }
-
-                //Bottom Cap
-                for (int lon = 0; lon < nbLong; lon++)
-                {
-                    triangles[i++] = vertices.Length - 1;
-                    triangles[i++] = vertices.Length - (lon + 2) - 1;
-                    triangles[i++] = vertices.Length - (lon + 1) - 1;
-                }
-                #endregion
-
-                mesh.vertices = vertices;
-                mesh.normals = normales;
-                mesh.uv = uvs;
-                mesh.triangles = triangles;
-
-                mesh.RecalculateBounds();
-
-                mr.renderer.sharedMaterial = overlayMaterial;
-
-                mr.castShadows = false;
-                mr.receiveShadows = false;
-                mr.enabled = true;
-
-                gameObject.renderer.enabled = true;
-
-                gameObject.layer = MAP_LAYER;
-                gameObject.transform.parent = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == planet);
-                gameObject.transform.localScale = Vector3.one * 1000f;
-                gameObject.transform.localPosition = Vector3.zero;
-                gameObject.transform.localRotation = Quaternion.identity;
-                
+                TextureDictionary.Add(textureString, tex);
             }
         }
+
+        public TextureSet(ConfigNode textureNode, bool bump)
+        {
+            if (textureNode != null)
+            {
+                String textureString = textureNode.GetValue("file");
+                initTextures(textureString, bump);
+                Texture = TextureDictionary[textureString];
+                ConfigNode offsetNode = textureNode.GetNode("offset");
+                if (offsetNode != null)
+                {
+                    Offset = new Vector2(float.Parse(offsetNode.GetValue("x")), float.Parse(offsetNode.GetValue("y")));
+                }
+                ConfigNode speedNode = textureNode.GetNode("speed");
+                if (speedNode != null)
+                {
+                    Speed = new Vector2(float.Parse(speedNode.GetValue("x")), float.Parse(speedNode.GetValue("y")));
+                }
+                ConfigNode scaleNode = textureNode.GetNode("scale");
+                if (scaleNode != null)
+                {
+                    Scale = new Vector2(float.Parse(scaleNode.GetValue("x")), float.Parse(scaleNode.GetValue("y")));
+                }
+            }
+            else
+            {
+                Texture = null;
+            }
+        }
+        
+        public void SaturateOffset()
+        {
+            while (this.Offset.x > 1.0f)
+            {
+                this.Offset.x -= 1.0f;
+            }
+            while (this.Offset.x < 0.0f)
+            {
+                this.Offset.x += 1.0f;
+            }
+            while (this.Offset.y > 1.0f)
+            {
+                this.Offset.y -= 1.0f;
+            }
+            while (this.Offset.y < 0.0f)
+            {
+                this.Offset.y += 1.0f;
+            }
+        }
+
+        public void UpdateOffset(float rateOffset)
+        {
+            this.Offset.x += rateOffset * this.Speed.x;
+            this.Offset.y += rateOffset * this.Speed.y;
+            SaturateOffset();
+        }
+
     }
+
 }
