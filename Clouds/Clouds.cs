@@ -27,7 +27,16 @@ namespace Clouds
             foreach (ConfigNode node in cloudLayersConfigs)
             {
                 String body = node.GetValue("body");
-                if (ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == body) != null)
+                Transform bodyTransform = null;
+                try
+                {
+                    bodyTransform = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == body);
+                }
+                catch
+                {
+
+                }
+                if (bodyTransform != null)
                 {
                     float radius = float.Parse(node.GetValue("radius"));
 
@@ -76,7 +85,9 @@ namespace Clouds
             {
                 layer.PerformUpdate();
             }
+ 
         }
+ 
     }
 
     public class CloudLayer

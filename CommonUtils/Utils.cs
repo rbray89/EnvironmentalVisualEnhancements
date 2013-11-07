@@ -175,6 +175,7 @@ namespace CommonUtils
         private void DisableMainOverlay()
         {
             //nothing to do here...
+            mainMenuOverlay = false;
         }
 
         private void EnableMainOverlay()
