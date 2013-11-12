@@ -185,17 +185,15 @@ namespace CommonUtils
                 var objects = GameObject.FindSceneObjectsOfType(typeof(GameObject));
                 if (objects.Any(o => o.name == "LoadingBuffer")) { return; }
                 var kerbin = objects.OfType<GameObject>().Where(b => b.name == "Kerbin").LastOrDefault();
-                if (kerbin == null)
+                if (kerbin != null)
                 {
-                    Log("Couldn't find Kerbin!");
-                    return;
-                }
-                List<Overlay> overlayList = Overlay.OverlayDatabase["Kerbin"];
-                if (overlayList != null)
-                {
-                    foreach (Overlay kerbinOverlay in overlayList)
+                    List<Overlay> overlayList = Overlay.OverlayDatabase["Kerbin"];
+                    if (overlayList != null)
                     {
-                        kerbinOverlay.CloneForMainMenu();
+                        foreach (Overlay kerbinOverlay in overlayList)
+                        {
+                            kerbinOverlay.CloneForMainMenu();
+                        }
                     }
                 }
                 mainMenuOverlay = true;
@@ -409,16 +407,14 @@ namespace CommonUtils
                 var objects = GameObject.FindSceneObjectsOfType(typeof(GameObject));
                 if (objects.Any(o => o.name == "LoadingBuffer")) { return; }
                 var body = objects.OfType<GameObject>().Where(b => b.name == this.Body).LastOrDefault();
-                if (body == null)
+                if (body != null)
                 {
-                    Utils.Log("Couldn't find Kerbin!");
-                    return;
+                    OverlayGameObject.layer = body.layer;
+                    OverlayGameObject.transform.parent = body.transform;
+                    OverlayGameObject.transform.localScale = Vector3.one * 1008f;
+                    OverlayGameObject.transform.localPosition = Vector3.zero;
+                    OverlayGameObject.transform.localRotation = Quaternion.identity;
                 }
-                OverlayGameObject.layer = body.layer;
-                OverlayGameObject.transform.parent = body.transform;
-                OverlayGameObject.transform.localScale = Vector3.one * 1008f;
-                OverlayGameObject.transform.localPosition = Vector3.zero;
-                OverlayGameObject.transform.localRotation = Quaternion.identity;
             }
             else
             {
@@ -460,6 +456,8 @@ namespace CommonUtils
 
             GameObject generatedMap = overlay.OverlayGameObject;
 
+            //Sphere code from http://wiki.unity3d.com/index.php/ProceduralPrimitives
+
             #region Vertices
             Vector3[] vertices = new Vector3[(nbLong + 1) * nbLat + 2];
             float _pi = Mathf.PI;
@@ -484,10 +482,10 @@ namespace CommonUtils
             vertices[vertices.Length - 1] = Vector3.up * -radius;
             #endregion
 
-            #region Normales
-            Vector3[] normales = new Vector3[vertices.Length];
+            #region Normals
+            Vector3[] normals = new Vector3[vertices.Length];
             for (int n = 0; n < vertices.Length; n++)
-                normales[n] = vertices[n].normalized;
+                normals[n] = vertices[n].normalized;
             #endregion
 
             #region UVs
@@ -505,6 +503,9 @@ namespace CommonUtils
             int nbIndexes = nbTriangles * 3;
             int[] triangles = new int[nbIndexes];
 
+            Vector3[] tan1 = new Vector3[nbFaces];
+            Vector3[] tan2 = new Vector3[nbFaces];
+
             //Top Cap
             int i = 0;
             for (int lon = 0; lon < nbLong; lon++)
@@ -512,6 +513,7 @@ namespace CommonUtils
                 triangles[i++] = lon + 2;
                 triangles[i++] = lon + 1;
                 triangles[i++] = 0;
+                calculateTangent(triangles, i - 3, vertices, uvs, tan1, tan2); 
             }
 
             //Middle
@@ -525,10 +527,12 @@ namespace CommonUtils
                     triangles[i++] = current;
                     triangles[i++] = current + 1;
                     triangles[i++] = next + 1;
+                    calculateTangent(triangles, i - 3, vertices, uvs, tan1, tan2); 
 
                     triangles[i++] = current;
                     triangles[i++] = next + 1;
                     triangles[i++] = next;
+                    calculateTangent(triangles, i - 3, vertices, uvs, tan1, tan2); 
                 }
             }
 
@@ -538,15 +542,28 @@ namespace CommonUtils
                 triangles[i++] = vertices.Length - 1;
                 triangles[i++] = vertices.Length - (lon + 2) - 1;
                 triangles[i++] = vertices.Length - (lon + 1) - 1;
+                calculateTangent(triangles, i - 3, vertices, uvs, tan1, tan2); 
             }
             #endregion
 
             mesh.vertices = vertices;
-            mesh.normals = normales;
             mesh.uv = uvs;
             mesh.triangles = triangles;
+            mesh.normals = normals;
 
-            mesh.RecalculateBounds();
+            Vector4[] tangents = new Vector4[nbFaces];
+
+            for (long a = 0; a < nbFaces; ++a)
+            {
+                Vector3 n = mesh.normals[a];
+                Vector3 t = tan1[a];
+
+                Vector3 tmp = (t - n * Vector3.Dot(n, t)).normalized;
+                tangents[a] = new Vector4(tmp.x, tmp.y, tmp.z);
+
+                tangents[a].w = (Vector3.Dot(Vector3.Cross(n, t), tan2[a]) < 0.0f) ? -1.0f : 1.0f;
+            }
+            mesh.tangents = tangents;
 
             mr.renderer.sharedMaterial = overlayMaterial;
 
@@ -558,6 +575,46 @@ namespace CommonUtils
 
             overlay.EnableMainMenu(mainMenu);
 
+        }
+
+        private static void calculateTangent(int[] triangles, int index, Vector3[] vertices, Vector2[] uvs, Vector3[] tan1, Vector3[] tan2)
+        {
+            long i1 = triangles[index + 0];
+            long i2 = triangles[index + 1];
+            long i3 = triangles[index + 2];
+
+            Vector3 v1 = vertices[i1];
+            Vector3 v2 = vertices[i2];
+            Vector3 v3 = vertices[i3];
+
+            Vector2 w1 = uvs[i1];
+            Vector2 w2 = uvs[i2];
+            Vector2 w3 = uvs[i3];
+
+            float x1 = v2.x - v1.x;
+            float x2 = v3.x - v1.x;
+            float y1 = v2.y - v1.y;
+            float y2 = v3.y - v1.y;
+            float z1 = v2.z - v1.z;
+            float z2 = v3.z - v1.z;
+
+            float s1 = w2.x - w1.x;
+            float s2 = w3.x - w1.x;
+            float t1 = w2.y - w1.y;
+            float t2 = w3.y - w1.y;
+
+            float r = 1.0f / (s1 * t2 - s2 * t1);
+
+            Vector3 sdir = new Vector3((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
+            Vector3 tdir = new Vector3((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
+
+            tan1[i1] += sdir;
+            tan1[i2] += sdir;
+            tan1[i3] += sdir;
+
+            tan2[i1] += tdir;
+            tan2[i2] += tdir;
+            tan2[i3] += tdir;
         }
 
 
@@ -575,11 +632,7 @@ namespace CommonUtils
         {
             if (!TextureDictionary.ContainsKey(textureString))
             {
-                Texture2D tex =  GameDatabase.Instance.GetTexture(textureString, false);
-                if(bump)
-                {
-                    tex = GameDatabase.BitmapToUnityNormalMap(tex);
-                }
+                Texture2D tex = GameDatabase.Instance.GetTexture(textureString, bump);
                 TextureDictionary.Add(textureString, tex);
             }
         }

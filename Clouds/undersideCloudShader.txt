@@ -28,9 +28,9 @@ SubShader {
 		float _FalloffScale;
 		
 		half4 LightingSimpleLambert (SurfaceOutput s, half3 lightDir, half atten) {
-          half NdotL = dot (s.Normal, lightDir);
+          half NdotL = saturate(dot (s.Normal, lightDir));
           half4 c;
-          c.rgb = s.Albedo * _LightColor0.rgb * (NdotL * atten * 2);
+          c.rgb = s.Albedo * saturate(.20+ _LightColor0.rgb * (NdotL * atten * 2));
           c.a = s.Alpha;
           return c;
       	}
@@ -50,7 +50,7 @@ SubShader {
 		   float3 viewVect = normalize( vertexPos - modelCam);
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 		   float diff = distance(origin, vertexPos) - (distance(origin,_WorldSpaceCameraPos));
-	   	   o.viewDist.x = saturate(.035*distance(vertexPos,_WorldSpaceCameraPos));
+	   	   o.viewDist.x = saturate(.025*distance(vertexPos,_WorldSpaceCameraPos));
 	   	   o.viewDist.y = saturate(diff) * saturate(saturate(.085*distance(vertexPos,_WorldSpaceCameraPos))+ saturate(pow(.8*_FalloffScale*dot(normalDir, -viewVect),_FalloffPow)));;
 	 	}
 
@@ -61,7 +61,7 @@ SubShader {
 			o.Albedo = albedo * _Color;
 			half avg = (IN.viewDist.x + ((1-IN.viewDist.x)*detail.a))*main.a;
           	o.Alpha = avg * IN.viewDist.y;
-          	o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
+          	o.Normal = half3(0,0,1)*(IN.viewDist.x + ((1-IN.viewDist.x)*UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap))));
 		}
 		ENDCG
 	
