@@ -30,7 +30,7 @@ SubShader {
 		half4 LightingSimpleLambert (SurfaceOutput s, half3 lightDir, half atten) {
           half NdotL = saturate(dot (s.Normal, lightDir));
           half4 c;
-          c.rgb = s.Albedo * saturate(.20+ _LightColor0.rgb * (NdotL * atten * 2));
+          c.rgb = s.Albedo * saturate(.18+ _LightColor0.rgb * (NdotL * atten * 2));
           c.a = s.Alpha;
           return c;
       	}
@@ -57,11 +57,12 @@ SubShader {
 		void surf (Input IN, inout SurfaceOutput o) {
 			half4 main = tex2D (_MainTex, IN.uv_MainTex);
 			half4 detail = tex2D (_DetailTex, IN.uv_DetailTex);
-			half3 albedo = main.rgb * (IN.viewDist.x + ((1-IN.viewDist.x)*detail.rgb));// * 1.5;
+			half detailLevel = IN.viewDist.x;
+			half3 albedo = main.rgb * lerp(detail.rgb, half3(1,1,1), detailLevel);// * 1.5;
 			o.Albedo = albedo * _Color;
-			half avg = (IN.viewDist.x + ((1-IN.viewDist.x)*detail.a))*main.a;
+			half avg = lerp(detail.a, 1, detailLevel)*main.a;
           	o.Alpha = avg * IN.viewDist.y;
-          	o.Normal = half3(0,0,1)*(IN.viewDist.x + ((1-IN.viewDist.x)*UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap))));
+          	o.Normal = lerp(UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap)),half3(0,0,1),detailLevel);
 		}
 		ENDCG
 	

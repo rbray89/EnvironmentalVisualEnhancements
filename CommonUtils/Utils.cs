@@ -307,28 +307,7 @@ namespace CommonUtils
                 overlay.FixZFighting(true);
             }
         }
-        /*
-        private GUISkin _mySkin;
-        private Rect _mainWindowRect = new Rect(20, 20, 200, 200);
-        private void OnGUI()
-        {
-
-            GUI.skin = _mySkin;
-
-            // Main Window
-            _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "CityGen");
-
-
-        }
-
-        private void DrawMainWindow(int windowID)
-        {
-
-                GUI.Label(new Rect(10, 15, 200, 25), "Body: " + CurrentBodyName);
-
-            GUI.DragWindow(new Rect(0, 0, 10000, 10000));
-        }
-        */
+        
         public static void Log(String message)
         {
             UnityEngine.Debug.Log("Utils: " + message);

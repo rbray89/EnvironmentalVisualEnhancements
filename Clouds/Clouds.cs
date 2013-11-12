@@ -22,6 +22,7 @@ namespace Clouds
         static GameObject particleSystemGo;
         static bool spawned = false;
 
+        static bool useEditor = false;
 
         private void loadCloudLayers()
         {
@@ -280,9 +281,61 @@ namespace Clouds
             {
                 //cloudParticleEmitter.Emit();
             }
-             
+            bool alt = (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt));
+            if (alt && Input.GetKeyDown(KeyCode.C))
+            {
+                useEditor = !useEditor; 
+            }
         }
- 
+
+        
+        private GUISkin _mySkin;
+        private Rect _mainWindowRect = new Rect(20, 20, 200, 200);
+        private void OnGUI()
+        {
+
+            GUI.skin = _mySkin;
+
+            // Main Window
+            if (useEditor)
+            {
+                _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "Clouds");
+
+            }
+        }
+
+        private void DrawMainWindow(int windowID)
+        {
+            
+                
+                if (GUI.Button(new Rect(10, 20, 160, 25), "Generate Volume Clouds"))
+                {
+                    
+                }
+                CelestialBody current = FlightGlobals.currentMainBody;
+                
+                if (current != null)
+                {
+                    GUI.Label(new Rect(50, 50, 150, 25), current.name);
+                }
+                else
+                {
+                    GUI.Label(new Rect(50, 50, 150, 25), "----");
+                }
+                if (GUI.Button(new Rect(20, 50, 25, 25), "<"))
+                {
+                    
+                }
+                if (GUI.Button(new Rect(170, 50, 25, 25), ">"))
+                {
+                    
+                }
+                
+                GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+            
+        }
+        
+
     }
 
     public class CloudLayer
