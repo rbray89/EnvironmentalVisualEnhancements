@@ -287,8 +287,10 @@ namespace Clouds
 
     public class CloudLayer
     {
-        public Material CloudMaterial;
-        public Material UndersideCloudMaterial;
+        private static Shader GlobalCloudShader;
+        private static Shader GlobalUndersideCloudShader;
+        private Material CloudMaterial;
+        private Material UndersideCloudMaterial;
         private float timeDelta = 0;
         private String body;
         private Color color;
@@ -354,16 +356,23 @@ namespace Clouds
 
         public void Init()
         {
-            Log("Initializing Textures");
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.CompiledCloudShader.txt"));
-            Log("reading stream...");
-            String shaderTxt = shaderStreamReader.ReadToEnd();
-            CloudMaterial = new Material(shaderTxt);
-            shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.undersideCompiledCloudShader.txt"));
-            Log("reading stream...");
-            shaderTxt = shaderStreamReader.ReadToEnd();
-            UndersideCloudMaterial = new Material(shaderTxt);
+            if (GlobalCloudShader == null)
+            {
+                Utils.Log("Initializing Textures");
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.CompiledCloudShader.txt"));
+                Utils.Log("reading stream...");
+                String shaderTxt = shaderStreamReader.ReadToEnd();
+                GlobalCloudShader = new Material(shaderTxt).shader;
+
+                shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.undersideCompiledCloudShader.txt"));
+                Utils.Log("reading stream...");
+                shaderTxt = shaderStreamReader.ReadToEnd();
+                GlobalUndersideCloudShader = new Material(shaderTxt).shader;
+            }
+            CloudMaterial = new Material(GlobalCloudShader);
+            UndersideCloudMaterial = new Material(GlobalUndersideCloudShader);
+           
             
             Log("Cloud Material initialized");
             InitTexture();
