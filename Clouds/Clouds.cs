@@ -23,6 +23,8 @@ namespace Clouds
         static bool spawned = false;
 
         static bool useEditor = false;
+        static Vector2 ScrollPosLayerList = Vector2.zero;
+        static int SelectedLayer = 0; 
 
         private void loadCloudLayers()
         {
@@ -277,10 +279,6 @@ namespace Clouds
             {
                 layer.PerformUpdate();
             }
-            if (spawned)
-            {
-                //cloudParticleEmitter.Emit();
-            }
             bool alt = (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt));
             if (alt && Input.GetKeyDown(KeyCode.C))
             {
@@ -290,17 +288,34 @@ namespace Clouds
 
         
         private GUISkin _mySkin;
-        private Rect _mainWindowRect = new Rect(20, 20, 200, 200);
+        private Rect _mainWindowRect = new Rect(20, 20, 200, 600);
+
         private void OnGUI()
         {
 
             GUI.skin = _mySkin;
 
-            // Main Window
-            if (useEditor)
+            CelestialBody current = null;
+            if (MapView.MapIsEnabled)
             {
-                _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "Clouds");
-
+                current = Utils.GetMapBody();
+            }
+            else
+            {
+                current = FlightGlobals.currentMainBody;
+            }
+            if (useEditor && current != null)
+            {
+                if (CloudLayer.GetBodyLayerCount(current.name) != 0)
+                {
+                    _mainWindowRect.height = 600;
+                    _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "Clouds");
+                }
+                else
+                {
+                    _mainWindowRect.height = 110;
+                    _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "Clouds");
+                }
             }
         }
 
@@ -308,29 +323,55 @@ namespace Clouds
         {
             
                 
-                if (GUI.Button(new Rect(10, 20, 160, 25), "Generate Volume Clouds"))
+                if (GUI.Button(new Rect(10, 20, 180, 25), "Generate Volume Clouds"))
                 {
-                    
+                    spawnVolumeClouds();
                 }
-                CelestialBody current = FlightGlobals.currentMainBody;
-                
-                if (current != null)
+                CelestialBody current = null;
+                if (MapView.MapIsEnabled)
                 {
-                    GUI.Label(new Rect(50, 50, 150, 25), current.name);
+                    current = Utils.GetMapBody();
                 }
                 else
                 {
-                    GUI.Label(new Rect(50, 50, 150, 25), "----");
+                    current = FlightGlobals.currentMainBody;
                 }
-                if (GUI.Button(new Rect(20, 50, 25, 25), "<"))
+                if (current != null)
                 {
-                    
-                }
-                if (GUI.Button(new Rect(170, 50, 25, 25), ">"))
-                {
-                    
-                }
+                    GUI.Label(new Rect(50, 50, 170, 25), current.name);
                 
+                    if (MapView.MapIsEnabled)
+                    {
+                        if (GUI.Button(new Rect(10, 50, 25, 25), "<"))
+                        {
+                            MapView.MapCamera.SetTarget(Utils.GetPreviousBody(current).name);
+                        }
+                        if (GUI.Button(new Rect(165, 50, 25, 25), ">"))
+                        {
+                            MapView.MapCamera.SetTarget(Utils.GetNextBody(current).name);
+                        }
+                    }
+                    if (GUI.Button(new Rect(10, 80, 85, 25), "Add"))
+                    {
+                        spawnVolumeClouds();
+                    }
+                    if (CloudLayer.GetBodyLayerCount(current.name) != 0)
+                    {
+                        if (GUI.Button(new Rect(100, 80, 85, 25), "Remove"))
+                        {
+                            spawnVolumeClouds();
+                        }
+                    
+                        String[] layerList = CloudLayer.GetBodyLayers(current.name);
+                        ScrollPosLayerList = GUI.BeginScrollView(new Rect(10, 110, 180, 75), ScrollPosLayerList, new Rect(0, 0, 160, 25 * layerList.Length));
+                        SelectedLayer = GUI.SelectionGrid(new Rect(25, 0, 130, 25 * layerList.Length), SelectedLayer, layerList, 1);
+                        GUI.EndScrollView();
+                    }
+                }
+                else
+                {
+                    GUI.Label(new Rect(50, 50, 170, 25), "----");
+                }
                 GUI.DragWindow(new Rect(0, 0, 10000, 10000));
             
         }
@@ -340,6 +381,7 @@ namespace Clouds
 
     public class CloudLayer
     {
+        public static Dictionary<String, List<CloudLayer>> PlanetDatabase = new Dictionary<string, List<CloudLayer>>();
         private static Shader GlobalCloudShader;
         private static Shader GlobalUndersideCloudShader;
         private Material CloudMaterial;
@@ -357,6 +399,11 @@ namespace Clouds
             TextureSet detailTexture,
             TextureSet bumpTexture)
         {
+            if(!PlanetDatabase.ContainsKey(body))
+            {
+                PlanetDatabase.Add(body, new List<CloudLayer>());
+            }
+            PlanetDatabase[body].Add(this);
             this.body = body;
             this.color = color;
             this.radius = radius;
@@ -435,8 +482,6 @@ namespace Clouds
             Log("Textures initialized");
         }
 
-
-
         private void updateOffset(float time)
         {
             float rateOffset = time;
@@ -474,6 +519,36 @@ namespace Clouds
         public static void Log(String message)
         {
             UnityEngine.Debug.Log("Clouds: " + message);
+        }
+
+        public static int GetBodyLayerCount(string p)
+        {
+            if (PlanetDatabase.ContainsKey(p))
+            {
+                return PlanetDatabase[p].Count;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        public static String[] GetBodyLayers(string p)
+        {
+            if (PlanetDatabase.ContainsKey(p))
+            {
+                int count = PlanetDatabase[p].Count;
+                String[] layerList = new String[count];
+                for(int i = 0; i < count; i++)
+                {
+                    layerList[i] = "Layer "+ i;
+                }
+                return layerList;
+            }
+            else
+            {
+                return new String[0];
+            }
         }
     }
 }

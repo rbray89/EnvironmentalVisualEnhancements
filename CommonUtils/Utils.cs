@@ -15,6 +15,7 @@ namespace CommonUtils
         public static int MAP_LAYER = 10;//31;
         
         static Dictionary<String, float> MAP_SWITCH_DISTANCE = new Dictionary<string,float>();
+        static List<CelestialBody> CelestialBodyList = new List<CelestialBody>();
         static ConfigNode config;
         static Camera overlayCamera;
         static Camera underlayCamera;
@@ -61,6 +62,7 @@ namespace CommonUtils
 
                 foreach (CelestialBody cb in celestialBodies)
                 {
+                    CelestialBodyList.Add(cb);
                     string name = cb.bodyName;
                     string val = cameraSwapConfig.GetValue(name);
                     float dist = 0;
@@ -312,7 +314,42 @@ namespace CommonUtils
         {
             UnityEngine.Debug.Log("Utils: " + message);
         }
-     
+
+        public static CelestialBody GetMapBody()
+        {
+            MapObject target = MapView.MapCamera.target;
+            switch (target.type)
+            {
+                case MapObject.MapObjectType.CELESTIALBODY:
+                    return target.celestialBody;
+                case MapObject.MapObjectType.MANEUVERNODE:
+                    return target.maneuverNode.patch.referenceBody;
+                case MapObject.MapObjectType.VESSEL:
+                    return target.vessel.mainBody;
+            }
+            
+            return null;
+        }
+
+        public static CelestialBody GetNextBody(CelestialBody body)
+        {
+            int index = CelestialBodyList.FindIndex(a => a.name == body.name);
+            if (index == CelestialBodyList.Count - 1)
+            {
+                index = -1;
+            }
+            return CelestialBodyList[index + 1];
+        }
+
+        public static CelestialBody GetPreviousBody(CelestialBody body)
+        {
+            int index = CelestialBodyList.FindIndex(a => a.name == body.name);
+            if (index == 0)
+            {
+                index = CelestialBodyList.Count;
+            }
+            return CelestialBodyList[index - 1];
+        }
     }
 
     public class Overlay
