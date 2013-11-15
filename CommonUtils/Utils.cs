@@ -638,11 +638,20 @@ namespace CommonUtils
 
     public class TextureSet
     {
-        static Dictionary<String, Texture2D> TextureDictionary = new Dictionary<string, Texture2D>();
-        public Vector2 Offset;
-        public Vector2 Speed;
-        public Vector2 Scale;
-        public Texture2D Texture;
+        private static Dictionary<String, Texture2D> TextureDictionary = new Dictionary<string, Texture2D>();
+        private Vector2 offset;
+        private Vector2 startOffset;
+        private Vector2 speed;
+        private Vector2 scale;
+        private Texture2D texture;
+        private String textureFile;
+
+        public Vector2 Offset{get{return offset;}}
+        public Vector2 StartOffset { get { return startOffset; } }
+        public Vector2 Speed { get { return speed; } }
+        public Vector2 Scale { get { return scale; } }
+        public Texture2D Texture { get { return texture; } }
+        public String TextureFile { get { return textureFile; } }
 
         private void initTextures(String textureString, bool bump)
         {
@@ -657,55 +666,56 @@ namespace CommonUtils
         {
             if (textureNode != null)
             {
-                String textureString = textureNode.GetValue("file");
-                initTextures(textureString, bump);
-                Texture = TextureDictionary[textureString];
+                textureFile = textureNode.GetValue("file");
+                initTextures(textureFile, bump);
+                texture = TextureDictionary[textureFile];
                 ConfigNode offsetNode = textureNode.GetNode("offset");
                 if (offsetNode != null)
                 {
-                    Offset = new Vector2(float.Parse(offsetNode.GetValue("x")), float.Parse(offsetNode.GetValue("y")));
+                    offset = new Vector2(float.Parse(offsetNode.GetValue("x")), float.Parse(offsetNode.GetValue("y")));
+                    startOffset = new Vector2(offset.x, offset.y);
                 }
                 ConfigNode speedNode = textureNode.GetNode("speed");
                 if (speedNode != null)
                 {
-                    Speed = new Vector2(float.Parse(speedNode.GetValue("x")), float.Parse(speedNode.GetValue("y")));
+                    speed = new Vector2(float.Parse(speedNode.GetValue("x")), float.Parse(speedNode.GetValue("y")));
                 }
                 ConfigNode scaleNode = textureNode.GetNode("scale");
                 if (scaleNode != null)
                 {
-                    Scale = new Vector2(float.Parse(scaleNode.GetValue("x")), float.Parse(scaleNode.GetValue("y")));
+                    scale = new Vector2(float.Parse(scaleNode.GetValue("x")), float.Parse(scaleNode.GetValue("y")));
                 }
             }
             else
             {
-                Texture = null;
+                texture = null;
             }
         }
         
         public void SaturateOffset()
         {
-            while (this.Offset.x > 1.0f)
+            while (this.offset.x > 1.0f)
             {
-                this.Offset.x -= 1.0f;
+                this.offset.x -= 1.0f;
             }
-            while (this.Offset.x < 0.0f)
+            while (this.offset.x < 0.0f)
             {
-                this.Offset.x += 1.0f;
+                this.offset.x += 1.0f;
             }
-            while (this.Offset.y > 1.0f)
+            while (this.offset.y > 1.0f)
             {
-                this.Offset.y -= 1.0f;
+                this.offset.y -= 1.0f;
             }
-            while (this.Offset.y < 0.0f)
+            while (this.offset.y < 0.0f)
             {
-                this.Offset.y += 1.0f;
+                this.offset.y += 1.0f;
             }
         }
 
         public void UpdateOffset(float rateOffset)
         {
-            this.Offset.x += rateOffset * this.Speed.x;
-            this.Offset.y += rateOffset * this.Speed.y;
+            this.offset.x += rateOffset * this.speed.x;
+            this.offset.y += rateOffset * this.speed.y;
             SaturateOffset();
         }
 

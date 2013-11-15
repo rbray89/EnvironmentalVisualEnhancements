@@ -288,7 +288,7 @@ namespace Clouds
 
         
         private GUISkin _mySkin;
-        private Rect _mainWindowRect = new Rect(20, 20, 200, 600);
+        private Rect _mainWindowRect = new Rect(20, 20, 260, 600);
 
         private void OnGUI()
         {
@@ -313,7 +313,7 @@ namespace Clouds
                 }
                 else
                 {
-                    _mainWindowRect.height = 110;
+                    _mainWindowRect.height = 115;
                     _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "Clouds");
                 }
             }
@@ -323,7 +323,7 @@ namespace Clouds
         {
             
                 
-                if (GUI.Button(new Rect(10, 20, 180, 25), "Generate Volume Clouds"))
+                if (GUI.Button(new Rect(10, 20, 240, 25), "Generate Volume Clouds"))
                 {
                     spawnVolumeClouds();
                 }
@@ -338,7 +338,9 @@ namespace Clouds
                 }
                 if (current != null)
                 {
-                    GUI.Label(new Rect(50, 50, 170, 25), current.name);
+                    GUIStyle gs = new GUIStyle(GUI.skin.label);
+                    gs.alignment = TextAnchor.MiddleCenter;
+                    GUI.Label(new Rect(35, 50, 190, 25), current.name, gs);
                 
                     if (MapView.MapIsEnabled)
                     {
@@ -346,31 +348,98 @@ namespace Clouds
                         {
                             MapView.MapCamera.SetTarget(Utils.GetPreviousBody(current).name);
                         }
-                        if (GUI.Button(new Rect(165, 50, 25, 25), ">"))
+                        if (GUI.Button(new Rect(225, 50, 25, 25), ">"))
                         {
                             MapView.MapCamera.SetTarget(Utils.GetNextBody(current).name);
                         }
                     }
-                    if (GUI.Button(new Rect(10, 80, 85, 25), "Add"))
+                    int layerCount = CloudLayer.GetBodyLayerCount(current.name);
+                    bool hasLayers = layerCount != 0;
+                    int addWidth = hasLayers ? 115 : 240;
+                    if ( GUI.Button(new Rect(10, 80, addWidth, 25), "Add")) 
                     {
-                        spawnVolumeClouds();
+                        
                     }
-                    if (CloudLayer.GetBodyLayerCount(current.name) != 0)
+                    if(hasLayers)
                     {
-                        if (GUI.Button(new Rect(100, 80, 85, 25), "Remove"))
+
+                        if (GUI.Button(new Rect(135, 80, 115, 25), "Remove"))
                         {
-                            spawnVolumeClouds();
+                            //remove selected layer
                         }
-                    
-                        String[] layerList = CloudLayer.GetBodyLayers(current.name);
-                        ScrollPosLayerList = GUI.BeginScrollView(new Rect(10, 110, 180, 75), ScrollPosLayerList, new Rect(0, 0, 160, 25 * layerList.Length));
-                        SelectedLayer = GUI.SelectionGrid(new Rect(25, 0, 130, 25 * layerList.Length), SelectedLayer, layerList, 1);
+                        GUI.Box(new Rect(10, 110, 240, 85), ""); 
+                        String[] layerList = CloudLayer.GetBodyLayerStringList(current.name);
+                        ScrollPosLayerList = GUI.BeginScrollView(new Rect(15, 115, 230, 75), ScrollPosLayerList, new Rect(0, 0, 210, 25 * layerList.Length));
+                        int layerWidth = layerCount > 3 ? 210 : 230;
+                        SelectedLayer = SelectedLayer >= layerCount ? 0 : SelectedLayer;
+                        SelectedLayer = GUI.SelectionGrid(new Rect(0, 0, layerWidth, 25 * layerList.Length), SelectedLayer, layerList, 1);
                         GUI.EndScrollView();
+
+                        gs.alignment = TextAnchor.MiddleRight;
+                        GUI.Label(
+                            new Rect(10, 200, 80, 25), "MainTexture: ", gs);
+                        GUI.TextField(
+                            new Rect(90, 200, 160, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].MainTexture.TextureFile);
+                        GUI.Label(
+                            new Rect(10, 230, 90, 25), "  Scale: X:", gs);
+                        GUI.TextField(
+                            new Rect(100, 230, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].MainTexture.Scale.x.ToString());
+                        GUI.Label(
+                            new Rect(165, 230, 25, 25), "  Y:", gs);
+                        GUI.TextField(
+                            new Rect(190, 230, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].MainTexture.Scale.y.ToString());
+                        GUI.Label( 
+                            new Rect(10, 260, 90, 25), "  Offset: X:", gs);
+                        GUI.TextField(
+                            new Rect(100, 260, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].MainTexture.StartOffset.x.ToString());
+                        GUI.Label(
+                            new Rect(165, 260, 25, 25), "  Y:", gs);
+                        GUI.TextField(
+                            new Rect(190, 260, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].MainTexture.StartOffset.y.ToString());
+                        GUI.Label(
+                            new Rect(10, 290, 90, 25), "  Speed: X:", gs);
+                        GUI.TextField(
+                            new Rect(100, 290, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].MainTexture.Speed.x.ToString());
+                        GUI.Label(
+                            new Rect(165, 290, 25, 25), "  Y:", gs);
+                        GUI.TextField(
+                            new Rect(190, 290, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].MainTexture.Speed.y.ToString());
+
+                        GUI.Label(
+                            new Rect(10, 320, 80, 25), "DetailTexture: ", gs);
+                        GUI.TextField(
+                            new Rect(90, 320, 160, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].DetailTexture.TextureFile);
+                        GUI.Label(
+                            new Rect(10, 350, 90, 25), "  Scale: X:", gs);
+                        GUI.TextField(
+                            new Rect(100, 350, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].DetailTexture.Scale.x.ToString());
+                        GUI.Label(
+                            new Rect(165, 350, 25, 25), "  Y:", gs);
+                        GUI.TextField(
+                            new Rect(190, 350, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].DetailTexture.Scale.y.ToString());
+                        GUI.Label(
+                            new Rect(10, 380, 90, 25), "  Offset: X:", gs);
+                        GUI.TextField(
+                            new Rect(100, 380, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].DetailTexture.StartOffset.x.ToString());
+                        GUI.Label(
+                            new Rect(165, 380, 25, 25), "  Y:", gs);
+                        GUI.TextField(
+                            new Rect(190, 380, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].DetailTexture.StartOffset.y.ToString());
+                        GUI.Label(
+                            new Rect(10, 410, 90, 25), "  Speed: X:", gs);
+                        GUI.TextField(
+                            new Rect(100, 410, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].DetailTexture.Speed.x.ToString());
+                        GUI.Label(
+                            new Rect(165, 410, 25, 25), "  Y:", gs);
+                        GUI.TextField(
+                            new Rect(190, 410, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].DetailTexture.Speed.y.ToString());
+
+
                     }
                 }
                 else
                 {
-                    GUI.Label(new Rect(50, 50, 170, 25), "----");
+                    GUI.Label(new Rect(50, 50, 230, 25), "----");
                 }
                 GUI.DragWindow(new Rect(0, 0, 10000, 10000));
             
@@ -381,7 +450,7 @@ namespace Clouds
 
     public class CloudLayer
     {
-        public static Dictionary<String, List<CloudLayer>> PlanetDatabase = new Dictionary<string, List<CloudLayer>>();
+        public static Dictionary<String, List<CloudLayer>> BodyDatabase = new Dictionary<string, List<CloudLayer>>();
         private static Shader GlobalCloudShader;
         private static Shader GlobalUndersideCloudShader;
         private Material CloudMaterial;
@@ -394,16 +463,20 @@ namespace Clouds
         private TextureSet detailTexture;
         private TextureSet bumpTexture;
 
+        public TextureSet MainTexture { get { return mainTexture; } }
+        public TextureSet DetailTexture { get { return detailTexture; } }
+        public TextureSet BumpTexture { get { return bumpTexture; } }
+
         public CloudLayer(String body, Color color, float radius,
             TextureSet mainTexture,
             TextureSet detailTexture,
             TextureSet bumpTexture)
         {
-            if(!PlanetDatabase.ContainsKey(body))
+            if(!BodyDatabase.ContainsKey(body))
             {
-                PlanetDatabase.Add(body, new List<CloudLayer>());
+                BodyDatabase.Add(body, new List<CloudLayer>());
             }
-            PlanetDatabase[body].Add(this);
+            BodyDatabase[body].Add(this);
             this.body = body;
             this.color = color;
             this.radius = radius;
@@ -523,9 +596,9 @@ namespace Clouds
 
         public static int GetBodyLayerCount(string p)
         {
-            if (PlanetDatabase.ContainsKey(p))
+            if (BodyDatabase.ContainsKey(p))
             {
-                return PlanetDatabase[p].Count;
+                return BodyDatabase[p].Count;
             }
             else
             {
@@ -533,11 +606,11 @@ namespace Clouds
             }
         }
 
-        public static String[] GetBodyLayers(string p)
+        public static String[] GetBodyLayerStringList(string p)
         {
-            if (PlanetDatabase.ContainsKey(p))
+            if (BodyDatabase.ContainsKey(p))
             {
-                int count = PlanetDatabase[p].Count;
+                int count = BodyDatabase[p].Count;
                 String[] layerList = new String[count];
                 for(int i = 0; i < count; i++)
                 {
