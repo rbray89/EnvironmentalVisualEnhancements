@@ -636,89 +636,231 @@ namespace CommonUtils
 
     }
 
+    public class RadiusSetGUI
+    {
+        public float RadiusF;
+        public String RadiusS;
+
+        public void Clone(float radius)
+        {
+            this.RadiusF = radius;
+            this.RadiusS = radius.ToString("R");
+        }
+
+        public void Update(float radiusF, String radiusS)
+        {
+            if (this.RadiusS != radiusS)
+            {
+                this.RadiusS = radiusS;
+                float.TryParse(radiusS, out RadiusF);
+            }
+            else if (RadiusF != radiusF)
+            {
+                this.RadiusF = radiusF;
+                this.RadiusS = radiusF.ToString("R");
+            }
+        }
+    }
+
+    public class ColorSetGUI
+    {
+        public Color Color;
+        public string Red = "";
+        public string Green = "";
+        public string Blue = "";
+
+        public void Clone(Color color)
+        {
+            this.Color = color;
+            this.Red = color.r.ToString("R");
+            this.Green = color.g.ToString("R");
+            this.Blue = color.b.ToString("R");
+        }
+
+        public void Update(string SRed, float FRed, string SGreen, float FGreen, string SBlue, float FBlue)
+        {
+            if (this.Red != SRed)
+            {
+                this.Red = SRed;
+                float.TryParse(SRed,out this.Color.r);
+            }
+            else if(this.Color.r != FRed)
+            {
+                this.Color.r = FRed;
+                this.Red = FRed.ToString("R");
+            }
+            if (this.Green != SGreen)
+            {
+                this.Green = SGreen;
+                float.TryParse(SGreen, out this.Color.g);
+            }
+            else if (this.Color.g != FGreen)
+            {
+                this.Color.g = FGreen;
+                this.Green = FGreen.ToString("R");
+            }
+            if (this.Blue != SBlue)
+            {
+                this.Blue = SBlue;
+                float.TryParse(SBlue, out this.Color.b);
+            }
+            else if (this.Color.b != FBlue)
+            {
+                this.Color.b = FBlue;
+                this.Blue = FBlue.ToString("R");
+            }
+        }
+    }
+
+    public class TextureSetGUI
+    {
+        public String StartOffsetX = "";
+        public String SpeedX = "";
+        public String ScaleX = "";
+        public String StartOffsetY = "";
+        public String SpeedY = "";
+        public String ScaleY = "";
+        public String TextureFile = "";
+        public bool InUse;
+
+        public void Clone(TextureSet textureSet)
+        {
+            this.InUse = textureSet.InUse;
+            this.TextureFile = textureSet.TextureFile;
+            if (this.TextureFile == null)
+            {
+                this.TextureFile = "";
+            }
+            this.StartOffsetX = textureSet.StartOffset.x.ToString("R");
+            this.StartOffsetY = textureSet.StartOffset.y.ToString("R");
+            this.ScaleX = textureSet.Scale.x.ToString("R");
+            this.ScaleY = textureSet.Scale.y.ToString("R");
+            this.SpeedX = textureSet.Speed.x.ToString("R");
+            this.SpeedY = textureSet.Speed.y.ToString("R");
+        }
+    }
+
     public class TextureSet
     {
         private static Dictionary<String, Texture2D> TextureDictionary = new Dictionary<string, Texture2D>();
-        private Vector2 offset;
-        private Vector2 startOffset;
-        private Vector2 speed;
-        private Vector2 scale;
+        private static Dictionary<String, Texture2D> BumpTextureDictionary = new Dictionary<string, Texture2D>();
+        public Vector2 Offset;
+        public Vector2 StartOffset;
+        public Vector2 Speed;
+        public Vector2 Scale;
         private Texture2D texture;
         private String textureFile;
+        private bool isBump;
 
-        public Vector2 Offset{get{return offset;}}
-        public Vector2 StartOffset { get { return startOffset; } }
-        public Vector2 Speed { get { return speed; } }
-        public Vector2 Scale { get { return scale; } }
+        public bool InUse;
         public Texture2D Texture { get { return texture; } }
-        public String TextureFile { get { return textureFile; } }
+        public String TextureFile { get { return textureFile; }}
 
-        private void initTextures(String textureString, bool bump)
+
+        private void initTexture()
         {
-            if (!TextureDictionary.ContainsKey(textureString))
+
+            if (isBump && !BumpTextureDictionary.ContainsKey(textureFile))
             {
-                Texture2D tex = GameDatabase.Instance.GetTexture(textureString, bump);
-                TextureDictionary.Add(textureString, tex);
+                Texture2D tex = GameDatabase.Instance.GetTexture(textureFile, isBump);
+                BumpTextureDictionary.Add(textureFile, tex);
             }
+            else if (!TextureDictionary.ContainsKey(textureFile))
+            {
+                Texture2D tex = GameDatabase.Instance.GetTexture(textureFile, isBump);
+                TextureDictionary.Add(textureFile, tex);
+            }
+            texture = isBump ? BumpTextureDictionary[textureFile] : TextureDictionary[textureFile];
         }
 
-        public TextureSet(ConfigNode textureNode, bool bump)
+        public TextureSet(ConfigNode textureNode, bool bump) : base()
         {
+            isBump = bump;
             if (textureNode != null)
             {
                 textureFile = textureNode.GetValue("file");
-                initTextures(textureFile, bump);
-                texture = TextureDictionary[textureFile];
-                ConfigNode offsetNode = textureNode.GetNode("offset");
-                if (offsetNode != null)
+                if (textureFile != null)
                 {
-                    offset = new Vector2(float.Parse(offsetNode.GetValue("x")), float.Parse(offsetNode.GetValue("y")));
-                    startOffset = new Vector2(offset.x, offset.y);
+                    initTexture();
+
+                    ConfigNode offsetNode = textureNode.GetNode("offset");
+                    if (offsetNode != null)
+                    {
+                        Offset = new Vector2(float.Parse(offsetNode.GetValue("x")), float.Parse(offsetNode.GetValue("y")));
+                        StartOffset = new Vector2(Offset.x, Offset.y);
+                    }
+                    ConfigNode speedNode = textureNode.GetNode("speed");
+                    if (speedNode != null)
+                    {
+                        Speed = new Vector2(float.Parse(speedNode.GetValue("x")), float.Parse(speedNode.GetValue("y")));
+                    }
+                    ConfigNode scaleNode = textureNode.GetNode("scale");
+                    if (scaleNode != null)
+                    {
+                        Scale = new Vector2(float.Parse(scaleNode.GetValue("x")), float.Parse(scaleNode.GetValue("y")));
+                    }
+                    InUse = true;
                 }
-                ConfigNode speedNode = textureNode.GetNode("speed");
-                if (speedNode != null)
+                else
                 {
-                    speed = new Vector2(float.Parse(speedNode.GetValue("x")), float.Parse(speedNode.GetValue("y")));
+                    textureFile = "";
                 }
-                ConfigNode scaleNode = textureNode.GetNode("scale");
-                if (scaleNode != null)
-                {
-                    scale = new Vector2(float.Parse(scaleNode.GetValue("x")), float.Parse(scaleNode.GetValue("y")));
-                }
-            }
-            else
-            {
-                texture = null;
             }
         }
-        
+
+        public TextureSet()
+        {
+                textureFile = "";
+                texture = null;
+                isBump = false;
+                InUse = false;
+                Offset = new Vector2(0, 0);
+                StartOffset = new Vector2(0, 0);
+                Speed = new Vector2(0, 0);
+                Scale = new Vector2(0, 0);
+        }
+
         public void SaturateOffset()
         {
-            while (this.offset.x > 1.0f)
+            while (this.Offset.x > 1.0f)
             {
-                this.offset.x -= 1.0f;
+                this.Offset.x -= 1.0f;
             }
-            while (this.offset.x < 0.0f)
+            while (this.Offset.x < 0.0f)
             {
-                this.offset.x += 1.0f;
+                this.Offset.x += 1.0f;
             }
-            while (this.offset.y > 1.0f)
+            while (this.Offset.y > 1.0f)
             {
-                this.offset.y -= 1.0f;
+                this.Offset.y -= 1.0f;
             }
-            while (this.offset.y < 0.0f)
+            while (this.Offset.y < 0.0f)
             {
-                this.offset.y += 1.0f;
+                this.Offset.y += 1.0f;
             }
         }
 
         public void UpdateOffset(float rateOffset)
         {
-            this.offset.x += rateOffset * this.speed.x;
-            this.offset.y += rateOffset * this.speed.y;
+            this.Offset.x += rateOffset * this.Speed.x;
+            this.Offset.y += rateOffset * this.Speed.y;
             SaturateOffset();
         }
 
+
+        public void Clone(TextureSetGUI textureSet)
+        {
+            this.InUse = textureSet.InUse;
+            this.textureFile = textureSet.TextureFile;
+            initTexture();
+            
+            this.StartOffset.x = float.Parse(textureSet.StartOffsetX);
+            this.StartOffset.y = float.Parse(textureSet.StartOffsetY);
+            this.Scale.x = float.Parse(textureSet.ScaleX);
+            this.Scale.y = float.Parse(textureSet.ScaleY);
+            this.Speed.x = float.Parse(textureSet.SpeedX);
+            this.Speed.y = float.Parse(textureSet.SpeedY);
+        }
     }
 
 }

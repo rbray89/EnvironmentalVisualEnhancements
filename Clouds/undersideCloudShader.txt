@@ -6,6 +6,8 @@
 		_BumpMap ("Bumpmap", 2D) = "bump" {}
 		_FalloffPow ("Falloff Power", Range(0,5)) = 1.8
 		_FalloffScale ("Falloff Scale", Range(0,20)) = 10
+		_DetailDist ("Detail Distance", Range(0,1)) = 0.025
+		_MinLight ("Minimum Light", Range(0,1)) = .18
 	}
 
 SubShader {
@@ -26,11 +28,13 @@ SubShader {
 		fixed4 _Color;
 		float _FalloffPow;
 		float _FalloffScale;
+		float _DetailDist;
+		float _MinLight;
 		
 		half4 LightingSimpleLambert (SurfaceOutput s, half3 lightDir, half atten) {
           half NdotL = saturate(dot (s.Normal, lightDir));
           half4 c;
-          c.rgb = s.Albedo * saturate(.18+ _LightColor0.rgb * (NdotL * atten * 2));
+          c.rgb = s.Albedo * saturate(_MinLight+ _LightColor0.rgb * (NdotL * atten * 2));
           c.a = s.Alpha;
           return c;
       	}
@@ -50,7 +54,7 @@ SubShader {
 		   float3 viewVect = normalize( vertexPos - modelCam);
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 		   float diff = distance(origin, vertexPos) - (distance(origin,_WorldSpaceCameraPos));
-	   	   o.viewDist.x = saturate(.025*distance(vertexPos,_WorldSpaceCameraPos));
+	   	   o.viewDist.x = saturate(_DetailDist*distance(vertexPos,_WorldSpaceCameraPos));
 	   	   o.viewDist.y = saturate(diff) * saturate(saturate(.085*distance(vertexPos,_WorldSpaceCameraPos))+ saturate(pow(.8*_FalloffScale*dot(normalDir, -viewVect),_FalloffPow)));;
 	 	}
 

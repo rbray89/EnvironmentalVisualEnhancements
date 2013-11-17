@@ -23,8 +23,13 @@ namespace Clouds
         static bool spawned = false;
 
         static bool useEditor = false;
+        static bool AdvancedGUI = false;
         static Vector2 ScrollPosLayerList = Vector2.zero;
-        static int SelectedLayer = 0; 
+        static int SelectedLayer = 0;
+        static CloudGUI CloudGUI = new CloudGUI();
+        static CelestialBody currentBody = null;
+        static CelestialBody oldBody = null;
+        
 
         private void loadCloudLayers()
         {
@@ -51,8 +56,12 @@ namespace Clouds
                     TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false);
                     TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false);
                     TextureSet bTexture = new TextureSet(node.GetNode("bump_texture"), true);
-
-
+                    ConfigNode floatsConfig = node.GetNode("shader_floats");
+                    ShaderFloats shaderFloats = null;
+                    if (floatsConfig != null)
+                    {
+                        shaderFloats = new ShaderFloats(floatsConfig);
+                    }
                     ConfigNode colorNode = node.GetNode("color");
                     Color color = new Color(
                         float.Parse(colorNode.GetValue("r")),
@@ -61,7 +70,7 @@ namespace Clouds
 
                     CloudLayers.Add(
                         new CloudLayer(body, color, radius,
-                        mTexture, dTexture, bTexture));
+                        mTexture, dTexture, bTexture, shaderFloats));
                 }
                 else
                 {
@@ -306,9 +315,18 @@ namespace Clouds
             }
             if (useEditor && current != null)
             {
+
+                if (AdvancedGUI)
+                {
+                    _mainWindowRect.width = 520;
+                }
+                else
+                {
+                    _mainWindowRect.width = 260;
+                }
                 if (CloudLayer.GetBodyLayerCount(current.name) != 0)
                 {
-                    _mainWindowRect.height = 600;
+                    _mainWindowRect.height = 685;
                     _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "Clouds");
                 }
                 else
@@ -322,40 +340,47 @@ namespace Clouds
         private void DrawMainWindow(int windowID)
         {
             
-                
+/*                
                 if (GUI.Button(new Rect(10, 20, 240, 25), "Generate Volume Clouds"))
                 {
                     spawnVolumeClouds();
                 }
-                CelestialBody current = null;
+*/  
+                
+                oldBody = currentBody;
+                currentBody = null;
                 if (MapView.MapIsEnabled)
                 {
-                    current = Utils.GetMapBody();
+                    currentBody = Utils.GetMapBody();
                 }
                 else
                 {
-                    current = FlightGlobals.currentMainBody;
+                    currentBody = FlightGlobals.currentMainBody;
                 }
-                if (current != null)
+                if (currentBody != null)
                 {
                     GUIStyle gs = new GUIStyle(GUI.skin.label);
                     gs.alignment = TextAnchor.MiddleCenter;
-                    GUI.Label(new Rect(35, 50, 190, 25), current.name, gs);
+
+                    GUI.Label(new Rect(35, 20, _mainWindowRect.width-70, 25), currentBody.name, gs);
                 
                     if (MapView.MapIsEnabled)
                     {
-                        if (GUI.Button(new Rect(10, 50, 25, 25), "<"))
+                        if (GUI.Button(new Rect(10, 20, 25, 25), "<"))
                         {
-                            MapView.MapCamera.SetTarget(Utils.GetPreviousBody(current).name);
+                            MapView.MapCamera.SetTarget(Utils.GetPreviousBody(currentBody).name);
                         }
-                        if (GUI.Button(new Rect(225, 50, 25, 25), ">"))
+                        if (GUI.Button(new Rect(_mainWindowRect.width-35, 20, 25, 25), ">"))
                         {
-                            MapView.MapCamera.SetTarget(Utils.GetNextBody(current).name);
+                            MapView.MapCamera.SetTarget(Utils.GetNextBody(currentBody).name);
                         }
                     }
-                    int layerCount = CloudLayer.GetBodyLayerCount(current.name);
+                    AdvancedGUI = GUI.Toggle(
+                            new Rect(10, 50, 240, 25), AdvancedGUI, "Advanced Settings");
+
+                    int layerCount = CloudLayer.GetBodyLayerCount(currentBody.name);
                     bool hasLayers = layerCount != 0;
-                    int addWidth = hasLayers ? 115 : 240;
+                    float addWidth = hasLayers ? ((_mainWindowRect.width-20) / 2) - 5 : _mainWindowRect.width-20;
                     if ( GUI.Button(new Rect(10, 80, addWidth, 25), "Add")) 
                     {
                         
@@ -363,77 +388,66 @@ namespace Clouds
                     if(hasLayers)
                     {
 
-                        if (GUI.Button(new Rect(135, 80, 115, 25), "Remove"))
+                        if (GUI.Button(new Rect(((_mainWindowRect.width - 20) / 2) + 15, 80, ((_mainWindowRect.width - 20) / 2) - 5, 25), "Remove"))
                         {
                             //remove selected layer
                         }
-                        GUI.Box(new Rect(10, 110, 240, 85), ""); 
-                        String[] layerList = CloudLayer.GetBodyLayerStringList(current.name);
-                        ScrollPosLayerList = GUI.BeginScrollView(new Rect(15, 115, 230, 75), ScrollPosLayerList, new Rect(0, 0, 210, 25 * layerList.Length));
-                        int layerWidth = layerCount > 3 ? 210 : 230;
+                        GUI.Box(new Rect(10, 110, _mainWindowRect.width - 20, 85), ""); 
+                        String[] layerList = CloudLayer.GetBodyLayerStringList(currentBody.name);
+                        ScrollPosLayerList = GUI.BeginScrollView(new Rect(15, 115, _mainWindowRect.width - 30, 75), ScrollPosLayerList, new Rect(0, 0, _mainWindowRect.width-50, 25 * layerList.Length));
+                        float layerWidth = layerCount > 3 ? _mainWindowRect.width - 50 : _mainWindowRect.width - 30;
                         SelectedLayer = SelectedLayer >= layerCount ? 0 : SelectedLayer;
+                        int OldSelectedLayer = SelectedLayer;
                         SelectedLayer = GUI.SelectionGrid(new Rect(0, 0, layerWidth, 25 * layerList.Length), SelectedLayer, layerList, 1);
                         GUI.EndScrollView();
 
+                        if (SelectedLayer != OldSelectedLayer || currentBody != oldBody)
+                        {
+                            CloudGUI.MainTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].MainTexture);
+                            CloudGUI.DetailTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].DetailTexture);
+                            CloudGUI.BumpTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].BumpTexture);
+                            CloudGUI.Color.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Color);
+                            CloudGUI.Radius.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Radius);
+                            CloudGUI.ShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ShaderFloats);
+                        }
+
+                        int nextLine = 200;
                         gs.alignment = TextAnchor.MiddleRight;
+                        if (AdvancedGUI)
+                        {
+                            HandleAdvancedGUI(CloudGUI.ShaderFloats, nextLine);
+                        }
+                        nextLine = HandleRadiusGUI(CloudGUI.Radius, nextLine);
+                        nextLine = HandleColorGUI(CloudGUI.Color, nextLine);
                         GUI.Label(
-                            new Rect(10, 200, 80, 25), "MainTexture: ", gs);
-                        GUI.TextField(
-                            new Rect(90, 200, 160, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].MainTexture.TextureFile);
-                        GUI.Label(
-                            new Rect(10, 230, 90, 25), "  Scale: X:", gs);
-                        GUI.TextField(
-                            new Rect(100, 230, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].MainTexture.Scale.x.ToString());
-                        GUI.Label(
-                            new Rect(165, 230, 25, 25), "  Y:", gs);
-                        GUI.TextField(
-                            new Rect(190, 230, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].MainTexture.Scale.y.ToString());
-                        GUI.Label( 
-                            new Rect(10, 260, 90, 25), "  Offset: X:", gs);
-                        GUI.TextField(
-                            new Rect(100, 260, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].MainTexture.StartOffset.x.ToString());
-                        GUI.Label(
-                            new Rect(165, 260, 25, 25), "  Y:", gs);
-                        GUI.TextField(
-                            new Rect(190, 260, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].MainTexture.StartOffset.y.ToString());
-                        GUI.Label(
-                            new Rect(10, 290, 90, 25), "  Speed: X:", gs);
-                        GUI.TextField(
-                            new Rect(100, 290, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].MainTexture.Speed.x.ToString());
-                        GUI.Label(
-                            new Rect(165, 290, 25, 25), "  Y:", gs);
-                        GUI.TextField(
-                            new Rect(190, 290, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].MainTexture.Speed.y.ToString());
+                            new Rect(10, nextLine, 80, 25), "MainTex: ", gs);
+                        nextLine = HandleTextureGUI(CloudGUI.MainTexture, nextLine);
 
                         GUI.Label(
-                            new Rect(10, 320, 80, 25), "DetailTexture: ", gs);
-                        GUI.TextField(
-                            new Rect(90, 320, 160, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].DetailTexture.TextureFile);
-                        GUI.Label(
-                            new Rect(10, 350, 90, 25), "  Scale: X:", gs);
-                        GUI.TextField(
-                            new Rect(100, 350, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].DetailTexture.Scale.x.ToString());
-                        GUI.Label(
-                            new Rect(165, 350, 25, 25), "  Y:", gs);
-                        GUI.TextField(
-                            new Rect(190, 350, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].DetailTexture.Scale.y.ToString());
-                        GUI.Label(
-                            new Rect(10, 380, 90, 25), "  Offset: X:", gs);
-                        GUI.TextField(
-                            new Rect(100, 380, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].DetailTexture.StartOffset.x.ToString());
-                        GUI.Label(
-                            new Rect(165, 380, 25, 25), "  Y:", gs);
-                        GUI.TextField(
-                            new Rect(190, 380, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].DetailTexture.StartOffset.y.ToString());
-                        GUI.Label(
-                            new Rect(10, 410, 90, 25), "  Speed: X:", gs);
-                        GUI.TextField(
-                            new Rect(100, 410, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].DetailTexture.Speed.x.ToString());
-                        GUI.Label(
-                            new Rect(165, 410, 25, 25), "  Y:", gs);
-                        GUI.TextField(
-                            new Rect(190, 410, 60, 25), CloudLayer.BodyDatabase[current.name][SelectedLayer].DetailTexture.Speed.y.ToString());
+                           new Rect(10, nextLine, 80, 25), "DetailTex: ", gs);
+                        CloudGUI.DetailTexture.InUse = GUI.Toggle(
+                            new Rect(10, nextLine, 25, 25), CloudGUI.DetailTexture.InUse, "");
+                        if (CloudGUI.DetailTexture.InUse)
+                        {
+                            nextLine = HandleTextureGUI(CloudGUI.DetailTexture, nextLine);
+                        }
+                        else
+                        {
+                            nextLine += 30;
+                        }
 
+                        GUI.Label(
+                           new Rect(10, nextLine, 80, 25), "BumpTex: ", gs);
+                        CloudGUI.BumpTexture.InUse = GUI.Toggle(
+                            new Rect(10, nextLine, 25, 25), CloudGUI.BumpTexture.InUse, "");
+                        if (CloudGUI.BumpTexture.InUse)
+                        {
+                            nextLine = HandleTextureGUI(CloudGUI.BumpTexture, nextLine);
+                        }
+                        else
+                        {
+                            nextLine += 30;
+                        }
 
                     }
                 }
@@ -444,11 +458,474 @@ namespace Clouds
                 GUI.DragWindow(new Rect(0, 0, 10000, 10000));
             
         }
-        
+
+        private int HandleAdvancedGUI(ShaderFloatsGUI floats, int y)
+        {
+            GUIStyle gs = new GUIStyle(GUI.skin.label);
+            gs.alignment = TextAnchor.MiddleRight;
+            GUIStyle texFieldGS = new GUIStyle(GUI.skin.textField);
+            Color errorColor = new Color(1, 0, 0);
+            Color normalColor = texFieldGS.normal.textColor;
+            float dummyFloat;
+            float offset = _mainWindowRect.width / 2;
+
+            GUI.Label(
+                new Rect(offset+10, y, 65, 25), "RimPower: ", gs);
+            if (float.TryParse(floats.FalloffPowerString, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            String SFalloffPower = GUI.TextField(new Rect(offset + 80, y, 50, 25), floats.FalloffPowerString, texFieldGS);
+            float FFalloffPower = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.FalloffPower, 0, 5);
+            y += 30;
+            GUI.Label(
+                new Rect(offset + 10, y, 65, 25), "RimScale ", gs);
+            if (float.TryParse(floats.FalloffScaleString, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            string SFalloffScale  = GUI.TextField(new Rect(offset + 80, y, 50, 25), floats.FalloffScaleString, texFieldGS);
+            float FFalloffScale = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.FalloffScale, 0, 10);
+            y += 30;
+            GUI.Label(
+                new Rect(offset + 10, y, 65, 25), "DetailDist: ", gs);
+            if (float.TryParse(floats.DetailDistanceString, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            string SDetailDistance = GUI.TextField(new Rect(offset + 80, y, 50, 25), floats.DetailDistanceString, texFieldGS);
+            float FDetailDistance = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.DetailDistance, 0, 1);
+            y += 30;
+            GUI.Label(
+                new Rect(offset + 10, y, 65, 25), "MinLight: ", gs);
+            if (float.TryParse(floats.MinimumLightString, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            string SMinimumLight = GUI.TextField(new Rect(offset + 80, y, 50, 25), floats.MinimumLightString, texFieldGS);
+            float FMinimumLight = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.MinimumLight, 0, 1);
+
+            floats.Update(SFalloffPower, FFalloffPower, SFalloffScale, FFalloffScale, SDetailDistance, FDetailDistance, SMinimumLight, FMinimumLight);
+
+            return y + 30;
+        }
+
+        private int HandleRadiusGUI(RadiusSetGUI radius, int y)
+        {
+            GUIStyle gs = new GUIStyle(GUI.skin.label);
+            gs.alignment = TextAnchor.MiddleRight;
+            GUIStyle texFieldGS = new GUIStyle(GUI.skin.textField);
+            Color errorColor = new Color(1, 0, 0);
+            Color normalColor = texFieldGS.normal.textColor;
+            float dummyFloat;
+
+            GUI.Label(
+                new Rect(10, y, 65, 25), "Radius: ", gs);
+            if (float.TryParse(radius.RadiusS, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            String sRadius = GUI.TextField(new Rect(80, y, 50, 25), radius.RadiusS, texFieldGS);
+            float fRadius = GUI.HorizontalSlider(new Rect(135, y + 5, 115, 25), radius.RadiusF, 0, 2);
+            radius.Update(fRadius, sRadius);
+            return y + 30;
+        }
+
+        private int HandleColorGUI(ColorSetGUI color, int y)
+        {
+            GUIStyle gs = new GUIStyle(GUI.skin.label);
+            gs.alignment = TextAnchor.MiddleRight;
+            GUIStyle texFieldGS = new GUIStyle(GUI.skin.textField);
+            Color errorColor = new Color(1, 0, 0);
+            Color normalColor = texFieldGS.normal.textColor;
+            float dummyFloat;
+
+            GUI.Label(
+                new Rect(10, y, 65, 25), "Color: R: ", gs);
+            if (float.TryParse(color.Red, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            string SRed = GUI.TextField(new Rect(80, y, 50, 25), color.Red, texFieldGS);
+            float FRed = GUI.HorizontalSlider(new Rect(135, y + 5, 115, 25), color.Color.r, 0, 1);
+            y += 30;
+            GUI.Label(
+                new Rect(10, y, 65, 25), "G: ", gs);
+            if (float.TryParse(color.Green, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            string SGreen = GUI.TextField(new Rect(80, y, 50, 25), color.Green, texFieldGS);
+            float FGreen = GUI.HorizontalSlider(new Rect(135, y + 5, 115, 25), color.Color.g, 0, 1);
+            y += 30;
+            GUI.Label(
+                new Rect(10, y, 65, 25), "B: ", gs);
+            if (float.TryParse(color.Blue, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            string SBlue = GUI.TextField(new Rect(80, y, 50, 25), color.Blue, texFieldGS);
+            float FBlue = GUI.HorizontalSlider(new Rect(135, y + 5, 115, 25), color.Color.b, 0, 1);
+            
+            color.Update(SRed, FRed, SGreen, FGreen, SBlue, FBlue);
+            return y += 30;
+        }
+
+        private int HandleTextureGUI(TextureSetGUI textureSet, int y)
+        {
+
+            GUIStyle labelGS = new GUIStyle(GUI.skin.label);
+            labelGS.alignment = TextAnchor.MiddleRight;
+            GUIStyle texFieldGS = new GUIStyle(GUI.skin.textField);
+            Color errorColor = new Color(1,0,0);
+            Color normalColor = texFieldGS.normal.textColor;
+            float dummyFloat;
+
+            float vectorWidth = (_mainWindowRect.width - 140) / 2;
+            float vectorStart = 105 + (_mainWindowRect.width - 140) / 2;
+
+            textureSet.TextureFile = GUI.TextField(
+                new Rect(90, y, _mainWindowRect.width - 100, 25), textureSet.TextureFile);
+            y += 30;
+            GUI.Label(
+                new Rect(10, y, 90, 25), "  Scale: X:", labelGS);
+            if (float.TryParse(textureSet.ScaleX, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            textureSet.ScaleX = GUI.TextField(
+                new Rect(100, y, vectorWidth, 25), textureSet.ScaleX, texFieldGS);
+            GUI.Label(
+                new Rect(vectorStart, y, 25, 25), "  Y:", labelGS);
+            if (float.TryParse(textureSet.ScaleY, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            textureSet.ScaleY = GUI.TextField(
+                new Rect(vectorStart + 25, y, vectorWidth, 25), textureSet.ScaleY, texFieldGS);
+            y += 30;
+            GUI.Label(
+                new Rect(10, y, 90, 25), "  Offset: X:", labelGS);
+            if (float.TryParse(textureSet.StartOffsetX, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            textureSet.StartOffsetX = GUI.TextField(
+                new Rect(100, y, vectorWidth, 25), textureSet.StartOffsetX, texFieldGS);
+            GUI.Label(
+                new Rect(vectorStart, y, 25, 25), "  Y:", labelGS);
+            if (float.TryParse(textureSet.StartOffsetY, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            textureSet.StartOffsetY = GUI.TextField(
+                new Rect(vectorStart + 25, y, vectorWidth, 25), textureSet.StartOffsetY, texFieldGS);
+            y += 30;
+            GUI.Label(
+                new Rect(10, y, 90, 25), "  Speed: X:", labelGS);
+            if (float.TryParse(textureSet.SpeedX, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            textureSet.SpeedX = GUI.TextField(
+                new Rect(100, y, vectorWidth, 25), textureSet.SpeedX, texFieldGS);
+            GUI.Label(
+                new Rect(vectorStart, y, 25, 25), "  Y:", labelGS);
+            if (float.TryParse(textureSet.SpeedY, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            textureSet.SpeedY = GUI.TextField(
+                new Rect(vectorStart + 25, y, vectorWidth, 25), textureSet.SpeedY, texFieldGS);
+            return y + 30;
+
+        }
 
     }
 
-    public class CloudLayer
+    internal class ShaderFloats
+    {
+        public float FalloffPower;
+        public float FalloffScale;
+        public float DetailDistance;
+        public float MinimumLight;
+
+        public ShaderFloats()
+        {
+            this.FalloffPower = 0;
+            this.FalloffScale = 0;
+            this.DetailDistance = 0;
+            this.MinimumLight = 0;
+        }
+
+        public ShaderFloats(float FalloffPower, float FalloffScale, float DetailDistance, float MinimumLight)
+        {
+            this.FalloffPower = FalloffPower;
+            this.FalloffScale = FalloffScale;
+            this.DetailDistance = DetailDistance;
+            this.MinimumLight = MinimumLight;
+        }
+
+        public ShaderFloats(ConfigNode configNode)
+        {
+            this.FalloffPower = float.Parse(configNode.GetValue("falloffPower"));
+            this.FalloffScale = float.Parse(configNode.GetValue("falloffScale"));
+            this.DetailDistance = float.Parse(configNode.GetValue("detailDistance"));
+            this.MinimumLight = float.Parse(configNode.GetValue("minimumLight"));
+        }
+
+        public void Clone(ShaderFloatsGUI toClone)
+        {
+            FalloffPower = toClone.FalloffPower;
+            FalloffScale = toClone.FalloffScale;
+            DetailDistance = toClone.DetailDistance;
+            MinimumLight = toClone.MinimumLight;
+        }
+    }
+
+    internal class ShaderFloatsGUI
+    {
+        public float FalloffPower;
+		public float FalloffScale;
+		public float DetailDistance;
+		public float MinimumLight;
+        public String FalloffPowerString;
+        public String FalloffScaleString;
+        public String DetailDistanceString;
+        public String MinimumLightString;
+
+        public ShaderFloatsGUI()
+        {
+            this.FalloffPower = 0;
+            this.FalloffScale = 0;
+            this.DetailDistance = 0;
+            this.MinimumLight = 0;
+            FalloffPowerString = "0";
+            FalloffScaleString = "0";
+            DetailDistanceString = "0";
+            MinimumLightString = "0";
+        }
+
+        public ShaderFloatsGUI(float FalloffPower, float FalloffScale, float DetailDistance, float MinimumLight)
+        {
+            this.FalloffPower = FalloffPower;
+            this.FalloffScale = FalloffScale;
+            this.DetailDistance = DetailDistance;
+            this.MinimumLight = MinimumLight;
+            FalloffPowerString = FalloffPower.ToString("R");
+            FalloffScaleString = FalloffScale.ToString("R");
+            DetailDistanceString = DetailDistance.ToString("R");
+            MinimumLightString = MinimumLight.ToString("R");
+        }
+
+        public void Clone(ShaderFloats toClone)
+        {
+            FalloffPower = toClone.FalloffPower;
+            FalloffScale = toClone.FalloffScale;
+            DetailDistance = toClone.DetailDistance;
+            MinimumLight = toClone.MinimumLight;
+            FalloffPowerString = FalloffPower.ToString("R");
+            FalloffScaleString = FalloffScale.ToString("R");
+            DetailDistanceString = DetailDistance.ToString("R");
+            MinimumLightString = MinimumLight.ToString("R");
+        }
+
+        internal void Update(string SFalloffPower, float FFalloffPower, string SFalloffScale, float FFalloffScale, string SDetailDistance, float FDetailDistance, string SMinimumLight, float FMinimumLight)
+        {
+            if (this.FalloffPowerString != SFalloffPower)
+            {
+                this.FalloffPowerString = SFalloffPower;
+                float.TryParse(SFalloffPower, out this.FalloffPower);
+            }
+            else if (this.FalloffPower != FFalloffPower)
+            {
+                this.FalloffPower = FFalloffPower;
+                this.FalloffPowerString = FFalloffPower.ToString("R");
+            }
+            if (this.FalloffScaleString != SFalloffScale)
+            {
+                this.FalloffScaleString = SFalloffScale;
+                float.TryParse(SFalloffScale, out this.FalloffScale);
+            }
+            else if (this.FalloffScale != FFalloffScale)
+            {
+                this.FalloffScale = FFalloffScale;
+                this.FalloffScaleString = FFalloffScale.ToString("R");
+            }
+            if (this.DetailDistanceString != SDetailDistance)
+            {
+                this.DetailDistanceString = SDetailDistance;
+                float.TryParse(SDetailDistance, out this.DetailDistance);
+            }
+            else if (this.DetailDistance != FDetailDistance)
+            {
+                this.DetailDistance = FDetailDistance;
+                this.DetailDistanceString = FDetailDistance.ToString("R");
+            }
+            if (this.MinimumLightString != SMinimumLight)
+            {
+                this.MinimumLightString = SMinimumLight;
+                float.TryParse(SMinimumLight, out this.MinimumLight);
+            }
+            else if (this.MinimumLight != FMinimumLight)
+            {
+                this.MinimumLight = FMinimumLight;
+                this.MinimumLightString = FMinimumLight.ToString("R");
+            }
+        }
+    }
+
+    internal class CloudGUI
+    {
+        public TextureSetGUI MainTexture = new TextureSetGUI();
+        public TextureSetGUI DetailTexture = new TextureSetGUI();
+        public TextureSetGUI BumpTexture = new TextureSetGUI();
+        public ColorSetGUI Color = new ColorSetGUI();
+        public RadiusSetGUI Radius = new RadiusSetGUI();
+        public ShaderFloatsGUI ShaderFloats = new ShaderFloatsGUI();
+    }
+
+    internal class CloudLayer
     {
         public static Dictionary<String, List<CloudLayer>> BodyDatabase = new Dictionary<string, List<CloudLayer>>();
         private static Shader GlobalCloudShader;
@@ -462,15 +939,23 @@ namespace Clouds
         private TextureSet mainTexture;
         private TextureSet detailTexture;
         private TextureSet bumpTexture;
+        private ShaderFloats shaderFloats;
+        private bool noDetail;
+        private bool noBump;
+
 
         public TextureSet MainTexture { get { return mainTexture; } }
         public TextureSet DetailTexture { get { return detailTexture; } }
         public TextureSet BumpTexture { get { return bumpTexture; } }
+        public Color Color { get { return color; } }
+        public float Radius { get { return radius; } }
+        public ShaderFloats ShaderFloats { get { return shaderFloats; } }
 
         public CloudLayer(String body, Color color, float radius,
             TextureSet mainTexture,
             TextureSet detailTexture,
-            TextureSet bumpTexture)
+            TextureSet bumpTexture,
+            ShaderFloats ShaderFloats)
         {
             if(!BodyDatabase.ContainsKey(body))
             {
@@ -481,22 +966,13 @@ namespace Clouds
             this.color = color;
             this.radius = radius;
             this.mainTexture = mainTexture;
-            if (detailTexture.Texture != null)
-            {
-                this.detailTexture = detailTexture;
-            }
-            else
-            {
-                this.detailTexture = null;
-            }
-            if (bumpTexture.Texture != null)
-            {
-                this.bumpTexture = bumpTexture;
-            }
-            else
-            {
-                this.bumpTexture = null;
-            }
+            
+            this.detailTexture = detailTexture;
+            this.bumpTexture = bumpTexture;
+            noDetail = (detailTexture.Texture == null);
+            noBump = (bumpTexture.Texture == null);
+
+            this.shaderFloats = ShaderFloats;
             Init();
         }
 
@@ -510,7 +986,7 @@ namespace Clouds
             UndersideCloudMaterial.SetTextureScale("_MainTex", mainTexture.Scale);
             UndersideCloudMaterial.SetColor("_Color", color);
 
-            if (detailTexture != null)
+            if (!noDetail)
             {
                 CloudMaterial.SetTexture("_DetailTex", detailTexture.Texture);
                 CloudMaterial.SetTextureScale("_DetailTex", detailTexture.Scale);
@@ -518,7 +994,7 @@ namespace Clouds
                 UndersideCloudMaterial.SetTextureScale("_DetailTex", detailTexture.Scale);
             }
 
-            if (bumpTexture != null)
+            if (!noBump)
             {
                 CloudMaterial.SetTexture("_BumpMap", bumpTexture.Texture);
                 CloudMaterial.SetTextureScale("_BumpMap", bumpTexture.Scale);
@@ -545,7 +1021,8 @@ namespace Clouds
             }
             CloudMaterial = new Material(GlobalCloudShader);
             UndersideCloudMaterial = new Material(GlobalUndersideCloudShader);
-           
+
+            UpdateFloats();
             
             Log("Cloud Material initialized");
             InitTexture();
@@ -553,6 +1030,25 @@ namespace Clouds
             Overlay.GeneratePlanetOverlay(body, radius, CloudMaterial, Utils.OVER_LAYER, false, 64,64);
             Overlay.GeneratePlanetOverlay(body, radius, UndersideCloudMaterial, Utils.UNDER_LAYER, false, 64, 64);
             Log("Textures initialized");
+        }
+
+        public void UpdateFloats()
+        {
+            if (this.shaderFloats != null)
+            {
+                CloudMaterial.SetFloat("_FalloffPow", shaderFloats.FalloffPower);
+                UndersideCloudMaterial.SetFloat("_FalloffPow", shaderFloats.FalloffPower*.9f);
+                CloudMaterial.SetFloat("_FalloffScale", shaderFloats.FalloffScale);
+                UndersideCloudMaterial.SetFloat("_FalloffScale", shaderFloats.FalloffScale*3.333f);
+                CloudMaterial.SetFloat("_DetailDist", shaderFloats.DetailDistance);
+                UndersideCloudMaterial.SetFloat("_DetailDist", shaderFloats.DetailDistance * 2.857f);
+                CloudMaterial.SetFloat("_MinLight", shaderFloats.MinimumLight);
+                UndersideCloudMaterial.SetFloat("_MinLight", shaderFloats.MinimumLight*1.125f);
+            }
+            else
+            {
+                this.shaderFloats = new ShaderFloats(CloudMaterial.GetFloat("_FalloffPow"), CloudMaterial.GetFloat("_FalloffScale"), CloudMaterial.GetFloat("_DetailDist"), CloudMaterial.GetFloat("_MinLight"));
+            }
         }
 
         private void updateOffset(float time)
@@ -563,14 +1059,14 @@ namespace Clouds
             CloudMaterial.SetTextureOffset("_MainTex", mainTexture.Offset);
             UndersideCloudMaterial.SetTextureOffset("_MainTex", mainTexture.Offset);
 
-            if(detailTexture != null)
+            if (!noDetail)
             {
                 detailTexture.UpdateOffset(rateOffset);
                 CloudMaterial.SetTextureOffset("_DetailTex", detailTexture.Offset);
                 UndersideCloudMaterial.SetTextureOffset("_DetailTex", detailTexture.Offset);
             }
 
-            if (bumpTexture != null)
+            if (!noBump)
             {
                 bumpTexture.UpdateOffset(rateOffset);
                 CloudMaterial.SetTextureOffset("_BumpMap", bumpTexture.Offset);
