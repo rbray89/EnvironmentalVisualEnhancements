@@ -289,7 +289,7 @@ namespace Clouds
                 layer.PerformUpdate();
             }
             bool alt = (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt));
-            if (alt && Input.GetKeyDown(KeyCode.C))
+            if (alt && Input.GetKeyDown(KeyCode.N))
             {
                 useEditor = !useEditor; 
             }
@@ -376,8 +376,8 @@ namespace Clouds
                         }
                     }
                     AdvancedGUI = GUI.Toggle(
-                            new Rect(10, 50, 240, 25), AdvancedGUI, "Advanced Settings");
-
+                            new Rect(10, 50, 125, 25), AdvancedGUI, "Advanced Settings");
+                    
                     int layerCount = CloudLayer.GetBodyLayerCount(currentBody.name);
                     bool hasLayers = layerCount != 0;
                     float addWidth = hasLayers ? ((_mainWindowRect.width-20) / 2) - 5 : _mainWindowRect.width-20;
@@ -409,16 +409,30 @@ namespace Clouds
                             CloudGUI.Color.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Color);
                             CloudGUI.Radius.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Radius);
                             CloudGUI.ShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ShaderFloats);
+                            CloudGUI.UndersideShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].UndersideShaderFloats);
+                        }
+
+                        if (CloudGUI.IsValid())
+                        {
+                            if (GUI.Button(new Rect(145, 50, 105, 25), "Apply"))
+                            {
+                                CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ApplyGUIUpdate(CloudGUI);
+                            }
                         }
 
                         int nextLine = 200;
                         gs.alignment = TextAnchor.MiddleRight;
                         if (AdvancedGUI)
                         {
-                            HandleAdvancedGUI(CloudGUI.ShaderFloats, nextLine);
+                            HandleAdvancedGUI(CloudGUI.ShaderFloats, nextLine, 0);
+                            nextLine = HandleAdvancedGUI(CloudGUI.UndersideShaderFloats, nextLine, _mainWindowRect.width / 2);
                         }
-                        nextLine = HandleRadiusGUI(CloudGUI.Radius, nextLine);
-                        nextLine = HandleColorGUI(CloudGUI.Color, nextLine);
+                        else
+                        {
+                            nextLine = HandleRadiusGUI(CloudGUI.Radius, nextLine);
+                            nextLine = HandleColorGUI(CloudGUI.Color, nextLine);
+                        }
+                        
                         GUI.Label(
                             new Rect(10, nextLine, 80, 25), "MainTex: ", gs);
                         nextLine = HandleTextureGUI(CloudGUI.MainTexture, nextLine);
@@ -459,7 +473,7 @@ namespace Clouds
             
         }
 
-        private int HandleAdvancedGUI(ShaderFloatsGUI floats, int y)
+        private int HandleAdvancedGUI(ShaderFloatsGUI floats, int y, float offset)
         {
             GUIStyle gs = new GUIStyle(GUI.skin.label);
             gs.alignment = TextAnchor.MiddleRight;
@@ -467,7 +481,7 @@ namespace Clouds
             Color errorColor = new Color(1, 0, 0);
             Color normalColor = texFieldGS.normal.textColor;
             float dummyFloat;
-            float offset = _mainWindowRect.width / 2;
+            
 
             GUI.Label(
                 new Rect(offset+10, y, 65, 25), "RimPower: ", gs);
@@ -486,10 +500,10 @@ namespace Clouds
                 texFieldGS.focused.textColor = errorColor;
             }
             String SFalloffPower = GUI.TextField(new Rect(offset + 80, y, 50, 25), floats.FalloffPowerString, texFieldGS);
-            float FFalloffPower = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.FalloffPower, 0, 5);
+            float FFalloffPower = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.FalloffPower, 0, 3);
             y += 30;
             GUI.Label(
-                new Rect(offset + 10, y, 65, 25), "RimScale ", gs);
+                new Rect(offset + 10, y, 65, 25), "RimScale: ", gs);
             if (float.TryParse(floats.FalloffScaleString, out dummyFloat))
             {
                 texFieldGS.normal.textColor = normalColor;
@@ -505,7 +519,7 @@ namespace Clouds
                 texFieldGS.focused.textColor = errorColor;
             }
             string SFalloffScale  = GUI.TextField(new Rect(offset + 80, y, 50, 25), floats.FalloffScaleString, texFieldGS);
-            float FFalloffScale = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.FalloffScale, 0, 10);
+            float FFalloffScale = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.FalloffScale, 0, 20);
             y += 30;
             GUI.Label(
                 new Rect(offset + 10, y, 65, 25), "DetailDist: ", gs);
@@ -913,6 +927,23 @@ namespace Clouds
                 this.MinimumLightString = FMinimumLight.ToString("R");
             }
         }
+
+        internal bool IsValid()
+        {
+            
+            float dummy;
+            if( float.TryParse(FalloffPowerString, out dummy) &&
+                float.TryParse(FalloffScaleString, out dummy) &&
+                float.TryParse(DetailDistanceString, out dummy) &&
+                float.TryParse(MinimumLightString, out dummy) )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 
     internal class CloudGUI
@@ -923,6 +954,25 @@ namespace Clouds
         public ColorSetGUI Color = new ColorSetGUI();
         public RadiusSetGUI Radius = new RadiusSetGUI();
         public ShaderFloatsGUI ShaderFloats = new ShaderFloatsGUI();
+        public ShaderFloatsGUI UndersideShaderFloats = new ShaderFloatsGUI();
+
+        internal bool IsValid()
+        {
+            if (MainTexture.IsValid() &&
+                DetailTexture.IsValid() &&
+                BumpTexture.IsValid() &&
+                Color.IsValid() &&
+                Radius.IsValid() &&
+                ShaderFloats.IsValid() &&
+                UndersideShaderFloats.IsValid())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 
     internal class CloudLayer
@@ -940,9 +990,7 @@ namespace Clouds
         private TextureSet detailTexture;
         private TextureSet bumpTexture;
         private ShaderFloats shaderFloats;
-        private bool noDetail;
-        private bool noBump;
-
+        private ShaderFloats undersideShaderFloats;
 
         public TextureSet MainTexture { get { return mainTexture; } }
         public TextureSet DetailTexture { get { return detailTexture; } }
@@ -950,6 +998,20 @@ namespace Clouds
         public Color Color { get { return color; } }
         public float Radius { get { return radius; } }
         public ShaderFloats ShaderFloats { get { return shaderFloats; } }
+        public ShaderFloats UndersideShaderFloats { get { return undersideShaderFloats; } }
+
+        internal void ApplyGUIUpdate(CloudGUI cloudGUI)
+        {
+            mainTexture.Clone(cloudGUI.MainTexture);
+            detailTexture.Clone(cloudGUI.DetailTexture);
+            bumpTexture.Clone(cloudGUI.BumpTexture);
+            shaderFloats.Clone(cloudGUI.ShaderFloats);
+            undersideShaderFloats.Clone(cloudGUI.UndersideShaderFloats);
+            radius = cloudGUI.Radius.RadiusF;
+            color = cloudGUI.Color.Color;
+            UpdateTextures();
+            UpdateFloats();
+        }
 
         public CloudLayer(String body, Color color, float radius,
             TextureSet mainTexture,
@@ -969,14 +1031,12 @@ namespace Clouds
             
             this.detailTexture = detailTexture;
             this.bumpTexture = bumpTexture;
-            noDetail = (detailTexture.Texture == null);
-            noBump = (bumpTexture.Texture == null);
 
             this.shaderFloats = ShaderFloats;
             Init();
         }
 
-        private void InitTexture()
+        private void UpdateTextures()
         {
             CloudMaterial.SetTexture("_MainTex", mainTexture.Texture);
             CloudMaterial.SetTextureScale("_MainTex", mainTexture.Scale);
@@ -986,7 +1046,7 @@ namespace Clouds
             UndersideCloudMaterial.SetTextureScale("_MainTex", mainTexture.Scale);
             UndersideCloudMaterial.SetColor("_Color", color);
 
-            if (!noDetail)
+            if (detailTexture.InUse)
             {
                 CloudMaterial.SetTexture("_DetailTex", detailTexture.Texture);
                 CloudMaterial.SetTextureScale("_DetailTex", detailTexture.Scale);
@@ -994,7 +1054,7 @@ namespace Clouds
                 UndersideCloudMaterial.SetTextureScale("_DetailTex", detailTexture.Scale);
             }
 
-            if (!noBump)
+            if (bumpTexture.InUse)
             {
                 CloudMaterial.SetTexture("_BumpMap", bumpTexture.Texture);
                 CloudMaterial.SetTextureScale("_BumpMap", bumpTexture.Scale);
@@ -1025,7 +1085,7 @@ namespace Clouds
             UpdateFloats();
             
             Log("Cloud Material initialized");
-            InitTexture();
+            UpdateTextures();
             Log("Generating Overlay...");
             Overlay.GeneratePlanetOverlay(body, radius, CloudMaterial, Utils.OVER_LAYER, false, 64,64);
             Overlay.GeneratePlanetOverlay(body, radius, UndersideCloudMaterial, Utils.UNDER_LAYER, false, 64, 64);
@@ -1034,20 +1094,21 @@ namespace Clouds
 
         public void UpdateFloats()
         {
-            if (this.shaderFloats != null)
+            if (this.shaderFloats != null && this.undersideShaderFloats != null)
             {
                 CloudMaterial.SetFloat("_FalloffPow", shaderFloats.FalloffPower);
-                UndersideCloudMaterial.SetFloat("_FalloffPow", shaderFloats.FalloffPower*.9f);
+                UndersideCloudMaterial.SetFloat("_FalloffPow", undersideShaderFloats.FalloffPower);
                 CloudMaterial.SetFloat("_FalloffScale", shaderFloats.FalloffScale);
-                UndersideCloudMaterial.SetFloat("_FalloffScale", shaderFloats.FalloffScale*3.333f);
+                UndersideCloudMaterial.SetFloat("_FalloffScale", undersideShaderFloats.FalloffScale);
                 CloudMaterial.SetFloat("_DetailDist", shaderFloats.DetailDistance);
-                UndersideCloudMaterial.SetFloat("_DetailDist", shaderFloats.DetailDistance * 2.857f);
+                UndersideCloudMaterial.SetFloat("_DetailDist", undersideShaderFloats.DetailDistance);
                 CloudMaterial.SetFloat("_MinLight", shaderFloats.MinimumLight);
-                UndersideCloudMaterial.SetFloat("_MinLight", shaderFloats.MinimumLight*1.125f);
+                UndersideCloudMaterial.SetFloat("_MinLight", undersideShaderFloats.MinimumLight);
             }
             else
             {
                 this.shaderFloats = new ShaderFloats(CloudMaterial.GetFloat("_FalloffPow"), CloudMaterial.GetFloat("_FalloffScale"), CloudMaterial.GetFloat("_DetailDist"), CloudMaterial.GetFloat("_MinLight"));
+                this.undersideShaderFloats = new ShaderFloats(UndersideCloudMaterial.GetFloat("_FalloffPow"), UndersideCloudMaterial.GetFloat("_FalloffScale"), UndersideCloudMaterial.GetFloat("_DetailDist"), UndersideCloudMaterial.GetFloat("_MinLight"));
             }
         }
 
@@ -1059,14 +1120,14 @@ namespace Clouds
             CloudMaterial.SetTextureOffset("_MainTex", mainTexture.Offset);
             UndersideCloudMaterial.SetTextureOffset("_MainTex", mainTexture.Offset);
 
-            if (!noDetail)
+            if (detailTexture.InUse)
             {
                 detailTexture.UpdateOffset(rateOffset);
                 CloudMaterial.SetTextureOffset("_DetailTex", detailTexture.Offset);
                 UndersideCloudMaterial.SetTextureOffset("_DetailTex", detailTexture.Offset);
             }
 
-            if (!noBump)
+            if (bumpTexture.InUse)
             {
                 bumpTexture.UpdateOffset(rateOffset);
                 CloudMaterial.SetTextureOffset("_BumpMap", bumpTexture.Offset);
@@ -1119,5 +1180,6 @@ namespace Clouds
                 return new String[0];
             }
         }
+
     }
 }

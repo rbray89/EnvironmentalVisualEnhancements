@@ -660,6 +660,12 @@ namespace CommonUtils
                 this.RadiusS = radiusF.ToString("R");
             }
         }
+
+        public bool IsValid()
+        {
+            float dummy;
+            return float.TryParse(RadiusS, out dummy);
+        }
     }
 
     public class ColorSetGUI
@@ -710,6 +716,21 @@ namespace CommonUtils
                 this.Blue = FBlue.ToString("R");
             }
         }
+
+        public bool IsValid()
+        {
+            float dummy;
+            if(float.TryParse(Red, out dummy) &&
+                float.TryParse(Green, out dummy) &&
+                float.TryParse(Blue, out dummy))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 
     public class TextureSetGUI
@@ -737,6 +758,24 @@ namespace CommonUtils
             this.ScaleY = textureSet.Scale.y.ToString("R");
             this.SpeedX = textureSet.Speed.x.ToString("R");
             this.SpeedY = textureSet.Speed.y.ToString("R");
+        }
+
+        public bool IsValid()
+        {
+            float dummy;
+            if (float.TryParse(StartOffsetX, out dummy) &&
+                float.TryParse(StartOffsetY, out dummy) &&
+                float.TryParse(SpeedX, out dummy) &&
+                float.TryParse(SpeedY, out dummy) &&
+                float.TryParse(ScaleX, out dummy) &&
+                float.TryParse(ScaleY, out dummy))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 

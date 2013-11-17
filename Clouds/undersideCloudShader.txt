@@ -4,7 +4,7 @@
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
 		_BumpMap ("Bumpmap", 2D) = "bump" {}
-		_FalloffPow ("Falloff Power", Range(0,5)) = 1.8
+		_FalloffPow ("Falloff Power", Range(0,3)) = 1.8
 		_FalloffScale ("Falloff Scale", Range(0,20)) = 10
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.025
 		_MinLight ("Minimum Light", Range(0,1)) = .18
