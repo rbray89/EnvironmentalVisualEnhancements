@@ -886,7 +886,6 @@ namespace CommonUtils
             SaturateOffset();
         }
 
-
         public void Clone(TextureSetGUI textureSet)
         {
             this.InUse = textureSet.InUse;
@@ -899,6 +898,26 @@ namespace CommonUtils
             this.Scale.y = float.Parse(textureSet.ScaleY);
             this.Speed.x = float.Parse(textureSet.SpeedX);
             this.Speed.y = float.Parse(textureSet.SpeedY);
+        }
+
+        public ConfigNode GetNode(string name)
+        {
+            if (!this.InUse)
+            {
+                return null;
+            }
+            ConfigNode newNode = new ConfigNode(name);
+            newNode.AddValue("file", this.textureFile);
+            ConfigNode offsetNode = newNode.AddNode("offset");
+            offsetNode.AddValue("x", this.Offset.x);
+            offsetNode.AddValue("y", this.Offset.y);
+            ConfigNode speedNode = newNode.AddNode("speed");
+            speedNode.AddValue("x", this.Speed.x);
+            speedNode.AddValue("y", this.Speed.y);
+            ConfigNode scaleNode = newNode.AddNode("scale");
+            scaleNode.AddValue("x", this.Scale.x);
+            scaleNode.AddValue("y", this.Scale.y);
+            return newNode;
         }
     }
 
