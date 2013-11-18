@@ -370,7 +370,7 @@ namespace CommonUtils
 
         public Overlay(string planet, float radius, Material overlayMaterial, int layer, bool avoidZFighting, int nbLong, int nbLat, Transform celestialTransform)
         {
-            // TODO: Complete member initialization
+
             this.OverlayGameObject = new GameObject();
             this.Body = planet;
             this.radius = radius;
@@ -475,11 +475,14 @@ namespace CommonUtils
             //Sphere code from http://wiki.unity3d.com/index.php/ProceduralPrimitives
 
             #region Vertices
-            Vector3[] vertices = new Vector3[(nbLong + 1) * nbLat + 2];
+            Vector3[] vertices = new Vector3[(nbLong + 1) * nbLat + (2 * nbLong)];
             float _pi = Mathf.PI;
             float _2pi = _pi * 2f;
 
-            vertices[0] = Vector3.up * radius;
+            for (int lon = 0; lon <= nbLong; lon++)
+            {
+                vertices[lon] = Vector3.up * radius;
+            }
             for (int lat = 0; lat < nbLat; lat++)
             {
                 float a1 = _pi * (float)(lat + 1) / (nbLat + 1);
@@ -492,10 +495,13 @@ namespace CommonUtils
                     float sin2 = Mathf.Sin(a2);
                     float cos2 = Mathf.Cos(a2);
 
-                    vertices[lon + lat * (nbLong + 1) + 1] = new Vector3(sin1 * cos2, cos1, sin1 * sin2) * radius;
+                    vertices[lon + lat * (nbLong + 1) +  nbLong] = new Vector3(sin1 * cos2, cos1, sin1 * sin2) * radius;
                 }
             }
-            vertices[vertices.Length - 1] = Vector3.up * -radius;
+            for (int lon = 0; lon <= nbLong; lon++)
+            {
+                vertices[(vertices.Length - 1)-lon ] = Vector3.up * -radius;
+            }
             #endregion
 
             #region Normals
@@ -506,11 +512,17 @@ namespace CommonUtils
 
             #region UVs
             Vector2[] uvs = new Vector2[vertices.Length];
-            uvs[0] = Vector2.up;
-            uvs[uvs.Length - 1] = Vector2.zero;
+            for (int lon = 0; lon <= nbLong; lon++)
+            {
+                uvs[lon] = new Vector2((float)lon / nbLong, 1f);
+            }
+            for (int lon = 0; lon <= nbLong; lon++)
+            {
+                uvs[(vertices.Length - 1) - lon] = new Vector2(1f-((float)lon / nbLong), 0f);
+            }
             for (int lat = 0; lat < nbLat; lat++)
                 for (int lon = 0; lon <= nbLong; lon++)
-                    uvs[lon + lat * (nbLong + 1) + 1] = new Vector2((float)lon / nbLong, 1f - (float)(lat + 1) / (nbLat + 1));
+                    uvs[lon + lat * (nbLong + 1) + nbLong] = new Vector2((float)lon / nbLong, 1f - (float)(lat + 1) / (nbLat + 1));
             #endregion
 
             #region Triangles
@@ -526,9 +538,9 @@ namespace CommonUtils
             int i = 0;
             for (int lon = 0; lon < nbLong; lon++)
             {
-                triangles[i++] = lon + 2;
-                triangles[i++] = lon + 1;
-                triangles[i++] = 0;
+                triangles[i++] = nbLong + lon + 2;
+                triangles[i++] = nbLong + lon + 1;
+                triangles[i++] = lon;
                 calculateTangent(triangles, i - 3, vertices, uvs, tan1, tan2); 
             }
 
@@ -537,7 +549,7 @@ namespace CommonUtils
             {
                 for (int lon = 0; lon < nbLong; lon++)
                 {
-                    int current = lon + lat * (nbLong + 1) + 1;
+                    int current = lon + lat * (nbLong + 1) + nbLong;
                     int next = current + nbLong + 1;
 
                     triangles[i++] = current;
@@ -555,9 +567,9 @@ namespace CommonUtils
             //Bottom Cap
             for (int lon = 0; lon < nbLong; lon++)
             {
-                triangles[i++] = vertices.Length - 1;
-                triangles[i++] = vertices.Length - (lon + 2) - 1;
-                triangles[i++] = vertices.Length - (lon + 1) - 1;
+                triangles[i++] = vertices.Length - lon - 1;
+                triangles[i++] = vertices.Length - (nbLong + lon + 2) - 1;
+                triangles[i++] = vertices.Length - (nbLong + lon + 1) - 1;
                 calculateTangent(triangles, i - 3, vertices, uvs, tan1, tan2); 
             }
             #endregion
