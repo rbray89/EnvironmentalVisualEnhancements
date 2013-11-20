@@ -52,7 +52,15 @@ namespace Clouds
             {
                 config = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/cloudLayers.cfg"); 
             }
-            GUI_KEYCODE = (KeyCode)Enum.Parse(typeof(KeyCode), config.GetValue("GUI_KEYCODE"));
+            String keycodeString = config.GetValue("GUI_KEYCODE");
+            if (keycodeString != null)
+            {
+                GUI_KEYCODE = (KeyCode)Enum.Parse(typeof(KeyCode), keycodeString);
+            }
+            else
+            {
+                GUI_KEYCODE = KeyCode.N;
+            }
 
             ConfigNode[] cloudLayersConfigs = config.GetNodes("CLOUD_LAYER");
 

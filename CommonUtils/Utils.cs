@@ -936,6 +936,8 @@ namespace CommonUtils
             
             this.StartOffset.x = float.Parse(textureSet.StartOffsetX);
             this.StartOffset.y = float.Parse(textureSet.StartOffsetY);
+            this.Offset.x = this.StartOffset.x;
+            this.Offset.y = this.StartOffset.y;
             this.Scale.x = float.Parse(textureSet.ScaleX);
             this.Scale.y = float.Parse(textureSet.ScaleY);
             this.Speed.x = float.Parse(textureSet.SpeedX);
@@ -951,8 +953,8 @@ namespace CommonUtils
             ConfigNode newNode = new ConfigNode(name);
             newNode.AddValue("file", this.textureFile);
             ConfigNode offsetNode = newNode.AddNode("offset");
-            offsetNode.AddValue("x", this.Offset.x);
-            offsetNode.AddValue("y", this.Offset.y);
+            offsetNode.AddValue("x", this.StartOffset.x);
+            offsetNode.AddValue("y", this.StartOffset.y);
             ConfigNode speedNode = newNode.AddNode("speed");
             speedNode.AddValue("x", this.Speed.x);
             speedNode.AddValue("y", this.Speed.y);
