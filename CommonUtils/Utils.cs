@@ -365,10 +365,11 @@ namespace CommonUtils
         private bool AvoidZFighting;
         private int nbLong;
         private int nbLat;
+        private bool StretchedPoles;
         private Transform celestialTransform;
 
 
-        public Overlay(string planet, float radius, Material overlayMaterial, int layer, bool avoidZFighting, int nbLong, int nbLat, Transform celestialTransform)
+        public Overlay(string planet, float radius, Material overlayMaterial, int layer, bool avoidZFighting, bool stretchedPoles, int nbLong, int nbLat, Transform celestialTransform)
         {
 
             this.OverlayGameObject = new GameObject();
@@ -377,6 +378,7 @@ namespace CommonUtils
             this.overlayMaterial = overlayMaterial;
             this.OriginalLayer = layer;
             this.AvoidZFighting = avoidZFighting;
+            this.StretchedPoles = stretchedPoles;
             this.nbLong = nbLong;
             this.nbLat = nbLat;
             this.celestialTransform = celestialTransform;
@@ -446,7 +448,7 @@ namespace CommonUtils
 
         public void CloneForMainMenu()
         {
-            GeneratePlanetOverlay(this.Body, this.radius, this.overlayMaterial, this.OriginalLayer, false, this.nbLong, this.nbLat, true);
+            GeneratePlanetOverlay(this.Body, this.radius, this.overlayMaterial, this.OriginalLayer, false, this.StretchedPoles, true);
         }
 
         public void RemoveOverlay()
@@ -459,11 +461,11 @@ namespace CommonUtils
             GameObject.Destroy(this.OverlayGameObject);
         }
 
-        public static Overlay GeneratePlanetOverlay(String planet, float radius, Material overlayMaterial, int layer, bool avoidZFighting = false, int nbLong = 48, int nbLat = 48, bool mainMenu = false)
+        public static Overlay GeneratePlanetOverlay(String planet, float radius, Material overlayMaterial, int layer, bool avoidZFighting = false, bool stretchPoles = false, bool mainMenu = false)
         {
-            
+            int nbLong = 64; int nbLat = 64;
             Transform celestialTransform = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == planet);
-            Overlay overlay = new Overlay(planet, radius, overlayMaterial, layer, avoidZFighting, nbLong, nbLat, celestialTransform);
+            Overlay overlay = new Overlay(planet, radius, overlayMaterial, layer, avoidZFighting, stretchPoles, nbLong, nbLat, celestialTransform);
             if (!mainMenu)
             {
                 if (!OverlayDatabase.ContainsKey(planet))
@@ -535,11 +537,15 @@ namespace CommonUtils
                 for (int lon = 0; lon <= nbLong; lon++)
                 {
                     float h = 1f - (float)(lat + 1) / (nbLat + 1);
-                    float height = (float)((.5 * Math.Cos(Math.PI * (h + 1))) + .5);
-                    float sigmoid = (float)(1/(1+Math.Pow(100000,-(h-.5))));
-                    float trinomial = (float)((4 * Math.Pow(h - .5, 3)) + .5);
-                    float invCos = (float)((Math.Acos(2 * (-h + .5))) / Math.PI);
-                    float modinvCos = (float)(((Math.Acos(1.68 * (-h + .5))) / (0.65*Math.PI))-0.269);
+                    //float height = (float)((.5 * Math.Cos(Math.PI * (h + 1))) + .5);
+                    //float sigmoid = (float)(1/(1+Math.Pow(100000,-(h-.5))));
+                    //float trinomial = (float)((4 * Math.Pow(h - .5, 3)) + .5);
+                    //float invCos = (float)((Math.Acos(2 * (-h + .5))) / Math.PI);
+                    if(stretchPoles)
+                    {
+                        float modinvCos = (float)(((Math.Acos(1.68 * (-h + .5))) / (0.65*Math.PI))-0.269);
+                        h = modinvCos;
+                    }
                     uvs[lon + lat * (nbLong + 1) + nbLong] = new Vector2((float)lon / nbLong, h);
                 }
             }
@@ -836,9 +842,13 @@ namespace CommonUtils
                 Texture2D tex = GameDatabase.Instance.GetTexture(textureFile, isBump);
                 BumpTextureDictionary.Add(textureFile, tex);
             }
-            else if (!TextureDictionary.ContainsKey(textureFile))
+            else if (!isBump && !TextureDictionary.ContainsKey(textureFile))
             {
                 Texture2D tex = GameDatabase.Instance.GetTexture(textureFile, isBump);
+                if (tex.format != TextureFormat.DXT1 && tex.format != TextureFormat.DXT5)
+                {
+                    tex.Compress(true);
+                }
                 TextureDictionary.Add(textureFile, tex);
             }
             texture = isBump ? BumpTextureDictionary[textureFile] : TextureDictionary[textureFile];

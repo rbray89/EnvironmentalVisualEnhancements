@@ -27,8 +27,8 @@ Program "vp" {
 // Vertex combos: 6
 //   opengl - ALU: 50 to 56
 //   d3d9 - ALU: 53 to 58
-//   d3d11 - ALU: 22 to 25, TEX: 0 to 0, FLOW: 1 to 1
-//   d3d11_9x - ALU: 22 to 25, TEX: 0 to 0, FLOW: 1 to 1
+//   d3d11 - ALU: 39 to 42, TEX: 0 to 0, FLOW: 1 to 1
+//   d3d11_9x - ALU: 39 to 42, TEX: 0 to 0, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 Bind "vertex" Vertex
@@ -204,7 +204,7 @@ Vector 96 [_DetailTex_ST] 4
 Vector 112 [_BumpMap_ST] 4
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
-ConstBuffer "UnityLighting" 400 // 16 used size, 16 vars
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
 Matrix 0 [glstate_matrix_mvp] 4
@@ -219,7 +219,7 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
 // 41 instructions, 2 temp regs, 0 temp arrays:
-// ALU 22 float, 0 int, 0 uint
+// ALU 39 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
@@ -722,7 +722,7 @@ Vector 96 [_DetailTex_ST] 4
 Vector 112 [_BumpMap_ST] 4
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
-ConstBuffer "UnityLighting" 400 // 16 used size, 16 vars
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
 Matrix 0 [glstate_matrix_mvp] 4
@@ -737,7 +737,7 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
 // 41 instructions, 2 temp regs, 0 temp arrays:
-// ALU 22 float, 0 int, 0 uint
+// ALU 39 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0_level_9_1
@@ -896,23 +896,23 @@ mat3 xll_saturate_mf3x3(mat3 m) {
 mat4 xll_saturate_mf4x4(mat4 m) {
   return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
 }
-#line 150
+#line 151
 struct v2f_vertex_lit {
     highp vec2 uv;
     lowp vec4 diff;
     lowp vec4 spec;
 };
-#line 186
+#line 187
 struct v2f_img {
     highp vec4 pos;
     mediump vec2 uv;
 };
-#line 180
+#line 181
 struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 306
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -921,7 +921,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 66
+#line 67
 struct appdata_full {
     highp vec4 vertex;
     highp vec4 tangent;
@@ -930,7 +930,7 @@ struct appdata_full {
     highp vec4 texcoord1;
     lowp vec4 color;
 };
-#line 398
+#line 407
 struct Input {
     highp vec2 uv_MainTex;
     highp vec2 uv_DetailTex;
@@ -938,7 +938,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec2 viewDist;
 };
-#line 430
+#line 439
 struct v2f_surf {
     highp vec4 pos;
     highp vec4 pack0;
@@ -967,137 +967,140 @@ uniform highp vec4 unity_4LightPosY0;
 uniform highp vec4 unity_4LightPosZ0;
 #line 15
 uniform highp vec4 unity_4LightAtten0;
-uniform highp vec4 unity_LightColor[4];
-uniform highp vec4 unity_LightPosition[4];
-uniform highp vec4 unity_LightAtten[4];
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
 #line 19
+uniform highp vec4 unity_SpotDirection[8];
 uniform highp vec4 unity_SHAr;
 uniform highp vec4 unity_SHAg;
 uniform highp vec4 unity_SHAb;
-uniform highp vec4 unity_SHBr;
 #line 23
+uniform highp vec4 unity_SHBr;
 uniform highp vec4 unity_SHBg;
 uniform highp vec4 unity_SHBb;
 uniform highp vec4 unity_SHC;
+#line 27
 uniform highp vec3 unity_LightColor0;
 uniform highp vec3 unity_LightColor1;
 uniform highp vec3 unity_LightColor2;
 uniform highp vec3 unity_LightColor3;
-#line 27
 uniform highp vec4 unity_ShadowSplitSpheres[4];
 uniform highp vec4 unity_ShadowSplitSqRadii;
 uniform highp vec4 unity_LightShadowBias;
-uniform highp vec4 _LightSplitsNear;
 #line 31
+uniform highp vec4 _LightSplitsNear;
 uniform highp vec4 _LightSplitsFar;
 uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec4 _LightShadowData;
-uniform highp vec4 unity_ShadowFadeCenterAndType;
 #line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
 uniform highp mat4 glstate_matrix_mvp;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp mat4 glstate_matrix_invtrans_modelview0;
-uniform highp mat4 _Object2World;
 #line 39
+uniform highp mat4 _Object2World;
 uniform highp mat4 _World2Object;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 glstate_matrix_transpose_modelview0;
-uniform highp mat4 glstate_matrix_texture0;
 #line 43
+uniform highp mat4 glstate_matrix_texture0;
 uniform highp mat4 glstate_matrix_texture1;
 uniform highp mat4 glstate_matrix_texture2;
 uniform highp mat4 glstate_matrix_texture3;
-uniform highp mat4 glstate_matrix_projection;
 #line 47
+uniform highp mat4 glstate_matrix_projection;
 uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp mat4 unity_MatrixV;
 uniform highp mat4 unity_MatrixVP;
+#line 51
 uniform lowp vec4 unity_ColorSpaceGrey;
-#line 76
-#line 81
-#line 86
-#line 90
-#line 95
-#line 119
-#line 136
-#line 157
-#line 165
-#line 192
-#line 205
-#line 214
-#line 219
-#line 228
-#line 233
-#line 242
-#line 259
-#line 264
-#line 290
-#line 298
-#line 302
-#line 316
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 329
-#line 337
-#line 351
+#line 338
+#line 346
+#line 360
 uniform sampler2D _MainTex;
 uniform sampler2D _DetailTex;
-#line 384
+#line 393
 uniform sampler2D _BumpMap;
 uniform lowp vec4 _Color;
 uniform highp float _FalloffPow;
 uniform highp float _FalloffScale;
-#line 388
+#line 397
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-#line 407
 #line 416
-#line 441
+#line 425
+#line 450
 uniform highp vec4 _MainTex_ST;
 uniform highp vec4 _DetailTex_ST;
 uniform highp vec4 _BumpMap_ST;
-#line 81
+#line 82
 highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
     highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
     return objSpaceLightPos.xyz;
 }
-#line 90
+#line 91
 highp vec3 ObjSpaceViewDir( in highp vec4 v ) {
     highp vec3 objSpaceCameraPos = ((_World2Object * vec4( _WorldSpaceCameraPos.xyz, 1.0)).xyz * unity_Scale.w);
     return (objSpaceCameraPos - v.xyz);
 }
-#line 407
+#line 416
 void vert( inout appdata_full v, out Input o ) {
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
-    #line 411
+    #line 420
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     o.viewDist.x = diff;
     o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.0005 * distance( origin, vertexPos))));
 }
-#line 444
+#line 453
 v2f_surf vert_surf( in appdata_full v ) {
-    #line 446
+    #line 455
     v2f_surf o;
     Input customInputData;
     vert( v, customInputData);
     o.cust_viewDist = customInputData.viewDist;
-    #line 450
+    #line 459
     o.pos = (glstate_matrix_mvp * v.vertex);
     o.pack0.xy = ((v.texcoord.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
     o.pack0.zw = ((v.texcoord.xy * _DetailTex_ST.xy) + _DetailTex_ST.zw);
     o.pack1.xy = ((v.texcoord.xy * _BumpMap_ST.xy) + _BumpMap_ST.zw);
-    #line 454
+    #line 463
     highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
     highp vec3 lightDir = (rotation * ObjSpaceLightDir( v.vertex));
-    #line 458
+    #line 467
     o.lightDir = lightDir;
     highp vec3 viewDirForLight = (rotation * ObjSpaceViewDir( v.vertex));
     o.viewDir = viewDirForLight;
     o.vlight = glstate_lightmodel_ambient.xyz;
-    #line 463
+    #line 472
     return o;
 }
 
@@ -1153,23 +1156,23 @@ mat3 xll_saturate_mf3x3(mat3 m) {
 mat4 xll_saturate_mf4x4(mat4 m) {
   return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
 }
-#line 150
+#line 151
 struct v2f_vertex_lit {
     highp vec2 uv;
     lowp vec4 diff;
     lowp vec4 spec;
 };
-#line 186
+#line 187
 struct v2f_img {
     highp vec4 pos;
     mediump vec2 uv;
 };
-#line 180
+#line 181
 struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 306
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -1178,7 +1181,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 66
+#line 67
 struct appdata_full {
     highp vec4 vertex;
     highp vec4 tangent;
@@ -1187,7 +1190,7 @@ struct appdata_full {
     highp vec4 texcoord1;
     lowp vec4 color;
 };
-#line 398
+#line 407
 struct Input {
     highp vec2 uv_MainTex;
     highp vec2 uv_DetailTex;
@@ -1195,7 +1198,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec2 viewDist;
 };
-#line 430
+#line 439
 struct v2f_surf {
     highp vec4 pos;
     highp vec4 pack0;
@@ -1224,150 +1227,153 @@ uniform highp vec4 unity_4LightPosY0;
 uniform highp vec4 unity_4LightPosZ0;
 #line 15
 uniform highp vec4 unity_4LightAtten0;
-uniform highp vec4 unity_LightColor[4];
-uniform highp vec4 unity_LightPosition[4];
-uniform highp vec4 unity_LightAtten[4];
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
 #line 19
+uniform highp vec4 unity_SpotDirection[8];
 uniform highp vec4 unity_SHAr;
 uniform highp vec4 unity_SHAg;
 uniform highp vec4 unity_SHAb;
-uniform highp vec4 unity_SHBr;
 #line 23
+uniform highp vec4 unity_SHBr;
 uniform highp vec4 unity_SHBg;
 uniform highp vec4 unity_SHBb;
 uniform highp vec4 unity_SHC;
+#line 27
 uniform highp vec3 unity_LightColor0;
 uniform highp vec3 unity_LightColor1;
 uniform highp vec3 unity_LightColor2;
 uniform highp vec3 unity_LightColor3;
-#line 27
 uniform highp vec4 unity_ShadowSplitSpheres[4];
 uniform highp vec4 unity_ShadowSplitSqRadii;
 uniform highp vec4 unity_LightShadowBias;
-uniform highp vec4 _LightSplitsNear;
 #line 31
+uniform highp vec4 _LightSplitsNear;
 uniform highp vec4 _LightSplitsFar;
 uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec4 _LightShadowData;
-uniform highp vec4 unity_ShadowFadeCenterAndType;
 #line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
 uniform highp mat4 glstate_matrix_mvp;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp mat4 glstate_matrix_invtrans_modelview0;
-uniform highp mat4 _Object2World;
 #line 39
+uniform highp mat4 _Object2World;
 uniform highp mat4 _World2Object;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 glstate_matrix_transpose_modelview0;
-uniform highp mat4 glstate_matrix_texture0;
 #line 43
+uniform highp mat4 glstate_matrix_texture0;
 uniform highp mat4 glstate_matrix_texture1;
 uniform highp mat4 glstate_matrix_texture2;
 uniform highp mat4 glstate_matrix_texture3;
-uniform highp mat4 glstate_matrix_projection;
 #line 47
+uniform highp mat4 glstate_matrix_projection;
 uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp mat4 unity_MatrixV;
 uniform highp mat4 unity_MatrixVP;
+#line 51
 uniform lowp vec4 unity_ColorSpaceGrey;
-#line 76
-#line 81
-#line 86
-#line 90
-#line 95
-#line 119
-#line 136
-#line 157
-#line 165
-#line 192
-#line 205
-#line 214
-#line 219
-#line 228
-#line 233
-#line 242
-#line 259
-#line 264
-#line 290
-#line 298
-#line 302
-#line 316
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 329
-#line 337
-#line 351
+#line 338
+#line 346
+#line 360
 uniform sampler2D _MainTex;
 uniform sampler2D _DetailTex;
-#line 384
+#line 393
 uniform sampler2D _BumpMap;
 uniform lowp vec4 _Color;
 uniform highp float _FalloffPow;
 uniform highp float _FalloffScale;
-#line 388
+#line 397
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-#line 407
 #line 416
-#line 441
+#line 425
+#line 450
 uniform highp vec4 _MainTex_ST;
 uniform highp vec4 _DetailTex_ST;
 uniform highp vec4 _BumpMap_ST;
-#line 390
+#line 399
 mediump vec4 LightingSimpleLambert( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
-    #line 392
+    #line 401
     mediump float NdotL = xll_saturate_f(dot( s.Normal, lightDir));
     mediump vec4 c;
     c.xyz = (s.Albedo * xll_saturate_vf3((_MinLight + (_LightColor0.xyz * ((NdotL * atten) * 2.0)))));
     c.w = s.Alpha;
-    #line 396
+    #line 405
     return c;
 }
-#line 271
+#line 272
 lowp vec3 UnpackNormal( in lowp vec4 packednormal ) {
-    #line 273
+    #line 274
     return ((packednormal.xyz * 2.0) - 1.0);
 }
-#line 416
+#line 425
 void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 main = texture( _MainTex, IN.uv_MainTex);
     mediump vec4 detail = texture( _DetailTex, IN.uv_DetailTex);
-    #line 420
+    #line 429
     mediump float detailLevel = xll_saturate_f((2.0 * IN.viewDist.x));
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0, 1.0, 1.0), vec3( detailLevel)));
     o.Normal = vec3( 0.0, 0.0, 1.0);
     o.Albedo = (albedo * vec3( _Color));
-    #line 424
+    #line 433
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
     mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
     o.Alpha = ((avg * IN.viewDist.y) * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow)))));
     detailLevel = xll_saturate_f(IN.viewDist.x);
-    #line 428
+    #line 437
     o.Normal = mix( UnpackNormal( texture( _BumpMap, IN.uv_BumpMap)), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
-#line 465
+#line 474
 lowp vec4 frag_surf( in v2f_surf IN ) {
-    #line 467
+    #line 476
     Input surfIN;
     surfIN.uv_MainTex = IN.pack0.xy;
     surfIN.uv_DetailTex = IN.pack0.zw;
     surfIN.uv_BumpMap = IN.pack1.xy;
-    #line 471
+    #line 480
     surfIN.viewDist = IN.cust_viewDist;
     surfIN.viewDir = IN.viewDir;
     SurfaceOutput o;
     o.Albedo = vec3( 0.0);
-    #line 475
+    #line 484
     o.Emission = vec3( 0.0);
     o.Specular = 0.0;
     o.Alpha = 0.0;
     o.Gloss = 0.0;
-    #line 479
+    #line 488
     surf( surfIN, o);
     lowp float atten = 1.0;
     lowp vec4 c = vec4( 0.0);
     c = LightingSimpleLambert( o, IN.lightDir, atten);
-    #line 483
+    #line 492
     c.xyz += (o.Albedo * IN.vlight);
     return c;
 }
@@ -1586,7 +1592,7 @@ Vector 176 [_BumpMap_ST] 4
 ConstBuffer "UnityPerCamera" 128 // 96 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 Vector 80 [_ProjectionParams] 4
-ConstBuffer "UnityLighting" 400 // 16 used size, 16 vars
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
 Matrix 0 [glstate_matrix_mvp] 4
@@ -1601,7 +1607,7 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
 // 46 instructions, 3 temp regs, 0 temp arrays:
-// ALU 25 float, 0 int, 0 uint
+// ALU 42 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
@@ -2158,7 +2164,7 @@ Vector 176 [_BumpMap_ST] 4
 ConstBuffer "UnityPerCamera" 128 // 96 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 Vector 80 [_ProjectionParams] 4
-ConstBuffer "UnityLighting" 400 // 16 used size, 16 vars
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
 Matrix 0 [glstate_matrix_mvp] 4
@@ -2173,7 +2179,7 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
 // 46 instructions, 3 temp regs, 0 temp arrays:
-// ALU 25 float, 0 int, 0 uint
+// ALU 42 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0_level_9_1
@@ -2340,23 +2346,23 @@ mat3 xll_saturate_mf3x3(mat3 m) {
 mat4 xll_saturate_mf4x4(mat4 m) {
   return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
 }
-#line 150
+#line 151
 struct v2f_vertex_lit {
     highp vec2 uv;
     lowp vec4 diff;
     lowp vec4 spec;
 };
-#line 186
+#line 187
 struct v2f_img {
     highp vec4 pos;
     mediump vec2 uv;
 };
-#line 180
+#line 181
 struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 306
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -2365,7 +2371,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 66
+#line 67
 struct appdata_full {
     highp vec4 vertex;
     highp vec4 tangent;
@@ -2374,7 +2380,7 @@ struct appdata_full {
     highp vec4 texcoord1;
     lowp vec4 color;
 };
-#line 406
+#line 415
 struct Input {
     highp vec2 uv_MainTex;
     highp vec2 uv_DetailTex;
@@ -2382,7 +2388,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec2 viewDist;
 };
-#line 438
+#line 447
 struct v2f_surf {
     highp vec4 pos;
     highp vec4 pack0;
@@ -2412,141 +2418,144 @@ uniform highp vec4 unity_4LightPosY0;
 uniform highp vec4 unity_4LightPosZ0;
 #line 15
 uniform highp vec4 unity_4LightAtten0;
-uniform highp vec4 unity_LightColor[4];
-uniform highp vec4 unity_LightPosition[4];
-uniform highp vec4 unity_LightAtten[4];
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
 #line 19
+uniform highp vec4 unity_SpotDirection[8];
 uniform highp vec4 unity_SHAr;
 uniform highp vec4 unity_SHAg;
 uniform highp vec4 unity_SHAb;
-uniform highp vec4 unity_SHBr;
 #line 23
+uniform highp vec4 unity_SHBr;
 uniform highp vec4 unity_SHBg;
 uniform highp vec4 unity_SHBb;
 uniform highp vec4 unity_SHC;
+#line 27
 uniform highp vec3 unity_LightColor0;
 uniform highp vec3 unity_LightColor1;
 uniform highp vec3 unity_LightColor2;
 uniform highp vec3 unity_LightColor3;
-#line 27
 uniform highp vec4 unity_ShadowSplitSpheres[4];
 uniform highp vec4 unity_ShadowSplitSqRadii;
 uniform highp vec4 unity_LightShadowBias;
-uniform highp vec4 _LightSplitsNear;
 #line 31
+uniform highp vec4 _LightSplitsNear;
 uniform highp vec4 _LightSplitsFar;
 uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec4 _LightShadowData;
-uniform highp vec4 unity_ShadowFadeCenterAndType;
 #line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
 uniform highp mat4 glstate_matrix_mvp;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp mat4 glstate_matrix_invtrans_modelview0;
-uniform highp mat4 _Object2World;
 #line 39
+uniform highp mat4 _Object2World;
 uniform highp mat4 _World2Object;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 glstate_matrix_transpose_modelview0;
-uniform highp mat4 glstate_matrix_texture0;
 #line 43
+uniform highp mat4 glstate_matrix_texture0;
 uniform highp mat4 glstate_matrix_texture1;
 uniform highp mat4 glstate_matrix_texture2;
 uniform highp mat4 glstate_matrix_texture3;
-uniform highp mat4 glstate_matrix_projection;
 #line 47
+uniform highp mat4 glstate_matrix_projection;
 uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp mat4 unity_MatrixV;
 uniform highp mat4 unity_MatrixVP;
+#line 51
 uniform lowp vec4 unity_ColorSpaceGrey;
-#line 76
-#line 81
-#line 86
-#line 90
-#line 95
-#line 119
-#line 136
-#line 157
-#line 165
-#line 192
-#line 205
-#line 214
-#line 219
-#line 228
-#line 233
-#line 242
-#line 259
-#line 264
-#line 290
-#line 298
-#line 302
-#line 316
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 329
-#line 337
-#line 351
+#line 338
+#line 346
+#line 360
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 384
+#line 393
 uniform sampler2D _MainTex;
 uniform sampler2D _DetailTex;
-#line 392
+#line 401
 uniform sampler2D _BumpMap;
 uniform lowp vec4 _Color;
 uniform highp float _FalloffPow;
 uniform highp float _FalloffScale;
-#line 396
+#line 405
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-#line 415
 #line 424
-#line 450
+#line 433
+#line 459
 uniform highp vec4 _MainTex_ST;
 uniform highp vec4 _DetailTex_ST;
 uniform highp vec4 _BumpMap_ST;
-#line 475
-#line 81
+#line 484
+#line 82
 highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
     highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
     return objSpaceLightPos.xyz;
 }
-#line 90
+#line 91
 highp vec3 ObjSpaceViewDir( in highp vec4 v ) {
     highp vec3 objSpaceCameraPos = ((_World2Object * vec4( _WorldSpaceCameraPos.xyz, 1.0)).xyz * unity_Scale.w);
     return (objSpaceCameraPos - v.xyz);
 }
-#line 415
+#line 424
 void vert( inout appdata_full v, out Input o ) {
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
-    #line 419
+    #line 428
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     o.viewDist.x = diff;
     o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.0005 * distance( origin, vertexPos))));
 }
-#line 453
+#line 462
 v2f_surf vert_surf( in appdata_full v ) {
-    #line 455
+    #line 464
     v2f_surf o;
     Input customInputData;
     vert( v, customInputData);
     o.cust_viewDist = customInputData.viewDist;
-    #line 459
+    #line 468
     o.pos = (glstate_matrix_mvp * v.vertex);
     o.pack0.xy = ((v.texcoord.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
     o.pack0.zw = ((v.texcoord.xy * _DetailTex_ST.xy) + _DetailTex_ST.zw);
     o.pack1.xy = ((v.texcoord.xy * _BumpMap_ST.xy) + _BumpMap_ST.zw);
-    #line 463
+    #line 472
     highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
     highp vec3 lightDir = (rotation * ObjSpaceLightDir( v.vertex));
-    #line 467
+    #line 476
     o.lightDir = lightDir;
     highp vec3 viewDirForLight = (rotation * ObjSpaceViewDir( v.vertex));
     o.viewDir = viewDirForLight;
     o.vlight = glstate_lightmodel_ambient.xyz;
-    #line 471
+    #line 480
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
 }
@@ -2605,23 +2614,23 @@ mat3 xll_saturate_mf3x3(mat3 m) {
 mat4 xll_saturate_mf4x4(mat4 m) {
   return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
 }
-#line 150
+#line 151
 struct v2f_vertex_lit {
     highp vec2 uv;
     lowp vec4 diff;
     lowp vec4 spec;
 };
-#line 186
+#line 187
 struct v2f_img {
     highp vec4 pos;
     mediump vec2 uv;
 };
-#line 180
+#line 181
 struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 306
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -2630,7 +2639,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 66
+#line 67
 struct appdata_full {
     highp vec4 vertex;
     highp vec4 tangent;
@@ -2639,7 +2648,7 @@ struct appdata_full {
     highp vec4 texcoord1;
     lowp vec4 color;
 };
-#line 406
+#line 415
 struct Input {
     highp vec2 uv_MainTex;
     highp vec2 uv_DetailTex;
@@ -2647,7 +2656,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec2 viewDist;
 };
-#line 438
+#line 447
 struct v2f_surf {
     highp vec4 pos;
     highp vec4 pack0;
@@ -2677,158 +2686,161 @@ uniform highp vec4 unity_4LightPosY0;
 uniform highp vec4 unity_4LightPosZ0;
 #line 15
 uniform highp vec4 unity_4LightAtten0;
-uniform highp vec4 unity_LightColor[4];
-uniform highp vec4 unity_LightPosition[4];
-uniform highp vec4 unity_LightAtten[4];
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
 #line 19
+uniform highp vec4 unity_SpotDirection[8];
 uniform highp vec4 unity_SHAr;
 uniform highp vec4 unity_SHAg;
 uniform highp vec4 unity_SHAb;
-uniform highp vec4 unity_SHBr;
 #line 23
+uniform highp vec4 unity_SHBr;
 uniform highp vec4 unity_SHBg;
 uniform highp vec4 unity_SHBb;
 uniform highp vec4 unity_SHC;
+#line 27
 uniform highp vec3 unity_LightColor0;
 uniform highp vec3 unity_LightColor1;
 uniform highp vec3 unity_LightColor2;
 uniform highp vec3 unity_LightColor3;
-#line 27
 uniform highp vec4 unity_ShadowSplitSpheres[4];
 uniform highp vec4 unity_ShadowSplitSqRadii;
 uniform highp vec4 unity_LightShadowBias;
-uniform highp vec4 _LightSplitsNear;
 #line 31
+uniform highp vec4 _LightSplitsNear;
 uniform highp vec4 _LightSplitsFar;
 uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec4 _LightShadowData;
-uniform highp vec4 unity_ShadowFadeCenterAndType;
 #line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
 uniform highp mat4 glstate_matrix_mvp;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp mat4 glstate_matrix_invtrans_modelview0;
-uniform highp mat4 _Object2World;
 #line 39
+uniform highp mat4 _Object2World;
 uniform highp mat4 _World2Object;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 glstate_matrix_transpose_modelview0;
-uniform highp mat4 glstate_matrix_texture0;
 #line 43
+uniform highp mat4 glstate_matrix_texture0;
 uniform highp mat4 glstate_matrix_texture1;
 uniform highp mat4 glstate_matrix_texture2;
 uniform highp mat4 glstate_matrix_texture3;
-uniform highp mat4 glstate_matrix_projection;
 #line 47
+uniform highp mat4 glstate_matrix_projection;
 uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp mat4 unity_MatrixV;
 uniform highp mat4 unity_MatrixVP;
+#line 51
 uniform lowp vec4 unity_ColorSpaceGrey;
-#line 76
-#line 81
-#line 86
-#line 90
-#line 95
-#line 119
-#line 136
-#line 157
-#line 165
-#line 192
-#line 205
-#line 214
-#line 219
-#line 228
-#line 233
-#line 242
-#line 259
-#line 264
-#line 290
-#line 298
-#line 302
-#line 316
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 329
-#line 337
-#line 351
+#line 338
+#line 346
+#line 360
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 384
+#line 393
 uniform sampler2D _MainTex;
 uniform sampler2D _DetailTex;
-#line 392
+#line 401
 uniform sampler2D _BumpMap;
 uniform lowp vec4 _Color;
 uniform highp float _FalloffPow;
 uniform highp float _FalloffScale;
-#line 396
+#line 405
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-#line 415
 #line 424
-#line 450
+#line 433
+#line 459
 uniform highp vec4 _MainTex_ST;
 uniform highp vec4 _DetailTex_ST;
 uniform highp vec4 _BumpMap_ST;
-#line 475
-#line 398
+#line 484
+#line 407
 mediump vec4 LightingSimpleLambert( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
-    #line 400
+    #line 409
     mediump float NdotL = xll_saturate_f(dot( s.Normal, lightDir));
     mediump vec4 c;
     c.xyz = (s.Albedo * xll_saturate_vf3((_MinLight + (_LightColor0.xyz * ((NdotL * atten) * 2.0)))));
     c.w = s.Alpha;
-    #line 404
+    #line 413
     return c;
 }
-#line 271
+#line 272
 lowp vec3 UnpackNormal( in lowp vec4 packednormal ) {
-    #line 273
+    #line 274
     return ((packednormal.xyz * 2.0) - 1.0);
 }
-#line 424
+#line 433
 void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 main = texture( _MainTex, IN.uv_MainTex);
     mediump vec4 detail = texture( _DetailTex, IN.uv_DetailTex);
-    #line 428
+    #line 437
     mediump float detailLevel = xll_saturate_f((2.0 * IN.viewDist.x));
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0, 1.0, 1.0), vec3( detailLevel)));
     o.Normal = vec3( 0.0, 0.0, 1.0);
     o.Albedo = (albedo * vec3( _Color));
-    #line 432
+    #line 441
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
     mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
     o.Alpha = ((avg * IN.viewDist.y) * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow)))));
     detailLevel = xll_saturate_f(IN.viewDist.x);
-    #line 436
+    #line 445
     o.Normal = mix( UnpackNormal( texture( _BumpMap, IN.uv_BumpMap)), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
-#line 384
+#line 393
 lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
     highp float dist = textureProj( _ShadowMapTexture, shadowCoord).x;
     mediump float lightShadowDataX = _LightShadowData.x;
-    #line 388
+    #line 397
     return max( float((dist > (shadowCoord.z / shadowCoord.w))), lightShadowDataX);
 }
-#line 475
+#line 484
 lowp vec4 frag_surf( in v2f_surf IN ) {
     Input surfIN;
     surfIN.uv_MainTex = IN.pack0.xy;
-    #line 479
+    #line 488
     surfIN.uv_DetailTex = IN.pack0.zw;
     surfIN.uv_BumpMap = IN.pack1.xy;
     surfIN.viewDist = IN.cust_viewDist;
     surfIN.viewDir = IN.viewDir;
-    #line 483
+    #line 492
     SurfaceOutput o;
     o.Albedo = vec3( 0.0);
     o.Emission = vec3( 0.0);
     o.Specular = 0.0;
-    #line 487
+    #line 496
     o.Alpha = 0.0;
     o.Gloss = 0.0;
     surf( surfIN, o);
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
-    #line 491
+    #line 500
     lowp vec4 c = vec4( 0.0);
     c = LightingSimpleLambert( o, IN.lightDir, atten);
     c.xyz += (o.Albedo * IN.vlight);
@@ -3035,7 +3047,7 @@ Vector 96 [_DetailTex_ST] 4
 Vector 112 [_BumpMap_ST] 4
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
-ConstBuffer "UnityLighting" 400 // 16 used size, 16 vars
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
 Matrix 0 [glstate_matrix_mvp] 4
@@ -3050,7 +3062,7 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
 // 41 instructions, 2 temp regs, 0 temp arrays:
-// ALU 22 float, 0 int, 0 uint
+// ALU 39 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
@@ -3553,7 +3565,7 @@ Vector 96 [_DetailTex_ST] 4
 Vector 112 [_BumpMap_ST] 4
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
-ConstBuffer "UnityLighting" 400 // 16 used size, 16 vars
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
 Matrix 0 [glstate_matrix_mvp] 4
@@ -3568,7 +3580,7 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
 // 41 instructions, 2 temp regs, 0 temp arrays:
-// ALU 22 float, 0 int, 0 uint
+// ALU 39 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0_level_9_1
@@ -3727,23 +3739,23 @@ mat3 xll_saturate_mf3x3(mat3 m) {
 mat4 xll_saturate_mf4x4(mat4 m) {
   return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
 }
-#line 150
+#line 151
 struct v2f_vertex_lit {
     highp vec2 uv;
     lowp vec4 diff;
     lowp vec4 spec;
 };
-#line 186
+#line 187
 struct v2f_img {
     highp vec4 pos;
     mediump vec2 uv;
 };
-#line 180
+#line 181
 struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 306
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -3752,7 +3764,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 66
+#line 67
 struct appdata_full {
     highp vec4 vertex;
     highp vec4 tangent;
@@ -3761,7 +3773,7 @@ struct appdata_full {
     highp vec4 texcoord1;
     lowp vec4 color;
 };
-#line 398
+#line 407
 struct Input {
     highp vec2 uv_MainTex;
     highp vec2 uv_DetailTex;
@@ -3769,7 +3781,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec2 viewDist;
 };
-#line 430
+#line 439
 struct v2f_surf {
     highp vec4 pos;
     highp vec4 pack0;
@@ -3798,137 +3810,140 @@ uniform highp vec4 unity_4LightPosY0;
 uniform highp vec4 unity_4LightPosZ0;
 #line 15
 uniform highp vec4 unity_4LightAtten0;
-uniform highp vec4 unity_LightColor[4];
-uniform highp vec4 unity_LightPosition[4];
-uniform highp vec4 unity_LightAtten[4];
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
 #line 19
+uniform highp vec4 unity_SpotDirection[8];
 uniform highp vec4 unity_SHAr;
 uniform highp vec4 unity_SHAg;
 uniform highp vec4 unity_SHAb;
-uniform highp vec4 unity_SHBr;
 #line 23
+uniform highp vec4 unity_SHBr;
 uniform highp vec4 unity_SHBg;
 uniform highp vec4 unity_SHBb;
 uniform highp vec4 unity_SHC;
+#line 27
 uniform highp vec3 unity_LightColor0;
 uniform highp vec3 unity_LightColor1;
 uniform highp vec3 unity_LightColor2;
 uniform highp vec3 unity_LightColor3;
-#line 27
 uniform highp vec4 unity_ShadowSplitSpheres[4];
 uniform highp vec4 unity_ShadowSplitSqRadii;
 uniform highp vec4 unity_LightShadowBias;
-uniform highp vec4 _LightSplitsNear;
 #line 31
+uniform highp vec4 _LightSplitsNear;
 uniform highp vec4 _LightSplitsFar;
 uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec4 _LightShadowData;
-uniform highp vec4 unity_ShadowFadeCenterAndType;
 #line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
 uniform highp mat4 glstate_matrix_mvp;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp mat4 glstate_matrix_invtrans_modelview0;
-uniform highp mat4 _Object2World;
 #line 39
+uniform highp mat4 _Object2World;
 uniform highp mat4 _World2Object;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 glstate_matrix_transpose_modelview0;
-uniform highp mat4 glstate_matrix_texture0;
 #line 43
+uniform highp mat4 glstate_matrix_texture0;
 uniform highp mat4 glstate_matrix_texture1;
 uniform highp mat4 glstate_matrix_texture2;
 uniform highp mat4 glstate_matrix_texture3;
-uniform highp mat4 glstate_matrix_projection;
 #line 47
+uniform highp mat4 glstate_matrix_projection;
 uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp mat4 unity_MatrixV;
 uniform highp mat4 unity_MatrixVP;
+#line 51
 uniform lowp vec4 unity_ColorSpaceGrey;
-#line 76
-#line 81
-#line 86
-#line 90
-#line 95
-#line 119
-#line 136
-#line 157
-#line 165
-#line 192
-#line 205
-#line 214
-#line 219
-#line 228
-#line 233
-#line 242
-#line 259
-#line 264
-#line 290
-#line 298
-#line 302
-#line 316
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 329
-#line 337
-#line 351
+#line 338
+#line 346
+#line 360
 uniform sampler2D _MainTex;
 uniform sampler2D _DetailTex;
-#line 384
+#line 393
 uniform sampler2D _BumpMap;
 uniform lowp vec4 _Color;
 uniform highp float _FalloffPow;
 uniform highp float _FalloffScale;
-#line 388
+#line 397
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-#line 407
 #line 416
-#line 441
+#line 425
+#line 450
 uniform highp vec4 _MainTex_ST;
 uniform highp vec4 _DetailTex_ST;
 uniform highp vec4 _BumpMap_ST;
-#line 81
+#line 82
 highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
     highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
     return objSpaceLightPos.xyz;
 }
-#line 90
+#line 91
 highp vec3 ObjSpaceViewDir( in highp vec4 v ) {
     highp vec3 objSpaceCameraPos = ((_World2Object * vec4( _WorldSpaceCameraPos.xyz, 1.0)).xyz * unity_Scale.w);
     return (objSpaceCameraPos - v.xyz);
 }
-#line 407
+#line 416
 void vert( inout appdata_full v, out Input o ) {
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
-    #line 411
+    #line 420
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     o.viewDist.x = diff;
     o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.0005 * distance( origin, vertexPos))));
 }
-#line 444
+#line 453
 v2f_surf vert_surf( in appdata_full v ) {
-    #line 446
+    #line 455
     v2f_surf o;
     Input customInputData;
     vert( v, customInputData);
     o.cust_viewDist = customInputData.viewDist;
-    #line 450
+    #line 459
     o.pos = (glstate_matrix_mvp * v.vertex);
     o.pack0.xy = ((v.texcoord.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
     o.pack0.zw = ((v.texcoord.xy * _DetailTex_ST.xy) + _DetailTex_ST.zw);
     o.pack1.xy = ((v.texcoord.xy * _BumpMap_ST.xy) + _BumpMap_ST.zw);
-    #line 454
+    #line 463
     highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
     highp vec3 lightDir = (rotation * ObjSpaceLightDir( v.vertex));
-    #line 458
+    #line 467
     o.lightDir = lightDir;
     highp vec3 viewDirForLight = (rotation * ObjSpaceViewDir( v.vertex));
     o.viewDir = viewDirForLight;
     o.vlight = glstate_lightmodel_ambient.xyz;
-    #line 463
+    #line 472
     return o;
 }
 
@@ -3984,23 +3999,23 @@ mat3 xll_saturate_mf3x3(mat3 m) {
 mat4 xll_saturate_mf4x4(mat4 m) {
   return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
 }
-#line 150
+#line 151
 struct v2f_vertex_lit {
     highp vec2 uv;
     lowp vec4 diff;
     lowp vec4 spec;
 };
-#line 186
+#line 187
 struct v2f_img {
     highp vec4 pos;
     mediump vec2 uv;
 };
-#line 180
+#line 181
 struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 306
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -4009,7 +4024,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 66
+#line 67
 struct appdata_full {
     highp vec4 vertex;
     highp vec4 tangent;
@@ -4018,7 +4033,7 @@ struct appdata_full {
     highp vec4 texcoord1;
     lowp vec4 color;
 };
-#line 398
+#line 407
 struct Input {
     highp vec2 uv_MainTex;
     highp vec2 uv_DetailTex;
@@ -4026,7 +4041,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec2 viewDist;
 };
-#line 430
+#line 439
 struct v2f_surf {
     highp vec4 pos;
     highp vec4 pack0;
@@ -4055,150 +4070,153 @@ uniform highp vec4 unity_4LightPosY0;
 uniform highp vec4 unity_4LightPosZ0;
 #line 15
 uniform highp vec4 unity_4LightAtten0;
-uniform highp vec4 unity_LightColor[4];
-uniform highp vec4 unity_LightPosition[4];
-uniform highp vec4 unity_LightAtten[4];
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
 #line 19
+uniform highp vec4 unity_SpotDirection[8];
 uniform highp vec4 unity_SHAr;
 uniform highp vec4 unity_SHAg;
 uniform highp vec4 unity_SHAb;
-uniform highp vec4 unity_SHBr;
 #line 23
+uniform highp vec4 unity_SHBr;
 uniform highp vec4 unity_SHBg;
 uniform highp vec4 unity_SHBb;
 uniform highp vec4 unity_SHC;
+#line 27
 uniform highp vec3 unity_LightColor0;
 uniform highp vec3 unity_LightColor1;
 uniform highp vec3 unity_LightColor2;
 uniform highp vec3 unity_LightColor3;
-#line 27
 uniform highp vec4 unity_ShadowSplitSpheres[4];
 uniform highp vec4 unity_ShadowSplitSqRadii;
 uniform highp vec4 unity_LightShadowBias;
-uniform highp vec4 _LightSplitsNear;
 #line 31
+uniform highp vec4 _LightSplitsNear;
 uniform highp vec4 _LightSplitsFar;
 uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec4 _LightShadowData;
-uniform highp vec4 unity_ShadowFadeCenterAndType;
 #line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
 uniform highp mat4 glstate_matrix_mvp;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp mat4 glstate_matrix_invtrans_modelview0;
-uniform highp mat4 _Object2World;
 #line 39
+uniform highp mat4 _Object2World;
 uniform highp mat4 _World2Object;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 glstate_matrix_transpose_modelview0;
-uniform highp mat4 glstate_matrix_texture0;
 #line 43
+uniform highp mat4 glstate_matrix_texture0;
 uniform highp mat4 glstate_matrix_texture1;
 uniform highp mat4 glstate_matrix_texture2;
 uniform highp mat4 glstate_matrix_texture3;
-uniform highp mat4 glstate_matrix_projection;
 #line 47
+uniform highp mat4 glstate_matrix_projection;
 uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp mat4 unity_MatrixV;
 uniform highp mat4 unity_MatrixVP;
+#line 51
 uniform lowp vec4 unity_ColorSpaceGrey;
-#line 76
-#line 81
-#line 86
-#line 90
-#line 95
-#line 119
-#line 136
-#line 157
-#line 165
-#line 192
-#line 205
-#line 214
-#line 219
-#line 228
-#line 233
-#line 242
-#line 259
-#line 264
-#line 290
-#line 298
-#line 302
-#line 316
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 329
-#line 337
-#line 351
+#line 338
+#line 346
+#line 360
 uniform sampler2D _MainTex;
 uniform sampler2D _DetailTex;
-#line 384
+#line 393
 uniform sampler2D _BumpMap;
 uniform lowp vec4 _Color;
 uniform highp float _FalloffPow;
 uniform highp float _FalloffScale;
-#line 388
+#line 397
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-#line 407
 #line 416
-#line 441
+#line 425
+#line 450
 uniform highp vec4 _MainTex_ST;
 uniform highp vec4 _DetailTex_ST;
 uniform highp vec4 _BumpMap_ST;
-#line 390
+#line 399
 mediump vec4 LightingSimpleLambert( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
-    #line 392
+    #line 401
     mediump float NdotL = xll_saturate_f(dot( s.Normal, lightDir));
     mediump vec4 c;
     c.xyz = (s.Albedo * xll_saturate_vf3((_MinLight + (_LightColor0.xyz * ((NdotL * atten) * 2.0)))));
     c.w = s.Alpha;
-    #line 396
+    #line 405
     return c;
 }
-#line 271
+#line 272
 lowp vec3 UnpackNormal( in lowp vec4 packednormal ) {
-    #line 273
+    #line 274
     return ((packednormal.xyz * 2.0) - 1.0);
 }
-#line 416
+#line 425
 void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 main = texture( _MainTex, IN.uv_MainTex);
     mediump vec4 detail = texture( _DetailTex, IN.uv_DetailTex);
-    #line 420
+    #line 429
     mediump float detailLevel = xll_saturate_f((2.0 * IN.viewDist.x));
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0, 1.0, 1.0), vec3( detailLevel)));
     o.Normal = vec3( 0.0, 0.0, 1.0);
     o.Albedo = (albedo * vec3( _Color));
-    #line 424
+    #line 433
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
     mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
     o.Alpha = ((avg * IN.viewDist.y) * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow)))));
     detailLevel = xll_saturate_f(IN.viewDist.x);
-    #line 428
+    #line 437
     o.Normal = mix( UnpackNormal( texture( _BumpMap, IN.uv_BumpMap)), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
-#line 465
+#line 474
 lowp vec4 frag_surf( in v2f_surf IN ) {
-    #line 467
+    #line 476
     Input surfIN;
     surfIN.uv_MainTex = IN.pack0.xy;
     surfIN.uv_DetailTex = IN.pack0.zw;
     surfIN.uv_BumpMap = IN.pack1.xy;
-    #line 471
+    #line 480
     surfIN.viewDist = IN.cust_viewDist;
     surfIN.viewDir = IN.viewDir;
     SurfaceOutput o;
     o.Albedo = vec3( 0.0);
-    #line 475
+    #line 484
     o.Emission = vec3( 0.0);
     o.Specular = 0.0;
     o.Alpha = 0.0;
     o.Gloss = 0.0;
-    #line 479
+    #line 488
     surf( surfIN, o);
     lowp float atten = 1.0;
     lowp vec4 c = vec4( 0.0);
     c = LightingSimpleLambert( o, IN.lightDir, atten);
-    #line 483
+    #line 492
     c.xyz += (o.Albedo * IN.vlight);
     return c;
 }
@@ -4417,7 +4435,7 @@ Vector 176 [_BumpMap_ST] 4
 ConstBuffer "UnityPerCamera" 128 // 96 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 Vector 80 [_ProjectionParams] 4
-ConstBuffer "UnityLighting" 400 // 16 used size, 16 vars
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
 Matrix 0 [glstate_matrix_mvp] 4
@@ -4432,7 +4450,7 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
 // 46 instructions, 3 temp regs, 0 temp arrays:
-// ALU 25 float, 0 int, 0 uint
+// ALU 42 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
@@ -4989,7 +5007,7 @@ Vector 176 [_BumpMap_ST] 4
 ConstBuffer "UnityPerCamera" 128 // 96 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 Vector 80 [_ProjectionParams] 4
-ConstBuffer "UnityLighting" 400 // 16 used size, 16 vars
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
 Matrix 0 [glstate_matrix_mvp] 4
@@ -5004,7 +5022,7 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
 // 46 instructions, 3 temp regs, 0 temp arrays:
-// ALU 25 float, 0 int, 0 uint
+// ALU 42 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0_level_9_1
@@ -5171,23 +5189,23 @@ mat3 xll_saturate_mf3x3(mat3 m) {
 mat4 xll_saturate_mf4x4(mat4 m) {
   return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
 }
-#line 150
+#line 151
 struct v2f_vertex_lit {
     highp vec2 uv;
     lowp vec4 diff;
     lowp vec4 spec;
 };
-#line 186
+#line 187
 struct v2f_img {
     highp vec4 pos;
     mediump vec2 uv;
 };
-#line 180
+#line 181
 struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 306
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -5196,7 +5214,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 66
+#line 67
 struct appdata_full {
     highp vec4 vertex;
     highp vec4 tangent;
@@ -5205,7 +5223,7 @@ struct appdata_full {
     highp vec4 texcoord1;
     lowp vec4 color;
 };
-#line 406
+#line 415
 struct Input {
     highp vec2 uv_MainTex;
     highp vec2 uv_DetailTex;
@@ -5213,7 +5231,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec2 viewDist;
 };
-#line 438
+#line 447
 struct v2f_surf {
     highp vec4 pos;
     highp vec4 pack0;
@@ -5243,141 +5261,144 @@ uniform highp vec4 unity_4LightPosY0;
 uniform highp vec4 unity_4LightPosZ0;
 #line 15
 uniform highp vec4 unity_4LightAtten0;
-uniform highp vec4 unity_LightColor[4];
-uniform highp vec4 unity_LightPosition[4];
-uniform highp vec4 unity_LightAtten[4];
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
 #line 19
+uniform highp vec4 unity_SpotDirection[8];
 uniform highp vec4 unity_SHAr;
 uniform highp vec4 unity_SHAg;
 uniform highp vec4 unity_SHAb;
-uniform highp vec4 unity_SHBr;
 #line 23
+uniform highp vec4 unity_SHBr;
 uniform highp vec4 unity_SHBg;
 uniform highp vec4 unity_SHBb;
 uniform highp vec4 unity_SHC;
+#line 27
 uniform highp vec3 unity_LightColor0;
 uniform highp vec3 unity_LightColor1;
 uniform highp vec3 unity_LightColor2;
 uniform highp vec3 unity_LightColor3;
-#line 27
 uniform highp vec4 unity_ShadowSplitSpheres[4];
 uniform highp vec4 unity_ShadowSplitSqRadii;
 uniform highp vec4 unity_LightShadowBias;
-uniform highp vec4 _LightSplitsNear;
 #line 31
+uniform highp vec4 _LightSplitsNear;
 uniform highp vec4 _LightSplitsFar;
 uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec4 _LightShadowData;
-uniform highp vec4 unity_ShadowFadeCenterAndType;
 #line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
 uniform highp mat4 glstate_matrix_mvp;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp mat4 glstate_matrix_invtrans_modelview0;
-uniform highp mat4 _Object2World;
 #line 39
+uniform highp mat4 _Object2World;
 uniform highp mat4 _World2Object;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 glstate_matrix_transpose_modelview0;
-uniform highp mat4 glstate_matrix_texture0;
 #line 43
+uniform highp mat4 glstate_matrix_texture0;
 uniform highp mat4 glstate_matrix_texture1;
 uniform highp mat4 glstate_matrix_texture2;
 uniform highp mat4 glstate_matrix_texture3;
-uniform highp mat4 glstate_matrix_projection;
 #line 47
+uniform highp mat4 glstate_matrix_projection;
 uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp mat4 unity_MatrixV;
 uniform highp mat4 unity_MatrixVP;
+#line 51
 uniform lowp vec4 unity_ColorSpaceGrey;
-#line 76
-#line 81
-#line 86
-#line 90
-#line 95
-#line 119
-#line 136
-#line 157
-#line 165
-#line 192
-#line 205
-#line 214
-#line 219
-#line 228
-#line 233
-#line 242
-#line 259
-#line 264
-#line 290
-#line 298
-#line 302
-#line 316
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 329
-#line 337
-#line 351
+#line 338
+#line 346
+#line 360
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 384
+#line 393
 uniform sampler2D _MainTex;
 uniform sampler2D _DetailTex;
-#line 392
+#line 401
 uniform sampler2D _BumpMap;
 uniform lowp vec4 _Color;
 uniform highp float _FalloffPow;
 uniform highp float _FalloffScale;
-#line 396
+#line 405
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-#line 415
 #line 424
-#line 450
+#line 433
+#line 459
 uniform highp vec4 _MainTex_ST;
 uniform highp vec4 _DetailTex_ST;
 uniform highp vec4 _BumpMap_ST;
-#line 475
-#line 81
+#line 484
+#line 82
 highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
     highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
     return objSpaceLightPos.xyz;
 }
-#line 90
+#line 91
 highp vec3 ObjSpaceViewDir( in highp vec4 v ) {
     highp vec3 objSpaceCameraPos = ((_World2Object * vec4( _WorldSpaceCameraPos.xyz, 1.0)).xyz * unity_Scale.w);
     return (objSpaceCameraPos - v.xyz);
 }
-#line 415
+#line 424
 void vert( inout appdata_full v, out Input o ) {
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
-    #line 419
+    #line 428
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     o.viewDist.x = diff;
     o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.0005 * distance( origin, vertexPos))));
 }
-#line 453
+#line 462
 v2f_surf vert_surf( in appdata_full v ) {
-    #line 455
+    #line 464
     v2f_surf o;
     Input customInputData;
     vert( v, customInputData);
     o.cust_viewDist = customInputData.viewDist;
-    #line 459
+    #line 468
     o.pos = (glstate_matrix_mvp * v.vertex);
     o.pack0.xy = ((v.texcoord.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
     o.pack0.zw = ((v.texcoord.xy * _DetailTex_ST.xy) + _DetailTex_ST.zw);
     o.pack1.xy = ((v.texcoord.xy * _BumpMap_ST.xy) + _BumpMap_ST.zw);
-    #line 463
+    #line 472
     highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
     highp vec3 lightDir = (rotation * ObjSpaceLightDir( v.vertex));
-    #line 467
+    #line 476
     o.lightDir = lightDir;
     highp vec3 viewDirForLight = (rotation * ObjSpaceViewDir( v.vertex));
     o.viewDir = viewDirForLight;
     o.vlight = glstate_lightmodel_ambient.xyz;
-    #line 471
+    #line 480
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
 }
@@ -5436,23 +5457,23 @@ mat3 xll_saturate_mf3x3(mat3 m) {
 mat4 xll_saturate_mf4x4(mat4 m) {
   return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
 }
-#line 150
+#line 151
 struct v2f_vertex_lit {
     highp vec2 uv;
     lowp vec4 diff;
     lowp vec4 spec;
 };
-#line 186
+#line 187
 struct v2f_img {
     highp vec4 pos;
     mediump vec2 uv;
 };
-#line 180
+#line 181
 struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 306
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -5461,7 +5482,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 66
+#line 67
 struct appdata_full {
     highp vec4 vertex;
     highp vec4 tangent;
@@ -5470,7 +5491,7 @@ struct appdata_full {
     highp vec4 texcoord1;
     lowp vec4 color;
 };
-#line 406
+#line 415
 struct Input {
     highp vec2 uv_MainTex;
     highp vec2 uv_DetailTex;
@@ -5478,7 +5499,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec2 viewDist;
 };
-#line 438
+#line 447
 struct v2f_surf {
     highp vec4 pos;
     highp vec4 pack0;
@@ -5508,158 +5529,161 @@ uniform highp vec4 unity_4LightPosY0;
 uniform highp vec4 unity_4LightPosZ0;
 #line 15
 uniform highp vec4 unity_4LightAtten0;
-uniform highp vec4 unity_LightColor[4];
-uniform highp vec4 unity_LightPosition[4];
-uniform highp vec4 unity_LightAtten[4];
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
 #line 19
+uniform highp vec4 unity_SpotDirection[8];
 uniform highp vec4 unity_SHAr;
 uniform highp vec4 unity_SHAg;
 uniform highp vec4 unity_SHAb;
-uniform highp vec4 unity_SHBr;
 #line 23
+uniform highp vec4 unity_SHBr;
 uniform highp vec4 unity_SHBg;
 uniform highp vec4 unity_SHBb;
 uniform highp vec4 unity_SHC;
+#line 27
 uniform highp vec3 unity_LightColor0;
 uniform highp vec3 unity_LightColor1;
 uniform highp vec3 unity_LightColor2;
 uniform highp vec3 unity_LightColor3;
-#line 27
 uniform highp vec4 unity_ShadowSplitSpheres[4];
 uniform highp vec4 unity_ShadowSplitSqRadii;
 uniform highp vec4 unity_LightShadowBias;
-uniform highp vec4 _LightSplitsNear;
 #line 31
+uniform highp vec4 _LightSplitsNear;
 uniform highp vec4 _LightSplitsFar;
 uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec4 _LightShadowData;
-uniform highp vec4 unity_ShadowFadeCenterAndType;
 #line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
 uniform highp mat4 glstate_matrix_mvp;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp mat4 glstate_matrix_invtrans_modelview0;
-uniform highp mat4 _Object2World;
 #line 39
+uniform highp mat4 _Object2World;
 uniform highp mat4 _World2Object;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 glstate_matrix_transpose_modelview0;
-uniform highp mat4 glstate_matrix_texture0;
 #line 43
+uniform highp mat4 glstate_matrix_texture0;
 uniform highp mat4 glstate_matrix_texture1;
 uniform highp mat4 glstate_matrix_texture2;
 uniform highp mat4 glstate_matrix_texture3;
-uniform highp mat4 glstate_matrix_projection;
 #line 47
+uniform highp mat4 glstate_matrix_projection;
 uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp mat4 unity_MatrixV;
 uniform highp mat4 unity_MatrixVP;
+#line 51
 uniform lowp vec4 unity_ColorSpaceGrey;
-#line 76
-#line 81
-#line 86
-#line 90
-#line 95
-#line 119
-#line 136
-#line 157
-#line 165
-#line 192
-#line 205
-#line 214
-#line 219
-#line 228
-#line 233
-#line 242
-#line 259
-#line 264
-#line 290
-#line 298
-#line 302
-#line 316
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 329
-#line 337
-#line 351
+#line 338
+#line 346
+#line 360
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 384
+#line 393
 uniform sampler2D _MainTex;
 uniform sampler2D _DetailTex;
-#line 392
+#line 401
 uniform sampler2D _BumpMap;
 uniform lowp vec4 _Color;
 uniform highp float _FalloffPow;
 uniform highp float _FalloffScale;
-#line 396
+#line 405
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-#line 415
 #line 424
-#line 450
+#line 433
+#line 459
 uniform highp vec4 _MainTex_ST;
 uniform highp vec4 _DetailTex_ST;
 uniform highp vec4 _BumpMap_ST;
-#line 475
-#line 398
+#line 484
+#line 407
 mediump vec4 LightingSimpleLambert( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
-    #line 400
+    #line 409
     mediump float NdotL = xll_saturate_f(dot( s.Normal, lightDir));
     mediump vec4 c;
     c.xyz = (s.Albedo * xll_saturate_vf3((_MinLight + (_LightColor0.xyz * ((NdotL * atten) * 2.0)))));
     c.w = s.Alpha;
-    #line 404
+    #line 413
     return c;
 }
-#line 271
+#line 272
 lowp vec3 UnpackNormal( in lowp vec4 packednormal ) {
-    #line 273
+    #line 274
     return ((packednormal.xyz * 2.0) - 1.0);
 }
-#line 424
+#line 433
 void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 main = texture( _MainTex, IN.uv_MainTex);
     mediump vec4 detail = texture( _DetailTex, IN.uv_DetailTex);
-    #line 428
+    #line 437
     mediump float detailLevel = xll_saturate_f((2.0 * IN.viewDist.x));
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0, 1.0, 1.0), vec3( detailLevel)));
     o.Normal = vec3( 0.0, 0.0, 1.0);
     o.Albedo = (albedo * vec3( _Color));
-    #line 432
+    #line 441
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
     mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
     o.Alpha = ((avg * IN.viewDist.y) * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow)))));
     detailLevel = xll_saturate_f(IN.viewDist.x);
-    #line 436
+    #line 445
     o.Normal = mix( UnpackNormal( texture( _BumpMap, IN.uv_BumpMap)), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
-#line 384
+#line 393
 lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
     highp float dist = textureProj( _ShadowMapTexture, shadowCoord).x;
     mediump float lightShadowDataX = _LightShadowData.x;
-    #line 388
+    #line 397
     return max( float((dist > (shadowCoord.z / shadowCoord.w))), lightShadowDataX);
 }
-#line 475
+#line 484
 lowp vec4 frag_surf( in v2f_surf IN ) {
     Input surfIN;
     surfIN.uv_MainTex = IN.pack0.xy;
-    #line 479
+    #line 488
     surfIN.uv_DetailTex = IN.pack0.zw;
     surfIN.uv_BumpMap = IN.pack1.xy;
     surfIN.viewDist = IN.cust_viewDist;
     surfIN.viewDir = IN.viewDir;
-    #line 483
+    #line 492
     SurfaceOutput o;
     o.Albedo = vec3( 0.0);
     o.Emission = vec3( 0.0);
     o.Specular = 0.0;
-    #line 487
+    #line 496
     o.Alpha = 0.0;
     o.Gloss = 0.0;
     surf( surfIN, o);
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
-    #line 491
+    #line 500
     lowp vec4 c = vec4( 0.0);
     c = LightingSimpleLambert( o, IN.lightDir, atten);
     c.xyz += (o.Albedo * IN.vlight);
@@ -5924,23 +5948,23 @@ mat3 xll_saturate_mf3x3(mat3 m) {
 mat4 xll_saturate_mf4x4(mat4 m) {
   return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
 }
-#line 150
+#line 151
 struct v2f_vertex_lit {
     highp vec2 uv;
     lowp vec4 diff;
     lowp vec4 spec;
 };
-#line 186
+#line 187
 struct v2f_img {
     highp vec4 pos;
     mediump vec2 uv;
 };
-#line 180
+#line 181
 struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 306
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -5949,7 +5973,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 66
+#line 67
 struct appdata_full {
     highp vec4 vertex;
     highp vec4 tangent;
@@ -5958,7 +5982,7 @@ struct appdata_full {
     highp vec4 texcoord1;
     lowp vec4 color;
 };
-#line 406
+#line 415
 struct Input {
     highp vec2 uv_MainTex;
     highp vec2 uv_DetailTex;
@@ -5966,7 +5990,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec2 viewDist;
 };
-#line 438
+#line 447
 struct v2f_surf {
     highp vec4 pos;
     highp vec4 pack0;
@@ -5996,141 +6020,144 @@ uniform highp vec4 unity_4LightPosY0;
 uniform highp vec4 unity_4LightPosZ0;
 #line 15
 uniform highp vec4 unity_4LightAtten0;
-uniform highp vec4 unity_LightColor[4];
-uniform highp vec4 unity_LightPosition[4];
-uniform highp vec4 unity_LightAtten[4];
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
 #line 19
+uniform highp vec4 unity_SpotDirection[8];
 uniform highp vec4 unity_SHAr;
 uniform highp vec4 unity_SHAg;
 uniform highp vec4 unity_SHAb;
-uniform highp vec4 unity_SHBr;
 #line 23
+uniform highp vec4 unity_SHBr;
 uniform highp vec4 unity_SHBg;
 uniform highp vec4 unity_SHBb;
 uniform highp vec4 unity_SHC;
+#line 27
 uniform highp vec3 unity_LightColor0;
 uniform highp vec3 unity_LightColor1;
 uniform highp vec3 unity_LightColor2;
 uniform highp vec3 unity_LightColor3;
-#line 27
 uniform highp vec4 unity_ShadowSplitSpheres[4];
 uniform highp vec4 unity_ShadowSplitSqRadii;
 uniform highp vec4 unity_LightShadowBias;
-uniform highp vec4 _LightSplitsNear;
 #line 31
+uniform highp vec4 _LightSplitsNear;
 uniform highp vec4 _LightSplitsFar;
 uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec4 _LightShadowData;
-uniform highp vec4 unity_ShadowFadeCenterAndType;
 #line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
 uniform highp mat4 glstate_matrix_mvp;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp mat4 glstate_matrix_invtrans_modelview0;
-uniform highp mat4 _Object2World;
 #line 39
+uniform highp mat4 _Object2World;
 uniform highp mat4 _World2Object;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 glstate_matrix_transpose_modelview0;
-uniform highp mat4 glstate_matrix_texture0;
 #line 43
+uniform highp mat4 glstate_matrix_texture0;
 uniform highp mat4 glstate_matrix_texture1;
 uniform highp mat4 glstate_matrix_texture2;
 uniform highp mat4 glstate_matrix_texture3;
-uniform highp mat4 glstate_matrix_projection;
 #line 47
+uniform highp mat4 glstate_matrix_projection;
 uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp mat4 unity_MatrixV;
 uniform highp mat4 unity_MatrixVP;
+#line 51
 uniform lowp vec4 unity_ColorSpaceGrey;
-#line 76
-#line 81
-#line 86
-#line 90
-#line 95
-#line 119
-#line 136
-#line 157
-#line 165
-#line 192
-#line 205
-#line 214
-#line 219
-#line 228
-#line 233
-#line 242
-#line 259
-#line 264
-#line 290
-#line 298
-#line 302
-#line 316
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 329
-#line 337
-#line 351
+#line 338
+#line 346
+#line 360
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 384
+#line 393
 uniform sampler2D _MainTex;
 uniform sampler2D _DetailTex;
-#line 392
+#line 401
 uniform sampler2D _BumpMap;
 uniform lowp vec4 _Color;
 uniform highp float _FalloffPow;
 uniform highp float _FalloffScale;
-#line 396
+#line 405
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-#line 415
 #line 424
-#line 450
+#line 433
+#line 459
 uniform highp vec4 _MainTex_ST;
 uniform highp vec4 _DetailTex_ST;
 uniform highp vec4 _BumpMap_ST;
-#line 475
-#line 81
+#line 484
+#line 82
 highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
     highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
     return objSpaceLightPos.xyz;
 }
-#line 90
+#line 91
 highp vec3 ObjSpaceViewDir( in highp vec4 v ) {
     highp vec3 objSpaceCameraPos = ((_World2Object * vec4( _WorldSpaceCameraPos.xyz, 1.0)).xyz * unity_Scale.w);
     return (objSpaceCameraPos - v.xyz);
 }
-#line 415
+#line 424
 void vert( inout appdata_full v, out Input o ) {
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
-    #line 419
+    #line 428
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     o.viewDist.x = diff;
     o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.0005 * distance( origin, vertexPos))));
 }
-#line 453
+#line 462
 v2f_surf vert_surf( in appdata_full v ) {
-    #line 455
+    #line 464
     v2f_surf o;
     Input customInputData;
     vert( v, customInputData);
     o.cust_viewDist = customInputData.viewDist;
-    #line 459
+    #line 468
     o.pos = (glstate_matrix_mvp * v.vertex);
     o.pack0.xy = ((v.texcoord.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
     o.pack0.zw = ((v.texcoord.xy * _DetailTex_ST.xy) + _DetailTex_ST.zw);
     o.pack1.xy = ((v.texcoord.xy * _BumpMap_ST.xy) + _BumpMap_ST.zw);
-    #line 463
+    #line 472
     highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
     highp vec3 lightDir = (rotation * ObjSpaceLightDir( v.vertex));
-    #line 467
+    #line 476
     o.lightDir = lightDir;
     highp vec3 viewDirForLight = (rotation * ObjSpaceViewDir( v.vertex));
     o.viewDir = viewDirForLight;
     o.vlight = glstate_lightmodel_ambient.xyz;
-    #line 471
+    #line 480
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
 }
@@ -6190,23 +6217,23 @@ mat3 xll_saturate_mf3x3(mat3 m) {
 mat4 xll_saturate_mf4x4(mat4 m) {
   return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
 }
-#line 150
+#line 151
 struct v2f_vertex_lit {
     highp vec2 uv;
     lowp vec4 diff;
     lowp vec4 spec;
 };
-#line 186
+#line 187
 struct v2f_img {
     highp vec4 pos;
     mediump vec2 uv;
 };
-#line 180
+#line 181
 struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 306
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -6215,7 +6242,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 66
+#line 67
 struct appdata_full {
     highp vec4 vertex;
     highp vec4 tangent;
@@ -6224,7 +6251,7 @@ struct appdata_full {
     highp vec4 texcoord1;
     lowp vec4 color;
 };
-#line 406
+#line 415
 struct Input {
     highp vec2 uv_MainTex;
     highp vec2 uv_DetailTex;
@@ -6232,7 +6259,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec2 viewDist;
 };
-#line 438
+#line 447
 struct v2f_surf {
     highp vec4 pos;
     highp vec4 pack0;
@@ -6262,158 +6289,161 @@ uniform highp vec4 unity_4LightPosY0;
 uniform highp vec4 unity_4LightPosZ0;
 #line 15
 uniform highp vec4 unity_4LightAtten0;
-uniform highp vec4 unity_LightColor[4];
-uniform highp vec4 unity_LightPosition[4];
-uniform highp vec4 unity_LightAtten[4];
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
 #line 19
+uniform highp vec4 unity_SpotDirection[8];
 uniform highp vec4 unity_SHAr;
 uniform highp vec4 unity_SHAg;
 uniform highp vec4 unity_SHAb;
-uniform highp vec4 unity_SHBr;
 #line 23
+uniform highp vec4 unity_SHBr;
 uniform highp vec4 unity_SHBg;
 uniform highp vec4 unity_SHBb;
 uniform highp vec4 unity_SHC;
+#line 27
 uniform highp vec3 unity_LightColor0;
 uniform highp vec3 unity_LightColor1;
 uniform highp vec3 unity_LightColor2;
 uniform highp vec3 unity_LightColor3;
-#line 27
 uniform highp vec4 unity_ShadowSplitSpheres[4];
 uniform highp vec4 unity_ShadowSplitSqRadii;
 uniform highp vec4 unity_LightShadowBias;
-uniform highp vec4 _LightSplitsNear;
 #line 31
+uniform highp vec4 _LightSplitsNear;
 uniform highp vec4 _LightSplitsFar;
 uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec4 _LightShadowData;
-uniform highp vec4 unity_ShadowFadeCenterAndType;
 #line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
 uniform highp mat4 glstate_matrix_mvp;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp mat4 glstate_matrix_invtrans_modelview0;
-uniform highp mat4 _Object2World;
 #line 39
+uniform highp mat4 _Object2World;
 uniform highp mat4 _World2Object;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 glstate_matrix_transpose_modelview0;
-uniform highp mat4 glstate_matrix_texture0;
 #line 43
+uniform highp mat4 glstate_matrix_texture0;
 uniform highp mat4 glstate_matrix_texture1;
 uniform highp mat4 glstate_matrix_texture2;
 uniform highp mat4 glstate_matrix_texture3;
-uniform highp mat4 glstate_matrix_projection;
 #line 47
+uniform highp mat4 glstate_matrix_projection;
 uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp mat4 unity_MatrixV;
 uniform highp mat4 unity_MatrixVP;
+#line 51
 uniform lowp vec4 unity_ColorSpaceGrey;
-#line 76
-#line 81
-#line 86
-#line 90
-#line 95
-#line 119
-#line 136
-#line 157
-#line 165
-#line 192
-#line 205
-#line 214
-#line 219
-#line 228
-#line 233
-#line 242
-#line 259
-#line 264
-#line 290
-#line 298
-#line 302
-#line 316
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 329
-#line 337
-#line 351
+#line 338
+#line 346
+#line 360
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 384
+#line 393
 uniform sampler2D _MainTex;
 uniform sampler2D _DetailTex;
-#line 392
+#line 401
 uniform sampler2D _BumpMap;
 uniform lowp vec4 _Color;
 uniform highp float _FalloffPow;
 uniform highp float _FalloffScale;
-#line 396
+#line 405
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-#line 415
 #line 424
-#line 450
+#line 433
+#line 459
 uniform highp vec4 _MainTex_ST;
 uniform highp vec4 _DetailTex_ST;
 uniform highp vec4 _BumpMap_ST;
-#line 475
-#line 398
+#line 484
+#line 407
 mediump vec4 LightingSimpleLambert( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
-    #line 400
+    #line 409
     mediump float NdotL = xll_saturate_f(dot( s.Normal, lightDir));
     mediump vec4 c;
     c.xyz = (s.Albedo * xll_saturate_vf3((_MinLight + (_LightColor0.xyz * ((NdotL * atten) * 2.0)))));
     c.w = s.Alpha;
-    #line 404
+    #line 413
     return c;
 }
-#line 271
+#line 272
 lowp vec3 UnpackNormal( in lowp vec4 packednormal ) {
-    #line 273
+    #line 274
     return ((packednormal.xyz * 2.0) - 1.0);
 }
-#line 424
+#line 433
 void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 main = texture( _MainTex, IN.uv_MainTex);
     mediump vec4 detail = texture( _DetailTex, IN.uv_DetailTex);
-    #line 428
+    #line 437
     mediump float detailLevel = xll_saturate_f((2.0 * IN.viewDist.x));
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0, 1.0, 1.0), vec3( detailLevel)));
     o.Normal = vec3( 0.0, 0.0, 1.0);
     o.Albedo = (albedo * vec3( _Color));
-    #line 432
+    #line 441
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
     mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
     o.Alpha = ((avg * IN.viewDist.y) * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow)))));
     detailLevel = xll_saturate_f(IN.viewDist.x);
-    #line 436
+    #line 445
     o.Normal = mix( UnpackNormal( texture( _BumpMap, IN.uv_BumpMap)), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
-#line 384
+#line 393
 lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
     lowp float shadow = xll_shadow2D( _ShadowMapTexture, shadowCoord.xyz.xyz);
     shadow = (_LightShadowData.x + (shadow * (1.0 - _LightShadowData.x)));
-    #line 388
+    #line 397
     return shadow;
 }
-#line 475
+#line 484
 lowp vec4 frag_surf( in v2f_surf IN ) {
     Input surfIN;
     surfIN.uv_MainTex = IN.pack0.xy;
-    #line 479
+    #line 488
     surfIN.uv_DetailTex = IN.pack0.zw;
     surfIN.uv_BumpMap = IN.pack1.xy;
     surfIN.viewDist = IN.cust_viewDist;
     surfIN.viewDir = IN.viewDir;
-    #line 483
+    #line 492
     SurfaceOutput o;
     o.Albedo = vec3( 0.0);
     o.Emission = vec3( 0.0);
     o.Specular = 0.0;
-    #line 487
+    #line 496
     o.Alpha = 0.0;
     o.Gloss = 0.0;
     surf( surfIN, o);
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
-    #line 491
+    #line 500
     lowp vec4 c = vec4( 0.0);
     c = LightingSimpleLambert( o, IN.lightDir, atten);
     c.xyz += (o.Albedo * IN.vlight);
@@ -6678,23 +6708,23 @@ mat3 xll_saturate_mf3x3(mat3 m) {
 mat4 xll_saturate_mf4x4(mat4 m) {
   return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
 }
-#line 150
+#line 151
 struct v2f_vertex_lit {
     highp vec2 uv;
     lowp vec4 diff;
     lowp vec4 spec;
 };
-#line 186
+#line 187
 struct v2f_img {
     highp vec4 pos;
     mediump vec2 uv;
 };
-#line 180
+#line 181
 struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 306
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -6703,7 +6733,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 66
+#line 67
 struct appdata_full {
     highp vec4 vertex;
     highp vec4 tangent;
@@ -6712,7 +6742,7 @@ struct appdata_full {
     highp vec4 texcoord1;
     lowp vec4 color;
 };
-#line 406
+#line 415
 struct Input {
     highp vec2 uv_MainTex;
     highp vec2 uv_DetailTex;
@@ -6720,7 +6750,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec2 viewDist;
 };
-#line 438
+#line 447
 struct v2f_surf {
     highp vec4 pos;
     highp vec4 pack0;
@@ -6750,141 +6780,144 @@ uniform highp vec4 unity_4LightPosY0;
 uniform highp vec4 unity_4LightPosZ0;
 #line 15
 uniform highp vec4 unity_4LightAtten0;
-uniform highp vec4 unity_LightColor[4];
-uniform highp vec4 unity_LightPosition[4];
-uniform highp vec4 unity_LightAtten[4];
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
 #line 19
+uniform highp vec4 unity_SpotDirection[8];
 uniform highp vec4 unity_SHAr;
 uniform highp vec4 unity_SHAg;
 uniform highp vec4 unity_SHAb;
-uniform highp vec4 unity_SHBr;
 #line 23
+uniform highp vec4 unity_SHBr;
 uniform highp vec4 unity_SHBg;
 uniform highp vec4 unity_SHBb;
 uniform highp vec4 unity_SHC;
+#line 27
 uniform highp vec3 unity_LightColor0;
 uniform highp vec3 unity_LightColor1;
 uniform highp vec3 unity_LightColor2;
 uniform highp vec3 unity_LightColor3;
-#line 27
 uniform highp vec4 unity_ShadowSplitSpheres[4];
 uniform highp vec4 unity_ShadowSplitSqRadii;
 uniform highp vec4 unity_LightShadowBias;
-uniform highp vec4 _LightSplitsNear;
 #line 31
+uniform highp vec4 _LightSplitsNear;
 uniform highp vec4 _LightSplitsFar;
 uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec4 _LightShadowData;
-uniform highp vec4 unity_ShadowFadeCenterAndType;
 #line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
 uniform highp mat4 glstate_matrix_mvp;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp mat4 glstate_matrix_invtrans_modelview0;
-uniform highp mat4 _Object2World;
 #line 39
+uniform highp mat4 _Object2World;
 uniform highp mat4 _World2Object;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 glstate_matrix_transpose_modelview0;
-uniform highp mat4 glstate_matrix_texture0;
 #line 43
+uniform highp mat4 glstate_matrix_texture0;
 uniform highp mat4 glstate_matrix_texture1;
 uniform highp mat4 glstate_matrix_texture2;
 uniform highp mat4 glstate_matrix_texture3;
-uniform highp mat4 glstate_matrix_projection;
 #line 47
+uniform highp mat4 glstate_matrix_projection;
 uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp mat4 unity_MatrixV;
 uniform highp mat4 unity_MatrixVP;
+#line 51
 uniform lowp vec4 unity_ColorSpaceGrey;
-#line 76
-#line 81
-#line 86
-#line 90
-#line 95
-#line 119
-#line 136
-#line 157
-#line 165
-#line 192
-#line 205
-#line 214
-#line 219
-#line 228
-#line 233
-#line 242
-#line 259
-#line 264
-#line 290
-#line 298
-#line 302
-#line 316
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 329
-#line 337
-#line 351
+#line 338
+#line 346
+#line 360
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 384
+#line 393
 uniform sampler2D _MainTex;
 uniform sampler2D _DetailTex;
-#line 392
+#line 401
 uniform sampler2D _BumpMap;
 uniform lowp vec4 _Color;
 uniform highp float _FalloffPow;
 uniform highp float _FalloffScale;
-#line 396
+#line 405
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-#line 415
 #line 424
-#line 450
+#line 433
+#line 459
 uniform highp vec4 _MainTex_ST;
 uniform highp vec4 _DetailTex_ST;
 uniform highp vec4 _BumpMap_ST;
-#line 475
-#line 81
+#line 484
+#line 82
 highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
     highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
     return objSpaceLightPos.xyz;
 }
-#line 90
+#line 91
 highp vec3 ObjSpaceViewDir( in highp vec4 v ) {
     highp vec3 objSpaceCameraPos = ((_World2Object * vec4( _WorldSpaceCameraPos.xyz, 1.0)).xyz * unity_Scale.w);
     return (objSpaceCameraPos - v.xyz);
 }
-#line 415
+#line 424
 void vert( inout appdata_full v, out Input o ) {
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
-    #line 419
+    #line 428
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     o.viewDist.x = diff;
     o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.0005 * distance( origin, vertexPos))));
 }
-#line 453
+#line 462
 v2f_surf vert_surf( in appdata_full v ) {
-    #line 455
+    #line 464
     v2f_surf o;
     Input customInputData;
     vert( v, customInputData);
     o.cust_viewDist = customInputData.viewDist;
-    #line 459
+    #line 468
     o.pos = (glstate_matrix_mvp * v.vertex);
     o.pack0.xy = ((v.texcoord.xy * _MainTex_ST.xy) + _MainTex_ST.zw);
     o.pack0.zw = ((v.texcoord.xy * _DetailTex_ST.xy) + _DetailTex_ST.zw);
     o.pack1.xy = ((v.texcoord.xy * _BumpMap_ST.xy) + _BumpMap_ST.zw);
-    #line 463
+    #line 472
     highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
     highp vec3 lightDir = (rotation * ObjSpaceLightDir( v.vertex));
-    #line 467
+    #line 476
     o.lightDir = lightDir;
     highp vec3 viewDirForLight = (rotation * ObjSpaceViewDir( v.vertex));
     o.viewDir = viewDirForLight;
     o.vlight = glstate_lightmodel_ambient.xyz;
-    #line 471
+    #line 480
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
 }
@@ -6944,23 +6977,23 @@ mat3 xll_saturate_mf3x3(mat3 m) {
 mat4 xll_saturate_mf4x4(mat4 m) {
   return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
 }
-#line 150
+#line 151
 struct v2f_vertex_lit {
     highp vec2 uv;
     lowp vec4 diff;
     lowp vec4 spec;
 };
-#line 186
+#line 187
 struct v2f_img {
     highp vec4 pos;
     mediump vec2 uv;
 };
-#line 180
+#line 181
 struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 306
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -6969,7 +7002,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 66
+#line 67
 struct appdata_full {
     highp vec4 vertex;
     highp vec4 tangent;
@@ -6978,7 +7011,7 @@ struct appdata_full {
     highp vec4 texcoord1;
     lowp vec4 color;
 };
-#line 406
+#line 415
 struct Input {
     highp vec2 uv_MainTex;
     highp vec2 uv_DetailTex;
@@ -6986,7 +7019,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec2 viewDist;
 };
-#line 438
+#line 447
 struct v2f_surf {
     highp vec4 pos;
     highp vec4 pack0;
@@ -7016,158 +7049,161 @@ uniform highp vec4 unity_4LightPosY0;
 uniform highp vec4 unity_4LightPosZ0;
 #line 15
 uniform highp vec4 unity_4LightAtten0;
-uniform highp vec4 unity_LightColor[4];
-uniform highp vec4 unity_LightPosition[4];
-uniform highp vec4 unity_LightAtten[4];
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
 #line 19
+uniform highp vec4 unity_SpotDirection[8];
 uniform highp vec4 unity_SHAr;
 uniform highp vec4 unity_SHAg;
 uniform highp vec4 unity_SHAb;
-uniform highp vec4 unity_SHBr;
 #line 23
+uniform highp vec4 unity_SHBr;
 uniform highp vec4 unity_SHBg;
 uniform highp vec4 unity_SHBb;
 uniform highp vec4 unity_SHC;
+#line 27
 uniform highp vec3 unity_LightColor0;
 uniform highp vec3 unity_LightColor1;
 uniform highp vec3 unity_LightColor2;
 uniform highp vec3 unity_LightColor3;
-#line 27
 uniform highp vec4 unity_ShadowSplitSpheres[4];
 uniform highp vec4 unity_ShadowSplitSqRadii;
 uniform highp vec4 unity_LightShadowBias;
-uniform highp vec4 _LightSplitsNear;
 #line 31
+uniform highp vec4 _LightSplitsNear;
 uniform highp vec4 _LightSplitsFar;
 uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec4 _LightShadowData;
-uniform highp vec4 unity_ShadowFadeCenterAndType;
 #line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
 uniform highp mat4 glstate_matrix_mvp;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp mat4 glstate_matrix_invtrans_modelview0;
-uniform highp mat4 _Object2World;
 #line 39
+uniform highp mat4 _Object2World;
 uniform highp mat4 _World2Object;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 glstate_matrix_transpose_modelview0;
-uniform highp mat4 glstate_matrix_texture0;
 #line 43
+uniform highp mat4 glstate_matrix_texture0;
 uniform highp mat4 glstate_matrix_texture1;
 uniform highp mat4 glstate_matrix_texture2;
 uniform highp mat4 glstate_matrix_texture3;
-uniform highp mat4 glstate_matrix_projection;
 #line 47
+uniform highp mat4 glstate_matrix_projection;
 uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp mat4 unity_MatrixV;
 uniform highp mat4 unity_MatrixVP;
+#line 51
 uniform lowp vec4 unity_ColorSpaceGrey;
-#line 76
-#line 81
-#line 86
-#line 90
-#line 95
-#line 119
-#line 136
-#line 157
-#line 165
-#line 192
-#line 205
-#line 214
-#line 219
-#line 228
-#line 233
-#line 242
-#line 259
-#line 264
-#line 290
-#line 298
-#line 302
-#line 316
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 329
-#line 337
-#line 351
+#line 338
+#line 346
+#line 360
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 384
+#line 393
 uniform sampler2D _MainTex;
 uniform sampler2D _DetailTex;
-#line 392
+#line 401
 uniform sampler2D _BumpMap;
 uniform lowp vec4 _Color;
 uniform highp float _FalloffPow;
 uniform highp float _FalloffScale;
-#line 396
+#line 405
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-#line 415
 #line 424
-#line 450
+#line 433
+#line 459
 uniform highp vec4 _MainTex_ST;
 uniform highp vec4 _DetailTex_ST;
 uniform highp vec4 _BumpMap_ST;
-#line 475
-#line 398
+#line 484
+#line 407
 mediump vec4 LightingSimpleLambert( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
-    #line 400
+    #line 409
     mediump float NdotL = xll_saturate_f(dot( s.Normal, lightDir));
     mediump vec4 c;
     c.xyz = (s.Albedo * xll_saturate_vf3((_MinLight + (_LightColor0.xyz * ((NdotL * atten) * 2.0)))));
     c.w = s.Alpha;
-    #line 404
+    #line 413
     return c;
 }
-#line 271
+#line 272
 lowp vec3 UnpackNormal( in lowp vec4 packednormal ) {
-    #line 273
+    #line 274
     return ((packednormal.xyz * 2.0) - 1.0);
 }
-#line 424
+#line 433
 void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 main = texture( _MainTex, IN.uv_MainTex);
     mediump vec4 detail = texture( _DetailTex, IN.uv_DetailTex);
-    #line 428
+    #line 437
     mediump float detailLevel = xll_saturate_f((2.0 * IN.viewDist.x));
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0, 1.0, 1.0), vec3( detailLevel)));
     o.Normal = vec3( 0.0, 0.0, 1.0);
     o.Albedo = (albedo * vec3( _Color));
-    #line 432
+    #line 441
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
     mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
     o.Alpha = ((avg * IN.viewDist.y) * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow)))));
     detailLevel = xll_saturate_f(IN.viewDist.x);
-    #line 436
+    #line 445
     o.Normal = mix( UnpackNormal( texture( _BumpMap, IN.uv_BumpMap)), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
-#line 384
+#line 393
 lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
     lowp float shadow = xll_shadow2D( _ShadowMapTexture, shadowCoord.xyz.xyz);
     shadow = (_LightShadowData.x + (shadow * (1.0 - _LightShadowData.x)));
-    #line 388
+    #line 397
     return shadow;
 }
-#line 475
+#line 484
 lowp vec4 frag_surf( in v2f_surf IN ) {
     Input surfIN;
     surfIN.uv_MainTex = IN.pack0.xy;
-    #line 479
+    #line 488
     surfIN.uv_DetailTex = IN.pack0.zw;
     surfIN.uv_BumpMap = IN.pack1.xy;
     surfIN.viewDist = IN.cust_viewDist;
     surfIN.viewDir = IN.viewDir;
-    #line 483
+    #line 492
     SurfaceOutput o;
     o.Albedo = vec3( 0.0);
     o.Emission = vec3( 0.0);
     o.Specular = 0.0;
-    #line 487
+    #line 496
     o.Alpha = 0.0;
     o.Gloss = 0.0;
     surf( surfIN, o);
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
-    #line 491
+    #line 500
     lowp vec4 c = vec4( 0.0);
     c = LightingSimpleLambert( o, IN.lightDir, atten);
     c.xyz += (o.Albedo * IN.vlight);
@@ -7204,8 +7240,8 @@ Program "fp" {
 // Fragment combos: 2
 //   opengl - ALU: 35 to 37, TEX: 3 to 4
 //   d3d9 - ALU: 42 to 42, TEX: 3 to 4
-//   d3d11 - ALU: 24 to 25, TEX: 3 to 4, FLOW: 1 to 1
-//   d3d11_9x - ALU: 24 to 25, TEX: 3 to 4, FLOW: 1 to 1
+//   d3d11 - ALU: 29 to 30, TEX: 3 to 4, FLOW: 1 to 1
+//   d3d11_9x - ALU: 29 to 30, TEX: 3 to 4, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 Vector 0 [_LightColor0]
@@ -7217,7 +7253,6 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_BumpMap] 2D
 "!!ARBfp1.0
-OPTION ARB_precision_hint_fastest;
 # 35 ALU, 3 TEX
 PARAM c[6] = { program.local[0..4],
 		{ 2, 1, 0 } };
@@ -7346,7 +7381,7 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_BumpMap] 2D 2
 // 34 instructions, 3 temp regs, 0 temp arrays:
-// ALU 24 float, 0 int, 0 uint
+// ALU 29 float, 0 int, 0 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
@@ -7501,7 +7536,7 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_BumpMap] 2D 2
 // 34 instructions, 3 temp regs, 0 temp arrays:
-// ALU 24 float, 0 int, 0 uint
+// ALU 29 float, 0 int, 0 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0_level_9_1
@@ -7598,7 +7633,6 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_BumpMap] 2D
 SetTexture 3 [_ShadowMapTexture] 2D
 "!!ARBfp1.0
-OPTION ARB_precision_hint_fastest;
 # 37 ALU, 4 TEX
 PARAM c[6] = { program.local[0..4],
 		{ 2, 1, 0 } };
@@ -7734,7 +7768,7 @@ SetTexture 1 [_DetailTex] 2D 2
 SetTexture 2 [_BumpMap] 2D 3
 SetTexture 3 [_ShadowMapTexture] 2D 0
 // 36 instructions, 3 temp regs, 0 temp arrays:
-// ALU 25 float, 0 int, 0 uint
+// ALU 30 float, 0 int, 0 uint
 // TEX 4 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
@@ -7897,7 +7931,7 @@ SetTexture 1 [_DetailTex] 2D 2
 SetTexture 2 [_BumpMap] 2D 3
 SetTexture 3 [_ShadowMapTexture] 2D 0
 // 36 instructions, 3 temp regs, 0 temp arrays:
-// ALU 25 float, 0 int, 0 uint
+// ALU 30 float, 0 int, 0 uint
 // TEX 4 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0_level_9_1

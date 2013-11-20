@@ -448,19 +448,30 @@ namespace Clouds
                         MapView.MapCamera.SetTarget(Utils.GetNextBody(currentBody).name);
                     }
                 }
-
+                float halfWidth;
                 if (AdvancedGUI)
                 {
                     if (GUI.Button(new Rect(itemFullWidth + 20, 20, itemFullWidth, 25), "Generate Test Launchpad Cloud"))
                     {
                         spawnVolumeClouds();
                     }
+                    halfWidth = (itemFullWidth / 2) - 5;
+                    if (GUI.Button(new Rect(itemFullWidth + 20, 50, halfWidth, 25), "Reset to Save"))
+                    {
+                        loadCloudLayers(null);
+                        oldBody = null;
+                    }
+                    if (GUI.Button(new Rect(itemFullWidth + (itemFullWidth/2) + 20, 50, halfWidth, 25), "Reset to Default"))
+                    {
+                        loadCloudLayers("cloudLayers.cfg");
+                        oldBody = null;
+                    }
                 }
 
                 int layerCount = CloudLayer.GetBodyLayerCount(currentBody.name);
                 bool hasLayers = layerCount != 0;
                 
-                float halfWidth = hasLayers ? (itemFullWidth / 2) - 5 : itemFullWidth;
+                halfWidth = hasLayers ? (itemFullWidth / 2) - 5 : itemFullWidth;
                 if ( GUI.Button(new Rect(10, 80, halfWidth, 25), "Add")) 
                 {
                     CloudLayers.Add(
@@ -512,10 +523,6 @@ namespace Clouds
                     gs.alignment = TextAnchor.MiddleRight;
                     if (AdvancedGUI)
                     {
-                        if (GUI.Button(new Rect(itemFullWidth + 20, 50, itemFullWidth, 25), "Reset Layers to Default"))
-                        {
-                            loadCloudLayers("cloudLayers.cfg");
-                        }
                         int advancedNextLine = HandleAdvancedGUI(CloudGUI.ShaderFloats, 80, _mainWindowRect.width / 2);
                         GUI.Label(new Rect((_mainWindowRect.width / 2) + 10, advancedNextLine, itemFullWidth, 25), "UnderCloud Settings:");
                         HandleAdvancedGUI(CloudGUI.UndersideShaderFloats, advancedNextLine+30, _mainWindowRect.width / 2);
@@ -1191,8 +1198,8 @@ namespace Clouds
             Log("Cloud Material initialized");
             UpdateTextures();
             Log("Generating Overlay...");
-            CloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, CloudMaterial, Utils.OVER_LAYER, false, 64,64);
-            UndersideCloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, UndersideCloudMaterial, Utils.UNDER_LAYER, false, 64, 64);
+            CloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, CloudMaterial, Utils.OVER_LAYER, false, true);
+            UndersideCloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, UndersideCloudMaterial, Utils.UNDER_LAYER, false, true);
             Log("Textures initialized");
         }
 
