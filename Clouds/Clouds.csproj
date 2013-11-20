@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\KSP_win_dev\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\ksp-win-0-22-0\KSP_win_dev\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -42,7 +42,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\..\KSP_win_dev\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\ksp-win-0-22-0\KSP_win_dev\KSP_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -67,7 +67,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /Y $(TargetFileName) "$(SolutionDir)GameData\BoulderCo\Plugins\"
-xcopy "$(SolutionDir)GameData" "C:\Users\Ryan\Documents\KSP_win_dev\GameData" /e /y /i /r</PostBuildEvent>
+xcopy "$(SolutionDir)GameData" "C:\Users\Ryan\Documents\ksp-win-0-22-0\KSP_win_dev\GameData" /e /y /i /r</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

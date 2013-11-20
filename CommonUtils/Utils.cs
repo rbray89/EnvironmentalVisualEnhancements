@@ -449,7 +449,17 @@ namespace CommonUtils
             GeneratePlanetOverlay(this.Body, this.radius, this.overlayMaterial, this.OriginalLayer, false, this.nbLong, this.nbLat, true);
         }
 
-        public static void GeneratePlanetOverlay(String planet, float radius, Material overlayMaterial, int layer, bool avoidZFighting = false, int nbLong = 48, int nbLat = 48, bool mainMenu = false)
+        public void RemoveOverlay()
+        {
+            OverlayDatabase[this.Body].Remove(this);
+            if (this.AvoidZFighting)
+            {
+                ZFightList.Remove(this);
+            }
+            GameObject.Destroy(this.OverlayGameObject);
+        }
+
+        public static Overlay GeneratePlanetOverlay(String planet, float radius, Material overlayMaterial, int layer, bool avoidZFighting = false, int nbLong = 48, int nbLat = 48, bool mainMenu = false)
         {
             
             Transform celestialTransform = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == planet);
@@ -612,7 +622,7 @@ namespace CommonUtils
             overlay.OverlayGameObject.renderer.enabled = true;
 
             overlay.EnableMainMenu(mainMenu);
-
+            return overlay;
         }
 
         private static void calculateTangent(int[] triangles, int index, Vector3[] vertices, Vector2[] uvs, Vector3[] tan1, Vector3[] tan2)

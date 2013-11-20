@@ -14,6 +14,7 @@ namespace Clouds
     {
         static List<CloudLayer> CloudLayers = new List<CloudLayer>();
         static bool Loaded = false;
+        static KeyCode GUI_KEYCODE = KeyCode.N;
 
         static ParticleEmitter cloudParticleEmitter;
         static ParticleAnimator cloudParticleAnimator;
@@ -30,10 +31,29 @@ namespace Clouds
         static CelestialBody oldBody = null;
         
 
-        private void loadCloudLayers()
+        private void loadCloudLayers(String configString)
         {
+            foreach (CloudLayer cl in CloudLayers)
+            {
+                cl.Remove();
+            }
+            CloudLayers.Clear();
+            if(configString == null)
+            {
+                configString = KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/userCloudLayers.cfg";
+            }
+            else 
+            {
+                configString = KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/" + configString;
+            }
 
-            ConfigNode config = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/cloudLayers.cfg");
+            ConfigNode config = ConfigNode.Load(configString);
+            if (config == null)
+            {
+                config = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/cloudLayers.cfg"); 
+            }
+            GUI_KEYCODE = (KeyCode)Enum.Parse(typeof(KeyCode), config.GetValue("GUI_KEYCODE"));
+
             ConfigNode[] cloudLayersConfigs = config.GetNodes("CLOUD_LAYER");
 
             foreach (ConfigNode node in cloudLayersConfigs)
@@ -84,10 +104,19 @@ namespace Clouds
             }
         }
 
-        private void saveCloudLayers()
+        private void saveCloudLayers(String configString)
         {
             ConfigNode saveConfig = new ConfigNode();
-            
+            if (configString == null)
+            {
+                configString = KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/userCloudLayers.cfg";
+            }
+            else
+            {
+                configString = KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/" + configString;
+            }
+            saveConfig.SetValue("GUI_KEYCODE", GUI_KEYCODE.ToString());
+
             foreach (KeyValuePair<String, List<CloudLayer>> cloudList in CloudLayer.BodyDatabase.ToArray())
             {
                 String body = cloudList.Key;
@@ -124,7 +153,7 @@ namespace Clouds
                     }
                 }
             }
-            saveConfig.Save(KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/cloudLayers.cfg");
+            saveConfig.Save(configString);
         }
 
         private void placePQS(float longitude, float latitude, GameObject go)
@@ -319,7 +348,7 @@ namespace Clouds
             if (HighLogic.LoadedScene == GameScenes.MAINMENU && !Loaded)
             {
                 Utils.Init();
-                loadCloudLayers();
+                loadCloudLayers(null);
                 
                 Loaded = true;
             }
@@ -337,7 +366,7 @@ namespace Clouds
                 layer.PerformUpdate();
             }
             bool alt = (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt));
-            if (alt && Input.GetKeyDown(KeyCode.N))
+            if (alt && Input.GetKeyDown(GUI_KEYCODE))
             {
                 useEditor = !useEditor; 
             }
@@ -374,7 +403,7 @@ namespace Clouds
                 }
                 if (CloudLayer.GetBodyLayerCount(current.name) != 0)
                 {
-                    _mainWindowRect.height = 685;
+                    _mainWindowRect.height = 715;
                     _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "Clouds");
                 }
                 else
@@ -445,10 +474,10 @@ namespace Clouds
                     {
                         CloudLayer.RemoveLayer(currentBody.name, SelectedLayer);
                     }
-                    GUI.Box(new Rect(10, 110, itemFullWidth, 85), ""); 
+                    GUI.Box(new Rect(10, 110, itemFullWidth, 115), ""); 
                     String[] layerList = CloudLayer.GetBodyLayerStringList(currentBody.name);
-                    ScrollPosLayerList = GUI.BeginScrollView(new Rect(15, 115, itemFullWidth - 10, 75), ScrollPosLayerList, new Rect(0, 0, itemFullWidth - 30, 25 * layerList.Length));
-                    float layerWidth = layerCount > 3 ? itemFullWidth - 30 : itemFullWidth - 10;
+                    ScrollPosLayerList = GUI.BeginScrollView(new Rect(15, 115, itemFullWidth - 10, 100), ScrollPosLayerList, new Rect(0, 0, itemFullWidth - 30, 25 * layerList.Length));
+                    float layerWidth = layerCount > 4 ? itemFullWidth - 30 : itemFullWidth - 10;
                     SelectedLayer = SelectedLayer >= layerCount ? 0 : SelectedLayer;
                     int OldSelectedLayer = SelectedLayer;
                     SelectedLayer = GUI.SelectionGrid(new Rect(0, 0, layerWidth, 25 * layerList.Length), SelectedLayer, layerList, 1);
@@ -456,13 +485,16 @@ namespace Clouds
 
                     if (SelectedLayer != OldSelectedLayer || currentBody != oldBody)
                     {
-                        CloudGUI.MainTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].MainTexture);
-                        CloudGUI.DetailTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].DetailTexture);
-                        CloudGUI.BumpTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].BumpTexture);
-                        CloudGUI.Color.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Color);
-                        CloudGUI.Radius.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Radius);
-                        CloudGUI.ShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ShaderFloats);
-                        CloudGUI.UndersideShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].UndersideShaderFloats);
+                        if (CloudLayer.BodyDatabase.ContainsKey(currentBody.name) && CloudLayer.BodyDatabase[currentBody.name].Count > SelectedLayer)
+                        {
+                            CloudGUI.MainTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].MainTexture);
+                            CloudGUI.DetailTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].DetailTexture);
+                            CloudGUI.BumpTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].BumpTexture);
+                            CloudGUI.Color.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Color);
+                            CloudGUI.Radius.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Radius);
+                            CloudGUI.ShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ShaderFloats);
+                            CloudGUI.UndersideShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].UndersideShaderFloats);
+                        }
                     }
 
                     if (CloudGUI.IsValid())
@@ -470,16 +502,21 @@ namespace Clouds
                         if (GUI.Button(new Rect(145, 50, 105, 25), "Apply & Save"))
                         {
                             CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ApplyGUIUpdate(CloudGUI);
-                            saveCloudLayers();
+                            saveCloudLayers(null);
                         }
                     }
 
-                    int nextLine = 200;
+                    
+
+                    int nextLine = 230;
                     gs.alignment = TextAnchor.MiddleRight;
                     if (AdvancedGUI)
                     {
-                        
-                        int advancedNextLine = HandleAdvancedGUI(CloudGUI.ShaderFloats, 50, _mainWindowRect.width / 2);
+                        if (GUI.Button(new Rect(itemFullWidth + 20, 50, itemFullWidth, 25), "Reset Layers to Default"))
+                        {
+                            loadCloudLayers("cloudLayers.cfg");
+                        }
+                        int advancedNextLine = HandleAdvancedGUI(CloudGUI.ShaderFloats, 80, _mainWindowRect.width / 2);
                         GUI.Label(new Rect((_mainWindowRect.width / 2) + 10, advancedNextLine, itemFullWidth, 25), "UnderCloud Settings:");
                         HandleAdvancedGUI(CloudGUI.UndersideShaderFloats, advancedNextLine+30, _mainWindowRect.width / 2);
                     }
@@ -1056,6 +1093,8 @@ namespace Clouds
         private TextureSet bumpTexture;
         private ShaderFloats shaderFloats;
         private ShaderFloats undersideShaderFloats;
+        private Overlay CloudOverlay;
+        private Overlay UndersideCloudOverlay;
 
         public TextureSet MainTexture { get { return mainTexture; } }
         public TextureSet DetailTexture { get { return detailTexture; } }
@@ -1152,8 +1191,8 @@ namespace Clouds
             Log("Cloud Material initialized");
             UpdateTextures();
             Log("Generating Overlay...");
-            Overlay.GeneratePlanetOverlay(body, radius, CloudMaterial, Utils.OVER_LAYER, false, 64,64);
-            Overlay.GeneratePlanetOverlay(body, radius, UndersideCloudMaterial, Utils.UNDER_LAYER, false, 64, 64);
+            CloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, CloudMaterial, Utils.OVER_LAYER, false, 64,64);
+            UndersideCloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, UndersideCloudMaterial, Utils.UNDER_LAYER, false, 64, 64);
             Log("Textures initialized");
         }
 
@@ -1251,7 +1290,8 @@ namespace Clouds
         {
             if (BodyDatabase.ContainsKey(body))
             {
-                BodyDatabase[body].RemoveAt(SelectedLayer);
+                CloudLayer layer = BodyDatabase[body][SelectedLayer];
+                layer.Remove();
             }
         }
 
@@ -1277,6 +1317,13 @@ namespace Clouds
             {
                 return false;
             }
+        }
+
+        internal void Remove()
+        {
+            this.CloudOverlay.RemoveOverlay();
+            this.UndersideCloudOverlay.RemoveOverlay();
+            BodyDatabase[body].Remove(this);
         }
     }
 }
