@@ -521,8 +521,18 @@ namespace CommonUtils
                 uvs[(vertices.Length - 1) - lon] = new Vector2(1f-((float)lon / nbLong), 0f);
             }
             for (int lat = 0; lat < nbLat; lat++)
+            {
                 for (int lon = 0; lon <= nbLong; lon++)
-                    uvs[lon + lat * (nbLong + 1) + nbLong] = new Vector2((float)lon / nbLong, 1f - (float)(lat + 1) / (nbLat + 1));
+                {
+                    float h = 1f - (float)(lat + 1) / (nbLat + 1);
+                    float height = (float)((.5 * Math.Cos(Math.PI * (h + 1))) + .5);
+                    float sigmoid = (float)(1/(1+Math.Pow(100000,-(h-.5))));
+                    float trinomial = (float)((4 * Math.Pow(h - .5, 3)) + .5);
+                    float invCos = (float)((Math.Acos(2 * (-h + .5))) / Math.PI);
+                    float modinvCos = (float)(((Math.Acos(1.68 * (-h + .5))) / (0.65*Math.PI))-0.269);
+                    uvs[lon + lat * (nbLong + 1) + nbLong] = new Vector2((float)lon / nbLong, h);
+                }
+            }
             #endregion
 
             #region Triangles
