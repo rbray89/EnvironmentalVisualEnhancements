@@ -888,7 +888,7 @@ namespace CommonUtils
                 Offset = new Vector2(0, 0);
                 StartOffset = new Vector2(0, 0);
                 Speed = new Vector2(0, 0);
-                Scale = new Vector2(0, 0);
+                Scale = new Vector2(1, 1);
         }
 
         public void SaturateOffset()
