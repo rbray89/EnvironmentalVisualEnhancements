@@ -50,6 +50,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CompiledCloudParticleShader.txt" />
+    <Content Include="CloudParticleShader.txt" />
     <Content Include="CloudShader.txt" />
     <Content Include="undersideCloudShader.txt" />
     <EmbeddedResource Include="undersideCompiledCloudShader.txt" />

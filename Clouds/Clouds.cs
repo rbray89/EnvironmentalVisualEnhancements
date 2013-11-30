@@ -29,7 +29,7 @@ namespace Clouds
         static CloudGUI CloudGUI = new CloudGUI();
         static CelestialBody currentBody = null;
         static CelestialBody oldBody = null;
-        
+
 
         private void loadCloudLayers(String configString)
         {
@@ -38,11 +38,11 @@ namespace Clouds
                 cl.Remove();
             }
             CloudLayers.Clear();
-            if(configString == null)
+            if (configString == null)
             {
                 configString = KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/userCloudLayers.cfg";
             }
-            else 
+            else
             {
                 configString = KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/" + configString;
             }
@@ -50,7 +50,7 @@ namespace Clouds
             ConfigNode config = ConfigNode.Load(configString);
             if (config == null)
             {
-                config = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/cloudLayers.cfg"); 
+                config = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/cloudLayers.cfg");
             }
             String keycodeString = config.GetValue("GUI_KEYCODE");
             if (keycodeString != null)
@@ -103,11 +103,11 @@ namespace Clouds
 
                     CloudLayers.Add(
                         new CloudLayer(body, color, radius,
-                        mTexture, dTexture, bTexture, shaderFloats));
+                        mTexture, dTexture, bTexture, shaderFloats, undersideShaderFloats));
                 }
                 else
                 {
-                    CloudLayer.Log("body "+body+" does not exist!");
+                    CloudLayer.Log("body " + body + " does not exist!");
                 }
             }
         }
@@ -164,7 +164,7 @@ namespace Clouds
             saveConfig.Save(configString);
         }
 
-        private void placePQS(float longitude, float latitude, GameObject go)
+        private void placePQS(float longitude, float latitude, float altitude, GameObject go)
         {
 
             UnityEngine.Object[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody));
@@ -215,7 +215,7 @@ namespace Clouds
             blockScript.reorientToSphere = true;
             //railScript.repositionRadial = (GameObject.Find("Runway").transform.position - currentBody.transform.position) + Vector3.up * 50 + Vector3.right * -350;
             blockScript.repositionRadial = QuaternionD.AngleAxis(longitude, Vector3d.down) * QuaternionD.AngleAxis(latitude, Vector3d.forward) * Vector3d.right;
-            blockScript.repositionRadiusOffset = 80f + (currentBody.pqsController.GetSurfaceHeight(QuaternionD.AngleAxis(longitude, Vector3d.down) * QuaternionD.AngleAxis(latitude, Vector3d.forward) * Vector3d.right) - currentBody.pqsController.radius);
+            blockScript.repositionRadiusOffset = altitude + (currentBody.pqsController.GetSurfaceHeight(QuaternionD.AngleAxis(longitude, Vector3d.down) * QuaternionD.AngleAxis(latitude, Vector3d.forward) * Vector3d.right) - currentBody.pqsController.radius);
             blockScript.repositionToSphere = true;
             blockScript.requirements = PQS.ModiferRequirements.Default;
             blockScript.sphere = currentBody.pqsController;
@@ -229,48 +229,101 @@ namespace Clouds
             {
 
                 particleSystemGo = GenerateCloudMesh();
-                
+
                 particleSystemGo.transform.localScale = Vector3.one * 5;
-/*                Material test = new Material(Shader.Find("Transparent/Diffuse"));
-                Utils.Log("2");
-                test.color = new Color(0, 0, 0, 0f);
-                particleSystemGo.renderer.material = test;
-*/                //particleSystemGo.layer = 15;
+                /*                Material test = new Material(Shader.Find("Transparent/Diffuse"));
+                                Utils.Log("2");
+                                test.color = new Color(0, 0, 0, 0f);
+                                particleSystemGo.renderer.material = test;*/
+                particleSystemGo.layer = 15;
                 float longitude = -74.559f;
                 float latitude = -0.0975f;
-                placePQS(longitude, latitude, particleSystemGo);
-
+                placePQS(longitude, latitude, 4000f, particleSystemGo);
 
                 cloudParticleEmitter = (ParticleEmitter)particleSystemGo.AddComponent("MeshParticleEmitter");
-                cloudParticleEmitter.minSize = 100;
-                cloudParticleEmitter.maxSize = 150;
-                cloudParticleEmitter.minEnergy = 25;
-                cloudParticleEmitter.maxEnergy = 40;
+                cloudParticleEmitter.minSize = 1000;
+                cloudParticleEmitter.maxSize = 1600;
+                cloudParticleEmitter.minEnergy = 100;
+                cloudParticleEmitter.maxEnergy = 200;
                 cloudParticleEmitter.minEmission = 4;
-                cloudParticleEmitter.maxEmission = 6;
+                cloudParticleEmitter.maxEmission = 8;
                 cloudParticleEmitter.localVelocity = new Vector3(.05f, .05f, .05f);
                 cloudParticleEmitter.rndVelocity = new Vector3(.5f, .5f, .5f);
                 cloudParticleEmitter.rndAngularVelocity = 3f;
                 cloudParticleEmitter.rndRotation = true;
                 cloudParticleEmitter.useWorldSpace = false;
-                cloudParticleEmitter.emit = true;
-                cloudParticleEmitter.enabled = true;
+                
 
                 cloudParticleAnimator = (ParticleAnimator)particleSystemGo.AddComponent<ParticleAnimator>();
-                cloudParticleAnimator.sizeGrow = -.025f;
+                cloudParticleAnimator.sizeGrow = -.0125f;
+                cloudParticleAnimator.colorAnimation = new Color[5] { 
+                    new Color(1, 1, 1, 0), 
+                    new Color(1, 1, 1, 1), 
+                    new Color(1, 1, 1, 1), 
+                    new Color(1, 1, 1, 1), 
+                    new Color(1, 1, 1, 0) };
 
                 cloudParticleRenderer = particleSystemGo.AddComponent<ParticleRenderer>();
-                cloudParticleRenderer.particleRenderMode = ParticleRenderMode.SortedBillboard;
-                cloudParticleRenderer.maxParticleSize = 20;
-                Material cloudMaterial = new Material(Shader.Find("Particles/Additive (Soft)"));
+                //cloudParticleRenderer.particleRenderMode = ParticleRenderMode.SortedBillboard;
+                cloudParticleRenderer.particleRenderMode = ParticleRenderMode.Stretch;
+                cloudParticleRenderer.receiveShadows = false;
+                cloudParticleRenderer.castShadows = false;
+                cloudParticleRenderer.cameraVelocityScale = 0;
+                cloudParticleRenderer.lengthScale = 1;
+                cloudParticleRenderer.velocityScale = 0;
+                cloudParticleRenderer.maxParticleSize = 50;
+                
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.CompiledCloudParticleShader.txt"));
+                Utils.Log("reading stream...");
+
+                Material cloudMaterial = new Material(shaderStreamReader.ReadToEnd());
                 cloudMaterial.mainTexture = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle", false);
+                cloudMaterial.SetTexture("_BumpMap", GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particleNormal", true));
+
                 //cloudMaterial.color = new Color(1, 1, 1, .80f);
                 cloudParticleRenderer.material = cloudMaterial;
-
+                cloudParticleEmitter.enabled = true;
+                cloudParticleEmitter.emit = true;
+                cloudParticleEmitter.Simulate(100);
+                
+                
                 spawned = true;
                 CloudLayer.Log("making particles");
             }
-            
+
+        }
+
+        List<Vector3> GenerateCloud(Vector3 location)
+        {
+            List<Vector3> verticiesList = new List<Vector3>();
+            for (int v = 0; v < 6; v++)
+            {
+                Vector3 start = location + new Vector3(UnityEngine.Random.Range(-50, 50), UnityEngine.Random.Range(-5f, 5f), UnityEngine.Random.Range(-50, 50));
+                for (int i = 0; i < 5; i++)
+                {
+                    Vector3 place = new Vector3(UnityEngine.Random.Range(-20, 20), UnityEngine.Random.Range(-2.5f, 2.5f), UnityEngine.Random.Range(-20, 20));
+                    for (int n = 0; n < 3; n++)
+                    {
+                        Vector3 dir = new Vector3(UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(-.2f, .2f), UnityEngine.Random.Range(-1, 1));
+                        verticiesList.Add(start + place + (dir * UnityEngine.Random.Range(10, 20)));
+                        //   Utils.Log("setting up verticies " + i);
+                    }
+                    /*
+                    for (int l = 0; l < 7; l++)
+                    {
+                        Vector3 expand = new Vector3(place.x, place.y, place.z);
+                        expand.Scale(new Vector3(UnityEngine.Random.Range(2, 5), UnityEngine.Random.Range(1f, 1f), UnityEngine.Random.Range(2, 5)));
+                        for (int n = 0; n < 5; n++)
+                        {
+                            Vector3 dir = new Vector3(UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(-.2f, .2f), UnityEngine.Random.Range(-1, 1));
+                            verticiesList.Add(start + expand + (dir * UnityEngine.Random.Range(5, 10)));
+                            Utils.Log("setting up verticies " + i);
+                        }
+                    }*/
+                }
+            }
+            return verticiesList;
         }
 
         private GameObject GenerateCloudMesh()
@@ -282,31 +335,9 @@ namespace Clouds
             Utils.Log("setting up verticies");
 
             List<Vector3> verticiesList = new List<Vector3>();
-            for (int v = 0; v < 6; v++)
+            for (int i = 0; i < 18; i++)
             {
-                Vector3 start = new Vector3(UnityEngine.Random.Range(-25, 25), UnityEngine.Random.Range(-2.5f, 2.5f), UnityEngine.Random.Range(-25, 25));
-                for (int i = 0; i < 5; i++)
-                {
-                    Vector3 place = new Vector3(UnityEngine.Random.Range(-5, 5), UnityEngine.Random.Range(-2.5f, 2.5f), UnityEngine.Random.Range(-5, 5));
-                    for (int n = 0; n < 3; n++)
-                    {
-                        Vector3 dir = new Vector3(UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(-.2f, .2f), UnityEngine.Random.Range(-1, 1));
-                        verticiesList.Add(start + place + (dir * UnityEngine.Random.Range(5, 10)));
-                        Utils.Log("setting up verticies " + i);
-                    }
-
-                    for (int l = 0; l < 7; l++)
-                    {
-                        Vector3 expand = new Vector3(place.x, place.y, place.z);
-                        expand.Scale(new Vector3(UnityEngine.Random.Range(2, 5), UnityEngine.Random.Range(1f, 1f), UnityEngine.Random.Range(2, 5)));
-                        for (int n = 0; n < 5; n++)
-                        {
-                            Vector3 dir = new Vector3(UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(-.2f, .2f), UnityEngine.Random.Range(-1, 1));
-                            verticiesList.Add(start + expand + (dir * UnityEngine.Random.Range(5, 10)));
-                            Utils.Log("setting up verticies " + i);
-                        }
-                    }
-                }
+                verticiesList.AddRange(GenerateCloud(new Vector3(UnityEngine.Random.Range(-500, 500), UnityEngine.Random.Range(-2.5f, 2.5f), UnityEngine.Random.Range(-500, 500))));
             }
 
             Vector3[] vertices = verticiesList.ToArray();
@@ -315,29 +346,29 @@ namespace Clouds
             int nbIndexes = nbTriangles * 3;
 
             int[] triangles = new int[nbIndexes];
-            Utils.Log("setting up triangles " + nbTriangles);
+            //Utils.Log("setting up triangles " + nbTriangles);
 
-            for (int i = 0; i < nbIndexes; i+=3)
+            for (int i = 0; i < nbIndexes; i += 3)
             {
                 triangles[i + 0] = i + 0;
                 triangles[i + 1] = i + 1;
                 triangles[i + 2] = i + 2;
-                Utils.Log("setting up triangle "+i);
+                //    Utils.Log("setting up triangle "+i);
             }
 
             int leftover = nbFaces % 3;
             if (leftover == 2)
             {
-                Utils.Log("leftover2 " + nbIndexes);
+                //    Utils.Log("leftover2 " + nbIndexes);
                 triangles[nbIndexes - 2] = nbFaces - 3;
                 triangles[nbIndexes - 1] = nbFaces - 2;
             }
             else if (leftover == 1)
             {
-                Utils.Log("leftover1 " + nbIndexes);
-                triangles[nbIndexes - 1] = nbFaces-3;
+                //    Utils.Log("leftover1 " + nbIndexes);
+                triangles[nbIndexes - 1] = nbFaces - 3;
             }
-            Utils.Log("finished triangle gen.");
+            //Utils.Log("finished triangle gen.");
 
             mesh.vertices = vertices;
             mesh.triangles = triangles;
@@ -357,12 +388,12 @@ namespace Clouds
             {
                 Utils.Init();
                 loadCloudLayers(null);
-                
+
                 Loaded = true;
             }
             else if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
-            //    spawnVolumeClouds();
+            //        spawnVolumeClouds();
             }
         }
 
@@ -376,11 +407,11 @@ namespace Clouds
             bool alt = (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt));
             if (alt && Input.GetKeyDown(GUI_KEYCODE))
             {
-                useEditor = !useEditor; 
+                useEditor = !useEditor;
             }
         }
 
-        
+
         private GUISkin _mySkin;
         private Rect _mainWindowRect = new Rect(20, 20, 260, 600);
 
@@ -420,10 +451,11 @@ namespace Clouds
                     _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "Clouds");
                 }
             }
+            
         }
 
         private void DrawMainWindow(int windowID)
-    {
+        {
             oldBody = currentBody;
             currentBody = null;
             if (MapView.MapIsEnabled)
@@ -444,7 +476,7 @@ namespace Clouds
                 float itemFullWidth = AdvancedGUI ? (_mainWindowRect.width / 2) - 20 : _mainWindowRect.width - 20;
 
                 GUI.Label(new Rect(35, 20, itemFullWidth - 50, 25), currentBody.name, gs);
-                
+
                 if (MapView.MapIsEnabled)
                 {
                     if (GUI.Button(new Rect(10, 20, 25, 25), "<"))
@@ -469,7 +501,7 @@ namespace Clouds
                         loadCloudLayers(null);
                         oldBody = null;
                     }
-                    if (GUI.Button(new Rect(itemFullWidth + (itemFullWidth/2) + 20, 50, halfWidth, 25), "Reset to Default"))
+                    if (GUI.Button(new Rect(itemFullWidth + (itemFullWidth / 2) + 20, 50, halfWidth, 25), "Reset to Default"))
                     {
                         loadCloudLayers("cloudLayers.cfg");
                         oldBody = null;
@@ -478,22 +510,22 @@ namespace Clouds
 
                 int layerCount = CloudLayer.GetBodyLayerCount(currentBody.name);
                 bool hasLayers = layerCount != 0;
-                
+
                 halfWidth = hasLayers ? (itemFullWidth / 2) - 5 : itemFullWidth;
-                if ( GUI.Button(new Rect(10, 80, halfWidth, 25), "Add")) 
+                if (GUI.Button(new Rect(10, 80, halfWidth, 25), "Add"))
                 {
                     CloudLayers.Add(
                     new CloudLayer(currentBody.name, new Color(1, 1, 1), 1.01f,
-                    new TextureSet(), new TextureSet(), new TextureSet(), null));
+                    new TextureSet(), new TextureSet(), new TextureSet(), null, null));
                 }
-                if(hasLayers)
+                if (hasLayers)
                 {
 
                     if (GUI.Button(new Rect(halfWidth + 20, 80, halfWidth, 25), "Remove"))
                     {
                         CloudLayer.RemoveLayer(currentBody.name, SelectedLayer);
                     }
-                    GUI.Box(new Rect(10, 110, itemFullWidth, 115), ""); 
+                    GUI.Box(new Rect(10, 110, itemFullWidth, 115), "");
                     String[] layerList = CloudLayer.GetBodyLayerStringList(currentBody.name);
                     ScrollPosLayerList = GUI.BeginScrollView(new Rect(15, 115, itemFullWidth - 10, 100), ScrollPosLayerList, new Rect(0, 0, itemFullWidth - 30, 25 * layerList.Length));
                     float layerWidth = layerCount > 4 ? itemFullWidth - 30 : itemFullWidth - 10;
@@ -525,7 +557,7 @@ namespace Clouds
                         }
                     }
 
-                    
+
 
                     int nextLine = 230;
                     gs.alignment = TextAnchor.MiddleRight;
@@ -533,13 +565,13 @@ namespace Clouds
                     {
                         int advancedNextLine = HandleAdvancedGUI(CloudGUI.ShaderFloats, 80, _mainWindowRect.width / 2);
                         GUI.Label(new Rect((_mainWindowRect.width / 2) + 10, advancedNextLine, itemFullWidth, 25), "UnderCloud Settings:");
-                        HandleAdvancedGUI(CloudGUI.UndersideShaderFloats, advancedNextLine+30, _mainWindowRect.width / 2);
+                        HandleAdvancedGUI(CloudGUI.UndersideShaderFloats, advancedNextLine + 30, _mainWindowRect.width / 2);
                     }
 
                     nextLine = HandleRadiusGUI(CloudGUI.Radius, nextLine);
                     nextLine = HandleColorGUI(CloudGUI.Color, nextLine);
-                        
-                        
+
+
                     GUI.Label(
                         new Rect(10, nextLine, 80, 25), "MainTex: ", gs);
                     nextLine = HandleTextureGUI(CloudGUI.MainTexture, nextLine);
@@ -577,7 +609,7 @@ namespace Clouds
                 GUI.Label(new Rect(50, 50, 230, 25), "----");
             }
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
-            
+
         }
 
         private int HandleAdvancedGUI(ShaderFloatsGUI floats, int y, float offset)
@@ -588,10 +620,10 @@ namespace Clouds
             Color errorColor = new Color(1, 0, 0);
             Color normalColor = texFieldGS.normal.textColor;
             float dummyFloat;
-            
+
 
             GUI.Label(
-                new Rect(offset+10, y, 65, 25), "RimPower: ", gs);
+                new Rect(offset + 10, y, 65, 25), "RimPower: ", gs);
             if (float.TryParse(floats.FalloffPowerString, out dummyFloat))
             {
                 texFieldGS.normal.textColor = normalColor;
@@ -625,7 +657,7 @@ namespace Clouds
                 texFieldGS.active.textColor = errorColor;
                 texFieldGS.focused.textColor = errorColor;
             }
-            string SFalloffScale  = GUI.TextField(new Rect(offset + 80, y, 50, 25), floats.FalloffScaleString, texFieldGS);
+            string SFalloffScale = GUI.TextField(new Rect(offset + 80, y, 50, 25), floats.FalloffScaleString, texFieldGS);
             float FFalloffScale = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.FalloffScale, 0, 20);
             y += 30;
             GUI.Label(
@@ -767,7 +799,7 @@ namespace Clouds
             }
             string SBlue = GUI.TextField(new Rect(80, y, 50, 25), color.Blue, texFieldGS);
             float FBlue = GUI.HorizontalSlider(new Rect(135, y + 5, 115, 25), color.Color.b, 0, 1);
-            
+
             color.Update(SRed, FRed, SGreen, FGreen, SBlue, FBlue);
             return y += 30;
         }
@@ -778,7 +810,7 @@ namespace Clouds
             GUIStyle labelGS = new GUIStyle(GUI.skin.label);
             labelGS.alignment = TextAnchor.MiddleRight;
             GUIStyle texFieldGS = new GUIStyle(GUI.skin.textField);
-            Color errorColor = new Color(1,0,0);
+            Color errorColor = new Color(1, 0, 0);
             Color normalColor = texFieldGS.normal.textColor;
             float dummyFloat;
 
@@ -957,9 +989,9 @@ namespace Clouds
     internal class ShaderFloatsGUI
     {
         public float FalloffPower;
-		public float FalloffScale;
-		public float DetailDistance;
-		public float MinimumLight;
+        public float FalloffScale;
+        public float DetailDistance;
+        public float MinimumLight;
         public String FalloffPowerString;
         public String FalloffScaleString;
         public String DetailDistanceString;
@@ -1047,12 +1079,12 @@ namespace Clouds
 
         internal bool IsValid()
         {
-            
+
             float dummy;
-            if( float.TryParse(FalloffPowerString, out dummy) &&
+            if (float.TryParse(FalloffPowerString, out dummy) &&
                 float.TryParse(FalloffScaleString, out dummy) &&
                 float.TryParse(DetailDistanceString, out dummy) &&
-                float.TryParse(MinimumLightString, out dummy) )
+                float.TryParse(MinimumLightString, out dummy))
             {
                 return true;
             }
@@ -1136,9 +1168,10 @@ namespace Clouds
             TextureSet mainTexture,
             TextureSet detailTexture,
             TextureSet bumpTexture,
-            ShaderFloats ShaderFloats)
+            ShaderFloats ShaderFloats,
+            ShaderFloats UndersideShaderFloats)
         {
-            if(!BodyDatabase.ContainsKey(body))
+            if (!BodyDatabase.ContainsKey(body))
             {
                 BodyDatabase.Add(body, new List<CloudLayer>());
             }
@@ -1147,11 +1180,12 @@ namespace Clouds
             this.color = color;
             this.radius = radius;
             this.mainTexture = mainTexture;
-            
+
             this.detailTexture = detailTexture;
             this.bumpTexture = bumpTexture;
 
             this.shaderFloats = ShaderFloats;
+            this.undersideShaderFloats = UndersideShaderFloats;
             Init();
         }
 
@@ -1202,7 +1236,7 @@ namespace Clouds
             UndersideCloudMaterial = new Material(GlobalUndersideCloudShader);
 
             UpdateFloats();
-            
+
             Log("Cloud Material initialized");
             UpdateTextures();
             Log("Generating Overlay...");
@@ -1213,20 +1247,26 @@ namespace Clouds
 
         public void UpdateFloats()
         {
-            if (this.shaderFloats != null && this.undersideShaderFloats != null)
+            if (this.shaderFloats != null)
             {
                 CloudMaterial.SetFloat("_FalloffPow", shaderFloats.FalloffPower);
-                UndersideCloudMaterial.SetFloat("_FalloffPow", undersideShaderFloats.FalloffPower);
                 CloudMaterial.SetFloat("_FalloffScale", shaderFloats.FalloffScale);
-                UndersideCloudMaterial.SetFloat("_FalloffScale", undersideShaderFloats.FalloffScale);
                 CloudMaterial.SetFloat("_DetailDist", shaderFloats.DetailDistance);
-                UndersideCloudMaterial.SetFloat("_DetailDist", undersideShaderFloats.DetailDistance);
                 CloudMaterial.SetFloat("_MinLight", shaderFloats.MinimumLight);
-                UndersideCloudMaterial.SetFloat("_MinLight", undersideShaderFloats.MinimumLight);
             }
             else
             {
                 this.shaderFloats = new ShaderFloats(CloudMaterial.GetFloat("_FalloffPow"), CloudMaterial.GetFloat("_FalloffScale"), CloudMaterial.GetFloat("_DetailDist"), CloudMaterial.GetFloat("_MinLight"));
+            }
+            if (this.undersideShaderFloats != null)
+            {
+                UndersideCloudMaterial.SetFloat("_FalloffPow", undersideShaderFloats.FalloffPower);
+                UndersideCloudMaterial.SetFloat("_FalloffScale", undersideShaderFloats.FalloffScale);
+                UndersideCloudMaterial.SetFloat("_DetailDist", undersideShaderFloats.DetailDistance);
+                UndersideCloudMaterial.SetFloat("_MinLight", undersideShaderFloats.MinimumLight);
+            }
+            else
+            {
                 this.undersideShaderFloats = new ShaderFloats(UndersideCloudMaterial.GetFloat("_FalloffPow"), UndersideCloudMaterial.GetFloat("_FalloffScale"), UndersideCloudMaterial.GetFloat("_DetailDist"), UndersideCloudMaterial.GetFloat("_MinLight"));
             }
         }
@@ -1288,9 +1328,9 @@ namespace Clouds
             {
                 int count = BodyDatabase[p].Count;
                 String[] layerList = new String[count];
-                for(int i = 0; i < count; i++)
+                for (int i = 0; i < count; i++)
                 {
-                    layerList[i] = "Layer "+ i;
+                    layerList[i] = "Layer " + i;
                 }
                 return layerList;
             }
