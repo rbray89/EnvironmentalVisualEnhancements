@@ -46,6 +46,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CloudLayer.cs" />
     <Compile Include="Clouds.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -62,6 +63,10 @@
       <Project>{6b877ddf-ebc6-4efd-a0f7-01f7cad8cf87}</Project>
       <Name>CommonUtils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Equirectangular2Cubic\Equirectangular2Cubic.csproj">
+      <Project>{0027c207-0937-4920-bd0f-6f03b7f02dea}</Project>
+      <Name>Equirectangular2Cubic</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="particle_system.prefab" />
@@ -69,7 +74,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /Y $(TargetFileName) "$(SolutionDir)GameData\BoulderCo\Plugins\"
-xcopy "$(SolutionDir)GameData" "C:\Users\Ryan\Documents\ksp-win-0-22-0\KSP_win_dev\GameData" /e /y /i /r</PostBuildEvent>
+xcopy "$(SolutionDir)GameData" "C:\Users\Ryan\Documents\ksp-win-0-23-0\KSP_win_dev\GameData" /e /y /i /r</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

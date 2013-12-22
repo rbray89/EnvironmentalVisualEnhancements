@@ -29,8 +29,8 @@ namespace CityLights
                 {
                     float radius = float.Parse(node.GetValue("radius"));
 
-                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false);
-                    TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false);
+                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false, true);
+                    TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false, false);
 
                     AddOverlay(mTexture, dTexture, radius);
                 }
@@ -47,12 +47,10 @@ namespace CityLights
             Material lightMaterial = new Material(shaderStreamReader.ReadToEnd());
 
             lightMaterial.SetTexture("_MainTex", mTexture.Texture);
-            lightMaterial.SetTextureScale("_MainTex", mTexture.Scale);
-            lightMaterial.SetTextureOffset("_MainTex", mTexture.Offset);
             lightMaterial.SetTexture("_DetailTex", dTexture.Texture);
-            lightMaterial.SetTextureScale("_DetailTex", dTexture.Scale);
-            lightMaterial.SetTextureOffset("_DetailTex", dTexture.Offset);
-            Overlay.GeneratePlanetOverlay("Kerbin", 1.001f, lightMaterial, Utils.OVER_LAYER, true);
+            lightMaterial.SetFloat("_DetailScale", dTexture.Scale);
+            lightMaterial.SetVector("_DetailOffset", dTexture.Offset);
+            Overlay.GeneratePlanetOverlay("Kerbin", radius, lightMaterial, mTexture.StartOffset, Utils.OVER_LAYER);
         }
 
         public static void Log(String message)

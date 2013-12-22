@@ -1,8 +1,10 @@
-﻿Shader "CityLightShader" {
+﻿Shader "Sphere/CityLightShader" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
-		_MainTex ("Base (RGB) (A)", 2D) = "white" {}
+		_MainTex ("Main (RGB)", CUBE) = "" {}
 		_DetailTex ("Detail (RGB) (A)", 2D) = "white" {}
+		_DetailScale ("Detail Scale", Range(0,1000)) = 100
+		_DetailOffset ("Detail Offset", Color) = (0,0,0,0)
 	}
 	Category {
 	   Lighting On
@@ -15,18 +17,19 @@
 	   }
 	   SubShader {  	
         
-		CGPROGRAM
+     CGPROGRAM
 	 #pragma surface surf None vertex:vert noforwardadd noambient novertexlights nolightmap nodirlightmap 
 		
-	 sampler2D _MainTex;
+	 samplerCUBE _MainTex;
 	 sampler2D _DetailTex;
+	 float _DetailScale;
 	 fixed4 _Color;
-	 float _ExtraLight;
+	 fixed4 _DetailOffset;
 	
 	 struct Input {
-	 float2 uv_MainTex;
-	 float2 uv_DetailTex;
-	 float distAlpha;
+	 	float distAlpha;
+	 	float3 localPos;
+	 	INTERNAL_DATA
 	 };
 	
 	half4 LightingNone (SurfaceOutput s, half3 lightDir, half atten)
@@ -50,16 +53,22 @@
 	   float dist = distance(vertexPos,_WorldSpaceCameraPos.xyz);
 	   float alpha = saturate(250 - .00001*pow(dist-5000,2));
 	   o.distAlpha = alpha*saturate((distance(origin,_WorldSpaceCameraPos)-1.0015*distance(origin, vertexPos)));
+	   o.localPos = normalize(v.vertex.xyz);
 	 }
 	
 	 void surf (Input IN, inout SurfaceOutput o) {
-	   fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
-	   fixed4 d = tex2D(_DetailTex, IN.uv_DetailTex);
-	   o.Albedo = 0;
-	   o.Gloss = 0;
-	   o.Specular = 0;
-	   o.Alpha = min(c.a, IN.distAlpha)*d.a;
-	   o.Emission = c.rgb;
+	    half4 main = texCUBE(_MainTex, IN.localPos)*_Color;
+		float3 pos = IN.localPos;
+		half4 detailX = tex2D (_DetailTex, pos.zy*_DetailScale + _DetailOffset.xy);
+		half4 detailY = tex2D (_DetailTex, pos.zx*_DetailScale + _DetailOffset.xy);
+		half4 detailZ = tex2D (_DetailTex, pos.xy*_DetailScale + _DetailOffset.xy);
+			
+		pos = abs(pos);
+		half4 detail = lerp(detailZ, detailX, pos.x);
+		detail = lerp(detail, detailY, pos.y);
+		main = main*detail;
+	    o.Alpha = min(main.a, IN.distAlpha);
+	    o.Emission = main.rgb;
 	 }
 	 	 
 	 ENDCG

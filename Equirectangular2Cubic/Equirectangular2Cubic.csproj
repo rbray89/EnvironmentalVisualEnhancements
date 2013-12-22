@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6B877DDF-EBC6-4EFD-A0F7-01F7CAD8CF87}</ProjectGuid>
+    <ProjectGuid>{0027C207-0937-4920-BD0F-6F03B7F02DEA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CommonUtils</RootNamespace>
-    <AssemblyName>CommonUtils</AssemblyName>
+    <RootNamespace>Equirectangular2Cubic</RootNamespace>
+    <AssemblyName>Equirectangular2Cubic</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\ksp-win-0-22-0\KSP_win_dev\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\ksp-win-0-23-0\KSP_win_dev\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -42,20 +42,15 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\ksp-win-0-22-0\KSP_win_dev\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\ksp-win-0-23-0\KSP_win_dev\KSP_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityScript.Lang">
+      <HintPath>..\..\..\ksp-win-0-23-0\KSP_win_dev\KSP_Data\Managed\UnityScript.Lang.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GuiUtils.cs" />
-    <Compile Include="IsoSphere.cs" />
-    <Compile Include="Utils.cs" />
+    <Compile Include="Equirectangular2Cubic.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Equirectangular2Cubic\Equirectangular2Cubic.csproj">
-      <Project>{0027c207-0937-4920-bd0f-6f03b7f02dea}</Project>
-      <Name>Equirectangular2Cubic</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

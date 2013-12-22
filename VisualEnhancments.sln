@@ -1,11 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Windows Desktop
+# Visual Studio Express 2013 for Windows Desktop
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clouds", "Clouds\Clouds.csproj", "{8DF6A385-18E6-4E76-A060-4C3847CA3046}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonUtils", "CommonUtils\CommonUtils.csproj", "{6B877DDF-EBC6-4EFD-A0F7-01F7CAD8CF87}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityLights", "CityLights\CityLights.csproj", "{C0D6B86D-11B6-4ABB-8517-877C1721E8A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Equirectangular2Cubic", "Equirectangular2Cubic\Equirectangular2Cubic.csproj", "{0027C207-0937-4920-BD0F-6F03B7F02DEA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,6 +29,10 @@ Global
 		{C0D6B86D-11B6-4ABB-8517-877C1721E8A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0D6B86D-11B6-4ABB-8517-877C1721E8A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0D6B86D-11B6-4ABB-8517-877C1721E8A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0027C207-0937-4920-BD0F-6F03B7F02DEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0027C207-0937-4920-BD0F-6F03B7F02DEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0027C207-0937-4920-BD0F-6F03B7F02DEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0027C207-0937-4920-BD0F-6F03B7F02DEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

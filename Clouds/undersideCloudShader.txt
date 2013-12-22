@@ -1,11 +1,15 @@
-﻿Shader "UndersideCloudShader" {
+﻿Shader "Sphere/UndersideCloudShader" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
-		_MainTex ("Main (RGB)", 2D) = "white" {}
+		_MainTex ("Main (RGB)", CUBE) = "" {}
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
 		_BumpMap ("Bumpmap", 2D) = "bump" {}
 		_FalloffPow ("Falloff Power", Range(0,3)) = 1.8
 		_FalloffScale ("Falloff Scale", Range(0,20)) = 10
+		_DetailScale ("Detail Scale", Range(0,1000)) = 100
+		_DetailOffset ("Detail Offset", Color) = (0,0,0,0)
+		_BumpScale ("Bump Scale", Range(0,1000)) = 50
+		_BumpOffset ("Bump offset", Color) = (0,0,0,0)
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.025
 		_MinLight ("Minimum Light", Range(0,1)) = .18
 	}
@@ -21,14 +25,19 @@ SubShader {
 		
 		CGPROGRAM
 		#pragma surface surf SimpleLambert vertex:vert noforwardadd novertexlights nolightmap nodirlightmap
-
-		sampler2D _MainTex;
+		#pragma target 3.0
+		
+		samplerCUBE _MainTex;
 		sampler2D _DetailTex;
 		sampler2D _BumpMap;
 		fixed4 _Color;
+		fixed4 _DetailOffset;
+		fixed4 _BumpOffset;
 		float _FalloffPow;
 		float _FalloffScale;
+		float _DetailScale;
 		float _DetailDist;
+		float _BumpScale;
 		float _MinLight;
 		
 		half4 LightingSimpleLambert (SurfaceOutput s, half3 lightDir, half atten) {
@@ -40,10 +49,10 @@ SubShader {
       	}
 		
 		struct Input {
-			float2 uv_MainTex;
-			float2 uv_DetailTex;
-			float2 uv_BumpMap;
 			float2 viewDist;
+			float3 viewDir;
+			float3 localPos;
+			INTERNAL_DATA
 		};
 
 		void vert (inout appdata_full v, out Input o) {
@@ -55,18 +64,31 @@ SubShader {
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 		   float diff = distance(origin, vertexPos) - (distance(origin,_WorldSpaceCameraPos));
 	   	   o.viewDist.x = saturate(_DetailDist*distance(vertexPos,_WorldSpaceCameraPos));
-	   	   o.viewDist.y = saturate(diff) * saturate(saturate(.085*distance(vertexPos,_WorldSpaceCameraPos))+ saturate(pow(.8*_FalloffScale*dot(normalDir, -viewVect),_FalloffPow)));;
+	   	   o.viewDist.y = saturate(diff) * saturate(saturate(.085*distance(vertexPos,_WorldSpaceCameraPos))+ saturate(pow(.8*_FalloffScale*dot(normalDir, -viewVect),_FalloffPow)));
+	   	   o.localPos = normalize(v.vertex.xyz);
 	 	}
 
 		void surf (Input IN, inout SurfaceOutput o) {
-			half4 main = tex2D (_MainTex, IN.uv_MainTex);
-			half4 detail = tex2D (_DetailTex, IN.uv_DetailTex);
+			half4 main = texCUBE(_MainTex, IN.localPos);
+			float3 pos = IN.localPos;
+			half4 detailX = tex2D (_DetailTex, pos.zy*_DetailScale + _DetailOffset.xy);
+			half4 detailY = tex2D (_DetailTex, pos.zx*_DetailScale + _DetailOffset.xy);
+			half4 detailZ = tex2D (_DetailTex, pos.xy*_DetailScale + _DetailOffset.xy);
+			half4 normalX = tex2D (_BumpMap, pos.zy*_BumpScale + _BumpOffset.xy);
+			half4 normalY = tex2D (_BumpMap, pos.zx*_BumpScale + _BumpOffset.xy);
+			half4 normalZ = tex2D (_BumpMap, pos.xy*_BumpScale + _BumpOffset.xy);
+			pos = abs(pos);
+			half4 detail = lerp(detailZ, detailX, pos.x);
+			detail = lerp(detail, detailY, pos.y);
+			half4 normal = lerp(normalZ, normalX, pos.x);
+			normal = lerp(normal, normalY, pos.y);
+			
 			half detailLevel = IN.viewDist.x;
-			half3 albedo = main.rgb * lerp(detail.rgb, half3(1,1,1), detailLevel);// * 1.5;
+			half3 albedo = main.rgb * lerp(detail.rgb, 1, detailLevel);
 			o.Albedo = albedo * _Color;
 			half avg = lerp(detail.a, 1, detailLevel)*main.a;
           	o.Alpha = avg * IN.viewDist.y;
-          	o.Normal = lerp(UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap)),half3(0,0,1),detailLevel);
+          	o.Normal = lerp(UnpackNormal (normal),half3(0,0,1),detailLevel);
 		}
 		ENDCG
 	
