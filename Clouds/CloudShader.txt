@@ -87,7 +87,6 @@ SubShader {
 			half avg = main.a * lerp(detail.a, 1, detailLevel);
 			half rim = saturate(dot(normalize(IN.viewDir), o.Normal));
           	o.Alpha = avg * IN.viewDist.y * saturate((1-IN.viewDist.y) +(saturate(pow(_FalloffScale*rim,_FalloffPow))));
-          	detailLevel = saturate(IN.viewDist.x);
           	o.Normal = lerp(UnpackNormal (normal),half3(0,0,1),detailLevel);
 		}
 		ENDCG
