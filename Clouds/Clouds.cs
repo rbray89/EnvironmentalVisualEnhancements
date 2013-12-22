@@ -637,10 +637,10 @@ namespace Clouds
                 float halfWidth;
                 if (AdvancedGUI)
                 {
-                    if (GUI.Button(new Rect(itemFullWidth + 20, 20, itemFullWidth, 25), "Generate Test Launchpad Cloud"))
-                    {
-                        spawnVolumeClouds();
-                    }
+                    //if (GUI.Button(new Rect(itemFullWidth + 20, 20, itemFullWidth, 25), "Generate Test Launchpad Cloud"))
+                    //{
+                    //    spawnVolumeClouds();
+                    //}
                     halfWidth = (itemFullWidth / 2) - 5;
                     if (GUI.Button(new Rect(itemFullWidth + 20, 50, halfWidth, 25), "Reset to Save"))
                     {

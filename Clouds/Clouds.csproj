@@ -55,7 +55,7 @@
     <Content Include="CloudParticleShader.txt" />
     <Content Include="CloudShader.txt" />
     <Content Include="undersideCloudShader.txt" />
-    <EmbeddedResource Include="undersideCompiledCloudShader.txt" />
+    <EmbeddedResource Include="CompiledUndersideCloudShader.txt" />
     <EmbeddedResource Include="CompiledCloudShader.txt" />
   </ItemGroup>
   <ItemGroup>

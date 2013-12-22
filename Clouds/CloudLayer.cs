@@ -112,7 +112,7 @@ namespace Clouds
                 String shaderTxt = shaderStreamReader.ReadToEnd();
                 GlobalCloudShader = new Material(shaderTxt).shader;
 
-                shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.undersideCompiledCloudShader.txt"));
+                shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.CompiledUndersideCloudShader.txt"));
                 Utils.Log("reading stream...");
                 shaderTxt = shaderStreamReader.ReadToEnd();
                 GlobalUndersideCloudShader = new Material(shaderTxt).shader;
@@ -170,6 +170,7 @@ namespace Clouds
             {
                 detailTexture.UpdateOffset(rateOffset, false);
                 CloudMaterial.SetVector("_DetailOffset", detailTexture.Offset);
+                Log("Offset :" + detailTexture.Offset);
                 UndersideCloudMaterial.SetVector("_DetailOffset", detailTexture.Offset);
             }
 
