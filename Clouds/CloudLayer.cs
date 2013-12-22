@@ -160,8 +160,6 @@ namespace Clouds
         {
             float rateOffset = time;
 
-
-            
             mainTexture.UpdateOffset(rateOffset, true);
             CloudOverlay.UpdateRotation(mainTexture.Offset);
             UndersideCloudOverlay.UpdateRotation(mainTexture.Offset);
@@ -170,7 +168,6 @@ namespace Clouds
             {
                 detailTexture.UpdateOffset(rateOffset, false);
                 CloudMaterial.SetVector("_DetailOffset", detailTexture.Offset);
-                Log("Offset :" + detailTexture.Offset);
                 UndersideCloudMaterial.SetVector("_DetailOffset", detailTexture.Offset);
             }
 
