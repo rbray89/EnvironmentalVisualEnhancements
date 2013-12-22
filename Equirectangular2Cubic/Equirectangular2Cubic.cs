@@ -145,7 +145,7 @@ namespace Equirectangular2Cubic
             {
                 test >>= 1;
             }
-            test >>= 1;
+            test >>= 2;
             return (int)test;
         }
 
