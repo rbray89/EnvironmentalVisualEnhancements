@@ -11,7 +11,7 @@
 		_BumpScale ("Bump Scale", Range(0,1000)) = 50
 		_BumpOffset ("Bump offset", Color) = (0,0,0,0)
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
-		_MinLight ("Minimum Light", Range(0,1)) = .16
+		_MinLight ("Minimum Light", Range(0,1)) = .1
 	}
 
 SubShader {
