@@ -111,8 +111,9 @@ namespace Equirectangular2Cubic
             newCubic.SetPixels(GetPixels(cubic[3]), CubemapFace.NegativeX);
             newCubic.SetPixels(GetPixels(cubic[4]), CubemapFace.PositiveY);
             newCubic.SetPixels(GetPixels(cubic[5]), CubemapFace.NegativeY);
-            newCubic.Apply(true,true);
             newCubic.SmoothEdges();
+            newCubic.Apply(true,true);
+            
             Log("initialized newcubic");
             return newCubic;
         }

@@ -170,6 +170,7 @@ namespace CommonUtils
             {
                 Texture2D tex = GameDatabase.Instance.GetTexture(textureFile, isBump);
                 TextureDictionary.Add(textureFile + "_CUBIC", CubicGen.getCubic(tex));
+                Texture2D.DestroyImmediate(tex,true);
             }
             else if (isBump && !TextureDictionary.ContainsKey(textureFile + "_BUMP"))
             {
