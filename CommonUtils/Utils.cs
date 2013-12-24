@@ -120,7 +120,7 @@ namespace CommonUtils
                 overlayCamera.farClipPlane = referenceCam.farClipPlane;
                 overlayCamera.cullingMask = (1 << OVER_LAYER); //-10,-9,-18,-23,-29
                 overlayCamera.eventMask = 0;
-                overlayCamera.nearClipPlane = .015f;
+                overlayCamera.nearClipPlane = .05f;
                 overlayCamera.layerCullDistances = new float[32];
                 overlayCamera.layerCullSpherical = true;
                 overlayCamera.clearFlags = CameraClearFlags.Depth;
@@ -138,7 +138,7 @@ namespace CommonUtils
                 underlayCamera.farClipPlane = referenceCam.farClipPlane;
                 underlayCamera.cullingMask = (1 << UNDER_LAYER); //-10,-9,-18,-23,-29
                 underlayCamera.eventMask = 0;
-                underlayCamera.nearClipPlane = .015f;
+                underlayCamera.nearClipPlane = .05f;
                 underlayCamera.layerCullDistances = new float[32];
                 underlayCamera.layerCullSpherical = true;
                 underlayCamera.clearFlags = CameraClearFlags.Depth;

@@ -61,7 +61,7 @@ SubShader {
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 		   float diff = _DetailDist*distance(vertexPos,_WorldSpaceCameraPos);
 	   	   o.viewDist.x = diff;
-	   	   o.viewDist.y = saturate((distance(origin,_WorldSpaceCameraPos)-1.0005*distance(origin, vertexPos)));
+	   	   o.viewDist.y = saturate((distance(origin,_WorldSpaceCameraPos)-1.00025*distance(origin, vertexPos)));
 	   	   o.localPos = normalize(v.vertex.xyz);
 	 	}
 		
@@ -86,7 +86,7 @@ SubShader {
 			o.Albedo = albedo * _Color.rgb;
 			half avg = main.a * lerp(detail.a, 1, detailLevel);
 			half rim = saturate(dot(normalize(IN.viewDir), o.Normal));
-          	o.Alpha = avg * IN.viewDist.y * saturate((1-IN.viewDist.y) +(saturate(pow(_FalloffScale*rim,_FalloffPow))));
+          	o.Alpha = lerp(0, avg, IN.viewDist.y * saturate((1-IN.viewDist.y) +(saturate(pow(_FalloffScale*rim,_FalloffPow)))));
           	o.Normal = lerp(UnpackNormal (normal),half3(0,0,1),detailLevel);
 		}
 		ENDCG

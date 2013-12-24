@@ -62,7 +62,7 @@ SubShader {
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
 		   float3 viewVect = normalize( vertexPos - modelCam);
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
-		   float diff = distance(origin, vertexPos) - (distance(origin,_WorldSpaceCameraPos));
+		   float diff = distance(origin, vertexPos) - 1.003*(distance(origin,_WorldSpaceCameraPos));
 	   	   o.viewDist.x = saturate(_DetailDist*distance(vertexPos,_WorldSpaceCameraPos));
 	   	   o.viewDist.y = saturate(diff) * saturate(saturate(.085*distance(vertexPos,_WorldSpaceCameraPos))+ saturate(pow(.8*_FalloffScale*dot(normalDir, -viewVect),_FalloffPow)));
 	   	   o.localPos = normalize(v.vertex.xyz);
@@ -87,7 +87,7 @@ SubShader {
 			half3 albedo = main.rgb * lerp(detail.rgb, 1, detailLevel);
 			o.Albedo = albedo * _Color;
 			half avg = lerp(detail.a, 1, detailLevel)*main.a;
-          	o.Alpha = avg * IN.viewDist.y;
+          	o.Alpha = lerp(0, avg,  IN.viewDist.y);
           	o.Normal = lerp(UnpackNormal (normal),half3(0,0,1),detailLevel);
 		}
 		ENDCG

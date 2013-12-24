@@ -45,7 +45,7 @@ Vector 4 [unity_Scale]
 Float 17 [_DetailDist]
 "3.0-!!ARBvp1.0
 # 50 ALU
-PARAM c[18] = { { 1, 1.0005, 0 },
+PARAM c[18] = { { 1, 1.00025, 0 },
 		state.lightmodel.ambient,
 		program.local[2..12],
 		state.matrix.mvp,
@@ -131,7 +131,7 @@ dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
-def c17, 1.00000000, 1.00049996, 0, 0
+def c17, 1.00000000, 1.00024998, 0, 0
 dcl_position0 v0
 dcl_tangent0 v1
 dcl_normal0 v2
@@ -218,7 +218,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedhpglldndbddppbjkaapmdheidoclempaabaaaaaanmahaaaaadaaaaaa
+eefiecedhholcncdoadlmcjpmaeeeblcbmfchepmabaaaaaanmahaaaaadaaaaaa
 cmaaaaaapeaaaaaakmabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -269,7 +269,7 @@ abaaaaaaegacbaaaabaaaaaaelaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaa
 diaaaaaibccabaaaacaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaagaaaaaa
 baaaaaahbcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
 bcaabaaaabaaaaaaakaabaaaabaaaaaadccaaaakcccabaaaacaaaaaaakaabaia
-ebaaaaaaabaaaaaaabeaaaaagcbaiadpdkaabaaaaaaaaaaabaaaaaahicaabaaa
+ebaaaaaaabaaaaaaabeaaaaadbaiiadpdkaabaaaaaaaaaaabaaaaaahicaabaaa
 aaaaaaaaegbcbaaaaaaaaaaaegbcbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadiaaaaahhccabaaaadaaaaaapgapbaaaaaaaaaaaegbcbaaa
 aaaaaaaadiaaaaajhcaabaaaabaaaaaafgifcaaaacaaaaaaaaaaaaaaegiccaaa
@@ -327,7 +327,7 @@ void main ()
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
   p_10 = (tmpvar_7 - tmpvar_6);
-  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.0005 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
+  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.00025 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
   highp vec3 tmpvar_11;
   highp vec3 tmpvar_12;
   tmpvar_11 = tmpvar_1.xyz;
@@ -485,7 +485,7 @@ void main ()
   tmpvar_44 = clamp (normalize(xlv_TEXCOORD0).z, 0.0, 1.0);
   rim_6 = tmpvar_44;
   highp float tmpvar_45;
-  tmpvar_45 = ((tmpvar_43 * xlv_TEXCOORD1.y) * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_45 = mix (0.0, tmpvar_43, (xlv_TEXCOORD1.y * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0)));
   tmpvar_5 = tmpvar_45;
   lowp vec3 tmpvar_46;
   lowp vec4 packednormal_47;
@@ -560,7 +560,7 @@ void main ()
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
   p_10 = (tmpvar_7 - tmpvar_6);
-  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.0005 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
+  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.00025 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
   highp vec3 tmpvar_11;
   highp vec3 tmpvar_12;
   tmpvar_11 = tmpvar_1.xyz;
@@ -718,7 +718,7 @@ void main ()
   tmpvar_44 = clamp (normalize(xlv_TEXCOORD0).z, 0.0, 1.0);
   rim_6 = tmpvar_44;
   highp float tmpvar_45;
-  tmpvar_45 = ((tmpvar_43 * xlv_TEXCOORD1.y) * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_45 = mix (0.0, tmpvar_43, (xlv_TEXCOORD1.y * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0)));
   tmpvar_5 = tmpvar_45;
   lowp vec4 packednormal_46;
   packednormal_46 = normal_8;
@@ -982,7 +982,7 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     o.viewDist.x = diff;
-    o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.0005 * distance( origin, vertexPos))));
+    o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.00025 * distance( origin, vertexPos))));
     #line 426
     o.localPos = normalize(v.vertex.xyz);
 }
@@ -1265,7 +1265,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     #line 450
     mediump float avg = (main.w * mix( detail.w, 1.0, detailLevel));
     mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
-    o.Alpha = ((avg * IN.viewDist.y) * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow)))));
+    o.Alpha = mix( 0.0, avg, (IN.viewDist.y * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow))))));
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
 #line 484
@@ -1327,7 +1327,7 @@ Vector 17 [unity_Scale]
 Float 18 [_DetailDist]
 "3.0-!!ARBvp1.0
 # 56 ALU
-PARAM c[19] = { { 1, 1.0005, 0, 0.5 },
+PARAM c[19] = { { 1, 1.00025, 0, 0.5 },
 		state.lightmodel.ambient,
 		program.local[2..12],
 		state.matrix.mvp,
@@ -1422,7 +1422,7 @@ dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
 dcl_texcoord5 o6
-def c19, 1.00000000, 1.00049996, 0.50000000, 0
+def c19, 1.00000000, 1.00024998, 0.50000000, 0
 dcl_position0 v0
 dcl_tangent0 v1
 dcl_normal0 v2
@@ -1515,7 +1515,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmhjbampoddpgbiepflodmedjbnifhnaiabaaaaaaimaiaaaaadaaaaaa
+eefiecedgphmmfjjokppmnejikfpihjbmnjbbcekabaaaaaaimaiaaaaadaaaaaa
 cmaaaaaapeaaaaaameabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -1568,7 +1568,7 @@ acaaaaaaelaaaaafbcaabaaaacaaaaaaakaabaaaacaaaaaadiaaaaaibccabaaa
 acaaaaaaakaabaaaacaaaaaadkiacaaaaaaaaaaaakaaaaaabaaaaaahbcaabaaa
 acaaaaaaegacbaaaadaaaaaaegacbaaaadaaaaaaelaaaaafbcaabaaaacaaaaaa
 akaabaaaacaaaaaadccaaaakcccabaaaacaaaaaaakaabaiaebaaaaaaacaaaaaa
-abeaaaaagcbaiadpdkaabaaaabaaaaaabaaaaaahicaabaaaabaaaaaaegbcbaaa
+abeaaaaadbaiiadpdkaabaaaabaaaaaabaaaaaahicaabaaaabaaaaaaegbcbaaa
 aaaaaaaaegbcbaaaaaaaaaaaeeaaaaaficaabaaaabaaaaaadkaabaaaabaaaaaa
 diaaaaahhccabaaaadaaaaaapgapbaaaabaaaaaaegbcbaaaaaaaaaaadiaaaaaj
 hcaabaaaacaaaaaafgifcaaaacaaaaaaaaaaaaaaegiccaaaadaaaaaabbaaaaaa
@@ -1632,7 +1632,7 @@ void main ()
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
   p_10 = (tmpvar_7 - tmpvar_6);
-  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.0005 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
+  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.00025 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
   highp vec3 tmpvar_11;
   highp vec3 tmpvar_12;
   tmpvar_11 = tmpvar_1.xyz;
@@ -1794,7 +1794,7 @@ void main ()
   tmpvar_44 = clamp (normalize(xlv_TEXCOORD0).z, 0.0, 1.0);
   rim_6 = tmpvar_44;
   highp float tmpvar_45;
-  tmpvar_45 = ((tmpvar_43 * xlv_TEXCOORD1.y) * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_45 = mix (0.0, tmpvar_43, (xlv_TEXCOORD1.y * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0)));
   tmpvar_5 = tmpvar_45;
   lowp vec3 tmpvar_46;
   lowp vec4 packednormal_47;
@@ -1885,7 +1885,7 @@ void main ()
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
   p_10 = (tmpvar_7 - tmpvar_6);
-  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.0005 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
+  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.00025 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
   highp vec4 tmpvar_11;
   tmpvar_11 = (glstate_matrix_mvp * _glesVertex);
   highp vec3 tmpvar_12;
@@ -2056,7 +2056,7 @@ void main ()
   tmpvar_44 = clamp (normalize(xlv_TEXCOORD0).z, 0.0, 1.0);
   rim_6 = tmpvar_44;
   highp float tmpvar_45;
-  tmpvar_45 = ((tmpvar_43 * xlv_TEXCOORD1.y) * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_45 = mix (0.0, tmpvar_43, (xlv_TEXCOORD1.y * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0)));
   tmpvar_5 = tmpvar_45;
   lowp vec4 packednormal_46;
   packednormal_46 = normal_8;
@@ -2329,7 +2329,7 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     o.viewDist.x = diff;
-    o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.0005 * distance( origin, vertexPos))));
+    o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.00025 * distance( origin, vertexPos))));
     #line 434
     o.localPos = normalize(v.vertex.xyz);
 }
@@ -2620,7 +2620,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     #line 458
     mediump float avg = (main.w * mix( detail.w, 1.0, detailLevel));
     mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
-    o.Alpha = ((avg * IN.viewDist.y) * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow)))));
+    o.Alpha = mix( 0.0, avg, (IN.viewDist.y * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow))))));
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
 #line 393
@@ -2690,7 +2690,7 @@ Vector 4 [unity_Scale]
 Float 17 [_DetailDist]
 "3.0-!!ARBvp1.0
 # 50 ALU
-PARAM c[18] = { { 1, 1.0005, 0 },
+PARAM c[18] = { { 1, 1.00025, 0 },
 		state.lightmodel.ambient,
 		program.local[2..12],
 		state.matrix.mvp,
@@ -2776,7 +2776,7 @@ dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
-def c17, 1.00000000, 1.00049996, 0, 0
+def c17, 1.00000000, 1.00024998, 0, 0
 dcl_position0 v0
 dcl_tangent0 v1
 dcl_normal0 v2
@@ -2863,7 +2863,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedhpglldndbddppbjkaapmdheidoclempaabaaaaaanmahaaaaadaaaaaa
+eefiecedhholcncdoadlmcjpmaeeeblcbmfchepmabaaaaaanmahaaaaadaaaaaa
 cmaaaaaapeaaaaaakmabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -2914,7 +2914,7 @@ abaaaaaaegacbaaaabaaaaaaelaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaa
 diaaaaaibccabaaaacaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaagaaaaaa
 baaaaaahbcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
 bcaabaaaabaaaaaaakaabaaaabaaaaaadccaaaakcccabaaaacaaaaaaakaabaia
-ebaaaaaaabaaaaaaabeaaaaagcbaiadpdkaabaaaaaaaaaaabaaaaaahicaabaaa
+ebaaaaaaabaaaaaaabeaaaaadbaiiadpdkaabaaaaaaaaaaabaaaaaahicaabaaa
 aaaaaaaaegbcbaaaaaaaaaaaegbcbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadiaaaaahhccabaaaadaaaaaapgapbaaaaaaaaaaaegbcbaaa
 aaaaaaaadiaaaaajhcaabaaaabaaaaaafgifcaaaacaaaaaaaaaaaaaaegiccaaa
@@ -2972,7 +2972,7 @@ void main ()
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
   p_10 = (tmpvar_7 - tmpvar_6);
-  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.0005 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
+  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.00025 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
   highp vec3 tmpvar_11;
   highp vec3 tmpvar_12;
   tmpvar_11 = tmpvar_1.xyz;
@@ -3130,7 +3130,7 @@ void main ()
   tmpvar_44 = clamp (normalize(xlv_TEXCOORD0).z, 0.0, 1.0);
   rim_6 = tmpvar_44;
   highp float tmpvar_45;
-  tmpvar_45 = ((tmpvar_43 * xlv_TEXCOORD1.y) * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_45 = mix (0.0, tmpvar_43, (xlv_TEXCOORD1.y * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0)));
   tmpvar_5 = tmpvar_45;
   lowp vec3 tmpvar_46;
   lowp vec4 packednormal_47;
@@ -3205,7 +3205,7 @@ void main ()
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
   p_10 = (tmpvar_7 - tmpvar_6);
-  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.0005 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
+  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.00025 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
   highp vec3 tmpvar_11;
   highp vec3 tmpvar_12;
   tmpvar_11 = tmpvar_1.xyz;
@@ -3363,7 +3363,7 @@ void main ()
   tmpvar_44 = clamp (normalize(xlv_TEXCOORD0).z, 0.0, 1.0);
   rim_6 = tmpvar_44;
   highp float tmpvar_45;
-  tmpvar_45 = ((tmpvar_43 * xlv_TEXCOORD1.y) * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_45 = mix (0.0, tmpvar_43, (xlv_TEXCOORD1.y * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0)));
   tmpvar_5 = tmpvar_45;
   lowp vec4 packednormal_46;
   packednormal_46 = normal_8;
@@ -3627,7 +3627,7 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     o.viewDist.x = diff;
-    o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.0005 * distance( origin, vertexPos))));
+    o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.00025 * distance( origin, vertexPos))));
     #line 426
     o.localPos = normalize(v.vertex.xyz);
 }
@@ -3910,7 +3910,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     #line 450
     mediump float avg = (main.w * mix( detail.w, 1.0, detailLevel));
     mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
-    o.Alpha = ((avg * IN.viewDist.y) * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow)))));
+    o.Alpha = mix( 0.0, avg, (IN.viewDist.y * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow))))));
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
 #line 484
@@ -3972,7 +3972,7 @@ Vector 17 [unity_Scale]
 Float 18 [_DetailDist]
 "3.0-!!ARBvp1.0
 # 56 ALU
-PARAM c[19] = { { 1, 1.0005, 0, 0.5 },
+PARAM c[19] = { { 1, 1.00025, 0, 0.5 },
 		state.lightmodel.ambient,
 		program.local[2..12],
 		state.matrix.mvp,
@@ -4067,7 +4067,7 @@ dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
 dcl_texcoord5 o6
-def c19, 1.00000000, 1.00049996, 0.50000000, 0
+def c19, 1.00000000, 1.00024998, 0.50000000, 0
 dcl_position0 v0
 dcl_tangent0 v1
 dcl_normal0 v2
@@ -4160,7 +4160,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmhjbampoddpgbiepflodmedjbnifhnaiabaaaaaaimaiaaaaadaaaaaa
+eefiecedgphmmfjjokppmnejikfpihjbmnjbbcekabaaaaaaimaiaaaaadaaaaaa
 cmaaaaaapeaaaaaameabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -4213,7 +4213,7 @@ acaaaaaaelaaaaafbcaabaaaacaaaaaaakaabaaaacaaaaaadiaaaaaibccabaaa
 acaaaaaaakaabaaaacaaaaaadkiacaaaaaaaaaaaakaaaaaabaaaaaahbcaabaaa
 acaaaaaaegacbaaaadaaaaaaegacbaaaadaaaaaaelaaaaafbcaabaaaacaaaaaa
 akaabaaaacaaaaaadccaaaakcccabaaaacaaaaaaakaabaiaebaaaaaaacaaaaaa
-abeaaaaagcbaiadpdkaabaaaabaaaaaabaaaaaahicaabaaaabaaaaaaegbcbaaa
+abeaaaaadbaiiadpdkaabaaaabaaaaaabaaaaaahicaabaaaabaaaaaaegbcbaaa
 aaaaaaaaegbcbaaaaaaaaaaaeeaaaaaficaabaaaabaaaaaadkaabaaaabaaaaaa
 diaaaaahhccabaaaadaaaaaapgapbaaaabaaaaaaegbcbaaaaaaaaaaadiaaaaaj
 hcaabaaaacaaaaaafgifcaaaacaaaaaaaaaaaaaaegiccaaaadaaaaaabbaaaaaa
@@ -4277,7 +4277,7 @@ void main ()
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
   p_10 = (tmpvar_7 - tmpvar_6);
-  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.0005 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
+  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.00025 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
   highp vec3 tmpvar_11;
   highp vec3 tmpvar_12;
   tmpvar_11 = tmpvar_1.xyz;
@@ -4439,7 +4439,7 @@ void main ()
   tmpvar_44 = clamp (normalize(xlv_TEXCOORD0).z, 0.0, 1.0);
   rim_6 = tmpvar_44;
   highp float tmpvar_45;
-  tmpvar_45 = ((tmpvar_43 * xlv_TEXCOORD1.y) * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_45 = mix (0.0, tmpvar_43, (xlv_TEXCOORD1.y * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0)));
   tmpvar_5 = tmpvar_45;
   lowp vec3 tmpvar_46;
   lowp vec4 packednormal_47;
@@ -4530,7 +4530,7 @@ void main ()
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
   p_10 = (tmpvar_7 - tmpvar_6);
-  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.0005 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
+  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.00025 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
   highp vec4 tmpvar_11;
   tmpvar_11 = (glstate_matrix_mvp * _glesVertex);
   highp vec3 tmpvar_12;
@@ -4701,7 +4701,7 @@ void main ()
   tmpvar_44 = clamp (normalize(xlv_TEXCOORD0).z, 0.0, 1.0);
   rim_6 = tmpvar_44;
   highp float tmpvar_45;
-  tmpvar_45 = ((tmpvar_43 * xlv_TEXCOORD1.y) * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_45 = mix (0.0, tmpvar_43, (xlv_TEXCOORD1.y * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0)));
   tmpvar_5 = tmpvar_45;
   lowp vec4 packednormal_46;
   packednormal_46 = normal_8;
@@ -4974,7 +4974,7 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     o.viewDist.x = diff;
-    o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.0005 * distance( origin, vertexPos))));
+    o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.00025 * distance( origin, vertexPos))));
     #line 434
     o.localPos = normalize(v.vertex.xyz);
 }
@@ -5265,7 +5265,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     #line 458
     mediump float avg = (main.w * mix( detail.w, 1.0, detailLevel));
     mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
-    o.Alpha = ((avg * IN.viewDist.y) * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow)))));
+    o.Alpha = mix( 0.0, avg, (IN.viewDist.y * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow))))));
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
 #line 393
@@ -5369,7 +5369,7 @@ void main ()
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
   p_10 = (tmpvar_7 - tmpvar_6);
-  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.0005 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
+  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.00025 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
   highp vec3 tmpvar_11;
   highp vec3 tmpvar_12;
   tmpvar_11 = tmpvar_1.xyz;
@@ -5532,7 +5532,7 @@ void main ()
   tmpvar_44 = clamp (normalize(xlv_TEXCOORD0).z, 0.0, 1.0);
   rim_6 = tmpvar_44;
   highp float tmpvar_45;
-  tmpvar_45 = ((tmpvar_43 * xlv_TEXCOORD1.y) * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_45 = mix (0.0, tmpvar_43, (xlv_TEXCOORD1.y * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0)));
   tmpvar_5 = tmpvar_45;
   lowp vec3 tmpvar_46;
   lowp vec4 packednormal_47;
@@ -5808,7 +5808,7 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     o.viewDist.x = diff;
-    o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.0005 * distance( origin, vertexPos))));
+    o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.00025 * distance( origin, vertexPos))));
     #line 434
     o.localPos = normalize(v.vertex.xyz);
 }
@@ -6100,7 +6100,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     #line 458
     mediump float avg = (main.w * mix( detail.w, 1.0, detailLevel));
     mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
-    o.Alpha = ((avg * IN.viewDist.y) * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow)))));
+    o.Alpha = mix( 0.0, avg, (IN.viewDist.y * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow))))));
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
 #line 393
@@ -6204,7 +6204,7 @@ void main ()
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
   p_10 = (tmpvar_7 - tmpvar_6);
-  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.0005 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
+  tmpvar_5.y = clamp ((sqrt(dot (p_9, p_9)) - (1.00025 * sqrt(dot (p_10, p_10)))), 0.0, 1.0);
   highp vec3 tmpvar_11;
   highp vec3 tmpvar_12;
   tmpvar_11 = tmpvar_1.xyz;
@@ -6367,7 +6367,7 @@ void main ()
   tmpvar_44 = clamp (normalize(xlv_TEXCOORD0).z, 0.0, 1.0);
   rim_6 = tmpvar_44;
   highp float tmpvar_45;
-  tmpvar_45 = ((tmpvar_43 * xlv_TEXCOORD1.y) * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_45 = mix (0.0, tmpvar_43, (xlv_TEXCOORD1.y * clamp (((1.0 - xlv_TEXCOORD1.y) + clamp (pow ((_FalloffScale * rim_6), _FalloffPow), 0.0, 1.0)), 0.0, 1.0)));
   tmpvar_5 = tmpvar_45;
   lowp vec3 tmpvar_46;
   lowp vec4 packednormal_47;
@@ -6643,7 +6643,7 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     o.viewDist.x = diff;
-    o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.0005 * distance( origin, vertexPos))));
+    o.viewDist.y = xll_saturate_f((distance( origin, _WorldSpaceCameraPos) - (1.00025 * distance( origin, vertexPos))));
     #line 434
     o.localPos = normalize(v.vertex.xyz);
 }
@@ -6935,7 +6935,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     #line 458
     mediump float avg = (main.w * mix( detail.w, 1.0, detailLevel));
     mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
-    o.Alpha = ((avg * IN.viewDist.y) * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow)))));
+    o.Alpha = mix( 0.0, avg, (IN.viewDist.y * xll_saturate_f(((1.0 - IN.viewDist.y) + xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow))))));
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
 #line 393
@@ -7024,101 +7024,100 @@ TEMP R0;
 TEMP R1;
 TEMP R2;
 TEMP R3;
-TEMP R4;
-MUL R3.xy, fragment.texcoord[2].zyzw, c[7].x;
-ADD R4.xy, R3, c[3];
 MUL R2.xy, fragment.texcoord[2].zxzw, c[6].x;
 ADD R2.zw, R2.xyxy, c[2].xyxy;
-MUL R0.zw, fragment.texcoord[2].xyzy, c[6].x;
-ADD R0.zw, R0, c[2].xyxy;
-MUL R0.xy, fragment.texcoord[2], c[6].x;
-MUL R3.zw, fragment.texcoord[2].xyxy, c[7].x;
-ADD R3.zw, R3, c[3].xyxy;
-ABS R2.xy, fragment.texcoord[2];
-TEX R3.yw, R3.zwzw, texture[2], 2D;
-TEX R4.yw, R4, texture[2], 2D;
-ADD R4.xy, R4.ywzw, -R3.ywzw;
-TEX R1, R0.zwzw, texture[1], 2D;
+MUL R0.xy, fragment.texcoord[2].zyzw, c[6].x;
 ADD R0.xy, R0, c[2];
-TEX R0, R0, texture[1], 2D;
+MUL R0.zw, fragment.texcoord[2].xyxy, c[6].x;
+MUL R3.xy, fragment.texcoord[2], c[7].x;
+ABS R2.xy, fragment.texcoord[2];
+ADD R3.xy, R3, c[3];
+MUL R3.zw, fragment.texcoord[2].xyzy, c[7].x;
+TEX R1, R0, texture[1], 2D;
+ADD R0.zw, R0, c[2].xyxy;
+TEX R0, R0.zwzw, texture[1], 2D;
 ADD R1, R1, -R0;
 MAD R0, R2.x, R1, R0;
 TEX R1, R2.zwzw, texture[1], 2D;
 ADD R1, R1, -R0;
 MAD R0, R2.y, R1, R0;
-MUL R2.zw, fragment.texcoord[2].xyzx, c[7].x;
-ADD R4.zw, R2, c[3].xyxy;
-MAD R2.zw, R2.x, R4.xyxy, R3.xyyw;
-TEX R3.yw, R4.zwzw, texture[2], 2D;
-ADD R3.xy, R3.ywzw, -R2.zwzw;
 ADD R1.xyz, -R0, c[10].z;
-MUL_SAT R1.w, fragment.texcoord[1].x, c[10];
-MAD R0.xyz, R1.w, R1, R0;
-MAD R1.xy, R2.y, R3, R2.zwzw;
-ABS R2.y, fragment.texcoord[2].z;
+MUL_SAT R2.w, fragment.texcoord[1].x, c[10];
+MAD R0.xyz, R2.w, R1, R0;
+ADD R1.yw, R3.xzzw, c[3].xxzy;
+MUL R1.xz, fragment.texcoord[2].zyxw, c[7].x;
+ADD R1.xz, R1, c[3].xyyw;
+TEX R3.yw, R3, texture[2], 2D;
+TEX R1.yw, R1.ywzw, texture[2], 2D;
+ADD R1.yw, R1, -R3;
+MAD R3.xy, R2.x, R1.ywzw, R3.ywzw;
+TEX R1.yw, R1.xzzw, texture[2], 2D;
+ADD R1.xy, R1.ywzw, -R3;
+ABS R1.w, fragment.texcoord[2].z;
+MAD R1.xy, R2.y, R1, R3;
+MAX R1.z, R1.w, R2.x;
 MAD R1.xy, R1.yxzw, c[10].w, -c[10].z;
-MAX R1.z, R2.y, R2.x;
-MIN R2.z, R2.y, R2.x;
-RCP R1.z, R1.z;
-MUL R2.z, R2, R1;
 MUL R3.xy, R1, R1;
-ADD_SAT R1.z, R3.x, R3.y;
-MUL R2.w, R2.z, R2.z;
-MAD R3.x, R2.w, c[11].y, c[11].z;
-MAD R3.x, R3, R2.w, -c[11].w;
-MAD R3.w, R3.x, R2, c[12].x;
-ADD R1.z, -R1, c[10];
-RSQ R1.z, R1.z;
-RCP R1.z, R1.z;
+ADD_SAT R3.x, R3, R3.y;
+RCP R2.y, R1.z;
+MIN R1.z, R1.w, R2.x;
+MUL R2.y, R1.z, R2;
+MUL R2.z, R2.y, R2.y;
+MAD R1.z, R2, c[11].y, c[11];
+ADD R3.x, -R3, c[10].z;
+MAD R1.z, R1, R2, -c[11].w;
+RSQ R3.y, R3.x;
+MAD R3.x, R1.z, R2.z, c[12];
+MAD R3.w, R3.x, R2.z, -c[12].y;
+RCP R1.z, R3.y;
 ADD R3.xyz, -R1, c[13].zzww;
-MAD R1.xyz, R1.w, R3, R1;
-MAD R3.w, R3, R2, -c[12].y;
-MAD R2.w, R3, R2, c[12].z;
-MUL R2.w, R2, R2.z;
-DP3_SAT R1.x, R1, fragment.texcoord[3];
-MUL R1.xyz, R1.x, c[0];
-MUL R1.xyz, R1, c[10].w;
-ABS R3.x, -fragment.texcoord[2].y;
-ADD R2.z, -R2.w, c[12].w;
-ADD R2.x, R2.y, -R2;
-CMP R2.x, -R2, R2.z, R2.w;
-ADD R2.y, -R2.x, c[9];
-ADD R2.z, -R3.x, c[10];
-MAD R2.w, R3.x, c[9].z, c[9];
-MAD R2.w, R2, R3.x, -c[10].x;
-MAD R2.w, R2, R3.x, c[10].y;
-CMP R2.x, fragment.texcoord[2], R2.y, R2;
-RSQ R2.z, R2.z;
-RCP R2.z, R2.z;
-CMP R2.x, fragment.texcoord[2].z, -R2, R2;
-MUL R2.w, R2, R2.z;
-SLT R3.x, -fragment.texcoord[2].y, c[9];
-MUL R2.z, R3.x, R2.w;
-MAD R2.y, -R2.z, c[10].w, R2.w;
-MAD R2.y, R3.x, c[9], R2;
-MAD R2.x, R2, c[13], c[13].y;
-MUL R2.y, R2, c[11].x;
-TEX R2, R2, texture[0], 2D;
-MUL R2, R2, c[1];
-MUL R0.xyz, R2, R0;
+MAD R2.z, R3.w, R2, c[12];
+MAD R1.xyz, R2.w, R3, R1;
+MUL R2.z, R2, R2.y;
+DP3_SAT R2.y, R1, fragment.texcoord[3];
+ABS R1.z, -fragment.texcoord[2].y;
+ADD R1.x, R1.w, -R2;
+ADD R1.y, -R2.z, c[12].w;
+CMP R1.x, -R1, R1.y, R2.z;
+ADD R1.y, -R1.x, c[9];
+ADD R2.x, -R1.z, c[10].z;
+MAD R1.w, R1.z, c[9].z, c[9];
+MAD R1.w, R1, R1.z, -c[10].x;
+RSQ R2.x, R2.x;
+CMP R1.y, fragment.texcoord[2].x, R1, R1.x;
+MAD R1.z, R1.w, R1, c[10].y;
+RCP R2.x, R2.x;
+MUL R1.w, R1.z, R2.x;
+SLT R1.z, -fragment.texcoord[2].y, c[9].x;
+MUL R2.x, R1.z, R1.w;
+MAD R1.x, -R2, c[10].w, R1.w;
+CMP R1.w, fragment.texcoord[2].z, -R1.y, R1.y;
+MAD R1.y, R1.z, c[9], R1.x;
+MUL R2.xyz, R2.y, c[0];
+MAD R1.x, R1.w, c[13], c[13].y;
+MUL R1.y, R1, c[11].x;
+TEX R1, R1, texture[0], 2D;
+MUL R1, R1, c[1];
+MUL R0.xyz, R1, R0;
+MUL R1.xyz, R2, c[10].w;
+DP3 R2.x, fragment.texcoord[0], fragment.texcoord[0];
 MUL R0.xyz, R0, c[1];
 ADD_SAT R1.xyz, R1, c[8].x;
 MUL R1.xyz, R0, R1;
 MAD result.color.xyz, R0, fragment.texcoord[4], R1;
-DP3 R2.x, fragment.texcoord[0], fragment.texcoord[0];
-RSQ R0.x, R2.x;
 ADD R0.y, -R0.w, c[10].z;
-MAD R0.y, R1.w, R0, R0.w;
-MUL R0.z, R2.w, R0.y;
-MUL_SAT R0.x, R0, fragment.texcoord[0].z;
+RSQ R2.x, R2.x;
+MUL_SAT R0.x, R2, fragment.texcoord[0].z;
 MUL R0.x, R0, c[5];
-ADD R0.y, -fragment.texcoord[1], c[10].z;
-POW_SAT R0.x, R0.x, c[4].x;
-ADD_SAT R0.x, R0.y, R0;
-MUL R0.y, fragment.texcoord[1], R0.z;
-MUL result.color.w, R0.y, R0.x;
+MAD R0.z, R2.w, R0.y, R0.w;
+POW_SAT R0.y, R0.x, c[4].x;
+ADD R0.x, -fragment.texcoord[1].y, c[10].z;
+ADD_SAT R0.x, R0, R0.y;
+MUL R0.y, R1.w, R0.z;
+MUL R0.x, fragment.texcoord[1].y, R0;
+MUL result.color.w, R0.x, R0.y;
 END
-# 92 instructions, 5 R-regs
+# 92 instructions, 4 R-regs
 "
 }
 
@@ -7151,99 +7150,99 @@ dcl_texcoord1 v1.xy
 dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
-mul r0.xy, v2.zyzw, c6.x
-add r1.xy, r0, c2
 mul r0.zw, v2.xyxy, c6.x
-add r0.xy, r0.zwzw, c2
-mul r2.xy, v2.zxzw, c6.x
-mul r3.xy, v2, c7.x
-add r3.xy, r3, c3
-abs r2.zw, v2.xyxy
-add r2.xy, r2, c2
-texld r3.yw, r3, s2
+add r1.xy, r0.zwzw, c2
+mul r0.xy, v2.zyzw, c6.x
+add r0.xy, r0, c2
+mul r3.xy, v2.zxzw, c6.x
 texld r0, r0, s1
 texld r1, r1, s1
-add_pp r1, r1, -r0
-mad_pp r0, r2.z, r1, r0
-texld r1, r2, s1
-add_pp r1, r1, -r0
-mad_pp r0, r2.w, r1, r0
-abs r2.y, v2.z
-add_pp r1.xyz, -r0, c9.y
-mul_sat r2.x, v1, c10.z
-mad_pp r0.xyz, r2.x, r1, r0
-mul r1.zw, v2.xyzy, c7.x
-add r4.xy, r1.zwzw, c3
-mul r1.xy, v2.zxzw, c7.x
+add_pp r2, r0, -r1
+abs r0.xy, v2
+mul r0.zw, v2.xyzy, c7.x
+add r4.xy, r0.zwzw, c3
 texld r4.yw, r4, s2
-add_pp r1.zw, r4.xyyw, -r3.xyyw
-mad_pp r1.zw, r2.z, r1, r3.xyyw
+mad_pp r1, r0.x, r2, r1
+add r3.xy, r3, c2
+texld r2, r3, s1
+add_pp r2, r2, -r1
+mad_pp r2, r0.y, r2, r1
+mul r3.xy, v2, c7.x
+add r3.xy, r3, c3
+texld r3.yw, r3, s2
+add_pp r0.zw, r4.xyyw, -r3.xyyw
+mad_pp r0.zw, r0.x, r0, r3.xyyw
+add_pp r1.xyz, -r2, c9.y
+mul_sat r1.w, v1.x, c10.z
+mad_pp r2.xyz, r1.w, r1, r2
+abs r4.x, v2.z
+max r1.z, r4.x, r0.x
+rcp r3.x, r1.z
+min r1.z, r4.x, r0.x
+mul r1.xy, v2.zxzw, c7.x
 add r1.xy, r1, c3
 texld r3.yw, r1, s2
-add_pp r1.xy, r3.ywzw, -r1.zwzw
-mad_pp r1.xy, r2.w, r1, r1.zwzw
-max r3.x, r2.y, r2.z
-mad_pp r1.xy, r1.yxzw, c13.z, c13.w
-rcp r1.w, r3.x
-min r1.z, r2.y, r2
-mul r2.w, r1.z, r1
-mul r3.x, r2.w, r2.w
-mul_pp r1.zw, r1.xyxy, r1.xyxy
-add_pp_sat r1.w, r1.z, r1
-mad r3.y, r3.x, c11, c11.z
-mad r1.z, r3.y, r3.x, c11.w
-add_pp r1.w, -r1, c9.y
-mad r1.z, r1, r3.x, c12.x
-rsq_pp r3.y, r1.w
-mad r1.w, r1.z, r3.x, c12.y
-mad r1.w, r1, r3.x, c12.z
-rcp_pp r1.z, r3.y
+add_pp r1.xy, r3.ywzw, -r0.zwzw
+mad_pp r0.zw, r0.y, r1.xyxy, r0
+mul r3.x, r1.z, r3
+mul r0.y, r3.x, r3.x
+mad_pp r1.xy, r0.wzzw, c13.z, c13.w
+mul_pp r0.zw, r1.xyxy, r1.xyxy
+mad r1.z, r0.y, c11.y, c11
+add_pp_sat r0.w, r0.z, r0
+mad r1.z, r1, r0.y, c11.w
+mad r0.z, r1, r0.y, c12.x
+mad r0.z, r0, r0.y, c12.y
+mad r0.y, r0.z, r0, c12.z
+mul r0.y, r0, r3.x
+add_pp r0.w, -r0, c9.y
+rsq_pp r0.w, r0.w
+rcp_pp r1.z, r0.w
 add_pp r3.xyz, -r1, c9.xxyw
-mad_pp r3.xyz, r2.x, r3, r1
-mul r1.w, r1, r2
-abs r1.z, -v2.y
-add r1.x, r2.y, -r2.z
-add r1.y, -r1.w, c12.w
-cmp r1.x, -r1, r1.w, r1.y
-add r1.y, -r1.x, c10.w
-add r2.y, -r1.z, c9
-mad r1.w, r1.z, c9.z, c9
-mad r1.w, r1, r1.z, c10.x
-rsq r2.y, r2.y
-mad r1.z, r1.w, r1, c10.y
-rcp r2.y, r2.y
-mul r1.w, r1.z, r2.y
-cmp r1.z, -v2.y, c9.x, c9.y
-mul r2.y, r1.z, r1.w
-cmp r1.y, v2.x, r1.x, r1
-mad r1.x, -r2.y, c10.z, r1.w
-cmp r1.w, v2.z, r1.y, -r1.y
-mad r1.y, r1.z, c10.w, r1.x
-dp3_pp_sat r2.y, r3, v3
-mad r1.x, r1.w, c13, c13.y
-mul r1.y, r1, c11.x
-texld r1, r1, s0
-mul r1, r1, c1
-mul_pp r0.xyz, r1, r0
-mul_pp r1.xyz, r2.y, c0
+mad_pp r1.xyz, r1.w, r3, r1
+dp3_pp_sat r1.x, r1, v3
+mul_pp r1.xyz, r1.x, c0
 mul_pp r1.xyz, r1, c10.z
-dp3 r2.y, v0, v0
-rsq r2.y, r2.y
+add r0.z, -r0.y, c12.w
+add r0.x, r4, -r0
+cmp r0.z, -r0.x, r0.y, r0
+abs r0.y, -v2
+add r0.w, -r0.z, c10
+cmp r0.z, v2.x, r0, r0.w
+add r3.w, -r0.y, c9.y
+mad r0.x, r0.y, c9.z, c9.w
+mad r0.x, r0, r0.y, c10
+rsq r3.w, r3.w
+mad r0.x, r0, r0.y, c10.y
+rcp r3.w, r3.w
+mul r3.w, r0.x, r3
+cmp r0.x, -v2.y, c9, c9.y
+mul r0.y, r0.x, r3.w
+mad r0.y, -r0, c10.z, r3.w
+mad r0.y, r0.x, c10.w, r0
+cmp r0.z, v2, r0, -r0
+mad r0.x, r0.z, c13, c13.y
+mul r0.y, r0, c11.x
+texld r0, r0, s0
+mul r0, r0, c1
+mul_pp r0.xyz, r0, r2
+dp3 r2.x, v0, v0
+rsq r2.x, r2.x
+mul_sat r2.x, r2, v0.z
+mul r2.x, r2, c5
+pow_sat r3, r2.x, c4.x
 mul_pp r0.xyz, r0, c1
 add_sat r1.xyz, r1, c8.x
 mul r1.xyz, r0, r1
 mad_pp oC0.xyz, r0, v4, r1
-mul_sat r2.y, r2, v0.z
-mul r0.y, r2, c5.x
-pow_sat r3, r0.y, c4.x
-add_pp r0.x, -r0.w, c9.y
-mad_pp r0.x, r2, r0, r0.w
-mul_pp r0.x, r1.w, r0
-mov r0.z, r3.x
-add r0.y, -v1, c9
-add_sat r0.y, r0, r0.z
+add_pp r0.x, -r2.w, c9.y
+mad_pp r0.z, r1.w, r0.x, r2.w
+mov r0.y, r3.x
+add r0.x, -v1.y, c9.y
+add_sat r0.x, r0, r0.y
+mul_pp r0.y, r0.w, r0.z
 mul r0.x, v1.y, r0
-mul oC0.w, r0.x, r0.y
+mul_pp oC0.w, r0.x, r0.y
 "
 }
 
@@ -7268,7 +7267,7 @@ SetTexture 2 [_BumpMap] 2D 2
 // TEX 7 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedehhdonoebglbchnnlfgfagiopojabblpabaaaaaanaamaaaaadaaaaaa
+eefiecedfjiooldbmglcpekcidokkecbhgafenmcabaaaaaanaamaaaaadaaaaaa
 cmaaaaaaoeaaaaaabiabaaaaejfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -7336,41 +7335,41 @@ ebaaaaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpaacaaaah
 bcaabaaaadaaaaaaakbabaaaacaaaaaaakbabaaaacaaaaaadcaaaaajpcaabaaa
 abaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaah
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadiaaaaaihcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaadiaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkbabaaaacaaaaaadiaaaaahhcaabaaaabaaaaaa
-egacbaaaaaaaaaaaegbcbaaaafaaaaaadcaaaaalpcaabaaaacaaaaaaggbcbaaa
-adaaaaaaagiacaaaaaaaaaaaahaaaaaaegiecaaaaaaaaaaaafaaaaaaefaaaaaj
-pcaabaaaaeaaaaaaegaabaaaacaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaa
-efaaaaajpcaabaaaacaaaaaaogakbaaaacaaaaaaeghobaaaacaaaaaaaagabaaa
-acaaaaaadcaaaaalfcaabaaaacaaaaaaagbbbaaaadaaaaaaagiacaaaaaaaaaaa
-ahaaaaaaagibcaaaaaaaaaaaafaaaaaaefaaaaajpcaabaaaafaaaaaaigaabaaa
-acaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaaaaaaaaaifcaabaaaacaaaaaa
-pganbaaaaeaaaaaapganbaiaebaaaaaaafaaaaaadcaaaaakfcaabaaaacaaaaaa
-agbabaiaibaaaaaaadaaaaaaagacbaaaacaaaaaapganbaaaafaaaaaaaaaaaaai
-kcaabaaaacaaaaaaagaibaiaebaaaaaaacaaaaaapgahbaaaacaaaaaadcaaaaak
-dcaabaaaacaaaaaafgbfbaiaibaaaaaaadaaaaaangafbaaaacaaaaaaigaabaaa
-acaaaaaadcaaaaapdcaabaaaacaaaaaaegaabaaaacaaaaaaaceaaaaaaaaaaaea
-aaaaaaeaaaaaaaaaaaaaaaaaaceaaaaaaaaaialpaaaaialpaaaaaaaaaaaaaaaa
-apaaaaahicaabaaaabaaaaaaegaabaaaacaaaaaaegaabaaaacaaaaaaddaaaaah
-icaabaaaabaaaaaadkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
-abaaaaaadkaabaiaebaaaaaaabaaaaaaabeaaaaaaaaaiadpelaaaaafecaabaaa
-acaaaaaadkaabaaaabaaaaaaaaaaaaalocaabaaaadaaaaaaagajbaiaebaaaaaa
-acaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaiadpdcaaaaajhcaabaaa
-acaaaaaaagaabaaaadaaaaaajgahbaaaadaaaaaaegacbaaaacaaaaaabacaaaah
-icaabaaaabaaaaaaegacbaaaacaaaaaaegbcbaaaaeaaaaaaaaaaaaahicaabaaa
-abaaaaaadkaabaaaabaaaaaadkaabaaaabaaaaaadccaaaalhcaabaaaacaaaaaa
-egiccaaaaaaaaaaaabaaaaaapgapbaaaabaaaaaafgifcaaaaaaaaaaaahaaaaaa
-dcaaaaajhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaabaaaaaaegbcbaaaabaaaaaa
-eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadicaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaackbabaaaabaaaaaadiaaaaaibcaabaaaaaaaaaaaakaabaaa
-aaaaaaaabkiacaaaaaaaaaaaagaaaaaacpaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaaakiacaaaaaaaaaaa
-agaaaaaabjaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahbcaabaaa
-aaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiccaabaaaaaaaaaaa
-bkbabaiaebaaaaaaacaaaaaaabeaaaaaaaaaiadpaacaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahiccabaaaaaaaaaaaakaabaaa
-aaaaaaaadkaabaaaaaaaaaaadoaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaadiaaaaahhcaabaaa
+abaaaaaaegacbaaaaaaaaaaaegbcbaaaafaaaaaadcaaaaalpcaabaaaacaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaahaaaaaaegiecaaaaaaaaaaaafaaaaaa
+efaaaaajpcaabaaaaeaaaaaaegaabaaaacaaaaaaeghobaaaacaaaaaaaagabaaa
+acaaaaaaefaaaaajpcaabaaaacaaaaaaogakbaaaacaaaaaaeghobaaaacaaaaaa
+aagabaaaacaaaaaadcaaaaalfcaabaaaacaaaaaaagbbbaaaadaaaaaaagiacaaa
+aaaaaaaaahaaaaaaagibcaaaaaaaaaaaafaaaaaaefaaaaajpcaabaaaafaaaaaa
+igaabaaaacaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaaaaaaaaaifcaabaaa
+acaaaaaapganbaaaaeaaaaaapganbaiaebaaaaaaafaaaaaadcaaaaakfcaabaaa
+acaaaaaaagbabaiaibaaaaaaadaaaaaaagacbaaaacaaaaaapganbaaaafaaaaaa
+aaaaaaaikcaabaaaacaaaaaaagaibaiaebaaaaaaacaaaaaapgahbaaaacaaaaaa
+dcaaaaakdcaabaaaacaaaaaafgbfbaiaibaaaaaaadaaaaaangafbaaaacaaaaaa
+igaabaaaacaaaaaadcaaaaapdcaabaaaacaaaaaaegaabaaaacaaaaaaaceaaaaa
+aaaaaaeaaaaaaaeaaaaaaaaaaaaaaaaaaceaaaaaaaaaialpaaaaialpaaaaaaaa
+aaaaaaaaapaaaaahicaabaaaabaaaaaaegaabaaaacaaaaaaegaabaaaacaaaaaa
+ddaaaaahicaabaaaabaaaaaadkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaai
+icaabaaaabaaaaaadkaabaiaebaaaaaaabaaaaaaabeaaaaaaaaaiadpelaaaaaf
+ecaabaaaacaaaaaadkaabaaaabaaaaaaaaaaaaalocaabaaaadaaaaaaagajbaia
+ebaaaaaaacaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaiadpdcaaaaaj
+hcaabaaaacaaaaaaagaabaaaadaaaaaajgahbaaaadaaaaaaegacbaaaacaaaaaa
+bacaaaahicaabaaaabaaaaaaegacbaaaacaaaaaaegbcbaaaaeaaaaaaaaaaaaah
+icaabaaaabaaaaaadkaabaaaabaaaaaadkaabaaaabaaaaaadccaaaalhcaabaaa
+acaaaaaaegiccaaaaaaaaaaaabaaaaaapgapbaaaabaaaaaafgifcaaaaaaaaaaa
+ahaaaaaadcaaaaajhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaacaaaaaa
+egacbaaaabaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaabaaaaaaegbcbaaa
+abaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadicaaaahbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaackbabaaaabaaaaaadiaaaaaibcaabaaaaaaaaaaa
+akaabaaaaaaaaaaabkiacaaaaaaaaaaaagaaaaaacpaaaaafbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaadiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaaakiacaaa
+aaaaaaaaagaaaaaabjaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaah
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiccaabaaa
+aaaaaaaabkbabaiaebaaaaaaacaaaaaaabeaaaaaaaaaiadpaacaaaahbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaabkbabaaaacaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -7416,97 +7415,97 @@ TEMP R1;
 TEMP R2;
 TEMP R3;
 MUL R2.xy, fragment.texcoord[2].zxzw, c[6].x;
-ADD R3.xy, R2, c[2];
+ADD R2.zw, R2.xyxy, c[2].xyxy;
 MUL R0.xy, fragment.texcoord[2].zyzw, c[6].x;
 ADD R0.xy, R0, c[2];
 MUL R0.zw, fragment.texcoord[2].xyxy, c[6].x;
-MUL R2.yw, fragment.texcoord[2].xzzy, c[7].x;
-ADD R2.yw, R2, c[3].xxzy;
-ABS R2.xz, fragment.texcoord[2].xyyw;
+ABS R2.xy, fragment.texcoord[2];
 TEX R1, R0, texture[1], 2D;
 ADD R0.zw, R0, c[2].xyxy;
 TEX R0, R0.zwzw, texture[1], 2D;
 ADD R1, R1, -R0;
 MAD R0, R2.x, R1, R0;
-TEX R1, R3, texture[1], 2D;
+TEX R1, R2.zwzw, texture[1], 2D;
 ADD R1, R1, -R0;
-MAD R0, R2.z, R1, R0;
-ABS R1.w, fragment.texcoord[2].z;
-MUL R3.xz, fragment.texcoord[2].zyxw, c[7].x;
-MUL R3.yw, fragment.texcoord[2].xxzy, c[7].x;
-ADD R3.yw, R3, c[3].xxzy;
-ADD R3.xz, R3, c[3].xyyw;
-MAX R1.z, R1.w, R2.x;
-TEX R3.yw, R3.ywzw, texture[2], 2D;
-TEX R2.yw, R2.ywzw, texture[2], 2D;
-ADD R2.yw, R2, -R3;
-MAD R2.yw, R2.x, R2, R3;
-TEX R3.yw, R3.xzzw, texture[2], 2D;
-ADD R3.xy, R3.ywzw, -R2.ywzw;
-MAD R1.xy, R2.z, R3, R2.ywzw;
-ADD R3.xyz, -R0, c[10].z;
+MAD R1, R2.y, R1, R0;
+MUL R0.zw, fragment.texcoord[2].xyxy, c[7].x;
+ADD R0.zw, R0, c[3].xyxy;
+MUL R0.xy, fragment.texcoord[2].zyzw, c[7].x;
+TEX R3.yw, R0.zwzw, texture[2], 2D;
+ADD R0.xy, R0, c[3];
+TEX R0.yw, R0, texture[2], 2D;
+ADD R0.xy, R0.ywzw, -R3.ywzw;
+MUL R2.zw, fragment.texcoord[2].xyzx, c[7].x;
+ADD R0.zw, R2, c[3].xyxy;
+MAD R2.zw, R2.x, R0.xyxy, R3.xyyw;
+TEX R0.yw, R0.zwzw, texture[2], 2D;
+ADD R3.xy, R0.ywzw, -R2.zwzw;
+MAD R3.xy, R2.y, R3, R2.zwzw;
+ADD R0.xyz, -R1, c[10].z;
 MUL_SAT R2.w, fragment.texcoord[1].x, c[10];
-MAD R1.xy, R1.yxzw, c[10].w, -c[10].z;
-MAD R0.xyz, R2.w, R3, R0;
-MUL R3.xy, R1, R1;
-ADD_SAT R2.y, R3.x, R3;
-ADD R2.z, -R2.y, c[10];
-RCP R2.y, R1.z;
-MIN R1.z, R1.w, R2.x;
-MUL R2.y, R1.z, R2;
-RSQ R1.z, R2.z;
+MAD R1.xyz, R2.w, R0, R1;
+MAD R0.xy, R3.yxzw, c[10].w, -c[10].z;
+ABS R0.w, fragment.texcoord[2].z;
+MUL R3.xy, R0, R0;
+MAX R0.z, R0.w, R2.x;
+RCP R2.y, R0.z;
+MIN R0.z, R0.w, R2.x;
+ADD_SAT R2.z, R3.x, R3.y;
+MUL R2.y, R0.z, R2;
+ADD R0.z, -R2, c[10];
 MUL R2.z, R2.y, R2.y;
-RCP R1.z, R1.z;
-ADD R3.xyz, -R1, c[13].zzww;
-MAD R1.xyz, R2.w, R3, R1;
-DP3_SAT R1.z, R1, fragment.texcoord[3];
-MAD R3.w, R2.z, c[11].y, c[11].z;
-MAD R3.w, R3, R2.z, -c[11];
-MAD R3.x, R3.w, R2.z, c[12];
-MAD R1.y, R3.x, R2.z, -c[12];
-MAD R1.y, R1, R2.z, c[12].z;
-TXP R1.x, fragment.texcoord[5], texture[3], 2D;
-MUL R1.x, R1.z, R1;
-MUL R1.y, R1, R2;
-MUL R3.xyz, R1.x, c[0];
-ADD R1.z, -R1.y, c[12].w;
-ADD R1.x, R1.w, -R2;
-CMP R1.x, -R1, R1.z, R1.y;
-ABS R1.z, -fragment.texcoord[2].y;
-ADD R1.y, -R1.x, c[9];
-ADD R2.x, -R1.z, c[10].z;
-MAD R1.w, R1.z, c[9].z, c[9];
-MAD R1.w, R1, R1.z, -c[10].x;
+MAD R3.x, R2.z, c[11].y, c[11].z;
+MAD R3.w, R3.x, R2.z, -c[11];
+RSQ R0.z, R0.z;
+RCP R0.z, R0.z;
+ADD R3.xyz, -R0, c[13].zzww;
+MAD R0.xyz, R2.w, R3, R0;
+DP3_SAT R0.z, R0, fragment.texcoord[3];
+MAD R3.w, R3, R2.z, c[12].x;
+MAD R3.x, R3.w, R2.z, -c[12].y;
+MAD R0.y, R3.x, R2.z, c[12].z;
+MUL R0.y, R0, R2;
+TXP R0.x, fragment.texcoord[5], texture[3], 2D;
+MUL R2.y, R0.z, R0.x;
+ADD R0.z, -R0.y, c[12].w;
+ADD R0.x, R0.w, -R2;
+CMP R0.x, -R0, R0.z, R0.y;
+ABS R0.z, -fragment.texcoord[2].y;
+ADD R0.y, -R0.x, c[9];
+ADD R2.x, -R0.z, c[10].z;
+MAD R0.w, R0.z, c[9].z, c[9];
+MAD R0.w, R0, R0.z, -c[10].x;
 RSQ R2.x, R2.x;
-CMP R1.y, fragment.texcoord[2].x, R1, R1.x;
-MAD R1.z, R1.w, R1, c[10].y;
+CMP R0.y, fragment.texcoord[2].x, R0, R0.x;
+MAD R0.z, R0.w, R0, c[10].y;
 RCP R2.x, R2.x;
-MUL R1.w, R1.z, R2.x;
-SLT R1.z, -fragment.texcoord[2].y, c[9].x;
-MUL R2.x, R1.z, R1.w;
-MAD R1.x, -R2, c[10].w, R1.w;
-CMP R1.w, fragment.texcoord[2].z, -R1.y, R1.y;
-MAD R1.y, R1.z, c[9], R1.x;
-MUL R2.xyz, R3, c[10].w;
-MAD R1.x, R1.w, c[13], c[13].y;
-MUL R1.y, R1, c[11].x;
-TEX R1, R1, texture[0], 2D;
-MUL R1, R1, c[1];
-MUL R0.xyz, R1, R0;
-ADD_SAT R1.xyz, R2, c[8].x;
+MUL R0.w, R0.z, R2.x;
+SLT R0.z, -fragment.texcoord[2].y, c[9].x;
+MUL R2.x, R0.z, R0.w;
+MAD R0.x, -R2, c[10].w, R0.w;
+CMP R0.w, fragment.texcoord[2].z, -R0.y, R0.y;
+MAD R0.y, R0.z, c[9], R0.x;
+MUL R2.xyz, R2.y, c[0];
+MAD R0.x, R0.w, c[13], c[13].y;
+MUL R0.y, R0, c[11].x;
+TEX R0, R0, texture[0], 2D;
+MUL R0, R0, c[1];
+MUL R0.xyz, R0, R1;
+MUL R1.xyz, R2, c[10].w;
+DP3 R2.x, fragment.texcoord[0], fragment.texcoord[0];
 MUL R0.xyz, R0, c[1];
+ADD_SAT R1.xyz, R1, c[8].x;
 MUL R1.xyz, R0, R1;
 MAD result.color.xyz, R0, fragment.texcoord[4], R1;
-DP3 R2.x, fragment.texcoord[0], fragment.texcoord[0];
-RSQ R0.y, R2.x;
-ADD R0.x, -R0.w, c[10].z;
-MUL_SAT R0.y, R0, fragment.texcoord[0].z;
-MUL R0.y, R0, c[5].x;
-POW_SAT R0.z, R0.y, c[4].x;
-MAD R0.x, R2.w, R0, R0.w;
-MUL R0.x, R1.w, R0;
-ADD R0.y, -fragment.texcoord[1], c[10].z;
-ADD_SAT R0.y, R0, R0.z;
+ADD R0.y, -R1.w, c[10].z;
+RSQ R2.x, R2.x;
+MUL_SAT R0.x, R2, fragment.texcoord[0].z;
+MUL R0.x, R0, c[5];
+MAD R0.z, R2.w, R0.y, R1.w;
+POW_SAT R0.y, R0.x, c[4].x;
+ADD R0.x, -fragment.texcoord[1].y, c[10].z;
+ADD_SAT R0.x, R0, R0.y;
+MUL R0.y, R0.w, R0.z;
 MUL R0.x, fragment.texcoord[1].y, R0;
 MUL result.color.w, R0.x, R0.y;
 END
@@ -7546,101 +7545,101 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5
-mul r0.xy, v2.zyzw, c6.x
-add r1.xy, r0, c2
 mul r0.zw, v2.xyxy, c6.x
-add r0.xy, r0.zwzw, c2
-mul r2.xy, v2.zxzw, c6.x
-mul r3.xy, v2, c7.x
-add r3.xy, r3, c3
-abs r2.zw, v2.xyxy
-add r2.xy, r2, c2
-texld r3.yw, r3, s2
+add r1.xy, r0.zwzw, c2
+mul r0.xy, v2.zyzw, c6.x
+add r0.xy, r0, c2
+mul r3.xy, v2.zxzw, c6.x
 texld r0, r0, s1
 texld r1, r1, s1
-add_pp r1, r1, -r0
-mad_pp r0, r2.z, r1, r0
-texld r1, r2, s1
-add_pp r1, r1, -r0
-mad_pp r0, r2.w, r1, r0
-add_pp r1.xyz, -r0, c9.y
-mul_sat r2.x, v1, c10.z
-mad_pp r0.xyz, r2.x, r1, r0
-mul r1.zw, v2.xyzy, c7.x
-add r4.xy, r1.zwzw, c3
-mul r1.xy, v2.zxzw, c7.x
+add_pp r2, r0, -r1
+abs r0.xy, v2
+mul r0.zw, v2.xyzy, c7.x
+add r4.xy, r0.zwzw, c3
+mad_pp r1, r0.x, r2, r1
+add r3.xy, r3, c2
+texld r2, r3, s1
+add_pp r2, r2, -r1
+mad_pp r2, r0.y, r2, r1
+mul r3.xy, v2, c7.x
+add r3.xy, r3, c3
+texld r3.yw, r3, s2
 texld r4.yw, r4, s2
-add_pp r1.zw, r4.xyyw, -r3.xyyw
-mad_pp r1.zw, r2.z, r1, r3.xyyw
+add_pp r0.zw, r4.xyyw, -r3.xyyw
+mad_pp r0.zw, r0.x, r0, r3.xyyw
+add_pp r1.xyz, -r2, c9.y
+mul_sat r1.w, v1.x, c10.z
+mad_pp r2.xyz, r1.w, r1, r2
+abs r3.x, v2.z
+max r1.z, r3.x, r0.x
+rcp r3.y, r1.z
+min r1.z, r3.x, r0.x
+mul r1.xy, v2.zxzw, c7.x
+mul r1.z, r1, r3.y
 add r1.xy, r1, c3
 texld r3.yw, r1, s2
-add_pp r1.xy, r3.ywzw, -r1.zwzw
-mad_pp r1.xy, r2.w, r1, r1.zwzw
-abs r2.y, v2.z
-max r1.z, r2.y, r2
-rcp r1.w, r1.z
-min r1.z, r2.y, r2
-mul r2.w, r1.z, r1
-mad_pp r1.xy, r1.yxzw, c13.z, c13.w
-mul_pp r1.zw, r1.xyxy, r1.xyxy
-add_pp_sat r1.w, r1.z, r1
-mul r3.w, r2, r2
-mad r1.z, r3.w, c11.y, c11
-add_pp r1.w, -r1, c9.y
-mad r1.z, r1, r3.w, c11.w
-rsq_pp r3.x, r1.w
-mad r1.w, r1.z, r3, c12.x
-rcp_pp r1.z, r3.x
+add_pp r1.xy, r3.ywzw, -r0.zwzw
+mad_pp r0.zw, r0.y, r1.xyxy, r0
+mul r3.y, r1.z, r1.z
+mad_pp r1.xy, r0.wzzw, c13.z, c13.w
+mul_pp r0.zw, r1.xyxy, r1.xyxy
+add_pp_sat r0.z, r0, r0.w
+mad r0.y, r3, c11, c11.z
+mad r0.y, r0, r3, c11.w
+mad r0.y, r0, r3, c12.x
+mad r0.y, r0, r3, c12
+mad r0.y, r0, r3, c12.z
+add_pp r0.z, -r0, c9.y
+mul r0.y, r0, r1.z
+rsq_pp r0.z, r0.z
+rcp_pp r1.z, r0.z
+add r0.z, -r0.y, c12.w
+add r0.x, r3, -r0
+cmp r0.x, -r0, r0.y, r0.z
+abs r0.z, -v2.y
+add r0.y, -r0.x, c10.w
+add r3.x, -r0.z, c9.y
+mad r0.w, r0.z, c9.z, c9
+mad r0.w, r0, r0.z, c10.x
+rsq r3.x, r3.x
+mad r0.z, r0.w, r0, c10.y
+rcp r3.x, r3.x
+mul r0.w, r0.z, r3.x
+cmp r0.z, -v2.y, c9.x, c9.y
+mul r3.x, r0.z, r0.w
+cmp r0.y, v2.x, r0.x, r0
+mad r0.x, -r3, c10.z, r0.w
+cmp r0.w, v2.z, r0.y, -r0.y
+mad r0.y, r0.z, c10.w, r0.x
 add_pp r3.xyz, -r1, c9.xxyw
-mad_pp r1.xyz, r2.x, r3, r1
-mad r1.w, r1, r3, c12.y
-mad r1.w, r1, r3, c12.z
-mul r1.w, r1, r2
-dp3_pp_sat r2.w, r1, v3
-abs r1.z, -v2.y
-add r1.x, r2.y, -r2.z
-add r1.y, -r1.w, c12.w
-cmp r1.x, -r1, r1.w, r1.y
-add r1.y, -r1.x, c10.w
-add r2.y, -r1.z, c9
-mad r1.w, r1.z, c9.z, c9
-mad r1.w, r1, r1.z, c10.x
-rsq r2.y, r2.y
-mad r1.z, r1.w, r1, c10.y
-rcp r2.y, r2.y
-mul r1.w, r1.z, r2.y
-cmp r1.z, -v2.y, c9.x, c9.y
-mul r2.y, r1.z, r1.w
-cmp r1.y, v2.x, r1.x, r1
-mad r1.x, -r2.y, c10.z, r1.w
-cmp r1.w, v2.z, r1.y, -r1.y
-mad r1.y, r1.z, c10.w, r1.x
-texldp r3.x, v5, s3
-mul_pp r2.y, r2.w, r3.x
-mad r1.x, r1.w, c13, c13.y
-mul r1.y, r1, c11.x
-texld r1, r1, s0
-mul r1, r1, c1
-mul_pp r0.xyz, r1, r0
-mul_pp r1.xyz, r2.y, c0
+mad_pp r1.xyz, r1.w, r3, r1
+dp3_pp_sat r1.x, r1, v3
+mad r0.x, r0.w, c13, c13.y
+mul r0.y, r0, c11.x
+texld r0, r0, s0
+mul r0, r0, c1
+mul_pp r0.xyz, r0, r2
+texldp r2.x, v5, s3
+mul_pp r1.x, r1, r2
+mul_pp r1.xyz, r1.x, c0
+dp3 r2.x, v0, v0
 mul_pp r1.xyz, r1, c10.z
-dp3 r2.y, v0, v0
-rsq r2.y, r2.y
+rsq r2.x, r2.x
+mul_sat r2.x, r2, v0.z
+mul r2.x, r2, c5
+pow_sat r3, r2.x, c4.x
 mul_pp r0.xyz, r0, c1
 add_sat r1.xyz, r1, c8.x
 mul r1.xyz, r0, r1
 mad_pp oC0.xyz, r0, v4, r1
-mul_sat r2.y, r2, v0.z
-mul r0.y, r2, c5.x
-pow_sat r3, r0.y, c4.x
-add_pp r0.x, -r0.w, c9.y
-mad_pp r0.x, r2, r0, r0.w
-mul_pp r0.x, r1.w, r0
-mov r0.z, r3.x
-add r0.y, -v1, c9
-add_sat r0.y, r0, r0.z
+add_pp r0.x, -r2.w, c9.y
+mad_pp r0.z, r1.w, r0.x, r2.w
+mov r0.y, r3.x
+add r0.x, -v1.y, c9.y
+add_sat r0.x, r0, r0.y
+mul_pp r0.y, r0.w, r0.z
 mul r0.x, v1.y, r0
-mul oC0.w, r0.x, r0.y
+mul_pp oC0.w, r0.x, r0.y
 "
 }
 
@@ -7666,7 +7665,7 @@ SetTexture 3 [_ShadowMapTexture] 2D 0
 // TEX 8 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedcpfajkcbebhfoflhciidclcoghdcmagpabaaaaaafaanaaaaadaaaaaa
+eefiecedokpjnkohblgokppcknnbigdfnfkceobnabaaaaaafaanaaaaadaaaaaa
 cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaalmaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -7736,43 +7735,43 @@ ebaaaaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpaacaaaah
 bcaabaaaadaaaaaaakbabaaaacaaaaaaakbabaaaacaaaaaadcaaaaajpcaabaaa
 abaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaah
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadiaaaaaihcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegiccaaaaaaaaaaaahaaaaaadiaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkbabaaaacaaaaaadiaaaaahhcaabaaaabaaaaaa
-egacbaaaaaaaaaaaegbcbaaaafaaaaaadcaaaaalpcaabaaaacaaaaaaggbcbaaa
-adaaaaaaagiacaaaaaaaaaaaalaaaaaaegiecaaaaaaaaaaaajaaaaaaefaaaaaj
-pcaabaaaaeaaaaaaegaabaaaacaaaaaaeghobaaaacaaaaaaaagabaaaadaaaaaa
-efaaaaajpcaabaaaacaaaaaaogakbaaaacaaaaaaeghobaaaacaaaaaaaagabaaa
-adaaaaaadcaaaaalfcaabaaaacaaaaaaagbbbaaaadaaaaaaagiacaaaaaaaaaaa
-alaaaaaaagibcaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaaafaaaaaaigaabaaa
-acaaaaaaeghobaaaacaaaaaaaagabaaaadaaaaaaaaaaaaaifcaabaaaacaaaaaa
-pganbaaaaeaaaaaapganbaiaebaaaaaaafaaaaaadcaaaaakfcaabaaaacaaaaaa
-agbabaiaibaaaaaaadaaaaaaagacbaaaacaaaaaapganbaaaafaaaaaaaaaaaaai
-kcaabaaaacaaaaaaagaibaiaebaaaaaaacaaaaaapgahbaaaacaaaaaadcaaaaak
-dcaabaaaacaaaaaafgbfbaiaibaaaaaaadaaaaaangafbaaaacaaaaaaigaabaaa
-acaaaaaadcaaaaapdcaabaaaacaaaaaaegaabaaaacaaaaaaaceaaaaaaaaaaaea
-aaaaaaeaaaaaaaaaaaaaaaaaaceaaaaaaaaaialpaaaaialpaaaaaaaaaaaaaaaa
-apaaaaahicaabaaaabaaaaaaegaabaaaacaaaaaaegaabaaaacaaaaaaddaaaaah
-icaabaaaabaaaaaadkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
-abaaaaaadkaabaiaebaaaaaaabaaaaaaabeaaaaaaaaaiadpelaaaaafecaabaaa
-acaaaaaadkaabaaaabaaaaaaaaaaaaalocaabaaaadaaaaaaagajbaiaebaaaaaa
-acaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaiadpdcaaaaajhcaabaaa
-acaaaaaaagaabaaaadaaaaaajgahbaaaadaaaaaaegacbaaaacaaaaaabacaaaah
-icaabaaaabaaaaaaegacbaaaacaaaaaaegbcbaaaaeaaaaaaaoaaaaahdcaabaaa
-acaaaaaaegbabaaaagaaaaaapgbpbaaaagaaaaaaefaaaaajpcaabaaaacaaaaaa
-egaabaaaacaaaaaaeghobaaaadaaaaaaaagabaaaaaaaaaaaapaaaaahicaabaaa
-abaaaaaapgapbaaaabaaaaaaagaabaaaacaaaaaadccaaaalhcaabaaaacaaaaaa
-egiccaaaaaaaaaaaabaaaaaapgapbaaaabaaaaaafgifcaaaaaaaaaaaalaaaaaa
-dcaaaaajhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaabaaaaaaegbcbaaaabaaaaaa
-eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadicaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaackbabaaaabaaaaaadiaaaaaibcaabaaaaaaaaaaaakaabaaa
-aaaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaaakiacaaaaaaaaaaa
-akaaaaaabjaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahbcaabaaa
-aaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiccaabaaaaaaaaaaa
-bkbabaiaebaaaaaaacaaaaaaabeaaaaaaaaaiadpaacaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahiccabaaaaaaaaaaaakaabaaa
-aaaaaaaadkaabaaaaaaaaaaadoaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegiccaaaaaaaaaaaahaaaaaadiaaaaahhcaabaaa
+abaaaaaaegacbaaaaaaaaaaaegbcbaaaafaaaaaadcaaaaalpcaabaaaacaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaalaaaaaaegiecaaaaaaaaaaaajaaaaaa
+efaaaaajpcaabaaaaeaaaaaaegaabaaaacaaaaaaeghobaaaacaaaaaaaagabaaa
+adaaaaaaefaaaaajpcaabaaaacaaaaaaogakbaaaacaaaaaaeghobaaaacaaaaaa
+aagabaaaadaaaaaadcaaaaalfcaabaaaacaaaaaaagbbbaaaadaaaaaaagiacaaa
+aaaaaaaaalaaaaaaagibcaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaaafaaaaaa
+igaabaaaacaaaaaaeghobaaaacaaaaaaaagabaaaadaaaaaaaaaaaaaifcaabaaa
+acaaaaaapganbaaaaeaaaaaapganbaiaebaaaaaaafaaaaaadcaaaaakfcaabaaa
+acaaaaaaagbabaiaibaaaaaaadaaaaaaagacbaaaacaaaaaapganbaaaafaaaaaa
+aaaaaaaikcaabaaaacaaaaaaagaibaiaebaaaaaaacaaaaaapgahbaaaacaaaaaa
+dcaaaaakdcaabaaaacaaaaaafgbfbaiaibaaaaaaadaaaaaangafbaaaacaaaaaa
+igaabaaaacaaaaaadcaaaaapdcaabaaaacaaaaaaegaabaaaacaaaaaaaceaaaaa
+aaaaaaeaaaaaaaeaaaaaaaaaaaaaaaaaaceaaaaaaaaaialpaaaaialpaaaaaaaa
+aaaaaaaaapaaaaahicaabaaaabaaaaaaegaabaaaacaaaaaaegaabaaaacaaaaaa
+ddaaaaahicaabaaaabaaaaaadkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaai
+icaabaaaabaaaaaadkaabaiaebaaaaaaabaaaaaaabeaaaaaaaaaiadpelaaaaaf
+ecaabaaaacaaaaaadkaabaaaabaaaaaaaaaaaaalocaabaaaadaaaaaaagajbaia
+ebaaaaaaacaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaiadpdcaaaaaj
+hcaabaaaacaaaaaaagaabaaaadaaaaaajgahbaaaadaaaaaaegacbaaaacaaaaaa
+bacaaaahicaabaaaabaaaaaaegacbaaaacaaaaaaegbcbaaaaeaaaaaaaoaaaaah
+dcaabaaaacaaaaaaegbabaaaagaaaaaapgbpbaaaagaaaaaaefaaaaajpcaabaaa
+acaaaaaaegaabaaaacaaaaaaeghobaaaadaaaaaaaagabaaaaaaaaaaaapaaaaah
+icaabaaaabaaaaaapgapbaaaabaaaaaaagaabaaaacaaaaaadccaaaalhcaabaaa
+acaaaaaaegiccaaaaaaaaaaaabaaaaaapgapbaaaabaaaaaafgifcaaaaaaaaaaa
+alaaaaaadcaaaaajhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaacaaaaaa
+egacbaaaabaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaabaaaaaaegbcbaaa
+abaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadicaaaahbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaackbabaaaabaaaaaadiaaaaaibcaabaaaaaaaaaaa
+akaabaaaaaaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaadiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaaakiacaaa
+aaaaaaaaakaaaaaabjaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaah
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiccaabaaa
+aaaaaaaabkbabaiaebaaaaaaacaaaaaaabeaaaaaaaaaiadpaacaaaahbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaabkbabaaaacaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {

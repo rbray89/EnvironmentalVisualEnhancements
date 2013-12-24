@@ -46,11 +46,12 @@ Float 17 [_FalloffScale]
 Float 18 [_DetailDist]
 "3.0-!!ARBvp1.0
 # 63 ALU
-PARAM c[19] = { { 0, 1, 0.085000001, 0.80000001 },
+PARAM c[20] = { { 1.003, 0, 1, 0.082500003 },
 		state.lightmodel.ambient,
 		program.local[2..12],
 		state.matrix.mvp,
-		program.local[17..18] };
+		program.local[17..18],
+		{ 0.80000001 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
@@ -77,41 +78,41 @@ MOV R1, c[3];
 DP4 R3.z, R1, c[11];
 DP4 R3.y, R1, c[10];
 DP4 R3.x, R1, c[9];
-MUL R2.xyz, R2, vertex.attrib[14].w;
-MUL R1.x, R2.w, c[0].w;
+MUL R1.x, R2.w, c[19];
 POW R1.y, R1.x, c[4].x;
 RCP R0.w, R0.w;
-MUL R1.x, R0.w, c[0].z;
-MIN R1.y, R1, c[0];
-MIN R1.x, R1, c[0].y;
-MAX R1.y, R1, c[0].x;
-MAX R1.x, R1, c[0];
+MUL R2.xyz, R2, vertex.attrib[14].w;
+MUL R1.x, R0.w, c[0].w;
+MIN R1.y, R1, c[0].z;
+MIN R1.x, R1, c[0].z;
+MAX R1.y, R1, c[0];
+MAX R1.x, R1, c[0].y;
 ADD R1.w, R1.x, R1.y;
-MOV R1.x, c[5].w;
 MOV R1.z, c[7].w;
+MOV R1.x, c[5].w;
 MOV R1.y, c[6].w;
-ADD R0.xyz, R0, -R1;
+ADD R0.xyz, -R1, R0;
 DP3 R0.x, R0, R0;
-DP3 result.texcoord[2].y, R3, R2;
-ADD R2.xyz, -R1, c[2];
-DP3 R1.x, R2, R2;
-RSQ R0.y, R1.x;
+ADD R1.xyz, -R1, c[2];
+DP3 R0.y, R1, R1;
 RSQ R0.x, R0.x;
+RSQ R0.y, R0.y;
 RCP R0.y, R0.y;
 RCP R0.x, R0.x;
-ADD R0.x, R0, -R0.y;
-MIN R0.y, R1.w, c[0];
-MIN R0.x, R0, c[0].y;
-MAX R0.y, R0, c[0].x;
-MAX R0.x, R0, c[0];
+MAD R0.x, -R0.y, c[0], R0;
+MIN R0.y, R1.w, c[0].z;
+MIN R0.x, R0, c[0].z;
+MAX R0.y, R0, c[0];
+MAX R0.x, R0, c[0].y;
 MUL result.texcoord[0].y, R0.x, R0;
 MUL R0.x, R0.w, c[18];
 DP3 R0.y, vertex.position, vertex.position;
-MIN R0.x, R0, c[0].y;
+MIN R0.x, R0, c[0].z;
 RSQ R0.y, R0.y;
+DP3 result.texcoord[2].y, R3, R2;
 DP3 result.texcoord[2].z, vertex.normal, R3;
 DP3 result.texcoord[2].x, R3, vertex.attrib[14];
-MAX result.texcoord[0].x, R0, c[0];
+MAX result.texcoord[0].x, R0, c[0].y;
 MUL result.texcoord[1].xyz, R0.y, vertex.position;
 MOV result.texcoord[3].xyz, c[1];
 DP4 result.position.w, vertex.position, c[16];
@@ -144,7 +145,7 @@ dcl_texcoord0 o1
 dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
-def c18, 0.08500000, 0.80000001, 0, 0
+def c18, 0.08250000, 0.80000001, 1.00300002, 0
 dcl_position0 v0
 dcl_tangent0 v1
 dcl_normal0 v2
@@ -183,15 +184,15 @@ add_sat r1.w, r0.x, r0.y
 mov r0.z, c6.w
 mov r0.x, c4.w
 mov r0.y, c5.w
-add r1.xyz, -r0, c13
-add r0.xyz, r3, -r0
-dp3 r0.x, r0, r0
+add r1.xyz, -r0, r3
+add r0.xyz, -r0, c13
+dp3 r0.y, r0, r0
 dp3 r1.x, r1, r1
-rsq r0.y, r1.x
-rsq r0.x, r0.x
-rcp r0.y, r0.y
+rsq r0.x, r1.x
+rsq r0.y, r0.y
 rcp r0.x, r0.x
-add_sat r0.x, r0, -r0.y
+rcp r0.y, r0.y
+mad_sat r0.x, -r0.y, c18.z, r0
 mul o1.y, r0.x, r1.w
 dp3 r0.x, v0, v0
 rsq r0.x, r0.x
@@ -238,7 +239,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmehehmoagfcfchcgjjkfabpbmeopebpjabaaaaaanaaiaaaaadaaaaaa
+eefiecedejclpngkipepfipkhoaodiddghemanckabaaaaaaniaiaaaaadaaaaaa
 cmaaaaaapeaaaaaajeabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -250,8 +251,8 @@ aiaaaaaaiaaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaaimaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaahaiaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaimaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaafdfgfpfa
-epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcdeahaaaaeaaaabaa
-mnabaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaafjaaaaaeegiocaaaabaaaaaa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcdmahaaaaeaaaabaa
+mpabaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaafjaaaaaeegiocaaaabaaaaaa
 afaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaa
 beaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaaghaaaaaepccabaaa
@@ -285,30 +286,30 @@ aaaaaaaabkiacaaaaaaaaaaaagaaaaaaabeaaaaamnmmemdpdiaaaaahbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaacpaaaaafbcaabaaaaaaaaaaa
 akaabaaaaaaaaaaadiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaaakiacaaa
 aaaaaaaaagaaaaaabjaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
-ccaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaahlbekodndicaaaaibccabaaa
+ccaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaamdpfkidndicaaaaibccabaaa
 abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaagaaaaaaddaaaaakdcaabaaa
 aaaaaaaaegaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaa
 aaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaaddaaaaah
 bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaakhcaabaaa
 abaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaaegiccaaaadaaaaaaapaaaaaa
 baaaaaahccaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaelaaaaaf
-kcaabaaaaaaaaaaafganbaaaaaaaaaaaaacaaaaiccaabaaaaaaaaaaabkaabaia
-ebaaaaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahcccabaaaabaaaaaaakaabaaa
-aaaaaaaabkaabaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaaaaaaaaa
-egbcbaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
-hccabaaaacaaaaaaagaabaaaaaaaaaaaegbcbaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaajgbebaaaabaaaaaacgbjbaaaacaaaaaadcaaaaakhcaabaaaaaaaaaaa
-jgbebaaaacaaaaaacgbjbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaah
-hcaabaaaaaaaaaaaegacbaaaaaaaaaaapgbpbaaaabaaaaaadiaaaaajhcaabaaa
-abaaaaaafgifcaaaacaaaaaaaaaaaaaaegiccaaaadaaaaaabbaaaaaadcaaaaal
-hcaabaaaabaaaaaaegiccaaaadaaaaaabaaaaaaaagiacaaaacaaaaaaaaaaaaaa
-egacbaaaabaaaaaadcaaaaalhcaabaaaabaaaaaaegiccaaaadaaaaaabcaaaaaa
-kgikcaaaacaaaaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalhcaabaaaabaaaaaa
-egiccaaaadaaaaaabdaaaaaapgipcaaaacaaaaaaaaaaaaaaegacbaaaabaaaaaa
-baaaaaahcccabaaaadaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaabaaaaaah
-bccabaaaadaaaaaaegbcbaaaabaaaaaaegacbaaaabaaaaaabaaaaaaheccabaaa
-adaaaaaaegbcbaaaacaaaaaaegacbaaaabaaaaaadgaaaaaghccabaaaaeaaaaaa
-egiccaaaaeaaaaaaaeaaaaaadoaaaaab"
+kcaabaaaaaaaaaaafganbaaaaaaaaaaadccaaaakccaabaaaaaaaaaaabkaabaia
+ebaaaaaaaaaaaaaaabeaaaaaeogciadpdkaabaaaaaaaaaaadiaaaaahcccabaaa
+abaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaaaaaaaaaegbcbaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhccabaaaacaaaaaaagaabaaaaaaaaaaaegbcbaaaaaaaaaaa
+diaaaaahhcaabaaaaaaaaaaajgbebaaaabaaaaaacgbjbaaaacaaaaaadcaaaaak
+hcaabaaaaaaaaaaajgbebaaaacaaaaaacgbjbaaaabaaaaaaegacbaiaebaaaaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaapgbpbaaaabaaaaaa
+diaaaaajhcaabaaaabaaaaaafgifcaaaacaaaaaaaaaaaaaaegiccaaaadaaaaaa
+bbaaaaaadcaaaaalhcaabaaaabaaaaaaegiccaaaadaaaaaabaaaaaaaagiacaaa
+acaaaaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalhcaabaaaabaaaaaaegiccaaa
+adaaaaaabcaaaaaakgikcaaaacaaaaaaaaaaaaaaegacbaaaabaaaaaadcaaaaal
+hcaabaaaabaaaaaaegiccaaaadaaaaaabdaaaaaapgipcaaaacaaaaaaaaaaaaaa
+egacbaaaabaaaaaabaaaaaahcccabaaaadaaaaaaegacbaaaaaaaaaaaegacbaaa
+abaaaaaabaaaaaahbccabaaaadaaaaaaegbcbaaaabaaaaaaegacbaaaabaaaaaa
+baaaaaaheccabaaaadaaaaaaegbcbaaaacaaaaaaegacbaaaabaaaaaadgaaaaag
+hccabaaaaeaaaaaaegiccaaaaeaaaaaaaeaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -357,7 +358,7 @@ void main ()
   tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - sqrt(dot (p_9, p_9))), 0.0, 1.0) * clamp ((clamp ((0.085 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec3 tmpvar_12;
   highp vec3 tmpvar_13;
   tmpvar_12 = tmpvar_1.xyz;
@@ -504,7 +505,7 @@ void main ()
   mediump float tmpvar_42;
   tmpvar_42 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
   highp float tmpvar_43;
-  tmpvar_43 = (tmpvar_42 * xlv_TEXCOORD0.y);
+  tmpvar_43 = mix (0.0, tmpvar_42, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_43;
   lowp vec3 tmpvar_44;
   lowp vec4 packednormal_45;
@@ -581,7 +582,7 @@ void main ()
   tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - sqrt(dot (p_9, p_9))), 0.0, 1.0) * clamp ((clamp ((0.085 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec3 tmpvar_12;
   highp vec3 tmpvar_13;
   tmpvar_12 = tmpvar_1.xyz;
@@ -728,7 +729,7 @@ void main ()
   mediump float tmpvar_42;
   tmpvar_42 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
   highp float tmpvar_43;
-  tmpvar_43 = (tmpvar_42 * xlv_TEXCOORD0.y);
+  tmpvar_43 = mix (0.0, tmpvar_42, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_43;
   lowp vec4 packednormal_44;
   packednormal_44 = normal_7;
@@ -990,9 +991,9 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 viewVect = normalize((vertexPos - modelCam));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     #line 426
-    highp float diff = (distance( origin, vertexPos) - distance( origin, _WorldSpaceCameraPos));
+    highp float diff = (distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos)));
     o.viewDist.x = xll_saturate_f((_DetailDist * distance( vertexPos, _WorldSpaceCameraPos)));
-    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.085 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
+    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
     o.localPos = normalize(v.vertex.xyz);
 }
 #line 465
@@ -1267,7 +1268,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     #line 451
     o.Albedo = (albedo * vec3( _Color));
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
-    o.Alpha = (avg * IN.viewDist.y);
+    o.Alpha = mix( 0.0, avg, IN.viewDist.y);
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
 #line 482
@@ -1327,12 +1328,12 @@ Float 18 [_FalloffScale]
 Float 19 [_DetailDist]
 "3.0-!!ARBvp1.0
 # 68 ALU
-PARAM c[21] = { { 0, 1, 0.085000001, 0.80000001 },
+PARAM c[21] = { { 1.003, 0, 1, 0.082500003 },
 		state.lightmodel.ambient,
 		program.local[2..12],
 		state.matrix.mvp,
 		program.local[17..19],
-		{ 0.5 } };
+		{ 0.80000001, 0.5 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
@@ -1361,48 +1362,48 @@ DP4 R3.y, R1, c[10];
 DP4 R3.x, R1, c[9];
 RCP R1.w, R0.w;
 MUL R2.xyz, R2, vertex.attrib[14].w;
-MUL R1.x, R2.w, c[0].w;
+MUL R1.x, R2.w, c[20];
 POW R1.x, R1.x, c[17].x;
-MUL R0.w, R1, c[0].z;
-MIN R1.x, R1, c[0].y;
-MIN R0.w, R0, c[0].y;
-MOV R1.z, c[7].w;
-MOV R1.y, c[6].w;
-MAX R1.x, R1, c[0];
-MAX R0.w, R0, c[0].x;
+MUL R0.w, R1, c[0];
+MIN R1.x, R1, c[0].z;
+MIN R0.w, R0, c[0].z;
+MAX R1.x, R1, c[0].y;
+MAX R0.w, R0, c[0].y;
 ADD R0.w, R0, R1.x;
+MOV R1.z, c[7].w;
 MOV R1.x, c[5].w;
-ADD R0.xyz, R0, -R1;
+MOV R1.y, c[6].w;
+ADD R0.xyz, -R1, R0;
 DP3 R0.x, R0, R0;
-DP3 result.texcoord[2].y, R3, R2;
-ADD R2.xyz, -R1, c[2];
-DP3 R1.x, R2, R2;
-RSQ R0.y, R1.x;
+ADD R1.xyz, -R1, c[2];
+DP3 R0.y, R1, R1;
 RSQ R0.x, R0.x;
+RSQ R0.y, R0.y;
 RCP R0.y, R0.y;
 RCP R0.x, R0.x;
-ADD R0.x, R0, -R0.y;
-MIN R0.y, R0.w, c[0];
-MIN R0.x, R0, c[0].y;
+MAD R0.x, -R0.y, c[0], R0;
+MIN R0.y, R0.w, c[0].z;
+MIN R0.x, R0, c[0].z;
 DP4 R0.w, vertex.position, c[16];
 DP4 R0.z, vertex.position, c[15];
-MAX R0.y, R0, c[0].x;
-MAX R0.x, R0, c[0];
+MAX R0.y, R0, c[0];
+MAX R0.x, R0, c[0].y;
 MUL result.texcoord[0].y, R0.x, R0;
 DP4 R0.x, vertex.position, c[13];
 DP4 R0.y, vertex.position, c[14];
-MUL R1.xyz, R0.xyww, c[20].x;
+MUL R1.xyz, R0.xyww, c[20].y;
 MOV result.position, R0;
 MUL R1.y, R1, c[3].x;
 MUL R0.x, R1.w, c[19];
 DP3 R0.y, vertex.position, vertex.position;
-MIN R0.x, R0, c[0].y;
+MIN R0.x, R0, c[0].z;
 RSQ R0.y, R0.y;
+DP3 result.texcoord[2].y, R3, R2;
 DP3 result.texcoord[2].z, vertex.normal, R3;
 DP3 result.texcoord[2].x, R3, vertex.attrib[14];
 ADD result.texcoord[4].xy, R1, R1.z;
 MOV result.texcoord[4].zw, R0;
-MAX result.texcoord[0].x, R0, c[0];
+MAX result.texcoord[0].x, R0, c[0].y;
 MUL result.texcoord[1].xyz, R0.y, vertex.position;
 MOV result.texcoord[3].xyz, c[1];
 END
@@ -1434,7 +1435,7 @@ dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
-def c20, 0.08500000, 0.80000001, 0.50000000, 0
+def c20, 0.08250000, 0.80000001, 1.00300002, 0.50000000
 dcl_position0 v0
 dcl_tangent0 v1
 dcl_normal0 v2
@@ -1473,21 +1474,21 @@ add_sat r0.w, r0.x, r0.y
 mov r0.z, c6.w
 mov r0.x, c4.w
 mov r0.y, c5.w
-add r1.xyz, -r0, c13
-add r0.xyz, r3, -r0
-dp3 r0.x, r0, r0
+add r1.xyz, -r0, r3
+add r0.xyz, -r0, c13
+dp3 r0.y, r0, r0
 dp3 r1.x, r1, r1
-rsq r0.y, r1.x
-rsq r0.x, r0.x
+rsq r0.x, r1.x
+rsq r0.y, r0.y
 rcp r0.y, r0.y
 rcp r0.x, r0.x
-add_sat r0.x, r0, -r0.y
+mad_sat r0.x, -r0.y, c20.z, r0
 mul o1.y, r0.x, r0.w
 dp4 r0.w, v0, c3
 dp4 r0.z, v0, c2
 dp4 r0.x, v0, c0
 dp4 r0.y, v0, c1
-mul r1.xyz, r0.xyww, c20.z
+mul r1.xyz, r0.xyww, c20.w
 mul r1.y, r1, c14.x
 mov o0, r0
 dp3 r0.x, v0, v0
@@ -1534,7 +1535,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedpmnnffnglbkjmadgklklblianogdemnlabaaaaaaiaajaaaaadaaaaaa
+eefiecedmgnhigadhfndlfbjoelmggnniiilfahmabaaaaaaiiajaaaaadaaaaaa
 cmaaaaaapeaaaaaakmabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -1547,7 +1548,7 @@ aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaakeaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaahaiaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaakeaaaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefcmmahaaaaeaaaabaapdabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcneahaaaaeaaaabaapfabaaaafjaaaaae
 egiocaaaaaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaagaaaaaafjaaaaae
 egiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaabeaaaaaafjaaaaae
 egiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
@@ -1583,34 +1584,34 @@ aaaaaaaaakaaaaaaabeaaaaamnmmemdpdiaaaaahbcaabaaaabaaaaaaakaabaaa
 abaaaaaabkaabaaaabaaaaaacpaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaa
 diaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaa
 bjaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaa
-akaabaaaacaaaaaaabeaaaaahlbekodndicaaaaibccabaaaabaaaaaaakaabaaa
+akaabaaaacaaaaaaabeaaaaamdpfkidndicaaaaibccabaaaabaaaaaaakaabaaa
 acaaaaaadkiacaaaaaaaaaaaakaaaaaaddaaaaakdcaabaaaabaaaaaaegaabaaa
 abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaahbcaabaaa
 abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahbcaabaaaabaaaaaa
 akaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaakhcaabaaaacaaaaaaegiccaia
 ebaaaaaaabaaaaaaaeaaaaaaegiccaaaadaaaaaaapaaaaaabaaaaaahccaabaaa
 abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafkcaabaaaabaaaaaa
-fganbaaaabaaaaaaaacaaaaiccaabaaaabaaaaaabkaabaiaebaaaaaaabaaaaaa
-dkaabaaaabaaaaaadiaaaaahcccabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
-abaaaaaabaaaaaahbcaabaaaabaaaaaaegbcbaaaaaaaaaaaegbcbaaaaaaaaaaa
-eeaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaahhccabaaaacaaaaaa
-agaabaaaabaaaaaaegbcbaaaaaaaaaaadiaaaaahhcaabaaaabaaaaaajgbebaaa
-abaaaaaacgbjbaaaacaaaaaadcaaaaakhcaabaaaabaaaaaajgbebaaaacaaaaaa
-cgbjbaaaabaaaaaaegacbaiaebaaaaaaabaaaaaadiaaaaahhcaabaaaabaaaaaa
-egacbaaaabaaaaaapgbpbaaaabaaaaaadiaaaaajhcaabaaaacaaaaaafgifcaaa
-acaaaaaaaaaaaaaaegiccaaaadaaaaaabbaaaaaadcaaaaalhcaabaaaacaaaaaa
-egiccaaaadaaaaaabaaaaaaaagiacaaaacaaaaaaaaaaaaaaegacbaaaacaaaaaa
-dcaaaaalhcaabaaaacaaaaaaegiccaaaadaaaaaabcaaaaaakgikcaaaacaaaaaa
-aaaaaaaaegacbaaaacaaaaaadcaaaaalhcaabaaaacaaaaaaegiccaaaadaaaaaa
-bdaaaaaapgipcaaaacaaaaaaaaaaaaaaegacbaaaacaaaaaabaaaaaahcccabaaa
-adaaaaaaegacbaaaabaaaaaaegacbaaaacaaaaaabaaaaaahbccabaaaadaaaaaa
-egbcbaaaabaaaaaaegacbaaaacaaaaaabaaaaaaheccabaaaadaaaaaaegbcbaaa
-acaaaaaaegacbaaaacaaaaaadgaaaaaghccabaaaaeaaaaaaegiccaaaaeaaaaaa
-aeaaaaaadiaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaaakiacaaaabaaaaaa
-afaaaaaadiaaaaakncaabaaaabaaaaaaagahbaaaaaaaaaaaaceaaaaaaaaaaadp
-aaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaaafaaaaaakgaobaaaaaaaaaaa
-aaaaaaahdccabaaaafaaaaaakgakbaaaabaaaaaamgaabaaaabaaaaaadoaaaaab
-"
+fganbaaaabaaaaaadccaaaakccaabaaaabaaaaaabkaabaiaebaaaaaaabaaaaaa
+abeaaaaaeogciadpdkaabaaaabaaaaaadiaaaaahcccabaaaabaaaaaaakaabaaa
+abaaaaaabkaabaaaabaaaaaabaaaaaahbcaabaaaabaaaaaaegbcbaaaaaaaaaaa
+egbcbaaaaaaaaaaaeeaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaah
+hccabaaaacaaaaaaagaabaaaabaaaaaaegbcbaaaaaaaaaaadiaaaaahhcaabaaa
+abaaaaaajgbebaaaabaaaaaacgbjbaaaacaaaaaadcaaaaakhcaabaaaabaaaaaa
+jgbebaaaacaaaaaacgbjbaaaabaaaaaaegacbaiaebaaaaaaabaaaaaadiaaaaah
+hcaabaaaabaaaaaaegacbaaaabaaaaaapgbpbaaaabaaaaaadiaaaaajhcaabaaa
+acaaaaaafgifcaaaacaaaaaaaaaaaaaaegiccaaaadaaaaaabbaaaaaadcaaaaal
+hcaabaaaacaaaaaaegiccaaaadaaaaaabaaaaaaaagiacaaaacaaaaaaaaaaaaaa
+egacbaaaacaaaaaadcaaaaalhcaabaaaacaaaaaaegiccaaaadaaaaaabcaaaaaa
+kgikcaaaacaaaaaaaaaaaaaaegacbaaaacaaaaaadcaaaaalhcaabaaaacaaaaaa
+egiccaaaadaaaaaabdaaaaaapgipcaaaacaaaaaaaaaaaaaaegacbaaaacaaaaaa
+baaaaaahcccabaaaadaaaaaaegacbaaaabaaaaaaegacbaaaacaaaaaabaaaaaah
+bccabaaaadaaaaaaegbcbaaaabaaaaaaegacbaaaacaaaaaabaaaaaaheccabaaa
+adaaaaaaegbcbaaaacaaaaaaegacbaaaacaaaaaadgaaaaaghccabaaaaeaaaaaa
+egiccaaaaeaaaaaaaeaaaaaadiaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaa
+akiacaaaabaaaaaaafaaaaaadiaaaaakncaabaaaabaaaaaaagahbaaaaaaaaaaa
+aceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaaafaaaaaa
+kgaobaaaaaaaaaaaaaaaaaahdccabaaaafaaaaaakgakbaaaabaaaaaamgaabaaa
+abaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -1661,7 +1662,7 @@ void main ()
   tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - sqrt(dot (p_9, p_9))), 0.0, 1.0) * clamp ((clamp ((0.085 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec3 tmpvar_12;
   highp vec3 tmpvar_13;
   tmpvar_12 = tmpvar_1.xyz;
@@ -1812,7 +1813,7 @@ void main ()
   mediump float tmpvar_42;
   tmpvar_42 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
   highp float tmpvar_43;
-  tmpvar_43 = (tmpvar_42 * xlv_TEXCOORD0.y);
+  tmpvar_43 = mix (0.0, tmpvar_42, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_43;
   lowp vec3 tmpvar_44;
   lowp vec4 packednormal_45;
@@ -1905,7 +1906,7 @@ void main ()
   tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - sqrt(dot (p_9, p_9))), 0.0, 1.0) * clamp ((clamp ((0.085 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec4 tmpvar_12;
   tmpvar_12 = (glstate_matrix_mvp * _glesVertex);
   highp vec3 tmpvar_13;
@@ -2065,7 +2066,7 @@ void main ()
   mediump float tmpvar_42;
   tmpvar_42 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
   highp float tmpvar_43;
-  tmpvar_43 = (tmpvar_42 * xlv_TEXCOORD0.y);
+  tmpvar_43 = mix (0.0, tmpvar_42, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_43;
   lowp vec4 packednormal_44;
   packednormal_44 = normal_7;
@@ -2334,9 +2335,9 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 viewVect = normalize((vertexPos - modelCam));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     #line 434
-    highp float diff = (distance( origin, vertexPos) - distance( origin, _WorldSpaceCameraPos));
+    highp float diff = (distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos)));
     o.viewDist.x = xll_saturate_f((_DetailDist * distance( vertexPos, _WorldSpaceCameraPos)));
-    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.085 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
+    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
     o.localPos = normalize(v.vertex.xyz);
 }
 #line 474
@@ -2618,7 +2619,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     #line 459
     o.Albedo = (albedo * vec3( _Color));
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
-    o.Alpha = (avg * IN.viewDist.y);
+    o.Alpha = mix( 0.0, avg, IN.viewDist.y);
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
 #line 393
@@ -2686,11 +2687,12 @@ Float 17 [_FalloffScale]
 Float 18 [_DetailDist]
 "3.0-!!ARBvp1.0
 # 63 ALU
-PARAM c[19] = { { 0, 1, 0.085000001, 0.80000001 },
+PARAM c[20] = { { 1.003, 0, 1, 0.082500003 },
 		state.lightmodel.ambient,
 		program.local[2..12],
 		state.matrix.mvp,
-		program.local[17..18] };
+		program.local[17..18],
+		{ 0.80000001 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
@@ -2717,41 +2719,41 @@ MOV R1, c[3];
 DP4 R3.z, R1, c[11];
 DP4 R3.y, R1, c[10];
 DP4 R3.x, R1, c[9];
-MUL R2.xyz, R2, vertex.attrib[14].w;
-MUL R1.x, R2.w, c[0].w;
+MUL R1.x, R2.w, c[19];
 POW R1.y, R1.x, c[4].x;
 RCP R0.w, R0.w;
-MUL R1.x, R0.w, c[0].z;
-MIN R1.y, R1, c[0];
-MIN R1.x, R1, c[0].y;
-MAX R1.y, R1, c[0].x;
-MAX R1.x, R1, c[0];
+MUL R2.xyz, R2, vertex.attrib[14].w;
+MUL R1.x, R0.w, c[0].w;
+MIN R1.y, R1, c[0].z;
+MIN R1.x, R1, c[0].z;
+MAX R1.y, R1, c[0];
+MAX R1.x, R1, c[0].y;
 ADD R1.w, R1.x, R1.y;
-MOV R1.x, c[5].w;
 MOV R1.z, c[7].w;
+MOV R1.x, c[5].w;
 MOV R1.y, c[6].w;
-ADD R0.xyz, R0, -R1;
+ADD R0.xyz, -R1, R0;
 DP3 R0.x, R0, R0;
-DP3 result.texcoord[2].y, R3, R2;
-ADD R2.xyz, -R1, c[2];
-DP3 R1.x, R2, R2;
-RSQ R0.y, R1.x;
+ADD R1.xyz, -R1, c[2];
+DP3 R0.y, R1, R1;
 RSQ R0.x, R0.x;
+RSQ R0.y, R0.y;
 RCP R0.y, R0.y;
 RCP R0.x, R0.x;
-ADD R0.x, R0, -R0.y;
-MIN R0.y, R1.w, c[0];
-MIN R0.x, R0, c[0].y;
-MAX R0.y, R0, c[0].x;
-MAX R0.x, R0, c[0];
+MAD R0.x, -R0.y, c[0], R0;
+MIN R0.y, R1.w, c[0].z;
+MIN R0.x, R0, c[0].z;
+MAX R0.y, R0, c[0];
+MAX R0.x, R0, c[0].y;
 MUL result.texcoord[0].y, R0.x, R0;
 MUL R0.x, R0.w, c[18];
 DP3 R0.y, vertex.position, vertex.position;
-MIN R0.x, R0, c[0].y;
+MIN R0.x, R0, c[0].z;
 RSQ R0.y, R0.y;
+DP3 result.texcoord[2].y, R3, R2;
 DP3 result.texcoord[2].z, vertex.normal, R3;
 DP3 result.texcoord[2].x, R3, vertex.attrib[14];
-MAX result.texcoord[0].x, R0, c[0];
+MAX result.texcoord[0].x, R0, c[0].y;
 MUL result.texcoord[1].xyz, R0.y, vertex.position;
 MOV result.texcoord[3].xyz, c[1];
 DP4 result.position.w, vertex.position, c[16];
@@ -2784,7 +2786,7 @@ dcl_texcoord0 o1
 dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
-def c18, 0.08500000, 0.80000001, 0, 0
+def c18, 0.08250000, 0.80000001, 1.00300002, 0
 dcl_position0 v0
 dcl_tangent0 v1
 dcl_normal0 v2
@@ -2823,15 +2825,15 @@ add_sat r1.w, r0.x, r0.y
 mov r0.z, c6.w
 mov r0.x, c4.w
 mov r0.y, c5.w
-add r1.xyz, -r0, c13
-add r0.xyz, r3, -r0
-dp3 r0.x, r0, r0
+add r1.xyz, -r0, r3
+add r0.xyz, -r0, c13
+dp3 r0.y, r0, r0
 dp3 r1.x, r1, r1
-rsq r0.y, r1.x
-rsq r0.x, r0.x
-rcp r0.y, r0.y
+rsq r0.x, r1.x
+rsq r0.y, r0.y
 rcp r0.x, r0.x
-add_sat r0.x, r0, -r0.y
+rcp r0.y, r0.y
+mad_sat r0.x, -r0.y, c18.z, r0
 mul o1.y, r0.x, r1.w
 dp3 r0.x, v0, v0
 rsq r0.x, r0.x
@@ -2878,7 +2880,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmehehmoagfcfchcgjjkfabpbmeopebpjabaaaaaanaaiaaaaadaaaaaa
+eefiecedejclpngkipepfipkhoaodiddghemanckabaaaaaaniaiaaaaadaaaaaa
 cmaaaaaapeaaaaaajeabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -2890,8 +2892,8 @@ aiaaaaaaiaaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaaimaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaahaiaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaimaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaafdfgfpfa
-epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcdeahaaaaeaaaabaa
-mnabaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaafjaaaaaeegiocaaaabaaaaaa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcdmahaaaaeaaaabaa
+mpabaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaafjaaaaaeegiocaaaabaaaaaa
 afaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaa
 beaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaaghaaaaaepccabaaa
@@ -2925,30 +2927,30 @@ aaaaaaaabkiacaaaaaaaaaaaagaaaaaaabeaaaaamnmmemdpdiaaaaahbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaacpaaaaafbcaabaaaaaaaaaaa
 akaabaaaaaaaaaaadiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaaakiacaaa
 aaaaaaaaagaaaaaabjaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
-ccaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaahlbekodndicaaaaibccabaaa
+ccaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaamdpfkidndicaaaaibccabaaa
 abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaagaaaaaaddaaaaakdcaabaaa
 aaaaaaaaegaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaa
 aaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaaddaaaaah
 bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaakhcaabaaa
 abaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaaegiccaaaadaaaaaaapaaaaaa
 baaaaaahccaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaelaaaaaf
-kcaabaaaaaaaaaaafganbaaaaaaaaaaaaacaaaaiccaabaaaaaaaaaaabkaabaia
-ebaaaaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahcccabaaaabaaaaaaakaabaaa
-aaaaaaaabkaabaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaaaaaaaaa
-egbcbaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
-hccabaaaacaaaaaaagaabaaaaaaaaaaaegbcbaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaajgbebaaaabaaaaaacgbjbaaaacaaaaaadcaaaaakhcaabaaaaaaaaaaa
-jgbebaaaacaaaaaacgbjbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaah
-hcaabaaaaaaaaaaaegacbaaaaaaaaaaapgbpbaaaabaaaaaadiaaaaajhcaabaaa
-abaaaaaafgifcaaaacaaaaaaaaaaaaaaegiccaaaadaaaaaabbaaaaaadcaaaaal
-hcaabaaaabaaaaaaegiccaaaadaaaaaabaaaaaaaagiacaaaacaaaaaaaaaaaaaa
-egacbaaaabaaaaaadcaaaaalhcaabaaaabaaaaaaegiccaaaadaaaaaabcaaaaaa
-kgikcaaaacaaaaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalhcaabaaaabaaaaaa
-egiccaaaadaaaaaabdaaaaaapgipcaaaacaaaaaaaaaaaaaaegacbaaaabaaaaaa
-baaaaaahcccabaaaadaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaabaaaaaah
-bccabaaaadaaaaaaegbcbaaaabaaaaaaegacbaaaabaaaaaabaaaaaaheccabaaa
-adaaaaaaegbcbaaaacaaaaaaegacbaaaabaaaaaadgaaaaaghccabaaaaeaaaaaa
-egiccaaaaeaaaaaaaeaaaaaadoaaaaab"
+kcaabaaaaaaaaaaafganbaaaaaaaaaaadccaaaakccaabaaaaaaaaaaabkaabaia
+ebaaaaaaaaaaaaaaabeaaaaaeogciadpdkaabaaaaaaaaaaadiaaaaahcccabaaa
+abaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaaaaaaaaaegbcbaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhccabaaaacaaaaaaagaabaaaaaaaaaaaegbcbaaaaaaaaaaa
+diaaaaahhcaabaaaaaaaaaaajgbebaaaabaaaaaacgbjbaaaacaaaaaadcaaaaak
+hcaabaaaaaaaaaaajgbebaaaacaaaaaacgbjbaaaabaaaaaaegacbaiaebaaaaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaapgbpbaaaabaaaaaa
+diaaaaajhcaabaaaabaaaaaafgifcaaaacaaaaaaaaaaaaaaegiccaaaadaaaaaa
+bbaaaaaadcaaaaalhcaabaaaabaaaaaaegiccaaaadaaaaaabaaaaaaaagiacaaa
+acaaaaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalhcaabaaaabaaaaaaegiccaaa
+adaaaaaabcaaaaaakgikcaaaacaaaaaaaaaaaaaaegacbaaaabaaaaaadcaaaaal
+hcaabaaaabaaaaaaegiccaaaadaaaaaabdaaaaaapgipcaaaacaaaaaaaaaaaaaa
+egacbaaaabaaaaaabaaaaaahcccabaaaadaaaaaaegacbaaaaaaaaaaaegacbaaa
+abaaaaaabaaaaaahbccabaaaadaaaaaaegbcbaaaabaaaaaaegacbaaaabaaaaaa
+baaaaaaheccabaaaadaaaaaaegbcbaaaacaaaaaaegacbaaaabaaaaaadgaaaaag
+hccabaaaaeaaaaaaegiccaaaaeaaaaaaaeaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -2997,7 +2999,7 @@ void main ()
   tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - sqrt(dot (p_9, p_9))), 0.0, 1.0) * clamp ((clamp ((0.085 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec3 tmpvar_12;
   highp vec3 tmpvar_13;
   tmpvar_12 = tmpvar_1.xyz;
@@ -3144,7 +3146,7 @@ void main ()
   mediump float tmpvar_42;
   tmpvar_42 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
   highp float tmpvar_43;
-  tmpvar_43 = (tmpvar_42 * xlv_TEXCOORD0.y);
+  tmpvar_43 = mix (0.0, tmpvar_42, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_43;
   lowp vec3 tmpvar_44;
   lowp vec4 packednormal_45;
@@ -3221,7 +3223,7 @@ void main ()
   tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - sqrt(dot (p_9, p_9))), 0.0, 1.0) * clamp ((clamp ((0.085 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec3 tmpvar_12;
   highp vec3 tmpvar_13;
   tmpvar_12 = tmpvar_1.xyz;
@@ -3368,7 +3370,7 @@ void main ()
   mediump float tmpvar_42;
   tmpvar_42 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
   highp float tmpvar_43;
-  tmpvar_43 = (tmpvar_42 * xlv_TEXCOORD0.y);
+  tmpvar_43 = mix (0.0, tmpvar_42, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_43;
   lowp vec4 packednormal_44;
   packednormal_44 = normal_7;
@@ -3630,9 +3632,9 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 viewVect = normalize((vertexPos - modelCam));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     #line 426
-    highp float diff = (distance( origin, vertexPos) - distance( origin, _WorldSpaceCameraPos));
+    highp float diff = (distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos)));
     o.viewDist.x = xll_saturate_f((_DetailDist * distance( vertexPos, _WorldSpaceCameraPos)));
-    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.085 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
+    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
     o.localPos = normalize(v.vertex.xyz);
 }
 #line 465
@@ -3907,7 +3909,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     #line 451
     o.Albedo = (albedo * vec3( _Color));
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
-    o.Alpha = (avg * IN.viewDist.y);
+    o.Alpha = mix( 0.0, avg, IN.viewDist.y);
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
 #line 482
@@ -3967,12 +3969,12 @@ Float 18 [_FalloffScale]
 Float 19 [_DetailDist]
 "3.0-!!ARBvp1.0
 # 68 ALU
-PARAM c[21] = { { 0, 1, 0.085000001, 0.80000001 },
+PARAM c[21] = { { 1.003, 0, 1, 0.082500003 },
 		state.lightmodel.ambient,
 		program.local[2..12],
 		state.matrix.mvp,
 		program.local[17..19],
-		{ 0.5 } };
+		{ 0.80000001, 0.5 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
@@ -4001,48 +4003,48 @@ DP4 R3.y, R1, c[10];
 DP4 R3.x, R1, c[9];
 RCP R1.w, R0.w;
 MUL R2.xyz, R2, vertex.attrib[14].w;
-MUL R1.x, R2.w, c[0].w;
+MUL R1.x, R2.w, c[20];
 POW R1.x, R1.x, c[17].x;
-MUL R0.w, R1, c[0].z;
-MIN R1.x, R1, c[0].y;
-MIN R0.w, R0, c[0].y;
-MOV R1.z, c[7].w;
-MOV R1.y, c[6].w;
-MAX R1.x, R1, c[0];
-MAX R0.w, R0, c[0].x;
+MUL R0.w, R1, c[0];
+MIN R1.x, R1, c[0].z;
+MIN R0.w, R0, c[0].z;
+MAX R1.x, R1, c[0].y;
+MAX R0.w, R0, c[0].y;
 ADD R0.w, R0, R1.x;
+MOV R1.z, c[7].w;
 MOV R1.x, c[5].w;
-ADD R0.xyz, R0, -R1;
+MOV R1.y, c[6].w;
+ADD R0.xyz, -R1, R0;
 DP3 R0.x, R0, R0;
-DP3 result.texcoord[2].y, R3, R2;
-ADD R2.xyz, -R1, c[2];
-DP3 R1.x, R2, R2;
-RSQ R0.y, R1.x;
+ADD R1.xyz, -R1, c[2];
+DP3 R0.y, R1, R1;
 RSQ R0.x, R0.x;
+RSQ R0.y, R0.y;
 RCP R0.y, R0.y;
 RCP R0.x, R0.x;
-ADD R0.x, R0, -R0.y;
-MIN R0.y, R0.w, c[0];
-MIN R0.x, R0, c[0].y;
+MAD R0.x, -R0.y, c[0], R0;
+MIN R0.y, R0.w, c[0].z;
+MIN R0.x, R0, c[0].z;
 DP4 R0.w, vertex.position, c[16];
 DP4 R0.z, vertex.position, c[15];
-MAX R0.y, R0, c[0].x;
-MAX R0.x, R0, c[0];
+MAX R0.y, R0, c[0];
+MAX R0.x, R0, c[0].y;
 MUL result.texcoord[0].y, R0.x, R0;
 DP4 R0.x, vertex.position, c[13];
 DP4 R0.y, vertex.position, c[14];
-MUL R1.xyz, R0.xyww, c[20].x;
+MUL R1.xyz, R0.xyww, c[20].y;
 MOV result.position, R0;
 MUL R1.y, R1, c[3].x;
 MUL R0.x, R1.w, c[19];
 DP3 R0.y, vertex.position, vertex.position;
-MIN R0.x, R0, c[0].y;
+MIN R0.x, R0, c[0].z;
 RSQ R0.y, R0.y;
+DP3 result.texcoord[2].y, R3, R2;
 DP3 result.texcoord[2].z, vertex.normal, R3;
 DP3 result.texcoord[2].x, R3, vertex.attrib[14];
 ADD result.texcoord[4].xy, R1, R1.z;
 MOV result.texcoord[4].zw, R0;
-MAX result.texcoord[0].x, R0, c[0];
+MAX result.texcoord[0].x, R0, c[0].y;
 MUL result.texcoord[1].xyz, R0.y, vertex.position;
 MOV result.texcoord[3].xyz, c[1];
 END
@@ -4074,7 +4076,7 @@ dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
-def c20, 0.08500000, 0.80000001, 0.50000000, 0
+def c20, 0.08250000, 0.80000001, 1.00300002, 0.50000000
 dcl_position0 v0
 dcl_tangent0 v1
 dcl_normal0 v2
@@ -4113,21 +4115,21 @@ add_sat r0.w, r0.x, r0.y
 mov r0.z, c6.w
 mov r0.x, c4.w
 mov r0.y, c5.w
-add r1.xyz, -r0, c13
-add r0.xyz, r3, -r0
-dp3 r0.x, r0, r0
+add r1.xyz, -r0, r3
+add r0.xyz, -r0, c13
+dp3 r0.y, r0, r0
 dp3 r1.x, r1, r1
-rsq r0.y, r1.x
-rsq r0.x, r0.x
+rsq r0.x, r1.x
+rsq r0.y, r0.y
 rcp r0.y, r0.y
 rcp r0.x, r0.x
-add_sat r0.x, r0, -r0.y
+mad_sat r0.x, -r0.y, c20.z, r0
 mul o1.y, r0.x, r0.w
 dp4 r0.w, v0, c3
 dp4 r0.z, v0, c2
 dp4 r0.x, v0, c0
 dp4 r0.y, v0, c1
-mul r1.xyz, r0.xyww, c20.z
+mul r1.xyz, r0.xyww, c20.w
 mul r1.y, r1, c14.x
 mov o0, r0
 dp3 r0.x, v0, v0
@@ -4174,7 +4176,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedpmnnffnglbkjmadgklklblianogdemnlabaaaaaaiaajaaaaadaaaaaa
+eefiecedmgnhigadhfndlfbjoelmggnniiilfahmabaaaaaaiiajaaaaadaaaaaa
 cmaaaaaapeaaaaaakmabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -4187,7 +4189,7 @@ aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaakeaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaahaiaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaakeaaaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefcmmahaaaaeaaaabaapdabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcneahaaaaeaaaabaapfabaaaafjaaaaae
 egiocaaaaaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaagaaaaaafjaaaaae
 egiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaabeaaaaaafjaaaaae
 egiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
@@ -4223,34 +4225,34 @@ aaaaaaaaakaaaaaaabeaaaaamnmmemdpdiaaaaahbcaabaaaabaaaaaaakaabaaa
 abaaaaaabkaabaaaabaaaaaacpaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaa
 diaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaa
 bjaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaa
-akaabaaaacaaaaaaabeaaaaahlbekodndicaaaaibccabaaaabaaaaaaakaabaaa
+akaabaaaacaaaaaaabeaaaaamdpfkidndicaaaaibccabaaaabaaaaaaakaabaaa
 acaaaaaadkiacaaaaaaaaaaaakaaaaaaddaaaaakdcaabaaaabaaaaaaegaabaaa
 abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaahbcaabaaa
 abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahbcaabaaaabaaaaaa
 akaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaakhcaabaaaacaaaaaaegiccaia
 ebaaaaaaabaaaaaaaeaaaaaaegiccaaaadaaaaaaapaaaaaabaaaaaahccaabaaa
 abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafkcaabaaaabaaaaaa
-fganbaaaabaaaaaaaacaaaaiccaabaaaabaaaaaabkaabaiaebaaaaaaabaaaaaa
-dkaabaaaabaaaaaadiaaaaahcccabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
-abaaaaaabaaaaaahbcaabaaaabaaaaaaegbcbaaaaaaaaaaaegbcbaaaaaaaaaaa
-eeaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaahhccabaaaacaaaaaa
-agaabaaaabaaaaaaegbcbaaaaaaaaaaadiaaaaahhcaabaaaabaaaaaajgbebaaa
-abaaaaaacgbjbaaaacaaaaaadcaaaaakhcaabaaaabaaaaaajgbebaaaacaaaaaa
-cgbjbaaaabaaaaaaegacbaiaebaaaaaaabaaaaaadiaaaaahhcaabaaaabaaaaaa
-egacbaaaabaaaaaapgbpbaaaabaaaaaadiaaaaajhcaabaaaacaaaaaafgifcaaa
-acaaaaaaaaaaaaaaegiccaaaadaaaaaabbaaaaaadcaaaaalhcaabaaaacaaaaaa
-egiccaaaadaaaaaabaaaaaaaagiacaaaacaaaaaaaaaaaaaaegacbaaaacaaaaaa
-dcaaaaalhcaabaaaacaaaaaaegiccaaaadaaaaaabcaaaaaakgikcaaaacaaaaaa
-aaaaaaaaegacbaaaacaaaaaadcaaaaalhcaabaaaacaaaaaaegiccaaaadaaaaaa
-bdaaaaaapgipcaaaacaaaaaaaaaaaaaaegacbaaaacaaaaaabaaaaaahcccabaaa
-adaaaaaaegacbaaaabaaaaaaegacbaaaacaaaaaabaaaaaahbccabaaaadaaaaaa
-egbcbaaaabaaaaaaegacbaaaacaaaaaabaaaaaaheccabaaaadaaaaaaegbcbaaa
-acaaaaaaegacbaaaacaaaaaadgaaaaaghccabaaaaeaaaaaaegiccaaaaeaaaaaa
-aeaaaaaadiaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaaakiacaaaabaaaaaa
-afaaaaaadiaaaaakncaabaaaabaaaaaaagahbaaaaaaaaaaaaceaaaaaaaaaaadp
-aaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaaafaaaaaakgaobaaaaaaaaaaa
-aaaaaaahdccabaaaafaaaaaakgakbaaaabaaaaaamgaabaaaabaaaaaadoaaaaab
-"
+fganbaaaabaaaaaadccaaaakccaabaaaabaaaaaabkaabaiaebaaaaaaabaaaaaa
+abeaaaaaeogciadpdkaabaaaabaaaaaadiaaaaahcccabaaaabaaaaaaakaabaaa
+abaaaaaabkaabaaaabaaaaaabaaaaaahbcaabaaaabaaaaaaegbcbaaaaaaaaaaa
+egbcbaaaaaaaaaaaeeaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaah
+hccabaaaacaaaaaaagaabaaaabaaaaaaegbcbaaaaaaaaaaadiaaaaahhcaabaaa
+abaaaaaajgbebaaaabaaaaaacgbjbaaaacaaaaaadcaaaaakhcaabaaaabaaaaaa
+jgbebaaaacaaaaaacgbjbaaaabaaaaaaegacbaiaebaaaaaaabaaaaaadiaaaaah
+hcaabaaaabaaaaaaegacbaaaabaaaaaapgbpbaaaabaaaaaadiaaaaajhcaabaaa
+acaaaaaafgifcaaaacaaaaaaaaaaaaaaegiccaaaadaaaaaabbaaaaaadcaaaaal
+hcaabaaaacaaaaaaegiccaaaadaaaaaabaaaaaaaagiacaaaacaaaaaaaaaaaaaa
+egacbaaaacaaaaaadcaaaaalhcaabaaaacaaaaaaegiccaaaadaaaaaabcaaaaaa
+kgikcaaaacaaaaaaaaaaaaaaegacbaaaacaaaaaadcaaaaalhcaabaaaacaaaaaa
+egiccaaaadaaaaaabdaaaaaapgipcaaaacaaaaaaaaaaaaaaegacbaaaacaaaaaa
+baaaaaahcccabaaaadaaaaaaegacbaaaabaaaaaaegacbaaaacaaaaaabaaaaaah
+bccabaaaadaaaaaaegbcbaaaabaaaaaaegacbaaaacaaaaaabaaaaaaheccabaaa
+adaaaaaaegbcbaaaacaaaaaaegacbaaaacaaaaaadgaaaaaghccabaaaaeaaaaaa
+egiccaaaaeaaaaaaaeaaaaaadiaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaa
+akiacaaaabaaaaaaafaaaaaadiaaaaakncaabaaaabaaaaaaagahbaaaaaaaaaaa
+aceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaaafaaaaaa
+kgaobaaaaaaaaaaaaaaaaaahdccabaaaafaaaaaakgakbaaaabaaaaaamgaabaaa
+abaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -4301,7 +4303,7 @@ void main ()
   tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - sqrt(dot (p_9, p_9))), 0.0, 1.0) * clamp ((clamp ((0.085 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec3 tmpvar_12;
   highp vec3 tmpvar_13;
   tmpvar_12 = tmpvar_1.xyz;
@@ -4452,7 +4454,7 @@ void main ()
   mediump float tmpvar_42;
   tmpvar_42 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
   highp float tmpvar_43;
-  tmpvar_43 = (tmpvar_42 * xlv_TEXCOORD0.y);
+  tmpvar_43 = mix (0.0, tmpvar_42, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_43;
   lowp vec3 tmpvar_44;
   lowp vec4 packednormal_45;
@@ -4545,7 +4547,7 @@ void main ()
   tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - sqrt(dot (p_9, p_9))), 0.0, 1.0) * clamp ((clamp ((0.085 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec4 tmpvar_12;
   tmpvar_12 = (glstate_matrix_mvp * _glesVertex);
   highp vec3 tmpvar_13;
@@ -4705,7 +4707,7 @@ void main ()
   mediump float tmpvar_42;
   tmpvar_42 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
   highp float tmpvar_43;
-  tmpvar_43 = (tmpvar_42 * xlv_TEXCOORD0.y);
+  tmpvar_43 = mix (0.0, tmpvar_42, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_43;
   lowp vec4 packednormal_44;
   packednormal_44 = normal_7;
@@ -4974,9 +4976,9 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 viewVect = normalize((vertexPos - modelCam));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     #line 434
-    highp float diff = (distance( origin, vertexPos) - distance( origin, _WorldSpaceCameraPos));
+    highp float diff = (distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos)));
     o.viewDist.x = xll_saturate_f((_DetailDist * distance( vertexPos, _WorldSpaceCameraPos)));
-    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.085 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
+    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
     o.localPos = normalize(v.vertex.xyz);
 }
 #line 474
@@ -5258,7 +5260,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     #line 459
     o.Albedo = (albedo * vec3( _Color));
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
-    o.Alpha = (avg * IN.viewDist.y);
+    o.Alpha = mix( 0.0, avg, IN.viewDist.y);
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
 #line 393
@@ -5361,7 +5363,7 @@ void main ()
   tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - sqrt(dot (p_9, p_9))), 0.0, 1.0) * clamp ((clamp ((0.085 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec3 tmpvar_12;
   highp vec3 tmpvar_13;
   tmpvar_12 = tmpvar_1.xyz;
@@ -5513,7 +5515,7 @@ void main ()
   mediump float tmpvar_42;
   tmpvar_42 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
   highp float tmpvar_43;
-  tmpvar_43 = (tmpvar_42 * xlv_TEXCOORD0.y);
+  tmpvar_43 = mix (0.0, tmpvar_42, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_43;
   lowp vec3 tmpvar_44;
   lowp vec4 packednormal_45;
@@ -5785,9 +5787,9 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 viewVect = normalize((vertexPos - modelCam));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     #line 434
-    highp float diff = (distance( origin, vertexPos) - distance( origin, _WorldSpaceCameraPos));
+    highp float diff = (distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos)));
     o.viewDist.x = xll_saturate_f((_DetailDist * distance( vertexPos, _WorldSpaceCameraPos)));
-    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.085 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
+    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
     o.localPos = normalize(v.vertex.xyz);
 }
 #line 474
@@ -6070,7 +6072,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     #line 459
     o.Albedo = (albedo * vec3( _Color));
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
-    o.Alpha = (avg * IN.viewDist.y);
+    o.Alpha = mix( 0.0, avg, IN.viewDist.y);
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
 #line 393
@@ -6173,7 +6175,7 @@ void main ()
   tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - sqrt(dot (p_9, p_9))), 0.0, 1.0) * clamp ((clamp ((0.085 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec3 tmpvar_12;
   highp vec3 tmpvar_13;
   tmpvar_12 = tmpvar_1.xyz;
@@ -6325,7 +6327,7 @@ void main ()
   mediump float tmpvar_42;
   tmpvar_42 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
   highp float tmpvar_43;
-  tmpvar_43 = (tmpvar_42 * xlv_TEXCOORD0.y);
+  tmpvar_43 = mix (0.0, tmpvar_42, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_43;
   lowp vec3 tmpvar_44;
   lowp vec4 packednormal_45;
@@ -6597,9 +6599,9 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 viewVect = normalize((vertexPos - modelCam));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
     #line 434
-    highp float diff = (distance( origin, vertexPos) - distance( origin, _WorldSpaceCameraPos));
+    highp float diff = (distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos)));
     o.viewDist.x = xll_saturate_f((_DetailDist * distance( vertexPos, _WorldSpaceCameraPos)));
-    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.085 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
+    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
     o.localPos = normalize(v.vertex.xyz);
 }
 #line 474
@@ -6882,7 +6884,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     #line 459
     o.Albedo = (albedo * vec3( _Color));
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
-    o.Alpha = (avg * IN.viewDist.y);
+    o.Alpha = mix( 0.0, avg, IN.viewDist.y);
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
 #line 393
@@ -7162,7 +7164,7 @@ mul_pp r0.xyz, r0, c1
 add_sat r1.xyz, r1, c6.x
 mul r1.xyz, r0, r1
 mad_pp oC0.xyz, r0, v3, r1
-mul oC0.w, v0.y, r0
+mul_pp oC0.w, v0.y, r0
 "
 }
 
@@ -7522,7 +7524,7 @@ mul_pp r0.xyz, r0, c1
 add_sat r1.xyz, r1, c6.x
 mul r1.xyz, r0, r1
 mad_pp oC0.xyz, r0, v3, r1
-mul oC0.w, v0.y, r0
+mul_pp oC0.w, v0.y, r0
 "
 }
 
