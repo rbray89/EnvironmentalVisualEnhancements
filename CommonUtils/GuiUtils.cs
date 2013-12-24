@@ -45,6 +45,7 @@ namespace CommonUtils
         public string Red = "";
         public string Green = "";
         public string Blue = "";
+        public string Alpha = "";
 
         public void Clone(Color color)
         {
@@ -52,9 +53,10 @@ namespace CommonUtils
             this.Red = color.r.ToString("R");
             this.Green = color.g.ToString("R");
             this.Blue = color.b.ToString("R");
+            this.Alpha = color.a.ToString("R");
         }
 
-        public void Update(string SRed, float FRed, string SGreen, float FGreen, string SBlue, float FBlue)
+        public void Update(string SRed, float FRed, string SGreen, float FGreen, string SBlue, float FBlue, String SAlpha, float FAlpha)
         {
             if (this.Red != SRed)
             {
@@ -86,6 +88,16 @@ namespace CommonUtils
                 this.Color.b = FBlue;
                 this.Blue = FBlue.ToString("R");
             }
+            if (this.Alpha != SAlpha)
+            {
+                this.Alpha = SAlpha;
+                float.TryParse(SAlpha, out this.Color.a);
+            }
+            else if (this.Color.a != FAlpha)
+            {
+                this.Color.a = FAlpha;
+                this.Alpha = FAlpha.ToString("R");
+            }
         }
 
         public bool IsValid()
@@ -93,7 +105,8 @@ namespace CommonUtils
             float dummy;
             if (float.TryParse(Red, out dummy) &&
                 float.TryParse(Green, out dummy) &&
-                float.TryParse(Blue, out dummy))
+                float.TryParse(Blue, out dummy) &&
+                float.TryParse(Alpha, out dummy))
             {
                 return true;
             }

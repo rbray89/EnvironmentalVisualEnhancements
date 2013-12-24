@@ -12,6 +12,7 @@ namespace Clouds
     internal class CloudLayer
     {
         public static Dictionary<String, List<CloudLayer>> BodyDatabase = new Dictionary<string, List<CloudLayer>>();
+        public static List<CloudLayer> Layers = new List<CloudLayer>();
         private static Shader GlobalCloudShader;
         private static Shader GlobalUndersideCloudShader;
         private Material CloudMaterial;
@@ -274,11 +275,15 @@ namespace Clouds
             }
         }
 
-        internal void Remove()
+        internal void Remove(bool fromList = true)
         {
             this.CloudOverlay.RemoveOverlay();
             this.UndersideCloudOverlay.RemoveOverlay();
             BodyDatabase[body].Remove(this);
+            if (fromList)
+            {
+                Layers.Remove(this);
+            }
         }
     }
 }

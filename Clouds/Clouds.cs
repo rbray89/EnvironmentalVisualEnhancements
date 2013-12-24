@@ -13,7 +13,6 @@ namespace Clouds
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class Clouds : MonoBehaviour
     {
-        static List<CloudLayer> CloudLayers = new List<CloudLayer>();
         static bool Loaded = false;
         static KeyCode GUI_KEYCODE = KeyCode.N;
 
@@ -34,11 +33,11 @@ namespace Clouds
 
         private void loadCloudLayers(String configString)
         {
-            foreach (CloudLayer cl in CloudLayers)
+            foreach (CloudLayer cl in CloudLayer.Layers)
             {
-                cl.Remove();
+                cl.Remove(false);
             }
-            CloudLayers.Clear();
+            CloudLayer.Layers.Clear();
             if (configString == null)
             {
                 configString = KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/userCloudLayers.cfg";
@@ -100,9 +99,10 @@ namespace Clouds
                     Color color = new Color(
                         float.Parse(colorNode.GetValue("r")),
                         float.Parse(colorNode.GetValue("g")),
-                        float.Parse(colorNode.GetValue("b")));
+                        float.Parse(colorNode.GetValue("b")),
+                        float.Parse(colorNode.GetValue("a")));
 
-                    CloudLayers.Add(
+                    CloudLayer.Layers.Add(
                         new CloudLayer(body, color, radius,
                         mTexture, dTexture, bTexture, shaderFloats, undersideShaderFloats));
                 }
@@ -139,6 +139,7 @@ namespace Clouds
                     colorNode.AddValue("r", cloudLayer.Color.r);
                     colorNode.AddValue("g", cloudLayer.Color.g);
                     colorNode.AddValue("b", cloudLayer.Color.b);
+                    colorNode.AddValue("a", cloudLayer.Color.a);
                     newNode.AddNode(cloudLayer.MainTexture.GetNode("main_texture"));
                     ConfigNode detailNode = cloudLayer.DetailTexture.GetNode("detail_texture");
                     if (detailNode != null)
@@ -523,7 +524,7 @@ namespace Clouds
         protected void Update()
         {
 
-            foreach (CloudLayer layer in CloudLayers)
+            foreach (CloudLayer layer in CloudLayer.Layers)
             {
                 layer.PerformUpdate();
             }
@@ -588,7 +589,7 @@ namespace Clouds
                 }
                 if (CloudLayer.GetBodyLayerCount(current.name) != 0)
                 {
-                    _mainWindowRect.height = 715;
+                    _mainWindowRect.height = 745;
                     _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "Clouds");
                 }
                 else
@@ -641,13 +642,13 @@ namespace Clouds
                     //{
                     //    spawnVolumeClouds();
                     //}
-                    halfWidth = (itemFullWidth / 2) - 5;
-                    if (GUI.Button(new Rect(itemFullWidth + 20, 50, halfWidth, 25), "Reset to Save"))
+                    halfWidth = (itemFullWidth / 2);
+                    if (GUI.Button(new Rect(itemFullWidth + 30, 50, halfWidth, 25), "Reset to Save"))
                     {
                         loadCloudLayers(null);
                         oldBody = null;
                     }
-                    if (GUI.Button(new Rect(itemFullWidth + (itemFullWidth / 2) + 20, 50, halfWidth, 25), "Reset to Default"))
+                    if (GUI.Button(new Rect(itemFullWidth + halfWidth + 35, 50, halfWidth-5, 25), "Reset to Default"))
                     {
                         loadCloudLayers("cloudLayers.cfg");
                         oldBody = null;
@@ -660,8 +661,8 @@ namespace Clouds
                 halfWidth = hasLayers ? (itemFullWidth / 2) - 5 : itemFullWidth;
                 if (GUI.Button(new Rect(10, 80, halfWidth, 25), "Add"))
                 {
-                    CloudLayers.Add(
-                    new CloudLayer(currentBody.name, new Color(1, 1, 1), 1.01f,
+                    CloudLayer.Layers.Add(
+                    new CloudLayer(currentBody.name, new Color(1, 1, 1, 1), 1.01f,
                     new TextureSet(), new TextureSet(), new TextureSet(), null, null));
                 }
                 if (hasLayers)
@@ -670,6 +671,7 @@ namespace Clouds
                     if (GUI.Button(new Rect(halfWidth + 20, 80, halfWidth, 25), "Remove"))
                     {
                         CloudLayer.RemoveLayer(currentBody.name, SelectedLayer);
+                        return;
                     }
                     GUI.Box(new Rect(10, 110, itemFullWidth, 115), "");
                     String[] layerList = CloudLayer.GetBodyLayerStringList(currentBody.name);
@@ -696,7 +698,11 @@ namespace Clouds
 
                     if (CloudGUI.IsValid())
                     {
-                        if (GUI.Button(new Rect(145, 50, 105, 25), "Apply & Save"))
+                        if (GUI.Button(new Rect(145, 50, 50, 25), "Apply"))
+                        {
+                            CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ApplyGUIUpdate(CloudGUI);
+                        }
+                        if (GUI.Button(new Rect(200, 50, 50, 25), "Save"))
                         {
                             CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ApplyGUIUpdate(CloudGUI);
                             saveCloudLayers(null);
@@ -945,8 +951,26 @@ namespace Clouds
             }
             string SBlue = GUI.TextField(new Rect(80, y, 50, 25), color.Blue, texFieldGS);
             float FBlue = GUI.HorizontalSlider(new Rect(135, y + 5, 115, 25), color.Color.b, 0, 1);
-
-            color.Update(SRed, FRed, SGreen, FGreen, SBlue, FBlue);
+            y += 30;
+            GUI.Label(
+                new Rect(10, y, 65, 25), "A: ", gs);
+            if (float.TryParse(color.Alpha, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            string SAlpha = GUI.TextField(new Rect(80, y, 50, 25), color.Alpha, texFieldGS);
+            float FAlpha = GUI.HorizontalSlider(new Rect(135, y + 5, 115, 25), color.Color.a, 0, 1);
+            color.Update(SRed, FRed, SGreen, FGreen, SBlue, FBlue, SAlpha, FAlpha);
             return y += 30;
         }
 
