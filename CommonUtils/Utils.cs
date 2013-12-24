@@ -25,11 +25,15 @@ namespace CommonUtils
         static String CurrentBodyName;
         static bool bodyOverlayEnabled = false;
         static bool mainMenuOverlay = false;
+        static bool isCubicMapped = false;
         public static bool MainMenuOverlay
         {
             get{return mainMenuOverlay;}
         }
-
+        public static bool IsCubicMapped
+        {
+            get { return isCubicMapped; }
+        }
 
         protected void Awake()
         {
@@ -55,12 +59,14 @@ namespace CommonUtils
         {
             if (!setup)
             {
-                
-
                 UnityEngine.Object[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody));
                 config = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/BoulderCo/common.cfg");
                 ConfigNode cameraSwapConfig = config.GetNode("CAMERA_SWAP_DISTANCES");
-
+                String cubicSetting = config.GetValue("CUBIC_MAPPING");
+                if(cubicSetting == "1" || cubicSetting == "true")
+                {
+                    isCubicMapped = true;
+                }
                 foreach (CelestialBody cb in celestialBodies)
                 {
                     CelestialBodyList.Add(cb);
@@ -114,7 +120,7 @@ namespace CommonUtils
                 overlayCamera.farClipPlane = referenceCam.farClipPlane;
                 overlayCamera.cullingMask = (1 << OVER_LAYER); //-10,-9,-18,-23,-29
                 overlayCamera.eventMask = 0;
-                overlayCamera.nearClipPlane = .025f;
+                overlayCamera.nearClipPlane = .015f;
                 overlayCamera.layerCullDistances = new float[32];
                 overlayCamera.layerCullSpherical = true;
                 overlayCamera.clearFlags = CameraClearFlags.Depth;
@@ -132,7 +138,7 @@ namespace CommonUtils
                 underlayCamera.farClipPlane = referenceCam.farClipPlane;
                 underlayCamera.cullingMask = (1 << UNDER_LAYER); //-10,-9,-18,-23,-29
                 underlayCamera.eventMask = 0;
-                underlayCamera.nearClipPlane = .025f;
+                underlayCamera.nearClipPlane = .015f;
                 underlayCamera.layerCullDistances = new float[32];
                 underlayCamera.layerCullSpherical = true;
                 underlayCamera.clearFlags = CameraClearFlags.Depth;
@@ -461,8 +467,17 @@ namespace CommonUtils
 
         public static Overlay GeneratePlanetOverlay(String planet, float radius, Material overlayMaterial, Vector2 rotation, int layer, bool avoidZFighting = false, bool mainMenu = false)
         {
+            Vector2 Rotation = new Vector2(rotation.x, rotation.y);
+            if (Utils.IsCubicMapped)
+            {
+                Rotation.y += .50f;
+            }
+            else
+            {
+                Rotation.x += .25f;
+            }
             Transform celestialTransform = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == planet);
-            Overlay overlay = new Overlay(planet, radius, overlayMaterial, rotation, layer, avoidZFighting, celestialTransform);
+            Overlay overlay = new Overlay(planet, radius, overlayMaterial, Rotation, layer, avoidZFighting, celestialTransform);
             if (!mainMenu)
             {
                 if (!OverlayDatabase.ContainsKey(planet))
@@ -501,7 +516,7 @@ namespace CommonUtils
             {
                 if (MapView.MapIsEnabled)
                 {
-                    OverlayGameObject.transform.localScale = this.radius * Vector3.one * 1002f;
+                    OverlayGameObject.transform.localScale = this.radius * Vector3.one * 1008f;
                 }
                 else
                 {

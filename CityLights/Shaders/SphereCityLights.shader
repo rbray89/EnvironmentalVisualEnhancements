@@ -1,7 +1,7 @@
-﻿Shader "Sphere/CityLightShader" {
+﻿Shader "Sphere/CityLight" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
-		_MainTex ("Main (RGB)", CUBE) = "" {}
+		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_DetailTex ("Detail (RGB) (A)", 2D) = "white" {}
 		_DetailScale ("Detail Scale", Range(0,1000)) = 100
 		_DetailOffset ("Detail Offset", Color) = (0,0,0,0)
@@ -19,8 +19,13 @@
         
      CGPROGRAM
 	 #pragma surface surf None vertex:vert noforwardadd noambient novertexlights nolightmap nodirlightmap 
-		
-	 samplerCUBE _MainTex;
+	 #pragma target 3.0
+	 #define PI 3.1415926535897932384626
+	 #define INV_PI (1.0/PI)
+	 #define TWOPI (2.0*PI) 
+	 #define INV_2PI (1.0/TWOPI)
+	 
+	 sampler2D _MainTex;
 	 sampler2D _DetailTex;
 	 float _DetailScale;
 	 fixed4 _Color;
@@ -57,8 +62,11 @@
 	 }
 	
 	 void surf (Input IN, inout SurfaceOutput o) {
-	    half4 main = texCUBE(_MainTex, IN.localPos)*_Color;
-		float3 pos = IN.localPos;
+	 	float3 pos = IN.localPos;
+	 	float2 uv;
+	 	uv.x = .5 + (INV_2PI*atan2(pos.z, pos.x));
+	 	uv.y = INV_PI*acos(-pos.y);
+	    half4 main = tex2D(_MainTex, uv)*_Color;
 		half4 detailX = tex2D (_DetailTex, pos.zy*_DetailScale + _DetailOffset.xy);
 		half4 detailY = tex2D (_DetailTex, pos.zx*_DetailScale + _DetailOffset.xy);
 		half4 detailZ = tex2D (_DetailTex, pos.xy*_DetailScale + _DetailOffset.xy);

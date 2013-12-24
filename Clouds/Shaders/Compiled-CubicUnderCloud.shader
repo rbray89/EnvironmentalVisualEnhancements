@@ -1,4 +1,4 @@
-﻿Shader "Sphere/UndersideCloudShader" {
+﻿Shader "Cubic/UndersideCloud" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_MainTex ("Main (RGB)", CUBE) = "" {}
@@ -425,32 +425,32 @@ void main ()
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
-  P_17 = ((xlv_TEXCOORD1.zy + _DetailOffset.xy) * _DetailScale);
+  P_17 = ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy);
   tmpvar_16 = texture2D (_DetailTex, P_17);
   detailX_13 = tmpvar_16;
   lowp vec4 tmpvar_18;
   highp vec2 P_19;
-  P_19 = ((xlv_TEXCOORD1.zx + _DetailOffset.xy) * _DetailScale);
+  P_19 = ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy);
   tmpvar_18 = texture2D (_DetailTex, P_19);
   detailY_12 = tmpvar_18;
   lowp vec4 tmpvar_20;
   highp vec2 P_21;
-  P_21 = ((xlv_TEXCOORD1.xy + _DetailOffset.xy) * _DetailScale);
+  P_21 = ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy);
   tmpvar_20 = texture2D (_DetailTex, P_21);
   detailZ_11 = tmpvar_20;
   lowp vec4 tmpvar_22;
   highp vec2 P_23;
-  P_23 = ((xlv_TEXCOORD1.zy + _BumpOffset.xy) * _BumpScale);
+  P_23 = ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy);
   tmpvar_22 = texture2D (_BumpMap, P_23);
   normalX_10 = tmpvar_22;
   lowp vec4 tmpvar_24;
   highp vec2 P_25;
-  P_25 = ((xlv_TEXCOORD1.zx + _BumpOffset.xy) * _BumpScale);
+  P_25 = ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy);
   tmpvar_24 = texture2D (_BumpMap, P_25);
   normalY_9 = tmpvar_24;
   lowp vec4 tmpvar_26;
   highp vec2 P_27;
-  P_27 = ((xlv_TEXCOORD1.xy + _BumpOffset.xy) * _BumpScale);
+  P_27 = ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy);
   tmpvar_26 = texture2D (_BumpMap, P_27);
   normalZ_8 = tmpvar_26;
   highp vec3 tmpvar_28;
@@ -620,32 +620,32 @@ void main ()
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
-  P_17 = ((xlv_TEXCOORD1.zy + _DetailOffset.xy) * _DetailScale);
+  P_17 = ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy);
   tmpvar_16 = texture2D (_DetailTex, P_17);
   detailX_13 = tmpvar_16;
   lowp vec4 tmpvar_18;
   highp vec2 P_19;
-  P_19 = ((xlv_TEXCOORD1.zx + _DetailOffset.xy) * _DetailScale);
+  P_19 = ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy);
   tmpvar_18 = texture2D (_DetailTex, P_19);
   detailY_12 = tmpvar_18;
   lowp vec4 tmpvar_20;
   highp vec2 P_21;
-  P_21 = ((xlv_TEXCOORD1.xy + _DetailOffset.xy) * _DetailScale);
+  P_21 = ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy);
   tmpvar_20 = texture2D (_DetailTex, P_21);
   detailZ_11 = tmpvar_20;
   lowp vec4 tmpvar_22;
   highp vec2 P_23;
-  P_23 = ((xlv_TEXCOORD1.zy + _BumpOffset.xy) * _BumpScale);
+  P_23 = ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy);
   tmpvar_22 = texture2D (_BumpMap, P_23);
   normalX_10 = tmpvar_22;
   lowp vec4 tmpvar_24;
   highp vec2 P_25;
-  P_25 = ((xlv_TEXCOORD1.zx + _BumpOffset.xy) * _BumpScale);
+  P_25 = ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy);
   tmpvar_24 = texture2D (_BumpMap, P_25);
   normalY_9 = tmpvar_24;
   lowp vec4 tmpvar_26;
   highp vec2 P_27;
-  P_27 = ((xlv_TEXCOORD1.xy + _BumpOffset.xy) * _BumpScale);
+  P_27 = ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy);
   tmpvar_26 = texture2D (_BumpMap, P_27);
   normalZ_8 = tmpvar_26;
   highp vec3 tmpvar_28;
@@ -1187,13 +1187,13 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 main = texture( _MainTex, IN.localPos);
     highp vec3 pos = IN.localPos;
     #line 435
-    mediump vec4 detailX = texture( _DetailTex, ((pos.zy + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 detailY = texture( _DetailTex, ((pos.zx + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 detailZ = texture( _DetailTex, ((pos.xy + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 normalX = texture( _BumpMap, ((pos.zy + _BumpOffset.xy) * _BumpScale));
+    mediump vec4 detailX = texture( _DetailTex, ((pos.zy * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 detailY = texture( _DetailTex, ((pos.zx * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 detailZ = texture( _DetailTex, ((pos.xy * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 normalX = texture( _BumpMap, ((pos.zy * _BumpScale) + _BumpOffset.xy));
     #line 439
-    mediump vec4 normalY = texture( _BumpMap, ((pos.zx + _BumpOffset.xy) * _BumpScale));
-    mediump vec4 normalZ = texture( _BumpMap, ((pos.xy + _BumpOffset.xy) * _BumpScale));
+    mediump vec4 normalY = texture( _BumpMap, ((pos.zx * _BumpScale) + _BumpOffset.xy));
+    mediump vec4 normalZ = texture( _BumpMap, ((pos.xy * _BumpScale) + _BumpOffset.xy));
     pos = abs(pos);
     mediump vec4 detail = mix( detailZ, detailX, vec4( pos.x));
     #line 443
@@ -1672,32 +1672,32 @@ void main ()
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
-  P_17 = ((xlv_TEXCOORD1.zy + _DetailOffset.xy) * _DetailScale);
+  P_17 = ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy);
   tmpvar_16 = texture2D (_DetailTex, P_17);
   detailX_13 = tmpvar_16;
   lowp vec4 tmpvar_18;
   highp vec2 P_19;
-  P_19 = ((xlv_TEXCOORD1.zx + _DetailOffset.xy) * _DetailScale);
+  P_19 = ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy);
   tmpvar_18 = texture2D (_DetailTex, P_19);
   detailY_12 = tmpvar_18;
   lowp vec4 tmpvar_20;
   highp vec2 P_21;
-  P_21 = ((xlv_TEXCOORD1.xy + _DetailOffset.xy) * _DetailScale);
+  P_21 = ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy);
   tmpvar_20 = texture2D (_DetailTex, P_21);
   detailZ_11 = tmpvar_20;
   lowp vec4 tmpvar_22;
   highp vec2 P_23;
-  P_23 = ((xlv_TEXCOORD1.zy + _BumpOffset.xy) * _BumpScale);
+  P_23 = ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy);
   tmpvar_22 = texture2D (_BumpMap, P_23);
   normalX_10 = tmpvar_22;
   lowp vec4 tmpvar_24;
   highp vec2 P_25;
-  P_25 = ((xlv_TEXCOORD1.zx + _BumpOffset.xy) * _BumpScale);
+  P_25 = ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy);
   tmpvar_24 = texture2D (_BumpMap, P_25);
   normalY_9 = tmpvar_24;
   lowp vec4 tmpvar_26;
   highp vec2 P_27;
-  P_27 = ((xlv_TEXCOORD1.xy + _BumpOffset.xy) * _BumpScale);
+  P_27 = ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy);
   tmpvar_26 = texture2D (_BumpMap, P_27);
   normalZ_8 = tmpvar_26;
   highp vec3 tmpvar_28;
@@ -1896,32 +1896,32 @@ void main ()
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
-  P_17 = ((xlv_TEXCOORD1.zy + _DetailOffset.xy) * _DetailScale);
+  P_17 = ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy);
   tmpvar_16 = texture2D (_DetailTex, P_17);
   detailX_13 = tmpvar_16;
   lowp vec4 tmpvar_18;
   highp vec2 P_19;
-  P_19 = ((xlv_TEXCOORD1.zx + _DetailOffset.xy) * _DetailScale);
+  P_19 = ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy);
   tmpvar_18 = texture2D (_DetailTex, P_19);
   detailY_12 = tmpvar_18;
   lowp vec4 tmpvar_20;
   highp vec2 P_21;
-  P_21 = ((xlv_TEXCOORD1.xy + _DetailOffset.xy) * _DetailScale);
+  P_21 = ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy);
   tmpvar_20 = texture2D (_DetailTex, P_21);
   detailZ_11 = tmpvar_20;
   lowp vec4 tmpvar_22;
   highp vec2 P_23;
-  P_23 = ((xlv_TEXCOORD1.zy + _BumpOffset.xy) * _BumpScale);
+  P_23 = ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy);
   tmpvar_22 = texture2D (_BumpMap, P_23);
   normalX_10 = tmpvar_22;
   lowp vec4 tmpvar_24;
   highp vec2 P_25;
-  P_25 = ((xlv_TEXCOORD1.zx + _BumpOffset.xy) * _BumpScale);
+  P_25 = ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy);
   tmpvar_24 = texture2D (_BumpMap, P_25);
   normalY_9 = tmpvar_24;
   lowp vec4 tmpvar_26;
   highp vec2 P_27;
-  P_27 = ((xlv_TEXCOORD1.xy + _BumpOffset.xy) * _BumpScale);
+  P_27 = ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy);
   tmpvar_26 = texture2D (_BumpMap, P_27);
   normalZ_8 = tmpvar_26;
   highp vec3 tmpvar_28;
@@ -2477,13 +2477,13 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 main = texture( _MainTex, IN.localPos);
     highp vec3 pos = IN.localPos;
     #line 443
-    mediump vec4 detailX = texture( _DetailTex, ((pos.zy + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 detailY = texture( _DetailTex, ((pos.zx + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 detailZ = texture( _DetailTex, ((pos.xy + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 normalX = texture( _BumpMap, ((pos.zy + _BumpOffset.xy) * _BumpScale));
+    mediump vec4 detailX = texture( _DetailTex, ((pos.zy * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 detailY = texture( _DetailTex, ((pos.zx * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 detailZ = texture( _DetailTex, ((pos.xy * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 normalX = texture( _BumpMap, ((pos.zy * _BumpScale) + _BumpOffset.xy));
     #line 447
-    mediump vec4 normalY = texture( _BumpMap, ((pos.zx + _BumpOffset.xy) * _BumpScale));
-    mediump vec4 normalZ = texture( _BumpMap, ((pos.xy + _BumpOffset.xy) * _BumpScale));
+    mediump vec4 normalY = texture( _BumpMap, ((pos.zx * _BumpScale) + _BumpOffset.xy));
+    mediump vec4 normalZ = texture( _BumpMap, ((pos.xy * _BumpScale) + _BumpOffset.xy));
     pos = abs(pos);
     mediump vec4 detail = mix( detailZ, detailX, vec4( pos.x));
     #line 451
@@ -2943,32 +2943,32 @@ void main ()
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
-  P_17 = ((xlv_TEXCOORD1.zy + _DetailOffset.xy) * _DetailScale);
+  P_17 = ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy);
   tmpvar_16 = texture2D (_DetailTex, P_17);
   detailX_13 = tmpvar_16;
   lowp vec4 tmpvar_18;
   highp vec2 P_19;
-  P_19 = ((xlv_TEXCOORD1.zx + _DetailOffset.xy) * _DetailScale);
+  P_19 = ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy);
   tmpvar_18 = texture2D (_DetailTex, P_19);
   detailY_12 = tmpvar_18;
   lowp vec4 tmpvar_20;
   highp vec2 P_21;
-  P_21 = ((xlv_TEXCOORD1.xy + _DetailOffset.xy) * _DetailScale);
+  P_21 = ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy);
   tmpvar_20 = texture2D (_DetailTex, P_21);
   detailZ_11 = tmpvar_20;
   lowp vec4 tmpvar_22;
   highp vec2 P_23;
-  P_23 = ((xlv_TEXCOORD1.zy + _BumpOffset.xy) * _BumpScale);
+  P_23 = ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy);
   tmpvar_22 = texture2D (_BumpMap, P_23);
   normalX_10 = tmpvar_22;
   lowp vec4 tmpvar_24;
   highp vec2 P_25;
-  P_25 = ((xlv_TEXCOORD1.zx + _BumpOffset.xy) * _BumpScale);
+  P_25 = ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy);
   tmpvar_24 = texture2D (_BumpMap, P_25);
   normalY_9 = tmpvar_24;
   lowp vec4 tmpvar_26;
   highp vec2 P_27;
-  P_27 = ((xlv_TEXCOORD1.xy + _BumpOffset.xy) * _BumpScale);
+  P_27 = ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy);
   tmpvar_26 = texture2D (_BumpMap, P_27);
   normalZ_8 = tmpvar_26;
   highp vec3 tmpvar_28;
@@ -3138,32 +3138,32 @@ void main ()
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
-  P_17 = ((xlv_TEXCOORD1.zy + _DetailOffset.xy) * _DetailScale);
+  P_17 = ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy);
   tmpvar_16 = texture2D (_DetailTex, P_17);
   detailX_13 = tmpvar_16;
   lowp vec4 tmpvar_18;
   highp vec2 P_19;
-  P_19 = ((xlv_TEXCOORD1.zx + _DetailOffset.xy) * _DetailScale);
+  P_19 = ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy);
   tmpvar_18 = texture2D (_DetailTex, P_19);
   detailY_12 = tmpvar_18;
   lowp vec4 tmpvar_20;
   highp vec2 P_21;
-  P_21 = ((xlv_TEXCOORD1.xy + _DetailOffset.xy) * _DetailScale);
+  P_21 = ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy);
   tmpvar_20 = texture2D (_DetailTex, P_21);
   detailZ_11 = tmpvar_20;
   lowp vec4 tmpvar_22;
   highp vec2 P_23;
-  P_23 = ((xlv_TEXCOORD1.zy + _BumpOffset.xy) * _BumpScale);
+  P_23 = ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy);
   tmpvar_22 = texture2D (_BumpMap, P_23);
   normalX_10 = tmpvar_22;
   lowp vec4 tmpvar_24;
   highp vec2 P_25;
-  P_25 = ((xlv_TEXCOORD1.zx + _BumpOffset.xy) * _BumpScale);
+  P_25 = ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy);
   tmpvar_24 = texture2D (_BumpMap, P_25);
   normalY_9 = tmpvar_24;
   lowp vec4 tmpvar_26;
   highp vec2 P_27;
-  P_27 = ((xlv_TEXCOORD1.xy + _BumpOffset.xy) * _BumpScale);
+  P_27 = ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy);
   tmpvar_26 = texture2D (_BumpMap, P_27);
   normalZ_8 = tmpvar_26;
   highp vec3 tmpvar_28;
@@ -3705,13 +3705,13 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 main = texture( _MainTex, IN.localPos);
     highp vec3 pos = IN.localPos;
     #line 435
-    mediump vec4 detailX = texture( _DetailTex, ((pos.zy + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 detailY = texture( _DetailTex, ((pos.zx + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 detailZ = texture( _DetailTex, ((pos.xy + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 normalX = texture( _BumpMap, ((pos.zy + _BumpOffset.xy) * _BumpScale));
+    mediump vec4 detailX = texture( _DetailTex, ((pos.zy * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 detailY = texture( _DetailTex, ((pos.zx * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 detailZ = texture( _DetailTex, ((pos.xy * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 normalX = texture( _BumpMap, ((pos.zy * _BumpScale) + _BumpOffset.xy));
     #line 439
-    mediump vec4 normalY = texture( _BumpMap, ((pos.zx + _BumpOffset.xy) * _BumpScale));
-    mediump vec4 normalZ = texture( _BumpMap, ((pos.xy + _BumpOffset.xy) * _BumpScale));
+    mediump vec4 normalY = texture( _BumpMap, ((pos.zx * _BumpScale) + _BumpOffset.xy));
+    mediump vec4 normalZ = texture( _BumpMap, ((pos.xy * _BumpScale) + _BumpOffset.xy));
     pos = abs(pos);
     mediump vec4 detail = mix( detailZ, detailX, vec4( pos.x));
     #line 443
@@ -4190,32 +4190,32 @@ void main ()
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
-  P_17 = ((xlv_TEXCOORD1.zy + _DetailOffset.xy) * _DetailScale);
+  P_17 = ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy);
   tmpvar_16 = texture2D (_DetailTex, P_17);
   detailX_13 = tmpvar_16;
   lowp vec4 tmpvar_18;
   highp vec2 P_19;
-  P_19 = ((xlv_TEXCOORD1.zx + _DetailOffset.xy) * _DetailScale);
+  P_19 = ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy);
   tmpvar_18 = texture2D (_DetailTex, P_19);
   detailY_12 = tmpvar_18;
   lowp vec4 tmpvar_20;
   highp vec2 P_21;
-  P_21 = ((xlv_TEXCOORD1.xy + _DetailOffset.xy) * _DetailScale);
+  P_21 = ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy);
   tmpvar_20 = texture2D (_DetailTex, P_21);
   detailZ_11 = tmpvar_20;
   lowp vec4 tmpvar_22;
   highp vec2 P_23;
-  P_23 = ((xlv_TEXCOORD1.zy + _BumpOffset.xy) * _BumpScale);
+  P_23 = ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy);
   tmpvar_22 = texture2D (_BumpMap, P_23);
   normalX_10 = tmpvar_22;
   lowp vec4 tmpvar_24;
   highp vec2 P_25;
-  P_25 = ((xlv_TEXCOORD1.zx + _BumpOffset.xy) * _BumpScale);
+  P_25 = ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy);
   tmpvar_24 = texture2D (_BumpMap, P_25);
   normalY_9 = tmpvar_24;
   lowp vec4 tmpvar_26;
   highp vec2 P_27;
-  P_27 = ((xlv_TEXCOORD1.xy + _BumpOffset.xy) * _BumpScale);
+  P_27 = ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy);
   tmpvar_26 = texture2D (_BumpMap, P_27);
   normalZ_8 = tmpvar_26;
   highp vec3 tmpvar_28;
@@ -4414,32 +4414,32 @@ void main ()
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
-  P_17 = ((xlv_TEXCOORD1.zy + _DetailOffset.xy) * _DetailScale);
+  P_17 = ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy);
   tmpvar_16 = texture2D (_DetailTex, P_17);
   detailX_13 = tmpvar_16;
   lowp vec4 tmpvar_18;
   highp vec2 P_19;
-  P_19 = ((xlv_TEXCOORD1.zx + _DetailOffset.xy) * _DetailScale);
+  P_19 = ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy);
   tmpvar_18 = texture2D (_DetailTex, P_19);
   detailY_12 = tmpvar_18;
   lowp vec4 tmpvar_20;
   highp vec2 P_21;
-  P_21 = ((xlv_TEXCOORD1.xy + _DetailOffset.xy) * _DetailScale);
+  P_21 = ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy);
   tmpvar_20 = texture2D (_DetailTex, P_21);
   detailZ_11 = tmpvar_20;
   lowp vec4 tmpvar_22;
   highp vec2 P_23;
-  P_23 = ((xlv_TEXCOORD1.zy + _BumpOffset.xy) * _BumpScale);
+  P_23 = ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy);
   tmpvar_22 = texture2D (_BumpMap, P_23);
   normalX_10 = tmpvar_22;
   lowp vec4 tmpvar_24;
   highp vec2 P_25;
-  P_25 = ((xlv_TEXCOORD1.zx + _BumpOffset.xy) * _BumpScale);
+  P_25 = ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy);
   tmpvar_24 = texture2D (_BumpMap, P_25);
   normalY_9 = tmpvar_24;
   lowp vec4 tmpvar_26;
   highp vec2 P_27;
-  P_27 = ((xlv_TEXCOORD1.xy + _BumpOffset.xy) * _BumpScale);
+  P_27 = ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy);
   tmpvar_26 = texture2D (_BumpMap, P_27);
   normalZ_8 = tmpvar_26;
   highp vec3 tmpvar_28;
@@ -4995,13 +4995,13 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 main = texture( _MainTex, IN.localPos);
     highp vec3 pos = IN.localPos;
     #line 443
-    mediump vec4 detailX = texture( _DetailTex, ((pos.zy + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 detailY = texture( _DetailTex, ((pos.zx + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 detailZ = texture( _DetailTex, ((pos.xy + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 normalX = texture( _BumpMap, ((pos.zy + _BumpOffset.xy) * _BumpScale));
+    mediump vec4 detailX = texture( _DetailTex, ((pos.zy * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 detailY = texture( _DetailTex, ((pos.zx * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 detailZ = texture( _DetailTex, ((pos.xy * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 normalX = texture( _BumpMap, ((pos.zy * _BumpScale) + _BumpOffset.xy));
     #line 447
-    mediump vec4 normalY = texture( _BumpMap, ((pos.zx + _BumpOffset.xy) * _BumpScale));
-    mediump vec4 normalZ = texture( _BumpMap, ((pos.xy + _BumpOffset.xy) * _BumpScale));
+    mediump vec4 normalY = texture( _BumpMap, ((pos.zx * _BumpScale) + _BumpOffset.xy));
+    mediump vec4 normalZ = texture( _BumpMap, ((pos.xy * _BumpScale) + _BumpOffset.xy));
     pos = abs(pos);
     mediump vec4 detail = mix( detailZ, detailX, vec4( pos.x));
     #line 451
@@ -5190,32 +5190,32 @@ void main ()
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
-  P_17 = ((xlv_TEXCOORD1.zy + _DetailOffset.xy) * _DetailScale);
+  P_17 = ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy);
   tmpvar_16 = texture2D (_DetailTex, P_17);
   detailX_13 = tmpvar_16;
   lowp vec4 tmpvar_18;
   highp vec2 P_19;
-  P_19 = ((xlv_TEXCOORD1.zx + _DetailOffset.xy) * _DetailScale);
+  P_19 = ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy);
   tmpvar_18 = texture2D (_DetailTex, P_19);
   detailY_12 = tmpvar_18;
   lowp vec4 tmpvar_20;
   highp vec2 P_21;
-  P_21 = ((xlv_TEXCOORD1.xy + _DetailOffset.xy) * _DetailScale);
+  P_21 = ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy);
   tmpvar_20 = texture2D (_DetailTex, P_21);
   detailZ_11 = tmpvar_20;
   lowp vec4 tmpvar_22;
   highp vec2 P_23;
-  P_23 = ((xlv_TEXCOORD1.zy + _BumpOffset.xy) * _BumpScale);
+  P_23 = ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy);
   tmpvar_22 = texture2D (_BumpMap, P_23);
   normalX_10 = tmpvar_22;
   lowp vec4 tmpvar_24;
   highp vec2 P_25;
-  P_25 = ((xlv_TEXCOORD1.zx + _BumpOffset.xy) * _BumpScale);
+  P_25 = ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy);
   tmpvar_24 = texture2D (_BumpMap, P_25);
   normalY_9 = tmpvar_24;
   lowp vec4 tmpvar_26;
   highp vec2 P_27;
-  P_27 = ((xlv_TEXCOORD1.xy + _BumpOffset.xy) * _BumpScale);
+  P_27 = ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy);
   tmpvar_26 = texture2D (_BumpMap, P_27);
   normalZ_8 = tmpvar_26;
   highp vec3 tmpvar_28;
@@ -5775,13 +5775,13 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 main = texture( _MainTex, IN.localPos);
     highp vec3 pos = IN.localPos;
     #line 443
-    mediump vec4 detailX = texture( _DetailTex, ((pos.zy + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 detailY = texture( _DetailTex, ((pos.zx + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 detailZ = texture( _DetailTex, ((pos.xy + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 normalX = texture( _BumpMap, ((pos.zy + _BumpOffset.xy) * _BumpScale));
+    mediump vec4 detailX = texture( _DetailTex, ((pos.zy * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 detailY = texture( _DetailTex, ((pos.zx * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 detailZ = texture( _DetailTex, ((pos.xy * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 normalX = texture( _BumpMap, ((pos.zy * _BumpScale) + _BumpOffset.xy));
     #line 447
-    mediump vec4 normalY = texture( _BumpMap, ((pos.zx + _BumpOffset.xy) * _BumpScale));
-    mediump vec4 normalZ = texture( _BumpMap, ((pos.xy + _BumpOffset.xy) * _BumpScale));
+    mediump vec4 normalY = texture( _BumpMap, ((pos.zx * _BumpScale) + _BumpOffset.xy));
+    mediump vec4 normalZ = texture( _BumpMap, ((pos.xy * _BumpScale) + _BumpOffset.xy));
     pos = abs(pos);
     mediump vec4 detail = mix( detailZ, detailX, vec4( pos.x));
     #line 451
@@ -5970,32 +5970,32 @@ void main ()
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
-  P_17 = ((xlv_TEXCOORD1.zy + _DetailOffset.xy) * _DetailScale);
+  P_17 = ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy);
   tmpvar_16 = texture2D (_DetailTex, P_17);
   detailX_13 = tmpvar_16;
   lowp vec4 tmpvar_18;
   highp vec2 P_19;
-  P_19 = ((xlv_TEXCOORD1.zx + _DetailOffset.xy) * _DetailScale);
+  P_19 = ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy);
   tmpvar_18 = texture2D (_DetailTex, P_19);
   detailY_12 = tmpvar_18;
   lowp vec4 tmpvar_20;
   highp vec2 P_21;
-  P_21 = ((xlv_TEXCOORD1.xy + _DetailOffset.xy) * _DetailScale);
+  P_21 = ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy);
   tmpvar_20 = texture2D (_DetailTex, P_21);
   detailZ_11 = tmpvar_20;
   lowp vec4 tmpvar_22;
   highp vec2 P_23;
-  P_23 = ((xlv_TEXCOORD1.zy + _BumpOffset.xy) * _BumpScale);
+  P_23 = ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy);
   tmpvar_22 = texture2D (_BumpMap, P_23);
   normalX_10 = tmpvar_22;
   lowp vec4 tmpvar_24;
   highp vec2 P_25;
-  P_25 = ((xlv_TEXCOORD1.zx + _BumpOffset.xy) * _BumpScale);
+  P_25 = ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy);
   tmpvar_24 = texture2D (_BumpMap, P_25);
   normalY_9 = tmpvar_24;
   lowp vec4 tmpvar_26;
   highp vec2 P_27;
-  P_27 = ((xlv_TEXCOORD1.xy + _BumpOffset.xy) * _BumpScale);
+  P_27 = ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy);
   tmpvar_26 = texture2D (_BumpMap, P_27);
   normalZ_8 = tmpvar_26;
   highp vec3 tmpvar_28;
@@ -6555,13 +6555,13 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 main = texture( _MainTex, IN.localPos);
     highp vec3 pos = IN.localPos;
     #line 443
-    mediump vec4 detailX = texture( _DetailTex, ((pos.zy + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 detailY = texture( _DetailTex, ((pos.zx + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 detailZ = texture( _DetailTex, ((pos.xy + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 normalX = texture( _BumpMap, ((pos.zy + _BumpOffset.xy) * _BumpScale));
+    mediump vec4 detailX = texture( _DetailTex, ((pos.zy * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 detailY = texture( _DetailTex, ((pos.zx * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 detailZ = texture( _DetailTex, ((pos.xy * _DetailScale) + _DetailOffset.xy));
+    mediump vec4 normalX = texture( _BumpMap, ((pos.zy * _BumpScale) + _BumpOffset.xy));
     #line 447
-    mediump vec4 normalY = texture( _BumpMap, ((pos.zx + _BumpOffset.xy) * _BumpScale));
-    mediump vec4 normalZ = texture( _BumpMap, ((pos.xy + _BumpOffset.xy) * _BumpScale));
+    mediump vec4 normalY = texture( _BumpMap, ((pos.zx * _BumpScale) + _BumpOffset.xy));
+    mediump vec4 normalZ = texture( _BumpMap, ((pos.xy * _BumpScale) + _BumpOffset.xy));
     pos = abs(pos);
     mediump vec4 detail = mix( detailZ, detailX, vec4( pos.x));
     #line 451
@@ -6633,7 +6633,7 @@ Program "fp" {
 // Fragment combos: 2
 //   opengl - ALU: 50 to 52, TEX: 7 to 8
 //   d3d9 - ALU: 43 to 44, TEX: 7 to 8
-//   d3d11 - ALU: 33 to 34, TEX: 7 to 8, FLOW: 1 to 1
+//   d3d11 - ALU: 29 to 30, TEX: 7 to 8, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 Vector 0 [_LightColor0]
@@ -6654,26 +6654,26 @@ TEMP R0;
 TEMP R1;
 TEMP R2;
 TEMP R3;
-ADD R0.xy, fragment.texcoord[1].zyzw, c[3];
-MUL R1.xy, R0, c[5].x;
-ADD R0.zw, fragment.texcoord[1].xyxy, c[3].xyxy;
-MUL R0.zw, R0, c[5].x;
+MUL R0.xy, fragment.texcoord[1].zyzw, c[5].x;
+ADD R1.xy, R0, c[3];
+MUL R0.zw, fragment.texcoord[1].xyxy, c[5].x;
+ADD R0.zw, R0, c[3].xyxy;
 TEX R0.yw, R0.zwzw, texture[2], 2D;
 TEX R1.yw, R1, texture[2], 2D;
 ABS R2.zw, fragment.texcoord[1].xyxy;
 ADD R1.xy, R1.ywzw, -R0.ywzw;
-ADD R2.xy, fragment.texcoord[1].zxzw, c[3];
+MUL R2.xy, fragment.texcoord[1].zxzw, c[5].x;
 MAD R1.xy, R2.z, R1, R0.ywzw;
-MUL R1.zw, R2.xyxy, c[5].x;
+ADD R1.zw, R2.xyxy, c[3].xyxy;
 TEX R0.yw, R1.zwzw, texture[2], 2D;
 ADD R0.xy, R0.ywzw, -R1;
 MAD R0.xy, R2.w, R0, R1;
 MAD R2.xy, R0.yxzw, c[7].y, -c[7].x;
-ADD R0.zw, fragment.texcoord[1].xyxy, c[2].xyxy;
-MUL R0.zw, R0, c[4].x;
-ADD R0.xy, fragment.texcoord[1].zyzw, c[2];
+MUL R0.zw, fragment.texcoord[1].xyxy, c[4].x;
+ADD R0.zw, R0, c[2].xyxy;
+MUL R0.xy, fragment.texcoord[1].zyzw, c[4].x;
 TEX R1, R0.zwzw, texture[1], 2D;
-MUL R0.xy, R0, c[4].x;
+ADD R0.xy, R0, c[2];
 TEX R0, R0, texture[1], 2D;
 ADD R0, R0, -R1;
 MAD R1, R2.z, R0, R1;
@@ -6682,8 +6682,8 @@ ADD_SAT R0.z, R3.x, R3.y;
 ADD R0.z, -R0, c[7].x;
 RSQ R2.z, R0.z;
 RCP R2.z, R2.z;
-ADD R0.xy, fragment.texcoord[1].zxzw, c[2];
-MUL R0.xy, R0, c[4].x;
+MUL R0.xy, fragment.texcoord[1].zxzw, c[4].x;
+ADD R0.xy, R0, c[2];
 TEX R0, R0, texture[1], 2D;
 ADD R0, R0, -R1;
 MAD R0, R2.w, R0, R1;
@@ -6731,25 +6731,25 @@ dcl_texcoord0 v0.xy
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xyz
-add r0.zw, v1.xyxy, c3.xyxy
-mul r1.xy, r0.zwzw, c5.x
-add r0.xy, v1.zyzw, c3
-mul r0.xy, r0, c5.x
+mul r0.zw, v1.xyxy, c5.x
+add r1.xy, r0.zwzw, c3
+mul r0.xy, v1.zyzw, c5.x
+add r0.xy, r0, c3
 abs r2.zw, v1.xyxy
 texld r1.yw, r1, s2
 texld r0.yw, r0, s2
 add_pp r0.zw, r0.xyyw, -r1.xyyw
-add r2.xy, v1.zxzw, c3
+mul r2.xy, v1.zxzw, c5.x
 mad_pp r1.xy, r2.z, r0.zwzw, r1.ywzw
-mul r0.xy, r2, c5.x
+add r0.xy, r2, c3
 texld r0.yw, r0, s2
 add_pp r0.xy, r0.ywzw, -r1
 mad_pp r0.xy, r2.w, r0, r1
 mad_pp r2.xy, r0.yxzw, c7.y, c7.z
-add r0.zw, v1.xyxy, c2.xyxy
-mul r1.xy, r0.zwzw, c4.x
-add r0.xy, v1.zyzw, c2
-mul r0.xy, r0, c4.x
+mul r0.zw, v1.xyxy, c4.x
+add r1.xy, r0.zwzw, c2
+mul r0.xy, v1.zyzw, c4.x
+add r0.xy, r0, c2
 mul_pp r3.xy, r2, r2
 texld r1, r1, s1
 texld r0, r0, s1
@@ -6759,8 +6759,8 @@ add_pp_sat r0.z, r3.x, r3.y
 add_pp r0.z, -r0, c7.x
 rsq_pp r2.z, r0.z
 rcp_pp r2.z, r2.z
-add r0.xy, v1.zxzw, c2
-mul r0.xy, r0, c4.x
+mul r0.xy, v1.zxzw, c4.x
+add r0.xy, r0, c2
 texld r0, r0, s1
 add_pp r0, r0, -r1
 mad_pp r0, r2.w, r0, r1
@@ -6798,12 +6798,12 @@ BindCB "$Globals" 0
 SetTexture 0 [_MainTex] CUBE 0
 SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_BumpMap] 2D 2
-// 41 instructions, 4 temp regs, 0 temp arrays:
-// ALU 33 float, 0 int, 0 uint
+// 37 instructions, 4 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 7 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedfgggfamajkiiblcehgljkkomlblkcpbgabaaaaaabmahaaaaadaaaaaa
+eefiecedglpaggjppljmfphocofhhdkopfpcddemabaaaaaammagaaaaadaaaaaa
 cmaaaaaammaaaaaaaaabaaaaejfdeheojiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaadadaaaaimaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -6811,55 +6811,53 @@ ahahaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaaimaaaaaa
 adaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahahaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcbeagaaaaeaaaaaaaifabaaaafjaaaaaeegiocaaaaaaaaaaaaiaaaaaa
+fdeieefcmeafaaaaeaaaaaaahbabaaaafjaaaaaeegiocaaaaaaaaaaaaiaaaaaa
 fkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaafkaaaaadaagabaaa
 acaaaaaafidaaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
 ffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaagcbaaaaddcbabaaaabaaaaaa
 gcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaa
-aeaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaaaaaaaaaipcaabaaa
-aaaaaaaaggbcbaaaacaaaaaaegiecaaaaaaaaaaaafaaaaaadiaaaaaipcaabaaa
-aaaaaaaaegaobaaaaaaaaaaaagiacaaaaaaaaaaaahaaaaaaefaaaaajpcaabaaa
-abaaaaaaegaabaaaaaaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaaefaaaaaj
-pcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaa
-aaaaaaaifcaabaaaaaaaaaaaagbbbaaaacaaaaaaagibcaaaaaaaaaaaafaaaaaa
-diaaaaaifcaabaaaaaaaaaaaagacbaaaaaaaaaaaagiacaaaaaaaaaaaahaaaaaa
-efaaaaajpcaabaaaacaaaaaaigaabaaaaaaaaaaaeghobaaaacaaaaaaaagabaaa
-acaaaaaaaaaaaaaifcaabaaaaaaaaaaapganbaaaabaaaaaapganbaiaebaaaaaa
-acaaaaaadcaaaaakfcaabaaaaaaaaaaaagbabaiaibaaaaaaacaaaaaaagacbaaa
-aaaaaaaapganbaaaacaaaaaaaaaaaaaikcaabaaaaaaaaaaaagaibaiaebaaaaaa
-aaaaaaaapgahbaaaaaaaaaaadcaaaaakdcaabaaaaaaaaaaafgbfbaiaibaaaaaa
-acaaaaaangafbaaaaaaaaaaaigaabaaaaaaaaaaadcaaaaapdcaabaaaaaaaaaaa
-egaabaaaaaaaaaaaaceaaaaaaaaaaaeaaaaaaaeaaaaaaaaaaaaaaaaaaceaaaaa
-aaaaialpaaaaialpaaaaaaaaaaaaaaaaapaaaaahicaabaaaaaaaaaaaegaabaaa
-aaaaaaaaegaabaaaaaaaaaaaddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaaaaiadpaaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
-abeaaaaaaaaaiadpelaaaaafecaabaaaaaaaaaaadkaabaaaaaaaaaaaaaaaaaal
-hcaabaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
-aaaaiadpaaaaaaaadcaaaaajhcaabaaaaaaaaaaaagbabaaaabaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaaaaaaaaa
-egbcbaaaadaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaakaabaaa
-aaaaaaaadccaaaalhcaabaaaaaaaaaaaegiccaaaaaaaaaaaabaaaaaaagaabaaa
-aaaaaaaafgifcaaaaaaaaaaaahaaaaaaaaaaaaaipcaabaaaabaaaaaaggbcbaaa
-acaaaaaaegiecaaaaaaaaaaaaeaaaaaadiaaaaaipcaabaaaabaaaaaaegaobaaa
-abaaaaaakgikcaaaaaaaaaaaagaaaaaaefaaaaajpcaabaaaacaaaaaaegaabaaa
-abaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaefaaaaajpcaabaaaabaaaaaa
-ogakbaaaabaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaaaaaaaaidcaabaaa
-adaaaaaaegbabaaaacaaaaaaegiacaaaaaaaaaaaaeaaaaaadiaaaaaidcaabaaa
-adaaaaaaegaabaaaadaaaaaakgikcaaaaaaaaaaaagaaaaaaefaaaaajpcaabaaa
-adaaaaaaegaabaaaadaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaaaaaaaai
-pcaabaaaacaaaaaaegaobaaaacaaaaaaegaobaiaebaaaaaaadaaaaaadcaaaaak
-pcaabaaaacaaaaaaagbabaiaibaaaaaaacaaaaaaegaobaaaacaaaaaaegaobaaa
-adaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaa
-acaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaacaaaaaaegaobaaa
-abaaaaaaegaobaaaacaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaa
-abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpdcaaaaajpcaabaaa
-abaaaaaaagbabaaaabaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaaefaaaaaj
-pcaabaaaacaaaaaaegbcbaaaacaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaa
-diaaaaahpcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaaaacaaaaaadiaaaaai
-hcaabaaaabaaaaaaegacbaaaabaaaaaaegiccaaaaaaaaaaaadaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaabaaaaaabkbabaaaabaaaaaadiaaaaahhcaabaaa
-acaaaaaaegacbaaaabaaaaaaegbcbaaaaeaaaaaadcaaaaajhccabaaaaaaaaaaa
-egacbaaaabaaaaaaegacbaaaaaaaaaaaegacbaaaacaaaaaadoaaaaab"
+aeaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaadcaaaaalpcaabaaa
+aaaaaaaaggbcbaaaacaaaaaaagiacaaaaaaaaaaaahaaaaaaegiecaaaaaaaaaaa
+afaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaaaaaaaaaeghobaaaacaaaaaa
+aagabaaaacaaaaaaefaaaaajpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
+acaaaaaaaagabaaaacaaaaaadcaaaaalfcaabaaaaaaaaaaaagbbbaaaacaaaaaa
+agiacaaaaaaaaaaaahaaaaaaagibcaaaaaaaaaaaafaaaaaaefaaaaajpcaabaaa
+acaaaaaaigaabaaaaaaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaaaaaaaaai
+fcaabaaaaaaaaaaapganbaaaabaaaaaapganbaiaebaaaaaaacaaaaaadcaaaaak
+fcaabaaaaaaaaaaaagbabaiaibaaaaaaacaaaaaaagacbaaaaaaaaaaapganbaaa
+acaaaaaaaaaaaaaikcaabaaaaaaaaaaaagaibaiaebaaaaaaaaaaaaaapgahbaaa
+aaaaaaaadcaaaaakdcaabaaaaaaaaaaafgbfbaiaibaaaaaaacaaaaaangafbaaa
+aaaaaaaaigaabaaaaaaaaaaadcaaaaapdcaabaaaaaaaaaaaegaabaaaaaaaaaaa
+aceaaaaaaaaaaaeaaaaaaaeaaaaaaaaaaaaaaaaaaceaaaaaaaaaialpaaaaialp
+aaaaaaaaaaaaaaaaapaaaaahicaabaaaaaaaaaaaegaabaaaaaaaaaaaegaabaaa
+aaaaaaaaddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
+aaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
+elaaaaafecaabaaaaaaaaaaadkaabaaaaaaaaaaaaaaaaaalhcaabaaaabaaaaaa
+egacbaiaebaaaaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaiadpaaaaaaaa
+dcaaaaajhcaabaaaaaaaaaaaagbabaaaabaaaaaaegacbaaaabaaaaaaegacbaaa
+aaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaaaaaaaaaegbcbaaaadaaaaaa
+aaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaakaabaaaaaaaaaaadccaaaal
+hcaabaaaaaaaaaaaegiccaaaaaaaaaaaabaaaaaaagaabaaaaaaaaaaafgifcaaa
+aaaaaaaaahaaaaaadcaaaaalpcaabaaaabaaaaaaggbcbaaaacaaaaaakgikcaaa
+aaaaaaaaagaaaaaaegiecaaaaaaaaaaaaeaaaaaaefaaaaajpcaabaaaacaaaaaa
+egaabaaaabaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaadcaaaaal
+dcaabaaaadaaaaaaegbabaaaacaaaaaakgikcaaaaaaaaaaaagaaaaaaegiacaaa
+aaaaaaaaaeaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaadaaaaaaeghobaaa
+abaaaaaaaagabaaaabaaaaaaaaaaaaaipcaabaaaacaaaaaaegaobaaaacaaaaaa
+egaobaiaebaaaaaaadaaaaaadcaaaaakpcaabaaaacaaaaaaagbabaiaibaaaaaa
+acaaaaaaegaobaaaacaaaaaaegaobaaaadaaaaaaaaaaaaaipcaabaaaabaaaaaa
+egaobaaaabaaaaaaegaobaiaebaaaaaaacaaaaaadcaaaaakpcaabaaaabaaaaaa
+fgbfbaiaibaaaaaaacaaaaaaegaobaaaabaaaaaaegaobaaaacaaaaaaaaaaaaal
+pcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpdcaaaaajpcaabaaaabaaaaaaagbabaaaabaaaaaaegaobaaa
+acaaaaaaegaobaaaabaaaaaaefaaaaajpcaabaaaacaaaaaaegbcbaaaacaaaaaa
+eghobaaaaaaaaaaaaagabaaaaaaaaaaadiaaaaahpcaabaaaabaaaaaaegaobaaa
+abaaaaaaegaobaaaacaaaaaadiaaaaaihcaabaaaabaaaaaaegacbaaaabaaaaaa
+egiccaaaaaaaaaaaadaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaabaaaaaa
+bkbabaaaabaaaaaadiaaaaahhcaabaaaacaaaaaaegacbaaaabaaaaaaegbcbaaa
+aeaaaaaadcaaaaajhccabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaa
+egacbaaaacaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -6898,24 +6896,24 @@ TEMP R0;
 TEMP R1;
 TEMP R2;
 TEMP R3;
-ADD R0.xy, fragment.texcoord[1].zyzw, c[3];
-MUL R1.xy, R0, c[5].x;
-ADD R2.xy, fragment.texcoord[1].zxzw, c[3];
-ADD R0.zw, fragment.texcoord[1].xyxy, c[3].xyxy;
-MUL R0.zw, R0, c[5].x;
+MUL R0.xy, fragment.texcoord[1].zyzw, c[5].x;
+ADD R1.xy, R0, c[3];
+MUL R2.xy, fragment.texcoord[1].zxzw, c[5].x;
+MUL R0.zw, fragment.texcoord[1].xyxy, c[5].x;
+ADD R0.zw, R0, c[3].xyxy;
 TEX R0.yw, R0.zwzw, texture[2], 2D;
 TEX R1.yw, R1, texture[2], 2D;
 ADD R1.xy, R1.ywzw, -R0.ywzw;
 ABS R1.zw, fragment.texcoord[1].xyxy;
 MAD R1.xy, R1.z, R1, R0.ywzw;
-MUL R2.xy, R2, c[5].x;
+ADD R2.xy, R2, c[3];
 TEX R0.yw, R2, texture[2], 2D;
 ADD R0.xy, R0.ywzw, -R1;
 MAD R1.xy, R1.w, R0, R1;
-ADD R0.zw, fragment.texcoord[1].xyzy, c[2].xyxy;
-MUL R2.xy, R0.zwzw, c[4].x;
-ADD R0.xy, fragment.texcoord[1], c[2];
-MUL R0.xy, R0, c[4].x;
+MUL R0.zw, fragment.texcoord[1].xyzy, c[4].x;
+ADD R2.xy, R0.zwzw, c[2];
+MUL R0.xy, fragment.texcoord[1], c[4].x;
+ADD R0.xy, R0, c[2];
 MAD R1.xy, R1.yxzw, c[7].y, -c[7].x;
 TEX R0, R0, texture[1], 2D;
 TEX R2, R2, texture[1], 2D;
@@ -6924,8 +6922,8 @@ MAD R2, R1.z, R2, R0;
 MUL R0.zw, R1.xyxy, R1.xyxy;
 ADD_SAT R0.z, R0, R0.w;
 ADD R1.z, -R0, c[7].x;
-ADD R0.xy, fragment.texcoord[1].zxzw, c[2];
-MUL R0.xy, R0, c[4].x;
+MUL R0.xy, fragment.texcoord[1].zxzw, c[4].x;
+ADD R0.xy, R0, c[2];
 TEX R0, R0, texture[1], 2D;
 ADD R0, R0, -R2;
 MAD R0, R1.w, R0, R2;
@@ -6980,24 +6978,24 @@ dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4
-add r0.zw, v1.xyxy, c3.xyxy
-mul r2.xy, r0.zwzw, c5.x
-add r0.xy, v1.zyzw, c3
-mul r0.xy, r0, c5.x
+mul r0.zw, v1.xyxy, c5.x
+add r2.xy, r0.zwzw, c3
+mul r0.xy, v1.zyzw, c5.x
+add r0.xy, r0, c3
 abs r1.zw, v1.xyxy
 texld r2.yw, r2, s2
 texld r0.yw, r0, s2
 add_pp r0.zw, r0.xyyw, -r2.xyyw
-add r1.xy, v1.zxzw, c3
-mul r0.xy, r1, c5.x
+mul r1.xy, v1.zxzw, c5.x
+add r0.xy, r1, c3
 mad_pp r1.xy, r1.z, r0.zwzw, r2.ywzw
 texld r0.yw, r0, s2
 add_pp r0.xy, r0.ywzw, -r1
 mad_pp r1.xy, r1.w, r0, r1
-add r0.zw, v1.xyzy, c2.xyxy
-mul r2.xy, r0.zwzw, c4.x
-add r0.xy, v1, c2
-mul r0.xy, r0, c4.x
+mul r0.zw, v1.xyzy, c4.x
+add r2.xy, r0.zwzw, c2
+mul r0.xy, v1, c4.x
+add r0.xy, r0, c2
 mad_pp r1.xy, r1.yxzw, c7.y, c7.z
 texld r0, r0, s1
 texld r2, r2, s1
@@ -7006,8 +7004,8 @@ mad_pp r2, r1.z, r2, r0
 mul_pp r0.zw, r1.xyxy, r1.xyxy
 add_pp_sat r0.z, r0, r0.w
 add_pp r1.z, -r0, c7.x
-add r0.xy, v1.zxzw, c2
-mul r0.xy, r0, c4.x
+mul r0.xy, v1.zxzw, c4.x
+add r0.xy, r0, c2
 texld r0, r0, s1
 add_pp r0, r0, -r2
 mad_pp r0, r1.w, r0, r2
@@ -7050,12 +7048,12 @@ SetTexture 0 [_MainTex] CUBE 1
 SetTexture 1 [_DetailTex] 2D 2
 SetTexture 2 [_BumpMap] 2D 3
 SetTexture 3 [_ShadowMapTexture] 2D 0
-// 43 instructions, 4 temp regs, 0 temp arrays:
-// ALU 34 float, 0 int, 0 uint
+// 39 instructions, 4 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 8 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedacmnjfopbhdjjjaeehpndgdbkgbindocabaaaaaajmahaaaaadaaaaaa
+eefiecedgmgjcclpkhdmedohojgdoibiheimlnlbabaaaaaaemahaaaaadaaaaaa
 cmaaaaaaoeaaaaaabiabaaaaejfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaadadaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -7063,59 +7061,57 @@ ahahaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaakeaaaaaa
 adaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahahaaaakeaaaaaaaeaaaaaaaaaaaaaa
 adaaaaaaafaaaaaaapalaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefchmagaaaa
-eaaaaaaajpabaaaafjaaaaaeegiocaaaaaaaaaaaamaaaaaafkaaaaadaagabaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefccmagaaaa
+eaaaaaaailabaaaafjaaaaaeegiocaaaaaaaaaaaamaaaaaafkaaaaadaagabaaa
 aaaaaaaafkaaaaadaagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafkaaaaad
 aagabaaaadaaaaaafidaaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
 abaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaafibiaaaeaahabaaa
 adaaaaaaffffaaaagcbaaaaddcbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
 gcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaadlcbabaaa
-afaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaaaaaaaaaipcaabaaa
-aaaaaaaaggbcbaaaacaaaaaaegiecaaaaaaaaaaaajaaaaaadiaaaaaipcaabaaa
-aaaaaaaaegaobaaaaaaaaaaaagiacaaaaaaaaaaaalaaaaaaefaaaaajpcaabaaa
-abaaaaaaegaabaaaaaaaaaaaeghobaaaacaaaaaaaagabaaaadaaaaaaefaaaaaj
-pcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaaacaaaaaaaagabaaaadaaaaaa
-aaaaaaaifcaabaaaaaaaaaaaagbbbaaaacaaaaaaagibcaaaaaaaaaaaajaaaaaa
-diaaaaaifcaabaaaaaaaaaaaagacbaaaaaaaaaaaagiacaaaaaaaaaaaalaaaaaa
-efaaaaajpcaabaaaacaaaaaaigaabaaaaaaaaaaaeghobaaaacaaaaaaaagabaaa
-adaaaaaaaaaaaaaifcaabaaaaaaaaaaapganbaaaabaaaaaapganbaiaebaaaaaa
-acaaaaaadcaaaaakfcaabaaaaaaaaaaaagbabaiaibaaaaaaacaaaaaaagacbaaa
-aaaaaaaapganbaaaacaaaaaaaaaaaaaikcaabaaaaaaaaaaaagaibaiaebaaaaaa
-aaaaaaaapgahbaaaaaaaaaaadcaaaaakdcaabaaaaaaaaaaafgbfbaiaibaaaaaa
-acaaaaaangafbaaaaaaaaaaaigaabaaaaaaaaaaadcaaaaapdcaabaaaaaaaaaaa
-egaabaaaaaaaaaaaaceaaaaaaaaaaaeaaaaaaaeaaaaaaaaaaaaaaaaaaceaaaaa
-aaaaialpaaaaialpaaaaaaaaaaaaaaaaapaaaaahicaabaaaaaaaaaaaegaabaaa
-aaaaaaaaegaabaaaaaaaaaaaddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaaaaiadpaaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
-abeaaaaaaaaaiadpelaaaaafecaabaaaaaaaaaaadkaabaaaaaaaaaaaaaaaaaal
-hcaabaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
-aaaaiadpaaaaaaaadcaaaaajhcaabaaaaaaaaaaaagbabaaaabaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaaaaaaaaa
-egbcbaaaadaaaaaaaoaaaaahgcaabaaaaaaaaaaaagbbbaaaafaaaaaapgbpbaaa
-afaaaaaaefaaaaajpcaabaaaabaaaaaajgafbaaaaaaaaaaaeghobaaaadaaaaaa
-aagabaaaaaaaaaaaapaaaaahbcaabaaaaaaaaaaaagaabaaaaaaaaaaaagaabaaa
-abaaaaaadccaaaalhcaabaaaaaaaaaaaegiccaaaaaaaaaaaabaaaaaaagaabaaa
-aaaaaaaafgifcaaaaaaaaaaaalaaaaaaaaaaaaaipcaabaaaabaaaaaaggbcbaaa
-acaaaaaaegiecaaaaaaaaaaaaiaaaaaadiaaaaaipcaabaaaabaaaaaaegaobaaa
-abaaaaaakgikcaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaacaaaaaaegaabaaa
-abaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaaefaaaaajpcaabaaaabaaaaaa
-ogakbaaaabaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaaaaaaaaaidcaabaaa
-adaaaaaaegbabaaaacaaaaaaegiacaaaaaaaaaaaaiaaaaaadiaaaaaidcaabaaa
-adaaaaaaegaabaaaadaaaaaakgikcaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaa
-adaaaaaaegaabaaaadaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaaaaaaaaai
-pcaabaaaacaaaaaaegaobaaaacaaaaaaegaobaiaebaaaaaaadaaaaaadcaaaaak
-pcaabaaaacaaaaaaagbabaiaibaaaaaaacaaaaaaegaobaaaacaaaaaaegaobaaa
-adaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaa
-acaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaacaaaaaaegaobaaa
-abaaaaaaegaobaaaacaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaa
-abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpdcaaaaajpcaabaaa
-abaaaaaaagbabaaaabaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaaefaaaaaj
-pcaabaaaacaaaaaaegbcbaaaacaaaaaaeghobaaaaaaaaaaaaagabaaaabaaaaaa
-diaaaaahpcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaaaacaaaaaadiaaaaai
-hcaabaaaabaaaaaaegacbaaaabaaaaaaegiccaaaaaaaaaaaahaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaabaaaaaabkbabaaaabaaaaaadiaaaaahhcaabaaa
-acaaaaaaegacbaaaabaaaaaaegbcbaaaaeaaaaaadcaaaaajhccabaaaaaaaaaaa
-egacbaaaabaaaaaaegacbaaaaaaaaaaaegacbaaaacaaaaaadoaaaaab"
+afaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaadcaaaaalpcaabaaa
+aaaaaaaaggbcbaaaacaaaaaaagiacaaaaaaaaaaaalaaaaaaegiecaaaaaaaaaaa
+ajaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaaaaaaaaaeghobaaaacaaaaaa
+aagabaaaadaaaaaaefaaaaajpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
+acaaaaaaaagabaaaadaaaaaadcaaaaalfcaabaaaaaaaaaaaagbbbaaaacaaaaaa
+agiacaaaaaaaaaaaalaaaaaaagibcaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaa
+acaaaaaaigaabaaaaaaaaaaaeghobaaaacaaaaaaaagabaaaadaaaaaaaaaaaaai
+fcaabaaaaaaaaaaapganbaaaabaaaaaapganbaiaebaaaaaaacaaaaaadcaaaaak
+fcaabaaaaaaaaaaaagbabaiaibaaaaaaacaaaaaaagacbaaaaaaaaaaapganbaaa
+acaaaaaaaaaaaaaikcaabaaaaaaaaaaaagaibaiaebaaaaaaaaaaaaaapgahbaaa
+aaaaaaaadcaaaaakdcaabaaaaaaaaaaafgbfbaiaibaaaaaaacaaaaaangafbaaa
+aaaaaaaaigaabaaaaaaaaaaadcaaaaapdcaabaaaaaaaaaaaegaabaaaaaaaaaaa
+aceaaaaaaaaaaaeaaaaaaaeaaaaaaaaaaaaaaaaaaceaaaaaaaaaialpaaaaialp
+aaaaaaaaaaaaaaaaapaaaaahicaabaaaaaaaaaaaegaabaaaaaaaaaaaegaabaaa
+aaaaaaaaddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
+aaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
+elaaaaafecaabaaaaaaaaaaadkaabaaaaaaaaaaaaaaaaaalhcaabaaaabaaaaaa
+egacbaiaebaaaaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaiadpaaaaaaaa
+dcaaaaajhcaabaaaaaaaaaaaagbabaaaabaaaaaaegacbaaaabaaaaaaegacbaaa
+aaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaaaaaaaaaegbcbaaaadaaaaaa
+aoaaaaahgcaabaaaaaaaaaaaagbbbaaaafaaaaaapgbpbaaaafaaaaaaefaaaaaj
+pcaabaaaabaaaaaajgafbaaaaaaaaaaaeghobaaaadaaaaaaaagabaaaaaaaaaaa
+apaaaaahbcaabaaaaaaaaaaaagaabaaaaaaaaaaaagaabaaaabaaaaaadccaaaal
+hcaabaaaaaaaaaaaegiccaaaaaaaaaaaabaaaaaaagaabaaaaaaaaaaafgifcaaa
+aaaaaaaaalaaaaaadcaaaaalpcaabaaaabaaaaaaggbcbaaaacaaaaaakgikcaaa
+aaaaaaaaakaaaaaaegiecaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaaacaaaaaa
+egaabaaaabaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaadcaaaaal
+dcaabaaaadaaaaaaegbabaaaacaaaaaakgikcaaaaaaaaaaaakaaaaaaegiacaaa
+aaaaaaaaaiaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaadaaaaaaeghobaaa
+abaaaaaaaagabaaaacaaaaaaaaaaaaaipcaabaaaacaaaaaaegaobaaaacaaaaaa
+egaobaiaebaaaaaaadaaaaaadcaaaaakpcaabaaaacaaaaaaagbabaiaibaaaaaa
+acaaaaaaegaobaaaacaaaaaaegaobaaaadaaaaaaaaaaaaaipcaabaaaabaaaaaa
+egaobaaaabaaaaaaegaobaiaebaaaaaaacaaaaaadcaaaaakpcaabaaaabaaaaaa
+fgbfbaiaibaaaaaaacaaaaaaegaobaaaabaaaaaaegaobaaaacaaaaaaaaaaaaal
+pcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpdcaaaaajpcaabaaaabaaaaaaagbabaaaabaaaaaaegaobaaa
+acaaaaaaegaobaaaabaaaaaaefaaaaajpcaabaaaacaaaaaaegbcbaaaacaaaaaa
+eghobaaaaaaaaaaaaagabaaaabaaaaaadiaaaaahpcaabaaaabaaaaaaegaobaaa
+abaaaaaaegaobaaaacaaaaaadiaaaaaihcaabaaaabaaaaaaegacbaaaabaaaaaa
+egiccaaaaaaaaaaaahaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaabaaaaaa
+bkbabaaaabaaaaaadiaaaaahhcaabaaaacaaaaaaegacbaaaabaaaaaaegbcbaaa
+aeaaaaaadcaaaaajhccabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaa
+egacbaaaacaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {

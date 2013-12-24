@@ -29,7 +29,7 @@ namespace CityLights
                 {
                     float radius = float.Parse(node.GetValue("radius"));
 
-                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false, true);
+                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false, Utils.IsCubicMapped);
                     TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false, false);
 
                     AddOverlay(mTexture, dTexture, radius);
@@ -42,7 +42,16 @@ namespace CityLights
         private void AddOverlay(TextureSet mTexture, TextureSet dTexture, float radius)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("CityLights.CompiledCityLightsShader.txt"));
+            StreamReader shaderStreamReader;
+            string[] resources = assembly.GetManifestResourceNames();
+            if (Utils.IsCubicMapped)
+            {
+                shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("CityLights.Shaders.Compiled-CubicCityLights.shader"));
+            }
+            else
+            {
+                shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("CityLights.Shaders.Compiled-SphereCityLights.shader"));
+            }
             Log("read stream");
             Material lightMaterial = new Material(shaderStreamReader.ReadToEnd());
 
@@ -50,7 +59,8 @@ namespace CityLights
             lightMaterial.SetTexture("_DetailTex", dTexture.Texture);
             lightMaterial.SetFloat("_DetailScale", dTexture.Scale);
             lightMaterial.SetVector("_DetailOffset", dTexture.Offset);
-            Overlay.GeneratePlanetOverlay("Kerbin", radius, lightMaterial, mTexture.StartOffset, Utils.OVER_LAYER);
+            
+            Overlay.GeneratePlanetOverlay("Kerbin", radius, lightMaterial, mTexture.StartOffset, Utils.OVER_LAYER, true);
         }
 
         public static void Log(String message)

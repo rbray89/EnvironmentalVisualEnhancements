@@ -51,12 +51,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CompiledCloudParticleShader.txt" />
-    <Content Include="CloudParticleShader.txt" />
-    <Content Include="CloudShader.txt" />
-    <Content Include="undersideCloudShader.txt" />
-    <EmbeddedResource Include="CompiledUndersideCloudShader.txt" />
-    <EmbeddedResource Include="CompiledCloudShader.txt" />
+    <EmbeddedResource Include="Shaders\Compiled-SphereCloud.shader" />
+    <EmbeddedResource Include="Shaders\Compiled-SphereUnderCloud.shader" />
+    <None Include="Shaders\SphereCloud.shader" />
+    <None Include="Shaders\CloudParticle.shader" />
+    <None Include="Shaders\CubicCloud.shader" />
+    <None Include="Shaders\CubicUnderCloud.shader" />
+    <EmbeddedResource Include="Shaders\Compiled-CubicUnderCloud.shader" />
+    <EmbeddedResource Include="Shaders\Compiled-CubicCloud.shader" />
+    <None Include="Shaders\SphereUnderCloud.shader" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommonUtils\CommonUtils.csproj">

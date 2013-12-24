@@ -107,12 +107,27 @@ namespace Clouds
             {
                 Utils.Log("Initializing Textures");
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.CompiledCloudShader.txt"));
+                StreamReader shaderStreamReader;
+                if(Utils.IsCubicMapped)
+                {
+                    shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-CubicCloud.shader"));
+                }
+                else
+                {
+                    shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-SphereCloud.shader"));
+                }
                 Utils.Log("reading stream...");
                 String shaderTxt = shaderStreamReader.ReadToEnd();
                 GlobalCloudShader = new Material(shaderTxt).shader;
 
-                shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.CompiledUndersideCloudShader.txt"));
+                if (Utils.IsCubicMapped)
+                {
+                    shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-CubicUnderCloud.shader"));
+                }
+                else
+                {
+                    shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-SphereUnderCloud.shader"));
+                }
                 Utils.Log("reading stream...");
                 shaderTxt = shaderStreamReader.ReadToEnd();
                 GlobalUndersideCloudShader = new Material(shaderTxt).shader;
@@ -125,8 +140,8 @@ namespace Clouds
             Log("Cloud Material initialized");
             UpdateTextures();
             Log("Generating Overlay...");
-            CloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, CloudMaterial, this.mainTexture.StartOffset, Utils.OVER_LAYER, true);
-            UndersideCloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, UndersideCloudMaterial, this.mainTexture.StartOffset, Utils.UNDER_LAYER, true);
+            CloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, CloudMaterial, this.mainTexture.StartOffset, Utils.OVER_LAYER);
+            UndersideCloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, UndersideCloudMaterial, this.mainTexture.StartOffset, Utils.UNDER_LAYER);
             Log("Textures initialized");
         }
 

@@ -81,7 +81,7 @@ namespace Clouds
                 {
                     float radius = float.Parse(node.GetValue("radius"));
 
-                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false, true);
+                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false, Utils.IsCubicMapped);
                     TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false, false);
                     TextureSet bTexture = new TextureSet(node.GetNode("bump_texture"), true, false);
                     ConfigNode floatsConfig = node.GetNode("shader_floats");
@@ -286,7 +286,7 @@ namespace Clouds
                 cloudParticleRenderer.maxParticleSize = 50;
                 
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.CompiledCloudParticleShader.txt"));
+                StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-CloudParticle.shader"));
                 Utils.Log("reading stream...");
 
                 Material cloudMaterial = new Material(shaderStreamReader.ReadToEnd());

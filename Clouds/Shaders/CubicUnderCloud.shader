@@ -1,4 +1,4 @@
-﻿Shader "Sphere/UndersideCloudShader" {
+﻿Shader "Cubic/UndersideCloud" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_MainTex ("Main (RGB)", CUBE) = "" {}

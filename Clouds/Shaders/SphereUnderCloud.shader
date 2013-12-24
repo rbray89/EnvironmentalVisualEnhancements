@@ -1,24 +1,24 @@
-﻿Shader "Sphere/CloudShader" {
+﻿Shader "Sphere/UndersideCloud" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
-		_MainTex ("Main (RGB)", CUBE) = "" {}
+		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
 		_BumpMap ("Bumpmap", 2D) = "bump" {}
-		_FalloffPow ("Falloff Power", Range(0,3)) = 2
-		_FalloffScale ("Falloff Scale", Range(0,20)) = 3
+		_FalloffPow ("Falloff Power", Range(0,3)) = 1.8
+		_FalloffScale ("Falloff Scale", Range(0,20)) = 10
 		_DetailScale ("Detail Scale", Range(0,1000)) = 100
 		_DetailOffset ("Detail Offset", Color) = (0,0,0,0)
 		_BumpScale ("Bump Scale", Range(0,1000)) = 50
 		_BumpOffset ("Bump offset", Color) = (0,0,0,0)
-		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
-		_MinLight ("Minimum Light", Range(0,1)) = .1
+		_DetailDist ("Detail Distance", Range(0,1)) = 0.025
+		_MinLight ("Minimum Light", Range(0,1)) = .18
 	}
 
 SubShader {
 		Tags {  "Queue"="Transparent"
 	   			"RenderMode"="Transparent" }
 		Lighting On
-		Cull Back
+		Cull Front
 	    ZWrite Off
 		
 		Blend SrcAlpha OneMinusSrcAlpha
@@ -26,8 +26,12 @@ SubShader {
 		CGPROGRAM
 		#pragma surface surf SimpleLambert vertex:vert noforwardadd novertexlights nolightmap nodirlightmap
 		#pragma target 3.0
+		#define PI 3.1415926535897932384626
+		#define INV_PI (1.0/PI)
+		#define TWOPI (2.0*PI) 
+		#define INV_2PI (1.0/TWOPI)
 		
-		samplerCUBE _MainTex;
+		sampler2D _MainTex;
 		sampler2D _DetailTex;
 		sampler2D _BumpMap;
 		fixed4 _Color;
@@ -56,18 +60,24 @@ SubShader {
 		};
 
 		void vert (inout appdata_full v, out Input o) {
-		   UNITY_INITIALIZE_OUTPUT(Input, o);
+			UNITY_INITIALIZE_OUTPUT(Input, o);
+		   float3 normalDir = normalize(mul(_Object2World, v.normal.xyzz).xyz);
+		   float3 modelCam = _WorldSpaceCameraPos;	   
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
+		   float3 viewVect = normalize( vertexPos - modelCam);
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
-		   float diff = _DetailDist*distance(vertexPos,_WorldSpaceCameraPos);
-	   	   o.viewDist.x = diff;
-	   	   o.viewDist.y = saturate((distance(origin,_WorldSpaceCameraPos)-1.0005*distance(origin, vertexPos)));
+		   float diff = distance(origin, vertexPos) - (distance(origin,_WorldSpaceCameraPos));
+	   	   o.viewDist.x = saturate(_DetailDist*distance(vertexPos,_WorldSpaceCameraPos));
+	   	   o.viewDist.y = saturate(diff) * saturate(saturate(.085*distance(vertexPos,_WorldSpaceCameraPos))+ saturate(pow(.8*_FalloffScale*dot(normalDir, -viewVect),_FalloffPow)));
 	   	   o.localPos = normalize(v.vertex.xyz);
 	 	}
-		
+
 		void surf (Input IN, inout SurfaceOutput o) {
-			half4 main = texCUBE(_MainTex, IN.localPos);
 			float3 pos = IN.localPos;
+		 	float2 uv;
+		 	uv.x = .5 + (INV_2PI*atan2(pos.z, pos.x));
+		 	uv.y = INV_PI*acos(-pos.y);
+		    half4 main = tex2D(_MainTex, uv)*_Color;
 			half4 detailX = tex2D (_DetailTex, pos.zy*_DetailScale + _DetailOffset.xy);
 			half4 detailY = tex2D (_DetailTex, pos.zx*_DetailScale + _DetailOffset.xy);
 			half4 detailZ = tex2D (_DetailTex, pos.xy*_DetailScale + _DetailOffset.xy);
@@ -79,14 +89,12 @@ SubShader {
 			detail = lerp(detail, detailY, pos.y);
 			half4 normal = lerp(normalZ, normalX, pos.x);
 			normal = lerp(normal, normalY, pos.y);
-		
-			half detailLevel = saturate(2*IN.viewDist.x);
+			
+			half detailLevel = IN.viewDist.x;
 			half3 albedo = main.rgb * lerp(detail.rgb, 1, detailLevel);
-			o.Normal = float3(0,0,1);
-			o.Albedo = albedo * _Color.rgb;
-			half avg = main.a * lerp(detail.a, 1, detailLevel);
-			half rim = saturate(dot(normalize(IN.viewDir), o.Normal));
-          	o.Alpha = avg * IN.viewDist.y * saturate((1-IN.viewDist.y) +(saturate(pow(_FalloffScale*rim,_FalloffPow))));
+			o.Albedo = albedo * _Color;
+			half avg = lerp(detail.a, 1, detailLevel)*main.a;
+          	o.Alpha = avg * IN.viewDist.y;
           	o.Normal = lerp(UnpackNormal (normal),half3(0,0,1),detailLevel);
 		}
 		ENDCG

@@ -50,8 +50,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CityLightsShader.txt" />
-    <EmbeddedResource Include="CompiledCityLightsShader.txt" />
+    <EmbeddedResource Include="Shaders\Compiled-SphereCityLights.shader" />
+    <None Include="Shaders\CubicCityLights.shader" />
+    <EmbeddedResource Include="Shaders\Compiled-CubicCityLights.shader" />
+    <None Include="Shaders\SphereCityLights.shader" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommonUtils\CommonUtils.csproj">
