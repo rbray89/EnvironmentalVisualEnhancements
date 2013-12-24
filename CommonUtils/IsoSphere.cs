@@ -59,7 +59,7 @@ namespace CommonUtils
             return i;
         }
 
-        public static void Create(GameObject gameObject, float radius = 1.00f)
+        public static void Create(GameObject gameObject, float radius = 1.004f)
         {
             MeshFilter filter = gameObject.AddComponent<MeshFilter>();
             Mesh mesh = filter.mesh;
@@ -68,7 +68,7 @@ namespace CommonUtils
             List<Vector3> vertList = new List<Vector3>();
             Dictionary<long, int> middlePointIndexCache = new Dictionary<long, int>();
 
-            int recursionLevel = 4;
+            int recursionLevel = 3;
             
             // create 12 vertices of a icosahedron
             float t = (1f + Mathf.Sqrt(5f)) / 2f;
