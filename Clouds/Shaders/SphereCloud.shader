@@ -25,6 +25,7 @@ SubShader {
 		
 		CGPROGRAM
 		#pragma surface surf SimpleLambert vertex:vert noforwardadd novertexlights nolightmap nodirlightmap
+		#pragma glsl
 		#pragma target 3.0
 		#define PI 3.1415926535897932384626
 		#define INV_PI (1.0/PI)
@@ -69,12 +70,26 @@ SubShader {
 	   	   o.localPos = normalize(v.vertex.xyz);
 	 	}
 	 		
+		float4 Derivatives( float3 pos )  
+		{  
+		    float lat = INV_2PI*atan2( pos.y, pos.x );  
+		    float lon = INV_PI*acos( pos.z );  
+		    float2 latLong = float2( lat, lon );  
+		    float latDdx = INV_2PI*length( ddx( pos.xy ) );  
+		    float latDdy = INV_2PI*length( ddy( pos.xy ) );  
+		    float longDdx = ddx( lon );  
+		    float longDdy = ddy( lon );  
+		 
+		    return float4( latDdx , longDdx , latDdy, longDdy );  
+		} 
+	 		
 		void surf (Input IN, inout SurfaceOutput o) {
 			float3 pos = IN.localPos;
 		 	float2 uv;
 		 	uv.x = .5 + (INV_2PI*atan2(pos.z, pos.x));
 		 	uv.y = INV_PI*acos(-pos.y);
-		    half4 main = tex2D(_MainTex, uv)*_Color;
+		 	float4 uvdd = Derivatives(pos);
+		    half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw)*_Color;
 			half4 detailX = tex2D (_DetailTex, pos.zy*_DetailScale + _DetailOffset.xy);
 			half4 detailY = tex2D (_DetailTex, pos.zx*_DetailScale + _DetailOffset.xy);
 			half4 detailZ = tex2D (_DetailTex, pos.xy*_DetailScale + _DetailOffset.xy);
@@ -90,7 +105,7 @@ SubShader {
 			half detailLevel = saturate(2*IN.viewDist.x);
 			half3 albedo = main.rgb * lerp(detail.rgb, 1, detailLevel);
 			o.Normal = float3(0,0,1);
-			o.Albedo = albedo * _Color.rgb;
+			o.Albedo = albedo;
 			half avg = main.a * lerp(detail.a, 1, detailLevel);
 			half rim = saturate(dot(normalize(IN.viewDir), o.Normal));
           	o.Alpha = lerp(0, avg, IN.viewDist.y * saturate((1-IN.viewDist.y) +(saturate(pow(_FalloffScale*rim,_FalloffPow)))));

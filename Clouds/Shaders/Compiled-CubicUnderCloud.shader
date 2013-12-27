@@ -422,7 +422,7 @@ void main ()
   mediump vec4 detailX_13;
   mediump vec4 main_14;
   lowp vec4 tmpvar_15;
-  tmpvar_15 = textureCube (_MainTex, xlv_TEXCOORD1);
+  tmpvar_15 = (textureCube (_MainTex, xlv_TEXCOORD1) * _Color);
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
@@ -472,7 +472,7 @@ void main ()
   tmpvar_33 = xlv_TEXCOORD0.x;
   detailLevel_5 = tmpvar_33;
   mediump vec3 tmpvar_34;
-  tmpvar_34 = ((main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5))) * _Color.xyz);
+  tmpvar_34 = (main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5)));
   tmpvar_2 = tmpvar_34;
   mediump float tmpvar_35;
   tmpvar_35 = (mix (detail_7.w, 1.0, detailLevel_5) * main_14.w);
@@ -617,7 +617,7 @@ void main ()
   mediump vec4 detailX_13;
   mediump vec4 main_14;
   lowp vec4 tmpvar_15;
-  tmpvar_15 = textureCube (_MainTex, xlv_TEXCOORD1);
+  tmpvar_15 = (textureCube (_MainTex, xlv_TEXCOORD1) * _Color);
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
@@ -667,7 +667,7 @@ void main ()
   tmpvar_33 = xlv_TEXCOORD0.x;
   detailLevel_5 = tmpvar_33;
   mediump vec3 tmpvar_34;
-  tmpvar_34 = ((main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5))) * _Color.xyz);
+  tmpvar_34 = (main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5)));
   tmpvar_2 = tmpvar_34;
   mediump float tmpvar_35;
   tmpvar_35 = (mix (detail_7.w, 1.0, detailLevel_5) * main_14.w);
@@ -1185,7 +1185,7 @@ lowp vec3 UnpackNormal( in lowp vec4 packednormal ) {
 }
 #line 431
 void surf( in Input IN, inout SurfaceOutput o ) {
-    mediump vec4 main = texture( _MainTex, IN.localPos);
+    mediump vec4 main = (texture( _MainTex, IN.localPos) * _Color);
     highp vec3 pos = IN.localPos;
     #line 435
     mediump vec4 detailX = texture( _DetailTex, ((pos.zy * _DetailScale) + _DetailOffset.xy));
@@ -1204,7 +1204,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump float detailLevel = IN.viewDist.x;
     #line 447
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0), vec3( detailLevel)));
-    o.Albedo = (albedo * vec3( _Color));
+    o.Albedo = albedo;
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
     o.Alpha = mix( 0.0, avg, IN.viewDist.y);
     #line 451
@@ -1669,7 +1669,7 @@ void main ()
   mediump vec4 detailX_13;
   mediump vec4 main_14;
   lowp vec4 tmpvar_15;
-  tmpvar_15 = textureCube (_MainTex, xlv_TEXCOORD1);
+  tmpvar_15 = (textureCube (_MainTex, xlv_TEXCOORD1) * _Color);
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
@@ -1719,7 +1719,7 @@ void main ()
   tmpvar_33 = xlv_TEXCOORD0.x;
   detailLevel_5 = tmpvar_33;
   mediump vec3 tmpvar_34;
-  tmpvar_34 = ((main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5))) * _Color.xyz);
+  tmpvar_34 = (main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5)));
   tmpvar_2 = tmpvar_34;
   mediump float tmpvar_35;
   tmpvar_35 = (mix (detail_7.w, 1.0, detailLevel_5) * main_14.w);
@@ -1893,7 +1893,7 @@ void main ()
   mediump vec4 detailX_13;
   mediump vec4 main_14;
   lowp vec4 tmpvar_15;
-  tmpvar_15 = textureCube (_MainTex, xlv_TEXCOORD1);
+  tmpvar_15 = (textureCube (_MainTex, xlv_TEXCOORD1) * _Color);
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
@@ -1943,7 +1943,7 @@ void main ()
   tmpvar_33 = xlv_TEXCOORD0.x;
   detailLevel_5 = tmpvar_33;
   mediump vec3 tmpvar_34;
-  tmpvar_34 = ((main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5))) * _Color.xyz);
+  tmpvar_34 = (main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5)));
   tmpvar_2 = tmpvar_34;
   mediump float tmpvar_35;
   tmpvar_35 = (mix (detail_7.w, 1.0, detailLevel_5) * main_14.w);
@@ -2475,7 +2475,7 @@ lowp vec3 UnpackNormal( in lowp vec4 packednormal ) {
 }
 #line 439
 void surf( in Input IN, inout SurfaceOutput o ) {
-    mediump vec4 main = texture( _MainTex, IN.localPos);
+    mediump vec4 main = (texture( _MainTex, IN.localPos) * _Color);
     highp vec3 pos = IN.localPos;
     #line 443
     mediump vec4 detailX = texture( _DetailTex, ((pos.zy * _DetailScale) + _DetailOffset.xy));
@@ -2494,7 +2494,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump float detailLevel = IN.viewDist.x;
     #line 455
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0), vec3( detailLevel)));
-    o.Albedo = (albedo * vec3( _Color));
+    o.Albedo = albedo;
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
     o.Alpha = mix( 0.0, avg, IN.viewDist.y);
     #line 459
@@ -2941,7 +2941,7 @@ void main ()
   mediump vec4 detailX_13;
   mediump vec4 main_14;
   lowp vec4 tmpvar_15;
-  tmpvar_15 = textureCube (_MainTex, xlv_TEXCOORD1);
+  tmpvar_15 = (textureCube (_MainTex, xlv_TEXCOORD1) * _Color);
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
@@ -2991,7 +2991,7 @@ void main ()
   tmpvar_33 = xlv_TEXCOORD0.x;
   detailLevel_5 = tmpvar_33;
   mediump vec3 tmpvar_34;
-  tmpvar_34 = ((main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5))) * _Color.xyz);
+  tmpvar_34 = (main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5)));
   tmpvar_2 = tmpvar_34;
   mediump float tmpvar_35;
   tmpvar_35 = (mix (detail_7.w, 1.0, detailLevel_5) * main_14.w);
@@ -3136,7 +3136,7 @@ void main ()
   mediump vec4 detailX_13;
   mediump vec4 main_14;
   lowp vec4 tmpvar_15;
-  tmpvar_15 = textureCube (_MainTex, xlv_TEXCOORD1);
+  tmpvar_15 = (textureCube (_MainTex, xlv_TEXCOORD1) * _Color);
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
@@ -3186,7 +3186,7 @@ void main ()
   tmpvar_33 = xlv_TEXCOORD0.x;
   detailLevel_5 = tmpvar_33;
   mediump vec3 tmpvar_34;
-  tmpvar_34 = ((main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5))) * _Color.xyz);
+  tmpvar_34 = (main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5)));
   tmpvar_2 = tmpvar_34;
   mediump float tmpvar_35;
   tmpvar_35 = (mix (detail_7.w, 1.0, detailLevel_5) * main_14.w);
@@ -3704,7 +3704,7 @@ lowp vec3 UnpackNormal( in lowp vec4 packednormal ) {
 }
 #line 431
 void surf( in Input IN, inout SurfaceOutput o ) {
-    mediump vec4 main = texture( _MainTex, IN.localPos);
+    mediump vec4 main = (texture( _MainTex, IN.localPos) * _Color);
     highp vec3 pos = IN.localPos;
     #line 435
     mediump vec4 detailX = texture( _DetailTex, ((pos.zy * _DetailScale) + _DetailOffset.xy));
@@ -3723,7 +3723,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump float detailLevel = IN.viewDist.x;
     #line 447
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0), vec3( detailLevel)));
-    o.Albedo = (albedo * vec3( _Color));
+    o.Albedo = albedo;
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
     o.Alpha = mix( 0.0, avg, IN.viewDist.y);
     #line 451
@@ -4188,7 +4188,7 @@ void main ()
   mediump vec4 detailX_13;
   mediump vec4 main_14;
   lowp vec4 tmpvar_15;
-  tmpvar_15 = textureCube (_MainTex, xlv_TEXCOORD1);
+  tmpvar_15 = (textureCube (_MainTex, xlv_TEXCOORD1) * _Color);
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
@@ -4238,7 +4238,7 @@ void main ()
   tmpvar_33 = xlv_TEXCOORD0.x;
   detailLevel_5 = tmpvar_33;
   mediump vec3 tmpvar_34;
-  tmpvar_34 = ((main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5))) * _Color.xyz);
+  tmpvar_34 = (main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5)));
   tmpvar_2 = tmpvar_34;
   mediump float tmpvar_35;
   tmpvar_35 = (mix (detail_7.w, 1.0, detailLevel_5) * main_14.w);
@@ -4412,7 +4412,7 @@ void main ()
   mediump vec4 detailX_13;
   mediump vec4 main_14;
   lowp vec4 tmpvar_15;
-  tmpvar_15 = textureCube (_MainTex, xlv_TEXCOORD1);
+  tmpvar_15 = (textureCube (_MainTex, xlv_TEXCOORD1) * _Color);
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
@@ -4462,7 +4462,7 @@ void main ()
   tmpvar_33 = xlv_TEXCOORD0.x;
   detailLevel_5 = tmpvar_33;
   mediump vec3 tmpvar_34;
-  tmpvar_34 = ((main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5))) * _Color.xyz);
+  tmpvar_34 = (main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5)));
   tmpvar_2 = tmpvar_34;
   mediump float tmpvar_35;
   tmpvar_35 = (mix (detail_7.w, 1.0, detailLevel_5) * main_14.w);
@@ -4994,7 +4994,7 @@ lowp vec3 UnpackNormal( in lowp vec4 packednormal ) {
 }
 #line 439
 void surf( in Input IN, inout SurfaceOutput o ) {
-    mediump vec4 main = texture( _MainTex, IN.localPos);
+    mediump vec4 main = (texture( _MainTex, IN.localPos) * _Color);
     highp vec3 pos = IN.localPos;
     #line 443
     mediump vec4 detailX = texture( _DetailTex, ((pos.zy * _DetailScale) + _DetailOffset.xy));
@@ -5013,7 +5013,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump float detailLevel = IN.viewDist.x;
     #line 455
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0), vec3( detailLevel)));
-    o.Albedo = (albedo * vec3( _Color));
+    o.Albedo = albedo;
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
     o.Alpha = mix( 0.0, avg, IN.viewDist.y);
     #line 459
@@ -5188,7 +5188,7 @@ void main ()
   mediump vec4 detailX_13;
   mediump vec4 main_14;
   lowp vec4 tmpvar_15;
-  tmpvar_15 = textureCube (_MainTex, xlv_TEXCOORD1);
+  tmpvar_15 = (textureCube (_MainTex, xlv_TEXCOORD1) * _Color);
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
@@ -5238,7 +5238,7 @@ void main ()
   tmpvar_33 = xlv_TEXCOORD0.x;
   detailLevel_5 = tmpvar_33;
   mediump vec3 tmpvar_34;
-  tmpvar_34 = ((main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5))) * _Color.xyz);
+  tmpvar_34 = (main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5)));
   tmpvar_2 = tmpvar_34;
   mediump float tmpvar_35;
   tmpvar_35 = (mix (detail_7.w, 1.0, detailLevel_5) * main_14.w);
@@ -5774,7 +5774,7 @@ lowp vec3 UnpackNormal( in lowp vec4 packednormal ) {
 }
 #line 439
 void surf( in Input IN, inout SurfaceOutput o ) {
-    mediump vec4 main = texture( _MainTex, IN.localPos);
+    mediump vec4 main = (texture( _MainTex, IN.localPos) * _Color);
     highp vec3 pos = IN.localPos;
     #line 443
     mediump vec4 detailX = texture( _DetailTex, ((pos.zy * _DetailScale) + _DetailOffset.xy));
@@ -5793,7 +5793,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump float detailLevel = IN.viewDist.x;
     #line 455
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0), vec3( detailLevel)));
-    o.Albedo = (albedo * vec3( _Color));
+    o.Albedo = albedo;
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
     o.Alpha = mix( 0.0, avg, IN.viewDist.y);
     #line 459
@@ -5968,7 +5968,7 @@ void main ()
   mediump vec4 detailX_13;
   mediump vec4 main_14;
   lowp vec4 tmpvar_15;
-  tmpvar_15 = textureCube (_MainTex, xlv_TEXCOORD1);
+  tmpvar_15 = (textureCube (_MainTex, xlv_TEXCOORD1) * _Color);
   main_14 = tmpvar_15;
   lowp vec4 tmpvar_16;
   highp vec2 P_17;
@@ -6018,7 +6018,7 @@ void main ()
   tmpvar_33 = xlv_TEXCOORD0.x;
   detailLevel_5 = tmpvar_33;
   mediump vec3 tmpvar_34;
-  tmpvar_34 = ((main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5))) * _Color.xyz);
+  tmpvar_34 = (main_14.xyz * mix (detail_7.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_5)));
   tmpvar_2 = tmpvar_34;
   mediump float tmpvar_35;
   tmpvar_35 = (mix (detail_7.w, 1.0, detailLevel_5) * main_14.w);
@@ -6554,7 +6554,7 @@ lowp vec3 UnpackNormal( in lowp vec4 packednormal ) {
 }
 #line 439
 void surf( in Input IN, inout SurfaceOutput o ) {
-    mediump vec4 main = texture( _MainTex, IN.localPos);
+    mediump vec4 main = (texture( _MainTex, IN.localPos) * _Color);
     highp vec3 pos = IN.localPos;
     #line 443
     mediump vec4 detailX = texture( _DetailTex, ((pos.zy * _DetailScale) + _DetailOffset.xy));
@@ -6573,7 +6573,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump float detailLevel = IN.viewDist.x;
     #line 455
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0), vec3( detailLevel)));
-    o.Albedo = (albedo * vec3( _Color));
+    o.Albedo = albedo;
     mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
     o.Alpha = mix( 0.0, avg, IN.viewDist.y);
     #line 459
@@ -6691,20 +6691,20 @@ ADD R0, R0, -R1;
 MAD R0, R2.w, R0, R1;
 ADD R1.xyz, -R0, c[7].x;
 MAD R0.xyz, fragment.texcoord[0].x, R1, R0;
-TEX R1, fragment.texcoord[1], texture[0], CUBE;
-MUL R1.xyz, R1, R0;
 ADD R3.xyz, -R2, c[7].zzxw;
 MAD R2.xyz, fragment.texcoord[0].x, R3, R2;
 DP3_SAT R2.x, R2, fragment.texcoord[2];
-MUL R0.xyz, R2.x, c[0];
-MUL R0.xyz, R0, c[7].y;
-ADD R2.x, -R0.w, c[7];
-MAD R0.w, fragment.texcoord[0].x, R2.x, R0;
-MUL R0.w, R1, R0;
-MUL R1.xyz, R1, c[1];
-ADD_SAT R0.xyz, R0, c[6].x;
+TEX R1, fragment.texcoord[1], texture[0], CUBE;
+MUL R1, R1, c[1];
 MUL R0.xyz, R1, R0;
-MAD result.color.xyz, R1, fragment.texcoord[3], R0;
+MUL R2.xyz, R2.x, c[0];
+MUL R1.xyz, R2, c[7].y;
+ADD R2.x, -R0.w, c[7];
+ADD_SAT R1.xyz, R1, c[6].x;
+MAD R0.w, fragment.texcoord[0].x, R2.x, R0;
+MUL R1.xyz, R0, R1;
+MUL R0.w, R1, R0;
+MAD result.color.xyz, R0, fragment.texcoord[3], R1;
 MUL result.color.w, fragment.texcoord[0].y, R0;
 END
 # 50 instructions, 4 R-regs
@@ -6768,20 +6768,20 @@ add_pp r0, r0, -r1
 mad_pp r0, r2.w, r0, r1
 add_pp r1.xyz, -r0, c7.x
 mad_pp r0.xyz, v0.x, r1, r0
-texld r1, v1, s0
-mul_pp r1.xyz, r1, r0
 add_pp r3.xyz, -r2, c7.wwxw
 mad_pp r2.xyz, v0.x, r3, r2
 dp3_pp_sat r2.x, r2, v2
-mul_pp r0.xyz, r2.x, c0
-mul_pp r0.xyz, r0, c7.y
+texld r1, v1, s0
+mul r1, r1, c1
+mul_pp r0.xyz, r1, r0
+mul_pp r2.xyz, r2.x, c0
+mul_pp r1.xyz, r2, c7.y
 add_pp r2.x, -r0.w, c7
+add_sat r1.xyz, r1, c6.x
 mad_pp r0.w, v0.x, r2.x, r0
+mul r1.xyz, r0, r1
 mul_pp r0.w, r1, r0
-mul_pp r1.xyz, r1, c1
-add_sat r0.xyz, r0, c6.x
-mul r0.xyz, r1, r0
-mad_pp oC0.xyz, r1, v3, r0
+mad_pp oC0.xyz, r0, v3, r1
 mul_pp oC0.w, v0.y, r0
 "
 }
@@ -6805,7 +6805,7 @@ SetTexture 2 [_BumpMap] 2D 2
 // TEX 7 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedglpaggjppljmfphocofhhdkopfpcddemabaaaaaammagaaaaadaaaaaa
+eefiecedpllabddgidjbflpobllmdjcobkohjhhhabaaaaaammagaaaaadaaaaaa
 cmaaaaaammaaaaaaaaabaaaaejfdeheojiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaadadaaaaimaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -6854,12 +6854,12 @@ fgbfbaiaibaaaaaaacaaaaaaegaobaaaabaaaaaaegaobaaaacaaaaaaaaaaaaal
 pcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadp
 aaaaiadpaaaaiadpdcaaaaajpcaabaaaabaaaaaaagbabaaaabaaaaaaegaobaaa
 acaaaaaaegaobaaaabaaaaaaefaaaaajpcaabaaaacaaaaaaegbcbaaaacaaaaaa
-eghobaaaaaaaaaaaaagabaaaaaaaaaaadiaaaaahpcaabaaaabaaaaaaegaobaaa
-abaaaaaaegaobaaaacaaaaaadiaaaaaihcaabaaaabaaaaaaegacbaaaabaaaaaa
-egiccaaaaaaaaaaaadaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaabaaaaaa
-bkbabaaaabaaaaaadiaaaaahhcaabaaaacaaaaaaegacbaaaabaaaaaaegbcbaaa
-aeaaaaaadcaaaaajhccabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaa
-egacbaaaacaaaaaadoaaaaab"
+eghobaaaaaaaaaaaaagabaaaaaaaaaaadiaaaaaipcaabaaaacaaaaaaegaobaaa
+acaaaaaaegiocaaaaaaaaaaaadaaaaaadiaaaaahpcaabaaaabaaaaaaegaobaaa
+abaaaaaaegaobaaaacaaaaaadiaaaaahhcaabaaaacaaaaaaegacbaaaabaaaaaa
+egbcbaaaaeaaaaaadcaaaaajhccabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaa
+aaaaaaaaegacbaaaacaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaabaaaaaa
+bkbabaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -6939,16 +6939,16 @@ DP3_SAT R1.y, R2, fragment.texcoord[2];
 TXP R1.x, fragment.texcoord[4], texture[3], 2D;
 MUL R2.x, R1.y, R1;
 TEX R1, fragment.texcoord[1], texture[0], CUBE;
-MUL R1.xyz, R1, R0;
-MUL R0.xyz, R2.x, c[0];
-MUL R0.xyz, R0, c[7].y;
-ADD R2.x, -R0.w, c[7];
-MAD R0.w, fragment.texcoord[0].x, R2.x, R0;
-MUL R0.w, R1, R0;
-MUL R1.xyz, R1, c[1];
-ADD_SAT R0.xyz, R0, c[6].x;
+MUL R1, R1, c[1];
 MUL R0.xyz, R1, R0;
-MAD result.color.xyz, R1, fragment.texcoord[3], R0;
+MUL R2.xyz, R2.x, c[0];
+MUL R1.xyz, R2, c[7].y;
+ADD R2.x, -R0.w, c[7];
+ADD_SAT R1.xyz, R1, c[6].x;
+MAD R0.w, fragment.texcoord[0].x, R2.x, R0;
+MUL R1.xyz, R0, R1;
+MUL R0.w, R1, R0;
+MAD result.color.xyz, R0, fragment.texcoord[3], R1;
 MUL result.color.w, fragment.texcoord[0].y, R0;
 END
 # 52 instructions, 4 R-regs
@@ -7021,16 +7021,16 @@ dp3_pp_sat r1.y, r2, v2
 texldp r1.x, v4, s3
 mul_pp r2.x, r1.y, r1
 texld r1, v1, s0
-mul_pp r1.xyz, r1, r0
-mul_pp r0.xyz, r2.x, c0
-mul_pp r0.xyz, r0, c7.y
+mul r1, r1, c1
+mul_pp r0.xyz, r1, r0
+mul_pp r2.xyz, r2.x, c0
+mul_pp r1.xyz, r2, c7.y
 add_pp r2.x, -r0.w, c7
+add_sat r1.xyz, r1, c6.x
 mad_pp r0.w, v0.x, r2.x, r0
+mul r1.xyz, r0, r1
 mul_pp r0.w, r1, r0
-mul_pp r1.xyz, r1, c1
-add_sat r0.xyz, r0, c6.x
-mul r0.xyz, r1, r0
-mad_pp oC0.xyz, r1, v3, r0
+mad_pp oC0.xyz, r0, v3, r1
 mul_pp oC0.w, v0.y, r0
 "
 }
@@ -7055,7 +7055,7 @@ SetTexture 3 [_ShadowMapTexture] 2D 0
 // TEX 8 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedgmgjcclpkhdmedohojgdoibiheimlnlbabaaaaaaemahaaaaadaaaaaa
+eefieceddomlcaheekilfaljgjonnelibkkgabbcabaaaaaaemahaaaaadaaaaaa
 cmaaaaaaoeaaaaaabiabaaaaejfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaadadaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -7108,12 +7108,12 @@ fgbfbaiaibaaaaaaacaaaaaaegaobaaaabaaaaaaegaobaaaacaaaaaaaaaaaaal
 pcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadp
 aaaaiadpaaaaiadpdcaaaaajpcaabaaaabaaaaaaagbabaaaabaaaaaaegaobaaa
 acaaaaaaegaobaaaabaaaaaaefaaaaajpcaabaaaacaaaaaaegbcbaaaacaaaaaa
-eghobaaaaaaaaaaaaagabaaaabaaaaaadiaaaaahpcaabaaaabaaaaaaegaobaaa
-abaaaaaaegaobaaaacaaaaaadiaaaaaihcaabaaaabaaaaaaegacbaaaabaaaaaa
-egiccaaaaaaaaaaaahaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaabaaaaaa
-bkbabaaaabaaaaaadiaaaaahhcaabaaaacaaaaaaegacbaaaabaaaaaaegbcbaaa
-aeaaaaaadcaaaaajhccabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaa
-egacbaaaacaaaaaadoaaaaab"
+eghobaaaaaaaaaaaaagabaaaabaaaaaadiaaaaaipcaabaaaacaaaaaaegaobaaa
+acaaaaaaegiocaaaaaaaaaaaahaaaaaadiaaaaahpcaabaaaabaaaaaaegaobaaa
+abaaaaaaegaobaaaacaaaaaadiaaaaahhcaabaaaacaaaaaaegacbaaaabaaaaaa
+egbcbaaaaeaaaaaadcaaaaajhccabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaa
+aaaaaaaaegacbaaaacaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaabaaaaaa
+bkbabaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {

@@ -69,7 +69,7 @@ SubShader {
 	 	}
 
 		void surf (Input IN, inout SurfaceOutput o) {
-			half4 main = texCUBE(_MainTex, IN.localPos);
+			half4 main = texCUBE(_MainTex, IN.localPos) * _Color;
 			float3 pos = IN.localPos;
 			half4 detailX = tex2D (_DetailTex, pos.zy*_DetailScale + _DetailOffset.xy);
 			half4 detailY = tex2D (_DetailTex, pos.zx*_DetailScale + _DetailOffset.xy);
@@ -85,7 +85,7 @@ SubShader {
 			
 			half detailLevel = IN.viewDist.x;
 			half3 albedo = main.rgb * lerp(detail.rgb, 1, detailLevel);
-			o.Albedo = albedo * _Color;
+			o.Albedo = albedo;
 			half avg = lerp(detail.a, 1, detailLevel)*main.a;
           	o.Alpha = lerp(0, avg,  IN.viewDist.y);
           	o.Normal = lerp(UnpackNormal (normal),half3(0,0,1),detailLevel);
