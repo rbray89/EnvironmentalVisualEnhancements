@@ -193,6 +193,7 @@ namespace CommonUtils
             else if (!isBump && !isCubic && !TextureDictionary.ContainsKey(textureFile))
             {
                 Texture2D tex = GameDatabase.Instance.GetTexture(textureFile, isBump);
+                AddMipMaps(tex);
                 if (tex.format != TextureFormat.DXT1 && tex.format != TextureFormat.DXT5)
                 {
                     tex.Compress(true);
@@ -202,6 +203,19 @@ namespace CommonUtils
             String textureName = isCubic ? textureFile + "_CUBIC" : textureFile;
             textureName = isBump ? textureName + "_BUMP" : textureName;
             texture = TextureDictionary[textureName];
+        }
+
+        private void AddMipMaps(Texture2D tex)
+        {
+            if (tex.mipmapCount == 1)
+            {
+                Color32[] pixels = tex.GetPixels32();
+                int width = tex.width;
+                int height = tex.height;
+                tex.Resize(width, height, TextureFormat.RGBA32, true);
+                tex.SetPixels32(pixels);
+                tex.Apply(true);
+            }
         }
 
         public TextureSet(ConfigNode textureNode, bool bump, bool cubic)
