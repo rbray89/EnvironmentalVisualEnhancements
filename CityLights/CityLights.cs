@@ -60,7 +60,7 @@ namespace CityLights
             lightMaterial.SetFloat("_DetailScale", dTexture.Scale);
             lightMaterial.SetVector("_DetailOffset", dTexture.Offset);
             
-            Overlay.GeneratePlanetOverlay("Kerbin", radius, lightMaterial, mTexture.StartOffset, Utils.OVER_LAYER, true);
+            Overlay.GeneratePlanetOverlay("Kerbin", radius, lightMaterial, mTexture.StartOffset, true);
         }
 
         public static void Log(String message)

@@ -14,9 +14,7 @@ namespace Clouds
         public static Dictionary<String, List<CloudLayer>> BodyDatabase = new Dictionary<string, List<CloudLayer>>();
         public static List<CloudLayer> Layers = new List<CloudLayer>();
         private static Shader GlobalCloudShader;
-        private static Shader GlobalUndersideCloudShader;
         private Material CloudMaterial;
-        private Material UndersideCloudMaterial;
         private float timeDelta = 0;
         private String body;
         private Color color;
@@ -25,9 +23,7 @@ namespace Clouds
         private TextureSet detailTexture;
         private TextureSet bumpTexture;
         private ShaderFloats shaderFloats;
-        private ShaderFloats undersideShaderFloats;
         private Overlay CloudOverlay;
-        private Overlay UndersideCloudOverlay;
 
         public TextureSet MainTexture { get { return mainTexture; } }
         public TextureSet DetailTexture { get { return detailTexture; } }
@@ -35,7 +31,6 @@ namespace Clouds
         public Color Color { get { return color; } }
         public float Radius { get { return radius; } }
         public ShaderFloats ShaderFloats { get { return shaderFloats; } }
-        public ShaderFloats UndersideShaderFloats { get { return undersideShaderFloats; } }
 
         internal void ApplyGUIUpdate(CloudGUI cloudGUI)
         {
@@ -43,10 +38,7 @@ namespace Clouds
             detailTexture.Clone(cloudGUI.DetailTexture);
             bumpTexture.Clone(cloudGUI.BumpTexture);
             shaderFloats.Clone(cloudGUI.ShaderFloats);
-            undersideShaderFloats.Clone(cloudGUI.UndersideShaderFloats);
             radius = cloudGUI.Radius.RadiusF;
-            CloudOverlay.UpdateRadius(radius);
-            UndersideCloudOverlay.UpdateRadius(radius);
             color = cloudGUI.Color.Color;
             UpdateTextures();
             UpdateFloats();
@@ -73,7 +65,6 @@ namespace Clouds
             this.bumpTexture = bumpTexture;
 
             this.shaderFloats = ShaderFloats;
-            this.undersideShaderFloats = UndersideShaderFloats;
             Init();
         }
 
@@ -82,23 +73,17 @@ namespace Clouds
             CloudMaterial.SetTexture("_MainTex", mainTexture.Texture);
             CloudMaterial.SetColor("_Color", color);
 
-            UndersideCloudMaterial.SetTexture("_MainTex", mainTexture.Texture);
-            UndersideCloudMaterial.SetColor("_Color", color);
 
             if (detailTexture.InUse)
             {
                 CloudMaterial.SetTexture("_DetailTex", detailTexture.Texture);
                 CloudMaterial.SetFloat("_DetailScale", detailTexture.Scale);
-                UndersideCloudMaterial.SetTexture("_DetailTex", detailTexture.Texture);
-                UndersideCloudMaterial.SetFloat("_DetailScale", detailTexture.Scale);
             }
 
             if (bumpTexture.InUse)
             {
                 CloudMaterial.SetTexture("_BumpMap", bumpTexture.Texture);
                 CloudMaterial.SetFloat("_BumpScale", bumpTexture.Scale);
-                UndersideCloudMaterial.SetTexture("_BumpMap", bumpTexture.Texture);
-                UndersideCloudMaterial.SetFloat("_BumpScale", bumpTexture.Scale);
             }
         }
 
@@ -120,31 +105,91 @@ namespace Clouds
                 Utils.Log("reading stream...");
                 String shaderTxt = shaderStreamReader.ReadToEnd();
                 GlobalCloudShader = new Material(shaderTxt).shader;
-
-                if (Utils.IsCubicMapped)
-                {
-                    shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-CubicUnderCloud.shader"));
-                }
-                else
-                {
-                    shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-SphereUnderCloud.shader"));
-                }
-                Utils.Log("reading stream...");
-                shaderTxt = shaderStreamReader.ReadToEnd();
-                GlobalUndersideCloudShader = new Material(shaderTxt).shader;
+                
             }
             CloudMaterial = new Material(GlobalCloudShader);
-            UndersideCloudMaterial = new Material(GlobalUndersideCloudShader);
 
             UpdateFloats();
 
             Log("Cloud Material initialized");
             UpdateTextures();
             Log("Generating Overlay...");
-            CloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, CloudMaterial, this.mainTexture.StartOffset, Utils.OVER_LAYER);
-            UndersideCloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, UndersideCloudMaterial, this.mainTexture.StartOffset, Utils.UNDER_LAYER);
+            CloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, CloudMaterial, this.mainTexture.StartOffset);
+            Overlay overlay = Overlay.GeneratePlanetOverlay(body, 80*radius, CloudMaterial, this.mainTexture.StartOffset);
+            float longitude = -74.559f;
+            float latitude = -0.0975f;
+            CelestialBody currentBody = null;
+
+            UnityEngine.Object[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody));
+            foreach (CelestialBody cb in celestialBodies)
+            {
+                string name = cb.bodyName;
+                if (name == this.body)
+                {
+                    currentBody = cb;
+                }
+            }
+            placePQS(longitude, latitude, (float)((radius - 1) * currentBody.Radius),overlay.OverlayGameObject);
+            overlay.OverlayGameObject.layer = 15;
             Log("Textures initialized");
         }
+
+        private void placePQS(float longitude, float latitude, float altitude, GameObject go)
+        {
+
+            UnityEngine.Object[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody));
+
+            CelestialBody currentBody = null;
+
+            foreach (CelestialBody cb in celestialBodies)
+            {
+                string name = cb.bodyName;
+                if (name == this.body)
+                {
+                    currentBody = cb;
+                }
+            }
+
+            GameObject blockHolder = new GameObject();
+            blockHolder.name = "blockHolder";
+
+            GameObject block = go;
+            if (block == null)
+            {
+
+            }
+
+            block.transform.parent = blockHolder.transform;
+
+            foreach (Transform aTransform in currentBody.transform)
+            {
+                if (aTransform.name == currentBody.transform.name)
+                    blockHolder.transform.parent = aTransform;
+            }
+            PQSCity blockScript = blockHolder.AddComponent<PQSCity>();
+            blockScript.debugOrientated = false;
+            blockScript.frameDelta = 1;
+            blockScript.lod = new PQSCity.LODRange[1];
+            blockScript.lod[0] = new PQSCity.LODRange();
+            blockScript.lod[0].visibleRange = 20000;
+            blockScript.lod[0].renderers = new GameObject[1];
+            blockScript.lod[0].renderers[0] = block;
+            blockScript.lod[0].objects = new GameObject[0];
+            blockScript.modEnabled = true;
+            blockScript.order = 100;
+            blockScript.reorientFinalAngle = -105;
+            blockScript.reorientInitialUp = Vector3.up;
+            blockScript.reorientToSphere = true;
+            //railScript.repositionRadial = (GameObject.Find("Runway").transform.position - currentBody.transform.position) + Vector3.up * 50 + Vector3.right * -350;
+            blockScript.repositionRadial = QuaternionD.AngleAxis(longitude, Vector3d.down) * QuaternionD.AngleAxis(latitude, Vector3d.forward) * Vector3d.right;
+            blockScript.repositionRadiusOffset = altitude;
+            blockScript.repositionToSphere = true;
+            blockScript.requirements = PQS.ModiferRequirements.Default;
+            blockScript.sphere = currentBody.pqsController;
+
+            blockScript.RebuildSphere();
+        }
+
 
         public void UpdateFloats()
         {
@@ -159,17 +204,7 @@ namespace Clouds
             {
                 this.shaderFloats = new ShaderFloats(CloudMaterial.GetFloat("_FalloffPow"), CloudMaterial.GetFloat("_FalloffScale"), CloudMaterial.GetFloat("_DetailDist"), CloudMaterial.GetFloat("_MinLight"));
             }
-            if (this.undersideShaderFloats != null)
-            {
-                UndersideCloudMaterial.SetFloat("_FalloffPow", undersideShaderFloats.FalloffPower);
-                UndersideCloudMaterial.SetFloat("_FalloffScale", undersideShaderFloats.FalloffScale);
-                UndersideCloudMaterial.SetFloat("_DetailDist", undersideShaderFloats.DetailDistance);
-                UndersideCloudMaterial.SetFloat("_MinLight", undersideShaderFloats.MinimumLight);
-            }
-            else
-            {
-                this.undersideShaderFloats = new ShaderFloats(UndersideCloudMaterial.GetFloat("_FalloffPow"), UndersideCloudMaterial.GetFloat("_FalloffScale"), UndersideCloudMaterial.GetFloat("_DetailDist"), UndersideCloudMaterial.GetFloat("_MinLight"));
-            }
+            
         }
 
         private void updateOffset(float time)
@@ -178,20 +213,17 @@ namespace Clouds
 
             mainTexture.UpdateOffset(rateOffset, true);
             CloudOverlay.UpdateRotation(mainTexture.Offset);
-            UndersideCloudOverlay.UpdateRotation(mainTexture.Offset);
 
             if (detailTexture.InUse)
             {
                 detailTexture.UpdateOffset(rateOffset, false);
                 CloudMaterial.SetVector("_DetailOffset", detailTexture.Offset);
-                UndersideCloudMaterial.SetVector("_DetailOffset", detailTexture.Offset);
             }
 
             if (bumpTexture.InUse)
             {
                 bumpTexture.UpdateOffset(rateOffset, false);
                 CloudMaterial.SetVector("_BumpOffset", bumpTexture.Offset);
-                UndersideCloudMaterial.SetVector("_BumpOffset", bumpTexture.Offset);
             }
 
         }
@@ -251,17 +283,12 @@ namespace Clouds
             }
         }
 
-        internal static bool IsDefaultShaderFloat(ShaderFloats shaderFloats, bool isUnderside = false)
+        internal static bool IsDefaultShaderFloat(ShaderFloats shaderFloats)
         {
             Material compareMaterial;
-            if (isUnderside)
-            {
-                compareMaterial = new Material(GlobalUndersideCloudShader);
-            }
-            else
-            {
-                compareMaterial = new Material(GlobalCloudShader);
-            }
+            
+            compareMaterial = new Material(GlobalCloudShader);
+            
             if (shaderFloats.FalloffPower == compareMaterial.GetFloat("_FalloffPow") &&
                 shaderFloats.FalloffScale == compareMaterial.GetFloat("_FalloffScale") &&
                 shaderFloats.DetailDistance == compareMaterial.GetFloat("_DetailDist") &&
@@ -278,7 +305,6 @@ namespace Clouds
         internal void Remove(bool fromList = true)
         {
             this.CloudOverlay.RemoveOverlay();
-            this.UndersideCloudOverlay.RemoveOverlay();
             BodyDatabase[body].Remove(this);
             if (fromList)
             {

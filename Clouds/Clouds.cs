@@ -156,11 +156,7 @@ namespace Clouds
                     {
                         newNode.AddNode(shaderFloatNode);
                     }
-                    ConfigNode undersideShaderFloatNode = cloudLayer.UndersideShaderFloats.GetNode("underside_shader_floats");
-                    if (!CloudLayer.IsDefaultShaderFloat(cloudLayer.UndersideShaderFloats, true))
-                    {
-                        newNode.AddNode(undersideShaderFloatNode);
-                    }
+
                 }
             }
             saveConfig.Save(configString);
@@ -185,14 +181,11 @@ namespace Clouds
             GameObject blockHolder = new GameObject();
             blockHolder.name = "blockHolder";
 
-            //GameObject block = GameDatabase.Instance.GetModel("Hubs/Static/FLG/FloatingLaunchGround");
-            //GameObject building = BuildingGenerator.Generate(20,20,20);
             GameObject block = go;
             if (block == null)
             {
 
             }
-
 
             block.transform.parent = blockHolder.transform;
 
@@ -692,7 +685,6 @@ namespace Clouds
                             CloudGUI.Color.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Color);
                             CloudGUI.Radius.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Radius);
                             CloudGUI.ShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ShaderFloats);
-                            CloudGUI.UndersideShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].UndersideShaderFloats);
                         }
                     }
 
