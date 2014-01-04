@@ -59,7 +59,7 @@ namespace CommonUtils
             return i;
         }
 
-        public static void Create(GameObject gameObject, float radius = 1.004f)
+        public static void Create(GameObject gameObject, bool pqsOverlay = false, float radius = 1.004f)
         {
             MeshFilter filter = gameObject.AddComponent<MeshFilter>();
             Mesh mesh = filter.mesh;
@@ -140,6 +140,19 @@ namespace CommonUtils
                 faces = faces2;
             }
 
+            Vector3[] normals = new Vector3[vertList.Count];
+            for (int i = 0; i < normals.Length; i++)
+                normals[i] = vertList[i].normalized;
+
+            if (pqsOverlay)
+            {
+                KSPLog.print("updating position on radius");
+                for(int i = 0; i < vertList.Count; i++)
+                {
+                    vertList[i] = new Vector3(vertList[i].x, vertList[i].y - radius, vertList[i].z);
+                }
+            }
+
             mesh.vertices = vertList.ToArray();
 
             List<int> triList = new List<int>();
@@ -164,12 +177,6 @@ namespace CommonUtils
             }
             mesh.uv = uvList.ToArray();
             
-
-            Vector3[] normals = new Vector3[vertList.Count];
-            for (int i = 0; i < normals.Length; i++)
-                normals[i] = vertList[i].normalized;
-
-
             mesh.normals = normals;
             calculateMeshTangents(mesh);
 

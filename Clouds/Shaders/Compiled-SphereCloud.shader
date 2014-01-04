@@ -1,24 +1,24 @@
-﻿Shader "Sphere/UndersideCloud" {
+﻿Shader "Sphere/Cloud" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
 		_BumpMap ("Bumpmap", 2D) = "bump" {}
-		_FalloffPow ("Falloff Power", Range(0,3)) = 1.8
-		_FalloffScale ("Falloff Scale", Range(0,20)) = 10
+		_FalloffPow ("Falloff Power", Range(0,3)) = 2
+		_FalloffScale ("Falloff Scale", Range(0,20)) = 3
 		_DetailScale ("Detail Scale", Range(0,1000)) = 100
 		_DetailOffset ("Detail Offset", Color) = (0,0,0,0)
 		_BumpScale ("Bump Scale", Range(0,1000)) = 50
 		_BumpOffset ("Bump offset", Color) = (0,0,0,0)
-		_DetailDist ("Detail Distance", Range(0,1)) = 0.025
-		_MinLight ("Minimum Light", Range(0,1)) = .18
+		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
+		_MinLight ("Minimum Light", Range(0,1)) = .1
 	}
 
 SubShader {
 		Tags {  "Queue"="Transparent"
 	   			"RenderMode"="Transparent" }
 		Lighting On
-		Cull Front
+		Cull Off
 	    ZWrite Off
 		
 		Blend SrcAlpha OneMinusSrcAlpha
@@ -29,8 +29,8 @@ SubShader {
 		Tags { "LightMode" = "ForwardBase" }
 Program "vp" {
 // Vertex combos: 6
-//   d3d9 - ALU: 59 to 64
-//   d3d11 - ALU: 51 to 54, TEX: 0 to 0, FLOW: 1 to 1
+//   d3d9 - ALU: 61 to 66
+//   d3d11 - ALU: 52 to 55, TEX: 0 to 0, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 "!!GLSL
@@ -57,15 +57,16 @@ void main ()
   vec3 tmpvar_3;
   tmpvar_3 = (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
   vec3 p_4;
-  p_4 = (tmpvar_3 - tmpvar_2);
+  p_4 = (tmpvar_2 - _WorldSpaceCameraPos);
+  tmpvar_1.x = (_DetailDist * sqrt(dot (p_4, p_4)));
   vec3 p_5;
   p_5 = (tmpvar_3 - _WorldSpaceCameraPos);
   vec3 p_6;
-  p_6 = (tmpvar_2 - _WorldSpaceCameraPos);
-  tmpvar_1.x = clamp ((_DetailDist * sqrt(dot (p_6, p_6))), 0.0, 1.0);
+  p_6 = (tmpvar_3 - tmpvar_2);
+  tmpvar_1.y = clamp (((0.01 * abs((sqrt(dot (p_5, p_5)) - sqrt(dot (p_6, p_6))))) - 2.0), 0.0, 1.0);
   vec3 p_7;
   p_7 = (tmpvar_2 - _WorldSpaceCameraPos);
-  tmpvar_1.y = (clamp ((sqrt(dot (p_4, p_4)) - (1.003 * sqrt(dot (p_5, p_5)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_7, p_7))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * gl_Normal.xyzz).xyz), -(normalize((tmpvar_2 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_1.y = (tmpvar_1.y * clamp ((clamp ((0.0825 * sqrt(dot (p_7, p_7))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * gl_Normal.xyzz).xyz), -(normalize((tmpvar_2 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   vec3 tmpvar_8;
   vec3 tmpvar_9;
   tmpvar_8 = TANGENT.xyz;
@@ -168,16 +169,18 @@ void main ()
   tmpvar_17 = abs(xlv_TEXCOORD1);
   vec4 tmpvar_18;
   tmpvar_18 = mix (mix (texture2D (_DetailTex, ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy)), texture2D (_DetailTex, ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DetailTex, ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy)), tmpvar_17.yyyy);
-  vec3 tmpvar_19;
-  tmpvar_19 = (tmpvar_16.xyz * mix (tmpvar_18.xyz, vec3(1.0, 1.0, 1.0), xlv_TEXCOORD0.xxx));
-  vec3 normal_20;
-  normal_20.xy = ((mix (mix (texture2D (_BumpMap, ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy)), texture2D (_BumpMap, ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy)), tmpvar_17.xxxx), texture2D (_BumpMap, ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy)), tmpvar_17.yyyy).wy * 2.0) - 1.0);
-  normal_20.z = sqrt((1.0 - clamp (dot (normal_20.xy, normal_20.xy), 0.0, 1.0)));
-  vec4 c_21;
-  c_21.xyz = (tmpvar_19 * clamp ((_MinLight + (_LightColor0.xyz * (clamp (dot (mix (normal_20, vec3(0.0, 0.0, 1.0), xlv_TEXCOORD0.xxx), xlv_TEXCOORD2), 0.0, 1.0) * 2.0))), 0.0, 1.0));
-  c_21.w = mix (0.0, (mix (tmpvar_18.w, 1.0, xlv_TEXCOORD0.x) * tmpvar_16.w), xlv_TEXCOORD0.y);
-  c_1.w = c_21.w;
-  c_1.xyz = (c_21.xyz + (tmpvar_19 * xlv_TEXCOORD3));
+  float tmpvar_19;
+  tmpvar_19 = clamp ((2.0 * xlv_TEXCOORD0.x), 0.0, 1.0);
+  vec3 tmpvar_20;
+  tmpvar_20 = (tmpvar_16.xyz * mix (tmpvar_18.xyz, vec3(1.0, 1.0, 1.0), vec3(tmpvar_19)));
+  vec3 normal_21;
+  normal_21.xy = ((mix (mix (texture2D (_BumpMap, ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy)), texture2D (_BumpMap, ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy)), tmpvar_17.xxxx), texture2D (_BumpMap, ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy)), tmpvar_17.yyyy).wy * 2.0) - 1.0);
+  normal_21.z = sqrt((1.0 - clamp (dot (normal_21.xy, normal_21.xy), 0.0, 1.0)));
+  vec4 c_22;
+  c_22.xyz = (tmpvar_20 * clamp ((_MinLight + (_LightColor0.xyz * (clamp (dot (mix (normal_21, vec3(0.0, 0.0, 1.0), vec3(tmpvar_19)), xlv_TEXCOORD2), 0.0, 1.0) * 2.0))), 0.0, 1.0));
+  c_22.w = mix (0.0, (tmpvar_16.w * mix (tmpvar_18.w, 1.0, tmpvar_19)), xlv_TEXCOORD0.y);
+  c_1.w = c_22.w;
+  c_1.xyz = (c_22.xyz + (tmpvar_20 * xlv_TEXCOORD3));
   gl_FragData[0] = c_1;
 }
 
@@ -201,13 +204,13 @@ Float 15 [_FalloffPow]
 Float 16 [_FalloffScale]
 Float 17 [_DetailDist]
 "vs_3_0
-; 59 ALU
+; 61 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
-def c18, 0.08250000, 0.80000001, 1.00300002, 0
+def c18, 0.08250000, 0.80000001, 0.01000000, -2.00000000
 dcl_position0 v0
 dcl_tangent0 v1
 dcl_normal0 v2
@@ -226,43 +229,45 @@ rsq r0.w, r0.w
 mul r1.xyz, r0.w, r1
 dp3 r0.x, r1, -r0
 mul r0.x, r0, c16
-mul r0.w, r0.x, c18.y
+mul r0.x, r0, c18.y
+pow_sat r2, r0.x, c15.x
 mov r0.xyz, v1
 mul r1.xyz, v2.zxyw, r0.yzxw
 mov r0.xyz, v1
 mad r1.xyz, v2.yzxw, r0.zxyw, -r1
-pow_sat r2, r0.w, c15.x
+mul r4.xyz, r1, v1.w
 mov r0, c10
 dp4 r2.w, c14, r0
 mov r0, c9
 dp4 r2.z, c14, r0
-rcp r0.w, r3.w
-mul r4.xyz, r1, v1.w
 mov r1, c8
 dp4 r2.y, c14, r1
-mov r0.y, r2.x
-mul_sat r0.x, r0.w, c18
-add_sat r1.w, r0.x, r0.y
 mov r0.z, c6.w
 mov r0.x, c4.w
 mov r0.y, c5.w
 add r1.xyz, -r0, r3
 add r0.xyz, -r0, c13
-dp3 r0.y, r0, r0
+dp3 r0.x, r0, r0
 dp3 r1.x, r1, r1
-rsq r0.x, r1.x
-rsq r0.y, r0.y
+rsq r0.y, r1.x
+rsq r0.x, r0.x
 rcp r0.x, r0.x
 rcp r0.y, r0.y
-mad_sat r0.x, -r0.y, c18.z, r0
-mul o1.y, r0.x, r1.w
-dp3 r0.x, v0, v0
-rsq r0.x, r0.x
+add r0.y, r0.x, -r0
+rcp r0.x, r3.w
+abs r0.y, r0
+mad_sat r0.y, r0, c18.z, c18.w
+mov r0.w, r2.x
+mul_sat r0.z, r0.x, c18.x
+add_sat r0.z, r0, r0.w
+mul o1.y, r0, r0.z
+dp3 r0.y, v0, v0
+rsq r0.y, r0.y
 dp3 o3.y, r2.yzww, r4
 dp3 o3.z, v2, r2.yzww
 dp3 o3.x, r2.yzww, v1
-mul_sat o1.x, r0.w, c17
-mul o2.xyz, r0.x, v0
+mul o1.x, r0, c17
+mul o2.xyz, r0.y, v0
 mov o4.xyz, c12
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
@@ -296,12 +301,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 53 instructions, 3 temp regs, 0 temp arrays:
-// ALU 51 float, 0 int, 0 uint
+// 54 instructions, 3 temp regs, 0 temp arrays:
+// ALU 52 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedejclpngkipepfipkhoaodiddghemanckabaaaaaaniaiaaaaadaaaaaa
+eefiecednbndcmepniccpokkheachgiimjinfaibabaaaaaapiaiaaaaadaaaaaa
 cmaaaaaapeaaaaaajeabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -313,8 +318,8 @@ aiaaaaaaiaaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaaimaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaahaiaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaimaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaafdfgfpfa
-epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcdmahaaaaeaaaabaa
-mpabaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaafjaaaaaeegiocaaaabaaaaaa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcfmahaaaaeaaaabaa
+nhabaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaafjaaaaaeegiocaaaabaaaaaa
 afaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaa
 beaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaaghaaaaaepccabaaa
@@ -348,15 +353,16 @@ aaaaaaaabkiacaaaaaaaaaaaagaaaaaaabeaaaaamnmmemdpdiaaaaahbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaacpaaaaafbcaabaaaaaaaaaaa
 akaabaaaaaaaaaaadiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaaakiacaaa
 aaaaaaaaagaaaaaabjaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
-ccaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaamdpfkidndicaaaaibccabaaa
+ccaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaamdpfkidndiaaaaaibccabaaa
 abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaagaaaaaaddaaaaakdcaabaaa
 aaaaaaaaegaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaa
 aaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaaddaaaaah
 bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaakhcaabaaa
 abaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaaegiccaaaadaaaaaaapaaaaaa
 baaaaaahccaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaelaaaaaf
-kcaabaaaaaaaaaaafganbaaaaaaaaaaadccaaaakccaabaaaaaaaaaaabkaabaia
-ebaaaaaaaaaaaaaaabeaaaaaeogciadpdkaabaaaaaaaaaaadiaaaaahcccabaaa
+kcaabaaaaaaaaaaafganbaaaaaaaaaaaaaaaaaaiccaabaaaaaaaaaaadkaabaia
+ebaaaaaaaaaaaaaabkaabaaaaaaaaaaadccaaaakccaabaaaaaaaaaaabkaabaia
+ibaaaaaaaaaaaaaaabeaaaaaaknhcddmabeaaaaaaaaaaamadiaaaaahcccabaaa
 abaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
 egbcbaaaaaaaaaaaegbcbaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhccabaaaacaaaaaaagaabaaaaaaaaaaaegbcbaaaaaaaaaaa
@@ -412,15 +418,16 @@ void main ()
   highp vec3 tmpvar_7;
   tmpvar_7 = (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
   highp vec3 p_8;
-  p_8 = (tmpvar_7 - tmpvar_6);
+  p_8 = (tmpvar_6 - _WorldSpaceCameraPos);
+  tmpvar_5.x = (_DetailDist * sqrt(dot (p_8, p_8)));
   highp vec3 p_9;
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
-  p_10 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
+  p_10 = (tmpvar_7 - tmpvar_6);
+  tmpvar_5.y = clamp (((0.01 * abs((sqrt(dot (p_9, p_9)) - sqrt(dot (p_10, p_10))))) - 2.0), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (tmpvar_5.y * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec3 tmpvar_12;
   highp vec3 tmpvar_13;
   tmpvar_12 = tmpvar_1.xyz;
@@ -591,13 +598,13 @@ void main ()
   tmpvar_47 = mix (normal_7, normalY_10, tmpvar_43.yyyy);
   normal_7 = tmpvar_47;
   highp float tmpvar_48;
-  tmpvar_48 = xlv_TEXCOORD0.x;
+  tmpvar_48 = clamp ((2.0 * xlv_TEXCOORD0.x), 0.0, 1.0);
   detailLevel_6 = tmpvar_48;
   mediump vec3 tmpvar_49;
   tmpvar_49 = (main_15.xyz * mix (detail_8.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_6)));
   tmpvar_3 = tmpvar_49;
   mediump float tmpvar_50;
-  tmpvar_50 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
+  tmpvar_50 = (main_15.w * mix (detail_8.w, 1.0, detailLevel_6));
   highp float tmpvar_51;
   tmpvar_51 = mix (0.0, tmpvar_50, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_51;
@@ -668,15 +675,16 @@ void main ()
   highp vec3 tmpvar_7;
   tmpvar_7 = (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
   highp vec3 p_8;
-  p_8 = (tmpvar_7 - tmpvar_6);
+  p_8 = (tmpvar_6 - _WorldSpaceCameraPos);
+  tmpvar_5.x = (_DetailDist * sqrt(dot (p_8, p_8)));
   highp vec3 p_9;
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
-  p_10 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
+  p_10 = (tmpvar_7 - tmpvar_6);
+  tmpvar_5.y = clamp (((0.01 * abs((sqrt(dot (p_9, p_9)) - sqrt(dot (p_10, p_10))))) - 2.0), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (tmpvar_5.y * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec3 tmpvar_12;
   highp vec3 tmpvar_13;
   tmpvar_12 = tmpvar_1.xyz;
@@ -847,13 +855,13 @@ void main ()
   tmpvar_47 = mix (normal_7, normalY_10, tmpvar_43.yyyy);
   normal_7 = tmpvar_47;
   highp float tmpvar_48;
-  tmpvar_48 = xlv_TEXCOORD0.x;
+  tmpvar_48 = clamp ((2.0 * xlv_TEXCOORD0.x), 0.0, 1.0);
   detailLevel_6 = tmpvar_48;
   mediump vec3 tmpvar_49;
   tmpvar_49 = (main_15.xyz * mix (detail_8.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_6)));
   tmpvar_3 = tmpvar_49;
   mediump float tmpvar_50;
-  tmpvar_50 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
+  tmpvar_50 = (main_15.w * mix (detail_8.w, 1.0, detailLevel_6));
   highp float tmpvar_51;
   tmpvar_51 = mix (0.0, tmpvar_50, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_51;
@@ -981,7 +989,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec3 localPos;
 };
-#line 468
+#line 470
 struct v2f_surf {
     highp vec4 pos;
     highp vec2 cust_viewDist;
@@ -1101,8 +1109,8 @@ uniform highp float _BumpScale;
 uniform highp float _MinLight;
 #line 418
 #line 431
-#line 477
-#line 494
+#line 479
+#line 496
 #line 82
 highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
     highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
@@ -1112,31 +1120,31 @@ highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
 void vert( inout appdata_full v, out Input o ) {
     highp vec3 normalDir = normalize((_Object2World * v.normal.xyzz).xyz);
     #line 422
-    highp vec3 modelCam = _WorldSpaceCameraPos;
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
-    highp vec3 viewVect = normalize((vertexPos - modelCam));
+    highp vec3 viewVect = normalize((vertexPos - _WorldSpaceCameraPos));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
+    highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     #line 426
-    highp float diff = (distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos)));
-    o.viewDist.x = xll_saturate_f((_DetailDist * distance( vertexPos, _WorldSpaceCameraPos)));
-    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
+    o.viewDist.x = diff;
+    o.viewDist.y = xll_saturate_f(((0.01 * abs((distance( origin, _WorldSpaceCameraPos) - distance( origin, vertexPos)))) - 2.0));
+    o.viewDist.y *= xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow))));
     o.localPos = normalize(v.vertex.xyz);
 }
-#line 477
+#line 479
 v2f_surf vert_surf( in appdata_full v ) {
     v2f_surf o;
     Input customInputData;
-    #line 481
+    #line 483
     vert( v, customInputData);
     o.cust_viewDist = customInputData.viewDist;
     o.cust_localPos = customInputData.localPos;
     o.pos = (glstate_matrix_mvp * v.vertex);
-    #line 485
+    #line 487
     highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
     highp vec3 lightDir = (rotation * ObjSpaceLightDir( v.vertex));
-    #line 489
+    #line 491
     o.lightDir = lightDir;
     o.vlight = glstate_lightmodel_ambient.xyz;
     return o;
@@ -1275,7 +1283,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec3 localPos;
 };
-#line 468
+#line 470
 struct v2f_surf {
     highp vec4 pos;
     highp vec2 cust_viewDist;
@@ -1395,8 +1403,8 @@ uniform highp float _BumpScale;
 uniform highp float _MinLight;
 #line 418
 #line 431
-#line 477
-#line 494
+#line 479
+#line 496
 #line 403
 mediump vec4 LightingSimpleLambert( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
     #line 405
@@ -1449,34 +1457,37 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 normal = mix( normalZ, normalX, vec4( pos.x));
     #line 460
     normal = mix( normal, normalY, vec4( pos.y));
-    mediump float detailLevel = IN.viewDist.x;
+    mediump float detailLevel = xll_saturate_f((2.0 * IN.viewDist.x));
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0), vec3( detailLevel)));
-    o.Albedo = albedo;
+    o.Normal = vec3( 0.0, 0.0, 1.0);
     #line 464
-    mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
+    o.Albedo = albedo;
+    mediump float avg = (main.w * mix( detail.w, 1.0, detailLevel));
+    mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
     o.Alpha = mix( 0.0, avg, IN.viewDist.y);
+    #line 468
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
-#line 494
+#line 496
 lowp vec4 frag_surf( in v2f_surf IN ) {
     Input surfIN;
     surfIN.viewDist = IN.cust_viewDist;
-    #line 498
+    #line 500
     surfIN.localPos = IN.cust_localPos;
     SurfaceOutput o;
     o.Albedo = vec3( 0.0);
     o.Emission = vec3( 0.0);
-    #line 502
+    #line 504
     o.Specular = 0.0;
     o.Alpha = 0.0;
     o.Gloss = 0.0;
     surf( surfIN, o);
-    #line 506
+    #line 508
     lowp float atten = 1.0;
     lowp vec4 c = vec4( 0.0);
     c = LightingSimpleLambert( o, IN.lightDir, atten);
     c.xyz += (o.Albedo * IN.vlight);
-    #line 510
+    #line 512
     return c;
 }
 in highp vec2 xlv_TEXCOORD0;
@@ -1527,15 +1538,16 @@ void main ()
   vec3 tmpvar_3;
   tmpvar_3 = (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
   vec3 p_4;
-  p_4 = (tmpvar_3 - tmpvar_2);
+  p_4 = (tmpvar_2 - _WorldSpaceCameraPos);
+  tmpvar_1.x = (_DetailDist * sqrt(dot (p_4, p_4)));
   vec3 p_5;
   p_5 = (tmpvar_3 - _WorldSpaceCameraPos);
   vec3 p_6;
-  p_6 = (tmpvar_2 - _WorldSpaceCameraPos);
-  tmpvar_1.x = clamp ((_DetailDist * sqrt(dot (p_6, p_6))), 0.0, 1.0);
+  p_6 = (tmpvar_3 - tmpvar_2);
+  tmpvar_1.y = clamp (((0.01 * abs((sqrt(dot (p_5, p_5)) - sqrt(dot (p_6, p_6))))) - 2.0), 0.0, 1.0);
   vec3 p_7;
   p_7 = (tmpvar_2 - _WorldSpaceCameraPos);
-  tmpvar_1.y = (clamp ((sqrt(dot (p_4, p_4)) - (1.003 * sqrt(dot (p_5, p_5)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_7, p_7))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * gl_Normal.xyzz).xyz), -(normalize((tmpvar_2 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_1.y = (tmpvar_1.y * clamp ((clamp ((0.0825 * sqrt(dot (p_7, p_7))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * gl_Normal.xyzz).xyz), -(normalize((tmpvar_2 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   vec4 tmpvar_8;
   tmpvar_8 = (gl_ModelViewProjectionMatrix * gl_Vertex);
   vec3 tmpvar_9;
@@ -1651,16 +1663,18 @@ void main ()
   tmpvar_17 = abs(xlv_TEXCOORD1);
   vec4 tmpvar_18;
   tmpvar_18 = mix (mix (texture2D (_DetailTex, ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy)), texture2D (_DetailTex, ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DetailTex, ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy)), tmpvar_17.yyyy);
-  vec3 tmpvar_19;
-  tmpvar_19 = (tmpvar_16.xyz * mix (tmpvar_18.xyz, vec3(1.0, 1.0, 1.0), xlv_TEXCOORD0.xxx));
-  vec3 normal_20;
-  normal_20.xy = ((mix (mix (texture2D (_BumpMap, ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy)), texture2D (_BumpMap, ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy)), tmpvar_17.xxxx), texture2D (_BumpMap, ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy)), tmpvar_17.yyyy).wy * 2.0) - 1.0);
-  normal_20.z = sqrt((1.0 - clamp (dot (normal_20.xy, normal_20.xy), 0.0, 1.0)));
-  vec4 c_21;
-  c_21.xyz = (tmpvar_19 * clamp ((_MinLight + (_LightColor0.xyz * ((clamp (dot (mix (normal_20, vec3(0.0, 0.0, 1.0), xlv_TEXCOORD0.xxx), xlv_TEXCOORD2), 0.0, 1.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x) * 2.0))), 0.0, 1.0));
-  c_21.w = mix (0.0, (mix (tmpvar_18.w, 1.0, xlv_TEXCOORD0.x) * tmpvar_16.w), xlv_TEXCOORD0.y);
-  c_1.w = c_21.w;
-  c_1.xyz = (c_21.xyz + (tmpvar_19 * xlv_TEXCOORD3));
+  float tmpvar_19;
+  tmpvar_19 = clamp ((2.0 * xlv_TEXCOORD0.x), 0.0, 1.0);
+  vec3 tmpvar_20;
+  tmpvar_20 = (tmpvar_16.xyz * mix (tmpvar_18.xyz, vec3(1.0, 1.0, 1.0), vec3(tmpvar_19)));
+  vec3 normal_21;
+  normal_21.xy = ((mix (mix (texture2D (_BumpMap, ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy)), texture2D (_BumpMap, ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy)), tmpvar_17.xxxx), texture2D (_BumpMap, ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy)), tmpvar_17.yyyy).wy * 2.0) - 1.0);
+  normal_21.z = sqrt((1.0 - clamp (dot (normal_21.xy, normal_21.xy), 0.0, 1.0)));
+  vec4 c_22;
+  c_22.xyz = (tmpvar_20 * clamp ((_MinLight + (_LightColor0.xyz * ((clamp (dot (mix (normal_21, vec3(0.0, 0.0, 1.0), vec3(tmpvar_19)), xlv_TEXCOORD2), 0.0, 1.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x) * 2.0))), 0.0, 1.0));
+  c_22.w = mix (0.0, (tmpvar_16.w * mix (tmpvar_18.w, 1.0, tmpvar_19)), xlv_TEXCOORD0.y);
+  c_1.w = c_22.w;
+  c_1.xyz = (c_22.xyz + (tmpvar_20 * xlv_TEXCOORD3));
   gl_FragData[0] = c_1;
 }
 
@@ -1686,14 +1700,15 @@ Float 17 [_FalloffPow]
 Float 18 [_FalloffScale]
 Float 19 [_DetailDist]
 "vs_3_0
-; 64 ALU
+; 66 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
-def c20, 0.08250000, 0.80000001, 1.00300002, 0.50000000
+def c20, 0.08250000, 0.80000001, 0.01000000, -2.00000000
+def c21, 0.50000000, 0, 0, 0
 dcl_position0 v0
 dcl_tangent0 v1
 dcl_normal0 v2
@@ -1712,41 +1727,43 @@ rsq r0.w, r0.w
 mul r1.xyz, r0.w, r1
 dp3 r0.x, r1, -r0
 mul r0.x, r0, c18
-mul r0.w, r0.x, c20.y
+mul r0.x, r0, c20.y
+pow_sat r2, r0.x, c17.x
 mov r0.xyz, v1
 mul r1.xyz, v2.zxyw, r0.yzxw
 mov r0.xyz, v1
 mad r1.xyz, v2.yzxw, r0.zxyw, -r1
-pow_sat r2, r0.w, c17.x
+mul r4.xyz, r1, v1.w
+mov r1, c8
+dp4 r2.y, c16, r1
 mov r0, c10
 dp4 r2.w, c16, r0
 mov r0, c9
 dp4 r2.z, c16, r0
-mul r4.xyz, r1, v1.w
-mov r1, c8
-dp4 r2.y, c16, r1
 rcp r1.w, r3.w
-mov r0.y, r2.x
-mul_sat r0.x, r1.w, c20
-add_sat r0.w, r0.x, r0.y
+mov r0.w, r2.x
 mov r0.z, c6.w
 mov r0.x, c4.w
 mov r0.y, c5.w
 add r1.xyz, -r0, r3
 add r0.xyz, -r0, c13
-dp3 r0.y, r0, r0
+dp3 r0.x, r0, r0
 dp3 r1.x, r1, r1
-rsq r0.x, r1.x
-rsq r0.y, r0.y
+rsq r0.y, r1.x
+rsq r0.x, r0.x
 rcp r0.y, r0.y
 rcp r0.x, r0.x
-mad_sat r0.x, -r0.y, c20.z, r0
-mul o1.y, r0.x, r0.w
+add r0.x, r0, -r0.y
+abs r0.x, r0
+mul_sat r0.y, r1.w, c20.x
+add_sat r0.y, r0, r0.w
+mad_sat r0.x, r0, c20.z, c20.w
+mul o1.y, r0.x, r0
 dp4 r0.w, v0, c3
 dp4 r0.z, v0, c2
 dp4 r0.x, v0, c0
 dp4 r0.y, v0, c1
-mul r1.xyz, r0.xyww, c20.w
+mul r1.xyz, r0.xyww, c21.x
 mul r1.y, r1, c14.x
 mov o0, r0
 dp3 r0.x, v0, v0
@@ -1756,7 +1773,7 @@ dp3 o3.z, v2, r2.yzww
 dp3 o3.x, r2.yzww, v1
 mad o5.xy, r1.z, c15.zwzw, r1
 mov o5.zw, r0
-mul_sat o1.x, r1.w, c19
+mul o1.x, r1.w, c19
 mul o2.xyz, r0.x, v0
 mov o4.xyz, c12
 "
@@ -1788,12 +1805,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 58 instructions, 4 temp regs, 0 temp arrays:
-// ALU 54 float, 0 int, 0 uint
+// 59 instructions, 4 temp regs, 0 temp arrays:
+// ALU 55 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmgnhigadhfndlfbjoelmggnniiilfahmabaaaaaaiiajaaaaadaaaaaa
+eefiecedmcbiebccpnkljbhanhpgogkhjdejekjjabaaaaaakiajaaaaadaaaaaa
 cmaaaaaapeaaaaaakmabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -1806,7 +1823,7 @@ aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaakeaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaahaiaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaakeaaaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefcneahaaaaeaaaabaapfabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcpeahaaaaeaaaabaapnabaaaafjaaaaae
 egiocaaaaaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaagaaaaaafjaaaaae
 egiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaabeaaaaaafjaaaaae
 egiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
@@ -1842,15 +1859,16 @@ aaaaaaaaakaaaaaaabeaaaaamnmmemdpdiaaaaahbcaabaaaabaaaaaaakaabaaa
 abaaaaaabkaabaaaabaaaaaacpaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaa
 diaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaa
 bjaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaa
-akaabaaaacaaaaaaabeaaaaamdpfkidndicaaaaibccabaaaabaaaaaaakaabaaa
+akaabaaaacaaaaaaabeaaaaamdpfkidndiaaaaaibccabaaaabaaaaaaakaabaaa
 acaaaaaadkiacaaaaaaaaaaaakaaaaaaddaaaaakdcaabaaaabaaaaaaegaabaaa
 abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaahbcaabaaa
 abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahbcaabaaaabaaaaaa
 akaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaakhcaabaaaacaaaaaaegiccaia
 ebaaaaaaabaaaaaaaeaaaaaaegiccaaaadaaaaaaapaaaaaabaaaaaahccaabaaa
 abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafkcaabaaaabaaaaaa
-fganbaaaabaaaaaadccaaaakccaabaaaabaaaaaabkaabaiaebaaaaaaabaaaaaa
-abeaaaaaeogciadpdkaabaaaabaaaaaadiaaaaahcccabaaaabaaaaaaakaabaaa
+fganbaaaabaaaaaaaaaaaaaiccaabaaaabaaaaaadkaabaiaebaaaaaaabaaaaaa
+bkaabaaaabaaaaaadccaaaakccaabaaaabaaaaaabkaabaiaibaaaaaaabaaaaaa
+abeaaaaaaknhcddmabeaaaaaaaaaaamadiaaaaahcccabaaaabaaaaaaakaabaaa
 abaaaaaabkaabaaaabaaaaaabaaaaaahbcaabaaaabaaaaaaegbcbaaaaaaaaaaa
 egbcbaaaaaaaaaaaeeaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaah
 hccabaaaacaaaaaaagaabaaaabaaaaaaegbcbaaaaaaaaaaadiaaaaahhcaabaaa
@@ -1912,15 +1930,16 @@ void main ()
   highp vec3 tmpvar_7;
   tmpvar_7 = (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
   highp vec3 p_8;
-  p_8 = (tmpvar_7 - tmpvar_6);
+  p_8 = (tmpvar_6 - _WorldSpaceCameraPos);
+  tmpvar_5.x = (_DetailDist * sqrt(dot (p_8, p_8)));
   highp vec3 p_9;
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
-  p_10 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
+  p_10 = (tmpvar_7 - tmpvar_6);
+  tmpvar_5.y = clamp (((0.01 * abs((sqrt(dot (p_9, p_9)) - sqrt(dot (p_10, p_10))))) - 2.0), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (tmpvar_5.y * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec3 tmpvar_12;
   highp vec3 tmpvar_13;
   tmpvar_12 = tmpvar_1.xyz;
@@ -2095,13 +2114,13 @@ void main ()
   tmpvar_47 = mix (normal_7, normalY_10, tmpvar_43.yyyy);
   normal_7 = tmpvar_47;
   highp float tmpvar_48;
-  tmpvar_48 = xlv_TEXCOORD0.x;
+  tmpvar_48 = clamp ((2.0 * xlv_TEXCOORD0.x), 0.0, 1.0);
   detailLevel_6 = tmpvar_48;
   mediump vec3 tmpvar_49;
   tmpvar_49 = (main_15.xyz * mix (detail_8.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_6)));
   tmpvar_3 = tmpvar_49;
   mediump float tmpvar_50;
-  tmpvar_50 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
+  tmpvar_50 = (main_15.w * mix (detail_8.w, 1.0, detailLevel_6));
   highp float tmpvar_51;
   tmpvar_51 = mix (0.0, tmpvar_50, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_51;
@@ -2188,15 +2207,16 @@ void main ()
   highp vec3 tmpvar_7;
   tmpvar_7 = (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
   highp vec3 p_8;
-  p_8 = (tmpvar_7 - tmpvar_6);
+  p_8 = (tmpvar_6 - _WorldSpaceCameraPos);
+  tmpvar_5.x = (_DetailDist * sqrt(dot (p_8, p_8)));
   highp vec3 p_9;
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
-  p_10 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
+  p_10 = (tmpvar_7 - tmpvar_6);
+  tmpvar_5.y = clamp (((0.01 * abs((sqrt(dot (p_9, p_9)) - sqrt(dot (p_10, p_10))))) - 2.0), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (tmpvar_5.y * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec4 tmpvar_12;
   tmpvar_12 = (glstate_matrix_mvp * _glesVertex);
   highp vec3 tmpvar_13;
@@ -2380,13 +2400,13 @@ void main ()
   tmpvar_47 = mix (normal_7, normalY_10, tmpvar_43.yyyy);
   normal_7 = tmpvar_47;
   highp float tmpvar_48;
-  tmpvar_48 = xlv_TEXCOORD0.x;
+  tmpvar_48 = clamp ((2.0 * xlv_TEXCOORD0.x), 0.0, 1.0);
   detailLevel_6 = tmpvar_48;
   mediump vec3 tmpvar_49;
   tmpvar_49 = (main_15.xyz * mix (detail_8.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_6)));
   tmpvar_3 = tmpvar_49;
   mediump float tmpvar_50;
-  tmpvar_50 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
+  tmpvar_50 = (main_15.w * mix (detail_8.w, 1.0, detailLevel_6));
   highp float tmpvar_51;
   tmpvar_51 = mix (0.0, tmpvar_50, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_51;
@@ -2518,7 +2538,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec3 localPos;
 };
-#line 476
+#line 478
 struct v2f_surf {
     highp vec4 pos;
     highp vec2 cust_viewDist;
@@ -2642,7 +2662,7 @@ uniform highp float _BumpScale;
 uniform highp float _MinLight;
 #line 426
 #line 439
-#line 486
+#line 488
 #line 82
 highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
     highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
@@ -2652,35 +2672,35 @@ highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
 void vert( inout appdata_full v, out Input o ) {
     highp vec3 normalDir = normalize((_Object2World * v.normal.xyzz).xyz);
     #line 430
-    highp vec3 modelCam = _WorldSpaceCameraPos;
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
-    highp vec3 viewVect = normalize((vertexPos - modelCam));
+    highp vec3 viewVect = normalize((vertexPos - _WorldSpaceCameraPos));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
+    highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     #line 434
-    highp float diff = (distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos)));
-    o.viewDist.x = xll_saturate_f((_DetailDist * distance( vertexPos, _WorldSpaceCameraPos)));
-    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
+    o.viewDist.x = diff;
+    o.viewDist.y = xll_saturate_f(((0.01 * abs((distance( origin, _WorldSpaceCameraPos) - distance( origin, vertexPos)))) - 2.0));
+    o.viewDist.y *= xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow))));
     o.localPos = normalize(v.vertex.xyz);
 }
-#line 486
+#line 488
 v2f_surf vert_surf( in appdata_full v ) {
     v2f_surf o;
     Input customInputData;
-    #line 490
+    #line 492
     vert( v, customInputData);
     o.cust_viewDist = customInputData.viewDist;
     o.cust_localPos = customInputData.localPos;
     o.pos = (glstate_matrix_mvp * v.vertex);
-    #line 494
+    #line 496
     highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
     highp vec3 lightDir = (rotation * ObjSpaceLightDir( v.vertex));
-    #line 498
+    #line 500
     o.lightDir = lightDir;
     o.vlight = glstate_lightmodel_ambient.xyz;
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
-    #line 502
+    #line 504
     return o;
 }
 
@@ -2819,7 +2839,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec3 localPos;
 };
-#line 476
+#line 478
 struct v2f_surf {
     highp vec4 pos;
     highp vec2 cust_viewDist;
@@ -2943,7 +2963,7 @@ uniform highp float _BumpScale;
 uniform highp float _MinLight;
 #line 426
 #line 439
-#line 486
+#line 488
 #line 411
 mediump vec4 LightingSimpleLambert( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
     #line 413
@@ -2996,12 +3016,15 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 normal = mix( normalZ, normalX, vec4( pos.x));
     #line 468
     normal = mix( normal, normalY, vec4( pos.y));
-    mediump float detailLevel = IN.viewDist.x;
+    mediump float detailLevel = xll_saturate_f((2.0 * IN.viewDist.x));
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0), vec3( detailLevel)));
-    o.Albedo = albedo;
+    o.Normal = vec3( 0.0, 0.0, 1.0);
     #line 472
-    mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
+    o.Albedo = albedo;
+    mediump float avg = (main.w * mix( detail.w, 1.0, detailLevel));
+    mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
     o.Alpha = mix( 0.0, avg, IN.viewDist.y);
+    #line 476
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
 #line 393
@@ -3011,24 +3034,24 @@ lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
     #line 397
     return max( float((dist > (shadowCoord.z / shadowCoord.w))), lightShadowDataX);
 }
-#line 504
+#line 506
 lowp vec4 frag_surf( in v2f_surf IN ) {
-    #line 506
+    #line 508
     Input surfIN;
     surfIN.viewDist = IN.cust_viewDist;
     surfIN.localPos = IN.cust_localPos;
     SurfaceOutput o;
-    #line 510
+    #line 512
     o.Albedo = vec3( 0.0);
     o.Emission = vec3( 0.0);
     o.Specular = 0.0;
     o.Alpha = 0.0;
-    #line 514
+    #line 516
     o.Gloss = 0.0;
     surf( surfIN, o);
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
     lowp vec4 c = vec4( 0.0);
-    #line 518
+    #line 520
     c = LightingSimpleLambert( o, IN.lightDir, atten);
     c.xyz += (o.Albedo * IN.vlight);
     return c;
@@ -3081,15 +3104,16 @@ void main ()
   vec3 tmpvar_3;
   tmpvar_3 = (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
   vec3 p_4;
-  p_4 = (tmpvar_3 - tmpvar_2);
+  p_4 = (tmpvar_2 - _WorldSpaceCameraPos);
+  tmpvar_1.x = (_DetailDist * sqrt(dot (p_4, p_4)));
   vec3 p_5;
   p_5 = (tmpvar_3 - _WorldSpaceCameraPos);
   vec3 p_6;
-  p_6 = (tmpvar_2 - _WorldSpaceCameraPos);
-  tmpvar_1.x = clamp ((_DetailDist * sqrt(dot (p_6, p_6))), 0.0, 1.0);
+  p_6 = (tmpvar_3 - tmpvar_2);
+  tmpvar_1.y = clamp (((0.01 * abs((sqrt(dot (p_5, p_5)) - sqrt(dot (p_6, p_6))))) - 2.0), 0.0, 1.0);
   vec3 p_7;
   p_7 = (tmpvar_2 - _WorldSpaceCameraPos);
-  tmpvar_1.y = (clamp ((sqrt(dot (p_4, p_4)) - (1.003 * sqrt(dot (p_5, p_5)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_7, p_7))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * gl_Normal.xyzz).xyz), -(normalize((tmpvar_2 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_1.y = (tmpvar_1.y * clamp ((clamp ((0.0825 * sqrt(dot (p_7, p_7))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * gl_Normal.xyzz).xyz), -(normalize((tmpvar_2 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   vec3 tmpvar_8;
   vec3 tmpvar_9;
   tmpvar_8 = TANGENT.xyz;
@@ -3192,16 +3216,18 @@ void main ()
   tmpvar_17 = abs(xlv_TEXCOORD1);
   vec4 tmpvar_18;
   tmpvar_18 = mix (mix (texture2D (_DetailTex, ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy)), texture2D (_DetailTex, ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DetailTex, ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy)), tmpvar_17.yyyy);
-  vec3 tmpvar_19;
-  tmpvar_19 = (tmpvar_16.xyz * mix (tmpvar_18.xyz, vec3(1.0, 1.0, 1.0), xlv_TEXCOORD0.xxx));
-  vec3 normal_20;
-  normal_20.xy = ((mix (mix (texture2D (_BumpMap, ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy)), texture2D (_BumpMap, ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy)), tmpvar_17.xxxx), texture2D (_BumpMap, ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy)), tmpvar_17.yyyy).wy * 2.0) - 1.0);
-  normal_20.z = sqrt((1.0 - clamp (dot (normal_20.xy, normal_20.xy), 0.0, 1.0)));
-  vec4 c_21;
-  c_21.xyz = (tmpvar_19 * clamp ((_MinLight + (_LightColor0.xyz * (clamp (dot (mix (normal_20, vec3(0.0, 0.0, 1.0), xlv_TEXCOORD0.xxx), xlv_TEXCOORD2), 0.0, 1.0) * 2.0))), 0.0, 1.0));
-  c_21.w = mix (0.0, (mix (tmpvar_18.w, 1.0, xlv_TEXCOORD0.x) * tmpvar_16.w), xlv_TEXCOORD0.y);
-  c_1.w = c_21.w;
-  c_1.xyz = (c_21.xyz + (tmpvar_19 * xlv_TEXCOORD3));
+  float tmpvar_19;
+  tmpvar_19 = clamp ((2.0 * xlv_TEXCOORD0.x), 0.0, 1.0);
+  vec3 tmpvar_20;
+  tmpvar_20 = (tmpvar_16.xyz * mix (tmpvar_18.xyz, vec3(1.0, 1.0, 1.0), vec3(tmpvar_19)));
+  vec3 normal_21;
+  normal_21.xy = ((mix (mix (texture2D (_BumpMap, ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy)), texture2D (_BumpMap, ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy)), tmpvar_17.xxxx), texture2D (_BumpMap, ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy)), tmpvar_17.yyyy).wy * 2.0) - 1.0);
+  normal_21.z = sqrt((1.0 - clamp (dot (normal_21.xy, normal_21.xy), 0.0, 1.0)));
+  vec4 c_22;
+  c_22.xyz = (tmpvar_20 * clamp ((_MinLight + (_LightColor0.xyz * (clamp (dot (mix (normal_21, vec3(0.0, 0.0, 1.0), vec3(tmpvar_19)), xlv_TEXCOORD2), 0.0, 1.0) * 2.0))), 0.0, 1.0));
+  c_22.w = mix (0.0, (tmpvar_16.w * mix (tmpvar_18.w, 1.0, tmpvar_19)), xlv_TEXCOORD0.y);
+  c_1.w = c_22.w;
+  c_1.xyz = (c_22.xyz + (tmpvar_20 * xlv_TEXCOORD3));
   gl_FragData[0] = c_1;
 }
 
@@ -3225,13 +3251,13 @@ Float 15 [_FalloffPow]
 Float 16 [_FalloffScale]
 Float 17 [_DetailDist]
 "vs_3_0
-; 59 ALU
+; 61 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
-def c18, 0.08250000, 0.80000001, 1.00300002, 0
+def c18, 0.08250000, 0.80000001, 0.01000000, -2.00000000
 dcl_position0 v0
 dcl_tangent0 v1
 dcl_normal0 v2
@@ -3250,43 +3276,45 @@ rsq r0.w, r0.w
 mul r1.xyz, r0.w, r1
 dp3 r0.x, r1, -r0
 mul r0.x, r0, c16
-mul r0.w, r0.x, c18.y
+mul r0.x, r0, c18.y
+pow_sat r2, r0.x, c15.x
 mov r0.xyz, v1
 mul r1.xyz, v2.zxyw, r0.yzxw
 mov r0.xyz, v1
 mad r1.xyz, v2.yzxw, r0.zxyw, -r1
-pow_sat r2, r0.w, c15.x
+mul r4.xyz, r1, v1.w
 mov r0, c10
 dp4 r2.w, c14, r0
 mov r0, c9
 dp4 r2.z, c14, r0
-rcp r0.w, r3.w
-mul r4.xyz, r1, v1.w
 mov r1, c8
 dp4 r2.y, c14, r1
-mov r0.y, r2.x
-mul_sat r0.x, r0.w, c18
-add_sat r1.w, r0.x, r0.y
 mov r0.z, c6.w
 mov r0.x, c4.w
 mov r0.y, c5.w
 add r1.xyz, -r0, r3
 add r0.xyz, -r0, c13
-dp3 r0.y, r0, r0
+dp3 r0.x, r0, r0
 dp3 r1.x, r1, r1
-rsq r0.x, r1.x
-rsq r0.y, r0.y
+rsq r0.y, r1.x
+rsq r0.x, r0.x
 rcp r0.x, r0.x
 rcp r0.y, r0.y
-mad_sat r0.x, -r0.y, c18.z, r0
-mul o1.y, r0.x, r1.w
-dp3 r0.x, v0, v0
-rsq r0.x, r0.x
+add r0.y, r0.x, -r0
+rcp r0.x, r3.w
+abs r0.y, r0
+mad_sat r0.y, r0, c18.z, c18.w
+mov r0.w, r2.x
+mul_sat r0.z, r0.x, c18.x
+add_sat r0.z, r0, r0.w
+mul o1.y, r0, r0.z
+dp3 r0.y, v0, v0
+rsq r0.y, r0.y
 dp3 o3.y, r2.yzww, r4
 dp3 o3.z, v2, r2.yzww
 dp3 o3.x, r2.yzww, v1
-mul_sat o1.x, r0.w, c17
-mul o2.xyz, r0.x, v0
+mul o1.x, r0, c17
+mul o2.xyz, r0.y, v0
 mov o4.xyz, c12
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
@@ -3320,12 +3348,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 53 instructions, 3 temp regs, 0 temp arrays:
-// ALU 51 float, 0 int, 0 uint
+// 54 instructions, 3 temp regs, 0 temp arrays:
+// ALU 52 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedejclpngkipepfipkhoaodiddghemanckabaaaaaaniaiaaaaadaaaaaa
+eefiecednbndcmepniccpokkheachgiimjinfaibabaaaaaapiaiaaaaadaaaaaa
 cmaaaaaapeaaaaaajeabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -3337,8 +3365,8 @@ aiaaaaaaiaaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaaimaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaahaiaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaimaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaafdfgfpfa
-epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcdmahaaaaeaaaabaa
-mpabaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaafjaaaaaeegiocaaaabaaaaaa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcfmahaaaaeaaaabaa
+nhabaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaafjaaaaaeegiocaaaabaaaaaa
 afaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaa
 beaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaaghaaaaaepccabaaa
@@ -3372,15 +3400,16 @@ aaaaaaaabkiacaaaaaaaaaaaagaaaaaaabeaaaaamnmmemdpdiaaaaahbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaacpaaaaafbcaabaaaaaaaaaaa
 akaabaaaaaaaaaaadiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaaakiacaaa
 aaaaaaaaagaaaaaabjaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
-ccaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaamdpfkidndicaaaaibccabaaa
+ccaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaamdpfkidndiaaaaaibccabaaa
 abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaagaaaaaaddaaaaakdcaabaaa
 aaaaaaaaegaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaa
 aaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaaddaaaaah
 bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaakhcaabaaa
 abaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaaegiccaaaadaaaaaaapaaaaaa
 baaaaaahccaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaelaaaaaf
-kcaabaaaaaaaaaaafganbaaaaaaaaaaadccaaaakccaabaaaaaaaaaaabkaabaia
-ebaaaaaaaaaaaaaaabeaaaaaeogciadpdkaabaaaaaaaaaaadiaaaaahcccabaaa
+kcaabaaaaaaaaaaafganbaaaaaaaaaaaaaaaaaaiccaabaaaaaaaaaaadkaabaia
+ebaaaaaaaaaaaaaabkaabaaaaaaaaaaadccaaaakccaabaaaaaaaaaaabkaabaia
+ibaaaaaaaaaaaaaaabeaaaaaaknhcddmabeaaaaaaaaaaamadiaaaaahcccabaaa
 abaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
 egbcbaaaaaaaaaaaegbcbaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhccabaaaacaaaaaaagaabaaaaaaaaaaaegbcbaaaaaaaaaaa
@@ -3436,15 +3465,16 @@ void main ()
   highp vec3 tmpvar_7;
   tmpvar_7 = (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
   highp vec3 p_8;
-  p_8 = (tmpvar_7 - tmpvar_6);
+  p_8 = (tmpvar_6 - _WorldSpaceCameraPos);
+  tmpvar_5.x = (_DetailDist * sqrt(dot (p_8, p_8)));
   highp vec3 p_9;
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
-  p_10 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
+  p_10 = (tmpvar_7 - tmpvar_6);
+  tmpvar_5.y = clamp (((0.01 * abs((sqrt(dot (p_9, p_9)) - sqrt(dot (p_10, p_10))))) - 2.0), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (tmpvar_5.y * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec3 tmpvar_12;
   highp vec3 tmpvar_13;
   tmpvar_12 = tmpvar_1.xyz;
@@ -3615,13 +3645,13 @@ void main ()
   tmpvar_47 = mix (normal_7, normalY_10, tmpvar_43.yyyy);
   normal_7 = tmpvar_47;
   highp float tmpvar_48;
-  tmpvar_48 = xlv_TEXCOORD0.x;
+  tmpvar_48 = clamp ((2.0 * xlv_TEXCOORD0.x), 0.0, 1.0);
   detailLevel_6 = tmpvar_48;
   mediump vec3 tmpvar_49;
   tmpvar_49 = (main_15.xyz * mix (detail_8.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_6)));
   tmpvar_3 = tmpvar_49;
   mediump float tmpvar_50;
-  tmpvar_50 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
+  tmpvar_50 = (main_15.w * mix (detail_8.w, 1.0, detailLevel_6));
   highp float tmpvar_51;
   tmpvar_51 = mix (0.0, tmpvar_50, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_51;
@@ -3692,15 +3722,16 @@ void main ()
   highp vec3 tmpvar_7;
   tmpvar_7 = (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
   highp vec3 p_8;
-  p_8 = (tmpvar_7 - tmpvar_6);
+  p_8 = (tmpvar_6 - _WorldSpaceCameraPos);
+  tmpvar_5.x = (_DetailDist * sqrt(dot (p_8, p_8)));
   highp vec3 p_9;
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
-  p_10 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
+  p_10 = (tmpvar_7 - tmpvar_6);
+  tmpvar_5.y = clamp (((0.01 * abs((sqrt(dot (p_9, p_9)) - sqrt(dot (p_10, p_10))))) - 2.0), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (tmpvar_5.y * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec3 tmpvar_12;
   highp vec3 tmpvar_13;
   tmpvar_12 = tmpvar_1.xyz;
@@ -3871,13 +3902,13 @@ void main ()
   tmpvar_47 = mix (normal_7, normalY_10, tmpvar_43.yyyy);
   normal_7 = tmpvar_47;
   highp float tmpvar_48;
-  tmpvar_48 = xlv_TEXCOORD0.x;
+  tmpvar_48 = clamp ((2.0 * xlv_TEXCOORD0.x), 0.0, 1.0);
   detailLevel_6 = tmpvar_48;
   mediump vec3 tmpvar_49;
   tmpvar_49 = (main_15.xyz * mix (detail_8.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_6)));
   tmpvar_3 = tmpvar_49;
   mediump float tmpvar_50;
-  tmpvar_50 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
+  tmpvar_50 = (main_15.w * mix (detail_8.w, 1.0, detailLevel_6));
   highp float tmpvar_51;
   tmpvar_51 = mix (0.0, tmpvar_50, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_51;
@@ -4005,7 +4036,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec3 localPos;
 };
-#line 468
+#line 470
 struct v2f_surf {
     highp vec4 pos;
     highp vec2 cust_viewDist;
@@ -4125,8 +4156,8 @@ uniform highp float _BumpScale;
 uniform highp float _MinLight;
 #line 418
 #line 431
-#line 477
-#line 494
+#line 479
+#line 496
 #line 82
 highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
     highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
@@ -4136,31 +4167,31 @@ highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
 void vert( inout appdata_full v, out Input o ) {
     highp vec3 normalDir = normalize((_Object2World * v.normal.xyzz).xyz);
     #line 422
-    highp vec3 modelCam = _WorldSpaceCameraPos;
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
-    highp vec3 viewVect = normalize((vertexPos - modelCam));
+    highp vec3 viewVect = normalize((vertexPos - _WorldSpaceCameraPos));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
+    highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     #line 426
-    highp float diff = (distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos)));
-    o.viewDist.x = xll_saturate_f((_DetailDist * distance( vertexPos, _WorldSpaceCameraPos)));
-    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
+    o.viewDist.x = diff;
+    o.viewDist.y = xll_saturate_f(((0.01 * abs((distance( origin, _WorldSpaceCameraPos) - distance( origin, vertexPos)))) - 2.0));
+    o.viewDist.y *= xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow))));
     o.localPos = normalize(v.vertex.xyz);
 }
-#line 477
+#line 479
 v2f_surf vert_surf( in appdata_full v ) {
     v2f_surf o;
     Input customInputData;
-    #line 481
+    #line 483
     vert( v, customInputData);
     o.cust_viewDist = customInputData.viewDist;
     o.cust_localPos = customInputData.localPos;
     o.pos = (glstate_matrix_mvp * v.vertex);
-    #line 485
+    #line 487
     highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
     highp vec3 lightDir = (rotation * ObjSpaceLightDir( v.vertex));
-    #line 489
+    #line 491
     o.lightDir = lightDir;
     o.vlight = glstate_lightmodel_ambient.xyz;
     return o;
@@ -4299,7 +4330,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec3 localPos;
 };
-#line 468
+#line 470
 struct v2f_surf {
     highp vec4 pos;
     highp vec2 cust_viewDist;
@@ -4419,8 +4450,8 @@ uniform highp float _BumpScale;
 uniform highp float _MinLight;
 #line 418
 #line 431
-#line 477
-#line 494
+#line 479
+#line 496
 #line 403
 mediump vec4 LightingSimpleLambert( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
     #line 405
@@ -4473,34 +4504,37 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 normal = mix( normalZ, normalX, vec4( pos.x));
     #line 460
     normal = mix( normal, normalY, vec4( pos.y));
-    mediump float detailLevel = IN.viewDist.x;
+    mediump float detailLevel = xll_saturate_f((2.0 * IN.viewDist.x));
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0), vec3( detailLevel)));
-    o.Albedo = albedo;
+    o.Normal = vec3( 0.0, 0.0, 1.0);
     #line 464
-    mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
+    o.Albedo = albedo;
+    mediump float avg = (main.w * mix( detail.w, 1.0, detailLevel));
+    mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
     o.Alpha = mix( 0.0, avg, IN.viewDist.y);
+    #line 468
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
-#line 494
+#line 496
 lowp vec4 frag_surf( in v2f_surf IN ) {
     Input surfIN;
     surfIN.viewDist = IN.cust_viewDist;
-    #line 498
+    #line 500
     surfIN.localPos = IN.cust_localPos;
     SurfaceOutput o;
     o.Albedo = vec3( 0.0);
     o.Emission = vec3( 0.0);
-    #line 502
+    #line 504
     o.Specular = 0.0;
     o.Alpha = 0.0;
     o.Gloss = 0.0;
     surf( surfIN, o);
-    #line 506
+    #line 508
     lowp float atten = 1.0;
     lowp vec4 c = vec4( 0.0);
     c = LightingSimpleLambert( o, IN.lightDir, atten);
     c.xyz += (o.Albedo * IN.vlight);
-    #line 510
+    #line 512
     return c;
 }
 in highp vec2 xlv_TEXCOORD0;
@@ -4551,15 +4585,16 @@ void main ()
   vec3 tmpvar_3;
   tmpvar_3 = (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
   vec3 p_4;
-  p_4 = (tmpvar_3 - tmpvar_2);
+  p_4 = (tmpvar_2 - _WorldSpaceCameraPos);
+  tmpvar_1.x = (_DetailDist * sqrt(dot (p_4, p_4)));
   vec3 p_5;
   p_5 = (tmpvar_3 - _WorldSpaceCameraPos);
   vec3 p_6;
-  p_6 = (tmpvar_2 - _WorldSpaceCameraPos);
-  tmpvar_1.x = clamp ((_DetailDist * sqrt(dot (p_6, p_6))), 0.0, 1.0);
+  p_6 = (tmpvar_3 - tmpvar_2);
+  tmpvar_1.y = clamp (((0.01 * abs((sqrt(dot (p_5, p_5)) - sqrt(dot (p_6, p_6))))) - 2.0), 0.0, 1.0);
   vec3 p_7;
   p_7 = (tmpvar_2 - _WorldSpaceCameraPos);
-  tmpvar_1.y = (clamp ((sqrt(dot (p_4, p_4)) - (1.003 * sqrt(dot (p_5, p_5)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_7, p_7))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * gl_Normal.xyzz).xyz), -(normalize((tmpvar_2 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_1.y = (tmpvar_1.y * clamp ((clamp ((0.0825 * sqrt(dot (p_7, p_7))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * gl_Normal.xyzz).xyz), -(normalize((tmpvar_2 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   vec4 tmpvar_8;
   tmpvar_8 = (gl_ModelViewProjectionMatrix * gl_Vertex);
   vec3 tmpvar_9;
@@ -4675,16 +4710,18 @@ void main ()
   tmpvar_17 = abs(xlv_TEXCOORD1);
   vec4 tmpvar_18;
   tmpvar_18 = mix (mix (texture2D (_DetailTex, ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy)), texture2D (_DetailTex, ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DetailTex, ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy)), tmpvar_17.yyyy);
-  vec3 tmpvar_19;
-  tmpvar_19 = (tmpvar_16.xyz * mix (tmpvar_18.xyz, vec3(1.0, 1.0, 1.0), xlv_TEXCOORD0.xxx));
-  vec3 normal_20;
-  normal_20.xy = ((mix (mix (texture2D (_BumpMap, ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy)), texture2D (_BumpMap, ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy)), tmpvar_17.xxxx), texture2D (_BumpMap, ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy)), tmpvar_17.yyyy).wy * 2.0) - 1.0);
-  normal_20.z = sqrt((1.0 - clamp (dot (normal_20.xy, normal_20.xy), 0.0, 1.0)));
-  vec4 c_21;
-  c_21.xyz = (tmpvar_19 * clamp ((_MinLight + (_LightColor0.xyz * ((clamp (dot (mix (normal_20, vec3(0.0, 0.0, 1.0), xlv_TEXCOORD0.xxx), xlv_TEXCOORD2), 0.0, 1.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x) * 2.0))), 0.0, 1.0));
-  c_21.w = mix (0.0, (mix (tmpvar_18.w, 1.0, xlv_TEXCOORD0.x) * tmpvar_16.w), xlv_TEXCOORD0.y);
-  c_1.w = c_21.w;
-  c_1.xyz = (c_21.xyz + (tmpvar_19 * xlv_TEXCOORD3));
+  float tmpvar_19;
+  tmpvar_19 = clamp ((2.0 * xlv_TEXCOORD0.x), 0.0, 1.0);
+  vec3 tmpvar_20;
+  tmpvar_20 = (tmpvar_16.xyz * mix (tmpvar_18.xyz, vec3(1.0, 1.0, 1.0), vec3(tmpvar_19)));
+  vec3 normal_21;
+  normal_21.xy = ((mix (mix (texture2D (_BumpMap, ((xlv_TEXCOORD1.xy * _BumpScale) + _BumpOffset.xy)), texture2D (_BumpMap, ((xlv_TEXCOORD1.zy * _BumpScale) + _BumpOffset.xy)), tmpvar_17.xxxx), texture2D (_BumpMap, ((xlv_TEXCOORD1.zx * _BumpScale) + _BumpOffset.xy)), tmpvar_17.yyyy).wy * 2.0) - 1.0);
+  normal_21.z = sqrt((1.0 - clamp (dot (normal_21.xy, normal_21.xy), 0.0, 1.0)));
+  vec4 c_22;
+  c_22.xyz = (tmpvar_20 * clamp ((_MinLight + (_LightColor0.xyz * ((clamp (dot (mix (normal_21, vec3(0.0, 0.0, 1.0), vec3(tmpvar_19)), xlv_TEXCOORD2), 0.0, 1.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x) * 2.0))), 0.0, 1.0));
+  c_22.w = mix (0.0, (tmpvar_16.w * mix (tmpvar_18.w, 1.0, tmpvar_19)), xlv_TEXCOORD0.y);
+  c_1.w = c_22.w;
+  c_1.xyz = (c_22.xyz + (tmpvar_20 * xlv_TEXCOORD3));
   gl_FragData[0] = c_1;
 }
 
@@ -4710,14 +4747,15 @@ Float 17 [_FalloffPow]
 Float 18 [_FalloffScale]
 Float 19 [_DetailDist]
 "vs_3_0
-; 64 ALU
+; 66 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
-def c20, 0.08250000, 0.80000001, 1.00300002, 0.50000000
+def c20, 0.08250000, 0.80000001, 0.01000000, -2.00000000
+def c21, 0.50000000, 0, 0, 0
 dcl_position0 v0
 dcl_tangent0 v1
 dcl_normal0 v2
@@ -4736,41 +4774,43 @@ rsq r0.w, r0.w
 mul r1.xyz, r0.w, r1
 dp3 r0.x, r1, -r0
 mul r0.x, r0, c18
-mul r0.w, r0.x, c20.y
+mul r0.x, r0, c20.y
+pow_sat r2, r0.x, c17.x
 mov r0.xyz, v1
 mul r1.xyz, v2.zxyw, r0.yzxw
 mov r0.xyz, v1
 mad r1.xyz, v2.yzxw, r0.zxyw, -r1
-pow_sat r2, r0.w, c17.x
+mul r4.xyz, r1, v1.w
+mov r1, c8
+dp4 r2.y, c16, r1
 mov r0, c10
 dp4 r2.w, c16, r0
 mov r0, c9
 dp4 r2.z, c16, r0
-mul r4.xyz, r1, v1.w
-mov r1, c8
-dp4 r2.y, c16, r1
 rcp r1.w, r3.w
-mov r0.y, r2.x
-mul_sat r0.x, r1.w, c20
-add_sat r0.w, r0.x, r0.y
+mov r0.w, r2.x
 mov r0.z, c6.w
 mov r0.x, c4.w
 mov r0.y, c5.w
 add r1.xyz, -r0, r3
 add r0.xyz, -r0, c13
-dp3 r0.y, r0, r0
+dp3 r0.x, r0, r0
 dp3 r1.x, r1, r1
-rsq r0.x, r1.x
-rsq r0.y, r0.y
+rsq r0.y, r1.x
+rsq r0.x, r0.x
 rcp r0.y, r0.y
 rcp r0.x, r0.x
-mad_sat r0.x, -r0.y, c20.z, r0
-mul o1.y, r0.x, r0.w
+add r0.x, r0, -r0.y
+abs r0.x, r0
+mul_sat r0.y, r1.w, c20.x
+add_sat r0.y, r0, r0.w
+mad_sat r0.x, r0, c20.z, c20.w
+mul o1.y, r0.x, r0
 dp4 r0.w, v0, c3
 dp4 r0.z, v0, c2
 dp4 r0.x, v0, c0
 dp4 r0.y, v0, c1
-mul r1.xyz, r0.xyww, c20.w
+mul r1.xyz, r0.xyww, c21.x
 mul r1.y, r1, c14.x
 mov o0, r0
 dp3 r0.x, v0, v0
@@ -4780,7 +4820,7 @@ dp3 o3.z, v2, r2.yzww
 dp3 o3.x, r2.yzww, v1
 mad o5.xy, r1.z, c15.zwzw, r1
 mov o5.zw, r0
-mul_sat o1.x, r1.w, c19
+mul o1.x, r1.w, c19
 mul o2.xyz, r0.x, v0
 mov o4.xyz, c12
 "
@@ -4812,12 +4852,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 58 instructions, 4 temp regs, 0 temp arrays:
-// ALU 54 float, 0 int, 0 uint
+// 59 instructions, 4 temp regs, 0 temp arrays:
+// ALU 55 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmgnhigadhfndlfbjoelmggnniiilfahmabaaaaaaiiajaaaaadaaaaaa
+eefiecedmcbiebccpnkljbhanhpgogkhjdejekjjabaaaaaakiajaaaaadaaaaaa
 cmaaaaaapeaaaaaakmabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -4830,7 +4870,7 @@ aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadamaaaakeaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaahaiaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaakeaaaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefcneahaaaaeaaaabaapfabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcpeahaaaaeaaaabaapnabaaaafjaaaaae
 egiocaaaaaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaagaaaaaafjaaaaae
 egiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaabeaaaaaafjaaaaae
 egiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
@@ -4866,15 +4906,16 @@ aaaaaaaaakaaaaaaabeaaaaamnmmemdpdiaaaaahbcaabaaaabaaaaaaakaabaaa
 abaaaaaabkaabaaaabaaaaaacpaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaa
 diaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaa
 bjaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaa
-akaabaaaacaaaaaaabeaaaaamdpfkidndicaaaaibccabaaaabaaaaaaakaabaaa
+akaabaaaacaaaaaaabeaaaaamdpfkidndiaaaaaibccabaaaabaaaaaaakaabaaa
 acaaaaaadkiacaaaaaaaaaaaakaaaaaaddaaaaakdcaabaaaabaaaaaaegaabaaa
 abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaahbcaabaaa
 abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahbcaabaaaabaaaaaa
 akaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaakhcaabaaaacaaaaaaegiccaia
 ebaaaaaaabaaaaaaaeaaaaaaegiccaaaadaaaaaaapaaaaaabaaaaaahccaabaaa
 abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafkcaabaaaabaaaaaa
-fganbaaaabaaaaaadccaaaakccaabaaaabaaaaaabkaabaiaebaaaaaaabaaaaaa
-abeaaaaaeogciadpdkaabaaaabaaaaaadiaaaaahcccabaaaabaaaaaaakaabaaa
+fganbaaaabaaaaaaaaaaaaaiccaabaaaabaaaaaadkaabaiaebaaaaaaabaaaaaa
+bkaabaaaabaaaaaadccaaaakccaabaaaabaaaaaabkaabaiaibaaaaaaabaaaaaa
+abeaaaaaaknhcddmabeaaaaaaaaaaamadiaaaaahcccabaaaabaaaaaaakaabaaa
 abaaaaaabkaabaaaabaaaaaabaaaaaahbcaabaaaabaaaaaaegbcbaaaaaaaaaaa
 egbcbaaaaaaaaaaaeeaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaah
 hccabaaaacaaaaaaagaabaaaabaaaaaaegbcbaaaaaaaaaaadiaaaaahhcaabaaa
@@ -4936,15 +4977,16 @@ void main ()
   highp vec3 tmpvar_7;
   tmpvar_7 = (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
   highp vec3 p_8;
-  p_8 = (tmpvar_7 - tmpvar_6);
+  p_8 = (tmpvar_6 - _WorldSpaceCameraPos);
+  tmpvar_5.x = (_DetailDist * sqrt(dot (p_8, p_8)));
   highp vec3 p_9;
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
-  p_10 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
+  p_10 = (tmpvar_7 - tmpvar_6);
+  tmpvar_5.y = clamp (((0.01 * abs((sqrt(dot (p_9, p_9)) - sqrt(dot (p_10, p_10))))) - 2.0), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (tmpvar_5.y * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec3 tmpvar_12;
   highp vec3 tmpvar_13;
   tmpvar_12 = tmpvar_1.xyz;
@@ -5119,13 +5161,13 @@ void main ()
   tmpvar_47 = mix (normal_7, normalY_10, tmpvar_43.yyyy);
   normal_7 = tmpvar_47;
   highp float tmpvar_48;
-  tmpvar_48 = xlv_TEXCOORD0.x;
+  tmpvar_48 = clamp ((2.0 * xlv_TEXCOORD0.x), 0.0, 1.0);
   detailLevel_6 = tmpvar_48;
   mediump vec3 tmpvar_49;
   tmpvar_49 = (main_15.xyz * mix (detail_8.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_6)));
   tmpvar_3 = tmpvar_49;
   mediump float tmpvar_50;
-  tmpvar_50 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
+  tmpvar_50 = (main_15.w * mix (detail_8.w, 1.0, detailLevel_6));
   highp float tmpvar_51;
   tmpvar_51 = mix (0.0, tmpvar_50, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_51;
@@ -5212,15 +5254,16 @@ void main ()
   highp vec3 tmpvar_7;
   tmpvar_7 = (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
   highp vec3 p_8;
-  p_8 = (tmpvar_7 - tmpvar_6);
+  p_8 = (tmpvar_6 - _WorldSpaceCameraPos);
+  tmpvar_5.x = (_DetailDist * sqrt(dot (p_8, p_8)));
   highp vec3 p_9;
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
-  p_10 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
+  p_10 = (tmpvar_7 - tmpvar_6);
+  tmpvar_5.y = clamp (((0.01 * abs((sqrt(dot (p_9, p_9)) - sqrt(dot (p_10, p_10))))) - 2.0), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (tmpvar_5.y * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec4 tmpvar_12;
   tmpvar_12 = (glstate_matrix_mvp * _glesVertex);
   highp vec3 tmpvar_13;
@@ -5404,13 +5447,13 @@ void main ()
   tmpvar_47 = mix (normal_7, normalY_10, tmpvar_43.yyyy);
   normal_7 = tmpvar_47;
   highp float tmpvar_48;
-  tmpvar_48 = xlv_TEXCOORD0.x;
+  tmpvar_48 = clamp ((2.0 * xlv_TEXCOORD0.x), 0.0, 1.0);
   detailLevel_6 = tmpvar_48;
   mediump vec3 tmpvar_49;
   tmpvar_49 = (main_15.xyz * mix (detail_8.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_6)));
   tmpvar_3 = tmpvar_49;
   mediump float tmpvar_50;
-  tmpvar_50 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
+  tmpvar_50 = (main_15.w * mix (detail_8.w, 1.0, detailLevel_6));
   highp float tmpvar_51;
   tmpvar_51 = mix (0.0, tmpvar_50, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_51;
@@ -5542,7 +5585,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec3 localPos;
 };
-#line 476
+#line 478
 struct v2f_surf {
     highp vec4 pos;
     highp vec2 cust_viewDist;
@@ -5666,7 +5709,7 @@ uniform highp float _BumpScale;
 uniform highp float _MinLight;
 #line 426
 #line 439
-#line 486
+#line 488
 #line 82
 highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
     highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
@@ -5676,35 +5719,35 @@ highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
 void vert( inout appdata_full v, out Input o ) {
     highp vec3 normalDir = normalize((_Object2World * v.normal.xyzz).xyz);
     #line 430
-    highp vec3 modelCam = _WorldSpaceCameraPos;
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
-    highp vec3 viewVect = normalize((vertexPos - modelCam));
+    highp vec3 viewVect = normalize((vertexPos - _WorldSpaceCameraPos));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
+    highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     #line 434
-    highp float diff = (distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos)));
-    o.viewDist.x = xll_saturate_f((_DetailDist * distance( vertexPos, _WorldSpaceCameraPos)));
-    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
+    o.viewDist.x = diff;
+    o.viewDist.y = xll_saturate_f(((0.01 * abs((distance( origin, _WorldSpaceCameraPos) - distance( origin, vertexPos)))) - 2.0));
+    o.viewDist.y *= xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow))));
     o.localPos = normalize(v.vertex.xyz);
 }
-#line 486
+#line 488
 v2f_surf vert_surf( in appdata_full v ) {
     v2f_surf o;
     Input customInputData;
-    #line 490
+    #line 492
     vert( v, customInputData);
     o.cust_viewDist = customInputData.viewDist;
     o.cust_localPos = customInputData.localPos;
     o.pos = (glstate_matrix_mvp * v.vertex);
-    #line 494
+    #line 496
     highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
     highp vec3 lightDir = (rotation * ObjSpaceLightDir( v.vertex));
-    #line 498
+    #line 500
     o.lightDir = lightDir;
     o.vlight = glstate_lightmodel_ambient.xyz;
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
-    #line 502
+    #line 504
     return o;
 }
 
@@ -5843,7 +5886,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec3 localPos;
 };
-#line 476
+#line 478
 struct v2f_surf {
     highp vec4 pos;
     highp vec2 cust_viewDist;
@@ -5967,7 +6010,7 @@ uniform highp float _BumpScale;
 uniform highp float _MinLight;
 #line 426
 #line 439
-#line 486
+#line 488
 #line 411
 mediump vec4 LightingSimpleLambert( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
     #line 413
@@ -6020,12 +6063,15 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 normal = mix( normalZ, normalX, vec4( pos.x));
     #line 468
     normal = mix( normal, normalY, vec4( pos.y));
-    mediump float detailLevel = IN.viewDist.x;
+    mediump float detailLevel = xll_saturate_f((2.0 * IN.viewDist.x));
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0), vec3( detailLevel)));
-    o.Albedo = albedo;
+    o.Normal = vec3( 0.0, 0.0, 1.0);
     #line 472
-    mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
+    o.Albedo = albedo;
+    mediump float avg = (main.w * mix( detail.w, 1.0, detailLevel));
+    mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
     o.Alpha = mix( 0.0, avg, IN.viewDist.y);
+    #line 476
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
 #line 393
@@ -6035,24 +6081,24 @@ lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
     #line 397
     return max( float((dist > (shadowCoord.z / shadowCoord.w))), lightShadowDataX);
 }
-#line 504
+#line 506
 lowp vec4 frag_surf( in v2f_surf IN ) {
-    #line 506
+    #line 508
     Input surfIN;
     surfIN.viewDist = IN.cust_viewDist;
     surfIN.localPos = IN.cust_localPos;
     SurfaceOutput o;
-    #line 510
+    #line 512
     o.Albedo = vec3( 0.0);
     o.Emission = vec3( 0.0);
     o.Specular = 0.0;
     o.Alpha = 0.0;
-    #line 514
+    #line 516
     o.Gloss = 0.0;
     surf( surfIN, o);
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
     lowp vec4 c = vec4( 0.0);
-    #line 518
+    #line 520
     c = LightingSimpleLambert( o, IN.lightDir, atten);
     c.xyz += (o.Albedo * IN.vlight);
     return c;
@@ -6120,15 +6166,16 @@ void main ()
   highp vec3 tmpvar_7;
   tmpvar_7 = (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
   highp vec3 p_8;
-  p_8 = (tmpvar_7 - tmpvar_6);
+  p_8 = (tmpvar_6 - _WorldSpaceCameraPos);
+  tmpvar_5.x = (_DetailDist * sqrt(dot (p_8, p_8)));
   highp vec3 p_9;
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
-  p_10 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
+  p_10 = (tmpvar_7 - tmpvar_6);
+  tmpvar_5.y = clamp (((0.01 * abs((sqrt(dot (p_9, p_9)) - sqrt(dot (p_10, p_10))))) - 2.0), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (tmpvar_5.y * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec3 tmpvar_12;
   highp vec3 tmpvar_13;
   tmpvar_12 = tmpvar_1.xyz;
@@ -6304,13 +6351,13 @@ void main ()
   tmpvar_47 = mix (normal_7, normalY_10, tmpvar_43.yyyy);
   normal_7 = tmpvar_47;
   highp float tmpvar_48;
-  tmpvar_48 = xlv_TEXCOORD0.x;
+  tmpvar_48 = clamp ((2.0 * xlv_TEXCOORD0.x), 0.0, 1.0);
   detailLevel_6 = tmpvar_48;
   mediump vec3 tmpvar_49;
   tmpvar_49 = (main_15.xyz * mix (detail_8.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_6)));
   tmpvar_3 = tmpvar_49;
   mediump float tmpvar_50;
-  tmpvar_50 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
+  tmpvar_50 = (main_15.w * mix (detail_8.w, 1.0, detailLevel_6));
   highp float tmpvar_51;
   tmpvar_51 = mix (0.0, tmpvar_50, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_51;
@@ -6445,7 +6492,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec3 localPos;
 };
-#line 476
+#line 478
 struct v2f_surf {
     highp vec4 pos;
     highp vec2 cust_viewDist;
@@ -6569,7 +6616,7 @@ uniform highp float _BumpScale;
 uniform highp float _MinLight;
 #line 426
 #line 439
-#line 486
+#line 488
 #line 82
 highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
     highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
@@ -6579,35 +6626,35 @@ highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
 void vert( inout appdata_full v, out Input o ) {
     highp vec3 normalDir = normalize((_Object2World * v.normal.xyzz).xyz);
     #line 430
-    highp vec3 modelCam = _WorldSpaceCameraPos;
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
-    highp vec3 viewVect = normalize((vertexPos - modelCam));
+    highp vec3 viewVect = normalize((vertexPos - _WorldSpaceCameraPos));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
+    highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     #line 434
-    highp float diff = (distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos)));
-    o.viewDist.x = xll_saturate_f((_DetailDist * distance( vertexPos, _WorldSpaceCameraPos)));
-    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
+    o.viewDist.x = diff;
+    o.viewDist.y = xll_saturate_f(((0.01 * abs((distance( origin, _WorldSpaceCameraPos) - distance( origin, vertexPos)))) - 2.0));
+    o.viewDist.y *= xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow))));
     o.localPos = normalize(v.vertex.xyz);
 }
-#line 486
+#line 488
 v2f_surf vert_surf( in appdata_full v ) {
     v2f_surf o;
     Input customInputData;
-    #line 490
+    #line 492
     vert( v, customInputData);
     o.cust_viewDist = customInputData.viewDist;
     o.cust_localPos = customInputData.localPos;
     o.pos = (glstate_matrix_mvp * v.vertex);
-    #line 494
+    #line 496
     highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
     highp vec3 lightDir = (rotation * ObjSpaceLightDir( v.vertex));
-    #line 498
+    #line 500
     o.lightDir = lightDir;
     o.vlight = glstate_lightmodel_ambient.xyz;
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
-    #line 502
+    #line 504
     return o;
 }
 
@@ -6747,7 +6794,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec3 localPos;
 };
-#line 476
+#line 478
 struct v2f_surf {
     highp vec4 pos;
     highp vec2 cust_viewDist;
@@ -6871,7 +6918,7 @@ uniform highp float _BumpScale;
 uniform highp float _MinLight;
 #line 426
 #line 439
-#line 486
+#line 488
 #line 411
 mediump vec4 LightingSimpleLambert( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
     #line 413
@@ -6924,12 +6971,15 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 normal = mix( normalZ, normalX, vec4( pos.x));
     #line 468
     normal = mix( normal, normalY, vec4( pos.y));
-    mediump float detailLevel = IN.viewDist.x;
+    mediump float detailLevel = xll_saturate_f((2.0 * IN.viewDist.x));
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0), vec3( detailLevel)));
-    o.Albedo = albedo;
+    o.Normal = vec3( 0.0, 0.0, 1.0);
     #line 472
-    mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
+    o.Albedo = albedo;
+    mediump float avg = (main.w * mix( detail.w, 1.0, detailLevel));
+    mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
     o.Alpha = mix( 0.0, avg, IN.viewDist.y);
+    #line 476
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
 #line 393
@@ -6939,24 +6989,24 @@ lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
     #line 397
     return shadow;
 }
-#line 504
+#line 506
 lowp vec4 frag_surf( in v2f_surf IN ) {
-    #line 506
+    #line 508
     Input surfIN;
     surfIN.viewDist = IN.cust_viewDist;
     surfIN.localPos = IN.cust_localPos;
     SurfaceOutput o;
-    #line 510
+    #line 512
     o.Albedo = vec3( 0.0);
     o.Emission = vec3( 0.0);
     o.Specular = 0.0;
     o.Alpha = 0.0;
-    #line 514
+    #line 516
     o.Gloss = 0.0;
     surf( surfIN, o);
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
     lowp vec4 c = vec4( 0.0);
-    #line 518
+    #line 520
     c = LightingSimpleLambert( o, IN.lightDir, atten);
     c.xyz += (o.Albedo * IN.vlight);
     return c;
@@ -7024,15 +7074,16 @@ void main ()
   highp vec3 tmpvar_7;
   tmpvar_7 = (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
   highp vec3 p_8;
-  p_8 = (tmpvar_7 - tmpvar_6);
+  p_8 = (tmpvar_6 - _WorldSpaceCameraPos);
+  tmpvar_5.x = (_DetailDist * sqrt(dot (p_8, p_8)));
   highp vec3 p_9;
   p_9 = (tmpvar_7 - _WorldSpaceCameraPos);
   highp vec3 p_10;
-  p_10 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.x = clamp ((_DetailDist * sqrt(dot (p_10, p_10))), 0.0, 1.0);
+  p_10 = (tmpvar_7 - tmpvar_6);
+  tmpvar_5.y = clamp (((0.01 * abs((sqrt(dot (p_9, p_9)) - sqrt(dot (p_10, p_10))))) - 2.0), 0.0, 1.0);
   highp vec3 p_11;
   p_11 = (tmpvar_6 - _WorldSpaceCameraPos);
-  tmpvar_5.y = (clamp ((sqrt(dot (p_8, p_8)) - (1.003 * sqrt(dot (p_9, p_9)))), 0.0, 1.0) * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
+  tmpvar_5.y = (tmpvar_5.y * clamp ((clamp ((0.0825 * sqrt(dot (p_11, p_11))), 0.0, 1.0) + clamp (pow (((0.8 * _FalloffScale) * dot (normalize((_Object2World * tmpvar_2.xyzz).xyz), -(normalize((tmpvar_6 - _WorldSpaceCameraPos))))), _FalloffPow), 0.0, 1.0)), 0.0, 1.0));
   highp vec3 tmpvar_12;
   highp vec3 tmpvar_13;
   tmpvar_12 = tmpvar_1.xyz;
@@ -7208,13 +7259,13 @@ void main ()
   tmpvar_47 = mix (normal_7, normalY_10, tmpvar_43.yyyy);
   normal_7 = tmpvar_47;
   highp float tmpvar_48;
-  tmpvar_48 = xlv_TEXCOORD0.x;
+  tmpvar_48 = clamp ((2.0 * xlv_TEXCOORD0.x), 0.0, 1.0);
   detailLevel_6 = tmpvar_48;
   mediump vec3 tmpvar_49;
   tmpvar_49 = (main_15.xyz * mix (detail_8.xyz, vec3(1.0, 1.0, 1.0), vec3(detailLevel_6)));
   tmpvar_3 = tmpvar_49;
   mediump float tmpvar_50;
-  tmpvar_50 = (mix (detail_8.w, 1.0, detailLevel_6) * main_15.w);
+  tmpvar_50 = (main_15.w * mix (detail_8.w, 1.0, detailLevel_6));
   highp float tmpvar_51;
   tmpvar_51 = mix (0.0, tmpvar_50, xlv_TEXCOORD0.y);
   tmpvar_5 = tmpvar_51;
@@ -7349,7 +7400,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec3 localPos;
 };
-#line 476
+#line 478
 struct v2f_surf {
     highp vec4 pos;
     highp vec2 cust_viewDist;
@@ -7473,7 +7524,7 @@ uniform highp float _BumpScale;
 uniform highp float _MinLight;
 #line 426
 #line 439
-#line 486
+#line 488
 #line 82
 highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
     highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
@@ -7483,35 +7534,35 @@ highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
 void vert( inout appdata_full v, out Input o ) {
     highp vec3 normalDir = normalize((_Object2World * v.normal.xyzz).xyz);
     #line 430
-    highp vec3 modelCam = _WorldSpaceCameraPos;
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
-    highp vec3 viewVect = normalize((vertexPos - modelCam));
+    highp vec3 viewVect = normalize((vertexPos - _WorldSpaceCameraPos));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
+    highp float diff = (_DetailDist * distance( vertexPos, _WorldSpaceCameraPos));
     #line 434
-    highp float diff = (distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos)));
-    o.viewDist.x = xll_saturate_f((_DetailDist * distance( vertexPos, _WorldSpaceCameraPos)));
-    o.viewDist.y = (xll_saturate_f(diff) * xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow)))));
+    o.viewDist.x = diff;
+    o.viewDist.y = xll_saturate_f(((0.01 * abs((distance( origin, _WorldSpaceCameraPos) - distance( origin, vertexPos)))) - 2.0));
+    o.viewDist.y *= xll_saturate_f((xll_saturate_f((0.0825 * distance( vertexPos, _WorldSpaceCameraPos))) + xll_saturate_f(pow( ((0.8 * _FalloffScale) * dot( normalDir, (-viewVect))), _FalloffPow))));
     o.localPos = normalize(v.vertex.xyz);
 }
-#line 486
+#line 488
 v2f_surf vert_surf( in appdata_full v ) {
     v2f_surf o;
     Input customInputData;
-    #line 490
+    #line 492
     vert( v, customInputData);
     o.cust_viewDist = customInputData.viewDist;
     o.cust_localPos = customInputData.localPos;
     o.pos = (glstate_matrix_mvp * v.vertex);
-    #line 494
+    #line 496
     highp vec3 worldN = (mat3( _Object2World) * (v.normal * unity_Scale.w));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
     highp vec3 lightDir = (rotation * ObjSpaceLightDir( v.vertex));
-    #line 498
+    #line 500
     o.lightDir = lightDir;
     o.vlight = glstate_lightmodel_ambient.xyz;
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
-    #line 502
+    #line 504
     return o;
 }
 
@@ -7651,7 +7702,7 @@ struct Input {
     highp vec3 viewDir;
     highp vec3 localPos;
 };
-#line 476
+#line 478
 struct v2f_surf {
     highp vec4 pos;
     highp vec2 cust_viewDist;
@@ -7775,7 +7826,7 @@ uniform highp float _BumpScale;
 uniform highp float _MinLight;
 #line 426
 #line 439
-#line 486
+#line 488
 #line 411
 mediump vec4 LightingSimpleLambert( in SurfaceOutput s, in mediump vec3 lightDir, in mediump float atten ) {
     #line 413
@@ -7828,12 +7879,15 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     mediump vec4 normal = mix( normalZ, normalX, vec4( pos.x));
     #line 468
     normal = mix( normal, normalY, vec4( pos.y));
-    mediump float detailLevel = IN.viewDist.x;
+    mediump float detailLevel = xll_saturate_f((2.0 * IN.viewDist.x));
     mediump vec3 albedo = (main.xyz * mix( detail.xyz, vec3( 1.0), vec3( detailLevel)));
-    o.Albedo = albedo;
+    o.Normal = vec3( 0.0, 0.0, 1.0);
     #line 472
-    mediump float avg = (mix( detail.w, 1.0, detailLevel) * main.w);
+    o.Albedo = albedo;
+    mediump float avg = (main.w * mix( detail.w, 1.0, detailLevel));
+    mediump float rim = xll_saturate_f(dot( normalize(IN.viewDir), o.Normal));
     o.Alpha = mix( 0.0, avg, IN.viewDist.y);
+    #line 476
     o.Normal = mix( UnpackNormal( normal), vec3( 0.0, 0.0, 1.0), vec3( detailLevel));
 }
 #line 393
@@ -7843,24 +7897,24 @@ lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
     #line 397
     return shadow;
 }
-#line 504
+#line 506
 lowp vec4 frag_surf( in v2f_surf IN ) {
-    #line 506
+    #line 508
     Input surfIN;
     surfIN.viewDist = IN.cust_viewDist;
     surfIN.localPos = IN.cust_localPos;
     SurfaceOutput o;
-    #line 510
+    #line 512
     o.Albedo = vec3( 0.0);
     o.Emission = vec3( 0.0);
     o.Specular = 0.0;
     o.Alpha = 0.0;
-    #line 514
+    #line 516
     o.Gloss = 0.0;
     surf( surfIN, o);
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
     lowp vec4 c = vec4( 0.0);
-    #line 518
+    #line 520
     c = LightingSimpleLambert( o, IN.lightDir, atten);
     c.xyz += (o.Albedo * IN.vlight);
     return c;
@@ -7890,8 +7944,8 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 2
-//   d3d9 - ALU: 105 to 106, TEX: 9 to 10
-//   d3d11 - ALU: 74 to 77, TEX: 6 to 7, FLOW: 1 to 1
+//   d3d9 - ALU: 106 to 107, TEX: 9 to 10
+//   d3d11 - ALU: 75 to 76, TEX: 6 to 7, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 "!!GLSL"
@@ -7910,7 +7964,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_BumpMap] 2D
 "ps_3_0
-; 105 ALU, 9 TEX
+; 106 ALU, 9 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -7929,6 +7983,8 @@ mul r0.zw, v1.xyxy, c4.x
 add r0.xy, r0.zwzw, c2
 mul r2.xy, v1.zxzw, c4.x
 abs r2.zw, v1.xyxy
+abs r3.z, v1
+mul_sat r3.x, v0, c8.z
 texld r0, r0, s1
 texld r1, r1, s1
 add_pp r1, r1, -r0
@@ -7938,52 +7994,52 @@ texld r1, r2, s1
 add_pp r1, r1, -r0
 mad_pp r0, r2.w, r1, r0
 add_pp r1.xyz, -r0, c7.y
-mad_pp r0.xyz, v0.x, r1, r0
-mul r1.zw, v1.xyxy, c5.x
+mad_pp r0.xyz, r3.x, r1, r0
+mul r1.zw, v1.xyzy, c5.x
 add r2.xy, r1.zwzw, c3
-mul r1.xy, v1.zyzw, c5.x
+mul r1.xy, v1, c5.x
 add r1.xy, r1, c3
-texld r3.yw, r2, s2
 texld r1.yw, r1, s2
-add_pp r1.xy, r1.ywzw, -r3.ywzw
-abs r1.w, v1.z
-mad_pp r2.xy, r2.z, r1, r3.ywzw
-max r1.z, r1.w, r2
-rcp r3.x, r1.z
-min r1.z, r1.w, r2
-mul r1.z, r1, r3.x
+texld r3.yw, r2, s2
+add_pp r2.xy, r3.ywzw, -r1.ywzw
+mad_pp r1.zw, r2.z, r2.xyxy, r1.xyyw
+max r2.x, r3.z, r2.z
+rcp r2.y, r2.x
+min r2.x, r3.z, r2.z
+mul r2.x, r2, r2.y
 mul r1.xy, v1.zxzw, c5.x
 add r1.xy, r1, c3
 texld r3.yw, r1, s2
-add_pp r1.xy, r3.ywzw, -r2
-mul r3.x, r1.z, r1.z
-mad_pp r1.xy, r2.w, r1, r2
-mad r3.y, r3.x, c9, c9.z
-mad r2.x, r3.y, r3, c9.w
-mad r2.w, r2.x, r3.x, c10.x
+add_pp r1.xy, r3.ywzw, -r1.zwzw
+mul r2.y, r2.x, r2.x
+mad_pp r1.xy, r2.w, r1, r1.zwzw
+mad r3.y, r2, c9, c9.z
+mad r1.z, r3.y, r2.y, c9.w
+mad r2.w, r1.z, r2.y, c10.x
 mad_pp r1.xy, r1.yxzw, c11.z, c11.w
-mul_pp r2.xy, r1, r1
-add_pp_sat r2.y, r2.x, r2
-mad r2.w, r2, r3.x, c10.y
-mad r2.x, r2.w, r3, c10.z
-mul r2.x, r2, r1.z
-add_pp r2.y, -r2, c7
-rsq_pp r3.x, r2.y
-add r1.z, r1.w, -r2
-add r2.y, -r2.x, c10.w
-cmp r2.w, -r1.z, r2.x, r2.y
-rcp_pp r1.z, r3.x
+mul_pp r1.zw, r1.xyxy, r1.xyxy
+mad r2.w, r2, r2.y, c10.y
+add_pp_sat r1.w, r1.z, r1
+mad r1.z, r2.w, r2.y, c10
+add_pp r2.y, -r1.w, c7
+mul r1.w, r1.z, r2.x
+add r1.z, r3, -r2
+add r2.x, -r1.w, c10.w
+cmp r1.w, -r1.z, r1, r2.x
+add r2.w, -r1, c8
+cmp r1.w, v1.x, r1, r2
+rsq_pp r2.y, r2.y
+rcp_pp r1.z, r2.y
 add_pp r2.xyz, -r1, c7.xxyw
-mad_pp r1.xyz, v0.x, r2, r1
-dp3_pp_sat r3.z, r1, v2
-add r3.x, -r2.w, c8.w
-cmp r2.w, v1.x, r2, r3.x
-cmp r2.x, v1.z, r2.w, -r2.w
-add r1.y, -r1.w, c7
-mad r1.x, r1.w, c7.z, c7.w
-mad r1.x, r1.w, r1, c8
-mad r1.x, r1.w, r1, c8.y
+mad_pp r1.xyz, r3.x, r2, r1
+dp3_pp_sat r3.y, r1, v2
+cmp r1.w, v1.z, r1, -r1
+mad r2.x, r1.w, c11, c11.y
 abs r1.w, -v1.y
+add r1.y, -r3.z, c7
+mad r1.x, r3.z, c7.z, c7.w
+mad r1.x, r3.z, r1, c8
+mad r1.x, r3.z, r1, c8.y
 add r2.z, -r1.w, c7.y
 mad r2.y, r1.w, c7.z, c7.w
 mad r2.y, r2, r1.w, c8.x
@@ -7994,7 +8050,7 @@ cmp r1.x, v1.z, c7, c7.y
 mul r1.z, r1.x, r1.y
 mad r1.z, -r1, c8, r1.y
 rsq r2.z, r2.z
-dsy r3.xy, v1
+dsy r3.zw, v1.xyxy
 mad r1.w, r2.y, r1, c8.y
 rcp r2.z, r2.z
 mul r2.y, r1.w, r2.z
@@ -8006,8 +8062,8 @@ mad r1.x, r1.w, c8.w, r1.y
 mul r1.y, r1.z, c9.x
 dsx r1.w, r1.y
 dsx r2.zw, v1.xyxy
-mul r3.xy, r3, r3
-add r1.z, r3.x, r3.y
+mul r3.zw, r3, r3
+add r1.z, r3, r3.w
 mul r2.y, r1.x, c9.x
 mul r2.zw, r2, r2
 add r1.x, r2.z, r2.w
@@ -8016,17 +8072,16 @@ rsq r1.x, r1.x
 rcp r2.z, r1.z
 rcp r1.x, r1.x
 mul r1.z, r1.x, c11.x
-mad r2.x, r2, c11, c11.y
 mul r1.x, r2.z, c11
 dsy r1.y, r1
 texldd r1, r2, s0, r1.zwzw, r1
 mul r1, r1, c1
 mul_pp r0.xyz, r1, r0
-mul_pp r2.xyz, r3.z, c0
+mul_pp r2.xyz, r3.y, c0
 mul_pp r1.xyz, r2, c8.z
 add_pp r2.x, -r0.w, c7.y
 add_sat r1.xyz, r1, c6.x
-mad_pp r0.w, v0.x, r2.x, r0
+mad_pp r0.w, r3.x, r2.x, r0
 mul r1.xyz, r0, r1
 mul_pp r0.w, r1, r0
 mad_pp oC0.xyz, r0, v3, r1
@@ -8048,12 +8103,12 @@ BindCB "$Globals" 0
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_BumpMap] 2D 2
-// 83 instructions, 5 temp regs, 0 temp arrays:
-// ALU 70 float, 0 int, 4 uint
+// 84 instructions, 6 temp regs, 0 temp arrays:
+// ALU 71 float, 0 int, 4 uint
 // TEX 6 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedhejmekcidfkobfiijmcedopjdbneammeabaaaaaameamaaaaadaaaaaa
+eefiecedkfjcjgekncgcbicljgacbjjmdefmbadcabaaaaaaoaamaaaaadaaaaaa
 cmaaaaaammaaaaaaaaabaaaaejfdeheojiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaadadaaaaimaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -8061,12 +8116,12 @@ ahahaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaaimaaaaaa
 adaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahahaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefclmalaaaaeaaaaaaaopacaaaafjaaaaaeegiocaaaaaaaaaaaaiaaaaaa
+fdeieefcnialaaaaeaaaaaaapgacaaaafjaaaaaeegiocaaaaaaaaaaaaiaaaaaa
 fkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaafkaaaaadaagabaaa
 acaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
 ffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaagcbaaaaddcbabaaaabaaaaaa
 gcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaa
-aeaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacafaaaaaadeaaaaajbcaabaaa
+aeaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacagaaaaaadeaaaaajbcaabaaa
 aaaaaaaaakbabaiaibaaaaaaacaaaaaackbabaiaibaaaaaaacaaaaaaaoaaaaak
 bcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaa
 aaaaaaaaddaaaaajccaabaaaaaaaaaaaakbabaiaibaaaaaaacaaaaaackbabaia
@@ -8128,34 +8183,35 @@ acaaaaaaagbabaiaibaaaaaaacaaaaaaegaobaaaacaaaaaaegaobaaaadaaaaaa
 aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaacaaaaaa
 dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaacaaaaaaegaobaaaabaaaaaa
 egaobaaaacaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaa
-aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpdcaaaaajpcaabaaaabaaaaaa
-agbabaaaabaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaahpcaabaaa
-aaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadiaaaaahhcaabaaaabaaaaaa
-egacbaaaaaaaaaaaegbcbaaaaeaaaaaadcaaaaalpcaabaaaacaaaaaaggbcbaaa
-acaaaaaaagiacaaaaaaaaaaaahaaaaaaegiecaaaaaaaaaaaafaaaaaaefaaaaaj
-pcaabaaaadaaaaaaegaabaaaacaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaa
-efaaaaajpcaabaaaacaaaaaaogakbaaaacaaaaaaeghobaaaacaaaaaaaagabaaa
-acaaaaaadcaaaaalfcaabaaaacaaaaaaagbbbaaaacaaaaaaagiacaaaaaaaaaaa
-ahaaaaaaagibcaaaaaaaaaaaafaaaaaaefaaaaajpcaabaaaaeaaaaaaigaabaaa
-acaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaaaaaaaaaifcaabaaaacaaaaaa
-pganbaaaadaaaaaapganbaiaebaaaaaaaeaaaaaadcaaaaakfcaabaaaacaaaaaa
-agbabaiaibaaaaaaacaaaaaaagacbaaaacaaaaaapganbaaaaeaaaaaaaaaaaaai
-kcaabaaaacaaaaaaagaibaiaebaaaaaaacaaaaaapgahbaaaacaaaaaadcaaaaak
-dcaabaaaacaaaaaafgbfbaiaibaaaaaaacaaaaaangafbaaaacaaaaaaigaabaaa
-acaaaaaadcaaaaapdcaabaaaacaaaaaaegaabaaaacaaaaaaaceaaaaaaaaaaaea
-aaaaaaeaaaaaaaaaaaaaaaaaaceaaaaaaaaaialpaaaaialpaaaaaaaaaaaaaaaa
-apaaaaahicaabaaaabaaaaaaegaabaaaacaaaaaaegaabaaaacaaaaaaddaaaaah
-icaabaaaabaaaaaadkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
-abaaaaaadkaabaiaebaaaaaaabaaaaaaabeaaaaaaaaaiadpelaaaaafecaabaaa
-acaaaaaadkaabaaaabaaaaaaaaaaaaalhcaabaaaadaaaaaaegacbaiaebaaaaaa
-acaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaiadpaaaaaaaadcaaaaajhcaabaaa
-acaaaaaaagbabaaaabaaaaaaegacbaaaadaaaaaaegacbaaaacaaaaaabacaaaah
-icaabaaaabaaaaaaegacbaaaacaaaaaaegbcbaaaadaaaaaaaaaaaaahicaabaaa
-abaaaaaadkaabaaaabaaaaaadkaabaaaabaaaaaadccaaaalhcaabaaaacaaaaaa
-egiccaaaaaaaaaaaabaaaaaapgapbaaaabaaaaaafgifcaaaaaaaaaaaahaaaaaa
-dcaaaaajhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaaaabaaaaaa
-doaaaaab"
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpaacaaaahbcaabaaaadaaaaaa
+akbabaaaabaaaaaaakbabaaaabaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
+adaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaa
+egaobaaaaaaaaaaaegaobaaaabaaaaaadiaaaaahhcaabaaaabaaaaaaegacbaaa
+aaaaaaaaegbcbaaaaeaaaaaadcaaaaalpcaabaaaacaaaaaaggbcbaaaacaaaaaa
+agiacaaaaaaaaaaaahaaaaaaegiecaaaaaaaaaaaafaaaaaaefaaaaajpcaabaaa
+aeaaaaaaegaabaaaacaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaaefaaaaaj
+pcaabaaaacaaaaaaogakbaaaacaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaa
+dcaaaaalfcaabaaaacaaaaaaagbbbaaaacaaaaaaagiacaaaaaaaaaaaahaaaaaa
+agibcaaaaaaaaaaaafaaaaaaefaaaaajpcaabaaaafaaaaaaigaabaaaacaaaaaa
+eghobaaaacaaaaaaaagabaaaacaaaaaaaaaaaaaifcaabaaaacaaaaaapganbaaa
+aeaaaaaapganbaiaebaaaaaaafaaaaaadcaaaaakfcaabaaaacaaaaaaagbabaia
+ibaaaaaaacaaaaaaagacbaaaacaaaaaapganbaaaafaaaaaaaaaaaaaikcaabaaa
+acaaaaaaagaibaiaebaaaaaaacaaaaaapgahbaaaacaaaaaadcaaaaakdcaabaaa
+acaaaaaafgbfbaiaibaaaaaaacaaaaaangafbaaaacaaaaaaigaabaaaacaaaaaa
+dcaaaaapdcaabaaaacaaaaaaegaabaaaacaaaaaaaceaaaaaaaaaaaeaaaaaaaea
+aaaaaaaaaaaaaaaaaceaaaaaaaaaialpaaaaialpaaaaaaaaaaaaaaaaapaaaaah
+icaabaaaabaaaaaaegaabaaaacaaaaaaegaabaaaacaaaaaaddaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaaabaaaaaa
+dkaabaiaebaaaaaaabaaaaaaabeaaaaaaaaaiadpelaaaaafecaabaaaacaaaaaa
+dkaabaaaabaaaaaaaaaaaaalocaabaaaadaaaaaaagajbaiaebaaaaaaacaaaaaa
+aceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaiadpdcaaaaajhcaabaaaacaaaaaa
+agaabaaaadaaaaaajgahbaaaadaaaaaaegacbaaaacaaaaaabacaaaahicaabaaa
+abaaaaaaegacbaaaacaaaaaaegbcbaaaadaaaaaaaaaaaaahicaabaaaabaaaaaa
+dkaabaaaabaaaaaadkaabaaaabaaaaaadccaaaalhcaabaaaacaaaaaaegiccaaa
+aaaaaaaaabaaaaaapgapbaaaabaaaaaafgifcaaaaaaaaaaaahaaaaaadcaaaaaj
+hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaacaaaaaaegacbaaaabaaaaaa
+diaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaaaabaaaaaadoaaaaab
+"
 }
 
 SubProgram "gles " {
@@ -8192,7 +8248,7 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_BumpMap] 2D
 SetTexture 3 [_ShadowMapTexture] 2D
 "ps_3_0
-; 106 ALU, 10 TEX
+; 107 ALU, 10 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -8213,6 +8269,7 @@ mul r0.zw, v1.xyxy, c4.x
 add r0.xy, r0.zwzw, c2
 mul r2.xy, v1.zxzw, c4.x
 abs r2.zw, v1.xyxy
+mul_sat r3.w, v0.x, c8.z
 texld r0, r0, s1
 texld r1, r1, s1
 add_pp r1, r1, -r0
@@ -8229,49 +8286,49 @@ add r1.xy, r1, c3
 texld r1.yw, r1, s2
 texld r4.yw, r2, s2
 add_pp r2.xy, r4.ywzw, -r1.ywzw
-mad_pp r2.xy, r2.z, r2, r1.ywzw
-abs r1.w, v1.z
+mad_pp r1.zw, r2.z, r2.xyxy, r1.xyyw
+abs r2.y, v1.z
 mul r1.xy, v1.zxzw, c5.x
-mad_pp r0.xyz, v0.x, r3, r0
-max r1.z, r1.w, r2
 add r1.xy, r1, c3
-texld r3.yw, r1, s2
-add_pp r1.xy, r3.ywzw, -r2
-mad_pp r1.xy, r2.w, r1, r2
+texld r4.yw, r1, s2
+add_pp r1.xy, r4.ywzw, -r1.zwzw
+mad_pp r1.xy, r2.w, r1, r1.zwzw
 mad_pp r1.xy, r1.yxzw, c11.z, c11.w
-mul_pp r2.xy, r1, r1
-rcp r3.x, r1.z
-min r1.z, r1.w, r2
-mul r3.x, r1.z, r3
-mul r1.z, r3.x, r3.x
-mad r2.w, r1.z, c9.y, c9.z
-add_pp_sat r2.y, r2.x, r2
-mad r2.w, r2, r1.z, c9
-mad r2.x, r2.w, r1.z, c10
-mad r2.x, r2, r1.z, c10.y
-add_pp r2.y, -r2, c7
-mad r2.x, r2, r1.z, c10.z
-rsq_pp r2.y, r2.y
-rcp_pp r1.z, r2.y
-mul r2.y, r2.x, r3.x
+mul_pp r1.zw, r1.xyxy, r1.xyxy
+add_pp_sat r1.w, r1.z, r1
+max r2.x, r2.y, r2.z
+mad_pp r0.xyz, r3.w, r3, r0
+rcp r3.x, r2.x
+min r2.x, r2.y, r2.z
+mul r2.x, r2, r3
+mul r2.w, r2.x, r2.x
+mad r3.x, r2.w, c9.y, c9.z
+mad r3.x, r3, r2.w, c9.w
+mad r1.z, r3.x, r2.w, c10.x
+add_pp r1.w, -r1, c7.y
+mad r1.z, r1, r2.w, c10.y
+rsq_pp r3.x, r1.w
+mad r1.w, r1.z, r2, c10.z
+mul r2.x, r1.w, r2
+rcp_pp r1.z, r3.x
 add_pp r3.xyz, -r1, c7.xxyw
-mad_pp r1.xyz, v0.x, r3, r1
+mad_pp r1.xyz, r3.w, r3, r1
 dp3_pp_sat r1.z, r1, v2
 texldp r1.x, v4, s3
 mul_pp r3.z, r1, r1.x
-mad r1.x, r1.w, c7.z, c7.w
-mad r1.x, r1.w, r1, c8
+mad r1.x, r2.y, c7.z, c7.w
+mad r1.x, r2.y, r1, c8
 dsy r3.xy, v1
-add r2.w, -r2.y, c10
-add r2.x, r1.w, -r2.z
-cmp r2.x, -r2, r2.y, r2.w
-add r2.y, -r2.x, c8.w
-cmp r1.y, v1.x, r2.x, r2
+add r2.w, -r2.x, c10
+add r1.w, r2.y, -r2.z
+cmp r1.w, -r1, r2.x, r2
+add r2.x, -r1.w, c8.w
+cmp r1.y, v1.x, r1.w, r2.x
+abs r1.w, -v1.y
 cmp r1.y, v1.z, r1, -r1
 mad r2.x, r1.y, c11, c11.y
-add r1.y, -r1.w, c7
-mad r1.x, r1.w, r1, c8.y
-abs r1.w, -v1.y
+add r1.y, -r2, c7
+mad r1.x, r2.y, r1, c8.y
 add r2.z, -r1.w, c7.y
 mad r2.y, r1.w, c7.z, c7.w
 mad r2.y, r2, r1.w, c8.x
@@ -8312,7 +8369,7 @@ mul_pp r2.xyz, r3.z, c0
 mul_pp r1.xyz, r2, c8.z
 add_pp r2.x, -r0.w, c7.y
 add_sat r1.xyz, r1, c6.x
-mad_pp r0.w, v0.x, r2.x, r0
+mad_pp r0.w, r3, r2.x, r0
 mul r1.xyz, r0, r1
 mul_pp r0.w, r1, r0
 mad_pp oC0.xyz, r0, v3, r1
@@ -8335,12 +8392,12 @@ SetTexture 0 [_MainTex] 2D 1
 SetTexture 1 [_DetailTex] 2D 2
 SetTexture 2 [_BumpMap] 2D 3
 SetTexture 3 [_ShadowMapTexture] 2D 0
-// 87 instructions, 5 temp regs, 0 temp arrays:
-// ALU 72 float, 0 int, 5 uint
+// 86 instructions, 6 temp regs, 0 temp arrays:
+// ALU 72 float, 0 int, 4 uint
 // TEX 7 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedlcjpdldiibcefnaabcjlfejafjhinepkabaaaaaahaanaaaaadaaaaaa
+eefiecedjaibcecccldaamhblmdiehambbljgnkpabaaaaaagaanaaaaadaaaaaa
 cmaaaaaaoeaaaaaabiabaaaaejfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaadadaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -8348,106 +8405,106 @@ ahahaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaakeaaaaaa
 adaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahahaaaakeaaaaaaaeaaaaaaaaaaaaaa
 adaaaaaaafaaaaaaapalaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcfaamaaaa
-eaaaaaaabeadaaaafjaaaaaeegiocaaaaaaaaaaaamaaaaaafkaaaaadaagabaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefceaamaaaa
+eaaaaaaabaadaaaafjaaaaaeegiocaaaaaaaaaaaamaaaaaafkaaaaadaagabaaa
 aaaaaaaafkaaaaadaagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafkaaaaad
 aagabaaaadaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
 abaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaafibiaaaeaahabaaa
 adaaaaaaffffaaaagcbaaaaddcbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
 gcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaadlcbabaaa
-afaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacafaaaaaadcaaaaalpcaabaaa
-aaaaaaaaggbcbaaaacaaaaaaagiacaaaaaaaaaaaalaaaaaaegiecaaaaaaaaaaa
-ajaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaaaaaaaaaeghobaaaacaaaaaa
-aagabaaaadaaaaaaefaaaaajpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
-acaaaaaaaagabaaaadaaaaaadcaaaaalfcaabaaaaaaaaaaaagbbbaaaacaaaaaa
-agiacaaaaaaaaaaaalaaaaaaagibcaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaa
-acaaaaaaigaabaaaaaaaaaaaeghobaaaacaaaaaaaagabaaaadaaaaaaaaaaaaai
-fcaabaaaaaaaaaaapganbaaaabaaaaaapganbaiaebaaaaaaacaaaaaadcaaaaak
-fcaabaaaaaaaaaaaagbabaiaibaaaaaaacaaaaaaagacbaaaaaaaaaaapganbaaa
-acaaaaaaaaaaaaaikcaabaaaaaaaaaaaagaibaiaebaaaaaaaaaaaaaapgahbaaa
-aaaaaaaadcaaaaakdcaabaaaaaaaaaaafgbfbaiaibaaaaaaacaaaaaangafbaaa
-aaaaaaaaigaabaaaaaaaaaaadcaaaaapdcaabaaaaaaaaaaaegaabaaaaaaaaaaa
-aceaaaaaaaaaaaeaaaaaaaeaaaaaaaaaaaaaaaaaaceaaaaaaaaaialpaaaaialp
-aaaaaaaaaaaaaaaaapaaaaahicaabaaaaaaaaaaaegaabaaaaaaaaaaaegaabaaa
-aaaaaaaaddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
-aaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
-elaaaaafecaabaaaaaaaaaaadkaabaaaaaaaaaaaaaaaaaalhcaabaaaabaaaaaa
-egacbaiaebaaaaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaiadpaaaaaaaa
-dcaaaaajhcaabaaaaaaaaaaaagbabaaaabaaaaaaegacbaaaabaaaaaaegacbaaa
-aaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaaaaaaaaaegbcbaaaadaaaaaa
-aoaaaaahgcaabaaaaaaaaaaaagbbbaaaafaaaaaapgbpbaaaafaaaaaaefaaaaaj
-pcaabaaaabaaaaaajgafbaaaaaaaaaaaeghobaaaadaaaaaaaagabaaaaaaaaaaa
-apaaaaahbcaabaaaaaaaaaaaagaabaaaaaaaaaaaagaabaaaabaaaaaadccaaaal
-hcaabaaaaaaaaaaaegiccaaaaaaaaaaaabaaaaaaagaabaaaaaaaaaaafgifcaaa
-aaaaaaaaalaaaaaadeaaaaajicaabaaaaaaaaaaaakbabaiaibaaaaaaacaaaaaa
-ckbabaiaibaaaaaaacaaaaaaaoaaaaakicaabaaaaaaaaaaaaceaaaaaaaaaiadp
-aaaaiadpaaaaiadpaaaaiadpdkaabaaaaaaaaaaaddaaaaajbcaabaaaabaaaaaa
-akbabaiaibaaaaaaacaaaaaackbabaiaibaaaaaaacaaaaaadiaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaa
-dkaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajccaabaaaabaaaaaaakaabaaa
-abaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajccaabaaaabaaaaaa
-akaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajccaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaaj
-bcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaadiphhpdp
-diaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaaj
-ccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdp
-dbaaaaajecaabaaaabaaaaaaakbabaiaibaaaaaaacaaaaaackbabaiaibaaaaaa
-acaaaaaaabaaaaahccaabaaaabaaaaaackaabaaaabaaaaaabkaabaaaabaaaaaa
-dcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabkaabaaa
-abaaaaaadbaaaaaidcaabaaaabaaaaaaigbabaaaacaaaaaaigbabaiaebaaaaaa
-acaaaaaaabaaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaanlapejma
-aaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaddaaaaah
-bcaabaaaabaaaaaaakbabaaaacaaaaaackbabaaaacaaaaaadbaaaaaibcaabaaa
-abaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaadeaaaaahecaabaaa
-abaaaaaaakbabaaaacaaaaaackbabaaaacaaaaaabnaaaaaiecaabaaaabaaaaaa
-ckaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaaabaaaaahbcaabaaaabaaaaaa
-ckaabaaaabaaaaaaakaabaaaabaaaaaadhaaaaakicaabaaaaaaaaaaaakaabaaa
-abaaaaaadkaabaiaebaaaaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajbcaabaaa
-acaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpalaaaaaf
-fcaabaaaabaaaaaaagbbbaaaacaaaaaaapaaaaahicaabaaaaaaaaaaaigaabaaa
-abaaaaaaigaabaaaabaaaaaaelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaahbcaabaaaadaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdoamaaaaaf
-fcaabaaaabaaaaaaagbbbaaaacaaaaaaapaaaaahicaabaaaaaaaaaaaigaabaaa
-abaaaaaaigaabaaaabaaaaaaelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaahbcaabaaaaeaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdodbaaaaai
-icaabaaaaaaaaaaabkbabaiaebaaaaaaacaaaaaabkbabaaaacaaaaaadcaaaaba
-fcaabaaaabaaaaaafgbgbaiaibaaaaaaacaaaaaaaceaaaaadagojjlmaaaaaaaa
-dagojjlmaaaaaaaaaceaaaaachbgjidnaaaaaaaachbgjidnaaaaaaaadcaaaaan
-fcaabaaaabaaaaaaagacbaaaabaaaaaafgbgbaiaibaaaaaaacaaaaaaaceaaaaa
-iedefjloaaaaaaaaiedefjloaaaaaaaadcaaaaanfcaabaaaabaaaaaaagacbaaa
-abaaaaaafgbgbaiaibaaaaaaacaaaaaaaceaaaaakeanmjdpaaaaaaaakeanmjdp
-aaaaaaaaaaaaaaalmcaabaaaacaaaaaafgbjbaiambaaaaaaacaaaaaaaceaaaaa
-aaaaaaaaaaaaaaaaaaaaiadpaaaaiadpelaaaaafmcaabaaaacaaaaaakgaobaaa
-acaaaaaadiaaaaahmcaabaaaadaaaaaaagaibaaaabaaaaaakgaobaaaacaaaaaa
-dcaaaaapmcaabaaaadaaaaaakgaobaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
-aaaaaamaaaaaaamaaceaaaaaaaaaaaaaaaaaaaaanlapejeanlapejeaabaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaadaaaaaaabaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaadkaabaaaadaaaaaadcaaaaajccaabaaaabaaaaaa
-ckaabaaaabaaaaaadkaabaaaacaaaaaabkaabaaaabaaaaaadcaaaaajicaabaaa
-aaaaaaaaakaabaaaabaaaaaackaabaaaacaaaaaadkaabaaaaaaaaaaadiaaaaah
-ccaabaaaacaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjkcdodiaaaaahicaabaaa
-aaaaaaaabkaabaaaabaaaaaaabeaaaaaidpjkcdoalaaaaafccaabaaaadaaaaaa
-dkaabaaaaaaaaaaaamaaaaafccaabaaaaeaaaaaadkaabaaaaaaaaaaaejaaaaan
-pcaabaaaabaaaaaaegaabaaaacaaaaaaeghobaaaaaaaaaaaaagabaaaabaaaaaa
-egaabaaaadaaaaaaegaabaaaaeaaaaaadiaaaaaipcaabaaaabaaaaaaegaobaaa
-abaaaaaaegiocaaaaaaaaaaaahaaaaaadcaaaaalpcaabaaaacaaaaaaggbcbaaa
-acaaaaaakgikcaaaaaaaaaaaakaaaaaaegiecaaaaaaaaaaaaiaaaaaaefaaaaaj
-pcaabaaaadaaaaaaegaabaaaacaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaa
-efaaaaajpcaabaaaacaaaaaaogakbaaaacaaaaaaeghobaaaabaaaaaaaagabaaa
-acaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaacaaaaaakgikcaaaaaaaaaaa
-akaaaaaaegiacaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaaaeaaaaaaegaabaaa
-aeaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaaaaaaaaaipcaabaaaadaaaaaa
-egaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaaadaaaaaa
-agbabaiaibaaaaaaacaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaaaaaaaaai
-pcaabaaaacaaaaaaegaobaaaacaaaaaaegaobaiaebaaaaaaadaaaaaadcaaaaak
-pcaabaaaacaaaaaafgbfbaiaibaaaaaaacaaaaaaegaobaaaacaaaaaaegaobaaa
-adaaaaaaaaaaaaalpcaabaaaadaaaaaaegaobaiaebaaaaaaacaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpdcaaaaajpcaabaaaacaaaaaaagbabaaa
-abaaaaaaegaobaaaadaaaaaaegaobaaaacaaaaaadiaaaaahpcaabaaaabaaaaaa
-egaobaaaabaaaaaaegaobaaaacaaaaaadiaaaaahhcaabaaaacaaaaaaegacbaaa
-abaaaaaaegbcbaaaaeaaaaaadcaaaaajhccabaaaaaaaaaaaegacbaaaabaaaaaa
-egacbaaaaaaaaaaaegacbaaaacaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaa
-abaaaaaabkbabaaaabaaaaaadoaaaaab"
+afaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacagaaaaaadeaaaaajbcaabaaa
+aaaaaaaaakbabaiaibaaaaaaacaaaaaackbabaiaibaaaaaaacaaaaaaaoaaaaak
+bcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaa
+aaaaaaaaddaaaaajccaabaaaaaaaaaaaakbabaiaibaaaaaaacaaaaaackbabaia
+ibaaaaaaacaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaa
+aaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaaaaaaaaaaakaabaaaaaaaaaaa
+dcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaa
+dgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
+abeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaa
+aaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaaaaaaaaaabkaabaaaaaaaaaaa
+ckaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaahecaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajicaabaaaaaaaaaaaakbabaia
+ibaaaaaaacaaaaaackbabaiaibaaaaaaacaaaaaaabaaaaahecaabaaaaaaaaaaa
+dkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaadbaaaaaigcaabaaaaaaaaaaa
+agbcbaaaacaaaaaaagbcbaiaebaaaaaaacaaaaaaabaaaaahccaabaaaaaaaaaaa
+bkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaahbcaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaaaaaaaaaaakbabaaaacaaaaaa
+ckbabaaaacaaaaaadbaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaabkaabaia
+ebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaaakbabaaaacaaaaaackbabaaa
+acaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaa
+aaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaaaaaaaaaabkaabaaaaaaaaaaa
+dhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaa
+akaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
+idpjccdoabeaaaaaaaaaaadpalaaaaafdcaabaaaabaaaaaaegbabaaaacaaaaaa
+apaaaaahicaabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaabaaaaaaelaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaaagbebaaaacaaaaaa
+apaaaaahicaabaaaaaaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaadkaabaaa
+aaaaaaaaabeaaaaaidpjccdodbaaaaaiicaabaaaaaaaaaaabkbabaiaebaaaaaa
+acaaaaaabkbabaaaacaaaaaadcaaaabamcaabaaaabaaaaaafgbjbaiaibaaaaaa
+acaaaaaaaceaaaaaaaaaaaaaaaaaaaaadagojjlmdagojjlmaceaaaaaaaaaaaaa
+aaaaaaaachbgjidnchbgjidndcaaaaanmcaabaaaabaaaaaakgaobaaaabaaaaaa
+fgbjbaiaibaaaaaaacaaaaaaaceaaaaaaaaaaaaaaaaaaaaaiedefjloiedefjlo
+dcaaaaanmcaabaaaabaaaaaakgaobaaaabaaaaaafgbjbaiaibaaaaaaacaaaaaa
+aceaaaaaaaaaaaaaaaaaaaaakeanmjdpkeanmjdpaaaaaaalmcaabaaaacaaaaaa
+fgbjbaiambaaaaaaacaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaiadpaaaaiadp
+elaaaaafmcaabaaaacaaaaaakgaobaaaacaaaaaadiaaaaahdcaabaaaadaaaaaa
+ogakbaaaabaaaaaaogakbaaaacaaaaaadcaaaaapdcaabaaaadaaaaaaegaabaaa
+adaaaaaaaceaaaaaaaaaaamaaaaaaamaaaaaaaaaaaaaaaaaaceaaaaanlapejea
+nlapejeaaaaaaaaaaaaaaaaaabaaaaahmcaabaaaaaaaaaaakgaobaaaaaaaaaaa
+fgabbaaaadaaaaaadcaaaaajecaabaaaaaaaaaaadkaabaaaabaaaaaadkaabaaa
+acaaaaaackaabaaaaaaaaaaadcaaaaajicaabaaaaaaaaaaackaabaaaabaaaaaa
+ckaabaaaacaaaaaadkaabaaaaaaaaaaadiaaaaakgcaabaaaaaaaaaaapgaobaaa
+aaaaaaaaaceaaaaaaaaaaaaaidpjkcdoidpjkcdoaaaaaaaaalaaaaafccaabaaa
+abaaaaaackaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaackaabaaaaaaaaaaa
+ejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
+abaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaaipcaabaaaaaaaaaaa
+egaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaadcaaaaalpcaabaaaabaaaaaa
+ggbcbaaaacaaaaaakgikcaaaaaaaaaaaakaaaaaaegiecaaaaaaaaaaaaiaaaaaa
+efaaaaajpcaabaaaacaaaaaaegaabaaaabaaaaaaeghobaaaabaaaaaaaagabaaa
+acaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaabaaaaaa
+aagabaaaacaaaaaadcaaaaaldcaabaaaadaaaaaaegbabaaaacaaaaaakgikcaaa
+aaaaaaaaakaaaaaaegiacaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaadaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaaaaaaaaaipcaabaaa
+acaaaaaaegaobaaaacaaaaaaegaobaiaebaaaaaaadaaaaaadcaaaaakpcaabaaa
+acaaaaaaagbabaiaibaaaaaaacaaaaaaegaobaaaacaaaaaaegaobaaaadaaaaaa
+aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaacaaaaaa
+dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaacaaaaaaegaobaaaabaaaaaa
+egaobaaaacaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpaacaaaahbcaabaaaadaaaaaa
+akbabaaaabaaaaaaakbabaaaabaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
+adaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaa
+egaobaaaaaaaaaaaegaobaaaabaaaaaadiaaaaahhcaabaaaabaaaaaaegacbaaa
+aaaaaaaaegbcbaaaaeaaaaaadcaaaaalpcaabaaaacaaaaaaggbcbaaaacaaaaaa
+agiacaaaaaaaaaaaalaaaaaaegiecaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaa
+aeaaaaaaegaabaaaacaaaaaaeghobaaaacaaaaaaaagabaaaadaaaaaaefaaaaaj
+pcaabaaaacaaaaaaogakbaaaacaaaaaaeghobaaaacaaaaaaaagabaaaadaaaaaa
+dcaaaaalfcaabaaaacaaaaaaagbbbaaaacaaaaaaagiacaaaaaaaaaaaalaaaaaa
+agibcaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaaafaaaaaaigaabaaaacaaaaaa
+eghobaaaacaaaaaaaagabaaaadaaaaaaaaaaaaaifcaabaaaacaaaaaapganbaaa
+aeaaaaaapganbaiaebaaaaaaafaaaaaadcaaaaakfcaabaaaacaaaaaaagbabaia
+ibaaaaaaacaaaaaaagacbaaaacaaaaaapganbaaaafaaaaaaaaaaaaaikcaabaaa
+acaaaaaaagaibaiaebaaaaaaacaaaaaapgahbaaaacaaaaaadcaaaaakdcaabaaa
+acaaaaaafgbfbaiaibaaaaaaacaaaaaangafbaaaacaaaaaaigaabaaaacaaaaaa
+dcaaaaapdcaabaaaacaaaaaaegaabaaaacaaaaaaaceaaaaaaaaaaaeaaaaaaaea
+aaaaaaaaaaaaaaaaaceaaaaaaaaaialpaaaaialpaaaaaaaaaaaaaaaaapaaaaah
+icaabaaaabaaaaaaegaabaaaacaaaaaaegaabaaaacaaaaaaddaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaaabaaaaaa
+dkaabaiaebaaaaaaabaaaaaaabeaaaaaaaaaiadpelaaaaafecaabaaaacaaaaaa
+dkaabaaaabaaaaaaaaaaaaalocaabaaaadaaaaaaagajbaiaebaaaaaaacaaaaaa
+aceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaiadpdcaaaaajhcaabaaaacaaaaaa
+agaabaaaadaaaaaajgahbaaaadaaaaaaegacbaaaacaaaaaabacaaaahicaabaaa
+abaaaaaaegacbaaaacaaaaaaegbcbaaaadaaaaaaaoaaaaahdcaabaaaacaaaaaa
+egbabaaaafaaaaaapgbpbaaaafaaaaaaefaaaaajpcaabaaaacaaaaaaegaabaaa
+acaaaaaaeghobaaaadaaaaaaaagabaaaaaaaaaaaapaaaaahicaabaaaabaaaaaa
+pgapbaaaabaaaaaaagaabaaaacaaaaaadccaaaalhcaabaaaacaaaaaaegiccaaa
+aaaaaaaaabaaaaaapgapbaaaabaaaaaafgifcaaaaaaaaaaaalaaaaaadcaaaaaj
+hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaacaaaaaaegacbaaaabaaaaaa
+diaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaaaabaaaaaadoaaaaab
+"
 }
 
 SubProgram "gles " {
@@ -8468,7 +8525,7 @@ Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
 }
 	}
 
-#LINE 115
+#LINE 117
 
 	
 	}

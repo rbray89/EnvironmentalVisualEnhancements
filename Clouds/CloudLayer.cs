@@ -114,82 +114,10 @@ namespace Clouds
             Log("Cloud Material initialized");
             UpdateTextures();
             Log("Generating Overlay...");
-            CloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, CloudMaterial, this.mainTexture.StartOffset);
-            Overlay overlay = Overlay.GeneratePlanetOverlay(body, 80*radius, CloudMaterial, this.mainTexture.StartOffset);
-            float longitude = -74.559f;
-            float latitude = -0.0975f;
-            CelestialBody currentBody = null;
+            CloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, CloudMaterial, CloudMaterial, this.mainTexture.StartOffset);
 
-            UnityEngine.Object[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody));
-            foreach (CelestialBody cb in celestialBodies)
-            {
-                string name = cb.bodyName;
-                if (name == this.body)
-                {
-                    currentBody = cb;
-                }
-            }
-            placePQS(longitude, latitude, (float)((radius - 1) * currentBody.Radius),overlay.OverlayGameObject);
-            overlay.OverlayGameObject.layer = 15;
             Log("Textures initialized");
         }
-
-        private void placePQS(float longitude, float latitude, float altitude, GameObject go)
-        {
-
-            UnityEngine.Object[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody));
-
-            CelestialBody currentBody = null;
-
-            foreach (CelestialBody cb in celestialBodies)
-            {
-                string name = cb.bodyName;
-                if (name == this.body)
-                {
-                    currentBody = cb;
-                }
-            }
-
-            GameObject blockHolder = new GameObject();
-            blockHolder.name = "blockHolder";
-
-            GameObject block = go;
-            if (block == null)
-            {
-
-            }
-
-            block.transform.parent = blockHolder.transform;
-
-            foreach (Transform aTransform in currentBody.transform)
-            {
-                if (aTransform.name == currentBody.transform.name)
-                    blockHolder.transform.parent = aTransform;
-            }
-            PQSCity blockScript = blockHolder.AddComponent<PQSCity>();
-            blockScript.debugOrientated = false;
-            blockScript.frameDelta = 1;
-            blockScript.lod = new PQSCity.LODRange[1];
-            blockScript.lod[0] = new PQSCity.LODRange();
-            blockScript.lod[0].visibleRange = 20000;
-            blockScript.lod[0].renderers = new GameObject[1];
-            blockScript.lod[0].renderers[0] = block;
-            blockScript.lod[0].objects = new GameObject[0];
-            blockScript.modEnabled = true;
-            blockScript.order = 100;
-            blockScript.reorientFinalAngle = -105;
-            blockScript.reorientInitialUp = Vector3.up;
-            blockScript.reorientToSphere = true;
-            //railScript.repositionRadial = (GameObject.Find("Runway").transform.position - currentBody.transform.position) + Vector3.up * 50 + Vector3.right * -350;
-            blockScript.repositionRadial = QuaternionD.AngleAxis(longitude, Vector3d.down) * QuaternionD.AngleAxis(latitude, Vector3d.forward) * Vector3d.right;
-            blockScript.repositionRadiusOffset = altitude;
-            blockScript.repositionToSphere = true;
-            blockScript.requirements = PQS.ModiferRequirements.Default;
-            blockScript.sphere = currentBody.pqsController;
-
-            blockScript.RebuildSphere();
-        }
-
 
         public void UpdateFloats()
         {
@@ -231,7 +159,8 @@ namespace Clouds
         public void PerformUpdate()
         {
             timeDelta = Time.time - timeDelta;
-            float timeOffset = timeDelta * TimeWarp.CurrentRate;
+            float timeRate = TimeWarp.CurrentRate == 0 ? 1 : TimeWarp.CurrentRate;
+            float timeOffset = timeDelta * timeRate;
 
             updateOffset(timeOffset);
 

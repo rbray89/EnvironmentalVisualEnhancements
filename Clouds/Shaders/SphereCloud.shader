@@ -62,7 +62,9 @@ SubShader {
 
 		void vert (inout appdata_full v, out Input o) {
 		   UNITY_INITIALIZE_OUTPUT(Input, o);
+		   float3 normalDir = normalize(mul(_Object2World, v.normal.xyzz).xyz);
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
+		   float3 viewVect = normalize( vertexPos - _WorldSpaceCameraPos);
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 		   float diff = _DetailDist*distance(vertexPos,_WorldSpaceCameraPos);
 	   	   o.viewDist.x = diff;
