@@ -89,11 +89,11 @@ namespace Clouds
                     {
                         shaderFloats = new ShaderFloats(floatsConfig);
                     }
-                    ConfigNode undersideFloatsConfig = node.GetNode("underside_shader_floats");
-                    ShaderFloats undersideShaderFloats = null;
-                    if (undersideFloatsConfig != null)
+                    ConfigNode pqsFloatsConfig = node.GetNode("PQS_shader_floats");
+                    ShaderFloats pqsShaderFloats = null;
+                    if (pqsFloatsConfig != null)
                     {
-                        undersideShaderFloats = new ShaderFloats(undersideFloatsConfig);
+                        pqsShaderFloats = new ShaderFloats(pqsFloatsConfig);
                     }
                     ConfigNode colorNode = node.GetNode("color");
                     Color color = new Color(
@@ -104,7 +104,7 @@ namespace Clouds
 
                     CloudLayer.Layers.Add(
                         new CloudLayer(body, color, radius,
-                        mTexture, dTexture, bTexture, shaderFloats, undersideShaderFloats));
+                        mTexture, dTexture, bTexture, shaderFloats, pqsShaderFloats));
                 }
                 else
                 {
@@ -156,7 +156,12 @@ namespace Clouds
                     {
                         newNode.AddNode(shaderFloatNode);
                     }
-
+                    ConfigNode PQSShaderFloatNode = cloudLayer.PQSShaderFloats.GetNode("pqsShader_floats");
+                    if (!CloudLayer.IsDefaultShaderFloat(cloudLayer.PQSShaderFloats))
+                    {
+                        newNode.AddNode(PQSShaderFloatNode);
+                    }
+                    
                 }
             }
             saveConfig.Save(configString);
@@ -501,16 +506,6 @@ namespace Clouds
             }
             else if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
-       /*         if (MapView.MapIsEnabled)
-                {
-                    currentBody = Utils.GetMapBody();
-                }
-                else
-                {
-                    currentBody = FlightGlobals.currentMainBody;
-                }
-                spawnVolumeClouds();
-         */
             }
         }
 
@@ -526,29 +521,6 @@ namespace Clouds
             {
                 useEditor = !useEditor;
             }
-/*
-            if ((HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.FLIGHT) && cloudUpdate > 1000)
-            {
-                float longitude = -74.559f;
-                float latitude = -0.0975f;
-                Utils.Log("Updating Cloud Mesh...");
-                if (MapView.MapIsEnabled)
-                {
-                    currentBody = Utils.GetMapBody();
-                }
-                else
-                {
-                    currentBody = FlightGlobals.currentMainBody;
-                }
-                AssignLayerCloudMesh(new Vector3((longitude + 180f) / 360f, (latitude + 180f) / 360f, 4000f + (float)currentBody.pqsController.radius));
-                cloudUpdate = 0;
-            }
-            else if (cloudUpdate > 2000)
-            {
-                cloudUpdate = 0;
-            }
-            cloudUpdate++;
- * */
         }
 
 
@@ -631,17 +603,13 @@ namespace Clouds
                 float halfWidth;
                 if (AdvancedGUI)
                 {
-                    //if (GUI.Button(new Rect(itemFullWidth + 20, 20, itemFullWidth, 25), "Generate Test Launchpad Cloud"))
-                    //{
-                    //    spawnVolumeClouds();
-                    //}
                     halfWidth = (itemFullWidth / 2);
-                    if (GUI.Button(new Rect(itemFullWidth + 30, 50, halfWidth, 25), "Reset to Save"))
+                    if (GUI.Button(new Rect(itemFullWidth + 30, 20, halfWidth, 25), "Reset to Save"))
                     {
                         loadCloudLayers(null);
                         oldBody = null;
                     }
-                    if (GUI.Button(new Rect(itemFullWidth + halfWidth + 35, 50, halfWidth-5, 25), "Reset to Default"))
+                    if (GUI.Button(new Rect(itemFullWidth + halfWidth + 35, 20, halfWidth-5, 25), "Reset to Default"))
                     {
                         loadCloudLayers("cloudLayers.cfg");
                         oldBody = null;
@@ -685,6 +653,7 @@ namespace Clouds
                             CloudGUI.Color.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Color);
                             CloudGUI.Radius.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Radius);
                             CloudGUI.ShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ShaderFloats);
+                            CloudGUI.PQSShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].PQSShaderFloats);
                         }
                     }
 
@@ -707,9 +676,9 @@ namespace Clouds
                     gs.alignment = TextAnchor.MiddleRight;
                     if (AdvancedGUI)
                     {
-                        int advancedNextLine = HandleAdvancedGUI(CloudGUI.ShaderFloats, 80, _mainWindowRect.width / 2);
-                        GUI.Label(new Rect((_mainWindowRect.width / 2) + 10, advancedNextLine, itemFullWidth, 25), "UnderCloud Settings:");
-                        HandleAdvancedGUI(CloudGUI.UndersideShaderFloats, advancedNextLine + 30, _mainWindowRect.width / 2);
+                        int advancedNextLine = HandleAdvancedGUI(CloudGUI.ShaderFloats, 50, _mainWindowRect.width / 2);
+                        GUI.Label(new Rect((_mainWindowRect.width / 2) + 10, advancedNextLine, itemFullWidth, 25), "PQS Settings:");
+                        HandleAdvancedGUI(CloudGUI.PQSShaderFloats, advancedNextLine + 30, _mainWindowRect.width / 2);
                     }
 
                     nextLine = HandleRadiusGUI(CloudGUI.Radius, nextLine);
@@ -841,8 +810,27 @@ namespace Clouds
             }
             string SMinimumLight = GUI.TextField(new Rect(offset + 80, y, 50, 25), floats.MinimumLightString, texFieldGS);
             float FMinimumLight = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.MinimumLight, 0, 1);
+            y += 30;
+            GUI.Label(
+                new Rect(offset + 10, y, 65, 25), "FadeDist: ", gs);
+            if (float.TryParse(floats.FadeDistanceString, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            string SFadeDist = GUI.TextField(new Rect(offset + 80, y, 50, 25), floats.FadeDistanceString, texFieldGS);
+            float FFadeDist = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.FadeDistance, 0, 1);
 
-            floats.Update(SFalloffPower, FFalloffPower, SFalloffScale, FFalloffScale, SDetailDistance, FDetailDistance, SMinimumLight, FMinimumLight);
+            floats.Update(SFalloffPower, FFalloffPower, SFalloffScale, FFalloffScale, SDetailDistance, FDetailDistance, SMinimumLight, FMinimumLight, SFadeDist, FFadeDist);
 
             return y + 30;
         }
@@ -1086,6 +1074,7 @@ namespace Clouds
         public float FalloffScale;
         public float DetailDistance;
         public float MinimumLight;
+        public float FadeDistance;
 
         public ShaderFloats()
         {
@@ -1093,14 +1082,16 @@ namespace Clouds
             this.FalloffScale = 0;
             this.DetailDistance = 0;
             this.MinimumLight = 0;
+            this.FadeDistance = 0;
         }
 
-        public ShaderFloats(float FalloffPower, float FalloffScale, float DetailDistance, float MinimumLight)
+        public ShaderFloats(float FalloffPower, float FalloffScale, float DetailDistance, float MinimumLight, float FadeDistance)
         {
             this.FalloffPower = FalloffPower;
             this.FalloffScale = FalloffScale;
             this.DetailDistance = DetailDistance;
             this.MinimumLight = MinimumLight;
+            this.FadeDistance = FadeDistance;
         }
 
         public ShaderFloats(ConfigNode configNode)
@@ -1109,6 +1100,7 @@ namespace Clouds
             this.FalloffScale = float.Parse(configNode.GetValue("falloffScale"));
             this.DetailDistance = float.Parse(configNode.GetValue("detailDistance"));
             this.MinimumLight = float.Parse(configNode.GetValue("minimumLight"));
+            this.FadeDistance = float.Parse(configNode.GetValue("fadeDistance"));
         }
 
         public void Clone(ShaderFloatsGUI toClone)
@@ -1117,6 +1109,7 @@ namespace Clouds
             FalloffScale = toClone.FalloffScale;
             DetailDistance = toClone.DetailDistance;
             MinimumLight = toClone.MinimumLight;
+            FadeDistance = toClone.FadeDistance;
         }
 
         internal ConfigNode GetNode(string name)
@@ -1126,6 +1119,7 @@ namespace Clouds
             newNode.AddValue("falloffScale", this.FalloffScale);
             newNode.AddValue("detailDistance", this.DetailDistance);
             newNode.AddValue("minimumLight", this.MinimumLight);
+            newNode.AddValue("FadeDistance", this.FadeDistance);
             return newNode;
         }
     }
@@ -1136,10 +1130,12 @@ namespace Clouds
         public float FalloffScale;
         public float DetailDistance;
         public float MinimumLight;
+        public float FadeDistance;
         public String FalloffPowerString;
         public String FalloffScaleString;
         public String DetailDistanceString;
         public String MinimumLightString;
+        public String FadeDistanceString;
 
         public ShaderFloatsGUI()
         {
@@ -1147,22 +1143,26 @@ namespace Clouds
             this.FalloffScale = 0;
             this.DetailDistance = 0;
             this.MinimumLight = 0;
-            FalloffPowerString = "0";
-            FalloffScaleString = "0";
-            DetailDistanceString = "0";
-            MinimumLightString = "0";
+            this.FadeDistance = 0;
+            this.FalloffPowerString = "0";
+            this.FalloffScaleString = "0";
+            this.DetailDistanceString = "0";
+            this.MinimumLightString = "0";
+            this.FadeDistanceString = "0";
         }
 
-        public ShaderFloatsGUI(float FalloffPower, float FalloffScale, float DetailDistance, float MinimumLight)
+        public ShaderFloatsGUI(float FalloffPower, float FalloffScale, float DetailDistance, float MinimumLight, float FadeDistance)
         {
             this.FalloffPower = FalloffPower;
             this.FalloffScale = FalloffScale;
             this.DetailDistance = DetailDistance;
             this.MinimumLight = MinimumLight;
+            this.FadeDistance = FadeDistance;
             FalloffPowerString = FalloffPower.ToString("R");
             FalloffScaleString = FalloffScale.ToString("R");
             DetailDistanceString = DetailDistance.ToString("R");
             MinimumLightString = MinimumLight.ToString("R");
+            FadeDistanceString = FadeDistance.ToString("R");
         }
 
         public void Clone(ShaderFloats toClone)
@@ -1171,13 +1171,15 @@ namespace Clouds
             FalloffScale = toClone.FalloffScale;
             DetailDistance = toClone.DetailDistance;
             MinimumLight = toClone.MinimumLight;
+            FadeDistance = toClone.FadeDistance;
             FalloffPowerString = FalloffPower.ToString("R");
             FalloffScaleString = FalloffScale.ToString("R");
             DetailDistanceString = DetailDistance.ToString("R");
             MinimumLightString = MinimumLight.ToString("R");
+            FadeDistanceString = FadeDistance.ToString("R");
         }
 
-        internal void Update(string SFalloffPower, float FFalloffPower, string SFalloffScale, float FFalloffScale, string SDetailDistance, float FDetailDistance, string SMinimumLight, float FMinimumLight)
+        internal void Update(string SFalloffPower, float FFalloffPower, string SFalloffScale, float FFalloffScale, string SDetailDistance, float FDetailDistance, string SMinimumLight, float FMinimumLight, string SFadeDist, float FFadeDist)
         {
             if (this.FalloffPowerString != SFalloffPower)
             {
@@ -1219,6 +1221,16 @@ namespace Clouds
                 this.MinimumLight = FMinimumLight;
                 this.MinimumLightString = FMinimumLight.ToString("R");
             }
+            if (this.FadeDistanceString != SFadeDist)
+            {
+                this.FadeDistanceString = SFadeDist;
+                float.TryParse(SFadeDist, out this.FadeDistance);
+            }
+            else if (this.FadeDistance != FFadeDist)
+            {
+                this.FadeDistance = FFadeDist;
+                this.FadeDistanceString = FFadeDist.ToString("R");
+            }
         }
 
         internal bool IsValid()
@@ -1228,7 +1240,8 @@ namespace Clouds
             if (float.TryParse(FalloffPowerString, out dummy) &&
                 float.TryParse(FalloffScaleString, out dummy) &&
                 float.TryParse(DetailDistanceString, out dummy) &&
-                float.TryParse(MinimumLightString, out dummy))
+                float.TryParse(MinimumLightString, out dummy) &&
+                float.TryParse(FadeDistanceString, out dummy))
             {
                 return true;
             }
@@ -1247,7 +1260,7 @@ namespace Clouds
         public ColorSetGUI Color = new ColorSetGUI();
         public RadiusSetGUI Radius = new RadiusSetGUI();
         public ShaderFloatsGUI ShaderFloats = new ShaderFloatsGUI();
-        public ShaderFloatsGUI UndersideShaderFloats = new ShaderFloatsGUI();
+        public ShaderFloatsGUI PQSShaderFloats = new ShaderFloatsGUI();
 
         internal bool IsValid()
         {
@@ -1257,7 +1270,7 @@ namespace Clouds
                 Color.IsValid() &&
                 Radius.IsValid() &&
                 ShaderFloats.IsValid() &&
-                UndersideShaderFloats.IsValid())
+                PQSShaderFloats.IsValid())
             {
                 return true;
             }

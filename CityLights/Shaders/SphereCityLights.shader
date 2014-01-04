@@ -3,8 +3,9 @@
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_DetailTex ("Detail (RGB) (A)", 2D) = "white" {}
-		_DetailScale ("Detail Scale", Range(0,1000)) = 100
+		_DetailScale ("Detail Scale", Range(0,1000)) = 80
 		_DetailOffset ("Detail Offset", Color) = (0,0,0,0)
+		_FadeDist ("Fade Distance", Range(0,1)) = .01
 	}
 	Category {
 	   Lighting On
@@ -29,12 +30,14 @@
 	 sampler2D _MainTex;
 	 sampler2D _DetailTex;
 	 float _DetailScale;
-	 fixed4 _Color;
 	 fixed4 _DetailOffset;
-	
+	 float _FadeDist;
+	 fixed4 _Color;
+	 
+	 
 	 struct Input {
-	 	float distAlpha;
-	 	float3 localPos;
+	 	float3 worldPos;
+	 	float3 nrm;
 	 	INTERNAL_DATA
 	 };
 	
@@ -53,13 +56,10 @@
       }
 	
 	 void vert (inout appdata_full v, out Input o) {
-	 	UNITY_INITIALIZE_OUTPUT(Input, o);
+	   UNITY_INITIALIZE_OUTPUT(Input, o);
 	   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
-	   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
-	   float dist = distance(vertexPos,_WorldSpaceCameraPos.xyz);
-	   float alpha = saturate(250 - .00001*pow(dist-5000,2));
-	   o.distAlpha = alpha*saturate((distance(origin,_WorldSpaceCameraPos)-1.0015*distance(origin, vertexPos)));
-	   o.localPos = normalize(v.vertex.xyz);
+	   o.worldPos = vertexPos;
+	   o.nrm = normalize(v.vertex.xyz);
 	 }
 	
 	float4 Derivatives( float3 pos )  
@@ -76,21 +76,22 @@
 		} 
 	
 	 void surf (Input IN, inout SurfaceOutput o) {
-	 	float3 pos = IN.localPos;
+	 	float3 nrm = IN.nrm;
 	 	float2 uv;
-	 	uv.x = .5 + (INV_2PI*atan2(pos.z, pos.x));
-	 	uv.y = INV_PI*acos(-pos.y);
-	    float4 uvdd = Derivatives(pos);
+	 	uv.x = .5 + (INV_2PI*atan2(nrm.z, nrm.x));
+	 	uv.y = INV_PI*acos(-nrm.y);
+	    float4 uvdd = Derivatives(nrm);
 		half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw)*_Color;
-		half4 detailX = tex2D (_DetailTex, pos.zy*_DetailScale + _DetailOffset.xy);
-		half4 detailY = tex2D (_DetailTex, pos.zx*_DetailScale + _DetailOffset.xy);
-		half4 detailZ = tex2D (_DetailTex, pos.xy*_DetailScale + _DetailOffset.xy);
+		half4 detailX = tex2D (_DetailTex, nrm.zy*_DetailScale + _DetailOffset.xy);
+		half4 detailY = tex2D (_DetailTex, nrm.zx*_DetailScale + _DetailOffset.xy);
+		half4 detailZ = tex2D (_DetailTex, nrm.xy*_DetailScale + _DetailOffset.xy);
 			
-		pos = abs(pos);
-		half4 detail = lerp(detailZ, detailX, pos.x);
-		detail = lerp(detail, detailY, pos.y);
+		nrm = abs(nrm);
+		half4 detail = lerp(detailZ, detailX, nrm.x);
+		detail = lerp(detail, detailY, nrm.y);
 		main = main*detail;
-	    o.Alpha = min(main.a, IN.distAlpha);
+		float distAlpha = saturate(_FadeDist*distance(IN.worldPos, _WorldSpaceCameraPos));
+	    o.Alpha = min(main.a, distAlpha);
 	    o.Emission = main.rgb;
 	 }
 	 	 

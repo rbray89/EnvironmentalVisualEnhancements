@@ -15,6 +15,7 @@ namespace Clouds
         public static List<CloudLayer> Layers = new List<CloudLayer>();
         private static Shader GlobalCloudShader;
         private Material CloudMaterial;
+        private Material PQSCloudMaterial;
         private float timeDelta = 0;
         private String body;
         private Color color;
@@ -23,6 +24,7 @@ namespace Clouds
         private TextureSet detailTexture;
         private TextureSet bumpTexture;
         private ShaderFloats shaderFloats;
+        private ShaderFloats PQSshaderFloats;
         private Overlay CloudOverlay;
 
         public TextureSet MainTexture { get { return mainTexture; } }
@@ -31,6 +33,7 @@ namespace Clouds
         public Color Color { get { return color; } }
         public float Radius { get { return radius; } }
         public ShaderFloats ShaderFloats { get { return shaderFloats; } }
+        public ShaderFloats PQSShaderFloats { get { return PQSshaderFloats; } }
 
         internal void ApplyGUIUpdate(CloudGUI cloudGUI)
         {
@@ -38,6 +41,7 @@ namespace Clouds
             detailTexture.Clone(cloudGUI.DetailTexture);
             bumpTexture.Clone(cloudGUI.BumpTexture);
             shaderFloats.Clone(cloudGUI.ShaderFloats);
+            PQSshaderFloats.Clone(cloudGUI.PQSShaderFloats);
             radius = cloudGUI.Radius.RadiusF;
             color = cloudGUI.Color.Color;
             UpdateTextures();
@@ -49,7 +53,7 @@ namespace Clouds
             TextureSet detailTexture,
             TextureSet bumpTexture,
             ShaderFloats ShaderFloats,
-            ShaderFloats UndersideShaderFloats)
+            ShaderFloats PQSShaderFloats)
         {
             if (!BodyDatabase.ContainsKey(body))
             {
@@ -65,25 +69,31 @@ namespace Clouds
             this.bumpTexture = bumpTexture;
 
             this.shaderFloats = ShaderFloats;
+            this.PQSshaderFloats = PQSShaderFloats;
             Init();
         }
 
         private void UpdateTextures()
         {
             CloudMaterial.SetTexture("_MainTex", mainTexture.Texture);
+            PQSCloudMaterial.SetTexture("_MainTex", mainTexture.Texture);
             CloudMaterial.SetColor("_Color", color);
-
+            PQSCloudMaterial.SetColor("_Color", color);
 
             if (detailTexture.InUse)
             {
                 CloudMaterial.SetTexture("_DetailTex", detailTexture.Texture);
+                PQSCloudMaterial.SetTexture("_DetailTex", detailTexture.Texture);
                 CloudMaterial.SetFloat("_DetailScale", detailTexture.Scale);
+                PQSCloudMaterial.SetFloat("_DetailScale", detailTexture.Scale);
             }
 
             if (bumpTexture.InUse)
             {
                 CloudMaterial.SetTexture("_BumpMap", bumpTexture.Texture);
+                PQSCloudMaterial.SetTexture("_BumpMap", bumpTexture.Texture);
                 CloudMaterial.SetFloat("_BumpScale", bumpTexture.Scale);
+                PQSCloudMaterial.SetFloat("_BumpScale", bumpTexture.Scale);
             }
         }
 
@@ -108,13 +118,13 @@ namespace Clouds
                 
             }
             CloudMaterial = new Material(GlobalCloudShader);
-
+            PQSCloudMaterial = new Material(GlobalCloudShader);
             UpdateFloats();
 
             Log("Cloud Material initialized");
             UpdateTextures();
             Log("Generating Overlay...");
-            CloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, CloudMaterial, CloudMaterial, this.mainTexture.StartOffset);
+            CloudOverlay = Overlay.GeneratePlanetOverlay(body, radius, CloudMaterial, PQSCloudMaterial, this.mainTexture.StartOffset);
 
             Log("Textures initialized");
         }
@@ -127,10 +137,23 @@ namespace Clouds
                 CloudMaterial.SetFloat("_FalloffScale", shaderFloats.FalloffScale);
                 CloudMaterial.SetFloat("_DetailDist", shaderFloats.DetailDistance);
                 CloudMaterial.SetFloat("_MinLight", shaderFloats.MinimumLight);
+                CloudMaterial.SetFloat("_FadeDist", shaderFloats.FadeDistance);
             }
             else
             {
-                this.shaderFloats = new ShaderFloats(CloudMaterial.GetFloat("_FalloffPow"), CloudMaterial.GetFloat("_FalloffScale"), CloudMaterial.GetFloat("_DetailDist"), CloudMaterial.GetFloat("_MinLight"));
+                this.shaderFloats = new ShaderFloats(CloudMaterial.GetFloat("_FalloffPow"), CloudMaterial.GetFloat("_FalloffScale"), CloudMaterial.GetFloat("_DetailDist"), CloudMaterial.GetFloat("_MinLight"), CloudMaterial.GetFloat("_FadeDist"));
+            }
+            if (this.PQSshaderFloats != null)
+            {
+                PQSCloudMaterial.SetFloat("_FalloffPow", PQSshaderFloats.FalloffPower);
+                PQSCloudMaterial.SetFloat("_FalloffScale", PQSshaderFloats.FalloffScale);
+                PQSCloudMaterial.SetFloat("_DetailDist", PQSshaderFloats.DetailDistance);
+                PQSCloudMaterial.SetFloat("_MinLight", PQSshaderFloats.MinimumLight);
+                PQSCloudMaterial.SetFloat("_FadeDist", PQSshaderFloats.FadeDistance);
+            }
+            else
+            {
+                this.PQSshaderFloats = new ShaderFloats(PQSCloudMaterial.GetFloat("_FalloffPow"), PQSCloudMaterial.GetFloat("_FalloffScale"), PQSCloudMaterial.GetFloat("_DetailDist"), PQSCloudMaterial.GetFloat("_MinLight"), PQSCloudMaterial.GetFloat("_FadeDist"));
             }
             
         }
@@ -146,12 +169,14 @@ namespace Clouds
             {
                 detailTexture.UpdateOffset(rateOffset, false);
                 CloudMaterial.SetVector("_DetailOffset", detailTexture.Offset);
+                PQSCloudMaterial.SetVector("_DetailOffset", detailTexture.Offset);
             }
 
             if (bumpTexture.InUse)
             {
                 bumpTexture.UpdateOffset(rateOffset, false);
                 CloudMaterial.SetVector("_BumpOffset", bumpTexture.Offset);
+                PQSCloudMaterial.SetVector("_BumpOffset", bumpTexture.Offset);
             }
 
         }

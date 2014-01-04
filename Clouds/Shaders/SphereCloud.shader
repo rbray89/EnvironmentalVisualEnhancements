@@ -12,6 +12,7 @@
 		_BumpOffset ("Bump offset", Color) = (0,0,0,0)
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
 		_MinLight ("Minimum Light", Range(0,1)) = .1
+		_FadeDist ("Fade Distance", Range(0,1)) = .002
 	}
 
 SubShader {
@@ -44,6 +45,7 @@ SubShader {
 		float _DetailDist;
 		float _BumpScale;
 		float _MinLight;
+		float _FadeDist;
 		
 		half4 LightingSimpleLambert (SurfaceOutput s, half3 lightDir, half atten) {
           half NdotL = saturate(dot (s.Normal, lightDir));
@@ -54,9 +56,10 @@ SubShader {
       	}
 		
 		struct Input {
-			float2 viewDist;
-			float3 viewDir;
-			float3 localPos;
+			float3 worldPos;
+	 		float3 nrm;
+	 		float rim;
+	 		float viewDist;
 			INTERNAL_DATA
 		};
 
@@ -65,12 +68,11 @@ SubShader {
 		   float3 normalDir = normalize(mul(_Object2World, v.normal.xyzz).xyz);
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
 		   float3 viewVect = normalize( vertexPos - _WorldSpaceCameraPos);
-		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
-		   float diff = _DetailDist*distance(vertexPos,_WorldSpaceCameraPos);
-	   	   o.viewDist.x = diff;
-	   	   o.viewDist.y = saturate((.01*abs((distance(origin,_WorldSpaceCameraPos)-distance(origin, vertexPos))))-2);
-	   	   o.viewDist.y *= saturate(saturate(.0825*distance(vertexPos,_WorldSpaceCameraPos))+ saturate(pow(.8*_FalloffScale*dot(normalDir, -viewVect),_FalloffPow)));
-	   	   o.localPos = normalize(v.vertex.xyz);
+		   float dist = _DetailDist*distance(vertexPos,_WorldSpaceCameraPos);
+	   	   o.viewDist = dist;
+	   	   o.rim = saturate(saturate(.0825*distance(vertexPos,_WorldSpaceCameraPos))+ saturate(pow(.8*_FalloffScale*dot(normalDir, -viewVect),_FalloffPow)));
+	   	   o.worldPos = vertexPos;
+	   	   o.nrm = normalize(v.vertex.xyz);
 	 	}
 	 		
 		float4 Derivatives( float3 pos )  
@@ -87,31 +89,31 @@ SubShader {
 		} 
 	 		
 		void surf (Input IN, inout SurfaceOutput o) {
-			float3 pos = IN.localPos;
+			float3 nrm = IN.nrm;
 		 	float2 uv;
-		 	uv.x = .5 + (INV_2PI*atan2(pos.z, pos.x));
-		 	uv.y = INV_PI*acos(-pos.y);
-		 	float4 uvdd = Derivatives(pos);
+		 	uv.x = .5 + (INV_2PI*atan2(nrm.z, nrm.x));
+		 	uv.y = INV_PI*acos(-nrm.y);
+		 	float4 uvdd = Derivatives(nrm);
 		    half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw)*_Color;
-			half4 detailX = tex2D (_DetailTex, pos.zy*_DetailScale + _DetailOffset.xy);
-			half4 detailY = tex2D (_DetailTex, pos.zx*_DetailScale + _DetailOffset.xy);
-			half4 detailZ = tex2D (_DetailTex, pos.xy*_DetailScale + _DetailOffset.xy);
-			half4 normalX = tex2D (_BumpMap, pos.zy*_BumpScale + _BumpOffset.xy);
-			half4 normalY = tex2D (_BumpMap, pos.zx*_BumpScale + _BumpOffset.xy);
-			half4 normalZ = tex2D (_BumpMap, pos.xy*_BumpScale + _BumpOffset.xy);
-			pos = abs(pos);
-			half4 detail = lerp(detailZ, detailX, pos.x);
-			detail = lerp(detail, detailY, pos.y);
-			half4 normal = lerp(normalZ, normalX, pos.x);
-			normal = lerp(normal, normalY, pos.y);
+			half4 detailX = tex2D (_DetailTex, nrm.zy*_DetailScale + _DetailOffset.xy);
+			half4 detailY = tex2D (_DetailTex, nrm.zx*_DetailScale + _DetailOffset.xy);
+			half4 detailZ = tex2D (_DetailTex, nrm.xy*_DetailScale + _DetailOffset.xy);
+			half4 normalX = tex2D (_BumpMap, nrm.zy*_BumpScale + _BumpOffset.xy);
+			half4 normalY = tex2D (_BumpMap, nrm.zx*_BumpScale + _BumpOffset.xy);
+			half4 normalZ = tex2D (_BumpMap, nrm.xy*_BumpScale + _BumpOffset.xy);
+			nrm = abs(nrm);
+			half4 detail = lerp(detailZ, detailX, nrm.x);
+			detail = lerp(detail, detailY, nrm.y);
+			half4 normal = lerp(normalZ, normalX, nrm.x);
+			normal = lerp(normal, normalY, nrm.y);
 		
-			half detailLevel = saturate(2*IN.viewDist.x);
+			half detailLevel = saturate(2*IN.viewDist);
 			half3 albedo = main.rgb * lerp(detail.rgb, 1, detailLevel);
 			o.Normal = float3(0,0,1);
 			o.Albedo = albedo;
 			half avg = main.a * lerp(detail.a, 1, detailLevel);
-			half rim = saturate(dot(normalize(IN.viewDir), o.Normal));
-          	o.Alpha = lerp(0, avg, IN.viewDist.y);
+			float distAlpha = saturate(_FadeDist*distance(IN.worldPos, _WorldSpaceCameraPos));
+          	o.Alpha = lerp(0, avg, min(IN.rim, distAlpha));
           	o.Normal = lerp(UnpackNormal (normal),half3(0,0,1),detailLevel);
 		}
 		ENDCG
