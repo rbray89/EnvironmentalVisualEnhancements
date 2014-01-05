@@ -623,7 +623,7 @@ namespace Clouds
                 if (GUI.Button(new Rect(10, 80, halfWidth, 25), "Add"))
                 {
                     CloudLayer.Layers.Add(
-                    new CloudLayer(currentBody.name, new Color(1, 1, 1, 1), 1.01f,
+                    new CloudLayer(currentBody.name, new Color(1, 1, 1, 1), 1000f,
                     new TextureSet(), new TextureSet(), new TextureSet(), null, null));
                 }
                 if (hasLayers)
@@ -828,7 +828,7 @@ namespace Clouds
                 texFieldGS.focused.textColor = errorColor;
             }
             string SFadeDist = GUI.TextField(new Rect(offset + 80, y, 50, 25), floats.FadeDistanceString, texFieldGS);
-            float FFadeDist = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.FadeDistance, 0, 1);
+            float FFadeDist = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.FadeDistance, 0, 100);
 
             floats.Update(SFalloffPower, FFalloffPower, SFalloffScale, FFalloffScale, SDetailDistance, FDetailDistance, SMinimumLight, FMinimumLight, SFadeDist, FFadeDist);
 
@@ -861,7 +861,7 @@ namespace Clouds
                 texFieldGS.focused.textColor = errorColor;
             }
             String sRadius = GUI.TextField(new Rect(80, y, 50, 25), radius.RadiusS, texFieldGS);
-            float fRadius = GUI.HorizontalSlider(new Rect(135, y + 5, 115, 25), radius.RadiusF, 0, 2);
+            float fRadius = GUI.HorizontalSlider(new Rect(135, y + 5, 115, 25), radius.RadiusF, 0, 25000);
             radius.Update(fRadius, sRadius);
             return y + 30;
         }

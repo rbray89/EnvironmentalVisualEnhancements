@@ -36,7 +36,7 @@
 	 
 	 
 	 struct Input {
-	 	float3 worldPos;
+	 	float3 viewDist;
 	 	float3 nrm;
 	 	INTERNAL_DATA
 	 };
@@ -58,7 +58,9 @@
 	 void vert (inout appdata_full v, out Input o) {
 	   UNITY_INITIALIZE_OUTPUT(Input, o);
 	   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
-	   o.worldPos = vertexPos;
+	   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
+	   float dist = abs(distance(origin, vertexPos) - (distance(origin,_WorldSpaceCameraPos)));
+   	   o.viewDist = dist;
 	   o.nrm = normalize(v.vertex.xyz);
 	 }
 	
@@ -90,7 +92,7 @@
 		half4 detail = lerp(detailZ, detailX, nrm.x);
 		detail = lerp(detail, detailY, nrm.y);
 		main = main*detail;
-		float distAlpha = saturate(_FadeDist*distance(IN.worldPos, _WorldSpaceCameraPos));
+		float distAlpha = saturate(_FadeDist*IN.viewDist);
 	    o.Alpha = min(main.a, distAlpha);
 	    o.Emission = main.rgb;
 	 }

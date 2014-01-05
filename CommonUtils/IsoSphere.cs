@@ -59,7 +59,7 @@ namespace CommonUtils
             return i;
         }
 
-        public static void Create(GameObject gameObject, bool pqsOverlay = false, float radius = 1.004f)
+        public static void Create(GameObject gameObject, bool pqsOverlay = false, float radius = 1.002f)
         {
             MeshFilter filter = gameObject.AddComponent<MeshFilter>();
             Mesh mesh = filter.mesh;

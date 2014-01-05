@@ -16,9 +16,6 @@ namespace CommonUtils
         static List<CelestialBody> CelestialBodyList = new List<CelestialBody>();
         static ConfigNode config;
         static bool setup = false;
-        static bool setupCallbacks = false;
-        static String CurrentBodyName;
-        static bool bodyOverlayEnabled = false;
         static bool mainMenuOverlay = false;
         static bool isCubicMapped = false;
         public static bool MainMenuOverlay
@@ -32,13 +29,10 @@ namespace CommonUtils
 
         protected void Awake()
         {
-
             if (HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
                 Init();
             }
-            
-
         }
 
         public static void Init()
@@ -78,7 +72,6 @@ namespace CommonUtils
                 }
                 Log("Camera Layers Parsed.");
 
-
                 setup = true;
             }
         }
@@ -93,10 +86,6 @@ namespace CommonUtils
             else
             {
                  DisableMainOverlay();
-            }
-            if (setup && HighLogic.LoadedScene == GameScenes.SPACECENTER)
-            {
-                CurrentBodyName = "Kerbin";
             }
         }
 
@@ -128,8 +117,6 @@ namespace CommonUtils
             }
         }
 
-
-
         public void Update()
         {
 
@@ -140,7 +127,6 @@ namespace CommonUtils
            
         }
 
-        
         public static void Log(String message)
         {
             UnityEngine.Debug.Log("Utils: " + message);
@@ -186,7 +172,6 @@ namespace CommonUtils
     public class Overlay
     {
         public static Dictionary<String, List<Overlay>> OverlayDatabase = new Dictionary<string, List<Overlay>>();
-        public static List<Overlay> ZFightList = new List<Overlay>();
 
         private GameObject OverlayGameObject;
         private GameObject PQSOverlayGameObject;
@@ -195,22 +180,21 @@ namespace CommonUtils
         private Material overlayMaterial;
         private Material PQSMaterial;
         private int OriginalLayer;
-        private bool AvoidZFighting;
+        private bool MainMenu;
         private Vector2 Rotation;
         private Transform celestialTransform;
         private Overlay MainMenuClone;
+        private CelestialBody celestialBody;
 
-        public Overlay(string planet, float radius, Material overlayMaterial, Material PQSMaterial, Vector2 rotation, int layer, bool avoidZFighting, Transform celestialTransform, bool mainMenu)
+        public Overlay(string planet, float radius, Material overlayMaterial, Material PQSMaterial, Vector2 rotation, int layer, Transform celestialTransform, bool mainMenu)
         {
-
+            this.MainMenu = mainMenu;
             this.OverlayGameObject = new GameObject();
             this.Body = planet;
-            this.radius = radius;
             this.Rotation = rotation;
             this.overlayMaterial = overlayMaterial;
             this.PQSMaterial = PQSMaterial;
             this.OriginalLayer = layer;
-            this.AvoidZFighting = avoidZFighting;
             this.celestialTransform = celestialTransform;
 
             var mr = OverlayGameObject.AddComponent<MeshRenderer>();
@@ -220,7 +204,12 @@ namespace CommonUtils
             mr.receiveShadows = false;
             mr.enabled = true;
             OverlayGameObject.renderer.enabled = true;
-            
+
+            overlayMaterial.SetFloat("_FadeDist", 0.4f);
+            overlayMaterial.SetFloat("_FadeScale", 0.1f / 0.4f);
+            PQSMaterial.SetFloat("_FadeDist", 8f);
+            PQSMaterial.SetFloat("_FadeScale", 0.1f / 8f);
+
             if (!mainMenu)
             {
                 this.PQSOverlayGameObject = new GameObject();
@@ -234,25 +223,25 @@ namespace CommonUtils
                 PQSOverlayGameObject.layer = 15;
 
                 CelestialBody[] celestialBodies = (CelestialBody[])CelestialBody.FindObjectsOfType(typeof(CelestialBody));
-                CelestialBody currentBody = celestialBodies.First(n => n.bodyName == this.Body);
+                celestialBody = celestialBodies.First(n => n.bodyName == this.Body);
 
-                placePQS(currentBody, (float)((radius - 1f) * currentBody.Radius), PQSOverlayGameObject);
-                PQSOverlayGameObject.transform.localScale = Vector3.one * (float)(radius * currentBody.Radius);
+                placePQS();
+                
             }
-            
+            this.UpdateRadius(radius, mainMenu);
         }
 
-        private void placePQS(CelestialBody currentBody, float altitude, GameObject overlay)
+        private void placePQS()
         {
 
             GameObject overlayHolder = new GameObject();
             overlayHolder.name = "blockHolder";
 
-            overlay.transform.parent = overlayHolder.transform;
+            PQSOverlayGameObject.transform.parent = overlayHolder.transform;
 
-            foreach (Transform aTransform in currentBody.transform)
+            foreach (Transform aTransform in celestialBody.transform)
             {
-                if (aTransform.name == currentBody.transform.name)
+                if (aTransform.name == celestialBody.transform.name)
                 {
                     overlayHolder.transform.parent = aTransform;
                     break;
@@ -263,9 +252,9 @@ namespace CommonUtils
             blockScript.frameDelta = 1;
             blockScript.lod = new PQSCity.LODRange[1];
             blockScript.lod[0] = new PQSCity.LODRange();
-            blockScript.lod[0].visibleRange = 200000 + (float)currentBody.Radius + altitude;
+            blockScript.lod[0].visibleRange = 300000 + (float)celestialBody.Radius;
             blockScript.lod[0].renderers = new GameObject[1];
-            blockScript.lod[0].renderers[0] = overlay;
+            blockScript.lod[0].renderers[0] = PQSOverlayGameObject;
             blockScript.lod[0].objects = new GameObject[0];
             blockScript.modEnabled = true;
             blockScript.order = 100;
@@ -276,7 +265,7 @@ namespace CommonUtils
             blockScript.repositionRadiusOffset = 0;// altitude;
             blockScript.repositionToSphere = true;
             blockScript.requirements = PQS.ModiferRequirements.Default;
-            blockScript.sphere = currentBody.pqsController;
+            blockScript.sphere = celestialBody.pqsController;
 
             blockScript.RebuildSphere();
         }
@@ -292,7 +281,6 @@ namespace CommonUtils
                 {
                     OverlayGameObject.layer = body.layer;
                     OverlayGameObject.transform.parent = body.transform;
-                    OverlayGameObject.transform.localScale = this.radius * Vector3.one * 1008f;
                     OverlayGameObject.transform.localPosition = Vector3.zero;
                     OverlayGameObject.transform.localRotation = Quaternion.identity;
                 }
@@ -301,32 +289,28 @@ namespace CommonUtils
             {
                 OverlayGameObject.layer = Utils.MAP_LAYER;
                 OverlayGameObject.transform.parent = celestialTransform;
-                OverlayGameObject.transform.localScale = this.radius * Vector3.one * 1000f;
                 OverlayGameObject.transform.localPosition = Vector3.zero;
                 OverlayGameObject.transform.localRotation = Quaternion.identity;
             }
             this.UpdateRotation(Rotation);
+            this.UpdateRadius(radius, mainMenu);
         }
 
         public void CloneForMainMenu()
         {
             if (MainMenuClone == null)
             {
-                MainMenuClone = GeneratePlanetOverlay(this.Body, this.radius, this.overlayMaterial, this.PQSMaterial, this.Rotation, this.AvoidZFighting, true);
+                MainMenuClone = GeneratePlanetOverlay(this.Body, (float)(1f + (this.radius / celestialBody.Radius)), this.overlayMaterial, this.PQSMaterial, this.Rotation, true);
             }
         }
 
         public void RemoveOverlay()
         {
             OverlayDatabase[this.Body].Remove(this);
-            if (this.AvoidZFighting)
-            {
-                ZFightList.Remove(this);
-            }
             GameObject.Destroy(this.OverlayGameObject);
         }
 
-        public static Overlay GeneratePlanetOverlay(String planet, float radius, Material overlayMaterial, Material PQSMaterial, Vector2 rotation, bool avoidZFighting = false, bool mainMenu = false)
+        public static Overlay GeneratePlanetOverlay(String planet, float radius, Material overlayMaterial, Material PQSMaterial, Vector2 rotation, bool mainMenu = false)
         {
             Vector2 Rotation = new Vector2(rotation.x, rotation.y);
             if (Utils.IsCubicMapped)
@@ -338,7 +322,7 @@ namespace CommonUtils
                 Rotation.x += .25f;
             }
             Transform celestialTransform = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == planet);
-            Overlay overlay = new Overlay(planet, radius, overlayMaterial, PQSMaterial, Rotation, Utils.MAP_LAYER, avoidZFighting, celestialTransform, mainMenu);
+            Overlay overlay = new Overlay(planet, radius, overlayMaterial, PQSMaterial, Rotation, Utils.MAP_LAYER, celestialTransform, mainMenu);
             if (!mainMenu)
             {
                 if (!OverlayDatabase.ContainsKey(planet))
@@ -346,11 +330,6 @@ namespace CommonUtils
                     OverlayDatabase.Add(planet, new List<Overlay>());
                 }
                 OverlayDatabase[planet].Add(overlay);
-
-                if (avoidZFighting)
-                {
-                    ZFightList.Add(overlay);
-                }
             }
             
             overlay.EnableMainMenu(mainMenu);
@@ -358,23 +337,20 @@ namespace CommonUtils
         }
 
 
-        public void UpdateRadius(float radius)
+        public void UpdateRadius(float radius, bool mapView = false)
         {
             this.radius = radius;
-            if (AvoidZFighting)
+            if (MainMenu)
             {
-                if (MapView.MapIsEnabled)
-                {
-                    OverlayGameObject.transform.localScale = this.radius * Vector3.one * 1008f;
-                }
-                else
-                {
-                    OverlayGameObject.transform.localScale = this.radius * Vector3.one * 1000f;
-                }
+                OverlayGameObject.transform.localScale = this.radius * Vector3.one * 1004f;
             }
             else
             {
-                OverlayGameObject.transform.localScale = this.radius * Vector3.one * 1000f;
+                OverlayGameObject.transform.localScale = (float)(1f + (this.radius / celestialBody.Radius)) * Vector3.one * 1000f;
+                if (PQSOverlayGameObject != null)
+                {
+                    PQSOverlayGameObject.transform.localScale = Vector3.one * (float)(celestialBody.Radius + this.radius);
+                }
             }
         }
 

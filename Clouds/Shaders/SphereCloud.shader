@@ -12,7 +12,8 @@
 		_BumpOffset ("Bump offset", Color) = (0,0,0,0)
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
 		_MinLight ("Minimum Light", Range(0,1)) = .1
-		_FadeDist ("Fade Distance", Range(0,1)) = .002
+		_FadeDist ("Fade Distance", Range(0,100)) = 10
+		_FadeScale ("Fade Scale", Range(0,1)) = .002
 	}
 
 SubShader {
@@ -46,6 +47,7 @@ SubShader {
 		float _BumpScale;
 		float _MinLight;
 		float _FadeDist;
+		float _FadeScale;
 		
 		half4 LightingSimpleLambert (SurfaceOutput s, half3 lightDir, half atten) {
           half NdotL = saturate(dot (s.Normal, lightDir));
@@ -56,22 +58,20 @@ SubShader {
       	}
 		
 		struct Input {
-			float3 worldPos;
 	 		float3 nrm;
-	 		float rim;
+	 		float3 viewDir;
+	 		float3 worldVert;
 	 		float viewDist;
 			INTERNAL_DATA
 		};
 
 		void vert (inout appdata_full v, out Input o) {
 		   UNITY_INITIALIZE_OUTPUT(Input, o);
-		   float3 normalDir = normalize(mul(_Object2World, v.normal.xyzz).xyz);
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
-		   float3 viewVect = normalize( vertexPos - _WorldSpaceCameraPos);
-		   float dist = _DetailDist*distance(vertexPos,_WorldSpaceCameraPos);
-	   	   o.viewDist = dist;
-	   	   o.rim = saturate(saturate(.0825*distance(vertexPos,_WorldSpaceCameraPos))+ saturate(pow(.8*_FalloffScale*dot(normalDir, -viewVect),_FalloffPow)));
-	   	   o.worldPos = vertexPos;
+		   //float4 viewPos = mul(glstate.matrix.modelview[0], v.vertex);
+		   //float dist = (-viewPos.z - _ProjectionParams.y);
+	   	   o.worldVert = vertexPos;
+	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
 	   	   o.nrm = normalize(v.vertex.xyz);
 	 	}
 	 		
@@ -107,13 +107,17 @@ SubShader {
 			half4 normal = lerp(normalZ, normalX, nrm.x);
 			normal = lerp(normal, normalY, nrm.y);
 		
-			half detailLevel = saturate(2*IN.viewDist);
+			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
 			half3 albedo = main.rgb * lerp(detail.rgb, 1, detailLevel);
 			o.Normal = float3(0,0,1);
 			o.Albedo = albedo;
-			half avg = main.a * lerp(detail.a, 1, detailLevel);
-			float distAlpha = saturate(_FadeDist*distance(IN.worldPos, _WorldSpaceCameraPos));
-          	o.Alpha = lerp(0, avg, min(IN.rim, distAlpha));
+			half avg = min(main.a, lerp(detail.a, 1, detailLevel));
+			float rim = saturate(abs(dot(normalize(IN.viewDir), o.Normal)));
+            rim = saturate(pow(_FalloffScale*rim,_FalloffPow));
+            float dist = distance(IN.worldVert,_WorldSpaceCameraPos);
+            float distFade = saturate((_FadeScale*dist)-_FadeDist);
+			float distAlpha = lerp(distFade, rim, distFade);
+          	o.Alpha = lerp(0, avg,  distAlpha);
           	o.Normal = lerp(UnpackNormal (normal),half3(0,0,1),detailLevel);
 		}
 		ENDCG

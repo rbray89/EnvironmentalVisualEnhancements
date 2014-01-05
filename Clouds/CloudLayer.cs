@@ -46,6 +46,7 @@ namespace Clouds
             color = cloudGUI.Color.Color;
             UpdateTextures();
             UpdateFloats();
+            CloudOverlay.UpdateRadius(radius);
         }
 
         public CloudLayer(String body, Color color, float radius,
@@ -138,10 +139,11 @@ namespace Clouds
                 CloudMaterial.SetFloat("_DetailDist", shaderFloats.DetailDistance);
                 CloudMaterial.SetFloat("_MinLight", shaderFloats.MinimumLight);
                 CloudMaterial.SetFloat("_FadeDist", shaderFloats.FadeDistance);
+                CloudMaterial.SetFloat("_FadeScale", 0.1f/ shaderFloats.FadeDistance);
             }
             else
             {
-                this.shaderFloats = new ShaderFloats(CloudMaterial.GetFloat("_FalloffPow"), CloudMaterial.GetFloat("_FalloffScale"), CloudMaterial.GetFloat("_DetailDist"), CloudMaterial.GetFloat("_MinLight"), CloudMaterial.GetFloat("_FadeDist"));
+                this.shaderFloats = new ShaderFloats(CloudMaterial.GetFloat("_FalloffPow"), CloudMaterial.GetFloat("_FalloffScale"), CloudMaterial.GetFloat("_DetailDist"), CloudMaterial.GetFloat("_MinLight"), 0.4f);//CloudMaterial.GetFloat("_FadeDist"));
             }
             if (this.PQSshaderFloats != null)
             {
@@ -150,10 +152,11 @@ namespace Clouds
                 PQSCloudMaterial.SetFloat("_DetailDist", PQSshaderFloats.DetailDistance);
                 PQSCloudMaterial.SetFloat("_MinLight", PQSshaderFloats.MinimumLight);
                 PQSCloudMaterial.SetFloat("_FadeDist", PQSshaderFloats.FadeDistance);
+                PQSCloudMaterial.SetFloat("_FadeScale", 0.1f/PQSshaderFloats.FadeDistance);
             }
             else
             {
-                this.PQSshaderFloats = new ShaderFloats(PQSCloudMaterial.GetFloat("_FalloffPow"), PQSCloudMaterial.GetFloat("_FalloffScale"), PQSCloudMaterial.GetFloat("_DetailDist"), PQSCloudMaterial.GetFloat("_MinLight"), PQSCloudMaterial.GetFloat("_FadeDist"));
+                this.PQSshaderFloats = new ShaderFloats(PQSCloudMaterial.GetFloat("_FalloffPow"), PQSCloudMaterial.GetFloat("_FalloffScale"), PQSCloudMaterial.GetFloat("_DetailDist"), PQSCloudMaterial.GetFloat("_MinLight"), 8);// PQSCloudMaterial.GetFloat("_FadeDist"));
             }
             
         }
@@ -226,7 +229,6 @@ namespace Clouds
                 return new String[0];
             }
         }
-
 
         internal static void RemoveLayer(string body, int SelectedLayer)
         {

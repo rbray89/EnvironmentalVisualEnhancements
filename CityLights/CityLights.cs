@@ -63,13 +63,16 @@ namespace CityLights
             lightMaterial.SetTexture("_DetailTex", dTexture.Texture);
             lightMaterial.SetFloat("_DetailScale", dTexture.Scale);
             lightMaterial.SetVector("_DetailOffset", dTexture.Offset);
-            lightMaterial.SetFloat("_FadeDistance", fadeDistance);
+            lightMaterial.SetFloat("_FadeDist", fadeDistance);
+            lightMaterial.SetFloat("_FadeScale", fadeDistance / 50.0f);
+
             pqsLightMaterial.SetTexture("_MainTex", mTexture.Texture);
             pqsLightMaterial.SetTexture("_DetailTex", dTexture.Texture);
             pqsLightMaterial.SetFloat("_DetailScale", dTexture.Scale);
             pqsLightMaterial.SetVector("_DetailOffset", dTexture.Offset);
-            pqsLightMaterial.SetFloat("_FadeDistance", pqsfadeDistance);
-            
+            pqsLightMaterial.SetFloat("_FadeDist", pqsfadeDistance);
+            pqsLightMaterial.SetFloat("_FadeScale", pqsfadeDistance / 50.0f);
+
             Overlay.GeneratePlanetOverlay("Kerbin", radius, lightMaterial, pqsLightMaterial, mTexture.StartOffset);
         }
 
