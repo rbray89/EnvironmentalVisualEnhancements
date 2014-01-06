@@ -78,7 +78,7 @@ namespace Clouds
                 }
                 if (bodyTransform != null)
                 {
-                    float radius = float.Parse(node.GetValue("radius"));
+                    float altitude = float.Parse(node.GetValue("altitude"));
 
                     TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false, Utils.IsCubicMapped);
                     TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false, false);
@@ -103,7 +103,7 @@ namespace Clouds
                         float.Parse(colorNode.GetValue("a")));
 
                     CloudLayer.Layers.Add(
-                        new CloudLayer(body, color, radius,
+                        new CloudLayer(body, color, altitude,
                         mTexture, dTexture, bTexture, shaderFloats, pqsShaderFloats));
                 }
                 else
@@ -134,7 +134,7 @@ namespace Clouds
                 {
                     ConfigNode newNode = saveConfig.AddNode("CLOUD_LAYER");
                     newNode.AddValue("body", body);
-                    newNode.AddValue("radius", cloudLayer.Radius);
+                    newNode.AddValue("altitude", cloudLayer.Altitude);
                     ConfigNode colorNode = newNode.AddNode("color");
                     colorNode.AddValue("r", cloudLayer.Color.r);
                     colorNode.AddValue("g", cloudLayer.Color.g);
@@ -651,7 +651,7 @@ namespace Clouds
                             CloudGUI.DetailTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].DetailTexture);
                             CloudGUI.BumpTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].BumpTexture);
                             CloudGUI.Color.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Color);
-                            CloudGUI.Radius.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Radius);
+                            CloudGUI.Altitude.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Altitude);
                             CloudGUI.ShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ShaderFloats);
                             CloudGUI.PQSShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].PQSShaderFloats);
                         }
@@ -681,7 +681,7 @@ namespace Clouds
                         HandleAdvancedGUI(CloudGUI.PQSShaderFloats, advancedNextLine + 30, _mainWindowRect.width / 2);
                     }
 
-                    nextLine = HandleRadiusGUI(CloudGUI.Radius, nextLine);
+                    nextLine = HandleAltitudeGUI(CloudGUI.Altitude, nextLine);
                     nextLine = HandleColorGUI(CloudGUI.Color, nextLine);
 
 
@@ -835,7 +835,7 @@ namespace Clouds
             return y + 30;
         }
 
-        private int HandleRadiusGUI(RadiusSetGUI radius, int y)
+        private int HandleAltitudeGUI(AltitudeSetGUI altitude, int y)
         {
             GUIStyle gs = new GUIStyle(GUI.skin.label);
             gs.alignment = TextAnchor.MiddleRight;
@@ -845,8 +845,8 @@ namespace Clouds
             float dummyFloat;
 
             GUI.Label(
-                new Rect(10, y, 65, 25), "Radius: ", gs);
-            if (float.TryParse(radius.RadiusS, out dummyFloat))
+                new Rect(10, y, 65, 25), "Altitude: ", gs);
+            if (float.TryParse(altitude.AltitudeS, out dummyFloat))
             {
                 texFieldGS.normal.textColor = normalColor;
                 texFieldGS.hover.textColor = normalColor;
@@ -860,9 +860,9 @@ namespace Clouds
                 texFieldGS.active.textColor = errorColor;
                 texFieldGS.focused.textColor = errorColor;
             }
-            String sRadius = GUI.TextField(new Rect(80, y, 50, 25), radius.RadiusS, texFieldGS);
-            float fRadius = GUI.HorizontalSlider(new Rect(135, y + 5, 115, 25), radius.RadiusF, 0, 25000);
-            radius.Update(fRadius, sRadius);
+            String sAltitude = GUI.TextField(new Rect(80, y, 50, 25), altitude.AltitudeS, texFieldGS);
+            float fAltitude = GUI.HorizontalSlider(new Rect(135, y + 5, 115, 25), altitude.AltitudeF, 0, 25000);
+            altitude.Update(fAltitude, sAltitude);
             return y + 30;
         }
 
@@ -1258,7 +1258,7 @@ namespace Clouds
         public TextureSetGUI DetailTexture = new TextureSetGUI();
         public TextureSetGUI BumpTexture = new TextureSetGUI();
         public ColorSetGUI Color = new ColorSetGUI();
-        public RadiusSetGUI Radius = new RadiusSetGUI();
+        public AltitudeSetGUI Altitude = new AltitudeSetGUI();
         public ShaderFloatsGUI ShaderFloats = new ShaderFloatsGUI();
         public ShaderFloatsGUI PQSShaderFloats = new ShaderFloatsGUI();
 
@@ -1268,7 +1268,7 @@ namespace Clouds
                 DetailTexture.IsValid() &&
                 BumpTexture.IsValid() &&
                 Color.IsValid() &&
-                Radius.IsValid() &&
+                Altitude.IsValid() &&
                 ShaderFloats.IsValid() &&
                 PQSShaderFloats.IsValid())
             {

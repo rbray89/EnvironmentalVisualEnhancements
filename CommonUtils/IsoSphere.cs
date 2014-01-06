@@ -25,7 +25,7 @@ namespace CommonUtils
         }
 
         // return index of point in the middle of p1 and p2
-        private static int getMiddlePoint(int p1, int p2, ref List<Vector3> vertices, ref Dictionary<long, int> cache, float radius)
+        private static int getMiddlePoint(int p1, int p2, ref List<Vector3> vertices, ref Dictionary<long, int> cache, float altitude)
         {
             // first check if we have it already
             bool firstIsSmaller = p1 < p2;
@@ -51,7 +51,7 @@ namespace CommonUtils
 
             // add vertex makes sure point is on unit sphere
             int i = vertices.Count;
-            vertices.Add(middle.normalized * radius);
+            vertices.Add(middle.normalized * altitude);
 
             // store it, return index
             cache.Add(key, i);
@@ -59,7 +59,7 @@ namespace CommonUtils
             return i;
         }
 
-        public static void Create(GameObject gameObject, bool pqsOverlay = false, float radius = 1.002f)
+        public static void Create(GameObject gameObject, bool pqsOverlay = false, float altitude = 1.002f)
         {
             MeshFilter filter = gameObject.AddComponent<MeshFilter>();
             Mesh mesh = filter.mesh;
@@ -73,20 +73,20 @@ namespace CommonUtils
             // create 12 vertices of a icosahedron
             float t = (1f + Mathf.Sqrt(5f)) / 2f;
 
-            vertList.Add(new Vector3(-1f, t, 0f).normalized * radius);
-            vertList.Add(new Vector3(1f, t, 0f).normalized * radius);
-            vertList.Add(new Vector3(-1f, -t, 0f).normalized * radius);
-            vertList.Add(new Vector3(1f, -t, 0f).normalized * radius);
+            vertList.Add(new Vector3(-1f, t, 0f).normalized * altitude);
+            vertList.Add(new Vector3(1f, t, 0f).normalized * altitude);
+            vertList.Add(new Vector3(-1f, -t, 0f).normalized * altitude);
+            vertList.Add(new Vector3(1f, -t, 0f).normalized * altitude);
 
-            vertList.Add(new Vector3(0f, -1f, t).normalized * radius);
-            vertList.Add(new Vector3(0f, 1f, t).normalized * radius);
-            vertList.Add(new Vector3(0f, -1f, -t).normalized * radius);
-            vertList.Add(new Vector3(0f, 1f, -t).normalized * radius);
+            vertList.Add(new Vector3(0f, -1f, t).normalized * altitude);
+            vertList.Add(new Vector3(0f, 1f, t).normalized * altitude);
+            vertList.Add(new Vector3(0f, -1f, -t).normalized * altitude);
+            vertList.Add(new Vector3(0f, 1f, -t).normalized * altitude);
 
-            vertList.Add(new Vector3(t, 0f, -1f).normalized * radius);
-            vertList.Add(new Vector3(t, 0f, 1f).normalized * radius);
-            vertList.Add(new Vector3(-t, 0f, -1f).normalized * radius);
-            vertList.Add(new Vector3(-t, 0f, 1f).normalized * radius);
+            vertList.Add(new Vector3(t, 0f, -1f).normalized * altitude);
+            vertList.Add(new Vector3(t, 0f, 1f).normalized * altitude);
+            vertList.Add(new Vector3(-t, 0f, -1f).normalized * altitude);
+            vertList.Add(new Vector3(-t, 0f, 1f).normalized * altitude);
 
 
             // create 20 triangles of the icosahedron
@@ -128,9 +128,9 @@ namespace CommonUtils
                 foreach (var tri in faces)
                 {
                     // replace triangle by 4 triangles
-                    int a = getMiddlePoint(tri.v1, tri.v2, ref vertList, ref middlePointIndexCache, radius);
-                    int b = getMiddlePoint(tri.v2, tri.v3, ref vertList, ref middlePointIndexCache, radius);
-                    int c = getMiddlePoint(tri.v3, tri.v1, ref vertList, ref middlePointIndexCache, radius);
+                    int a = getMiddlePoint(tri.v1, tri.v2, ref vertList, ref middlePointIndexCache, altitude);
+                    int b = getMiddlePoint(tri.v2, tri.v3, ref vertList, ref middlePointIndexCache, altitude);
+                    int c = getMiddlePoint(tri.v3, tri.v1, ref vertList, ref middlePointIndexCache, altitude);
 
                     faces2.Add(new TriangleIndices(tri.v1, a, c));
                     faces2.Add(new TriangleIndices(tri.v2, b, a));
@@ -146,10 +146,10 @@ namespace CommonUtils
 
             if (pqsOverlay)
             {
-                KSPLog.print("updating position on radius");
+                KSPLog.print("updating position on altitude");
                 for(int i = 0; i < vertList.Count; i++)
                 {
-                    vertList[i] = new Vector3(vertList[i].x, vertList[i].y - radius, vertList[i].z);
+                    vertList[i] = new Vector3(vertList[i].x, vertList[i].y - altitude, vertList[i].z);
                 }
             }
 

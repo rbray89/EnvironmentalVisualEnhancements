@@ -7,35 +7,35 @@ using UnityEngine;
 
 namespace CommonUtils
 {
-    public class RadiusSetGUI
+    public class AltitudeSetGUI
     {
-        public float RadiusF;
-        public String RadiusS;
+        public float AltitudeF;
+        public String AltitudeS;
 
-        public void Clone(float radius)
+        public void Clone(float altitude)
         {
-            this.RadiusF = radius;
-            this.RadiusS = radius.ToString("R");
+            this.AltitudeF = altitude;
+            this.AltitudeS = altitude.ToString("R");
         }
 
-        public void Update(float radiusF, String radiusS)
+        public void Update(float altitudeF, String altitudeS)
         {
-            if (this.RadiusS != radiusS)
+            if (this.AltitudeS != altitudeS)
             {
-                this.RadiusS = radiusS;
-                float.TryParse(radiusS, out RadiusF);
+                this.AltitudeS = altitudeS;
+                float.TryParse(altitudeS, out AltitudeF);
             }
-            else if (RadiusF != radiusF)
+            else if (AltitudeF != altitudeF)
             {
-                this.RadiusF = radiusF;
-                this.RadiusS = radiusF.ToString("R");
+                this.AltitudeF = altitudeF;
+                this.AltitudeS = altitudeF.ToString("R");
             }
         }
 
         public bool IsValid()
         {
             float dummy;
-            return float.TryParse(RadiusS, out dummy);
+            return float.TryParse(AltitudeS, out dummy);
         }
     }
 

@@ -176,7 +176,7 @@ namespace CommonUtils
         private GameObject OverlayGameObject;
         private GameObject PQSOverlayGameObject;
         private string Body;
-        private float radius;
+        private float altitude;
         private Material overlayMaterial;
         private Material PQSMaterial;
         private int OriginalLayer;
@@ -186,7 +186,7 @@ namespace CommonUtils
         private Overlay MainMenuClone;
         private CelestialBody celestialBody;
 
-        public Overlay(string planet, float radius, Material overlayMaterial, Material PQSMaterial, Vector2 rotation, int layer, Transform celestialTransform, bool mainMenu)
+        public Overlay(string planet, float altitude, Material overlayMaterial, Material PQSMaterial, Vector2 rotation, int layer, Transform celestialTransform, bool mainMenu)
         {
             this.MainMenu = mainMenu;
             this.OverlayGameObject = new GameObject();
@@ -209,6 +209,7 @@ namespace CommonUtils
             overlayMaterial.SetFloat("_FadeScale", 0.1f / 0.4f);
             PQSMaterial.SetFloat("_FadeDist", 8f);
             PQSMaterial.SetFloat("_FadeScale", 0.1f / 8f);
+            PQSMaterial.SetFloat("_DetailDist", 0.000002f);
 
             if (!mainMenu)
             {
@@ -228,7 +229,7 @@ namespace CommonUtils
                 placePQS();
                 
             }
-            this.UpdateRadius(radius, mainMenu);
+            this.UpdateAltitude(altitude, mainMenu);
         }
 
         private void placePQS()
@@ -252,7 +253,7 @@ namespace CommonUtils
             blockScript.frameDelta = 1;
             blockScript.lod = new PQSCity.LODRange[1];
             blockScript.lod[0] = new PQSCity.LODRange();
-            blockScript.lod[0].visibleRange = 300000 + (float)celestialBody.Radius;
+            blockScript.lod[0].visibleRange = 4f * (float)celestialBody.Radius;
             blockScript.lod[0].renderers = new GameObject[1];
             blockScript.lod[0].renderers[0] = PQSOverlayGameObject;
             blockScript.lod[0].objects = new GameObject[0];
@@ -293,14 +294,14 @@ namespace CommonUtils
                 OverlayGameObject.transform.localRotation = Quaternion.identity;
             }
             this.UpdateRotation(Rotation);
-            this.UpdateRadius(radius, mainMenu);
+            this.UpdateAltitude(altitude, mainMenu);
         }
 
         public void CloneForMainMenu()
         {
             if (MainMenuClone == null)
             {
-                MainMenuClone = GeneratePlanetOverlay(this.Body, (float)(1f + (this.radius / celestialBody.Radius)), this.overlayMaterial, this.PQSMaterial, this.Rotation, true);
+                MainMenuClone = GeneratePlanetOverlay(this.Body, (float)(1f + (this.altitude / celestialBody.Radius)), this.overlayMaterial, this.PQSMaterial, this.Rotation, true);
             }
         }
 
@@ -310,7 +311,7 @@ namespace CommonUtils
             GameObject.Destroy(this.OverlayGameObject);
         }
 
-        public static Overlay GeneratePlanetOverlay(String planet, float radius, Material overlayMaterial, Material PQSMaterial, Vector2 rotation, bool mainMenu = false)
+        public static Overlay GeneratePlanetOverlay(String planet, float altitude, Material overlayMaterial, Material PQSMaterial, Vector2 rotation, bool mainMenu = false)
         {
             Vector2 Rotation = new Vector2(rotation.x, rotation.y);
             if (Utils.IsCubicMapped)
@@ -322,7 +323,7 @@ namespace CommonUtils
                 Rotation.x += .25f;
             }
             Transform celestialTransform = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == planet);
-            Overlay overlay = new Overlay(planet, radius, overlayMaterial, PQSMaterial, Rotation, Utils.MAP_LAYER, celestialTransform, mainMenu);
+            Overlay overlay = new Overlay(planet, altitude, overlayMaterial, PQSMaterial, Rotation, Utils.MAP_LAYER, celestialTransform, mainMenu);
             if (!mainMenu)
             {
                 if (!OverlayDatabase.ContainsKey(planet))
@@ -337,19 +338,19 @@ namespace CommonUtils
         }
 
 
-        public void UpdateRadius(float radius, bool mapView = false)
+        public void UpdateAltitude(float altitude, bool mapView = false)
         {
-            this.radius = radius;
+            this.altitude = altitude;
             if (MainMenu)
             {
-                OverlayGameObject.transform.localScale = this.radius * Vector3.one * 1004f;
+                OverlayGameObject.transform.localScale = this.altitude * Vector3.one * 1001f;
             }
             else
             {
-                OverlayGameObject.transform.localScale = (float)(1f + (this.radius / celestialBody.Radius)) * Vector3.one * 1000f;
+                OverlayGameObject.transform.localScale = (float)(1f + (this.altitude / celestialBody.Radius)) * Vector3.one * 1000f;
                 if (PQSOverlayGameObject != null)
                 {
-                    PQSOverlayGameObject.transform.localScale = Vector3.one * (float)(celestialBody.Radius + this.radius);
+                    PQSOverlayGameObject.transform.localScale = Vector3.one * (float)(celestialBody.Radius + this.altitude);
                 }
             }
         }

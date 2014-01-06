@@ -27,21 +27,21 @@ namespace CityLights
 
                 foreach (ConfigNode node in cloudLayersConfigs)
                 {
-                    float radius = float.Parse(node.GetValue("radius"));
+                    float altitude = float.Parse(node.GetValue("altitude"));
                     float fadeDistance = float.Parse(node.GetValue("fadeDistance"));
                     float pqsfadeDistance = float.Parse(node.GetValue("pqsFadeDistance"));
 
                     TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false, Utils.IsCubicMapped);
                     TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false, false);
 
-                    AddOverlay(mTexture, dTexture, radius, fadeDistance, pqsfadeDistance);
+                    AddOverlay(mTexture, dTexture, altitude, fadeDistance, pqsfadeDistance);
                 }
                 
                 setup = true;
             }
         }
 
-        private void AddOverlay(TextureSet mTexture, TextureSet dTexture, float radius, float fadeDistance, float pqsfadeDistance)
+        private void AddOverlay(TextureSet mTexture, TextureSet dTexture, float altitude, float fadeDistance, float pqsfadeDistance)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
             StreamReader shaderStreamReader;
@@ -73,7 +73,7 @@ namespace CityLights
             pqsLightMaterial.SetFloat("_FadeDist", pqsfadeDistance);
             pqsLightMaterial.SetFloat("_FadeScale", pqsfadeDistance / 50.0f);
 
-            Overlay.GeneratePlanetOverlay("Kerbin", radius, lightMaterial, pqsLightMaterial, mTexture.StartOffset);
+            Overlay.GeneratePlanetOverlay("Kerbin", altitude, lightMaterial, pqsLightMaterial, mTexture.StartOffset);
         }
 
         public static void Log(String message)
