@@ -33,7 +33,7 @@ Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
-varying vec3 xlv_TEXCOORD0;
+varying float xlv_TEXCOORD0;
 uniform vec4 unity_Scale;
 uniform mat4 _Object2World;
 
@@ -51,7 +51,7 @@ void main ()
   tmpvar_4[1] = _Object2World[1].xyz;
   tmpvar_4[2] = _Object2World[2].xyz;
   gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  xlv_TEXCOORD0 = vec3(abs((sqrt(dot (p_2, p_2)) - sqrt(dot (p_3, p_3)))));
+  xlv_TEXCOORD0 = abs((sqrt(dot (p_2, p_2)) - (1.003 * sqrt(dot (p_3, p_3)))));
   xlv_TEXCOORD1 = normalize(gl_Vertex.xyz);
   xlv_TEXCOORD2 = (tmpvar_4 * (gl_Normal * unity_Scale.w));
   xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
@@ -63,7 +63,7 @@ void main ()
 #extension GL_ARB_shader_texture_lod : enable
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
-varying vec3 xlv_TEXCOORD0;
+varying float xlv_TEXCOORD0;
 uniform vec4 _Color;
 uniform float _FadeDist;
 uniform vec4 _DetailOffset;
@@ -134,7 +134,7 @@ void main ()
   vec4 tmpvar_17;
   tmpvar_17 = ((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * _Color) * mix (mix (texture2D (_DetailTex, ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy)), texture2D (_DetailTex, ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy)), tmpvar_16.xxxx), texture2D (_DetailTex, ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy)), tmpvar_16.yyyy));
   vec4 c_18;
-  c_18.w = (min (tmpvar_17.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0).x) * (1.0 - clamp ((_LightColor0.w * (((dot (xlv_TEXCOORD2, _WorldSpaceLightPos0.xyz) - 0.01) / 0.99) * 16.0)), 0.0, 1.0)));
+  c_18.w = (min (tmpvar_17.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0)) * (1.0 - clamp ((_LightColor0.w * (((dot (xlv_TEXCOORD2, _WorldSpaceLightPos0.xyz) - 0.01) / 0.99) * 16.0)), 0.0, 1.0)));
   c_18.xyz = vec3(0.0, 0.0, 0.0);
   c_1.w = c_18.w;
   c_1.xyz = tmpvar_17.xyz;
@@ -161,33 +161,33 @@ dcl_texcoord0 o1
 dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
-def c10, 0.00000000, 0, 0, 0
+def c10, 1.00300002, 0.00000000, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
-mov r1.z, c6.w
-mov r1.x, c4.w
-mov r1.y, c5.w
-add r2.xyz, -r1, c8
-dp4 r0.z, v0, c6
-dp4 r0.x, v0, c4
-dp4 r0.y, v0, c5
-add r0.xyz, r0, -r1
+mov r0.z, c6.w
+mov r0.y, c5.w
+mov r0.x, c4.w
+dp4 r1.z, v0, c6
+dp4 r1.x, v0, c4
+dp4 r1.y, v0, c5
+add r1.xyz, -r0, r1
+add r0.xyz, -r0, c8
+dp3 r0.y, r0, r0
+dp3 r0.w, r1, r1
 mul r1.xyz, v1, c9.w
-dp3 r0.x, r0, r0
-dp3 r0.w, r2, r2
-rsq r0.y, r0.w
-rsq r0.x, r0.x
+rsq r0.x, r0.w
+rsq r0.y, r0.y
 rcp r0.y, r0.y
 rcp r0.x, r0.x
-add r0.x, r0, -r0.y
+mad r0.x, -r0.y, c10, r0
 dp3 r0.y, v0, v0
-abs o1.xyz, r0.x
+abs o1.x, r0
 rsq r0.x, r0.y
 mul o2.xyz, r0.x, v0
 dp3 o3.z, r1, c6
 dp3 o3.y, r1, c5
 dp3 o3.x, r1, c4
-mov o4.xyz, c10.x
+mov o4.xyz, c10.y
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -213,7 +213,7 @@ BindCB "UnityPerDraw" 1
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjmgjilbhjpcndkhhmhecknmeoeobhenkabaaaaaaceafaaaaadaaaaaa
+eefiecedgmkofhbloekdpncmphencbhhkdjjogcaabaaaaaacmafaaaaadaaaaaa
 cmaaaaaapeaaaaaajeabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapaaaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -222,14 +222,14 @@ abaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaljaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaafaaaaaaapaaaaaafaepfdejfeejepeoaafeebeoehefeofeaaeoepfc
 enebemaafeeffiedepepfceeaaedepemepfcaaklepfdeheojiaaaaaaafaaaaaa
 aiaaaaaaiaaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaa
-aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaahaiaaaaimaaaaaaabaaaaaaaaaaaaaa
-adaaaaaaacaaaaaaahaiaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaa
-ahaiaaaaimaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaafdfgfpfa
-epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefciiadaaaaeaaaabaa
-ocaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaabaoaaaaimaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaaoabaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahaiaaaaimaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaafdfgfpfa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcjaadaaaaeaaaabaa
+oeaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
 bfaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadhcbabaaaacaaaaaaghaaaaae
-pccabaaaaaaaaaaaabaaaaaagfaaaaadhccabaaaabaaaaaagfaaaaadhccabaaa
-acaaaaaagfaaaaadhccabaaaadaaaaaagfaaaaadhccabaaaaeaaaaaagiaaaaac
+pccabaaaaaaaaaaaabaaaaaagfaaaaadbccabaaaabaaaaaagfaaaaadoccabaaa
+abaaaaaagfaaaaadhccabaaaacaaaaaagfaaaaadhccabaaaadaaaaaagiaaaaac
 acaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaabaaaaaa
 abaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaaagbabaaa
 aaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaa
@@ -244,17 +244,17 @@ egacbaiaebaaaaaaaaaaaaaaegiccaaaabaaaaaaapaaaaaabaaaaaahbcaabaaa
 aaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaaaaaaaakocaabaaaaaaaaaaa
 agijcaiaebaaaaaaaaaaaaaaaeaaaaaaagijcaaaabaaaaaaapaaaaaabaaaaaah
 ccaabaaaaaaaaaaajgahbaaaaaaaaaaajgahbaaaaaaaaaaaelaaaaafdcaabaaa
-aaaaaaaaegaabaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaiaebaaaaaa
-aaaaaaaaakaabaaaaaaaaaaadgaaaaaghccabaaaabaaaaaaagaabaiaibaaaaaa
-aaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaaaaaaaaaegbcbaaaaaaaaaaa
-eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhccabaaaacaaaaaa
-agaabaaaaaaaaaaaegbcbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaaegbcbaaa
-acaaaaaapgipcaaaabaaaaaabeaaaaaadiaaaaaihcaabaaaabaaaaaafgafbaaa
-aaaaaaaaegiccaaaabaaaaaaanaaaaaadcaaaaaklcaabaaaaaaaaaaaegiicaaa
-abaaaaaaamaaaaaaagaabaaaaaaaaaaaegaibaaaabaaaaaadcaaaaakhccabaaa
-adaaaaaaegiccaaaabaaaaaaaoaaaaaakgakbaaaaaaaaaaaegadbaaaaaaaaaaa
-dgaaaaaihccabaaaaeaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-doaaaaab"
+aaaaaaaaegaabaaaaaaaaaaadcaaaaakbcaabaaaaaaaaaaabkaabaiaebaaaaaa
+aaaaaaaaabeaaaaaeogciadpakaabaaaaaaaaaaadgaaaaagbccabaaaabaaaaaa
+akaabaiaibaaaaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaaaaaaaaa
+egbcbaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+occabaaaabaaaaaaagaabaaaaaaaaaaaagbjbaaaaaaaaaaadiaaaaaihcaabaaa
+aaaaaaaaegbcbaaaacaaaaaapgipcaaaabaaaaaabeaaaaaadiaaaaaihcaabaaa
+abaaaaaafgafbaaaaaaaaaaaegiccaaaabaaaaaaanaaaaaadcaaaaaklcaabaaa
+aaaaaaaaegiicaaaabaaaaaaamaaaaaaagaabaaaaaaaaaaaegaibaaaabaaaaaa
+dcaaaaakhccabaaaacaaaaaaegiccaaaabaaaaaaaoaaaaaakgakbaaaaaaaaaaa
+egadbaaaaaaaaaaadgaaaaaihccabaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -267,7 +267,7 @@ Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 varying lowp vec3 xlv_TEXCOORD3;
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 _Object2World;
 uniform highp mat4 glstate_matrix_mvp;
@@ -291,7 +291,7 @@ void main ()
   tmpvar_6 = (tmpvar_5 * (normalize(_glesNormal) * unity_Scale.w));
   tmpvar_1 = tmpvar_6;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = vec3(abs((sqrt(dot (p_3, p_3)) - sqrt(dot (p_4, p_4)))));
+  xlv_TEXCOORD0 = abs((sqrt(dot (p_3, p_3)) - (1.003 * sqrt(dot (p_4, p_4)))));
   xlv_TEXCOORD1 = normalize(_glesVertex.xyz);
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
@@ -306,7 +306,7 @@ void main ()
 #extension GL_OES_standard_derivatives : enable
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform lowp vec4 _Color;
 uniform highp float _FadeDist;
 uniform lowp vec4 _DetailOffset;
@@ -411,7 +411,7 @@ void main ()
   tmpvar_33 = (main_8 * detail_4);
   main_8 = tmpvar_33;
   highp float tmpvar_34;
-  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0).x);
+  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0));
   tmpvar_3 = tmpvar_34;
   mediump vec3 tmpvar_35;
   tmpvar_35 = tmpvar_33.xyz;
@@ -450,7 +450,7 @@ Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 varying lowp vec3 xlv_TEXCOORD3;
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 _Object2World;
 uniform highp mat4 glstate_matrix_mvp;
@@ -474,7 +474,7 @@ void main ()
   tmpvar_6 = (tmpvar_5 * (normalize(_glesNormal) * unity_Scale.w));
   tmpvar_1 = tmpvar_6;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = vec3(abs((sqrt(dot (p_3, p_3)) - sqrt(dot (p_4, p_4)))));
+  xlv_TEXCOORD0 = abs((sqrt(dot (p_3, p_3)) - (1.003 * sqrt(dot (p_4, p_4)))));
   xlv_TEXCOORD1 = normalize(_glesVertex.xyz);
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
@@ -489,7 +489,7 @@ void main ()
 #extension GL_OES_standard_derivatives : enable
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform lowp vec4 _Color;
 uniform highp float _FadeDist;
 uniform lowp vec4 _DetailOffset;
@@ -594,7 +594,7 @@ void main ()
   tmpvar_33 = (main_8 * detail_4);
   main_8 = tmpvar_33;
   highp float tmpvar_34;
-  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0).x);
+  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0));
   tmpvar_3 = tmpvar_34;
   mediump vec3 tmpvar_35;
   tmpvar_35 = tmpvar_33.xyz;
@@ -679,13 +679,13 @@ struct appdata_full {
 };
 #line 397
 struct Input {
-    highp vec3 viewDist;
+    highp float viewDist;
     highp vec3 nrm;
 };
 #line 454
 struct v2f_surf {
     highp vec4 pos;
-    highp vec3 cust_viewDist;
+    highp float cust_viewDist;
     highp vec3 cust_nrm;
     lowp vec3 normal;
     lowp vec3 vlight;
@@ -801,8 +801,8 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     #line 419
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp float dist = abs((distance( origin, vertexPos) - distance( origin, _WorldSpaceCameraPos)));
-    o.viewDist = vec3( dist);
+    highp float dist = abs((distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos))));
+    o.viewDist = dist;
     o.nrm = normalize(v.vertex.xyz);
 }
 #line 463
@@ -822,7 +822,7 @@ v2f_surf vert_surf( in appdata_full v ) {
     return o;
 }
 
-out highp vec3 xlv_TEXCOORD0;
+out highp float xlv_TEXCOORD0;
 out highp vec3 xlv_TEXCOORD1;
 out lowp vec3 xlv_TEXCOORD2;
 out lowp vec3 xlv_TEXCOORD3;
@@ -837,7 +837,7 @@ void main() {
     xlt_v.color = vec4(gl_Color);
     xl_retval = vert_surf( xlt_v);
     gl_Position = vec4(xl_retval.pos);
-    xlv_TEXCOORD0 = vec3(xl_retval.cust_viewDist);
+    xlv_TEXCOORD0 = float(xl_retval.cust_viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.cust_nrm);
     xlv_TEXCOORD2 = vec3(xl_retval.normal);
     xlv_TEXCOORD3 = vec3(xl_retval.vlight);
@@ -951,13 +951,13 @@ struct appdata_full {
 };
 #line 397
 struct Input {
-    highp vec3 viewDist;
+    highp float viewDist;
     highp vec3 nrm;
 };
 #line 454
 struct v2f_surf {
     highp vec4 pos;
-    highp vec3 cust_viewDist;
+    highp float cust_viewDist;
     highp vec3 cust_nrm;
     lowp vec3 normal;
     lowp vec3 vlight;
@@ -1114,7 +1114,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     detail = mix( detail, detailY, vec4( nrm.y));
     #line 449
     main = (main * detail);
-    highp float distAlpha = float( xll_saturate_vf3((_FadeDist * IN.viewDist)));
+    highp float distAlpha = xll_saturate_f((_FadeDist * IN.viewDist));
     o.Alpha = min( main.w, distAlpha);
     o.Emission = main.xyz;
 }
@@ -1143,7 +1143,7 @@ lowp vec4 frag_surf( in v2f_surf IN ) {
     #line 495
     return c;
 }
-in highp vec3 xlv_TEXCOORD0;
+in highp float xlv_TEXCOORD0;
 in highp vec3 xlv_TEXCOORD1;
 in lowp vec3 xlv_TEXCOORD2;
 in lowp vec3 xlv_TEXCOORD3;
@@ -1151,7 +1151,7 @@ void main() {
     lowp vec4 xl_retval;
     v2f_surf xlt_IN;
     xlt_IN.pos = vec4(0.0);
-    xlt_IN.cust_viewDist = vec3(xlv_TEXCOORD0);
+    xlt_IN.cust_viewDist = float(xlv_TEXCOORD0);
     xlt_IN.cust_nrm = vec3(xlv_TEXCOORD1);
     xlt_IN.normal = vec3(xlv_TEXCOORD2);
     xlt_IN.vlight = vec3(xlv_TEXCOORD3);
@@ -1171,7 +1171,7 @@ varying vec4 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
-varying vec3 xlv_TEXCOORD0;
+varying float xlv_TEXCOORD0;
 uniform vec4 unity_Scale;
 uniform mat4 _Object2World;
 
@@ -1200,7 +1200,7 @@ void main ()
   o_6.xy = (tmpvar_8 + tmpvar_7.w);
   o_6.zw = tmpvar_4.zw;
   gl_Position = tmpvar_4;
-  xlv_TEXCOORD0 = vec3(abs((sqrt(dot (p_2, p_2)) - sqrt(dot (p_3, p_3)))));
+  xlv_TEXCOORD0 = abs((sqrt(dot (p_2, p_2)) - (1.003 * sqrt(dot (p_3, p_3)))));
   xlv_TEXCOORD1 = normalize(gl_Vertex.xyz);
   xlv_TEXCOORD2 = (tmpvar_5 * (gl_Normal * unity_Scale.w));
   xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
@@ -1214,7 +1214,7 @@ void main ()
 varying vec4 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
-varying vec3 xlv_TEXCOORD0;
+varying float xlv_TEXCOORD0;
 uniform vec4 _Color;
 uniform float _FadeDist;
 uniform vec4 _DetailOffset;
@@ -1286,7 +1286,7 @@ void main ()
   vec4 tmpvar_17;
   tmpvar_17 = ((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * _Color) * mix (mix (texture2D (_DetailTex, ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy)), texture2D (_DetailTex, ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy)), tmpvar_16.xxxx), texture2D (_DetailTex, ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy)), tmpvar_16.yyyy));
   vec4 c_18;
-  c_18.w = (min (tmpvar_17.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0).x) * (1.0 - clamp ((_LightColor0.w * ((((dot (xlv_TEXCOORD2, _WorldSpaceLightPos0.xyz) - 0.01) / 0.99) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x) * 16.0)), 0.0, 1.0)));
+  c_18.w = (min (tmpvar_17.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0)) * (1.0 - clamp ((_LightColor0.w * ((((dot (xlv_TEXCOORD2, _WorldSpaceLightPos0.xyz) - 0.01) / 0.99) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x) * 16.0)), 0.0, 1.0)));
   c_18.xyz = vec3(0.0, 0.0, 0.0);
   c_1.w = c_18.w;
   c_1.xyz = tmpvar_17.xyz;
@@ -1316,30 +1316,30 @@ dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
-def c12, 0.50000000, 0.00000000, 0, 0
+def c12, 1.00300002, 0.50000000, 0.00000000, 0
 dcl_position0 v0
 dcl_normal0 v1
-mov r1.z, c6.w
-mov r1.x, c4.w
-mov r1.y, c5.w
-add r2.xyz, -r1, c8
-dp3 r0.w, r2, r2
-dp4 r0.z, v0, c6
-dp4 r0.x, v0, c4
-dp4 r0.y, v0, c5
-add r0.xyz, r0, -r1
-dp3 r0.x, r0, r0
-rsq r0.y, r0.w
-rsq r0.x, r0.x
+mov r0.z, c6.w
+mov r0.y, c5.w
+mov r0.x, c4.w
+dp4 r1.z, v0, c6
+dp4 r1.x, v0, c4
+dp4 r1.y, v0, c5
+add r1.xyz, -r0, r1
+add r0.xyz, -r0, c8
+dp3 r0.y, r0, r0
+dp3 r0.w, r1, r1
+rsq r0.x, r0.w
+rsq r0.y, r0.y
 dp4 r0.w, v0, c3
-rcp r0.y, r0.y
 rcp r0.x, r0.x
-add r0.z, r0.x, -r0.y
-abs o1.xyz, r0.z
+rcp r0.y, r0.y
+mad r0.z, -r0.y, c12.x, r0.x
+abs o1.x, r0.z
 dp4 r0.z, v0, c2
 dp4 r0.x, v0, c0
 dp4 r0.y, v0, c1
-mul r1.xyz, r0.xyww, c12.x
+mul r1.xyz, r0.xyww, c12.y
 mul r1.y, r1, c9.x
 mad o5.xy, r1.z, c10.zwzw, r1
 mul r1.xyz, v1, c11.w
@@ -1351,7 +1351,7 @@ mul o2.xyz, r0.x, v0
 dp3 o3.z, r1, c6
 dp3 o3.y, r1, c5
 dp3 o3.x, r1, c4
-mov o4.xyz, c12.y
+mov o4.xyz, c12.z
 "
 }
 
@@ -1374,7 +1374,7 @@ BindCB "UnityPerDraw" 1
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkcnogfphhdglmpngkhaegmmlcmipibacabaaaaaaneafaaaaadaaaaaa
+eefiecedahffcoledmkfhlenlglefegolgdlahldabaaaaaanmafaaaaadaaaaaa
 cmaaaaaapeaaaaaakmabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapaaaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -1383,15 +1383,15 @@ abaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaljaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaafaaaaaaapaaaaaafaepfdejfeejepeoaafeebeoehefeofeaaeoepfc
 enebemaafeeffiedepepfceeaaedepemepfcaaklepfdeheolaaaaaaaagaaaaaa
 aiaaaaaajiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaa
-aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaahaiaaaakeaaaaaaabaaaaaaaaaaaaaa
-adaaaaaaacaaaaaaahaiaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaa
-ahaiaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaakeaaaaaa
-aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefccaaeaaaaeaaaabaaaiabaaaafjaaaaae
+aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaabaoaaaakeaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaaoabaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahaiaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaakeaaaaaa
+aeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
+feeffiedepepfceeaaklklklfdeieefcciaeaaaaeaaaabaaakabaaaafjaaaaae
 egiocaaaaaaaaaaaagaaaaaafjaaaaaeegiocaaaabaaaaaabfaaaaaafpaaaaad
 pcbabaaaaaaaaaaafpaaaaadhcbabaaaacaaaaaaghaaaaaepccabaaaaaaaaaaa
-abaaaaaagfaaaaadhccabaaaabaaaaaagfaaaaadhccabaaaacaaaaaagfaaaaad
-hccabaaaadaaaaaagfaaaaadhccabaaaaeaaaaaagfaaaaadpccabaaaafaaaaaa
+abaaaaaagfaaaaadbccabaaaabaaaaaagfaaaaadoccabaaaabaaaaaagfaaaaad
+hccabaaaacaaaaaagfaaaaadhccabaaaadaaaaaagfaaaaadpccabaaaaeaaaaaa
 giaaaaacadaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaa
 abaaaaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaa
 agbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
@@ -1407,20 +1407,20 @@ abaaaaaaegiccaaaabaaaaaaapaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaa
 abaaaaaaegacbaaaabaaaaaaaaaaaaakocaabaaaabaaaaaaagijcaiaebaaaaaa
 aaaaaaaaaeaaaaaaagijcaaaabaaaaaaapaaaaaabaaaaaahccaabaaaabaaaaaa
 jgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaa
-abaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaiaebaaaaaaabaaaaaaakaabaaa
-abaaaaaadgaaaaaghccabaaaabaaaaaaagaabaiaibaaaaaaabaaaaaabaaaaaah
-bcaabaaaabaaaaaaegbcbaaaaaaaaaaaegbcbaaaaaaaaaaaeeaaaaafbcaabaaa
-abaaaaaaakaabaaaabaaaaaadiaaaaahhccabaaaacaaaaaaagaabaaaabaaaaaa
-egbcbaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaaegbcbaaaacaaaaaapgipcaaa
-abaaaaaabeaaaaaadiaaaaaihcaabaaaacaaaaaafgafbaaaabaaaaaaegiccaaa
-abaaaaaaanaaaaaadcaaaaaklcaabaaaabaaaaaaegiicaaaabaaaaaaamaaaaaa
-agaabaaaabaaaaaaegaibaaaacaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaa
-abaaaaaaaoaaaaaakgakbaaaabaaaaaaegadbaaaabaaaaaadgaaaaaihccabaaa
-aeaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadiaaaaaiccaabaaa
-aaaaaaaabkaabaaaaaaaaaaaakiacaaaaaaaaaaaafaaaaaadiaaaaakncaabaaa
-abaaaaaaagahbaaaaaaaaaaaaceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadp
-dgaaaaafmccabaaaafaaaaaakgaobaaaaaaaaaaaaaaaaaahdccabaaaafaaaaaa
-kgakbaaaabaaaaaamgaabaaaabaaaaaadoaaaaab"
+abaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaa
+eogciadpakaabaaaabaaaaaadgaaaaagbccabaaaabaaaaaaakaabaiaibaaaaaa
+abaaaaaabaaaaaahbcaabaaaabaaaaaaegbcbaaaaaaaaaaaegbcbaaaaaaaaaaa
+eeaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaahoccabaaaabaaaaaa
+agaabaaaabaaaaaaagbjbaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaaegbcbaaa
+acaaaaaapgipcaaaabaaaaaabeaaaaaadiaaaaaihcaabaaaacaaaaaafgafbaaa
+abaaaaaaegiccaaaabaaaaaaanaaaaaadcaaaaaklcaabaaaabaaaaaaegiicaaa
+abaaaaaaamaaaaaaagaabaaaabaaaaaaegaibaaaacaaaaaadcaaaaakhccabaaa
+acaaaaaaegiccaaaabaaaaaaaoaaaaaakgakbaaaabaaaaaaegadbaaaabaaaaaa
+dgaaaaaihccabaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+diaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaaakiacaaaaaaaaaaaafaaaaaa
+diaaaaakncaabaaaabaaaaaaagahbaaaaaaaaaaaaceaaaaaaaaaaadpaaaaaaaa
+aaaaaadpaaaaaadpdgaaaaafmccabaaaaeaaaaaakgaobaaaaaaaaaaaaaaaaaah
+dccabaaaaeaaaaaakgakbaaaabaaaaaamgaabaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -1434,7 +1434,7 @@ varying highp vec4 xlv_TEXCOORD4;
 varying lowp vec3 xlv_TEXCOORD3;
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 _Object2World;
 uniform highp mat4 glstate_matrix_mvp;
@@ -1459,7 +1459,7 @@ void main ()
   tmpvar_6 = (tmpvar_5 * (normalize(_glesNormal) * unity_Scale.w));
   tmpvar_1 = tmpvar_6;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = vec3(abs((sqrt(dot (p_3, p_3)) - sqrt(dot (p_4, p_4)))));
+  xlv_TEXCOORD0 = abs((sqrt(dot (p_3, p_3)) - (1.003 * sqrt(dot (p_4, p_4)))));
   xlv_TEXCOORD1 = normalize(_glesVertex.xyz);
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
@@ -1476,7 +1476,7 @@ void main ()
 varying highp vec4 xlv_TEXCOORD4;
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform lowp vec4 _Color;
 uniform highp float _FadeDist;
 uniform lowp vec4 _DetailOffset;
@@ -1583,7 +1583,7 @@ void main ()
   tmpvar_33 = (main_8 * detail_4);
   main_8 = tmpvar_33;
   highp float tmpvar_34;
-  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0).x);
+  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0));
   tmpvar_3 = tmpvar_34;
   mediump vec3 tmpvar_35;
   tmpvar_35 = tmpvar_33.xyz;
@@ -1637,7 +1637,7 @@ varying highp vec4 xlv_TEXCOORD4;
 varying lowp vec3 xlv_TEXCOORD3;
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 _Object2World;
 uniform highp mat4 glstate_matrix_mvp;
@@ -1672,7 +1672,7 @@ void main ()
   o_8.xy = (tmpvar_10 + tmpvar_9.w);
   o_8.zw = tmpvar_5.zw;
   gl_Position = tmpvar_5;
-  xlv_TEXCOORD0 = vec3(abs((sqrt(dot (p_3, p_3)) - sqrt(dot (p_4, p_4)))));
+  xlv_TEXCOORD0 = abs((sqrt(dot (p_3, p_3)) - (1.003 * sqrt(dot (p_4, p_4)))));
   xlv_TEXCOORD1 = normalize(_glesVertex.xyz);
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
@@ -1689,7 +1689,7 @@ void main ()
 varying highp vec4 xlv_TEXCOORD4;
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform lowp vec4 _Color;
 uniform highp float _FadeDist;
 uniform lowp vec4 _DetailOffset;
@@ -1795,7 +1795,7 @@ void main ()
   tmpvar_33 = (main_8 * detail_4);
   main_8 = tmpvar_33;
   highp float tmpvar_34;
-  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0).x);
+  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0));
   tmpvar_3 = tmpvar_34;
   mediump vec3 tmpvar_35;
   tmpvar_35 = tmpvar_33.xyz;
@@ -1884,13 +1884,13 @@ struct appdata_full {
 };
 #line 405
 struct Input {
-    highp vec3 viewDist;
+    highp float viewDist;
     highp vec3 nrm;
 };
 #line 462
 struct v2f_surf {
     highp vec4 pos;
-    highp vec3 cust_viewDist;
+    highp float cust_viewDist;
     highp vec3 cust_nrm;
     lowp vec3 normal;
     lowp vec3 vlight;
@@ -2010,8 +2010,8 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     #line 427
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp float dist = abs((distance( origin, vertexPos) - distance( origin, _WorldSpaceCameraPos)));
-    o.viewDist = vec3( dist);
+    highp float dist = abs((distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos))));
+    o.viewDist = dist;
     o.nrm = normalize(v.vertex.xyz);
 }
 #line 472
@@ -2032,7 +2032,7 @@ v2f_surf vert_surf( in appdata_full v ) {
     return o;
 }
 
-out highp vec3 xlv_TEXCOORD0;
+out highp float xlv_TEXCOORD0;
 out highp vec3 xlv_TEXCOORD1;
 out lowp vec3 xlv_TEXCOORD2;
 out lowp vec3 xlv_TEXCOORD3;
@@ -2048,7 +2048,7 @@ void main() {
     xlt_v.color = vec4(gl_Color);
     xl_retval = vert_surf( xlt_v);
     gl_Position = vec4(xl_retval.pos);
-    xlv_TEXCOORD0 = vec3(xl_retval.cust_viewDist);
+    xlv_TEXCOORD0 = float(xl_retval.cust_viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.cust_nrm);
     xlv_TEXCOORD2 = vec3(xl_retval.normal);
     xlv_TEXCOORD3 = vec3(xl_retval.vlight);
@@ -2163,13 +2163,13 @@ struct appdata_full {
 };
 #line 405
 struct Input {
-    highp vec3 viewDist;
+    highp float viewDist;
     highp vec3 nrm;
 };
 #line 462
 struct v2f_surf {
     highp vec4 pos;
-    highp vec3 cust_viewDist;
+    highp float cust_viewDist;
     highp vec3 cust_nrm;
     lowp vec3 normal;
     lowp vec3 vlight;
@@ -2330,7 +2330,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     detail = mix( detail, detailY, vec4( nrm.y));
     #line 457
     main = (main * detail);
-    highp float distAlpha = float( xll_saturate_vf3((_FadeDist * IN.viewDist)));
+    highp float distAlpha = xll_saturate_f((_FadeDist * IN.viewDist));
     o.Alpha = min( main.w, distAlpha);
     o.Emission = main.xyz;
 }
@@ -2366,7 +2366,7 @@ lowp vec4 frag_surf( in v2f_surf IN ) {
     #line 505
     return c;
 }
-in highp vec3 xlv_TEXCOORD0;
+in highp float xlv_TEXCOORD0;
 in highp vec3 xlv_TEXCOORD1;
 in lowp vec3 xlv_TEXCOORD2;
 in lowp vec3 xlv_TEXCOORD3;
@@ -2375,7 +2375,7 @@ void main() {
     lowp vec4 xl_retval;
     v2f_surf xlt_IN;
     xlt_IN.pos = vec4(0.0);
-    xlt_IN.cust_viewDist = vec3(xlv_TEXCOORD0);
+    xlt_IN.cust_viewDist = float(xlv_TEXCOORD0);
     xlt_IN.cust_nrm = vec3(xlv_TEXCOORD1);
     xlt_IN.normal = vec3(xlv_TEXCOORD2);
     xlt_IN.vlight = vec3(xlv_TEXCOORD3);
@@ -2395,7 +2395,7 @@ Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" "VERTEXL
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
-varying vec3 xlv_TEXCOORD0;
+varying float xlv_TEXCOORD0;
 uniform vec4 unity_Scale;
 uniform mat4 _Object2World;
 
@@ -2413,7 +2413,7 @@ void main ()
   tmpvar_4[1] = _Object2World[1].xyz;
   tmpvar_4[2] = _Object2World[2].xyz;
   gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  xlv_TEXCOORD0 = vec3(abs((sqrt(dot (p_2, p_2)) - sqrt(dot (p_3, p_3)))));
+  xlv_TEXCOORD0 = abs((sqrt(dot (p_2, p_2)) - (1.003 * sqrt(dot (p_3, p_3)))));
   xlv_TEXCOORD1 = normalize(gl_Vertex.xyz);
   xlv_TEXCOORD2 = (tmpvar_4 * (gl_Normal * unity_Scale.w));
   xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
@@ -2425,7 +2425,7 @@ void main ()
 #extension GL_ARB_shader_texture_lod : enable
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
-varying vec3 xlv_TEXCOORD0;
+varying float xlv_TEXCOORD0;
 uniform vec4 _Color;
 uniform float _FadeDist;
 uniform vec4 _DetailOffset;
@@ -2496,7 +2496,7 @@ void main ()
   vec4 tmpvar_17;
   tmpvar_17 = ((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * _Color) * mix (mix (texture2D (_DetailTex, ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy)), texture2D (_DetailTex, ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy)), tmpvar_16.xxxx), texture2D (_DetailTex, ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy)), tmpvar_16.yyyy));
   vec4 c_18;
-  c_18.w = (min (tmpvar_17.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0).x) * (1.0 - clamp ((_LightColor0.w * (((dot (xlv_TEXCOORD2, _WorldSpaceLightPos0.xyz) - 0.01) / 0.99) * 16.0)), 0.0, 1.0)));
+  c_18.w = (min (tmpvar_17.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0)) * (1.0 - clamp ((_LightColor0.w * (((dot (xlv_TEXCOORD2, _WorldSpaceLightPos0.xyz) - 0.01) / 0.99) * 16.0)), 0.0, 1.0)));
   c_18.xyz = vec3(0.0, 0.0, 0.0);
   c_1.w = c_18.w;
   c_1.xyz = tmpvar_17.xyz;
@@ -2523,33 +2523,33 @@ dcl_texcoord0 o1
 dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
-def c10, 0.00000000, 0, 0, 0
+def c10, 1.00300002, 0.00000000, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
-mov r1.z, c6.w
-mov r1.x, c4.w
-mov r1.y, c5.w
-add r2.xyz, -r1, c8
-dp4 r0.z, v0, c6
-dp4 r0.x, v0, c4
-dp4 r0.y, v0, c5
-add r0.xyz, r0, -r1
+mov r0.z, c6.w
+mov r0.y, c5.w
+mov r0.x, c4.w
+dp4 r1.z, v0, c6
+dp4 r1.x, v0, c4
+dp4 r1.y, v0, c5
+add r1.xyz, -r0, r1
+add r0.xyz, -r0, c8
+dp3 r0.y, r0, r0
+dp3 r0.w, r1, r1
 mul r1.xyz, v1, c9.w
-dp3 r0.x, r0, r0
-dp3 r0.w, r2, r2
-rsq r0.y, r0.w
-rsq r0.x, r0.x
+rsq r0.x, r0.w
+rsq r0.y, r0.y
 rcp r0.y, r0.y
 rcp r0.x, r0.x
-add r0.x, r0, -r0.y
+mad r0.x, -r0.y, c10, r0
 dp3 r0.y, v0, v0
-abs o1.xyz, r0.x
+abs o1.x, r0
 rsq r0.x, r0.y
 mul o2.xyz, r0.x, v0
 dp3 o3.z, r1, c6
 dp3 o3.y, r1, c5
 dp3 o3.x, r1, c4
-mov o4.xyz, c10.x
+mov o4.xyz, c10.y
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -2575,7 +2575,7 @@ BindCB "UnityPerDraw" 1
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjmgjilbhjpcndkhhmhecknmeoeobhenkabaaaaaaceafaaaaadaaaaaa
+eefiecedgmkofhbloekdpncmphencbhhkdjjogcaabaaaaaacmafaaaaadaaaaaa
 cmaaaaaapeaaaaaajeabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapaaaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -2584,14 +2584,14 @@ abaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaljaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaafaaaaaaapaaaaaafaepfdejfeejepeoaafeebeoehefeofeaaeoepfc
 enebemaafeeffiedepepfceeaaedepemepfcaaklepfdeheojiaaaaaaafaaaaaa
 aiaaaaaaiaaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaa
-aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaahaiaaaaimaaaaaaabaaaaaaaaaaaaaa
-adaaaaaaacaaaaaaahaiaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaa
-ahaiaaaaimaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaafdfgfpfa
-epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefciiadaaaaeaaaabaa
-ocaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaabaoaaaaimaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaaoabaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahaiaaaaimaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaafdfgfpfa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcjaadaaaaeaaaabaa
+oeaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
 bfaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadhcbabaaaacaaaaaaghaaaaae
-pccabaaaaaaaaaaaabaaaaaagfaaaaadhccabaaaabaaaaaagfaaaaadhccabaaa
-acaaaaaagfaaaaadhccabaaaadaaaaaagfaaaaadhccabaaaaeaaaaaagiaaaaac
+pccabaaaaaaaaaaaabaaaaaagfaaaaadbccabaaaabaaaaaagfaaaaadoccabaaa
+abaaaaaagfaaaaadhccabaaaacaaaaaagfaaaaadhccabaaaadaaaaaagiaaaaac
 acaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaabaaaaaa
 abaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaaagbabaaa
 aaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaa
@@ -2606,17 +2606,17 @@ egacbaiaebaaaaaaaaaaaaaaegiccaaaabaaaaaaapaaaaaabaaaaaahbcaabaaa
 aaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaaaaaaaakocaabaaaaaaaaaaa
 agijcaiaebaaaaaaaaaaaaaaaeaaaaaaagijcaaaabaaaaaaapaaaaaabaaaaaah
 ccaabaaaaaaaaaaajgahbaaaaaaaaaaajgahbaaaaaaaaaaaelaaaaafdcaabaaa
-aaaaaaaaegaabaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaiaebaaaaaa
-aaaaaaaaakaabaaaaaaaaaaadgaaaaaghccabaaaabaaaaaaagaabaiaibaaaaaa
-aaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaaaaaaaaaegbcbaaaaaaaaaaa
-eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhccabaaaacaaaaaa
-agaabaaaaaaaaaaaegbcbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaaegbcbaaa
-acaaaaaapgipcaaaabaaaaaabeaaaaaadiaaaaaihcaabaaaabaaaaaafgafbaaa
-aaaaaaaaegiccaaaabaaaaaaanaaaaaadcaaaaaklcaabaaaaaaaaaaaegiicaaa
-abaaaaaaamaaaaaaagaabaaaaaaaaaaaegaibaaaabaaaaaadcaaaaakhccabaaa
-adaaaaaaegiccaaaabaaaaaaaoaaaaaakgakbaaaaaaaaaaaegadbaaaaaaaaaaa
-dgaaaaaihccabaaaaeaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-doaaaaab"
+aaaaaaaaegaabaaaaaaaaaaadcaaaaakbcaabaaaaaaaaaaabkaabaiaebaaaaaa
+aaaaaaaaabeaaaaaeogciadpakaabaaaaaaaaaaadgaaaaagbccabaaaabaaaaaa
+akaabaiaibaaaaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaaaaaaaaa
+egbcbaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+occabaaaabaaaaaaagaabaaaaaaaaaaaagbjbaaaaaaaaaaadiaaaaaihcaabaaa
+aaaaaaaaegbcbaaaacaaaaaapgipcaaaabaaaaaabeaaaaaadiaaaaaihcaabaaa
+abaaaaaafgafbaaaaaaaaaaaegiccaaaabaaaaaaanaaaaaadcaaaaaklcaabaaa
+aaaaaaaaegiicaaaabaaaaaaamaaaaaaagaabaaaaaaaaaaaegaibaaaabaaaaaa
+dcaaaaakhccabaaaacaaaaaaegiccaaaabaaaaaaaoaaaaaakgakbaaaaaaaaaaa
+egadbaaaaaaaaaaadgaaaaaihccabaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -2629,7 +2629,7 @@ Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" "VERTEXL
 varying lowp vec3 xlv_TEXCOORD3;
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 _Object2World;
 uniform highp mat4 glstate_matrix_mvp;
@@ -2653,7 +2653,7 @@ void main ()
   tmpvar_6 = (tmpvar_5 * (normalize(_glesNormal) * unity_Scale.w));
   tmpvar_1 = tmpvar_6;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = vec3(abs((sqrt(dot (p_3, p_3)) - sqrt(dot (p_4, p_4)))));
+  xlv_TEXCOORD0 = abs((sqrt(dot (p_3, p_3)) - (1.003 * sqrt(dot (p_4, p_4)))));
   xlv_TEXCOORD1 = normalize(_glesVertex.xyz);
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
@@ -2668,7 +2668,7 @@ void main ()
 #extension GL_OES_standard_derivatives : enable
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform lowp vec4 _Color;
 uniform highp float _FadeDist;
 uniform lowp vec4 _DetailOffset;
@@ -2773,7 +2773,7 @@ void main ()
   tmpvar_33 = (main_8 * detail_4);
   main_8 = tmpvar_33;
   highp float tmpvar_34;
-  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0).x);
+  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0));
   tmpvar_3 = tmpvar_34;
   mediump vec3 tmpvar_35;
   tmpvar_35 = tmpvar_33.xyz;
@@ -2812,7 +2812,7 @@ Keywords { "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" "VERTEXL
 varying lowp vec3 xlv_TEXCOORD3;
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 _Object2World;
 uniform highp mat4 glstate_matrix_mvp;
@@ -2836,7 +2836,7 @@ void main ()
   tmpvar_6 = (tmpvar_5 * (normalize(_glesNormal) * unity_Scale.w));
   tmpvar_1 = tmpvar_6;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = vec3(abs((sqrt(dot (p_3, p_3)) - sqrt(dot (p_4, p_4)))));
+  xlv_TEXCOORD0 = abs((sqrt(dot (p_3, p_3)) - (1.003 * sqrt(dot (p_4, p_4)))));
   xlv_TEXCOORD1 = normalize(_glesVertex.xyz);
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
@@ -2851,7 +2851,7 @@ void main ()
 #extension GL_OES_standard_derivatives : enable
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform lowp vec4 _Color;
 uniform highp float _FadeDist;
 uniform lowp vec4 _DetailOffset;
@@ -2956,7 +2956,7 @@ void main ()
   tmpvar_33 = (main_8 * detail_4);
   main_8 = tmpvar_33;
   highp float tmpvar_34;
-  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0).x);
+  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0));
   tmpvar_3 = tmpvar_34;
   mediump vec3 tmpvar_35;
   tmpvar_35 = tmpvar_33.xyz;
@@ -3041,13 +3041,13 @@ struct appdata_full {
 };
 #line 397
 struct Input {
-    highp vec3 viewDist;
+    highp float viewDist;
     highp vec3 nrm;
 };
 #line 454
 struct v2f_surf {
     highp vec4 pos;
-    highp vec3 cust_viewDist;
+    highp float cust_viewDist;
     highp vec3 cust_nrm;
     lowp vec3 normal;
     lowp vec3 vlight;
@@ -3163,8 +3163,8 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     #line 419
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp float dist = abs((distance( origin, vertexPos) - distance( origin, _WorldSpaceCameraPos)));
-    o.viewDist = vec3( dist);
+    highp float dist = abs((distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos))));
+    o.viewDist = dist;
     o.nrm = normalize(v.vertex.xyz);
 }
 #line 463
@@ -3184,7 +3184,7 @@ v2f_surf vert_surf( in appdata_full v ) {
     return o;
 }
 
-out highp vec3 xlv_TEXCOORD0;
+out highp float xlv_TEXCOORD0;
 out highp vec3 xlv_TEXCOORD1;
 out lowp vec3 xlv_TEXCOORD2;
 out lowp vec3 xlv_TEXCOORD3;
@@ -3199,7 +3199,7 @@ void main() {
     xlt_v.color = vec4(gl_Color);
     xl_retval = vert_surf( xlt_v);
     gl_Position = vec4(xl_retval.pos);
-    xlv_TEXCOORD0 = vec3(xl_retval.cust_viewDist);
+    xlv_TEXCOORD0 = float(xl_retval.cust_viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.cust_nrm);
     xlv_TEXCOORD2 = vec3(xl_retval.normal);
     xlv_TEXCOORD3 = vec3(xl_retval.vlight);
@@ -3313,13 +3313,13 @@ struct appdata_full {
 };
 #line 397
 struct Input {
-    highp vec3 viewDist;
+    highp float viewDist;
     highp vec3 nrm;
 };
 #line 454
 struct v2f_surf {
     highp vec4 pos;
-    highp vec3 cust_viewDist;
+    highp float cust_viewDist;
     highp vec3 cust_nrm;
     lowp vec3 normal;
     lowp vec3 vlight;
@@ -3476,7 +3476,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     detail = mix( detail, detailY, vec4( nrm.y));
     #line 449
     main = (main * detail);
-    highp float distAlpha = float( xll_saturate_vf3((_FadeDist * IN.viewDist)));
+    highp float distAlpha = xll_saturate_f((_FadeDist * IN.viewDist));
     o.Alpha = min( main.w, distAlpha);
     o.Emission = main.xyz;
 }
@@ -3505,7 +3505,7 @@ lowp vec4 frag_surf( in v2f_surf IN ) {
     #line 495
     return c;
 }
-in highp vec3 xlv_TEXCOORD0;
+in highp float xlv_TEXCOORD0;
 in highp vec3 xlv_TEXCOORD1;
 in lowp vec3 xlv_TEXCOORD2;
 in lowp vec3 xlv_TEXCOORD3;
@@ -3513,7 +3513,7 @@ void main() {
     lowp vec4 xl_retval;
     v2f_surf xlt_IN;
     xlt_IN.pos = vec4(0.0);
-    xlt_IN.cust_viewDist = vec3(xlv_TEXCOORD0);
+    xlt_IN.cust_viewDist = float(xlv_TEXCOORD0);
     xlt_IN.cust_nrm = vec3(xlv_TEXCOORD1);
     xlt_IN.normal = vec3(xlv_TEXCOORD2);
     xlt_IN.vlight = vec3(xlv_TEXCOORD3);
@@ -3533,7 +3533,7 @@ varying vec4 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
-varying vec3 xlv_TEXCOORD0;
+varying float xlv_TEXCOORD0;
 uniform vec4 unity_Scale;
 uniform mat4 _Object2World;
 
@@ -3562,7 +3562,7 @@ void main ()
   o_6.xy = (tmpvar_8 + tmpvar_7.w);
   o_6.zw = tmpvar_4.zw;
   gl_Position = tmpvar_4;
-  xlv_TEXCOORD0 = vec3(abs((sqrt(dot (p_2, p_2)) - sqrt(dot (p_3, p_3)))));
+  xlv_TEXCOORD0 = abs((sqrt(dot (p_2, p_2)) - (1.003 * sqrt(dot (p_3, p_3)))));
   xlv_TEXCOORD1 = normalize(gl_Vertex.xyz);
   xlv_TEXCOORD2 = (tmpvar_5 * (gl_Normal * unity_Scale.w));
   xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
@@ -3576,7 +3576,7 @@ void main ()
 varying vec4 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
-varying vec3 xlv_TEXCOORD0;
+varying float xlv_TEXCOORD0;
 uniform vec4 _Color;
 uniform float _FadeDist;
 uniform vec4 _DetailOffset;
@@ -3648,7 +3648,7 @@ void main ()
   vec4 tmpvar_17;
   tmpvar_17 = ((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * _Color) * mix (mix (texture2D (_DetailTex, ((xlv_TEXCOORD1.xy * _DetailScale) + _DetailOffset.xy)), texture2D (_DetailTex, ((xlv_TEXCOORD1.zy * _DetailScale) + _DetailOffset.xy)), tmpvar_16.xxxx), texture2D (_DetailTex, ((xlv_TEXCOORD1.zx * _DetailScale) + _DetailOffset.xy)), tmpvar_16.yyyy));
   vec4 c_18;
-  c_18.w = (min (tmpvar_17.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0).x) * (1.0 - clamp ((_LightColor0.w * ((((dot (xlv_TEXCOORD2, _WorldSpaceLightPos0.xyz) - 0.01) / 0.99) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x) * 16.0)), 0.0, 1.0)));
+  c_18.w = (min (tmpvar_17.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0)) * (1.0 - clamp ((_LightColor0.w * ((((dot (xlv_TEXCOORD2, _WorldSpaceLightPos0.xyz) - 0.01) / 0.99) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x) * 16.0)), 0.0, 1.0)));
   c_18.xyz = vec3(0.0, 0.0, 0.0);
   c_1.w = c_18.w;
   c_1.xyz = tmpvar_17.xyz;
@@ -3678,30 +3678,30 @@ dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
-def c12, 0.50000000, 0.00000000, 0, 0
+def c12, 1.00300002, 0.50000000, 0.00000000, 0
 dcl_position0 v0
 dcl_normal0 v1
-mov r1.z, c6.w
-mov r1.x, c4.w
-mov r1.y, c5.w
-add r2.xyz, -r1, c8
-dp3 r0.w, r2, r2
-dp4 r0.z, v0, c6
-dp4 r0.x, v0, c4
-dp4 r0.y, v0, c5
-add r0.xyz, r0, -r1
-dp3 r0.x, r0, r0
-rsq r0.y, r0.w
-rsq r0.x, r0.x
+mov r0.z, c6.w
+mov r0.y, c5.w
+mov r0.x, c4.w
+dp4 r1.z, v0, c6
+dp4 r1.x, v0, c4
+dp4 r1.y, v0, c5
+add r1.xyz, -r0, r1
+add r0.xyz, -r0, c8
+dp3 r0.y, r0, r0
+dp3 r0.w, r1, r1
+rsq r0.x, r0.w
+rsq r0.y, r0.y
 dp4 r0.w, v0, c3
-rcp r0.y, r0.y
 rcp r0.x, r0.x
-add r0.z, r0.x, -r0.y
-abs o1.xyz, r0.z
+rcp r0.y, r0.y
+mad r0.z, -r0.y, c12.x, r0.x
+abs o1.x, r0.z
 dp4 r0.z, v0, c2
 dp4 r0.x, v0, c0
 dp4 r0.y, v0, c1
-mul r1.xyz, r0.xyww, c12.x
+mul r1.xyz, r0.xyww, c12.y
 mul r1.y, r1, c9.x
 mad o5.xy, r1.z, c10.zwzw, r1
 mul r1.xyz, v1, c11.w
@@ -3713,7 +3713,7 @@ mul o2.xyz, r0.x, v0
 dp3 o3.z, r1, c6
 dp3 o3.y, r1, c5
 dp3 o3.x, r1, c4
-mov o4.xyz, c12.y
+mov o4.xyz, c12.z
 "
 }
 
@@ -3736,7 +3736,7 @@ BindCB "UnityPerDraw" 1
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkcnogfphhdglmpngkhaegmmlcmipibacabaaaaaaneafaaaaadaaaaaa
+eefiecedahffcoledmkfhlenlglefegolgdlahldabaaaaaanmafaaaaadaaaaaa
 cmaaaaaapeaaaaaakmabaaaaejfdeheomaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaakbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapaaaaaakjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -3745,15 +3745,15 @@ abaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaljaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaafaaaaaaapaaaaaafaepfdejfeejepeoaafeebeoehefeofeaaeoepfc
 enebemaafeeffiedepepfceeaaedepemepfcaaklepfdeheolaaaaaaaagaaaaaa
 aiaaaaaajiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaa
-aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaahaiaaaakeaaaaaaabaaaaaaaaaaaaaa
-adaaaaaaacaaaaaaahaiaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaa
-ahaiaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaakeaaaaaa
-aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefccaaeaaaaeaaaabaaaiabaaaafjaaaaae
+aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaabaoaaaakeaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaaoabaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahaiaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaakeaaaaaa
+aeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
+feeffiedepepfceeaaklklklfdeieefcciaeaaaaeaaaabaaakabaaaafjaaaaae
 egiocaaaaaaaaaaaagaaaaaafjaaaaaeegiocaaaabaaaaaabfaaaaaafpaaaaad
 pcbabaaaaaaaaaaafpaaaaadhcbabaaaacaaaaaaghaaaaaepccabaaaaaaaaaaa
-abaaaaaagfaaaaadhccabaaaabaaaaaagfaaaaadhccabaaaacaaaaaagfaaaaad
-hccabaaaadaaaaaagfaaaaadhccabaaaaeaaaaaagfaaaaadpccabaaaafaaaaaa
+abaaaaaagfaaaaadbccabaaaabaaaaaagfaaaaadoccabaaaabaaaaaagfaaaaad
+hccabaaaacaaaaaagfaaaaadhccabaaaadaaaaaagfaaaaadpccabaaaaeaaaaaa
 giaaaaacadaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaa
 abaaaaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaa
 agbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
@@ -3769,20 +3769,20 @@ abaaaaaaegiccaaaabaaaaaaapaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaa
 abaaaaaaegacbaaaabaaaaaaaaaaaaakocaabaaaabaaaaaaagijcaiaebaaaaaa
 aaaaaaaaaeaaaaaaagijcaaaabaaaaaaapaaaaaabaaaaaahccaabaaaabaaaaaa
 jgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaa
-abaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaiaebaaaaaaabaaaaaaakaabaaa
-abaaaaaadgaaaaaghccabaaaabaaaaaaagaabaiaibaaaaaaabaaaaaabaaaaaah
-bcaabaaaabaaaaaaegbcbaaaaaaaaaaaegbcbaaaaaaaaaaaeeaaaaafbcaabaaa
-abaaaaaaakaabaaaabaaaaaadiaaaaahhccabaaaacaaaaaaagaabaaaabaaaaaa
-egbcbaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaaegbcbaaaacaaaaaapgipcaaa
-abaaaaaabeaaaaaadiaaaaaihcaabaaaacaaaaaafgafbaaaabaaaaaaegiccaaa
-abaaaaaaanaaaaaadcaaaaaklcaabaaaabaaaaaaegiicaaaabaaaaaaamaaaaaa
-agaabaaaabaaaaaaegaibaaaacaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaa
-abaaaaaaaoaaaaaakgakbaaaabaaaaaaegadbaaaabaaaaaadgaaaaaihccabaaa
-aeaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadiaaaaaiccaabaaa
-aaaaaaaabkaabaaaaaaaaaaaakiacaaaaaaaaaaaafaaaaaadiaaaaakncaabaaa
-abaaaaaaagahbaaaaaaaaaaaaceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadp
-dgaaaaafmccabaaaafaaaaaakgaobaaaaaaaaaaaaaaaaaahdccabaaaafaaaaaa
-kgakbaaaabaaaaaamgaabaaaabaaaaaadoaaaaab"
+abaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaa
+eogciadpakaabaaaabaaaaaadgaaaaagbccabaaaabaaaaaaakaabaiaibaaaaaa
+abaaaaaabaaaaaahbcaabaaaabaaaaaaegbcbaaaaaaaaaaaegbcbaaaaaaaaaaa
+eeaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaahoccabaaaabaaaaaa
+agaabaaaabaaaaaaagbjbaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaaegbcbaaa
+acaaaaaapgipcaaaabaaaaaabeaaaaaadiaaaaaihcaabaaaacaaaaaafgafbaaa
+abaaaaaaegiccaaaabaaaaaaanaaaaaadcaaaaaklcaabaaaabaaaaaaegiicaaa
+abaaaaaaamaaaaaaagaabaaaabaaaaaaegaibaaaacaaaaaadcaaaaakhccabaaa
+acaaaaaaegiccaaaabaaaaaaaoaaaaaakgakbaaaabaaaaaaegadbaaaabaaaaaa
+dgaaaaaihccabaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+diaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaaakiacaaaaaaaaaaaafaaaaaa
+diaaaaakncaabaaaabaaaaaaagahbaaaaaaaaaaaaceaaaaaaaaaaadpaaaaaaaa
+aaaaaadpaaaaaadpdgaaaaafmccabaaaaeaaaaaakgaobaaaaaaaaaaaaaaaaaah
+dccabaaaaeaaaaaakgakbaaaabaaaaaamgaabaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -3796,7 +3796,7 @@ varying highp vec4 xlv_TEXCOORD4;
 varying lowp vec3 xlv_TEXCOORD3;
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 _Object2World;
 uniform highp mat4 glstate_matrix_mvp;
@@ -3821,7 +3821,7 @@ void main ()
   tmpvar_6 = (tmpvar_5 * (normalize(_glesNormal) * unity_Scale.w));
   tmpvar_1 = tmpvar_6;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = vec3(abs((sqrt(dot (p_3, p_3)) - sqrt(dot (p_4, p_4)))));
+  xlv_TEXCOORD0 = abs((sqrt(dot (p_3, p_3)) - (1.003 * sqrt(dot (p_4, p_4)))));
   xlv_TEXCOORD1 = normalize(_glesVertex.xyz);
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
@@ -3838,7 +3838,7 @@ void main ()
 varying highp vec4 xlv_TEXCOORD4;
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform lowp vec4 _Color;
 uniform highp float _FadeDist;
 uniform lowp vec4 _DetailOffset;
@@ -3945,7 +3945,7 @@ void main ()
   tmpvar_33 = (main_8 * detail_4);
   main_8 = tmpvar_33;
   highp float tmpvar_34;
-  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0).x);
+  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0));
   tmpvar_3 = tmpvar_34;
   mediump vec3 tmpvar_35;
   tmpvar_35 = tmpvar_33.xyz;
@@ -3999,7 +3999,7 @@ varying highp vec4 xlv_TEXCOORD4;
 varying lowp vec3 xlv_TEXCOORD3;
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 _Object2World;
 uniform highp mat4 glstate_matrix_mvp;
@@ -4034,7 +4034,7 @@ void main ()
   o_8.xy = (tmpvar_10 + tmpvar_9.w);
   o_8.zw = tmpvar_5.zw;
   gl_Position = tmpvar_5;
-  xlv_TEXCOORD0 = vec3(abs((sqrt(dot (p_3, p_3)) - sqrt(dot (p_4, p_4)))));
+  xlv_TEXCOORD0 = abs((sqrt(dot (p_3, p_3)) - (1.003 * sqrt(dot (p_4, p_4)))));
   xlv_TEXCOORD1 = normalize(_glesVertex.xyz);
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
@@ -4051,7 +4051,7 @@ void main ()
 varying highp vec4 xlv_TEXCOORD4;
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform lowp vec4 _Color;
 uniform highp float _FadeDist;
 uniform lowp vec4 _DetailOffset;
@@ -4157,7 +4157,7 @@ void main ()
   tmpvar_33 = (main_8 * detail_4);
   main_8 = tmpvar_33;
   highp float tmpvar_34;
-  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0).x);
+  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0));
   tmpvar_3 = tmpvar_34;
   mediump vec3 tmpvar_35;
   tmpvar_35 = tmpvar_33.xyz;
@@ -4246,13 +4246,13 @@ struct appdata_full {
 };
 #line 405
 struct Input {
-    highp vec3 viewDist;
+    highp float viewDist;
     highp vec3 nrm;
 };
 #line 462
 struct v2f_surf {
     highp vec4 pos;
-    highp vec3 cust_viewDist;
+    highp float cust_viewDist;
     highp vec3 cust_nrm;
     lowp vec3 normal;
     lowp vec3 vlight;
@@ -4372,8 +4372,8 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     #line 427
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp float dist = abs((distance( origin, vertexPos) - distance( origin, _WorldSpaceCameraPos)));
-    o.viewDist = vec3( dist);
+    highp float dist = abs((distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos))));
+    o.viewDist = dist;
     o.nrm = normalize(v.vertex.xyz);
 }
 #line 472
@@ -4394,7 +4394,7 @@ v2f_surf vert_surf( in appdata_full v ) {
     return o;
 }
 
-out highp vec3 xlv_TEXCOORD0;
+out highp float xlv_TEXCOORD0;
 out highp vec3 xlv_TEXCOORD1;
 out lowp vec3 xlv_TEXCOORD2;
 out lowp vec3 xlv_TEXCOORD3;
@@ -4410,7 +4410,7 @@ void main() {
     xlt_v.color = vec4(gl_Color);
     xl_retval = vert_surf( xlt_v);
     gl_Position = vec4(xl_retval.pos);
-    xlv_TEXCOORD0 = vec3(xl_retval.cust_viewDist);
+    xlv_TEXCOORD0 = float(xl_retval.cust_viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.cust_nrm);
     xlv_TEXCOORD2 = vec3(xl_retval.normal);
     xlv_TEXCOORD3 = vec3(xl_retval.vlight);
@@ -4525,13 +4525,13 @@ struct appdata_full {
 };
 #line 405
 struct Input {
-    highp vec3 viewDist;
+    highp float viewDist;
     highp vec3 nrm;
 };
 #line 462
 struct v2f_surf {
     highp vec4 pos;
-    highp vec3 cust_viewDist;
+    highp float cust_viewDist;
     highp vec3 cust_nrm;
     lowp vec3 normal;
     lowp vec3 vlight;
@@ -4692,7 +4692,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     detail = mix( detail, detailY, vec4( nrm.y));
     #line 457
     main = (main * detail);
-    highp float distAlpha = float( xll_saturate_vf3((_FadeDist * IN.viewDist)));
+    highp float distAlpha = xll_saturate_f((_FadeDist * IN.viewDist));
     o.Alpha = min( main.w, distAlpha);
     o.Emission = main.xyz;
 }
@@ -4728,7 +4728,7 @@ lowp vec4 frag_surf( in v2f_surf IN ) {
     #line 505
     return c;
 }
-in highp vec3 xlv_TEXCOORD0;
+in highp float xlv_TEXCOORD0;
 in highp vec3 xlv_TEXCOORD1;
 in lowp vec3 xlv_TEXCOORD2;
 in lowp vec3 xlv_TEXCOORD3;
@@ -4737,7 +4737,7 @@ void main() {
     lowp vec4 xl_retval;
     v2f_surf xlt_IN;
     xlt_IN.pos = vec4(0.0);
-    xlt_IN.cust_viewDist = vec3(xlv_TEXCOORD0);
+    xlt_IN.cust_viewDist = float(xlv_TEXCOORD0);
     xlt_IN.cust_nrm = vec3(xlv_TEXCOORD1);
     xlt_IN.normal = vec3(xlv_TEXCOORD2);
     xlt_IN.vlight = vec3(xlv_TEXCOORD3);
@@ -4762,7 +4762,7 @@ varying highp vec4 xlv_TEXCOORD4;
 varying lowp vec3 xlv_TEXCOORD3;
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 _Object2World;
 uniform highp mat4 glstate_matrix_mvp;
@@ -4787,7 +4787,7 @@ void main ()
   tmpvar_6 = (tmpvar_5 * (normalize(_glesNormal) * unity_Scale.w));
   tmpvar_1 = tmpvar_6;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = vec3(abs((sqrt(dot (p_3, p_3)) - sqrt(dot (p_4, p_4)))));
+  xlv_TEXCOORD0 = abs((sqrt(dot (p_3, p_3)) - (1.003 * sqrt(dot (p_4, p_4)))));
   xlv_TEXCOORD1 = normalize(_glesVertex.xyz);
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
@@ -4805,7 +4805,7 @@ void main ()
 varying highp vec4 xlv_TEXCOORD4;
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform lowp vec4 _Color;
 uniform highp float _FadeDist;
 uniform lowp vec4 _DetailOffset;
@@ -4912,7 +4912,7 @@ void main ()
   tmpvar_33 = (main_8 * detail_4);
   main_8 = tmpvar_33;
   highp float tmpvar_34;
-  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0).x);
+  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0));
   tmpvar_3 = tmpvar_34;
   mediump vec3 tmpvar_35;
   tmpvar_35 = tmpvar_33.xyz;
@@ -5005,13 +5005,13 @@ struct appdata_full {
 };
 #line 405
 struct Input {
-    highp vec3 viewDist;
+    highp float viewDist;
     highp vec3 nrm;
 };
 #line 462
 struct v2f_surf {
     highp vec4 pos;
-    highp vec3 cust_viewDist;
+    highp float cust_viewDist;
     highp vec3 cust_nrm;
     lowp vec3 normal;
     lowp vec3 vlight;
@@ -5131,8 +5131,8 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     #line 427
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp float dist = abs((distance( origin, vertexPos) - distance( origin, _WorldSpaceCameraPos)));
-    o.viewDist = vec3( dist);
+    highp float dist = abs((distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos))));
+    o.viewDist = dist;
     o.nrm = normalize(v.vertex.xyz);
 }
 #line 472
@@ -5153,7 +5153,7 @@ v2f_surf vert_surf( in appdata_full v ) {
     return o;
 }
 
-out highp vec3 xlv_TEXCOORD0;
+out highp float xlv_TEXCOORD0;
 out highp vec3 xlv_TEXCOORD1;
 out lowp vec3 xlv_TEXCOORD2;
 out lowp vec3 xlv_TEXCOORD3;
@@ -5169,7 +5169,7 @@ void main() {
     xlt_v.color = vec4(gl_Color);
     xl_retval = vert_surf( xlt_v);
     gl_Position = vec4(xl_retval.pos);
-    xlv_TEXCOORD0 = vec3(xl_retval.cust_viewDist);
+    xlv_TEXCOORD0 = float(xl_retval.cust_viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.cust_nrm);
     xlv_TEXCOORD2 = vec3(xl_retval.normal);
     xlv_TEXCOORD3 = vec3(xl_retval.vlight);
@@ -5285,13 +5285,13 @@ struct appdata_full {
 };
 #line 405
 struct Input {
-    highp vec3 viewDist;
+    highp float viewDist;
     highp vec3 nrm;
 };
 #line 462
 struct v2f_surf {
     highp vec4 pos;
-    highp vec3 cust_viewDist;
+    highp float cust_viewDist;
     highp vec3 cust_nrm;
     lowp vec3 normal;
     lowp vec3 vlight;
@@ -5452,7 +5452,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     detail = mix( detail, detailY, vec4( nrm.y));
     #line 457
     main = (main * detail);
-    highp float distAlpha = float( xll_saturate_vf3((_FadeDist * IN.viewDist)));
+    highp float distAlpha = xll_saturate_f((_FadeDist * IN.viewDist));
     o.Alpha = min( main.w, distAlpha);
     o.Emission = main.xyz;
 }
@@ -5488,7 +5488,7 @@ lowp vec4 frag_surf( in v2f_surf IN ) {
     #line 505
     return c;
 }
-in highp vec3 xlv_TEXCOORD0;
+in highp float xlv_TEXCOORD0;
 in highp vec3 xlv_TEXCOORD1;
 in lowp vec3 xlv_TEXCOORD2;
 in lowp vec3 xlv_TEXCOORD3;
@@ -5497,7 +5497,7 @@ void main() {
     lowp vec4 xl_retval;
     v2f_surf xlt_IN;
     xlt_IN.pos = vec4(0.0);
-    xlt_IN.cust_viewDist = vec3(xlv_TEXCOORD0);
+    xlt_IN.cust_viewDist = float(xlv_TEXCOORD0);
     xlt_IN.cust_nrm = vec3(xlv_TEXCOORD1);
     xlt_IN.normal = vec3(xlv_TEXCOORD2);
     xlt_IN.vlight = vec3(xlv_TEXCOORD3);
@@ -5522,7 +5522,7 @@ varying highp vec4 xlv_TEXCOORD4;
 varying lowp vec3 xlv_TEXCOORD3;
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform highp vec4 unity_Scale;
 uniform highp mat4 _Object2World;
 uniform highp mat4 glstate_matrix_mvp;
@@ -5547,7 +5547,7 @@ void main ()
   tmpvar_6 = (tmpvar_5 * (normalize(_glesNormal) * unity_Scale.w));
   tmpvar_1 = tmpvar_6;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = vec3(abs((sqrt(dot (p_3, p_3)) - sqrt(dot (p_4, p_4)))));
+  xlv_TEXCOORD0 = abs((sqrt(dot (p_3, p_3)) - (1.003 * sqrt(dot (p_4, p_4)))));
   xlv_TEXCOORD1 = normalize(_glesVertex.xyz);
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = vec3(0.0, 0.0, 0.0);
@@ -5565,7 +5565,7 @@ void main ()
 varying highp vec4 xlv_TEXCOORD4;
 varying lowp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
-varying highp vec3 xlv_TEXCOORD0;
+varying highp float xlv_TEXCOORD0;
 uniform lowp vec4 _Color;
 uniform highp float _FadeDist;
 uniform lowp vec4 _DetailOffset;
@@ -5672,7 +5672,7 @@ void main ()
   tmpvar_33 = (main_8 * detail_4);
   main_8 = tmpvar_33;
   highp float tmpvar_34;
-  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0).x);
+  tmpvar_34 = min (tmpvar_33.w, clamp ((_FadeDist * xlv_TEXCOORD0), 0.0, 1.0));
   tmpvar_3 = tmpvar_34;
   mediump vec3 tmpvar_35;
   tmpvar_35 = tmpvar_33.xyz;
@@ -5765,13 +5765,13 @@ struct appdata_full {
 };
 #line 405
 struct Input {
-    highp vec3 viewDist;
+    highp float viewDist;
     highp vec3 nrm;
 };
 #line 462
 struct v2f_surf {
     highp vec4 pos;
-    highp vec3 cust_viewDist;
+    highp float cust_viewDist;
     highp vec3 cust_nrm;
     lowp vec3 normal;
     lowp vec3 vlight;
@@ -5891,8 +5891,8 @@ void vert( inout appdata_full v, out Input o ) {
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     #line 427
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp float dist = abs((distance( origin, vertexPos) - distance( origin, _WorldSpaceCameraPos)));
-    o.viewDist = vec3( dist);
+    highp float dist = abs((distance( origin, vertexPos) - (1.003 * distance( origin, _WorldSpaceCameraPos))));
+    o.viewDist = dist;
     o.nrm = normalize(v.vertex.xyz);
 }
 #line 472
@@ -5913,7 +5913,7 @@ v2f_surf vert_surf( in appdata_full v ) {
     return o;
 }
 
-out highp vec3 xlv_TEXCOORD0;
+out highp float xlv_TEXCOORD0;
 out highp vec3 xlv_TEXCOORD1;
 out lowp vec3 xlv_TEXCOORD2;
 out lowp vec3 xlv_TEXCOORD3;
@@ -5929,7 +5929,7 @@ void main() {
     xlt_v.color = vec4(gl_Color);
     xl_retval = vert_surf( xlt_v);
     gl_Position = vec4(xl_retval.pos);
-    xlv_TEXCOORD0 = vec3(xl_retval.cust_viewDist);
+    xlv_TEXCOORD0 = float(xl_retval.cust_viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.cust_nrm);
     xlv_TEXCOORD2 = vec3(xl_retval.normal);
     xlv_TEXCOORD3 = vec3(xl_retval.vlight);
@@ -6045,13 +6045,13 @@ struct appdata_full {
 };
 #line 405
 struct Input {
-    highp vec3 viewDist;
+    highp float viewDist;
     highp vec3 nrm;
 };
 #line 462
 struct v2f_surf {
     highp vec4 pos;
-    highp vec3 cust_viewDist;
+    highp float cust_viewDist;
     highp vec3 cust_nrm;
     lowp vec3 normal;
     lowp vec3 vlight;
@@ -6212,7 +6212,7 @@ void surf( in Input IN, inout SurfaceOutput o ) {
     detail = mix( detail, detailY, vec4( nrm.y));
     #line 457
     main = (main * detail);
-    highp float distAlpha = float( xll_saturate_vf3((_FadeDist * IN.viewDist)));
+    highp float distAlpha = xll_saturate_f((_FadeDist * IN.viewDist));
     o.Alpha = min( main.w, distAlpha);
     o.Emission = main.xyz;
 }
@@ -6248,7 +6248,7 @@ lowp vec4 frag_surf( in v2f_surf IN ) {
     #line 505
     return c;
 }
-in highp vec3 xlv_TEXCOORD0;
+in highp float xlv_TEXCOORD0;
 in highp vec3 xlv_TEXCOORD1;
 in lowp vec3 xlv_TEXCOORD2;
 in lowp vec3 xlv_TEXCOORD3;
@@ -6257,7 +6257,7 @@ void main() {
     lowp vec4 xl_retval;
     v2f_surf xlt_IN;
     xlt_IN.pos = vec4(0.0);
-    xlt_IN.cust_viewDist = vec3(xlv_TEXCOORD0);
+    xlt_IN.cust_viewDist = float(xlv_TEXCOORD0);
     xlt_IN.cust_nrm = vec3(xlv_TEXCOORD1);
     xlt_IN.normal = vec3(xlv_TEXCOORD2);
     xlt_IN.vlight = vec3(xlv_TEXCOORD3);
@@ -6408,23 +6408,23 @@ SetTexture 1 [_DetailTex] 2D 1
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedljcfnaeaganbibpkiaohalplckefgkcpabaaaaaafeakaaaaadaaaaaa
+eefiecededlkklapopjcfadnppdhfkncjnmcnfenabaaaaaafeakaaaaadaaaaaa
 cmaaaaaammaaaaaaaaabaaaaejfdeheojiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaabaaaaaaahabaaaaimaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
-ahahaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaaimaaaaaa
-adaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaaaaaafdfgfpfaepfdejfeejepeoaa
+adaaaaaaabaaaaaaababaaaaimaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+aoaoaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaaimaaaaaa
+adaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
 fdeieefcemajaaaaeaaaaaaafdacaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaa
 fjaaaaaeegiocaaaabaaaaaaabaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
-abaaaaaaffffaaaagcbaaaadbcbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
-gcbaaaadhcbabaaaadaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaa
-deaaaaajbcaabaaaaaaaaaaaakbabaiaibaaaaaaacaaaaaackbabaiaibaaaaaa
-acaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
-aaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaaakbabaiaibaaaaaa
-acaaaaaackbabaiaibaaaaaaacaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaa
+abaaaaaaffffaaaagcbaaaadbcbabaaaabaaaaaagcbaaaadocbabaaaabaaaaaa
+gcbaaaadhcbabaaaacaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaa
+deaaaaajbcaabaaaaaaaaaaabkbabaiaibaaaaaaabaaaaaadkbabaiaibaaaaaa
+abaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
+aaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaabkbabaiaibaaaaaa
+abaaaaaadkbabaiaibaaaaaaabaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaaaaaaaaaa
 akaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaa
 fpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
@@ -6433,32 +6433,32 @@ aaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaaaaaaaaaa
 bkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaahecaabaaa
 aaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaa
 ckaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajicaabaaa
-aaaaaaaaakbabaiaibaaaaaaacaaaaaackbabaiaibaaaaaaacaaaaaaabaaaaah
+aaaaaaaabkbabaiaibaaaaaaabaaaaaadkbabaiaibaaaaaaabaaaaaaabaaaaah
 ecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaadbaaaaai
-gcaabaaaaaaaaaaaagbcbaaaacaaaaaaagbcbaiaebaaaaaaacaaaaaaabaaaaah
+gcaabaaaaaaaaaaafgbhbaaaabaaaaaafgbhbaiaebaaaaaaabaaaaaaabaaaaah
 ccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaahbcaabaaa
 aaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaaaaaaaaaa
-akbabaaaacaaaaaackbabaaaacaaaaaadbaaaaaiccaabaaaaaaaaaaabkaabaaa
-aaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaaakbabaaa
-acaaaaaackbabaaaacaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+bkbabaaaabaaaaaadkbabaaaabaaaaaadbaaaaaiccaabaaaaaaaaaaabkaabaaa
+aaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaabkbabaaa
+abaaaaaadkbabaaaabaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
 dkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaaaaaaaaaa
 bkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaia
 ebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpalaaaaafdcaabaaaabaaaaaa
-egbabaaaacaaaaaaapaaaaahicaabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaa
+jgbfbaaaabaaaaaaapaaaaahicaabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaa
 abaaaaaaelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaa
 abaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaa
-agbebaaaacaaaaaaapaaaaahicaabaaaaaaaaaaaogakbaaaabaaaaaaogakbaaa
+fgbjbaaaabaaaaaaapaaaaahicaabaaaaaaaaaaaogakbaaaabaaaaaaogakbaaa
 abaaaaaaelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaa
 acaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdodbaaaaaiicaabaaaaaaaaaaa
-bkbabaiaebaaaaaaacaaaaaabkbabaaaacaaaaaadcaaaabamcaabaaaabaaaaaa
-fgbjbaiaibaaaaaaacaaaaaaaceaaaaaaaaaaaaaaaaaaaaadagojjlmdagojjlm
+ckbabaiaebaaaaaaabaaaaaackbabaaaabaaaaaadcaaaabamcaabaaaabaaaaaa
+kgbobaiaibaaaaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaaaadagojjlmdagojjlm
 aceaaaaaaaaaaaaaaaaaaaaachbgjidnchbgjidndcaaaaanmcaabaaaabaaaaaa
-kgaobaaaabaaaaaafgbjbaiaibaaaaaaacaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
-iedefjloiedefjlodcaaaaanmcaabaaaabaaaaaakgaobaaaabaaaaaafgbjbaia
-ibaaaaaaacaaaaaaaceaaaaaaaaaaaaaaaaaaaaakeanmjdpkeanmjdpaaaaaaal
-mcaabaaaacaaaaaafgbjbaiambaaaaaaacaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
+kgaobaaaabaaaaaakgbobaiaibaaaaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
+iedefjloiedefjlodcaaaaanmcaabaaaabaaaaaakgaobaaaabaaaaaakgbobaia
+ibaaaaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaaaakeanmjdpkeanmjdpaaaaaaal
+mcaabaaaacaaaaaakgbobaiambaaaaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
 aaaaiadpaaaaiadpelaaaaafmcaabaaaacaaaaaakgaobaaaacaaaaaadiaaaaah
 dcaabaaaadaaaaaaogakbaaaabaaaaaaogakbaaaacaaaaaadcaaaaapdcaabaaa
 adaaaaaaegaabaaaadaaaaaaaceaaaaaaaaaaamaaaaaaamaaaaaaaaaaaaaaaaa
@@ -6471,21 +6471,21 @@ alaaaaafccaabaaaabaaaaaackaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaa
 ckaabaaaaaaaaaaaejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
 aaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaai
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaagaaaaaadcaaaaal
-pcaabaaaabaaaaaaggbcbaaaacaaaaaaagiacaaaaaaaaaaaadaaaaaaegiecaaa
+pcaabaaaabaaaaaalgbhbaaaabaaaaaaagiacaaaaaaaaaaaadaaaaaaegiecaaa
 aaaaaaaaaeaaaaaaefaaaaajpcaabaaaacaaaaaaegaabaaaabaaaaaaeghobaaa
 abaaaaaaaagabaaaabaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaa
-eghobaaaabaaaaaaaagabaaaabaaaaaadcaaaaaldcaabaaaadaaaaaaegbabaaa
-acaaaaaaagiacaaaaaaaaaaaadaaaaaaegiacaaaaaaaaaaaaeaaaaaaefaaaaaj
+eghobaaaabaaaaaaaagabaaaabaaaaaadcaaaaaldcaabaaaadaaaaaajgbfbaaa
+abaaaaaaagiacaaaaaaaaaaaadaaaaaaegiacaaaaaaaaaaaaeaaaaaaefaaaaaj
 pcaabaaaadaaaaaaegaabaaaadaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaa
 aaaaaaaipcaabaaaacaaaaaaegaobaaaacaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaacaaaaaaagbabaiaibaaaaaaacaaaaaaegaobaaaacaaaaaa
+dcaaaaakpcaabaaaacaaaaaafgbfbaiaibaaaaaaabaaaaaaegaobaaaacaaaaaa
 egaobaaaadaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
-ebaaaaaaacaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaacaaaaaa
+ebaaaaaaacaaaaaadcaaaaakpcaabaaaabaaaaaakgbkbaiaibaaaaaaabaaaaaa
 egaobaaaabaaaaaaegaobaaaacaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaa
 aaaaaaaaegaobaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakbabaaaabaaaaaa
 akiacaaaaaaaaaaaafaaaaaaddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
 akaabaaaabaaaaaadgaaaaafhccabaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaai
-bcaabaaaaaaaaaaaegbcbaaaadaaaaaaegiccaaaabaaaaaaaaaaaaaaaaaaaaah
+bcaabaaaaaaaaaaaegbcbaaaacaaaaaaegiccaaaabaaaaaaaaaaaaaaaaaaaaah
 bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaaabeaaaaapnekibebdicaaaaibcaabaaaaaaaaaaa
 akaabaaaaaaaaaaadkiacaaaaaaaaaaaabaaaaaaaaaaaaaibcaabaaaaaaaaaaa
@@ -6647,25 +6647,25 @@ SetTexture 2 [_ShadowMapTexture] 2D 0
 // TEX 4 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedjfkkfldcofbcpmninadkcaodlkgfdnknabaaaaaaamalaaaaadaaaaaa
+eefiecedjkkceepmpadmhemohnmdmlnjojmjjageabaaaaaaamalaaaaadaaaaaa
 cmaaaaaaoeaaaaaabiabaaaaejfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaabaaaaaaahabaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
-ahahaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaakeaaaaaa
-adaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaaaaaakeaaaaaaaeaaaaaaaaaaaaaa
-adaaaaaaafaaaaaaapalaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
+adaaaaaaabaaaaaaababaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+aoaoaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaakeaaaaaa
+adaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaaaaaakeaaaaaaaeaaaaaaaaaaaaaa
+adaaaaaaaeaaaaaaapalaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcomajaaaa
 eaaaaaaahlacaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaafjaaaaaeegiocaaa
 abaaaaaaabaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
 aahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaagcbaaaad
-bcbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaa
-gcbaaaadlcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaa
-deaaaaajbcaabaaaaaaaaaaaakbabaiaibaaaaaaacaaaaaackbabaiaibaaaaaa
-acaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
-aaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaaakbabaiaibaaaaaa
-acaaaaaackbabaiaibaaaaaaacaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaa
+bcbabaaaabaaaaaagcbaaaadocbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
+gcbaaaadlcbabaaaaeaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaa
+deaaaaajbcaabaaaaaaaaaaabkbabaiaibaaaaaaabaaaaaadkbabaiaibaaaaaa
+abaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
+aaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaabkbabaiaibaaaaaa
+abaaaaaadkbabaiaibaaaaaaabaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaaaaaaaaaa
 akaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaa
 fpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
@@ -6674,32 +6674,32 @@ aaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaaaaaaaaaa
 bkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaahecaabaaa
 aaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaa
 ckaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajicaabaaa
-aaaaaaaaakbabaiaibaaaaaaacaaaaaackbabaiaibaaaaaaacaaaaaaabaaaaah
+aaaaaaaabkbabaiaibaaaaaaabaaaaaadkbabaiaibaaaaaaabaaaaaaabaaaaah
 ecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaadbaaaaai
-gcaabaaaaaaaaaaaagbcbaaaacaaaaaaagbcbaiaebaaaaaaacaaaaaaabaaaaah
+gcaabaaaaaaaaaaafgbhbaaaabaaaaaafgbhbaiaebaaaaaaabaaaaaaabaaaaah
 ccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaahbcaabaaa
 aaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaaaaaaaaaa
-akbabaaaacaaaaaackbabaaaacaaaaaadbaaaaaiccaabaaaaaaaaaaabkaabaaa
-aaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaaakbabaaa
-acaaaaaackbabaaaacaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+bkbabaaaabaaaaaadkbabaaaabaaaaaadbaaaaaiccaabaaaaaaaaaaabkaabaaa
+aaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaabkbabaaa
+abaaaaaadkbabaaaabaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
 dkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaaaaaaaaaa
 bkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaia
 ebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpalaaaaafdcaabaaaabaaaaaa
-egbabaaaacaaaaaaapaaaaahicaabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaa
+jgbfbaaaabaaaaaaapaaaaahicaabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaa
 abaaaaaaelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaa
 abaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaa
-agbebaaaacaaaaaaapaaaaahicaabaaaaaaaaaaaogakbaaaabaaaaaaogakbaaa
+fgbjbaaaabaaaaaaapaaaaahicaabaaaaaaaaaaaogakbaaaabaaaaaaogakbaaa
 abaaaaaaelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaa
 acaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdodbaaaaaiicaabaaaaaaaaaaa
-bkbabaiaebaaaaaaacaaaaaabkbabaaaacaaaaaadcaaaabamcaabaaaabaaaaaa
-fgbjbaiaibaaaaaaacaaaaaaaceaaaaaaaaaaaaaaaaaaaaadagojjlmdagojjlm
+ckbabaiaebaaaaaaabaaaaaackbabaaaabaaaaaadcaaaabamcaabaaaabaaaaaa
+kgbobaiaibaaaaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaaaadagojjlmdagojjlm
 aceaaaaaaaaaaaaaaaaaaaaachbgjidnchbgjidndcaaaaanmcaabaaaabaaaaaa
-kgaobaaaabaaaaaafgbjbaiaibaaaaaaacaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
-iedefjloiedefjlodcaaaaanmcaabaaaabaaaaaakgaobaaaabaaaaaafgbjbaia
-ibaaaaaaacaaaaaaaceaaaaaaaaaaaaaaaaaaaaakeanmjdpkeanmjdpaaaaaaal
-mcaabaaaacaaaaaafgbjbaiambaaaaaaacaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
+kgaobaaaabaaaaaakgbobaiaibaaaaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
+iedefjloiedefjlodcaaaaanmcaabaaaabaaaaaakgaobaaaabaaaaaakgbobaia
+ibaaaaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaaaakeanmjdpkeanmjdpaaaaaaal
+mcaabaaaacaaaaaakgbobaiambaaaaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
 aaaaiadpaaaaiadpelaaaaafmcaabaaaacaaaaaakgaobaaaacaaaaaadiaaaaah
 dcaabaaaadaaaaaaogakbaaaabaaaaaaogakbaaaacaaaaaadcaaaaapdcaabaaa
 adaaaaaaegaabaaaadaaaaaaaceaaaaaaaaaaamaaaaaaamaaaaaaaaaaaaaaaaa
@@ -6712,24 +6712,24 @@ alaaaaafccaabaaaabaaaaaackaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaa
 ckaabaaaaaaaaaaaejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
 aaaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaai
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaakaaaaaadcaaaaal
-pcaabaaaabaaaaaaggbcbaaaacaaaaaaagiacaaaaaaaaaaaahaaaaaaegiecaaa
+pcaabaaaabaaaaaalgbhbaaaabaaaaaaagiacaaaaaaaaaaaahaaaaaaegiecaaa
 aaaaaaaaaiaaaaaaefaaaaajpcaabaaaacaaaaaaegaabaaaabaaaaaaeghobaaa
 abaaaaaaaagabaaaacaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaa
-eghobaaaabaaaaaaaagabaaaacaaaaaadcaaaaaldcaabaaaadaaaaaaegbabaaa
-acaaaaaaagiacaaaaaaaaaaaahaaaaaaegiacaaaaaaaaaaaaiaaaaaaefaaaaaj
+eghobaaaabaaaaaaaagabaaaacaaaaaadcaaaaaldcaabaaaadaaaaaajgbfbaaa
+abaaaaaaagiacaaaaaaaaaaaahaaaaaaegiacaaaaaaaaaaaaiaaaaaaefaaaaaj
 pcaabaaaadaaaaaaegaabaaaadaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaa
 aaaaaaaipcaabaaaacaaaaaaegaobaaaacaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaacaaaaaaagbabaiaibaaaaaaacaaaaaaegaobaaaacaaaaaa
+dcaaaaakpcaabaaaacaaaaaafgbfbaiaibaaaaaaabaaaaaaegaobaaaacaaaaaa
 egaobaaaadaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
-ebaaaaaaacaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaacaaaaaa
+ebaaaaaaacaaaaaadcaaaaakpcaabaaaabaaaaaakgbkbaiaibaaaaaaabaaaaaa
 egaobaaaabaaaaaaegaobaaaacaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaa
 aaaaaaaaegaobaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakbabaaaabaaaaaa
 akiacaaaaaaaaaaaajaaaaaaddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
 akaabaaaabaaaaaadgaaaaafhccabaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaai
-bcaabaaaaaaaaaaaegbcbaaaadaaaaaaegiccaaaabaaaaaaaaaaaaaaaaaaaaah
+bcaabaaaaaaaaaaaegbcbaaaacaaaaaaegiccaaaabaaaaaaaaaaaaaaaaaaaaah
 bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaaabeaaaaapnekibdpaoaaaaahgcaabaaaaaaaaaaa
-agbbbaaaafaaaaaapgbpbaaaafaaaaaaefaaaaajpcaabaaaabaaaaaajgafbaaa
+agbbbaaaaeaaaaaapgbpbaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaajgafbaaa
 aaaaaaaaeghobaaaacaaaaaaaagabaaaaaaaaaaadiaaaaahbcaabaaaaaaaaaaa
 akaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaaibcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadkiacaaaaaaaaaaaabaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaa

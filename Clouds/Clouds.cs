@@ -499,9 +499,10 @@ namespace Clouds
         {
             if (HighLogic.LoadedScene == GameScenes.MAINMENU && !Loaded)
             {
+                
                 Utils.Init();
                 loadCloudLayers(null);
-
+                
                 Loaded = true;
             }
             else if (HighLogic.LoadedScene == GameScenes.SPACECENTER)

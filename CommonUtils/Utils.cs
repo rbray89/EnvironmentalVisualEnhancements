@@ -186,7 +186,7 @@ namespace CommonUtils
         private Overlay MainMenuClone;
         private CelestialBody celestialBody;
 
-        public Overlay(string planet, float altitude, Material overlayMaterial, Material PQSMaterial, Vector2 rotation, int layer, Transform celestialTransform, bool mainMenu)
+        public Overlay(string planet, float altitude, Material overlayMaterial, Material PQSMaterial, Vector2 rotation, int layer, Transform celestialTransform, bool mainMenu, bool matchTerrain)
         {
             this.MainMenu = mainMenu;
             this.OverlayGameObject = new GameObject();
@@ -198,33 +198,35 @@ namespace CommonUtils
             this.celestialTransform = celestialTransform;
 
             var mr = OverlayGameObject.AddComponent<MeshRenderer>();
-            IsoSphere.Create(OverlayGameObject, false);
+            IsoSphere.Create(OverlayGameObject, null);
             mr.renderer.sharedMaterial = overlayMaterial;
             mr.castShadows = false;
             mr.receiveShadows = false;
             mr.enabled = true;
             OverlayGameObject.renderer.enabled = true;
 
-            overlayMaterial.SetFloat("_FadeDist", 0.4f);
-            overlayMaterial.SetFloat("_FadeScale", 0.1f / 0.4f);
-            PQSMaterial.SetFloat("_FadeDist", 8f);
-            PQSMaterial.SetFloat("_FadeScale", 0.1f / 8f);
-            PQSMaterial.SetFloat("_DetailDist", 0.000002f);
 
             if (!mainMenu)
             {
+                CelestialBody[] celestialBodies = (CelestialBody[])CelestialBody.FindObjectsOfType(typeof(CelestialBody));
+                celestialBody = celestialBodies.First(n => n.bodyName == this.Body);
+
                 this.PQSOverlayGameObject = new GameObject();
                 mr = PQSOverlayGameObject.AddComponent<MeshRenderer>();
-                IsoSphere.Create(PQSOverlayGameObject, false);
+                if (matchTerrain)
+                {
+                    IsoSphere.Create(PQSOverlayGameObject, celestialBody);
+                }
+                else
+                {
+                    IsoSphere.Create(PQSOverlayGameObject, null);
+                }
                 mr.renderer.sharedMaterial = PQSMaterial;
                 mr.castShadows = false;
                 mr.receiveShadows = false;
                 mr.enabled = true;
                 PQSOverlayGameObject.renderer.enabled = true;
                 PQSOverlayGameObject.layer = 15;
-
-                CelestialBody[] celestialBodies = (CelestialBody[])CelestialBody.FindObjectsOfType(typeof(CelestialBody));
-                celestialBody = celestialBodies.First(n => n.bodyName == this.Body);
 
                 placePQS();
                 
@@ -311,7 +313,7 @@ namespace CommonUtils
             GameObject.Destroy(this.OverlayGameObject);
         }
 
-        public static Overlay GeneratePlanetOverlay(String planet, float altitude, Material overlayMaterial, Material PQSMaterial, Vector2 rotation, bool mainMenu = false)
+        public static Overlay GeneratePlanetOverlay(String planet, float altitude, Material overlayMaterial, Material PQSMaterial, Vector2 rotation, bool mainMenu = false, bool matchTerrain = false)
         {
             Vector2 Rotation = new Vector2(rotation.x, rotation.y);
             if (Utils.IsCubicMapped)
@@ -323,7 +325,7 @@ namespace CommonUtils
                 Rotation.x += .25f;
             }
             Transform celestialTransform = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == planet);
-            Overlay overlay = new Overlay(planet, altitude, overlayMaterial, PQSMaterial, Rotation, Utils.MAP_LAYER, celestialTransform, mainMenu);
+            Overlay overlay = new Overlay(planet, altitude, overlayMaterial, PQSMaterial, Rotation, Utils.MAP_LAYER, celestialTransform, mainMenu, matchTerrain);
             if (!mainMenu)
             {
                 if (!OverlayDatabase.ContainsKey(planet))
@@ -347,7 +349,7 @@ namespace CommonUtils
             }
             else
             {
-                OverlayGameObject.transform.localScale = (float)(1f + (this.altitude / celestialBody.Radius)) * Vector3.one * 1000f;
+                OverlayGameObject.transform.localScale = (float)(1f + (this.altitude / celestialBody.Radius)) * Vector3.one * 1002f;
                 if (PQSOverlayGameObject != null)
                 {
                     PQSOverlayGameObject.transform.localScale = Vector3.one * (float)(celestialBody.Radius + this.altitude);

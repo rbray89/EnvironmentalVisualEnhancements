@@ -196,7 +196,8 @@ namespace CommonUtils
                 AddMipMaps(tex);
                 if (tex.format != TextureFormat.DXT1 && tex.format != TextureFormat.DXT5)
                 {
-                    tex.Compress(true);
+                    try { tex.GetPixel(0, 0); tex.Compress(true); }
+                    catch { }
                 }
                 TextureDictionary.Add(textureFile, tex);
             }

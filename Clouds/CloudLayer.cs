@@ -120,7 +120,13 @@ namespace Clouds
             }
             CloudMaterial = new Material(GlobalCloudShader);
             PQSCloudMaterial = new Material(GlobalCloudShader);
-            
+
+            CloudMaterial.SetFloat("_FadeDist", 0.4f);
+            CloudMaterial.SetFloat("_FadeScale", 0.1f / 0.4f);
+            PQSCloudMaterial.SetFloat("_FadeDist", 8f);
+            PQSCloudMaterial.SetFloat("_FadeScale", 0.1f / 8f);
+            PQSCloudMaterial.SetFloat("_DetailDist", 0.000002f);
+
             Log("Cloud Material initialized");
             UpdateTextures();
             Log("Generating Overlay...");

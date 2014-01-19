@@ -59,8 +59,13 @@ namespace CommonUtils
             return i;
         }
 
-        public static void Create(GameObject gameObject, bool pqsOverlay = false, float altitude = 1.002f)
+        public static void Create(GameObject gameObject, CelestialBody celestialBody)
         {
+            float altitude = 1.002f;
+            if(celestialBody != null)
+            {
+                altitude = 1.0f;
+            }
             MeshFilter filter = gameObject.AddComponent<MeshFilter>();
             Mesh mesh = filter.mesh;
             mesh.Clear();
@@ -70,6 +75,11 @@ namespace CommonUtils
 
             int recursionLevel = 3;
             
+            if (celestialBody != null)
+            {
+                recursionLevel = 6;
+            }
+
             // create 12 vertices of a icosahedron
             float t = (1f + Mathf.Sqrt(5f)) / 2f;
 
@@ -144,12 +154,16 @@ namespace CommonUtils
             for (int i = 0; i < normals.Length; i++)
                 normals[i] = vertList[i].normalized;
 
-            if (pqsOverlay)
+            if (celestialBody != null)
             {
-                KSPLog.print("updating position on altitude");
-                for(int i = 0; i < vertList.Count; i++)
+                for (int i = 0; i < vertList.Count; i++ )
                 {
-                    vertList[i] = new Vector3(vertList[i].x, vertList[i].y - altitude, vertList[i].z);
+                    Vector3 rotVert = RotateY(vertList[i], .5f*Mathf.PI);
+                    
+                    float value = (float)((200 + celestialBody.pqsController.GetSurfaceHeight(rotVert) )/ celestialBody.pqsController.radius);
+
+                    Utils.Log("surface height: " + celestialBody.pqsController.GetSurfaceHeight(rotVert) + " " + value + " " + celestialBody.pqsController.radius);
+                    vertList[i] *= value;
                 }
             }
 
@@ -183,6 +197,20 @@ namespace CommonUtils
             mesh.RecalculateBounds();
             mesh.Optimize();
             Utils.Log("Vericies Count: "+vertList.Count);
+        }
+
+        public static Vector3 RotateY(Vector3 v, float angle)
+        {
+
+            float sin = Mathf.Sin(angle);
+
+            float cos = Mathf.Cos(angle);
+
+            float x = (cos * v.x) + (sin * v.z);
+
+            float z = (cos * v.z) - (sin * v.x);
+            return new Vector3(x, v.y, z);
+
         }
 
         private static void calculateMeshTangents(Mesh mesh)

@@ -61,6 +61,7 @@ SubShader {
 	 		float3 nrm;
 	 		float3 viewDir;
 	 		float3 worldVert;
+	 		float3 worldOrigin;
 	 		float viewDist;
 			INTERNAL_DATA
 		};
@@ -68,9 +69,11 @@ SubShader {
 		void vert (inout appdata_full v, out Input o) {
 		   UNITY_INITIALIZE_OUTPUT(Input, o);
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
+		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 		   //float4 viewPos = mul(glstate.matrix.modelview[0], v.vertex);
 		   //float dist = (-viewPos.z - _ProjectionParams.y);
 	   	   o.worldVert = vertexPos;
+	   	   o.worldOrigin = origin;
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
 	   	   o.nrm = normalize(v.vertex.xyz);
 	 	}
@@ -115,8 +118,9 @@ SubShader {
 			float rim = saturate(abs(dot(normalize(IN.viewDir), o.Normal)));
             rim = saturate(pow(_FalloffScale*rim,_FalloffPow));
             float dist = distance(IN.worldVert,_WorldSpaceCameraPos);
+            float distLerp = saturate(.0001*abs(distance(IN.worldVert,IN.worldOrigin) - 1.003*distance(IN.worldOrigin,_WorldSpaceCameraPos)));
             float distFade = saturate((_FadeScale*dist)-_FadeDist);
-			float distAlpha = lerp(distFade, rim, distFade);
+			float distAlpha = lerp(distFade, rim, distLerp);
           	o.Alpha = lerp(0, avg,  distAlpha);
           	o.Normal = lerp(UnpackNormal (normal),half3(0,0,1),detailLevel);
 		}
