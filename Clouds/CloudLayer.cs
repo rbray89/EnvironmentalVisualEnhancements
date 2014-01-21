@@ -1,4 +1,4 @@
-﻿using CommonUtils;
+﻿using OverlaySystem;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -102,10 +102,10 @@ namespace Clouds
         {
             if (GlobalCloudShader == null)
             {
-                Utils.Log("Initializing Textures");
+                OverlayMgr.Log("Initializing Textures");
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 StreamReader shaderStreamReader;
-                if(Utils.IsCubicMapped)
+                if (OverlayMgr.IsCubicMapped)
                 {
                     shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-CubicCloud.shader"));
                 }
@@ -113,11 +113,12 @@ namespace Clouds
                 {
                     shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-SphereCloud.shader"));
                 }
-                Utils.Log("reading stream...");
+                OverlayMgr.Log("reading stream...");
                 String shaderTxt = shaderStreamReader.ReadToEnd();
                 GlobalCloudShader = new Material(shaderTxt).shader;
                 
             }
+
             CloudMaterial = new Material(GlobalCloudShader);
             PQSCloudMaterial = new Material(GlobalCloudShader);
 

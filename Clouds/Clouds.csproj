@@ -58,9 +58,9 @@
     <EmbeddedResource Include="Shaders\Compiled-CubicCloud.shader" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonUtils\CommonUtils.csproj">
+    <ProjectReference Include="..\CommonUtils\OverlayMgr.csproj">
       <Project>{6b877ddf-ebc6-4efd-a0f7-01f7cad8cf87}</Project>
-      <Name>CommonUtils</Name>
+      <Name>OverlayMgr</Name>
     </ProjectReference>
     <ProjectReference Include="..\Equirectangular2Cubic\Equirectangular2Cubic.csproj">
       <Project>{0027c207-0937-4920-bd0f-6f03b7f02dea}</Project>

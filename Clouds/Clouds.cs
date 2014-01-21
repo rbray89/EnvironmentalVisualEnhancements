@@ -5,7 +5,7 @@ using System.Text;
 using System.Reflection;
 using UnityEngine;
 using System.IO;
-using CommonUtils;
+using OverlaySystem;
 using Equirectangular2Cubic;
 
 namespace Clouds
@@ -80,7 +80,7 @@ namespace Clouds
                 {
                     float altitude = float.Parse(node.GetValue("altitude"));
 
-                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false, Utils.IsCubicMapped);
+                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false, OverlayMgr.IsCubicMapped);
                     TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false, false);
                     TextureSet bTexture = new TextureSet(node.GetNode("bump_texture"), true, false);
                     ConfigNode floatsConfig = node.GetNode("shader_floats");
@@ -235,7 +235,7 @@ namespace Clouds
 
                 if (MapView.MapIsEnabled)
                 {
-                    currentBody = Utils.GetMapBody();
+                    currentBody = OverlayMgr.GetMapBody();
                 }
                 else
                 {
@@ -286,7 +286,7 @@ namespace Clouds
                 
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-CloudParticle.shader"));
-                Utils.Log("reading stream...");
+                OverlayMgr.Log("reading stream...");
 
                 Material cloudMaterial = new Material(shaderStreamReader.ReadToEnd());
                 cloudMaterial.mainTexture = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle", false);
@@ -340,7 +340,7 @@ namespace Clouds
             Mesh mesh = cloudObject.AddComponent<MeshFilter>().mesh;
             //var mr = cloudObject.AddComponent<MeshRenderer>();
 
-            Utils.Log("setting up verticies");
+            OverlayMgr.Log("setting up verticies");
 
             List<Vector3> verticiesList = new List<Vector3>();
             for (int i = 0; i < 18; i++)
@@ -386,7 +386,7 @@ namespace Clouds
             //mr.castShadows = false;
             //mr.receiveShadows = false;
             //mr.enabled = true;
-            Utils.Log("generated Mesh");
+            OverlayMgr.Log("generated Mesh");
             return cloudObject;
         }
 /*
@@ -499,8 +499,8 @@ namespace Clouds
         {
             if (HighLogic.LoadedScene == GameScenes.MAINMENU && !Loaded)
             {
-                
-                Utils.Init();
+
+                OverlayMgr.Init();
                 loadCloudLayers(null);
                 
                 Loaded = true;
@@ -512,7 +512,8 @@ namespace Clouds
 
         protected void Update()
         {
-
+            CelestialBody[] celestialBodies = (CelestialBody[])CelestialBody.FindObjectsOfType(typeof(CelestialBody));
+            CelestialBody   celestialBody = celestialBodies.First(n => n.bodyName == "Kerbin");
             foreach (CloudLayer layer in CloudLayer.Layers)
             {
                 layer.PerformUpdate();
@@ -521,6 +522,10 @@ namespace Clouds
             if (alt && Input.GetKeyDown(GUI_KEYCODE))
             {
                 useEditor = !useEditor;
+            }
+            if (celestialBody.pqsController.quads != null && celestialBody.pqsController.quads.Length > 0)
+            {
+                OverlayMgr.Log("QUADS Verts: " + celestialBody.pqsController.quads[0].verts.Length);
             }
         }
 
@@ -536,7 +541,7 @@ namespace Clouds
             CelestialBody current = null;
             if (MapView.MapIsEnabled)
             {
-                current = Utils.GetMapBody();
+                current = OverlayMgr.GetMapBody();
             }
             else
             {
@@ -573,7 +578,7 @@ namespace Clouds
             currentBody = null;
             if (MapView.MapIsEnabled)
             {
-                currentBody = Utils.GetMapBody();
+                currentBody = OverlayMgr.GetMapBody();
             }
             else
             {
@@ -594,11 +599,11 @@ namespace Clouds
                 {
                     if (GUI.Button(new Rect(10, 20, 25, 25), "<"))
                     {
-                        MapView.MapCamera.SetTarget(Utils.GetPreviousBody(currentBody).name);
+                        MapView.MapCamera.SetTarget(OverlayMgr.GetPreviousBody(currentBody).name);
                     }
                     if (GUI.Button(new Rect(itemFullWidth - 15, 20, 25, 25), ">"))
                     {
-                        MapView.MapCamera.SetTarget(Utils.GetNextBody(currentBody).name);
+                        MapView.MapCamera.SetTarget(OverlayMgr.GetNextBody(currentBody).name);
                     }
                 }
                 float halfWidth;

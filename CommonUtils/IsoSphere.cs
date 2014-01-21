@@ -5,7 +5,7 @@ using System.Text;
 using UnityEngine;
 
 //Sphere code from http://wiki.unity3d.com/index.php/ProceduralPrimitives
-namespace CommonUtils
+namespace OverlaySystem
 {
     public static class IsoSphere
     {
@@ -161,12 +161,12 @@ namespace CommonUtils
                     Vector3 rotVert = RotateY(vertList[i], .5f*Mathf.PI);
                     
                     float value = (float)((200 + celestialBody.pqsController.GetSurfaceHeight(rotVert) )/ celestialBody.pqsController.radius);
-
-                    Utils.Log("surface height: " + celestialBody.pqsController.GetSurfaceHeight(rotVert) + " " + value + " " + celestialBody.pqsController.radius);
+                    
+                    OverlayMgr.Log("surface height: " + celestialBody.pqsController.GetSurfaceHeight(rotVert) + " " + value + " " + celestialBody.pqsController.radius);
                     vertList[i] *= value;
                 }
             }
-
+           
             mesh.vertices = vertList.ToArray();
 
             List<int> triList = new List<int>();
@@ -196,7 +196,7 @@ namespace CommonUtils
 
             mesh.RecalculateBounds();
             mesh.Optimize();
-            Utils.Log("Vericies Count: "+vertList.Count);
+            OverlayMgr.Log("Vericies Count: "+vertList.Count);
         }
 
         public static Vector3 RotateY(Vector3 v, float angle)

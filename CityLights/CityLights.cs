@@ -1,4 +1,4 @@
-﻿using CommonUtils;
+﻿using OverlaySystem;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,7 +21,7 @@ namespace CityLights
         {
             if (HighLogic.LoadedScene == GameScenes.MAINMENU && !setup)
             {
-                Utils.Init();
+                OverlayMgr.Init();
                 config = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/BoulderCo/CityLights/cityLights.cfg");
                 ConfigNode[] cloudLayersConfigs = config.GetNodes("CITY_LIGHTS");
 
@@ -31,7 +31,7 @@ namespace CityLights
                     float fadeDistance = float.Parse(node.GetValue("fadeDistance"));
                     float pqsfadeDistance = float.Parse(node.GetValue("pqsFadeDistance"));
 
-                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false, Utils.IsCubicMapped);
+                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false, OverlayMgr.IsCubicMapped);
                     TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false, false);
 
                     AddOverlay(mTexture, dTexture, altitude, fadeDistance, pqsfadeDistance);
@@ -46,7 +46,7 @@ namespace CityLights
             Assembly assembly = Assembly.GetExecutingAssembly();
             StreamReader shaderStreamReader;
             string[] resources = assembly.GetManifestResourceNames();
-            if (Utils.IsCubicMapped)
+            if (OverlayMgr.IsCubicMapped)
             {
                 shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("CityLights.Shaders.Compiled-CubicCityLights.shader"));
             }
@@ -64,7 +64,7 @@ namespace CityLights
             lightMaterial.SetFloat("_DetailScale", dTexture.Scale);
             lightMaterial.SetVector("_DetailOffset", dTexture.Offset);
             lightMaterial.SetFloat("_FadeDist", fadeDistance);
-            lightMaterial.SetFloat("_FadeScale", fadeDistance / 10.0f);
+            lightMaterial.SetFloat("_FadeScale", 1);
 
             pqsLightMaterial.SetTexture("_MainTex", mTexture.Texture);
             pqsLightMaterial.SetTexture("_DetailTex", dTexture.Texture);

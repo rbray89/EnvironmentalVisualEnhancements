@@ -56,9 +56,9 @@
     <None Include="Shaders\SphereCityLights.shader" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonUtils\CommonUtils.csproj">
+    <ProjectReference Include="..\CommonUtils\OverlayMgr.csproj">
       <Project>{6b877ddf-ebc6-4efd-a0f7-01f7cad8cf87}</Project>
-      <Name>CommonUtils</Name>
+      <Name>OverlayMgr</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
