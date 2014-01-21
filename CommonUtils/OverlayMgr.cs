@@ -46,13 +46,19 @@ namespace OverlaySystem
                 MapView.OnExitMapView += new Callback(ExitMapView);
                 Log("Initialized Callbacks");
                 setupCallbacks = true;
+                PQSEnabled = true;
             }
             else if (HighLogic.LoadedScene == GameScenes.TRACKSTATION)
             {
                 foreach(Overlay overlay in Overlay.OverlayList)
                 {
                     overlay.SwitchToOverlay();
+                    DisablePQS();
                 }
+            }
+            else if (HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER)
+            {
+                PQSEnabled = true;
             }
         }
 
@@ -194,7 +200,7 @@ namespace OverlaySystem
 
         public void Update()
         {
-            if (PQSEnabled && HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.FLIGHT)
+            if (PQSEnabled && (HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.FLIGHT))
             {
                 if(CurrentPQS.isActive)
                 {
