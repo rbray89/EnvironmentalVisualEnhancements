@@ -14,7 +14,6 @@ namespace OverlaySystem
         public static int MACRO_LAYER = 15;
 
         static List<CelestialBody> CelestialBodyList = new List<CelestialBody>();
-        static ConfigNode config;
         static bool setup = false;
         static bool mainMenuOverlay = false;
         static bool setupCallbacks = false;
@@ -47,12 +46,7 @@ namespace OverlaySystem
             }
             else if (HighLogic.LoadedScene == GameScenes.TRACKSTATION)
             {
-                foreach(Overlay overlay in Overlay.OverlayList)
-                {
-                    overlay.SwitchToScaled();
-                    EnableScaled();
-                }
-                ScaledEnabled = true;
+                EnableScaled();
             }
             
         }
@@ -112,6 +106,12 @@ namespace OverlaySystem
 
             CelestialBody celestialBody = CelestialBodyList.First(n => n.bodyName == CurrentBodyName);
             CurrentPQS = celestialBody.pqsController;
+
+            foreach (Overlay overlay in Overlay.OverlayDatabase[CurrentBodyName])
+            {
+                overlay.UpdateTranform();
+            }
+            ScaledEnabled = !(CurrentPQS.isActive && !MapView.MapIsEnabled);
         }
 
         private void EnterMapView()
@@ -257,7 +257,6 @@ namespace OverlaySystem
             this.OriginalLayer = layer;
             this.celestialTransform = celestialTransform;
 
-            
             if (!mainMenu)
             {
                 CelestialBody[] celestialBodies = (CelestialBody[])CelestialBody.FindObjectsOfType(typeof(CelestialBody));
@@ -285,23 +284,18 @@ namespace OverlaySystem
 
         public void EnableMainMenu()
         {
-            if (MainMenu)
-            {
-                var objects = GameObject.FindSceneObjectsOfType(typeof(GameObject));
-                if (objects.Any(o => o.name == "LoadingBuffer")) { return; }
-                var body = objects.OfType<GameObject>().Where(b => b.name == this.Body).LastOrDefault();
-                if (body != null)
-                {
-                    OverlayGameObject.layer = body.layer;
-                    OverlayGameObject.transform.parent = body.transform;
-                    OverlayGameObject.transform.localPosition = Vector3.zero;
-                    OverlayGameObject.transform.localRotation = Quaternion.identity;
-                }
-            }
-
-            this.UpdateAltitude(altitude);
-            this.UpdateRotation(Rotation);
             
+            var objects = GameObject.FindSceneObjectsOfType(typeof(GameObject));
+            if (objects.Any(o => o.name == "LoadingBuffer")) { return; }
+            var body = objects.OfType<GameObject>().Where(b => b.name == this.Body).LastOrDefault();
+            if (body != null)
+            {
+                OverlayGameObject.layer = body.layer;
+                OverlayGameObject.transform.parent = body.transform;
+                OverlayGameObject.transform.localPosition = Vector3.zero;
+                OverlayGameObject.transform.localRotation = Quaternion.identity;
+            }
+          
         }
 
         public void CloneForMainMenu()
@@ -336,9 +330,29 @@ namespace OverlaySystem
                 OverlayDatabase[planet].Add(overlay);
                 OverlayList.Add(overlay);
             }
-            
-            overlay.EnableMainMenu();
+
+            if (mainMenu)
+            {
+                overlay.EnableMainMenu();
+            }
+            else 
+            {
+                overlay.UpdateTranform();
+            }
+            overlay.UpdateRotation(Rotation);
             return overlay;
+        }
+
+        public void UpdateTranform()
+        {
+            if (celestialBody.pqsController.isActive && !MapView.MapIsEnabled)
+            {
+                SwitchToMacro();
+            }
+            else
+            {
+                SwitchToScaled();
+            }
         }
 
 
