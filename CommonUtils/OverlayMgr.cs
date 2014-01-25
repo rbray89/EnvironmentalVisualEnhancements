@@ -342,7 +342,8 @@ namespace OverlaySystem
 
         private void placePQS()
         {
-
+            PQSOverlayGameObject.transform.parent = celestialBody.transform;
+            /*
             GameObject overlayHolder = new GameObject();
             overlayHolder.name = "blockHolder";
 
@@ -377,7 +378,7 @@ namespace OverlaySystem
             blockScript.requirements = PQS.ModiferRequirements.Default;
             blockScript.sphere = celestialBody.pqsController;
             blockScript.RebuildSphere();
-
+            */
         }
 
         public void EnableMainMenu(bool mainMenu)
