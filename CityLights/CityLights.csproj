@@ -51,8 +51,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Shaders\Compiled-SphereCityLights.shader" />
-    <None Include="Shaders\CubicCityLights.shader" />
-    <EmbeddedResource Include="Shaders\Compiled-CubicCityLights.shader" />
     <None Include="Shaders\SphereCityLights.shader" />
   </ItemGroup>
   <ItemGroup>

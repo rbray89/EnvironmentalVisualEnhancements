@@ -80,9 +80,9 @@ namespace Clouds
                 {
                     float altitude = float.Parse(node.GetValue("altitude"));
 
-                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false, OverlayMgr.IsCubicMapped);
-                    TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false, false);
-                    TextureSet bTexture = new TextureSet(node.GetNode("bump_texture"), true, false);
+                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false);
+                    TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false);
+                    TextureSet bTexture = new TextureSet(node.GetNode("bump_texture"), true);
                     ConfigNode floatsConfig = node.GetNode("shader_floats");
                     ShaderFloats shaderFloats = null;
                     if (floatsConfig != null)

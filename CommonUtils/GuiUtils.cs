@@ -170,7 +170,6 @@ namespace OverlaySystem
         private Texture texture;
         private String textureFile;
         private bool isBump;
-        private bool isCubic;
 
         public bool InUse;
         public Texture Texture { get { return texture; } }
@@ -179,18 +178,12 @@ namespace OverlaySystem
 
         private void initTexture()
         {
-            if (isCubic && !TextureDictionary.ContainsKey(textureFile + "_CUBIC"))
-            {
-                Texture2D tex = GameDatabase.Instance.GetTexture(textureFile, isBump);
-                TextureDictionary.Add(textureFile + "_CUBIC", CubicGen.getCubic(tex));
-                Texture2D.DestroyImmediate(tex,true);
-            }
-            else if (isBump && !TextureDictionary.ContainsKey(textureFile + "_BUMP"))
+            if (isBump && !TextureDictionary.ContainsKey(textureFile + "_BUMP"))
             {
                 Texture2D tex = GameDatabase.Instance.GetTexture(textureFile, isBump);
                 TextureDictionary.Add(textureFile + "_BUMP", tex);
             }
-            else if (!isBump && !isCubic && !TextureDictionary.ContainsKey(textureFile))
+            else if (!isBump && !TextureDictionary.ContainsKey(textureFile))
             {
                 Texture2D tex = GameDatabase.Instance.GetTexture(textureFile, isBump);
                 AddMipMaps(tex);
@@ -201,8 +194,7 @@ namespace OverlaySystem
                 }
                 TextureDictionary.Add(textureFile, tex);
             }
-            String textureName = isCubic ? textureFile + "_CUBIC" : textureFile;
-            textureName = isBump ? textureName + "_BUMP" : textureName;
+            String textureName = isBump ? textureFile + "_BUMP" : textureFile;
             texture = TextureDictionary[textureName];
         }
 
@@ -219,11 +211,11 @@ namespace OverlaySystem
             }
         }
 
-        public TextureSet(ConfigNode textureNode, bool bump, bool cubic)
+        public TextureSet(ConfigNode textureNode, bool bump)
             : base()
         {
             isBump = bump;
-            isCubic = cubic;
+
             if (textureNode != null)
             {
                 textureFile = textureNode.GetValue("file");

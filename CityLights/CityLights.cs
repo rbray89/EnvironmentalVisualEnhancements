@@ -31,8 +31,8 @@ namespace CityLights
                     float fadeDistance = float.Parse(node.GetValue("fadeDistance"));
                     float pqsfadeDistance = float.Parse(node.GetValue("pqsFadeDistance"));
 
-                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false, OverlayMgr.IsCubicMapped);
-                    TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false, false);
+                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false);
+                    TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false);
 
                     AddOverlay(mTexture, dTexture, altitude, fadeDistance, pqsfadeDistance);
                 }
@@ -44,16 +44,10 @@ namespace CityLights
         private void AddOverlay(TextureSet mTexture, TextureSet dTexture, float altitude, float fadeDistance, float pqsfadeDistance)
         {
             Assembly assembly = Assembly.GetExecutingAssembly();
-            StreamReader shaderStreamReader;
             string[] resources = assembly.GetManifestResourceNames();
-            if (OverlayMgr.IsCubicMapped)
-            {
-                shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("CityLights.Shaders.Compiled-CubicCityLights.shader"));
-            }
-            else
-            {
-                shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("CityLights.Shaders.Compiled-SphereCityLights.shader"));
-            }
+
+            StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("CityLights.Shaders.Compiled-SphereCityLights.shader"));
+            
             Log("read stream");
             String shaderString = shaderStreamReader.ReadToEnd();
             Material lightMaterial = new Material(shaderString);

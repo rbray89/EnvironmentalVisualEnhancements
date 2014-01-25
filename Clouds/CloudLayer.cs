@@ -104,15 +104,9 @@ namespace Clouds
             {
                 OverlayMgr.Log("Initializing Textures");
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                StreamReader shaderStreamReader;
-                if (OverlayMgr.IsCubicMapped)
-                {
-                    shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-CubicCloud.shader"));
-                }
-                else
-                {
-                    shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-SphereCloud.shader"));
-                }
+
+                StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-SphereCloud.shader"));
+                
                 OverlayMgr.Log("reading stream...");
                 String shaderTxt = shaderStreamReader.ReadToEnd();
                 GlobalCloudShader = new Material(shaderTxt).shader;

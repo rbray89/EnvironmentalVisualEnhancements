@@ -10,29 +10,21 @@ namespace OverlaySystem
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class OverlayMgr : MonoBehaviour
     {
-        public static int MAP_LAYER = 10;//31;
-        
-        static Dictionary<String, float> MAP_SWITCH_DISTANCE = new Dictionary<string,float>();
+        public static int MAP_LAYER = 10;
+        public static int MACRO_LAYER = 15;
+
         static List<CelestialBody> CelestialBodyList = new List<CelestialBody>();
         static ConfigNode config;
         static bool setup = false;
         static bool mainMenuOverlay = false;
-        static bool isCubicMapped = false;
         static bool setupCallbacks = false;
         static String CurrentBodyName = "Kerbin";
         static PQS CurrentPQS = null;
         static bool ScaledEnabled = true;
-        static Transform ScaledBodyTransform;
-        static float OverlaySwapDist = 0;
-        static float OverlaySwapRatio = 0;
 
         public static bool MainMenuOverlay
         {
             get{return mainMenuOverlay;}
-        }
-        public static bool IsCubicMapped
-        {
-            get { return isCubicMapped; }
         }
 
         protected void Awake()
@@ -70,13 +62,6 @@ namespace OverlaySystem
             if (!setup)
             {
                 UnityEngine.Object[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody));
-                config = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/BoulderCo/common.cfg");
-                ConfigNode cameraSwapConfig = config.GetNode("CAMERA_SWAP_DISTANCES");
-                String cubicSetting = config.GetValue("CUBIC_MAPPING");
-                if(cubicSetting == "1" || cubicSetting == "true")
-                {
-                    isCubicMapped = true;
-                }
                 foreach (CelestialBody cb in celestialBodies)
                 {
                     CelestialBodyList.Add(cb);
@@ -84,28 +69,7 @@ namespace OverlaySystem
                     {
                         CurrentPQS = cb.pqsController;
                     }
-                    string name = cb.bodyName;
-                    string val = cameraSwapConfig.GetValue(name);
-                    float dist = 0;
-                    if (val != null && val != "")
-                    {
-                        dist = float.Parse(val);
-                    }
-                    Log("loading " + name + " distance " + dist);
-                    MAP_SWITCH_DISTANCE.Add(name, dist);
                 }
-
-                ConfigNode cameraLayers = config.GetNode("CAMERA_LAYERS");
-                if (cameraLayers != null)
-                {
-                    String value = cameraLayers.GetValue("MAP_LAYER");
-                    if (value != null && value != "")
-                    {
-                        MAP_LAYER = int.Parse(value);
-                    }
-                }
-                Log("Camera Layers Parsed.");
-
                 setup = true;
             }
 
@@ -359,14 +323,8 @@ namespace OverlaySystem
         public static Overlay GeneratePlanetOverlay(String planet, float altitude, Material scaledMaterial, Material macroMaterial, Vector2 rotation, bool mainMenu = false, bool matchTerrain = false)
         {
             Vector2 Rotation = new Vector2(rotation.x, rotation.y);
-            if (OverlayMgr.IsCubicMapped)
-            {
-                Rotation.y += .50f;
-            }
-            else
-            {
-                Rotation.x += .25f;
-            }
+            Rotation.x += .25f;
+            
             Transform celestialTransform = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == planet);
             Overlay overlay = new Overlay(planet, altitude, scaledMaterial, macroMaterial, Rotation, OverlayMgr.MAP_LAYER, celestialTransform, mainMenu, matchTerrain);
             if (!mainMenu)
@@ -448,7 +406,7 @@ namespace OverlaySystem
         {
             Renderer mr = OverlayGameObject.GetComponent<MeshRenderer>();
             mr.renderer.sharedMaterial = macroMaterial;
-            OverlayGameObject.layer = 15;
+            OverlayGameObject.layer = OverlayMgr.MACRO_LAYER;
             IsScaledSpace = false;
             UpdateAltitude(this.altitude);
         }

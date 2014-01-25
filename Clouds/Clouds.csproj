@@ -54,8 +54,6 @@
     <EmbeddedResource Include="Shaders\Compiled-SphereCloud.shader" />
     <None Include="Shaders\SphereCloud.shader" />
     <None Include="Shaders\CloudParticle.shader" />
-    <None Include="Shaders\CubicCloud.shader" />
-    <EmbeddedResource Include="Shaders\Compiled-CubicCloud.shader" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CommonUtils\OverlayMgr.csproj">
