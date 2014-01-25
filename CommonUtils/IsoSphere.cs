@@ -162,7 +162,7 @@ namespace OverlaySystem
                     
                     float value = (float)((200 + celestialBody.pqsController.GetSurfaceHeight(rotVert) )/ celestialBody.pqsController.radius);
                     
-                    OverlayMgr.Log("surface height: " + celestialBody.pqsController.GetSurfaceHeight(rotVert) + " " + value + " " + celestialBody.pqsController.radius);
+                    //OverlayMgr.Log("surface height: " + celestialBody.pqsController.GetSurfaceHeight(rotVert) + " " + value + " " + celestialBody.pqsController.radius);
                     vertList[i] *= value;
                 }
             }

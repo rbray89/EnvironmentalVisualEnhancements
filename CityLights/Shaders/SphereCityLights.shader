@@ -7,6 +7,7 @@
 		_DetailOffset ("Detail Offset", Color) = (0,0,0,0)
 		_FadeDist ("Fade Distance", Range(0,10000)) = .01
 		_FadeScale ("Fade Scale", Range(0,1)) = .002
+		_Opacity ("Fade Alpha", Range(0,1)) = 1
 	}
 	Category {
 	   Lighting On
@@ -34,6 +35,7 @@
 	 fixed4 _DetailOffset;
 	 float _FadeDist;
 	 float _FadeScale;
+	 float _Opacity;
 	 fixed4 _Color;
 	 
 	 
@@ -95,7 +97,7 @@
 		detail = lerp(detail, detailY, nrm.y);
 		main = main*detail;
 		float distAlpha = saturate(_FadeScale*(IN.viewDist - _FadeDist));
-	    o.Alpha = min(main.a, distAlpha);
+	    o.Alpha = _Opacity*min(main.a, distAlpha);
 	    o.Emission = main.rgb;
 	 }
 	 	 

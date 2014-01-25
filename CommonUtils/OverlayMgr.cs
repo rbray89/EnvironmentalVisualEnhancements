@@ -22,6 +22,10 @@ namespace OverlaySystem
         static String CurrentBodyName = "Kerbin";
         static PQS CurrentPQS = null;
         static bool PQSEnabled = true;
+        static Transform ScaledBodyTransform;
+        static float OverlaySwapDist = 0;
+        static float OverlaySwapRatio = 0;
+
         public static bool MainMenuOverlay
         {
             get{return mainMenuOverlay;}
@@ -36,6 +40,7 @@ namespace OverlaySystem
             if (HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
                 Init();
+                
             }
             else if (HighLogic.LoadedScene == GameScenes.FLIGHT && !setupCallbacks)
             {
@@ -46,7 +51,7 @@ namespace OverlaySystem
                 MapView.OnExitMapView += new Callback(ExitMapView);
                 Log("Initialized Callbacks");
                 setupCallbacks = true;
-                PQSEnabled = true;
+
             }
             else if (HighLogic.LoadedScene == GameScenes.TRACKSTATION)
             {
@@ -55,11 +60,9 @@ namespace OverlaySystem
                     overlay.SwitchToOverlay();
                     DisablePQS();
                 }
+                PQSEnabled = false;
             }
-            else if (HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER)
-            {
-                PQSEnabled = true;
-            }
+            
         }
 
         public static void Init()
@@ -123,20 +126,15 @@ namespace OverlaySystem
 
         private void OnDominantBodyChangeCallback(GameEvents.FromToAction<CelestialBody, CelestialBody> data)
         {
-            if (Overlay.OverlayDatabase.ContainsKey(CurrentBodyName))
-            {
-                foreach (Overlay overlay in Overlay.OverlayDatabase[CurrentBodyName])
-                {
-                    overlay.SwitchToOverlay();
-                }
-            }
-            CurrentBodyName = data.to.bodyName;
- 
-            CelestialBody celestialBody = CelestialBodyList.First(n => n.bodyName == CurrentBodyName);
-            CurrentPQS = celestialBody.pqsController;
+            UpdateCurrentBody(data.to.bodyName);
         }
 
         private void OnFlightReadyCallback()
+        {
+            UpdateCurrentBody(FlightGlobals.currentMainBody.bodyName);
+        }
+
+        private void UpdateCurrentBody(string body)
         {
             if (Overlay.OverlayDatabase.ContainsKey(CurrentBodyName))
             {
@@ -145,10 +143,15 @@ namespace OverlaySystem
                     overlay.SwitchToOverlay();
                 }
             }
-            CurrentBodyName = FlightGlobals.currentMainBody.bodyName;
+            PQSEnabled = false;
+            CurrentBodyName = body;
 
             CelestialBody celestialBody = CelestialBodyList.First(n => n.bodyName == CurrentBodyName);
             CurrentPQS = celestialBody.pqsController;
+            ScaledBodyTransform = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == CurrentBodyName);
+            float bodyRadius = ScaledBodyTransform.localScale.x * 1000f;
+            OverlaySwapDist = (5f/4f)*bodyRadius;
+            OverlaySwapRatio = 8f / bodyRadius;
         }
 
         private void EnterMapView()
@@ -158,7 +161,7 @@ namespace OverlaySystem
 
         private void ExitMapView()
         {
-            PQSEnabled = true;
+
         }
 
         private void DisablePQS()
@@ -200,22 +203,31 @@ namespace OverlaySystem
 
         public void Update()
         {
-            if (PQSEnabled && (HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.FLIGHT))
+            if (HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.FLIGHT)
             {
-                if(CurrentPQS.isActive)
+                //float dist = Vector3.Distance(
+                //    ScaledBodyTransform.position,
+                //    ScaledCamera.Instance.transform.position);
+                //float alpha = Mathf.Clamp(OverlaySwapRatio * (dist-OverlaySwapDist), 0, 1);
+                bool inNeedOfUpdate = CurrentPQS.isActive != PQSEnabled;
+                if (inNeedOfUpdate && CurrentPQS.isActive && !MapView.MapIsEnabled)
                 {
                     foreach (Overlay overlay in Overlay.OverlayDatabase[CurrentBodyName])
                     {
+                        //overlay.SwitchToPQS(alpha);
                         overlay.SwitchToPQS();
                     }
+                    PQSEnabled = true;
                 }
-                else
+                else if (inNeedOfUpdate)
                 {
                     foreach (Overlay overlay in Overlay.OverlayDatabase[CurrentBodyName])
                     {
                         overlay.SwitchToOverlay();
                     }
+                    PQSEnabled = false;
                 }
+                
             }
         }
 
@@ -295,7 +307,8 @@ namespace OverlaySystem
             mr.renderer.sharedMaterial = overlayMaterial;
             mr.castShadows = false;
             mr.receiveShadows = false;
-            mr.enabled = mainMenu;
+            //mr.enabled = mainMenu;
+            mr.enabled = true;
             OverlayGameObject.renderer.enabled = true;
 
 
@@ -363,8 +376,8 @@ namespace OverlaySystem
             blockScript.repositionToSphere = true;
             blockScript.requirements = PQS.ModiferRequirements.Default;
             blockScript.sphere = celestialBody.pqsController;
-            
             blockScript.RebuildSphere();
+
         }
 
         public void EnableMainMenu(bool mainMenu)
@@ -388,6 +401,7 @@ namespace OverlaySystem
                 OverlayGameObject.transform.parent = celestialTransform;
                 OverlayGameObject.transform.localPosition = Vector3.zero;
                 OverlayGameObject.transform.localRotation = Quaternion.identity;
+
             }
             this.UpdateRotation(Rotation);
             this.UpdateAltitude(altitude, mainMenu);
@@ -477,16 +491,24 @@ namespace OverlaySystem
             }
         }
 
+        internal void UpdateAlpha(float alpha)
+        {
+            overlayMaterial.SetFloat("_Opacity", alpha);
+            PQSMaterial.SetFloat("_Opacity", 1.0f - alpha);
+        }
+
         internal void SwitchToOverlay()
         {
             OverlayGameObject.renderer.enabled = true;
             PQSOverlayGameObject.renderer.enabled = false;
+            //UpdateAlpha(1);
         }
 
         internal void SwitchToPQS()
         {
             OverlayGameObject.renderer.enabled = false;
             PQSOverlayGameObject.renderer.enabled = true;
+            //UpdateAlpha(alpha);
         }
     }
 

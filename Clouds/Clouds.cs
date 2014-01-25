@@ -512,20 +512,18 @@ namespace Clouds
 
         protected void Update()
         {
-            CelestialBody[] celestialBodies = (CelestialBody[])CelestialBody.FindObjectsOfType(typeof(CelestialBody));
-            CelestialBody   celestialBody = celestialBodies.First(n => n.bodyName == "Kerbin");
-            foreach (CloudLayer layer in CloudLayer.Layers)
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.TRACKSTATION ||
+                HighLogic.LoadedScene == GameScenes.MAINMENU || HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
-                layer.PerformUpdate();
-            }
-            bool alt = (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt));
-            if (alt && Input.GetKeyDown(GUI_KEYCODE))
-            {
-                useEditor = !useEditor;
-            }
-            if (celestialBody.pqsController.quads != null && celestialBody.pqsController.quads.Length > 0)
-            {
-                OverlayMgr.Log("QUADS Verts: " + celestialBody.pqsController.quads[0].verts.Length);
+                foreach (CloudLayer layer in CloudLayer.Layers)
+                {
+                    layer.PerformUpdate();
+                }
+                bool alt = (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt));
+                if (alt && Input.GetKeyDown(GUI_KEYCODE))
+                {
+                    useEditor = !useEditor;
+                }
             }
         }
 
