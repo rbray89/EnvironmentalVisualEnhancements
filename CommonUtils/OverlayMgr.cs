@@ -256,6 +256,7 @@ namespace OverlaySystem
             this.macroMaterial = macroMaterial;
             this.OriginalLayer = layer;
             this.celestialTransform = celestialTransform;
+            this.altitude = altitude;
 
             if (!mainMenu)
             {
@@ -279,12 +280,10 @@ namespace OverlaySystem
             mr.enabled = true;
             OverlayGameObject.renderer.enabled = true;
 
-            this.UpdateAltitude(altitude);
         }
 
         public void EnableMainMenu()
         {
-            
             var objects = GameObject.FindSceneObjectsOfType(typeof(GameObject));
             if (objects.Any(o => o.name == "LoadingBuffer")) { return; }
             var body = objects.OfType<GameObject>().Where(b => b.name == this.Body).LastOrDefault();
@@ -294,6 +293,7 @@ namespace OverlaySystem
                 OverlayGameObject.transform.parent = body.transform;
                 OverlayGameObject.transform.localPosition = Vector3.zero;
                 OverlayGameObject.transform.localRotation = Quaternion.identity;
+                OverlayGameObject.transform.localScale = this.altitude * Vector3.one * 1001f;
             }
           
         }
@@ -359,24 +359,17 @@ namespace OverlaySystem
         public void UpdateAltitude(float altitude)
         {
             this.altitude = altitude;
-            if (MainMenu)
+            if (IsScaledSpace)
             {
-                OverlayGameObject.transform.localScale = this.altitude * Vector3.one * 1001f;
+                OverlayGameObject.transform.parent = celestialTransform;
+                OverlayGameObject.transform.localPosition = Vector3.zero;
+                OverlayGameObject.transform.localScale = (float)(1f + (this.altitude / celestialBody.Radius)) * Vector3.one * 1002f;
             }
             else
             {
-                if (IsScaledSpace)
-                {
-                    OverlayGameObject.transform.parent = celestialTransform;
-                    OverlayGameObject.transform.localPosition = Vector3.zero;
-                    OverlayGameObject.transform.localScale = (float)(1f + (this.altitude / celestialBody.Radius)) * Vector3.one * 1002f;
-                }
-                else
-                {
-                    OverlayGameObject.transform.parent = celestialBody.transform;
-                    OverlayGameObject.transform.localPosition = Vector3.zero;
-                    OverlayGameObject.transform.localScale = Vector3.one * (float)(celestialBody.Radius + this.altitude);
-                }
+                OverlayGameObject.transform.parent = celestialBody.transform;
+                OverlayGameObject.transform.localPosition = Vector3.zero;
+                OverlayGameObject.transform.localScale = Vector3.one * (float)(celestialBody.Radius + this.altitude);
             }
         }
 
