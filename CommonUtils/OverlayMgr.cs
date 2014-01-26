@@ -311,7 +311,6 @@ namespace OverlaySystem
             OverlayDatabase[this.Body].Remove(this);
             OverlayList.Remove(this);
             GameObject.Destroy(this.OverlayGameObject);
-
         }
 
         public static Overlay GeneratePlanetOverlay(String planet, float altitude, Material scaledMaterial, Material macroMaterial, Vector2 rotation, bool mainMenu = false, bool matchTerrain = false)
@@ -339,7 +338,7 @@ namespace OverlaySystem
             {
                 overlay.UpdateTranform();
             }
-            overlay.UpdateRotation(Rotation);
+            overlay.SetRotation(Rotation);
             return overlay;
         }
 
@@ -393,6 +392,12 @@ namespace OverlaySystem
             }
         }
 
+        public void SetRotation(Vector3 vector3)
+        {
+            Vector3 rot = new Vector3(vector3.y, vector3.x, vector3.z);
+            OverlayGameObject.transform.localRotation = Quaternion.Euler(360f * rot);
+        }
+
         internal void UpdateAlpha(float alpha)
         {
             scaledMaterial.SetFloat("_Opacity", alpha);
@@ -417,6 +422,7 @@ namespace OverlaySystem
             IsScaledSpace = false;
             UpdateAltitude(this.altitude);
         }
+
     }
 
 

@@ -15,7 +15,7 @@ namespace CityLights
 
         static bool setup = false;
         static ConfigNode config;
-        
+        static List<Overlay> overlayList = new List<Overlay>();
 
         protected void Awake()
         {
@@ -33,7 +33,7 @@ namespace CityLights
 
                     TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false);
                     TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false);
-
+                    
                     AddOverlay(mTexture, dTexture, altitude, fadeDistance, pqsfadeDistance);
                 }
                 
@@ -67,13 +67,12 @@ namespace CityLights
             pqsLightMaterial.SetFloat("_FadeDist", pqsfadeDistance);
             pqsLightMaterial.SetFloat("_FadeScale", .02f);
 
-            Overlay.GeneratePlanetOverlay("Kerbin", altitude, lightMaterial, pqsLightMaterial, mTexture.StartOffset, false, true);
+            overlayList.Add(Overlay.GeneratePlanetOverlay("Kerbin", altitude, lightMaterial, pqsLightMaterial, mTexture.StartOffset, false, true));
         }
 
         public static void Log(String message)
         {
             UnityEngine.Debug.Log("CityLights: " + message);
         }
-
     }
 }
