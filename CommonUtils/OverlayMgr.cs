@@ -258,11 +258,10 @@ namespace OverlaySystem
             this.celestialTransform = celestialTransform;
             this.altitude = altitude;
 
-            if (!mainMenu)
-            {
-                CelestialBody[] celestialBodies = (CelestialBody[])CelestialBody.FindObjectsOfType(typeof(CelestialBody));
-                celestialBody = celestialBodies.First(n => n.bodyName == this.Body);
-            }
+
+            CelestialBody[] celestialBodies = (CelestialBody[])CelestialBody.FindObjectsOfType(typeof(CelestialBody));
+            celestialBody = celestialBodies.First(n => n.bodyName == this.Body);
+            
             if (!mainMenu && matchTerrain)
             {
                 IsoSphere.Create(OverlayGameObject, celestialBody);
@@ -293,7 +292,7 @@ namespace OverlaySystem
                 OverlayGameObject.transform.parent = body.transform;
                 OverlayGameObject.transform.localPosition = Vector3.zero;
                 OverlayGameObject.transform.localRotation = Quaternion.identity;
-                OverlayGameObject.transform.localScale = this.altitude * Vector3.one * 1001f;
+                OverlayGameObject.transform.localScale = (float)(1f + (this.altitude / celestialBody.Radius)) * Vector3.one * 1008f;
             }
           
         }
@@ -302,7 +301,7 @@ namespace OverlaySystem
         {
             if (MainMenuClone == null)
             {
-                MainMenuClone = GeneratePlanetOverlay(this.Body, (float)(1f + (this.altitude / celestialBody.Radius)), this.scaledMaterial, this.macroMaterial, this.Rotation, true);
+                MainMenuClone = GeneratePlanetOverlay(this.Body, this.altitude, this.scaledMaterial, this.macroMaterial, this.Rotation, true);
             }
         }
 
