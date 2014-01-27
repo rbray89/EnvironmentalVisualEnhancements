@@ -59,6 +59,103 @@ namespace OverlaySystem
             return i;
         }
 
+        private static Vector3d[] TryGetHeight(PQ quad, Vector3d reference)
+        {
+            float dot = -2;
+            PQ closestQuad = null;
+            Vector3d[] verts = null;
+            if (quad.subNodes != null && quad.subNodes.Length > 0)
+            {
+                //OverlayMgr.Log("subquad: " + quad.subNodes.Length);
+                foreach (PQ sub in quad.subNodes)
+                {
+                    if (sub != null && sub.positionPlanet != null)
+                    {
+                        float testdot = (float)Vector3d.Dot(sub.positionPlanet.normalized, reference);
+                        if (testdot > dot)
+                        {
+                            dot = testdot;
+                            closestQuad = sub;
+                        }
+                    }
+                }
+                //OverlayMgr.Log("subQuad dot: " + dot);
+                if (closestQuad != null)
+                {
+                    //OverlayMgr.Log("subQuad pos: " + closestQuad.positionPlanet);
+                    verts = TryGetHeight(closestQuad, reference);
+                    return verts;
+                }
+                verts = GetClosestVerts(quad, reference);
+                return verts;
+            }
+            return verts;
+        }
+
+        private static Vector3d[] GetClosestVerts(PQ centerPQ, Vector3d reference)
+        {
+            List<Vector3d> fullList = new List<Vector3d>();
+            List<PQ> pqlist = new List<PQ>();
+            pqlist.Add(centerPQ);
+            pqlist.Add(centerPQ.north);
+            pqlist.Add(centerPQ.south);
+            pqlist.Add(centerPQ.east);
+            pqlist.Add(centerPQ.west);
+            foreach (PQ quad in pqlist)
+            {
+                List<Vector3> vertList = new List<Vector3>(quad.verts);
+                vertList.Sort(delegate(Vector3 x, Vector3 y)
+                {
+                    Vector3 xPos = quad.positionPlanet + x;
+                    Vector3 yPos = quad.positionPlanet + y;
+                    float xdot = Vector3.Dot(xPos.normalized, reference);
+                    float ydot = Vector3.Dot(yPos.normalized, reference);
+                    return ydot.CompareTo(xdot);
+                });
+
+                fullList.Add(quad.positionPlanet + vertList[0]);
+                fullList.Add(quad.positionPlanet + vertList[1]);
+                fullList.Add(quad.positionPlanet + vertList[2]);
+            }
+
+            fullList.Sort(delegate(Vector3d x, Vector3d y)
+            {
+                float xdot = Vector3.Dot(x.normalized, reference);
+                float ydot = Vector3.Dot(y.normalized, reference);
+                return ydot.CompareTo(xdot);
+            });
+
+            return new Vector3d[3] { fullList[0], fullList[1], fullList[2] };
+
+        }
+
+        private static double TryGetHeight(PQS pqs, Vector3d reference)
+        {
+            float dot = -2;
+            PQ closestQuad = null;
+            foreach (PQ quad in pqs.quads)
+            {
+                float testdot = (float)Vector3d.Dot(quad.positionPlanet.normalized, reference);
+                if (testdot > dot)
+                {
+                    dot = testdot;
+                    closestQuad = quad;
+                }
+            }
+            OverlayMgr.Log("Quad dot: " + dot);
+
+            Vector3d[] triangle = TryGetHeight(closestQuad, reference.normalized);
+
+            double dist1 = Vector3d.Distance(reference, triangle[0]);
+            double dist2 = Vector3d.Distance(reference, triangle[1]);
+            double dist3 = Vector3d.Distance(reference, triangle[2]);
+            double mag = (dist1 + dist2 + dist3);
+            double mag1 = dist1 / mag;
+            double mag2 = dist2 / mag;
+            double mag3 = dist3 / mag;
+            return (mag1 * triangle[0].magnitude) + (mag2 * triangle[1].magnitude) + (mag3 * triangle[2].magnitude);
+        }
+
         public static void Create(GameObject gameObject, CelestialBody celestialBody)
         {
             float altitude = 1.002f;
@@ -73,7 +170,7 @@ namespace OverlaySystem
             List<Vector3> vertList = new List<Vector3>();
             Dictionary<long, int> middlePointIndexCache = new Dictionary<long, int>();
 
-            int recursionLevel = 3;
+            int recursionLevel = 4;
             
             if (celestialBody != null)
             {
@@ -158,17 +255,14 @@ namespace OverlaySystem
             {
                 for (int i = 0; i < vertList.Count; i++ )
                 {
-                    Vector3 rotVert = RotateY(vertList[i], .5f*Mathf.PI);
-                    
-                    float value = (float)((200 + celestialBody.pqsController.GetSurfaceHeight(rotVert) )/ celestialBody.pqsController.radius);
-                    
-                    //OverlayMgr.Log("surface height: " + celestialBody.pqsController.GetSurfaceHeight(rotVert) + " " + value + " " + celestialBody.pqsController.radius);
+                    Vector3d rotVert = RotateY(vertList[i], .5*Math.PI);
+                    float value = (float)(230 + celestialBody.pqsController.GetSurfaceHeight(rotVert) );
                     vertList[i] *= value;
                 }
             }
            
             mesh.vertices = vertList.ToArray();
-
+            
             List<int> triList = new List<int>();
             for (int i = 0; i < faces.Count; i++)
             {
@@ -199,17 +293,15 @@ namespace OverlaySystem
             OverlayMgr.Log("Vericies Count: "+vertList.Count);
         }
 
-        public static Vector3 RotateY(Vector3 v, float angle)
+        public static Vector3 RotateY(Vector3d v, double angle)
         {
 
-            float sin = Mathf.Sin(angle);
+            double sin = Math.Sin(angle);
+            double cos = Math.Cos(angle);
 
-            float cos = Mathf.Cos(angle);
-
-            float x = (cos * v.x) + (sin * v.z);
-
-            float z = (cos * v.z) - (sin * v.x);
-            return new Vector3(x, v.y, z);
+            double x = (cos * v.x) + (sin * v.z);
+            double z = (cos * v.z) - (sin * v.x);
+            return new Vector3d(x, v.y, z);
 
         }
 

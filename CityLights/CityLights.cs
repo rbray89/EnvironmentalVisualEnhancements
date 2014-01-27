@@ -19,7 +19,7 @@ namespace CityLights
 
         protected void Awake()
         {
-            if (HighLogic.LoadedScene == GameScenes.MAINMENU && !setup)
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT && !setup)
             {
                 OverlayMgr.Init();
                 config = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/BoulderCo/CityLights/cityLights.cfg");

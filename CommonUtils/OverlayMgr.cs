@@ -245,6 +245,7 @@ namespace OverlaySystem
         private Overlay MainMenuClone;
         private CelestialBody celestialBody;
         private bool IsScaledSpace = true;
+        private bool matchTerrain = false;
 
         public Overlay(string planet, float altitude, Material scaledMaterial, Material macroMaterial, Vector2 rotation, int layer, Transform celestialTransform, bool mainMenu, bool matchTerrain)
         {
@@ -257,7 +258,7 @@ namespace OverlaySystem
             this.OriginalLayer = layer;
             this.celestialTransform = celestialTransform;
             this.altitude = altitude;
-
+            this.matchTerrain = matchTerrain;
 
             CelestialBody[] celestialBodies = (CelestialBody[])CelestialBody.FindObjectsOfType(typeof(CelestialBody));
             celestialBody = celestialBodies.First(n => n.bodyName == this.Body);
@@ -292,7 +293,14 @@ namespace OverlaySystem
                 OverlayGameObject.transform.parent = body.transform;
                 OverlayGameObject.transform.localPosition = Vector3.zero;
                 OverlayGameObject.transform.localRotation = Quaternion.identity;
-                OverlayGameObject.transform.localScale = (float)(1f + (this.altitude / celestialBody.Radius)) * Vector3.one * 1008f;
+                if (matchTerrain)
+                {
+                    OverlayGameObject.transform.localScale = (float)(1008f / celestialBody.Radius) * Vector3.one;
+                }
+                else
+                {
+                    OverlayGameObject.transform.localScale = (float)(1f + (this.altitude / celestialBody.Radius)) * Vector3.one * 1008f;
+                }
             }
           
         }
@@ -343,7 +351,7 @@ namespace OverlaySystem
 
         public void UpdateTranform()
         {
-            if (celestialBody.pqsController.isActive && !MapView.MapIsEnabled)
+            if (celestialBody.pqsController != null && celestialBody.pqsController.isActive && !MapView.MapIsEnabled)
             {
                 SwitchToMacro();
             }
@@ -361,13 +369,27 @@ namespace OverlaySystem
             {
                 OverlayGameObject.transform.parent = celestialTransform;
                 OverlayGameObject.transform.localPosition = Vector3.zero;
-                OverlayGameObject.transform.localScale = (float)(1f + (this.altitude / celestialBody.Radius)) * Vector3.one * 1002f;
+                if (matchTerrain)
+                {
+                    OverlayGameObject.transform.localScale = (float)(1002f / celestialBody.Radius) * Vector3.one;
+                }
+                else
+                {
+                    OverlayGameObject.transform.localScale = (float)(1f + (this.altitude / celestialBody.Radius)) * Vector3.one * 1002f;
+                }
             }
             else
             {
                 OverlayGameObject.transform.parent = celestialBody.transform;
                 OverlayGameObject.transform.localPosition = Vector3.zero;
-                OverlayGameObject.transform.localScale = Vector3.one * (float)(celestialBody.Radius + this.altitude);
+                if (matchTerrain)
+                {
+                    OverlayGameObject.transform.localScale = Vector3.one;
+                }
+                else
+                {
+                    OverlayGameObject.transform.localScale = Vector3.one * (float)(celestialBody.Radius + this.altitude);
+                }
             }
         }
 
