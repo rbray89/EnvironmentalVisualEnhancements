@@ -525,6 +525,13 @@ namespace Clouds
                     useEditor = !useEditor;
                 }
             }
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT )
+            {
+                foreach(CloudLayer cl in CloudLayer.BodyDatabase[currentBody.name])
+                {
+                    cl.SpawnParticleClouds(FlightGlobals.ActiveVessel.findWorldCenterOfMass());
+                }
+            }
         }
 
 

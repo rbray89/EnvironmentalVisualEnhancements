@@ -268,5 +268,13 @@ namespace Clouds
                 Layers.Remove(this);
             }
         }
+
+        internal void SpawnParticleClouds(Vector3 WorldPos)
+        {
+            Vector3 intendedPoint = this.CloudOverlay.Transform.worldToLocalMatrix.MultiplyPoint3x4(WorldPos);
+            intendedPoint.Normalize();
+            intendedPoint *= CloudOverlay.Radius;
+            
+        }
     }
 }

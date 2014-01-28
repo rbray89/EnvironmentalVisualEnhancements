@@ -1,75 +1,87 @@
-﻿Shader "Particles/CloudShader" {
-	Properties {
-		_Color ("Tint Color", Color) = (1,1,1,1)
-		_MainTex ("Main (RGB)", 2D) = "white" {}
-		_BumpMap ("Bumpmap", 2D) = "bump" {}
-		_MinLight ("Minimum Light", Range(0,1)) = .16
-		_NormScale ("Normal Scale", Range(0,1)) = .5
-	}
-
-SubShader {
-		Tags {  "Queue"="Transparent"
-	   			"RenderMode"="Transparent" }
-		Lighting On
-	    ZWrite Off
-		Cull Off
-		Blend SrcAlpha OneMinusSrcAlpha
-		
-		CGPROGRAM
-		#pragma surface surf SimpleLambert vertex:vert noforwardadd novertexlights nolightmap nodirlightmap
-
-		sampler2D _MainTex;
-		sampler2D _BumpMap;
-		fixed4 _Color;
-		float _MinLight;
-		float _NormScale;
-		
-		struct WorldSurfaceOutput {
-			half3 Albedo;
-		    half3 Normal;
-		    half3 Emission;
-		    half3 Specular;
-		    half Alpha;
-		};
-		
-		half4 LightingSimpleLambert (WorldSurfaceOutput s, half3 lightDir, half atten) {
-			float4 light4 = lightDir.xyzz;
-			float3 worldLightDir = mul(UNITY_MATRIX_MVP, light4).xyz;
-			half CdotL = lerp(saturate(dot (s.Specular, worldLightDir)),saturate(dot (s.Normal, lightDir)),_NormScale);
-	        half4 c;
-	        c.rgb = s.Albedo * saturate(_MinLight+ _LightColor0.rgb * (CdotL * atten * 2));
-	        c.a = s.Alpha;
-	        return c;
-      	}
-		
-		struct Input {
-			float2 uv_MainTex;
-			float2 uv_BumpMap;
-			half3  cameraVector;
-			half4 color;
-		};
-
-		void vert (inout appdata_full v, out Input o) {
-		   UNITY_INITIALIZE_OUTPUT(Input, o);
-		   float3 vertexPos = mul(UNITY_MATRIX_MVP, v.vertex).xyz;
-		   o.cameraVector = normalize(-vertexPos);
-		   o.color = v.color;
-	 	}
-
-		void surf (Input IN, inout WorldSurfaceOutput o) {
-			half4 main = tex2D (_MainTex, IN.uv_MainTex);
-			half3 albedo = main.rgb;
-			o.Albedo = albedo * _Color.rgb*IN.color.rgb;
-			o.Specular = IN.cameraVector;
-			o.Normal = tex2D (_BumpMap, IN.uv_BumpMap);
-          	o.Alpha = main.a*_Color.a*IN.color.a;
-          	o.Emission = 0;//half3(0,0,0);
-		}
-		ENDCG
-	
-	}
-	
-	 
-	FallBack "Diffuse"
+﻿Shader "CloudParticle" {
+Properties {
+	_TopTex ("Particle Texture", 2D) = "white" {}
+	_BotTex ("Particle Texture", 2D) = "white" {}
+	_LeftTex ("Particle Texture", 2D) = "white" {}
+	_RightTex ("Particle Texture", 2D) = "white" {}
+	_FrontTex ("Particle Texture", 2D) = "white" {}
+	_BackTex ("Particle Texture", 2D) = "white" {}
+	_Color ("Color Tint", Color) = (1,1,1,1)
 }
 
+Category {
+	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
+	Blend One OneMinusSrcColor
+	ColorMask RGB
+	Cull Off Lighting Off ZWrite Off Fog { Color (0,0,0,0) }
+
+	SubShader {
+		Pass {
+		
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+			#pragma multi_compile_particles
+
+			#include "UnityCG.cginc"
+			
+			sampler2D _TopTex;
+			sampler2D _BotTex;
+			sampler2D _LeftTex;
+			sampler2D _RightTex;
+			sampler2D _FrontTex;
+			sampler2D _BackTex;
+			fixed4 _Color;
+			
+			struct appdata_t {
+				float4 vertex : POSITION;
+				fixed4 color : COLOR;
+				float2 texcoord : TEXCOORD0;
+			};
+
+			struct v2f {
+				float4 vertex : POSITION;
+				fixed4 color : COLOR;
+				float2 texcoord : TEXCOORD0;
+				float3 viewDir : TEXCOORD1;
+			};
+
+			float4 _TopTex_ST;
+			
+			v2f vert (appdata_t v)
+			{
+				v2f o;
+				o.vertex = mul(UNITY_MATRIX_P, 
+	              mul(UNITY_MATRIX_MV, float4(0.0, 0.0, 0.0, 1.0))
+	              + float4(v.vertex.x, v.vertex.y, v.vertex.z, 0.0));
+				
+				o.color = v.color;
+				o.texcoord = TRANSFORM_TEX(v.texcoord,_TopTex);
+				o.viewDir = normalize(_WorldSpaceCameraPos - mul(_Object2World, half4(0,0,0,1)));
+				return o;
+			}
+
+			sampler2D _CameraDepthTexture;
+			float _InvFade;
+			
+			fixed4 frag (v2f i) : COLOR
+			{
+				
+				half xval = saturate (.5 + (.5*i.viewDir.x));
+				half4 xtex = lerp(tex2D(_LeftTex, i.texcoord),tex2D(_RightTex, i.texcoord), xval );
+				half yval = saturate (.5 + (.5*i.viewDir.y));
+				half4 ytex = lerp(tex2D(_TopTex, i.texcoord),tex2D(_BotTex, i.texcoord), yval );
+				half zval = saturate (.5 + (.5*i.viewDir.z));
+				half4 ztex = lerp(tex2D(_FrontTex, i.texcoord),tex2D(_BackTex, i.texcoord), zval );
+				
+				half4 tex = lerp(lerp(ytex,ztex,abs(i.viewDir.z)), xtex, abs(i.viewDir.x));
+				half4 prev = _Color * i.color * tex;
+
+				prev.rgb *= prev.a;
+				return prev;
+			}
+			ENDCG 
+		}
+	} 
+}
+}

@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Shaders\Compiled-SphereCloud.shader" />
+    <EmbeddedResource Include="Shaders\Compiled-CloudParticle.shader" />
     <None Include="Shaders\SphereCloud.shader" />
     <None Include="Shaders\CloudParticle.shader" />
   </ItemGroup>

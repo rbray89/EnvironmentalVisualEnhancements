@@ -247,6 +247,10 @@ namespace OverlaySystem
         private bool IsScaledSpace = true;
         private bool matchTerrain = false;
 
+        public Transform Transform { get{return this.OverlayGameObject.transform;}}
+
+        public float Radius { get { return altitude + (float)celestialBody.Radius; } }
+
         public Overlay(string planet, float altitude, Material scaledMaterial, Material macroMaterial, Vector2 rotation, int layer, Transform celestialTransform, bool mainMenu, bool matchTerrain)
         {
             this.MainMenu = mainMenu;
