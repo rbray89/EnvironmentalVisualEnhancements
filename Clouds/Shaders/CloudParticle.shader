@@ -10,10 +10,16 @@ Properties {
 }
 
 Category {
-	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
+	
+	Lighting On
+	ZWrite Off
+	Cull Off
 	Blend One OneMinusSrcColor
-	ColorMask RGB
-	Cull Off Lighting Off ZWrite Off Fog { Color (0,0,0,0) }
+	Tags { 
+	"Queue"="Transparent" 
+	"IgnoreProjector"="True" 
+	"RenderType"="Transparent" 
+	}
 
 	SubShader {
 		Pass {
@@ -21,8 +27,7 @@ Category {
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma multi_compile_particles
-
+			#define MAG_ONE 1.4142135623730950488016887242097
 			#include "UnityCG.cginc"
 			
 			sampler2D _TopTex;
@@ -40,39 +45,58 @@ Category {
 			};
 
 			struct v2f {
-				float4 vertex : POSITION;
+				float4 pos : SV_POSITION;
 				fixed4 color : COLOR;
-				float2 texcoord : TEXCOORD0;
-				float3 viewDir : TEXCOORD1;
+				float3 viewDir : TEXCOORD0;
+				float2 texcoordZY : TEXCOORD1;
+				float2 texcoordXZ : TEXCOORD2;
+				float2 texcoordXY : TEXCOORD3;
 			};
 
 			float4 _TopTex_ST;
 			
 			v2f vert (appdata_t v)
 			{
+				float4 mvCenter = mul(UNITY_MATRIX_MV, float4(0, 0, 0, 1));
+				float4 origin = mul(UNITY_MATRIX_P, 
+	              mvCenter
+	              + float4(0,0,0,1));
+	              
 				v2f o;
-				o.vertex = mul(UNITY_MATRIX_P, 
-	              mul(UNITY_MATRIX_MV, float4(0.0, 0.0, 0.0, 1.0))
-	              + float4(v.vertex.x, v.vertex.y, v.vertex.z, 0.0));
 				
-				o.color = v.color;
-				o.texcoord = TRANSFORM_TEX(v.texcoord,_TopTex);
-				o.viewDir = normalize(_WorldSpaceCameraPos - mul(_Object2World, half4(0,0,0,1)));
+				o.pos = mul(UNITY_MATRIX_P, 
+	              mvCenter
+	              + float4(v.vertex.x, v.vertex.y, v.vertex.z,1));
+				
+				float2 texcoodOffsetxy = (2*v.texcoord)- 1;
+				float4 texcoordOffset = float4(texcoodOffsetxy.x, texcoodOffsetxy.y, 0, 1);
+				
+				float2 ZY = mul(UNITY_MATRIX_MV, texcoordOffset.zyxw).xy - mvCenter.xy;
+				float2 XZ = mul(UNITY_MATRIX_MV, texcoordOffset.xzyw).xy - mvCenter.xy;
+				float2 XY = mul(UNITY_MATRIX_MV, texcoordOffset.xyzw).xy - mvCenter.xy;
+	                       								
+				o.texcoordZY = half2(.5 ,.5) + (.5*ZY*MAG_ONE);
+				o.texcoordXZ = half2(.5 ,.5) + (.5*XZ*MAG_ONE);
+				o.texcoordXY = half2(.5 ,.5) + (.5*XY*MAG_ONE);
+				
+				o.viewDir = normalize(ObjSpaceViewDir(half4(0,0,0,1)));
+//				float3 vertex = mul(UNITY_MATRIX_IT_MV, o.pos).xyz;
+//				o.color = float4(vertex.x, vertex.y, vertex.z, 1);//v.color;
+				//o.color = float4(o.pos.x, o.pos.y, o.pos.z, 1);
+				
 				return o;
 			}
 
-			sampler2D _CameraDepthTexture;
-			float _InvFade;
 			
 			fixed4 frag (v2f i) : COLOR
 			{
 				
 				half xval = saturate (.5 + (.5*i.viewDir.x));
-				half4 xtex = lerp(tex2D(_LeftTex, i.texcoord),tex2D(_RightTex, i.texcoord), xval );
+				half4 xtex = lerp(tex2D(_LeftTex, i.texcoordZY),tex2D(_RightTex, i.texcoordZY), xval );
 				half yval = saturate (.5 + (.5*i.viewDir.y));
-				half4 ytex = lerp(tex2D(_TopTex, i.texcoord),tex2D(_BotTex, i.texcoord), yval );
+				half4 ytex = lerp(tex2D(_TopTex, i.texcoordXZ),tex2D(_BotTex, i.texcoordXZ), yval );
 				half zval = saturate (.5 + (.5*i.viewDir.z));
-				half4 ztex = lerp(tex2D(_FrontTex, i.texcoord),tex2D(_BackTex, i.texcoord), zval );
+				half4 ztex = lerp(tex2D(_FrontTex, i.texcoordXY),tex2D(_BackTex, i.texcoordXY), zval );
 				
 				half4 tex = lerp(lerp(ytex,ztex,abs(i.viewDir.z)), xtex, abs(i.viewDir.x));
 				half4 prev = _Color * i.color * tex;

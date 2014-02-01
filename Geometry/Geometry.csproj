@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8DF6A385-18E6-4E76-A060-4C3847CA3046}</ProjectGuid>
+    <ProjectGuid>{8B24314B-4B75-43F3-B31C-FFA9FC83FB70}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Clouds</RootNamespace>
-    <AssemblyName>Clouds</AssemblyName>
+    <RootNamespace>Geometry</RootNamespace>
+    <AssemblyName>Geometry</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -32,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\ksp-win-0-22-0\KSP_win_dev\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\ksp-win-0-23-0\KSP_win_dev\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -42,38 +42,18 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\ksp-win-0-22-0\KSP_win_dev\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\ksp-win-0-23-0\KSP_win_dev\KSP_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CloudLayer.cs" />
-    <Compile Include="Clouds.cs" />
+    <Compile Include="IsoSphere.cs" />
+    <Compile Include="Quad.cs" />
+    <Compile Include="Tools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Shaders\Compiled-SphereCloud.shader" />
-    <EmbeddedResource Include="Shaders\Compiled-CloudParticle.shader" />
-    <None Include="Shaders\SphereCloud.shader" />
-    <None Include="Shaders\CloudParticle.shader" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CommonUtils\OverlayMgr.csproj">
-      <Project>{6b877ddf-ebc6-4efd-a0f7-01f7cad8cf87}</Project>
-      <Name>OverlayMgr</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Equirectangular2Cubic\Equirectangular2Cubic.csproj">
-      <Project>{0027c207-0937-4920-bd0f-6f03b7f02dea}</Project>
-      <Name>Equirectangular2Cubic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Geometry\Geometry.csproj">
-      <Project>{8b24314b-4b75-43f3-b31c-ffa9fc83fb70}</Project>
-      <Name>Geometry</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /Y $(TargetFileName) "$(SolutionDir)GameData\BoulderCo\Plugins\"
-xcopy "$(SolutionDir)GameData" "C:\Users\Ryan\Documents\ksp-win-0-23-0\KSP_win_dev\GameData" /e /y /i /r</PostBuildEvent>
+    <PostBuildEvent>copy /Y $(TargetFileName) "$(SolutionDir)\GameData\BoulderCo\Plugins\";</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

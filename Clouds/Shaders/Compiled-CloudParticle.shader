@@ -13,33 +13,35 @@ Category {
 	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
 	Blend One OneMinusSrcColor
 	ColorMask RGB
-	Cull Off Lighting Off ZWrite Off Fog { Color (0,0,0,0) }
+	Cull Back Lighting Off ZWrite Off Fog { Color (0,0,0,0) }
 
 	SubShader {
 		Pass {
 		
 			Program "vp" {
 // Vertex combos: 2
-//   opengl - ALU: 20 to 20
-//   d3d9 - ALU: 20 to 20
-//   d3d11 - ALU: 10 to 10, TEX: 0 to 0, FLOW: 1 to 1
-//   d3d11_9x - ALU: 10 to 10, TEX: 0 to 0, FLOW: 1 to 1
+//   opengl - ALU: 22 to 22
+//   d3d9 - ALU: 22 to 22
+//   d3d11 - ALU: 14 to 14, TEX: 0 to 0, FLOW: 1 to 1
+//   d3d11_9x - ALU: 14 to 14, TEX: 0 to 0, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { "SOFTPARTICLES_OFF" }
 Bind "vertex" Vertex
 Bind "color" Color
 Bind "texcoord" TexCoord0
 Vector 13 [_WorldSpaceCameraPos]
-Matrix 9 [_Object2World]
-Vector 14 [_TopTex_ST]
+Matrix 9 [_World2Object]
+Vector 14 [unity_Scale]
+Vector 15 [_TopTex_ST]
 "!!ARBvp1.0
-# 20 ALU
-PARAM c[15] = { { 0 },
+# 22 ALU
+PARAM c[16] = { { 0, 1 },
 		state.matrix.modelview[0],
 		state.matrix.projection,
-		program.local[9..14] };
+		program.local[9..15] };
 TEMP R0;
 TEMP R1;
+TEMP R2;
 MOV R0.xyz, vertex.position;
 MOV R0.w, c[0].x;
 MOV R1.w, c[4];
@@ -47,21 +49,23 @@ MOV R1.z, c[3].w;
 MOV R1.y, c[2].w;
 MOV R1.x, c[1].w;
 ADD R1, R1, R0;
-MOV R0.z, c[11].w;
-MOV R0.x, c[9].w;
-MOV R0.y, c[10].w;
-ADD R0.xyz, -R0, c[13];
+MOV R0.w, c[0].y;
+MOV R0.xyz, c[13];
+DP4 R2.z, R0, c[11];
+DP4 R2.x, R0, c[9];
+DP4 R2.y, R0, c[10];
+MUL R0.xyz, R2, c[14].w;
 DP3 R0.w, R0, R0;
 RSQ R0.w, R0.w;
 DP4 result.position.w, R1, c[8];
 DP4 result.position.z, R1, c[7];
 DP4 result.position.y, R1, c[6];
 DP4 result.position.x, R1, c[5];
-MOV result.color, vertex.color;
 MUL result.texcoord[1].xyz, R0.w, R0;
-MAD result.texcoord[0].xy, vertex.texcoord[0], c[14], c[14].zwzw;
+MOV result.color, vertex.color;
+MAD result.texcoord[0].xy, vertex.texcoord[0], c[15], c[15].zwzw;
 END
-# 20 instructions, 2 R-regs
+# 22 instructions, 3 R-regs
 "
 }
 
@@ -73,34 +77,37 @@ Bind "texcoord" TexCoord0
 Matrix 0 [glstate_matrix_modelview0]
 Matrix 4 [glstate_matrix_projection]
 Vector 12 [_WorldSpaceCameraPos]
-Matrix 8 [_Object2World]
-Vector 13 [_TopTex_ST]
+Matrix 8 [_World2Object]
+Vector 13 [unity_Scale]
+Vector 14 [_TopTex_ST]
 "vs_2_0
-; 20 ALU
-def c14, 0.00000000, 0, 0, 0
+; 22 ALU
+def c15, 0.00000000, 1.00000000, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_texcoord0 v2
 mov r0.xyz, v0
-mov r0.w, c14.x
+mov r0.w, c15.x
 mov r1.w, c3
 mov r1.z, c2.w
 mov r1.y, c1.w
 mov r1.x, c0.w
 add r1, r1, r0
-mov r0.z, c10.w
-mov r0.x, c8.w
-mov r0.y, c9.w
-add r0.xyz, -r0, c12
+mov r0.w, c15.y
+mov r0.xyz, c12
+dp4 r2.z, r0, c10
+dp4 r2.x, r0, c8
+dp4 r2.y, r0, c9
+mul r0.xyz, r2, c13.w
 dp3 r0.w, r0, r0
 rsq r0.w, r0.w
 dp4 oPos.w, r1, c7
 dp4 oPos.z, r1, c6
 dp4 oPos.y, r1, c5
 dp4 oPos.x, r1, c4
-mov oD0, v1
 mul oT1.xyz, r0.w, r0
-mad oT0.xy, v2, c13, c13.zwzw
+mov oD0, v1
+mad oT0.xy, v2, c14, c14.zwzw
 "
 }
 
@@ -113,21 +120,22 @@ ConstBuffer "$Globals" 64 // 48 used size, 4 vars
 Vector 32 [_TopTex_ST] 4
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
-ConstBuffer "UnityPerDraw" 336 // 256 used size, 6 vars
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
 Matrix 64 [glstate_matrix_modelview0] 4
-Matrix 192 [_Object2World] 4
+Matrix 256 [_World2Object] 4
+Vector 320 [unity_Scale] 4
 ConstBuffer "UnityPerFrame" 208 // 64 used size, 4 vars
 Matrix 0 [glstate_matrix_projection] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
 BindCB "UnityPerFrame" 3
-// 14 instructions, 2 temp regs, 0 temp arrays:
-// ALU 10 float, 0 int, 0 uint
+// 18 instructions, 2 temp regs, 0 temp arrays:
+// ALU 14 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedokkhndmghkamkjnimhefciegehkbcnlpabaaaaaahaadaaaaadaaaaaa
+eefiecedkjdnhponcmjilkhabcpflglfgoamnahkabaaaaaaaeaeaaaaadaaaaaa
 cmaaaaaajmaaaaaaciabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapahaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -136,9 +144,9 @@ ieaaaaaaaeaaaaaaaiaaaaaagiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaa
 apaaaaaaheaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapaaaaaahkaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaacaaaaaaadamaaaahkaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaadaaaaaaahaiaaaafdfgfpfagphdgjhegjgpgoaaedepemepfcaafeef
-fiedepepfceeaaklfdeieefceaacaaaaeaaaabaajaaaaaaafjaaaaaeegiocaaa
+fiedepepfceeaaklfdeieefcneacaaaaeaaaabaalfaaaaaafjaaaaaeegiocaaa
 aaaaaaaaadaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaa
-acaaaaaabaaaaaaafjaaaaaeegiocaaaadaaaaaaaeaaaaaafpaaaaadhcbabaaa
+acaaaaaabfaaaaaafjaaaaaeegiocaaaadaaaaaaaeaaaaaafpaaaaadhcbabaaa
 aaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaaddcbabaaaacaaaaaaghaaaaae
 pccabaaaaaaaaaaaabaaaaaagfaaaaadpccabaaaabaaaaaagfaaaaaddccabaaa
 acaaaaaagfaaaaadhccabaaaadaaaaaagiaaaaacacaaaaaadgaaaaafhcaabaaa
@@ -150,11 +158,16 @@ egaobaaaabaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaadaaaaaaacaaaaaa
 kgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpccabaaaaaaaaaaaegiocaaa
 adaaaaaaadaaaaaapgapbaaaaaaaaaaaegaobaaaabaaaaaadgaaaaafpccabaaa
 abaaaaaaegbobaaaabaaaaaadcaaaaaldccabaaaacaaaaaaegbabaaaacaaaaaa
-egiacaaaaaaaaaaaacaaaaaaogikcaaaaaaaaaaaacaaaaaaaaaaaaakhcaabaaa
-aaaaaaaaegiccaaaabaaaaaaaeaaaaaaegiccaiaebaaaaaaacaaaaaaapaaaaaa
-baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaadaaaaaapgapbaaa
-aaaaaaaaegacbaaaaaaaaaaadoaaaaab"
+egiacaaaaaaaaaaaacaaaaaaogikcaaaaaaaaaaaacaaaaaadiaaaaajhcaabaaa
+aaaaaaaafgifcaaaabaaaaaaaeaaaaaaegiccaaaacaaaaaabbaaaaaadcaaaaal
+hcaabaaaaaaaaaaaegiccaaaacaaaaaabaaaaaaaagiacaaaabaaaaaaaeaaaaaa
+egacbaaaaaaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaaacaaaaaabcaaaaaa
+kgikcaaaabaaaaaaaeaaaaaaegacbaaaaaaaaaaaaaaaaaaihcaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegiccaaaacaaaaaabdaaaaaadiaaaaaihcaabaaaaaaaaaaa
+egacbaaaaaaaaaaapgipcaaaacaaaaaabeaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaadaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+doaaaaab"
 }
 
 SubProgram "gles " {
@@ -169,7 +182,8 @@ varying highp vec2 xlv_TEXCOORD0;
 varying lowp vec4 xlv_COLOR;
 uniform highp vec4 _TopTex_ST;
 uniform highp mat4 glstate_matrix_projection;
-uniform highp mat4 _Object2World;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _World2Object;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord0;
@@ -182,10 +196,13 @@ void main ()
   tmpvar_1.x = _glesVertex.x;
   tmpvar_1.y = _glesVertex.y;
   tmpvar_1.z = _glesVertex.z;
+  highp vec4 tmpvar_2;
+  tmpvar_2.w = 1.0;
+  tmpvar_2.xyz = _WorldSpaceCameraPos;
   gl_Position = (glstate_matrix_projection * ((glstate_matrix_modelview0 * vec4(0.0, 0.0, 0.0, 1.0)) + tmpvar_1));
   xlv_COLOR = _glesColor;
   xlv_TEXCOORD0 = ((_glesMultiTexCoord0.xy * _TopTex_ST.xy) + _TopTex_ST.zw);
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz));
+  xlv_TEXCOORD1 = normalize(((_World2Object * tmpvar_2).xyz * unity_Scale.w));
 }
 
 
@@ -266,7 +283,8 @@ varying highp vec2 xlv_TEXCOORD0;
 varying lowp vec4 xlv_COLOR;
 uniform highp vec4 _TopTex_ST;
 uniform highp mat4 glstate_matrix_projection;
-uniform highp mat4 _Object2World;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _World2Object;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord0;
@@ -279,10 +297,13 @@ void main ()
   tmpvar_1.x = _glesVertex.x;
   tmpvar_1.y = _glesVertex.y;
   tmpvar_1.z = _glesVertex.z;
+  highp vec4 tmpvar_2;
+  tmpvar_2.w = 1.0;
+  tmpvar_2.xyz = _WorldSpaceCameraPos;
   gl_Position = (glstate_matrix_projection * ((glstate_matrix_modelview0 * vec4(0.0, 0.0, 0.0, 1.0)) + tmpvar_1));
   xlv_COLOR = _glesColor;
   xlv_TEXCOORD0 = ((_glesMultiTexCoord0.xy * _TopTex_ST.xy) + _TopTex_ST.zw);
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz));
+  xlv_TEXCOORD1 = normalize(((_World2Object * tmpvar_2).xyz * unity_Scale.w));
 }
 
 
@@ -359,33 +380,35 @@ Bind "texcoord" TexCoord0
 Matrix 0 [glstate_matrix_modelview0]
 Matrix 4 [glstate_matrix_projection]
 Vector 12 [_WorldSpaceCameraPos]
-Matrix 8 [_Object2World]
-Vector 13 [_TopTex_ST]
+Matrix 8 [_World2Object]
+Vector 13 [unity_Scale]
+Vector 14 [_TopTex_ST]
 "agal_vs
-c14 0.0 0.0 0.0 0.0
+c15 0.0 1.0 0.0 0.0
 [bc]
 aaaaaaaaaaaaahacaaaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov r0.xyz, a0
-aaaaaaaaaaaaaiacaoaaaaaaabaaaaaaaaaaaaaaaaaaaaaa mov r0.w, c14.x
+aaaaaaaaaaaaaiacapaaaaaaabaaaaaaaaaaaaaaaaaaaaaa mov r0.w, c15.x
 aaaaaaaaabaaaiacadaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r1.w, c3
 aaaaaaaaabaaaeacacaaaappabaaaaaaaaaaaaaaaaaaaaaa mov r1.z, c2.w
 aaaaaaaaabaaacacabaaaappabaaaaaaaaaaaaaaaaaaaaaa mov r1.y, c1.w
 aaaaaaaaabaaabacaaaaaappabaaaaaaaaaaaaaaaaaaaaaa mov r1.x, c0.w
 abaaaaaaabaaapacabaaaaoeacaaaaaaaaaaaaoeacaaaaaa add r1, r1, r0
-aaaaaaaaaaaaaeacakaaaappabaaaaaaaaaaaaaaaaaaaaaa mov r0.z, c10.w
-aaaaaaaaaaaaabacaiaaaappabaaaaaaaaaaaaaaaaaaaaaa mov r0.x, c8.w
-aaaaaaaaaaaaacacajaaaappabaaaaaaaaaaaaaaaaaaaaaa mov r0.y, c9.w
-bfaaaaaaaaaaahacaaaaaakeacaaaaaaaaaaaaaaaaaaaaaa neg r0.xyz, r0.xyzz
-abaaaaaaaaaaahacaaaaaakeacaaaaaaamaaaaoeabaaaaaa add r0.xyz, r0.xyzz, c12
+aaaaaaaaaaaaaiacapaaaaffabaaaaaaaaaaaaaaaaaaaaaa mov r0.w, c15.y
+aaaaaaaaaaaaahacamaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r0.xyz, c12
+bdaaaaaaacaaaeacaaaaaaoeacaaaaaaakaaaaoeabaaaaaa dp4 r2.z, r0, c10
+bdaaaaaaacaaabacaaaaaaoeacaaaaaaaiaaaaoeabaaaaaa dp4 r2.x, r0, c8
+bdaaaaaaacaaacacaaaaaaoeacaaaaaaajaaaaoeabaaaaaa dp4 r2.y, r0, c9
+adaaaaaaaaaaahacacaaaakeacaaaaaaanaaaappabaaaaaa mul r0.xyz, r2.xyzz, c13.w
 bcaaaaaaaaaaaiacaaaaaakeacaaaaaaaaaaaakeacaaaaaa dp3 r0.w, r0.xyzz, r0.xyzz
 akaaaaaaaaaaaiacaaaaaappacaaaaaaaaaaaaaaaaaaaaaa rsq r0.w, r0.w
 bdaaaaaaaaaaaiadabaaaaoeacaaaaaaahaaaaoeabaaaaaa dp4 o0.w, r1, c7
 bdaaaaaaaaaaaeadabaaaaoeacaaaaaaagaaaaoeabaaaaaa dp4 o0.z, r1, c6
 bdaaaaaaaaaaacadabaaaaoeacaaaaaaafaaaaoeabaaaaaa dp4 o0.y, r1, c5
 bdaaaaaaaaaaabadabaaaaoeacaaaaaaaeaaaaoeabaaaaaa dp4 o0.x, r1, c4
-aaaaaaaaahaaapaeacaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov v7, a2
 adaaaaaaabaaahaeaaaaaappacaaaaaaaaaaaakeacaaaaaa mul v1.xyz, r0.w, r0.xyzz
-adaaaaaaaaaaadacadaaaaoeaaaaaaaaanaaaaoeabaaaaaa mul r0.xy, a3, c13
-abaaaaaaaaaaadaeaaaaaafeacaaaaaaanaaaaooabaaaaaa add v0.xy, r0.xyyy, c13.zwzw
+aaaaaaaaahaaapaeacaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov v7, a2
+adaaaaaaaaaaadacadaaaaoeaaaaaaaaaoaaaaoeabaaaaaa mul r0.xy, a3, c14
+abaaaaaaaaaaadaeaaaaaafeacaaaaaaaoaaaaooabaaaaaa add v0.xy, r0.xyyy, c14.zwzw
 aaaaaaaaaaaaamaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v0.zw, c0
 aaaaaaaaabaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v1.w, c0
 "
@@ -400,61 +423,69 @@ ConstBuffer "$Globals" 64 // 48 used size, 4 vars
 Vector 32 [_TopTex_ST] 4
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
-ConstBuffer "UnityPerDraw" 336 // 256 used size, 6 vars
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
 Matrix 64 [glstate_matrix_modelview0] 4
-Matrix 192 [_Object2World] 4
+Matrix 256 [_World2Object] 4
+Vector 320 [unity_Scale] 4
 ConstBuffer "UnityPerFrame" 208 // 64 used size, 4 vars
 Matrix 0 [glstate_matrix_projection] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
 BindCB "UnityPerFrame" 3
-// 14 instructions, 2 temp regs, 0 temp arrays:
-// ALU 10 float, 0 int, 0 uint
+// 18 instructions, 2 temp regs, 0 temp arrays:
+// ALU 14 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0_level_9_1
-eefiecedpenacaoflogoiikhfnjjkbfbdgkhmhgkabaaaaaabiafaaaaaeaaaaaa
-daaaaaaaneabaaaabmaeaaaaimaeaaaaebgpgodjjmabaaaajmabaaaaaaacpopp
-diabaaaageaaaaaaafaaceaaaaaagaaaaaaagaaaaaaaceaaabaagaaaaaaaacaa
+eefiecedjhmdlmaojedkgbealmpkaokmibiieogpabaaaaaapeafaaaaaeaaaaaa
+daaaaaaabmacaaaapiaeaaaagiafaaaaebgpgodjoeabaaaaoeabaaaaaaacpopp
+iaabaaaageaaaaaaafaaceaaaaaagaaaaaaagaaaaaaaceaaabaagaaaaaaaacaa
 abaaabaaaaaaaaaaabaaaeaaabaaacaaaaaaaaaaacaaahaaabaaadaaaaaaaaaa
-acaaapaaabaaaeaaaaaaaaaaadaaaaaaaeaaafaaaaaaaaaaaaaaaaaaaaacpopp
-fbaaaaafajaaapkaaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaabpaaaaacafaaaaia
+acaabaaaafaaaeaaaaaaaaaaadaaaaaaaeaaajaaaaaaaaaaaaaaaaaaaaacpopp
+fbaaaaafanaaapkaaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaabpaaaaacafaaaaia
 aaaaapjabpaaaaacafaaabiaabaaapjabpaaaaacafaaaciaacaaapjaaeaaaaae
-abaaadoaacaaoejaabaaoekaabaaookaabaaaaacaaaaahiaacaaoekaacaaaaad
-aaaaahiaaaaaoeiaaeaaoekbaiaaaaadaaaaaiiaaaaaoeiaaaaaoeiaahaaaaac
-aaaaaiiaaaaappiaafaaaaadacaaahoaaaaappiaaaaaoeiaabaaaaacaaaaadia
-ajaaoekaaeaaaaaeaaaaapiaaaaacejaaaaaeaiaadaaoekaafaaaaadabaaapia
-aaaaffiaagaaoekaaeaaaaaeabaaapiaafaaoekaaaaaaaiaabaaoeiaaeaaaaae
-abaaapiaahaaoekaaaaakkiaabaaoeiaaeaaaaaeaaaaapiaaiaaoekaaaaappia
-abaaoeiaaeaaaaaeaaaaadmaaaaappiaaaaaoekaaaaaoeiaabaaaaacaaaaamma
-aaaaoeiaabaaaaacaaaaapoaabaaoejappppaaaafdeieefceaacaaaaeaaaabaa
-jaaaaaaafjaaaaaeegiocaaaaaaaaaaaadaaaaaafjaaaaaeegiocaaaabaaaaaa
-afaaaaaafjaaaaaeegiocaaaacaaaaaabaaaaaaafjaaaaaeegiocaaaadaaaaaa
-aeaaaaaafpaaaaadhcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaad
-dcbabaaaacaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaadpccabaaa
-abaaaaaagfaaaaaddccabaaaacaaaaaagfaaaaadhccabaaaadaaaaaagiaaaaac
-acaaaaaadgaaaaafhcaabaaaaaaaaaaaegbcbaaaaaaaaaaadgaaaaaficaabaaa
-aaaaaaaaabeaaaaaaaaaaaaaaaaaaaaipcaabaaaaaaaaaaaegaobaaaaaaaaaaa
-egiocaaaacaaaaaaahaaaaaadiaaaaaipcaabaaaabaaaaaafgafbaaaaaaaaaaa
-egiocaaaadaaaaaaabaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaadaaaaaa
-aaaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpcaabaaaabaaaaaa
-egiocaaaadaaaaaaacaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
-pccabaaaaaaaaaaaegiocaaaadaaaaaaadaaaaaapgapbaaaaaaaaaaaegaobaaa
-abaaaaaadgaaaaafpccabaaaabaaaaaaegbobaaaabaaaaaadcaaaaaldccabaaa
-acaaaaaaegbabaaaacaaaaaaegiacaaaaaaaaaaaacaaaaaaogikcaaaaaaaaaaa
-acaaaaaaaaaaaaakhcaabaaaaaaaaaaaegiccaaaabaaaaaaaeaaaaaaegiccaia
-ebaaaaaaacaaaaaaapaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
-hccabaaaadaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaadoaaaaabejfdeheo
-giaaaaaaadaaaaaaaiaaaaaafaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apahaaaafjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapapaaaafpaaaaaa
-aaaaaaaaaaaaaaaaadaaaaaaacaaaaaaadadaaaafaepfdejfeejepeoaaedepem
-epfcaafeeffiedepepfceeaaepfdeheoieaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
-aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaheaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaabaaaaaaapaaaaaahkaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
-adamaaaahkaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaafdfgfpfa
-gphdgjhegjgpgoaaedepemepfcaafeeffiedepepfceeaakl"
+abaaadoaacaaoejaabaaoekaabaaookaabaaaaacaaaaahiaacaaoekaafaaaaad
+abaaahiaaaaaffiaafaaoekaaeaaaaaeaaaaaliaaeaakekaaaaaaaiaabaakeia
+aeaaaaaeaaaaahiaagaaoekaaaaakkiaaaaapeiaacaaaaadaaaaahiaaaaaoeia
+ahaaoekaafaaaaadaaaaahiaaaaaoeiaaiaappkaaiaaaaadaaaaaiiaaaaaoeia
+aaaaoeiaahaaaaacaaaaaiiaaaaappiaafaaaaadacaaahoaaaaappiaaaaaoeia
+abaaaaacaaaaadiaanaaoekaaeaaaaaeaaaaapiaaaaacejaaaaaeaiaadaaoeka
+afaaaaadabaaapiaaaaaffiaakaaoekaaeaaaaaeabaaapiaajaaoekaaaaaaaia
+abaaoeiaaeaaaaaeabaaapiaalaaoekaaaaakkiaabaaoeiaaeaaaaaeaaaaapia
+amaaoekaaaaappiaabaaoeiaaeaaaaaeaaaaadmaaaaappiaaaaaoekaaaaaoeia
+abaaaaacaaaaammaaaaaoeiaabaaaaacaaaaapoaabaaoejappppaaaafdeieefc
+neacaaaaeaaaabaalfaaaaaafjaaaaaeegiocaaaaaaaaaaaadaaaaaafjaaaaae
+egiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaabfaaaaaafjaaaaae
+egiocaaaadaaaaaaaeaaaaaafpaaaaadhcbabaaaaaaaaaaafpaaaaadpcbabaaa
+abaaaaaafpaaaaaddcbabaaaacaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaa
+gfaaaaadpccabaaaabaaaaaagfaaaaaddccabaaaacaaaaaagfaaaaadhccabaaa
+adaaaaaagiaaaaacacaaaaaadgaaaaafhcaabaaaaaaaaaaaegbcbaaaaaaaaaaa
+dgaaaaaficaabaaaaaaaaaaaabeaaaaaaaaaaaaaaaaaaaaipcaabaaaaaaaaaaa
+egaobaaaaaaaaaaaegiocaaaacaaaaaaahaaaaaadiaaaaaipcaabaaaabaaaaaa
+fgafbaaaaaaaaaaaegiocaaaadaaaaaaabaaaaaadcaaaaakpcaabaaaabaaaaaa
+egiocaaaadaaaaaaaaaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
+pcaabaaaabaaaaaaegiocaaaadaaaaaaacaaaaaakgakbaaaaaaaaaaaegaobaaa
+abaaaaaadcaaaaakpccabaaaaaaaaaaaegiocaaaadaaaaaaadaaaaaapgapbaaa
+aaaaaaaaegaobaaaabaaaaaadgaaaaafpccabaaaabaaaaaaegbobaaaabaaaaaa
+dcaaaaaldccabaaaacaaaaaaegbabaaaacaaaaaaegiacaaaaaaaaaaaacaaaaaa
+ogikcaaaaaaaaaaaacaaaaaadiaaaaajhcaabaaaaaaaaaaafgifcaaaabaaaaaa
+aeaaaaaaegiccaaaacaaaaaabbaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaa
+acaaaaaabaaaaaaaagiacaaaabaaaaaaaeaaaaaaegacbaaaaaaaaaaadcaaaaal
+hcaabaaaaaaaaaaaegiccaaaacaaaaaabcaaaaaakgikcaaaabaaaaaaaeaaaaaa
+egacbaaaaaaaaaaaaaaaaaaihcaabaaaaaaaaaaaegacbaaaaaaaaaaaegiccaaa
+acaaaaaabdaaaaaadiaaaaaihcaabaaaaaaaaaaaegacbaaaaaaaaaaapgipcaaa
+acaaaaaabeaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+adaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaadoaaaaabejfdeheogiaaaaaa
+adaaaaaaaiaaaaaafaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapahaaaa
+fjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaa
+aaaaaaaaadaaaaaaacaaaaaaadadaaaafaepfdejfeejepeoaaedepemepfcaafe
+effiedepepfceeaaepfdeheoieaaaaaaaeaaaaaaaiaaaaaagiaaaaaaaaaaaaaa
+abaaaaaaadaaaaaaaaaaaaaaapaaaaaaheaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
+abaaaaaaapaaaaaahkaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaaadamaaaa
+hkaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaafdfgfpfagphdgjhe
+gjgpgoaaedepemepfcaafeeffiedepepfceeaakl"
 }
 
 SubProgram "gles3 " {
@@ -603,6 +634,11 @@ uniform highp vec4 _TopTex_ST;
 uniform sampler2D _CameraDepthTexture;
 uniform highp float _InvFade;
 #line 349
+#line 91
+highp vec3 ObjSpaceViewDir( in highp vec4 v ) {
+    highp vec3 objSpaceCameraPos = ((_World2Object * vec4( _WorldSpaceCameraPos.xyz, 1.0)).xyz * unity_Scale.w);
+    return (objSpaceCameraPos - v.xyz);
+}
 #line 338
 v2f vert( in appdata_t v ) {
     v2f o;
@@ -610,7 +646,7 @@ v2f vert( in appdata_t v ) {
     o.vertex = (glstate_matrix_projection * ((glstate_matrix_modelview0 * vec4( 0.0, 0.0, 0.0, 1.0)) + vec4( v.vertex.x, v.vertex.y, v.vertex.z, 0.0)));
     o.color = v.color;
     o.texcoord = ((v.texcoord.xy * _TopTex_ST.xy) + _TopTex_ST.zw);
-    o.viewDir = normalize((_WorldSpaceCameraPos - vec3( (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)))));
+    o.viewDir = normalize(ObjSpaceViewDir( vec4( 0.0, 0.0, 0.0, 1.0)));
     #line 345
     return o;
 }
@@ -828,16 +864,18 @@ Bind "vertex" Vertex
 Bind "color" Color
 Bind "texcoord" TexCoord0
 Vector 13 [_WorldSpaceCameraPos]
-Matrix 9 [_Object2World]
-Vector 14 [_TopTex_ST]
+Matrix 9 [_World2Object]
+Vector 14 [unity_Scale]
+Vector 15 [_TopTex_ST]
 "!!ARBvp1.0
-# 20 ALU
-PARAM c[15] = { { 0 },
+# 22 ALU
+PARAM c[16] = { { 0, 1 },
 		state.matrix.modelview[0],
 		state.matrix.projection,
-		program.local[9..14] };
+		program.local[9..15] };
 TEMP R0;
 TEMP R1;
+TEMP R2;
 MOV R0.xyz, vertex.position;
 MOV R0.w, c[0].x;
 MOV R1.w, c[4];
@@ -845,21 +883,23 @@ MOV R1.z, c[3].w;
 MOV R1.y, c[2].w;
 MOV R1.x, c[1].w;
 ADD R1, R1, R0;
-MOV R0.z, c[11].w;
-MOV R0.x, c[9].w;
-MOV R0.y, c[10].w;
-ADD R0.xyz, -R0, c[13];
+MOV R0.w, c[0].y;
+MOV R0.xyz, c[13];
+DP4 R2.z, R0, c[11];
+DP4 R2.x, R0, c[9];
+DP4 R2.y, R0, c[10];
+MUL R0.xyz, R2, c[14].w;
 DP3 R0.w, R0, R0;
 RSQ R0.w, R0.w;
 DP4 result.position.w, R1, c[8];
 DP4 result.position.z, R1, c[7];
 DP4 result.position.y, R1, c[6];
 DP4 result.position.x, R1, c[5];
-MOV result.color, vertex.color;
 MUL result.texcoord[1].xyz, R0.w, R0;
-MAD result.texcoord[0].xy, vertex.texcoord[0], c[14], c[14].zwzw;
+MOV result.color, vertex.color;
+MAD result.texcoord[0].xy, vertex.texcoord[0], c[15], c[15].zwzw;
 END
-# 20 instructions, 2 R-regs
+# 22 instructions, 3 R-regs
 "
 }
 
@@ -871,34 +911,37 @@ Bind "texcoord" TexCoord0
 Matrix 0 [glstate_matrix_modelview0]
 Matrix 4 [glstate_matrix_projection]
 Vector 12 [_WorldSpaceCameraPos]
-Matrix 8 [_Object2World]
-Vector 13 [_TopTex_ST]
+Matrix 8 [_World2Object]
+Vector 13 [unity_Scale]
+Vector 14 [_TopTex_ST]
 "vs_2_0
-; 20 ALU
-def c14, 0.00000000, 0, 0, 0
+; 22 ALU
+def c15, 0.00000000, 1.00000000, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_texcoord0 v2
 mov r0.xyz, v0
-mov r0.w, c14.x
+mov r0.w, c15.x
 mov r1.w, c3
 mov r1.z, c2.w
 mov r1.y, c1.w
 mov r1.x, c0.w
 add r1, r1, r0
-mov r0.z, c10.w
-mov r0.x, c8.w
-mov r0.y, c9.w
-add r0.xyz, -r0, c12
+mov r0.w, c15.y
+mov r0.xyz, c12
+dp4 r2.z, r0, c10
+dp4 r2.x, r0, c8
+dp4 r2.y, r0, c9
+mul r0.xyz, r2, c13.w
 dp3 r0.w, r0, r0
 rsq r0.w, r0.w
 dp4 oPos.w, r1, c7
 dp4 oPos.z, r1, c6
 dp4 oPos.y, r1, c5
 dp4 oPos.x, r1, c4
-mov oD0, v1
 mul oT1.xyz, r0.w, r0
-mad oT0.xy, v2, c13, c13.zwzw
+mov oD0, v1
+mad oT0.xy, v2, c14, c14.zwzw
 "
 }
 
@@ -911,21 +954,22 @@ ConstBuffer "$Globals" 64 // 48 used size, 4 vars
 Vector 32 [_TopTex_ST] 4
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
-ConstBuffer "UnityPerDraw" 336 // 256 used size, 6 vars
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
 Matrix 64 [glstate_matrix_modelview0] 4
-Matrix 192 [_Object2World] 4
+Matrix 256 [_World2Object] 4
+Vector 320 [unity_Scale] 4
 ConstBuffer "UnityPerFrame" 208 // 64 used size, 4 vars
 Matrix 0 [glstate_matrix_projection] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
 BindCB "UnityPerFrame" 3
-// 14 instructions, 2 temp regs, 0 temp arrays:
-// ALU 10 float, 0 int, 0 uint
+// 18 instructions, 2 temp regs, 0 temp arrays:
+// ALU 14 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedokkhndmghkamkjnimhefciegehkbcnlpabaaaaaahaadaaaaadaaaaaa
+eefiecedkjdnhponcmjilkhabcpflglfgoamnahkabaaaaaaaeaeaaaaadaaaaaa
 cmaaaaaajmaaaaaaciabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapahaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -934,9 +978,9 @@ ieaaaaaaaeaaaaaaaiaaaaaagiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaa
 apaaaaaaheaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapaaaaaahkaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaacaaaaaaadamaaaahkaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaadaaaaaaahaiaaaafdfgfpfagphdgjhegjgpgoaaedepemepfcaafeef
-fiedepepfceeaaklfdeieefceaacaaaaeaaaabaajaaaaaaafjaaaaaeegiocaaa
+fiedepepfceeaaklfdeieefcneacaaaaeaaaabaalfaaaaaafjaaaaaeegiocaaa
 aaaaaaaaadaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaa
-acaaaaaabaaaaaaafjaaaaaeegiocaaaadaaaaaaaeaaaaaafpaaaaadhcbabaaa
+acaaaaaabfaaaaaafjaaaaaeegiocaaaadaaaaaaaeaaaaaafpaaaaadhcbabaaa
 aaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaaddcbabaaaacaaaaaaghaaaaae
 pccabaaaaaaaaaaaabaaaaaagfaaaaadpccabaaaabaaaaaagfaaaaaddccabaaa
 acaaaaaagfaaaaadhccabaaaadaaaaaagiaaaaacacaaaaaadgaaaaafhcaabaaa
@@ -948,11 +992,16 @@ egaobaaaabaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaadaaaaaaacaaaaaa
 kgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpccabaaaaaaaaaaaegiocaaa
 adaaaaaaadaaaaaapgapbaaaaaaaaaaaegaobaaaabaaaaaadgaaaaafpccabaaa
 abaaaaaaegbobaaaabaaaaaadcaaaaaldccabaaaacaaaaaaegbabaaaacaaaaaa
-egiacaaaaaaaaaaaacaaaaaaogikcaaaaaaaaaaaacaaaaaaaaaaaaakhcaabaaa
-aaaaaaaaegiccaaaabaaaaaaaeaaaaaaegiccaiaebaaaaaaacaaaaaaapaaaaaa
-baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaadaaaaaapgapbaaa
-aaaaaaaaegacbaaaaaaaaaaadoaaaaab"
+egiacaaaaaaaaaaaacaaaaaaogikcaaaaaaaaaaaacaaaaaadiaaaaajhcaabaaa
+aaaaaaaafgifcaaaabaaaaaaaeaaaaaaegiccaaaacaaaaaabbaaaaaadcaaaaal
+hcaabaaaaaaaaaaaegiccaaaacaaaaaabaaaaaaaagiacaaaabaaaaaaaeaaaaaa
+egacbaaaaaaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaaacaaaaaabcaaaaaa
+kgikcaaaabaaaaaaaeaaaaaaegacbaaaaaaaaaaaaaaaaaaihcaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegiccaaaacaaaaaabdaaaaaadiaaaaaihcaabaaaaaaaaaaa
+egacbaaaaaaaaaaapgipcaaaacaaaaaabeaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaadaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+doaaaaab"
 }
 
 SubProgram "gles " {
@@ -967,7 +1016,8 @@ varying highp vec2 xlv_TEXCOORD0;
 varying lowp vec4 xlv_COLOR;
 uniform highp vec4 _TopTex_ST;
 uniform highp mat4 glstate_matrix_projection;
-uniform highp mat4 _Object2World;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _World2Object;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord0;
@@ -980,10 +1030,13 @@ void main ()
   tmpvar_1.x = _glesVertex.x;
   tmpvar_1.y = _glesVertex.y;
   tmpvar_1.z = _glesVertex.z;
+  highp vec4 tmpvar_2;
+  tmpvar_2.w = 1.0;
+  tmpvar_2.xyz = _WorldSpaceCameraPos;
   gl_Position = (glstate_matrix_projection * ((glstate_matrix_modelview0 * vec4(0.0, 0.0, 0.0, 1.0)) + tmpvar_1));
   xlv_COLOR = _glesColor;
   xlv_TEXCOORD0 = ((_glesMultiTexCoord0.xy * _TopTex_ST.xy) + _TopTex_ST.zw);
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz));
+  xlv_TEXCOORD1 = normalize(((_World2Object * tmpvar_2).xyz * unity_Scale.w));
 }
 
 
@@ -1064,7 +1117,8 @@ varying highp vec2 xlv_TEXCOORD0;
 varying lowp vec4 xlv_COLOR;
 uniform highp vec4 _TopTex_ST;
 uniform highp mat4 glstate_matrix_projection;
-uniform highp mat4 _Object2World;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _World2Object;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord0;
@@ -1077,10 +1131,13 @@ void main ()
   tmpvar_1.x = _glesVertex.x;
   tmpvar_1.y = _glesVertex.y;
   tmpvar_1.z = _glesVertex.z;
+  highp vec4 tmpvar_2;
+  tmpvar_2.w = 1.0;
+  tmpvar_2.xyz = _WorldSpaceCameraPos;
   gl_Position = (glstate_matrix_projection * ((glstate_matrix_modelview0 * vec4(0.0, 0.0, 0.0, 1.0)) + tmpvar_1));
   xlv_COLOR = _glesColor;
   xlv_TEXCOORD0 = ((_glesMultiTexCoord0.xy * _TopTex_ST.xy) + _TopTex_ST.zw);
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz));
+  xlv_TEXCOORD1 = normalize(((_World2Object * tmpvar_2).xyz * unity_Scale.w));
 }
 
 
@@ -1157,33 +1214,35 @@ Bind "texcoord" TexCoord0
 Matrix 0 [glstate_matrix_modelview0]
 Matrix 4 [glstate_matrix_projection]
 Vector 12 [_WorldSpaceCameraPos]
-Matrix 8 [_Object2World]
-Vector 13 [_TopTex_ST]
+Matrix 8 [_World2Object]
+Vector 13 [unity_Scale]
+Vector 14 [_TopTex_ST]
 "agal_vs
-c14 0.0 0.0 0.0 0.0
+c15 0.0 1.0 0.0 0.0
 [bc]
 aaaaaaaaaaaaahacaaaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov r0.xyz, a0
-aaaaaaaaaaaaaiacaoaaaaaaabaaaaaaaaaaaaaaaaaaaaaa mov r0.w, c14.x
+aaaaaaaaaaaaaiacapaaaaaaabaaaaaaaaaaaaaaaaaaaaaa mov r0.w, c15.x
 aaaaaaaaabaaaiacadaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r1.w, c3
 aaaaaaaaabaaaeacacaaaappabaaaaaaaaaaaaaaaaaaaaaa mov r1.z, c2.w
 aaaaaaaaabaaacacabaaaappabaaaaaaaaaaaaaaaaaaaaaa mov r1.y, c1.w
 aaaaaaaaabaaabacaaaaaappabaaaaaaaaaaaaaaaaaaaaaa mov r1.x, c0.w
 abaaaaaaabaaapacabaaaaoeacaaaaaaaaaaaaoeacaaaaaa add r1, r1, r0
-aaaaaaaaaaaaaeacakaaaappabaaaaaaaaaaaaaaaaaaaaaa mov r0.z, c10.w
-aaaaaaaaaaaaabacaiaaaappabaaaaaaaaaaaaaaaaaaaaaa mov r0.x, c8.w
-aaaaaaaaaaaaacacajaaaappabaaaaaaaaaaaaaaaaaaaaaa mov r0.y, c9.w
-bfaaaaaaaaaaahacaaaaaakeacaaaaaaaaaaaaaaaaaaaaaa neg r0.xyz, r0.xyzz
-abaaaaaaaaaaahacaaaaaakeacaaaaaaamaaaaoeabaaaaaa add r0.xyz, r0.xyzz, c12
+aaaaaaaaaaaaaiacapaaaaffabaaaaaaaaaaaaaaaaaaaaaa mov r0.w, c15.y
+aaaaaaaaaaaaahacamaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r0.xyz, c12
+bdaaaaaaacaaaeacaaaaaaoeacaaaaaaakaaaaoeabaaaaaa dp4 r2.z, r0, c10
+bdaaaaaaacaaabacaaaaaaoeacaaaaaaaiaaaaoeabaaaaaa dp4 r2.x, r0, c8
+bdaaaaaaacaaacacaaaaaaoeacaaaaaaajaaaaoeabaaaaaa dp4 r2.y, r0, c9
+adaaaaaaaaaaahacacaaaakeacaaaaaaanaaaappabaaaaaa mul r0.xyz, r2.xyzz, c13.w
 bcaaaaaaaaaaaiacaaaaaakeacaaaaaaaaaaaakeacaaaaaa dp3 r0.w, r0.xyzz, r0.xyzz
 akaaaaaaaaaaaiacaaaaaappacaaaaaaaaaaaaaaaaaaaaaa rsq r0.w, r0.w
 bdaaaaaaaaaaaiadabaaaaoeacaaaaaaahaaaaoeabaaaaaa dp4 o0.w, r1, c7
 bdaaaaaaaaaaaeadabaaaaoeacaaaaaaagaaaaoeabaaaaaa dp4 o0.z, r1, c6
 bdaaaaaaaaaaacadabaaaaoeacaaaaaaafaaaaoeabaaaaaa dp4 o0.y, r1, c5
 bdaaaaaaaaaaabadabaaaaoeacaaaaaaaeaaaaoeabaaaaaa dp4 o0.x, r1, c4
-aaaaaaaaahaaapaeacaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov v7, a2
 adaaaaaaabaaahaeaaaaaappacaaaaaaaaaaaakeacaaaaaa mul v1.xyz, r0.w, r0.xyzz
-adaaaaaaaaaaadacadaaaaoeaaaaaaaaanaaaaoeabaaaaaa mul r0.xy, a3, c13
-abaaaaaaaaaaadaeaaaaaafeacaaaaaaanaaaaooabaaaaaa add v0.xy, r0.xyyy, c13.zwzw
+aaaaaaaaahaaapaeacaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov v7, a2
+adaaaaaaaaaaadacadaaaaoeaaaaaaaaaoaaaaoeabaaaaaa mul r0.xy, a3, c14
+abaaaaaaaaaaadaeaaaaaafeacaaaaaaaoaaaaooabaaaaaa add v0.xy, r0.xyyy, c14.zwzw
 aaaaaaaaaaaaamaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v0.zw, c0
 aaaaaaaaabaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v1.w, c0
 "
@@ -1198,61 +1257,69 @@ ConstBuffer "$Globals" 64 // 48 used size, 4 vars
 Vector 32 [_TopTex_ST] 4
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
-ConstBuffer "UnityPerDraw" 336 // 256 used size, 6 vars
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
 Matrix 64 [glstate_matrix_modelview0] 4
-Matrix 192 [_Object2World] 4
+Matrix 256 [_World2Object] 4
+Vector 320 [unity_Scale] 4
 ConstBuffer "UnityPerFrame" 208 // 64 used size, 4 vars
 Matrix 0 [glstate_matrix_projection] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
 BindCB "UnityPerFrame" 3
-// 14 instructions, 2 temp regs, 0 temp arrays:
-// ALU 10 float, 0 int, 0 uint
+// 18 instructions, 2 temp regs, 0 temp arrays:
+// ALU 14 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0_level_9_1
-eefiecedpenacaoflogoiikhfnjjkbfbdgkhmhgkabaaaaaabiafaaaaaeaaaaaa
-daaaaaaaneabaaaabmaeaaaaimaeaaaaebgpgodjjmabaaaajmabaaaaaaacpopp
-diabaaaageaaaaaaafaaceaaaaaagaaaaaaagaaaaaaaceaaabaagaaaaaaaacaa
+eefiecedjhmdlmaojedkgbealmpkaokmibiieogpabaaaaaapeafaaaaaeaaaaaa
+daaaaaaabmacaaaapiaeaaaagiafaaaaebgpgodjoeabaaaaoeabaaaaaaacpopp
+iaabaaaageaaaaaaafaaceaaaaaagaaaaaaagaaaaaaaceaaabaagaaaaaaaacaa
 abaaabaaaaaaaaaaabaaaeaaabaaacaaaaaaaaaaacaaahaaabaaadaaaaaaaaaa
-acaaapaaabaaaeaaaaaaaaaaadaaaaaaaeaaafaaaaaaaaaaaaaaaaaaaaacpopp
-fbaaaaafajaaapkaaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaabpaaaaacafaaaaia
+acaabaaaafaaaeaaaaaaaaaaadaaaaaaaeaaajaaaaaaaaaaaaaaaaaaaaacpopp
+fbaaaaafanaaapkaaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaabpaaaaacafaaaaia
 aaaaapjabpaaaaacafaaabiaabaaapjabpaaaaacafaaaciaacaaapjaaeaaaaae
-abaaadoaacaaoejaabaaoekaabaaookaabaaaaacaaaaahiaacaaoekaacaaaaad
-aaaaahiaaaaaoeiaaeaaoekbaiaaaaadaaaaaiiaaaaaoeiaaaaaoeiaahaaaaac
-aaaaaiiaaaaappiaafaaaaadacaaahoaaaaappiaaaaaoeiaabaaaaacaaaaadia
-ajaaoekaaeaaaaaeaaaaapiaaaaacejaaaaaeaiaadaaoekaafaaaaadabaaapia
-aaaaffiaagaaoekaaeaaaaaeabaaapiaafaaoekaaaaaaaiaabaaoeiaaeaaaaae
-abaaapiaahaaoekaaaaakkiaabaaoeiaaeaaaaaeaaaaapiaaiaaoekaaaaappia
-abaaoeiaaeaaaaaeaaaaadmaaaaappiaaaaaoekaaaaaoeiaabaaaaacaaaaamma
-aaaaoeiaabaaaaacaaaaapoaabaaoejappppaaaafdeieefceaacaaaaeaaaabaa
-jaaaaaaafjaaaaaeegiocaaaaaaaaaaaadaaaaaafjaaaaaeegiocaaaabaaaaaa
-afaaaaaafjaaaaaeegiocaaaacaaaaaabaaaaaaafjaaaaaeegiocaaaadaaaaaa
-aeaaaaaafpaaaaadhcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaad
-dcbabaaaacaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaadpccabaaa
-abaaaaaagfaaaaaddccabaaaacaaaaaagfaaaaadhccabaaaadaaaaaagiaaaaac
-acaaaaaadgaaaaafhcaabaaaaaaaaaaaegbcbaaaaaaaaaaadgaaaaaficaabaaa
-aaaaaaaaabeaaaaaaaaaaaaaaaaaaaaipcaabaaaaaaaaaaaegaobaaaaaaaaaaa
-egiocaaaacaaaaaaahaaaaaadiaaaaaipcaabaaaabaaaaaafgafbaaaaaaaaaaa
-egiocaaaadaaaaaaabaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaadaaaaaa
-aaaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpcaabaaaabaaaaaa
-egiocaaaadaaaaaaacaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
-pccabaaaaaaaaaaaegiocaaaadaaaaaaadaaaaaapgapbaaaaaaaaaaaegaobaaa
-abaaaaaadgaaaaafpccabaaaabaaaaaaegbobaaaabaaaaaadcaaaaaldccabaaa
-acaaaaaaegbabaaaacaaaaaaegiacaaaaaaaaaaaacaaaaaaogikcaaaaaaaaaaa
-acaaaaaaaaaaaaakhcaabaaaaaaaaaaaegiccaaaabaaaaaaaeaaaaaaegiccaia
-ebaaaaaaacaaaaaaapaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
-hccabaaaadaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaadoaaaaabejfdeheo
-giaaaaaaadaaaaaaaiaaaaaafaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apahaaaafjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapapaaaafpaaaaaa
-aaaaaaaaaaaaaaaaadaaaaaaacaaaaaaadadaaaafaepfdejfeejepeoaaedepem
-epfcaafeeffiedepepfceeaaepfdeheoieaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
-aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaheaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaabaaaaaaapaaaaaahkaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
-adamaaaahkaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaafdfgfpfa
-gphdgjhegjgpgoaaedepemepfcaafeeffiedepepfceeaakl"
+abaaadoaacaaoejaabaaoekaabaaookaabaaaaacaaaaahiaacaaoekaafaaaaad
+abaaahiaaaaaffiaafaaoekaaeaaaaaeaaaaaliaaeaakekaaaaaaaiaabaakeia
+aeaaaaaeaaaaahiaagaaoekaaaaakkiaaaaapeiaacaaaaadaaaaahiaaaaaoeia
+ahaaoekaafaaaaadaaaaahiaaaaaoeiaaiaappkaaiaaaaadaaaaaiiaaaaaoeia
+aaaaoeiaahaaaaacaaaaaiiaaaaappiaafaaaaadacaaahoaaaaappiaaaaaoeia
+abaaaaacaaaaadiaanaaoekaaeaaaaaeaaaaapiaaaaacejaaaaaeaiaadaaoeka
+afaaaaadabaaapiaaaaaffiaakaaoekaaeaaaaaeabaaapiaajaaoekaaaaaaaia
+abaaoeiaaeaaaaaeabaaapiaalaaoekaaaaakkiaabaaoeiaaeaaaaaeaaaaapia
+amaaoekaaaaappiaabaaoeiaaeaaaaaeaaaaadmaaaaappiaaaaaoekaaaaaoeia
+abaaaaacaaaaammaaaaaoeiaabaaaaacaaaaapoaabaaoejappppaaaafdeieefc
+neacaaaaeaaaabaalfaaaaaafjaaaaaeegiocaaaaaaaaaaaadaaaaaafjaaaaae
+egiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaabfaaaaaafjaaaaae
+egiocaaaadaaaaaaaeaaaaaafpaaaaadhcbabaaaaaaaaaaafpaaaaadpcbabaaa
+abaaaaaafpaaaaaddcbabaaaacaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaa
+gfaaaaadpccabaaaabaaaaaagfaaaaaddccabaaaacaaaaaagfaaaaadhccabaaa
+adaaaaaagiaaaaacacaaaaaadgaaaaafhcaabaaaaaaaaaaaegbcbaaaaaaaaaaa
+dgaaaaaficaabaaaaaaaaaaaabeaaaaaaaaaaaaaaaaaaaaipcaabaaaaaaaaaaa
+egaobaaaaaaaaaaaegiocaaaacaaaaaaahaaaaaadiaaaaaipcaabaaaabaaaaaa
+fgafbaaaaaaaaaaaegiocaaaadaaaaaaabaaaaaadcaaaaakpcaabaaaabaaaaaa
+egiocaaaadaaaaaaaaaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
+pcaabaaaabaaaaaaegiocaaaadaaaaaaacaaaaaakgakbaaaaaaaaaaaegaobaaa
+abaaaaaadcaaaaakpccabaaaaaaaaaaaegiocaaaadaaaaaaadaaaaaapgapbaaa
+aaaaaaaaegaobaaaabaaaaaadgaaaaafpccabaaaabaaaaaaegbobaaaabaaaaaa
+dcaaaaaldccabaaaacaaaaaaegbabaaaacaaaaaaegiacaaaaaaaaaaaacaaaaaa
+ogikcaaaaaaaaaaaacaaaaaadiaaaaajhcaabaaaaaaaaaaafgifcaaaabaaaaaa
+aeaaaaaaegiccaaaacaaaaaabbaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaa
+acaaaaaabaaaaaaaagiacaaaabaaaaaaaeaaaaaaegacbaaaaaaaaaaadcaaaaal
+hcaabaaaaaaaaaaaegiccaaaacaaaaaabcaaaaaakgikcaaaabaaaaaaaeaaaaaa
+egacbaaaaaaaaaaaaaaaaaaihcaabaaaaaaaaaaaegacbaaaaaaaaaaaegiccaaa
+acaaaaaabdaaaaaadiaaaaaihcaabaaaaaaaaaaaegacbaaaaaaaaaaapgipcaaa
+acaaaaaabeaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+adaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaadoaaaaabejfdeheogiaaaaaa
+adaaaaaaaiaaaaaafaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapahaaaa
+fjaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaa
+aaaaaaaaadaaaaaaacaaaaaaadadaaaafaepfdejfeejepeoaaedepemepfcaafe
+effiedepepfceeaaepfdeheoieaaaaaaaeaaaaaaaiaaaaaagiaaaaaaaaaaaaaa
+abaaaaaaadaaaaaaaaaaaaaaapaaaaaaheaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
+abaaaaaaapaaaaaahkaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaaadamaaaa
+hkaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaafdfgfpfagphdgjhe
+gjgpgoaaedepemepfcaafeeffiedepepfceeaakl"
 }
 
 SubProgram "gles3 " {
@@ -1401,6 +1468,11 @@ uniform highp vec4 _TopTex_ST;
 uniform sampler2D _CameraDepthTexture;
 uniform highp float _InvFade;
 #line 349
+#line 91
+highp vec3 ObjSpaceViewDir( in highp vec4 v ) {
+    highp vec3 objSpaceCameraPos = ((_World2Object * vec4( _WorldSpaceCameraPos.xyz, 1.0)).xyz * unity_Scale.w);
+    return (objSpaceCameraPos - v.xyz);
+}
 #line 338
 v2f vert( in appdata_t v ) {
     v2f o;
@@ -1408,7 +1480,7 @@ v2f vert( in appdata_t v ) {
     o.vertex = (glstate_matrix_projection * ((glstate_matrix_modelview0 * vec4( 0.0, 0.0, 0.0, 1.0)) + vec4( v.vertex.x, v.vertex.y, v.vertex.z, 0.0)));
     o.color = v.color;
     o.texcoord = ((v.texcoord.xy * _TopTex_ST.xy) + _TopTex_ST.zw);
-    o.viewDir = normalize((_WorldSpaceCameraPos - vec3( (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)))));
+    o.viewDir = normalize(ObjSpaceViewDir( vec4( 0.0, 0.0, 0.0, 1.0)));
     #line 345
     return o;
 }

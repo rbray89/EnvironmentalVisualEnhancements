@@ -16,12 +16,6 @@ namespace Clouds
         static bool Loaded = false;
         static KeyCode GUI_KEYCODE = KeyCode.N;
 
-        static ParticleEmitter cloudParticleEmitter;
-        static ParticleAnimator cloudParticleAnimator;
-        static ParticleRenderer cloudParticleRenderer;
-        static GameObject particleSystemGo;
-        static bool spawned = false;
-
         static bool useEditor = false;
         static bool AdvancedGUI = false;
         static Vector2 ScrollPosLayerList = Vector2.zero;
@@ -29,7 +23,6 @@ namespace Clouds
         static CloudGUI CloudGUI = new CloudGUI();
         static CelestialBody currentBody = null;
         static CelestialBody oldBody = null;
-        static int cloudUpdate = 0;
 
         private void loadCloudLayers(String configString)
         {
@@ -151,13 +144,13 @@ namespace Clouds
                     {
                         newNode.AddNode(bumpNode);
                     }
-                    ConfigNode shaderFloatNode = cloudLayer.ShaderFloats.GetNode("shader_floats");
-                    if (!CloudLayer.IsDefaultShaderFloat(cloudLayer.ShaderFloats))
+                    ConfigNode shaderFloatNode = cloudLayer.ScaledShaderFloats.GetNode("shader_floats");
+                    if (!CloudLayer.IsDefaultShaderFloat(cloudLayer.ScaledShaderFloats))
                     {
                         newNode.AddNode(shaderFloatNode);
                     }
-                    ConfigNode PQSShaderFloatNode = cloudLayer.PQSShaderFloats.GetNode("pqsShader_floats");
-                    if (!CloudLayer.IsDefaultShaderFloat(cloudLayer.PQSShaderFloats))
+                    ConfigNode PQSShaderFloatNode = cloudLayer.ShaderFloats.GetNode("pqsShader_floats");
+                    if (!CloudLayer.IsDefaultShaderFloat(cloudLayer.ShaderFloats))
                     {
                         newNode.AddNode(PQSShaderFloatNode);
                     }
@@ -167,334 +160,6 @@ namespace Clouds
             saveConfig.Save(configString);
         }
 
-        private void placePQS(float longitude, float latitude, float altitude, GameObject go)
-        {
-
-            UnityEngine.Object[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody));
-
-            CelestialBody currentBody = null;
-
-            foreach (CelestialBody cb in celestialBodies)
-            {
-                string name = cb.bodyName;
-                if (name == "Kerbin")
-                {
-                    currentBody = cb;
-                }
-            }
-
-            GameObject blockHolder = new GameObject();
-            blockHolder.name = "blockHolder";
-
-            GameObject block = go;
-            if (block == null)
-            {
-
-            }
-
-            block.transform.parent = blockHolder.transform;
-
-            foreach (Transform aTransform in currentBody.transform)
-            {
-                if (aTransform.name == currentBody.transform.name)
-                    blockHolder.transform.parent = aTransform;
-            }
-            PQSCity blockScript = blockHolder.AddComponent<PQSCity>();
-            blockScript.debugOrientated = false;
-            blockScript.frameDelta = 1;
-            blockScript.lod = new PQSCity.LODRange[1];
-            blockScript.lod[0] = new PQSCity.LODRange();
-            blockScript.lod[0].visibleRange = 20000;
-            blockScript.lod[0].renderers = new GameObject[1];
-            blockScript.lod[0].renderers[0] = block;
-            blockScript.lod[0].objects = new GameObject[0];
-            blockScript.modEnabled = true;
-            blockScript.order = 100;
-            blockScript.reorientFinalAngle = -105;
-            blockScript.reorientInitialUp = Vector3.up;
-            blockScript.reorientToSphere = true;
-            //railScript.repositionRadial = (GameObject.Find("Runway").transform.position - currentBody.transform.position) + Vector3.up * 50 + Vector3.right * -350;
-            blockScript.repositionRadial = QuaternionD.AngleAxis(longitude, Vector3d.down) * QuaternionD.AngleAxis(latitude, Vector3d.forward) * Vector3d.right;
-            blockScript.repositionRadiusOffset = altitude;
-            blockScript.repositionToSphere = true;
-            blockScript.requirements = PQS.ModiferRequirements.Default;
-            blockScript.sphere = currentBody.pqsController;
-
-            blockScript.RebuildSphere();
-        }
-
-        protected void spawnVolumeClouds()
-        {
-            if (!spawned)
-            {
-                float longitude = -74.559f;
-                float latitude = -0.0975f;
-                //particleSystemGo = GenerateCloudMesh();
-                particleSystemGo = new GameObject();
-                particleSystemGo.AddComponent<MeshFilter>();
-
-                if (MapView.MapIsEnabled)
-                {
-                    currentBody = OverlayMgr.GetMapBody();
-                }
-                else
-                {
-                    currentBody = FlightGlobals.currentMainBody;
-                }
-
-                particleSystemGo.transform.localScale = Vector3.one * 5;
-                /*                Material test = new Material(Shader.Find("Transparent/Diffuse"));
-                                Utils.Log("2");
-                                test.color = new Color(0, 0, 0, 0f);
-                                particleSystemGo.renderer.material = test;*/
-                particleSystemGo.layer = 15;
-                
-                placePQS(longitude, latitude, 4000f, particleSystemGo);
-
-                cloudParticleEmitter = (ParticleEmitter)particleSystemGo.AddComponent("MeshParticleEmitter");
-                cloudParticleEmitter.minSize = 1000;
-                cloudParticleEmitter.maxSize = 1600;
-                cloudParticleEmitter.minEnergy = 100;
-                cloudParticleEmitter.maxEnergy = 200;
-                cloudParticleEmitter.minEmission = 8;
-                cloudParticleEmitter.maxEmission = 12;
-                cloudParticleEmitter.localVelocity = new Vector3(.05f, .05f, .05f);
-                cloudParticleEmitter.rndVelocity = new Vector3(.5f, .5f, .5f);
-                cloudParticleEmitter.rndAngularVelocity = 3f;
-                cloudParticleEmitter.rndRotation = true;
-                cloudParticleEmitter.useWorldSpace = false;
-                
-
-                cloudParticleAnimator = (ParticleAnimator)particleSystemGo.AddComponent<ParticleAnimator>();
-                cloudParticleAnimator.sizeGrow = -.0025f;
-                cloudParticleAnimator.colorAnimation = new Color[5] { 
-                    new Color(1, 1, 1, 0), 
-                    new Color(1, 1, 1, 1), 
-                    new Color(1, 1, 1, 1), 
-                    new Color(1, 1, 1, 1), 
-                    new Color(1, 1, 1, 0) };
-
-                cloudParticleRenderer = particleSystemGo.AddComponent<ParticleRenderer>();
-                //cloudParticleRenderer.particleRenderMode = ParticleRenderMode.SortedBillboard;
-                cloudParticleRenderer.particleRenderMode = ParticleRenderMode.Stretch;
-                cloudParticleRenderer.receiveShadows = false;
-                cloudParticleRenderer.castShadows = false;
-                cloudParticleRenderer.cameraVelocityScale = 0;
-                cloudParticleRenderer.lengthScale = 1;
-                cloudParticleRenderer.velocityScale = 0;
-                cloudParticleRenderer.maxParticleSize = 50;
-                
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-CloudParticle.shader"));
-                OverlayMgr.Log("reading stream...");
-
-                Material cloudMaterial = new Material(shaderStreamReader.ReadToEnd());
-                cloudMaterial.mainTexture = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle", false);
-                cloudMaterial.SetTexture("_BumpMap", GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particleNormal", true));
-
-                //cloudMaterial.color = new Color(1, 1, 1, .80f);
-                cloudParticleRenderer.material = cloudMaterial;
-
-                spawned = true;
-//                AssignLayerCloudMesh(new Vector3((longitude + 180f) / 360f, (latitude + 180f) / 360f, 4000f + (float)currentBody.pqsController.radius));
-                CloudLayer.Log("making particles");
-            }
-
-        }
-
-        List<Vector3> GenerateCloud(Vector3 location)
-        {
-            List<Vector3> verticiesList = new List<Vector3>();
-            for (int v = 0; v < 6; v++)
-            {
-                Vector3 start = location + new Vector3(UnityEngine.Random.Range(-50, 50), UnityEngine.Random.Range(-5f, 5f), UnityEngine.Random.Range(-50, 50));
-                for (int i = 0; i < 5; i++)
-                {
-                    Vector3 place = new Vector3(UnityEngine.Random.Range(-20, 20), UnityEngine.Random.Range(-2.5f, 2.5f), UnityEngine.Random.Range(-20, 20));
-                    for (int n = 0; n < 3; n++)
-                    {
-                        Vector3 dir = new Vector3(UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(-.2f, .2f), UnityEngine.Random.Range(-1, 1));
-                        verticiesList.Add(start + place + (dir * UnityEngine.Random.Range(10, 20)));
-                        //   Utils.Log("setting up verticies " + i);
-                    }
-                    /*
-                    for (int l = 0; l < 7; l++)
-                    {
-                        Vector3 expand = new Vector3(place.x, place.y, place.z);
-                        expand.Scale(new Vector3(UnityEngine.Random.Range(2, 5), UnityEngine.Random.Range(1f, 1f), UnityEngine.Random.Range(2, 5)));
-                        for (int n = 0; n < 5; n++)
-                        {
-                            Vector3 dir = new Vector3(UnityEngine.Random.Range(-1, 1), UnityEngine.Random.Range(-.2f, .2f), UnityEngine.Random.Range(-1, 1));
-                            verticiesList.Add(start + expand + (dir * UnityEngine.Random.Range(5, 10)));
-                            Utils.Log("setting up verticies " + i);
-                        }
-                    }*/
-                }
-            }
-            return verticiesList;
-        }
-
-        private GameObject GenerateCloudMesh()
-        {
-            GameObject cloudObject = new GameObject();
-            Mesh mesh = cloudObject.AddComponent<MeshFilter>().mesh;
-            //var mr = cloudObject.AddComponent<MeshRenderer>();
-
-            OverlayMgr.Log("setting up verticies");
-
-            List<Vector3> verticiesList = new List<Vector3>();
-            for (int i = 0; i < 18; i++)
-            {
-                verticiesList.AddRange(GenerateCloud(new Vector3(UnityEngine.Random.Range(-500, 500), UnityEngine.Random.Range(-2.5f, 2.5f), UnityEngine.Random.Range(-500, 500))));
-            }
-
-            Vector3[] vertices = verticiesList.ToArray();
-            int nbFaces = vertices.Length;
-            int nbTriangles = (int)Math.Ceiling(nbFaces / 3.0); ;
-            int nbIndexes = nbTriangles * 3;
-
-            int[] triangles = new int[nbIndexes];
-            //Utils.Log("setting up triangles " + nbTriangles);
-
-            for (int i = 0; i < nbIndexes; i += 3)
-            {
-                triangles[i + 0] = i + 0;
-                triangles[i + 1] = i + 1;
-                triangles[i + 2] = i + 2;
-                //    Utils.Log("setting up triangle "+i);
-            }
-
-            int leftover = nbFaces % 3;
-            if (leftover == 2)
-            {
-                //    Utils.Log("leftover2 " + nbIndexes);
-                triangles[nbIndexes - 2] = nbFaces - 3;
-                triangles[nbIndexes - 1] = nbFaces - 2;
-            }
-            else if (leftover == 1)
-            {
-                //    Utils.Log("leftover1 " + nbIndexes);
-                triangles[nbIndexes - 1] = nbFaces - 3;
-            }
-            //Utils.Log("finished triangle gen.");
-
-            mesh.vertices = vertices;
-            mesh.triangles = triangles;
-
-            //mr.renderer.sharedMaterial = overlayMaterial;
-
-            //mr.castShadows = false;
-            //mr.receiveShadows = false;
-            //mr.enabled = true;
-            OverlayMgr.Log("generated Mesh");
-            return cloudObject;
-        }
-/*
-        private void AssignLayerCloudMesh(Vector3 location)
-        {
-            if (spawned && particleSystemGo != null && currentBody != null && CloudLayer.BodyDatabase.ContainsKey(currentBody.name))
-            {
-                Mesh mesh = particleSystemGo.GetComponent<MeshFilter>().mesh;
-
-                Utils.Log("setting up verticies");
-                Texture cloudLayer = CloudLayer.BodyDatabase[currentBody.name][0].MainTexture.Texture;
-                Vector2 offset = CloudLayer.BodyDatabase[currentBody.name][0].MainTexture.Offset;
-                List<Vector3> verticiesList = new List<Vector3>();
-                float cirumference = (float)(2*Math.PI*location.z);
-                Utils.Log("circumference: " + cirumference.ToString());
-                Utils.Log("location.X: " + location.x.ToString());
-                Utils.Log("location.Y: " + location.y.ToString());
-                Utils.Log("offset.X: " + offset.x.ToString());
-                Utils.Log("offset.Y: " + offset.y.ToString());
-                float x=0;
-                float y=0;
-
-                float u=0;
-                float v=0;
-                for (int radius = 0, c = 1; radius < 2820; radius += 30, c += 2)
-                {
-                    for (int d = 0; d < c; d++)
-                    {
-                        float rads = (float)((2 * Math.PI * d) / c);
-                        x = (float)(radius * Math.Cos(rads));
-                        y = (float)(radius * Math.Sin(rads));
-
-                        u = offset.x + location.x + (x / cirumference) - .25f;
-                        v = offset.y + location.y + (y / cirumference);
-                        while (u > 1)
-                        {
-                            u -= 1;
-                        }
-                        while (u < 0)
-                        {
-                            u += 1;
-                        }
-                        while (v > 1)
-                        {
-                            v -= 1;
-                        }
-                        while (v < 0)
-                        {
-                            v += 1;
-                        }
-                        if (cloudLayer.GetPixelBilinear(u, v).a > .05)
-                        {
-                            float z = UnityEngine.Random.Range(-10, 10);
-                            verticiesList.Add(new Vector3(x, z, y));
-                        }
-                    }
-                }
-                if (verticiesList.Count >= 3)
-                {
-                    Utils.Log("X " + x.ToString());
-                    Utils.Log("Y " + y.ToString());
-                    Utils.Log("U " + u.ToString());
-                    Utils.Log("V " + v.ToString());
-                    Utils.Log("alpha " + cloudLayer.GetPixelBilinear(u, v).a.ToString());
-                    Vector3[] vertices = verticiesList.ToArray();
-                    int nbFaces = vertices.Length;
-                    int nbTriangles = (int)Math.Ceiling(nbFaces / 3.0); ;
-                    int nbIndexes = nbTriangles * 3;
-                    Utils.Log("nb cloud verticies " + nbFaces);
-                    int[] triangles = new int[nbIndexes];
-                    //Utils.Log("setting up triangles " + nbTriangles);
-
-                    for (int i = 0; i < nbIndexes; i += 3)
-                    {
-                        triangles[i + 0] = i + 0;
-                        triangles[i + 1] = i + 1;
-                        triangles[i + 2] = i + 2;
-                        //Utils.Log("setting up triangle "+i);
-                    }
-
-                    triangles[nbIndexes - 3] = nbFaces - 3;
-                    triangles[nbIndexes - 2] = nbFaces - 2;
-                    triangles[nbIndexes - 1] = nbFaces - 1;
-
-                    //Utils.Log("finished triangle gen.");
-
-                    mesh.vertices = vertices;
-                    mesh.triangles = triangles;
-
-                    //mr.renderer.sharedMaterial = overlayMaterial;
-
-                    //mr.castShadows = false;
-                    //mr.receiveShadows = false;
-                    //mr.enabled = true;
-                    Utils.Log("generated Mesh");
-                    cloudParticleEmitter.enabled = true;
-                    cloudParticleEmitter.emit = true;
-                    cloudParticleEmitter.Simulate(50);
-                }
-                else
-                {
-                    cloudParticleEmitter.enabled = false;
-                    cloudParticleEmitter.emit = false;
-                    cloudParticleEmitter.ClearParticles();
-                }
-            }
-        }
-*/
         protected void Awake()
         {
             if (HighLogic.LoadedScene == GameScenes.MAINMENU && !Loaded)
@@ -527,9 +192,12 @@ namespace Clouds
             }
             if (HighLogic.LoadedScene == GameScenes.FLIGHT )
             {
-                foreach(CloudLayer cl in CloudLayer.BodyDatabase[currentBody.name])
+                if (CloudLayer.BodyDatabase.ContainsKey(FlightGlobals.currentMainBody.name))
                 {
-                    cl.SpawnParticleClouds(FlightGlobals.ActiveVessel.findWorldCenterOfMass());
+                    foreach (CloudLayer cl in CloudLayer.BodyDatabase[FlightGlobals.currentMainBody.name])
+                    {
+                        cl.SpawnParticleClouds(FlightGlobals.ActiveVessel.findWorldCenterOfMass());
+                    }
                 }
             }
         }
@@ -663,8 +331,8 @@ namespace Clouds
                             CloudGUI.BumpTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].BumpTexture);
                             CloudGUI.Color.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Color);
                             CloudGUI.Altitude.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Altitude);
+                            CloudGUI.ScaledShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ScaledShaderFloats);
                             CloudGUI.ShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ShaderFloats);
-                            CloudGUI.PQSShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].PQSShaderFloats);
                         }
                     }
 
@@ -687,9 +355,9 @@ namespace Clouds
                     gs.alignment = TextAnchor.MiddleRight;
                     if (AdvancedGUI)
                     {
-                        int advancedNextLine = HandleAdvancedGUI(CloudGUI.ShaderFloats, 50, _mainWindowRect.width / 2);
+                        int advancedNextLine = HandleAdvancedGUI(CloudGUI.ScaledShaderFloats, 50, _mainWindowRect.width / 2);
                         GUI.Label(new Rect((_mainWindowRect.width / 2) + 10, advancedNextLine, itemFullWidth, 25), "PQS Settings:");
-                        HandleAdvancedGUI(CloudGUI.PQSShaderFloats, advancedNextLine + 30, _mainWindowRect.width / 2);
+                        HandleAdvancedGUI(CloudGUI.ShaderFloats, advancedNextLine + 30, _mainWindowRect.width / 2);
                     }
 
                     nextLine = HandleAltitudeGUI(CloudGUI.Altitude, nextLine);
@@ -1270,8 +938,8 @@ namespace Clouds
         public TextureSetGUI BumpTexture = new TextureSetGUI();
         public ColorSetGUI Color = new ColorSetGUI();
         public AltitudeSetGUI Altitude = new AltitudeSetGUI();
+        public ShaderFloatsGUI ScaledShaderFloats = new ShaderFloatsGUI();
         public ShaderFloatsGUI ShaderFloats = new ShaderFloatsGUI();
-        public ShaderFloatsGUI PQSShaderFloats = new ShaderFloatsGUI();
 
         internal bool IsValid()
         {
@@ -1280,8 +948,8 @@ namespace Clouds
                 BumpTexture.IsValid() &&
                 Color.IsValid() &&
                 Altitude.IsValid() &&
-                ShaderFloats.IsValid() &&
-                PQSShaderFloats.IsValid())
+                ScaledShaderFloats.IsValid() &&
+                ShaderFloats.IsValid())
             {
                 return true;
             }
