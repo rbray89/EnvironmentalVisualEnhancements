@@ -16,6 +16,9 @@ namespace Clouds
         public static List<CloudLayer> Layers = new List<CloudLayer>();
         private static Shader GlobalCloudShader;
         private static Shader GlobalCloudParticleShader;
+
+        private static System.Random Random = new System.Random();
+        
         private Material ScaledCloudMaterial;
         private Material CloudMaterial;
         private Material CloudParticleMaterial;
@@ -290,14 +293,19 @@ namespace Clouds
             Vector3 intendedPoint = this.CloudOverlay.Transform.worldToLocalMatrix.MultiplyPoint3x4(WorldPos);
                 intendedPoint.Normalize();
                 intendedPoint *= CloudOverlay.Radius;
-            if (particle == null || Vector3.Distance(particle.transform.localPosition, intendedPoint) > 1000)
+            if (particle == null || Vector3.Distance(particle.transform.localPosition, intendedPoint) > 400)
             {
                 Log("Creating particle");
                 particle = new GameObject();
-                Quad.Create(particle, 1000);
+                Quad.Create(particle, 4000);
                 Log("Created Particle...");
                 particle.transform.parent = this.CloudOverlay.Transform;
                 particle.transform.localPosition = intendedPoint;
+                float x = 360f*(float)Random.NextDouble();
+                float y = 360f*(float)Random.NextDouble();
+                float z = 360f*(float)Random.NextDouble();
+
+                particle.transform.localRotation = Quaternion.Euler(x, y, z);
                 particle.transform.localScale = Vector3.one;
                 particle.layer = OverlayMgr.MACRO_LAYER;
                 Log("updated transform");
@@ -305,12 +313,18 @@ namespace Clouds
                 var mr = particle.AddComponent<MeshRenderer>();
                 mr.sharedMaterial = new Material(GlobalCloudParticleShader);// Shader.Find("KSP/Diffuse"));
 
-                mr.sharedMaterial.SetTexture("_TopTex", GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/1", false));
-                mr.sharedMaterial.SetTexture("_BotTex", GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/2", false));
-                mr.sharedMaterial.SetTexture("_LeftTex", GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/3", false));
-                mr.sharedMaterial.SetTexture("_RightTex", GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/4", false));
-                mr.sharedMaterial.SetTexture("_FrontTex", GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/5", false));
-                mr.sharedMaterial.SetTexture("_BackTex", GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/6", false));
+                Texture2D tex1 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/3", false);
+                Texture2D tex2 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/5", false);
+                Texture2D tex3 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/6", false);
+
+                tex1.wrapMode = TextureWrapMode.Clamp;
+                tex2.wrapMode = TextureWrapMode.Clamp;
+                tex3.wrapMode = TextureWrapMode.Clamp;
+
+                mr.sharedMaterial.SetTexture("_TopTex", tex1);
+                mr.sharedMaterial.SetTexture("_LeftTex", tex2);
+                mr.sharedMaterial.SetTexture("_FrontTex", tex3);
+                
                 Log("Added Material");
                 mr.castShadows = false;
                 mr.receiveShadows = false;
