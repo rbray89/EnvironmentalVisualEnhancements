@@ -540,7 +540,7 @@ namespace Clouds
                 texFieldGS.focused.textColor = errorColor;
             }
             String sAltitude = GUI.TextField(new Rect(80, y, 50, 25), altitude.AltitudeS, texFieldGS);
-            float fAltitude = GUI.HorizontalSlider(new Rect(135, y + 5, 115, 25), altitude.AltitudeF, 0, 25000);
+            float fAltitude = GUI.HorizontalSlider(new Rect(135, y + 5, 115, 25), altitude.AltitudeF, 0, 22000);
             altitude.Update(fAltitude, sAltitude);
             return y + 30;
         }

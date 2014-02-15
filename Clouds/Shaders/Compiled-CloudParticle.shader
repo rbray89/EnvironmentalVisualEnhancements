@@ -11,7 +11,7 @@ Category {
 	Lighting On
 	ZWrite Off
 	Cull Off
-	Blend One OneMinusSrcColor
+	Blend OneMinusDstColor One
 	Tags { 
 	"Queue"="Transparent" 
 	"IgnoreProjector"="True" 
@@ -23,19 +23,20 @@ Category {
 		
 			Program "vp" {
 // Vertex combos: 1
-//   opengl - ALU: 68 to 68
-//   d3d9 - ALU: 68 to 68
+//   opengl - ALU: 67 to 67
+//   d3d9 - ALU: 66 to 66
 //   d3d11 - ALU: 37 to 37, TEX: 0 to 0, FLOW: 1 to 1
 //   d3d11_9x - ALU: 37 to 37, TEX: 0 to 0, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { }
 Bind "vertex" Vertex
+Bind "color" Color
 Bind "texcoord" TexCoord0
 Vector 13 [_WorldSpaceCameraPos]
 Matrix 9 [_World2Object]
 Vector 14 [unity_Scale]
 "!!ARBvp1.0
-# 68 ALU
+# 67 ALU
 PARAM c[15] = { { 0, 1, 2, 0.5 },
 		state.matrix.modelview[0],
 		state.matrix.projection,
@@ -80,16 +81,14 @@ MOV R1.xyz, c[0].x;
 DP4 R4.y, R1, c[2];
 DP4 R4.x, R1, c[1];
 ADD R2.xy, -R4, R2;
+SLT R2.w, -R3.y, c[0].x;
+SLT R2.z, c[0].x, -R3.y;
+ADD R2.z, R2, -R2.w;
 ADD result.texcoord[1].xy, R2, c[0].w;
-SLT R2.y, -R3, c[0].x;
-SLT R2.x, c[0], -R3.y;
-ADD R2.x, R2, -R2.y;
-SLT R2.z, c[0].x, c[0].x;
-ADD R2.y, R2.z, -R2.z;
-MUL R2.z, R0, R2.x;
-MUL R4.z, R3.x, R2;
-MUL R2.y, R2.x, R2;
-MAD R2.y, R3.z, R2, R4.z;
+MUL R2.x, R3.w, R2.z;
+MUL R2.y, R0.z, R2.z;
+MUL R4.z, R3, R2.x;
+MAD R2.y, R3.x, R2, R4.z;
 MOV R2.xzw, R0.xyyw;
 DP4 R4.w, R2, c[2];
 SLT R4.z, c[0].x, -R3;
@@ -114,14 +113,16 @@ DP4 result.position.z, R1, c[7];
 DP4 result.position.y, R1, c[6];
 DP4 result.position.x, R1, c[5];
 MUL result.texcoord[0].xyz, R3, R3;
+MOV result.color, vertex.color;
 END
-# 68 instructions, 6 R-regs
+# 67 instructions, 6 R-regs
 "
 }
 
 SubProgram "d3d9 " {
 Keywords { }
 Bind "vertex" Vertex
+Bind "color" Color
 Bind "texcoord" TexCoord0
 Matrix 0 [glstate_matrix_modelview0]
 Matrix 4 [glstate_matrix_projection]
@@ -129,11 +130,12 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 8 [_World2Object]
 Vector 13 [unity_Scale]
 "vs_2_0
-; 68 ALU
+; 66 ALU
 def c14, 0.00000000, 1.00000000, -0.00000000, 0.50000000
 def c15, 2.00000000, -1.00000000, 0, 0
 dcl_position0 v0
-dcl_texcoord0 v1
+dcl_color0 v1
+dcl_texcoord0 v2
 mov r1.xyz, c12
 mov r1.w, c14.y
 dp4 r0.z, r1, c10
@@ -144,7 +146,7 @@ add r0.xyz, r0, c14.z
 dp3 r0.w, r0, r0
 rsq r0.w, r0.w
 mul r3.xyz, r0.w, r0
-mad r0.xy, v1, c15.x, c15.y
+mad r0.xy, v2, c15.x, c15.y
 slt r1.x, r0, -r0
 slt r1.y, r0, -r0
 slt r0.z, r3.x, -r3.x
@@ -167,17 +169,14 @@ mov r1.xyz, c14.x
 dp4 r4.y, r1, c1
 dp4 r4.x, r1, c0
 add r2.xy, -r4, r2
+slt r2.w, -r3.y, r3.y
+slt r2.z, r3.y, -r3.y
+sub r2.z, r2, r2.w
 add oT1.xy, r2, c14.w
-slt r2.y, -r3, r3
-slt r2.x, r3.y, -r3.y
-sub r2.x, r2, r2.y
-slt r2.z, c14.x, -c14.x
-slt r2.y, c14.z, -c14.z
-sub r2.y, r2, r2.z
-mul r2.z, r0, r2.x
-mul r4.z, r3.x, r2
-mul r2.y, r2.x, r2
-mad r2.y, r3.z, r2, r4.z
+mul r2.x, r3.w, r2.z
+mul r2.y, r0.z, r2.z
+mul r4.z, r3, r2.x
+mad r2.y, r3.x, r2, r4.z
 mov r2.xzw, r0.xyyw
 dp4 r4.w, r2, c1
 slt r4.z, r3, -r3
@@ -202,6 +201,7 @@ dp4 oPos.z, r1, c6
 dp4 oPos.y, r1, c5
 dp4 oPos.x, r1, c4
 mul oT0.xyz, r3, r3
+mov oD0, v1
 "
 }
 
@@ -221,71 +221,72 @@ Matrix 0 [glstate_matrix_projection] 4
 BindCB "UnityPerCamera" 0
 BindCB "UnityPerDraw" 1
 BindCB "UnityPerFrame" 2
-// 40 instructions, 5 temp regs, 0 temp arrays:
+// 41 instructions, 5 temp regs, 0 temp arrays:
 // ALU 33 float, 4 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedhhalbbimmdnlcehpdfncekbeejadgjngabaaaaaahaahaaaaadaaaaaa
+eefiecedakelbdncebbiibdojdlmplhlhenkhfnlabaaaaaajmahaaaaadaaaaaa
 cmaaaaaajmaaaaaafiabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaabaaaaaaapaaaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
 adadaaaafaepfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaepfdeheo
 leaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaa
-apaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapapaaaakkaaaaaa
+apaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapaaaaaakkaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaacaaaaaaahaiaaaakkaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaadaaaaaaadamaaaakkaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 amadaaaakkaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaafdfgfpfa
-epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcbaagaaaa
-eaaaabaaieabaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaa
+epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcdmagaaaa
+eaaaabaaipabaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaa
 abaaaaaabfaaaaaafjaaaaaeegiocaaaacaaaaaaaeaaaaaafpaaaaadpcbabaaa
-aaaaaaaafpaaaaaddcbabaaaacaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaa
-gfaaaaadhccabaaaacaaaaaagfaaaaaddccabaaaadaaaaaagfaaaaadmccabaaa
-adaaaaaagfaaaaaddccabaaaaeaaaaaagiaaaaacafaaaaaadcaaaaakpcaabaaa
-aaaaaaaaegiocaaaabaaaaaaahaaaaaapgbpbaaaaaaaaaaaegbobaaaaaaaaaaa
-diaaaaaipcaabaaaabaaaaaafgafbaaaaaaaaaaaegiocaaaacaaaaaaabaaaaaa
-dcaaaaakpcaabaaaabaaaaaaegiocaaaacaaaaaaaaaaaaaaagaabaaaaaaaaaaa
-egaobaaaabaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaacaaaaaaacaaaaaa
-kgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpccabaaaaaaaaaaaegiocaaa
-acaaaaaaadaaaaaapgapbaaaaaaaaaaaegaobaaaabaaaaaadiaaaaajpcaabaaa
-aaaaaaaafgifcaaaaaaaaaaaaeaaaaaacgibcaaaabaaaaaabbaaaaaadcaaaaal
-pcaabaaaaaaaaaaacgibcaaaabaaaaaabaaaaaaaagiacaaaaaaaaaaaaeaaaaaa
-egaobaaaaaaaaaaadcaaaaalpcaabaaaaaaaaaaacgibcaaaabaaaaaabcaaaaaa
-kgikcaaaaaaaaaaaaeaaaaaaegaobaaaaaaaaaaaaaaaaaaipcaabaaaaaaaaaaa
-egaobaaaaaaaaaaacgibcaaaabaaaaaabdaaaaaadiaaaaaipcaabaaaaaaaaaaa
-egaobaaaaaaaaaaapgipcaaaabaaaaaabeaaaaaabaaaaaahbcaabaaaabaaaaaa
-igadbaaaaaaaaaaaigadbaaaaaaaaaaaeeaaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaagaabaaaabaaaaaa
-diaaaaahhccabaaaacaaaaaalgambaaaaaaaaaaalgambaaaaaaaaaaadbaaaaal
-pcaabaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadgalbaia
-ebaaaaaaaaaaaaaadbaaaaalpcaabaaaacaaaaaadgalbaiaebaaaaaaaaaaaaaa
-aceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaboaaaaaipcaabaaaabaaaaaa
-egaobaiaebaaaaaaabaaaaaaegaobaaaacaaaaaadcaaaaappcaabaaaacaaaaaa
-agbfbaaaacaaaaaaaceaaaaaaaaaaaeaaaaaaaeaaaaaaaeaaaaaaaeaaceaaaaa
-aaaaialpaaaaialpaaaaialpaaaaialpdbaaaaakpcaabaaaadaaaaaaaceaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafgahbaaaacaaaaaadbaaaaakpcaabaaa
-aeaaaaaafgahbaaaacaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-boaaaaaipcaabaaaadaaaaaaegaobaiaebaaaaaaadaaaaaaegaobaaaaeaaaaaa
-cgaaaaaiaanaaaaapcaabaaaaeaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaa
-cgaaaaaiaanaaaaabcaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaadaaaaaa
-claaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaclaaaaafpcaabaaaadaaaaaa
-egaobaaaaeaaaaaadiaaaaahpcaabaaaadaaaaaaegaobaaaaaaaaaaaegaobaaa
-adaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaaaaaaaaaa
-bkaabaaaadaaaaaadiaaaaaigcaabaaaaaaaaaaafgafbaaaacaaaaaaagibcaaa
-abaaaaaaaeaaaaaadcaaaaakgcaabaaaaaaaaaaaagibcaaaabaaaaaaafaaaaaa
-pgapbaaaadaaaaaafgagbaaaaaaaaaaaaaaaaaahicaabaaaaaaaaaaackaabaaa
-adaaaaaaakaabaaaadaaaaaadcaaaaakgcaabaaaaaaaaaaaagibcaaaabaaaaaa
-agaaaaaakgalbaaaacaaaaaafgagbaaaaaaaaaaaaaaaaaakmccabaaaadaaaaaa
-fgajbaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaadpaaaaaadpdiaaaaai
-gcaabaaaaaaaaaaapgapbaaaacaaaaaaagibcaaaabaaaaaaafaaaaaadcaaaaak
-dcaabaaaabaaaaaaegiacaaaabaaaaaaaeaaaaaapgapbaaaaaaaaaaajgafbaaa
-aaaaaaaadcaaaaakgcaabaaaaaaaaaaaagibcaaaabaaaaaaaeaaaaaafgafbaaa
-acaaaaaafgagbaaaaaaaaaaadcaaaaakdcaabaaaabaaaaaaegiacaaaabaaaaaa
-agaaaaaaegaabaaaacaaaaaaegaabaaaabaaaaaaaaaaaaakdccabaaaadaaaaaa
-egaabaaaabaaaaaaaceaaaaaaaaaaadpaaaaaadpaaaaaaaaaaaaaaaadcaaaaak
-dcaabaaaaaaaaaaaegiacaaaabaaaaaaagaaaaaaagaabaaaaaaaaaaajgafbaaa
-aaaaaaaaaaaaaaakdccabaaaaeaaaaaaegaabaaaaaaaaaaaaceaaaaaaaaaaadp
-aaaaaadpaaaaaaaaaaaaaaaadoaaaaab"
+aaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaaddcbabaaaacaaaaaaghaaaaae
+pccabaaaaaaaaaaaabaaaaaagfaaaaadpccabaaaabaaaaaagfaaaaadhccabaaa
+acaaaaaagfaaaaaddccabaaaadaaaaaagfaaaaadmccabaaaadaaaaaagfaaaaad
+dccabaaaaeaaaaaagiaaaaacafaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+abaaaaaaahaaaaaapgbpbaaaaaaaaaaaegbobaaaaaaaaaaadiaaaaaipcaabaaa
+abaaaaaafgafbaaaaaaaaaaaegiocaaaacaaaaaaabaaaaaadcaaaaakpcaabaaa
+abaaaaaaegiocaaaacaaaaaaaaaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaa
+dcaaaaakpcaabaaaabaaaaaaegiocaaaacaaaaaaacaaaaaakgakbaaaaaaaaaaa
+egaobaaaabaaaaaadcaaaaakpccabaaaaaaaaaaaegiocaaaacaaaaaaadaaaaaa
+pgapbaaaaaaaaaaaegaobaaaabaaaaaadgaaaaafpccabaaaabaaaaaaegbobaaa
+abaaaaaadiaaaaajpcaabaaaaaaaaaaafgifcaaaaaaaaaaaaeaaaaaacgiecaaa
+abaaaaaabbaaaaaadcaaaaalpcaabaaaaaaaaaaacgiecaaaabaaaaaabaaaaaaa
+agiacaaaaaaaaaaaaeaaaaaaegaobaaaaaaaaaaadcaaaaalpcaabaaaaaaaaaaa
+cgiecaaaabaaaaaabcaaaaaakgikcaaaaaaaaaaaaeaaaaaaegaobaaaaaaaaaaa
+aaaaaaaipcaabaaaaaaaaaaaegaobaaaaaaaaaaacgiecaaaabaaaaaabdaaaaaa
+diaaaaaipcaabaaaaaaaaaaaegaobaaaaaaaaaaapgipcaaaabaaaaaabeaaaaaa
+baaaaaahbcaabaaaabaaaaaaigadbaaaaaaaaaaaigadbaaaaaaaaaaaeeaaaaaf
+bcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaa
+aaaaaaaaagaabaaaabaaaaaadiaaaaahhccabaaaacaaaaaaogaibaaaaaaaaaaa
+ogaibaaaaaaaaaaadbaaaaalpcaabaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaogaibaiaebaaaaaaaaaaaaaadbaaaaalpcaabaaaacaaaaaa
+ogaibaiaebaaaaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+boaaaaaipcaabaaaabaaaaaaegaobaiaebaaaaaaabaaaaaaegaobaaaacaaaaaa
+dcaaaaappcaabaaaacaaaaaaagbfbaaaacaaaaaaaceaaaaaaaaaaaeaaaaaaaea
+aaaaaaeaaaaaaaeaaceaaaaaaaaaialpaaaaialpaaaaialpaaaaialpdbaaaaak
+pcaabaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafganbaaa
+acaaaaaadbaaaaakpcaabaaaaeaaaaaafganbaaaacaaaaaaaceaaaaaaaaaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaboaaaaaipcaabaaaadaaaaaaegaobaiaebaaaaaa
+adaaaaaaegaobaaaaeaaaaaacgaaaaaiaanaaaaapcaabaaaaeaaaaaaegaobaaa
+abaaaaaaegaobaaaadaaaaaacgaaaaaiaanaaaaadcaabaaaabaaaaaajgafbaaa
+abaaaaaapgapbaaaadaaaaaaclaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
+claaaaafpcaabaaaadaaaaaaegaobaaaaeaaaaaadiaaaaahpcaabaaaadaaaaaa
+egaobaaaaaaaaaaaegaobaaaadaaaaaadcaaaaajdcaabaaaaaaaaaaaegaabaaa
+abaaaaaamgaabaaaaaaaaaaajgafbaaaadaaaaaaaaaaaaahecaabaaaaaaaaaaa
+dkaabaaaadaaaaaaakaabaaaadaaaaaadiaaaaaidcaabaaaabaaaaaafgafbaaa
+acaaaaaaegiacaaaabaaaaaaaeaaaaaadcaaaaakjcaabaaaaaaaaaaaagiecaaa
+abaaaaaaafaaaaaaagaabaaaaaaaaaaaagaebaaaabaaaaaadcaaaaakjcaabaaa
+aaaaaaaaagiecaaaabaaaaaaagaaaaaakgaobaaaacaaaaaaagambaaaaaaaaaaa
+aaaaaaakmccabaaaadaaaaaaagambaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
+aaaaaadpaaaaaadpdiaaaaaijcaabaaaaaaaaaaapgapbaaaacaaaaaaagiecaaa
+abaaaaaaafaaaaaadcaaaaakdcaabaaaabaaaaaaegiacaaaabaaaaaaaeaaaaaa
+kgakbaaaaaaaaaaamgaabaaaaaaaaaaadcaaaaakfcaabaaaaaaaaaaaagibcaaa
+abaaaaaaaeaaaaaafgafbaaaacaaaaaaagadbaaaaaaaaaaadcaaaaakdcaabaaa
+abaaaaaaegiacaaaabaaaaaaagaaaaaaegaabaaaacaaaaaaegaabaaaabaaaaaa
+aaaaaaakdccabaaaadaaaaaaegaabaaaabaaaaaaaceaaaaaaaaaaadpaaaaaadp
+aaaaaaaaaaaaaaaadcaaaaakdcaabaaaaaaaaaaaegiacaaaabaaaaaaagaaaaaa
+fgafbaaaaaaaaaaaigaabaaaaaaaaaaaaaaaaaakdccabaaaaeaaaaaaegaabaaa
+aaaaaaaaaceaaaaaaaaaaadpaaaaaadpaaaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -306,44 +307,45 @@ uniform highp mat4 _World2Object;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord0;
+attribute vec4 _glesColor;
 attribute vec4 _glesVertex;
 void main ()
 {
   highp vec4 XYv_1;
   highp vec4 XZv_2;
   highp vec4 ZYv_3;
-  lowp vec4 tmpvar_4;
+  highp vec4 tmpvar_4;
+  tmpvar_4.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_4.w = _glesVertex.w;
   highp vec4 tmpvar_5;
-  tmpvar_5.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_5.w = _glesVertex.w;
+  tmpvar_5 = (glstate_matrix_modelview0 * tmpvar_4);
   highp vec4 tmpvar_6;
-  tmpvar_6 = (glstate_matrix_modelview0 * tmpvar_5);
-  highp vec4 tmpvar_7;
-  tmpvar_7.w = 1.0;
-  tmpvar_7.xyz = _WorldSpaceCameraPos;
-  highp vec3 tmpvar_8;
-  tmpvar_8 = normalize(((_World2Object * tmpvar_7).xyz * unity_Scale.w));
-  highp vec2 tmpvar_9;
-  tmpvar_9 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
-  highp vec4 tmpvar_10;
-  tmpvar_10.z = 0.0;
-  tmpvar_10.x = tmpvar_9.x;
-  tmpvar_10.y = tmpvar_9.y;
-  tmpvar_10.w = _glesVertex.w;
-  ZYv_3.yzw = tmpvar_10.yxw;
-  XZv_2.xzw = tmpvar_10.xyw;
-  XYv_1.xyw = tmpvar_10.xyw;
-  ZYv_3.x = ((sign(-(tmpvar_8.x)) * sign(tmpvar_9.x)) * tmpvar_8.z);
-  XYv_1.z = ((sign(-(tmpvar_8.z)) * sign(tmpvar_9.x)) * tmpvar_8.x);
-  ZYv_3.x = (ZYv_3.x + ((sign(-(tmpvar_8.x)) * sign(tmpvar_9.y)) * tmpvar_8.y));
-  XZv_2.y = ((sign(-(tmpvar_8.y)) * sign(tmpvar_9.x)) * tmpvar_8.x);
-  XYv_1.z = (XYv_1.z + ((sign(-(tmpvar_8.z)) * sign(tmpvar_9.y)) * tmpvar_8.y));
-  gl_Position = (glstate_matrix_projection * (tmpvar_6 + _glesVertex));
-  xlv_COLOR = tmpvar_4;
-  xlv_TEXCOORD0 = pow (tmpvar_8, vec3(2.0, 2.0, 2.0));
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + ((glstate_matrix_modelview0 * ZYv_3).xy - tmpvar_6.xy));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + ((glstate_matrix_modelview0 * XZv_2).xy - tmpvar_6.xy));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + ((glstate_matrix_modelview0 * XYv_1).xy - tmpvar_6.xy));
+  tmpvar_6.w = 1.0;
+  tmpvar_6.xyz = _WorldSpaceCameraPos;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(((_World2Object * tmpvar_6).xyz * unity_Scale.w));
+  highp vec2 tmpvar_8;
+  tmpvar_8 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_9;
+  tmpvar_9.z = 0.0;
+  tmpvar_9.x = tmpvar_8.x;
+  tmpvar_9.y = tmpvar_8.y;
+  tmpvar_9.w = _glesVertex.w;
+  ZYv_3.yzw = tmpvar_9.yxw;
+  XZv_2.xzw = tmpvar_9.xyw;
+  XYv_1.xyw = tmpvar_9.xyw;
+  ZYv_3.x = ((sign(-(tmpvar_7.x)) * sign(tmpvar_8.x)) * tmpvar_7.z);
+  XZv_2.y = ((sign(-(tmpvar_7.y)) * sign(tmpvar_8.x)) * tmpvar_7.x);
+  XYv_1.z = ((sign(-(tmpvar_7.z)) * sign(tmpvar_8.x)) * tmpvar_7.x);
+  ZYv_3.x = (ZYv_3.x + ((sign(-(tmpvar_7.x)) * sign(tmpvar_8.y)) * tmpvar_7.y));
+  XZv_2.y = (XZv_2.y + ((sign(-(tmpvar_7.y)) * sign(tmpvar_8.y)) * tmpvar_7.z));
+  XYv_1.z = (XYv_1.z + ((sign(-(tmpvar_7.z)) * sign(tmpvar_8.y)) * tmpvar_7.y));
+  gl_Position = (glstate_matrix_projection * (tmpvar_5 + _glesVertex));
+  xlv_COLOR = _glesColor;
+  xlv_TEXCOORD0 = pow (tmpvar_7, vec3(2.0, 2.0, 2.0));
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + ((glstate_matrix_modelview0 * ZYv_3).xy - tmpvar_5.xy));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + ((glstate_matrix_modelview0 * XZv_2).xy - tmpvar_5.xy));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + ((glstate_matrix_modelview0 * XYv_1).xy - tmpvar_5.xy));
 }
 
 
@@ -419,44 +421,45 @@ uniform highp mat4 _World2Object;
 uniform highp mat4 glstate_matrix_modelview0;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord0;
+attribute vec4 _glesColor;
 attribute vec4 _glesVertex;
 void main ()
 {
   highp vec4 XYv_1;
   highp vec4 XZv_2;
   highp vec4 ZYv_3;
-  lowp vec4 tmpvar_4;
+  highp vec4 tmpvar_4;
+  tmpvar_4.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_4.w = _glesVertex.w;
   highp vec4 tmpvar_5;
-  tmpvar_5.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_5.w = _glesVertex.w;
+  tmpvar_5 = (glstate_matrix_modelview0 * tmpvar_4);
   highp vec4 tmpvar_6;
-  tmpvar_6 = (glstate_matrix_modelview0 * tmpvar_5);
-  highp vec4 tmpvar_7;
-  tmpvar_7.w = 1.0;
-  tmpvar_7.xyz = _WorldSpaceCameraPos;
-  highp vec3 tmpvar_8;
-  tmpvar_8 = normalize(((_World2Object * tmpvar_7).xyz * unity_Scale.w));
-  highp vec2 tmpvar_9;
-  tmpvar_9 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
-  highp vec4 tmpvar_10;
-  tmpvar_10.z = 0.0;
-  tmpvar_10.x = tmpvar_9.x;
-  tmpvar_10.y = tmpvar_9.y;
-  tmpvar_10.w = _glesVertex.w;
-  ZYv_3.yzw = tmpvar_10.yxw;
-  XZv_2.xzw = tmpvar_10.xyw;
-  XYv_1.xyw = tmpvar_10.xyw;
-  ZYv_3.x = ((sign(-(tmpvar_8.x)) * sign(tmpvar_9.x)) * tmpvar_8.z);
-  XYv_1.z = ((sign(-(tmpvar_8.z)) * sign(tmpvar_9.x)) * tmpvar_8.x);
-  ZYv_3.x = (ZYv_3.x + ((sign(-(tmpvar_8.x)) * sign(tmpvar_9.y)) * tmpvar_8.y));
-  XZv_2.y = ((sign(-(tmpvar_8.y)) * sign(tmpvar_9.x)) * tmpvar_8.x);
-  XYv_1.z = (XYv_1.z + ((sign(-(tmpvar_8.z)) * sign(tmpvar_9.y)) * tmpvar_8.y));
-  gl_Position = (glstate_matrix_projection * (tmpvar_6 + _glesVertex));
-  xlv_COLOR = tmpvar_4;
-  xlv_TEXCOORD0 = pow (tmpvar_8, vec3(2.0, 2.0, 2.0));
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + ((glstate_matrix_modelview0 * ZYv_3).xy - tmpvar_6.xy));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + ((glstate_matrix_modelview0 * XZv_2).xy - tmpvar_6.xy));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + ((glstate_matrix_modelview0 * XYv_1).xy - tmpvar_6.xy));
+  tmpvar_6.w = 1.0;
+  tmpvar_6.xyz = _WorldSpaceCameraPos;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(((_World2Object * tmpvar_6).xyz * unity_Scale.w));
+  highp vec2 tmpvar_8;
+  tmpvar_8 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_9;
+  tmpvar_9.z = 0.0;
+  tmpvar_9.x = tmpvar_8.x;
+  tmpvar_9.y = tmpvar_8.y;
+  tmpvar_9.w = _glesVertex.w;
+  ZYv_3.yzw = tmpvar_9.yxw;
+  XZv_2.xzw = tmpvar_9.xyw;
+  XYv_1.xyw = tmpvar_9.xyw;
+  ZYv_3.x = ((sign(-(tmpvar_7.x)) * sign(tmpvar_8.x)) * tmpvar_7.z);
+  XZv_2.y = ((sign(-(tmpvar_7.y)) * sign(tmpvar_8.x)) * tmpvar_7.x);
+  XYv_1.z = ((sign(-(tmpvar_7.z)) * sign(tmpvar_8.x)) * tmpvar_7.x);
+  ZYv_3.x = (ZYv_3.x + ((sign(-(tmpvar_7.x)) * sign(tmpvar_8.y)) * tmpvar_7.y));
+  XZv_2.y = (XZv_2.y + ((sign(-(tmpvar_7.y)) * sign(tmpvar_8.y)) * tmpvar_7.z));
+  XYv_1.z = (XYv_1.z + ((sign(-(tmpvar_7.z)) * sign(tmpvar_8.y)) * tmpvar_7.y));
+  gl_Position = (glstate_matrix_projection * (tmpvar_5 + _glesVertex));
+  xlv_COLOR = _glesColor;
+  xlv_TEXCOORD0 = pow (tmpvar_7, vec3(2.0, 2.0, 2.0));
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + ((glstate_matrix_modelview0 * ZYv_3).xy - tmpvar_5.xy));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + ((glstate_matrix_modelview0 * XZv_2).xy - tmpvar_5.xy));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + ((glstate_matrix_modelview0 * XYv_1).xy - tmpvar_5.xy));
 }
 
 
@@ -517,6 +520,7 @@ void main ()
 SubProgram "flash " {
 Keywords { }
 Bind "vertex" Vertex
+Bind "color" Color
 Bind "texcoord" TexCoord0
 Matrix 0 [glstate_matrix_modelview0]
 Matrix 4 [glstate_matrix_projection]
@@ -567,32 +571,25 @@ aaaaaaaaabaaaiacaaaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov r1.w, a0
 aaaaaaaaabaaahacaoaaaaaaabaaaaaaaaaaaaaaaaaaaaaa mov r1.xyz, c14.x
 bdaaaaaaaeaaacacabaaaaoeacaaaaaaabaaaaoeabaaaaaa dp4 r4.y, r1, c1
 bdaaaaaaaeaaabacabaaaaoeacaaaaaaaaaaaaoeabaaaaaa dp4 r4.x, r1, c0
-bfaaaaaaagaaagacaeaaaafeacaaaaaaaaaaaaaaaaaaaaaa neg r6.yz, r4.xyyy
-abaaaaaaacaaadacagaaaakjacaaaaaaacaaaafeacaaaaaa add r2.xy, r6.yzzz, r2.xyyy
+bfaaaaaaagaaadacaeaaaafeacaaaaaaaaaaaaaaaaaaaaaa neg r6.xy, r4.xyyy
+abaaaaaaacaaadacagaaaafeacaaaaaaacaaaafeacaaaaaa add r2.xy, r6.xyyy, r2.xyyy
+bfaaaaaaagaaacacadaaaaffacaaaaaaaaaaaaaaaaaaaaaa neg r6.y, r3.y
+ckaaaaaaacaaaiacagaaaaffacaaaaaaadaaaaffacaaaaaa slt r2.w, r6.y, r3.y
+bfaaaaaaagaaacacadaaaaffacaaaaaaaaaaaaaaaaaaaaaa neg r6.y, r3.y
+ckaaaaaaacaaaeacadaaaaffacaaaaaaagaaaaffacaaaaaa slt r2.z, r3.y, r6.y
+acaaaaaaacaaaeacacaaaakkacaaaaaaacaaaappacaaaaaa sub r2.z, r2.z, r2.w
 abaaaaaaabaaadaeacaaaafeacaaaaaaaoaaaappabaaaaaa add v1.xy, r2.xyyy, c14.w
-bfaaaaaaacaaacacadaaaaffacaaaaaaaaaaaaaaaaaaaaaa neg r2.y, r3.y
-ckaaaaaaacaaacacacaaaaffacaaaaaaadaaaaffacaaaaaa slt r2.y, r2.y, r3.y
-bfaaaaaaagaaaeacadaaaaffacaaaaaaaaaaaaaaaaaaaaaa neg r6.z, r3.y
-ckaaaaaaacaaabacadaaaaffacaaaaaaagaaaakkacaaaaaa slt r2.x, r3.y, r6.z
-acaaaaaaacaaabacacaaaaaaacaaaaaaacaaaaffacaaaaaa sub r2.x, r2.x, r2.y
-aaaaaaaaagaaapacaoaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r6, c14
-bfaaaaaaagaaacacagaaaaaaacaaaaaaaaaaaaaaaaaaaaaa neg r6.y, r6.x
-ckaaaaaaacaaaeacaoaaaaaaabaaaaaaagaaaaffacaaaaaa slt r2.z, c14.x, r6.y
-aaaaaaaaahaaapacaoaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r7, c14
-bfaaaaaaagaaaiacahaaaakkacaaaaaaaaaaaaaaaaaaaaaa neg r6.w, r7.z
-ckaaaaaaacaaacacaoaaaakkabaaaaaaagaaaappacaaaaaa slt r2.y, c14.z, r6.w
-acaaaaaaacaaacacacaaaaffacaaaaaaacaaaakkacaaaaaa sub r2.y, r2.y, r2.z
-adaaaaaaacaaaeacaaaaaakkacaaaaaaacaaaaaaacaaaaaa mul r2.z, r0.z, r2.x
-adaaaaaaaeaaaeacadaaaaaaacaaaaaaacaaaakkacaaaaaa mul r4.z, r3.x, r2.z
-adaaaaaaacaaacacacaaaaaaacaaaaaaacaaaaffacaaaaaa mul r2.y, r2.x, r2.y
-adaaaaaaacaaacacadaaaakkacaaaaaaacaaaaffacaaaaaa mul r2.y, r3.z, r2.y
+adaaaaaaacaaabacadaaaappacaaaaaaacaaaakkacaaaaaa mul r2.x, r3.w, r2.z
+adaaaaaaacaaacacaaaaaakkacaaaaaaacaaaakkacaaaaaa mul r2.y, r0.z, r2.z
+adaaaaaaaeaaaeacadaaaakkacaaaaaaacaaaaaaacaaaaaa mul r4.z, r3.z, r2.x
+adaaaaaaacaaacacadaaaaaaacaaaaaaacaaaaffacaaaaaa mul r2.y, r3.x, r2.y
 abaaaaaaacaaacacacaaaaffacaaaaaaaeaaaakkacaaaaaa add r2.y, r2.y, r4.z
 aaaaaaaaacaaanacaaaaaanmacaaaaaaaaaaaaaaaaaaaaaa mov r2.xzw, r0.xwyw
 bdaaaaaaaeaaaiacacaaaaoeacaaaaaaabaaaaoeabaaaaaa dp4 r4.w, r2, c1
 bfaaaaaaaeaaaeacadaaaakkacaaaaaaaaaaaaaaaaaaaaaa neg r4.z, r3.z
 ckaaaaaaaeaaaeacadaaaakkacaaaaaaaeaaaakkacaaaaaa slt r4.z, r3.z, r4.z
-bfaaaaaaagaaaiacadaaaakkacaaaaaaaaaaaaaaaaaaaaaa neg r6.w, r3.z
-ckaaaaaaafaaabacagaaaappacaaaaaaadaaaakkacaaaaaa slt r5.x, r6.w, r3.z
+bfaaaaaaagaaaeacadaaaakkacaaaaaaaaaaaaaaaaaaaaaa neg r6.z, r3.z
+ckaaaaaaafaaabacagaaaakkacaaaaaaadaaaakkacaaaaaa slt r5.x, r6.z, r3.z
 acaaaaaaafaaabacaeaaaakkacaaaaaaafaaaaaaacaaaaaa sub r5.x, r4.z, r5.x
 bdaaaaaaaeaaaeacacaaaaoeacaaaaaaaaaaaaoeabaaaaaa dp4 r4.z, r2, c0
 bfaaaaaaacaaadacaeaaaafeacaaaaaaaaaaaaaaaaaaaaaa neg r2.xy, r4.xyyy
@@ -616,6 +613,7 @@ bdaaaaaaaaaaaeadabaaaaoeacaaaaaaagaaaaoeabaaaaaa dp4 o0.z, r1, c6
 bdaaaaaaaaaaacadabaaaaoeacaaaaaaafaaaaoeabaaaaaa dp4 o0.y, r1, c5
 bdaaaaaaaaaaabadabaaaaoeacaaaaaaaeaaaaoeabaaaaaa dp4 o0.x, r1, c4
 adaaaaaaaaaaahaeadaaaakeacaaaaaaadaaaakeacaaaaaa mul v0.xyz, r3.xyzz, r3.xyzz
+aaaaaaaaahaaapaeacaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov v7, a2
 aaaaaaaaaaaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v0.w, c0
 aaaaaaaaabaaamaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v1.zw, c0
 aaaaaaaaacaaamaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v2.zw, c0
@@ -639,97 +637,100 @@ Matrix 0 [glstate_matrix_projection] 4
 BindCB "UnityPerCamera" 0
 BindCB "UnityPerDraw" 1
 BindCB "UnityPerFrame" 2
-// 40 instructions, 5 temp regs, 0 temp arrays:
+// 41 instructions, 5 temp regs, 0 temp arrays:
 // ALU 33 float, 4 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0_level_9_1
-eefiecedjdddeagminohffdkbpllddbgbnjfbpoaabaaaaaalmakaaaaaeaaaaaa
-daaaaaaahiadaaaajaajaaaaaaakaaaaebgpgodjeaadaaaaeaadaaaaaaacpopp
-oiacaaaafiaaaaaaaeaaceaaaaaafeaaaaaafeaaaaaaceaaabaafeaaaaaaaeaa
+eefieceddffgbgjlgcapjbfdhbollaoophflgadhabaaaaaaaaalaaaaaeaaaaaa
+daaaaaaajaadaaaaneajaaaaeeakaaaaebgpgodjfiadaaaafiadaaaaaaacpopp
+aaadaaaafiaaaaaaaeaaceaaaaaafeaaaaaafeaaaaaaceaaabaafeaaaaaaaeaa
 abaaabaaaaaaaaaaabaaaeaaaeaaacaaaaaaaaaaabaabaaaafaaagaaaaaaaaaa
 acaaaaaaaeaaalaaaaaaaaaaaaaaaaaaaaacpoppfbaaaaafapaaapkaaaaaaaea
-aaaaialpaaaaaadpaaaaaaaabpaaaaacafaaaaiaaaaaapjabpaaaaacafaaacia
-acaaapjaabaaaaacaaaaahiaabaaoekaafaaaaadabaaapiaaaaaffiaahaabcka
-aeaaaaaeabaaapiaagaabckaaaaaaaiaabaaoeiaaeaaaaaeaaaaapiaaiaabcka
-aaaakkiaabaaoeiaacaaaaadaaaaapiaaaaaoeiaajaabckaafaaaaadaaaaapia
-aaaaoeiaakaappkaaiaaaaadabaaabiaaaaapiiaaaaapiiaahaaaaacabaaabia
-abaaaaiaafaaaaadaaaaapiaaaaaoeiaabaaaaiaafaaaaadabaaahoaaaaamlia
-aaaamliaamaaaaadabaaapiaaaaaldiaaaaaldibamaaaaadacaaapiaaaaaldib
-aaaaldiaacaaaaadabaaapiaabaaoeiaacaaoeibaeaaaaaeacaaapiaacaafaja
-apaaaakaapaaffkaamaaaaadadaaapiaacaahfibacaahfiaamaaaaadaeaaapia
-acaahfiaacaahfibacaaaaadadaaapiaadaaoeiaaeaaoeibafaaaaadaeaaapia
-abaaoeiaadaaoeiaafaaaaadabaaabiaabaaffiaadaakkiaafaaaaadadaaapia
-aaaaoeiaaeaaoeiaaeaaaaaeaaaaabiaabaaaaiaaaaakkiaadaaffiaacaaaaad
-aaaaaciaadaakkiaadaaaaiaafaaaaadaaaaamiaacaappiaadaaeekaaeaaaaae
-abaaadiaacaaoekaaaaaffiaaaaaooiaaeaaaaaeaaaaagiaacaanakaacaaffia
-aaaapiiaaeaaaaaeaaaaadiaaeaaoekaaaaaaaiaaaaaojiaacaaaaadadaaadoa
-aaaaoeiaapaakkkaaeaaaaaeaaaaadiaaeaaoekaacaaoeiaabaaoeiaacaaaaad
-acaaadoaaaaaoeiaapaakkkaafaaaaadaaaaadiaacaaffiaacaaoekaaeaaaaae
-aaaaadiaadaaobkaadaappiaaaaaobiaaeaaaaaeaaaaadiaaeaaobkaacaaolia
-aaaaoeiaacaaaaadacaaamoaaaaaeeiaapaakkkaaeaaaaaeaaaaapiaafaaoeka
-aaaappjaaaaaoejaafaaaaadabaaapiaaaaaffiaamaaoekaaeaaaaaeabaaapia
-alaaoekaaaaaaaiaabaaoeiaaeaaaaaeabaaapiaanaaoekaaaaakkiaabaaoeia
-aeaaaaaeaaaaapiaaoaaoekaaaaappiaabaaoeiaaeaaaaaeaaaaadmaaaaappia
-aaaaoekaaaaaoeiaabaaaaacaaaaammaaaaaoeiappppaaaafdeieefcbaagaaaa
-eaaaabaaieabaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaa
-abaaaaaabfaaaaaafjaaaaaeegiocaaaacaaaaaaaeaaaaaafpaaaaadpcbabaaa
-aaaaaaaafpaaaaaddcbabaaaacaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaa
-gfaaaaadhccabaaaacaaaaaagfaaaaaddccabaaaadaaaaaagfaaaaadmccabaaa
-adaaaaaagfaaaaaddccabaaaaeaaaaaagiaaaaacafaaaaaadcaaaaakpcaabaaa
-aaaaaaaaegiocaaaabaaaaaaahaaaaaapgbpbaaaaaaaaaaaegbobaaaaaaaaaaa
-diaaaaaipcaabaaaabaaaaaafgafbaaaaaaaaaaaegiocaaaacaaaaaaabaaaaaa
-dcaaaaakpcaabaaaabaaaaaaegiocaaaacaaaaaaaaaaaaaaagaabaaaaaaaaaaa
-egaobaaaabaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaacaaaaaaacaaaaaa
-kgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpccabaaaaaaaaaaaegiocaaa
-acaaaaaaadaaaaaapgapbaaaaaaaaaaaegaobaaaabaaaaaadiaaaaajpcaabaaa
-aaaaaaaafgifcaaaaaaaaaaaaeaaaaaacgibcaaaabaaaaaabbaaaaaadcaaaaal
-pcaabaaaaaaaaaaacgibcaaaabaaaaaabaaaaaaaagiacaaaaaaaaaaaaeaaaaaa
-egaobaaaaaaaaaaadcaaaaalpcaabaaaaaaaaaaacgibcaaaabaaaaaabcaaaaaa
-kgikcaaaaaaaaaaaaeaaaaaaegaobaaaaaaaaaaaaaaaaaaipcaabaaaaaaaaaaa
-egaobaaaaaaaaaaacgibcaaaabaaaaaabdaaaaaadiaaaaaipcaabaaaaaaaaaaa
-egaobaaaaaaaaaaapgipcaaaabaaaaaabeaaaaaabaaaaaahbcaabaaaabaaaaaa
-igadbaaaaaaaaaaaigadbaaaaaaaaaaaeeaaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaagaabaaaabaaaaaa
-diaaaaahhccabaaaacaaaaaalgambaaaaaaaaaaalgambaaaaaaaaaaadbaaaaal
-pcaabaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaadgalbaia
-ebaaaaaaaaaaaaaadbaaaaalpcaabaaaacaaaaaadgalbaiaebaaaaaaaaaaaaaa
-aceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaboaaaaaipcaabaaaabaaaaaa
-egaobaiaebaaaaaaabaaaaaaegaobaaaacaaaaaadcaaaaappcaabaaaacaaaaaa
-agbfbaaaacaaaaaaaceaaaaaaaaaaaeaaaaaaaeaaaaaaaeaaaaaaaeaaceaaaaa
-aaaaialpaaaaialpaaaaialpaaaaialpdbaaaaakpcaabaaaadaaaaaaaceaaaaa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafgahbaaaacaaaaaadbaaaaakpcaabaaa
-aeaaaaaafgahbaaaacaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-boaaaaaipcaabaaaadaaaaaaegaobaiaebaaaaaaadaaaaaaegaobaaaaeaaaaaa
-cgaaaaaiaanaaaaapcaabaaaaeaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaa
-cgaaaaaiaanaaaaabcaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaadaaaaaa
-claaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaclaaaaafpcaabaaaadaaaaaa
-egaobaaaaeaaaaaadiaaaaahpcaabaaaadaaaaaaegaobaaaaaaaaaaaegaobaaa
-adaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaaaaaaaaaa
-bkaabaaaadaaaaaadiaaaaaigcaabaaaaaaaaaaafgafbaaaacaaaaaaagibcaaa
-abaaaaaaaeaaaaaadcaaaaakgcaabaaaaaaaaaaaagibcaaaabaaaaaaafaaaaaa
-pgapbaaaadaaaaaafgagbaaaaaaaaaaaaaaaaaahicaabaaaaaaaaaaackaabaaa
-adaaaaaaakaabaaaadaaaaaadcaaaaakgcaabaaaaaaaaaaaagibcaaaabaaaaaa
-agaaaaaakgalbaaaacaaaaaafgagbaaaaaaaaaaaaaaaaaakmccabaaaadaaaaaa
-fgajbaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaadpaaaaaadpdiaaaaai
-gcaabaaaaaaaaaaapgapbaaaacaaaaaaagibcaaaabaaaaaaafaaaaaadcaaaaak
-dcaabaaaabaaaaaaegiacaaaabaaaaaaaeaaaaaapgapbaaaaaaaaaaajgafbaaa
-aaaaaaaadcaaaaakgcaabaaaaaaaaaaaagibcaaaabaaaaaaaeaaaaaafgafbaaa
-acaaaaaafgagbaaaaaaaaaaadcaaaaakdcaabaaaabaaaaaaegiacaaaabaaaaaa
-agaaaaaaegaabaaaacaaaaaaegaabaaaabaaaaaaaaaaaaakdccabaaaadaaaaaa
-egaabaaaabaaaaaaaceaaaaaaaaaaadpaaaaaadpaaaaaaaaaaaaaaaadcaaaaak
-dcaabaaaaaaaaaaaegiacaaaabaaaaaaagaaaaaaagaabaaaaaaaaaaajgafbaaa
-aaaaaaaaaaaaaaakdccabaaaaeaaaaaaegaabaaaaaaaaaaaaceaaaaaaaaaaadp
-aaaaaadpaaaaaaaaaaaaaaaadoaaaaabejfdeheogiaaaaaaadaaaaaaaiaaaaaa
-faaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaa
-aaaaaaaaadaaaaaaabaaaaaaapaaaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
-acaaaaaaadadaaaafaepfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaa
-epfdeheoleaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaaabaaaaaaadaaaaaa
-aaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapapaaaa
-kkaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaaahaiaaaakkaaaaaaabaaaaaa
-aaaaaaaaadaaaaaaadaaaaaaadamaaaakkaaaaaaacaaaaaaaaaaaaaaadaaaaaa
-adaaaaaaamadaaaakkaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaa
-fdfgfpfaepfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaakl"
+aaaaialpaaaaaadpaaaaaaaabpaaaaacafaaaaiaaaaaapjabpaaaaacafaaabia
+abaaapjabpaaaaacafaaaciaacaaapjaabaaaaacaaaaahiaabaaoekaafaaaaad
+abaaapiaaaaaffiaahaaeckaaeaaaaaeabaaapiaagaaeckaaaaaaaiaabaaoeia
+aeaaaaaeaaaaapiaaiaaeckaaaaakkiaabaaoeiaacaaaaadaaaaapiaaaaaoeia
+ajaaeckaafaaaaadaaaaapiaaaaaoeiaakaappkaaiaaaaadabaaabiaaaaapiia
+aaaapiiaahaaaaacabaaabiaabaaaaiaafaaaaadaaaaapiaaaaaoeiaabaaaaia
+afaaaaadabaaahoaaaaamoiaaaaamoiaamaaaaadabaaapiaaaaaioiaaaaaioib
+amaaaaadacaaapiaaaaaioibaaaaioiaacaaaaadabaaapiaabaaoeiaacaaoeib
+aeaaaaaeacaaapiaacaafajaapaaaakaapaaffkaamaaaaadadaaapiaacaanfib
+acaanfiaamaaaaadaeaaapiaacaanfiaacaanfibacaaaaadadaaapiaadaaoeia
+aeaaoeibafaaaaadaeaaapiaabaaoeiaadaaoeiaafaaaaadabaaadiaabaaojia
+adaappiaafaaaaadadaaapiaaaaaoeiaaeaaoeiaaeaaaaaeaaaaadiaabaaoeia
+aaaaomiaadaaojiaacaaaaadaaaaaeiaadaappiaadaaaaiaafaaaaadabaaadia
+acaappiaadaaoekaaeaaaaaeaaaaamiaacaaeekaaaaakkiaabaaeeiaaeaaaaae
+abaaadiaacaaoekaacaaffiaabaaoeiaaeaaaaaeabaaadiaaeaaoekaaaaaffia
+abaaoeiaacaaaaadadaaadoaabaaoeiaapaakkkaaeaaaaaeaaaaagiaaeaanaka
+acaanaiaaaaapiiaacaaaaadacaaadoaaaaaojiaapaakkkaafaaaaadaaaaagia
+acaaffiaacaanakaaeaaaaaeaaaaadiaadaaobkaaaaaaaiaaaaaogiaaeaaaaae
+aaaaadiaaeaaobkaacaaoliaaaaaoeiaacaaaaadacaaamoaaaaaeeiaapaakkka
+aeaaaaaeaaaaapiaafaaoekaaaaappjaaaaaoejaafaaaaadabaaapiaaaaaffia
+amaaoekaaeaaaaaeabaaapiaalaaoekaaaaaaaiaabaaoeiaaeaaaaaeabaaapia
+anaaoekaaaaakkiaabaaoeiaaeaaaaaeaaaaapiaaoaaoekaaaaappiaabaaoeia
+aeaaaaaeaaaaadmaaaaappiaaaaaoekaaaaaoeiaabaaaaacaaaaammaaaaaoeia
+abaaaaacaaaaapoaabaaoejappppaaaafdeieefcdmagaaaaeaaaabaaipabaaaa
+fjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaabfaaaaaa
+fjaaaaaeegiocaaaacaaaaaaaeaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaad
+pcbabaaaabaaaaaafpaaaaaddcbabaaaacaaaaaaghaaaaaepccabaaaaaaaaaaa
+abaaaaaagfaaaaadpccabaaaabaaaaaagfaaaaadhccabaaaacaaaaaagfaaaaad
+dccabaaaadaaaaaagfaaaaadmccabaaaadaaaaaagfaaaaaddccabaaaaeaaaaaa
+giaaaaacafaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaahaaaaaa
+pgbpbaaaaaaaaaaaegbobaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaafgafbaaa
+aaaaaaaaegiocaaaacaaaaaaabaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaa
+acaaaaaaaaaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpcaabaaa
+abaaaaaaegiocaaaacaaaaaaacaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaa
+dcaaaaakpccabaaaaaaaaaaaegiocaaaacaaaaaaadaaaaaapgapbaaaaaaaaaaa
+egaobaaaabaaaaaadgaaaaafpccabaaaabaaaaaaegbobaaaabaaaaaadiaaaaaj
+pcaabaaaaaaaaaaafgifcaaaaaaaaaaaaeaaaaaacgiecaaaabaaaaaabbaaaaaa
+dcaaaaalpcaabaaaaaaaaaaacgiecaaaabaaaaaabaaaaaaaagiacaaaaaaaaaaa
+aeaaaaaaegaobaaaaaaaaaaadcaaaaalpcaabaaaaaaaaaaacgiecaaaabaaaaaa
+bcaaaaaakgikcaaaaaaaaaaaaeaaaaaaegaobaaaaaaaaaaaaaaaaaaipcaabaaa
+aaaaaaaaegaobaaaaaaaaaaacgiecaaaabaaaaaabdaaaaaadiaaaaaipcaabaaa
+aaaaaaaaegaobaaaaaaaaaaapgipcaaaabaaaaaabeaaaaaabaaaaaahbcaabaaa
+abaaaaaaigadbaaaaaaaaaaaigadbaaaaaaaaaaaeeaaaaafbcaabaaaabaaaaaa
+akaabaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaagaabaaa
+abaaaaaadiaaaaahhccabaaaacaaaaaaogaibaaaaaaaaaaaogaibaaaaaaaaaaa
+dbaaaaalpcaabaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+ogaibaiaebaaaaaaaaaaaaaadbaaaaalpcaabaaaacaaaaaaogaibaiaebaaaaaa
+aaaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaboaaaaaipcaabaaa
+abaaaaaaegaobaiaebaaaaaaabaaaaaaegaobaaaacaaaaaadcaaaaappcaabaaa
+acaaaaaaagbfbaaaacaaaaaaaceaaaaaaaaaaaeaaaaaaaeaaaaaaaeaaaaaaaea
+aceaaaaaaaaaialpaaaaialpaaaaialpaaaaialpdbaaaaakpcaabaaaadaaaaaa
+aceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafganbaaaacaaaaaadbaaaaak
+pcaabaaaaeaaaaaafganbaaaacaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaaaboaaaaaipcaabaaaadaaaaaaegaobaiaebaaaaaaadaaaaaaegaobaaa
+aeaaaaaacgaaaaaiaanaaaaapcaabaaaaeaaaaaaegaobaaaabaaaaaaegaobaaa
+adaaaaaacgaaaaaiaanaaaaadcaabaaaabaaaaaajgafbaaaabaaaaaapgapbaaa
+adaaaaaaclaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaaclaaaaafpcaabaaa
+adaaaaaaegaobaaaaeaaaaaadiaaaaahpcaabaaaadaaaaaaegaobaaaaaaaaaaa
+egaobaaaadaaaaaadcaaaaajdcaabaaaaaaaaaaaegaabaaaabaaaaaamgaabaaa
+aaaaaaaajgafbaaaadaaaaaaaaaaaaahecaabaaaaaaaaaaadkaabaaaadaaaaaa
+akaabaaaadaaaaaadiaaaaaidcaabaaaabaaaaaafgafbaaaacaaaaaaegiacaaa
+abaaaaaaaeaaaaaadcaaaaakjcaabaaaaaaaaaaaagiecaaaabaaaaaaafaaaaaa
+agaabaaaaaaaaaaaagaebaaaabaaaaaadcaaaaakjcaabaaaaaaaaaaaagiecaaa
+abaaaaaaagaaaaaakgaobaaaacaaaaaaagambaaaaaaaaaaaaaaaaaakmccabaaa
+adaaaaaaagambaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaadpaaaaaadp
+diaaaaaijcaabaaaaaaaaaaapgapbaaaacaaaaaaagiecaaaabaaaaaaafaaaaaa
+dcaaaaakdcaabaaaabaaaaaaegiacaaaabaaaaaaaeaaaaaakgakbaaaaaaaaaaa
+mgaabaaaaaaaaaaadcaaaaakfcaabaaaaaaaaaaaagibcaaaabaaaaaaaeaaaaaa
+fgafbaaaacaaaaaaagadbaaaaaaaaaaadcaaaaakdcaabaaaabaaaaaaegiacaaa
+abaaaaaaagaaaaaaegaabaaaacaaaaaaegaabaaaabaaaaaaaaaaaaakdccabaaa
+adaaaaaaegaabaaaabaaaaaaaceaaaaaaaaaaadpaaaaaadpaaaaaaaaaaaaaaaa
+dcaaaaakdcaabaaaaaaaaaaaegiacaaaabaaaaaaagaaaaaafgafbaaaaaaaaaaa
+igaabaaaaaaaaaaaaaaaaaakdccabaaaaeaaaaaaegaabaaaaaaaaaaaaceaaaaa
+aaaaaadpaaaaaadpaaaaaaaaaaaaaaaadoaaaaabejfdeheogiaaaaaaadaaaaaa
+aiaaaaaafaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaacaaaaaaadadaaaafaepfdejfeejepeoaaedepemepfcaafeeffiedep
+epfceeaaepfdeheoleaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaaabaaaaaa
+adaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+apaaaaaakkaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaaahaiaaaakkaaaaaa
+abaaaaaaaaaaaaaaadaaaaaaadaaaaaaadamaaaakkaaaaaaacaaaaaaaaaaaaaa
+adaaaaaaadaaaaaaamadaaaakkaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaa
+adamaaaafdfgfpfaepfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaakl
+"
 }
 
 SubProgram "gles3 " {
@@ -877,6 +878,7 @@ uniform sampler2D _BackTex;
 uniform lowp vec4 _Color;
 #line 339
 uniform highp vec4 _TopTex_ST;
+#line 368
 #line 91
 highp vec3 ObjSpaceViewDir( in highp vec4 v ) {
     highp vec3 objSpaceCameraPos = ((_World2Object * vec4( _WorldSpaceCameraPos.xyz, 1.0)).xyz * unity_Scale.w);
@@ -899,24 +901,21 @@ v2f vert( in appdata_t v ) {
     highp vec4 XZv = texcoordOffset.xzyw;
     highp vec4 XYv = texcoordOffset.xyzw;
     ZYv.x += ((sign((-viewDir.x)) * sign(ZYv.z)) * viewDir.z);
-    XZv.y += ((sign((-viewDir.y)) * sign(XYv.z)) * viewDir.z);
+    XZv.y += ((sign((-viewDir.y)) * sign(XZv.x)) * viewDir.x);
     #line 355
     XYv.z += ((sign((-viewDir.z)) * sign(XYv.x)) * viewDir.x);
     ZYv.x += ((sign((-viewDir.x)) * sign(ZYv.y)) * viewDir.y);
-    XZv.y += ((sign((-viewDir.y)) * sign(XYv.x)) * viewDir.x);
+    XZv.y += ((sign((-viewDir.y)) * sign(XZv.z)) * viewDir.z);
     XYv.z += ((sign((-viewDir.z)) * sign(XYv.y)) * viewDir.y);
     #line 359
     highp vec2 ZY = ((glstate_matrix_modelview0 * ZYv).xy - mvCenter.xy);
     highp vec2 XZ = ((glstate_matrix_modelview0 * XZv).xy - mvCenter.xy);
     highp vec2 XY = ((glstate_matrix_modelview0 * XYv).xy - mvCenter.xy);
-    viewDir.x = o.viewDir.x;
-    #line 363
-    viewDir.y = o.viewDir.y;
-    viewDir.z = o.viewDir.z;
     o.texcoordZY = (vec2( 0.5, 0.5) + ZY);
+    #line 363
     o.texcoordXZ = (vec2( 0.5, 0.5) + XZ);
-    #line 367
     o.texcoordXY = (vec2( 0.5, 0.5) + XY);
+    o.color = v.color;
     return o;
 }
 out lowp vec4 xlv_COLOR;
@@ -1077,19 +1076,19 @@ uniform sampler2D _BackTex;
 uniform lowp vec4 _Color;
 #line 339
 uniform highp vec4 _TopTex_ST;
-#line 370
+#line 368
+#line 368
 lowp vec4 frag( in v2f i ) {
-    #line 372
     mediump float xval = i.viewDir.x;
     mediump vec4 xtex = texture( _LeftTex, i.texcoordZY);
+    #line 372
     mediump float yval = i.viewDir.y;
     mediump vec4 ytex = texture( _TopTex, i.texcoordXZ);
-    #line 376
     mediump float zval = i.viewDir.z;
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
+    #line 376
     mediump vec4 tex = (((xtex * xval) + (ytex * yval)) + (ztex * zval));
     mediump vec4 prev = ((_Color * i.color) * tex);
-    #line 380
     prev.xyz *= prev.w;
     return prev;
 }
@@ -1312,7 +1311,7 @@ Keywords { }
 
 }
 
-#LINE 138
+#LINE 123
  
 		}
 	} 

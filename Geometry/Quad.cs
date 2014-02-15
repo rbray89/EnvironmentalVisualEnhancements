@@ -8,12 +8,12 @@ namespace Geometry
 {
     public static class Quad
     {
-        public static void Create(GameObject gameObject, float size)
+        public static void Create(GameObject gameObject, float size, Color color)
         {
             MeshFilter filter = gameObject.AddComponent<MeshFilter>();
             Mesh mesh = filter.mesh;
             mesh.Clear();
-
+            
             mesh.vertices = new Vector3[4] 
             {
                 new Vector3(-.5f,-.5f,0)*size,
@@ -38,6 +38,14 @@ namespace Geometry
                 new Vector3(0,0,-1),
                 new Vector3(0,0,-1),
                 new Vector3(0,0,-1)
+            };
+
+            mesh.colors = new Color[4]
+            {
+                new Color(color.r, color.g/2f, color.b, color.a),
+                new Color(color.r, color.g, color.b, color.a),
+                new Color(color.r, color.g/2f, color.b, color.a),
+                new Color(color.r, color.g, color.b, color.a)
             };
 
             Tools.CalculateMeshTangents(mesh);

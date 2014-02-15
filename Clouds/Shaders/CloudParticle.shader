@@ -11,7 +11,7 @@ Category {
 	Lighting On
 	ZWrite Off
 	Cull Off
-	Blend One OneMinusSrcColor
+	Blend One OneMinusSrcAlpha  
 	Tags { 
 	"Queue"="Transparent" 
 	"IgnoreProjector"="True" 
@@ -71,45 +71,30 @@ Category {
 				float2 texcoodOffsetxy = (2*v.texcoord)- 1;
 				float4 texcoordOffset = float4(texcoodOffsetxy.x, texcoodOffsetxy.y, 0, v.vertex.w);
 				
-				//float4 wVert = mul(_Object2World, texcoordOffset);
-				//float4 wOrigin = mul(_Object2World, float4(0, 0, 0, 1));
-				
-				//texcoordOffset = (wVert.xyww - wOrigin);
-	            //  + float4(v.vertex.x, v.vertex.y, v.vertex.z,1));
-				
 				float4 ZYv = texcoordOffset.zyxw;
 				float4 XZv = texcoordOffset.xzyw;
 				float4 XYv = texcoordOffset.xyzw;
 				
 				ZYv.x += sign(-viewDir.x)*sign(ZYv.z)*(viewDir.z);
-				XZv.y += sign(-viewDir.y)*sign(XYv.x)*(viewDir.x);
+				XZv.y += sign(-viewDir.y)*sign(XZv.x)*(viewDir.x);
 				XYv.z += sign(-viewDir.z)*sign(XYv.x)*(viewDir.x);
 				
+				//XZv.z *= -1;
 				ZYv.x += sign(-viewDir.x)*sign(ZYv.y)*(viewDir.y);
-				//XZv.y += sign(-viewDir.y)*sign(XYv.z)*(viewDir.z);
+				XZv.y += sign(-viewDir.y)*sign(XZv.z)*(viewDir.z);
 				XYv.z += sign(-viewDir.z)*sign(XYv.y)*(viewDir.y);
 				
-				//o.pos = mul(UNITY_MATRIX_P, XYv + mvCenter);
 				
 				float2 ZY = mul(UNITY_MATRIX_MV, ZYv).xy - mvCenter.xy;
 				float2 XZ = mul(UNITY_MATRIX_MV, XZv).xy - mvCenter.xy;
-				float2 XY = mul(UNITY_MATRIX_MV, XYv).xy - mvCenter.xy;
-	            
-	            viewDir.x = o.viewDir.x;
-	            viewDir.y = o.viewDir.y;
-	            viewDir.z = o.viewDir.z;
-	            
-				//ZY = float2(ZY.x*viewDir.x, ZY.y*viewDir.x);               					
-				//XZ = float2(XZ.x*viewDir.y, XZ.y*viewDir.y);
-				//XY = float2(XY.x*viewDir.z, XY.y*viewDir.z);	 	
-									
+				float2 XY = mul(UNITY_MATRIX_MV, XYv).xy - mvCenter.xy;	
+																			
 				o.texcoordZY = half2(.5 ,.5) + (ZY);
 				o.texcoordXZ = half2(.5 ,.5) + (XZ);
 				o.texcoordXY = half2(.5 ,.5) + (XY);
 				
-//				float3 vertex = mul(UNITY_MATRIX_IT_MV, o.pos).xyz;
-//				o.color = float4(vertex.x, vertex.y, vertex.z, 1);//v.color;
-				//o.color = float4(o.pos.x, o.pos.y, o.pos.z, 1);
+				//float3 vertex = 3*normalize(mul(UNITY_MATRIX_MV, v.vertex)).xyz;
+				o.color = v.color;//float4(vertex.x, vertex.y, vertex.z, 1)*v.color;
 
 				return o;
 			}
