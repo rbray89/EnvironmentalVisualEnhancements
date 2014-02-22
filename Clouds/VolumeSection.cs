@@ -23,9 +23,9 @@ namespace Clouds
 
             particle.transform.parent = parent;
             particle.transform.localPosition = pos;
-            float x = 0;// 360f * (float)Random.NextDouble();
-            float y = 0;// 360f * (float)Random.NextDouble();
-            float z = 0;// 360f * (float)Random.NextDouble();
+            float x = 360f * (float)Random.NextDouble();
+            float y = 360f * (float)Random.NextDouble();
+            float z = 360f * (float)Random.NextDouble();
 
             particle.transform.localRotation = Quaternion.Euler(x, y, z);
             particle.transform.localScale = Vector3.one;
@@ -35,7 +35,7 @@ namespace Clouds
             float u = (float)(.5 + (Mathf.Atan2(point.z, point.x) / (2f * Mathf.PI)));
             float v = Mathf.Acos(-point.y) / Mathf.PI;
             Color pix = tex.GetPixelBilinear(u, v);
-            Quad.Create(particle, Random.Next(4000, 8000), pix);
+            Quad.Create(particle, Random.Next(2000, 4000), pix);
 
             var mr = particle.AddComponent<MeshRenderer>();
             mr.sharedMaterial = new Material(CloudLayer.CloudParticleShader);// Shader.Find("KSP/Diffuse"));
