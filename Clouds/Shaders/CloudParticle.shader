@@ -9,16 +9,15 @@ Properties {
 
 Category {
 	
-	Lighting On
-	ZWrite Off
-	Cull Off
-	AlphaTest Greater .01
+	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
 	Blend SrcAlpha OneMinusSrcAlpha
-	Fog { Color (0,0,0,0) }
-	Tags { 
-	"Queue"="Transparent" 
-	"IgnoreProjector"="True" 
-	"RenderType"="Transparent" 
+	AlphaTest Greater .01
+	ColorMask RGB
+	Cull Off Lighting Off ZWrite Off
+	BindChannels {
+		Bind "Color", color
+		Bind "Vertex", vertex
+		Bind "TexCoord", texcoord
 	}
 
 	SubShader {
@@ -140,11 +139,12 @@ Category {
 				i.color.a *= fade;
 				#endif
 				
-				half4 prev = _Color * i.color * tex;
+				half4 prev = .95*_Color * i.color * tex;
 				return prev;
 			}
 			ENDCG 
 		}
 	} 
+	
 }
 }

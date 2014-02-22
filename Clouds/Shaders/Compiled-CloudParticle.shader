@@ -9,16 +9,15 @@ Properties {
 
 Category {
 	
-	Lighting On
-	ZWrite Off
-	Cull Off
-	AlphaTest Greater .01
+	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
 	Blend SrcAlpha OneMinusSrcAlpha
-	Fog { Color (0,0,0,0) }
-	Tags { 
-	"Queue"="Transparent" 
-	"IgnoreProjector"="True" 
-	"RenderType"="Transparent" 
+	AlphaTest Greater .01
+	ColorMask RGB
+	Cull Off Lighting Off ZWrite Off
+	BindChannels {
+		Bind "Color", color
+		Bind "Vertex", vertex
+		Bind "TexCoord", texcoord
 	}
 
 	SubShader {
@@ -404,7 +403,7 @@ void main ()
   tmpvar_11 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_2 = tmpvar_11;
   mediump vec4 tmpvar_12;
-  tmpvar_12 = ((_Color * xlv_COLOR) * mix (mix (xtex_6, ytex_4, vec4(yval_5)), ztex_2, vec4(zval_3)));
+  tmpvar_12 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_6, ytex_4, vec4(yval_5)), ztex_2, vec4(zval_3)));
   tmpvar_1 = tmpvar_12;
   gl_FragData[0] = tmpvar_1;
 }
@@ -513,7 +512,7 @@ void main ()
   tmpvar_11 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_2 = tmpvar_11;
   mediump vec4 tmpvar_12;
-  tmpvar_12 = ((_Color * xlv_COLOR) * mix (mix (xtex_6, ytex_4, vec4(yval_5)), ztex_2, vec4(zval_3)));
+  tmpvar_12 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_6, ytex_4, vec4(yval_5)), ztex_2, vec4(zval_3)));
   tmpvar_1 = tmpvar_12;
   gl_FragData[0] = tmpvar_1;
 }
@@ -1116,7 +1115,7 @@ lowp vec4 frag( in v2f i ) {
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     #line 380
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = ((_Color * i.color) * tex);
+    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
     return prev;
 }
 in lowp vec4 xlv_COLOR;
@@ -1580,7 +1579,7 @@ void main ()
   tmpvar_15 = (xlv_COLOR.w * clamp ((_InvFade * ((1.0/(((_ZBufferParams.z * z_14) + _ZBufferParams.w))) - xlv_TEXCOORD4.z)), 0.0, 1.0));
   tmpvar_2.w = tmpvar_15;
   mediump vec4 tmpvar_16;
-  tmpvar_16 = ((_Color * tmpvar_2) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_16 = (((0.95 * _Color) * tmpvar_2) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   tmpvar_1 = tmpvar_16;
   gl_FragData[0] = tmpvar_1;
 }
@@ -1718,7 +1717,7 @@ void main ()
   tmpvar_15 = (xlv_COLOR.w * clamp ((_InvFade * ((1.0/(((_ZBufferParams.z * z_14) + _ZBufferParams.w))) - xlv_TEXCOORD4.z)), 0.0, 1.0));
   tmpvar_2.w = tmpvar_15;
   mediump vec4 tmpvar_16;
-  tmpvar_16 = ((_Color * tmpvar_2) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_16 = (((0.95 * _Color) * tmpvar_2) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   tmpvar_1 = tmpvar_16;
   gl_FragData[0] = tmpvar_1;
 }
@@ -2396,7 +2395,7 @@ lowp vec4 frag( in v2f i ) {
     #line 386
     highp float fade = xll_saturate_f((_InvFade * (sceneZ - partZ)));
     i.color.w *= fade;
-    mediump vec4 prev = ((_Color * i.color) * tex);
+    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
     return prev;
 }
 in lowp vec4 xlv_COLOR;
@@ -2426,10 +2425,10 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 2
-//   opengl - ALU: 9 to 16, TEX: 3 to 4
-//   d3d9 - ALU: 7 to 13, TEX: 3 to 4
-//   d3d11 - ALU: 6 to 12, TEX: 3 to 4, FLOW: 1 to 1
-//   d3d11_9x - ALU: 6 to 12, TEX: 3 to 4, FLOW: 1 to 1
+//   opengl - ALU: 10 to 17, TEX: 3 to 4
+//   d3d9 - ALU: 8 to 14, TEX: 3 to 4
+//   d3d11 - ALU: 7 to 13, TEX: 3 to 4, FLOW: 1 to 1
+//   d3d11_9x - ALU: 7 to 13, TEX: 3 to 4, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { "SOFTPARTICLES_OFF" }
 Vector 0 [_Color]
@@ -2438,8 +2437,9 @@ SetTexture 1 [_TopTex] 2D
 SetTexture 2 [_FrontTex] 2D
 "!!ARBfp1.0
 OPTION ARB_precision_hint_fastest;
-# 9 ALU, 3 TEX
-PARAM c[1] = { program.local[0] };
+# 10 ALU, 3 TEX
+PARAM c[2] = { program.local[0],
+		{ 0.95019531 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
@@ -2451,9 +2451,10 @@ MAD R1, fragment.texcoord[0].y, R1, R2;
 ADD R0, R0, -R1;
 MAD R1, fragment.texcoord[0].z, R0, R1;
 MUL R0, fragment.color.primary, c[0];
-MUL result.color, R0, R1;
+MUL R0, R0, R1;
+MUL result.color, R0, c[1].x;
 END
-# 9 instructions, 3 R-regs
+# 10 instructions, 3 R-regs
 "
 }
 
@@ -2464,10 +2465,11 @@ SetTexture 0 [_LeftTex] 2D
 SetTexture 1 [_TopTex] 2D
 SetTexture 2 [_FrontTex] 2D
 "ps_2_0
-; 7 ALU, 3 TEX
+; 8 ALU, 3 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
+def c1, 0.95019531, 0, 0, 0
 dcl v0
 dcl t0.xyz
 dcl t1.xy
@@ -2482,6 +2484,7 @@ add_pp r1, r2, -r0
 mad_pp r1, t0.z, r1, r0
 mul_pp r0, v0, c0
 mul_pp r0, r0, r1
+mul_pp r0, r0, c1.x
 mov_pp oC0, r0
 "
 }
@@ -2494,12 +2497,12 @@ BindCB "$Globals" 0
 SetTexture 0 [_LeftTex] 2D 1
 SetTexture 1 [_TopTex] 2D 0
 SetTexture 2 [_FrontTex] 2D 2
-// 10 instructions, 2 temp regs, 0 temp arrays:
-// ALU 6 float, 0 int, 0 uint
+// 11 instructions, 2 temp regs, 0 temp arrays:
+// ALU 7 float, 0 int, 0 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedgiajoahkkfodfelagcmjinbddpoigmhkabaaaaaabeadaaaaadaaaaaa
+eefiecedeomphjlflljhcdgappkaigcnjmnnniapabaaaaaadmadaaaaadaaaaaa
 cmaaaaaaoiaaaaaabmabaaaaejfdeheoleaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaakkaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -2508,7 +2511,7 @@ acaaaaaaaaaaaaaaadaaaaaaadaaaaaaamamaaaakkaaaaaaadaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaadadaaaafdfgfpfaepfdejfeejepeoaaedepemepfcaafeef
 fiedepepfceeaaklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaa
 aaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefc
-paabaaaaeaaaaaaahmaaaaaafjaaaaaeegiocaaaaaaaaaaaacaaaaaafkaaaaad
+biacaaaaeaaaaaaaigaaaaaafjaaaaaeegiocaaaaaaaaaaaacaaaaaafkaaaaad
 aagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaa
 fibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaa
 fibiaaaeaahabaaaacaaaaaaffffaaaagcbaaaadpcbabaaaabaaaaaagcbaaaad
@@ -2522,8 +2525,9 @@ aaaaaaaaegaobaaaabaaaaaaefaaaaajpcaabaaaabaaaaaaegbabaaaaeaaaaaa
 eghobaaaacaaaaaaaagabaaaacaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaia
 ebaaaaaaaaaaaaaaegaobaaaabaaaaaadcaaaaajpcaabaaaaaaaaaaakgbkbaaa
 acaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaa
-egbobaaaabaaaaaaegiocaaaaaaaaaaaabaaaaaadiaaaaahpccabaaaaaaaaaaa
-egaobaaaaaaaaaaaegaobaaaabaaaaaadoaaaaab"
+egbobaaaabaaaaaaegiocaaaaaaaaaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaa
+egaobaaaaaaaaaaaegaobaaaabaaaaaadiaaaaakpccabaaaaaaaaaaaegaobaaa
+aaaaaaaaaceaaaaaddddhddpddddhddpddddhddpddddhddpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -2543,6 +2547,7 @@ SetTexture 0 [_LeftTex] 2D
 SetTexture 1 [_TopTex] 2D
 SetTexture 2 [_FrontTex] 2D
 "agal_ps
+c1 0.950195 0.0 0.0 0.0
 [bc]
 ciaaaaaaacaaapacadaaaaoeaeaaaaaaacaaaaaaafaababb tex r2, v3, s2 <2d wrap linear point>
 ciaaaaaaaaaaapacabaaaaoeaeaaaaaaaaaaaaaaafaababb tex r0, v1, s0 <2d wrap linear point>
@@ -2555,6 +2560,7 @@ adaaaaaaabaaapacaaaaaakkaeaaaaaaabaaaaoeacaaaaaa mul r1, v0.z, r1
 abaaaaaaabaaapacabaaaaoeacaaaaaaaaaaaaoeacaaaaaa add r1, r1, r0
 adaaaaaaaaaaapacahaaaaoeaeaaaaaaaaaaaaoeabaaaaaa mul r0, v7, c0
 adaaaaaaaaaaapacaaaaaaoeacaaaaaaabaaaaoeacaaaaaa mul r0, r0, r1
+adaaaaaaaaaaapacaaaaaaoeacaaaaaaabaaaaaaabaaaaaa mul r0, r0, c1.x
 aaaaaaaaaaaaapadaaaaaaoeacaaaaaaaaaaaaaaaaaaaaaa mov o0, r0
 "
 }
@@ -2567,46 +2573,48 @@ BindCB "$Globals" 0
 SetTexture 0 [_LeftTex] 2D 1
 SetTexture 1 [_TopTex] 2D 0
 SetTexture 2 [_FrontTex] 2D 2
-// 10 instructions, 2 temp regs, 0 temp arrays:
-// ALU 6 float, 0 int, 0 uint
+// 11 instructions, 2 temp regs, 0 temp arrays:
+// ALU 7 float, 0 int, 0 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0_level_9_1
-eefiecedpbiklihgfohcggidmbmpblacdeoeomipabaaaaaaeiaeaaaaaeaaaaaa
-daaaaaaagaabaaaafiadaaaabeaeaaaaebgpgodjciabaaaaciabaaaaaaacpppp
-omaaaaaadmaaaaaaabaadaaaaaaadmaaaaaadmaaadaaceaaaaaadmaaabaaaaaa
-aaababaaacacacaaaaaaabaaabaaaaaaaaaaaaaaaaacppppbpaaaaacaaaaaaia
-aaaacplabpaaaaacaaaaaaiaabaachlabpaaaaacaaaaaaiaacaaaplabpaaaaac
-aaaaaaiaadaaadlabpaaaaacaaaaaajaaaaiapkabpaaaaacaaaaaajaabaiapka
-bpaaaaacaaaaaajaacaiapkaabaaaaacaaaaadiaacaabllaecaaaaadaaaacpia
-aaaaoeiaaaaioekaecaaaaadabaacpiaacaaoelaabaioekaecaaaaadacaacpia
-adaaoelaacaioekabcaaaaaeadaacpiaabaafflaaaaaoeiaabaaoeiabcaaaaae
-aaaacpiaabaakklaacaaoeiaadaaoeiaafaaaaadabaacpiaaaaaoelaaaaaoeka
-afaaaaadaaaacpiaaaaaoeiaabaaoeiaabaaaaacaaaicpiaaaaaoeiappppaaaa
-fdeieefcpaabaaaaeaaaaaaahmaaaaaafjaaaaaeegiocaaaaaaaaaaaacaaaaaa
-fkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaafkaaaaadaagabaaa
-acaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
-ffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaagcbaaaadpcbabaaaabaaaaaa
-gcbaaaadgcbabaaaacaaaaaagcbaaaaddcbabaaaadaaaaaagcbaaaadmcbabaaa
-adaaaaaagcbaaaaddcbabaaaaeaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-acaaaaaaefaaaaajpcaabaaaaaaaaaaaogbkbaaaadaaaaaaeghobaaaabaaaaaa
-aagabaaaaaaaaaaaefaaaaajpcaabaaaabaaaaaaegbabaaaadaaaaaaeghobaaa
-aaaaaaaaaagabaaaabaaaaaaaaaaaaaipcaabaaaaaaaaaaaegaobaaaaaaaaaaa
-egaobaiaebaaaaaaabaaaaaadcaaaaajpcaabaaaaaaaaaaafgbfbaaaacaaaaaa
-egaobaaaaaaaaaaaegaobaaaabaaaaaaefaaaaajpcaabaaaabaaaaaaegbabaaa
-aeaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaaaaaaaaaipcaabaaaabaaaaaa
-egaobaiaebaaaaaaaaaaaaaaegaobaaaabaaaaaadcaaaaajpcaabaaaaaaaaaaa
-kgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaadiaaaaaipcaabaaa
-abaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaabaaaaaadiaaaaahpccabaaa
-aaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadoaaaaabejfdeheoleaaaaaa
-agaaaaaaaiaaaaaajiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaa
-keaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapapaaaakkaaaaaaaaaaaaaa
-aaaaaaaaadaaaaaaacaaaaaaahagaaaakkaaaaaaabaaaaaaaaaaaaaaadaaaaaa
-adaaaaaaadadaaaakkaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaaamamaaaa
-kkaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadadaaaafdfgfpfaepfdejfe
-ejepeoaaedepemepfcaafeeffiedepepfceeaaklepfdeheocmaaaaaaabaaaaaa
-aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklkl"
+eefiecedaaplcgeoladelibjlmbaanpnefigjclpabaaaaaajiaeaaaaaeaaaaaa
+daaaaaaaiiabaaaakiadaaaageaeaaaaebgpgodjfaabaaaafaabaaaaaaacpppp
+beabaaaadmaaaaaaabaadaaaaaaadmaaaaaadmaaadaaceaaaaaadmaaabaaaaaa
+aaababaaacacacaaaaaaabaaabaaaaaaaaaaaaaaaaacppppfbaaaaafabaaapka
+ddddhddpaaaaaaaaaaaaaaaaaaaaaaaabpaaaaacaaaaaaiaaaaacplabpaaaaac
+aaaaaaiaabaachlabpaaaaacaaaaaaiaacaaaplabpaaaaacaaaaaaiaadaaadla
+bpaaaaacaaaaaajaaaaiapkabpaaaaacaaaaaajaabaiapkabpaaaaacaaaaaaja
+acaiapkaabaaaaacaaaaadiaacaabllaecaaaaadaaaacpiaaaaaoeiaaaaioeka
+ecaaaaadabaacpiaacaaoelaabaioekaecaaaaadacaacpiaadaaoelaacaioeka
+bcaaaaaeadaacpiaabaafflaaaaaoeiaabaaoeiabcaaaaaeaaaacpiaabaakkla
+acaaoeiaadaaoeiaafaaaaadabaacpiaaaaaoelaaaaaoekaafaaaaadaaaacpia
+aaaaoeiaabaaoeiaafaaaaadaaaacpiaaaaaoeiaabaaaakaabaaaaacaaaicpia
+aaaaoeiappppaaaafdeieefcbiacaaaaeaaaaaaaigaaaaaafjaaaaaeegiocaaa
+aaaaaaaaacaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
+fkaaaaadaagabaaaacaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
+aahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaagcbaaaad
+pcbabaaaabaaaaaagcbaaaadgcbabaaaacaaaaaagcbaaaaddcbabaaaadaaaaaa
+gcbaaaadmcbabaaaadaaaaaagcbaaaaddcbabaaaaeaaaaaagfaaaaadpccabaaa
+aaaaaaaagiaaaaacacaaaaaaefaaaaajpcaabaaaaaaaaaaaogbkbaaaadaaaaaa
+eghobaaaabaaaaaaaagabaaaaaaaaaaaefaaaaajpcaabaaaabaaaaaaegbabaaa
+adaaaaaaeghobaaaaaaaaaaaaagabaaaabaaaaaaaaaaaaaipcaabaaaaaaaaaaa
+egaobaaaaaaaaaaaegaobaiaebaaaaaaabaaaaaadcaaaaajpcaabaaaaaaaaaaa
+fgbfbaaaacaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaaefaaaaajpcaabaaa
+abaaaaaaegbabaaaaeaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaaaaaaaaai
+pcaabaaaabaaaaaaegaobaiaebaaaaaaaaaaaaaaegaobaaaabaaaaaadcaaaaaj
+pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
+diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaabaaaaaa
+diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadiaaaaak
+pccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaaddddhddpddddhddpddddhddp
+ddddhddpdoaaaaabejfdeheoleaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaa
+abaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
+abaaaaaaapapaaaakkaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaaahagaaaa
+kkaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaaadadaaaakkaaaaaaacaaaaaa
+aaaaaaaaadaaaaaaadaaaaaaamamaaaakkaaaaaaadaaaaaaaaaaaaaaadaaaaaa
+aeaaaaaaadadaaaafdfgfpfaepfdejfeejepeoaaedepemepfcaafeeffiedepep
+fceeaaklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl"
 }
 
 SubProgram "gles3 " {
@@ -2625,8 +2633,9 @@ SetTexture 2 [_FrontTex] 2D
 SetTexture 3 [_CameraDepthTexture] 2D
 "!!ARBfp1.0
 OPTION ARB_precision_hint_fastest;
-# 16 ALU, 4 TEX
-PARAM c[3] = { program.local[0..2] };
+# 17 ALU, 4 TEX
+PARAM c[4] = { program.local[0..2],
+		{ 0.95019531 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
@@ -2646,9 +2655,10 @@ MUL_SAT R0.w, R2.x, c[2].x;
 MOV R0.xyz, fragment.color.primary;
 MUL R0.w, fragment.color.primary, R0;
 MUL R0, R0, c[1];
-MUL result.color, R0, R1;
+MUL R0, R0, R1;
+MUL result.color, R0, c[3].x;
 END
-# 16 instructions, 4 R-regs
+# 17 instructions, 4 R-regs
 "
 }
 
@@ -2662,11 +2672,12 @@ SetTexture 1 [_TopTex] 2D
 SetTexture 2 [_FrontTex] 2D
 SetTexture 3 [_CameraDepthTexture] 2D
 "ps_2_0
-; 13 ALU, 4 TEX
+; 14 ALU, 4 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
+def c3, 0.95019531, 0, 0, 0
 dcl v0
 dcl t0.xyz
 dcl t1.xy
@@ -2689,6 +2700,7 @@ mov_pp r2.xyz, v0
 mul_pp r2.w, v0, r1.x
 mul_pp r1, r2, c1
 mul_pp r0, r1, r0
+mul_pp r0, r0, c3.x
 mov_pp oC0, r0
 "
 }
@@ -2706,12 +2718,12 @@ SetTexture 0 [_LeftTex] 2D 1
 SetTexture 1 [_TopTex] 2D 0
 SetTexture 2 [_FrontTex] 2D 2
 SetTexture 3 [_CameraDepthTexture] 2D 3
-// 18 instructions, 3 temp regs, 0 temp arrays:
-// ALU 12 float, 0 int, 0 uint
+// 19 instructions, 3 temp regs, 0 temp arrays:
+// ALU 13 float, 0 int, 0 uint
 // TEX 4 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedfolindhpflpngnkeoddccdgcfchcogolabaaaaaagiaeaaaaadaaaaaa
+eefiecededjkdpnnakfgadbiogpjcgapcfnmljjiabaaaaaajaaeaaaaadaaaaaa
 cmaaaaaaaaabaaaadeabaaaaejfdeheommaaaaaaahaaaaaaaiaaaaaalaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaamcaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -2720,8 +2732,8 @@ acaaaaaaaaaaaaaaadaaaaaaadaaaaaaamamaaaamcaaaaaaadaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaadadaaaamcaaaaaaaeaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 apapaaaafdfgfpfaepfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaakl
 epfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
-aaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefccmadaaaaeaaaaaaa
-mlaaaaaafjaaaaaeegiocaaaaaaaaaaaadaaaaaafjaaaaaeegiocaaaabaaaaaa
+aaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcfeadaaaaeaaaaaaa
+nfaaaaaafjaaaaaeegiocaaaaaaaaaaaadaaaaaafjaaaaaeegiocaaaabaaaaaa
 aiaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaafkaaaaad
 aagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafibiaaaeaahabaaaaaaaaaaa
 ffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaa
@@ -2745,8 +2757,9 @@ pcaabaaaabaaaaaafgbfbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaacaaaaaa
 efaaaaajpcaabaaaacaaaaaaegbabaaaaeaaaaaaeghobaaaacaaaaaaaagabaaa
 acaaaaaaaaaaaaaipcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaegaobaaa
 acaaaaaadcaaaaajpcaabaaaabaaaaaakgbkbaaaacaaaaaaegaobaaaacaaaaaa
-egaobaaaabaaaaaadiaaaaahpccabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaa
-abaaaaaadoaaaaab"
+egaobaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaa
+abaaaaaadiaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaaddddhddp
+ddddhddpddddhddpddddhddpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -2770,6 +2783,7 @@ SetTexture 2 [_FrontTex] 2D
 SetTexture 3 [_CameraDepthTexture] 2D
 "agal_ps
 c3 1.0 0.003922 0.000015 0.0
+c4 0.950195 0.0 0.0 0.0
 [bc]
 ciaaaaaaacaaapacadaaaaoeaeaaaaaaacaaaaaaafaababb tex r2, v3, s2 <2d wrap linear point>
 ciaaaaaaadaaapacacaaaaoeaeaaaaaaabaaaaaaafaababb tex r3, v2, s1 <2d wrap linear point>
@@ -2793,6 +2807,7 @@ aaaaaaaaacaaahacahaaaaoeaeaaaaaaaaaaaaaaaaaaaaaa mov r2.xyz, v7
 adaaaaaaacaaaiacahaaaaoeaeaaaaaaaaaaaaaaacaaaaaa mul r2.w, v7, r0.x
 adaaaaaaaaaaapacacaaaaoeacaaaaaaabaaaaoeabaaaaaa mul r0, r2, c1
 adaaaaaaaaaaapacaaaaaaoeacaaaaaaabaaaaoeacaaaaaa mul r0, r0, r1
+adaaaaaaaaaaapacaaaaaaoeacaaaaaaaeaaaaaaabaaaaaa mul r0, r0, c4.x
 aaaaaaaaaaaaapadaaaaaaoeacaaaaaaaaaaaaaaaaaaaaaa mov o0, r0
 "
 }
@@ -2810,62 +2825,64 @@ SetTexture 0 [_LeftTex] 2D 1
 SetTexture 1 [_TopTex] 2D 0
 SetTexture 2 [_FrontTex] 2D 2
 SetTexture 3 [_CameraDepthTexture] 2D 3
-// 18 instructions, 3 temp regs, 0 temp arrays:
-// ALU 12 float, 0 int, 0 uint
+// 19 instructions, 3 temp regs, 0 temp arrays:
+// ALU 13 float, 0 int, 0 uint
 // TEX 4 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0_level_9_1
-eefiecedkipkcmgcggffngnfmmebphmmhdnlcglfabaaaaaaemagaaaaaeaaaaaa
-daaaaaaabaacaaaaeeafaaaabiagaaaaebgpgodjniabaaaaniabaaaaaaacpppp
-imabaaaaemaaaaaaacaadeaaaaaaemaaaaaaemaaaeaaceaaaaaaemaaabaaaaaa
+eefiecedjedjgjedlpccdnhfjlgdcinhiinenbdaabaaaaaajmagaaaaaeaaaaaa
+daaaaaaadiacaaaajeafaaaagiagaaaaebgpgodjaaacaaaaaaacaaaaaaacpppp
+leabaaaaemaaaaaaacaadeaaaaaaemaaaaaaemaaaeaaceaaaaaaemaaabaaaaaa
 aaababaaacacacaaadadadaaaaaaabaaacaaaaaaaaaaaaaaabaaahaaabaaacaa
-aaaaaaaaaaacppppbpaaaaacaaaaaaiaaaaaaplabpaaaaacaaaaaaiaabaachla
-bpaaaaacaaaaaaiaacaaaplabpaaaaacaaaaaaiaadaaadlabpaaaaacaaaaaaia
-aeaaaplabpaaaaacaaaaaajaaaaiapkabpaaaaacaaaaaajaabaiapkabpaaaaac
-aaaaaajaacaiapkabpaaaaacaaaaaajaadaiapkaagaaaaacaaaaaiiaaeaappla
-afaaaaadaaaaadiaaaaappiaaeaaoelaabaaaaacabaaadiaacaabllaecaaaaad
-aaaaapiaaaaaoeiaadaioekaecaaaaadabaacpiaabaaoeiaaaaioekaecaaaaad
-acaacpiaacaaoelaabaioekaecaaaaadadaacpiaadaaoelaacaioekaaeaaaaae
-aaaaabiaacaakkkaaaaaaaiaacaappkaagaaaaacaaaaabiaaaaaaaiaacaaaaad
-aaaaabiaaaaaaaiaaeaakklbafaaaaadaaaabbiaaaaaaaiaabaaaakaafaaaaad
-aaaaciiaaaaaaaiaaaaapplaabaaaaacaaaachiaaaaaoelaafaaaaadaaaacpia
-aaaaoeiaaaaaoekabcaaaaaeaeaacpiaabaafflaabaaoeiaacaaoeiabcaaaaae
-abaacpiaabaakklaadaaoeiaaeaaoeiaafaaaaadaaaacpiaaaaaoeiaabaaoeia
-abaaaaacaaaicpiaaaaaoeiappppaaaafdeieefccmadaaaaeaaaaaaamlaaaaaa
-fjaaaaaeegiocaaaaaaaaaaaadaaaaaafjaaaaaeegiocaaaabaaaaaaaiaaaaaa
-fkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaafkaaaaadaagabaaa
-acaaaaaafkaaaaadaagabaaaadaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaa
-fibiaaaeaahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaa
-fibiaaaeaahabaaaadaaaaaaffffaaaagcbaaaadpcbabaaaabaaaaaagcbaaaad
-gcbabaaaacaaaaaagcbaaaaddcbabaaaadaaaaaagcbaaaadmcbabaaaadaaaaaa
-gcbaaaaddcbabaaaaeaaaaaagcbaaaadpcbabaaaafaaaaaagfaaaaadpccabaaa
-aaaaaaaagiaaaaacadaaaaaaaoaaaaahdcaabaaaaaaaaaaaegbabaaaafaaaaaa
-pgbpbaaaafaaaaaaefaaaaajpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
-adaaaaaaaagabaaaadaaaaaadcaaaaalbcaabaaaaaaaaaaackiacaaaabaaaaaa
-ahaaaaaaakaabaaaaaaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaa
-aaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaaaaaaaaa
-aaaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaackbabaiaebaaaaaaafaaaaaa
-dicaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaaakiacaaaaaaaaaaaacaaaaaa
-diaaaaahicaabaaaaaaaaaaaakaabaaaaaaaaaaadkbabaaaabaaaaaadgaaaaaf
-hcaabaaaaaaaaaaaegbcbaaaabaaaaaadiaaaaaipcaabaaaaaaaaaaaegaobaaa
-aaaaaaaaegiocaaaaaaaaaaaabaaaaaaefaaaaajpcaabaaaabaaaaaaogbkbaaa
-adaaaaaaeghobaaaabaaaaaaaagabaaaaaaaaaaaefaaaaajpcaabaaaacaaaaaa
-egbabaaaadaaaaaaeghobaaaaaaaaaaaaagabaaaabaaaaaaaaaaaaaipcaabaaa
-abaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaacaaaaaadcaaaaajpcaabaaa
-abaaaaaafgbfbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaacaaaaaaefaaaaaj
-pcaabaaaacaaaaaaegbabaaaaeaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaa
-aaaaaaaipcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaegaobaaaacaaaaaa
-dcaaaaajpcaabaaaabaaaaaakgbkbaaaacaaaaaaegaobaaaacaaaaaaegaobaaa
-abaaaaaadiaaaaahpccabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-doaaaaabejfdeheommaaaaaaahaaaaaaaiaaaaaalaaaaaaaaaaaaaaaabaaaaaa
-adaaaaaaaaaaaaaaapaaaaaalmaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaa
-apapaaaamcaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaaahagaaaamcaaaaaa
-abaaaaaaaaaaaaaaadaaaaaaadaaaaaaadadaaaamcaaaaaaacaaaaaaaaaaaaaa
-adaaaaaaadaaaaaaamamaaaamcaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaa
-adadaaaamcaaaaaaaeaaaaaaaaaaaaaaadaaaaaaafaaaaaaapapaaaafdfgfpfa
-epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklepfdeheocmaaaaaa
-abaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaa
-fdfgfpfegbhcghgfheaaklkl"
+aaaaaaaaaaacppppfbaaaaafadaaapkaddddhddpaaaaaaaaaaaaaaaaaaaaaaaa
+bpaaaaacaaaaaaiaaaaaaplabpaaaaacaaaaaaiaabaachlabpaaaaacaaaaaaia
+acaaaplabpaaaaacaaaaaaiaadaaadlabpaaaaacaaaaaaiaaeaaaplabpaaaaac
+aaaaaajaaaaiapkabpaaaaacaaaaaajaabaiapkabpaaaaacaaaaaajaacaiapka
+bpaaaaacaaaaaajaadaiapkaagaaaaacaaaaaiiaaeaapplaafaaaaadaaaaadia
+aaaappiaaeaaoelaabaaaaacabaaadiaacaabllaecaaaaadaaaaapiaaaaaoeia
+adaioekaecaaaaadabaacpiaabaaoeiaaaaioekaecaaaaadacaacpiaacaaoela
+abaioekaecaaaaadadaacpiaadaaoelaacaioekaaeaaaaaeaaaaabiaacaakkka
+aaaaaaiaacaappkaagaaaaacaaaaabiaaaaaaaiaacaaaaadaaaaabiaaaaaaaia
+aeaakklbafaaaaadaaaabbiaaaaaaaiaabaaaakaafaaaaadaaaaciiaaaaaaaia
+aaaapplaabaaaaacaaaachiaaaaaoelaafaaaaadaaaacpiaaaaaoeiaaaaaoeka
+bcaaaaaeaeaacpiaabaafflaabaaoeiaacaaoeiabcaaaaaeabaacpiaabaakkla
+adaaoeiaaeaaoeiaafaaaaadaaaacpiaaaaaoeiaabaaoeiaafaaaaadaaaacpia
+aaaaoeiaadaaaakaabaaaaacaaaicpiaaaaaoeiappppaaaafdeieefcfeadaaaa
+eaaaaaaanfaaaaaafjaaaaaeegiocaaaaaaaaaaaadaaaaaafjaaaaaeegiocaaa
+abaaaaaaaiaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
+fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafibiaaaeaahabaaa
+aaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaafibiaaaeaahabaaa
+acaaaaaaffffaaaafibiaaaeaahabaaaadaaaaaaffffaaaagcbaaaadpcbabaaa
+abaaaaaagcbaaaadgcbabaaaacaaaaaagcbaaaaddcbabaaaadaaaaaagcbaaaad
+mcbabaaaadaaaaaagcbaaaaddcbabaaaaeaaaaaagcbaaaadpcbabaaaafaaaaaa
+gfaaaaadpccabaaaaaaaaaaagiaaaaacadaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+egbabaaaafaaaaaapgbpbaaaafaaaaaaefaaaaajpcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaeghobaaaadaaaaaaaagabaaaadaaaaaadcaaaaalbcaabaaaaaaaaaaa
+ckiacaaaabaaaaaaahaaaaaaakaabaaaaaaaaaaadkiacaaaabaaaaaaahaaaaaa
+aoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
+akaabaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaackbabaia
+ebaaaaaaafaaaaaadicaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaaakiacaaa
+aaaaaaaaacaaaaaadiaaaaahicaabaaaaaaaaaaaakaabaaaaaaaaaaadkbabaaa
+abaaaaaadgaaaaafhcaabaaaaaaaaaaaegbcbaaaabaaaaaadiaaaaaipcaabaaa
+aaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaabaaaaaaefaaaaajpcaabaaa
+abaaaaaaogbkbaaaadaaaaaaeghobaaaabaaaaaaaagabaaaaaaaaaaaefaaaaaj
+pcaabaaaacaaaaaaegbabaaaadaaaaaaeghobaaaaaaaaaaaaagabaaaabaaaaaa
+aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaacaaaaaa
+dcaaaaajpcaabaaaabaaaaaafgbfbaaaacaaaaaaegaobaaaabaaaaaaegaobaaa
+acaaaaaaefaaaaajpcaabaaaacaaaaaaegbabaaaaeaaaaaaeghobaaaacaaaaaa
+aagabaaaacaaaaaaaaaaaaaipcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaa
+egaobaaaacaaaaaadcaaaaajpcaabaaaabaaaaaakgbkbaaaacaaaaaaegaobaaa
+acaaaaaaegaobaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+egaobaaaabaaaaaadiaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaa
+ddddhddpddddhddpddddhddpddddhddpdoaaaaabejfdeheommaaaaaaahaaaaaa
+aiaaaaaalaaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapapaaaamcaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaacaaaaaaahagaaaamcaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaa
+adadaaaamcaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaaamamaaaamcaaaaaa
+adaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadadaaaamcaaaaaaaeaaaaaaaaaaaaaa
+adaaaaaaafaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaaedepemepfcaafeef
+fiedepepfceeaaklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaa
+aaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl"
 }
 
 SubProgram "gles3 " {
@@ -2875,9 +2892,10 @@ Keywords { "SOFTPARTICLES_ON" }
 
 }
 
-#LINE 146
+#LINE 145
  
 		}
 	} 
+	
 }
 }
