@@ -35,7 +35,7 @@ namespace Clouds
             float u = (float)(.5 + (Mathf.Atan2(point.z, point.x) / (2f * Mathf.PI)));
             float v = Mathf.Acos(-point.y) / Mathf.PI;
             Color pix = tex.GetPixelBilinear(u, v);
-            Quad.Create(particle, Random.Next(2000, 4000), pix);
+            Quad.Create(particle, Random.Next(2500, 4500), pix);
 
             var mr = particle.AddComponent<MeshRenderer>();
             mr.sharedMaterial = new Material(CloudLayer.CloudParticleShader);// Shader.Find("KSP/Diffuse"));

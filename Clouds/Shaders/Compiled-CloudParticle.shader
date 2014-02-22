@@ -14,6 +14,7 @@ Category {
 	Cull Off
 	AlphaTest Greater .01
 	Blend SrcAlpha OneMinusSrcAlpha
+	Fog { Color (0,0,0,0) }
 	Tags { 
 	"Queue"="Transparent" 
 	"IgnoreProjector"="True" 
@@ -2874,7 +2875,7 @@ Keywords { "SOFTPARTICLES_ON" }
 
 }
 
-#LINE 145
+#LINE 146
  
 		}
 	} 

@@ -42,7 +42,7 @@ namespace Geometry
 
             mesh.colors = new Color[4]
             {
-                new Color(0, 0, 0, color.a),
+                new Color(color.r, color.g, color.b, color.a),
                 new Color(color.r, color.g, color.b, color.a),
                 new Color(color.r, color.g, color.b, color.a),
                 new Color(color.r, color.g, color.b, color.a)

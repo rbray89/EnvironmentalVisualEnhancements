@@ -297,7 +297,7 @@ namespace Clouds
             {
                 Log("Creating particle");
 
-                volume = new VolumeSection((Texture2D)this.mainTexture.Texture, this.CloudOverlay.Transform, intendedPoint, 28000);
+                volume = new VolumeSection((Texture2D)this.mainTexture.Texture, this.CloudOverlay.Transform, intendedPoint, 26000);
                 
             }
         }
