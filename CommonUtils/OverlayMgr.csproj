@@ -53,10 +53,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Equirectangular2Cubic\Equirectangular2Cubic.csproj">
-      <Project>{0027c207-0937-4920-bd0f-6f03b7f02dea}</Project>
-      <Name>Equirectangular2Cubic</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Geometry\Geometry.csproj">
       <Project>{8b24314b-4b75-43f3-b31c-ffa9fc83fb70}</Project>
       <Name>Geometry</Name>

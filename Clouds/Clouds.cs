@@ -6,7 +6,6 @@ using System.Reflection;
 using UnityEngine;
 using System.IO;
 using OverlaySystem;
-using Equirectangular2Cubic;
 
 namespace Clouds
 {

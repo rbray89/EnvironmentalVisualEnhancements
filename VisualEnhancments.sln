@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OverlayMgr", "CommonUtils\O
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityLights", "CityLights\CityLights.csproj", "{C0D6B86D-11B6-4ABB-8517-877C1721E8A2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Equirectangular2Cubic", "Equirectangular2Cubic\Equirectangular2Cubic.csproj", "{0027C207-0937-4920-BD0F-6F03B7F02DEA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Geometry", "Geometry\Geometry.csproj", "{8B24314B-4B75-43F3-B31C-FFA9FC83FB70}"
 EndProject
 Global
@@ -31,10 +29,6 @@ Global
 		{C0D6B86D-11B6-4ABB-8517-877C1721E8A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0D6B86D-11B6-4ABB-8517-877C1721E8A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0D6B86D-11B6-4ABB-8517-877C1721E8A2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0027C207-0937-4920-BD0F-6F03B7F02DEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0027C207-0937-4920-BD0F-6F03B7F02DEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0027C207-0937-4920-BD0F-6F03B7F02DEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0027C207-0937-4920-BD0F-6F03B7F02DEA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8B24314B-4B75-43F3-B31C-FFA9FC83FB70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8B24314B-4B75-43F3-B31C-FFA9FC83FB70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B24314B-4B75-43F3-B31C-FFA9FC83FB70}.Release|Any CPU.ActiveCfg = Release|Any CPU

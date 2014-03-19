@@ -1,4 +1,4 @@
-﻿using Equirectangular2Cubic;
+﻿
 using Geometry;
 using System;
 using System.Collections.Generic;
