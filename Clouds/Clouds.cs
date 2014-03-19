@@ -190,7 +190,7 @@ namespace Clouds
                     useEditor = !useEditor;
                 }
             }
-            if (HighLogic.LoadedScene == GameScenes.FLIGHT )
+/*            if (HighLogic.LoadedScene == GameScenes.FLIGHT )
             {
                 if (CloudLayer.BodyDatabase.ContainsKey(FlightGlobals.currentMainBody.name))
                 {
@@ -200,6 +200,7 @@ namespace Clouds
                     }
                 }
             }
+ */
         }
 
 
