@@ -148,7 +148,7 @@ namespace Clouds
                     {
                         newNode.AddNode(shaderFloatNode);
                     }
-                    ConfigNode PQSShaderFloatNode = cloudLayer.ShaderFloats.GetNode("pqsShader_floats");
+                    ConfigNode PQSShaderFloatNode = cloudLayer.ShaderFloats.GetNode("PQS_shader_floats");
                     if (!CloudLayer.IsDefaultShaderFloat(cloudLayer.ShaderFloats))
                     {
                         newNode.AddNode(PQSShaderFloatNode);
