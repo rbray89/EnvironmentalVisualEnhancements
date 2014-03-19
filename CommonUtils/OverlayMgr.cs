@@ -115,7 +115,7 @@ namespace OverlaySystem
                     overlay.UpdateTranform();
                 }
             }
-            ScaledEnabled = !(CurrentPQS.isActive && !MapView.MapIsEnabled);
+            ScaledEnabled = !(CurrentPQS != null && CurrentPQS.isActive && !MapView.MapIsEnabled);
         }
 
         private void EnterMapView()
@@ -169,8 +169,8 @@ namespace OverlaySystem
         {
             if ((HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.FLIGHT ) && Overlay.OverlayDatabase.ContainsKey(CurrentBodyName))
             {
-                bool inNeedOfUpdate = CurrentPQS.isActive == ScaledEnabled;
-                if (inNeedOfUpdate && CurrentPQS.isActive && !MapView.MapIsEnabled)
+                bool inNeedOfUpdate = (CurrentPQS != null && CurrentPQS.isActive) == ScaledEnabled;
+                if (inNeedOfUpdate && CurrentPQS != null && CurrentPQS.isActive && !MapView.MapIsEnabled)
                 {
                     foreach (Overlay overlay in Overlay.OverlayDatabase[CurrentBodyName])
                     {
