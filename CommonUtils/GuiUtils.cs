@@ -186,7 +186,8 @@ namespace OverlaySystem
             else if (!isBump && !TextureDictionary.ContainsKey(textureFile))
             {
                 Texture2D tex = GameDatabase.Instance.GetTexture(textureFile, isBump);
-                AddMipMaps(tex);
+                try { AddMipMaps(tex); }
+                catch { }
                 if (tex.format != TextureFormat.DXT1 && tex.format != TextureFormat.DXT5)
                 {
                     try { tex.GetPixel(0, 0); tex.Compress(true); }
