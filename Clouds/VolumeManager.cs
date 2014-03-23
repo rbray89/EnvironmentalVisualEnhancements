@@ -28,11 +28,12 @@ namespace Clouds
         public VolumeManager(Vector3 pos, float cloudSphereRadius, Texture2D texture, Transform transform)
         {
             //translator = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            //translator.renderer.material.color = new Color(1, 0, 0);
             translator = new GameObject();
             translator.transform.parent = transform;
             translator.transform.localPosition = pos * cloudSphereRadius;
             translator.transform.localScale = Vector3.one*4000;
-            translator.renderer.material.color = new Color(1, 0, 0);
+            
 
             this.Texture = texture;
             this.Transform = transform;
