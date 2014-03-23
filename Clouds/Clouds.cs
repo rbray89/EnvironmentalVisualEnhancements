@@ -189,17 +189,17 @@ namespace Clouds
                     useEditor = !useEditor;
                 }
             }
-/*            if (HighLogic.LoadedScene == GameScenes.FLIGHT )
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT )
             {
                 if (CloudLayer.BodyDatabase.ContainsKey(FlightGlobals.currentMainBody.name))
                 {
                     foreach (CloudLayer cl in CloudLayer.BodyDatabase[FlightGlobals.currentMainBody.name])
                     {
-                        cl.SpawnParticleClouds(FlightGlobals.ActiveVessel.findWorldCenterOfMass());
+                        cl.UpdateParticleClouds(FlightGlobals.ActiveVessel.findWorldCenterOfMass());
                     }
                 }
             }
- */
+ 
         }
 
 

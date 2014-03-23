@@ -4,6 +4,7 @@ Properties {
 	_LeftTex ("Particle Texture", 2D) = "white" {}
 	_FrontTex ("Particle Texture", 2D) = "white" {}
 	_InvFade ("Soft Particles Factor", Range(0.01,3.0)) = 1.0
+	_DistFade ("Distance Fade", Range(0,1)) = 1.0
 	_Color ("Color Tint", Color) = (1,1,1,1)
 }
 
@@ -42,6 +43,7 @@ Category {
 			sampler2D _BackTex;
 			fixed4 _Color;
 			float _InvFade;
+			float _DistFade;
 			
 			struct appdata_t {
 				float4 vertex : POSITION;
@@ -73,10 +75,8 @@ Category {
 	              mvCenter
 	              + float4(v.vertex.x, v.vertex.y, v.vertex.z,v.vertex.w));
 				
-				//float3 viewDir = normalize(ObjSpaceViewDir(half4(0,0,0,v.vertex.w)));
 				float3 viewDir = normalize(UNITY_MATRIX_MV[2].xyz);
-				
-				//o.viewDir = pow(viewDir,2);
+
 				o.viewDir = abs(viewDir);
 				
 				float2 texcoodOffsetxy = ((2*v.texcoord)- 1);
@@ -106,9 +106,11 @@ Category {
 				o.texcoordXZ = half2(.5 ,.5) + .6*(XZ);
 				o.texcoordXY = half2(.5 ,.5) + .6*(XY);
 				
-				//float3 vertex = 3*normalize(mul(UNITY_MATRIX_MV, v.vertex)).xyz;
-				o.color = v.color;//float4(vertex.x, vertex.y, vertex.z, 1)*v.color;
-
+				o.color = v.color;
+				
+			    float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
+				o.color.a *= saturate(_DistFade*distance(origin,_WorldSpaceCameraPos));
+				
 				#ifdef SOFTPARTICLES_ON
 				o.projPos = ComputeScreenPos (o.pos);
 				COMPUTE_EYEDEPTH(o.projPos.z);

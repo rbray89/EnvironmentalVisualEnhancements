@@ -49,6 +49,7 @@
     <Compile Include="CloudLayer.cs" />
     <Compile Include="Clouds.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VolumeManager.cs" />
     <Compile Include="VolumeSection.cs" />
   </ItemGroup>
   <ItemGroup>

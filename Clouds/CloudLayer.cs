@@ -30,6 +30,7 @@ namespace Clouds
         private ShaderFloats scaledShaderFloats;
         private ShaderFloats shaderFloats;
         private Overlay CloudOverlay;
+        private VolumeManager volume = null;
 
         public TextureSet MainTexture { get { return mainTexture; } }
         public TextureSet DetailTexture { get { return detailTexture; } }
@@ -144,9 +145,17 @@ namespace Clouds
             UpdateTextures();
             Log("Generating Overlay...");
             CloudOverlay = Overlay.GeneratePlanetOverlay(body, altitude, ScaledCloudMaterial, CloudMaterial, this.mainTexture.StartOffset);
-            
+            CloudOverlay.MacroCallback = MacroCallback;
             UpdateFloats();
             Log("Textures initialized");
+        }
+
+        private void MacroCallback(bool value)
+        {
+            if (volume != null)
+            {
+                volume.Enabled = value;
+            }
         }
 
         public void UpdateFloats()
@@ -287,18 +296,21 @@ namespace Clouds
             }
         }
 
-        VolumeSection volume = null;
-        internal void SpawnParticleClouds(Vector3 WorldPos)
+        
+        internal void UpdateParticleClouds(Vector3 WorldPos)
         {
             Vector3 intendedPoint = this.CloudOverlay.Transform.worldToLocalMatrix.MultiplyPoint3x4(WorldPos);
                 intendedPoint.Normalize();
-                intendedPoint *= CloudOverlay.Radius;
-            if (volume == null)// || Vector3.Distance(particle.transform.localPosition, intendedPoint) > 400)
+            if (volume == null)
             {
                 Log("Creating particle");
 
-                volume = new VolumeSection((Texture2D)this.mainTexture.Texture, this.CloudOverlay.Transform, intendedPoint, 26000);
+                volume = new VolumeManager(intendedPoint, CloudOverlay.Radius, (Texture2D)this.mainTexture.Texture, this.CloudOverlay.Transform);
                 
+            }
+            else
+            {
+                volume.Update(intendedPoint);
             }
         }
     }

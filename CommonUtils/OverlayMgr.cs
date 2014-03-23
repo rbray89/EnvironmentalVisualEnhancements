@@ -234,8 +234,11 @@ namespace OverlaySystem
 
     public class Overlay
     {
+        public delegate void BoolCallback(bool value);
+
         public static Dictionary<String, List<Overlay>> OverlayDatabase = new Dictionary<string, List<Overlay>>();
         public static List<Overlay> OverlayList = new List<Overlay>();
+        
 
         private GameObject OverlayGameObject;
         private string Body;
@@ -255,6 +258,7 @@ namespace OverlaySystem
 
         public float Radius { get { return altitude + (float)celestialBody.Radius; } }
         public float ScaledRadius { get { return (float)(1f + (this.altitude / celestialBody.Radius)); } }
+        public BoolCallback MacroCallback; 
 
         public Overlay(string planet, float altitude, Material scaledMaterial, Material macroMaterial, Vector2 rotation, int layer, Transform celestialTransform, bool mainMenu, bool matchTerrain)
         {
@@ -418,6 +422,9 @@ namespace OverlaySystem
             OverlayGameObject.layer = OverlayMgr.MAP_LAYER;
             IsScaledSpace = true;
             UpdateAltitude(this.altitude);
+            if (MacroCallback != null)
+            { MacroCallback(false); }
+           
         }
 
         internal void SwitchToMacro()
@@ -426,6 +433,8 @@ namespace OverlaySystem
             OverlayGameObject.layer = OverlayMgr.MACRO_LAYER;
             IsScaledSpace = false;
             UpdateAltitude(this.altitude);
+            if (MacroCallback != null)
+            { MacroCallback(true); }
         }
 
     }
