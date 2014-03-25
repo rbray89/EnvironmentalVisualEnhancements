@@ -86,6 +86,7 @@ namespace Clouds
             CloudMaterial.SetTexture("_MainTex", mainTexture.Texture);
             ScaledCloudMaterial.SetColor("_Color", color);
             CloudMaterial.SetColor("_Color", color);
+            CloudParticleMaterial.SetColor("_Color", color);
 
             if (detailTexture.InUse)
             {
@@ -305,13 +306,13 @@ namespace Clouds
             {
                 Log("Creating particle");
 
-                volume = new VolumeManager(intendedPoint, CloudOverlay.Radius, (Texture2D)this.mainTexture.Texture, this.CloudOverlay.Transform);
-                
+                volume = new VolumeManager(intendedPoint, CloudOverlay.Radius, (Texture2D)this.mainTexture.Texture, CloudParticleMaterial, this.CloudOverlay.Transform);
             }
             else
             {
                 volume.Update(intendedPoint);
             }
+            volume.UpdateShaderNorm();
         }
     }
 }

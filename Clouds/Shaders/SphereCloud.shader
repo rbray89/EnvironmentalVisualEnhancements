@@ -11,11 +11,10 @@
 		_BumpScale ("Bump Scale", Range(0,1000)) = 50
 		_BumpOffset ("Bump offset", Color) = (0,0,0,0)
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
-		_MinLight ("Minimum Light", Range(0,1)) = .1
+		_MinLight ("Minimum Light", Range(0,1)) = .5
 		_FadeDist ("Fade Distance", Range(0,100)) = 10
 		_FadeScale ("Fade Scale", Range(0,1)) = .002
 		_RimDist ("Rim Distance", Range(0,100000)) = 1000
-		_Opacity ("Fade Alpha", Range(-1,1)) = 1
 	}
 
 SubShader {
@@ -51,12 +50,13 @@ SubShader {
 		float _FadeDist;
 		float _FadeScale;
 		float _RimDist;
-		float _Opacity;
 		
 		half4 LightingSimpleLambert (SurfaceOutput s, half3 lightDir, half atten) {
           half NdotL = saturate(dot (s.Normal, lightDir));
+          half diff = (NdotL - 0.01) / 0.99;
+		  float lightIntensity = saturate(_LightColor0.a * (diff * atten * 4));
           half4 c;
-          c.rgb = s.Albedo * saturate(_MinLight+ _LightColor0.rgb * (NdotL * atten * 2));
+          c.rgb = s.Albedo *saturate((_MinLight + _LightColor0.rgb) * lightIntensity);
           c.a = s.Alpha;
           return c;
       	}
@@ -125,7 +125,7 @@ SubShader {
             float distLerp = saturate(distance(IN.worldOrigin,_WorldSpaceCameraPos)-1.2*distance(IN.worldVert,IN.worldOrigin));
             float distFade = saturate((_FadeScale*dist)-_FadeDist);
 			float distAlpha = lerp(distFade, rim, distLerp);
-          	o.Alpha = _Opacity*lerp(0, avg,  distAlpha);
+          	o.Alpha = lerp(0, avg,  distAlpha);
           	o.Normal = lerp(UnpackNormal (normal),half3(0,0,1),detailLevel);
 		}
 		ENDCG

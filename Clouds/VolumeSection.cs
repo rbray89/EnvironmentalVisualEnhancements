@@ -13,7 +13,7 @@ namespace Clouds
         private static System.Random Random = new System.Random();
 
         GameObject particle;
-        public CloudParticle(Texture2D tex, Transform parent, Vector3 pos)
+        public CloudParticle(Texture2D tex, Material cloudParticleMaterial, Transform parent, Vector3 pos)
         {
             particle = new GameObject();
 
@@ -38,7 +38,7 @@ namespace Clouds
             Quad.Create(particle, Random.Next(2500, 4500), pix);
 
             var mr = particle.AddComponent<MeshRenderer>();
-            mr.sharedMaterial = new Material(CloudLayer.CloudParticleShader);
+            mr.sharedMaterial = cloudParticleMaterial;
 
             Texture2D tex1 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/3", false);
             Texture2D tex2 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/5", false);
@@ -90,7 +90,7 @@ namespace Clouds
         public Vector3 Offset { get { return offset; } set { offset = value; } }
         public bool Enabled { get { return segment.activeSelf; } set { segment.SetActive(value); } }
 
-        public VolumeSection(Texture2D tex, Transform parent, Vector3 pos, Vector3 offset, float radius)
+        public VolumeSection(Texture2D tex, Material cloudParticleMaterial, Transform parent, Vector3 pos, Vector3 offset, float radius)
         {
             HexSeg hexGeometry = new HexSeg(radius, 4);
             segment = new GameObject();
@@ -100,7 +100,7 @@ namespace Clouds
             List<Vector3> positions = hexGeometry.GetPoints();
             foreach (Vector3 position in positions)
             {
-                Particles.Add(new CloudParticle(tex, segment.transform, position));
+                Particles.Add(new CloudParticle(tex, cloudParticleMaterial, segment.transform, position));
             }
         }
 
@@ -112,12 +112,12 @@ namespace Clouds
             }
             this.offset = offset;
             segment.transform.localPosition = pos;
-            Vector3 worldUp = segment.transform.parent.localToWorldMatrix.MultiplyPoint3x4(pos) - segment.transform.parent.localToWorldMatrix.MultiplyPoint3x4(Vector3.zero);
+            Vector3 worldUp = segment.transform.position - segment.transform.parent.localToWorldMatrix.MultiplyPoint3x4(Vector3.zero);
             segment.transform.up = worldUp.normalized;
             segment.transform.localScale = Vector3.one;
 
             segment.transform.Translate(offset);
-            worldUp = segment.transform.parent.localToWorldMatrix.MultiplyPoint3x4(segment.transform.localPosition) - segment.transform.parent.localToWorldMatrix.MultiplyPoint3x4(Vector3.zero);
+            worldUp = segment.transform.position - segment.transform.parent.localToWorldMatrix.MultiplyPoint3x4(Vector3.zero);
             segment.transform.up = worldUp.normalized;
 
             center = segment.transform.localPosition;

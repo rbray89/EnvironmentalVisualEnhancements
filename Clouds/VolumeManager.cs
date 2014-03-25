@@ -14,40 +14,44 @@ namespace Clouds
         float outCheck;
         float opp;
         Texture2D Texture;
+        Material CloudParticleMaterial;
         Transform Transform;
-        Vector3 Center;
+
         float Magnitude;
         VolumeSection[] moveSections = new VolumeSection[3];
         VolumeSection[] unchangedSections = new VolumeSection[3];
 
-        static GameObject translator;
+        GameObject translator;
+        Transform Center;
 
         bool enabled;
         public bool Enabled { get { return enabled; } set { enabled = value; foreach (VolumeSection vs in VolumeList) { vs.Enabled = value; } } }
 
-        public VolumeManager(Vector3 pos, float cloudSphereRadius, Texture2D texture, Transform transform)
+        public VolumeManager(Vector3 pos, float cloudSphereRadius, Texture2D texture, Material cloudParticleMaterial, Transform transform)
         {
             //translator = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             //translator.renderer.material.color = new Color(1, 0, 0);
             translator = new GameObject();
-            translator.transform.parent = transform;
-            translator.transform.localPosition = pos * cloudSphereRadius;
-            translator.transform.localScale = Vector3.one*4000;
+            Center = translator.transform;
+            //Center.localScale = Vector3.one*4000f;
+            Center.localScale = Vector3.one;
+            Center.parent = transform;
+            Center.localPosition = pos * cloudSphereRadius;
             
 
             this.Texture = texture;
+            this.CloudParticleMaterial = cloudParticleMaterial;
             this.Transform = transform;
             radius = 20000;
             halfRad = radius / 2f;
             opp = Mathf.Sqrt(.75f) * radius;
             outCheck = opp*2f;
-            Center = pos * cloudSphereRadius;
             Magnitude = cloudSphereRadius;
             enabled = true;
 
-            VolumeList.Add(new VolumeSection(texture, transform, Center, new Vector3(-radius, 0, 0), radius));
-            VolumeList.Add(new VolumeSection(texture, transform, Center, new Vector3(halfRad, 0, opp), radius));
-            VolumeList.Add(new VolumeSection(texture, transform, Center, new Vector3(halfRad, 0, -opp), radius));
+            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, new Vector3(-radius, 0, 0), radius));
+            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, new Vector3(halfRad, 0, opp), radius));
+            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, new Vector3(halfRad, 0, -opp), radius));
         }
 
         public void Update(Vector3 pos)
@@ -82,7 +86,7 @@ namespace Clouds
                        tmp = unchangedSections[0].Offset;
                        unchangedSections[0].Offset = -unchangedSections[1].Offset;
                        unchangedSections[1].Offset = -tmp;
-                       moveSections[0].Reassign(Center, -moveSections[0].Offset);
+                       moveSections[0].Reassign(Center.localPosition, -moveSections[0].Offset);
                        moveSections[0].UpdateTexture(Texture);
                        break;
                    case 2:
@@ -90,16 +94,16 @@ namespace Clouds
                        
                        unchangedSections[0].Offset *= -1f;
                        tmp = moveSections[0].Offset;
-                       moveSections[0].Reassign(Center, -moveSections[1].Offset);
-                       moveSections[1].Reassign(Center, -tmp);
+                       moveSections[0].Reassign(Center.localPosition, -moveSections[1].Offset);
+                       moveSections[1].Reassign(Center.localPosition, -tmp);
                        moveSections[0].UpdateTexture(Texture);
                        moveSections[1].UpdateTexture(Texture);
                        break;
                    case 3:
-                       Center = place;
-                       moveSections[0].Reassign(Center, new Vector3(-radius, 0, 0));
-                       moveSections[1].Reassign(Center, new Vector3(halfRad, 0, opp));
-                       moveSections[2].Reassign(Center, new Vector3(halfRad, 0, -opp));
+                       Center.localPosition = place;
+                       moveSections[0].Reassign(Center.localPosition, new Vector3(-radius, 0, 0));
+                       moveSections[1].Reassign(Center.localPosition, new Vector3(halfRad, 0, opp));
+                       moveSections[2].Reassign(Center.localPosition, new Vector3(halfRad, 0, -opp));
                        moveSections[0].UpdateTexture(Texture);
                        moveSections[1].UpdateTexture(Texture);
                        moveSections[2].UpdateTexture(Texture);
@@ -111,12 +115,18 @@ namespace Clouds
 
         private void Recenter(Vector3 vector3)
         {
-            translator.transform.localPosition = Center;
-            Vector3 worldUp = translator.transform.parent.localToWorldMatrix.MultiplyPoint3x4(Center) - translator.transform.parent.localToWorldMatrix.MultiplyPoint3x4(Vector3.zero);
-            translator.transform.up = worldUp.normalized;
-            translator.transform.Translate(-moveSections[0].Offset);
-            Center = translator.transform.localPosition.normalized * Magnitude;
-            translator.transform.localPosition = Center;
+            Vector3 worldUp = Center.position - Center.parent.localToWorldMatrix.MultiplyPoint3x4(Vector3.zero);
+            Center.up = worldUp.normalized;
+            Center.Translate(-moveSections[0].Offset);
+            Center.localPosition = Magnitude * Center.localPosition.normalized;
+            //CloudLayer.Log("LocalCenter: " + Center.localPosition);
+        }
+
+        public void UpdateShaderNorm()
+        {
+            Vector3 worldUp = Center.position - Center.parent.localToWorldMatrix.MultiplyPoint3x4(Vector3.zero);
+            CloudParticleMaterial.SetVector("_WorldNorm", worldUp);
+            //CloudLayer.Log("PositionCenter: " + Center.position);
         }
     }
 }

@@ -5,35 +5,41 @@ Properties {
 	_FrontTex ("Particle Texture", 2D) = "white" {}
 	_InvFade ("Soft Particles Factor", Range(0.01,3.0)) = 1.0
 	_DistFade ("Distance Fade", Range(0,1)) = 1.0
+	_LightScatter ("Light Scatter", Range(0,1)) = 0.55 
+	_MinLight ("Minimum Light", Range(0,1)) = .5
+	_WorldNorm ("World Normal", Vector) = (0,1,0,1)
 	_Color ("Color Tint", Color) = (1,1,1,1)
 }
 
 Category {
 	
-	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
+	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "RenderMode"="Transparent"}
 	Blend SrcAlpha OneMinusSrcAlpha
+	Fog { Mode Global}
 	AlphaTest Greater .01
 	ColorMask RGB
-	Cull Off Lighting Off ZWrite Off
-	BindChannels {
-		Bind "Color", color
-		Bind "Vertex", vertex
-		Bind "TexCoord", texcoord
-	}
-
+	Cull Off Lighting On ZWrite Off
+	
 	SubShader {
 		Pass {
-		
+			
+			Lighting On
+			Tags { "LightMode"="ForwardBase"}
+			
 			CGPROGRAM
+			
+			#include "UnityCG.cginc"
+			#include "AutoLight.cginc"
+			#include "Lighting.cginc"
+			#pragma target 3.0
 			#pragma vertex vert
 			#pragma fragment frag
 			#define MAG_ONE 1.4142135623730950488016887242097
 
 			#pragma fragmentoption ARB_precision_hint_fastest
-			#pragma multi_compile_particles
-
-			#include "UnityCG.cginc"
-
+			#pragma multi_compile_fwdbase
+			#pragma multi_compile_fwdadd_fullshadows
+			
 			
 			sampler2D _TopTex;
 			sampler2D _BotTex;
@@ -42,8 +48,11 @@ Category {
 			sampler2D _FrontTex;
 			sampler2D _BackTex;
 			fixed4 _Color;
+			float4 _WorldNorm;
 			float _InvFade;
 			float _DistFade;
+			float _LightScatter;
+			float _MinLight;
 			
 			struct appdata_t {
 				float4 vertex : POSITION;
@@ -58,9 +67,8 @@ Category {
 				float2 texcoordZY : TEXCOORD1;
 				float2 texcoordXZ : TEXCOORD2;
 				float2 texcoordXY : TEXCOORD3;
-				#ifdef SOFTPARTICLES_ON
-				float4 projPos : TEXCOORD4;
-				#endif
+				float3 projPos : TEXCOORD4;
+				LIGHTING_COORDS(5,6)
 			};
 
 			float4 _TopTex_ST;
@@ -76,8 +84,9 @@ Category {
 	              + float4(v.vertex.x, v.vertex.y, v.vertex.z,v.vertex.w));
 				
 				float3 viewDir = normalize(UNITY_MATRIX_MV[2].xyz);
-
 				o.viewDir = abs(viewDir);
+				
+				o.projPos = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, float4(0, 0, 0, v.vertex.w)).xyz);
 				
 				float2 texcoodOffsetxy = ((2*v.texcoord)- 1);
 				float4 texcoordOffset = float4(texcoodOffsetxy.x, texcoodOffsetxy.y, 0, v.vertex.w);
@@ -111,11 +120,6 @@ Category {
 			    float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 				o.color.a *= saturate(_DistFade*distance(origin,_WorldSpaceCameraPos));
 				
-				#ifdef SOFTPARTICLES_ON
-				o.projPos = ComputeScreenPos (o.pos);
-				COMPUTE_EYEDEPTH(o.projPos.z);
-				#endif
-
 				return o;
 			}
 
@@ -134,18 +138,29 @@ Category {
 				//half4 tex = (xtex*xval)+(ytex*yval)+(ztex*zval);
 				half4 tex = lerp(lerp(xtex, ytex, yval), ztex, zval);
 				
-				#ifdef SOFTPARTICLES_ON
-				float sceneZ = LinearEyeDepth (UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.projPos))));
-				float partZ = i.projPos.z;
-				float fade = saturate (_InvFade * (sceneZ-partZ));
-				i.color.a *= fade;
-				#endif
-				
 				half4 prev = .95*_Color * i.color * tex;
-				return prev;
+				
+				float3 lightColor = _LightColor0.rgb;
+		        float3 lightDir = _WorldSpaceLightPos0;
+		        float  atten = LIGHT_ATTENUATION(i);
+		        float  NL = saturate(.5*(1+dot(i.projPos, lightDir)));
+				float  lightIntensity = saturate(_LightColor0.a * (NL * atten * 4));
+		 		float  lightScatter = saturate(1-(lightIntensity*_LightScatter*prev.a));
+		 		
+		 		half WNL = saturate(dot (_WorldNorm, lightDir));
+		        half diff = (WNL - 0.01) / 0.99;
+				lightIntensity = saturate(_LightColor0.a * (diff * atten * 4));
+		        half3 baseLight = saturate((_MinLight + lightColor) * lightIntensity);
+		 		
+		        half4 color;
+		        color.rgb = prev.rgb * baseLight;
+				color.a = prev.a;
+				
+				return color;
 			}
 			ENDCG 
 		}
+		
 	} 
 	
 }
