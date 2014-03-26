@@ -37,7 +37,6 @@ namespace Clouds
             Center.localScale = Vector3.one;
             Center.parent = transform;
             Center.localPosition = pos * cloudSphereRadius;
-            
 
             this.Texture = texture;
             this.CloudParticleMaterial = cloudParticleMaterial;

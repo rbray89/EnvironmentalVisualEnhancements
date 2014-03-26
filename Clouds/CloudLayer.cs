@@ -182,6 +182,7 @@ namespace Clouds
                 CloudMaterial.SetFloat("_MinLight", shaderFloats.MinimumLight);
                 CloudMaterial.SetFloat("_FadeDist", shaderFloats.FadeDistance);
                 CloudMaterial.SetFloat("_FadeScale", 0.1f/shaderFloats.FadeDistance);
+                CloudParticleMaterial.SetFloat("_MinLight", shaderFloats.MinimumLight);
             }
             else
             {

@@ -13,7 +13,7 @@ Properties {
 
 Category {
 	
-	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "RenderMode"="Transparent"}
+	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
 	Blend SrcAlpha OneMinusSrcAlpha
 	Fog { Mode Global}
 	AlphaTest Greater .01
@@ -35,7 +35,6 @@ Category {
 			#pragma vertex vert
 			#pragma fragment frag
 			#define MAG_ONE 1.4142135623730950488016887242097
-
 			#pragma fragmentoption ARB_precision_hint_fastest
 			#pragma multi_compile_fwdbase
 			#pragma multi_compile_fwdadd_fullshadows
@@ -68,7 +67,8 @@ Category {
 				float2 texcoordXZ : TEXCOORD2;
 				float2 texcoordXY : TEXCOORD3;
 				float3 projPos : TEXCOORD4;
-				LIGHTING_COORDS(5,6)
+				half3 baseLight : TEXCOORD5;
+				LIGHTING_COORDS(6,7)
 			};
 
 			float4 _TopTex_ST;
@@ -87,7 +87,7 @@ Category {
 				o.viewDir = abs(viewDir);
 				
 				o.projPos = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, float4(0, 0, 0, v.vertex.w)).xyz);
-				
+
 				float2 texcoodOffsetxy = ((2*v.texcoord)- 1);
 				float4 texcoordOffset = float4(texcoodOffsetxy.x, texcoodOffsetxy.y, 0, v.vertex.w);
 				
@@ -115,9 +115,18 @@ Category {
 				o.texcoordXZ = half2(.5 ,.5) + .6*(XZ);
 				o.texcoordXY = half2(.5 ,.5) + .6*(XY);
 				
+				float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
+				
+				
+				float3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
+				float3 lightDirection = .98*normalize(_WorldSpaceLightPos0);
+ 				half NdotL = saturate(dot (normalize(_WorldNorm), lightDirection));
+		        half diff = (NdotL - 0.01) / 0.99;
+				half lightIntensity = saturate(_LightColor0.a * diff * 4);
+				o.baseLight = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
 				o.color = v.color;
 				
-			    float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
+			    
 				o.color.a *= saturate(_DistFade*distance(origin,_WorldSpaceCameraPos));
 				
 				return o;
@@ -141,19 +150,15 @@ Category {
 				half4 prev = .95*_Color * i.color * tex;
 				
 				float3 lightColor = _LightColor0.rgb;
-		        float3 lightDir = _WorldSpaceLightPos0;
+		        float3 lightDir = normalize(_WorldSpaceLightPos0);
+		        
 		        float  atten = LIGHT_ATTENUATION(i);
 		        float  NL = saturate(.5*(1+dot(i.projPos, lightDir)));
 				float  lightIntensity = saturate(_LightColor0.a * (NL * atten * 4));
 		 		float  lightScatter = saturate(1-(lightIntensity*_LightScatter*prev.a));
 		 		
-		 		half WNL = saturate(dot (_WorldNorm, lightDir));
-		        half diff = (WNL - 0.01) / 0.99;
-				lightIntensity = saturate(_LightColor0.a * (diff * atten * 4));
-		        half3 baseLight = saturate((_MinLight + lightColor) * lightIntensity);
-		 		
 		        half4 color;
-		        color.rgb = prev.rgb * baseLight;
+		        color.rgb = prev.rgb * i.baseLight;
 				color.a = prev.a;
 				
 				return color;
