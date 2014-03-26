@@ -313,7 +313,6 @@ namespace Clouds
             {
                 volume.Update(intendedPoint);
             }
-            volume.UpdateShaderNorm();
         }
     }
 }

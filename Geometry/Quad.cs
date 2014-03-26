@@ -8,7 +8,7 @@ namespace Geometry
 {
     public static class Quad
     {
-        public static void Create(GameObject gameObject, float size, Color color)
+        public static void Create(GameObject gameObject, float size, Color color, Vector3 up)
         {
             MeshFilter filter = gameObject.AddComponent<MeshFilter>();
             Mesh mesh = filter.mesh;
@@ -34,10 +34,10 @@ namespace Geometry
 
             mesh.normals = new Vector3[4]
             {
-                new Vector3(0,0,-1),
-                new Vector3(0,0,-1),
-                new Vector3(0,0,-1),
-                new Vector3(0,0,-1)
+                up,
+                up,
+                up,
+                up
             };
 
             mesh.colors = new Color[4]
@@ -53,5 +53,6 @@ namespace Geometry
             mesh.RecalculateBounds();
             mesh.Optimize();
         }
+
     }
 }

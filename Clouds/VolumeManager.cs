@@ -36,7 +36,7 @@ namespace Clouds
             //Center.localScale = Vector3.one*4000f;
             Center.localScale = Vector3.one;
             Center.parent = transform;
-            Center.localPosition = pos * cloudSphereRadius;
+            Recenter(pos* cloudSphereRadius);
 
             this.Texture = texture;
             this.CloudParticleMaterial = cloudParticleMaterial;
@@ -99,7 +99,7 @@ namespace Clouds
                        moveSections[1].UpdateTexture(Texture);
                        break;
                    case 3:
-                       Center.localPosition = place;
+                       Recenter(place, true);
                        moveSections[0].Reassign(Center.localPosition, new Vector3(-radius, 0, 0));
                        moveSections[1].Reassign(Center.localPosition, new Vector3(halfRad, 0, opp));
                        moveSections[2].Reassign(Center.localPosition, new Vector3(halfRad, 0, -opp));
@@ -112,20 +112,24 @@ namespace Clouds
             }
         }
 
-        private void Recenter(Vector3 vector3)
+        private void Recenter(Vector3 vector3, bool abs = false)
         {
-            Vector3 worldUp = Center.position - Center.parent.localToWorldMatrix.MultiplyPoint3x4(Vector3.zero);
-            Center.up = worldUp.normalized;
-            Center.Translate(-moveSections[0].Offset);
+            if (abs)
+            {
+                Center.localPosition = vector3;
+                Vector3 worldUp = Center.position - Center.parent.position;
+                Center.up = worldUp.normalized;
+            }
+            else
+            {
+                Vector3 worldUp = Center.position - Center.parent.position;
+                Center.up = worldUp.normalized;
+                Center.Translate(vector3);
+                worldUp = Center.position - Center.parent.position;
+                Center.up = worldUp.normalized;
+            }
             Center.localPosition = Magnitude * Center.localPosition.normalized;
             //CloudLayer.Log("LocalCenter: " + Center.localPosition);
-        }
-
-        public void UpdateShaderNorm()
-        {
-            Vector3 worldUp = Center.position - Center.parent.localToWorldMatrix.MultiplyPoint3x4(Vector3.zero);
-            CloudParticleMaterial.SetVector("_WorldNorm", worldUp);
-            //CloudLayer.Log("PositionCenter: " + Center.position);
         }
     }
 }

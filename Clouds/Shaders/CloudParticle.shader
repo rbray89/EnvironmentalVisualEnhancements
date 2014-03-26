@@ -7,7 +7,6 @@ Properties {
 	_DistFade ("Distance Fade", Range(0,1)) = 1.0
 	_LightScatter ("Light Scatter", Range(0,1)) = 0.55 
 	_MinLight ("Minimum Light", Range(0,1)) = .5
-	_WorldNorm ("World Normal", Vector) = (0,1,0,1)
 	_Color ("Color Tint", Color) = (1,1,1,1)
 }
 
@@ -47,7 +46,6 @@ Category {
 			sampler2D _FrontTex;
 			sampler2D _BackTex;
 			fixed4 _Color;
-			float4 _WorldNorm;
 			float _InvFade;
 			float _DistFade;
 			float _LightScatter;
@@ -56,6 +54,8 @@ Category {
 			struct appdata_t {
 				float4 vertex : POSITION;
 				fixed4 color : COLOR;
+				float3 normal : NORMAL;
+				float4 tangent : TANGENT;
 				float2 texcoord : TEXCOORD0;
 			};
 
@@ -117,16 +117,15 @@ Category {
 				
 				float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 				
-				
+				float3 worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
 				half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
-				half3 lightDirection = .99*normalize(_WorldSpaceLightPos0);
- 				half NdotL = saturate(dot (normalize(_WorldNorm), lightDirection));
+				half3 lightDirection = normalize(_WorldSpaceLightPos0);
+ 				half NdotL = saturate(dot (worldNormal, lightDirection));
 		        half diff = (NdotL - 0.01) / 0.99;
 				half lightIntensity = saturate(_LightColor0.a * diff * 4);
 				o.baseLight = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
-				o.color = v.color;
 				
-			    
+				o.color = v.color;
 				o.color.a *= saturate(_DistFade*distance(origin,_WorldSpaceCameraPos));
 				
 				return o;
@@ -149,13 +148,13 @@ Category {
 				
 				half4 prev = .95*_Color * i.color * tex;
 				
-				float3 lightColor = _LightColor0.rgb;
-		        float3 lightDir = normalize(_WorldSpaceLightPos0);
-		        
-		        float  atten = LIGHT_ATTENUATION(i);
-		        float  NL = saturate(.5*(1+dot(i.projPos, lightDir)));
-				float  lightIntensity = saturate(_LightColor0.a * (NL * atten * 4));
-		 		float  lightScatter = saturate(1-(lightIntensity*_LightScatter*prev.a));
+//				float3 lightColor = _LightColor0.rgb;
+//		        float3 lightDir = normalize(_WorldSpaceLightPos0);
+//		        
+//		        float  atten = LIGHT_ATTENUATION(i);
+//		        float  NL = saturate(.5*(1+dot(i.projPos, lightDir)));
+//				float  lightIntensity = saturate(_LightColor0.a * (NL * atten * 4));
+//		 		float  lightScatter = saturate(1-(lightIntensity*_LightScatter*prev.a));
 		 		
 		        half4 color;
 		        color.rgb = prev.rgb * i.baseLight;

@@ -27,7 +27,8 @@ namespace Clouds
             x = 360f * (float)Random.NextDouble();
             y = 360f * (float)Random.NextDouble();
             z = 360f * (float)Random.NextDouble();
-            particle.transform.localRotation = Quaternion.Euler(x, y, z);
+            //particle.transform.localRotation = Quaternion.Euler(x, y, z);
+            particle.transform.up = parent.up;
             particle.transform.localScale = Vector3.one;
             particle.layer = OverlayMgr.MACRO_LAYER;
 
@@ -35,7 +36,9 @@ namespace Clouds
             float u = (float)(.5 + (Mathf.Atan2(point.z, point.x) / (2f * Mathf.PI)));
             float v = Mathf.Acos(-point.y) / Mathf.PI;
             Color pix = tex.GetPixelBilinear(u, v);
-            Quad.Create(particle, Random.Next(2500, 4500), pix);
+
+            Vector3 up = Vector3.Normalize(-particle.transform.worldToLocalMatrix.MultiplyPoint3x4(parent.parent.position));
+            Quad.Create(particle, Random.Next(2500, 4500), pix, up);
 
             var mr = particle.AddComponent<MeshRenderer>();
             mr.sharedMaterial = cloudParticleMaterial;
@@ -92,8 +95,8 @@ namespace Clouds
 
         public VolumeSection(Texture2D tex, Material cloudParticleMaterial, Transform parent, Vector3 pos, Vector3 offset, float radius)
         {
-            HexSeg hexGeometry = new HexSeg(radius, 4);
             segment = new GameObject();
+            HexSeg hexGeometry = new HexSeg(radius, 4);
 
             Reassign(pos, offset, parent);
 
@@ -110,17 +113,17 @@ namespace Clouds
             {
                 segment.transform.parent = parent;
             }
-            this.offset = offset;
+            
             segment.transform.localPosition = pos;
-            Vector3 worldUp = segment.transform.position - segment.transform.parent.localToWorldMatrix.MultiplyPoint3x4(Vector3.zero);
+            Vector3 worldUp = segment.transform.position - segment.transform.parent.position;
             segment.transform.up = worldUp.normalized;
             segment.transform.localScale = Vector3.one;
-
             segment.transform.Translate(offset);
-            worldUp = segment.transform.position - segment.transform.parent.localToWorldMatrix.MultiplyPoint3x4(Vector3.zero);
-            segment.transform.up = worldUp.normalized;
 
+            worldUp = segment.transform.position - segment.transform.parent.position;
+            segment.transform.up = worldUp.normalized;
             center = segment.transform.localPosition;
+            this.offset = offset;
         }
 
         public void UpdateTexture(Texture2D texture)
