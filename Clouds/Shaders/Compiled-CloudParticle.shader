@@ -51,7 +51,7 @@ PARAM c[22] = { { 0, 1, 2, 0.60000002 },
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..19],
-		{ 0.5, 0.98000002, 0.010002136 },
+		{ 0.5, 0.99000001, 0.010002136 },
 		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
@@ -201,7 +201,7 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c19, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.00000000, 2.00000000, -1.00000000, 0.99000001
 def c20, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
@@ -338,7 +338,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecediadfejibahneajfoilijfndgkdfoijijabaaaaaaeiamaaaaadaaaaaa
+eefiecedapgomlmfgomnmfobmeelpeabhilnnhblabaaaaaaeiamaaaaadaaaaaa
 cmaaaaaajmaaaaaakaabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -426,7 +426,7 @@ pgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajbcaabaaaaaaaaaaaegiocaaa
 acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaa
 akaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaa
 acaaaaaaaaaaaaaadiaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaa
-eiobhkdpeiobhkdpeiobhkdpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
+kehahndpkehahndpkehahndpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
 aaaaaaaaaiaaaaaaegiocaaaaaaaaaaaaiaaaaaaeeaaaaaficaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
 aaaaaaaaaiaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaa
@@ -470,72 +470,80 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec3 tmpvar_7;
-  highp vec4 tmpvar_8;
-  tmpvar_8.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_8.w = _glesVertex.w;
-  highp vec4 tmpvar_9;
-  tmpvar_9 = (glstate_matrix_modelview0 * tmpvar_8);
-  vec4 v_10;
-  v_10.x = glstate_matrix_modelview0[0].z;
-  v_10.y = glstate_matrix_modelview0[1].z;
-  v_10.z = glstate_matrix_modelview0[2].z;
-  v_10.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_11;
-  tmpvar_11 = normalize(v_10.xyz);
-  highp vec4 tmpvar_12;
-  tmpvar_12.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_12.w = _glesVertex.w;
-  highp vec2 tmpvar_13;
-  tmpvar_13 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
+  highp vec3 tmpvar_9;
+  highp vec4 tmpvar_10;
+  tmpvar_10.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_10.w = _glesVertex.w;
+  highp vec4 tmpvar_11;
+  tmpvar_11 = (glstate_matrix_modelview0 * tmpvar_10);
+  vec4 v_12;
+  v_12.x = glstate_matrix_modelview0[0].z;
+  v_12.y = glstate_matrix_modelview0[1].z;
+  v_12.z = glstate_matrix_modelview0[2].z;
+  v_12.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_13;
+  tmpvar_13 = normalize(v_12.xyz);
   highp vec4 tmpvar_14;
-  tmpvar_14.z = 0.0;
-  tmpvar_14.x = tmpvar_13.x;
-  tmpvar_14.y = tmpvar_13.y;
+  tmpvar_14.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_14.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_14.zyw;
-  XZv_3.yzw = tmpvar_14.zyw;
-  XYv_2.yzw = tmpvar_14.yzw;
-  ZYv_4.z = (tmpvar_13.x * sign(-(tmpvar_11.x)));
-  XZv_3.x = (tmpvar_13.x * sign(-(tmpvar_11.y)));
-  XYv_2.x = (tmpvar_13.x * sign(tmpvar_11.z));
-  ZYv_4.x = ((sign(-(tmpvar_11.x)) * sign(ZYv_4.z)) * tmpvar_11.z);
-  XZv_3.y = ((sign(-(tmpvar_11.y)) * sign(XZv_3.x)) * tmpvar_11.x);
-  XYv_2.z = ((sign(-(tmpvar_11.z)) * sign(XYv_2.x)) * tmpvar_11.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_11.x)) * sign(tmpvar_13.y)) * tmpvar_11.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_11.y)) * sign(tmpvar_13.y)) * tmpvar_11.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_11.z)) * sign(tmpvar_13.y)) * tmpvar_11.y));
-  highp vec4 tmpvar_15;
-  tmpvar_15.w = 0.0;
-  tmpvar_15.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_16;
-  tmpvar_16 = clamp (dot (normalize(_WorldNorm), tmpvar_15), 0.0, 1.0);
-  NdotL_1 = tmpvar_16;
-  mediump float tmpvar_17;
-  tmpvar_17 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_15;
+  tmpvar_15 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_16;
+  tmpvar_16.z = 0.0;
+  tmpvar_16.x = tmpvar_15.x;
+  tmpvar_16.y = tmpvar_15.y;
+  tmpvar_16.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_16.zyw;
+  XZv_5.yzw = tmpvar_16.zyw;
+  XYv_4.yzw = tmpvar_16.yzw;
+  ZYv_6.z = (tmpvar_15.x * sign(-(tmpvar_13.x)));
+  XZv_5.x = (tmpvar_15.x * sign(-(tmpvar_13.y)));
+  XYv_4.x = (tmpvar_15.x * sign(tmpvar_13.z));
+  ZYv_6.x = ((sign(-(tmpvar_13.x)) * sign(ZYv_6.z)) * tmpvar_13.z);
+  XZv_5.y = ((sign(-(tmpvar_13.y)) * sign(XZv_5.x)) * tmpvar_13.x);
+  XYv_4.z = ((sign(-(tmpvar_13.z)) * sign(XYv_4.x)) * tmpvar_13.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_13.x)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_13.y)) * sign(tmpvar_15.y)) * tmpvar_13.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_13.z)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  highp vec3 tmpvar_17;
+  tmpvar_17 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_17;
   highp vec3 tmpvar_18;
-  tmpvar_18 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_17)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_18;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_19;
-  p_19 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_18 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_18;
+  mediump vec4 tmpvar_19;
+  tmpvar_19.w = 0.0;
+  tmpvar_19.xyz = lightDirection_2;
   highp float tmpvar_20;
-  tmpvar_20 = clamp ((_DistFade * sqrt(dot (p_19, p_19))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_20);
-  gl_Position = (glstate_matrix_projection * (tmpvar_9 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_11);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_12).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
+  tmpvar_20 = clamp (dot (normalize(_WorldNorm), tmpvar_19), 0.0, 1.0);
+  NdotL_1 = tmpvar_20;
+  mediump float tmpvar_21;
+  tmpvar_21 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_22;
+  tmpvar_22 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_21)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_22;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_23;
+  p_23 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_24;
+  tmpvar_24 = clamp ((_DistFade * sqrt(dot (p_23, p_23))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_24);
+  gl_Position = (glstate_matrix_projection * (tmpvar_11 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_13);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_14).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
 }
 
 
@@ -621,72 +629,80 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec3 tmpvar_7;
-  highp vec4 tmpvar_8;
-  tmpvar_8.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_8.w = _glesVertex.w;
-  highp vec4 tmpvar_9;
-  tmpvar_9 = (glstate_matrix_modelview0 * tmpvar_8);
-  vec4 v_10;
-  v_10.x = glstate_matrix_modelview0[0].z;
-  v_10.y = glstate_matrix_modelview0[1].z;
-  v_10.z = glstate_matrix_modelview0[2].z;
-  v_10.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_11;
-  tmpvar_11 = normalize(v_10.xyz);
-  highp vec4 tmpvar_12;
-  tmpvar_12.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_12.w = _glesVertex.w;
-  highp vec2 tmpvar_13;
-  tmpvar_13 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
+  highp vec3 tmpvar_9;
+  highp vec4 tmpvar_10;
+  tmpvar_10.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_10.w = _glesVertex.w;
+  highp vec4 tmpvar_11;
+  tmpvar_11 = (glstate_matrix_modelview0 * tmpvar_10);
+  vec4 v_12;
+  v_12.x = glstate_matrix_modelview0[0].z;
+  v_12.y = glstate_matrix_modelview0[1].z;
+  v_12.z = glstate_matrix_modelview0[2].z;
+  v_12.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_13;
+  tmpvar_13 = normalize(v_12.xyz);
   highp vec4 tmpvar_14;
-  tmpvar_14.z = 0.0;
-  tmpvar_14.x = tmpvar_13.x;
-  tmpvar_14.y = tmpvar_13.y;
+  tmpvar_14.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_14.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_14.zyw;
-  XZv_3.yzw = tmpvar_14.zyw;
-  XYv_2.yzw = tmpvar_14.yzw;
-  ZYv_4.z = (tmpvar_13.x * sign(-(tmpvar_11.x)));
-  XZv_3.x = (tmpvar_13.x * sign(-(tmpvar_11.y)));
-  XYv_2.x = (tmpvar_13.x * sign(tmpvar_11.z));
-  ZYv_4.x = ((sign(-(tmpvar_11.x)) * sign(ZYv_4.z)) * tmpvar_11.z);
-  XZv_3.y = ((sign(-(tmpvar_11.y)) * sign(XZv_3.x)) * tmpvar_11.x);
-  XYv_2.z = ((sign(-(tmpvar_11.z)) * sign(XYv_2.x)) * tmpvar_11.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_11.x)) * sign(tmpvar_13.y)) * tmpvar_11.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_11.y)) * sign(tmpvar_13.y)) * tmpvar_11.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_11.z)) * sign(tmpvar_13.y)) * tmpvar_11.y));
-  highp vec4 tmpvar_15;
-  tmpvar_15.w = 0.0;
-  tmpvar_15.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_16;
-  tmpvar_16 = clamp (dot (normalize(_WorldNorm), tmpvar_15), 0.0, 1.0);
-  NdotL_1 = tmpvar_16;
-  mediump float tmpvar_17;
-  tmpvar_17 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_15;
+  tmpvar_15 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_16;
+  tmpvar_16.z = 0.0;
+  tmpvar_16.x = tmpvar_15.x;
+  tmpvar_16.y = tmpvar_15.y;
+  tmpvar_16.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_16.zyw;
+  XZv_5.yzw = tmpvar_16.zyw;
+  XYv_4.yzw = tmpvar_16.yzw;
+  ZYv_6.z = (tmpvar_15.x * sign(-(tmpvar_13.x)));
+  XZv_5.x = (tmpvar_15.x * sign(-(tmpvar_13.y)));
+  XYv_4.x = (tmpvar_15.x * sign(tmpvar_13.z));
+  ZYv_6.x = ((sign(-(tmpvar_13.x)) * sign(ZYv_6.z)) * tmpvar_13.z);
+  XZv_5.y = ((sign(-(tmpvar_13.y)) * sign(XZv_5.x)) * tmpvar_13.x);
+  XYv_4.z = ((sign(-(tmpvar_13.z)) * sign(XYv_4.x)) * tmpvar_13.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_13.x)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_13.y)) * sign(tmpvar_15.y)) * tmpvar_13.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_13.z)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  highp vec3 tmpvar_17;
+  tmpvar_17 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_17;
   highp vec3 tmpvar_18;
-  tmpvar_18 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_17)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_18;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_19;
-  p_19 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_18 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_18;
+  mediump vec4 tmpvar_19;
+  tmpvar_19.w = 0.0;
+  tmpvar_19.xyz = lightDirection_2;
   highp float tmpvar_20;
-  tmpvar_20 = clamp ((_DistFade * sqrt(dot (p_19, p_19))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_20);
-  gl_Position = (glstate_matrix_projection * (tmpvar_9 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_11);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_12).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
+  tmpvar_20 = clamp (dot (normalize(_WorldNorm), tmpvar_19), 0.0, 1.0);
+  NdotL_1 = tmpvar_20;
+  mediump float tmpvar_21;
+  tmpvar_21 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_22;
+  tmpvar_22 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_21)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_22;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_23;
+  p_23 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_24;
+  tmpvar_24 = clamp ((_DistFade * sqrt(dot (p_23, p_23))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_24);
+  gl_Position = (glstate_matrix_projection * (tmpvar_11 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_13);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_14).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
 }
 
 
@@ -974,8 +990,8 @@ v2f vert( in appdata_t v ) {
     #line 453
     o.texcoordXY = (vec2( 0.5, 0.5) + (0.6 * XY));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    highp vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
+    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
+    mediump vec3 lightDirection = vec3( (0.99 * normalize(_WorldSpaceLightPos0)));
     #line 457
     mediump float NdotL = xll_saturate_f(dot( normalize(_WorldNorm), vec4( lightDirection, 0.0)));
     mediump float diff = ((NdotL - 0.01) / 0.99);
@@ -1273,7 +1289,7 @@ PARAM c[22] = { { 0, 1, 2, 0.60000002 },
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..19],
-		{ 0.5, 0.97998047, 0.010002136 },
+		{ 0.5, 0.99023438, 0.010002136 },
 		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
@@ -1423,7 +1439,7 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c19, 0.00000000, 2.00000000, -1.00000000, 0.97998047
+def c19, 0.00000000, 2.00000000, -1.00000000, 0.99023438
 def c20, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
@@ -1560,7 +1576,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmplpdkknlfhoheifchgedjkmdbohhnfoabaaaaaadaamaaaaadaaaaaa
+eefiecedpakoklpdogdadppibgnobfkeagoeahaoabaaaaaadaamaaaaadaaaaaa
 cmaaaaaajmaaaaaaiiabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -1647,7 +1663,7 @@ hccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajbcaabaaa
 aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
 bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaaagaabaaa
 aaaaaaaaegiccaaaacaaaaaaaaaaaaaadiaaaaakhcaabaaaaaaaaaaaegacbaaa
-aaaaaaaaaceaaaaaeiobhkdpeiobhkdpeiobhkdpaaaaaaaabbaaaaajicaabaaa
+aaaaaaaaaceaaaaakehahndpkehahndpkehahndpaaaaaaaabbaaaaajicaabaaa
 aaaaaaaaegiocaaaaaaaaaaaaeaaaaaaegiocaaaaaaaaaaaaeaaaaaaeeaaaaaf
 icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
 aaaaaaaaegiccaaaaaaaaaaaaeaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaa
@@ -1690,74 +1706,78 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec3 lightDirection_2;
-  highp vec4 XYv_3;
-  highp vec4 XZv_4;
-  highp vec4 ZYv_5;
-  lowp vec4 tmpvar_6;
-  mediump vec3 tmpvar_7;
-  highp vec4 tmpvar_8;
-  tmpvar_8.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_8.w = _glesVertex.w;
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
   highp vec4 tmpvar_9;
-  tmpvar_9 = (glstate_matrix_modelview0 * tmpvar_8);
-  vec4 v_10;
-  v_10.x = glstate_matrix_modelview0[0].z;
-  v_10.y = glstate_matrix_modelview0[1].z;
-  v_10.z = glstate_matrix_modelview0[2].z;
-  v_10.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_11;
-  tmpvar_11 = normalize(v_10.xyz);
-  highp vec4 tmpvar_12;
-  tmpvar_12.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_12.w = _glesVertex.w;
-  highp vec2 tmpvar_13;
-  tmpvar_13 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
-  highp vec4 tmpvar_14;
-  tmpvar_14.z = 0.0;
-  tmpvar_14.x = tmpvar_13.x;
-  tmpvar_14.y = tmpvar_13.y;
-  tmpvar_14.w = _glesVertex.w;
-  ZYv_5.xyw = tmpvar_14.zyw;
-  XZv_4.yzw = tmpvar_14.zyw;
-  XYv_3.yzw = tmpvar_14.yzw;
-  ZYv_5.z = (tmpvar_13.x * sign(-(tmpvar_11.x)));
-  XZv_4.x = (tmpvar_13.x * sign(-(tmpvar_11.y)));
-  XYv_3.x = (tmpvar_13.x * sign(tmpvar_11.z));
-  ZYv_5.x = ((sign(-(tmpvar_11.x)) * sign(ZYv_5.z)) * tmpvar_11.z);
-  XZv_4.y = ((sign(-(tmpvar_11.y)) * sign(XZv_4.x)) * tmpvar_11.x);
-  XYv_3.z = ((sign(-(tmpvar_11.z)) * sign(XYv_3.x)) * tmpvar_11.x);
-  ZYv_5.x = (ZYv_5.x + ((sign(-(tmpvar_11.x)) * sign(tmpvar_13.y)) * tmpvar_11.y));
-  XZv_4.y = (XZv_4.y + ((sign(-(tmpvar_11.y)) * sign(tmpvar_13.y)) * tmpvar_11.z));
-  XYv_3.z = (XYv_3.z + ((sign(-(tmpvar_11.z)) * sign(tmpvar_13.y)) * tmpvar_11.y));
-  lowp vec3 tmpvar_15;
-  tmpvar_15 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  lightDirection_2 = tmpvar_15;
-  highp vec4 tmpvar_16;
-  tmpvar_16.w = 0.0;
-  tmpvar_16.xyz = lightDirection_2;
-  highp float tmpvar_17;
-  tmpvar_17 = clamp (dot (normalize(_WorldNorm), tmpvar_16), 0.0, 1.0);
-  NdotL_1 = tmpvar_17;
-  mediump float tmpvar_18;
-  tmpvar_18 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
-  highp vec3 tmpvar_19;
-  tmpvar_19 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_18)), 0.0, 1.0);
-  tmpvar_7 = tmpvar_19;
-  tmpvar_6.xyz = _glesColor.xyz;
-  highp vec3 p_20;
-  p_20 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
-  highp float tmpvar_21;
-  tmpvar_21 = clamp ((_DistFade * sqrt(dot (p_20, p_20))), 0.0, 1.0);
-  tmpvar_6.w = (_glesColor.w * tmpvar_21);
-  gl_Position = (glstate_matrix_projection * (tmpvar_9 + _glesVertex));
-  xlv_COLOR = tmpvar_6;
-  xlv_TEXCOORD0 = abs(tmpvar_11);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_5).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_4).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_3).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_12).xyz));
-  xlv_TEXCOORD5 = tmpvar_7;
+  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_9.w = _glesVertex.w;
+  highp vec4 tmpvar_10;
+  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
+  vec4 v_11;
+  v_11.x = glstate_matrix_modelview0[0].z;
+  v_11.y = glstate_matrix_modelview0[1].z;
+  v_11.z = glstate_matrix_modelview0[2].z;
+  v_11.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_12;
+  tmpvar_12 = normalize(v_11.xyz);
+  highp vec4 tmpvar_13;
+  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_13.w = _glesVertex.w;
+  highp vec2 tmpvar_14;
+  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_15;
+  tmpvar_15.z = 0.0;
+  tmpvar_15.x = tmpvar_14.x;
+  tmpvar_15.y = tmpvar_14.y;
+  tmpvar_15.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_15.zyw;
+  XZv_5.yzw = tmpvar_15.zyw;
+  XYv_4.yzw = tmpvar_15.yzw;
+  ZYv_6.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
+  XZv_5.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
+  XYv_4.x = (tmpvar_14.x * sign(tmpvar_12.z));
+  ZYv_6.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_6.z)) * tmpvar_12.z);
+  XZv_5.y = ((sign(-(tmpvar_12.y)) * sign(XZv_5.x)) * tmpvar_12.x);
+  XYv_4.z = ((sign(-(tmpvar_12.z)) * sign(XYv_4.x)) * tmpvar_12.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
+  highp vec3 tmpvar_16;
+  tmpvar_16 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_16;
+  lowp vec3 tmpvar_17;
+  tmpvar_17 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_17;
+  mediump vec4 tmpvar_18;
+  tmpvar_18.w = 0.0;
+  tmpvar_18.xyz = lightDirection_2;
+  highp float tmpvar_19;
+  tmpvar_19 = clamp (dot (normalize(_WorldNorm), tmpvar_18), 0.0, 1.0);
+  NdotL_1 = tmpvar_19;
+  mediump float tmpvar_20;
+  tmpvar_20 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_21;
+  tmpvar_21 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_20)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_21;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_22;
+  p_22 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_23;
+  tmpvar_23 = clamp ((_DistFade * sqrt(dot (p_22, p_22))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_23);
+  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_12);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_10.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_10.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_10.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
 }
 
 
@@ -1842,74 +1862,78 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec3 lightDirection_2;
-  highp vec4 XYv_3;
-  highp vec4 XZv_4;
-  highp vec4 ZYv_5;
-  lowp vec4 tmpvar_6;
-  mediump vec3 tmpvar_7;
-  highp vec4 tmpvar_8;
-  tmpvar_8.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_8.w = _glesVertex.w;
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
   highp vec4 tmpvar_9;
-  tmpvar_9 = (glstate_matrix_modelview0 * tmpvar_8);
-  vec4 v_10;
-  v_10.x = glstate_matrix_modelview0[0].z;
-  v_10.y = glstate_matrix_modelview0[1].z;
-  v_10.z = glstate_matrix_modelview0[2].z;
-  v_10.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_11;
-  tmpvar_11 = normalize(v_10.xyz);
-  highp vec4 tmpvar_12;
-  tmpvar_12.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_12.w = _glesVertex.w;
-  highp vec2 tmpvar_13;
-  tmpvar_13 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
-  highp vec4 tmpvar_14;
-  tmpvar_14.z = 0.0;
-  tmpvar_14.x = tmpvar_13.x;
-  tmpvar_14.y = tmpvar_13.y;
-  tmpvar_14.w = _glesVertex.w;
-  ZYv_5.xyw = tmpvar_14.zyw;
-  XZv_4.yzw = tmpvar_14.zyw;
-  XYv_3.yzw = tmpvar_14.yzw;
-  ZYv_5.z = (tmpvar_13.x * sign(-(tmpvar_11.x)));
-  XZv_4.x = (tmpvar_13.x * sign(-(tmpvar_11.y)));
-  XYv_3.x = (tmpvar_13.x * sign(tmpvar_11.z));
-  ZYv_5.x = ((sign(-(tmpvar_11.x)) * sign(ZYv_5.z)) * tmpvar_11.z);
-  XZv_4.y = ((sign(-(tmpvar_11.y)) * sign(XZv_4.x)) * tmpvar_11.x);
-  XYv_3.z = ((sign(-(tmpvar_11.z)) * sign(XYv_3.x)) * tmpvar_11.x);
-  ZYv_5.x = (ZYv_5.x + ((sign(-(tmpvar_11.x)) * sign(tmpvar_13.y)) * tmpvar_11.y));
-  XZv_4.y = (XZv_4.y + ((sign(-(tmpvar_11.y)) * sign(tmpvar_13.y)) * tmpvar_11.z));
-  XYv_3.z = (XYv_3.z + ((sign(-(tmpvar_11.z)) * sign(tmpvar_13.y)) * tmpvar_11.y));
-  lowp vec3 tmpvar_15;
-  tmpvar_15 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  lightDirection_2 = tmpvar_15;
-  highp vec4 tmpvar_16;
-  tmpvar_16.w = 0.0;
-  tmpvar_16.xyz = lightDirection_2;
-  highp float tmpvar_17;
-  tmpvar_17 = clamp (dot (normalize(_WorldNorm), tmpvar_16), 0.0, 1.0);
-  NdotL_1 = tmpvar_17;
-  mediump float tmpvar_18;
-  tmpvar_18 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
-  highp vec3 tmpvar_19;
-  tmpvar_19 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_18)), 0.0, 1.0);
-  tmpvar_7 = tmpvar_19;
-  tmpvar_6.xyz = _glesColor.xyz;
-  highp vec3 p_20;
-  p_20 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
-  highp float tmpvar_21;
-  tmpvar_21 = clamp ((_DistFade * sqrt(dot (p_20, p_20))), 0.0, 1.0);
-  tmpvar_6.w = (_glesColor.w * tmpvar_21);
-  gl_Position = (glstate_matrix_projection * (tmpvar_9 + _glesVertex));
-  xlv_COLOR = tmpvar_6;
-  xlv_TEXCOORD0 = abs(tmpvar_11);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_5).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_4).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_3).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_12).xyz));
-  xlv_TEXCOORD5 = tmpvar_7;
+  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_9.w = _glesVertex.w;
+  highp vec4 tmpvar_10;
+  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
+  vec4 v_11;
+  v_11.x = glstate_matrix_modelview0[0].z;
+  v_11.y = glstate_matrix_modelview0[1].z;
+  v_11.z = glstate_matrix_modelview0[2].z;
+  v_11.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_12;
+  tmpvar_12 = normalize(v_11.xyz);
+  highp vec4 tmpvar_13;
+  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_13.w = _glesVertex.w;
+  highp vec2 tmpvar_14;
+  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_15;
+  tmpvar_15.z = 0.0;
+  tmpvar_15.x = tmpvar_14.x;
+  tmpvar_15.y = tmpvar_14.y;
+  tmpvar_15.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_15.zyw;
+  XZv_5.yzw = tmpvar_15.zyw;
+  XYv_4.yzw = tmpvar_15.yzw;
+  ZYv_6.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
+  XZv_5.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
+  XYv_4.x = (tmpvar_14.x * sign(tmpvar_12.z));
+  ZYv_6.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_6.z)) * tmpvar_12.z);
+  XZv_5.y = ((sign(-(tmpvar_12.y)) * sign(XZv_5.x)) * tmpvar_12.x);
+  XYv_4.z = ((sign(-(tmpvar_12.z)) * sign(XYv_4.x)) * tmpvar_12.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
+  highp vec3 tmpvar_16;
+  tmpvar_16 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_16;
+  lowp vec3 tmpvar_17;
+  tmpvar_17 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_17;
+  mediump vec4 tmpvar_18;
+  tmpvar_18.w = 0.0;
+  tmpvar_18.xyz = lightDirection_2;
+  highp float tmpvar_19;
+  tmpvar_19 = clamp (dot (normalize(_WorldNorm), tmpvar_18), 0.0, 1.0);
+  NdotL_1 = tmpvar_19;
+  mediump float tmpvar_20;
+  tmpvar_20 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_21;
+  tmpvar_21 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_20)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_21;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_22;
+  p_22 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_23;
+  tmpvar_23 = clamp ((_DistFade * sqrt(dot (p_22, p_22))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_23);
+  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_12);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_10.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_10.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_10.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
 }
 
 
@@ -2193,8 +2217,8 @@ v2f vert( in appdata_t v ) {
     #line 450
     o.texcoordXY = (vec2( 0.5, 0.5) + (0.6 * XY));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    highp vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
+    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
+    mediump vec3 lightDirection = vec3( (0.99 * normalize(_WorldSpaceLightPos0)));
     #line 454
     mediump float NdotL = xll_saturate_f(dot( normalize(_WorldNorm), vec4( lightDirection, 0.0)));
     mediump float diff = ((NdotL - 0.01) / 0.99);
@@ -2484,7 +2508,7 @@ PARAM c[22] = { { 0, 1, 2, 0.60000002 },
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..19],
-		{ 0.5, 0.98000002, 0.010002136 },
+		{ 0.5, 0.99000001, 0.010002136 },
 		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
@@ -2634,7 +2658,7 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c19, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.00000000, 2.00000000, -1.00000000, 0.99000001
 def c20, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
@@ -2771,7 +2795,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecednplicfjepinnfjinlpngpidheckalchnabaaaaaaeiamaaaaadaaaaaa
+eefiecedapdealcfopdonkpkjjihlbnajcgcimaoabaaaaaaeiamaaaaadaaaaaa
 cmaaaaaajmaaaaaakaabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -2859,7 +2883,7 @@ pgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajbcaabaaaaaaaaaaaegiocaaa
 acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaa
 akaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaa
 acaaaaaaaaaaaaaadiaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaa
-eiobhkdpeiobhkdpeiobhkdpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
+kehahndpkehahndpkehahndpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
 aaaaaaaaaiaaaaaaegiocaaaaaaaaaaaaiaaaaaaeeaaaaaficaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
 aaaaaaaaaiaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaa
@@ -2903,72 +2927,80 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec4 tmpvar_7;
-  highp vec4 tmpvar_8;
-  tmpvar_8.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_8.w = _glesVertex.w;
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
   highp vec4 tmpvar_9;
-  tmpvar_9 = (glstate_matrix_modelview0 * tmpvar_8);
-  vec4 v_10;
-  v_10.x = glstate_matrix_modelview0[0].z;
-  v_10.y = glstate_matrix_modelview0[1].z;
-  v_10.z = glstate_matrix_modelview0[2].z;
-  v_10.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_11;
-  tmpvar_11 = normalize(v_10.xyz);
-  highp vec4 tmpvar_12;
-  tmpvar_12.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_12.w = _glesVertex.w;
-  highp vec2 tmpvar_13;
-  tmpvar_13 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_10;
+  tmpvar_10.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_10.w = _glesVertex.w;
+  highp vec4 tmpvar_11;
+  tmpvar_11 = (glstate_matrix_modelview0 * tmpvar_10);
+  vec4 v_12;
+  v_12.x = glstate_matrix_modelview0[0].z;
+  v_12.y = glstate_matrix_modelview0[1].z;
+  v_12.z = glstate_matrix_modelview0[2].z;
+  v_12.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_13;
+  tmpvar_13 = normalize(v_12.xyz);
   highp vec4 tmpvar_14;
-  tmpvar_14.z = 0.0;
-  tmpvar_14.x = tmpvar_13.x;
-  tmpvar_14.y = tmpvar_13.y;
+  tmpvar_14.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_14.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_14.zyw;
-  XZv_3.yzw = tmpvar_14.zyw;
-  XYv_2.yzw = tmpvar_14.yzw;
-  ZYv_4.z = (tmpvar_13.x * sign(-(tmpvar_11.x)));
-  XZv_3.x = (tmpvar_13.x * sign(-(tmpvar_11.y)));
-  XYv_2.x = (tmpvar_13.x * sign(tmpvar_11.z));
-  ZYv_4.x = ((sign(-(tmpvar_11.x)) * sign(ZYv_4.z)) * tmpvar_11.z);
-  XZv_3.y = ((sign(-(tmpvar_11.y)) * sign(XZv_3.x)) * tmpvar_11.x);
-  XYv_2.z = ((sign(-(tmpvar_11.z)) * sign(XYv_2.x)) * tmpvar_11.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_11.x)) * sign(tmpvar_13.y)) * tmpvar_11.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_11.y)) * sign(tmpvar_13.y)) * tmpvar_11.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_11.z)) * sign(tmpvar_13.y)) * tmpvar_11.y));
-  highp vec4 tmpvar_15;
-  tmpvar_15.w = 0.0;
-  tmpvar_15.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_16;
-  tmpvar_16 = clamp (dot (normalize(_WorldNorm), tmpvar_15), 0.0, 1.0);
-  NdotL_1 = tmpvar_16;
-  mediump float tmpvar_17;
-  tmpvar_17 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_15;
+  tmpvar_15 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_16;
+  tmpvar_16.z = 0.0;
+  tmpvar_16.x = tmpvar_15.x;
+  tmpvar_16.y = tmpvar_15.y;
+  tmpvar_16.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_16.zyw;
+  XZv_5.yzw = tmpvar_16.zyw;
+  XYv_4.yzw = tmpvar_16.yzw;
+  ZYv_6.z = (tmpvar_15.x * sign(-(tmpvar_13.x)));
+  XZv_5.x = (tmpvar_15.x * sign(-(tmpvar_13.y)));
+  XYv_4.x = (tmpvar_15.x * sign(tmpvar_13.z));
+  ZYv_6.x = ((sign(-(tmpvar_13.x)) * sign(ZYv_6.z)) * tmpvar_13.z);
+  XZv_5.y = ((sign(-(tmpvar_13.y)) * sign(XZv_5.x)) * tmpvar_13.x);
+  XYv_4.z = ((sign(-(tmpvar_13.z)) * sign(XYv_4.x)) * tmpvar_13.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_13.x)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_13.y)) * sign(tmpvar_15.y)) * tmpvar_13.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_13.z)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  highp vec3 tmpvar_17;
+  tmpvar_17 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_17;
   highp vec3 tmpvar_18;
-  tmpvar_18 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_17)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_18;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_19;
-  p_19 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_18 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_18;
+  mediump vec4 tmpvar_19;
+  tmpvar_19.w = 0.0;
+  tmpvar_19.xyz = lightDirection_2;
   highp float tmpvar_20;
-  tmpvar_20 = clamp ((_DistFade * sqrt(dot (p_19, p_19))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_20);
-  gl_Position = (glstate_matrix_projection * (tmpvar_9 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_11);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_12).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
+  tmpvar_20 = clamp (dot (normalize(_WorldNorm), tmpvar_19), 0.0, 1.0);
+  NdotL_1 = tmpvar_20;
+  mediump float tmpvar_21;
+  tmpvar_21 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_22;
+  tmpvar_22 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_21)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_22;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_23;
+  p_23 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_24;
+  tmpvar_24 = clamp ((_DistFade * sqrt(dot (p_23, p_23))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_24);
+  gl_Position = (glstate_matrix_projection * (tmpvar_11 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_13);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_14).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
 }
 
 
@@ -3054,72 +3086,80 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec4 tmpvar_7;
-  highp vec4 tmpvar_8;
-  tmpvar_8.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_8.w = _glesVertex.w;
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
   highp vec4 tmpvar_9;
-  tmpvar_9 = (glstate_matrix_modelview0 * tmpvar_8);
-  vec4 v_10;
-  v_10.x = glstate_matrix_modelview0[0].z;
-  v_10.y = glstate_matrix_modelview0[1].z;
-  v_10.z = glstate_matrix_modelview0[2].z;
-  v_10.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_11;
-  tmpvar_11 = normalize(v_10.xyz);
-  highp vec4 tmpvar_12;
-  tmpvar_12.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_12.w = _glesVertex.w;
-  highp vec2 tmpvar_13;
-  tmpvar_13 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_10;
+  tmpvar_10.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_10.w = _glesVertex.w;
+  highp vec4 tmpvar_11;
+  tmpvar_11 = (glstate_matrix_modelview0 * tmpvar_10);
+  vec4 v_12;
+  v_12.x = glstate_matrix_modelview0[0].z;
+  v_12.y = glstate_matrix_modelview0[1].z;
+  v_12.z = glstate_matrix_modelview0[2].z;
+  v_12.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_13;
+  tmpvar_13 = normalize(v_12.xyz);
   highp vec4 tmpvar_14;
-  tmpvar_14.z = 0.0;
-  tmpvar_14.x = tmpvar_13.x;
-  tmpvar_14.y = tmpvar_13.y;
+  tmpvar_14.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_14.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_14.zyw;
-  XZv_3.yzw = tmpvar_14.zyw;
-  XYv_2.yzw = tmpvar_14.yzw;
-  ZYv_4.z = (tmpvar_13.x * sign(-(tmpvar_11.x)));
-  XZv_3.x = (tmpvar_13.x * sign(-(tmpvar_11.y)));
-  XYv_2.x = (tmpvar_13.x * sign(tmpvar_11.z));
-  ZYv_4.x = ((sign(-(tmpvar_11.x)) * sign(ZYv_4.z)) * tmpvar_11.z);
-  XZv_3.y = ((sign(-(tmpvar_11.y)) * sign(XZv_3.x)) * tmpvar_11.x);
-  XYv_2.z = ((sign(-(tmpvar_11.z)) * sign(XYv_2.x)) * tmpvar_11.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_11.x)) * sign(tmpvar_13.y)) * tmpvar_11.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_11.y)) * sign(tmpvar_13.y)) * tmpvar_11.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_11.z)) * sign(tmpvar_13.y)) * tmpvar_11.y));
-  highp vec4 tmpvar_15;
-  tmpvar_15.w = 0.0;
-  tmpvar_15.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_16;
-  tmpvar_16 = clamp (dot (normalize(_WorldNorm), tmpvar_15), 0.0, 1.0);
-  NdotL_1 = tmpvar_16;
-  mediump float tmpvar_17;
-  tmpvar_17 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_15;
+  tmpvar_15 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_16;
+  tmpvar_16.z = 0.0;
+  tmpvar_16.x = tmpvar_15.x;
+  tmpvar_16.y = tmpvar_15.y;
+  tmpvar_16.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_16.zyw;
+  XZv_5.yzw = tmpvar_16.zyw;
+  XYv_4.yzw = tmpvar_16.yzw;
+  ZYv_6.z = (tmpvar_15.x * sign(-(tmpvar_13.x)));
+  XZv_5.x = (tmpvar_15.x * sign(-(tmpvar_13.y)));
+  XYv_4.x = (tmpvar_15.x * sign(tmpvar_13.z));
+  ZYv_6.x = ((sign(-(tmpvar_13.x)) * sign(ZYv_6.z)) * tmpvar_13.z);
+  XZv_5.y = ((sign(-(tmpvar_13.y)) * sign(XZv_5.x)) * tmpvar_13.x);
+  XYv_4.z = ((sign(-(tmpvar_13.z)) * sign(XYv_4.x)) * tmpvar_13.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_13.x)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_13.y)) * sign(tmpvar_15.y)) * tmpvar_13.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_13.z)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  highp vec3 tmpvar_17;
+  tmpvar_17 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_17;
   highp vec3 tmpvar_18;
-  tmpvar_18 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_17)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_18;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_19;
-  p_19 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_18 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_18;
+  mediump vec4 tmpvar_19;
+  tmpvar_19.w = 0.0;
+  tmpvar_19.xyz = lightDirection_2;
   highp float tmpvar_20;
-  tmpvar_20 = clamp ((_DistFade * sqrt(dot (p_19, p_19))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_20);
-  gl_Position = (glstate_matrix_projection * (tmpvar_9 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_11);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_12).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
+  tmpvar_20 = clamp (dot (normalize(_WorldNorm), tmpvar_19), 0.0, 1.0);
+  NdotL_1 = tmpvar_20;
+  mediump float tmpvar_21;
+  tmpvar_21 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_22;
+  tmpvar_22 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_21)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_22;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_23;
+  p_23 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_24;
+  tmpvar_24 = clamp ((_DistFade * sqrt(dot (p_23, p_23))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_24);
+  gl_Position = (glstate_matrix_projection * (tmpvar_11 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_13);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_14).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
 }
 
 
@@ -3408,8 +3448,8 @@ v2f vert( in appdata_t v ) {
     #line 462
     o.texcoordXY = (vec2( 0.5, 0.5) + (0.6 * XY));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    highp vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
+    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
+    mediump vec3 lightDirection = vec3( (0.99 * normalize(_WorldSpaceLightPos0)));
     #line 466
     mediump float NdotL = xll_saturate_f(dot( normalize(_WorldNorm), vec4( lightDirection, 0.0)));
     mediump float diff = ((NdotL - 0.01) / 0.99);
@@ -3718,7 +3758,7 @@ PARAM c[22] = { { 0, 1, 2, 0.60000002 },
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..19],
-		{ 0.5, 0.98000002, 0.010002136 },
+		{ 0.5, 0.99000001, 0.010002136 },
 		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
@@ -3868,7 +3908,7 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c19, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.00000000, 2.00000000, -1.00000000, 0.99000001
 def c20, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
@@ -4005,7 +4045,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecediadfejibahneajfoilijfndgkdfoijijabaaaaaaeiamaaaaadaaaaaa
+eefiecedapgomlmfgomnmfobmeelpeabhilnnhblabaaaaaaeiamaaaaadaaaaaa
 cmaaaaaajmaaaaaakaabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -4093,7 +4133,7 @@ pgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajbcaabaaaaaaaaaaaegiocaaa
 acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaa
 akaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaa
 acaaaaaaaaaaaaaadiaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaa
-eiobhkdpeiobhkdpeiobhkdpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
+kehahndpkehahndpkehahndpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
 aaaaaaaaaiaaaaaaegiocaaaaaaaaaaaaiaaaaaaeeaaaaaficaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
 aaaaaaaaaiaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaa
@@ -4137,72 +4177,80 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec3 tmpvar_7;
-  highp vec4 tmpvar_8;
-  tmpvar_8.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_8.w = _glesVertex.w;
-  highp vec4 tmpvar_9;
-  tmpvar_9 = (glstate_matrix_modelview0 * tmpvar_8);
-  vec4 v_10;
-  v_10.x = glstate_matrix_modelview0[0].z;
-  v_10.y = glstate_matrix_modelview0[1].z;
-  v_10.z = glstate_matrix_modelview0[2].z;
-  v_10.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_11;
-  tmpvar_11 = normalize(v_10.xyz);
-  highp vec4 tmpvar_12;
-  tmpvar_12.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_12.w = _glesVertex.w;
-  highp vec2 tmpvar_13;
-  tmpvar_13 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
+  highp vec3 tmpvar_9;
+  highp vec4 tmpvar_10;
+  tmpvar_10.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_10.w = _glesVertex.w;
+  highp vec4 tmpvar_11;
+  tmpvar_11 = (glstate_matrix_modelview0 * tmpvar_10);
+  vec4 v_12;
+  v_12.x = glstate_matrix_modelview0[0].z;
+  v_12.y = glstate_matrix_modelview0[1].z;
+  v_12.z = glstate_matrix_modelview0[2].z;
+  v_12.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_13;
+  tmpvar_13 = normalize(v_12.xyz);
   highp vec4 tmpvar_14;
-  tmpvar_14.z = 0.0;
-  tmpvar_14.x = tmpvar_13.x;
-  tmpvar_14.y = tmpvar_13.y;
+  tmpvar_14.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_14.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_14.zyw;
-  XZv_3.yzw = tmpvar_14.zyw;
-  XYv_2.yzw = tmpvar_14.yzw;
-  ZYv_4.z = (tmpvar_13.x * sign(-(tmpvar_11.x)));
-  XZv_3.x = (tmpvar_13.x * sign(-(tmpvar_11.y)));
-  XYv_2.x = (tmpvar_13.x * sign(tmpvar_11.z));
-  ZYv_4.x = ((sign(-(tmpvar_11.x)) * sign(ZYv_4.z)) * tmpvar_11.z);
-  XZv_3.y = ((sign(-(tmpvar_11.y)) * sign(XZv_3.x)) * tmpvar_11.x);
-  XYv_2.z = ((sign(-(tmpvar_11.z)) * sign(XYv_2.x)) * tmpvar_11.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_11.x)) * sign(tmpvar_13.y)) * tmpvar_11.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_11.y)) * sign(tmpvar_13.y)) * tmpvar_11.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_11.z)) * sign(tmpvar_13.y)) * tmpvar_11.y));
-  highp vec4 tmpvar_15;
-  tmpvar_15.w = 0.0;
-  tmpvar_15.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_16;
-  tmpvar_16 = clamp (dot (normalize(_WorldNorm), tmpvar_15), 0.0, 1.0);
-  NdotL_1 = tmpvar_16;
-  mediump float tmpvar_17;
-  tmpvar_17 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_15;
+  tmpvar_15 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_16;
+  tmpvar_16.z = 0.0;
+  tmpvar_16.x = tmpvar_15.x;
+  tmpvar_16.y = tmpvar_15.y;
+  tmpvar_16.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_16.zyw;
+  XZv_5.yzw = tmpvar_16.zyw;
+  XYv_4.yzw = tmpvar_16.yzw;
+  ZYv_6.z = (tmpvar_15.x * sign(-(tmpvar_13.x)));
+  XZv_5.x = (tmpvar_15.x * sign(-(tmpvar_13.y)));
+  XYv_4.x = (tmpvar_15.x * sign(tmpvar_13.z));
+  ZYv_6.x = ((sign(-(tmpvar_13.x)) * sign(ZYv_6.z)) * tmpvar_13.z);
+  XZv_5.y = ((sign(-(tmpvar_13.y)) * sign(XZv_5.x)) * tmpvar_13.x);
+  XYv_4.z = ((sign(-(tmpvar_13.z)) * sign(XYv_4.x)) * tmpvar_13.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_13.x)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_13.y)) * sign(tmpvar_15.y)) * tmpvar_13.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_13.z)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  highp vec3 tmpvar_17;
+  tmpvar_17 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_17;
   highp vec3 tmpvar_18;
-  tmpvar_18 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_17)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_18;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_19;
-  p_19 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_18 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_18;
+  mediump vec4 tmpvar_19;
+  tmpvar_19.w = 0.0;
+  tmpvar_19.xyz = lightDirection_2;
   highp float tmpvar_20;
-  tmpvar_20 = clamp ((_DistFade * sqrt(dot (p_19, p_19))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_20);
-  gl_Position = (glstate_matrix_projection * (tmpvar_9 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_11);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_12).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
+  tmpvar_20 = clamp (dot (normalize(_WorldNorm), tmpvar_19), 0.0, 1.0);
+  NdotL_1 = tmpvar_20;
+  mediump float tmpvar_21;
+  tmpvar_21 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_22;
+  tmpvar_22 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_21)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_22;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_23;
+  p_23 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_24;
+  tmpvar_24 = clamp ((_DistFade * sqrt(dot (p_23, p_23))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_24);
+  gl_Position = (glstate_matrix_projection * (tmpvar_11 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_13);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_14).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
 }
 
 
@@ -4288,72 +4336,80 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec3 tmpvar_7;
-  highp vec4 tmpvar_8;
-  tmpvar_8.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_8.w = _glesVertex.w;
-  highp vec4 tmpvar_9;
-  tmpvar_9 = (glstate_matrix_modelview0 * tmpvar_8);
-  vec4 v_10;
-  v_10.x = glstate_matrix_modelview0[0].z;
-  v_10.y = glstate_matrix_modelview0[1].z;
-  v_10.z = glstate_matrix_modelview0[2].z;
-  v_10.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_11;
-  tmpvar_11 = normalize(v_10.xyz);
-  highp vec4 tmpvar_12;
-  tmpvar_12.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_12.w = _glesVertex.w;
-  highp vec2 tmpvar_13;
-  tmpvar_13 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
+  highp vec3 tmpvar_9;
+  highp vec4 tmpvar_10;
+  tmpvar_10.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_10.w = _glesVertex.w;
+  highp vec4 tmpvar_11;
+  tmpvar_11 = (glstate_matrix_modelview0 * tmpvar_10);
+  vec4 v_12;
+  v_12.x = glstate_matrix_modelview0[0].z;
+  v_12.y = glstate_matrix_modelview0[1].z;
+  v_12.z = glstate_matrix_modelview0[2].z;
+  v_12.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_13;
+  tmpvar_13 = normalize(v_12.xyz);
   highp vec4 tmpvar_14;
-  tmpvar_14.z = 0.0;
-  tmpvar_14.x = tmpvar_13.x;
-  tmpvar_14.y = tmpvar_13.y;
+  tmpvar_14.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_14.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_14.zyw;
-  XZv_3.yzw = tmpvar_14.zyw;
-  XYv_2.yzw = tmpvar_14.yzw;
-  ZYv_4.z = (tmpvar_13.x * sign(-(tmpvar_11.x)));
-  XZv_3.x = (tmpvar_13.x * sign(-(tmpvar_11.y)));
-  XYv_2.x = (tmpvar_13.x * sign(tmpvar_11.z));
-  ZYv_4.x = ((sign(-(tmpvar_11.x)) * sign(ZYv_4.z)) * tmpvar_11.z);
-  XZv_3.y = ((sign(-(tmpvar_11.y)) * sign(XZv_3.x)) * tmpvar_11.x);
-  XYv_2.z = ((sign(-(tmpvar_11.z)) * sign(XYv_2.x)) * tmpvar_11.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_11.x)) * sign(tmpvar_13.y)) * tmpvar_11.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_11.y)) * sign(tmpvar_13.y)) * tmpvar_11.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_11.z)) * sign(tmpvar_13.y)) * tmpvar_11.y));
-  highp vec4 tmpvar_15;
-  tmpvar_15.w = 0.0;
-  tmpvar_15.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_16;
-  tmpvar_16 = clamp (dot (normalize(_WorldNorm), tmpvar_15), 0.0, 1.0);
-  NdotL_1 = tmpvar_16;
-  mediump float tmpvar_17;
-  tmpvar_17 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_15;
+  tmpvar_15 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_16;
+  tmpvar_16.z = 0.0;
+  tmpvar_16.x = tmpvar_15.x;
+  tmpvar_16.y = tmpvar_15.y;
+  tmpvar_16.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_16.zyw;
+  XZv_5.yzw = tmpvar_16.zyw;
+  XYv_4.yzw = tmpvar_16.yzw;
+  ZYv_6.z = (tmpvar_15.x * sign(-(tmpvar_13.x)));
+  XZv_5.x = (tmpvar_15.x * sign(-(tmpvar_13.y)));
+  XYv_4.x = (tmpvar_15.x * sign(tmpvar_13.z));
+  ZYv_6.x = ((sign(-(tmpvar_13.x)) * sign(ZYv_6.z)) * tmpvar_13.z);
+  XZv_5.y = ((sign(-(tmpvar_13.y)) * sign(XZv_5.x)) * tmpvar_13.x);
+  XYv_4.z = ((sign(-(tmpvar_13.z)) * sign(XYv_4.x)) * tmpvar_13.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_13.x)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_13.y)) * sign(tmpvar_15.y)) * tmpvar_13.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_13.z)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  highp vec3 tmpvar_17;
+  tmpvar_17 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_17;
   highp vec3 tmpvar_18;
-  tmpvar_18 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_17)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_18;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_19;
-  p_19 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_18 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_18;
+  mediump vec4 tmpvar_19;
+  tmpvar_19.w = 0.0;
+  tmpvar_19.xyz = lightDirection_2;
   highp float tmpvar_20;
-  tmpvar_20 = clamp ((_DistFade * sqrt(dot (p_19, p_19))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_20);
-  gl_Position = (glstate_matrix_projection * (tmpvar_9 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_11);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_9.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_12).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
+  tmpvar_20 = clamp (dot (normalize(_WorldNorm), tmpvar_19), 0.0, 1.0);
+  NdotL_1 = tmpvar_20;
+  mediump float tmpvar_21;
+  tmpvar_21 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_22;
+  tmpvar_22 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_21)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_22;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_23;
+  p_23 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_24;
+  tmpvar_24 = clamp ((_DistFade * sqrt(dot (p_23, p_23))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_24);
+  gl_Position = (glstate_matrix_projection * (tmpvar_11 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_13);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_14).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
 }
 
 
@@ -4642,8 +4698,8 @@ v2f vert( in appdata_t v ) {
     #line 454
     o.texcoordXY = (vec2( 0.5, 0.5) + (0.6 * XY));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    highp vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
+    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
+    mediump vec3 lightDirection = vec3( (0.99 * normalize(_WorldSpaceLightPos0)));
     #line 458
     mediump float NdotL = xll_saturate_f(dot( normalize(_WorldNorm), vec4( lightDirection, 0.0)));
     mediump float diff = ((NdotL - 0.01) / 0.99);
@@ -4942,7 +4998,7 @@ PARAM c[22] = { { 0, 1, 2, 0.60000002 },
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..19],
-		{ 0.5, 0.97998047, 0.010002136 },
+		{ 0.5, 0.99023438, 0.010002136 },
 		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
@@ -5092,7 +5148,7 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c19, 0.00000000, 2.00000000, -1.00000000, 0.97998047
+def c19, 0.00000000, 2.00000000, -1.00000000, 0.99023438
 def c20, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
@@ -5229,7 +5285,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmffpccennbieblneegcmheiohjliehbfabaaaaaaeiamaaaaadaaaaaa
+eefiecedegajihpjepfafgiogebbpodkjcamgepdabaaaaaaeiamaaaaadaaaaaa
 cmaaaaaajmaaaaaakaabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -5317,7 +5373,7 @@ pgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajbcaabaaaaaaaaaaaegiocaaa
 acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaa
 akaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaa
 acaaaaaaaaaaaaaadiaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaa
-eiobhkdpeiobhkdpeiobhkdpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
+kehahndpkehahndpkehahndpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
 aaaaaaaaaiaaaaaaegiocaaaaaaaaaaaaiaaaaaaeeaaaaaficaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
 aaaaaaaaaiaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaa
@@ -5361,76 +5417,80 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec3 lightDirection_2;
-  highp vec4 XYv_3;
-  highp vec4 XZv_4;
-  highp vec4 ZYv_5;
-  lowp vec4 tmpvar_6;
-  mediump vec3 tmpvar_7;
-  highp vec2 tmpvar_8;
-  highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
+  highp vec2 tmpvar_9;
   highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
-  highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
-  tmpvar_15.w = _glesVertex.w;
-  ZYv_5.xyw = tmpvar_15.zyw;
-  XZv_4.yzw = tmpvar_15.zyw;
-  XYv_3.yzw = tmpvar_15.yzw;
-  ZYv_5.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_4.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_3.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_5.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_5.z)) * tmpvar_12.z);
-  XZv_4.y = ((sign(-(tmpvar_12.y)) * sign(XZv_4.x)) * tmpvar_12.x);
-  XYv_3.z = ((sign(-(tmpvar_12.z)) * sign(XYv_3.x)) * tmpvar_12.x);
-  ZYv_5.x = (ZYv_5.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_4.y = (XZv_4.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_3.z = (XYv_3.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  lowp vec3 tmpvar_16;
-  tmpvar_16 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  lightDirection_2 = tmpvar_16;
-  highp vec4 tmpvar_17;
-  tmpvar_17.w = 0.0;
-  tmpvar_17.xyz = lightDirection_2;
-  highp float tmpvar_18;
-  tmpvar_18 = clamp (dot (normalize(_WorldNorm), tmpvar_17), 0.0, 1.0);
-  NdotL_1 = tmpvar_18;
-  mediump float tmpvar_19;
-  tmpvar_19 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
-  highp vec3 tmpvar_20;
-  tmpvar_20 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_19)), 0.0, 1.0);
-  tmpvar_7 = tmpvar_20;
-  tmpvar_6.xyz = _glesColor.xyz;
-  highp vec3 p_21;
-  p_21 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
-  highp float tmpvar_22;
-  tmpvar_22 = clamp ((_DistFade * sqrt(dot (p_21, p_21))), 0.0, 1.0);
-  tmpvar_6.w = (_glesColor.w * tmpvar_22);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_6;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_5).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_7;
-  xlv_TEXCOORD6 = tmpvar_8;
+  tmpvar_10.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_10.w = _glesVertex.w;
+  highp vec4 tmpvar_11;
+  tmpvar_11 = (glstate_matrix_modelview0 * tmpvar_10);
+  vec4 v_12;
+  v_12.x = glstate_matrix_modelview0[0].z;
+  v_12.y = glstate_matrix_modelview0[1].z;
+  v_12.z = glstate_matrix_modelview0[2].z;
+  v_12.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_13;
+  tmpvar_13 = normalize(v_12.xyz);
+  highp vec4 tmpvar_14;
+  tmpvar_14.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_14.w = _glesVertex.w;
+  highp vec2 tmpvar_15;
+  tmpvar_15 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_16;
+  tmpvar_16.z = 0.0;
+  tmpvar_16.x = tmpvar_15.x;
+  tmpvar_16.y = tmpvar_15.y;
+  tmpvar_16.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_16.zyw;
+  XZv_5.yzw = tmpvar_16.zyw;
+  XYv_4.yzw = tmpvar_16.yzw;
+  ZYv_6.z = (tmpvar_15.x * sign(-(tmpvar_13.x)));
+  XZv_5.x = (tmpvar_15.x * sign(-(tmpvar_13.y)));
+  XYv_4.x = (tmpvar_15.x * sign(tmpvar_13.z));
+  ZYv_6.x = ((sign(-(tmpvar_13.x)) * sign(ZYv_6.z)) * tmpvar_13.z);
+  XZv_5.y = ((sign(-(tmpvar_13.y)) * sign(XZv_5.x)) * tmpvar_13.x);
+  XYv_4.z = ((sign(-(tmpvar_13.z)) * sign(XYv_4.x)) * tmpvar_13.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_13.x)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_13.y)) * sign(tmpvar_15.y)) * tmpvar_13.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_13.z)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  highp vec3 tmpvar_17;
+  tmpvar_17 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_17;
+  lowp vec3 tmpvar_18;
+  tmpvar_18 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_18;
+  mediump vec4 tmpvar_19;
+  tmpvar_19.w = 0.0;
+  tmpvar_19.xyz = lightDirection_2;
+  highp float tmpvar_20;
+  tmpvar_20 = clamp (dot (normalize(_WorldNorm), tmpvar_19), 0.0, 1.0);
+  NdotL_1 = tmpvar_20;
+  mediump float tmpvar_21;
+  tmpvar_21 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_22;
+  tmpvar_22 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_21)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_22;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_23;
+  p_23 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_24;
+  tmpvar_24 = clamp ((_DistFade * sqrt(dot (p_23, p_23))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_24);
+  gl_Position = (glstate_matrix_projection * (tmpvar_11 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_13);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_14).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
 }
 
 
@@ -5516,76 +5576,80 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec3 lightDirection_2;
-  highp vec4 XYv_3;
-  highp vec4 XZv_4;
-  highp vec4 ZYv_5;
-  lowp vec4 tmpvar_6;
-  mediump vec3 tmpvar_7;
-  highp vec2 tmpvar_8;
-  highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
+  highp vec2 tmpvar_9;
   highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
-  highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
-  tmpvar_15.w = _glesVertex.w;
-  ZYv_5.xyw = tmpvar_15.zyw;
-  XZv_4.yzw = tmpvar_15.zyw;
-  XYv_3.yzw = tmpvar_15.yzw;
-  ZYv_5.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_4.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_3.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_5.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_5.z)) * tmpvar_12.z);
-  XZv_4.y = ((sign(-(tmpvar_12.y)) * sign(XZv_4.x)) * tmpvar_12.x);
-  XYv_3.z = ((sign(-(tmpvar_12.z)) * sign(XYv_3.x)) * tmpvar_12.x);
-  ZYv_5.x = (ZYv_5.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_4.y = (XZv_4.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_3.z = (XYv_3.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  lowp vec3 tmpvar_16;
-  tmpvar_16 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  lightDirection_2 = tmpvar_16;
-  highp vec4 tmpvar_17;
-  tmpvar_17.w = 0.0;
-  tmpvar_17.xyz = lightDirection_2;
-  highp float tmpvar_18;
-  tmpvar_18 = clamp (dot (normalize(_WorldNorm), tmpvar_17), 0.0, 1.0);
-  NdotL_1 = tmpvar_18;
-  mediump float tmpvar_19;
-  tmpvar_19 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
-  highp vec3 tmpvar_20;
-  tmpvar_20 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_19)), 0.0, 1.0);
-  tmpvar_7 = tmpvar_20;
-  tmpvar_6.xyz = _glesColor.xyz;
-  highp vec3 p_21;
-  p_21 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
-  highp float tmpvar_22;
-  tmpvar_22 = clamp ((_DistFade * sqrt(dot (p_21, p_21))), 0.0, 1.0);
-  tmpvar_6.w = (_glesColor.w * tmpvar_22);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_6;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_5).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_7;
-  xlv_TEXCOORD6 = tmpvar_8;
+  tmpvar_10.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_10.w = _glesVertex.w;
+  highp vec4 tmpvar_11;
+  tmpvar_11 = (glstate_matrix_modelview0 * tmpvar_10);
+  vec4 v_12;
+  v_12.x = glstate_matrix_modelview0[0].z;
+  v_12.y = glstate_matrix_modelview0[1].z;
+  v_12.z = glstate_matrix_modelview0[2].z;
+  v_12.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_13;
+  tmpvar_13 = normalize(v_12.xyz);
+  highp vec4 tmpvar_14;
+  tmpvar_14.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_14.w = _glesVertex.w;
+  highp vec2 tmpvar_15;
+  tmpvar_15 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_16;
+  tmpvar_16.z = 0.0;
+  tmpvar_16.x = tmpvar_15.x;
+  tmpvar_16.y = tmpvar_15.y;
+  tmpvar_16.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_16.zyw;
+  XZv_5.yzw = tmpvar_16.zyw;
+  XYv_4.yzw = tmpvar_16.yzw;
+  ZYv_6.z = (tmpvar_15.x * sign(-(tmpvar_13.x)));
+  XZv_5.x = (tmpvar_15.x * sign(-(tmpvar_13.y)));
+  XYv_4.x = (tmpvar_15.x * sign(tmpvar_13.z));
+  ZYv_6.x = ((sign(-(tmpvar_13.x)) * sign(ZYv_6.z)) * tmpvar_13.z);
+  XZv_5.y = ((sign(-(tmpvar_13.y)) * sign(XZv_5.x)) * tmpvar_13.x);
+  XYv_4.z = ((sign(-(tmpvar_13.z)) * sign(XYv_4.x)) * tmpvar_13.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_13.x)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_13.y)) * sign(tmpvar_15.y)) * tmpvar_13.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_13.z)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  highp vec3 tmpvar_17;
+  tmpvar_17 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_17;
+  lowp vec3 tmpvar_18;
+  tmpvar_18 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_18;
+  mediump vec4 tmpvar_19;
+  tmpvar_19.w = 0.0;
+  tmpvar_19.xyz = lightDirection_2;
+  highp float tmpvar_20;
+  tmpvar_20 = clamp (dot (normalize(_WorldNorm), tmpvar_19), 0.0, 1.0);
+  NdotL_1 = tmpvar_20;
+  mediump float tmpvar_21;
+  tmpvar_21 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_22;
+  tmpvar_22 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_21)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_22;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_23;
+  p_23 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_24;
+  tmpvar_24 = clamp ((_DistFade * sqrt(dot (p_23, p_23))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_24);
+  gl_Position = (glstate_matrix_projection * (tmpvar_11 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_13);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_14).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
 }
 
 
@@ -5873,8 +5937,8 @@ v2f vert( in appdata_t v ) {
     #line 453
     o.texcoordXY = (vec2( 0.5, 0.5) + (0.6 * XY));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    highp vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
+    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
+    mediump vec3 lightDirection = vec3( (0.99 * normalize(_WorldSpaceLightPos0)));
     #line 457
     mediump float NdotL = xll_saturate_f(dot( normalize(_WorldNorm), vec4( lightDirection, 0.0)));
     mediump float diff = ((NdotL - 0.01) / 0.99);
@@ -6172,7 +6236,7 @@ PARAM c[22] = { { 0, 1, 2, 0.60000002 },
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..19],
-		{ 0.5, 0.98000002, 0.010002136 },
+		{ 0.5, 0.99000001, 0.010002136 },
 		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
@@ -6322,7 +6386,7 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c19, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.00000000, 2.00000000, -1.00000000, 0.99000001
 def c20, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
@@ -6459,7 +6523,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedcdjbikddghanchiehpmicdifdlahoepiabaaaaaagaamaaaaadaaaaaa
+eefiecedpnjjdofdhigmojdioekldildbkhadgnlabaaaaaagaamaaaaadaaaaaa
 cmaaaaaajmaaaaaaliabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -6547,8 +6611,8 @@ aaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaa
 egacbaaaaaaaaaaabbaaaaajbcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
 egiocaaaacaaaaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
 diaaaaaihcaabaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaaeiobhkdpeiobhkdp
-eiobhkdpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaaiaaaaaa
+diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaakehahndpkehahndp
+kehahndpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaaiaaaaaa
 egiocaaaaaaaaaaaaiaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
 diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaaaaaaaaaaiaaaaaa
 bacaaaahbcaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaaaaaaaaah
@@ -6593,74 +6657,82 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec4 tmpvar_7;
-  highp vec4 tmpvar_8;
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
   highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
   highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_11;
+  tmpvar_11.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_11.w = _glesVertex.w;
+  highp vec4 tmpvar_12;
+  tmpvar_12 = (glstate_matrix_modelview0 * tmpvar_11);
+  vec4 v_13;
+  v_13.x = glstate_matrix_modelview0[0].z;
+  v_13.y = glstate_matrix_modelview0[1].z;
+  v_13.z = glstate_matrix_modelview0[2].z;
+  v_13.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_14;
+  tmpvar_14 = normalize(v_13.xyz);
   highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
+  tmpvar_15.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_15.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_15.zyw;
-  XZv_3.yzw = tmpvar_15.zyw;
-  XYv_2.yzw = tmpvar_15.yzw;
-  ZYv_4.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_3.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_2.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_4.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_4.z)) * tmpvar_12.z);
-  XZv_3.y = ((sign(-(tmpvar_12.y)) * sign(XZv_3.x)) * tmpvar_12.x);
-  XYv_2.z = ((sign(-(tmpvar_12.z)) * sign(XYv_2.x)) * tmpvar_12.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  highp vec4 tmpvar_16;
-  tmpvar_16.w = 0.0;
-  tmpvar_16.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_17;
-  tmpvar_17 = clamp (dot (normalize(_WorldNorm), tmpvar_16), 0.0, 1.0);
-  NdotL_1 = tmpvar_17;
-  mediump float tmpvar_18;
-  tmpvar_18 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_16;
+  tmpvar_16 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_17;
+  tmpvar_17.z = 0.0;
+  tmpvar_17.x = tmpvar_16.x;
+  tmpvar_17.y = tmpvar_16.y;
+  tmpvar_17.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_17.zyw;
+  XZv_5.yzw = tmpvar_17.zyw;
+  XYv_4.yzw = tmpvar_17.yzw;
+  ZYv_6.z = (tmpvar_16.x * sign(-(tmpvar_14.x)));
+  XZv_5.x = (tmpvar_16.x * sign(-(tmpvar_14.y)));
+  XYv_4.x = (tmpvar_16.x * sign(tmpvar_14.z));
+  ZYv_6.x = ((sign(-(tmpvar_14.x)) * sign(ZYv_6.z)) * tmpvar_14.z);
+  XZv_5.y = ((sign(-(tmpvar_14.y)) * sign(XZv_5.x)) * tmpvar_14.x);
+  XYv_4.z = ((sign(-(tmpvar_14.z)) * sign(XYv_4.x)) * tmpvar_14.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_14.x)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_14.y)) * sign(tmpvar_16.y)) * tmpvar_14.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_14.z)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  highp vec3 tmpvar_18;
+  tmpvar_18 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_18)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_19;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_20;
-  p_20 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_19 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_19;
+  mediump vec4 tmpvar_20;
+  tmpvar_20.w = 0.0;
+  tmpvar_20.xyz = lightDirection_2;
   highp float tmpvar_21;
-  tmpvar_21 = clamp ((_DistFade * sqrt(dot (p_20, p_20))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_21);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
-  xlv_TEXCOORD7 = tmpvar_8;
+  tmpvar_21 = clamp (dot (normalize(_WorldNorm), tmpvar_20), 0.0, 1.0);
+  NdotL_1 = tmpvar_21;
+  mediump float tmpvar_22;
+  tmpvar_22 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_23;
+  tmpvar_23 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_22)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_23;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_24;
+  p_24 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_25;
+  tmpvar_25 = clamp ((_DistFade * sqrt(dot (p_24, p_24))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_25);
+  gl_Position = (glstate_matrix_projection * (tmpvar_12 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_14);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_15).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
+  xlv_TEXCOORD7 = tmpvar_10;
 }
 
 
@@ -6747,74 +6819,82 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec4 tmpvar_7;
-  highp vec4 tmpvar_8;
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
   highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
   highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_11;
+  tmpvar_11.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_11.w = _glesVertex.w;
+  highp vec4 tmpvar_12;
+  tmpvar_12 = (glstate_matrix_modelview0 * tmpvar_11);
+  vec4 v_13;
+  v_13.x = glstate_matrix_modelview0[0].z;
+  v_13.y = glstate_matrix_modelview0[1].z;
+  v_13.z = glstate_matrix_modelview0[2].z;
+  v_13.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_14;
+  tmpvar_14 = normalize(v_13.xyz);
   highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
+  tmpvar_15.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_15.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_15.zyw;
-  XZv_3.yzw = tmpvar_15.zyw;
-  XYv_2.yzw = tmpvar_15.yzw;
-  ZYv_4.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_3.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_2.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_4.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_4.z)) * tmpvar_12.z);
-  XZv_3.y = ((sign(-(tmpvar_12.y)) * sign(XZv_3.x)) * tmpvar_12.x);
-  XYv_2.z = ((sign(-(tmpvar_12.z)) * sign(XYv_2.x)) * tmpvar_12.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  highp vec4 tmpvar_16;
-  tmpvar_16.w = 0.0;
-  tmpvar_16.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_17;
-  tmpvar_17 = clamp (dot (normalize(_WorldNorm), tmpvar_16), 0.0, 1.0);
-  NdotL_1 = tmpvar_17;
-  mediump float tmpvar_18;
-  tmpvar_18 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_16;
+  tmpvar_16 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_17;
+  tmpvar_17.z = 0.0;
+  tmpvar_17.x = tmpvar_16.x;
+  tmpvar_17.y = tmpvar_16.y;
+  tmpvar_17.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_17.zyw;
+  XZv_5.yzw = tmpvar_17.zyw;
+  XYv_4.yzw = tmpvar_17.yzw;
+  ZYv_6.z = (tmpvar_16.x * sign(-(tmpvar_14.x)));
+  XZv_5.x = (tmpvar_16.x * sign(-(tmpvar_14.y)));
+  XYv_4.x = (tmpvar_16.x * sign(tmpvar_14.z));
+  ZYv_6.x = ((sign(-(tmpvar_14.x)) * sign(ZYv_6.z)) * tmpvar_14.z);
+  XZv_5.y = ((sign(-(tmpvar_14.y)) * sign(XZv_5.x)) * tmpvar_14.x);
+  XYv_4.z = ((sign(-(tmpvar_14.z)) * sign(XYv_4.x)) * tmpvar_14.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_14.x)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_14.y)) * sign(tmpvar_16.y)) * tmpvar_14.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_14.z)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  highp vec3 tmpvar_18;
+  tmpvar_18 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_18)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_19;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_20;
-  p_20 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_19 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_19;
+  mediump vec4 tmpvar_20;
+  tmpvar_20.w = 0.0;
+  tmpvar_20.xyz = lightDirection_2;
   highp float tmpvar_21;
-  tmpvar_21 = clamp ((_DistFade * sqrt(dot (p_20, p_20))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_21);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
-  xlv_TEXCOORD7 = tmpvar_8;
+  tmpvar_21 = clamp (dot (normalize(_WorldNorm), tmpvar_20), 0.0, 1.0);
+  NdotL_1 = tmpvar_21;
+  mediump float tmpvar_22;
+  tmpvar_22 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_23;
+  tmpvar_23 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_22)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_23;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_24;
+  p_24 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_25;
+  tmpvar_25 = clamp ((_DistFade * sqrt(dot (p_24, p_24))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_25);
+  gl_Position = (glstate_matrix_projection * (tmpvar_12 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_14);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_15).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
+  xlv_TEXCOORD7 = tmpvar_10;
 }
 
 
@@ -7107,8 +7187,8 @@ v2f vert( in appdata_t v ) {
     #line 469
     o.texcoordXY = (vec2( 0.5, 0.5) + (0.6 * XY));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    highp vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
+    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
+    mediump vec3 lightDirection = vec3( (0.99 * normalize(_WorldSpaceLightPos0)));
     #line 473
     mediump float NdotL = xll_saturate_f(dot( normalize(_WorldNorm), vec4( lightDirection, 0.0)));
     mediump float diff = ((NdotL - 0.01) / 0.99);
@@ -7429,7 +7509,7 @@ PARAM c[22] = { { 0, 1, 2, 0.60000002 },
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..19],
-		{ 0.5, 0.98000002, 0.010002136 },
+		{ 0.5, 0.99000001, 0.010002136 },
 		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
@@ -7579,7 +7659,7 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c19, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.00000000, 2.00000000, -1.00000000, 0.99000001
 def c20, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
@@ -7716,7 +7796,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedcdjbikddghanchiehpmicdifdlahoepiabaaaaaagaamaaaaadaaaaaa
+eefiecedpnjjdofdhigmojdioekldildbkhadgnlabaaaaaagaamaaaaadaaaaaa
 cmaaaaaajmaaaaaaliabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -7804,8 +7884,8 @@ aaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaa
 egacbaaaaaaaaaaabbaaaaajbcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
 egiocaaaacaaaaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
 diaaaaaihcaabaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaaeiobhkdpeiobhkdp
-eiobhkdpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaaiaaaaaa
+diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaakehahndpkehahndp
+kehahndpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaaiaaaaaa
 egiocaaaaaaaaaaaaiaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
 diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaaaaaaaaaaiaaaaaa
 bacaaaahbcaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaaaaaaaaah
@@ -7851,74 +7931,82 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec4 tmpvar_7;
-  highp vec4 tmpvar_8;
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
   highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
   highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_11;
+  tmpvar_11.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_11.w = _glesVertex.w;
+  highp vec4 tmpvar_12;
+  tmpvar_12 = (glstate_matrix_modelview0 * tmpvar_11);
+  vec4 v_13;
+  v_13.x = glstate_matrix_modelview0[0].z;
+  v_13.y = glstate_matrix_modelview0[1].z;
+  v_13.z = glstate_matrix_modelview0[2].z;
+  v_13.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_14;
+  tmpvar_14 = normalize(v_13.xyz);
   highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
+  tmpvar_15.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_15.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_15.zyw;
-  XZv_3.yzw = tmpvar_15.zyw;
-  XYv_2.yzw = tmpvar_15.yzw;
-  ZYv_4.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_3.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_2.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_4.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_4.z)) * tmpvar_12.z);
-  XZv_3.y = ((sign(-(tmpvar_12.y)) * sign(XZv_3.x)) * tmpvar_12.x);
-  XYv_2.z = ((sign(-(tmpvar_12.z)) * sign(XYv_2.x)) * tmpvar_12.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  highp vec4 tmpvar_16;
-  tmpvar_16.w = 0.0;
-  tmpvar_16.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_17;
-  tmpvar_17 = clamp (dot (normalize(_WorldNorm), tmpvar_16), 0.0, 1.0);
-  NdotL_1 = tmpvar_17;
-  mediump float tmpvar_18;
-  tmpvar_18 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_16;
+  tmpvar_16 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_17;
+  tmpvar_17.z = 0.0;
+  tmpvar_17.x = tmpvar_16.x;
+  tmpvar_17.y = tmpvar_16.y;
+  tmpvar_17.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_17.zyw;
+  XZv_5.yzw = tmpvar_17.zyw;
+  XYv_4.yzw = tmpvar_17.yzw;
+  ZYv_6.z = (tmpvar_16.x * sign(-(tmpvar_14.x)));
+  XZv_5.x = (tmpvar_16.x * sign(-(tmpvar_14.y)));
+  XYv_4.x = (tmpvar_16.x * sign(tmpvar_14.z));
+  ZYv_6.x = ((sign(-(tmpvar_14.x)) * sign(ZYv_6.z)) * tmpvar_14.z);
+  XZv_5.y = ((sign(-(tmpvar_14.y)) * sign(XZv_5.x)) * tmpvar_14.x);
+  XYv_4.z = ((sign(-(tmpvar_14.z)) * sign(XYv_4.x)) * tmpvar_14.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_14.x)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_14.y)) * sign(tmpvar_16.y)) * tmpvar_14.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_14.z)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  highp vec3 tmpvar_18;
+  tmpvar_18 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_18)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_19;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_20;
-  p_20 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_19 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_19;
+  mediump vec4 tmpvar_20;
+  tmpvar_20.w = 0.0;
+  tmpvar_20.xyz = lightDirection_2;
   highp float tmpvar_21;
-  tmpvar_21 = clamp ((_DistFade * sqrt(dot (p_20, p_20))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_21);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
-  xlv_TEXCOORD7 = tmpvar_8;
+  tmpvar_21 = clamp (dot (normalize(_WorldNorm), tmpvar_20), 0.0, 1.0);
+  NdotL_1 = tmpvar_21;
+  mediump float tmpvar_22;
+  tmpvar_22 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_23;
+  tmpvar_23 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_22)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_23;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_24;
+  p_24 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_25;
+  tmpvar_25 = clamp ((_DistFade * sqrt(dot (p_24, p_24))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_25);
+  gl_Position = (glstate_matrix_projection * (tmpvar_12 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_14);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_15).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
+  xlv_TEXCOORD7 = tmpvar_10;
 }
 
 
@@ -8221,8 +8309,8 @@ v2f vert( in appdata_t v ) {
     #line 470
     o.texcoordXY = (vec2( 0.5, 0.5) + (0.6 * XY));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    highp vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
+    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
+    mediump vec3 lightDirection = vec3( (0.99 * normalize(_WorldSpaceLightPos0)));
     #line 474
     mediump float NdotL = xll_saturate_f(dot( normalize(_WorldNorm), vec4( lightDirection, 0.0)));
     mediump float diff = ((NdotL - 0.01) / 0.99);
@@ -8546,7 +8634,7 @@ PARAM c[22] = { { 0, 1, 2, 0.60000002 },
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..19],
-		{ 0.5, 0.97998047, 0.010002136 },
+		{ 0.5, 0.99023438, 0.010002136 },
 		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
@@ -8696,7 +8784,7 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c19, 0.00000000, 2.00000000, -1.00000000, 0.97998047
+def c19, 0.00000000, 2.00000000, -1.00000000, 0.99023438
 def c20, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
@@ -8833,7 +8921,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecednplicfjepinnfjinlpngpidheckalchnabaaaaaaeiamaaaaadaaaaaa
+eefiecedapdealcfopdonkpkjjihlbnajcgcimaoabaaaaaaeiamaaaaadaaaaaa
 cmaaaaaajmaaaaaakaabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -8921,7 +9009,7 @@ pgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajbcaabaaaaaaaaaaaegiocaaa
 acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaa
 akaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaa
 acaaaaaaaaaaaaaadiaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaa
-eiobhkdpeiobhkdpeiobhkdpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
+kehahndpkehahndpkehahndpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
 aaaaaaaaaiaaaaaaegiocaaaaaaaaaaaaiaaaaaaeeaaaaaficaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
 aaaaaaaaaiaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaa
@@ -8965,76 +9053,80 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec3 lightDirection_2;
-  highp vec4 XYv_3;
-  highp vec4 XZv_4;
-  highp vec4 ZYv_5;
-  lowp vec4 tmpvar_6;
-  mediump vec3 tmpvar_7;
-  highp vec4 tmpvar_8;
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
   highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
   highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
-  highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
-  tmpvar_15.w = _glesVertex.w;
-  ZYv_5.xyw = tmpvar_15.zyw;
-  XZv_4.yzw = tmpvar_15.zyw;
-  XYv_3.yzw = tmpvar_15.yzw;
-  ZYv_5.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_4.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_3.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_5.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_5.z)) * tmpvar_12.z);
-  XZv_4.y = ((sign(-(tmpvar_12.y)) * sign(XZv_4.x)) * tmpvar_12.x);
-  XYv_3.z = ((sign(-(tmpvar_12.z)) * sign(XYv_3.x)) * tmpvar_12.x);
-  ZYv_5.x = (ZYv_5.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_4.y = (XZv_4.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_3.z = (XYv_3.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  lowp vec3 tmpvar_16;
-  tmpvar_16 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  lightDirection_2 = tmpvar_16;
-  highp vec4 tmpvar_17;
-  tmpvar_17.w = 0.0;
-  tmpvar_17.xyz = lightDirection_2;
-  highp float tmpvar_18;
-  tmpvar_18 = clamp (dot (normalize(_WorldNorm), tmpvar_17), 0.0, 1.0);
-  NdotL_1 = tmpvar_18;
-  mediump float tmpvar_19;
-  tmpvar_19 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
-  highp vec3 tmpvar_20;
-  tmpvar_20 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_19)), 0.0, 1.0);
-  tmpvar_7 = tmpvar_20;
-  tmpvar_6.xyz = _glesColor.xyz;
-  highp vec3 p_21;
-  p_21 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
-  highp float tmpvar_22;
-  tmpvar_22 = clamp ((_DistFade * sqrt(dot (p_21, p_21))), 0.0, 1.0);
-  tmpvar_6.w = (_glesColor.w * tmpvar_22);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_6;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_5).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_7;
-  xlv_TEXCOORD6 = tmpvar_8;
+  tmpvar_10.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_10.w = _glesVertex.w;
+  highp vec4 tmpvar_11;
+  tmpvar_11 = (glstate_matrix_modelview0 * tmpvar_10);
+  vec4 v_12;
+  v_12.x = glstate_matrix_modelview0[0].z;
+  v_12.y = glstate_matrix_modelview0[1].z;
+  v_12.z = glstate_matrix_modelview0[2].z;
+  v_12.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_13;
+  tmpvar_13 = normalize(v_12.xyz);
+  highp vec4 tmpvar_14;
+  tmpvar_14.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_14.w = _glesVertex.w;
+  highp vec2 tmpvar_15;
+  tmpvar_15 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_16;
+  tmpvar_16.z = 0.0;
+  tmpvar_16.x = tmpvar_15.x;
+  tmpvar_16.y = tmpvar_15.y;
+  tmpvar_16.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_16.zyw;
+  XZv_5.yzw = tmpvar_16.zyw;
+  XYv_4.yzw = tmpvar_16.yzw;
+  ZYv_6.z = (tmpvar_15.x * sign(-(tmpvar_13.x)));
+  XZv_5.x = (tmpvar_15.x * sign(-(tmpvar_13.y)));
+  XYv_4.x = (tmpvar_15.x * sign(tmpvar_13.z));
+  ZYv_6.x = ((sign(-(tmpvar_13.x)) * sign(ZYv_6.z)) * tmpvar_13.z);
+  XZv_5.y = ((sign(-(tmpvar_13.y)) * sign(XZv_5.x)) * tmpvar_13.x);
+  XYv_4.z = ((sign(-(tmpvar_13.z)) * sign(XYv_4.x)) * tmpvar_13.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_13.x)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_13.y)) * sign(tmpvar_15.y)) * tmpvar_13.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_13.z)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  highp vec3 tmpvar_17;
+  tmpvar_17 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_17;
+  lowp vec3 tmpvar_18;
+  tmpvar_18 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_18;
+  mediump vec4 tmpvar_19;
+  tmpvar_19.w = 0.0;
+  tmpvar_19.xyz = lightDirection_2;
+  highp float tmpvar_20;
+  tmpvar_20 = clamp (dot (normalize(_WorldNorm), tmpvar_19), 0.0, 1.0);
+  NdotL_1 = tmpvar_20;
+  mediump float tmpvar_21;
+  tmpvar_21 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_22;
+  tmpvar_22 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_21)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_22;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_23;
+  p_23 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_24;
+  tmpvar_24 = clamp ((_DistFade * sqrt(dot (p_23, p_23))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_24);
+  gl_Position = (glstate_matrix_projection * (tmpvar_11 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_13);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_14).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
 }
 
 
@@ -9120,76 +9212,80 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec3 lightDirection_2;
-  highp vec4 XYv_3;
-  highp vec4 XZv_4;
-  highp vec4 ZYv_5;
-  lowp vec4 tmpvar_6;
-  mediump vec3 tmpvar_7;
-  highp vec4 tmpvar_8;
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
   highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
   highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
-  highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
-  tmpvar_15.w = _glesVertex.w;
-  ZYv_5.xyw = tmpvar_15.zyw;
-  XZv_4.yzw = tmpvar_15.zyw;
-  XYv_3.yzw = tmpvar_15.yzw;
-  ZYv_5.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_4.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_3.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_5.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_5.z)) * tmpvar_12.z);
-  XZv_4.y = ((sign(-(tmpvar_12.y)) * sign(XZv_4.x)) * tmpvar_12.x);
-  XYv_3.z = ((sign(-(tmpvar_12.z)) * sign(XYv_3.x)) * tmpvar_12.x);
-  ZYv_5.x = (ZYv_5.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_4.y = (XZv_4.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_3.z = (XYv_3.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  lowp vec3 tmpvar_16;
-  tmpvar_16 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  lightDirection_2 = tmpvar_16;
-  highp vec4 tmpvar_17;
-  tmpvar_17.w = 0.0;
-  tmpvar_17.xyz = lightDirection_2;
-  highp float tmpvar_18;
-  tmpvar_18 = clamp (dot (normalize(_WorldNorm), tmpvar_17), 0.0, 1.0);
-  NdotL_1 = tmpvar_18;
-  mediump float tmpvar_19;
-  tmpvar_19 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
-  highp vec3 tmpvar_20;
-  tmpvar_20 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_19)), 0.0, 1.0);
-  tmpvar_7 = tmpvar_20;
-  tmpvar_6.xyz = _glesColor.xyz;
-  highp vec3 p_21;
-  p_21 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
-  highp float tmpvar_22;
-  tmpvar_22 = clamp ((_DistFade * sqrt(dot (p_21, p_21))), 0.0, 1.0);
-  tmpvar_6.w = (_glesColor.w * tmpvar_22);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_6;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_5).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_7;
-  xlv_TEXCOORD6 = tmpvar_8;
+  tmpvar_10.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_10.w = _glesVertex.w;
+  highp vec4 tmpvar_11;
+  tmpvar_11 = (glstate_matrix_modelview0 * tmpvar_10);
+  vec4 v_12;
+  v_12.x = glstate_matrix_modelview0[0].z;
+  v_12.y = glstate_matrix_modelview0[1].z;
+  v_12.z = glstate_matrix_modelview0[2].z;
+  v_12.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_13;
+  tmpvar_13 = normalize(v_12.xyz);
+  highp vec4 tmpvar_14;
+  tmpvar_14.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_14.w = _glesVertex.w;
+  highp vec2 tmpvar_15;
+  tmpvar_15 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_16;
+  tmpvar_16.z = 0.0;
+  tmpvar_16.x = tmpvar_15.x;
+  tmpvar_16.y = tmpvar_15.y;
+  tmpvar_16.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_16.zyw;
+  XZv_5.yzw = tmpvar_16.zyw;
+  XYv_4.yzw = tmpvar_16.yzw;
+  ZYv_6.z = (tmpvar_15.x * sign(-(tmpvar_13.x)));
+  XZv_5.x = (tmpvar_15.x * sign(-(tmpvar_13.y)));
+  XYv_4.x = (tmpvar_15.x * sign(tmpvar_13.z));
+  ZYv_6.x = ((sign(-(tmpvar_13.x)) * sign(ZYv_6.z)) * tmpvar_13.z);
+  XZv_5.y = ((sign(-(tmpvar_13.y)) * sign(XZv_5.x)) * tmpvar_13.x);
+  XYv_4.z = ((sign(-(tmpvar_13.z)) * sign(XYv_4.x)) * tmpvar_13.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_13.x)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_13.y)) * sign(tmpvar_15.y)) * tmpvar_13.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_13.z)) * sign(tmpvar_15.y)) * tmpvar_13.y));
+  highp vec3 tmpvar_17;
+  tmpvar_17 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_17;
+  lowp vec3 tmpvar_18;
+  tmpvar_18 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_18;
+  mediump vec4 tmpvar_19;
+  tmpvar_19.w = 0.0;
+  tmpvar_19.xyz = lightDirection_2;
+  highp float tmpvar_20;
+  tmpvar_20 = clamp (dot (normalize(_WorldNorm), tmpvar_19), 0.0, 1.0);
+  NdotL_1 = tmpvar_20;
+  mediump float tmpvar_21;
+  tmpvar_21 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_22;
+  tmpvar_22 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_21)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_22;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_23;
+  p_23 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_24;
+  tmpvar_24 = clamp ((_DistFade * sqrt(dot (p_23, p_23))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_24);
+  gl_Position = (glstate_matrix_projection * (tmpvar_11 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_13);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_11.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_14).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
 }
 
 
@@ -9477,8 +9573,8 @@ v2f vert( in appdata_t v ) {
     #line 459
     o.texcoordXY = (vec2( 0.5, 0.5) + (0.6 * XY));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    highp vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
+    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
+    mediump vec3 lightDirection = vec3( (0.99 * normalize(_WorldSpaceLightPos0)));
     #line 463
     mediump float NdotL = xll_saturate_f(dot( normalize(_WorldNorm), vec4( lightDirection, 0.0)));
     mediump float diff = ((NdotL - 0.01) / 0.99);
@@ -9783,7 +9879,7 @@ PARAM c[22] = { { 0, 1, 2, 0.60000002 },
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..19],
-		{ 0.5, 0.97998047, 0.010002136 },
+		{ 0.5, 0.99023438, 0.010002136 },
 		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
@@ -9933,7 +10029,7 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c19, 0.00000000, 2.00000000, -1.00000000, 0.97998047
+def c19, 0.00000000, 2.00000000, -1.00000000, 0.99023438
 def c20, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
@@ -10070,7 +10166,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedngodhbkljlpggbpngobnnpamnkaklkfpabaaaaaagaamaaaaadaaaaaa
+eefiecedmegmaoijmjmmegahlejcnebkpljbookiabaaaaaagaamaaaaadaaaaaa
 cmaaaaaajmaaaaaaliabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -10158,8 +10254,8 @@ aaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaa
 egacbaaaaaaaaaaabbaaaaajbcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
 egiocaaaacaaaaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
 diaaaaaihcaabaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaaeiobhkdpeiobhkdp
-eiobhkdpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaamaaaaaa
+diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaakehahndpkehahndp
+kehahndpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaamaaaaaa
 egiocaaaaaaaaaaaamaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
 diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaaaaaaaaaamaaaaaa
 bacaaaahbcaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaaaaaaaaah
@@ -10204,78 +10300,82 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec3 lightDirection_2;
-  highp vec4 XYv_3;
-  highp vec4 XZv_4;
-  highp vec4 ZYv_5;
-  lowp vec4 tmpvar_6;
-  mediump vec3 tmpvar_7;
-  highp vec2 tmpvar_8;
-  highp vec4 tmpvar_9;
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
+  highp vec2 tmpvar_9;
   highp vec4 tmpvar_10;
-  tmpvar_10.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_10.w = _glesVertex.w;
   highp vec4 tmpvar_11;
-  tmpvar_11 = (glstate_matrix_modelview0 * tmpvar_10);
-  vec4 v_12;
-  v_12.x = glstate_matrix_modelview0[0].z;
-  v_12.y = glstate_matrix_modelview0[1].z;
-  v_12.z = glstate_matrix_modelview0[2].z;
-  v_12.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_13;
-  tmpvar_13 = normalize(v_12.xyz);
-  highp vec4 tmpvar_14;
-  tmpvar_14.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_14.w = _glesVertex.w;
-  highp vec2 tmpvar_15;
-  tmpvar_15 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
-  highp vec4 tmpvar_16;
-  tmpvar_16.z = 0.0;
-  tmpvar_16.x = tmpvar_15.x;
-  tmpvar_16.y = tmpvar_15.y;
-  tmpvar_16.w = _glesVertex.w;
-  ZYv_5.xyw = tmpvar_16.zyw;
-  XZv_4.yzw = tmpvar_16.zyw;
-  XYv_3.yzw = tmpvar_16.yzw;
-  ZYv_5.z = (tmpvar_15.x * sign(-(tmpvar_13.x)));
-  XZv_4.x = (tmpvar_15.x * sign(-(tmpvar_13.y)));
-  XYv_3.x = (tmpvar_15.x * sign(tmpvar_13.z));
-  ZYv_5.x = ((sign(-(tmpvar_13.x)) * sign(ZYv_5.z)) * tmpvar_13.z);
-  XZv_4.y = ((sign(-(tmpvar_13.y)) * sign(XZv_4.x)) * tmpvar_13.x);
-  XYv_3.z = ((sign(-(tmpvar_13.z)) * sign(XYv_3.x)) * tmpvar_13.x);
-  ZYv_5.x = (ZYv_5.x + ((sign(-(tmpvar_13.x)) * sign(tmpvar_15.y)) * tmpvar_13.y));
-  XZv_4.y = (XZv_4.y + ((sign(-(tmpvar_13.y)) * sign(tmpvar_15.y)) * tmpvar_13.z));
-  XYv_3.z = (XYv_3.z + ((sign(-(tmpvar_13.z)) * sign(tmpvar_15.y)) * tmpvar_13.y));
-  lowp vec3 tmpvar_17;
-  tmpvar_17 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  lightDirection_2 = tmpvar_17;
-  highp vec4 tmpvar_18;
-  tmpvar_18.w = 0.0;
-  tmpvar_18.xyz = lightDirection_2;
-  highp float tmpvar_19;
-  tmpvar_19 = clamp (dot (normalize(_WorldNorm), tmpvar_18), 0.0, 1.0);
-  NdotL_1 = tmpvar_19;
-  mediump float tmpvar_20;
-  tmpvar_20 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
-  highp vec3 tmpvar_21;
-  tmpvar_21 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_20)), 0.0, 1.0);
-  tmpvar_7 = tmpvar_21;
-  tmpvar_6.xyz = _glesColor.xyz;
-  highp vec3 p_22;
-  p_22 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
-  highp float tmpvar_23;
-  tmpvar_23 = clamp ((_DistFade * sqrt(dot (p_22, p_22))), 0.0, 1.0);
-  tmpvar_6.w = (_glesColor.w * tmpvar_23);
-  gl_Position = (glstate_matrix_projection * (tmpvar_11 + _glesVertex));
-  xlv_COLOR = tmpvar_6;
-  xlv_TEXCOORD0 = abs(tmpvar_13);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_5).xy - tmpvar_11.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_4).xy - tmpvar_11.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_3).xy - tmpvar_11.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_14).xyz));
-  xlv_TEXCOORD5 = tmpvar_7;
-  xlv_TEXCOORD6 = tmpvar_8;
-  xlv_TEXCOORD7 = tmpvar_9;
+  tmpvar_11.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_11.w = _glesVertex.w;
+  highp vec4 tmpvar_12;
+  tmpvar_12 = (glstate_matrix_modelview0 * tmpvar_11);
+  vec4 v_13;
+  v_13.x = glstate_matrix_modelview0[0].z;
+  v_13.y = glstate_matrix_modelview0[1].z;
+  v_13.z = glstate_matrix_modelview0[2].z;
+  v_13.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_14;
+  tmpvar_14 = normalize(v_13.xyz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_15.w = _glesVertex.w;
+  highp vec2 tmpvar_16;
+  tmpvar_16 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_17;
+  tmpvar_17.z = 0.0;
+  tmpvar_17.x = tmpvar_16.x;
+  tmpvar_17.y = tmpvar_16.y;
+  tmpvar_17.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_17.zyw;
+  XZv_5.yzw = tmpvar_17.zyw;
+  XYv_4.yzw = tmpvar_17.yzw;
+  ZYv_6.z = (tmpvar_16.x * sign(-(tmpvar_14.x)));
+  XZv_5.x = (tmpvar_16.x * sign(-(tmpvar_14.y)));
+  XYv_4.x = (tmpvar_16.x * sign(tmpvar_14.z));
+  ZYv_6.x = ((sign(-(tmpvar_14.x)) * sign(ZYv_6.z)) * tmpvar_14.z);
+  XZv_5.y = ((sign(-(tmpvar_14.y)) * sign(XZv_5.x)) * tmpvar_14.x);
+  XYv_4.z = ((sign(-(tmpvar_14.z)) * sign(XYv_4.x)) * tmpvar_14.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_14.x)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_14.y)) * sign(tmpvar_16.y)) * tmpvar_14.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_14.z)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  highp vec3 tmpvar_18;
+  tmpvar_18 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_18;
+  lowp vec3 tmpvar_19;
+  tmpvar_19 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_19;
+  mediump vec4 tmpvar_20;
+  tmpvar_20.w = 0.0;
+  tmpvar_20.xyz = lightDirection_2;
+  highp float tmpvar_21;
+  tmpvar_21 = clamp (dot (normalize(_WorldNorm), tmpvar_20), 0.0, 1.0);
+  NdotL_1 = tmpvar_21;
+  mediump float tmpvar_22;
+  tmpvar_22 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_23;
+  tmpvar_23 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_22)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_23;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_24;
+  p_24 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_25;
+  tmpvar_25 = clamp ((_DistFade * sqrt(dot (p_24, p_24))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_25);
+  gl_Position = (glstate_matrix_projection * (tmpvar_12 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_14);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_15).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
+  xlv_TEXCOORD7 = tmpvar_10;
 }
 
 
@@ -10362,78 +10462,82 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec3 lightDirection_2;
-  highp vec4 XYv_3;
-  highp vec4 XZv_4;
-  highp vec4 ZYv_5;
-  lowp vec4 tmpvar_6;
-  mediump vec3 tmpvar_7;
-  highp vec2 tmpvar_8;
-  highp vec4 tmpvar_9;
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
+  highp vec2 tmpvar_9;
   highp vec4 tmpvar_10;
-  tmpvar_10.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_10.w = _glesVertex.w;
   highp vec4 tmpvar_11;
-  tmpvar_11 = (glstate_matrix_modelview0 * tmpvar_10);
-  vec4 v_12;
-  v_12.x = glstate_matrix_modelview0[0].z;
-  v_12.y = glstate_matrix_modelview0[1].z;
-  v_12.z = glstate_matrix_modelview0[2].z;
-  v_12.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_13;
-  tmpvar_13 = normalize(v_12.xyz);
-  highp vec4 tmpvar_14;
-  tmpvar_14.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_14.w = _glesVertex.w;
-  highp vec2 tmpvar_15;
-  tmpvar_15 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
-  highp vec4 tmpvar_16;
-  tmpvar_16.z = 0.0;
-  tmpvar_16.x = tmpvar_15.x;
-  tmpvar_16.y = tmpvar_15.y;
-  tmpvar_16.w = _glesVertex.w;
-  ZYv_5.xyw = tmpvar_16.zyw;
-  XZv_4.yzw = tmpvar_16.zyw;
-  XYv_3.yzw = tmpvar_16.yzw;
-  ZYv_5.z = (tmpvar_15.x * sign(-(tmpvar_13.x)));
-  XZv_4.x = (tmpvar_15.x * sign(-(tmpvar_13.y)));
-  XYv_3.x = (tmpvar_15.x * sign(tmpvar_13.z));
-  ZYv_5.x = ((sign(-(tmpvar_13.x)) * sign(ZYv_5.z)) * tmpvar_13.z);
-  XZv_4.y = ((sign(-(tmpvar_13.y)) * sign(XZv_4.x)) * tmpvar_13.x);
-  XYv_3.z = ((sign(-(tmpvar_13.z)) * sign(XYv_3.x)) * tmpvar_13.x);
-  ZYv_5.x = (ZYv_5.x + ((sign(-(tmpvar_13.x)) * sign(tmpvar_15.y)) * tmpvar_13.y));
-  XZv_4.y = (XZv_4.y + ((sign(-(tmpvar_13.y)) * sign(tmpvar_15.y)) * tmpvar_13.z));
-  XYv_3.z = (XYv_3.z + ((sign(-(tmpvar_13.z)) * sign(tmpvar_15.y)) * tmpvar_13.y));
-  lowp vec3 tmpvar_17;
-  tmpvar_17 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  lightDirection_2 = tmpvar_17;
-  highp vec4 tmpvar_18;
-  tmpvar_18.w = 0.0;
-  tmpvar_18.xyz = lightDirection_2;
-  highp float tmpvar_19;
-  tmpvar_19 = clamp (dot (normalize(_WorldNorm), tmpvar_18), 0.0, 1.0);
-  NdotL_1 = tmpvar_19;
-  mediump float tmpvar_20;
-  tmpvar_20 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
-  highp vec3 tmpvar_21;
-  tmpvar_21 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_20)), 0.0, 1.0);
-  tmpvar_7 = tmpvar_21;
-  tmpvar_6.xyz = _glesColor.xyz;
-  highp vec3 p_22;
-  p_22 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
-  highp float tmpvar_23;
-  tmpvar_23 = clamp ((_DistFade * sqrt(dot (p_22, p_22))), 0.0, 1.0);
-  tmpvar_6.w = (_glesColor.w * tmpvar_23);
-  gl_Position = (glstate_matrix_projection * (tmpvar_11 + _glesVertex));
-  xlv_COLOR = tmpvar_6;
-  xlv_TEXCOORD0 = abs(tmpvar_13);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_5).xy - tmpvar_11.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_4).xy - tmpvar_11.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_3).xy - tmpvar_11.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_14).xyz));
-  xlv_TEXCOORD5 = tmpvar_7;
-  xlv_TEXCOORD6 = tmpvar_8;
-  xlv_TEXCOORD7 = tmpvar_9;
+  tmpvar_11.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_11.w = _glesVertex.w;
+  highp vec4 tmpvar_12;
+  tmpvar_12 = (glstate_matrix_modelview0 * tmpvar_11);
+  vec4 v_13;
+  v_13.x = glstate_matrix_modelview0[0].z;
+  v_13.y = glstate_matrix_modelview0[1].z;
+  v_13.z = glstate_matrix_modelview0[2].z;
+  v_13.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_14;
+  tmpvar_14 = normalize(v_13.xyz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_15.w = _glesVertex.w;
+  highp vec2 tmpvar_16;
+  tmpvar_16 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_17;
+  tmpvar_17.z = 0.0;
+  tmpvar_17.x = tmpvar_16.x;
+  tmpvar_17.y = tmpvar_16.y;
+  tmpvar_17.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_17.zyw;
+  XZv_5.yzw = tmpvar_17.zyw;
+  XYv_4.yzw = tmpvar_17.yzw;
+  ZYv_6.z = (tmpvar_16.x * sign(-(tmpvar_14.x)));
+  XZv_5.x = (tmpvar_16.x * sign(-(tmpvar_14.y)));
+  XYv_4.x = (tmpvar_16.x * sign(tmpvar_14.z));
+  ZYv_6.x = ((sign(-(tmpvar_14.x)) * sign(ZYv_6.z)) * tmpvar_14.z);
+  XZv_5.y = ((sign(-(tmpvar_14.y)) * sign(XZv_5.x)) * tmpvar_14.x);
+  XYv_4.z = ((sign(-(tmpvar_14.z)) * sign(XYv_4.x)) * tmpvar_14.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_14.x)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_14.y)) * sign(tmpvar_16.y)) * tmpvar_14.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_14.z)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  highp vec3 tmpvar_18;
+  tmpvar_18 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_18;
+  lowp vec3 tmpvar_19;
+  tmpvar_19 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_19;
+  mediump vec4 tmpvar_20;
+  tmpvar_20.w = 0.0;
+  tmpvar_20.xyz = lightDirection_2;
+  highp float tmpvar_21;
+  tmpvar_21 = clamp (dot (normalize(_WorldNorm), tmpvar_20), 0.0, 1.0);
+  NdotL_1 = tmpvar_21;
+  mediump float tmpvar_22;
+  tmpvar_22 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_23;
+  tmpvar_23 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_22)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_23;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_24;
+  p_24 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_25;
+  tmpvar_25 = clamp ((_DistFade * sqrt(dot (p_24, p_24))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_25);
+  gl_Position = (glstate_matrix_projection * (tmpvar_12 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_14);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_15).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
+  xlv_TEXCOORD7 = tmpvar_10;
 }
 
 
@@ -10725,8 +10829,8 @@ v2f vert( in appdata_t v ) {
     #line 462
     o.texcoordXY = (vec2( 0.5, 0.5) + (0.6 * XY));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    highp vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
+    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
+    mediump vec3 lightDirection = vec3( (0.99 * normalize(_WorldSpaceLightPos0)));
     #line 466
     mediump float NdotL = xll_saturate_f(dot( normalize(_WorldNorm), vec4( lightDirection, 0.0)));
     mediump float diff = ((NdotL - 0.01) / 0.99);
@@ -11039,7 +11143,7 @@ PARAM c[22] = { { 0, 1, 2, 0.60000002 },
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..19],
-		{ 0.5, 0.98000002, 0.010002136 },
+		{ 0.5, 0.99000001, 0.010002136 },
 		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
@@ -11189,7 +11293,7 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c19, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.00000000, 2.00000000, -1.00000000, 0.99000001
 def c20, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
@@ -11326,7 +11430,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedomcchojhfbiiagbkidpcfmphmkpmpgpgabaaaaaagaamaaaaadaaaaaa
+eefiecedakddohhhkcafeaeemkofcneahilghbajabaaaaaagaamaaaaadaaaaaa
 cmaaaaaajmaaaaaaliabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -11414,8 +11518,8 @@ aaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaa
 egacbaaaaaaaaaaabbaaaaajbcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
 egiocaaaacaaaaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
 diaaaaaihcaabaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaaeiobhkdpeiobhkdp
-eiobhkdpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaaiaaaaaa
+diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaakehahndpkehahndp
+kehahndpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaaiaaaaaa
 egiocaaaaaaaaaaaaiaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
 diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaaaaaaaaaaiaaaaaa
 bacaaaahbcaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaaaaaaaaah
@@ -11460,74 +11564,82 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec3 tmpvar_7;
-  highp vec3 tmpvar_8;
-  highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
-  highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
+  highp vec3 tmpvar_9;
+  highp vec3 tmpvar_10;
+  highp vec4 tmpvar_11;
+  tmpvar_11.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_11.w = _glesVertex.w;
+  highp vec4 tmpvar_12;
+  tmpvar_12 = (glstate_matrix_modelview0 * tmpvar_11);
+  vec4 v_13;
+  v_13.x = glstate_matrix_modelview0[0].z;
+  v_13.y = glstate_matrix_modelview0[1].z;
+  v_13.z = glstate_matrix_modelview0[2].z;
+  v_13.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_14;
+  tmpvar_14 = normalize(v_13.xyz);
   highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
+  tmpvar_15.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_15.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_15.zyw;
-  XZv_3.yzw = tmpvar_15.zyw;
-  XYv_2.yzw = tmpvar_15.yzw;
-  ZYv_4.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_3.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_2.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_4.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_4.z)) * tmpvar_12.z);
-  XZv_3.y = ((sign(-(tmpvar_12.y)) * sign(XZv_3.x)) * tmpvar_12.x);
-  XYv_2.z = ((sign(-(tmpvar_12.z)) * sign(XYv_2.x)) * tmpvar_12.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  highp vec4 tmpvar_16;
-  tmpvar_16.w = 0.0;
-  tmpvar_16.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_17;
-  tmpvar_17 = clamp (dot (normalize(_WorldNorm), tmpvar_16), 0.0, 1.0);
-  NdotL_1 = tmpvar_17;
-  mediump float tmpvar_18;
-  tmpvar_18 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_16;
+  tmpvar_16 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_17;
+  tmpvar_17.z = 0.0;
+  tmpvar_17.x = tmpvar_16.x;
+  tmpvar_17.y = tmpvar_16.y;
+  tmpvar_17.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_17.zyw;
+  XZv_5.yzw = tmpvar_17.zyw;
+  XYv_4.yzw = tmpvar_17.yzw;
+  ZYv_6.z = (tmpvar_16.x * sign(-(tmpvar_14.x)));
+  XZv_5.x = (tmpvar_16.x * sign(-(tmpvar_14.y)));
+  XYv_4.x = (tmpvar_16.x * sign(tmpvar_14.z));
+  ZYv_6.x = ((sign(-(tmpvar_14.x)) * sign(ZYv_6.z)) * tmpvar_14.z);
+  XZv_5.y = ((sign(-(tmpvar_14.y)) * sign(XZv_5.x)) * tmpvar_14.x);
+  XYv_4.z = ((sign(-(tmpvar_14.z)) * sign(XYv_4.x)) * tmpvar_14.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_14.x)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_14.y)) * sign(tmpvar_16.y)) * tmpvar_14.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_14.z)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  highp vec3 tmpvar_18;
+  tmpvar_18 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_18)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_19;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_20;
-  p_20 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_19 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_19;
+  mediump vec4 tmpvar_20;
+  tmpvar_20.w = 0.0;
+  tmpvar_20.xyz = lightDirection_2;
   highp float tmpvar_21;
-  tmpvar_21 = clamp ((_DistFade * sqrt(dot (p_20, p_20))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_21);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
-  xlv_TEXCOORD7 = tmpvar_8;
+  tmpvar_21 = clamp (dot (normalize(_WorldNorm), tmpvar_20), 0.0, 1.0);
+  NdotL_1 = tmpvar_21;
+  mediump float tmpvar_22;
+  tmpvar_22 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_23;
+  tmpvar_23 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_22)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_23;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_24;
+  p_24 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_25;
+  tmpvar_25 = clamp ((_DistFade * sqrt(dot (p_24, p_24))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_25);
+  gl_Position = (glstate_matrix_projection * (tmpvar_12 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_14);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_15).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
+  xlv_TEXCOORD7 = tmpvar_10;
 }
 
 
@@ -11614,74 +11726,82 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec3 tmpvar_7;
-  highp vec3 tmpvar_8;
-  highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
-  highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
+  highp vec3 tmpvar_9;
+  highp vec3 tmpvar_10;
+  highp vec4 tmpvar_11;
+  tmpvar_11.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_11.w = _glesVertex.w;
+  highp vec4 tmpvar_12;
+  tmpvar_12 = (glstate_matrix_modelview0 * tmpvar_11);
+  vec4 v_13;
+  v_13.x = glstate_matrix_modelview0[0].z;
+  v_13.y = glstate_matrix_modelview0[1].z;
+  v_13.z = glstate_matrix_modelview0[2].z;
+  v_13.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_14;
+  tmpvar_14 = normalize(v_13.xyz);
   highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
+  tmpvar_15.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_15.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_15.zyw;
-  XZv_3.yzw = tmpvar_15.zyw;
-  XYv_2.yzw = tmpvar_15.yzw;
-  ZYv_4.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_3.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_2.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_4.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_4.z)) * tmpvar_12.z);
-  XZv_3.y = ((sign(-(tmpvar_12.y)) * sign(XZv_3.x)) * tmpvar_12.x);
-  XYv_2.z = ((sign(-(tmpvar_12.z)) * sign(XYv_2.x)) * tmpvar_12.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  highp vec4 tmpvar_16;
-  tmpvar_16.w = 0.0;
-  tmpvar_16.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_17;
-  tmpvar_17 = clamp (dot (normalize(_WorldNorm), tmpvar_16), 0.0, 1.0);
-  NdotL_1 = tmpvar_17;
-  mediump float tmpvar_18;
-  tmpvar_18 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_16;
+  tmpvar_16 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_17;
+  tmpvar_17.z = 0.0;
+  tmpvar_17.x = tmpvar_16.x;
+  tmpvar_17.y = tmpvar_16.y;
+  tmpvar_17.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_17.zyw;
+  XZv_5.yzw = tmpvar_17.zyw;
+  XYv_4.yzw = tmpvar_17.yzw;
+  ZYv_6.z = (tmpvar_16.x * sign(-(tmpvar_14.x)));
+  XZv_5.x = (tmpvar_16.x * sign(-(tmpvar_14.y)));
+  XYv_4.x = (tmpvar_16.x * sign(tmpvar_14.z));
+  ZYv_6.x = ((sign(-(tmpvar_14.x)) * sign(ZYv_6.z)) * tmpvar_14.z);
+  XZv_5.y = ((sign(-(tmpvar_14.y)) * sign(XZv_5.x)) * tmpvar_14.x);
+  XYv_4.z = ((sign(-(tmpvar_14.z)) * sign(XYv_4.x)) * tmpvar_14.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_14.x)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_14.y)) * sign(tmpvar_16.y)) * tmpvar_14.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_14.z)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  highp vec3 tmpvar_18;
+  tmpvar_18 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_18)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_19;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_20;
-  p_20 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_19 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_19;
+  mediump vec4 tmpvar_20;
+  tmpvar_20.w = 0.0;
+  tmpvar_20.xyz = lightDirection_2;
   highp float tmpvar_21;
-  tmpvar_21 = clamp ((_DistFade * sqrt(dot (p_20, p_20))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_21);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
-  xlv_TEXCOORD7 = tmpvar_8;
+  tmpvar_21 = clamp (dot (normalize(_WorldNorm), tmpvar_20), 0.0, 1.0);
+  NdotL_1 = tmpvar_21;
+  mediump float tmpvar_22;
+  tmpvar_22 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_23;
+  tmpvar_23 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_22)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_23;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_24;
+  p_24 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_25;
+  tmpvar_25 = clamp ((_DistFade * sqrt(dot (p_24, p_24))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_25);
+  gl_Position = (glstate_matrix_projection * (tmpvar_12 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_14);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_15).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
+  xlv_TEXCOORD7 = tmpvar_10;
 }
 
 
@@ -11972,8 +12092,8 @@ v2f vert( in appdata_t v ) {
     #line 467
     o.texcoordXY = (vec2( 0.5, 0.5) + (0.6 * XY));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    highp vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
+    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
+    mediump vec3 lightDirection = vec3( (0.99 * normalize(_WorldSpaceLightPos0)));
     #line 471
     mediump float NdotL = xll_saturate_f(dot( normalize(_WorldNorm), vec4( lightDirection, 0.0)));
     mediump float diff = ((NdotL - 0.01) / 0.99);
@@ -12297,7 +12417,7 @@ PARAM c[22] = { { 0, 1, 2, 0.60000002 },
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..19],
-		{ 0.5, 0.98000002, 0.010002136 },
+		{ 0.5, 0.99000001, 0.010002136 },
 		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
@@ -12447,7 +12567,7 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c19, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.00000000, 2.00000000, -1.00000000, 0.99000001
 def c20, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
@@ -12584,7 +12704,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedomcchojhfbiiagbkidpcfmphmkpmpgpgabaaaaaagaamaaaaadaaaaaa
+eefiecedakddohhhkcafeaeemkofcneahilghbajabaaaaaagaamaaaaadaaaaaa
 cmaaaaaajmaaaaaaliabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -12672,8 +12792,8 @@ aaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaa
 egacbaaaaaaaaaaabbaaaaajbcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
 egiocaaaacaaaaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
 diaaaaaihcaabaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaaeiobhkdpeiobhkdp
-eiobhkdpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaaiaaaaaa
+diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaakehahndpkehahndp
+kehahndpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaaiaaaaaa
 egiocaaaaaaaaaaaaiaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
 diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaaaaaaaaaaiaaaaaa
 bacaaaahbcaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaaaaaaaaah
@@ -12718,74 +12838,82 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec3 tmpvar_7;
-  highp vec3 tmpvar_8;
-  highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
-  highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
+  highp vec3 tmpvar_9;
+  highp vec3 tmpvar_10;
+  highp vec4 tmpvar_11;
+  tmpvar_11.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_11.w = _glesVertex.w;
+  highp vec4 tmpvar_12;
+  tmpvar_12 = (glstate_matrix_modelview0 * tmpvar_11);
+  vec4 v_13;
+  v_13.x = glstate_matrix_modelview0[0].z;
+  v_13.y = glstate_matrix_modelview0[1].z;
+  v_13.z = glstate_matrix_modelview0[2].z;
+  v_13.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_14;
+  tmpvar_14 = normalize(v_13.xyz);
   highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
+  tmpvar_15.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_15.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_15.zyw;
-  XZv_3.yzw = tmpvar_15.zyw;
-  XYv_2.yzw = tmpvar_15.yzw;
-  ZYv_4.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_3.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_2.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_4.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_4.z)) * tmpvar_12.z);
-  XZv_3.y = ((sign(-(tmpvar_12.y)) * sign(XZv_3.x)) * tmpvar_12.x);
-  XYv_2.z = ((sign(-(tmpvar_12.z)) * sign(XYv_2.x)) * tmpvar_12.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  highp vec4 tmpvar_16;
-  tmpvar_16.w = 0.0;
-  tmpvar_16.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_17;
-  tmpvar_17 = clamp (dot (normalize(_WorldNorm), tmpvar_16), 0.0, 1.0);
-  NdotL_1 = tmpvar_17;
-  mediump float tmpvar_18;
-  tmpvar_18 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_16;
+  tmpvar_16 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_17;
+  tmpvar_17.z = 0.0;
+  tmpvar_17.x = tmpvar_16.x;
+  tmpvar_17.y = tmpvar_16.y;
+  tmpvar_17.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_17.zyw;
+  XZv_5.yzw = tmpvar_17.zyw;
+  XYv_4.yzw = tmpvar_17.yzw;
+  ZYv_6.z = (tmpvar_16.x * sign(-(tmpvar_14.x)));
+  XZv_5.x = (tmpvar_16.x * sign(-(tmpvar_14.y)));
+  XYv_4.x = (tmpvar_16.x * sign(tmpvar_14.z));
+  ZYv_6.x = ((sign(-(tmpvar_14.x)) * sign(ZYv_6.z)) * tmpvar_14.z);
+  XZv_5.y = ((sign(-(tmpvar_14.y)) * sign(XZv_5.x)) * tmpvar_14.x);
+  XYv_4.z = ((sign(-(tmpvar_14.z)) * sign(XYv_4.x)) * tmpvar_14.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_14.x)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_14.y)) * sign(tmpvar_16.y)) * tmpvar_14.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_14.z)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  highp vec3 tmpvar_18;
+  tmpvar_18 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_18)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_19;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_20;
-  p_20 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_19 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_19;
+  mediump vec4 tmpvar_20;
+  tmpvar_20.w = 0.0;
+  tmpvar_20.xyz = lightDirection_2;
   highp float tmpvar_21;
-  tmpvar_21 = clamp ((_DistFade * sqrt(dot (p_20, p_20))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_21);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
-  xlv_TEXCOORD7 = tmpvar_8;
+  tmpvar_21 = clamp (dot (normalize(_WorldNorm), tmpvar_20), 0.0, 1.0);
+  NdotL_1 = tmpvar_21;
+  mediump float tmpvar_22;
+  tmpvar_22 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_23;
+  tmpvar_23 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_22)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_23;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_24;
+  p_24 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_25;
+  tmpvar_25 = clamp ((_DistFade * sqrt(dot (p_24, p_24))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_25);
+  gl_Position = (glstate_matrix_projection * (tmpvar_12 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_14);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_15).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
+  xlv_TEXCOORD7 = tmpvar_10;
 }
 
 
@@ -12872,74 +13000,82 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec3 tmpvar_7;
-  highp vec3 tmpvar_8;
-  highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
-  highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
+  highp vec3 tmpvar_9;
+  highp vec3 tmpvar_10;
+  highp vec4 tmpvar_11;
+  tmpvar_11.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_11.w = _glesVertex.w;
+  highp vec4 tmpvar_12;
+  tmpvar_12 = (glstate_matrix_modelview0 * tmpvar_11);
+  vec4 v_13;
+  v_13.x = glstate_matrix_modelview0[0].z;
+  v_13.y = glstate_matrix_modelview0[1].z;
+  v_13.z = glstate_matrix_modelview0[2].z;
+  v_13.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_14;
+  tmpvar_14 = normalize(v_13.xyz);
   highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
+  tmpvar_15.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_15.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_15.zyw;
-  XZv_3.yzw = tmpvar_15.zyw;
-  XYv_2.yzw = tmpvar_15.yzw;
-  ZYv_4.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_3.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_2.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_4.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_4.z)) * tmpvar_12.z);
-  XZv_3.y = ((sign(-(tmpvar_12.y)) * sign(XZv_3.x)) * tmpvar_12.x);
-  XYv_2.z = ((sign(-(tmpvar_12.z)) * sign(XYv_2.x)) * tmpvar_12.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  highp vec4 tmpvar_16;
-  tmpvar_16.w = 0.0;
-  tmpvar_16.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_17;
-  tmpvar_17 = clamp (dot (normalize(_WorldNorm), tmpvar_16), 0.0, 1.0);
-  NdotL_1 = tmpvar_17;
-  mediump float tmpvar_18;
-  tmpvar_18 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_16;
+  tmpvar_16 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_17;
+  tmpvar_17.z = 0.0;
+  tmpvar_17.x = tmpvar_16.x;
+  tmpvar_17.y = tmpvar_16.y;
+  tmpvar_17.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_17.zyw;
+  XZv_5.yzw = tmpvar_17.zyw;
+  XYv_4.yzw = tmpvar_17.yzw;
+  ZYv_6.z = (tmpvar_16.x * sign(-(tmpvar_14.x)));
+  XZv_5.x = (tmpvar_16.x * sign(-(tmpvar_14.y)));
+  XYv_4.x = (tmpvar_16.x * sign(tmpvar_14.z));
+  ZYv_6.x = ((sign(-(tmpvar_14.x)) * sign(ZYv_6.z)) * tmpvar_14.z);
+  XZv_5.y = ((sign(-(tmpvar_14.y)) * sign(XZv_5.x)) * tmpvar_14.x);
+  XYv_4.z = ((sign(-(tmpvar_14.z)) * sign(XYv_4.x)) * tmpvar_14.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_14.x)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_14.y)) * sign(tmpvar_16.y)) * tmpvar_14.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_14.z)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  highp vec3 tmpvar_18;
+  tmpvar_18 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_18)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_19;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_20;
-  p_20 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_19 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_19;
+  mediump vec4 tmpvar_20;
+  tmpvar_20.w = 0.0;
+  tmpvar_20.xyz = lightDirection_2;
   highp float tmpvar_21;
-  tmpvar_21 = clamp ((_DistFade * sqrt(dot (p_20, p_20))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_21);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
-  xlv_TEXCOORD7 = tmpvar_8;
+  tmpvar_21 = clamp (dot (normalize(_WorldNorm), tmpvar_20), 0.0, 1.0);
+  NdotL_1 = tmpvar_21;
+  mediump float tmpvar_22;
+  tmpvar_22 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_23;
+  tmpvar_23 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_22)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_23;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_24;
+  p_24 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_25;
+  tmpvar_25 = clamp ((_DistFade * sqrt(dot (p_24, p_24))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_25);
+  gl_Position = (glstate_matrix_projection * (tmpvar_12 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_14);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_15).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
+  xlv_TEXCOORD7 = tmpvar_10;
 }
 
 
@@ -13231,8 +13367,8 @@ v2f vert( in appdata_t v ) {
     #line 468
     o.texcoordXY = (vec2( 0.5, 0.5) + (0.6 * XY));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    highp vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
+    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
+    mediump vec3 lightDirection = vec3( (0.99 * normalize(_WorldSpaceLightPos0)));
     #line 472
     mediump float NdotL = xll_saturate_f(dot( normalize(_WorldNorm), vec4( lightDirection, 0.0)));
     mediump float diff = ((NdotL - 0.01) / 0.99);
@@ -13557,7 +13693,7 @@ PARAM c[22] = { { 0, 1, 2, 0.60000002 },
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..19],
-		{ 0.5, 0.98000002, 0.010002136 },
+		{ 0.5, 0.99000001, 0.010002136 },
 		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
@@ -13707,7 +13843,7 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c19, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.00000000, 2.00000000, -1.00000000, 0.99000001
 def c20, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
@@ -13844,7 +13980,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedapbnndpkhnmpeloffikbdkklcohgbhlfabaaaaaagaamaaaaadaaaaaa
+eefiecedjogmmbldnnppbndedngndaklngjhanppabaaaaaagaamaaaaadaaaaaa
 cmaaaaaajmaaaaaaliabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -13932,8 +14068,8 @@ aaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaa
 egacbaaaaaaaaaaabbaaaaajbcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
 egiocaaaacaaaaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
 diaaaaaihcaabaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaaeiobhkdpeiobhkdp
-eiobhkdpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaamaaaaaa
+diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaakehahndpkehahndp
+kehahndpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaamaaaaaa
 egiocaaaaaaaaaaaamaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
 diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaaaaaaaaaamaaaaaa
 bacaaaahbcaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaaaaaaaaah
@@ -13978,74 +14114,82 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec4 tmpvar_7;
-  highp vec4 tmpvar_8;
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
   highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
   highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_11;
+  tmpvar_11.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_11.w = _glesVertex.w;
+  highp vec4 tmpvar_12;
+  tmpvar_12 = (glstate_matrix_modelview0 * tmpvar_11);
+  vec4 v_13;
+  v_13.x = glstate_matrix_modelview0[0].z;
+  v_13.y = glstate_matrix_modelview0[1].z;
+  v_13.z = glstate_matrix_modelview0[2].z;
+  v_13.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_14;
+  tmpvar_14 = normalize(v_13.xyz);
   highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
+  tmpvar_15.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_15.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_15.zyw;
-  XZv_3.yzw = tmpvar_15.zyw;
-  XYv_2.yzw = tmpvar_15.yzw;
-  ZYv_4.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_3.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_2.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_4.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_4.z)) * tmpvar_12.z);
-  XZv_3.y = ((sign(-(tmpvar_12.y)) * sign(XZv_3.x)) * tmpvar_12.x);
-  XYv_2.z = ((sign(-(tmpvar_12.z)) * sign(XYv_2.x)) * tmpvar_12.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  highp vec4 tmpvar_16;
-  tmpvar_16.w = 0.0;
-  tmpvar_16.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_17;
-  tmpvar_17 = clamp (dot (normalize(_WorldNorm), tmpvar_16), 0.0, 1.0);
-  NdotL_1 = tmpvar_17;
-  mediump float tmpvar_18;
-  tmpvar_18 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_16;
+  tmpvar_16 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_17;
+  tmpvar_17.z = 0.0;
+  tmpvar_17.x = tmpvar_16.x;
+  tmpvar_17.y = tmpvar_16.y;
+  tmpvar_17.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_17.zyw;
+  XZv_5.yzw = tmpvar_17.zyw;
+  XYv_4.yzw = tmpvar_17.yzw;
+  ZYv_6.z = (tmpvar_16.x * sign(-(tmpvar_14.x)));
+  XZv_5.x = (tmpvar_16.x * sign(-(tmpvar_14.y)));
+  XYv_4.x = (tmpvar_16.x * sign(tmpvar_14.z));
+  ZYv_6.x = ((sign(-(tmpvar_14.x)) * sign(ZYv_6.z)) * tmpvar_14.z);
+  XZv_5.y = ((sign(-(tmpvar_14.y)) * sign(XZv_5.x)) * tmpvar_14.x);
+  XYv_4.z = ((sign(-(tmpvar_14.z)) * sign(XYv_4.x)) * tmpvar_14.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_14.x)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_14.y)) * sign(tmpvar_16.y)) * tmpvar_14.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_14.z)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  highp vec3 tmpvar_18;
+  tmpvar_18 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_18)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_19;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_20;
-  p_20 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_19 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_19;
+  mediump vec4 tmpvar_20;
+  tmpvar_20.w = 0.0;
+  tmpvar_20.xyz = lightDirection_2;
   highp float tmpvar_21;
-  tmpvar_21 = clamp ((_DistFade * sqrt(dot (p_20, p_20))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_21);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
-  xlv_TEXCOORD7 = tmpvar_8;
+  tmpvar_21 = clamp (dot (normalize(_WorldNorm), tmpvar_20), 0.0, 1.0);
+  NdotL_1 = tmpvar_21;
+  mediump float tmpvar_22;
+  tmpvar_22 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_23;
+  tmpvar_23 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_22)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_23;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_24;
+  p_24 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_25;
+  tmpvar_25 = clamp ((_DistFade * sqrt(dot (p_24, p_24))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_25);
+  gl_Position = (glstate_matrix_projection * (tmpvar_12 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_14);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_15).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
+  xlv_TEXCOORD7 = tmpvar_10;
 }
 
 
@@ -14132,74 +14276,82 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec4 tmpvar_7;
-  highp vec4 tmpvar_8;
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
   highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
   highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_11;
+  tmpvar_11.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_11.w = _glesVertex.w;
+  highp vec4 tmpvar_12;
+  tmpvar_12 = (glstate_matrix_modelview0 * tmpvar_11);
+  vec4 v_13;
+  v_13.x = glstate_matrix_modelview0[0].z;
+  v_13.y = glstate_matrix_modelview0[1].z;
+  v_13.z = glstate_matrix_modelview0[2].z;
+  v_13.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_14;
+  tmpvar_14 = normalize(v_13.xyz);
   highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
+  tmpvar_15.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_15.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_15.zyw;
-  XZv_3.yzw = tmpvar_15.zyw;
-  XYv_2.yzw = tmpvar_15.yzw;
-  ZYv_4.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_3.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_2.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_4.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_4.z)) * tmpvar_12.z);
-  XZv_3.y = ((sign(-(tmpvar_12.y)) * sign(XZv_3.x)) * tmpvar_12.x);
-  XYv_2.z = ((sign(-(tmpvar_12.z)) * sign(XYv_2.x)) * tmpvar_12.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  highp vec4 tmpvar_16;
-  tmpvar_16.w = 0.0;
-  tmpvar_16.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_17;
-  tmpvar_17 = clamp (dot (normalize(_WorldNorm), tmpvar_16), 0.0, 1.0);
-  NdotL_1 = tmpvar_17;
-  mediump float tmpvar_18;
-  tmpvar_18 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_16;
+  tmpvar_16 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_17;
+  tmpvar_17.z = 0.0;
+  tmpvar_17.x = tmpvar_16.x;
+  tmpvar_17.y = tmpvar_16.y;
+  tmpvar_17.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_17.zyw;
+  XZv_5.yzw = tmpvar_17.zyw;
+  XYv_4.yzw = tmpvar_17.yzw;
+  ZYv_6.z = (tmpvar_16.x * sign(-(tmpvar_14.x)));
+  XZv_5.x = (tmpvar_16.x * sign(-(tmpvar_14.y)));
+  XYv_4.x = (tmpvar_16.x * sign(tmpvar_14.z));
+  ZYv_6.x = ((sign(-(tmpvar_14.x)) * sign(ZYv_6.z)) * tmpvar_14.z);
+  XZv_5.y = ((sign(-(tmpvar_14.y)) * sign(XZv_5.x)) * tmpvar_14.x);
+  XYv_4.z = ((sign(-(tmpvar_14.z)) * sign(XYv_4.x)) * tmpvar_14.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_14.x)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_14.y)) * sign(tmpvar_16.y)) * tmpvar_14.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_14.z)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  highp vec3 tmpvar_18;
+  tmpvar_18 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_18)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_19;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_20;
-  p_20 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_19 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_19;
+  mediump vec4 tmpvar_20;
+  tmpvar_20.w = 0.0;
+  tmpvar_20.xyz = lightDirection_2;
   highp float tmpvar_21;
-  tmpvar_21 = clamp ((_DistFade * sqrt(dot (p_20, p_20))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_21);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
-  xlv_TEXCOORD7 = tmpvar_8;
+  tmpvar_21 = clamp (dot (normalize(_WorldNorm), tmpvar_20), 0.0, 1.0);
+  NdotL_1 = tmpvar_21;
+  mediump float tmpvar_22;
+  tmpvar_22 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_23;
+  tmpvar_23 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_22)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_23;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_24;
+  p_24 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_25;
+  tmpvar_25 = clamp ((_DistFade * sqrt(dot (p_24, p_24))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_25);
+  gl_Position = (glstate_matrix_projection * (tmpvar_12 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_14);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_15).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
+  xlv_TEXCOORD7 = tmpvar_10;
 }
 
 
@@ -14493,8 +14645,8 @@ v2f vert( in appdata_t v ) {
     #line 477
     o.texcoordXY = (vec2( 0.5, 0.5) + (0.6 * XY));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    highp vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
+    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
+    mediump vec3 lightDirection = vec3( (0.99 * normalize(_WorldSpaceLightPos0)));
     #line 481
     mediump float NdotL = xll_saturate_f(dot( normalize(_WorldNorm), vec4( lightDirection, 0.0)));
     mediump float diff = ((NdotL - 0.01) / 0.99);
@@ -14834,7 +14986,7 @@ PARAM c[22] = { { 0, 1, 2, 0.60000002 },
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..19],
-		{ 0.5, 0.98000002, 0.010002136 },
+		{ 0.5, 0.99000001, 0.010002136 },
 		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
@@ -14984,7 +15136,7 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c19, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.00000000, 2.00000000, -1.00000000, 0.99000001
 def c20, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
@@ -15121,7 +15273,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedapbnndpkhnmpeloffikbdkklcohgbhlfabaaaaaagaamaaaaadaaaaaa
+eefiecedjogmmbldnnppbndedngndaklngjhanppabaaaaaagaamaaaaadaaaaaa
 cmaaaaaajmaaaaaaliabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -15209,8 +15361,8 @@ aaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaa
 egacbaaaaaaaaaaabbaaaaajbcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
 egiocaaaacaaaaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
 diaaaaaihcaabaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaaeiobhkdpeiobhkdp
-eiobhkdpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaamaaaaaa
+diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaakehahndpkehahndp
+kehahndpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaamaaaaaa
 egiocaaaaaaaaaaaamaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
 diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaaaaaaaaaamaaaaaa
 bacaaaahbcaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaaaaaaaaah
@@ -15256,74 +15408,82 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec4 tmpvar_7;
-  highp vec4 tmpvar_8;
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
   highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
   highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_11;
+  tmpvar_11.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_11.w = _glesVertex.w;
+  highp vec4 tmpvar_12;
+  tmpvar_12 = (glstate_matrix_modelview0 * tmpvar_11);
+  vec4 v_13;
+  v_13.x = glstate_matrix_modelview0[0].z;
+  v_13.y = glstate_matrix_modelview0[1].z;
+  v_13.z = glstate_matrix_modelview0[2].z;
+  v_13.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_14;
+  tmpvar_14 = normalize(v_13.xyz);
   highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
+  tmpvar_15.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_15.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_15.zyw;
-  XZv_3.yzw = tmpvar_15.zyw;
-  XYv_2.yzw = tmpvar_15.yzw;
-  ZYv_4.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_3.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_2.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_4.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_4.z)) * tmpvar_12.z);
-  XZv_3.y = ((sign(-(tmpvar_12.y)) * sign(XZv_3.x)) * tmpvar_12.x);
-  XYv_2.z = ((sign(-(tmpvar_12.z)) * sign(XYv_2.x)) * tmpvar_12.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  highp vec4 tmpvar_16;
-  tmpvar_16.w = 0.0;
-  tmpvar_16.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_17;
-  tmpvar_17 = clamp (dot (normalize(_WorldNorm), tmpvar_16), 0.0, 1.0);
-  NdotL_1 = tmpvar_17;
-  mediump float tmpvar_18;
-  tmpvar_18 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_16;
+  tmpvar_16 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_17;
+  tmpvar_17.z = 0.0;
+  tmpvar_17.x = tmpvar_16.x;
+  tmpvar_17.y = tmpvar_16.y;
+  tmpvar_17.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_17.zyw;
+  XZv_5.yzw = tmpvar_17.zyw;
+  XYv_4.yzw = tmpvar_17.yzw;
+  ZYv_6.z = (tmpvar_16.x * sign(-(tmpvar_14.x)));
+  XZv_5.x = (tmpvar_16.x * sign(-(tmpvar_14.y)));
+  XYv_4.x = (tmpvar_16.x * sign(tmpvar_14.z));
+  ZYv_6.x = ((sign(-(tmpvar_14.x)) * sign(ZYv_6.z)) * tmpvar_14.z);
+  XZv_5.y = ((sign(-(tmpvar_14.y)) * sign(XZv_5.x)) * tmpvar_14.x);
+  XYv_4.z = ((sign(-(tmpvar_14.z)) * sign(XYv_4.x)) * tmpvar_14.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_14.x)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_14.y)) * sign(tmpvar_16.y)) * tmpvar_14.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_14.z)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  highp vec3 tmpvar_18;
+  tmpvar_18 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_18)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_19;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_20;
-  p_20 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_19 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_19;
+  mediump vec4 tmpvar_20;
+  tmpvar_20.w = 0.0;
+  tmpvar_20.xyz = lightDirection_2;
   highp float tmpvar_21;
-  tmpvar_21 = clamp ((_DistFade * sqrt(dot (p_20, p_20))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_21);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
-  xlv_TEXCOORD7 = tmpvar_8;
+  tmpvar_21 = clamp (dot (normalize(_WorldNorm), tmpvar_20), 0.0, 1.0);
+  NdotL_1 = tmpvar_21;
+  mediump float tmpvar_22;
+  tmpvar_22 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_23;
+  tmpvar_23 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_22)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_23;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_24;
+  p_24 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_25;
+  tmpvar_25 = clamp ((_DistFade * sqrt(dot (p_24, p_24))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_25);
+  gl_Position = (glstate_matrix_projection * (tmpvar_12 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_14);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_15).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
+  xlv_TEXCOORD7 = tmpvar_10;
 }
 
 
@@ -15648,8 +15808,8 @@ v2f vert( in appdata_t v ) {
     #line 477
     o.texcoordXY = (vec2( 0.5, 0.5) + (0.6 * XY));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    highp vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
+    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
+    mediump vec3 lightDirection = vec3( (0.99 * normalize(_WorldSpaceLightPos0)));
     #line 481
     mediump float NdotL = xll_saturate_f(dot( normalize(_WorldNorm), vec4( lightDirection, 0.0)));
     mediump float diff = ((NdotL - 0.01) / 0.99);
@@ -15981,7 +16141,7 @@ PARAM c[22] = { { 0, 1, 2, 0.60000002 },
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..19],
-		{ 0.5, 0.98000002, 0.010002136 },
+		{ 0.5, 0.99000001, 0.010002136 },
 		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
@@ -16131,7 +16291,7 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c19, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.00000000, 2.00000000, -1.00000000, 0.99000001
 def c20, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
@@ -16268,7 +16428,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedomcchojhfbiiagbkidpcfmphmkpmpgpgabaaaaaagaamaaaaadaaaaaa
+eefiecedakddohhhkcafeaeemkofcneahilghbajabaaaaaagaamaaaaadaaaaaa
 cmaaaaaajmaaaaaaliabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -16356,8 +16516,8 @@ aaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaa
 egacbaaaaaaaaaaabbaaaaajbcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
 egiocaaaacaaaaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
 diaaaaaihcaabaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaaeiobhkdpeiobhkdp
-eiobhkdpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaaiaaaaaa
+diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaakehahndpkehahndp
+kehahndpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaaiaaaaaa
 egiocaaaaaaaaaaaaiaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
 diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaaaaaaaaaaiaaaaaa
 bacaaaahbcaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaaaaaaaaah
@@ -16402,74 +16562,82 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec3 tmpvar_7;
-  highp vec3 tmpvar_8;
-  highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
-  highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
+  highp vec3 tmpvar_9;
+  highp vec3 tmpvar_10;
+  highp vec4 tmpvar_11;
+  tmpvar_11.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_11.w = _glesVertex.w;
+  highp vec4 tmpvar_12;
+  tmpvar_12 = (glstate_matrix_modelview0 * tmpvar_11);
+  vec4 v_13;
+  v_13.x = glstate_matrix_modelview0[0].z;
+  v_13.y = glstate_matrix_modelview0[1].z;
+  v_13.z = glstate_matrix_modelview0[2].z;
+  v_13.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_14;
+  tmpvar_14 = normalize(v_13.xyz);
   highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
+  tmpvar_15.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_15.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_15.zyw;
-  XZv_3.yzw = tmpvar_15.zyw;
-  XYv_2.yzw = tmpvar_15.yzw;
-  ZYv_4.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_3.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_2.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_4.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_4.z)) * tmpvar_12.z);
-  XZv_3.y = ((sign(-(tmpvar_12.y)) * sign(XZv_3.x)) * tmpvar_12.x);
-  XYv_2.z = ((sign(-(tmpvar_12.z)) * sign(XYv_2.x)) * tmpvar_12.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  highp vec4 tmpvar_16;
-  tmpvar_16.w = 0.0;
-  tmpvar_16.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_17;
-  tmpvar_17 = clamp (dot (normalize(_WorldNorm), tmpvar_16), 0.0, 1.0);
-  NdotL_1 = tmpvar_17;
-  mediump float tmpvar_18;
-  tmpvar_18 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_16;
+  tmpvar_16 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_17;
+  tmpvar_17.z = 0.0;
+  tmpvar_17.x = tmpvar_16.x;
+  tmpvar_17.y = tmpvar_16.y;
+  tmpvar_17.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_17.zyw;
+  XZv_5.yzw = tmpvar_17.zyw;
+  XYv_4.yzw = tmpvar_17.yzw;
+  ZYv_6.z = (tmpvar_16.x * sign(-(tmpvar_14.x)));
+  XZv_5.x = (tmpvar_16.x * sign(-(tmpvar_14.y)));
+  XYv_4.x = (tmpvar_16.x * sign(tmpvar_14.z));
+  ZYv_6.x = ((sign(-(tmpvar_14.x)) * sign(ZYv_6.z)) * tmpvar_14.z);
+  XZv_5.y = ((sign(-(tmpvar_14.y)) * sign(XZv_5.x)) * tmpvar_14.x);
+  XYv_4.z = ((sign(-(tmpvar_14.z)) * sign(XYv_4.x)) * tmpvar_14.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_14.x)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_14.y)) * sign(tmpvar_16.y)) * tmpvar_14.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_14.z)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  highp vec3 tmpvar_18;
+  tmpvar_18 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_18)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_19;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_20;
-  p_20 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_19 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_19;
+  mediump vec4 tmpvar_20;
+  tmpvar_20.w = 0.0;
+  tmpvar_20.xyz = lightDirection_2;
   highp float tmpvar_21;
-  tmpvar_21 = clamp ((_DistFade * sqrt(dot (p_20, p_20))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_21);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
-  xlv_TEXCOORD7 = tmpvar_8;
+  tmpvar_21 = clamp (dot (normalize(_WorldNorm), tmpvar_20), 0.0, 1.0);
+  NdotL_1 = tmpvar_21;
+  mediump float tmpvar_22;
+  tmpvar_22 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_23;
+  tmpvar_23 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_22)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_23;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_24;
+  p_24 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_25;
+  tmpvar_25 = clamp ((_DistFade * sqrt(dot (p_24, p_24))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_25);
+  gl_Position = (glstate_matrix_projection * (tmpvar_12 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_14);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_15).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
+  xlv_TEXCOORD7 = tmpvar_10;
 }
 
 
@@ -16556,74 +16724,82 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec3 tmpvar_7;
-  highp vec3 tmpvar_8;
-  highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
-  highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
+  highp vec3 tmpvar_9;
+  highp vec3 tmpvar_10;
+  highp vec4 tmpvar_11;
+  tmpvar_11.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_11.w = _glesVertex.w;
+  highp vec4 tmpvar_12;
+  tmpvar_12 = (glstate_matrix_modelview0 * tmpvar_11);
+  vec4 v_13;
+  v_13.x = glstate_matrix_modelview0[0].z;
+  v_13.y = glstate_matrix_modelview0[1].z;
+  v_13.z = glstate_matrix_modelview0[2].z;
+  v_13.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_14;
+  tmpvar_14 = normalize(v_13.xyz);
   highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
+  tmpvar_15.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_15.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_15.zyw;
-  XZv_3.yzw = tmpvar_15.zyw;
-  XYv_2.yzw = tmpvar_15.yzw;
-  ZYv_4.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_3.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_2.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_4.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_4.z)) * tmpvar_12.z);
-  XZv_3.y = ((sign(-(tmpvar_12.y)) * sign(XZv_3.x)) * tmpvar_12.x);
-  XYv_2.z = ((sign(-(tmpvar_12.z)) * sign(XYv_2.x)) * tmpvar_12.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  highp vec4 tmpvar_16;
-  tmpvar_16.w = 0.0;
-  tmpvar_16.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_17;
-  tmpvar_17 = clamp (dot (normalize(_WorldNorm), tmpvar_16), 0.0, 1.0);
-  NdotL_1 = tmpvar_17;
-  mediump float tmpvar_18;
-  tmpvar_18 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_16;
+  tmpvar_16 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_17;
+  tmpvar_17.z = 0.0;
+  tmpvar_17.x = tmpvar_16.x;
+  tmpvar_17.y = tmpvar_16.y;
+  tmpvar_17.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_17.zyw;
+  XZv_5.yzw = tmpvar_17.zyw;
+  XYv_4.yzw = tmpvar_17.yzw;
+  ZYv_6.z = (tmpvar_16.x * sign(-(tmpvar_14.x)));
+  XZv_5.x = (tmpvar_16.x * sign(-(tmpvar_14.y)));
+  XYv_4.x = (tmpvar_16.x * sign(tmpvar_14.z));
+  ZYv_6.x = ((sign(-(tmpvar_14.x)) * sign(ZYv_6.z)) * tmpvar_14.z);
+  XZv_5.y = ((sign(-(tmpvar_14.y)) * sign(XZv_5.x)) * tmpvar_14.x);
+  XYv_4.z = ((sign(-(tmpvar_14.z)) * sign(XYv_4.x)) * tmpvar_14.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_14.x)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_14.y)) * sign(tmpvar_16.y)) * tmpvar_14.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_14.z)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  highp vec3 tmpvar_18;
+  tmpvar_18 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_18)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_19;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_20;
-  p_20 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_19 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_19;
+  mediump vec4 tmpvar_20;
+  tmpvar_20.w = 0.0;
+  tmpvar_20.xyz = lightDirection_2;
   highp float tmpvar_21;
-  tmpvar_21 = clamp ((_DistFade * sqrt(dot (p_20, p_20))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_21);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
-  xlv_TEXCOORD7 = tmpvar_8;
+  tmpvar_21 = clamp (dot (normalize(_WorldNorm), tmpvar_20), 0.0, 1.0);
+  NdotL_1 = tmpvar_21;
+  mediump float tmpvar_22;
+  tmpvar_22 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_23;
+  tmpvar_23 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_22)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_23;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_24;
+  p_24 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_25;
+  tmpvar_25 = clamp ((_DistFade * sqrt(dot (p_24, p_24))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_25);
+  gl_Position = (glstate_matrix_projection * (tmpvar_12 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_14);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_15).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
+  xlv_TEXCOORD7 = tmpvar_10;
 }
 
 
@@ -16914,8 +17090,8 @@ v2f vert( in appdata_t v ) {
     #line 473
     o.texcoordXY = (vec2( 0.5, 0.5) + (0.6 * XY));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    highp vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
+    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
+    mediump vec3 lightDirection = vec3( (0.99 * normalize(_WorldSpaceLightPos0)));
     #line 477
     mediump float NdotL = xll_saturate_f(dot( normalize(_WorldNorm), vec4( lightDirection, 0.0)));
     mediump float diff = ((NdotL - 0.01) / 0.99);
@@ -17256,7 +17432,7 @@ PARAM c[22] = { { 0, 1, 2, 0.60000002 },
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..19],
-		{ 0.5, 0.98000002, 0.010002136 },
+		{ 0.5, 0.99000001, 0.010002136 },
 		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
@@ -17406,7 +17582,7 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c19, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.00000000, 2.00000000, -1.00000000, 0.99000001
 def c20, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
@@ -17543,7 +17719,7 @@ BindCB "UnityPerFrame" 4
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedomcchojhfbiiagbkidpcfmphmkpmpgpgabaaaaaagaamaaaaadaaaaaa
+eefiecedakddohhhkcafeaeemkofcneahilghbajabaaaaaagaamaaaaadaaaaaa
 cmaaaaaajmaaaaaaliabaaaaejfdeheogiaaaaaaadaaaaaaaiaaaaaafaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaafjaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafpaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -17631,8 +17807,8 @@ aaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaa
 egacbaaaaaaaaaaabbaaaaajbcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
 egiocaaaacaaaaaaaaaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
 diaaaaaihcaabaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaaeiobhkdpeiobhkdp
-eiobhkdpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaaiaaaaaa
+diaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaakehahndpkehahndp
+kehahndpaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaaaaaaaaaaiaaaaaa
 egiocaaaaaaaaaaaaiaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
 diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaaaaaaaaaaiaaaaaa
 bacaaaahbcaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaaaaaaaaah
@@ -17677,74 +17853,82 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec3 tmpvar_7;
-  highp vec3 tmpvar_8;
-  highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
-  highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
+  highp vec3 tmpvar_9;
+  highp vec3 tmpvar_10;
+  highp vec4 tmpvar_11;
+  tmpvar_11.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_11.w = _glesVertex.w;
+  highp vec4 tmpvar_12;
+  tmpvar_12 = (glstate_matrix_modelview0 * tmpvar_11);
+  vec4 v_13;
+  v_13.x = glstate_matrix_modelview0[0].z;
+  v_13.y = glstate_matrix_modelview0[1].z;
+  v_13.z = glstate_matrix_modelview0[2].z;
+  v_13.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_14;
+  tmpvar_14 = normalize(v_13.xyz);
   highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
+  tmpvar_15.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_15.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_15.zyw;
-  XZv_3.yzw = tmpvar_15.zyw;
-  XYv_2.yzw = tmpvar_15.yzw;
-  ZYv_4.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_3.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_2.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_4.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_4.z)) * tmpvar_12.z);
-  XZv_3.y = ((sign(-(tmpvar_12.y)) * sign(XZv_3.x)) * tmpvar_12.x);
-  XYv_2.z = ((sign(-(tmpvar_12.z)) * sign(XYv_2.x)) * tmpvar_12.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  highp vec4 tmpvar_16;
-  tmpvar_16.w = 0.0;
-  tmpvar_16.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_17;
-  tmpvar_17 = clamp (dot (normalize(_WorldNorm), tmpvar_16), 0.0, 1.0);
-  NdotL_1 = tmpvar_17;
-  mediump float tmpvar_18;
-  tmpvar_18 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_16;
+  tmpvar_16 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_17;
+  tmpvar_17.z = 0.0;
+  tmpvar_17.x = tmpvar_16.x;
+  tmpvar_17.y = tmpvar_16.y;
+  tmpvar_17.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_17.zyw;
+  XZv_5.yzw = tmpvar_17.zyw;
+  XYv_4.yzw = tmpvar_17.yzw;
+  ZYv_6.z = (tmpvar_16.x * sign(-(tmpvar_14.x)));
+  XZv_5.x = (tmpvar_16.x * sign(-(tmpvar_14.y)));
+  XYv_4.x = (tmpvar_16.x * sign(tmpvar_14.z));
+  ZYv_6.x = ((sign(-(tmpvar_14.x)) * sign(ZYv_6.z)) * tmpvar_14.z);
+  XZv_5.y = ((sign(-(tmpvar_14.y)) * sign(XZv_5.x)) * tmpvar_14.x);
+  XYv_4.z = ((sign(-(tmpvar_14.z)) * sign(XYv_4.x)) * tmpvar_14.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_14.x)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_14.y)) * sign(tmpvar_16.y)) * tmpvar_14.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_14.z)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  highp vec3 tmpvar_18;
+  tmpvar_18 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_18)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_19;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_20;
-  p_20 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_19 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_19;
+  mediump vec4 tmpvar_20;
+  tmpvar_20.w = 0.0;
+  tmpvar_20.xyz = lightDirection_2;
   highp float tmpvar_21;
-  tmpvar_21 = clamp ((_DistFade * sqrt(dot (p_20, p_20))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_21);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
-  xlv_TEXCOORD7 = tmpvar_8;
+  tmpvar_21 = clamp (dot (normalize(_WorldNorm), tmpvar_20), 0.0, 1.0);
+  NdotL_1 = tmpvar_21;
+  mediump float tmpvar_22;
+  tmpvar_22 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_23;
+  tmpvar_23 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_22)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_23;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_24;
+  p_24 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_25;
+  tmpvar_25 = clamp ((_DistFade * sqrt(dot (p_24, p_24))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_25);
+  gl_Position = (glstate_matrix_projection * (tmpvar_12 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_14);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_15).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
+  xlv_TEXCOORD7 = tmpvar_10;
 }
 
 
@@ -17831,74 +18015,82 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float NdotL_1;
-  highp vec4 XYv_2;
-  highp vec4 XZv_3;
-  highp vec4 ZYv_4;
-  lowp vec4 tmpvar_5;
-  mediump vec3 tmpvar_6;
-  highp vec3 tmpvar_7;
-  highp vec3 tmpvar_8;
-  highp vec4 tmpvar_9;
-  tmpvar_9.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_9.w = _glesVertex.w;
-  highp vec4 tmpvar_10;
-  tmpvar_10 = (glstate_matrix_modelview0 * tmpvar_9);
-  vec4 v_11;
-  v_11.x = glstate_matrix_modelview0[0].z;
-  v_11.y = glstate_matrix_modelview0[1].z;
-  v_11.z = glstate_matrix_modelview0[2].z;
-  v_11.w = glstate_matrix_modelview0[3].z;
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(v_11.xyz);
-  highp vec4 tmpvar_13;
-  tmpvar_13.xyz = vec3(0.0, 0.0, 0.0);
-  tmpvar_13.w = _glesVertex.w;
-  highp vec2 tmpvar_14;
-  tmpvar_14 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  mediump vec3 lightDirection_2;
+  mediump vec3 ambientLighting_3;
+  highp vec4 XYv_4;
+  highp vec4 XZv_5;
+  highp vec4 ZYv_6;
+  lowp vec4 tmpvar_7;
+  mediump vec3 tmpvar_8;
+  highp vec3 tmpvar_9;
+  highp vec3 tmpvar_10;
+  highp vec4 tmpvar_11;
+  tmpvar_11.xyz = vec3(0.0, 0.0, 0.0);
+  tmpvar_11.w = _glesVertex.w;
+  highp vec4 tmpvar_12;
+  tmpvar_12 = (glstate_matrix_modelview0 * tmpvar_11);
+  vec4 v_13;
+  v_13.x = glstate_matrix_modelview0[0].z;
+  v_13.y = glstate_matrix_modelview0[1].z;
+  v_13.z = glstate_matrix_modelview0[2].z;
+  v_13.w = glstate_matrix_modelview0[3].z;
+  vec3 tmpvar_14;
+  tmpvar_14 = normalize(v_13.xyz);
   highp vec4 tmpvar_15;
-  tmpvar_15.z = 0.0;
-  tmpvar_15.x = tmpvar_14.x;
-  tmpvar_15.y = tmpvar_14.y;
+  tmpvar_15.xyz = vec3(0.0, 0.0, 0.0);
   tmpvar_15.w = _glesVertex.w;
-  ZYv_4.xyw = tmpvar_15.zyw;
-  XZv_3.yzw = tmpvar_15.zyw;
-  XYv_2.yzw = tmpvar_15.yzw;
-  ZYv_4.z = (tmpvar_14.x * sign(-(tmpvar_12.x)));
-  XZv_3.x = (tmpvar_14.x * sign(-(tmpvar_12.y)));
-  XYv_2.x = (tmpvar_14.x * sign(tmpvar_12.z));
-  ZYv_4.x = ((sign(-(tmpvar_12.x)) * sign(ZYv_4.z)) * tmpvar_12.z);
-  XZv_3.y = ((sign(-(tmpvar_12.y)) * sign(XZv_3.x)) * tmpvar_12.x);
-  XYv_2.z = ((sign(-(tmpvar_12.z)) * sign(XYv_2.x)) * tmpvar_12.x);
-  ZYv_4.x = (ZYv_4.x + ((sign(-(tmpvar_12.x)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  XZv_3.y = (XZv_3.y + ((sign(-(tmpvar_12.y)) * sign(tmpvar_14.y)) * tmpvar_12.z));
-  XYv_2.z = (XYv_2.z + ((sign(-(tmpvar_12.z)) * sign(tmpvar_14.y)) * tmpvar_12.y));
-  highp vec4 tmpvar_16;
-  tmpvar_16.w = 0.0;
-  tmpvar_16.xyz = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
-  highp float tmpvar_17;
-  tmpvar_17 = clamp (dot (normalize(_WorldNorm), tmpvar_16), 0.0, 1.0);
-  NdotL_1 = tmpvar_17;
-  mediump float tmpvar_18;
-  tmpvar_18 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec2 tmpvar_16;
+  tmpvar_16 = ((2.0 * _glesMultiTexCoord0.xy) - 1.0);
+  highp vec4 tmpvar_17;
+  tmpvar_17.z = 0.0;
+  tmpvar_17.x = tmpvar_16.x;
+  tmpvar_17.y = tmpvar_16.y;
+  tmpvar_17.w = _glesVertex.w;
+  ZYv_6.xyw = tmpvar_17.zyw;
+  XZv_5.yzw = tmpvar_17.zyw;
+  XYv_4.yzw = tmpvar_17.yzw;
+  ZYv_6.z = (tmpvar_16.x * sign(-(tmpvar_14.x)));
+  XZv_5.x = (tmpvar_16.x * sign(-(tmpvar_14.y)));
+  XYv_4.x = (tmpvar_16.x * sign(tmpvar_14.z));
+  ZYv_6.x = ((sign(-(tmpvar_14.x)) * sign(ZYv_6.z)) * tmpvar_14.z);
+  XZv_5.y = ((sign(-(tmpvar_14.y)) * sign(XZv_5.x)) * tmpvar_14.x);
+  XYv_4.z = ((sign(-(tmpvar_14.z)) * sign(XYv_4.x)) * tmpvar_14.x);
+  ZYv_6.x = (ZYv_6.x + ((sign(-(tmpvar_14.x)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  XZv_5.y = (XZv_5.y + ((sign(-(tmpvar_14.y)) * sign(tmpvar_16.y)) * tmpvar_14.z));
+  XYv_4.z = (XYv_4.z + ((sign(-(tmpvar_14.z)) * sign(tmpvar_16.y)) * tmpvar_14.y));
+  highp vec3 tmpvar_18;
+  tmpvar_18 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = clamp ((glstate_lightmodel_ambient.xyz + ((_MinLight + _LightColor0.xyz) * tmpvar_18)), 0.0, 1.0);
-  tmpvar_6 = tmpvar_19;
-  tmpvar_5.xyz = _glesColor.xyz;
-  highp vec3 p_20;
-  p_20 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  tmpvar_19 = (0.99 * normalize(_WorldSpaceLightPos0)).xyz;
+  lightDirection_2 = tmpvar_19;
+  mediump vec4 tmpvar_20;
+  tmpvar_20.w = 0.0;
+  tmpvar_20.xyz = lightDirection_2;
   highp float tmpvar_21;
-  tmpvar_21 = clamp ((_DistFade * sqrt(dot (p_20, p_20))), 0.0, 1.0);
-  tmpvar_5.w = (_glesColor.w * tmpvar_21);
-  gl_Position = (glstate_matrix_projection * (tmpvar_10 + _glesVertex));
-  xlv_COLOR = tmpvar_5;
-  xlv_TEXCOORD0 = abs(tmpvar_12);
-  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_4).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_3).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_2).xy - tmpvar_10.xy)));
-  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_13).xyz));
-  xlv_TEXCOORD5 = tmpvar_6;
-  xlv_TEXCOORD6 = tmpvar_7;
-  xlv_TEXCOORD7 = tmpvar_8;
+  tmpvar_21 = clamp (dot (normalize(_WorldNorm), tmpvar_20), 0.0, 1.0);
+  NdotL_1 = tmpvar_21;
+  mediump float tmpvar_22;
+  tmpvar_22 = clamp (((_LightColor0.w * ((NdotL_1 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_23;
+  tmpvar_23 = clamp ((ambientLighting_3 + ((_MinLight + _LightColor0.xyz) * tmpvar_22)), 0.0, 1.0);
+  tmpvar_8 = tmpvar_23;
+  tmpvar_7.xyz = _glesColor.xyz;
+  highp vec3 p_24;
+  p_24 = ((_Object2World * vec4(0.0, 0.0, 0.0, 1.0)).xyz - _WorldSpaceCameraPos);
+  highp float tmpvar_25;
+  tmpvar_25 = clamp ((_DistFade * sqrt(dot (p_24, p_24))), 0.0, 1.0);
+  tmpvar_7.w = (_glesColor.w * tmpvar_25);
+  gl_Position = (glstate_matrix_projection * (tmpvar_12 + _glesVertex));
+  xlv_COLOR = tmpvar_7;
+  xlv_TEXCOORD0 = abs(tmpvar_14);
+  xlv_TEXCOORD1 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * ZYv_6).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD2 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XZv_5).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD3 = (vec2(0.5, 0.5) + (0.6 * ((glstate_matrix_modelview0 * XYv_4).xy - tmpvar_12.xy)));
+  xlv_TEXCOORD4 = normalize((_WorldSpaceCameraPos - (_Object2World * tmpvar_15).xyz));
+  xlv_TEXCOORD5 = tmpvar_8;
+  xlv_TEXCOORD6 = tmpvar_9;
+  xlv_TEXCOORD7 = tmpvar_10;
 }
 
 
@@ -18190,8 +18382,8 @@ v2f vert( in appdata_t v ) {
     #line 474
     o.texcoordXY = (vec2( 0.5, 0.5) + (0.6 * XY));
     highp vec3 origin = (_Object2World * vec4( 0.0, 0.0, 0.0, 1.0)).xyz;
-    highp vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    highp vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
+    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
+    mediump vec3 lightDirection = vec3( (0.99 * normalize(_WorldSpaceLightPos0)));
     #line 478
     mediump float NdotL = xll_saturate_f(dot( normalize(_WorldNorm), vec4( lightDirection, 0.0)));
     mediump float diff = ((NdotL - 0.01) / 0.99);

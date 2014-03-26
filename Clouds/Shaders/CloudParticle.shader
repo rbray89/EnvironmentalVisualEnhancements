@@ -118,8 +118,8 @@ Category {
 				float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 				
 				
-				float3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
-				float3 lightDirection = .98*normalize(_WorldSpaceLightPos0);
+				half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
+				half3 lightDirection = .99*normalize(_WorldSpaceLightPos0);
  				half NdotL = saturate(dot (normalize(_WorldNorm), lightDirection));
 		        half diff = (NdotL - 0.01) / 0.99;
 				half lightIntensity = saturate(_LightColor0.a * diff * 4);
