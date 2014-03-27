@@ -1,0 +1,17 @@
+config_enabled = true
+NORMAL_LIST
+{
+	texture = BoulderCo/Clouds/Textures/bump1
+}
+
+OVERRIDES
+{
+	BoulderCo/Clouds/*
+	{
+		compress = true
+		mipmaps = true
+		scale = 1
+		max_size = 0
+		make_not_readable = false
+	}
+}

@@ -189,13 +189,24 @@ namespace Clouds
                     useEditor = !useEditor;
                 }
             }
-            if (HighLogic.LoadedScene == GameScenes.FLIGHT )
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT)
+            {
+                if (FlightGlobals.ActiveVessel != null && CloudLayer.BodyDatabase.ContainsKey(FlightGlobals.currentMainBody.name))
+                {
+                    Vector3 COM = FlightGlobals.ActiveVessel.findWorldCenterOfMass();
+                    foreach (CloudLayer cl in CloudLayer.BodyDatabase[FlightGlobals.currentMainBody.name])
+                    {
+                        cl.UpdateParticleClouds(COM);
+                    }
+                }
+            }
+            else if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
                 if (CloudLayer.BodyDatabase.ContainsKey(FlightGlobals.currentMainBody.name))
                 {
                     foreach (CloudLayer cl in CloudLayer.BodyDatabase[FlightGlobals.currentMainBody.name])
                     {
-                        cl.UpdateParticleClouds(FlightGlobals.ActiveVessel.findWorldCenterOfMass());
+                        cl.UpdateParticleClouds(((SpaceCenterMain)Resources.FindObjectsOfTypeAll(typeof(SpaceCenterMain))[0]).transform.position);
                     }
                 }
             }

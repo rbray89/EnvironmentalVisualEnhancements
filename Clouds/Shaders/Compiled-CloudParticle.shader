@@ -15,7 +15,7 @@ Category {
 	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
 	Blend SrcAlpha OneMinusSrcAlpha
 	Fog { Mode Global}
-	AlphaTest Greater .01
+	AlphaTest Greater 0
 	ColorMask RGB
 	Cull Off Lighting On ZWrite Off
 	
@@ -599,7 +599,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -758,7 +758,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -1229,7 +1229,7 @@ lowp vec4 frag( in v2f i ) {
     #line 475
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 479
     color.xyz = (prev.xyz * i.baseLight);
@@ -1829,7 +1829,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -1985,7 +1985,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -2446,7 +2446,7 @@ lowp vec4 frag( in v2f i ) {
     #line 472
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 476
     color.xyz = (prev.xyz * i.baseLight);
@@ -3048,7 +3048,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -3207,7 +3207,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -3680,7 +3680,7 @@ lowp vec4 frag( in v2f i ) {
     #line 484
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 488
     color.xyz = (prev.xyz * i.baseLight);
@@ -4284,7 +4284,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -4443,7 +4443,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -4916,7 +4916,7 @@ lowp vec4 frag( in v2f i ) {
     #line 476
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 480
     color.xyz = (prev.xyz * i.baseLight);
@@ -5520,7 +5520,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -5679,7 +5679,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -6150,7 +6150,7 @@ lowp vec4 frag( in v2f i ) {
     #line 475
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 479
     color.xyz = (prev.xyz * i.baseLight);
@@ -6758,7 +6758,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -6920,7 +6920,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -7403,7 +7403,7 @@ lowp vec4 frag( in v2f i ) {
     #line 491
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 495
     color.xyz = (prev.xyz * i.baseLight);
@@ -8015,7 +8015,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -8496,7 +8496,7 @@ lowp vec4 frag( in v2f i ) {
     #line 492
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 496
     color.xyz = (prev.xyz * i.baseLight);
@@ -9102,7 +9102,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -9261,7 +9261,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -9732,7 +9732,7 @@ lowp vec4 frag( in v2f i ) {
     #line 481
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 485
     color.xyz = (prev.xyz * i.baseLight);
@@ -10340,7 +10340,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -10502,7 +10502,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -10983,7 +10983,7 @@ lowp vec4 frag( in v2f i ) {
     #line 484
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 488
     color.xyz = (prev.xyz * i.baseLight);
@@ -11593,7 +11593,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -11755,7 +11755,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -12234,7 +12234,7 @@ lowp vec4 frag( in v2f i ) {
     #line 489
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 493
     color.xyz = (prev.xyz * i.baseLight);
@@ -12844,7 +12844,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -13006,7 +13006,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -13487,7 +13487,7 @@ lowp vec4 frag( in v2f i ) {
     #line 490
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 494
     color.xyz = (prev.xyz * i.baseLight);
@@ -14097,7 +14097,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -14259,7 +14259,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -14744,7 +14744,7 @@ lowp vec4 frag( in v2f i ) {
     #line 499
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 503
     color.xyz = (prev.xyz * i.baseLight);
@@ -15356,7 +15356,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -15841,7 +15841,7 @@ lowp vec4 frag( in v2f i ) {
     #line 499
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 503
     color.xyz = (prev.xyz * i.baseLight);
@@ -16451,7 +16451,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -16613,7 +16613,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -17092,7 +17092,7 @@ lowp vec4 frag( in v2f i ) {
     #line 495
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 499
     color.xyz = (prev.xyz * i.baseLight);
@@ -17702,7 +17702,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -17864,7 +17864,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.95 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -18345,7 +18345,7 @@ lowp vec4 frag( in v2f i ) {
     #line 496
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.95 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 500
     color.xyz = (prev.xyz * i.baseLight);
@@ -18398,7 +18398,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.95019531 } };
+		{ 0.93017578 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -18429,7 +18429,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.95019531, 0, 0, 0
+def c1, 0.93017578, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -18464,7 +18464,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedbgbnlgommijeclaogjfhmnggbgladodpabaaaaaaneadaaaaadaaaaaa
+eefieceddeignkbkdolooakmllgnknaebgdgljpcabaaaaaaneadaaaaadaaaaaa
 cmaaaaaadaabaaaageabaaaaejfdeheopmaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaapcaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -18492,9 +18492,9 @@ abaaaaaadcaaaaajpcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaa
 egaobaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaa
 aaaaaaaaahaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaa
 abaaaaaadgaaaaafhcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaa
-abaaaaaaabeaaaaaddddhddpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+abaaaaaaabeaaaaahlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
 egaobaaaabaaaaaadiaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaa
-ddddhddpddddhddpddddhddpaaaaiadpdoaaaaab"
+hlbegodphlbegodphlbegodpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -18522,7 +18522,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.95019531 } };
+		{ 0.93017578 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -18553,7 +18553,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.95019531, 0, 0, 0
+def c1, 0.93017578, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -18588,7 +18588,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedbnbhionelcnondpkpiodbjlpmfngonnmabaaaaaalmadaaaaadaaaaaa
+eefiecedmjlecbiopjlephnlblkmppmjidjpifnmabaaaaaalmadaaaaadaaaaaa
 cmaaaaaabiabaaaaemabaaaaejfdeheooeaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaankaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -18615,9 +18615,9 @@ aaaaaaaaegaobaaaabaaaaaadcaaaaajpcaabaaaaaaaaaaakgbkbaaaacaaaaaa
 egaobaaaabaaaaaaegaobaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaaegbobaaa
 abaaaaaaegiocaaaaaaaaaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaa
 aaaaaaaaegaobaaaabaaaaaadgaaaaafhcaabaaaabaaaaaaegbcbaaaagaaaaaa
-dgaaaaaficaabaaaabaaaaaaabeaaaaaddddhddpdiaaaaahpcaabaaaaaaaaaaa
+dgaaaaaficaabaaaabaaaaaaabeaaaaahlbegodpdiaaaaahpcaabaaaaaaaaaaa
 egaobaaaaaaaaaaaegaobaaaabaaaaaadiaaaaakpccabaaaaaaaaaaaegaobaaa
-aaaaaaaaaceaaaaaddddhddpddddhddpddddhddpaaaaiadpdoaaaaab"
+aaaaaaaaaceaaaaahlbegodphlbegodphlbegodpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -18645,7 +18645,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.95019531 } };
+		{ 0.93017578 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -18676,7 +18676,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.95019531, 0, 0, 0
+def c1, 0.93017578, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -18711,7 +18711,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedhabnbpkjaadflhapeedagkkelljkbengabaaaaaaneadaaaaadaaaaaa
+eefiecedlkeffgnlhmhicaanponffocpgmapijloabaaaaaaneadaaaaadaaaaaa
 cmaaaaaadaabaaaageabaaaaejfdeheopmaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaapcaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -18739,9 +18739,9 @@ abaaaaaadcaaaaajpcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaa
 egaobaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaa
 aaaaaaaaahaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaa
 abaaaaaadgaaaaafhcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaa
-abaaaaaaabeaaaaaddddhddpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+abaaaaaaabeaaaaahlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
 egaobaaaabaaaaaadiaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaa
-ddddhddpddddhddpddddhddpaaaaiadpdoaaaaab"
+hlbegodphlbegodphlbegodpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -18769,7 +18769,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.95019531 } };
+		{ 0.93017578 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -18800,7 +18800,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.95019531, 0, 0, 0
+def c1, 0.93017578, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -18835,7 +18835,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedbgbnlgommijeclaogjfhmnggbgladodpabaaaaaaneadaaaaadaaaaaa
+eefieceddeignkbkdolooakmllgnknaebgdgljpcabaaaaaaneadaaaaadaaaaaa
 cmaaaaaadaabaaaageabaaaaejfdeheopmaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaapcaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -18863,9 +18863,9 @@ abaaaaaadcaaaaajpcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaa
 egaobaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaa
 aaaaaaaaahaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaa
 abaaaaaadgaaaaafhcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaa
-abaaaaaaabeaaaaaddddhddpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+abaaaaaaabeaaaaahlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
 egaobaaaabaaaaaadiaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaa
-ddddhddpddddhddpddddhddpaaaaiadpdoaaaaab"
+hlbegodphlbegodphlbegodpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -18893,7 +18893,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.95019531 } };
+		{ 0.93017578 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -18924,7 +18924,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.95019531, 0, 0, 0
+def c1, 0.93017578, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -18959,7 +18959,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedkpdodmdenefiljpcchimnalconipodhfabaaaaaaneadaaaaadaaaaaa
+eefiecedppfcinmlfeckonjmcmgeiaihdegobjebabaaaaaaneadaaaaadaaaaaa
 cmaaaaaadaabaaaageabaaaaejfdeheopmaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaapcaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -18987,9 +18987,9 @@ abaaaaaadcaaaaajpcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaa
 egaobaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaa
 aaaaaaaaahaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaa
 abaaaaaadgaaaaafhcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaa
-abaaaaaaabeaaaaaddddhddpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+abaaaaaaabeaaaaahlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
 egaobaaaabaaaaaadiaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaa
-ddddhddpddddhddpddddhddpaaaaiadpdoaaaaab"
+hlbegodphlbegodphlbegodpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19017,7 +19017,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.95019531 } };
+		{ 0.93017578 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -19048,7 +19048,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.95019531, 0, 0, 0
+def c1, 0.93017578, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -19083,7 +19083,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedgebclhcpphieimhdofckeikdmdchnbkkabaaaaaaomadaaaaadaaaaaa
+eefiecedejnfligjigbfffjejhdboamfcihogeaoabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19112,9 +19112,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaahaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-ddddhddpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaaddddhddpddddhddp
-ddddhddpaaaaiadpdoaaaaab"
+hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
+hlbegodpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19142,7 +19142,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.95019531 } };
+		{ 0.93017578 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -19173,7 +19173,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.95019531, 0, 0, 0
+def c1, 0.93017578, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -19208,7 +19208,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedgebclhcpphieimhdofckeikdmdchnbkkabaaaaaaomadaaaaadaaaaaa
+eefiecedejnfligjigbfffjejhdboamfcihogeaoabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19237,9 +19237,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaahaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-ddddhddpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaaddddhddpddddhddp
-ddddhddpaaaaiadpdoaaaaab"
+hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
+hlbegodpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19262,7 +19262,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.95019531 } };
+		{ 0.93017578 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -19293,7 +19293,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.95019531, 0, 0, 0
+def c1, 0.93017578, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -19328,7 +19328,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedhabnbpkjaadflhapeedagkkelljkbengabaaaaaaneadaaaaadaaaaaa
+eefiecedlkeffgnlhmhicaanponffocpgmapijloabaaaaaaneadaaaaadaaaaaa
 cmaaaaaadaabaaaageabaaaaejfdeheopmaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaapcaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19356,9 +19356,9 @@ abaaaaaadcaaaaajpcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaa
 egaobaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaa
 aaaaaaaaahaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaa
 abaaaaaadgaaaaafhcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaa
-abaaaaaaabeaaaaaddddhddpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+abaaaaaaabeaaaaahlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
 egaobaaaabaaaaaadiaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaa
-ddddhddpddddhddpddddhddpaaaaiadpdoaaaaab"
+hlbegodphlbegodphlbegodpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19386,7 +19386,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.95019531 } };
+		{ 0.93017578 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -19417,7 +19417,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.95019531, 0, 0, 0
+def c1, 0.93017578, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -19452,7 +19452,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedgkgfamaldkbjjemnamndjjllhkeecbkdabaaaaaaomadaaaaadaaaaaa
+eefiecedcnhgmdgmjgjkpppoacnfalngelkbkociabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19481,9 +19481,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaalaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-ddddhddpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaaddddhddpddddhddp
-ddddhddpaaaaiadpdoaaaaab"
+hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
+hlbegodpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19511,7 +19511,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.95019531 } };
+		{ 0.93017578 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -19542,7 +19542,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.95019531, 0, 0, 0
+def c1, 0.93017578, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -19577,7 +19577,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedlbdfpnmcnddpidaloejcpipkmeegkmeaabaaaaaaomadaaaaadaaaaaa
+eefiecedooafakhkbheanlggdmikeaoejpkjbpmmabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19606,9 +19606,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaahaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-ddddhddpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaaddddhddpddddhddp
-ddddhddpaaaaiadpdoaaaaab"
+hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
+hlbegodpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19636,7 +19636,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.95019531 } };
+		{ 0.93017578 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -19667,7 +19667,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.95019531, 0, 0, 0
+def c1, 0.93017578, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -19702,7 +19702,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedlbdfpnmcnddpidaloejcpipkmeegkmeaabaaaaaaomadaaaaadaaaaaa
+eefiecedooafakhkbheanlggdmikeaoejpkjbpmmabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19731,9 +19731,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaahaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-ddddhddpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaaddddhddpddddhddp
-ddddhddpaaaaiadpdoaaaaab"
+hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
+hlbegodpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19761,7 +19761,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.95019531 } };
+		{ 0.93017578 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -19792,7 +19792,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.95019531, 0, 0, 0
+def c1, 0.93017578, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -19827,7 +19827,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedbgbkaihpoigfihlefiiaebaoiojmmkieabaaaaaaomadaaaaadaaaaaa
+eefiecedepcmkpichgbfgepkmncbohbhkglnpphfabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19856,9 +19856,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaalaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-ddddhddpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaaddddhddpddddhddp
-ddddhddpaaaaiadpdoaaaaab"
+hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
+hlbegodpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19886,7 +19886,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.95019531 } };
+		{ 0.93017578 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -19917,7 +19917,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.95019531, 0, 0, 0
+def c1, 0.93017578, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -19952,7 +19952,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedbgbkaihpoigfihlefiiaebaoiojmmkieabaaaaaaomadaaaaadaaaaaa
+eefiecedepcmkpichgbfgepkmncbohbhkglnpphfabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19981,9 +19981,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaalaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-ddddhddpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaaddddhddpddddhddp
-ddddhddpaaaaiadpdoaaaaab"
+hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
+hlbegodpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -20006,7 +20006,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.95019531 } };
+		{ 0.93017578 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -20037,7 +20037,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.95019531, 0, 0, 0
+def c1, 0.93017578, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -20072,7 +20072,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedlbdfpnmcnddpidaloejcpipkmeegkmeaabaaaaaaomadaaaaadaaaaaa
+eefiecedooafakhkbheanlggdmikeaoejpkjbpmmabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -20101,9 +20101,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaahaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-ddddhddpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaaddddhddpddddhddp
-ddddhddpaaaaiadpdoaaaaab"
+hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
+hlbegodpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -20131,7 +20131,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.95019531 } };
+		{ 0.93017578 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -20162,7 +20162,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.95019531, 0, 0, 0
+def c1, 0.93017578, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -20197,7 +20197,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedlbdfpnmcnddpidaloejcpipkmeegkmeaabaaaaaaomadaaaaadaaaaaa
+eefiecedooafakhkbheanlggdmikeaoejpkjbpmmabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -20226,9 +20226,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaahaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-ddddhddpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaaddddhddpddddhddp
-ddddhddpaaaaiadpdoaaaaab"
+hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
+hlbegodpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {

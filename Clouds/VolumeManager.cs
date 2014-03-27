@@ -13,9 +13,8 @@ namespace Clouds
         float halfRad;
         float outCheck;
         float opp;
+        bool forceUpdate;
         Texture2D Texture;
-        Material CloudParticleMaterial;
-        Transform Transform;
 
         float Magnitude;
         VolumeSection[] moveSections = new VolumeSection[3];
@@ -27,30 +26,28 @@ namespace Clouds
         bool enabled;
         public bool Enabled { get { return enabled; } set { enabled = value; foreach (VolumeSection vs in VolumeList) { vs.Enabled = value; } } }
 
-        public VolumeManager(Vector3 pos, float cloudSphereRadius, Texture2D texture, Material cloudParticleMaterial, Transform transform)
+        public VolumeManager(float cloudSphereRadius, Texture2D texture, Material cloudParticleMaterial, Transform transform)
         {
-            //translator = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            //translator.renderer.material.color = new Color(1, 0, 0);
+            Magnitude = cloudSphereRadius;
+            Vector3 pos = Vector3.up * Magnitude;
             translator = new GameObject();
             Center = translator.transform;
-            //Center.localScale = Vector3.one*4000f;
             Center.localScale = Vector3.one;
             Center.parent = transform;
-            Recenter(pos* cloudSphereRadius);
+            Recenter(pos, true);
 
             this.Texture = texture;
-            this.CloudParticleMaterial = cloudParticleMaterial;
-            this.Transform = transform;
             radius = 20000;
             halfRad = radius / 2f;
             opp = Mathf.Sqrt(.75f) * radius;
             outCheck = opp*2f;
-            Magnitude = cloudSphereRadius;
+            
             enabled = true;
+            forceUpdate = true;
 
-            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, new Vector3(-radius, 0, 0), radius));
-            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, new Vector3(halfRad, 0, opp), radius));
-            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, new Vector3(halfRad, 0, -opp), radius));
+            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(-radius, 0, 0), radius));
+            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, opp), radius));
+            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, -opp), radius));
         }
 
         public void Update(Vector3 pos)
@@ -58,7 +55,6 @@ namespace Clouds
             Vector3 place = pos * Magnitude;
             int moveCount = 0;
             int unchangedCount = 0;
-            
 
             for (int i = 0; i < VolumeList.Count; i++)
             {
@@ -72,6 +68,15 @@ namespace Clouds
                 else
                 {
                     unchangedSections[unchangedCount++] = volumeSection;
+                }
+            }
+            if (forceUpdate == true)
+            {
+                forceUpdate = false;
+                for (int i = 0; i < VolumeList.Count; i++)
+                {
+                    VolumeSection volumeSection = VolumeList[i];
+                    moveSections[moveCount++] = volumeSection;
                 }
             }
             if (moveCount > 0)
@@ -112,11 +117,11 @@ namespace Clouds
             }
         }
 
-        private void Recenter(Vector3 vector3, bool abs = false)
+        private void Recenter(Vector3 vector, bool abs = false)
         {
             if (abs)
             {
-                Center.localPosition = vector3;
+                Center.localPosition = vector;
                 Vector3 worldUp = Center.position - Center.parent.position;
                 Center.up = worldUp.normalized;
             }
@@ -124,12 +129,12 @@ namespace Clouds
             {
                 Vector3 worldUp = Center.position - Center.parent.position;
                 Center.up = worldUp.normalized;
-                Center.Translate(vector3);
+                Center.Translate(vector);
                 worldUp = Center.position - Center.parent.position;
                 Center.up = worldUp.normalized;
+                Center.localPosition = Magnitude * Center.localPosition.normalized;
             }
-            Center.localPosition = Magnitude * Center.localPosition.normalized;
-            //CloudLayer.Log("LocalCenter: " + Center.localPosition);
+            CloudLayer.Log("Recenter: " + Center.localPosition);
         }
     }
 }

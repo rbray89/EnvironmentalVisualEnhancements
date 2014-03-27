@@ -142,6 +142,19 @@ namespace Clouds
             CloudMaterial.SetFloat("_FadeScale", 0.1f / 8f);
             CloudMaterial.SetFloat("_DetailDist", 0.000002f);
 
+            Texture2D tex1 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/3", false);
+            Texture2D tex2 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/5", false);
+            Texture2D tex3 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/6", false);
+
+            tex1.wrapMode = TextureWrapMode.Clamp;
+            tex2.wrapMode = TextureWrapMode.Clamp;
+            tex3.wrapMode = TextureWrapMode.Clamp;
+
+            CloudParticleMaterial.SetTexture("_TopTex", tex1);
+            CloudParticleMaterial.SetTexture("_LeftTex", tex2);
+            CloudParticleMaterial.SetTexture("_FrontTex", tex3);
+            CloudParticleMaterial.SetFloat("_DistFade", 1f / 2250f);
+
             Log("Cloud Material initialized");
             UpdateTextures();
             Log("Generating Overlay...");
@@ -149,6 +162,9 @@ namespace Clouds
             CloudOverlay.MacroCallback = MacroCallback;
             UpdateFloats();
             Log("Textures initialized");
+
+            volume = new VolumeManager(CloudOverlay.Radius, (Texture2D)this.mainTexture.Texture, CloudParticleMaterial, this.CloudOverlay.Transform);
+
         }
 
         private void MacroCallback(bool value)
@@ -267,6 +283,7 @@ namespace Clouds
                 CloudLayer layer = BodyDatabase[body][SelectedLayer];
                 layer.Remove();
             }
+            
         }
 
         internal static bool IsDefaultShaderFloat(ShaderFloats shaderFloats)
@@ -296,23 +313,16 @@ namespace Clouds
             {
                 Layers.Remove(this);
             }
+            volume.Enabled = false;
         }
 
         
         internal void UpdateParticleClouds(Vector3 WorldPos)
         {
-            Vector3 intendedPoint = this.CloudOverlay.Transform.worldToLocalMatrix.MultiplyPoint3x4(WorldPos);
-                intendedPoint.Normalize();
-            if (volume == null)
-            {
-                Log("Creating particle");
-
-                volume = new VolumeManager(intendedPoint, CloudOverlay.Radius, (Texture2D)this.mainTexture.Texture, CloudParticleMaterial, this.CloudOverlay.Transform);
-            }
-            else
-            {
-                volume.Update(intendedPoint);
-            }
+            Vector3 intendedPoint = this.CloudOverlay.Transform.InverseTransformPoint(WorldPos);
+            intendedPoint.Normalize();
+            volume.Update(intendedPoint);
         }
+        
     }
 }

@@ -15,7 +15,7 @@ Category {
 	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
 	Blend SrcAlpha OneMinusSrcAlpha
 	Fog { Mode Global}
-	AlphaTest Greater .01
+	AlphaTest Greater 0
 	ColorMask RGB
 	Cull Off Lighting On ZWrite Off
 	
@@ -146,7 +146,7 @@ Category {
 				//half4 tex = (xtex*xval)+(ytex*yval)+(ztex*zval);
 				half4 tex = lerp(lerp(xtex, ytex, yval), ztex, zval);
 				
-				half4 prev = .95*_Color * i.color * tex;
+				half4 prev = .93*_Color * i.color * tex;
 				
 //				float3 lightColor = _LightColor0.rgb;
 //		        float3 lightDir = normalize(_WorldSpaceLightPos0);
