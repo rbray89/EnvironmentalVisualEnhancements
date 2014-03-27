@@ -809,7 +809,7 @@ namespace Clouds
             newNode.AddValue("falloffScale", this.FalloffScale);
             newNode.AddValue("detailDistance", this.DetailDistance);
             newNode.AddValue("minimumLight", this.MinimumLight);
-            newNode.AddValue("FadeDistance", this.FadeDistance);
+            newNode.AddValue("fadeDistance", this.FadeDistance);
             return newNode;
         }
     }
