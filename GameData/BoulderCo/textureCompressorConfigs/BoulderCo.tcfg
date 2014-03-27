@@ -6,7 +6,7 @@ NORMAL_LIST
 
 OVERRIDES
 {
-	BoulderCo/Clouds/*
+	BoulderCo/Clouds/.*
 	{
 		compress = true
 		mipmaps = true

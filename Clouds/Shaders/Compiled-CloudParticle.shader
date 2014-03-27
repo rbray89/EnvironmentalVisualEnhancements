@@ -27,9 +27,9 @@ Category {
 			
 			Program "vp" {
 // Vertex combos: 15
-//   opengl - ALU: 118 to 118
-//   d3d9 - ALU: 104 to 104
-//   d3d11 - ALU: 68 to 68, TEX: 0 to 0, FLOW: 1 to 1
+//   opengl - ALU: 118 to 119
+//   d3d9 - ALU: 104 to 105
+//   d3d11 - ALU: 69 to 69, TEX: 0 to 0, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { "POINT" "SHADOWS_OFF" }
 Bind "vertex" Vertex
@@ -44,114 +44,114 @@ Float 17 [_DistFade]
 Float 18 [_MinLight]
 "3.0-!!ARBvp1.0
 # 118 ALU
-PARAM c[20] = { { 0, 1, 2, 0.60000002 },
+PARAM c[21] = { { 0, 1, 2, 0.60000002 },
 		state.lightmodel.ambient,
 		state.matrix.modelview[0],
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..18],
-		{ 0.5, 0.010002136, 4.0394478, 0 } };
+		{ 0.5, 0.98000002, 0.010002136 },
+		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
 TEMP R3;
 TEMP R4;
-DP3 R1.x, c[4], c[4];
-RSQ R1.x, R1.x;
-MUL R3.xyz, R1.x, c[4];
-MOV R2.w, vertex.position;
-MOV R2.xyz, c[0].x;
-DP4 R4.x, R2, c[2];
-DP4 R4.y, R2, c[3];
+DP3 R2.x, c[4], c[4];
+RSQ R2.x, R2.x;
+MUL R3.xyz, R2.x, c[4];
+MOV R1.xyz, c[0].x;
 MOV R1.w, vertex.position;
-DP4 R4.w, R2, c[5];
-DP4 R4.z, R2, c[4];
+DP4 R4.x, R1, c[2];
+DP4 R4.y, R1, c[3];
+DP4 R4.w, R1, c[5];
+DP4 R4.z, R1, c[4];
 ADD R0, R4, vertex.position;
 DP4 result.position.w, R0, c[16];
 DP4 result.position.z, R0, c[15];
 DP4 result.position.y, R0, c[14];
 DP4 result.position.x, R0, c[13];
-MUL R0.xy, vertex.texcoord[0], c[0].z;
-ADD R4.zw, R0.xyxy, -c[0].y;
-MOV R1.y, R4.w;
-SLT R0.x, c[0], R4.w;
-SLT R0.y, R0, c[0];
-ADD R3.w, R0.x, -R0.y;
-SLT R0.z, c[0].x, -R3.x;
-SLT R0.w, -R3.x, c[0].x;
-ADD R0.w, R0.z, -R0;
-MUL R0.z, R4, R0.w;
-MUL R1.x, R0.w, R3.w;
-SLT R0.y, R0.z, c[0].x;
-SLT R0.x, c[0], R0.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.y, R3, R1.x;
-MUL R0.x, R0, R0.w;
-MAD R0.x, R3.z, R0, R0.y;
-MOV R0.yw, R1;
-DP4 R1.x, R0, c[2];
-DP4 R1.z, R0, c[3];
-ADD R0.xy, -R4, R1.xzzw;
-MUL R0.xy, R0, c[0].w;
-SLT R0.w, R3.z, c[0].x;
-SLT R0.z, c[0].x, R3;
+MUL R0.zw, vertex.texcoord[0].xyxy, c[0].z;
+SLT R0.x, c[0], -R3;
+SLT R0.y, -R3.x, c[0].x;
+ADD R2.x, R0, -R0.y;
+ADD R0.xy, R0.zwzw, -c[0].y;
+MUL R2.z, R0.x, R2.x;
+SLT R2.y, R2.z, c[0].x;
+SLT R0.w, R0, c[0].y;
+SLT R0.z, c[0].x, R0.y;
 ADD R0.z, R0, -R0.w;
-MUL R1.x, R4.z, R0.z;
-ADD result.texcoord[1].xy, R0, c[19].x;
-SLT R0.y, R1.x, c[0].x;
-SLT R0.x, c[0], R1;
-ADD R0.z, R0.x, -R0.y;
-SLT R0.y, -R3.z, c[0].x;
-SLT R0.x, c[0], -R3.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.w, R3, R0.x;
-MUL R0.z, R0.x, R0;
-MUL R0.w, R3.y, R0;
-MAD R1.z, R3.x, R0, R0.w;
-SLT R0.x, c[0], -R3.y;
-SLT R0.y, -R3, c[0].x;
-ADD R0.y, R0.x, -R0;
-MUL R0.x, R4.z, R0.y;
-SLT R0.w, R0.x, c[0].x;
+SLT R0.w, c[0].x, R2.z;
+ADD R0.w, R0, -R2.y;
+MUL R2.w, R2.x, R0.z;
+MUL R0.w, R0, R2.x;
+MUL R2.y, R3, R2.w;
+MAD R2.x, R3.z, R0.w, R2.y;
+MOV R0.w, vertex.position;
+MOV R2.yw, R0;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+SLT R2.w, -R3.y, c[0].x;
+SLT R2.z, c[0].x, -R3.y;
+ADD R3.w, R2.z, -R2;
+MUL R2.zw, R2.xyxy, c[0].w;
+MUL R2.x, R0, R3.w;
+ADD result.texcoord[1].xy, R2.zwzw, c[19].x;
+SLT R2.z, R2.x, c[0].x;
+SLT R2.y, c[0].x, R2.x;
+ADD R2.y, R2, -R2.z;
+MUL R2.z, R0, R3.w;
+MUL R2.y, R2, R3.w;
+MUL R3.w, R3.z, R2.z;
+MOV R2.zw, R0.xyyw;
+MAD R2.y, R3.x, R2, R3.w;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+MUL R2.xy, R2, c[0].w;
+SLT R2.w, R3.z, c[0].x;
+SLT R2.z, c[0].x, R3;
+ADD R3.w, R2.z, -R2;
+MUL R0.x, R0, R3.w;
+SLT R2.w, -R3.z, c[0].x;
+SLT R2.z, c[0].x, -R3;
+ADD R2.z, R2, -R2.w;
+MUL R3.w, R0.z, R2.z;
+SLT R2.w, R0.x, c[0].x;
 SLT R0.z, c[0].x, R0.x;
-ADD R0.z, R0, -R0.w;
-MUL R0.w, R3, R0.y;
-MUL R0.y, R0.z, R0;
-MUL R3.w, R3.z, R0;
-MOV R0.zw, R1.xyyw;
-MAD R0.y, R3.x, R0, R3.w;
-DP4 R4.z, R0, c[2];
-DP4 R4.w, R0, c[3];
-ADD R0.xy, -R4, R4.zwzw;
-MUL R0.xy, R0, c[0].w;
-DP4 R0.z, R1, c[2];
-DP4 R0.w, R1, c[3];
-ADD R0.zw, -R4.xyxy, R0;
-MUL R0.zw, R0, c[0].w;
-ADD result.texcoord[3].xy, R0.zwzw, c[19].x;
-ADD result.texcoord[2].xy, R0, c[19].x;
+ADD R0.z, R0, -R2.w;
+MUL R2.w, R3.y, R3;
+MUL R0.z, R2, R0;
+MAD R0.z, R3.x, R0, R2.w;
+DP4 R2.z, R0, c[2];
+DP4 R2.w, R0, c[3];
+ADD R0.xy, -R4, R2.zwzw;
+MUL R4.xy, R0, c[0].w;
 MOV R0.xyz, vertex.normal;
 MOV R0.w, c[0].x;
-DP4 R1.z, R0, c[11];
-DP4 R1.y, R0, c[10];
-DP4 R1.x, R0, c[9];
-DP3 R0.x, R1, R1;
-RSQ R0.w, R0.x;
-DP4 R0.y, c[7], c[7];
+ADD result.texcoord[2].xy, R2, c[19].x;
+DP4 R2.z, R0, c[11];
+DP4 R2.x, R0, c[9];
+DP4 R2.y, R0, c[10];
+DP3 R0.y, R2, R2;
 RSQ R0.y, R0.y;
-MUL R1.xyz, R0.w, R1;
-MUL R0.xyz, R0.y, c[7];
-DP3 R0.w, R1, R0;
+DP4 R0.x, c[7], c[7];
+MUL R2.xyz, R0.y, R2;
+RSQ R0.x, R0.x;
+MUL R0.xyz, R0.x, c[7];
+MUL R0.xyz, R0, R2;
+DP3 R0.w, R0, c[19].y;
+DP4 R0.z, R1, c[11];
+DP4 R0.x, R1, c[9];
+DP4 R0.y, R1, c[10];
 MIN R1.x, R0.w, c[0].y;
-MAX R1.x, R1, c[0];
-ADD R1.x, R1, -c[19].y;
-DP4 R0.z, R2, c[11];
-DP4 R0.x, R2, c[9];
-DP4 R0.y, R2, c[10];
 ADD R0.xyz, -R0, c[6];
 DP3 R0.w, R0, R0;
 RSQ R0.w, R0.w;
 MUL result.texcoord[4].xyz, R0.w, R0;
+MAX R1.x, R1, c[0];
+ADD R1.x, R1, -c[19].z;
 MUL R0.w, R1.x, c[8];
 MOV R1.xyz, c[8];
 MOV R0.z, c[11].w;
@@ -159,7 +159,7 @@ MOV R0.x, c[9].w;
 MOV R0.y, c[10].w;
 ADD R0.xyz, -R0, c[6];
 DP3 R0.x, R0, R0;
-MUL R0.w, R0, c[19].z;
+MUL R0.w, R0, c[20].x;
 MIN R0.y, R0.w, c[0];
 RSQ R0.x, R0.x;
 RCP R0.x, R0.x;
@@ -170,6 +170,7 @@ MAX R0.y, R0, c[0].x;
 ADD R1.xyz, R1, c[18].x;
 MAD R1.xyz, R1, R0.y, c[1];
 MIN R1.xyz, R1, c[0].y;
+ADD result.texcoord[3].xy, R4, c[19].x;
 MAX result.texcoord[5].xyz, R1, c[0].x;
 MUL result.color.w, vertex.color, R0.x;
 MOV result.color.xyz, vertex.color;
@@ -204,107 +205,107 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c18, 0.00000000, 2.00000000, -1.00000000, -0.01000214
-def c19, 0.60000002, 0.50000000, 4.03944778, 0
+def c18, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_texcoord0 v3
-mov r1.xyz, c18.x
-mov r1.w, v0
-dp4 r2.x, r1, c0
-dp4 r2.y, r1, c1
-dp4 r2.w, r1, c3
-dp4 r2.z, r1, c2
-add r0, r2, v0
-dp3 r2.z, c2, c2
-rsq r2.z, r2.z
-mul r3.xyz, r2.z, c2
-mad r2.zw, v3.xyxy, c18.y, c18.z
-mov r4.y, r2.w
+dp3 r1.x, c2, c2
+rsq r1.x, r1.x
+mul r3.xyz, r1.x, c2
+mad r1.xy, v3, c18.y, c18.z
+mov r2.xyz, c18.x
+mov r2.w, v0
+dp4 r5.x, r2, c0
+dp4 r5.y, r2, c1
+dp4 r5.w, r2, c3
+dp4 r5.z, r2, c2
+add r0, r5, v0
 dp4 o0.w, r0, c7
 dp4 o0.z, r0, c6
 dp4 o0.y, r0, c5
 dp4 o0.x, r0, c4
-mov r4.w, v0
-slt r0.z, r2.w, -r2.w
+slt r0.z, r1.y, -r1.y
 slt r0.y, -r3.x, r3.x
 slt r0.x, r3, -r3
 sub r0.x, r0, r0.y
-slt r0.y, -r2.w, r2.w
-sub r3.w, r0.y, r0.z
-mul r0.z, r2, r0.x
-mul r4.x, r0, r3.w
+slt r0.y, -r1, r1
+sub r1.z, r0.y, r0
+mul r0.z, r1.x, r0.x
+mul r1.w, r0.x, r1.z
 slt r0.w, r0.z, -r0.z
 slt r0.y, -r0.z, r0.z
 sub r0.y, r0, r0.w
-mul r0.w, r3.y, r4.x
+mul r0.w, r3.y, r1
 mul r0.x, r0.y, r0
 mad r0.x, r3.z, r0, r0.w
-mov r0.yw, r4
-dp4 r5.y, r0, c1
-dp4 r5.x, r0, c0
+mov r1.w, v0
+mov r0.yw, r1
+dp4 r4.y, r0, c1
 slt r4.x, -r3.y, r3.y
-slt r2.w, r3.y, -r3.y
-sub r2.w, r2, r4.x
-mul r0.x, r2.z, r2.w
-add r4.xz, -r2.xyyw, r5.xyyw
+slt r3.w, r3.y, -r3.y
+sub r3.w, r3, r4.x
+dp4 r4.x, r0, c0
+mul r0.x, r1, r3.w
+add r4.xy, -r5, r4
 slt r0.z, r0.x, -r0.x
 slt r0.y, -r0.x, r0.x
 sub r0.y, r0, r0.z
-mul r0.z, r3.w, r2.w
-mul r0.y, r0, r2.w
-mul r2.w, r3.z, r0.z
-mov r0.zw, r4.xyyw
-mad r0.y, r3.x, r0, r2.w
-dp4 r5.x, r0, c0
-dp4 r5.y, r0, c1
-add r0.xy, -r2, r5
+mul r0.z, r1, r3.w
+mul r0.y, r0, r3.w
+mul r3.w, r3.z, r0.z
+mov r0.zw, r1.xyyw
+mad r0.y, r3.x, r0, r3.w
+dp4 r4.z, r0, c0
+dp4 r4.w, r0, c1
+add r0.xy, -r5, r4.zwzw
 mad o4.xy, r0, c19.x, c19.y
-dp4 r0.z, r1, c10
-dp4 r0.x, r1, c8
-dp4 r0.y, r1, c9
-add r0.xyz, -r0, c13
-slt r1.x, -r3.z, r3.z
-slt r0.w, r3.z, -r3.z
-sub r1.y, r1.x, r0.w
-sub r0.w, r0, r1.x
-mad o3.xy, r4.xzzw, c19.x, c19.y
-mul r4.x, r2.z, r1.y
-mul r1.z, r3.w, r0.w
-slt r1.y, r4.x, -r4.x
-slt r1.x, -r4, r4
-sub r1.x, r1, r1.y
-mul r0.w, r0, r1.x
-mul r1.y, r3, r1.z
-mad r4.z, r3.x, r0.w, r1.y
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o6.xyz, r0.w, r0
+slt r0.y, -r3.z, r3.z
+slt r0.x, r3.z, -r3.z
+sub r0.z, r0.y, r0.x
+mul r1.x, r1, r0.z
+sub r0.x, r0, r0.y
+mul r0.w, r1.z, r0.x
+slt r0.z, r1.x, -r1.x
+slt r0.y, -r1.x, r1.x
+sub r0.y, r0, r0.z
+mul r0.z, r3.y, r0.w
+mul r0.x, r0, r0.y
+mad r1.z, r3.x, r0.x, r0
 mov r0.xyz, v2
 mov r0.w, c18.x
-dp4 r1.z, r0, c10
-dp4 r1.x, r4, c0
-dp4 r1.y, r4, c1
-add r1.xy, -r2, r1
-mad o5.xy, r1, c19.x, c19.y
-dp4 r1.y, r0, c9
-dp4 r1.x, r0, c8
-dp3 r0.x, r1, r1
-rsq r0.w, r0.x
-dp4 r0.y, c14, c14
-rsq r0.y, r0.y
-mul r0.xyz, r0.y, c14
-mul r1.xyz, r0.w, r1
-dp3_sat r0.w, r1, r0
+mad o3.xy, r4, c19.x, c19.y
+dp4 r4.z, r0, c10
+dp4 r4.x, r0, c8
+dp4 r4.y, r0, c9
+dp3 r0.z, r4, r4
+dp4 r0.x, r1, c0
+dp4 r0.y, r1, c1
+add r0.xy, -r5, r0
+dp4 r1.w, c14, c14
+dp4 r1.z, r2, c10
+dp4 r1.x, r2, c8
+dp4 r1.y, r2, c9
+add r1.xyz, -r1, c13
+dp3 r0.w, r1, r1
+rsq r0.w, r0.w
+rsq r1.w, r1.w
+mul o6.xyz, r0.w, r1
+rsq r0.z, r0.z
+mad o5.xy, r0, c19.x, c19.y
+mul r0.xyz, r0.z, r4
+mul r2.xyz, r1.w, c14
+mul r0.xyz, r2, r0
+dp3_sat r0.w, r0, c18.w
 mov r0.z, c10.w
 mov r0.x, c8.w
 mov r0.y, c9.w
 add r0.xyz, -r0, c13
 dp3 r0.x, r0, r0
-add r0.w, r0, c18
+add r0.w, r0, c19.z
 mul r0.y, r0.w, c15.w
-mul_sat r0.z, r0.y, c19
+mul_sat r0.z, r0.y, c19.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mov r0.y, c17.x
@@ -342,12 +343,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 79 instructions, 5 temp regs, 0 temp arrays:
-// ALU 60 float, 8 int, 0 uint
+// 80 instructions, 5 temp regs, 0 temp arrays:
+// ALU 61 float, 8 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedhafffomhdbcdbgaahcljldncldmaaadnabaaaaaanaamaaaaadaaaaaa
+eefiecedlciegmadoaeidnhhnnnigknampjkojhoabaaaaaapiamaaaaadaaaaaa
 cmaaaaaanmaaaaaaoaabaaaaejfdeheokiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaijaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaipaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -362,7 +363,7 @@ amadaaaapcaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaapcaaaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaapcaaaaaaafaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaapcaaaaaaagaaaaaaaaaaaaaaadaaaaaaahaaaaaa
 ahapaaaafdfgfpfaepfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaakl
-fdeieefcoiakaaaaeaaaabaalkacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaa
+fdeieefcbaalaaaaeaaaabaameacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaabaaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaa
 fpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaa
@@ -442,14 +443,15 @@ egacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
 hcaabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajicaabaaa
 aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
 icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaa
-aaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaa
-afaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaa
-aiaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaa
-egiccaaaaeaaaaaaaeaaaaaadoaaaaab"
+aaaaaaaaegiccaaaacaaaaaaaaaaaaaadiaaaaakhcaabaaaabaaaaaaegacbaaa
+abaaaaaaaceaaaaaeiobhkdpeiobhkdpeiobhkdpaaaaaaaabacaaaahbcaabaaa
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaafaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaafaaaaaa
+pgipcaaaaaaaaaaaaiaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaa
+agaabaaaaaaaaaaaegiccaaaaeaaaaaaaeaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -532,7 +534,7 @@ void main ()
   tmpvar_18 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_19 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_19;
   highp float tmpvar_20;
   tmpvar_20 = clamp (dot (normalize((_Object2World * tmpvar_17).xyz), lightDirection_2), 0.0, 1.0);
@@ -599,7 +601,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -691,7 +693,7 @@ void main ()
   tmpvar_18 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_19 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_19;
   highp float tmpvar_20;
   tmpvar_20 = clamp (dot (normalize((_Object2World * tmpvar_17).xyz), lightDirection_2), 0.0, 1.0);
@@ -758,7 +760,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -1011,7 +1013,7 @@ v2f vert( in appdata_t v ) {
     highp vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     #line 458
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
+    mediump vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
     mediump float NdotL = xll_saturate_f(dot( worldNormal, lightDirection));
     mediump float diff = ((NdotL - 0.01) / 0.99);
     mediump float lightIntensity = xll_saturate_f(((_LightColor0.w * diff) * 4.0));
@@ -1229,7 +1231,7 @@ lowp vec4 frag( in v2f i ) {
     #line 475
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.94 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 479
     color.xyz = (prev.xyz * i.baseLight);
@@ -1277,14 +1279,15 @@ Vector 8 [_LightColor0]
 Float 17 [_DistFade]
 Float 18 [_MinLight]
 "3.0-!!ARBvp1.0
-# 118 ALU
-PARAM c[20] = { { 0, 1, 2, 0.60000002 },
+# 119 ALU
+PARAM c[21] = { { 0, 1, 2, 0.60000002 },
 		state.lightmodel.ambient,
 		state.matrix.modelview[0],
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..18],
-		{ 0.5, 0.010002136, 4.0394478, 0 } };
+		{ 0.5, 0.97998047, 0.010002136 },
+		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
@@ -1295,9 +1298,9 @@ RSQ R1.x, R1.x;
 MUL R3.xyz, R1.x, c[4];
 MOV R2.w, vertex.position;
 MOV R2.xyz, c[0].x;
+MOV R1.w, vertex.position;
 DP4 R4.x, R2, c[2];
 DP4 R4.y, R2, c[3];
-MOV R1.w, vertex.position;
 DP4 R4.w, R2, c[5];
 DP4 R4.z, R2, c[4];
 ADD R0, R4, vertex.position;
@@ -1369,16 +1372,17 @@ MOV R0.w, c[0].x;
 DP4 R1.z, R0, c[11];
 DP4 R1.y, R0, c[10];
 DP4 R1.x, R0, c[9];
-DP3 R0.x, R1, R1;
-RSQ R0.w, R0.x;
-DP4 R0.y, c[7], c[7];
-RSQ R0.y, R0.y;
+DP3 R0.w, R1, R1;
+RSQ R0.w, R0.w;
+DP4 R1.w, c[7], c[7];
+RSQ R0.x, R1.w;
+MUL R0.xyz, R0.x, c[7];
+MUL R0.xyz, R0, c[19].y;
 MUL R1.xyz, R0.w, R1;
-MUL R0.xyz, R0.y, c[7];
 DP3 R0.w, R1, R0;
 MIN R1.x, R0.w, c[0].y;
 MAX R1.x, R1, c[0];
-ADD R1.x, R1, -c[19].y;
+ADD R1.x, R1, -c[19].z;
 DP4 R0.z, R2, c[11];
 DP4 R0.x, R2, c[9];
 DP4 R0.y, R2, c[10];
@@ -1393,7 +1397,7 @@ MOV R0.x, c[9].w;
 MOV R0.y, c[10].w;
 ADD R0.xyz, -R0, c[6];
 DP3 R0.x, R0, R0;
-MUL R0.w, R0, c[19].z;
+MUL R0.w, R0, c[20].x;
 MIN R0.y, R0.w, c[0];
 RSQ R0.x, R0.x;
 RCP R0.x, R0.x;
@@ -1409,7 +1413,7 @@ MUL result.color.w, vertex.color, R0.x;
 MOV result.color.xyz, vertex.color;
 ABS result.texcoord[0].xyz, R3;
 END
-# 118 instructions, 5 R-regs
+# 119 instructions, 5 R-regs
 "
 }
 
@@ -1429,7 +1433,7 @@ Vector 15 [_LightColor0]
 Float 16 [_DistFade]
 Float 17 [_MinLight]
 "vs_3_0
-; 104 ALU
+; 105 ALU
 dcl_position o0
 dcl_color0 o1
 dcl_texcoord0 o2
@@ -1438,8 +1442,8 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c18, 0.00000000, 2.00000000, -1.00000000, -0.01000214
-def c19, 0.60000002, 0.50000000, 4.03944778, 0
+def c18, 0.00000000, 2.00000000, -1.00000000, 0.97998047
+def c19, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -1524,11 +1528,12 @@ add r1.xy, -r2, r1
 mad o5.xy, r1, c19.x, c19.y
 dp4 r1.y, r0, c9
 dp4 r1.x, r0, c8
-dp3 r0.x, r1, r1
-rsq r0.w, r0.x
-dp4 r0.y, c14, c14
-rsq r0.y, r0.y
-mul r0.xyz, r0.y, c14
+dp3 r0.w, r1, r1
+rsq r0.w, r0.w
+dp4 r1.w, c14, c14
+rsq r0.x, r1.w
+mul r0.xyz, r0.x, c14
+mul r0.xyz, r0, c18.w
 mul r1.xyz, r0.w, r1
 dp3_sat r0.w, r1, r0
 mov r0.z, c10.w
@@ -1536,9 +1541,9 @@ mov r0.x, c8.w
 mov r0.y, c9.w
 add r0.xyz, -r0, c13
 dp3 r0.x, r0, r0
-add r0.w, r0, c18
+add r0.w, r0, c19.z
 mul r0.y, r0.w, c15.w
-mul_sat r0.z, r0.y, c19
+mul_sat r0.z, r0.y, c19.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mov r0.y, c17.x
@@ -1576,12 +1581,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 79 instructions, 5 temp regs, 0 temp arrays:
-// ALU 60 float, 8 int, 0 uint
+// 80 instructions, 5 temp regs, 0 temp arrays:
+// ALU 61 float, 8 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfhpdcdadfmeipfhipfldeaocfmpjncnmabaaaaaaliamaaaaadaaaaaa
+eefiecedlenkcfgjbgedfanjfldojnejfdjgnkbgabaaaaaaoaamaaaaadaaaaaa
 cmaaaaaanmaaaaaamiabaaaaejfdeheokiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaijaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaipaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -1595,7 +1600,7 @@ adaaaaaaadaaaaaaadamaaaankaaaaaaacaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 amadaaaankaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaankaaaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaankaaaaaaafaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaaedepemepfcaafeef
-fiedepepfceeaaklfdeieefcoiakaaaaeaaaabaalkacaaaafjaaaaaeegiocaaa
+fiedepepfceeaaklfdeieefcbaalaaaaeaaaabaameacaaaafjaaaaaeegiocaaa
 aaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaa
 acaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafjaaaaaeegiocaaa
 aeaaaaaaafaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaa
@@ -1675,14 +1680,16 @@ egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
 bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
 aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
-abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahbcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaaabeaaaaapnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-dkiacaaaaaaaaaaaabaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaaaaaiaeaaaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaabaaaaaa
-pgipcaaaaaaaaaaaaeaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaa
-agaabaaaaaaaaaaaegiccaaaaeaaaaaaaeaaaaaadoaaaaab"
+abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaadiaaaaakhcaabaaa
+abaaaaaaegacbaaaabaaaaaaaceaaaaaeiobhkdpeiobhkdpeiobhkdpaaaaaaaa
+bacaaaahbcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaaaaaaaaah
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaibcaabaaaaaaaaaaa
+akaabaaaaaaaaaaadkiacaaaaaaaaaaaabaaaaaadicaaaahbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajocaabaaaaaaaaaaaagijcaaa
+aaaaaaaaabaaaaaapgipcaaaaaaaaaaaaeaaaaaadccaaaakhccabaaaagaaaaaa
+jgahbaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaaeaaaaaaaeaaaaaadoaaaaab
+"
 }
 
 SubProgram "gles " {
@@ -1763,7 +1770,7 @@ void main ()
   tmpvar_17 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_17;
   lowp vec3 tmpvar_18;
-  tmpvar_18 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_18 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_18;
   highp float tmpvar_19;
   tmpvar_19 = clamp (dot (normalize((_Object2World * tmpvar_16).xyz), lightDirection_2), 0.0, 1.0);
@@ -1829,7 +1836,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -1919,7 +1926,7 @@ void main ()
   tmpvar_17 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_17;
   lowp vec3 tmpvar_18;
-  tmpvar_18 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_18 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_18;
   highp float tmpvar_19;
   tmpvar_19 = clamp (dot (normalize((_Object2World * tmpvar_16).xyz), lightDirection_2), 0.0, 1.0);
@@ -1985,7 +1992,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -2234,7 +2241,7 @@ v2f vert( in appdata_t v ) {
     highp vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     #line 455
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
+    mediump vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
     mediump float NdotL = xll_saturate_f(dot( worldNormal, lightDirection));
     mediump float diff = ((NdotL - 0.01) / 0.99);
     mediump float lightIntensity = xll_saturate_f(((_LightColor0.w * diff) * 4.0));
@@ -2446,7 +2453,7 @@ lowp vec4 frag( in v2f i ) {
     #line 472
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.94 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 476
     color.xyz = (prev.xyz * i.baseLight);
@@ -2493,114 +2500,114 @@ Float 17 [_DistFade]
 Float 18 [_MinLight]
 "3.0-!!ARBvp1.0
 # 118 ALU
-PARAM c[20] = { { 0, 1, 2, 0.60000002 },
+PARAM c[21] = { { 0, 1, 2, 0.60000002 },
 		state.lightmodel.ambient,
 		state.matrix.modelview[0],
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..18],
-		{ 0.5, 0.010002136, 4.0394478, 0 } };
+		{ 0.5, 0.98000002, 0.010002136 },
+		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
 TEMP R3;
 TEMP R4;
-DP3 R1.x, c[4], c[4];
-RSQ R1.x, R1.x;
-MUL R3.xyz, R1.x, c[4];
-MOV R2.w, vertex.position;
-MOV R2.xyz, c[0].x;
-DP4 R4.x, R2, c[2];
-DP4 R4.y, R2, c[3];
+DP3 R2.x, c[4], c[4];
+RSQ R2.x, R2.x;
+MUL R3.xyz, R2.x, c[4];
+MOV R1.xyz, c[0].x;
 MOV R1.w, vertex.position;
-DP4 R4.w, R2, c[5];
-DP4 R4.z, R2, c[4];
+DP4 R4.x, R1, c[2];
+DP4 R4.y, R1, c[3];
+DP4 R4.w, R1, c[5];
+DP4 R4.z, R1, c[4];
 ADD R0, R4, vertex.position;
 DP4 result.position.w, R0, c[16];
 DP4 result.position.z, R0, c[15];
 DP4 result.position.y, R0, c[14];
 DP4 result.position.x, R0, c[13];
-MUL R0.xy, vertex.texcoord[0], c[0].z;
-ADD R4.zw, R0.xyxy, -c[0].y;
-MOV R1.y, R4.w;
-SLT R0.x, c[0], R4.w;
-SLT R0.y, R0, c[0];
-ADD R3.w, R0.x, -R0.y;
-SLT R0.z, c[0].x, -R3.x;
-SLT R0.w, -R3.x, c[0].x;
-ADD R0.w, R0.z, -R0;
-MUL R0.z, R4, R0.w;
-MUL R1.x, R0.w, R3.w;
-SLT R0.y, R0.z, c[0].x;
-SLT R0.x, c[0], R0.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.y, R3, R1.x;
-MUL R0.x, R0, R0.w;
-MAD R0.x, R3.z, R0, R0.y;
-MOV R0.yw, R1;
-DP4 R1.x, R0, c[2];
-DP4 R1.z, R0, c[3];
-ADD R0.xy, -R4, R1.xzzw;
-MUL R0.xy, R0, c[0].w;
-SLT R0.w, R3.z, c[0].x;
-SLT R0.z, c[0].x, R3;
+MUL R0.zw, vertex.texcoord[0].xyxy, c[0].z;
+SLT R0.x, c[0], -R3;
+SLT R0.y, -R3.x, c[0].x;
+ADD R2.x, R0, -R0.y;
+ADD R0.xy, R0.zwzw, -c[0].y;
+MUL R2.z, R0.x, R2.x;
+SLT R2.y, R2.z, c[0].x;
+SLT R0.w, R0, c[0].y;
+SLT R0.z, c[0].x, R0.y;
 ADD R0.z, R0, -R0.w;
-MUL R1.x, R4.z, R0.z;
-ADD result.texcoord[1].xy, R0, c[19].x;
-SLT R0.y, R1.x, c[0].x;
-SLT R0.x, c[0], R1;
-ADD R0.z, R0.x, -R0.y;
-SLT R0.y, -R3.z, c[0].x;
-SLT R0.x, c[0], -R3.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.w, R3, R0.x;
-MUL R0.z, R0.x, R0;
-MUL R0.w, R3.y, R0;
-MAD R1.z, R3.x, R0, R0.w;
-SLT R0.x, c[0], -R3.y;
-SLT R0.y, -R3, c[0].x;
-ADD R0.y, R0.x, -R0;
-MUL R0.x, R4.z, R0.y;
-SLT R0.w, R0.x, c[0].x;
+SLT R0.w, c[0].x, R2.z;
+ADD R0.w, R0, -R2.y;
+MUL R2.w, R2.x, R0.z;
+MUL R0.w, R0, R2.x;
+MUL R2.y, R3, R2.w;
+MAD R2.x, R3.z, R0.w, R2.y;
+MOV R0.w, vertex.position;
+MOV R2.yw, R0;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+SLT R2.w, -R3.y, c[0].x;
+SLT R2.z, c[0].x, -R3.y;
+ADD R3.w, R2.z, -R2;
+MUL R2.zw, R2.xyxy, c[0].w;
+MUL R2.x, R0, R3.w;
+ADD result.texcoord[1].xy, R2.zwzw, c[19].x;
+SLT R2.z, R2.x, c[0].x;
+SLT R2.y, c[0].x, R2.x;
+ADD R2.y, R2, -R2.z;
+MUL R2.z, R0, R3.w;
+MUL R2.y, R2, R3.w;
+MUL R3.w, R3.z, R2.z;
+MOV R2.zw, R0.xyyw;
+MAD R2.y, R3.x, R2, R3.w;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+MUL R2.xy, R2, c[0].w;
+SLT R2.w, R3.z, c[0].x;
+SLT R2.z, c[0].x, R3;
+ADD R3.w, R2.z, -R2;
+MUL R0.x, R0, R3.w;
+SLT R2.w, -R3.z, c[0].x;
+SLT R2.z, c[0].x, -R3;
+ADD R2.z, R2, -R2.w;
+MUL R3.w, R0.z, R2.z;
+SLT R2.w, R0.x, c[0].x;
 SLT R0.z, c[0].x, R0.x;
-ADD R0.z, R0, -R0.w;
-MUL R0.w, R3, R0.y;
-MUL R0.y, R0.z, R0;
-MUL R3.w, R3.z, R0;
-MOV R0.zw, R1.xyyw;
-MAD R0.y, R3.x, R0, R3.w;
-DP4 R4.z, R0, c[2];
-DP4 R4.w, R0, c[3];
-ADD R0.xy, -R4, R4.zwzw;
-MUL R0.xy, R0, c[0].w;
-DP4 R0.z, R1, c[2];
-DP4 R0.w, R1, c[3];
-ADD R0.zw, -R4.xyxy, R0;
-MUL R0.zw, R0, c[0].w;
-ADD result.texcoord[3].xy, R0.zwzw, c[19].x;
-ADD result.texcoord[2].xy, R0, c[19].x;
+ADD R0.z, R0, -R2.w;
+MUL R2.w, R3.y, R3;
+MUL R0.z, R2, R0;
+MAD R0.z, R3.x, R0, R2.w;
+DP4 R2.z, R0, c[2];
+DP4 R2.w, R0, c[3];
+ADD R0.xy, -R4, R2.zwzw;
+MUL R4.xy, R0, c[0].w;
 MOV R0.xyz, vertex.normal;
 MOV R0.w, c[0].x;
-DP4 R1.z, R0, c[11];
-DP4 R1.y, R0, c[10];
-DP4 R1.x, R0, c[9];
-DP3 R0.x, R1, R1;
-RSQ R0.w, R0.x;
-DP4 R0.y, c[7], c[7];
+ADD result.texcoord[2].xy, R2, c[19].x;
+DP4 R2.z, R0, c[11];
+DP4 R2.x, R0, c[9];
+DP4 R2.y, R0, c[10];
+DP3 R0.y, R2, R2;
 RSQ R0.y, R0.y;
-MUL R1.xyz, R0.w, R1;
-MUL R0.xyz, R0.y, c[7];
-DP3 R0.w, R1, R0;
+DP4 R0.x, c[7], c[7];
+MUL R2.xyz, R0.y, R2;
+RSQ R0.x, R0.x;
+MUL R0.xyz, R0.x, c[7];
+MUL R0.xyz, R0, R2;
+DP3 R0.w, R0, c[19].y;
+DP4 R0.z, R1, c[11];
+DP4 R0.x, R1, c[9];
+DP4 R0.y, R1, c[10];
 MIN R1.x, R0.w, c[0].y;
-MAX R1.x, R1, c[0];
-ADD R1.x, R1, -c[19].y;
-DP4 R0.z, R2, c[11];
-DP4 R0.x, R2, c[9];
-DP4 R0.y, R2, c[10];
 ADD R0.xyz, -R0, c[6];
 DP3 R0.w, R0, R0;
 RSQ R0.w, R0.w;
 MUL result.texcoord[4].xyz, R0.w, R0;
+MAX R1.x, R1, c[0];
+ADD R1.x, R1, -c[19].z;
 MUL R0.w, R1.x, c[8];
 MOV R1.xyz, c[8];
 MOV R0.z, c[11].w;
@@ -2608,7 +2615,7 @@ MOV R0.x, c[9].w;
 MOV R0.y, c[10].w;
 ADD R0.xyz, -R0, c[6];
 DP3 R0.x, R0, R0;
-MUL R0.w, R0, c[19].z;
+MUL R0.w, R0, c[20].x;
 MIN R0.y, R0.w, c[0];
 RSQ R0.x, R0.x;
 RCP R0.x, R0.x;
@@ -2619,6 +2626,7 @@ MAX R0.y, R0, c[0].x;
 ADD R1.xyz, R1, c[18].x;
 MAD R1.xyz, R1, R0.y, c[1];
 MIN R1.xyz, R1, c[0].y;
+ADD result.texcoord[3].xy, R4, c[19].x;
 MAX result.texcoord[5].xyz, R1, c[0].x;
 MUL result.color.w, vertex.color, R0.x;
 MOV result.color.xyz, vertex.color;
@@ -2653,107 +2661,107 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c18, 0.00000000, 2.00000000, -1.00000000, -0.01000214
-def c19, 0.60000002, 0.50000000, 4.03944778, 0
+def c18, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_texcoord0 v3
-mov r1.xyz, c18.x
-mov r1.w, v0
-dp4 r2.x, r1, c0
-dp4 r2.y, r1, c1
-dp4 r2.w, r1, c3
-dp4 r2.z, r1, c2
-add r0, r2, v0
-dp3 r2.z, c2, c2
-rsq r2.z, r2.z
-mul r3.xyz, r2.z, c2
-mad r2.zw, v3.xyxy, c18.y, c18.z
-mov r4.y, r2.w
+dp3 r1.x, c2, c2
+rsq r1.x, r1.x
+mul r3.xyz, r1.x, c2
+mad r1.xy, v3, c18.y, c18.z
+mov r2.xyz, c18.x
+mov r2.w, v0
+dp4 r5.x, r2, c0
+dp4 r5.y, r2, c1
+dp4 r5.w, r2, c3
+dp4 r5.z, r2, c2
+add r0, r5, v0
 dp4 o0.w, r0, c7
 dp4 o0.z, r0, c6
 dp4 o0.y, r0, c5
 dp4 o0.x, r0, c4
-mov r4.w, v0
-slt r0.z, r2.w, -r2.w
+slt r0.z, r1.y, -r1.y
 slt r0.y, -r3.x, r3.x
 slt r0.x, r3, -r3
 sub r0.x, r0, r0.y
-slt r0.y, -r2.w, r2.w
-sub r3.w, r0.y, r0.z
-mul r0.z, r2, r0.x
-mul r4.x, r0, r3.w
+slt r0.y, -r1, r1
+sub r1.z, r0.y, r0
+mul r0.z, r1.x, r0.x
+mul r1.w, r0.x, r1.z
 slt r0.w, r0.z, -r0.z
 slt r0.y, -r0.z, r0.z
 sub r0.y, r0, r0.w
-mul r0.w, r3.y, r4.x
+mul r0.w, r3.y, r1
 mul r0.x, r0.y, r0
 mad r0.x, r3.z, r0, r0.w
-mov r0.yw, r4
-dp4 r5.y, r0, c1
-dp4 r5.x, r0, c0
+mov r1.w, v0
+mov r0.yw, r1
+dp4 r4.y, r0, c1
 slt r4.x, -r3.y, r3.y
-slt r2.w, r3.y, -r3.y
-sub r2.w, r2, r4.x
-mul r0.x, r2.z, r2.w
-add r4.xz, -r2.xyyw, r5.xyyw
+slt r3.w, r3.y, -r3.y
+sub r3.w, r3, r4.x
+dp4 r4.x, r0, c0
+mul r0.x, r1, r3.w
+add r4.xy, -r5, r4
 slt r0.z, r0.x, -r0.x
 slt r0.y, -r0.x, r0.x
 sub r0.y, r0, r0.z
-mul r0.z, r3.w, r2.w
-mul r0.y, r0, r2.w
-mul r2.w, r3.z, r0.z
-mov r0.zw, r4.xyyw
-mad r0.y, r3.x, r0, r2.w
-dp4 r5.x, r0, c0
-dp4 r5.y, r0, c1
-add r0.xy, -r2, r5
+mul r0.z, r1, r3.w
+mul r0.y, r0, r3.w
+mul r3.w, r3.z, r0.z
+mov r0.zw, r1.xyyw
+mad r0.y, r3.x, r0, r3.w
+dp4 r4.z, r0, c0
+dp4 r4.w, r0, c1
+add r0.xy, -r5, r4.zwzw
 mad o4.xy, r0, c19.x, c19.y
-dp4 r0.z, r1, c10
-dp4 r0.x, r1, c8
-dp4 r0.y, r1, c9
-add r0.xyz, -r0, c13
-slt r1.x, -r3.z, r3.z
-slt r0.w, r3.z, -r3.z
-sub r1.y, r1.x, r0.w
-sub r0.w, r0, r1.x
-mad o3.xy, r4.xzzw, c19.x, c19.y
-mul r4.x, r2.z, r1.y
-mul r1.z, r3.w, r0.w
-slt r1.y, r4.x, -r4.x
-slt r1.x, -r4, r4
-sub r1.x, r1, r1.y
-mul r0.w, r0, r1.x
-mul r1.y, r3, r1.z
-mad r4.z, r3.x, r0.w, r1.y
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o6.xyz, r0.w, r0
+slt r0.y, -r3.z, r3.z
+slt r0.x, r3.z, -r3.z
+sub r0.z, r0.y, r0.x
+mul r1.x, r1, r0.z
+sub r0.x, r0, r0.y
+mul r0.w, r1.z, r0.x
+slt r0.z, r1.x, -r1.x
+slt r0.y, -r1.x, r1.x
+sub r0.y, r0, r0.z
+mul r0.z, r3.y, r0.w
+mul r0.x, r0, r0.y
+mad r1.z, r3.x, r0.x, r0
 mov r0.xyz, v2
 mov r0.w, c18.x
-dp4 r1.z, r0, c10
-dp4 r1.x, r4, c0
-dp4 r1.y, r4, c1
-add r1.xy, -r2, r1
-mad o5.xy, r1, c19.x, c19.y
-dp4 r1.y, r0, c9
-dp4 r1.x, r0, c8
-dp3 r0.x, r1, r1
-rsq r0.w, r0.x
-dp4 r0.y, c14, c14
-rsq r0.y, r0.y
-mul r0.xyz, r0.y, c14
-mul r1.xyz, r0.w, r1
-dp3_sat r0.w, r1, r0
+mad o3.xy, r4, c19.x, c19.y
+dp4 r4.z, r0, c10
+dp4 r4.x, r0, c8
+dp4 r4.y, r0, c9
+dp3 r0.z, r4, r4
+dp4 r0.x, r1, c0
+dp4 r0.y, r1, c1
+add r0.xy, -r5, r0
+dp4 r1.w, c14, c14
+dp4 r1.z, r2, c10
+dp4 r1.x, r2, c8
+dp4 r1.y, r2, c9
+add r1.xyz, -r1, c13
+dp3 r0.w, r1, r1
+rsq r0.w, r0.w
+rsq r1.w, r1.w
+mul o6.xyz, r0.w, r1
+rsq r0.z, r0.z
+mad o5.xy, r0, c19.x, c19.y
+mul r0.xyz, r0.z, r4
+mul r2.xyz, r1.w, c14
+mul r0.xyz, r2, r0
+dp3_sat r0.w, r0, c18.w
 mov r0.z, c10.w
 mov r0.x, c8.w
 mov r0.y, c9.w
 add r0.xyz, -r0, c13
 dp3 r0.x, r0, r0
-add r0.w, r0, c18
+add r0.w, r0, c19.z
 mul r0.y, r0.w, c15.w
-mul_sat r0.z, r0.y, c19
+mul_sat r0.z, r0.y, c19.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mov r0.y, c17.x
@@ -2791,12 +2799,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 79 instructions, 5 temp regs, 0 temp arrays:
-// ALU 60 float, 8 int, 0 uint
+// 80 instructions, 5 temp regs, 0 temp arrays:
+// ALU 61 float, 8 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfdmdljoodegcpkjoedbklkpdohjpfeocabaaaaaanaamaaaaadaaaaaa
+eefiecedaedjbdgpdndpleaeoajhkjjkclpofcpcabaaaaaapiamaaaaadaaaaaa
 cmaaaaaanmaaaaaaoaabaaaaejfdeheokiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaijaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaipaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -2811,7 +2819,7 @@ amadaaaapcaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaapcaaaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaapcaaaaaaafaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaapcaaaaaaagaaaaaaaaaaaaaaadaaaaaaahaaaaaa
 apapaaaafdfgfpfaepfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaakl
-fdeieefcoiakaaaaeaaaabaalkacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaa
+fdeieefcbaalaaaaeaaaabaameacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaabaaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaa
 fpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaa
@@ -2891,14 +2899,15 @@ egacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
 hcaabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajicaabaaa
 aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
 icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaa
-aaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaa
-afaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaa
-aiaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaa
-egiccaaaaeaaaaaaaeaaaaaadoaaaaab"
+aaaaaaaaegiccaaaacaaaaaaaaaaaaaadiaaaaakhcaabaaaabaaaaaaegacbaaa
+abaaaaaaaceaaaaaeiobhkdpeiobhkdpeiobhkdpaaaaaaaabacaaaahbcaabaaa
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaafaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaafaaaaaa
+pgipcaaaaaaaaaaaaiaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaa
+agaabaaaaaaaaaaaegiccaaaaeaaaaaaaeaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -2981,7 +2990,7 @@ void main ()
   tmpvar_18 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_19 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_19;
   highp float tmpvar_20;
   tmpvar_20 = clamp (dot (normalize((_Object2World * tmpvar_17).xyz), lightDirection_2), 0.0, 1.0);
@@ -3048,7 +3057,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -3140,7 +3149,7 @@ void main ()
   tmpvar_18 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_19 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_19;
   highp float tmpvar_20;
   tmpvar_20 = clamp (dot (normalize((_Object2World * tmpvar_17).xyz), lightDirection_2), 0.0, 1.0);
@@ -3207,7 +3216,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -3461,7 +3470,7 @@ v2f vert( in appdata_t v ) {
     highp vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     #line 467
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
+    mediump vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
     mediump float NdotL = xll_saturate_f(dot( worldNormal, lightDirection));
     mediump float diff = ((NdotL - 0.01) / 0.99);
     mediump float lightIntensity = xll_saturate_f(((_LightColor0.w * diff) * 4.0));
@@ -3680,7 +3689,7 @@ lowp vec4 frag( in v2f i ) {
     #line 484
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.94 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 488
     color.xyz = (prev.xyz * i.baseLight);
@@ -3729,114 +3738,114 @@ Float 17 [_DistFade]
 Float 18 [_MinLight]
 "3.0-!!ARBvp1.0
 # 118 ALU
-PARAM c[20] = { { 0, 1, 2, 0.60000002 },
+PARAM c[21] = { { 0, 1, 2, 0.60000002 },
 		state.lightmodel.ambient,
 		state.matrix.modelview[0],
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..18],
-		{ 0.5, 0.010002136, 4.0394478, 0 } };
+		{ 0.5, 0.98000002, 0.010002136 },
+		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
 TEMP R3;
 TEMP R4;
-DP3 R1.x, c[4], c[4];
-RSQ R1.x, R1.x;
-MUL R3.xyz, R1.x, c[4];
-MOV R2.w, vertex.position;
-MOV R2.xyz, c[0].x;
-DP4 R4.x, R2, c[2];
-DP4 R4.y, R2, c[3];
+DP3 R2.x, c[4], c[4];
+RSQ R2.x, R2.x;
+MUL R3.xyz, R2.x, c[4];
+MOV R1.xyz, c[0].x;
 MOV R1.w, vertex.position;
-DP4 R4.w, R2, c[5];
-DP4 R4.z, R2, c[4];
+DP4 R4.x, R1, c[2];
+DP4 R4.y, R1, c[3];
+DP4 R4.w, R1, c[5];
+DP4 R4.z, R1, c[4];
 ADD R0, R4, vertex.position;
 DP4 result.position.w, R0, c[16];
 DP4 result.position.z, R0, c[15];
 DP4 result.position.y, R0, c[14];
 DP4 result.position.x, R0, c[13];
-MUL R0.xy, vertex.texcoord[0], c[0].z;
-ADD R4.zw, R0.xyxy, -c[0].y;
-MOV R1.y, R4.w;
-SLT R0.x, c[0], R4.w;
-SLT R0.y, R0, c[0];
-ADD R3.w, R0.x, -R0.y;
-SLT R0.z, c[0].x, -R3.x;
-SLT R0.w, -R3.x, c[0].x;
-ADD R0.w, R0.z, -R0;
-MUL R0.z, R4, R0.w;
-MUL R1.x, R0.w, R3.w;
-SLT R0.y, R0.z, c[0].x;
-SLT R0.x, c[0], R0.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.y, R3, R1.x;
-MUL R0.x, R0, R0.w;
-MAD R0.x, R3.z, R0, R0.y;
-MOV R0.yw, R1;
-DP4 R1.x, R0, c[2];
-DP4 R1.z, R0, c[3];
-ADD R0.xy, -R4, R1.xzzw;
-MUL R0.xy, R0, c[0].w;
-SLT R0.w, R3.z, c[0].x;
-SLT R0.z, c[0].x, R3;
+MUL R0.zw, vertex.texcoord[0].xyxy, c[0].z;
+SLT R0.x, c[0], -R3;
+SLT R0.y, -R3.x, c[0].x;
+ADD R2.x, R0, -R0.y;
+ADD R0.xy, R0.zwzw, -c[0].y;
+MUL R2.z, R0.x, R2.x;
+SLT R2.y, R2.z, c[0].x;
+SLT R0.w, R0, c[0].y;
+SLT R0.z, c[0].x, R0.y;
 ADD R0.z, R0, -R0.w;
-MUL R1.x, R4.z, R0.z;
-ADD result.texcoord[1].xy, R0, c[19].x;
-SLT R0.y, R1.x, c[0].x;
-SLT R0.x, c[0], R1;
-ADD R0.z, R0.x, -R0.y;
-SLT R0.y, -R3.z, c[0].x;
-SLT R0.x, c[0], -R3.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.w, R3, R0.x;
-MUL R0.z, R0.x, R0;
-MUL R0.w, R3.y, R0;
-MAD R1.z, R3.x, R0, R0.w;
-SLT R0.x, c[0], -R3.y;
-SLT R0.y, -R3, c[0].x;
-ADD R0.y, R0.x, -R0;
-MUL R0.x, R4.z, R0.y;
-SLT R0.w, R0.x, c[0].x;
+SLT R0.w, c[0].x, R2.z;
+ADD R0.w, R0, -R2.y;
+MUL R2.w, R2.x, R0.z;
+MUL R0.w, R0, R2.x;
+MUL R2.y, R3, R2.w;
+MAD R2.x, R3.z, R0.w, R2.y;
+MOV R0.w, vertex.position;
+MOV R2.yw, R0;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+SLT R2.w, -R3.y, c[0].x;
+SLT R2.z, c[0].x, -R3.y;
+ADD R3.w, R2.z, -R2;
+MUL R2.zw, R2.xyxy, c[0].w;
+MUL R2.x, R0, R3.w;
+ADD result.texcoord[1].xy, R2.zwzw, c[19].x;
+SLT R2.z, R2.x, c[0].x;
+SLT R2.y, c[0].x, R2.x;
+ADD R2.y, R2, -R2.z;
+MUL R2.z, R0, R3.w;
+MUL R2.y, R2, R3.w;
+MUL R3.w, R3.z, R2.z;
+MOV R2.zw, R0.xyyw;
+MAD R2.y, R3.x, R2, R3.w;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+MUL R2.xy, R2, c[0].w;
+SLT R2.w, R3.z, c[0].x;
+SLT R2.z, c[0].x, R3;
+ADD R3.w, R2.z, -R2;
+MUL R0.x, R0, R3.w;
+SLT R2.w, -R3.z, c[0].x;
+SLT R2.z, c[0].x, -R3;
+ADD R2.z, R2, -R2.w;
+MUL R3.w, R0.z, R2.z;
+SLT R2.w, R0.x, c[0].x;
 SLT R0.z, c[0].x, R0.x;
-ADD R0.z, R0, -R0.w;
-MUL R0.w, R3, R0.y;
-MUL R0.y, R0.z, R0;
-MUL R3.w, R3.z, R0;
-MOV R0.zw, R1.xyyw;
-MAD R0.y, R3.x, R0, R3.w;
-DP4 R4.z, R0, c[2];
-DP4 R4.w, R0, c[3];
-ADD R0.xy, -R4, R4.zwzw;
-MUL R0.xy, R0, c[0].w;
-DP4 R0.z, R1, c[2];
-DP4 R0.w, R1, c[3];
-ADD R0.zw, -R4.xyxy, R0;
-MUL R0.zw, R0, c[0].w;
-ADD result.texcoord[3].xy, R0.zwzw, c[19].x;
-ADD result.texcoord[2].xy, R0, c[19].x;
+ADD R0.z, R0, -R2.w;
+MUL R2.w, R3.y, R3;
+MUL R0.z, R2, R0;
+MAD R0.z, R3.x, R0, R2.w;
+DP4 R2.z, R0, c[2];
+DP4 R2.w, R0, c[3];
+ADD R0.xy, -R4, R2.zwzw;
+MUL R4.xy, R0, c[0].w;
 MOV R0.xyz, vertex.normal;
 MOV R0.w, c[0].x;
-DP4 R1.z, R0, c[11];
-DP4 R1.y, R0, c[10];
-DP4 R1.x, R0, c[9];
-DP3 R0.x, R1, R1;
-RSQ R0.w, R0.x;
-DP4 R0.y, c[7], c[7];
+ADD result.texcoord[2].xy, R2, c[19].x;
+DP4 R2.z, R0, c[11];
+DP4 R2.x, R0, c[9];
+DP4 R2.y, R0, c[10];
+DP3 R0.y, R2, R2;
 RSQ R0.y, R0.y;
-MUL R1.xyz, R0.w, R1;
-MUL R0.xyz, R0.y, c[7];
-DP3 R0.w, R1, R0;
+DP4 R0.x, c[7], c[7];
+MUL R2.xyz, R0.y, R2;
+RSQ R0.x, R0.x;
+MUL R0.xyz, R0.x, c[7];
+MUL R0.xyz, R0, R2;
+DP3 R0.w, R0, c[19].y;
+DP4 R0.z, R1, c[11];
+DP4 R0.x, R1, c[9];
+DP4 R0.y, R1, c[10];
 MIN R1.x, R0.w, c[0].y;
-MAX R1.x, R1, c[0];
-ADD R1.x, R1, -c[19].y;
-DP4 R0.z, R2, c[11];
-DP4 R0.x, R2, c[9];
-DP4 R0.y, R2, c[10];
 ADD R0.xyz, -R0, c[6];
 DP3 R0.w, R0, R0;
 RSQ R0.w, R0.w;
 MUL result.texcoord[4].xyz, R0.w, R0;
+MAX R1.x, R1, c[0];
+ADD R1.x, R1, -c[19].z;
 MUL R0.w, R1.x, c[8];
 MOV R1.xyz, c[8];
 MOV R0.z, c[11].w;
@@ -3844,7 +3853,7 @@ MOV R0.x, c[9].w;
 MOV R0.y, c[10].w;
 ADD R0.xyz, -R0, c[6];
 DP3 R0.x, R0, R0;
-MUL R0.w, R0, c[19].z;
+MUL R0.w, R0, c[20].x;
 MIN R0.y, R0.w, c[0];
 RSQ R0.x, R0.x;
 RCP R0.x, R0.x;
@@ -3855,6 +3864,7 @@ MAX R0.y, R0, c[0].x;
 ADD R1.xyz, R1, c[18].x;
 MAD R1.xyz, R1, R0.y, c[1];
 MIN R1.xyz, R1, c[0].y;
+ADD result.texcoord[3].xy, R4, c[19].x;
 MAX result.texcoord[5].xyz, R1, c[0].x;
 MUL result.color.w, vertex.color, R0.x;
 MOV result.color.xyz, vertex.color;
@@ -3889,107 +3899,107 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c18, 0.00000000, 2.00000000, -1.00000000, -0.01000214
-def c19, 0.60000002, 0.50000000, 4.03944778, 0
+def c18, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_texcoord0 v3
-mov r1.xyz, c18.x
-mov r1.w, v0
-dp4 r2.x, r1, c0
-dp4 r2.y, r1, c1
-dp4 r2.w, r1, c3
-dp4 r2.z, r1, c2
-add r0, r2, v0
-dp3 r2.z, c2, c2
-rsq r2.z, r2.z
-mul r3.xyz, r2.z, c2
-mad r2.zw, v3.xyxy, c18.y, c18.z
-mov r4.y, r2.w
+dp3 r1.x, c2, c2
+rsq r1.x, r1.x
+mul r3.xyz, r1.x, c2
+mad r1.xy, v3, c18.y, c18.z
+mov r2.xyz, c18.x
+mov r2.w, v0
+dp4 r5.x, r2, c0
+dp4 r5.y, r2, c1
+dp4 r5.w, r2, c3
+dp4 r5.z, r2, c2
+add r0, r5, v0
 dp4 o0.w, r0, c7
 dp4 o0.z, r0, c6
 dp4 o0.y, r0, c5
 dp4 o0.x, r0, c4
-mov r4.w, v0
-slt r0.z, r2.w, -r2.w
+slt r0.z, r1.y, -r1.y
 slt r0.y, -r3.x, r3.x
 slt r0.x, r3, -r3
 sub r0.x, r0, r0.y
-slt r0.y, -r2.w, r2.w
-sub r3.w, r0.y, r0.z
-mul r0.z, r2, r0.x
-mul r4.x, r0, r3.w
+slt r0.y, -r1, r1
+sub r1.z, r0.y, r0
+mul r0.z, r1.x, r0.x
+mul r1.w, r0.x, r1.z
 slt r0.w, r0.z, -r0.z
 slt r0.y, -r0.z, r0.z
 sub r0.y, r0, r0.w
-mul r0.w, r3.y, r4.x
+mul r0.w, r3.y, r1
 mul r0.x, r0.y, r0
 mad r0.x, r3.z, r0, r0.w
-mov r0.yw, r4
-dp4 r5.y, r0, c1
-dp4 r5.x, r0, c0
+mov r1.w, v0
+mov r0.yw, r1
+dp4 r4.y, r0, c1
 slt r4.x, -r3.y, r3.y
-slt r2.w, r3.y, -r3.y
-sub r2.w, r2, r4.x
-mul r0.x, r2.z, r2.w
-add r4.xz, -r2.xyyw, r5.xyyw
+slt r3.w, r3.y, -r3.y
+sub r3.w, r3, r4.x
+dp4 r4.x, r0, c0
+mul r0.x, r1, r3.w
+add r4.xy, -r5, r4
 slt r0.z, r0.x, -r0.x
 slt r0.y, -r0.x, r0.x
 sub r0.y, r0, r0.z
-mul r0.z, r3.w, r2.w
-mul r0.y, r0, r2.w
-mul r2.w, r3.z, r0.z
-mov r0.zw, r4.xyyw
-mad r0.y, r3.x, r0, r2.w
-dp4 r5.x, r0, c0
-dp4 r5.y, r0, c1
-add r0.xy, -r2, r5
+mul r0.z, r1, r3.w
+mul r0.y, r0, r3.w
+mul r3.w, r3.z, r0.z
+mov r0.zw, r1.xyyw
+mad r0.y, r3.x, r0, r3.w
+dp4 r4.z, r0, c0
+dp4 r4.w, r0, c1
+add r0.xy, -r5, r4.zwzw
 mad o4.xy, r0, c19.x, c19.y
-dp4 r0.z, r1, c10
-dp4 r0.x, r1, c8
-dp4 r0.y, r1, c9
-add r0.xyz, -r0, c13
-slt r1.x, -r3.z, r3.z
-slt r0.w, r3.z, -r3.z
-sub r1.y, r1.x, r0.w
-sub r0.w, r0, r1.x
-mad o3.xy, r4.xzzw, c19.x, c19.y
-mul r4.x, r2.z, r1.y
-mul r1.z, r3.w, r0.w
-slt r1.y, r4.x, -r4.x
-slt r1.x, -r4, r4
-sub r1.x, r1, r1.y
-mul r0.w, r0, r1.x
-mul r1.y, r3, r1.z
-mad r4.z, r3.x, r0.w, r1.y
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o6.xyz, r0.w, r0
+slt r0.y, -r3.z, r3.z
+slt r0.x, r3.z, -r3.z
+sub r0.z, r0.y, r0.x
+mul r1.x, r1, r0.z
+sub r0.x, r0, r0.y
+mul r0.w, r1.z, r0.x
+slt r0.z, r1.x, -r1.x
+slt r0.y, -r1.x, r1.x
+sub r0.y, r0, r0.z
+mul r0.z, r3.y, r0.w
+mul r0.x, r0, r0.y
+mad r1.z, r3.x, r0.x, r0
 mov r0.xyz, v2
 mov r0.w, c18.x
-dp4 r1.z, r0, c10
-dp4 r1.x, r4, c0
-dp4 r1.y, r4, c1
-add r1.xy, -r2, r1
-mad o5.xy, r1, c19.x, c19.y
-dp4 r1.y, r0, c9
-dp4 r1.x, r0, c8
-dp3 r0.x, r1, r1
-rsq r0.w, r0.x
-dp4 r0.y, c14, c14
-rsq r0.y, r0.y
-mul r0.xyz, r0.y, c14
-mul r1.xyz, r0.w, r1
-dp3_sat r0.w, r1, r0
+mad o3.xy, r4, c19.x, c19.y
+dp4 r4.z, r0, c10
+dp4 r4.x, r0, c8
+dp4 r4.y, r0, c9
+dp3 r0.z, r4, r4
+dp4 r0.x, r1, c0
+dp4 r0.y, r1, c1
+add r0.xy, -r5, r0
+dp4 r1.w, c14, c14
+dp4 r1.z, r2, c10
+dp4 r1.x, r2, c8
+dp4 r1.y, r2, c9
+add r1.xyz, -r1, c13
+dp3 r0.w, r1, r1
+rsq r0.w, r0.w
+rsq r1.w, r1.w
+mul o6.xyz, r0.w, r1
+rsq r0.z, r0.z
+mad o5.xy, r0, c19.x, c19.y
+mul r0.xyz, r0.z, r4
+mul r2.xyz, r1.w, c14
+mul r0.xyz, r2, r0
+dp3_sat r0.w, r0, c18.w
 mov r0.z, c10.w
 mov r0.x, c8.w
 mov r0.y, c9.w
 add r0.xyz, -r0, c13
 dp3 r0.x, r0, r0
-add r0.w, r0, c18
+add r0.w, r0, c19.z
 mul r0.y, r0.w, c15.w
-mul_sat r0.z, r0.y, c19
+mul_sat r0.z, r0.y, c19.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mov r0.y, c17.x
@@ -4027,12 +4037,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 79 instructions, 5 temp regs, 0 temp arrays:
-// ALU 60 float, 8 int, 0 uint
+// 80 instructions, 5 temp regs, 0 temp arrays:
+// ALU 61 float, 8 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedhafffomhdbcdbgaahcljldncldmaaadnabaaaaaanaamaaaaadaaaaaa
+eefiecedlciegmadoaeidnhhnnnigknampjkojhoabaaaaaapiamaaaaadaaaaaa
 cmaaaaaanmaaaaaaoaabaaaaejfdeheokiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaijaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaipaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -4047,7 +4057,7 @@ amadaaaapcaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaapcaaaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaapcaaaaaaafaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaapcaaaaaaagaaaaaaaaaaaaaaadaaaaaaahaaaaaa
 ahapaaaafdfgfpfaepfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaakl
-fdeieefcoiakaaaaeaaaabaalkacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaa
+fdeieefcbaalaaaaeaaaabaameacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaabaaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaa
 fpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaa
@@ -4127,14 +4137,15 @@ egacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
 hcaabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajicaabaaa
 aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
 icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaa
-aaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaa
-afaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaa
-aiaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaa
-egiccaaaaeaaaaaaaeaaaaaadoaaaaab"
+aaaaaaaaegiccaaaacaaaaaaaaaaaaaadiaaaaakhcaabaaaabaaaaaaegacbaaa
+abaaaaaaaceaaaaaeiobhkdpeiobhkdpeiobhkdpaaaaaaaabacaaaahbcaabaaa
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaafaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaafaaaaaa
+pgipcaaaaaaaaaaaaiaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaa
+agaabaaaaaaaaaaaegiccaaaaeaaaaaaaeaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -4217,7 +4228,7 @@ void main ()
   tmpvar_18 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_19 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_19;
   highp float tmpvar_20;
   tmpvar_20 = clamp (dot (normalize((_Object2World * tmpvar_17).xyz), lightDirection_2), 0.0, 1.0);
@@ -4284,7 +4295,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -4376,7 +4387,7 @@ void main ()
   tmpvar_18 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_18;
   highp vec3 tmpvar_19;
-  tmpvar_19 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_19 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_19;
   highp float tmpvar_20;
   tmpvar_20 = clamp (dot (normalize((_Object2World * tmpvar_17).xyz), lightDirection_2), 0.0, 1.0);
@@ -4443,7 +4454,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -4697,7 +4708,7 @@ v2f vert( in appdata_t v ) {
     highp vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     #line 459
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
+    mediump vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
     mediump float NdotL = xll_saturate_f(dot( worldNormal, lightDirection));
     mediump float diff = ((NdotL - 0.01) / 0.99);
     mediump float lightIntensity = xll_saturate_f(((_LightColor0.w * diff) * 4.0));
@@ -4916,7 +4927,7 @@ lowp vec4 frag( in v2f i ) {
     #line 476
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.94 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 480
     color.xyz = (prev.xyz * i.baseLight);
@@ -4964,14 +4975,15 @@ Vector 8 [_LightColor0]
 Float 17 [_DistFade]
 Float 18 [_MinLight]
 "3.0-!!ARBvp1.0
-# 118 ALU
-PARAM c[20] = { { 0, 1, 2, 0.60000002 },
+# 119 ALU
+PARAM c[21] = { { 0, 1, 2, 0.60000002 },
 		state.lightmodel.ambient,
 		state.matrix.modelview[0],
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..18],
-		{ 0.5, 0.010002136, 4.0394478, 0 } };
+		{ 0.5, 0.97998047, 0.010002136 },
+		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
@@ -4982,9 +4994,9 @@ RSQ R1.x, R1.x;
 MUL R3.xyz, R1.x, c[4];
 MOV R2.w, vertex.position;
 MOV R2.xyz, c[0].x;
+MOV R1.w, vertex.position;
 DP4 R4.x, R2, c[2];
 DP4 R4.y, R2, c[3];
-MOV R1.w, vertex.position;
 DP4 R4.w, R2, c[5];
 DP4 R4.z, R2, c[4];
 ADD R0, R4, vertex.position;
@@ -5056,16 +5068,17 @@ MOV R0.w, c[0].x;
 DP4 R1.z, R0, c[11];
 DP4 R1.y, R0, c[10];
 DP4 R1.x, R0, c[9];
-DP3 R0.x, R1, R1;
-RSQ R0.w, R0.x;
-DP4 R0.y, c[7], c[7];
-RSQ R0.y, R0.y;
+DP3 R0.w, R1, R1;
+RSQ R0.w, R0.w;
+DP4 R1.w, c[7], c[7];
+RSQ R0.x, R1.w;
+MUL R0.xyz, R0.x, c[7];
+MUL R0.xyz, R0, c[19].y;
 MUL R1.xyz, R0.w, R1;
-MUL R0.xyz, R0.y, c[7];
 DP3 R0.w, R1, R0;
 MIN R1.x, R0.w, c[0].y;
 MAX R1.x, R1, c[0];
-ADD R1.x, R1, -c[19].y;
+ADD R1.x, R1, -c[19].z;
 DP4 R0.z, R2, c[11];
 DP4 R0.x, R2, c[9];
 DP4 R0.y, R2, c[10];
@@ -5080,7 +5093,7 @@ MOV R0.x, c[9].w;
 MOV R0.y, c[10].w;
 ADD R0.xyz, -R0, c[6];
 DP3 R0.x, R0, R0;
-MUL R0.w, R0, c[19].z;
+MUL R0.w, R0, c[20].x;
 MIN R0.y, R0.w, c[0];
 RSQ R0.x, R0.x;
 RCP R0.x, R0.x;
@@ -5096,7 +5109,7 @@ MUL result.color.w, vertex.color, R0.x;
 MOV result.color.xyz, vertex.color;
 ABS result.texcoord[0].xyz, R3;
 END
-# 118 instructions, 5 R-regs
+# 119 instructions, 5 R-regs
 "
 }
 
@@ -5116,7 +5129,7 @@ Vector 15 [_LightColor0]
 Float 16 [_DistFade]
 Float 17 [_MinLight]
 "vs_3_0
-; 104 ALU
+; 105 ALU
 dcl_position o0
 dcl_color0 o1
 dcl_texcoord0 o2
@@ -5125,8 +5138,8 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c18, 0.00000000, 2.00000000, -1.00000000, -0.01000214
-def c19, 0.60000002, 0.50000000, 4.03944778, 0
+def c18, 0.00000000, 2.00000000, -1.00000000, 0.97998047
+def c19, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -5211,11 +5224,12 @@ add r1.xy, -r2, r1
 mad o5.xy, r1, c19.x, c19.y
 dp4 r1.y, r0, c9
 dp4 r1.x, r0, c8
-dp3 r0.x, r1, r1
-rsq r0.w, r0.x
-dp4 r0.y, c14, c14
-rsq r0.y, r0.y
-mul r0.xyz, r0.y, c14
+dp3 r0.w, r1, r1
+rsq r0.w, r0.w
+dp4 r1.w, c14, c14
+rsq r0.x, r1.w
+mul r0.xyz, r0.x, c14
+mul r0.xyz, r0, c18.w
 mul r1.xyz, r0.w, r1
 dp3_sat r0.w, r1, r0
 mov r0.z, c10.w
@@ -5223,9 +5237,9 @@ mov r0.x, c8.w
 mov r0.y, c9.w
 add r0.xyz, -r0, c13
 dp3 r0.x, r0, r0
-add r0.w, r0, c18
+add r0.w, r0, c19.z
 mul r0.y, r0.w, c15.w
-mul_sat r0.z, r0.y, c19
+mul_sat r0.z, r0.y, c19.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mov r0.y, c17.x
@@ -5263,12 +5277,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 79 instructions, 5 temp regs, 0 temp arrays:
-// ALU 60 float, 8 int, 0 uint
+// 80 instructions, 5 temp regs, 0 temp arrays:
+// ALU 61 float, 8 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedciaopefdmcdcnogagdojpeefadpnoojpabaaaaaanaamaaaaadaaaaaa
+eefiecediajnpgahadjkdplnjmjialdoeamichfhabaaaaaapiamaaaaadaaaaaa
 cmaaaaaanmaaaaaaoaabaaaaejfdeheokiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaijaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaipaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -5283,7 +5297,7 @@ amadaaaapcaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaapcaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaaeaaaaaaamapaaaapcaaaaaaaeaaaaaaaaaaaaaa
 adaaaaaaafaaaaaaahaiaaaapcaaaaaaafaaaaaaaaaaaaaaadaaaaaaagaaaaaa
 ahaiaaaafdfgfpfaepfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaakl
-fdeieefcoiakaaaaeaaaabaalkacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaa
+fdeieefcbaalaaaaeaaaabaameacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaabaaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaa
 fpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaa
@@ -5363,14 +5377,15 @@ egacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
 hcaabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajicaabaaa
 aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
 icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaa
-aaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaa
-afaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaa
-aiaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaa
-egiccaaaaeaaaaaaaeaaaaaadoaaaaab"
+aaaaaaaaegiccaaaacaaaaaaaaaaaaaadiaaaaakhcaabaaaabaaaaaaegacbaaa
+abaaaaaaaceaaaaaeiobhkdpeiobhkdpeiobhkdpaaaaaaaabacaaaahbcaabaaa
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaafaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaafaaaaaa
+pgipcaaaaaaaaaaaaiaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaa
+agaabaaaaaaaaaaaegiccaaaaeaaaaaaaeaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -5453,7 +5468,7 @@ void main ()
   tmpvar_18 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_18;
   lowp vec3 tmpvar_19;
-  tmpvar_19 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_19 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_19;
   highp float tmpvar_20;
   tmpvar_20 = clamp (dot (normalize((_Object2World * tmpvar_17).xyz), lightDirection_2), 0.0, 1.0);
@@ -5520,7 +5535,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -5612,7 +5627,7 @@ void main ()
   tmpvar_18 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_18;
   lowp vec3 tmpvar_19;
-  tmpvar_19 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_19 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_19;
   highp float tmpvar_20;
   tmpvar_20 = clamp (dot (normalize((_Object2World * tmpvar_17).xyz), lightDirection_2), 0.0, 1.0);
@@ -5679,7 +5694,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -5932,7 +5947,7 @@ v2f vert( in appdata_t v ) {
     highp vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     #line 458
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
+    mediump vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
     mediump float NdotL = xll_saturate_f(dot( worldNormal, lightDirection));
     mediump float diff = ((NdotL - 0.01) / 0.99);
     mediump float lightIntensity = xll_saturate_f(((_LightColor0.w * diff) * 4.0));
@@ -6150,7 +6165,7 @@ lowp vec4 frag( in v2f i ) {
     #line 475
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.94 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 479
     color.xyz = (prev.xyz * i.baseLight);
@@ -6199,114 +6214,114 @@ Float 17 [_DistFade]
 Float 18 [_MinLight]
 "3.0-!!ARBvp1.0
 # 118 ALU
-PARAM c[20] = { { 0, 1, 2, 0.60000002 },
+PARAM c[21] = { { 0, 1, 2, 0.60000002 },
 		state.lightmodel.ambient,
 		state.matrix.modelview[0],
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..18],
-		{ 0.5, 0.010002136, 4.0394478, 0 } };
+		{ 0.5, 0.98000002, 0.010002136 },
+		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
 TEMP R3;
 TEMP R4;
-DP3 R1.x, c[4], c[4];
-RSQ R1.x, R1.x;
-MUL R3.xyz, R1.x, c[4];
-MOV R2.w, vertex.position;
-MOV R2.xyz, c[0].x;
-DP4 R4.x, R2, c[2];
-DP4 R4.y, R2, c[3];
+DP3 R2.x, c[4], c[4];
+RSQ R2.x, R2.x;
+MUL R3.xyz, R2.x, c[4];
+MOV R1.xyz, c[0].x;
 MOV R1.w, vertex.position;
-DP4 R4.w, R2, c[5];
-DP4 R4.z, R2, c[4];
+DP4 R4.x, R1, c[2];
+DP4 R4.y, R1, c[3];
+DP4 R4.w, R1, c[5];
+DP4 R4.z, R1, c[4];
 ADD R0, R4, vertex.position;
 DP4 result.position.w, R0, c[16];
 DP4 result.position.z, R0, c[15];
 DP4 result.position.y, R0, c[14];
 DP4 result.position.x, R0, c[13];
-MUL R0.xy, vertex.texcoord[0], c[0].z;
-ADD R4.zw, R0.xyxy, -c[0].y;
-MOV R1.y, R4.w;
-SLT R0.x, c[0], R4.w;
-SLT R0.y, R0, c[0];
-ADD R3.w, R0.x, -R0.y;
-SLT R0.z, c[0].x, -R3.x;
-SLT R0.w, -R3.x, c[0].x;
-ADD R0.w, R0.z, -R0;
-MUL R0.z, R4, R0.w;
-MUL R1.x, R0.w, R3.w;
-SLT R0.y, R0.z, c[0].x;
-SLT R0.x, c[0], R0.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.y, R3, R1.x;
-MUL R0.x, R0, R0.w;
-MAD R0.x, R3.z, R0, R0.y;
-MOV R0.yw, R1;
-DP4 R1.x, R0, c[2];
-DP4 R1.z, R0, c[3];
-ADD R0.xy, -R4, R1.xzzw;
-MUL R0.xy, R0, c[0].w;
-SLT R0.w, R3.z, c[0].x;
-SLT R0.z, c[0].x, R3;
+MUL R0.zw, vertex.texcoord[0].xyxy, c[0].z;
+SLT R0.x, c[0], -R3;
+SLT R0.y, -R3.x, c[0].x;
+ADD R2.x, R0, -R0.y;
+ADD R0.xy, R0.zwzw, -c[0].y;
+MUL R2.z, R0.x, R2.x;
+SLT R2.y, R2.z, c[0].x;
+SLT R0.w, R0, c[0].y;
+SLT R0.z, c[0].x, R0.y;
 ADD R0.z, R0, -R0.w;
-MUL R1.x, R4.z, R0.z;
-ADD result.texcoord[1].xy, R0, c[19].x;
-SLT R0.y, R1.x, c[0].x;
-SLT R0.x, c[0], R1;
-ADD R0.z, R0.x, -R0.y;
-SLT R0.y, -R3.z, c[0].x;
-SLT R0.x, c[0], -R3.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.w, R3, R0.x;
-MUL R0.z, R0.x, R0;
-MUL R0.w, R3.y, R0;
-MAD R1.z, R3.x, R0, R0.w;
-SLT R0.x, c[0], -R3.y;
-SLT R0.y, -R3, c[0].x;
-ADD R0.y, R0.x, -R0;
-MUL R0.x, R4.z, R0.y;
-SLT R0.w, R0.x, c[0].x;
+SLT R0.w, c[0].x, R2.z;
+ADD R0.w, R0, -R2.y;
+MUL R2.w, R2.x, R0.z;
+MUL R0.w, R0, R2.x;
+MUL R2.y, R3, R2.w;
+MAD R2.x, R3.z, R0.w, R2.y;
+MOV R0.w, vertex.position;
+MOV R2.yw, R0;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+SLT R2.w, -R3.y, c[0].x;
+SLT R2.z, c[0].x, -R3.y;
+ADD R3.w, R2.z, -R2;
+MUL R2.zw, R2.xyxy, c[0].w;
+MUL R2.x, R0, R3.w;
+ADD result.texcoord[1].xy, R2.zwzw, c[19].x;
+SLT R2.z, R2.x, c[0].x;
+SLT R2.y, c[0].x, R2.x;
+ADD R2.y, R2, -R2.z;
+MUL R2.z, R0, R3.w;
+MUL R2.y, R2, R3.w;
+MUL R3.w, R3.z, R2.z;
+MOV R2.zw, R0.xyyw;
+MAD R2.y, R3.x, R2, R3.w;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+MUL R2.xy, R2, c[0].w;
+SLT R2.w, R3.z, c[0].x;
+SLT R2.z, c[0].x, R3;
+ADD R3.w, R2.z, -R2;
+MUL R0.x, R0, R3.w;
+SLT R2.w, -R3.z, c[0].x;
+SLT R2.z, c[0].x, -R3;
+ADD R2.z, R2, -R2.w;
+MUL R3.w, R0.z, R2.z;
+SLT R2.w, R0.x, c[0].x;
 SLT R0.z, c[0].x, R0.x;
-ADD R0.z, R0, -R0.w;
-MUL R0.w, R3, R0.y;
-MUL R0.y, R0.z, R0;
-MUL R3.w, R3.z, R0;
-MOV R0.zw, R1.xyyw;
-MAD R0.y, R3.x, R0, R3.w;
-DP4 R4.z, R0, c[2];
-DP4 R4.w, R0, c[3];
-ADD R0.xy, -R4, R4.zwzw;
-MUL R0.xy, R0, c[0].w;
-DP4 R0.z, R1, c[2];
-DP4 R0.w, R1, c[3];
-ADD R0.zw, -R4.xyxy, R0;
-MUL R0.zw, R0, c[0].w;
-ADD result.texcoord[3].xy, R0.zwzw, c[19].x;
-ADD result.texcoord[2].xy, R0, c[19].x;
+ADD R0.z, R0, -R2.w;
+MUL R2.w, R3.y, R3;
+MUL R0.z, R2, R0;
+MAD R0.z, R3.x, R0, R2.w;
+DP4 R2.z, R0, c[2];
+DP4 R2.w, R0, c[3];
+ADD R0.xy, -R4, R2.zwzw;
+MUL R4.xy, R0, c[0].w;
 MOV R0.xyz, vertex.normal;
 MOV R0.w, c[0].x;
-DP4 R1.z, R0, c[11];
-DP4 R1.y, R0, c[10];
-DP4 R1.x, R0, c[9];
-DP3 R0.x, R1, R1;
-RSQ R0.w, R0.x;
-DP4 R0.y, c[7], c[7];
+ADD result.texcoord[2].xy, R2, c[19].x;
+DP4 R2.z, R0, c[11];
+DP4 R2.x, R0, c[9];
+DP4 R2.y, R0, c[10];
+DP3 R0.y, R2, R2;
 RSQ R0.y, R0.y;
-MUL R1.xyz, R0.w, R1;
-MUL R0.xyz, R0.y, c[7];
-DP3 R0.w, R1, R0;
+DP4 R0.x, c[7], c[7];
+MUL R2.xyz, R0.y, R2;
+RSQ R0.x, R0.x;
+MUL R0.xyz, R0.x, c[7];
+MUL R0.xyz, R0, R2;
+DP3 R0.w, R0, c[19].y;
+DP4 R0.z, R1, c[11];
+DP4 R0.x, R1, c[9];
+DP4 R0.y, R1, c[10];
 MIN R1.x, R0.w, c[0].y;
-MAX R1.x, R1, c[0];
-ADD R1.x, R1, -c[19].y;
-DP4 R0.z, R2, c[11];
-DP4 R0.x, R2, c[9];
-DP4 R0.y, R2, c[10];
 ADD R0.xyz, -R0, c[6];
 DP3 R0.w, R0, R0;
 RSQ R0.w, R0.w;
 MUL result.texcoord[4].xyz, R0.w, R0;
+MAX R1.x, R1, c[0];
+ADD R1.x, R1, -c[19].z;
 MUL R0.w, R1.x, c[8];
 MOV R1.xyz, c[8];
 MOV R0.z, c[11].w;
@@ -6314,7 +6329,7 @@ MOV R0.x, c[9].w;
 MOV R0.y, c[10].w;
 ADD R0.xyz, -R0, c[6];
 DP3 R0.x, R0, R0;
-MUL R0.w, R0, c[19].z;
+MUL R0.w, R0, c[20].x;
 MIN R0.y, R0.w, c[0];
 RSQ R0.x, R0.x;
 RCP R0.x, R0.x;
@@ -6325,6 +6340,7 @@ MAX R0.y, R0, c[0].x;
 ADD R1.xyz, R1, c[18].x;
 MAD R1.xyz, R1, R0.y, c[1];
 MIN R1.xyz, R1, c[0].y;
+ADD result.texcoord[3].xy, R4, c[19].x;
 MAX result.texcoord[5].xyz, R1, c[0].x;
 MUL result.color.w, vertex.color, R0.x;
 MOV result.color.xyz, vertex.color;
@@ -6359,107 +6375,107 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c18, 0.00000000, 2.00000000, -1.00000000, -0.01000214
-def c19, 0.60000002, 0.50000000, 4.03944778, 0
+def c18, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_texcoord0 v3
-mov r1.xyz, c18.x
-mov r1.w, v0
-dp4 r2.x, r1, c0
-dp4 r2.y, r1, c1
-dp4 r2.w, r1, c3
-dp4 r2.z, r1, c2
-add r0, r2, v0
-dp3 r2.z, c2, c2
-rsq r2.z, r2.z
-mul r3.xyz, r2.z, c2
-mad r2.zw, v3.xyxy, c18.y, c18.z
-mov r4.y, r2.w
+dp3 r1.x, c2, c2
+rsq r1.x, r1.x
+mul r3.xyz, r1.x, c2
+mad r1.xy, v3, c18.y, c18.z
+mov r2.xyz, c18.x
+mov r2.w, v0
+dp4 r5.x, r2, c0
+dp4 r5.y, r2, c1
+dp4 r5.w, r2, c3
+dp4 r5.z, r2, c2
+add r0, r5, v0
 dp4 o0.w, r0, c7
 dp4 o0.z, r0, c6
 dp4 o0.y, r0, c5
 dp4 o0.x, r0, c4
-mov r4.w, v0
-slt r0.z, r2.w, -r2.w
+slt r0.z, r1.y, -r1.y
 slt r0.y, -r3.x, r3.x
 slt r0.x, r3, -r3
 sub r0.x, r0, r0.y
-slt r0.y, -r2.w, r2.w
-sub r3.w, r0.y, r0.z
-mul r0.z, r2, r0.x
-mul r4.x, r0, r3.w
+slt r0.y, -r1, r1
+sub r1.z, r0.y, r0
+mul r0.z, r1.x, r0.x
+mul r1.w, r0.x, r1.z
 slt r0.w, r0.z, -r0.z
 slt r0.y, -r0.z, r0.z
 sub r0.y, r0, r0.w
-mul r0.w, r3.y, r4.x
+mul r0.w, r3.y, r1
 mul r0.x, r0.y, r0
 mad r0.x, r3.z, r0, r0.w
-mov r0.yw, r4
-dp4 r5.y, r0, c1
-dp4 r5.x, r0, c0
+mov r1.w, v0
+mov r0.yw, r1
+dp4 r4.y, r0, c1
 slt r4.x, -r3.y, r3.y
-slt r2.w, r3.y, -r3.y
-sub r2.w, r2, r4.x
-mul r0.x, r2.z, r2.w
-add r4.xz, -r2.xyyw, r5.xyyw
+slt r3.w, r3.y, -r3.y
+sub r3.w, r3, r4.x
+dp4 r4.x, r0, c0
+mul r0.x, r1, r3.w
+add r4.xy, -r5, r4
 slt r0.z, r0.x, -r0.x
 slt r0.y, -r0.x, r0.x
 sub r0.y, r0, r0.z
-mul r0.z, r3.w, r2.w
-mul r0.y, r0, r2.w
-mul r2.w, r3.z, r0.z
-mov r0.zw, r4.xyyw
-mad r0.y, r3.x, r0, r2.w
-dp4 r5.x, r0, c0
-dp4 r5.y, r0, c1
-add r0.xy, -r2, r5
+mul r0.z, r1, r3.w
+mul r0.y, r0, r3.w
+mul r3.w, r3.z, r0.z
+mov r0.zw, r1.xyyw
+mad r0.y, r3.x, r0, r3.w
+dp4 r4.z, r0, c0
+dp4 r4.w, r0, c1
+add r0.xy, -r5, r4.zwzw
 mad o4.xy, r0, c19.x, c19.y
-dp4 r0.z, r1, c10
-dp4 r0.x, r1, c8
-dp4 r0.y, r1, c9
-add r0.xyz, -r0, c13
-slt r1.x, -r3.z, r3.z
-slt r0.w, r3.z, -r3.z
-sub r1.y, r1.x, r0.w
-sub r0.w, r0, r1.x
-mad o3.xy, r4.xzzw, c19.x, c19.y
-mul r4.x, r2.z, r1.y
-mul r1.z, r3.w, r0.w
-slt r1.y, r4.x, -r4.x
-slt r1.x, -r4, r4
-sub r1.x, r1, r1.y
-mul r0.w, r0, r1.x
-mul r1.y, r3, r1.z
-mad r4.z, r3.x, r0.w, r1.y
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o6.xyz, r0.w, r0
+slt r0.y, -r3.z, r3.z
+slt r0.x, r3.z, -r3.z
+sub r0.z, r0.y, r0.x
+mul r1.x, r1, r0.z
+sub r0.x, r0, r0.y
+mul r0.w, r1.z, r0.x
+slt r0.z, r1.x, -r1.x
+slt r0.y, -r1.x, r1.x
+sub r0.y, r0, r0.z
+mul r0.z, r3.y, r0.w
+mul r0.x, r0, r0.y
+mad r1.z, r3.x, r0.x, r0
 mov r0.xyz, v2
 mov r0.w, c18.x
-dp4 r1.z, r0, c10
-dp4 r1.x, r4, c0
-dp4 r1.y, r4, c1
-add r1.xy, -r2, r1
-mad o5.xy, r1, c19.x, c19.y
-dp4 r1.y, r0, c9
-dp4 r1.x, r0, c8
-dp3 r0.x, r1, r1
-rsq r0.w, r0.x
-dp4 r0.y, c14, c14
-rsq r0.y, r0.y
-mul r0.xyz, r0.y, c14
-mul r1.xyz, r0.w, r1
-dp3_sat r0.w, r1, r0
+mad o3.xy, r4, c19.x, c19.y
+dp4 r4.z, r0, c10
+dp4 r4.x, r0, c8
+dp4 r4.y, r0, c9
+dp3 r0.z, r4, r4
+dp4 r0.x, r1, c0
+dp4 r0.y, r1, c1
+add r0.xy, -r5, r0
+dp4 r1.w, c14, c14
+dp4 r1.z, r2, c10
+dp4 r1.x, r2, c8
+dp4 r1.y, r2, c9
+add r1.xyz, -r1, c13
+dp3 r0.w, r1, r1
+rsq r0.w, r0.w
+rsq r1.w, r1.w
+mul o6.xyz, r0.w, r1
+rsq r0.z, r0.z
+mad o5.xy, r0, c19.x, c19.y
+mul r0.xyz, r0.z, r4
+mul r2.xyz, r1.w, c14
+mul r0.xyz, r2, r0
+dp3_sat r0.w, r0, c18.w
 mov r0.z, c10.w
 mov r0.x, c8.w
 mov r0.y, c9.w
 add r0.xyz, -r0, c13
 dp3 r0.x, r0, r0
-add r0.w, r0, c18
+add r0.w, r0, c19.z
 mul r0.y, r0.w, c15.w
-mul_sat r0.z, r0.y, c19
+mul_sat r0.z, r0.y, c19.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mov r0.y, c17.x
@@ -6497,12 +6513,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 79 instructions, 5 temp regs, 0 temp arrays:
-// ALU 60 float, 8 int, 0 uint
+// 80 instructions, 5 temp regs, 0 temp arrays:
+// ALU 61 float, 8 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedggnabeobfmomldehmjibmncjlnhffgliabaaaaaaoiamaaaaadaaaaaa
+eefiecednlkfobgeengdjnjdhemppmnmfjgjhklcabaaaaaabaanaaaaadaaaaaa
 cmaaaaaanmaaaaaapiabaaaaejfdeheokiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaijaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaipaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -6517,8 +6533,8 @@ amadaaaaakabaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaaakabaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaakabaaaaafaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaaakabaaaaagaaaaaaaaaaaaaaadaaaaaaahaaaaaa
 apapaaaaakabaaaaahaaaaaaaaaaaaaaadaaaaaaaiaaaaaaapapaaaafdfgfpfa
-epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcoiakaaaa
-eaaaabaalkacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaafjaaaaaeegiocaaa
+epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcbaalaaaa
+eaaaabaameacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaabaaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaa
 aaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaad
@@ -6598,14 +6614,15 @@ eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
 acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
-abaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajocaabaaa
-aaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaaaiaaaaaadccaaaak
-hccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaaeaaaaaa
-aeaaaaaadoaaaaab"
+acaaaaaaaaaaaaaadiaaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaaaceaaaaa
+eiobhkdpeiobhkdpeiobhkdpaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaa
+afaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaa
+aiaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaa
+egiccaaaaeaaaaaaaeaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -6690,7 +6707,7 @@ void main ()
   tmpvar_19 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_19;
   highp vec3 tmpvar_20;
-  tmpvar_20 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_20 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_20;
   highp float tmpvar_21;
   tmpvar_21 = clamp (dot (normalize((_Object2World * tmpvar_18).xyz), lightDirection_2), 0.0, 1.0);
@@ -6758,7 +6775,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -6852,7 +6869,7 @@ void main ()
   tmpvar_19 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_19;
   highp vec3 tmpvar_20;
-  tmpvar_20 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_20 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_20;
   highp float tmpvar_21;
   tmpvar_21 = clamp (dot (normalize((_Object2World * tmpvar_18).xyz), lightDirection_2), 0.0, 1.0);
@@ -6920,7 +6937,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -7178,7 +7195,7 @@ v2f vert( in appdata_t v ) {
     highp vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     #line 474
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
+    mediump vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
     mediump float NdotL = xll_saturate_f(dot( worldNormal, lightDirection));
     mediump float diff = ((NdotL - 0.01) / 0.99);
     mediump float lightIntensity = xll_saturate_f(((_LightColor0.w * diff) * 4.0));
@@ -7403,7 +7420,7 @@ lowp vec4 frag( in v2f i ) {
     #line 491
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.94 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 495
     color.xyz = (prev.xyz * i.baseLight);
@@ -7454,114 +7471,114 @@ Float 17 [_DistFade]
 Float 18 [_MinLight]
 "3.0-!!ARBvp1.0
 # 118 ALU
-PARAM c[20] = { { 0, 1, 2, 0.60000002 },
+PARAM c[21] = { { 0, 1, 2, 0.60000002 },
 		state.lightmodel.ambient,
 		state.matrix.modelview[0],
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..18],
-		{ 0.5, 0.010002136, 4.0394478, 0 } };
+		{ 0.5, 0.98000002, 0.010002136 },
+		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
 TEMP R3;
 TEMP R4;
-DP3 R1.x, c[4], c[4];
-RSQ R1.x, R1.x;
-MUL R3.xyz, R1.x, c[4];
-MOV R2.w, vertex.position;
-MOV R2.xyz, c[0].x;
-DP4 R4.x, R2, c[2];
-DP4 R4.y, R2, c[3];
+DP3 R2.x, c[4], c[4];
+RSQ R2.x, R2.x;
+MUL R3.xyz, R2.x, c[4];
+MOV R1.xyz, c[0].x;
 MOV R1.w, vertex.position;
-DP4 R4.w, R2, c[5];
-DP4 R4.z, R2, c[4];
+DP4 R4.x, R1, c[2];
+DP4 R4.y, R1, c[3];
+DP4 R4.w, R1, c[5];
+DP4 R4.z, R1, c[4];
 ADD R0, R4, vertex.position;
 DP4 result.position.w, R0, c[16];
 DP4 result.position.z, R0, c[15];
 DP4 result.position.y, R0, c[14];
 DP4 result.position.x, R0, c[13];
-MUL R0.xy, vertex.texcoord[0], c[0].z;
-ADD R4.zw, R0.xyxy, -c[0].y;
-MOV R1.y, R4.w;
-SLT R0.x, c[0], R4.w;
-SLT R0.y, R0, c[0];
-ADD R3.w, R0.x, -R0.y;
-SLT R0.z, c[0].x, -R3.x;
-SLT R0.w, -R3.x, c[0].x;
-ADD R0.w, R0.z, -R0;
-MUL R0.z, R4, R0.w;
-MUL R1.x, R0.w, R3.w;
-SLT R0.y, R0.z, c[0].x;
-SLT R0.x, c[0], R0.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.y, R3, R1.x;
-MUL R0.x, R0, R0.w;
-MAD R0.x, R3.z, R0, R0.y;
-MOV R0.yw, R1;
-DP4 R1.x, R0, c[2];
-DP4 R1.z, R0, c[3];
-ADD R0.xy, -R4, R1.xzzw;
-MUL R0.xy, R0, c[0].w;
-SLT R0.w, R3.z, c[0].x;
-SLT R0.z, c[0].x, R3;
+MUL R0.zw, vertex.texcoord[0].xyxy, c[0].z;
+SLT R0.x, c[0], -R3;
+SLT R0.y, -R3.x, c[0].x;
+ADD R2.x, R0, -R0.y;
+ADD R0.xy, R0.zwzw, -c[0].y;
+MUL R2.z, R0.x, R2.x;
+SLT R2.y, R2.z, c[0].x;
+SLT R0.w, R0, c[0].y;
+SLT R0.z, c[0].x, R0.y;
 ADD R0.z, R0, -R0.w;
-MUL R1.x, R4.z, R0.z;
-ADD result.texcoord[1].xy, R0, c[19].x;
-SLT R0.y, R1.x, c[0].x;
-SLT R0.x, c[0], R1;
-ADD R0.z, R0.x, -R0.y;
-SLT R0.y, -R3.z, c[0].x;
-SLT R0.x, c[0], -R3.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.w, R3, R0.x;
-MUL R0.z, R0.x, R0;
-MUL R0.w, R3.y, R0;
-MAD R1.z, R3.x, R0, R0.w;
-SLT R0.x, c[0], -R3.y;
-SLT R0.y, -R3, c[0].x;
-ADD R0.y, R0.x, -R0;
-MUL R0.x, R4.z, R0.y;
-SLT R0.w, R0.x, c[0].x;
+SLT R0.w, c[0].x, R2.z;
+ADD R0.w, R0, -R2.y;
+MUL R2.w, R2.x, R0.z;
+MUL R0.w, R0, R2.x;
+MUL R2.y, R3, R2.w;
+MAD R2.x, R3.z, R0.w, R2.y;
+MOV R0.w, vertex.position;
+MOV R2.yw, R0;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+SLT R2.w, -R3.y, c[0].x;
+SLT R2.z, c[0].x, -R3.y;
+ADD R3.w, R2.z, -R2;
+MUL R2.zw, R2.xyxy, c[0].w;
+MUL R2.x, R0, R3.w;
+ADD result.texcoord[1].xy, R2.zwzw, c[19].x;
+SLT R2.z, R2.x, c[0].x;
+SLT R2.y, c[0].x, R2.x;
+ADD R2.y, R2, -R2.z;
+MUL R2.z, R0, R3.w;
+MUL R2.y, R2, R3.w;
+MUL R3.w, R3.z, R2.z;
+MOV R2.zw, R0.xyyw;
+MAD R2.y, R3.x, R2, R3.w;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+MUL R2.xy, R2, c[0].w;
+SLT R2.w, R3.z, c[0].x;
+SLT R2.z, c[0].x, R3;
+ADD R3.w, R2.z, -R2;
+MUL R0.x, R0, R3.w;
+SLT R2.w, -R3.z, c[0].x;
+SLT R2.z, c[0].x, -R3;
+ADD R2.z, R2, -R2.w;
+MUL R3.w, R0.z, R2.z;
+SLT R2.w, R0.x, c[0].x;
 SLT R0.z, c[0].x, R0.x;
-ADD R0.z, R0, -R0.w;
-MUL R0.w, R3, R0.y;
-MUL R0.y, R0.z, R0;
-MUL R3.w, R3.z, R0;
-MOV R0.zw, R1.xyyw;
-MAD R0.y, R3.x, R0, R3.w;
-DP4 R4.z, R0, c[2];
-DP4 R4.w, R0, c[3];
-ADD R0.xy, -R4, R4.zwzw;
-MUL R0.xy, R0, c[0].w;
-DP4 R0.z, R1, c[2];
-DP4 R0.w, R1, c[3];
-ADD R0.zw, -R4.xyxy, R0;
-MUL R0.zw, R0, c[0].w;
-ADD result.texcoord[3].xy, R0.zwzw, c[19].x;
-ADD result.texcoord[2].xy, R0, c[19].x;
+ADD R0.z, R0, -R2.w;
+MUL R2.w, R3.y, R3;
+MUL R0.z, R2, R0;
+MAD R0.z, R3.x, R0, R2.w;
+DP4 R2.z, R0, c[2];
+DP4 R2.w, R0, c[3];
+ADD R0.xy, -R4, R2.zwzw;
+MUL R4.xy, R0, c[0].w;
 MOV R0.xyz, vertex.normal;
 MOV R0.w, c[0].x;
-DP4 R1.z, R0, c[11];
-DP4 R1.y, R0, c[10];
-DP4 R1.x, R0, c[9];
-DP3 R0.x, R1, R1;
-RSQ R0.w, R0.x;
-DP4 R0.y, c[7], c[7];
+ADD result.texcoord[2].xy, R2, c[19].x;
+DP4 R2.z, R0, c[11];
+DP4 R2.x, R0, c[9];
+DP4 R2.y, R0, c[10];
+DP3 R0.y, R2, R2;
 RSQ R0.y, R0.y;
-MUL R1.xyz, R0.w, R1;
-MUL R0.xyz, R0.y, c[7];
-DP3 R0.w, R1, R0;
+DP4 R0.x, c[7], c[7];
+MUL R2.xyz, R0.y, R2;
+RSQ R0.x, R0.x;
+MUL R0.xyz, R0.x, c[7];
+MUL R0.xyz, R0, R2;
+DP3 R0.w, R0, c[19].y;
+DP4 R0.z, R1, c[11];
+DP4 R0.x, R1, c[9];
+DP4 R0.y, R1, c[10];
 MIN R1.x, R0.w, c[0].y;
-MAX R1.x, R1, c[0];
-ADD R1.x, R1, -c[19].y;
-DP4 R0.z, R2, c[11];
-DP4 R0.x, R2, c[9];
-DP4 R0.y, R2, c[10];
 ADD R0.xyz, -R0, c[6];
 DP3 R0.w, R0, R0;
 RSQ R0.w, R0.w;
 MUL result.texcoord[4].xyz, R0.w, R0;
+MAX R1.x, R1, c[0];
+ADD R1.x, R1, -c[19].z;
 MUL R0.w, R1.x, c[8];
 MOV R1.xyz, c[8];
 MOV R0.z, c[11].w;
@@ -7569,7 +7586,7 @@ MOV R0.x, c[9].w;
 MOV R0.y, c[10].w;
 ADD R0.xyz, -R0, c[6];
 DP3 R0.x, R0, R0;
-MUL R0.w, R0, c[19].z;
+MUL R0.w, R0, c[20].x;
 MIN R0.y, R0.w, c[0];
 RSQ R0.x, R0.x;
 RCP R0.x, R0.x;
@@ -7580,6 +7597,7 @@ MAX R0.y, R0, c[0].x;
 ADD R1.xyz, R1, c[18].x;
 MAD R1.xyz, R1, R0.y, c[1];
 MIN R1.xyz, R1, c[0].y;
+ADD result.texcoord[3].xy, R4, c[19].x;
 MAX result.texcoord[5].xyz, R1, c[0].x;
 MUL result.color.w, vertex.color, R0.x;
 MOV result.color.xyz, vertex.color;
@@ -7614,107 +7632,107 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c18, 0.00000000, 2.00000000, -1.00000000, -0.01000214
-def c19, 0.60000002, 0.50000000, 4.03944778, 0
+def c18, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_texcoord0 v3
-mov r1.xyz, c18.x
-mov r1.w, v0
-dp4 r2.x, r1, c0
-dp4 r2.y, r1, c1
-dp4 r2.w, r1, c3
-dp4 r2.z, r1, c2
-add r0, r2, v0
-dp3 r2.z, c2, c2
-rsq r2.z, r2.z
-mul r3.xyz, r2.z, c2
-mad r2.zw, v3.xyxy, c18.y, c18.z
-mov r4.y, r2.w
+dp3 r1.x, c2, c2
+rsq r1.x, r1.x
+mul r3.xyz, r1.x, c2
+mad r1.xy, v3, c18.y, c18.z
+mov r2.xyz, c18.x
+mov r2.w, v0
+dp4 r5.x, r2, c0
+dp4 r5.y, r2, c1
+dp4 r5.w, r2, c3
+dp4 r5.z, r2, c2
+add r0, r5, v0
 dp4 o0.w, r0, c7
 dp4 o0.z, r0, c6
 dp4 o0.y, r0, c5
 dp4 o0.x, r0, c4
-mov r4.w, v0
-slt r0.z, r2.w, -r2.w
+slt r0.z, r1.y, -r1.y
 slt r0.y, -r3.x, r3.x
 slt r0.x, r3, -r3
 sub r0.x, r0, r0.y
-slt r0.y, -r2.w, r2.w
-sub r3.w, r0.y, r0.z
-mul r0.z, r2, r0.x
-mul r4.x, r0, r3.w
+slt r0.y, -r1, r1
+sub r1.z, r0.y, r0
+mul r0.z, r1.x, r0.x
+mul r1.w, r0.x, r1.z
 slt r0.w, r0.z, -r0.z
 slt r0.y, -r0.z, r0.z
 sub r0.y, r0, r0.w
-mul r0.w, r3.y, r4.x
+mul r0.w, r3.y, r1
 mul r0.x, r0.y, r0
 mad r0.x, r3.z, r0, r0.w
-mov r0.yw, r4
-dp4 r5.y, r0, c1
-dp4 r5.x, r0, c0
+mov r1.w, v0
+mov r0.yw, r1
+dp4 r4.y, r0, c1
 slt r4.x, -r3.y, r3.y
-slt r2.w, r3.y, -r3.y
-sub r2.w, r2, r4.x
-mul r0.x, r2.z, r2.w
-add r4.xz, -r2.xyyw, r5.xyyw
+slt r3.w, r3.y, -r3.y
+sub r3.w, r3, r4.x
+dp4 r4.x, r0, c0
+mul r0.x, r1, r3.w
+add r4.xy, -r5, r4
 slt r0.z, r0.x, -r0.x
 slt r0.y, -r0.x, r0.x
 sub r0.y, r0, r0.z
-mul r0.z, r3.w, r2.w
-mul r0.y, r0, r2.w
-mul r2.w, r3.z, r0.z
-mov r0.zw, r4.xyyw
-mad r0.y, r3.x, r0, r2.w
-dp4 r5.x, r0, c0
-dp4 r5.y, r0, c1
-add r0.xy, -r2, r5
+mul r0.z, r1, r3.w
+mul r0.y, r0, r3.w
+mul r3.w, r3.z, r0.z
+mov r0.zw, r1.xyyw
+mad r0.y, r3.x, r0, r3.w
+dp4 r4.z, r0, c0
+dp4 r4.w, r0, c1
+add r0.xy, -r5, r4.zwzw
 mad o4.xy, r0, c19.x, c19.y
-dp4 r0.z, r1, c10
-dp4 r0.x, r1, c8
-dp4 r0.y, r1, c9
-add r0.xyz, -r0, c13
-slt r1.x, -r3.z, r3.z
-slt r0.w, r3.z, -r3.z
-sub r1.y, r1.x, r0.w
-sub r0.w, r0, r1.x
-mad o3.xy, r4.xzzw, c19.x, c19.y
-mul r4.x, r2.z, r1.y
-mul r1.z, r3.w, r0.w
-slt r1.y, r4.x, -r4.x
-slt r1.x, -r4, r4
-sub r1.x, r1, r1.y
-mul r0.w, r0, r1.x
-mul r1.y, r3, r1.z
-mad r4.z, r3.x, r0.w, r1.y
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o6.xyz, r0.w, r0
+slt r0.y, -r3.z, r3.z
+slt r0.x, r3.z, -r3.z
+sub r0.z, r0.y, r0.x
+mul r1.x, r1, r0.z
+sub r0.x, r0, r0.y
+mul r0.w, r1.z, r0.x
+slt r0.z, r1.x, -r1.x
+slt r0.y, -r1.x, r1.x
+sub r0.y, r0, r0.z
+mul r0.z, r3.y, r0.w
+mul r0.x, r0, r0.y
+mad r1.z, r3.x, r0.x, r0
 mov r0.xyz, v2
 mov r0.w, c18.x
-dp4 r1.z, r0, c10
-dp4 r1.x, r4, c0
-dp4 r1.y, r4, c1
-add r1.xy, -r2, r1
-mad o5.xy, r1, c19.x, c19.y
-dp4 r1.y, r0, c9
-dp4 r1.x, r0, c8
-dp3 r0.x, r1, r1
-rsq r0.w, r0.x
-dp4 r0.y, c14, c14
-rsq r0.y, r0.y
-mul r0.xyz, r0.y, c14
-mul r1.xyz, r0.w, r1
-dp3_sat r0.w, r1, r0
+mad o3.xy, r4, c19.x, c19.y
+dp4 r4.z, r0, c10
+dp4 r4.x, r0, c8
+dp4 r4.y, r0, c9
+dp3 r0.z, r4, r4
+dp4 r0.x, r1, c0
+dp4 r0.y, r1, c1
+add r0.xy, -r5, r0
+dp4 r1.w, c14, c14
+dp4 r1.z, r2, c10
+dp4 r1.x, r2, c8
+dp4 r1.y, r2, c9
+add r1.xyz, -r1, c13
+dp3 r0.w, r1, r1
+rsq r0.w, r0.w
+rsq r1.w, r1.w
+mul o6.xyz, r0.w, r1
+rsq r0.z, r0.z
+mad o5.xy, r0, c19.x, c19.y
+mul r0.xyz, r0.z, r4
+mul r2.xyz, r1.w, c14
+mul r0.xyz, r2, r0
+dp3_sat r0.w, r0, c18.w
 mov r0.z, c10.w
 mov r0.x, c8.w
 mov r0.y, c9.w
 add r0.xyz, -r0, c13
 dp3 r0.x, r0, r0
-add r0.w, r0, c18
+add r0.w, r0, c19.z
 mul r0.y, r0.w, c15.w
-mul_sat r0.z, r0.y, c19
+mul_sat r0.z, r0.y, c19.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mov r0.y, c17.x
@@ -7752,12 +7770,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 79 instructions, 5 temp regs, 0 temp arrays:
-// ALU 60 float, 8 int, 0 uint
+// 80 instructions, 5 temp regs, 0 temp arrays:
+// ALU 61 float, 8 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedggnabeobfmomldehmjibmncjlnhffgliabaaaaaaoiamaaaaadaaaaaa
+eefiecednlkfobgeengdjnjdhemppmnmfjgjhklcabaaaaaabaanaaaaadaaaaaa
 cmaaaaaanmaaaaaapiabaaaaejfdeheokiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaijaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaipaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -7772,8 +7790,8 @@ amadaaaaakabaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaaakabaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaakabaaaaafaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaaakabaaaaagaaaaaaaaaaaaaaadaaaaaaahaaaaaa
 apapaaaaakabaaaaahaaaaaaaaaaaaaaadaaaaaaaiaaaaaaapapaaaafdfgfpfa
-epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcoiakaaaa
-eaaaabaalkacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaafjaaaaaeegiocaaa
+epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcbaalaaaa
+eaaaabaameacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaabaaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaa
 aaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaad
@@ -7853,14 +7871,15 @@ eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
 acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
-abaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajocaabaaa
-aaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaaaiaaaaaadccaaaak
-hccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaaeaaaaaa
-aeaaaaaadoaaaaab"
+acaaaaaaaaaaaaaadiaaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaaaceaaaaa
+eiobhkdpeiobhkdpeiobhkdpaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaa
+afaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaa
+aiaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaa
+egiccaaaaeaaaaaaaeaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -7946,7 +7965,7 @@ void main ()
   tmpvar_19 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_19;
   highp vec3 tmpvar_20;
-  tmpvar_20 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_20 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_20;
   highp float tmpvar_21;
   tmpvar_21 = clamp (dot (normalize((_Object2World * tmpvar_18).xyz), lightDirection_2), 0.0, 1.0);
@@ -8015,7 +8034,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -8272,7 +8291,7 @@ v2f vert( in appdata_t v ) {
     highp vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     #line 475
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
+    mediump vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
     mediump float NdotL = xll_saturate_f(dot( worldNormal, lightDirection));
     mediump float diff = ((NdotL - 0.01) / 0.99);
     mediump float lightIntensity = xll_saturate_f(((_LightColor0.w * diff) * 4.0));
@@ -8496,7 +8515,7 @@ lowp vec4 frag( in v2f i ) {
     #line 492
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.94 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 496
     color.xyz = (prev.xyz * i.baseLight);
@@ -8546,14 +8565,15 @@ Vector 8 [_LightColor0]
 Float 17 [_DistFade]
 Float 18 [_MinLight]
 "3.0-!!ARBvp1.0
-# 118 ALU
-PARAM c[20] = { { 0, 1, 2, 0.60000002 },
+# 119 ALU
+PARAM c[21] = { { 0, 1, 2, 0.60000002 },
 		state.lightmodel.ambient,
 		state.matrix.modelview[0],
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..18],
-		{ 0.5, 0.010002136, 4.0394478, 0 } };
+		{ 0.5, 0.97998047, 0.010002136 },
+		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
@@ -8564,9 +8584,9 @@ RSQ R1.x, R1.x;
 MUL R3.xyz, R1.x, c[4];
 MOV R2.w, vertex.position;
 MOV R2.xyz, c[0].x;
+MOV R1.w, vertex.position;
 DP4 R4.x, R2, c[2];
 DP4 R4.y, R2, c[3];
-MOV R1.w, vertex.position;
 DP4 R4.w, R2, c[5];
 DP4 R4.z, R2, c[4];
 ADD R0, R4, vertex.position;
@@ -8638,16 +8658,17 @@ MOV R0.w, c[0].x;
 DP4 R1.z, R0, c[11];
 DP4 R1.y, R0, c[10];
 DP4 R1.x, R0, c[9];
-DP3 R0.x, R1, R1;
-RSQ R0.w, R0.x;
-DP4 R0.y, c[7], c[7];
-RSQ R0.y, R0.y;
+DP3 R0.w, R1, R1;
+RSQ R0.w, R0.w;
+DP4 R1.w, c[7], c[7];
+RSQ R0.x, R1.w;
+MUL R0.xyz, R0.x, c[7];
+MUL R0.xyz, R0, c[19].y;
 MUL R1.xyz, R0.w, R1;
-MUL R0.xyz, R0.y, c[7];
 DP3 R0.w, R1, R0;
 MIN R1.x, R0.w, c[0].y;
 MAX R1.x, R1, c[0];
-ADD R1.x, R1, -c[19].y;
+ADD R1.x, R1, -c[19].z;
 DP4 R0.z, R2, c[11];
 DP4 R0.x, R2, c[9];
 DP4 R0.y, R2, c[10];
@@ -8662,7 +8683,7 @@ MOV R0.x, c[9].w;
 MOV R0.y, c[10].w;
 ADD R0.xyz, -R0, c[6];
 DP3 R0.x, R0, R0;
-MUL R0.w, R0, c[19].z;
+MUL R0.w, R0, c[20].x;
 MIN R0.y, R0.w, c[0];
 RSQ R0.x, R0.x;
 RCP R0.x, R0.x;
@@ -8678,7 +8699,7 @@ MUL result.color.w, vertex.color, R0.x;
 MOV result.color.xyz, vertex.color;
 ABS result.texcoord[0].xyz, R3;
 END
-# 118 instructions, 5 R-regs
+# 119 instructions, 5 R-regs
 "
 }
 
@@ -8698,7 +8719,7 @@ Vector 15 [_LightColor0]
 Float 16 [_DistFade]
 Float 17 [_MinLight]
 "vs_3_0
-; 104 ALU
+; 105 ALU
 dcl_position o0
 dcl_color0 o1
 dcl_texcoord0 o2
@@ -8707,8 +8728,8 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c18, 0.00000000, 2.00000000, -1.00000000, -0.01000214
-def c19, 0.60000002, 0.50000000, 4.03944778, 0
+def c18, 0.00000000, 2.00000000, -1.00000000, 0.97998047
+def c19, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -8793,11 +8814,12 @@ add r1.xy, -r2, r1
 mad o5.xy, r1, c19.x, c19.y
 dp4 r1.y, r0, c9
 dp4 r1.x, r0, c8
-dp3 r0.x, r1, r1
-rsq r0.w, r0.x
-dp4 r0.y, c14, c14
-rsq r0.y, r0.y
-mul r0.xyz, r0.y, c14
+dp3 r0.w, r1, r1
+rsq r0.w, r0.w
+dp4 r1.w, c14, c14
+rsq r0.x, r1.w
+mul r0.xyz, r0.x, c14
+mul r0.xyz, r0, c18.w
 mul r1.xyz, r0.w, r1
 dp3_sat r0.w, r1, r0
 mov r0.z, c10.w
@@ -8805,9 +8827,9 @@ mov r0.x, c8.w
 mov r0.y, c9.w
 add r0.xyz, -r0, c13
 dp3 r0.x, r0, r0
-add r0.w, r0, c18
+add r0.w, r0, c19.z
 mul r0.y, r0.w, c15.w
-mul_sat r0.z, r0.y, c19
+mul_sat r0.z, r0.y, c19.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mov r0.y, c17.x
@@ -8845,12 +8867,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 79 instructions, 5 temp regs, 0 temp arrays:
-// ALU 60 float, 8 int, 0 uint
+// 80 instructions, 5 temp regs, 0 temp arrays:
+// ALU 61 float, 8 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfdmdljoodegcpkjoedbklkpdohjpfeocabaaaaaanaamaaaaadaaaaaa
+eefiecedaedjbdgpdndpleaeoajhkjjkclpofcpcabaaaaaapiamaaaaadaaaaaa
 cmaaaaaanmaaaaaaoaabaaaaejfdeheokiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaijaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaipaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -8865,7 +8887,7 @@ amadaaaapcaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaapcaaaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaapcaaaaaaafaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaapcaaaaaaagaaaaaaaaaaaaaaadaaaaaaahaaaaaa
 apapaaaafdfgfpfaepfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaakl
-fdeieefcoiakaaaaeaaaabaalkacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaa
+fdeieefcbaalaaaaeaaaabaameacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaabaaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaa
 fpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaa
@@ -8945,14 +8967,15 @@ egacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
 hcaabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajicaabaaa
 aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
 icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaa
-aaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaa
-afaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaa
-aiaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaa
-egiccaaaaeaaaaaaaeaaaaaadoaaaaab"
+aaaaaaaaegiccaaaacaaaaaaaaaaaaaadiaaaaakhcaabaaaabaaaaaaegacbaaa
+abaaaaaaaceaaaaaeiobhkdpeiobhkdpeiobhkdpaaaaaaaabacaaaahbcaabaaa
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaafaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaafaaaaaa
+pgipcaaaaaaaaaaaaiaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaa
+agaabaaaaaaaaaaaegiccaaaaeaaaaaaaeaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -9035,7 +9058,7 @@ void main ()
   tmpvar_18 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_18;
   lowp vec3 tmpvar_19;
-  tmpvar_19 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_19 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_19;
   highp float tmpvar_20;
   tmpvar_20 = clamp (dot (normalize((_Object2World * tmpvar_17).xyz), lightDirection_2), 0.0, 1.0);
@@ -9102,7 +9125,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -9194,7 +9217,7 @@ void main ()
   tmpvar_18 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_18;
   lowp vec3 tmpvar_19;
-  tmpvar_19 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_19 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_19;
   highp float tmpvar_20;
   tmpvar_20 = clamp (dot (normalize((_Object2World * tmpvar_17).xyz), lightDirection_2), 0.0, 1.0);
@@ -9261,7 +9284,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -9514,7 +9537,7 @@ v2f vert( in appdata_t v ) {
     highp vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     #line 464
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
+    mediump vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
     mediump float NdotL = xll_saturate_f(dot( worldNormal, lightDirection));
     mediump float diff = ((NdotL - 0.01) / 0.99);
     mediump float lightIntensity = xll_saturate_f(((_LightColor0.w * diff) * 4.0));
@@ -9732,7 +9755,7 @@ lowp vec4 frag( in v2f i ) {
     #line 481
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.94 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 485
     color.xyz = (prev.xyz * i.baseLight);
@@ -9780,14 +9803,15 @@ Vector 8 [_LightColor0]
 Float 17 [_DistFade]
 Float 18 [_MinLight]
 "3.0-!!ARBvp1.0
-# 118 ALU
-PARAM c[20] = { { 0, 1, 2, 0.60000002 },
+# 119 ALU
+PARAM c[21] = { { 0, 1, 2, 0.60000002 },
 		state.lightmodel.ambient,
 		state.matrix.modelview[0],
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..18],
-		{ 0.5, 0.010002136, 4.0394478, 0 } };
+		{ 0.5, 0.97998047, 0.010002136 },
+		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
@@ -9798,9 +9822,9 @@ RSQ R1.x, R1.x;
 MUL R3.xyz, R1.x, c[4];
 MOV R2.w, vertex.position;
 MOV R2.xyz, c[0].x;
+MOV R1.w, vertex.position;
 DP4 R4.x, R2, c[2];
 DP4 R4.y, R2, c[3];
-MOV R1.w, vertex.position;
 DP4 R4.w, R2, c[5];
 DP4 R4.z, R2, c[4];
 ADD R0, R4, vertex.position;
@@ -9872,16 +9896,17 @@ MOV R0.w, c[0].x;
 DP4 R1.z, R0, c[11];
 DP4 R1.y, R0, c[10];
 DP4 R1.x, R0, c[9];
-DP3 R0.x, R1, R1;
-RSQ R0.w, R0.x;
-DP4 R0.y, c[7], c[7];
-RSQ R0.y, R0.y;
+DP3 R0.w, R1, R1;
+RSQ R0.w, R0.w;
+DP4 R1.w, c[7], c[7];
+RSQ R0.x, R1.w;
+MUL R0.xyz, R0.x, c[7];
+MUL R0.xyz, R0, c[19].y;
 MUL R1.xyz, R0.w, R1;
-MUL R0.xyz, R0.y, c[7];
 DP3 R0.w, R1, R0;
 MIN R1.x, R0.w, c[0].y;
 MAX R1.x, R1, c[0];
-ADD R1.x, R1, -c[19].y;
+ADD R1.x, R1, -c[19].z;
 DP4 R0.z, R2, c[11];
 DP4 R0.x, R2, c[9];
 DP4 R0.y, R2, c[10];
@@ -9896,7 +9921,7 @@ MOV R0.x, c[9].w;
 MOV R0.y, c[10].w;
 ADD R0.xyz, -R0, c[6];
 DP3 R0.x, R0, R0;
-MUL R0.w, R0, c[19].z;
+MUL R0.w, R0, c[20].x;
 MIN R0.y, R0.w, c[0];
 RSQ R0.x, R0.x;
 RCP R0.x, R0.x;
@@ -9912,7 +9937,7 @@ MUL result.color.w, vertex.color, R0.x;
 MOV result.color.xyz, vertex.color;
 ABS result.texcoord[0].xyz, R3;
 END
-# 118 instructions, 5 R-regs
+# 119 instructions, 5 R-regs
 "
 }
 
@@ -9932,7 +9957,7 @@ Vector 15 [_LightColor0]
 Float 16 [_DistFade]
 Float 17 [_MinLight]
 "vs_3_0
-; 104 ALU
+; 105 ALU
 dcl_position o0
 dcl_color0 o1
 dcl_texcoord0 o2
@@ -9941,8 +9966,8 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c18, 0.00000000, 2.00000000, -1.00000000, -0.01000214
-def c19, 0.60000002, 0.50000000, 4.03944778, 0
+def c18, 0.00000000, 2.00000000, -1.00000000, 0.97998047
+def c19, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -10027,11 +10052,12 @@ add r1.xy, -r2, r1
 mad o5.xy, r1, c19.x, c19.y
 dp4 r1.y, r0, c9
 dp4 r1.x, r0, c8
-dp3 r0.x, r1, r1
-rsq r0.w, r0.x
-dp4 r0.y, c14, c14
-rsq r0.y, r0.y
-mul r0.xyz, r0.y, c14
+dp3 r0.w, r1, r1
+rsq r0.w, r0.w
+dp4 r1.w, c14, c14
+rsq r0.x, r1.w
+mul r0.xyz, r0.x, c14
+mul r0.xyz, r0, c18.w
 mul r1.xyz, r0.w, r1
 dp3_sat r0.w, r1, r0
 mov r0.z, c10.w
@@ -10039,9 +10065,9 @@ mov r0.x, c8.w
 mov r0.y, c9.w
 add r0.xyz, -r0, c13
 dp3 r0.x, r0, r0
-add r0.w, r0, c18
+add r0.w, r0, c19.z
 mul r0.y, r0.w, c15.w
-mul_sat r0.z, r0.y, c19
+mul_sat r0.z, r0.y, c19.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mov r0.y, c17.x
@@ -10079,12 +10105,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 79 instructions, 5 temp regs, 0 temp arrays:
-// ALU 60 float, 8 int, 0 uint
+// 80 instructions, 5 temp regs, 0 temp arrays:
+// ALU 61 float, 8 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedankojfpdaokoocklmkggpdgbmipacgfeabaaaaaaoiamaaaaadaaaaaa
+eefiecedflkdkjfcaikgkajofddoecojppjcegpgabaaaaaabaanaaaaadaaaaaa
 cmaaaaaanmaaaaaapiabaaaaejfdeheokiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaijaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaipaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -10099,8 +10125,8 @@ amadaaaaakabaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaaakabaaaa
 agaaaaaaaaaaaaaaadaaaaaaaeaaaaaaamapaaaaakabaaaaaeaaaaaaaaaaaaaa
 adaaaaaaafaaaaaaahaiaaaaakabaaaaafaaaaaaaaaaaaaaadaaaaaaagaaaaaa
 ahaiaaaaakabaaaaahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapapaaaafdfgfpfa
-epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcoiakaaaa
-eaaaabaalkacaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
+epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcbaalaaaa
+eaaaabaameacaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaabaaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaa
 aaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaad
@@ -10180,14 +10206,15 @@ eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
 acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
-abaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaaajaaaaaadicaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajocaabaaa
-aaaaaaaaagijcaaaaaaaaaaaajaaaaaapgipcaaaaaaaaaaaamaaaaaadccaaaak
-hccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaaeaaaaaa
-aeaaaaaadoaaaaab"
+acaaaaaaaaaaaaaadiaaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaaaceaaaaa
+eiobhkdpeiobhkdpeiobhkdpaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaa
+ajaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaajaaaaaapgipcaaaaaaaaaaa
+amaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaa
+egiccaaaaeaaaaaaaeaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -10272,7 +10299,7 @@ void main ()
   tmpvar_19 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_19;
   lowp vec3 tmpvar_20;
-  tmpvar_20 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_20 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_20;
   highp float tmpvar_21;
   tmpvar_21 = clamp (dot (normalize((_Object2World * tmpvar_18).xyz), lightDirection_2), 0.0, 1.0);
@@ -10340,7 +10367,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -10434,7 +10461,7 @@ void main ()
   tmpvar_19 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_19;
   lowp vec3 tmpvar_20;
-  tmpvar_20 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_20 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_20;
   highp float tmpvar_21;
   tmpvar_21 = clamp (dot (normalize((_Object2World * tmpvar_18).xyz), lightDirection_2), 0.0, 1.0);
@@ -10502,7 +10529,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -10759,7 +10786,7 @@ v2f vert( in appdata_t v ) {
     highp vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     #line 467
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
+    mediump vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
     mediump float NdotL = xll_saturate_f(dot( worldNormal, lightDirection));
     mediump float diff = ((NdotL - 0.01) / 0.99);
     mediump float lightIntensity = xll_saturate_f(((_LightColor0.w * diff) * 4.0));
@@ -10983,7 +11010,7 @@ lowp vec4 frag( in v2f i ) {
     #line 484
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.94 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 488
     color.xyz = (prev.xyz * i.baseLight);
@@ -11034,114 +11061,114 @@ Float 17 [_DistFade]
 Float 18 [_MinLight]
 "3.0-!!ARBvp1.0
 # 118 ALU
-PARAM c[20] = { { 0, 1, 2, 0.60000002 },
+PARAM c[21] = { { 0, 1, 2, 0.60000002 },
 		state.lightmodel.ambient,
 		state.matrix.modelview[0],
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..18],
-		{ 0.5, 0.010002136, 4.0394478, 0 } };
+		{ 0.5, 0.98000002, 0.010002136 },
+		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
 TEMP R3;
 TEMP R4;
-DP3 R1.x, c[4], c[4];
-RSQ R1.x, R1.x;
-MUL R3.xyz, R1.x, c[4];
-MOV R2.w, vertex.position;
-MOV R2.xyz, c[0].x;
-DP4 R4.x, R2, c[2];
-DP4 R4.y, R2, c[3];
+DP3 R2.x, c[4], c[4];
+RSQ R2.x, R2.x;
+MUL R3.xyz, R2.x, c[4];
+MOV R1.xyz, c[0].x;
 MOV R1.w, vertex.position;
-DP4 R4.w, R2, c[5];
-DP4 R4.z, R2, c[4];
+DP4 R4.x, R1, c[2];
+DP4 R4.y, R1, c[3];
+DP4 R4.w, R1, c[5];
+DP4 R4.z, R1, c[4];
 ADD R0, R4, vertex.position;
 DP4 result.position.w, R0, c[16];
 DP4 result.position.z, R0, c[15];
 DP4 result.position.y, R0, c[14];
 DP4 result.position.x, R0, c[13];
-MUL R0.xy, vertex.texcoord[0], c[0].z;
-ADD R4.zw, R0.xyxy, -c[0].y;
-MOV R1.y, R4.w;
-SLT R0.x, c[0], R4.w;
-SLT R0.y, R0, c[0];
-ADD R3.w, R0.x, -R0.y;
-SLT R0.z, c[0].x, -R3.x;
-SLT R0.w, -R3.x, c[0].x;
-ADD R0.w, R0.z, -R0;
-MUL R0.z, R4, R0.w;
-MUL R1.x, R0.w, R3.w;
-SLT R0.y, R0.z, c[0].x;
-SLT R0.x, c[0], R0.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.y, R3, R1.x;
-MUL R0.x, R0, R0.w;
-MAD R0.x, R3.z, R0, R0.y;
-MOV R0.yw, R1;
-DP4 R1.x, R0, c[2];
-DP4 R1.z, R0, c[3];
-ADD R0.xy, -R4, R1.xzzw;
-MUL R0.xy, R0, c[0].w;
-SLT R0.w, R3.z, c[0].x;
-SLT R0.z, c[0].x, R3;
+MUL R0.zw, vertex.texcoord[0].xyxy, c[0].z;
+SLT R0.x, c[0], -R3;
+SLT R0.y, -R3.x, c[0].x;
+ADD R2.x, R0, -R0.y;
+ADD R0.xy, R0.zwzw, -c[0].y;
+MUL R2.z, R0.x, R2.x;
+SLT R2.y, R2.z, c[0].x;
+SLT R0.w, R0, c[0].y;
+SLT R0.z, c[0].x, R0.y;
 ADD R0.z, R0, -R0.w;
-MUL R1.x, R4.z, R0.z;
-ADD result.texcoord[1].xy, R0, c[19].x;
-SLT R0.y, R1.x, c[0].x;
-SLT R0.x, c[0], R1;
-ADD R0.z, R0.x, -R0.y;
-SLT R0.y, -R3.z, c[0].x;
-SLT R0.x, c[0], -R3.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.w, R3, R0.x;
-MUL R0.z, R0.x, R0;
-MUL R0.w, R3.y, R0;
-MAD R1.z, R3.x, R0, R0.w;
-SLT R0.x, c[0], -R3.y;
-SLT R0.y, -R3, c[0].x;
-ADD R0.y, R0.x, -R0;
-MUL R0.x, R4.z, R0.y;
-SLT R0.w, R0.x, c[0].x;
+SLT R0.w, c[0].x, R2.z;
+ADD R0.w, R0, -R2.y;
+MUL R2.w, R2.x, R0.z;
+MUL R0.w, R0, R2.x;
+MUL R2.y, R3, R2.w;
+MAD R2.x, R3.z, R0.w, R2.y;
+MOV R0.w, vertex.position;
+MOV R2.yw, R0;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+SLT R2.w, -R3.y, c[0].x;
+SLT R2.z, c[0].x, -R3.y;
+ADD R3.w, R2.z, -R2;
+MUL R2.zw, R2.xyxy, c[0].w;
+MUL R2.x, R0, R3.w;
+ADD result.texcoord[1].xy, R2.zwzw, c[19].x;
+SLT R2.z, R2.x, c[0].x;
+SLT R2.y, c[0].x, R2.x;
+ADD R2.y, R2, -R2.z;
+MUL R2.z, R0, R3.w;
+MUL R2.y, R2, R3.w;
+MUL R3.w, R3.z, R2.z;
+MOV R2.zw, R0.xyyw;
+MAD R2.y, R3.x, R2, R3.w;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+MUL R2.xy, R2, c[0].w;
+SLT R2.w, R3.z, c[0].x;
+SLT R2.z, c[0].x, R3;
+ADD R3.w, R2.z, -R2;
+MUL R0.x, R0, R3.w;
+SLT R2.w, -R3.z, c[0].x;
+SLT R2.z, c[0].x, -R3;
+ADD R2.z, R2, -R2.w;
+MUL R3.w, R0.z, R2.z;
+SLT R2.w, R0.x, c[0].x;
 SLT R0.z, c[0].x, R0.x;
-ADD R0.z, R0, -R0.w;
-MUL R0.w, R3, R0.y;
-MUL R0.y, R0.z, R0;
-MUL R3.w, R3.z, R0;
-MOV R0.zw, R1.xyyw;
-MAD R0.y, R3.x, R0, R3.w;
-DP4 R4.z, R0, c[2];
-DP4 R4.w, R0, c[3];
-ADD R0.xy, -R4, R4.zwzw;
-MUL R0.xy, R0, c[0].w;
-DP4 R0.z, R1, c[2];
-DP4 R0.w, R1, c[3];
-ADD R0.zw, -R4.xyxy, R0;
-MUL R0.zw, R0, c[0].w;
-ADD result.texcoord[3].xy, R0.zwzw, c[19].x;
-ADD result.texcoord[2].xy, R0, c[19].x;
+ADD R0.z, R0, -R2.w;
+MUL R2.w, R3.y, R3;
+MUL R0.z, R2, R0;
+MAD R0.z, R3.x, R0, R2.w;
+DP4 R2.z, R0, c[2];
+DP4 R2.w, R0, c[3];
+ADD R0.xy, -R4, R2.zwzw;
+MUL R4.xy, R0, c[0].w;
 MOV R0.xyz, vertex.normal;
 MOV R0.w, c[0].x;
-DP4 R1.z, R0, c[11];
-DP4 R1.y, R0, c[10];
-DP4 R1.x, R0, c[9];
-DP3 R0.x, R1, R1;
-RSQ R0.w, R0.x;
-DP4 R0.y, c[7], c[7];
+ADD result.texcoord[2].xy, R2, c[19].x;
+DP4 R2.z, R0, c[11];
+DP4 R2.x, R0, c[9];
+DP4 R2.y, R0, c[10];
+DP3 R0.y, R2, R2;
 RSQ R0.y, R0.y;
-MUL R1.xyz, R0.w, R1;
-MUL R0.xyz, R0.y, c[7];
-DP3 R0.w, R1, R0;
+DP4 R0.x, c[7], c[7];
+MUL R2.xyz, R0.y, R2;
+RSQ R0.x, R0.x;
+MUL R0.xyz, R0.x, c[7];
+MUL R0.xyz, R0, R2;
+DP3 R0.w, R0, c[19].y;
+DP4 R0.z, R1, c[11];
+DP4 R0.x, R1, c[9];
+DP4 R0.y, R1, c[10];
 MIN R1.x, R0.w, c[0].y;
-MAX R1.x, R1, c[0];
-ADD R1.x, R1, -c[19].y;
-DP4 R0.z, R2, c[11];
-DP4 R0.x, R2, c[9];
-DP4 R0.y, R2, c[10];
 ADD R0.xyz, -R0, c[6];
 DP3 R0.w, R0, R0;
 RSQ R0.w, R0.w;
 MUL result.texcoord[4].xyz, R0.w, R0;
+MAX R1.x, R1, c[0];
+ADD R1.x, R1, -c[19].z;
 MUL R0.w, R1.x, c[8];
 MOV R1.xyz, c[8];
 MOV R0.z, c[11].w;
@@ -11149,7 +11176,7 @@ MOV R0.x, c[9].w;
 MOV R0.y, c[10].w;
 ADD R0.xyz, -R0, c[6];
 DP3 R0.x, R0, R0;
-MUL R0.w, R0, c[19].z;
+MUL R0.w, R0, c[20].x;
 MIN R0.y, R0.w, c[0];
 RSQ R0.x, R0.x;
 RCP R0.x, R0.x;
@@ -11160,6 +11187,7 @@ MAX R0.y, R0, c[0].x;
 ADD R1.xyz, R1, c[18].x;
 MAD R1.xyz, R1, R0.y, c[1];
 MIN R1.xyz, R1, c[0].y;
+ADD result.texcoord[3].xy, R4, c[19].x;
 MAX result.texcoord[5].xyz, R1, c[0].x;
 MUL result.color.w, vertex.color, R0.x;
 MOV result.color.xyz, vertex.color;
@@ -11194,107 +11222,107 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c18, 0.00000000, 2.00000000, -1.00000000, -0.01000214
-def c19, 0.60000002, 0.50000000, 4.03944778, 0
+def c18, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_texcoord0 v3
-mov r1.xyz, c18.x
-mov r1.w, v0
-dp4 r2.x, r1, c0
-dp4 r2.y, r1, c1
-dp4 r2.w, r1, c3
-dp4 r2.z, r1, c2
-add r0, r2, v0
-dp3 r2.z, c2, c2
-rsq r2.z, r2.z
-mul r3.xyz, r2.z, c2
-mad r2.zw, v3.xyxy, c18.y, c18.z
-mov r4.y, r2.w
+dp3 r1.x, c2, c2
+rsq r1.x, r1.x
+mul r3.xyz, r1.x, c2
+mad r1.xy, v3, c18.y, c18.z
+mov r2.xyz, c18.x
+mov r2.w, v0
+dp4 r5.x, r2, c0
+dp4 r5.y, r2, c1
+dp4 r5.w, r2, c3
+dp4 r5.z, r2, c2
+add r0, r5, v0
 dp4 o0.w, r0, c7
 dp4 o0.z, r0, c6
 dp4 o0.y, r0, c5
 dp4 o0.x, r0, c4
-mov r4.w, v0
-slt r0.z, r2.w, -r2.w
+slt r0.z, r1.y, -r1.y
 slt r0.y, -r3.x, r3.x
 slt r0.x, r3, -r3
 sub r0.x, r0, r0.y
-slt r0.y, -r2.w, r2.w
-sub r3.w, r0.y, r0.z
-mul r0.z, r2, r0.x
-mul r4.x, r0, r3.w
+slt r0.y, -r1, r1
+sub r1.z, r0.y, r0
+mul r0.z, r1.x, r0.x
+mul r1.w, r0.x, r1.z
 slt r0.w, r0.z, -r0.z
 slt r0.y, -r0.z, r0.z
 sub r0.y, r0, r0.w
-mul r0.w, r3.y, r4.x
+mul r0.w, r3.y, r1
 mul r0.x, r0.y, r0
 mad r0.x, r3.z, r0, r0.w
-mov r0.yw, r4
-dp4 r5.y, r0, c1
-dp4 r5.x, r0, c0
+mov r1.w, v0
+mov r0.yw, r1
+dp4 r4.y, r0, c1
 slt r4.x, -r3.y, r3.y
-slt r2.w, r3.y, -r3.y
-sub r2.w, r2, r4.x
-mul r0.x, r2.z, r2.w
-add r4.xz, -r2.xyyw, r5.xyyw
+slt r3.w, r3.y, -r3.y
+sub r3.w, r3, r4.x
+dp4 r4.x, r0, c0
+mul r0.x, r1, r3.w
+add r4.xy, -r5, r4
 slt r0.z, r0.x, -r0.x
 slt r0.y, -r0.x, r0.x
 sub r0.y, r0, r0.z
-mul r0.z, r3.w, r2.w
-mul r0.y, r0, r2.w
-mul r2.w, r3.z, r0.z
-mov r0.zw, r4.xyyw
-mad r0.y, r3.x, r0, r2.w
-dp4 r5.x, r0, c0
-dp4 r5.y, r0, c1
-add r0.xy, -r2, r5
+mul r0.z, r1, r3.w
+mul r0.y, r0, r3.w
+mul r3.w, r3.z, r0.z
+mov r0.zw, r1.xyyw
+mad r0.y, r3.x, r0, r3.w
+dp4 r4.z, r0, c0
+dp4 r4.w, r0, c1
+add r0.xy, -r5, r4.zwzw
 mad o4.xy, r0, c19.x, c19.y
-dp4 r0.z, r1, c10
-dp4 r0.x, r1, c8
-dp4 r0.y, r1, c9
-add r0.xyz, -r0, c13
-slt r1.x, -r3.z, r3.z
-slt r0.w, r3.z, -r3.z
-sub r1.y, r1.x, r0.w
-sub r0.w, r0, r1.x
-mad o3.xy, r4.xzzw, c19.x, c19.y
-mul r4.x, r2.z, r1.y
-mul r1.z, r3.w, r0.w
-slt r1.y, r4.x, -r4.x
-slt r1.x, -r4, r4
-sub r1.x, r1, r1.y
-mul r0.w, r0, r1.x
-mul r1.y, r3, r1.z
-mad r4.z, r3.x, r0.w, r1.y
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o6.xyz, r0.w, r0
+slt r0.y, -r3.z, r3.z
+slt r0.x, r3.z, -r3.z
+sub r0.z, r0.y, r0.x
+mul r1.x, r1, r0.z
+sub r0.x, r0, r0.y
+mul r0.w, r1.z, r0.x
+slt r0.z, r1.x, -r1.x
+slt r0.y, -r1.x, r1.x
+sub r0.y, r0, r0.z
+mul r0.z, r3.y, r0.w
+mul r0.x, r0, r0.y
+mad r1.z, r3.x, r0.x, r0
 mov r0.xyz, v2
 mov r0.w, c18.x
-dp4 r1.z, r0, c10
-dp4 r1.x, r4, c0
-dp4 r1.y, r4, c1
-add r1.xy, -r2, r1
-mad o5.xy, r1, c19.x, c19.y
-dp4 r1.y, r0, c9
-dp4 r1.x, r0, c8
-dp3 r0.x, r1, r1
-rsq r0.w, r0.x
-dp4 r0.y, c14, c14
-rsq r0.y, r0.y
-mul r0.xyz, r0.y, c14
-mul r1.xyz, r0.w, r1
-dp3_sat r0.w, r1, r0
+mad o3.xy, r4, c19.x, c19.y
+dp4 r4.z, r0, c10
+dp4 r4.x, r0, c8
+dp4 r4.y, r0, c9
+dp3 r0.z, r4, r4
+dp4 r0.x, r1, c0
+dp4 r0.y, r1, c1
+add r0.xy, -r5, r0
+dp4 r1.w, c14, c14
+dp4 r1.z, r2, c10
+dp4 r1.x, r2, c8
+dp4 r1.y, r2, c9
+add r1.xyz, -r1, c13
+dp3 r0.w, r1, r1
+rsq r0.w, r0.w
+rsq r1.w, r1.w
+mul o6.xyz, r0.w, r1
+rsq r0.z, r0.z
+mad o5.xy, r0, c19.x, c19.y
+mul r0.xyz, r0.z, r4
+mul r2.xyz, r1.w, c14
+mul r0.xyz, r2, r0
+dp3_sat r0.w, r0, c18.w
 mov r0.z, c10.w
 mov r0.x, c8.w
 mov r0.y, c9.w
 add r0.xyz, -r0, c13
 dp3 r0.x, r0, r0
-add r0.w, r0, c18
+add r0.w, r0, c19.z
 mul r0.y, r0.w, c15.w
-mul_sat r0.z, r0.y, c19
+mul_sat r0.z, r0.y, c19.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mov r0.y, c17.x
@@ -11332,12 +11360,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 79 instructions, 5 temp regs, 0 temp arrays:
-// ALU 60 float, 8 int, 0 uint
+// 80 instructions, 5 temp regs, 0 temp arrays:
+// ALU 61 float, 8 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedpfceoggbbmbbdbbdploccfnllnpdamadabaaaaaaoiamaaaaadaaaaaa
+eefiecedobpjjkiikjcokmafnfaainmnjmgcekaaabaaaaaabaanaaaaadaaaaaa
 cmaaaaaanmaaaaaapiabaaaaejfdeheokiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaijaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaipaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -11352,8 +11380,8 @@ amadaaaaakabaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaaakabaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaakabaaaaafaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaaakabaaaaagaaaaaaaaaaaaaaadaaaaaaahaaaaaa
 ahapaaaaakabaaaaahaaaaaaaaaaaaaaadaaaaaaaiaaaaaaahapaaaafdfgfpfa
-epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcoiakaaaa
-eaaaabaalkacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaafjaaaaaeegiocaaa
+epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcbaalaaaa
+eaaaabaameacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaabaaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaa
 aaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaad
@@ -11433,14 +11461,15 @@ eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
 acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
-abaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajocaabaaa
-aaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaaaiaaaaaadccaaaak
-hccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaaeaaaaaa
-aeaaaaaadoaaaaab"
+acaaaaaaaaaaaaaadiaaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaaaceaaaaa
+eiobhkdpeiobhkdpeiobhkdpaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaa
+afaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaa
+aiaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaa
+egiccaaaaeaaaaaaaeaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -11525,7 +11554,7 @@ void main ()
   tmpvar_19 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_19;
   highp vec3 tmpvar_20;
-  tmpvar_20 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_20 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_20;
   highp float tmpvar_21;
   tmpvar_21 = clamp (dot (normalize((_Object2World * tmpvar_18).xyz), lightDirection_2), 0.0, 1.0);
@@ -11593,7 +11622,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -11687,7 +11716,7 @@ void main ()
   tmpvar_19 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_19;
   highp vec3 tmpvar_20;
-  tmpvar_20 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_20 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_20;
   highp float tmpvar_21;
   tmpvar_21 = clamp (dot (normalize((_Object2World * tmpvar_18).xyz), lightDirection_2), 0.0, 1.0);
@@ -11755,7 +11784,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -12011,7 +12040,7 @@ v2f vert( in appdata_t v ) {
     highp vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     #line 472
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
+    mediump vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
     mediump float NdotL = xll_saturate_f(dot( worldNormal, lightDirection));
     mediump float diff = ((NdotL - 0.01) / 0.99);
     mediump float lightIntensity = xll_saturate_f(((_LightColor0.w * diff) * 4.0));
@@ -12234,7 +12263,7 @@ lowp vec4 frag( in v2f i ) {
     #line 489
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.94 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 493
     color.xyz = (prev.xyz * i.baseLight);
@@ -12285,114 +12314,114 @@ Float 17 [_DistFade]
 Float 18 [_MinLight]
 "3.0-!!ARBvp1.0
 # 118 ALU
-PARAM c[20] = { { 0, 1, 2, 0.60000002 },
+PARAM c[21] = { { 0, 1, 2, 0.60000002 },
 		state.lightmodel.ambient,
 		state.matrix.modelview[0],
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..18],
-		{ 0.5, 0.010002136, 4.0394478, 0 } };
+		{ 0.5, 0.98000002, 0.010002136 },
+		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
 TEMP R3;
 TEMP R4;
-DP3 R1.x, c[4], c[4];
-RSQ R1.x, R1.x;
-MUL R3.xyz, R1.x, c[4];
-MOV R2.w, vertex.position;
-MOV R2.xyz, c[0].x;
-DP4 R4.x, R2, c[2];
-DP4 R4.y, R2, c[3];
+DP3 R2.x, c[4], c[4];
+RSQ R2.x, R2.x;
+MUL R3.xyz, R2.x, c[4];
+MOV R1.xyz, c[0].x;
 MOV R1.w, vertex.position;
-DP4 R4.w, R2, c[5];
-DP4 R4.z, R2, c[4];
+DP4 R4.x, R1, c[2];
+DP4 R4.y, R1, c[3];
+DP4 R4.w, R1, c[5];
+DP4 R4.z, R1, c[4];
 ADD R0, R4, vertex.position;
 DP4 result.position.w, R0, c[16];
 DP4 result.position.z, R0, c[15];
 DP4 result.position.y, R0, c[14];
 DP4 result.position.x, R0, c[13];
-MUL R0.xy, vertex.texcoord[0], c[0].z;
-ADD R4.zw, R0.xyxy, -c[0].y;
-MOV R1.y, R4.w;
-SLT R0.x, c[0], R4.w;
-SLT R0.y, R0, c[0];
-ADD R3.w, R0.x, -R0.y;
-SLT R0.z, c[0].x, -R3.x;
-SLT R0.w, -R3.x, c[0].x;
-ADD R0.w, R0.z, -R0;
-MUL R0.z, R4, R0.w;
-MUL R1.x, R0.w, R3.w;
-SLT R0.y, R0.z, c[0].x;
-SLT R0.x, c[0], R0.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.y, R3, R1.x;
-MUL R0.x, R0, R0.w;
-MAD R0.x, R3.z, R0, R0.y;
-MOV R0.yw, R1;
-DP4 R1.x, R0, c[2];
-DP4 R1.z, R0, c[3];
-ADD R0.xy, -R4, R1.xzzw;
-MUL R0.xy, R0, c[0].w;
-SLT R0.w, R3.z, c[0].x;
-SLT R0.z, c[0].x, R3;
+MUL R0.zw, vertex.texcoord[0].xyxy, c[0].z;
+SLT R0.x, c[0], -R3;
+SLT R0.y, -R3.x, c[0].x;
+ADD R2.x, R0, -R0.y;
+ADD R0.xy, R0.zwzw, -c[0].y;
+MUL R2.z, R0.x, R2.x;
+SLT R2.y, R2.z, c[0].x;
+SLT R0.w, R0, c[0].y;
+SLT R0.z, c[0].x, R0.y;
 ADD R0.z, R0, -R0.w;
-MUL R1.x, R4.z, R0.z;
-ADD result.texcoord[1].xy, R0, c[19].x;
-SLT R0.y, R1.x, c[0].x;
-SLT R0.x, c[0], R1;
-ADD R0.z, R0.x, -R0.y;
-SLT R0.y, -R3.z, c[0].x;
-SLT R0.x, c[0], -R3.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.w, R3, R0.x;
-MUL R0.z, R0.x, R0;
-MUL R0.w, R3.y, R0;
-MAD R1.z, R3.x, R0, R0.w;
-SLT R0.x, c[0], -R3.y;
-SLT R0.y, -R3, c[0].x;
-ADD R0.y, R0.x, -R0;
-MUL R0.x, R4.z, R0.y;
-SLT R0.w, R0.x, c[0].x;
+SLT R0.w, c[0].x, R2.z;
+ADD R0.w, R0, -R2.y;
+MUL R2.w, R2.x, R0.z;
+MUL R0.w, R0, R2.x;
+MUL R2.y, R3, R2.w;
+MAD R2.x, R3.z, R0.w, R2.y;
+MOV R0.w, vertex.position;
+MOV R2.yw, R0;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+SLT R2.w, -R3.y, c[0].x;
+SLT R2.z, c[0].x, -R3.y;
+ADD R3.w, R2.z, -R2;
+MUL R2.zw, R2.xyxy, c[0].w;
+MUL R2.x, R0, R3.w;
+ADD result.texcoord[1].xy, R2.zwzw, c[19].x;
+SLT R2.z, R2.x, c[0].x;
+SLT R2.y, c[0].x, R2.x;
+ADD R2.y, R2, -R2.z;
+MUL R2.z, R0, R3.w;
+MUL R2.y, R2, R3.w;
+MUL R3.w, R3.z, R2.z;
+MOV R2.zw, R0.xyyw;
+MAD R2.y, R3.x, R2, R3.w;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+MUL R2.xy, R2, c[0].w;
+SLT R2.w, R3.z, c[0].x;
+SLT R2.z, c[0].x, R3;
+ADD R3.w, R2.z, -R2;
+MUL R0.x, R0, R3.w;
+SLT R2.w, -R3.z, c[0].x;
+SLT R2.z, c[0].x, -R3;
+ADD R2.z, R2, -R2.w;
+MUL R3.w, R0.z, R2.z;
+SLT R2.w, R0.x, c[0].x;
 SLT R0.z, c[0].x, R0.x;
-ADD R0.z, R0, -R0.w;
-MUL R0.w, R3, R0.y;
-MUL R0.y, R0.z, R0;
-MUL R3.w, R3.z, R0;
-MOV R0.zw, R1.xyyw;
-MAD R0.y, R3.x, R0, R3.w;
-DP4 R4.z, R0, c[2];
-DP4 R4.w, R0, c[3];
-ADD R0.xy, -R4, R4.zwzw;
-MUL R0.xy, R0, c[0].w;
-DP4 R0.z, R1, c[2];
-DP4 R0.w, R1, c[3];
-ADD R0.zw, -R4.xyxy, R0;
-MUL R0.zw, R0, c[0].w;
-ADD result.texcoord[3].xy, R0.zwzw, c[19].x;
-ADD result.texcoord[2].xy, R0, c[19].x;
+ADD R0.z, R0, -R2.w;
+MUL R2.w, R3.y, R3;
+MUL R0.z, R2, R0;
+MAD R0.z, R3.x, R0, R2.w;
+DP4 R2.z, R0, c[2];
+DP4 R2.w, R0, c[3];
+ADD R0.xy, -R4, R2.zwzw;
+MUL R4.xy, R0, c[0].w;
 MOV R0.xyz, vertex.normal;
 MOV R0.w, c[0].x;
-DP4 R1.z, R0, c[11];
-DP4 R1.y, R0, c[10];
-DP4 R1.x, R0, c[9];
-DP3 R0.x, R1, R1;
-RSQ R0.w, R0.x;
-DP4 R0.y, c[7], c[7];
+ADD result.texcoord[2].xy, R2, c[19].x;
+DP4 R2.z, R0, c[11];
+DP4 R2.x, R0, c[9];
+DP4 R2.y, R0, c[10];
+DP3 R0.y, R2, R2;
 RSQ R0.y, R0.y;
-MUL R1.xyz, R0.w, R1;
-MUL R0.xyz, R0.y, c[7];
-DP3 R0.w, R1, R0;
+DP4 R0.x, c[7], c[7];
+MUL R2.xyz, R0.y, R2;
+RSQ R0.x, R0.x;
+MUL R0.xyz, R0.x, c[7];
+MUL R0.xyz, R0, R2;
+DP3 R0.w, R0, c[19].y;
+DP4 R0.z, R1, c[11];
+DP4 R0.x, R1, c[9];
+DP4 R0.y, R1, c[10];
 MIN R1.x, R0.w, c[0].y;
-MAX R1.x, R1, c[0];
-ADD R1.x, R1, -c[19].y;
-DP4 R0.z, R2, c[11];
-DP4 R0.x, R2, c[9];
-DP4 R0.y, R2, c[10];
 ADD R0.xyz, -R0, c[6];
 DP3 R0.w, R0, R0;
 RSQ R0.w, R0.w;
 MUL result.texcoord[4].xyz, R0.w, R0;
+MAX R1.x, R1, c[0];
+ADD R1.x, R1, -c[19].z;
 MUL R0.w, R1.x, c[8];
 MOV R1.xyz, c[8];
 MOV R0.z, c[11].w;
@@ -12400,7 +12429,7 @@ MOV R0.x, c[9].w;
 MOV R0.y, c[10].w;
 ADD R0.xyz, -R0, c[6];
 DP3 R0.x, R0, R0;
-MUL R0.w, R0, c[19].z;
+MUL R0.w, R0, c[20].x;
 MIN R0.y, R0.w, c[0];
 RSQ R0.x, R0.x;
 RCP R0.x, R0.x;
@@ -12411,6 +12440,7 @@ MAX R0.y, R0, c[0].x;
 ADD R1.xyz, R1, c[18].x;
 MAD R1.xyz, R1, R0.y, c[1];
 MIN R1.xyz, R1, c[0].y;
+ADD result.texcoord[3].xy, R4, c[19].x;
 MAX result.texcoord[5].xyz, R1, c[0].x;
 MUL result.color.w, vertex.color, R0.x;
 MOV result.color.xyz, vertex.color;
@@ -12445,107 +12475,107 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c18, 0.00000000, 2.00000000, -1.00000000, -0.01000214
-def c19, 0.60000002, 0.50000000, 4.03944778, 0
+def c18, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_texcoord0 v3
-mov r1.xyz, c18.x
-mov r1.w, v0
-dp4 r2.x, r1, c0
-dp4 r2.y, r1, c1
-dp4 r2.w, r1, c3
-dp4 r2.z, r1, c2
-add r0, r2, v0
-dp3 r2.z, c2, c2
-rsq r2.z, r2.z
-mul r3.xyz, r2.z, c2
-mad r2.zw, v3.xyxy, c18.y, c18.z
-mov r4.y, r2.w
+dp3 r1.x, c2, c2
+rsq r1.x, r1.x
+mul r3.xyz, r1.x, c2
+mad r1.xy, v3, c18.y, c18.z
+mov r2.xyz, c18.x
+mov r2.w, v0
+dp4 r5.x, r2, c0
+dp4 r5.y, r2, c1
+dp4 r5.w, r2, c3
+dp4 r5.z, r2, c2
+add r0, r5, v0
 dp4 o0.w, r0, c7
 dp4 o0.z, r0, c6
 dp4 o0.y, r0, c5
 dp4 o0.x, r0, c4
-mov r4.w, v0
-slt r0.z, r2.w, -r2.w
+slt r0.z, r1.y, -r1.y
 slt r0.y, -r3.x, r3.x
 slt r0.x, r3, -r3
 sub r0.x, r0, r0.y
-slt r0.y, -r2.w, r2.w
-sub r3.w, r0.y, r0.z
-mul r0.z, r2, r0.x
-mul r4.x, r0, r3.w
+slt r0.y, -r1, r1
+sub r1.z, r0.y, r0
+mul r0.z, r1.x, r0.x
+mul r1.w, r0.x, r1.z
 slt r0.w, r0.z, -r0.z
 slt r0.y, -r0.z, r0.z
 sub r0.y, r0, r0.w
-mul r0.w, r3.y, r4.x
+mul r0.w, r3.y, r1
 mul r0.x, r0.y, r0
 mad r0.x, r3.z, r0, r0.w
-mov r0.yw, r4
-dp4 r5.y, r0, c1
-dp4 r5.x, r0, c0
+mov r1.w, v0
+mov r0.yw, r1
+dp4 r4.y, r0, c1
 slt r4.x, -r3.y, r3.y
-slt r2.w, r3.y, -r3.y
-sub r2.w, r2, r4.x
-mul r0.x, r2.z, r2.w
-add r4.xz, -r2.xyyw, r5.xyyw
+slt r3.w, r3.y, -r3.y
+sub r3.w, r3, r4.x
+dp4 r4.x, r0, c0
+mul r0.x, r1, r3.w
+add r4.xy, -r5, r4
 slt r0.z, r0.x, -r0.x
 slt r0.y, -r0.x, r0.x
 sub r0.y, r0, r0.z
-mul r0.z, r3.w, r2.w
-mul r0.y, r0, r2.w
-mul r2.w, r3.z, r0.z
-mov r0.zw, r4.xyyw
-mad r0.y, r3.x, r0, r2.w
-dp4 r5.x, r0, c0
-dp4 r5.y, r0, c1
-add r0.xy, -r2, r5
+mul r0.z, r1, r3.w
+mul r0.y, r0, r3.w
+mul r3.w, r3.z, r0.z
+mov r0.zw, r1.xyyw
+mad r0.y, r3.x, r0, r3.w
+dp4 r4.z, r0, c0
+dp4 r4.w, r0, c1
+add r0.xy, -r5, r4.zwzw
 mad o4.xy, r0, c19.x, c19.y
-dp4 r0.z, r1, c10
-dp4 r0.x, r1, c8
-dp4 r0.y, r1, c9
-add r0.xyz, -r0, c13
-slt r1.x, -r3.z, r3.z
-slt r0.w, r3.z, -r3.z
-sub r1.y, r1.x, r0.w
-sub r0.w, r0, r1.x
-mad o3.xy, r4.xzzw, c19.x, c19.y
-mul r4.x, r2.z, r1.y
-mul r1.z, r3.w, r0.w
-slt r1.y, r4.x, -r4.x
-slt r1.x, -r4, r4
-sub r1.x, r1, r1.y
-mul r0.w, r0, r1.x
-mul r1.y, r3, r1.z
-mad r4.z, r3.x, r0.w, r1.y
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o6.xyz, r0.w, r0
+slt r0.y, -r3.z, r3.z
+slt r0.x, r3.z, -r3.z
+sub r0.z, r0.y, r0.x
+mul r1.x, r1, r0.z
+sub r0.x, r0, r0.y
+mul r0.w, r1.z, r0.x
+slt r0.z, r1.x, -r1.x
+slt r0.y, -r1.x, r1.x
+sub r0.y, r0, r0.z
+mul r0.z, r3.y, r0.w
+mul r0.x, r0, r0.y
+mad r1.z, r3.x, r0.x, r0
 mov r0.xyz, v2
 mov r0.w, c18.x
-dp4 r1.z, r0, c10
-dp4 r1.x, r4, c0
-dp4 r1.y, r4, c1
-add r1.xy, -r2, r1
-mad o5.xy, r1, c19.x, c19.y
-dp4 r1.y, r0, c9
-dp4 r1.x, r0, c8
-dp3 r0.x, r1, r1
-rsq r0.w, r0.x
-dp4 r0.y, c14, c14
-rsq r0.y, r0.y
-mul r0.xyz, r0.y, c14
-mul r1.xyz, r0.w, r1
-dp3_sat r0.w, r1, r0
+mad o3.xy, r4, c19.x, c19.y
+dp4 r4.z, r0, c10
+dp4 r4.x, r0, c8
+dp4 r4.y, r0, c9
+dp3 r0.z, r4, r4
+dp4 r0.x, r1, c0
+dp4 r0.y, r1, c1
+add r0.xy, -r5, r0
+dp4 r1.w, c14, c14
+dp4 r1.z, r2, c10
+dp4 r1.x, r2, c8
+dp4 r1.y, r2, c9
+add r1.xyz, -r1, c13
+dp3 r0.w, r1, r1
+rsq r0.w, r0.w
+rsq r1.w, r1.w
+mul o6.xyz, r0.w, r1
+rsq r0.z, r0.z
+mad o5.xy, r0, c19.x, c19.y
+mul r0.xyz, r0.z, r4
+mul r2.xyz, r1.w, c14
+mul r0.xyz, r2, r0
+dp3_sat r0.w, r0, c18.w
 mov r0.z, c10.w
 mov r0.x, c8.w
 mov r0.y, c9.w
 add r0.xyz, -r0, c13
 dp3 r0.x, r0, r0
-add r0.w, r0, c18
+add r0.w, r0, c19.z
 mul r0.y, r0.w, c15.w
-mul_sat r0.z, r0.y, c19
+mul_sat r0.z, r0.y, c19.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mov r0.y, c17.x
@@ -12583,12 +12613,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 79 instructions, 5 temp regs, 0 temp arrays:
-// ALU 60 float, 8 int, 0 uint
+// 80 instructions, 5 temp regs, 0 temp arrays:
+// ALU 61 float, 8 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedpfceoggbbmbbdbbdploccfnllnpdamadabaaaaaaoiamaaaaadaaaaaa
+eefiecedobpjjkiikjcokmafnfaainmnjmgcekaaabaaaaaabaanaaaaadaaaaaa
 cmaaaaaanmaaaaaapiabaaaaejfdeheokiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaijaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaipaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -12603,8 +12633,8 @@ amadaaaaakabaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaaakabaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaakabaaaaafaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaaakabaaaaagaaaaaaaaaaaaaaadaaaaaaahaaaaaa
 ahapaaaaakabaaaaahaaaaaaaaaaaaaaadaaaaaaaiaaaaaaahapaaaafdfgfpfa
-epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcoiakaaaa
-eaaaabaalkacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaafjaaaaaeegiocaaa
+epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcbaalaaaa
+eaaaabaameacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaabaaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaa
 aaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaad
@@ -12684,14 +12714,15 @@ eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
 acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
-abaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajocaabaaa
-aaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaaaiaaaaaadccaaaak
-hccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaaeaaaaaa
-aeaaaaaadoaaaaab"
+acaaaaaaaaaaaaaadiaaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaaaceaaaaa
+eiobhkdpeiobhkdpeiobhkdpaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaa
+afaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaa
+aiaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaa
+egiccaaaaeaaaaaaaeaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -12776,7 +12807,7 @@ void main ()
   tmpvar_19 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_19;
   highp vec3 tmpvar_20;
-  tmpvar_20 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_20 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_20;
   highp float tmpvar_21;
   tmpvar_21 = clamp (dot (normalize((_Object2World * tmpvar_18).xyz), lightDirection_2), 0.0, 1.0);
@@ -12844,7 +12875,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -12938,7 +12969,7 @@ void main ()
   tmpvar_19 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_19;
   highp vec3 tmpvar_20;
-  tmpvar_20 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_20 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_20;
   highp float tmpvar_21;
   tmpvar_21 = clamp (dot (normalize((_Object2World * tmpvar_18).xyz), lightDirection_2), 0.0, 1.0);
@@ -13006,7 +13037,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -13263,7 +13294,7 @@ v2f vert( in appdata_t v ) {
     highp vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     #line 473
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
+    mediump vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
     mediump float NdotL = xll_saturate_f(dot( worldNormal, lightDirection));
     mediump float diff = ((NdotL - 0.01) / 0.99);
     mediump float lightIntensity = xll_saturate_f(((_LightColor0.w * diff) * 4.0));
@@ -13487,7 +13518,7 @@ lowp vec4 frag( in v2f i ) {
     #line 490
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.94 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 494
     color.xyz = (prev.xyz * i.baseLight);
@@ -13538,114 +13569,114 @@ Float 17 [_DistFade]
 Float 18 [_MinLight]
 "3.0-!!ARBvp1.0
 # 118 ALU
-PARAM c[20] = { { 0, 1, 2, 0.60000002 },
+PARAM c[21] = { { 0, 1, 2, 0.60000002 },
 		state.lightmodel.ambient,
 		state.matrix.modelview[0],
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..18],
-		{ 0.5, 0.010002136, 4.0394478, 0 } };
+		{ 0.5, 0.98000002, 0.010002136 },
+		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
 TEMP R3;
 TEMP R4;
-DP3 R1.x, c[4], c[4];
-RSQ R1.x, R1.x;
-MUL R3.xyz, R1.x, c[4];
-MOV R2.w, vertex.position;
-MOV R2.xyz, c[0].x;
-DP4 R4.x, R2, c[2];
-DP4 R4.y, R2, c[3];
+DP3 R2.x, c[4], c[4];
+RSQ R2.x, R2.x;
+MUL R3.xyz, R2.x, c[4];
+MOV R1.xyz, c[0].x;
 MOV R1.w, vertex.position;
-DP4 R4.w, R2, c[5];
-DP4 R4.z, R2, c[4];
+DP4 R4.x, R1, c[2];
+DP4 R4.y, R1, c[3];
+DP4 R4.w, R1, c[5];
+DP4 R4.z, R1, c[4];
 ADD R0, R4, vertex.position;
 DP4 result.position.w, R0, c[16];
 DP4 result.position.z, R0, c[15];
 DP4 result.position.y, R0, c[14];
 DP4 result.position.x, R0, c[13];
-MUL R0.xy, vertex.texcoord[0], c[0].z;
-ADD R4.zw, R0.xyxy, -c[0].y;
-MOV R1.y, R4.w;
-SLT R0.x, c[0], R4.w;
-SLT R0.y, R0, c[0];
-ADD R3.w, R0.x, -R0.y;
-SLT R0.z, c[0].x, -R3.x;
-SLT R0.w, -R3.x, c[0].x;
-ADD R0.w, R0.z, -R0;
-MUL R0.z, R4, R0.w;
-MUL R1.x, R0.w, R3.w;
-SLT R0.y, R0.z, c[0].x;
-SLT R0.x, c[0], R0.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.y, R3, R1.x;
-MUL R0.x, R0, R0.w;
-MAD R0.x, R3.z, R0, R0.y;
-MOV R0.yw, R1;
-DP4 R1.x, R0, c[2];
-DP4 R1.z, R0, c[3];
-ADD R0.xy, -R4, R1.xzzw;
-MUL R0.xy, R0, c[0].w;
-SLT R0.w, R3.z, c[0].x;
-SLT R0.z, c[0].x, R3;
+MUL R0.zw, vertex.texcoord[0].xyxy, c[0].z;
+SLT R0.x, c[0], -R3;
+SLT R0.y, -R3.x, c[0].x;
+ADD R2.x, R0, -R0.y;
+ADD R0.xy, R0.zwzw, -c[0].y;
+MUL R2.z, R0.x, R2.x;
+SLT R2.y, R2.z, c[0].x;
+SLT R0.w, R0, c[0].y;
+SLT R0.z, c[0].x, R0.y;
 ADD R0.z, R0, -R0.w;
-MUL R1.x, R4.z, R0.z;
-ADD result.texcoord[1].xy, R0, c[19].x;
-SLT R0.y, R1.x, c[0].x;
-SLT R0.x, c[0], R1;
-ADD R0.z, R0.x, -R0.y;
-SLT R0.y, -R3.z, c[0].x;
-SLT R0.x, c[0], -R3.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.w, R3, R0.x;
-MUL R0.z, R0.x, R0;
-MUL R0.w, R3.y, R0;
-MAD R1.z, R3.x, R0, R0.w;
-SLT R0.x, c[0], -R3.y;
-SLT R0.y, -R3, c[0].x;
-ADD R0.y, R0.x, -R0;
-MUL R0.x, R4.z, R0.y;
-SLT R0.w, R0.x, c[0].x;
+SLT R0.w, c[0].x, R2.z;
+ADD R0.w, R0, -R2.y;
+MUL R2.w, R2.x, R0.z;
+MUL R0.w, R0, R2.x;
+MUL R2.y, R3, R2.w;
+MAD R2.x, R3.z, R0.w, R2.y;
+MOV R0.w, vertex.position;
+MOV R2.yw, R0;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+SLT R2.w, -R3.y, c[0].x;
+SLT R2.z, c[0].x, -R3.y;
+ADD R3.w, R2.z, -R2;
+MUL R2.zw, R2.xyxy, c[0].w;
+MUL R2.x, R0, R3.w;
+ADD result.texcoord[1].xy, R2.zwzw, c[19].x;
+SLT R2.z, R2.x, c[0].x;
+SLT R2.y, c[0].x, R2.x;
+ADD R2.y, R2, -R2.z;
+MUL R2.z, R0, R3.w;
+MUL R2.y, R2, R3.w;
+MUL R3.w, R3.z, R2.z;
+MOV R2.zw, R0.xyyw;
+MAD R2.y, R3.x, R2, R3.w;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+MUL R2.xy, R2, c[0].w;
+SLT R2.w, R3.z, c[0].x;
+SLT R2.z, c[0].x, R3;
+ADD R3.w, R2.z, -R2;
+MUL R0.x, R0, R3.w;
+SLT R2.w, -R3.z, c[0].x;
+SLT R2.z, c[0].x, -R3;
+ADD R2.z, R2, -R2.w;
+MUL R3.w, R0.z, R2.z;
+SLT R2.w, R0.x, c[0].x;
 SLT R0.z, c[0].x, R0.x;
-ADD R0.z, R0, -R0.w;
-MUL R0.w, R3, R0.y;
-MUL R0.y, R0.z, R0;
-MUL R3.w, R3.z, R0;
-MOV R0.zw, R1.xyyw;
-MAD R0.y, R3.x, R0, R3.w;
-DP4 R4.z, R0, c[2];
-DP4 R4.w, R0, c[3];
-ADD R0.xy, -R4, R4.zwzw;
-MUL R0.xy, R0, c[0].w;
-DP4 R0.z, R1, c[2];
-DP4 R0.w, R1, c[3];
-ADD R0.zw, -R4.xyxy, R0;
-MUL R0.zw, R0, c[0].w;
-ADD result.texcoord[3].xy, R0.zwzw, c[19].x;
-ADD result.texcoord[2].xy, R0, c[19].x;
+ADD R0.z, R0, -R2.w;
+MUL R2.w, R3.y, R3;
+MUL R0.z, R2, R0;
+MAD R0.z, R3.x, R0, R2.w;
+DP4 R2.z, R0, c[2];
+DP4 R2.w, R0, c[3];
+ADD R0.xy, -R4, R2.zwzw;
+MUL R4.xy, R0, c[0].w;
 MOV R0.xyz, vertex.normal;
 MOV R0.w, c[0].x;
-DP4 R1.z, R0, c[11];
-DP4 R1.y, R0, c[10];
-DP4 R1.x, R0, c[9];
-DP3 R0.x, R1, R1;
-RSQ R0.w, R0.x;
-DP4 R0.y, c[7], c[7];
+ADD result.texcoord[2].xy, R2, c[19].x;
+DP4 R2.z, R0, c[11];
+DP4 R2.x, R0, c[9];
+DP4 R2.y, R0, c[10];
+DP3 R0.y, R2, R2;
 RSQ R0.y, R0.y;
-MUL R1.xyz, R0.w, R1;
-MUL R0.xyz, R0.y, c[7];
-DP3 R0.w, R1, R0;
+DP4 R0.x, c[7], c[7];
+MUL R2.xyz, R0.y, R2;
+RSQ R0.x, R0.x;
+MUL R0.xyz, R0.x, c[7];
+MUL R0.xyz, R0, R2;
+DP3 R0.w, R0, c[19].y;
+DP4 R0.z, R1, c[11];
+DP4 R0.x, R1, c[9];
+DP4 R0.y, R1, c[10];
 MIN R1.x, R0.w, c[0].y;
-MAX R1.x, R1, c[0];
-ADD R1.x, R1, -c[19].y;
-DP4 R0.z, R2, c[11];
-DP4 R0.x, R2, c[9];
-DP4 R0.y, R2, c[10];
 ADD R0.xyz, -R0, c[6];
 DP3 R0.w, R0, R0;
 RSQ R0.w, R0.w;
 MUL result.texcoord[4].xyz, R0.w, R0;
+MAX R1.x, R1, c[0];
+ADD R1.x, R1, -c[19].z;
 MUL R0.w, R1.x, c[8];
 MOV R1.xyz, c[8];
 MOV R0.z, c[11].w;
@@ -13653,7 +13684,7 @@ MOV R0.x, c[9].w;
 MOV R0.y, c[10].w;
 ADD R0.xyz, -R0, c[6];
 DP3 R0.x, R0, R0;
-MUL R0.w, R0, c[19].z;
+MUL R0.w, R0, c[20].x;
 MIN R0.y, R0.w, c[0];
 RSQ R0.x, R0.x;
 RCP R0.x, R0.x;
@@ -13664,6 +13695,7 @@ MAX R0.y, R0, c[0].x;
 ADD R1.xyz, R1, c[18].x;
 MAD R1.xyz, R1, R0.y, c[1];
 MIN R1.xyz, R1, c[0].y;
+ADD result.texcoord[3].xy, R4, c[19].x;
 MAX result.texcoord[5].xyz, R1, c[0].x;
 MUL result.color.w, vertex.color, R0.x;
 MOV result.color.xyz, vertex.color;
@@ -13698,107 +13730,107 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c18, 0.00000000, 2.00000000, -1.00000000, -0.01000214
-def c19, 0.60000002, 0.50000000, 4.03944778, 0
+def c18, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_texcoord0 v3
-mov r1.xyz, c18.x
-mov r1.w, v0
-dp4 r2.x, r1, c0
-dp4 r2.y, r1, c1
-dp4 r2.w, r1, c3
-dp4 r2.z, r1, c2
-add r0, r2, v0
-dp3 r2.z, c2, c2
-rsq r2.z, r2.z
-mul r3.xyz, r2.z, c2
-mad r2.zw, v3.xyxy, c18.y, c18.z
-mov r4.y, r2.w
+dp3 r1.x, c2, c2
+rsq r1.x, r1.x
+mul r3.xyz, r1.x, c2
+mad r1.xy, v3, c18.y, c18.z
+mov r2.xyz, c18.x
+mov r2.w, v0
+dp4 r5.x, r2, c0
+dp4 r5.y, r2, c1
+dp4 r5.w, r2, c3
+dp4 r5.z, r2, c2
+add r0, r5, v0
 dp4 o0.w, r0, c7
 dp4 o0.z, r0, c6
 dp4 o0.y, r0, c5
 dp4 o0.x, r0, c4
-mov r4.w, v0
-slt r0.z, r2.w, -r2.w
+slt r0.z, r1.y, -r1.y
 slt r0.y, -r3.x, r3.x
 slt r0.x, r3, -r3
 sub r0.x, r0, r0.y
-slt r0.y, -r2.w, r2.w
-sub r3.w, r0.y, r0.z
-mul r0.z, r2, r0.x
-mul r4.x, r0, r3.w
+slt r0.y, -r1, r1
+sub r1.z, r0.y, r0
+mul r0.z, r1.x, r0.x
+mul r1.w, r0.x, r1.z
 slt r0.w, r0.z, -r0.z
 slt r0.y, -r0.z, r0.z
 sub r0.y, r0, r0.w
-mul r0.w, r3.y, r4.x
+mul r0.w, r3.y, r1
 mul r0.x, r0.y, r0
 mad r0.x, r3.z, r0, r0.w
-mov r0.yw, r4
-dp4 r5.y, r0, c1
-dp4 r5.x, r0, c0
+mov r1.w, v0
+mov r0.yw, r1
+dp4 r4.y, r0, c1
 slt r4.x, -r3.y, r3.y
-slt r2.w, r3.y, -r3.y
-sub r2.w, r2, r4.x
-mul r0.x, r2.z, r2.w
-add r4.xz, -r2.xyyw, r5.xyyw
+slt r3.w, r3.y, -r3.y
+sub r3.w, r3, r4.x
+dp4 r4.x, r0, c0
+mul r0.x, r1, r3.w
+add r4.xy, -r5, r4
 slt r0.z, r0.x, -r0.x
 slt r0.y, -r0.x, r0.x
 sub r0.y, r0, r0.z
-mul r0.z, r3.w, r2.w
-mul r0.y, r0, r2.w
-mul r2.w, r3.z, r0.z
-mov r0.zw, r4.xyyw
-mad r0.y, r3.x, r0, r2.w
-dp4 r5.x, r0, c0
-dp4 r5.y, r0, c1
-add r0.xy, -r2, r5
+mul r0.z, r1, r3.w
+mul r0.y, r0, r3.w
+mul r3.w, r3.z, r0.z
+mov r0.zw, r1.xyyw
+mad r0.y, r3.x, r0, r3.w
+dp4 r4.z, r0, c0
+dp4 r4.w, r0, c1
+add r0.xy, -r5, r4.zwzw
 mad o4.xy, r0, c19.x, c19.y
-dp4 r0.z, r1, c10
-dp4 r0.x, r1, c8
-dp4 r0.y, r1, c9
-add r0.xyz, -r0, c13
-slt r1.x, -r3.z, r3.z
-slt r0.w, r3.z, -r3.z
-sub r1.y, r1.x, r0.w
-sub r0.w, r0, r1.x
-mad o3.xy, r4.xzzw, c19.x, c19.y
-mul r4.x, r2.z, r1.y
-mul r1.z, r3.w, r0.w
-slt r1.y, r4.x, -r4.x
-slt r1.x, -r4, r4
-sub r1.x, r1, r1.y
-mul r0.w, r0, r1.x
-mul r1.y, r3, r1.z
-mad r4.z, r3.x, r0.w, r1.y
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o6.xyz, r0.w, r0
+slt r0.y, -r3.z, r3.z
+slt r0.x, r3.z, -r3.z
+sub r0.z, r0.y, r0.x
+mul r1.x, r1, r0.z
+sub r0.x, r0, r0.y
+mul r0.w, r1.z, r0.x
+slt r0.z, r1.x, -r1.x
+slt r0.y, -r1.x, r1.x
+sub r0.y, r0, r0.z
+mul r0.z, r3.y, r0.w
+mul r0.x, r0, r0.y
+mad r1.z, r3.x, r0.x, r0
 mov r0.xyz, v2
 mov r0.w, c18.x
-dp4 r1.z, r0, c10
-dp4 r1.x, r4, c0
-dp4 r1.y, r4, c1
-add r1.xy, -r2, r1
-mad o5.xy, r1, c19.x, c19.y
-dp4 r1.y, r0, c9
-dp4 r1.x, r0, c8
-dp3 r0.x, r1, r1
-rsq r0.w, r0.x
-dp4 r0.y, c14, c14
-rsq r0.y, r0.y
-mul r0.xyz, r0.y, c14
-mul r1.xyz, r0.w, r1
-dp3_sat r0.w, r1, r0
+mad o3.xy, r4, c19.x, c19.y
+dp4 r4.z, r0, c10
+dp4 r4.x, r0, c8
+dp4 r4.y, r0, c9
+dp3 r0.z, r4, r4
+dp4 r0.x, r1, c0
+dp4 r0.y, r1, c1
+add r0.xy, -r5, r0
+dp4 r1.w, c14, c14
+dp4 r1.z, r2, c10
+dp4 r1.x, r2, c8
+dp4 r1.y, r2, c9
+add r1.xyz, -r1, c13
+dp3 r0.w, r1, r1
+rsq r0.w, r0.w
+rsq r1.w, r1.w
+mul o6.xyz, r0.w, r1
+rsq r0.z, r0.z
+mad o5.xy, r0, c19.x, c19.y
+mul r0.xyz, r0.z, r4
+mul r2.xyz, r1.w, c14
+mul r0.xyz, r2, r0
+dp3_sat r0.w, r0, c18.w
 mov r0.z, c10.w
 mov r0.x, c8.w
 mov r0.y, c9.w
 add r0.xyz, -r0, c13
 dp3 r0.x, r0, r0
-add r0.w, r0, c18
+add r0.w, r0, c19.z
 mul r0.y, r0.w, c15.w
-mul_sat r0.z, r0.y, c19
+mul_sat r0.z, r0.y, c19.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mov r0.y, c17.x
@@ -13836,12 +13868,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 79 instructions, 5 temp regs, 0 temp arrays:
-// ALU 60 float, 8 int, 0 uint
+// 80 instructions, 5 temp regs, 0 temp arrays:
+// ALU 61 float, 8 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecededikhcagknibmlkpoaekmnpeendamhmeabaaaaaaoiamaaaaadaaaaaa
+eefiecedmgikbbmpphclokekjneoblfjjapggemlabaaaaaabaanaaaaadaaaaaa
 cmaaaaaanmaaaaaapiabaaaaejfdeheokiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaijaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaipaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -13856,8 +13888,8 @@ amadaaaaakabaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaaakabaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaakabaaaaafaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaaakabaaaaagaaaaaaaaaaaaaaadaaaaaaahaaaaaa
 apapaaaaakabaaaaahaaaaaaaaaaaaaaadaaaaaaaiaaaaaaapapaaaafdfgfpfa
-epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcoiakaaaa
-eaaaabaalkacaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
+epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcbaalaaaa
+eaaaabaameacaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaabaaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaa
 aaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaad
@@ -13937,14 +13969,15 @@ eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
 acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
-abaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaaajaaaaaadicaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajocaabaaa
-aaaaaaaaagijcaaaaaaaaaaaajaaaaaapgipcaaaaaaaaaaaamaaaaaadccaaaak
-hccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaaeaaaaaa
-aeaaaaaadoaaaaab"
+acaaaaaaaaaaaaaadiaaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaaaceaaaaa
+eiobhkdpeiobhkdpeiobhkdpaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaa
+ajaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaajaaaaaapgipcaaaaaaaaaaa
+amaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaa
+egiccaaaaeaaaaaaaeaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -14029,7 +14062,7 @@ void main ()
   tmpvar_19 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_19;
   highp vec3 tmpvar_20;
-  tmpvar_20 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_20 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_20;
   highp float tmpvar_21;
   tmpvar_21 = clamp (dot (normalize((_Object2World * tmpvar_18).xyz), lightDirection_2), 0.0, 1.0);
@@ -14097,7 +14130,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -14191,7 +14224,7 @@ void main ()
   tmpvar_19 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_19;
   highp vec3 tmpvar_20;
-  tmpvar_20 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_20 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_20;
   highp float tmpvar_21;
   tmpvar_21 = clamp (dot (normalize((_Object2World * tmpvar_18).xyz), lightDirection_2), 0.0, 1.0);
@@ -14259,7 +14292,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -14518,7 +14551,7 @@ v2f vert( in appdata_t v ) {
     highp vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     #line 482
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
+    mediump vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
     mediump float NdotL = xll_saturate_f(dot( worldNormal, lightDirection));
     mediump float diff = ((NdotL - 0.01) / 0.99);
     mediump float lightIntensity = xll_saturate_f(((_LightColor0.w * diff) * 4.0));
@@ -14744,7 +14777,7 @@ lowp vec4 frag( in v2f i ) {
     #line 499
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.94 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 503
     color.xyz = (prev.xyz * i.baseLight);
@@ -14795,114 +14828,114 @@ Float 17 [_DistFade]
 Float 18 [_MinLight]
 "3.0-!!ARBvp1.0
 # 118 ALU
-PARAM c[20] = { { 0, 1, 2, 0.60000002 },
+PARAM c[21] = { { 0, 1, 2, 0.60000002 },
 		state.lightmodel.ambient,
 		state.matrix.modelview[0],
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..18],
-		{ 0.5, 0.010002136, 4.0394478, 0 } };
+		{ 0.5, 0.98000002, 0.010002136 },
+		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
 TEMP R3;
 TEMP R4;
-DP3 R1.x, c[4], c[4];
-RSQ R1.x, R1.x;
-MUL R3.xyz, R1.x, c[4];
-MOV R2.w, vertex.position;
-MOV R2.xyz, c[0].x;
-DP4 R4.x, R2, c[2];
-DP4 R4.y, R2, c[3];
+DP3 R2.x, c[4], c[4];
+RSQ R2.x, R2.x;
+MUL R3.xyz, R2.x, c[4];
+MOV R1.xyz, c[0].x;
 MOV R1.w, vertex.position;
-DP4 R4.w, R2, c[5];
-DP4 R4.z, R2, c[4];
+DP4 R4.x, R1, c[2];
+DP4 R4.y, R1, c[3];
+DP4 R4.w, R1, c[5];
+DP4 R4.z, R1, c[4];
 ADD R0, R4, vertex.position;
 DP4 result.position.w, R0, c[16];
 DP4 result.position.z, R0, c[15];
 DP4 result.position.y, R0, c[14];
 DP4 result.position.x, R0, c[13];
-MUL R0.xy, vertex.texcoord[0], c[0].z;
-ADD R4.zw, R0.xyxy, -c[0].y;
-MOV R1.y, R4.w;
-SLT R0.x, c[0], R4.w;
-SLT R0.y, R0, c[0];
-ADD R3.w, R0.x, -R0.y;
-SLT R0.z, c[0].x, -R3.x;
-SLT R0.w, -R3.x, c[0].x;
-ADD R0.w, R0.z, -R0;
-MUL R0.z, R4, R0.w;
-MUL R1.x, R0.w, R3.w;
-SLT R0.y, R0.z, c[0].x;
-SLT R0.x, c[0], R0.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.y, R3, R1.x;
-MUL R0.x, R0, R0.w;
-MAD R0.x, R3.z, R0, R0.y;
-MOV R0.yw, R1;
-DP4 R1.x, R0, c[2];
-DP4 R1.z, R0, c[3];
-ADD R0.xy, -R4, R1.xzzw;
-MUL R0.xy, R0, c[0].w;
-SLT R0.w, R3.z, c[0].x;
-SLT R0.z, c[0].x, R3;
+MUL R0.zw, vertex.texcoord[0].xyxy, c[0].z;
+SLT R0.x, c[0], -R3;
+SLT R0.y, -R3.x, c[0].x;
+ADD R2.x, R0, -R0.y;
+ADD R0.xy, R0.zwzw, -c[0].y;
+MUL R2.z, R0.x, R2.x;
+SLT R2.y, R2.z, c[0].x;
+SLT R0.w, R0, c[0].y;
+SLT R0.z, c[0].x, R0.y;
 ADD R0.z, R0, -R0.w;
-MUL R1.x, R4.z, R0.z;
-ADD result.texcoord[1].xy, R0, c[19].x;
-SLT R0.y, R1.x, c[0].x;
-SLT R0.x, c[0], R1;
-ADD R0.z, R0.x, -R0.y;
-SLT R0.y, -R3.z, c[0].x;
-SLT R0.x, c[0], -R3.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.w, R3, R0.x;
-MUL R0.z, R0.x, R0;
-MUL R0.w, R3.y, R0;
-MAD R1.z, R3.x, R0, R0.w;
-SLT R0.x, c[0], -R3.y;
-SLT R0.y, -R3, c[0].x;
-ADD R0.y, R0.x, -R0;
-MUL R0.x, R4.z, R0.y;
-SLT R0.w, R0.x, c[0].x;
+SLT R0.w, c[0].x, R2.z;
+ADD R0.w, R0, -R2.y;
+MUL R2.w, R2.x, R0.z;
+MUL R0.w, R0, R2.x;
+MUL R2.y, R3, R2.w;
+MAD R2.x, R3.z, R0.w, R2.y;
+MOV R0.w, vertex.position;
+MOV R2.yw, R0;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+SLT R2.w, -R3.y, c[0].x;
+SLT R2.z, c[0].x, -R3.y;
+ADD R3.w, R2.z, -R2;
+MUL R2.zw, R2.xyxy, c[0].w;
+MUL R2.x, R0, R3.w;
+ADD result.texcoord[1].xy, R2.zwzw, c[19].x;
+SLT R2.z, R2.x, c[0].x;
+SLT R2.y, c[0].x, R2.x;
+ADD R2.y, R2, -R2.z;
+MUL R2.z, R0, R3.w;
+MUL R2.y, R2, R3.w;
+MUL R3.w, R3.z, R2.z;
+MOV R2.zw, R0.xyyw;
+MAD R2.y, R3.x, R2, R3.w;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+MUL R2.xy, R2, c[0].w;
+SLT R2.w, R3.z, c[0].x;
+SLT R2.z, c[0].x, R3;
+ADD R3.w, R2.z, -R2;
+MUL R0.x, R0, R3.w;
+SLT R2.w, -R3.z, c[0].x;
+SLT R2.z, c[0].x, -R3;
+ADD R2.z, R2, -R2.w;
+MUL R3.w, R0.z, R2.z;
+SLT R2.w, R0.x, c[0].x;
 SLT R0.z, c[0].x, R0.x;
-ADD R0.z, R0, -R0.w;
-MUL R0.w, R3, R0.y;
-MUL R0.y, R0.z, R0;
-MUL R3.w, R3.z, R0;
-MOV R0.zw, R1.xyyw;
-MAD R0.y, R3.x, R0, R3.w;
-DP4 R4.z, R0, c[2];
-DP4 R4.w, R0, c[3];
-ADD R0.xy, -R4, R4.zwzw;
-MUL R0.xy, R0, c[0].w;
-DP4 R0.z, R1, c[2];
-DP4 R0.w, R1, c[3];
-ADD R0.zw, -R4.xyxy, R0;
-MUL R0.zw, R0, c[0].w;
-ADD result.texcoord[3].xy, R0.zwzw, c[19].x;
-ADD result.texcoord[2].xy, R0, c[19].x;
+ADD R0.z, R0, -R2.w;
+MUL R2.w, R3.y, R3;
+MUL R0.z, R2, R0;
+MAD R0.z, R3.x, R0, R2.w;
+DP4 R2.z, R0, c[2];
+DP4 R2.w, R0, c[3];
+ADD R0.xy, -R4, R2.zwzw;
+MUL R4.xy, R0, c[0].w;
 MOV R0.xyz, vertex.normal;
 MOV R0.w, c[0].x;
-DP4 R1.z, R0, c[11];
-DP4 R1.y, R0, c[10];
-DP4 R1.x, R0, c[9];
-DP3 R0.x, R1, R1;
-RSQ R0.w, R0.x;
-DP4 R0.y, c[7], c[7];
+ADD result.texcoord[2].xy, R2, c[19].x;
+DP4 R2.z, R0, c[11];
+DP4 R2.x, R0, c[9];
+DP4 R2.y, R0, c[10];
+DP3 R0.y, R2, R2;
 RSQ R0.y, R0.y;
-MUL R1.xyz, R0.w, R1;
-MUL R0.xyz, R0.y, c[7];
-DP3 R0.w, R1, R0;
+DP4 R0.x, c[7], c[7];
+MUL R2.xyz, R0.y, R2;
+RSQ R0.x, R0.x;
+MUL R0.xyz, R0.x, c[7];
+MUL R0.xyz, R0, R2;
+DP3 R0.w, R0, c[19].y;
+DP4 R0.z, R1, c[11];
+DP4 R0.x, R1, c[9];
+DP4 R0.y, R1, c[10];
 MIN R1.x, R0.w, c[0].y;
-MAX R1.x, R1, c[0];
-ADD R1.x, R1, -c[19].y;
-DP4 R0.z, R2, c[11];
-DP4 R0.x, R2, c[9];
-DP4 R0.y, R2, c[10];
 ADD R0.xyz, -R0, c[6];
 DP3 R0.w, R0, R0;
 RSQ R0.w, R0.w;
 MUL result.texcoord[4].xyz, R0.w, R0;
+MAX R1.x, R1, c[0];
+ADD R1.x, R1, -c[19].z;
 MUL R0.w, R1.x, c[8];
 MOV R1.xyz, c[8];
 MOV R0.z, c[11].w;
@@ -14910,7 +14943,7 @@ MOV R0.x, c[9].w;
 MOV R0.y, c[10].w;
 ADD R0.xyz, -R0, c[6];
 DP3 R0.x, R0, R0;
-MUL R0.w, R0, c[19].z;
+MUL R0.w, R0, c[20].x;
 MIN R0.y, R0.w, c[0];
 RSQ R0.x, R0.x;
 RCP R0.x, R0.x;
@@ -14921,6 +14954,7 @@ MAX R0.y, R0, c[0].x;
 ADD R1.xyz, R1, c[18].x;
 MAD R1.xyz, R1, R0.y, c[1];
 MIN R1.xyz, R1, c[0].y;
+ADD result.texcoord[3].xy, R4, c[19].x;
 MAX result.texcoord[5].xyz, R1, c[0].x;
 MUL result.color.w, vertex.color, R0.x;
 MOV result.color.xyz, vertex.color;
@@ -14955,107 +14989,107 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c18, 0.00000000, 2.00000000, -1.00000000, -0.01000214
-def c19, 0.60000002, 0.50000000, 4.03944778, 0
+def c18, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_texcoord0 v3
-mov r1.xyz, c18.x
-mov r1.w, v0
-dp4 r2.x, r1, c0
-dp4 r2.y, r1, c1
-dp4 r2.w, r1, c3
-dp4 r2.z, r1, c2
-add r0, r2, v0
-dp3 r2.z, c2, c2
-rsq r2.z, r2.z
-mul r3.xyz, r2.z, c2
-mad r2.zw, v3.xyxy, c18.y, c18.z
-mov r4.y, r2.w
+dp3 r1.x, c2, c2
+rsq r1.x, r1.x
+mul r3.xyz, r1.x, c2
+mad r1.xy, v3, c18.y, c18.z
+mov r2.xyz, c18.x
+mov r2.w, v0
+dp4 r5.x, r2, c0
+dp4 r5.y, r2, c1
+dp4 r5.w, r2, c3
+dp4 r5.z, r2, c2
+add r0, r5, v0
 dp4 o0.w, r0, c7
 dp4 o0.z, r0, c6
 dp4 o0.y, r0, c5
 dp4 o0.x, r0, c4
-mov r4.w, v0
-slt r0.z, r2.w, -r2.w
+slt r0.z, r1.y, -r1.y
 slt r0.y, -r3.x, r3.x
 slt r0.x, r3, -r3
 sub r0.x, r0, r0.y
-slt r0.y, -r2.w, r2.w
-sub r3.w, r0.y, r0.z
-mul r0.z, r2, r0.x
-mul r4.x, r0, r3.w
+slt r0.y, -r1, r1
+sub r1.z, r0.y, r0
+mul r0.z, r1.x, r0.x
+mul r1.w, r0.x, r1.z
 slt r0.w, r0.z, -r0.z
 slt r0.y, -r0.z, r0.z
 sub r0.y, r0, r0.w
-mul r0.w, r3.y, r4.x
+mul r0.w, r3.y, r1
 mul r0.x, r0.y, r0
 mad r0.x, r3.z, r0, r0.w
-mov r0.yw, r4
-dp4 r5.y, r0, c1
-dp4 r5.x, r0, c0
+mov r1.w, v0
+mov r0.yw, r1
+dp4 r4.y, r0, c1
 slt r4.x, -r3.y, r3.y
-slt r2.w, r3.y, -r3.y
-sub r2.w, r2, r4.x
-mul r0.x, r2.z, r2.w
-add r4.xz, -r2.xyyw, r5.xyyw
+slt r3.w, r3.y, -r3.y
+sub r3.w, r3, r4.x
+dp4 r4.x, r0, c0
+mul r0.x, r1, r3.w
+add r4.xy, -r5, r4
 slt r0.z, r0.x, -r0.x
 slt r0.y, -r0.x, r0.x
 sub r0.y, r0, r0.z
-mul r0.z, r3.w, r2.w
-mul r0.y, r0, r2.w
-mul r2.w, r3.z, r0.z
-mov r0.zw, r4.xyyw
-mad r0.y, r3.x, r0, r2.w
-dp4 r5.x, r0, c0
-dp4 r5.y, r0, c1
-add r0.xy, -r2, r5
+mul r0.z, r1, r3.w
+mul r0.y, r0, r3.w
+mul r3.w, r3.z, r0.z
+mov r0.zw, r1.xyyw
+mad r0.y, r3.x, r0, r3.w
+dp4 r4.z, r0, c0
+dp4 r4.w, r0, c1
+add r0.xy, -r5, r4.zwzw
 mad o4.xy, r0, c19.x, c19.y
-dp4 r0.z, r1, c10
-dp4 r0.x, r1, c8
-dp4 r0.y, r1, c9
-add r0.xyz, -r0, c13
-slt r1.x, -r3.z, r3.z
-slt r0.w, r3.z, -r3.z
-sub r1.y, r1.x, r0.w
-sub r0.w, r0, r1.x
-mad o3.xy, r4.xzzw, c19.x, c19.y
-mul r4.x, r2.z, r1.y
-mul r1.z, r3.w, r0.w
-slt r1.y, r4.x, -r4.x
-slt r1.x, -r4, r4
-sub r1.x, r1, r1.y
-mul r0.w, r0, r1.x
-mul r1.y, r3, r1.z
-mad r4.z, r3.x, r0.w, r1.y
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o6.xyz, r0.w, r0
+slt r0.y, -r3.z, r3.z
+slt r0.x, r3.z, -r3.z
+sub r0.z, r0.y, r0.x
+mul r1.x, r1, r0.z
+sub r0.x, r0, r0.y
+mul r0.w, r1.z, r0.x
+slt r0.z, r1.x, -r1.x
+slt r0.y, -r1.x, r1.x
+sub r0.y, r0, r0.z
+mul r0.z, r3.y, r0.w
+mul r0.x, r0, r0.y
+mad r1.z, r3.x, r0.x, r0
 mov r0.xyz, v2
 mov r0.w, c18.x
-dp4 r1.z, r0, c10
-dp4 r1.x, r4, c0
-dp4 r1.y, r4, c1
-add r1.xy, -r2, r1
-mad o5.xy, r1, c19.x, c19.y
-dp4 r1.y, r0, c9
-dp4 r1.x, r0, c8
-dp3 r0.x, r1, r1
-rsq r0.w, r0.x
-dp4 r0.y, c14, c14
-rsq r0.y, r0.y
-mul r0.xyz, r0.y, c14
-mul r1.xyz, r0.w, r1
-dp3_sat r0.w, r1, r0
+mad o3.xy, r4, c19.x, c19.y
+dp4 r4.z, r0, c10
+dp4 r4.x, r0, c8
+dp4 r4.y, r0, c9
+dp3 r0.z, r4, r4
+dp4 r0.x, r1, c0
+dp4 r0.y, r1, c1
+add r0.xy, -r5, r0
+dp4 r1.w, c14, c14
+dp4 r1.z, r2, c10
+dp4 r1.x, r2, c8
+dp4 r1.y, r2, c9
+add r1.xyz, -r1, c13
+dp3 r0.w, r1, r1
+rsq r0.w, r0.w
+rsq r1.w, r1.w
+mul o6.xyz, r0.w, r1
+rsq r0.z, r0.z
+mad o5.xy, r0, c19.x, c19.y
+mul r0.xyz, r0.z, r4
+mul r2.xyz, r1.w, c14
+mul r0.xyz, r2, r0
+dp3_sat r0.w, r0, c18.w
 mov r0.z, c10.w
 mov r0.x, c8.w
 mov r0.y, c9.w
 add r0.xyz, -r0, c13
 dp3 r0.x, r0, r0
-add r0.w, r0, c18
+add r0.w, r0, c19.z
 mul r0.y, r0.w, c15.w
-mul_sat r0.z, r0.y, c19
+mul_sat r0.z, r0.y, c19.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mov r0.y, c17.x
@@ -15093,12 +15127,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 79 instructions, 5 temp regs, 0 temp arrays:
-// ALU 60 float, 8 int, 0 uint
+// 80 instructions, 5 temp regs, 0 temp arrays:
+// ALU 61 float, 8 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecededikhcagknibmlkpoaekmnpeendamhmeabaaaaaaoiamaaaaadaaaaaa
+eefiecedmgikbbmpphclokekjneoblfjjapggemlabaaaaaabaanaaaaadaaaaaa
 cmaaaaaanmaaaaaapiabaaaaejfdeheokiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaijaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaipaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -15113,8 +15147,8 @@ amadaaaaakabaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaaakabaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaakabaaaaafaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaaakabaaaaagaaaaaaaaaaaaaaadaaaaaaahaaaaaa
 apapaaaaakabaaaaahaaaaaaaaaaaaaaadaaaaaaaiaaaaaaapapaaaafdfgfpfa
-epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcoiakaaaa
-eaaaabaalkacaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
+epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcbaalaaaa
+eaaaabaameacaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaabaaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaa
 aaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaad
@@ -15194,14 +15228,15 @@ eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
 acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
-abaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaaajaaaaaadicaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajocaabaaa
-aaaaaaaaagijcaaaaaaaaaaaajaaaaaapgipcaaaaaaaaaaaamaaaaaadccaaaak
-hccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaaeaaaaaa
-aeaaaaaadoaaaaab"
+acaaaaaaaaaaaaaadiaaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaaaceaaaaa
+eiobhkdpeiobhkdpeiobhkdpaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaa
+ajaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaajaaaaaapgipcaaaaaaaaaaa
+amaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaa
+egiccaaaaeaaaaaaaeaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -15287,7 +15322,7 @@ void main ()
   tmpvar_19 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_19;
   highp vec3 tmpvar_20;
-  tmpvar_20 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_20 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_20;
   highp float tmpvar_21;
   tmpvar_21 = clamp (dot (normalize((_Object2World * tmpvar_18).xyz), lightDirection_2), 0.0, 1.0);
@@ -15356,7 +15391,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -15615,7 +15650,7 @@ v2f vert( in appdata_t v ) {
     highp vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     #line 482
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
+    mediump vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
     mediump float NdotL = xll_saturate_f(dot( worldNormal, lightDirection));
     mediump float diff = ((NdotL - 0.01) / 0.99);
     mediump float lightIntensity = xll_saturate_f(((_LightColor0.w * diff) * 4.0));
@@ -15841,7 +15876,7 @@ lowp vec4 frag( in v2f i ) {
     #line 499
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.94 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 503
     color.xyz = (prev.xyz * i.baseLight);
@@ -15892,114 +15927,114 @@ Float 17 [_DistFade]
 Float 18 [_MinLight]
 "3.0-!!ARBvp1.0
 # 118 ALU
-PARAM c[20] = { { 0, 1, 2, 0.60000002 },
+PARAM c[21] = { { 0, 1, 2, 0.60000002 },
 		state.lightmodel.ambient,
 		state.matrix.modelview[0],
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..18],
-		{ 0.5, 0.010002136, 4.0394478, 0 } };
+		{ 0.5, 0.98000002, 0.010002136 },
+		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
 TEMP R3;
 TEMP R4;
-DP3 R1.x, c[4], c[4];
-RSQ R1.x, R1.x;
-MUL R3.xyz, R1.x, c[4];
-MOV R2.w, vertex.position;
-MOV R2.xyz, c[0].x;
-DP4 R4.x, R2, c[2];
-DP4 R4.y, R2, c[3];
+DP3 R2.x, c[4], c[4];
+RSQ R2.x, R2.x;
+MUL R3.xyz, R2.x, c[4];
+MOV R1.xyz, c[0].x;
 MOV R1.w, vertex.position;
-DP4 R4.w, R2, c[5];
-DP4 R4.z, R2, c[4];
+DP4 R4.x, R1, c[2];
+DP4 R4.y, R1, c[3];
+DP4 R4.w, R1, c[5];
+DP4 R4.z, R1, c[4];
 ADD R0, R4, vertex.position;
 DP4 result.position.w, R0, c[16];
 DP4 result.position.z, R0, c[15];
 DP4 result.position.y, R0, c[14];
 DP4 result.position.x, R0, c[13];
-MUL R0.xy, vertex.texcoord[0], c[0].z;
-ADD R4.zw, R0.xyxy, -c[0].y;
-MOV R1.y, R4.w;
-SLT R0.x, c[0], R4.w;
-SLT R0.y, R0, c[0];
-ADD R3.w, R0.x, -R0.y;
-SLT R0.z, c[0].x, -R3.x;
-SLT R0.w, -R3.x, c[0].x;
-ADD R0.w, R0.z, -R0;
-MUL R0.z, R4, R0.w;
-MUL R1.x, R0.w, R3.w;
-SLT R0.y, R0.z, c[0].x;
-SLT R0.x, c[0], R0.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.y, R3, R1.x;
-MUL R0.x, R0, R0.w;
-MAD R0.x, R3.z, R0, R0.y;
-MOV R0.yw, R1;
-DP4 R1.x, R0, c[2];
-DP4 R1.z, R0, c[3];
-ADD R0.xy, -R4, R1.xzzw;
-MUL R0.xy, R0, c[0].w;
-SLT R0.w, R3.z, c[0].x;
-SLT R0.z, c[0].x, R3;
+MUL R0.zw, vertex.texcoord[0].xyxy, c[0].z;
+SLT R0.x, c[0], -R3;
+SLT R0.y, -R3.x, c[0].x;
+ADD R2.x, R0, -R0.y;
+ADD R0.xy, R0.zwzw, -c[0].y;
+MUL R2.z, R0.x, R2.x;
+SLT R2.y, R2.z, c[0].x;
+SLT R0.w, R0, c[0].y;
+SLT R0.z, c[0].x, R0.y;
 ADD R0.z, R0, -R0.w;
-MUL R1.x, R4.z, R0.z;
-ADD result.texcoord[1].xy, R0, c[19].x;
-SLT R0.y, R1.x, c[0].x;
-SLT R0.x, c[0], R1;
-ADD R0.z, R0.x, -R0.y;
-SLT R0.y, -R3.z, c[0].x;
-SLT R0.x, c[0], -R3.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.w, R3, R0.x;
-MUL R0.z, R0.x, R0;
-MUL R0.w, R3.y, R0;
-MAD R1.z, R3.x, R0, R0.w;
-SLT R0.x, c[0], -R3.y;
-SLT R0.y, -R3, c[0].x;
-ADD R0.y, R0.x, -R0;
-MUL R0.x, R4.z, R0.y;
-SLT R0.w, R0.x, c[0].x;
+SLT R0.w, c[0].x, R2.z;
+ADD R0.w, R0, -R2.y;
+MUL R2.w, R2.x, R0.z;
+MUL R0.w, R0, R2.x;
+MUL R2.y, R3, R2.w;
+MAD R2.x, R3.z, R0.w, R2.y;
+MOV R0.w, vertex.position;
+MOV R2.yw, R0;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+SLT R2.w, -R3.y, c[0].x;
+SLT R2.z, c[0].x, -R3.y;
+ADD R3.w, R2.z, -R2;
+MUL R2.zw, R2.xyxy, c[0].w;
+MUL R2.x, R0, R3.w;
+ADD result.texcoord[1].xy, R2.zwzw, c[19].x;
+SLT R2.z, R2.x, c[0].x;
+SLT R2.y, c[0].x, R2.x;
+ADD R2.y, R2, -R2.z;
+MUL R2.z, R0, R3.w;
+MUL R2.y, R2, R3.w;
+MUL R3.w, R3.z, R2.z;
+MOV R2.zw, R0.xyyw;
+MAD R2.y, R3.x, R2, R3.w;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+MUL R2.xy, R2, c[0].w;
+SLT R2.w, R3.z, c[0].x;
+SLT R2.z, c[0].x, R3;
+ADD R3.w, R2.z, -R2;
+MUL R0.x, R0, R3.w;
+SLT R2.w, -R3.z, c[0].x;
+SLT R2.z, c[0].x, -R3;
+ADD R2.z, R2, -R2.w;
+MUL R3.w, R0.z, R2.z;
+SLT R2.w, R0.x, c[0].x;
 SLT R0.z, c[0].x, R0.x;
-ADD R0.z, R0, -R0.w;
-MUL R0.w, R3, R0.y;
-MUL R0.y, R0.z, R0;
-MUL R3.w, R3.z, R0;
-MOV R0.zw, R1.xyyw;
-MAD R0.y, R3.x, R0, R3.w;
-DP4 R4.z, R0, c[2];
-DP4 R4.w, R0, c[3];
-ADD R0.xy, -R4, R4.zwzw;
-MUL R0.xy, R0, c[0].w;
-DP4 R0.z, R1, c[2];
-DP4 R0.w, R1, c[3];
-ADD R0.zw, -R4.xyxy, R0;
-MUL R0.zw, R0, c[0].w;
-ADD result.texcoord[3].xy, R0.zwzw, c[19].x;
-ADD result.texcoord[2].xy, R0, c[19].x;
+ADD R0.z, R0, -R2.w;
+MUL R2.w, R3.y, R3;
+MUL R0.z, R2, R0;
+MAD R0.z, R3.x, R0, R2.w;
+DP4 R2.z, R0, c[2];
+DP4 R2.w, R0, c[3];
+ADD R0.xy, -R4, R2.zwzw;
+MUL R4.xy, R0, c[0].w;
 MOV R0.xyz, vertex.normal;
 MOV R0.w, c[0].x;
-DP4 R1.z, R0, c[11];
-DP4 R1.y, R0, c[10];
-DP4 R1.x, R0, c[9];
-DP3 R0.x, R1, R1;
-RSQ R0.w, R0.x;
-DP4 R0.y, c[7], c[7];
+ADD result.texcoord[2].xy, R2, c[19].x;
+DP4 R2.z, R0, c[11];
+DP4 R2.x, R0, c[9];
+DP4 R2.y, R0, c[10];
+DP3 R0.y, R2, R2;
 RSQ R0.y, R0.y;
-MUL R1.xyz, R0.w, R1;
-MUL R0.xyz, R0.y, c[7];
-DP3 R0.w, R1, R0;
+DP4 R0.x, c[7], c[7];
+MUL R2.xyz, R0.y, R2;
+RSQ R0.x, R0.x;
+MUL R0.xyz, R0.x, c[7];
+MUL R0.xyz, R0, R2;
+DP3 R0.w, R0, c[19].y;
+DP4 R0.z, R1, c[11];
+DP4 R0.x, R1, c[9];
+DP4 R0.y, R1, c[10];
 MIN R1.x, R0.w, c[0].y;
-MAX R1.x, R1, c[0];
-ADD R1.x, R1, -c[19].y;
-DP4 R0.z, R2, c[11];
-DP4 R0.x, R2, c[9];
-DP4 R0.y, R2, c[10];
 ADD R0.xyz, -R0, c[6];
 DP3 R0.w, R0, R0;
 RSQ R0.w, R0.w;
 MUL result.texcoord[4].xyz, R0.w, R0;
+MAX R1.x, R1, c[0];
+ADD R1.x, R1, -c[19].z;
 MUL R0.w, R1.x, c[8];
 MOV R1.xyz, c[8];
 MOV R0.z, c[11].w;
@@ -16007,7 +16042,7 @@ MOV R0.x, c[9].w;
 MOV R0.y, c[10].w;
 ADD R0.xyz, -R0, c[6];
 DP3 R0.x, R0, R0;
-MUL R0.w, R0, c[19].z;
+MUL R0.w, R0, c[20].x;
 MIN R0.y, R0.w, c[0];
 RSQ R0.x, R0.x;
 RCP R0.x, R0.x;
@@ -16018,6 +16053,7 @@ MAX R0.y, R0, c[0].x;
 ADD R1.xyz, R1, c[18].x;
 MAD R1.xyz, R1, R0.y, c[1];
 MIN R1.xyz, R1, c[0].y;
+ADD result.texcoord[3].xy, R4, c[19].x;
 MAX result.texcoord[5].xyz, R1, c[0].x;
 MUL result.color.w, vertex.color, R0.x;
 MOV result.color.xyz, vertex.color;
@@ -16052,107 +16088,107 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c18, 0.00000000, 2.00000000, -1.00000000, -0.01000214
-def c19, 0.60000002, 0.50000000, 4.03944778, 0
+def c18, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_texcoord0 v3
-mov r1.xyz, c18.x
-mov r1.w, v0
-dp4 r2.x, r1, c0
-dp4 r2.y, r1, c1
-dp4 r2.w, r1, c3
-dp4 r2.z, r1, c2
-add r0, r2, v0
-dp3 r2.z, c2, c2
-rsq r2.z, r2.z
-mul r3.xyz, r2.z, c2
-mad r2.zw, v3.xyxy, c18.y, c18.z
-mov r4.y, r2.w
+dp3 r1.x, c2, c2
+rsq r1.x, r1.x
+mul r3.xyz, r1.x, c2
+mad r1.xy, v3, c18.y, c18.z
+mov r2.xyz, c18.x
+mov r2.w, v0
+dp4 r5.x, r2, c0
+dp4 r5.y, r2, c1
+dp4 r5.w, r2, c3
+dp4 r5.z, r2, c2
+add r0, r5, v0
 dp4 o0.w, r0, c7
 dp4 o0.z, r0, c6
 dp4 o0.y, r0, c5
 dp4 o0.x, r0, c4
-mov r4.w, v0
-slt r0.z, r2.w, -r2.w
+slt r0.z, r1.y, -r1.y
 slt r0.y, -r3.x, r3.x
 slt r0.x, r3, -r3
 sub r0.x, r0, r0.y
-slt r0.y, -r2.w, r2.w
-sub r3.w, r0.y, r0.z
-mul r0.z, r2, r0.x
-mul r4.x, r0, r3.w
+slt r0.y, -r1, r1
+sub r1.z, r0.y, r0
+mul r0.z, r1.x, r0.x
+mul r1.w, r0.x, r1.z
 slt r0.w, r0.z, -r0.z
 slt r0.y, -r0.z, r0.z
 sub r0.y, r0, r0.w
-mul r0.w, r3.y, r4.x
+mul r0.w, r3.y, r1
 mul r0.x, r0.y, r0
 mad r0.x, r3.z, r0, r0.w
-mov r0.yw, r4
-dp4 r5.y, r0, c1
-dp4 r5.x, r0, c0
+mov r1.w, v0
+mov r0.yw, r1
+dp4 r4.y, r0, c1
 slt r4.x, -r3.y, r3.y
-slt r2.w, r3.y, -r3.y
-sub r2.w, r2, r4.x
-mul r0.x, r2.z, r2.w
-add r4.xz, -r2.xyyw, r5.xyyw
+slt r3.w, r3.y, -r3.y
+sub r3.w, r3, r4.x
+dp4 r4.x, r0, c0
+mul r0.x, r1, r3.w
+add r4.xy, -r5, r4
 slt r0.z, r0.x, -r0.x
 slt r0.y, -r0.x, r0.x
 sub r0.y, r0, r0.z
-mul r0.z, r3.w, r2.w
-mul r0.y, r0, r2.w
-mul r2.w, r3.z, r0.z
-mov r0.zw, r4.xyyw
-mad r0.y, r3.x, r0, r2.w
-dp4 r5.x, r0, c0
-dp4 r5.y, r0, c1
-add r0.xy, -r2, r5
+mul r0.z, r1, r3.w
+mul r0.y, r0, r3.w
+mul r3.w, r3.z, r0.z
+mov r0.zw, r1.xyyw
+mad r0.y, r3.x, r0, r3.w
+dp4 r4.z, r0, c0
+dp4 r4.w, r0, c1
+add r0.xy, -r5, r4.zwzw
 mad o4.xy, r0, c19.x, c19.y
-dp4 r0.z, r1, c10
-dp4 r0.x, r1, c8
-dp4 r0.y, r1, c9
-add r0.xyz, -r0, c13
-slt r1.x, -r3.z, r3.z
-slt r0.w, r3.z, -r3.z
-sub r1.y, r1.x, r0.w
-sub r0.w, r0, r1.x
-mad o3.xy, r4.xzzw, c19.x, c19.y
-mul r4.x, r2.z, r1.y
-mul r1.z, r3.w, r0.w
-slt r1.y, r4.x, -r4.x
-slt r1.x, -r4, r4
-sub r1.x, r1, r1.y
-mul r0.w, r0, r1.x
-mul r1.y, r3, r1.z
-mad r4.z, r3.x, r0.w, r1.y
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o6.xyz, r0.w, r0
+slt r0.y, -r3.z, r3.z
+slt r0.x, r3.z, -r3.z
+sub r0.z, r0.y, r0.x
+mul r1.x, r1, r0.z
+sub r0.x, r0, r0.y
+mul r0.w, r1.z, r0.x
+slt r0.z, r1.x, -r1.x
+slt r0.y, -r1.x, r1.x
+sub r0.y, r0, r0.z
+mul r0.z, r3.y, r0.w
+mul r0.x, r0, r0.y
+mad r1.z, r3.x, r0.x, r0
 mov r0.xyz, v2
 mov r0.w, c18.x
-dp4 r1.z, r0, c10
-dp4 r1.x, r4, c0
-dp4 r1.y, r4, c1
-add r1.xy, -r2, r1
-mad o5.xy, r1, c19.x, c19.y
-dp4 r1.y, r0, c9
-dp4 r1.x, r0, c8
-dp3 r0.x, r1, r1
-rsq r0.w, r0.x
-dp4 r0.y, c14, c14
-rsq r0.y, r0.y
-mul r0.xyz, r0.y, c14
-mul r1.xyz, r0.w, r1
-dp3_sat r0.w, r1, r0
+mad o3.xy, r4, c19.x, c19.y
+dp4 r4.z, r0, c10
+dp4 r4.x, r0, c8
+dp4 r4.y, r0, c9
+dp3 r0.z, r4, r4
+dp4 r0.x, r1, c0
+dp4 r0.y, r1, c1
+add r0.xy, -r5, r0
+dp4 r1.w, c14, c14
+dp4 r1.z, r2, c10
+dp4 r1.x, r2, c8
+dp4 r1.y, r2, c9
+add r1.xyz, -r1, c13
+dp3 r0.w, r1, r1
+rsq r0.w, r0.w
+rsq r1.w, r1.w
+mul o6.xyz, r0.w, r1
+rsq r0.z, r0.z
+mad o5.xy, r0, c19.x, c19.y
+mul r0.xyz, r0.z, r4
+mul r2.xyz, r1.w, c14
+mul r0.xyz, r2, r0
+dp3_sat r0.w, r0, c18.w
 mov r0.z, c10.w
 mov r0.x, c8.w
 mov r0.y, c9.w
 add r0.xyz, -r0, c13
 dp3 r0.x, r0, r0
-add r0.w, r0, c18
+add r0.w, r0, c19.z
 mul r0.y, r0.w, c15.w
-mul_sat r0.z, r0.y, c19
+mul_sat r0.z, r0.y, c19.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mov r0.y, c17.x
@@ -16190,12 +16226,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 79 instructions, 5 temp regs, 0 temp arrays:
-// ALU 60 float, 8 int, 0 uint
+// 80 instructions, 5 temp regs, 0 temp arrays:
+// ALU 61 float, 8 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedpfceoggbbmbbdbbdploccfnllnpdamadabaaaaaaoiamaaaaadaaaaaa
+eefiecedobpjjkiikjcokmafnfaainmnjmgcekaaabaaaaaabaanaaaaadaaaaaa
 cmaaaaaanmaaaaaapiabaaaaejfdeheokiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaijaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaipaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -16210,8 +16246,8 @@ amadaaaaakabaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaaakabaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaakabaaaaafaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaaakabaaaaagaaaaaaaaaaaaaaadaaaaaaahaaaaaa
 ahapaaaaakabaaaaahaaaaaaaaaaaaaaadaaaaaaaiaaaaaaahapaaaafdfgfpfa
-epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcoiakaaaa
-eaaaabaalkacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaafjaaaaaeegiocaaa
+epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcbaalaaaa
+eaaaabaameacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaabaaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaa
 aaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaad
@@ -16291,14 +16327,15 @@ eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
 acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
-abaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajocaabaaa
-aaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaaaiaaaaaadccaaaak
-hccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaaeaaaaaa
-aeaaaaaadoaaaaab"
+acaaaaaaaaaaaaaadiaaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaaaceaaaaa
+eiobhkdpeiobhkdpeiobhkdpaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaa
+afaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaa
+aiaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaa
+egiccaaaaeaaaaaaaeaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -16383,7 +16420,7 @@ void main ()
   tmpvar_19 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_19;
   highp vec3 tmpvar_20;
-  tmpvar_20 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_20 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_20;
   highp float tmpvar_21;
   tmpvar_21 = clamp (dot (normalize((_Object2World * tmpvar_18).xyz), lightDirection_2), 0.0, 1.0);
@@ -16451,7 +16488,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -16545,7 +16582,7 @@ void main ()
   tmpvar_19 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_19;
   highp vec3 tmpvar_20;
-  tmpvar_20 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_20 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_20;
   highp float tmpvar_21;
   tmpvar_21 = clamp (dot (normalize((_Object2World * tmpvar_18).xyz), lightDirection_2), 0.0, 1.0);
@@ -16613,7 +16650,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -16869,7 +16906,7 @@ v2f vert( in appdata_t v ) {
     highp vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     #line 478
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
+    mediump vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
     mediump float NdotL = xll_saturate_f(dot( worldNormal, lightDirection));
     mediump float diff = ((NdotL - 0.01) / 0.99);
     mediump float lightIntensity = xll_saturate_f(((_LightColor0.w * diff) * 4.0));
@@ -17092,7 +17129,7 @@ lowp vec4 frag( in v2f i ) {
     #line 495
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.94 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 499
     color.xyz = (prev.xyz * i.baseLight);
@@ -17143,114 +17180,114 @@ Float 17 [_DistFade]
 Float 18 [_MinLight]
 "3.0-!!ARBvp1.0
 # 118 ALU
-PARAM c[20] = { { 0, 1, 2, 0.60000002 },
+PARAM c[21] = { { 0, 1, 2, 0.60000002 },
 		state.lightmodel.ambient,
 		state.matrix.modelview[0],
 		program.local[6..12],
 		state.matrix.projection,
 		program.local[17..18],
-		{ 0.5, 0.010002136, 4.0394478, 0 } };
+		{ 0.5, 0.98000002, 0.010002136 },
+		{ 4.0394478, 0 } };
 TEMP R0;
 TEMP R1;
 TEMP R2;
 TEMP R3;
 TEMP R4;
-DP3 R1.x, c[4], c[4];
-RSQ R1.x, R1.x;
-MUL R3.xyz, R1.x, c[4];
-MOV R2.w, vertex.position;
-MOV R2.xyz, c[0].x;
-DP4 R4.x, R2, c[2];
-DP4 R4.y, R2, c[3];
+DP3 R2.x, c[4], c[4];
+RSQ R2.x, R2.x;
+MUL R3.xyz, R2.x, c[4];
+MOV R1.xyz, c[0].x;
 MOV R1.w, vertex.position;
-DP4 R4.w, R2, c[5];
-DP4 R4.z, R2, c[4];
+DP4 R4.x, R1, c[2];
+DP4 R4.y, R1, c[3];
+DP4 R4.w, R1, c[5];
+DP4 R4.z, R1, c[4];
 ADD R0, R4, vertex.position;
 DP4 result.position.w, R0, c[16];
 DP4 result.position.z, R0, c[15];
 DP4 result.position.y, R0, c[14];
 DP4 result.position.x, R0, c[13];
-MUL R0.xy, vertex.texcoord[0], c[0].z;
-ADD R4.zw, R0.xyxy, -c[0].y;
-MOV R1.y, R4.w;
-SLT R0.x, c[0], R4.w;
-SLT R0.y, R0, c[0];
-ADD R3.w, R0.x, -R0.y;
-SLT R0.z, c[0].x, -R3.x;
-SLT R0.w, -R3.x, c[0].x;
-ADD R0.w, R0.z, -R0;
-MUL R0.z, R4, R0.w;
-MUL R1.x, R0.w, R3.w;
-SLT R0.y, R0.z, c[0].x;
-SLT R0.x, c[0], R0.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.y, R3, R1.x;
-MUL R0.x, R0, R0.w;
-MAD R0.x, R3.z, R0, R0.y;
-MOV R0.yw, R1;
-DP4 R1.x, R0, c[2];
-DP4 R1.z, R0, c[3];
-ADD R0.xy, -R4, R1.xzzw;
-MUL R0.xy, R0, c[0].w;
-SLT R0.w, R3.z, c[0].x;
-SLT R0.z, c[0].x, R3;
+MUL R0.zw, vertex.texcoord[0].xyxy, c[0].z;
+SLT R0.x, c[0], -R3;
+SLT R0.y, -R3.x, c[0].x;
+ADD R2.x, R0, -R0.y;
+ADD R0.xy, R0.zwzw, -c[0].y;
+MUL R2.z, R0.x, R2.x;
+SLT R2.y, R2.z, c[0].x;
+SLT R0.w, R0, c[0].y;
+SLT R0.z, c[0].x, R0.y;
 ADD R0.z, R0, -R0.w;
-MUL R1.x, R4.z, R0.z;
-ADD result.texcoord[1].xy, R0, c[19].x;
-SLT R0.y, R1.x, c[0].x;
-SLT R0.x, c[0], R1;
-ADD R0.z, R0.x, -R0.y;
-SLT R0.y, -R3.z, c[0].x;
-SLT R0.x, c[0], -R3.z;
-ADD R0.x, R0, -R0.y;
-MUL R0.w, R3, R0.x;
-MUL R0.z, R0.x, R0;
-MUL R0.w, R3.y, R0;
-MAD R1.z, R3.x, R0, R0.w;
-SLT R0.x, c[0], -R3.y;
-SLT R0.y, -R3, c[0].x;
-ADD R0.y, R0.x, -R0;
-MUL R0.x, R4.z, R0.y;
-SLT R0.w, R0.x, c[0].x;
+SLT R0.w, c[0].x, R2.z;
+ADD R0.w, R0, -R2.y;
+MUL R2.w, R2.x, R0.z;
+MUL R0.w, R0, R2.x;
+MUL R2.y, R3, R2.w;
+MAD R2.x, R3.z, R0.w, R2.y;
+MOV R0.w, vertex.position;
+MOV R2.yw, R0;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+SLT R2.w, -R3.y, c[0].x;
+SLT R2.z, c[0].x, -R3.y;
+ADD R3.w, R2.z, -R2;
+MUL R2.zw, R2.xyxy, c[0].w;
+MUL R2.x, R0, R3.w;
+ADD result.texcoord[1].xy, R2.zwzw, c[19].x;
+SLT R2.z, R2.x, c[0].x;
+SLT R2.y, c[0].x, R2.x;
+ADD R2.y, R2, -R2.z;
+MUL R2.z, R0, R3.w;
+MUL R2.y, R2, R3.w;
+MUL R3.w, R3.z, R2.z;
+MOV R2.zw, R0.xyyw;
+MAD R2.y, R3.x, R2, R3.w;
+DP4 R4.z, R2, c[2];
+DP4 R4.w, R2, c[3];
+ADD R2.xy, -R4, R4.zwzw;
+MUL R2.xy, R2, c[0].w;
+SLT R2.w, R3.z, c[0].x;
+SLT R2.z, c[0].x, R3;
+ADD R3.w, R2.z, -R2;
+MUL R0.x, R0, R3.w;
+SLT R2.w, -R3.z, c[0].x;
+SLT R2.z, c[0].x, -R3;
+ADD R2.z, R2, -R2.w;
+MUL R3.w, R0.z, R2.z;
+SLT R2.w, R0.x, c[0].x;
 SLT R0.z, c[0].x, R0.x;
-ADD R0.z, R0, -R0.w;
-MUL R0.w, R3, R0.y;
-MUL R0.y, R0.z, R0;
-MUL R3.w, R3.z, R0;
-MOV R0.zw, R1.xyyw;
-MAD R0.y, R3.x, R0, R3.w;
-DP4 R4.z, R0, c[2];
-DP4 R4.w, R0, c[3];
-ADD R0.xy, -R4, R4.zwzw;
-MUL R0.xy, R0, c[0].w;
-DP4 R0.z, R1, c[2];
-DP4 R0.w, R1, c[3];
-ADD R0.zw, -R4.xyxy, R0;
-MUL R0.zw, R0, c[0].w;
-ADD result.texcoord[3].xy, R0.zwzw, c[19].x;
-ADD result.texcoord[2].xy, R0, c[19].x;
+ADD R0.z, R0, -R2.w;
+MUL R2.w, R3.y, R3;
+MUL R0.z, R2, R0;
+MAD R0.z, R3.x, R0, R2.w;
+DP4 R2.z, R0, c[2];
+DP4 R2.w, R0, c[3];
+ADD R0.xy, -R4, R2.zwzw;
+MUL R4.xy, R0, c[0].w;
 MOV R0.xyz, vertex.normal;
 MOV R0.w, c[0].x;
-DP4 R1.z, R0, c[11];
-DP4 R1.y, R0, c[10];
-DP4 R1.x, R0, c[9];
-DP3 R0.x, R1, R1;
-RSQ R0.w, R0.x;
-DP4 R0.y, c[7], c[7];
+ADD result.texcoord[2].xy, R2, c[19].x;
+DP4 R2.z, R0, c[11];
+DP4 R2.x, R0, c[9];
+DP4 R2.y, R0, c[10];
+DP3 R0.y, R2, R2;
 RSQ R0.y, R0.y;
-MUL R1.xyz, R0.w, R1;
-MUL R0.xyz, R0.y, c[7];
-DP3 R0.w, R1, R0;
+DP4 R0.x, c[7], c[7];
+MUL R2.xyz, R0.y, R2;
+RSQ R0.x, R0.x;
+MUL R0.xyz, R0.x, c[7];
+MUL R0.xyz, R0, R2;
+DP3 R0.w, R0, c[19].y;
+DP4 R0.z, R1, c[11];
+DP4 R0.x, R1, c[9];
+DP4 R0.y, R1, c[10];
 MIN R1.x, R0.w, c[0].y;
-MAX R1.x, R1, c[0];
-ADD R1.x, R1, -c[19].y;
-DP4 R0.z, R2, c[11];
-DP4 R0.x, R2, c[9];
-DP4 R0.y, R2, c[10];
 ADD R0.xyz, -R0, c[6];
 DP3 R0.w, R0, R0;
 RSQ R0.w, R0.w;
 MUL result.texcoord[4].xyz, R0.w, R0;
+MAX R1.x, R1, c[0];
+ADD R1.x, R1, -c[19].z;
 MUL R0.w, R1.x, c[8];
 MOV R1.xyz, c[8];
 MOV R0.z, c[11].w;
@@ -17258,7 +17295,7 @@ MOV R0.x, c[9].w;
 MOV R0.y, c[10].w;
 ADD R0.xyz, -R0, c[6];
 DP3 R0.x, R0, R0;
-MUL R0.w, R0, c[19].z;
+MUL R0.w, R0, c[20].x;
 MIN R0.y, R0.w, c[0];
 RSQ R0.x, R0.x;
 RCP R0.x, R0.x;
@@ -17269,6 +17306,7 @@ MAX R0.y, R0, c[0].x;
 ADD R1.xyz, R1, c[18].x;
 MAD R1.xyz, R1, R0.y, c[1];
 MIN R1.xyz, R1, c[0].y;
+ADD result.texcoord[3].xy, R4, c[19].x;
 MAX result.texcoord[5].xyz, R1, c[0].x;
 MUL result.color.w, vertex.color, R0.x;
 MOV result.color.xyz, vertex.color;
@@ -17303,107 +17341,107 @@ dcl_texcoord2 o4
 dcl_texcoord3 o5
 dcl_texcoord4 o6
 dcl_texcoord5 o7
-def c18, 0.00000000, 2.00000000, -1.00000000, -0.01000214
-def c19, 0.60000002, 0.50000000, 4.03944778, 0
+def c18, 0.00000000, 2.00000000, -1.00000000, 0.98000002
+def c19, 0.60000002, 0.50000000, -0.01000214, 4.03944778
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_texcoord0 v3
-mov r1.xyz, c18.x
-mov r1.w, v0
-dp4 r2.x, r1, c0
-dp4 r2.y, r1, c1
-dp4 r2.w, r1, c3
-dp4 r2.z, r1, c2
-add r0, r2, v0
-dp3 r2.z, c2, c2
-rsq r2.z, r2.z
-mul r3.xyz, r2.z, c2
-mad r2.zw, v3.xyxy, c18.y, c18.z
-mov r4.y, r2.w
+dp3 r1.x, c2, c2
+rsq r1.x, r1.x
+mul r3.xyz, r1.x, c2
+mad r1.xy, v3, c18.y, c18.z
+mov r2.xyz, c18.x
+mov r2.w, v0
+dp4 r5.x, r2, c0
+dp4 r5.y, r2, c1
+dp4 r5.w, r2, c3
+dp4 r5.z, r2, c2
+add r0, r5, v0
 dp4 o0.w, r0, c7
 dp4 o0.z, r0, c6
 dp4 o0.y, r0, c5
 dp4 o0.x, r0, c4
-mov r4.w, v0
-slt r0.z, r2.w, -r2.w
+slt r0.z, r1.y, -r1.y
 slt r0.y, -r3.x, r3.x
 slt r0.x, r3, -r3
 sub r0.x, r0, r0.y
-slt r0.y, -r2.w, r2.w
-sub r3.w, r0.y, r0.z
-mul r0.z, r2, r0.x
-mul r4.x, r0, r3.w
+slt r0.y, -r1, r1
+sub r1.z, r0.y, r0
+mul r0.z, r1.x, r0.x
+mul r1.w, r0.x, r1.z
 slt r0.w, r0.z, -r0.z
 slt r0.y, -r0.z, r0.z
 sub r0.y, r0, r0.w
-mul r0.w, r3.y, r4.x
+mul r0.w, r3.y, r1
 mul r0.x, r0.y, r0
 mad r0.x, r3.z, r0, r0.w
-mov r0.yw, r4
-dp4 r5.y, r0, c1
-dp4 r5.x, r0, c0
+mov r1.w, v0
+mov r0.yw, r1
+dp4 r4.y, r0, c1
 slt r4.x, -r3.y, r3.y
-slt r2.w, r3.y, -r3.y
-sub r2.w, r2, r4.x
-mul r0.x, r2.z, r2.w
-add r4.xz, -r2.xyyw, r5.xyyw
+slt r3.w, r3.y, -r3.y
+sub r3.w, r3, r4.x
+dp4 r4.x, r0, c0
+mul r0.x, r1, r3.w
+add r4.xy, -r5, r4
 slt r0.z, r0.x, -r0.x
 slt r0.y, -r0.x, r0.x
 sub r0.y, r0, r0.z
-mul r0.z, r3.w, r2.w
-mul r0.y, r0, r2.w
-mul r2.w, r3.z, r0.z
-mov r0.zw, r4.xyyw
-mad r0.y, r3.x, r0, r2.w
-dp4 r5.x, r0, c0
-dp4 r5.y, r0, c1
-add r0.xy, -r2, r5
+mul r0.z, r1, r3.w
+mul r0.y, r0, r3.w
+mul r3.w, r3.z, r0.z
+mov r0.zw, r1.xyyw
+mad r0.y, r3.x, r0, r3.w
+dp4 r4.z, r0, c0
+dp4 r4.w, r0, c1
+add r0.xy, -r5, r4.zwzw
 mad o4.xy, r0, c19.x, c19.y
-dp4 r0.z, r1, c10
-dp4 r0.x, r1, c8
-dp4 r0.y, r1, c9
-add r0.xyz, -r0, c13
-slt r1.x, -r3.z, r3.z
-slt r0.w, r3.z, -r3.z
-sub r1.y, r1.x, r0.w
-sub r0.w, r0, r1.x
-mad o3.xy, r4.xzzw, c19.x, c19.y
-mul r4.x, r2.z, r1.y
-mul r1.z, r3.w, r0.w
-slt r1.y, r4.x, -r4.x
-slt r1.x, -r4, r4
-sub r1.x, r1, r1.y
-mul r0.w, r0, r1.x
-mul r1.y, r3, r1.z
-mad r4.z, r3.x, r0.w, r1.y
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o6.xyz, r0.w, r0
+slt r0.y, -r3.z, r3.z
+slt r0.x, r3.z, -r3.z
+sub r0.z, r0.y, r0.x
+mul r1.x, r1, r0.z
+sub r0.x, r0, r0.y
+mul r0.w, r1.z, r0.x
+slt r0.z, r1.x, -r1.x
+slt r0.y, -r1.x, r1.x
+sub r0.y, r0, r0.z
+mul r0.z, r3.y, r0.w
+mul r0.x, r0, r0.y
+mad r1.z, r3.x, r0.x, r0
 mov r0.xyz, v2
 mov r0.w, c18.x
-dp4 r1.z, r0, c10
-dp4 r1.x, r4, c0
-dp4 r1.y, r4, c1
-add r1.xy, -r2, r1
-mad o5.xy, r1, c19.x, c19.y
-dp4 r1.y, r0, c9
-dp4 r1.x, r0, c8
-dp3 r0.x, r1, r1
-rsq r0.w, r0.x
-dp4 r0.y, c14, c14
-rsq r0.y, r0.y
-mul r0.xyz, r0.y, c14
-mul r1.xyz, r0.w, r1
-dp3_sat r0.w, r1, r0
+mad o3.xy, r4, c19.x, c19.y
+dp4 r4.z, r0, c10
+dp4 r4.x, r0, c8
+dp4 r4.y, r0, c9
+dp3 r0.z, r4, r4
+dp4 r0.x, r1, c0
+dp4 r0.y, r1, c1
+add r0.xy, -r5, r0
+dp4 r1.w, c14, c14
+dp4 r1.z, r2, c10
+dp4 r1.x, r2, c8
+dp4 r1.y, r2, c9
+add r1.xyz, -r1, c13
+dp3 r0.w, r1, r1
+rsq r0.w, r0.w
+rsq r1.w, r1.w
+mul o6.xyz, r0.w, r1
+rsq r0.z, r0.z
+mad o5.xy, r0, c19.x, c19.y
+mul r0.xyz, r0.z, r4
+mul r2.xyz, r1.w, c14
+mul r0.xyz, r2, r0
+dp3_sat r0.w, r0, c18.w
 mov r0.z, c10.w
 mov r0.x, c8.w
 mov r0.y, c9.w
 add r0.xyz, -r0, c13
 dp3 r0.x, r0, r0
-add r0.w, r0, c18
+add r0.w, r0, c19.z
 mul r0.y, r0.w, c15.w
-mul_sat r0.z, r0.y, c19
+mul_sat r0.z, r0.y, c19.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mov r0.y, c17.x
@@ -17441,12 +17479,12 @@ BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
 BindCB "UnityPerFrame" 4
-// 79 instructions, 5 temp regs, 0 temp arrays:
-// ALU 60 float, 8 int, 0 uint
+// 80 instructions, 5 temp regs, 0 temp arrays:
+// ALU 61 float, 8 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedpfceoggbbmbbdbbdploccfnllnpdamadabaaaaaaoiamaaaaadaaaaaa
+eefiecedobpjjkiikjcokmafnfaainmnjmgcekaaabaaaaaabaanaaaaadaaaaaa
 cmaaaaaanmaaaaaapiabaaaaejfdeheokiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaijaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaipaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -17461,8 +17499,8 @@ amadaaaaakabaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaadamaaaaakabaaaa
 aeaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaakabaaaaafaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaaakabaaaaagaaaaaaaaaaaaaaadaaaaaaahaaaaaa
 ahapaaaaakabaaaaahaaaaaaaaaaaaaaadaaaaaaaiaaaaaaahapaaaafdfgfpfa
-epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcoiakaaaa
-eaaaabaalkacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaafjaaaaaeegiocaaa
+epfdejfeejepeoaaedepemepfcaafeeffiedepepfceeaaklfdeieefcbaalaaaa
+eaaaabaameacaaaafjaaaaaeegiocaaaaaaaaaaaajaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaabaaaaaaafjaaaaaeegiocaaaaeaaaaaaafaaaaaafpaaaaadpcbabaaa
 aaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaad
@@ -17542,14 +17580,15 @@ eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
 acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
-abaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajocaabaaa
-aaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaaaiaaaaaadccaaaak
-hccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaaegiccaaaaeaaaaaa
-aeaaaaaadoaaaaab"
+acaaaaaaaaaaaaaadiaaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaaaceaaaaa
+eiobhkdpeiobhkdpeiobhkdpaaaaaaaabacaaaahbcaabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaa
+afaaaaaadicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajocaabaaaaaaaaaaaagijcaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaa
+aiaaaaaadccaaaakhccabaaaagaaaaaajgahbaaaaaaaaaaaagaabaaaaaaaaaaa
+egiccaaaaeaaaaaaaeaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -17634,7 +17673,7 @@ void main ()
   tmpvar_19 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_19;
   highp vec3 tmpvar_20;
-  tmpvar_20 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_20 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_20;
   highp float tmpvar_21;
   tmpvar_21 = clamp (dot (normalize((_Object2World * tmpvar_18).xyz), lightDirection_2), 0.0, 1.0);
@@ -17702,7 +17741,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -17796,7 +17835,7 @@ void main ()
   tmpvar_19 = glstate_lightmodel_ambient.xyz;
   ambientLighting_3 = tmpvar_19;
   highp vec3 tmpvar_20;
-  tmpvar_20 = normalize(_WorldSpaceLightPos0).xyz;
+  tmpvar_20 = (0.98 * normalize(_WorldSpaceLightPos0)).xyz;
   lightDirection_2 = tmpvar_20;
   highp float tmpvar_21;
   tmpvar_21 = clamp (dot (normalize((_Object2World * tmpvar_18).xyz), lightDirection_2), 0.0, 1.0);
@@ -17864,7 +17903,7 @@ void main ()
   tmpvar_12 = texture2D (_FrontTex, xlv_TEXCOORD3);
   ztex_3 = tmpvar_12;
   mediump vec4 tmpvar_13;
-  tmpvar_13 = (((0.93 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
+  tmpvar_13 = (((0.94 * _Color) * xlv_COLOR) * mix (mix (xtex_7, ytex_5, vec4(yval_6)), ztex_3, vec4(zval_4)));
   color_2.xyz = (tmpvar_13.xyz * xlv_TEXCOORD5);
   color_2.w = tmpvar_13.w;
   tmpvar_1 = color_2;
@@ -18121,7 +18160,7 @@ v2f vert( in appdata_t v ) {
     highp vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     #line 479
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
+    mediump vec3 lightDirection = vec3( (0.98 * normalize(_WorldSpaceLightPos0)));
     mediump float NdotL = xll_saturate_f(dot( worldNormal, lightDirection));
     mediump float diff = ((NdotL - 0.01) / 0.99);
     mediump float lightIntensity = xll_saturate_f(((_LightColor0.w * diff) * 4.0));
@@ -18345,7 +18384,7 @@ lowp vec4 frag( in v2f i ) {
     #line 496
     mediump vec4 ztex = texture( _FrontTex, i.texcoordXY);
     mediump vec4 tex = mix( mix( xtex, ytex, vec4( yval)), ztex, vec4( zval));
-    mediump vec4 prev = (((0.93 * _Color) * i.color) * tex);
+    mediump vec4 prev = (((0.94 * _Color) * i.color) * tex);
     mediump vec4 color;
     #line 500
     color.xyz = (prev.xyz * i.baseLight);
@@ -18398,7 +18437,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.93017578 } };
+		{ 0.93994141 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -18429,7 +18468,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.93017578, 0, 0, 0
+def c1, 0.93994141, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -18464,7 +18503,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefieceddeignkbkdolooakmllgnknaebgdgljpcabaaaaaaneadaaaaadaaaaaa
+eefiecedodadahealddjnkgieipgncgndgmejmnhabaaaaaaneadaaaaadaaaaaa
 cmaaaaaadaabaaaageabaaaaejfdeheopmaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaapcaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -18492,9 +18531,9 @@ abaaaaaadcaaaaajpcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaa
 egaobaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaa
 aaaaaaaaahaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaa
 abaaaaaadgaaaaafhcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaa
-abaaaaaaabeaaaaahlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+abaaaaaaabeaaaaanhkdhadpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
 egaobaaaabaaaaaadiaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaa
-hlbegodphlbegodphlbegodpaaaaiadpdoaaaaab"
+nhkdhadpnhkdhadpnhkdhadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -18522,7 +18561,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.93017578 } };
+		{ 0.93994141 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -18553,7 +18592,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.93017578, 0, 0, 0
+def c1, 0.93994141, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -18588,7 +18627,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedmjlecbiopjlephnlblkmppmjidjpifnmabaaaaaalmadaaaaadaaaaaa
+eefiecedlfgnppikdbmfaglpmgpoopohliibnnneabaaaaaalmadaaaaadaaaaaa
 cmaaaaaabiabaaaaemabaaaaejfdeheooeaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaankaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -18615,9 +18654,9 @@ aaaaaaaaegaobaaaabaaaaaadcaaaaajpcaabaaaaaaaaaaakgbkbaaaacaaaaaa
 egaobaaaabaaaaaaegaobaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaaegbobaaa
 abaaaaaaegiocaaaaaaaaaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaa
 aaaaaaaaegaobaaaabaaaaaadgaaaaafhcaabaaaabaaaaaaegbcbaaaagaaaaaa
-dgaaaaaficaabaaaabaaaaaaabeaaaaahlbegodpdiaaaaahpcaabaaaaaaaaaaa
+dgaaaaaficaabaaaabaaaaaaabeaaaaanhkdhadpdiaaaaahpcaabaaaaaaaaaaa
 egaobaaaaaaaaaaaegaobaaaabaaaaaadiaaaaakpccabaaaaaaaaaaaegaobaaa
-aaaaaaaaaceaaaaahlbegodphlbegodphlbegodpaaaaiadpdoaaaaab"
+aaaaaaaaaceaaaaanhkdhadpnhkdhadpnhkdhadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -18645,7 +18684,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.93017578 } };
+		{ 0.93994141 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -18676,7 +18715,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.93017578, 0, 0, 0
+def c1, 0.93994141, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -18711,7 +18750,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedlkeffgnlhmhicaanponffocpgmapijloabaaaaaaneadaaaaadaaaaaa
+eefiecedokbkggajkjmpenfmdhikkffancmdohkiabaaaaaaneadaaaaadaaaaaa
 cmaaaaaadaabaaaageabaaaaejfdeheopmaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaapcaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -18739,9 +18778,9 @@ abaaaaaadcaaaaajpcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaa
 egaobaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaa
 aaaaaaaaahaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaa
 abaaaaaadgaaaaafhcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaa
-abaaaaaaabeaaaaahlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+abaaaaaaabeaaaaanhkdhadpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
 egaobaaaabaaaaaadiaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaa
-hlbegodphlbegodphlbegodpaaaaiadpdoaaaaab"
+nhkdhadpnhkdhadpnhkdhadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -18769,7 +18808,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.93017578 } };
+		{ 0.93994141 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -18800,7 +18839,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.93017578, 0, 0, 0
+def c1, 0.93994141, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -18835,7 +18874,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefieceddeignkbkdolooakmllgnknaebgdgljpcabaaaaaaneadaaaaadaaaaaa
+eefiecedodadahealddjnkgieipgncgndgmejmnhabaaaaaaneadaaaaadaaaaaa
 cmaaaaaadaabaaaageabaaaaejfdeheopmaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaapcaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -18863,9 +18902,9 @@ abaaaaaadcaaaaajpcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaa
 egaobaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaa
 aaaaaaaaahaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaa
 abaaaaaadgaaaaafhcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaa
-abaaaaaaabeaaaaahlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+abaaaaaaabeaaaaanhkdhadpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
 egaobaaaabaaaaaadiaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaa
-hlbegodphlbegodphlbegodpaaaaiadpdoaaaaab"
+nhkdhadpnhkdhadpnhkdhadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -18893,7 +18932,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.93017578 } };
+		{ 0.93994141 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -18924,7 +18963,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.93017578, 0, 0, 0
+def c1, 0.93994141, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -18959,7 +18998,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedppfcinmlfeckonjmcmgeiaihdegobjebabaaaaaaneadaaaaadaaaaaa
+eefiecedlhhlfcnialcaljjjfdhopekoifanajheabaaaaaaneadaaaaadaaaaaa
 cmaaaaaadaabaaaageabaaaaejfdeheopmaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaapcaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -18987,9 +19026,9 @@ abaaaaaadcaaaaajpcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaa
 egaobaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaa
 aaaaaaaaahaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaa
 abaaaaaadgaaaaafhcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaa
-abaaaaaaabeaaaaahlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+abaaaaaaabeaaaaanhkdhadpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
 egaobaaaabaaaaaadiaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaa
-hlbegodphlbegodphlbegodpaaaaiadpdoaaaaab"
+nhkdhadpnhkdhadpnhkdhadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19017,7 +19056,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.93017578 } };
+		{ 0.93994141 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -19048,7 +19087,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.93017578, 0, 0, 0
+def c1, 0.93994141, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -19083,7 +19122,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedejnfligjigbfffjejhdboamfcihogeaoabaaaaaaomadaaaaadaaaaaa
+eefiecedjbhipcibppfbbclkakhpgcncmenakbooabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19112,9 +19151,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaahaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
-hlbegodpaaaaiadpdoaaaaab"
+nhkdhadpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaanhkdhadpnhkdhadp
+nhkdhadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19142,7 +19181,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.93017578 } };
+		{ 0.93994141 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -19173,7 +19212,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.93017578, 0, 0, 0
+def c1, 0.93994141, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -19208,7 +19247,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedejnfligjigbfffjejhdboamfcihogeaoabaaaaaaomadaaaaadaaaaaa
+eefiecedjbhipcibppfbbclkakhpgcncmenakbooabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19237,9 +19276,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaahaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
-hlbegodpaaaaiadpdoaaaaab"
+nhkdhadpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaanhkdhadpnhkdhadp
+nhkdhadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19262,7 +19301,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.93017578 } };
+		{ 0.93994141 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -19293,7 +19332,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.93017578, 0, 0, 0
+def c1, 0.93994141, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -19328,7 +19367,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedlkeffgnlhmhicaanponffocpgmapijloabaaaaaaneadaaaaadaaaaaa
+eefiecedokbkggajkjmpenfmdhikkffancmdohkiabaaaaaaneadaaaaadaaaaaa
 cmaaaaaadaabaaaageabaaaaejfdeheopmaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaapcaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19356,9 +19395,9 @@ abaaaaaadcaaaaajpcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaa
 egaobaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaa
 aaaaaaaaahaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaa
 abaaaaaadgaaaaafhcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaa
-abaaaaaaabeaaaaahlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+abaaaaaaabeaaaaanhkdhadpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
 egaobaaaabaaaaaadiaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaa
-hlbegodphlbegodphlbegodpaaaaiadpdoaaaaab"
+nhkdhadpnhkdhadpnhkdhadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19386,7 +19425,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.93017578 } };
+		{ 0.93994141 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -19417,7 +19456,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.93017578, 0, 0, 0
+def c1, 0.93994141, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -19452,7 +19491,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedcnhgmdgmjgjkpppoacnfalngelkbkociabaaaaaaomadaaaaadaaaaaa
+eefiecedemfmnnloemgadokadpocpneinoinlmgoabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19481,9 +19520,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaalaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
-hlbegodpaaaaiadpdoaaaaab"
+nhkdhadpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaanhkdhadpnhkdhadp
+nhkdhadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19511,7 +19550,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.93017578 } };
+		{ 0.93994141 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -19542,7 +19581,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.93017578, 0, 0, 0
+def c1, 0.93994141, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -19577,7 +19616,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedooafakhkbheanlggdmikeaoejpkjbpmmabaaaaaaomadaaaaadaaaaaa
+eefiecedbcnkhihkdaaejahcjnhieomohegekhncabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19606,9 +19645,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaahaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
-hlbegodpaaaaiadpdoaaaaab"
+nhkdhadpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaanhkdhadpnhkdhadp
+nhkdhadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19636,7 +19675,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.93017578 } };
+		{ 0.93994141 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -19667,7 +19706,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.93017578, 0, 0, 0
+def c1, 0.93994141, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -19702,7 +19741,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedooafakhkbheanlggdmikeaoejpkjbpmmabaaaaaaomadaaaaadaaaaaa
+eefiecedbcnkhihkdaaejahcjnhieomohegekhncabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19731,9 +19770,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaahaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
-hlbegodpaaaaiadpdoaaaaab"
+nhkdhadpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaanhkdhadpnhkdhadp
+nhkdhadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19761,7 +19800,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.93017578 } };
+		{ 0.93994141 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -19792,7 +19831,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.93017578, 0, 0, 0
+def c1, 0.93994141, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -19827,7 +19866,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedepcmkpichgbfgepkmncbohbhkglnpphfabaaaaaaomadaaaaadaaaaaa
+eefiecedgpcflpkjlggaodikpmbhfjbljbbdbikmabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19856,9 +19895,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaalaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
-hlbegodpaaaaiadpdoaaaaab"
+nhkdhadpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaanhkdhadpnhkdhadp
+nhkdhadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19886,7 +19925,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.93017578 } };
+		{ 0.93994141 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -19917,7 +19956,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.93017578, 0, 0, 0
+def c1, 0.93994141, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -19952,7 +19991,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedepcmkpichgbfgepkmncbohbhkglnpphfabaaaaaaomadaaaaadaaaaaa
+eefiecedgpcflpkjlggaodikpmbhfjbljbbdbikmabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19981,9 +20020,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaalaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
-hlbegodpaaaaiadpdoaaaaab"
+nhkdhadpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaanhkdhadpnhkdhadp
+nhkdhadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -20006,7 +20045,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.93017578 } };
+		{ 0.93994141 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -20037,7 +20076,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.93017578, 0, 0, 0
+def c1, 0.93994141, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -20072,7 +20111,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedooafakhkbheanlggdmikeaoejpkjbpmmabaaaaaaomadaaaaadaaaaaa
+eefiecedbcnkhihkdaaejahcjnhieomohegekhncabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -20101,9 +20140,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaahaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
-hlbegodpaaaaiadpdoaaaaab"
+nhkdhadpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaanhkdhadpnhkdhadp
+nhkdhadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -20131,7 +20170,7 @@ SetTexture 2 [_FrontTex] 2D
 OPTION ARB_precision_hint_fastest;
 # 12 ALU, 3 TEX
 PARAM c[2] = { program.local[0],
-		{ 0.93017578 } };
+		{ 0.93994141 } };
 TEMP R0;
 TEMP R1;
 TEX R1, fragment.texcoord[1], texture[0], 2D;
@@ -20162,7 +20201,7 @@ SetTexture 2 [_FrontTex] 2D
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c1, 0.93017578, 0, 0, 0
+def c1, 0.93994141, 0, 0, 0
 dcl_color0 v0
 dcl_texcoord0 v1.xyz
 dcl_texcoord1 v2.xy
@@ -20197,7 +20236,7 @@ SetTexture 2 [_FrontTex] 2D 2
 // TEX 3 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedooafakhkbheanlggdmikeaoejpkjbpmmabaaaaaaomadaaaaadaaaaaa
+eefiecedbcnkhihkdaaejahcjnhieomohegekhncabaaaaaaomadaaaaadaaaaaa
 cmaaaaaaeiabaaaahmabaaaaejfdeheobeabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaaakabaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -20226,9 +20265,9 @@ pcaabaaaaaaaaaaakgbkbaaaacaaaaaaegaobaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaaegbobaaaabaaaaaaegiocaaaaaaaaaaaahaaaaaa
 diaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaadgaaaaaf
 hcaabaaaabaaaaaaegbcbaaaagaaaaaadgaaaaaficaabaaaabaaaaaaabeaaaaa
-hlbegodpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaahlbegodphlbegodp
-hlbegodpaaaaiadpdoaaaaab"
+nhkdhadpdiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+diaaaaakpccabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaanhkdhadpnhkdhadp
+nhkdhadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
