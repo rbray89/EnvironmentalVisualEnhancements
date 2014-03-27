@@ -123,7 +123,7 @@ Category {
  				half NdotL = saturate(dot (worldNormal, lightDirection));
 		        half diff = (NdotL - 0.01) / 0.99;
 				half lightIntensity = saturate(_LightColor0.a * diff * 4);
-				o.baseLight = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
+				o.baseLight = saturate(.98*(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity)));
 				
 				o.color = v.color;
 				o.color.a *= saturate(_DistFade*distance(origin,_WorldSpaceCameraPos));
@@ -146,7 +146,7 @@ Category {
 				//half4 tex = (xtex*xval)+(ytex*yval)+(ztex*zval);
 				half4 tex = lerp(lerp(xtex, ytex, yval), ztex, zval);
 				
-				half4 prev = .93*_Color * i.color * tex;
+				half4 prev = .94*_Color * i.color * tex;
 				
 //				float3 lightColor = _LightColor0.rgb;
 //		        float3 lightDir = normalize(_WorldSpaceLightPos0);

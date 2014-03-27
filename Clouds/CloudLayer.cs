@@ -142,9 +142,9 @@ namespace Clouds
             CloudMaterial.SetFloat("_FadeScale", 0.1f / 8f);
             CloudMaterial.SetFloat("_DetailDist", 0.000002f);
 
-            Texture2D tex1 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/3", false);
-            Texture2D tex2 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/5", false);
-            Texture2D tex3 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/6", false);
+            Texture2D tex1 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/1", false);
+            Texture2D tex2 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/2", false);
+            Texture2D tex3 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/3", false);
 
             tex1.wrapMode = TextureWrapMode.Clamp;
             tex2.wrapMode = TextureWrapMode.Clamp;
