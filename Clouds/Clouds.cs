@@ -200,7 +200,7 @@ namespace Clouds
                     }
                 }
             }
-            else if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
+/*            else if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
                 if (CloudLayer.BodyDatabase.ContainsKey(FlightGlobals.currentMainBody.name))
                 {
@@ -210,7 +210,7 @@ namespace Clouds
                     }
                 }
             }
- 
+ */
         }
 
 
