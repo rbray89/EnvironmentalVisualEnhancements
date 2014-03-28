@@ -136,5 +136,14 @@ namespace Clouds
             }
             CloudLayer.Log("Recenter: " + Center.localPosition);
         }
+
+        internal void Destroy()
+        {
+            GameObject.DestroyImmediate(translator);
+            foreach (VolumeSection vs in VolumeList)
+            {
+                vs.Destroy();
+            }
+        }
     }
 }

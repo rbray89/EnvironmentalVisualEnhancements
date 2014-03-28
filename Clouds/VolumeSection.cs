@@ -11,7 +11,7 @@ namespace Clouds
     class CloudParticle
     {
         private static System.Random Random = new System.Random();
-        static bool once = true;
+
         GameObject particle;
         public CloudParticle(Texture2D tex, Material cloudParticleMaterial, Transform parent, Vector3 pos, float magnitude)
         {
@@ -66,6 +66,11 @@ namespace Clouds
                 new Color(color.r, color.g, color.b, color.a),
                 new Color(color.r, color.g, color.b, color.a)
             };
+        }
+
+        internal void Destroy()
+        {
+            GameObject.DestroyImmediate(particle);
         }
     }
 
@@ -127,6 +132,15 @@ namespace Clouds
             {
                 particle.Update(texture);
             }
+        }
+
+        internal void Destroy()
+        {
+            foreach (CloudParticle particle in Particles)
+            {
+                particle.Destroy();
+            }
+            GameObject.DestroyImmediate(segment);
         }
     }
 }

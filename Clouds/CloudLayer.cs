@@ -163,15 +163,18 @@ namespace Clouds
             UpdateFloats();
             Log("Textures initialized");
 
-            volume = new VolumeManager(CloudOverlay.Radius, (Texture2D)this.mainTexture.Texture, CloudParticleMaterial, this.CloudOverlay.Transform);
-
         }
 
         private void MacroCallback(bool value)
         {
-            if (volume != null)
+            if (volume != null && !value)
             {
-                volume.Enabled = value;
+                volume.Destroy();
+                volume = null;
+            }
+            else if(volume == null)
+            {
+                volume = new VolumeManager(CloudOverlay.Radius, (Texture2D)this.mainTexture.Texture, CloudParticleMaterial, this.CloudOverlay.Transform);
             }
         }
 
@@ -313,15 +316,19 @@ namespace Clouds
             {
                 Layers.Remove(this);
             }
-            volume.Enabled = false;
+            volume.Destroy();
+            volume = null;
         }
 
         
         internal void UpdateParticleClouds(Vector3 WorldPos)
         {
-            Vector3 intendedPoint = this.CloudOverlay.Transform.InverseTransformPoint(WorldPos);
-            intendedPoint.Normalize();
-            volume.Update(intendedPoint);
+            if (volume != null)
+            {
+                Vector3 intendedPoint = this.CloudOverlay.Transform.InverseTransformPoint(WorldPos);
+                intendedPoint.Normalize();
+                volume.Update(intendedPoint);
+            }
         }
         
     }
