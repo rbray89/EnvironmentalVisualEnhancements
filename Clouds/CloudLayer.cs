@@ -172,7 +172,7 @@ namespace Clouds
                 volume.Destroy();
                 volume = null;
             }
-            else if(volume == null)
+            else if(volume == null && value)
             {
                 volume = new VolumeManager(CloudOverlay.Radius, (Texture2D)this.mainTexture.Texture, CloudParticleMaterial, this.CloudOverlay.Transform);
             }
