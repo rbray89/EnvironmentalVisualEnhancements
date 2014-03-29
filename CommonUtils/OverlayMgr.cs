@@ -169,7 +169,8 @@ namespace OverlaySystem
         {
             if ((HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.FLIGHT ) && Overlay.OverlayDatabase.ContainsKey(CurrentBodyName))
             {
-                bool inNeedOfUpdate = (CurrentPQS != null && CurrentPQS.isActive) == ScaledEnabled;
+                bool inNeedOfUpdate = (CurrentPQS != null && CurrentPQS.isActive && !MapView.MapIsEnabled) == ScaledEnabled;
+                inNeedOfUpdate |= (!ScaledEnabled && MapView.MapIsEnabled);
                 if (inNeedOfUpdate && CurrentPQS != null && CurrentPQS.isActive && !MapView.MapIsEnabled)
                 {
                     foreach (Overlay overlay in Overlay.OverlayDatabase[CurrentBodyName])
