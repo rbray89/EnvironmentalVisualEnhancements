@@ -17,19 +17,34 @@
 		_RimDist ("Rim Distance", Range(0,100000)) = 1000
 	}
 
+Category {
+	
+	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
+	Blend SrcAlpha OneMinusSrcAlpha
+	Fog { Mode Global}
+	AlphaTest Greater 0
+	ColorMask RGB
+	Cull Off Lighting On ZWrite Off
+	
 SubShader {
-		Tags {  "Queue"="Transparent"
-	   			"RenderMode"="Transparent" }
+	Pass {
+
 		Lighting On
-		Cull Off
-	    ZWrite Off
-		
-		Blend SrcAlpha OneMinusSrcAlpha
+		Tags { "LightMode"="ForwardBase"}
 		
 		CGPROGRAM
-		#pragma surface surf SimpleLambert vertex:vert noforwardadd novertexlights nolightmap nodirlightmap
-		#pragma glsl
+		
+		#include "UnityCG.cginc"
+		#include "AutoLight.cginc"
+		#include "Lighting.cginc"
 		#pragma target 3.0
+		#pragma glsl
+		#pragma vertex vert
+		#pragma fragment frag
+		#define MAG_ONE 1.4142135623730950488016887242097
+		#pragma fragmentoption ARB_precision_hint_fastest
+		#pragma multi_compile_fwdbase
+		#pragma multi_compile_fwdadd_fullshadows
 		#define PI 3.1415926535897932384626
 		#define INV_PI (1.0/PI)
 		#define TWOPI (2.0*PI) 
@@ -51,27 +66,29 @@ SubShader {
 		float _FadeScale;
 		float _RimDist;
 		
-		half4 LightingSimpleLambert (SurfaceOutput s, half3 lightDir, half atten) {
-          half NdotL = saturate(dot (s.Normal, lightDir));
-          half diff = (NdotL - 0.01) / 0.99;
-		  float lightIntensity = saturate(_LightColor0.a * (diff * atten * 4));
-          half4 c;
-          c.rgb = s.Albedo *saturate((_MinLight + _LightColor0.rgb) * lightIntensity);
-          c.a = s.Alpha;
-          return c;
-      	}
-		
-		struct Input {
-	 		float3 nrm;
-	 		float3 viewDir;
-	 		float3 worldVert;
-	 		float3 worldOrigin;
-	 		float viewDist;
-			INTERNAL_DATA
-		};
+		struct appdata_t {
+				float4 vertex : POSITION;
+				fixed4 color : COLOR;
+				float3 normal : NORMAL;
+			};
 
-		void vert (inout appdata_full v, out Input o) {
-		   UNITY_INITIALIZE_OUTPUT(Input, o);
+		struct v2f {
+			float4 pos : SV_POSITION;
+			float3 worldVert : TEXCOORD0;
+			float3 worldOrigin : TEXCOORD1;
+			float  viewDist : TEXCOORD2;
+			float3 worldNormal : TEXCOORD3;
+			float3 objNormal : TEXCOORD4;
+			float3 viewDir : TEXCOORD5;
+			LIGHTING_COORDS(7,8)
+		};	
+		
+
+		v2f vert (appdata_t v)
+		{
+			v2f o;
+			o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+			
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 		   //float4 viewPos = mul(glstate.matrix.modelview[0], v.vertex);
@@ -79,9 +96,12 @@ SubShader {
 	   	   o.worldVert = vertexPos;
 	   	   o.worldOrigin = origin;
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
-	   	   o.nrm = normalize(v.vertex.xyz);
+	   	   o.worldNormal = normalize(vertexPos-origin);
+	   	   o.objNormal = normalize( v.vertex);
+	   	   o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
+	   	   return o;
 	 	}
-	 		
+	 	
 		float4 Derivatives( float3 pos )  
 		{  
 		    float lat = INV_2PI*atan2( pos.y, pos.x );  
@@ -91,47 +111,58 @@ SubShader {
 		    float latDdy = INV_2PI*length( ddy( pos.xy ) );  
 		    float longDdx = ddx( lon );  
 		    float longDdy = ddy( lon );  
-		 
+		 	
 		    return float4( latDdx , longDdx , latDdy, longDdy );  
 		} 
 	 		
-		void surf (Input IN, inout SurfaceOutput o) {
-			float3 nrm = IN.nrm;
+		fixed4 frag (v2f IN) : COLOR
+			{
+			half4 color;
+			float3 objNrm = IN.objNormal;
 		 	float2 uv;
-		 	uv.x = .5 + (INV_2PI*atan2(nrm.z, nrm.x));
-		 	uv.y = INV_PI*acos(-nrm.y);
-		 	float4 uvdd = Derivatives(nrm);
+		 	uv.x = .5 + (INV_2PI*atan2(objNrm.z, objNrm.x));
+		 	uv.y = INV_PI*acos(-objNrm.y);
+		 	float4 uvdd = Derivatives(objNrm);
 		    half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw)*_Color;
-			half4 detailX = tex2D (_DetailTex, nrm.zy*_DetailScale + _DetailOffset.xy);
-			half4 detailY = tex2D (_DetailTex, nrm.zx*_DetailScale + _DetailOffset.xy);
-			half4 detailZ = tex2D (_DetailTex, nrm.xy*_DetailScale + _DetailOffset.xy);
-			half4 normalX = tex2D (_BumpMap, nrm.zy*_BumpScale + _BumpOffset.xy);
-			half4 normalY = tex2D (_BumpMap, nrm.zx*_BumpScale + _BumpOffset.xy);
-			half4 normalZ = tex2D (_BumpMap, nrm.xy*_BumpScale + _BumpOffset.xy);
-			nrm = abs(nrm);
-			half4 detail = lerp(detailZ, detailX, nrm.x);
-			detail = lerp(detail, detailY, nrm.y);
-			half4 normal = lerp(normalZ, normalX, nrm.x);
-			normal = lerp(normal, normalY, nrm.y);
+			half4 detailX = tex2D (_DetailTex, objNrm.zy*_DetailScale + _DetailOffset.xy);
+			half4 detailY = tex2D (_DetailTex, objNrm.zx*_DetailScale + _DetailOffset.xy);
+			half4 detailZ = tex2D (_DetailTex, objNrm.xy*_DetailScale + _DetailOffset.xy);
+			half4 normalX = tex2D (_BumpMap, objNrm.zy*_BumpScale + _BumpOffset.xy);
+			half4 normalY = tex2D (_BumpMap, objNrm.zx*_BumpScale + _BumpOffset.xy);
+			half4 normalZ = tex2D (_BumpMap, objNrm.xy*_BumpScale + _BumpOffset.xy);
+			objNrm = abs(objNrm);
+			half4 detail = lerp(detailZ, detailX, objNrm.x);
+			detail = lerp(detail, detailY, objNrm.y);
+			half4 normal = lerp(normalZ, normalX, objNrm.x);
+			normal = lerp(normal, normalY, objNrm.y);
 		
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
-			half3 albedo = main.rgb * lerp(detail.rgb, 1, detailLevel);
-			o.Normal = float3(0,0,1);
-			o.Albedo = albedo;
-			half avg = min(main.a, lerp(detail.a, 1, detailLevel));
-			float rim = saturate(abs(dot(normalize(IN.viewDir), o.Normal)));
-            rim = saturate(pow(_FalloffScale*rim,_FalloffPow));
-            float dist = distance(IN.worldVert,_WorldSpaceCameraPos);
-            float distLerp = saturate(distance(IN.worldOrigin,_WorldSpaceCameraPos)-1.2*distance(IN.worldVert,IN.worldOrigin));
-            float distFade = saturate((_FadeScale*dist)-_FadeDist);
-			float distAlpha = lerp(distFade, rim, distLerp);
-          	o.Alpha = lerp(0, avg,  distAlpha);
-          	o.Normal = lerp(UnpackNormal (normal),half3(0,0,1),detailLevel);
+			color = main.rgba * lerp(detail.rgba, 1, detailLevel);
+
+//			float rim = saturate(abs(dot(IN.viewDir, IN.worldNormal)));
+//			rim = saturate(pow(_FalloffScale*rim,_FalloffPow));
+//			float dist = distance(IN.worldVert,_WorldSpaceCameraPos);
+//			float distLerp = saturate(distance(IN.worldOrigin,_WorldSpaceCameraPos)-1.2*distance(IN.worldVert,IN.worldOrigin));
+//			float distFade = saturate((_FadeScale*dist)-_FadeDist);
+//			float distAlpha = lerp(distFade, rim, distLerp);
+//			color.a = lerp(0, color.a,  distAlpha);
+
+          	
+			half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
+			half3 lightDirection = normalize(_WorldSpaceLightPos0);
+			half NdotL = saturate(dot (IN.worldNormal, lightDirection));
+	        half diff = (NdotL - 0.01) / 0.99;
+			half lightIntensity = saturate(_LightColor0.a * diff * 4);
+			color.rgb *= saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
+				
+          	
+          	return color;
 		}
 		ENDCG
 	
-	}
+		}
+		
+	} 
 	
-	 
-	FallBack "Diffuse"
+}
 }

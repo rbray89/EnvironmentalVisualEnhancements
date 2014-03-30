@@ -123,7 +123,7 @@ Category {
  				half NdotL = saturate(dot (worldNormal, lightDirection));
 		        half diff = (NdotL - 0.01) / 0.99;
 				half lightIntensity = saturate(_LightColor0.a * diff * 4);
-				o.baseLight = saturate(.98*(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity)));
+				o.baseLight = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
 				
 				o.color = v.color;
 				o.color.a *= saturate(_DistFade*distance(origin,_WorldSpaceCameraPos));

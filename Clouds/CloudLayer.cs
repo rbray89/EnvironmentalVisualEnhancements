@@ -163,6 +163,7 @@ namespace Clouds
             UpdateFloats();
             Log("Textures initialized");
 
+            volume = new VolumeManager(CloudOverlay.Radius, (Texture2D)this.mainTexture.Texture, CloudParticleMaterial, this.CloudOverlay.Transform);
         }
 
         private void MacroCallback(bool value)
@@ -176,6 +177,7 @@ namespace Clouds
             {
                 volume = new VolumeManager(CloudOverlay.Radius, (Texture2D)this.mainTexture.Texture, CloudParticleMaterial, this.CloudOverlay.Transform);
             }
+            Log("macro: "+value);
         }
 
         public void UpdateFloats()
@@ -316,8 +318,11 @@ namespace Clouds
             {
                 Layers.Remove(this);
             }
-            volume.Destroy();
-            volume = null;
+            if (volume != null)
+            {
+                volume.Destroy();
+                volume = null;
+            }
         }
 
         

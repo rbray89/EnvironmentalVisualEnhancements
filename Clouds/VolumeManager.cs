@@ -17,8 +17,8 @@ namespace Clouds
         Texture2D Texture;
 
         float Magnitude;
-        VolumeSection[] moveSections = new VolumeSection[3];
-        VolumeSection[] unchangedSections = new VolumeSection[3];
+        VolumeSection[] moveSections;
+        VolumeSection[] unchangedSections;
 
         GameObject translator;
         Transform Center;
@@ -43,11 +43,14 @@ namespace Clouds
             outCheck = opp*2f;
             
             enabled = true;
-            forceUpdate = true;
+            
+            moveSections = new VolumeSection[3];
+            unchangedSections = new VolumeSection[3];
 
             VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(-radius, 0, 0), radius));
             VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, opp), radius));
             VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, -opp), radius));
+            forceUpdate = true;
         }
 
         public void Update(Vector3 pos)
@@ -61,7 +64,7 @@ namespace Clouds
                 VolumeSection volumeSection = VolumeList[i];
                 float distance = Vector3.Distance(volumeSection.Center, place);
 
-                if (distance > outCheck)
+                if (distance > outCheck || forceUpdate)
                 {
                     moveSections[moveCount++] = volumeSection;
                 }
@@ -70,15 +73,7 @@ namespace Clouds
                     unchangedSections[unchangedCount++] = volumeSection;
                 }
             }
-            if (forceUpdate == true)
-            {
-                forceUpdate = false;
-                for (int i = 0; i < VolumeList.Count; i++)
-                {
-                    VolumeSection volumeSection = VolumeList[i];
-                    moveSections[moveCount++] = volumeSection;
-                }
-            }
+            forceUpdate = false;
             if (moveCount > 0)
             {
                 Vector3 tmp;
