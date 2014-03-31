@@ -4,7 +4,8 @@ Properties {
 	_LeftTex ("Particle Texture", 2D) = "white" {}
 	_FrontTex ("Particle Texture", 2D) = "white" {}
 	_InvFade ("Soft Particles Factor", Range(0.01,3.0)) = 1.0
-	_DistFade ("Distance Fade", Range(0,1)) = 1.0
+	_DistFade ("Distance Fade Near", Range(0,1)) = 1.0
+	_DistFadeVert ("Distance Fade Vertical", Range(0,1)) = 0.00004
 	_LightScatter ("Light Scatter", Range(0,1)) = 0.55 
 	_MinLight ("Minimum Light", Range(0,1)) = .5
 	_Color ("Color Tint", Color) = (1,1,1,1)
@@ -48,6 +49,7 @@ Category {
 			fixed4 _Color;
 			float _InvFade;
 			float _DistFade;
+			float _DistFadeVert;
 			float _LightScatter;
 			float _MinLight;
 			
@@ -126,7 +128,9 @@ Category {
 				o.baseLight = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
 				
 				o.color = v.color;
-				o.color.a *= saturate(_DistFade*distance(origin,_WorldSpaceCameraPos));
+				float dist = _DistFade*distance(origin,_WorldSpaceCameraPos);
+				float distVert = 1-(_DistFadeVert*distance(origin,_WorldSpaceCameraPos));
+				o.color.a *= saturate(dist) * saturate(distVert);
 				
 				return o;
 			}

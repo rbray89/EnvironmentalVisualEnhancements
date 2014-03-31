@@ -139,15 +139,15 @@ SubShader {
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
 			color = main.rgba * lerp(detail.rgba, 1, detailLevel);
 
-//			float rim = saturate(abs(dot(IN.viewDir, IN.worldNormal)));
-//			rim = saturate(pow(_FalloffScale*rim,_FalloffPow));
-//			float dist = distance(IN.worldVert,_WorldSpaceCameraPos);
-//			float distLerp = saturate(distance(IN.worldOrigin,_WorldSpaceCameraPos)-1.2*distance(IN.worldVert,IN.worldOrigin));
-//			float distFade = saturate((_FadeScale*dist)-_FadeDist);
-//			float distAlpha = lerp(distFade, rim, distLerp);
-//			color.a = lerp(0, color.a,  distAlpha);
+			float rim = saturate(abs(dot(IN.viewDir, IN.worldNormal)));
+			rim = saturate(pow(_FalloffScale*rim,_FalloffPow));
+			float dist = distance(IN.worldVert,_WorldSpaceCameraPos);
+			float distLerp = saturate(.00001*(distance(IN.worldOrigin,_WorldSpaceCameraPos)-1.05*distance(IN.worldVert,IN.worldOrigin)));
+			float distFade = saturate((_FadeScale*dist)-_FadeDist);
+			float distAlpha = lerp(distFade, rim, distLerp);
+			color.a = lerp(0, color.a,  distAlpha);
 
-          	
+          	//lighting
 			half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
 			half3 lightDirection = normalize(_WorldSpaceLightPos0);
 			half NdotL = saturate(dot (IN.worldNormal, lightDirection));

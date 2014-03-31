@@ -400,6 +400,8 @@ namespace OverlaySystem
             if(!matchTerrain && meshUpdate)
             {
                 IsoSphere.UpdateRadius(OverlayGameObject, Radius);
+                OverlayMgr.Log("radius: " + Radius);
+                OverlayMgr.Log("radius: " + celestialBody.Radius);
             }
         }
 
@@ -440,7 +442,7 @@ namespace OverlaySystem
             OverlayGameObject.renderer.sharedMaterial = scaledMaterial;
             OverlayGameObject.layer = OverlayMgr.MAP_LAYER;
             IsScaledSpace = true;
-            UpdateAltitude(false, this.altitude);
+            UpdateAltitude(false);
             if (MacroCallback != null)
             { MacroCallback(false); }
            
@@ -451,7 +453,7 @@ namespace OverlaySystem
             OverlayGameObject.renderer.sharedMaterial = macroMaterial;
             OverlayGameObject.layer = OverlayMgr.MACRO_LAYER;
             IsScaledSpace = false;
-            UpdateAltitude(false, this.altitude);
+            UpdateAltitude(false);
             if (MacroCallback != null)
             { MacroCallback(true); }
         }
