@@ -52,7 +52,7 @@ namespace Clouds
             color = cloudGUI.Color.Color;
             UpdateTextures();
             UpdateFloats();
-            CloudOverlay.UpdateAltitude(altitude);
+            CloudOverlay.UpdateAltitude(true, altitude);
         }
 
         public CloudLayer(String body, Color color, float altitude,
@@ -177,7 +177,6 @@ namespace Clouds
             {
                 volume = new VolumeManager(CloudOverlay.Radius, (Texture2D)this.mainTexture.Texture, CloudParticleMaterial, this.CloudOverlay.Transform);
             }
-            Log("macro: "+value);
         }
 
         public void UpdateFloats()

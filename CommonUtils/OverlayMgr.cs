@@ -49,7 +49,18 @@ namespace OverlaySystem
             {
                 EnableScaled();
             }
-            
+            else if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
+            {
+                UpdateRadii();
+            }
+        }
+
+        private void UpdateRadii()
+        {
+            foreach(Overlay overlay in Overlay.OverlayList)
+            {
+                overlay.UpdateAltitude(true);
+            }
         }
 
         public static void Init()
@@ -368,9 +379,12 @@ namespace OverlaySystem
         }
 
 
-        public void UpdateAltitude(float altitude)
+        public void UpdateAltitude(bool meshUpdate, float altitude = -1)
         {
-            this.altitude = altitude;
+            if (altitude != -1.0)
+            {
+                this.altitude = altitude;
+            }
             if (IsScaledSpace)
             {
                 OverlayGameObject.transform.parent = celestialTransform;
@@ -382,6 +396,10 @@ namespace OverlaySystem
                 OverlayGameObject.transform.parent = celestialBody.transform;
                 OverlayGameObject.transform.localPosition = Vector3.zero;
                 OverlayGameObject.transform.localScale = Vector3.one;
+            }
+            if(!matchTerrain && meshUpdate)
+            {
+                IsoSphere.UpdateRadius(OverlayGameObject, Radius);
             }
         }
 
@@ -422,7 +440,7 @@ namespace OverlaySystem
             OverlayGameObject.renderer.sharedMaterial = scaledMaterial;
             OverlayGameObject.layer = OverlayMgr.MAP_LAYER;
             IsScaledSpace = true;
-            UpdateAltitude(this.altitude);
+            UpdateAltitude(false, this.altitude);
             if (MacroCallback != null)
             { MacroCallback(false); }
            
@@ -433,7 +451,7 @@ namespace OverlaySystem
             OverlayGameObject.renderer.sharedMaterial = macroMaterial;
             OverlayGameObject.layer = OverlayMgr.MACRO_LAYER;
             IsScaledSpace = false;
-            UpdateAltitude(this.altitude);
+            UpdateAltitude(false, this.altitude);
             if (MacroCallback != null)
             { MacroCallback(true); }
         }

@@ -196,6 +196,17 @@ namespace Geometry
             
         }
 
+        public static void UpdateRadius(GameObject gameObject, float radius)
+        {
+            MeshFilter filter = gameObject.GetComponent<MeshFilter>();
+            Mesh mesh = filter.mesh;
+            Vector3[] verticies = mesh.vertices;
+            for(int i = 0; i < verticies.Length; i++)
+            {
+                verticies[i] = verticies[i].normalized * radius;
+            }
+            mesh.vertices = verticies;
+        }
     }
 
 }
