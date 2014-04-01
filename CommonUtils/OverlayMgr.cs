@@ -161,7 +161,7 @@ namespace OverlaySystem
                 var objects = GameObject.FindSceneObjectsOfType(typeof(GameObject));
                 if (objects.Any(o => o.name == "LoadingBuffer")) { return; }
                 var kerbin = objects.OfType<GameObject>().Where(b => b.name == "Kerbin").LastOrDefault();
-                if (kerbin != null)
+                if (kerbin != null && Overlay.OverlayDatabase.ContainsKey("Kerbin"))
                 {
                     List<Overlay> overlayList = Overlay.OverlayDatabase["Kerbin"];
                     if (overlayList != null)
@@ -197,8 +197,7 @@ namespace OverlaySystem
                         overlay.SwitchToScaled();
                     }
                     ScaledEnabled = true;
-                }
-                
+                }                
             }
         }
 

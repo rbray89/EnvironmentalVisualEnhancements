@@ -212,8 +212,20 @@ namespace OverlaySystem
             }
         }
 
+        public TextureSet()
+        {
+            textureFile = "";
+            texture = null;
+            isBump = false;
+            InUse = false;
+            Offset = new Vector2(0, 0);
+            StartOffset = new Vector2(0, 0);
+            Speed = new Vector2(0, 0);
+            Scale = 1;
+        }
+
         public TextureSet(ConfigNode textureNode, bool bump)
-            : base()
+            : this()
         {
             isBump = bump;
 
@@ -230,15 +242,28 @@ namespace OverlaySystem
                         Offset = new Vector2(float.Parse(offsetNode.GetValue("x")), float.Parse(offsetNode.GetValue("y")));
                         StartOffset = new Vector2(Offset.x, Offset.y);
                     }
+                    else
+                    {
+                        Offset = Vector2.zero;
+                        StartOffset = Vector2.zero;
+                    }
                     ConfigNode speedNode = textureNode.GetNode("speed");
                     if (speedNode != null)
                     {
                         Speed = new Vector2(float.Parse(speedNode.GetValue("x")), float.Parse(speedNode.GetValue("y")));
                     }
+                    else
+                    {
+                        Speed = Vector2.zero;
+                    }
                     String scale = textureNode.GetValue("scale");
                     if (scale != null)
                     {
                         Scale = float.Parse(scale);
+                    }
+                    else
+                    {
+                        Scale = 1;
                     }
 
                     InUse = true;
@@ -250,16 +275,11 @@ namespace OverlaySystem
             }
         }
 
-        public TextureSet()
+        public TextureSet(bool inUse)
+            : this()
         {
-            textureFile = "";
-            texture = null;
-            isBump = false;
-            InUse = false;
-            Offset = new Vector2(0, 0);
-            StartOffset = new Vector2(0, 0);
-            Speed = new Vector2(0, 0);
-            Scale = 1;
+            this.InUse = inUse;
+            UnityEngine.Debug.Log("TextureSet: " + Scale);
         }
 
         public void SaturateOffset()
@@ -302,8 +322,10 @@ namespace OverlaySystem
         {
             this.InUse = textureSet.InUse;
             this.textureFile = textureSet.TextureFile;
-            initTexture();
-
+            if (InUse)
+            {
+                initTexture();
+            }
             this.StartOffset.x = float.Parse(textureSet.StartOffsetX);
             this.StartOffset.y = float.Parse(textureSet.StartOffsetY);
             this.Offset.x = this.StartOffset.x;

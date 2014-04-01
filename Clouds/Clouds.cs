@@ -22,29 +22,18 @@ namespace Clouds
         static CloudGUI CloudGUI = new CloudGUI();
         static CelestialBody currentBody = null;
         static CelestialBody oldBody = null;
+        static List<UrlDir.UrlConfig> ConfigNodeList = new List<UrlDir.UrlConfig>();
 
-        private void loadCloudLayers(String configString)
+        private void loadCloudLayers(bool defaults)
         {
             foreach (CloudLayer cl in CloudLayer.Layers)
             {
                 cl.Remove(false);
             }
             CloudLayer.Layers.Clear();
-            if (configString == null)
-            {
-                configString = KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/userCloudLayers.cfg";
-            }
-            else
-            {
-                configString = KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/" + configString;
-            }
 
-            ConfigNode config = ConfigNode.Load(configString);
-            if (config == null)
-            {
-                config = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/cloudLayers.cfg");
-            }
-            String keycodeString = config.GetValue("GUI_KEYCODE");
+            ConfigNode settings = GameDatabase.Instance.GetConfigNode("BoulderCo/Clouds/cloudLayers/CLOUDS_SETTINGS");
+            String keycodeString = settings.GetValue("GUI_KEYCODE");
             if (keycodeString != null)
             {
                 GUI_KEYCODE = (KeyCode)Enum.Parse(typeof(KeyCode), keycodeString);
@@ -53,110 +42,144 @@ namespace Clouds
             {
                 GUI_KEYCODE = KeyCode.N;
             }
+            String cloudPack = settings.GetValue("CLOUD_PACK");
 
-            ConfigNode[] cloudLayersConfigs = config.GetNodes("CLOUD_LAYER");
-
-            foreach (ConfigNode node in cloudLayersConfigs)
+            UrlDir.UrlConfig[] packLayersConfigs = GameDatabase.Instance.GetConfigs("CLOUD_LAYER_PACK");
+            foreach (UrlDir.UrlConfig node in packLayersConfigs)
             {
-                String body = node.GetValue("body");
-                Transform bodyTransform = null;
-                try
+                ConfigNodeList.Add(node);
+                CloudLayer.Log(node.url + " " + cloudPack);
+                if (node.url == cloudPack)
                 {
-                    bodyTransform = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == body);
-                }
-                catch
-                {
-
-                }
-                if (bodyTransform != null)
-                {
-                    float altitude = float.Parse(node.GetValue("altitude"));
-
-                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false);
-                    TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false);
-                    TextureSet bTexture = new TextureSet(node.GetNode("bump_texture"), true);
-                    ConfigNode floatsConfig = node.GetNode("shader_floats");
-                    ShaderFloats shaderFloats = null;
-                    if (floatsConfig != null)
+                    foreach (ConfigNode configNode in node.config.nodes)
                     {
-                        shaderFloats = new ShaderFloats(floatsConfig);
+                        LoadConfigNode(configNode, node.url, defaults);
                     }
-                    ConfigNode pqsFloatsConfig = node.GetNode("PQS_shader_floats");
-                    ShaderFloats pqsShaderFloats = null;
-                    if (pqsFloatsConfig != null)
-                    {
-                        pqsShaderFloats = new ShaderFloats(pqsFloatsConfig);
-                    }
-                    ConfigNode colorNode = node.GetNode("color");
-                    Color color = new Color(
-                        float.Parse(colorNode.GetValue("r")),
-                        float.Parse(colorNode.GetValue("g")),
-                        float.Parse(colorNode.GetValue("b")),
-                        float.Parse(colorNode.GetValue("a")));
-
-                    CloudLayer.Layers.Add(
-                        new CloudLayer(body, color, altitude,
-                        mTexture, dTexture, bTexture, shaderFloats, pqsShaderFloats));
-                }
-                else
-                {
-                    CloudLayer.Log("body " + body + " does not exist!");
                 }
             }
         }
 
-        private void saveCloudLayers(String configString)
+        private void LoadConfigNode(ConfigNode node, string url, bool defaults)
         {
-            ConfigNode saveConfig = new ConfigNode();
-            if (configString == null)
+            ConfigNode loadNode = node.GetNode("SAVED");
+            if ((loadNode == null || defaults) && node.HasNode("DEFAULTS"))
             {
-                configString = KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/userCloudLayers.cfg";
+                loadNode = node.GetNode("DEFAULTS");
+                loadNode.RemoveValue("REMOVED");
+            }
+            else if( node.HasValue("REMOVED") && bool.Parse(node.GetValue("REMOVED")))
+            {
+                return;
+            }
+            else if (defaults && !node.HasNode("DEFAULTS"))
+            {
+                node.AddValue("REMOVED", true);
+                return;
+            }
+
+            String body = loadNode.GetValue("body");
+            Transform bodyTransform = null;
+            try
+            {
+                bodyTransform = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == body);
+            }
+            catch
+            {
+
+            }
+            if (bodyTransform != null)
+            {
+                float altitude = float.Parse(loadNode.GetValue("altitude"));
+
+                TextureSet mTexture = new TextureSet(loadNode.GetNode("main_texture"), false);
+                TextureSet dTexture = new TextureSet(loadNode.GetNode("detail_texture"), false);
+                ConfigNode floatsConfig = loadNode.GetNode("shader_floats");
+                ShaderFloats shaderFloats = null;
+                if (floatsConfig != null)
+                {
+                    shaderFloats = new ShaderFloats(floatsConfig);
+                }
+                ConfigNode scaledfloatsConfig = loadNode.GetNode("shader_floats");
+                ShaderFloats scaledShaderFloats = null;
+                if (scaledfloatsConfig != null)
+                {
+                    scaledShaderFloats = new ShaderFloats(scaledfloatsConfig);
+                }
+                ConfigNode colorNode = loadNode.GetNode("color");
+                Color color = new Color(
+                    float.Parse(colorNode.GetValue("r")),
+                    float.Parse(colorNode.GetValue("g")),
+                    float.Parse(colorNode.GetValue("b")),
+                    float.Parse(colorNode.GetValue("a")));
+
+                CloudLayer.Layers.Add(
+                    new CloudLayer(url, node, body, color, altitude,
+                    mTexture, dTexture, scaledShaderFloats, shaderFloats));
             }
             else
             {
-                configString = KSPUtil.ApplicationRootPath + "GameData/BoulderCo/Clouds/" + configString;
+                CloudLayer.Log("body " + body + " does not exist!");
             }
-            saveConfig.SetValue("GUI_KEYCODE", GUI_KEYCODE.ToString());
+        }
 
+        private void saveCloudLayers()
+        {
             foreach (KeyValuePair<String, List<CloudLayer>> cloudList in CloudLayer.BodyDatabase.ToArray())
             {
                 String body = cloudList.Key;
                 List<CloudLayer> list = cloudList.Value;
                 foreach (CloudLayer cloudLayer in list)
                 {
-                    ConfigNode newNode = saveConfig.AddNode("CLOUD_LAYER");
-                    newNode.AddValue("body", body);
-                    newNode.AddValue("altitude", cloudLayer.Altitude);
-                    ConfigNode colorNode = newNode.AddNode("color");
-                    colorNode.AddValue("r", cloudLayer.Color.r);
-                    colorNode.AddValue("g", cloudLayer.Color.g);
-                    colorNode.AddValue("b", cloudLayer.Color.b);
-                    colorNode.AddValue("a", cloudLayer.Color.a);
-                    newNode.AddNode(cloudLayer.MainTexture.GetNode("main_texture"));
+                    ConfigNode saveNode = cloudLayer.ConfigNode.GetNode("SAVED");
+                    if(saveNode == null)
+                    {
+                        saveNode = cloudLayer.ConfigNode.AddNode("SAVED");
+                    }
+                    
+                    saveNode.ClearData();
+                    saveNode.AddValue("body", body);
+                    saveNode.AddValue("altitude", cloudLayer.Altitude.ToString());
+                    ConfigNode colorNode = saveNode.AddNode("color");
+                    colorNode.AddValue("r", cloudLayer.Color.r.ToString());
+                    colorNode.AddValue("g", cloudLayer.Color.g.ToString());
+                    colorNode.AddValue("b", cloudLayer.Color.b.ToString());
+                    colorNode.AddValue("a", cloudLayer.Color.a.ToString());
+                    saveNode.AddNode(cloudLayer.MainTexture.GetNode("main_texture"));
                     ConfigNode detailNode = cloudLayer.DetailTexture.GetNode("detail_texture");
                     if (detailNode != null)
                     {
-                        newNode.AddNode(detailNode);
+                        saveNode.AddNode(detailNode);
                     }
-                    ConfigNode bumpNode = cloudLayer.BumpTexture.GetNode("bump_texture");
-                    if (bumpNode != null)
+                    ConfigNode scaledShaderFloatNode = cloudLayer.ScaledShaderFloats.GetNode("scaled_shader_floats");
+                    if (!CloudLayer.IsDefaultShaderFloat(cloudLayer.ScaledShaderFloats, true))
                     {
-                        newNode.AddNode(bumpNode);
+                        saveNode.AddNode(scaledShaderFloatNode);
                     }
-                    ConfigNode shaderFloatNode = cloudLayer.ScaledShaderFloats.GetNode("shader_floats");
-                    if (!CloudLayer.IsDefaultShaderFloat(cloudLayer.ScaledShaderFloats))
+                    ConfigNode shaderFloatNode = cloudLayer.ShaderFloats.GetNode("shader_floats");
+                    if (!CloudLayer.IsDefaultShaderFloat(cloudLayer.ShaderFloats, false))
                     {
-                        newNode.AddNode(shaderFloatNode);
+                        saveNode.AddNode(shaderFloatNode);
                     }
-                    ConfigNode PQSShaderFloatNode = cloudLayer.ShaderFloats.GetNode("PQS_shader_floats");
-                    if (!CloudLayer.IsDefaultShaderFloat(cloudLayer.ShaderFloats))
-                    {
-                        newNode.AddNode(PQSShaderFloatNode);
-                    }
-                    
                 }
             }
-            saveConfig.Save(configString);
+            UrlDir.UrlConfig[] packLayersConfigs = GameDatabase.Instance.GetConfigs("CLOUD_LAYER_PACK");
+            foreach (UrlDir.UrlConfig node in packLayersConfigs)
+            {
+                List<ConfigNode> remove = new List<ConfigNode>();
+                foreach(ConfigNode config in node.config.nodes)
+                {
+                    if(config.HasValue("REMOVED") && bool.Parse(config.GetValue("REMOVED")) &&
+                        !config.HasNode("DEFAULTS"))
+                    {
+                        remove.Add(config);
+                    }
+                }
+                foreach(ConfigNode config in remove)
+                {
+                    node.config.nodes.Remove(config);
+                }
+                node.parent.SaveConfigs();
+            }
         }
 
         protected void Awake()
@@ -165,7 +188,7 @@ namespace Clouds
             {
 
                 OverlayMgr.Init();
-                loadCloudLayers(null);
+                loadCloudLayers(false);
                 
                 Loaded = true;
             }
@@ -296,12 +319,12 @@ namespace Clouds
                     halfWidth = (itemFullWidth / 2);
                     if (GUI.Button(new Rect(itemFullWidth + 30, 20, halfWidth, 25), "Reset to Save"))
                     {
-                        loadCloudLayers(null);
+                        loadCloudLayers(false);
                         oldBody = null;
                     }
                     if (GUI.Button(new Rect(itemFullWidth + halfWidth + 35, 20, halfWidth-5, 25), "Reset to Default"))
                     {
-                        loadCloudLayers("cloudLayers.cfg");
+                        loadCloudLayers(true);
                         oldBody = null;
                     }
                 }
@@ -312,26 +335,30 @@ namespace Clouds
                 halfWidth = hasLayers ? (itemFullWidth / 2) - 5 : itemFullWidth;
                 if (GUI.Button(new Rect(10, 80, halfWidth, 25), "Add"))
                 {
+                    ConfigNode newNode = new ConfigNode("CLOUD_LAYER");
+                    ConfigNodeList.First(n => n.url == "BoulderCo/Clouds/cloudLayers/CLOUD_LAYER_PACK").config.AddNode(newNode);
                     CloudLayer.Layers.Add(
-                    new CloudLayer(currentBody.name, new Color(1, 1, 1, 1), 1000f,
-                    new TextureSet(), new TextureSet(), new TextureSet(), null, null));
+                    new CloudLayer("BoulderCo/Clouds/cloudLayers", newNode, currentBody.name, new Color(1, 1, 1, 1), 1000f,
+                    new TextureSet(true), new TextureSet(), null, null));
                 }
                 if (hasLayers)
                 {
 
-                    if (GUI.Button(new Rect(halfWidth + 20, 80, halfWidth, 25), "Remove"))
-                    {
-                        CloudLayer.RemoveLayer(currentBody.name, SelectedLayer);
-                        return;
-                    }
                     GUI.Box(new Rect(10, 110, itemFullWidth, 115), "");
                     String[] layerList = CloudLayer.GetBodyLayerStringList(currentBody.name);
                     ScrollPosLayerList = GUI.BeginScrollView(new Rect(15, 115, itemFullWidth - 10, 100), ScrollPosLayerList, new Rect(0, 0, itemFullWidth - 30, 25 * layerList.Length));
                     float layerWidth = layerCount > 4 ? itemFullWidth - 30 : itemFullWidth - 10;
-                    SelectedLayer = SelectedLayer >= layerCount ? 0 : SelectedLayer;
                     int OldSelectedLayer = SelectedLayer;
+                    SelectedLayer = SelectedLayer >= layerCount ? 0 : SelectedLayer;
                     SelectedLayer = GUI.SelectionGrid(new Rect(0, 0, layerWidth, 25 * layerList.Length), SelectedLayer, layerList, 1);
                     GUI.EndScrollView();
+
+                    if (GUI.Button(new Rect(halfWidth + 20, 80, halfWidth, 25), "Remove"))
+                    {
+                        CloudLayer.RemoveLayer(currentBody.name, SelectedLayer);
+                        SelectedLayer = -1;
+                        return;
+                    }
 
                     if (SelectedLayer != OldSelectedLayer || currentBody != oldBody)
                     {
@@ -339,7 +366,6 @@ namespace Clouds
                         {
                             CloudGUI.MainTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].MainTexture);
                             CloudGUI.DetailTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].DetailTexture);
-                            CloudGUI.BumpTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].BumpTexture);
                             CloudGUI.Color.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Color);
                             CloudGUI.Altitude.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Altitude);
                             CloudGUI.ScaledShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ScaledShaderFloats);
@@ -356,19 +382,17 @@ namespace Clouds
                         if (GUI.Button(new Rect(200, 50, 50, 25), "Save"))
                         {
                             CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ApplyGUIUpdate(CloudGUI);
-                            saveCloudLayers(null);
+                            saveCloudLayers();
                         }
                     }
-
-
 
                     int nextLine = 230;
                     gs.alignment = TextAnchor.MiddleRight;
                     if (AdvancedGUI)
                     {
-                        int advancedNextLine = HandleAdvancedGUI(CloudGUI.ScaledShaderFloats, 50, _mainWindowRect.width / 2);
-                        GUI.Label(new Rect((_mainWindowRect.width / 2) + 10, advancedNextLine, itemFullWidth, 25), "PQS Settings:");
-                        HandleAdvancedGUI(CloudGUI.ShaderFloats, advancedNextLine + 30, _mainWindowRect.width / 2);
+                        int advancedNextLine = HandleAdvancedGUI(CloudGUI.ShaderFloats, 50, _mainWindowRect.width / 2);
+                        GUI.Label(new Rect((_mainWindowRect.width / 2) + 10, advancedNextLine, itemFullWidth, 25), "Scaled Settings:");
+                        HandleAdvancedGUI(CloudGUI.ScaledShaderFloats, advancedNextLine + 30, _mainWindowRect.width / 2);
                     }
 
                     nextLine = HandleAltitudeGUI(CloudGUI.Altitude, nextLine);
@@ -386,19 +410,6 @@ namespace Clouds
                     if (CloudGUI.DetailTexture.InUse)
                     {
                         nextLine = HandleTextureGUI(CloudGUI.DetailTexture, nextLine);
-                    }
-                    else
-                    {
-                        nextLine += 30;
-                    }
-
-                    GUI.Label(
-                        new Rect(10, nextLine, 80, 25), "BumpTex: ", gs);
-                    CloudGUI.BumpTexture.InUse = GUI.Toggle(
-                        new Rect(10, nextLine, 25, 25), CloudGUI.BumpTexture.InUse, "");
-                    if (CloudGUI.BumpTexture.InUse)
-                    {
-                        nextLine = HandleTextureGUI(CloudGUI.BumpTexture, nextLine);
                     }
                     else
                     {
@@ -946,7 +957,6 @@ namespace Clouds
     {
         public TextureSetGUI MainTexture = new TextureSetGUI();
         public TextureSetGUI DetailTexture = new TextureSetGUI();
-        public TextureSetGUI BumpTexture = new TextureSetGUI();
         public ColorSetGUI Color = new ColorSetGUI();
         public AltitudeSetGUI Altitude = new AltitudeSetGUI();
         public ShaderFloatsGUI ScaledShaderFloats = new ShaderFloatsGUI();
@@ -956,7 +966,6 @@ namespace Clouds
         {
             if (MainTexture.IsValid() &&
                 DetailTexture.IsValid() &&
-                BumpTexture.IsValid() &&
                 Color.IsValid() &&
                 Altitude.IsValid() &&
                 ScaledShaderFloats.IsValid() &&

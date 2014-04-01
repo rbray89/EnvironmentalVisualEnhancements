@@ -21,20 +21,21 @@ namespace Clouds
         private Material CloudMaterial;
         private Material CloudParticleMaterial;
         private float timeDelta = 0;
+        private String url;
+        private ConfigNode node;
         private String body;
         private Color color;
         private float altitude;
         private TextureSet mainTexture;
         private TextureSet detailTexture;
-        private TextureSet bumpTexture;
         private ShaderFloats scaledShaderFloats;
         private ShaderFloats shaderFloats;
         private Overlay CloudOverlay;
         private VolumeManager volume = null;
 
+        public ConfigNode ConfigNode { get { return node; } }
         public TextureSet MainTexture { get { return mainTexture; } }
         public TextureSet DetailTexture { get { return detailTexture; } }
-        public TextureSet BumpTexture { get { return bumpTexture; } }
         public Color Color { get { return color; } }
         public float Altitude { get { return altitude; } }
         public ShaderFloats ScaledShaderFloats { get { return scaledShaderFloats; } }
@@ -45,7 +46,6 @@ namespace Clouds
         {
             mainTexture.Clone(cloudGUI.MainTexture);
             detailTexture.Clone(cloudGUI.DetailTexture);
-            bumpTexture.Clone(cloudGUI.BumpTexture);
             scaledShaderFloats.Clone(cloudGUI.ScaledShaderFloats);
             shaderFloats.Clone(cloudGUI.ShaderFloats);
             altitude = cloudGUI.Altitude.AltitudeF;
@@ -53,12 +53,16 @@ namespace Clouds
             UpdateTextures();
             UpdateFloats();
             CloudOverlay.UpdateAltitude(true, altitude);
+            if (volume != null)
+            {
+                volume.Destroy();
+                volume = new VolumeManager(CloudOverlay.Radius, (Texture2D)this.mainTexture.Texture, CloudParticleMaterial, this.CloudOverlay.Transform);
+            }
         }
 
-        public CloudLayer(String body, Color color, float altitude,
+        public CloudLayer(String url, ConfigNode node, String body, Color color, float altitude,
             TextureSet mainTexture,
             TextureSet detailTexture,
-            TextureSet bumpTexture,
             ShaderFloats ShaderFloats,
             ShaderFloats PQSShaderFloats)
         {
@@ -67,13 +71,14 @@ namespace Clouds
                 BodyDatabase.Add(body, new List<CloudLayer>());
             }
             BodyDatabase[body].Add(this);
+            this.url = url;
+            this.node = node;
             this.body = body;
             this.color = color;
             this.altitude = altitude;
             this.mainTexture = mainTexture;
 
             this.detailTexture = detailTexture;
-            this.bumpTexture = bumpTexture;
 
             this.scaledShaderFloats = ShaderFloats;
             this.shaderFloats = PQSShaderFloats;
@@ -96,13 +101,7 @@ namespace Clouds
                 CloudMaterial.SetFloat("_DetailScale", detailTexture.Scale);
             }
 
-            if (bumpTexture.InUse)
-            {
-                ScaledCloudMaterial.SetTexture("_BumpMap", bumpTexture.Texture);
-                CloudMaterial.SetTexture("_BumpMap", bumpTexture.Texture);
-                ScaledCloudMaterial.SetFloat("_BumpScale", bumpTexture.Scale);
-                CloudMaterial.SetFloat("_BumpScale", bumpTexture.Scale);
-            }
+            
         }
 
         public void Init()
@@ -136,11 +135,9 @@ namespace Clouds
             CloudMaterial = new Material(GlobalCloudShader);
             CloudParticleMaterial = new Material(GlobalCloudParticleShader);
 
-            ScaledCloudMaterial.SetFloat("_FadeDist", 0.4f);
-            ScaledCloudMaterial.SetFloat("_FadeScale", 0.1f / 0.4f);
-            CloudMaterial.SetFloat("_FadeDist", 8f);
-            CloudMaterial.SetFloat("_FadeScale", 0.1f / 8f);
-            CloudMaterial.SetFloat("_DetailDist", 0.000002f);
+
+            scaledShaderFloats = GetDefault(true);
+            shaderFloats = GetDefault(false);
 
             Texture2D tex1 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/1", false);
             Texture2D tex2 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/2", false);
@@ -224,13 +221,6 @@ namespace Clouds
                 CloudMaterial.SetVector("_DetailOffset", detailTexture.Offset);
             }
 
-            if (bumpTexture.InUse)
-            {
-                bumpTexture.UpdateOffset(rateOffset, false);
-                ScaledCloudMaterial.SetVector("_BumpOffset", bumpTexture.Offset);
-                CloudMaterial.SetVector("_BumpOffset", bumpTexture.Offset);
-            }
-
         }
 
         public void PerformUpdate()
@@ -284,21 +274,34 @@ namespace Clouds
             if (BodyDatabase.ContainsKey(body))
             {
                 CloudLayer layer = BodyDatabase[body][SelectedLayer];
+                layer.node.AddValue("REMOVED", true);
                 layer.Remove();
             }
             
         }
 
-        internal static bool IsDefaultShaderFloat(ShaderFloats shaderFloats)
+        internal static ShaderFloats GetDefault( bool isScaled)
         {
-            Material compareMaterial;
-            
-            compareMaterial = new Material(GlobalCloudShader);
-            
-            if (shaderFloats.FalloffPower == compareMaterial.GetFloat("_FalloffPow") &&
-                shaderFloats.FalloffScale == compareMaterial.GetFloat("_FalloffScale") &&
-                shaderFloats.DetailDistance == compareMaterial.GetFloat("_DetailDist") &&
-                shaderFloats.MinimumLight == compareMaterial.GetFloat("_MinLight"))
+            Material compareMaterial = new Material(GlobalCloudShader);
+            if (isScaled)
+            {
+                return new ShaderFloats(compareMaterial.GetFloat("_FalloffPow"), compareMaterial.GetFloat("_FalloffScale"), compareMaterial.GetFloat("_DetailDist"), compareMaterial.GetFloat("_MinLight"), 0.4f);
+            }
+            else
+            {
+                return new ShaderFloats(compareMaterial.GetFloat("_FalloffPow"), compareMaterial.GetFloat("_FalloffScale"), 0.000002f, compareMaterial.GetFloat("_MinLight"), 0.8f);
+            }
+
+        }
+
+        internal static bool IsDefaultShaderFloat(ShaderFloats shaderFloats, bool isScaled)
+        {
+            ShaderFloats compare = GetDefault(isScaled);
+
+            if (shaderFloats.FalloffPower == compare.FalloffPower &&
+                shaderFloats.FalloffScale == compare.FalloffScale &&
+                shaderFloats.DetailDistance == compare.DetailDistance &&
+                shaderFloats.MinimumLight == compare.MinimumLight)
             {
                 return true;
             }
@@ -333,6 +336,6 @@ namespace Clouds
                 volume.Update(intendedPoint);
             }
         }
-        
+
     }
 }
