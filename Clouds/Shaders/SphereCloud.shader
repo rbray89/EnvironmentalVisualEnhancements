@@ -3,13 +3,10 @@
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
-		_BumpMap ("Bumpmap", 2D) = "bump" {}
 		_FalloffPow ("Falloff Power", Range(0,3)) = 2
 		_FalloffScale ("Falloff Scale", Range(0,20)) = 3
 		_DetailScale ("Detail Scale", Range(0,1000)) = 100
 		_DetailOffset ("Detail Offset", Color) = (0,0,0,0)
-		_BumpScale ("Bump Scale", Range(0,1000)) = 50
-		_BumpOffset ("Bump offset", Color) = (0,0,0,0)
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
 		_MinLight ("Minimum Light", Range(0,1)) = .5
 		_FadeDist ("Fade Distance", Range(0,100)) = 10
@@ -52,15 +49,12 @@ SubShader {
 	 
 		sampler2D _MainTex;
 		sampler2D _DetailTex;
-		sampler2D _BumpMap;
 		fixed4 _Color;
 		fixed4 _DetailOffset;
-		fixed4 _BumpOffset;
 		float _FalloffPow;
 		float _FalloffScale;
 		float _DetailScale;
 		float _DetailDist;
-		float _BumpScale;
 		float _MinLight;
 		float _FadeDist;
 		float _FadeScale;
@@ -80,7 +74,7 @@ SubShader {
 			float3 worldNormal : TEXCOORD3;
 			float3 objNormal : TEXCOORD4;
 			float3 viewDir : TEXCOORD5;
-			LIGHTING_COORDS(7,8)
+			LIGHTING_COORDS(6,7)
 		};	
 		
 
@@ -91,8 +85,6 @@ SubShader {
 			
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
-		   //float4 viewPos = mul(glstate.matrix.modelview[0], v.vertex);
-		   //float dist = (-viewPos.z - _ProjectionParams.y);
 	   	   o.worldVert = vertexPos;
 	   	   o.worldOrigin = origin;
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
@@ -127,24 +119,19 @@ SubShader {
 			half4 detailX = tex2D (_DetailTex, objNrm.zy*_DetailScale + _DetailOffset.xy);
 			half4 detailY = tex2D (_DetailTex, objNrm.zx*_DetailScale + _DetailOffset.xy);
 			half4 detailZ = tex2D (_DetailTex, objNrm.xy*_DetailScale + _DetailOffset.xy);
-			half4 normalX = tex2D (_BumpMap, objNrm.zy*_BumpScale + _BumpOffset.xy);
-			half4 normalY = tex2D (_BumpMap, objNrm.zx*_BumpScale + _BumpOffset.xy);
-			half4 normalZ = tex2D (_BumpMap, objNrm.xy*_BumpScale + _BumpOffset.xy);
 			objNrm = abs(objNrm);
 			half4 detail = lerp(detailZ, detailX, objNrm.x);
 			detail = lerp(detail, detailY, objNrm.y);
-			half4 normal = lerp(normalZ, normalX, objNrm.x);
-			normal = lerp(normal, normalY, objNrm.y);
-		
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
 			color = main.rgba * lerp(detail.rgba, 1, detailLevel);
 
 			float rim = saturate(abs(dot(IN.viewDir, IN.worldNormal)));
 			rim = saturate(pow(_FalloffScale*rim,_FalloffPow));
 			float dist = distance(IN.worldVert,_WorldSpaceCameraPos);
-			float distLerp = saturate(.00001*(distance(IN.worldOrigin,_WorldSpaceCameraPos)-1.05*distance(IN.worldVert,IN.worldOrigin)));
+			float distLerp = saturate(.0001*(distance(IN.worldOrigin,_WorldSpaceCameraPos)-1.05*distance(IN.worldVert,IN.worldOrigin)));
 			float distFade = saturate((_FadeScale*dist)-_FadeDist);
-			float distAlpha = lerp(distFade, rim, distLerp);
+	   	   	float distAlpha = lerp(distFade, rim, distLerp);
+
 			color.a = lerp(0, color.a,  distAlpha);
 
           	//lighting
@@ -154,8 +141,7 @@ SubShader {
 	        half diff = (NdotL - 0.01) / 0.99;
 			half lightIntensity = saturate(_LightColor0.a * diff * 4);
 			color.rgb *= saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
-				
-          	
+
           	return color;
 		}
 		ENDCG
