@@ -13,6 +13,7 @@ namespace Clouds
     internal class CloudLayer
     {
         public static Dictionary<String, List<CloudLayer>> BodyDatabase = new Dictionary<string, List<CloudLayer>>();
+        public static Dictionary<string, Dictionary<string, List<CloudLayer>>> ConfigBodyDatabase = new Dictionary<string, Dictionary<string, List<CloudLayer>>>();
         public static List<CloudLayer> Layers = new List<CloudLayer>();
         private static Shader GlobalCloudShader;
         private static Shader GlobalCloudParticleShader;
@@ -71,6 +72,16 @@ namespace Clouds
                 BodyDatabase.Add(body, new List<CloudLayer>());
             }
             BodyDatabase[body].Add(this);
+            if (!ConfigBodyDatabase.ContainsKey(url))
+            {
+                ConfigBodyDatabase.Add(url, new Dictionary<String, List<CloudLayer>>());
+                ConfigBodyDatabase[url].Add(body, new List<CloudLayer>());
+            }
+            else if (!ConfigBodyDatabase[url].ContainsKey(body))
+            {
+                ConfigBodyDatabase[url].Add(body, new List<CloudLayer>());
+            }
+            ConfigBodyDatabase[url][body].Add(this);
             this.url = url;
             this.node = node;
             this.body = body;
@@ -240,11 +251,11 @@ namespace Clouds
             UnityEngine.Debug.Log("Clouds: " + message);
         }
 
-        public static int GetBodyLayerCount(string p)
+        public static int GetBodyLayerCount(string url, string body)
         {
-            if (BodyDatabase.ContainsKey(p))
+            if (ConfigBodyDatabase[url].ContainsKey(body))
             {
-                return BodyDatabase[p].Count;
+                return ConfigBodyDatabase[url][body].Count;
             }
             else
             {
@@ -252,11 +263,11 @@ namespace Clouds
             }
         }
 
-        public static String[] GetBodyLayerStringList(string p)
+        public static String[] GetBodyLayerStringList(string url, string body)
         {
-            if (BodyDatabase.ContainsKey(p))
+            if (ConfigBodyDatabase[url].ContainsKey(body))
             {
-                int count = BodyDatabase[p].Count;
+                int count = ConfigBodyDatabase[url][body].Count;
                 String[] layerList = new String[count];
                 for (int i = 0; i < count; i++)
                 {
@@ -270,15 +281,14 @@ namespace Clouds
             }
         }
 
-        internal static void RemoveLayer(string body, int SelectedLayer)
+        internal static void RemoveLayer(string url, string body, int SelectedLayer)
         {
-            if (BodyDatabase.ContainsKey(body))
+            if (ConfigBodyDatabase[url].ContainsKey(body))
             {
-                CloudLayer layer = BodyDatabase[body][SelectedLayer];
+                CloudLayer layer = ConfigBodyDatabase[url][body][SelectedLayer];
                 layer.node.AddValue("REMOVED", true);
                 layer.Remove();
             }
-            
         }
 
         internal static ShaderFloats GetDefault( bool isScaled)
@@ -316,6 +326,7 @@ namespace Clouds
         {
             this.CloudOverlay.RemoveOverlay();
             BodyDatabase[body].Remove(this);
+            ConfigBodyDatabase[url][body].Remove(this);
             if (fromList)
             {
                 Layers.Remove(this);

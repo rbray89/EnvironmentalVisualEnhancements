@@ -251,7 +251,7 @@ namespace Clouds
                 {
                     _mainWindowRect.width = 260;
                 }
-                if (CloudLayer.GetBodyLayerCount(current.name) != 0)
+                if (CloudLayer.GetBodyLayerCount(ConfigNodeList[SelectedConfig].url, current.name) != 0)
                 {
                     _mainWindowRect.height = 745;
                     _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "Clouds");
@@ -312,49 +312,50 @@ namespace Clouds
                     oldBody = null;
                 }
 
+                string configUrl = ConfigNodeList[SelectedConfig].url;
                 GUI.Button(new Rect(10, 80, itemFullWidth-30, 25), ConfigNodeList[SelectedConfig].parent.url);
 
-                int layerCount = CloudLayer.GetBodyLayerCount(currentBody.name);
+                int layerCount = CloudLayer.GetBodyLayerCount(configUrl, currentBody.name);
                 bool hasLayers = layerCount != 0;
 
                 halfWidth = hasLayers ? (itemFullWidth / 2) - 5 : itemFullWidth;
                 if (GUI.Button(new Rect(10, 140, halfWidth, 25), "Add"))
                 {
                     ConfigNode newNode = new ConfigNode("CLOUD_LAYER");
-                    ConfigNodeList.First(n => n.url == "BoulderCo/Clouds/cloudLayers/CLOUD_LAYER_PACK").config.AddNode(newNode);
+                    ConfigNodeList.First(n => n.url == configUrl).config.AddNode(newNode);
                     CloudLayer.Layers.Add(
-                    new CloudLayer("BoulderCo/Clouds/cloudLayers", newNode, currentBody.name, new Color(1, 1, 1, 1), 1000f,
+                    new CloudLayer(configUrl, newNode, currentBody.name, new Color(1, 1, 1, 1), 1000f,
                     new TextureSet(true), new TextureSet(), null, null));
                 }
                 if (hasLayers)
                 {
 
                     GUI.Box(new Rect(10, 170, itemFullWidth, 115), "");
-                    String[] layerList = CloudLayer.GetBodyLayerStringList(currentBody.name);
+                    String[] layerList = CloudLayer.GetBodyLayerStringList(configUrl, currentBody.name);
                     ScrollPosLayerList = GUI.BeginScrollView(new Rect(15, 175, itemFullWidth - 10, 100), ScrollPosLayerList, new Rect(0, 0, itemFullWidth - 30, 25 * layerList.Length));
                     float layerWidth = layerCount > 4 ? itemFullWidth - 30 : itemFullWidth - 10;
                     int OldSelectedLayer = SelectedLayer;
-                    SelectedLayer = SelectedLayer >= layerCount ? 0 : SelectedLayer;
+                    SelectedLayer = SelectedLayer >= layerCount || SelectedLayer< 0 ? 0 : SelectedLayer;
                     SelectedLayer = GUI.SelectionGrid(new Rect(0, 0, layerWidth, 25 * layerList.Length), SelectedLayer, layerList, 1);
                     GUI.EndScrollView();
 
                     if (GUI.Button(new Rect(halfWidth + 20, 140, halfWidth, 25), "Remove"))
                     {
-                        CloudLayer.RemoveLayer(currentBody.name, SelectedLayer);
+                        CloudLayer.RemoveLayer(configUrl, currentBody.name, SelectedLayer);
                         SelectedLayer = -1;
                         return;
                     }
 
                     if (SelectedLayer != OldSelectedLayer || currentBody != oldBody)
                     {
-                        if (CloudLayer.BodyDatabase.ContainsKey(currentBody.name) && CloudLayer.BodyDatabase[currentBody.name].Count > SelectedLayer)
+                        if (CloudLayer.ConfigBodyDatabase[configUrl].ContainsKey(currentBody.name) && CloudLayer.ConfigBodyDatabase[configUrl][currentBody.name].Count > SelectedLayer)
                         {
-                            CloudGUI.MainTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].MainTexture);
-                            CloudGUI.DetailTexture.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].DetailTexture);
-                            CloudGUI.Color.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Color);
-                            CloudGUI.Altitude.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].Altitude);
-                            CloudGUI.ScaledShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ScaledShaderFloats);
-                            CloudGUI.ShaderFloats.Clone(CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ShaderFloats);
+                            CloudGUI.MainTexture.Clone(CloudLayer.ConfigBodyDatabase[configUrl][currentBody.name][SelectedLayer].MainTexture);
+                            CloudGUI.DetailTexture.Clone(CloudLayer.ConfigBodyDatabase[configUrl][currentBody.name][SelectedLayer].DetailTexture);
+                            CloudGUI.Color.Clone(CloudLayer.ConfigBodyDatabase[configUrl][currentBody.name][SelectedLayer].Color);
+                            CloudGUI.Altitude.Clone(CloudLayer.ConfigBodyDatabase[configUrl][currentBody.name][SelectedLayer].Altitude);
+                            CloudGUI.ScaledShaderFloats.Clone(CloudLayer.ConfigBodyDatabase[configUrl][currentBody.name][SelectedLayer].ScaledShaderFloats);
+                            CloudGUI.ShaderFloats.Clone(CloudLayer.ConfigBodyDatabase[configUrl][currentBody.name][SelectedLayer].ShaderFloats);
                         }
                     }
 
@@ -362,11 +363,11 @@ namespace Clouds
                     {
                         if (GUI.Button(new Rect(145, 110, 50, 25), "Apply"))
                         {
-                            CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ApplyGUIUpdate(CloudGUI);
+                            CloudLayer.ConfigBodyDatabase[configUrl][currentBody.name][SelectedLayer].ApplyGUIUpdate(CloudGUI);
                         }
                         if (GUI.Button(new Rect(200, 110, 50, 25), "Save"))
                         {
-                            CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ApplyGUIUpdate(CloudGUI);
+                            CloudLayer.ConfigBodyDatabase[configUrl][currentBody.name][SelectedLayer].ApplyGUIUpdate(CloudGUI);
                             saveCloudLayers();
                         }
                     }

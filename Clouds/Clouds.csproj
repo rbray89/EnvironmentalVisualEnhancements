@@ -70,7 +70,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /Y $(TargetFileName) "$(SolutionDir)GameData\BoulderCo\Plugins\"
+    <PostBuildEvent>copy /Y $(TargetFileName) "$(SolutionDir)GameData\EnvironmentalVisualEnhancements\Plugins\"
 xcopy "$(SolutionDir)GameData" "C:\Users\Ryan\Documents\ksp-win-0-23-0\KSP_win_dev\GameData" /e /y /i /r</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
