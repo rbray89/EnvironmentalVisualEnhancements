@@ -37,15 +37,17 @@ namespace Clouds
             foreach (UrlDir.UrlConfig node in packLayersConfigs)
             {
                 ConfigNodeList.Add(node);
+                bool useVolume = false;
+                bool.TryParse(node.config.GetValue("volume"), out useVolume);
                 foreach (ConfigNode configNode in node.config.nodes)
                 {
-                    LoadConfigNode(configNode, node.url, defaults);
+                    LoadConfigNode(configNode, node.url, useVolume, defaults);
                 }
                 
             }
         }
 
-        private void LoadConfigNode(ConfigNode node, string url, bool defaults)
+        private void LoadConfigNode(ConfigNode node, string url, bool useVolume, bool defaults)
         {
             ConfigNode loadNode = node.GetNode("SAVED");
             if ((loadNode == null || defaults) && node.HasNode("DEFAULTS"))
@@ -97,10 +99,14 @@ namespace Clouds
                     float.Parse(colorNode.GetValue("g")),
                     float.Parse(colorNode.GetValue("b")),
                     float.Parse(colorNode.GetValue("a")));
+                if (useVolume)
+                {
+                    bool.TryParse(loadNode.GetValue("volume"), out useVolume);
+                }
 
                 CloudLayer.Layers.Add(
                     new CloudLayer(url, node, body, color, altitude,
-                    mTexture, dTexture, scaledShaderFloats, shaderFloats));
+                    mTexture, dTexture, scaledShaderFloats, shaderFloats, useVolume));
             }
             else
             {
@@ -125,6 +131,7 @@ namespace Clouds
                     saveNode.ClearData();
                     saveNode.AddValue("body", body);
                     saveNode.AddValue("altitude", cloudLayer.Altitude.ToString());
+                    saveNode.AddValue("volume", cloudLayer.UseVolume);
                     ConfigNode colorNode = saveNode.AddNode("color");
                     colorNode.AddValue("r", cloudLayer.Color.r.ToString());
                     colorNode.AddValue("g", cloudLayer.Color.g.ToString());
@@ -325,7 +332,7 @@ namespace Clouds
                     ConfigNodeList.First(n => n.url == configUrl).config.AddNode(newNode);
                     CloudLayer.Layers.Add(
                     new CloudLayer(configUrl, newNode, currentBody.name, new Color(1, 1, 1, 1), 1000f,
-                    new TextureSet(true), new TextureSet(), null, null));
+                    new TextureSet(true), new TextureSet(), null, null, false));
                 }
                 if (hasLayers)
                 {
@@ -356,6 +363,7 @@ namespace Clouds
                             CloudGUI.Altitude.Clone(CloudLayer.ConfigBodyDatabase[configUrl][currentBody.name][SelectedLayer].Altitude);
                             CloudGUI.ScaledShaderFloats.Clone(CloudLayer.ConfigBodyDatabase[configUrl][currentBody.name][SelectedLayer].ScaledShaderFloats);
                             CloudGUI.ShaderFloats.Clone(CloudLayer.ConfigBodyDatabase[configUrl][currentBody.name][SelectedLayer].ShaderFloats);
+                            CloudGUI.UseVolume = CloudLayer.ConfigBodyDatabase[configUrl][currentBody.name][SelectedLayer].UseVolume; 
                         }
                     }
 
@@ -385,6 +393,9 @@ namespace Clouds
                     int nextLine = 290;
 
                     nextLine = HandleAltitudeGUI(CloudGUI.Altitude, nextLine);
+                    CloudGUI.UseVolume = GUI.Toggle(
+                        new Rect(80, nextLine, 50, 25), CloudGUI.UseVolume, "Volumetric Clouds");
+                    nextLine += 30;
                     nextLine = HandleColorGUI(CloudGUI.Color, nextLine);
 
 
@@ -998,6 +1009,7 @@ namespace Clouds
         public AltitudeSetGUI Altitude = new AltitudeSetGUI();
         public ShaderFloatsGUI ScaledShaderFloats = new ShaderFloatsGUI();
         public ShaderFloatsGUI ShaderFloats = new ShaderFloatsGUI();
+        public Boolean UseVolume;
 
         internal bool IsValid()
         {

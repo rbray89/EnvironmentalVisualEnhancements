@@ -159,7 +159,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -442,7 +442,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -638,7 +638,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -1142,7 +1142,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     #line 465
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
-    highp float rim = xll_saturate_f(abs(dot( IN.viewDir, IN.worldNormal)));
+    highp float rim = xll_saturate_f(dot( IN.viewDir, IN.worldNormal));
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 469
@@ -1309,7 +1309,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -1588,7 +1588,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -1781,7 +1781,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -2275,7 +2275,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     #line 462
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
-    highp float rim = xll_saturate_f(abs(dot( IN.viewDir, IN.worldNormal)));
+    highp float rim = xll_saturate_f(dot( IN.viewDir, IN.worldNormal));
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 466
@@ -2443,7 +2443,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -2726,7 +2726,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -2922,7 +2922,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -3428,7 +3428,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     #line 474
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
-    highp float rim = xll_saturate_f(abs(dot( IN.viewDir, IN.worldNormal)));
+    highp float rim = xll_saturate_f(dot( IN.viewDir, IN.worldNormal));
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 478
@@ -3598,7 +3598,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -3881,7 +3881,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -4077,7 +4077,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -4583,7 +4583,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     #line 466
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
-    highp float rim = xll_saturate_f(abs(dot( IN.viewDir, IN.worldNormal)));
+    highp float rim = xll_saturate_f(dot( IN.viewDir, IN.worldNormal));
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 470
@@ -4753,7 +4753,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -5036,7 +5036,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -5232,7 +5232,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -5736,7 +5736,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     #line 465
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
-    highp float rim = xll_saturate_f(abs(dot( IN.viewDir, IN.worldNormal)));
+    highp float rim = xll_saturate_f(dot( IN.viewDir, IN.worldNormal));
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 469
@@ -5909,7 +5909,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -6195,7 +6195,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -6394,7 +6394,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -6910,7 +6910,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     #line 481
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
-    highp float rim = xll_saturate_f(abs(dot( IN.viewDir, IN.worldNormal)));
+    highp float rim = xll_saturate_f(dot( IN.viewDir, IN.worldNormal));
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 485
@@ -7085,7 +7085,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -7373,7 +7373,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -7887,7 +7887,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     #line 482
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
-    highp float rim = xll_saturate_f(abs(dot( IN.viewDir, IN.worldNormal)));
+    highp float rim = xll_saturate_f(dot( IN.viewDir, IN.worldNormal));
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 486
@@ -8059,7 +8059,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -8342,7 +8342,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -8538,7 +8538,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -9042,7 +9042,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     #line 471
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
-    highp float rim = xll_saturate_f(abs(dot( IN.viewDir, IN.worldNormal)));
+    highp float rim = xll_saturate_f(dot( IN.viewDir, IN.worldNormal));
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 475
@@ -9215,7 +9215,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -9501,7 +9501,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -9700,7 +9700,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -10214,7 +10214,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     #line 474
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
-    highp float rim = xll_saturate_f(abs(dot( IN.viewDir, IN.worldNormal)));
+    highp float rim = xll_saturate_f(dot( IN.viewDir, IN.worldNormal));
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 478
@@ -10389,7 +10389,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -10675,7 +10675,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -10874,7 +10874,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -11386,7 +11386,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     #line 479
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
-    highp float rim = xll_saturate_f(abs(dot( IN.viewDir, IN.worldNormal)));
+    highp float rim = xll_saturate_f(dot( IN.viewDir, IN.worldNormal));
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 483
@@ -11561,7 +11561,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -11847,7 +11847,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -12046,7 +12046,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -12560,7 +12560,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     #line 480
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
-    highp float rim = xll_saturate_f(abs(dot( IN.viewDir, IN.worldNormal)));
+    highp float rim = xll_saturate_f(dot( IN.viewDir, IN.worldNormal));
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 484
@@ -12735,7 +12735,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -13021,7 +13021,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -13220,7 +13220,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -13738,7 +13738,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     #line 489
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
-    highp float rim = xll_saturate_f(abs(dot( IN.viewDir, IN.worldNormal)));
+    highp float rim = xll_saturate_f(dot( IN.viewDir, IN.worldNormal));
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 493
@@ -13913,7 +13913,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -14201,7 +14201,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -14719,7 +14719,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     #line 489
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
-    highp float rim = xll_saturate_f(abs(dot( IN.viewDir, IN.worldNormal)));
+    highp float rim = xll_saturate_f(dot( IN.viewDir, IN.worldNormal));
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 493
@@ -14894,7 +14894,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -15180,7 +15180,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -15379,7 +15379,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -15891,7 +15891,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     #line 485
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
-    highp float rim = xll_saturate_f(abs(dot( IN.viewDir, IN.worldNormal)));
+    highp float rim = xll_saturate_f(dot( IN.viewDir, IN.worldNormal));
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 489
@@ -16066,7 +16066,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -16352,7 +16352,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -16551,7 +16551,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (dot (xlv_TEXCOORD5, xlv_TEXCOORD3), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -17065,7 +17065,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     #line 486
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
-    highp float rim = xll_saturate_f(abs(dot( IN.viewDir, IN.worldNormal)));
+    highp float rim = xll_saturate_f(dot( IN.viewDir, IN.worldNormal));
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 490
@@ -17114,8 +17114,8 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 15
-//   d3d9 - ALU: 117 to 117, TEX: 6 to 6
-//   d3d11 - ALU: 88 to 88, TEX: 3 to 3, FLOW: 1 to 1
+//   d3d9 - ALU: 116 to 116, TEX: 6 to 6
+//   d3d11 - ALU: 87 to 87, TEX: 3 to 3, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { "POINT" "SHADOWS_OFF" }
 "!!GLSL"
@@ -17140,7 +17140,7 @@ Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 117 ALU, 6 TEX
+; 116 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -17250,16 +17250,15 @@ add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
 dp3 r1.w, r2, r2
 rsq r2.x, r2.w
-mov r3.xyz, v3
+add r3.xyz, -v0, c1
 rsq r1.w, r1.w
-dp3 r2.w, v5, r3
+dp3 r2.w, r3, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
 mad r1.w, -r1, c19.x, r2.x
-add r2.xyz, -v0, c1
-dp3 r2.y, r2, r2
-abs_sat r2.x, r2.w
-rsq r2.y, r2.y
+mov r2.xyz, v3
+dp3_sat r2.x, v5, r2
+rsq r2.y, r2.w
 rcp r3.y, r2.y
 mul r3.x, r2, c7
 pow_sat r2, r3.x, c6.x
@@ -17299,12 +17298,12 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-// 94 instructions, 4 temp regs, 0 temp arrays:
-// ALU 84 float, 0 int, 4 uint
+// 93 instructions, 4 temp regs, 0 temp arrays:
+// ALU 83 float, 0 int, 4 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedlbnkoahpilpoigcapngoogndahdpgalcabaaaaaabiaoaaaaadaaaaaa
+eefiecedpiemahpmkldegjncjeaonlcanfmcgdneabaaaaaapianaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -17314,7 +17313,7 @@ adaaaaaaaeaaaaaaahahaaaaneaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefckiamaaaaeaaaaaaackadaaaafjaaaaaeegiocaaa
 aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaa
 acaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaa
 aaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaa
@@ -17393,8 +17392,7 @@ ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
 abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaa
 abaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaa
 dicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaa
-baaaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaai
-ccaabaaaabaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaai
+bacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaai
 ccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaaf
 ccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
 abaaaaaaakiacaaaaaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaa
@@ -17458,7 +17456,7 @@ Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 117 ALU, 6 TEX
+; 116 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -17568,16 +17566,15 @@ add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
 dp3 r1.w, r2, r2
 rsq r2.x, r2.w
-mov r3.xyz, v3
+add r3.xyz, -v0, c1
 rsq r1.w, r1.w
-dp3 r2.w, v5, r3
+dp3 r2.w, r3, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
 mad r1.w, -r1, c19.x, r2.x
-add r2.xyz, -v0, c1
-dp3 r2.y, r2, r2
-abs_sat r2.x, r2.w
-rsq r2.y, r2.y
+mov r2.xyz, v3
+dp3_sat r2.x, v5, r2
+rsq r2.y, r2.w
 rcp r3.y, r2.y
 mul r3.x, r2, c7
 pow_sat r2, r3.x, c6.x
@@ -17617,12 +17614,12 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-// 94 instructions, 4 temp regs, 0 temp arrays:
-// ALU 84 float, 0 int, 4 uint
+// 93 instructions, 4 temp regs, 0 temp arrays:
+// ALU 83 float, 0 int, 4 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedjlombolmckidlecpegegcmibphbjhlfiabaaaaaaaaaoaaaaadaaaaaa
+eefiecedhjecheadejmljihnlhjafkgkjeldpjodabaaaaaaoaanaaaaadaaaaaa
 cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaalmaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -17631,7 +17628,7 @@ adaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaalmaaaaaaaeaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaahahaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahahaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
 cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcmiamaaaaeaaaaaaadcadaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefckiamaaaaeaaaaaaackadaaaa
 fjaaaaaeegiocaaaaaaaaaaaahaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaa
 fjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaaafaaaaaa
 fkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaa
@@ -17710,9 +17707,8 @@ abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
 abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
 dcaaaaakbcaabaaaabaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaakoehibdp
 akaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaa
-aaaaaaaaagaaaaaabaaaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaa
-adaaaaaaddaaaaaiccaabaaaabaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaa
-aaaaiadpdiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaa
+aaaaaaaaagaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaa
+adaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaa
 afaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaa
 abaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaafaaaaaabjaaaaafccaabaaa
 abaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaa
@@ -17776,7 +17772,7 @@ Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 117 ALU, 6 TEX
+; 116 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -17886,16 +17882,15 @@ add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
 dp3 r1.w, r2, r2
 rsq r2.x, r2.w
-mov r3.xyz, v3
+add r3.xyz, -v0, c1
 rsq r1.w, r1.w
-dp3 r2.w, v5, r3
+dp3 r2.w, r3, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
 mad r1.w, -r1, c19.x, r2.x
-add r2.xyz, -v0, c1
-dp3 r2.y, r2, r2
-abs_sat r2.x, r2.w
-rsq r2.y, r2.y
+mov r2.xyz, v3
+dp3_sat r2.x, v5, r2
+rsq r2.y, r2.w
 rcp r3.y, r2.y
 mul r3.x, r2, c7
 pow_sat r2, r3.x, c6.x
@@ -17935,12 +17930,12 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-// 94 instructions, 4 temp regs, 0 temp arrays:
-// ALU 84 float, 0 int, 4 uint
+// 93 instructions, 4 temp regs, 0 temp arrays:
+// ALU 83 float, 0 int, 4 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedipfmnecajkjidgefkbgcooejlbdcdidjabaaaaaabiaoaaaaadaaaaaa
+eefiecedppjhbpclambncnmkpnphmbnmhfjggnlhabaaaaaapianaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -17950,7 +17945,7 @@ adaaaaaaaeaaaaaaahahaaaaneaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefckiamaaaaeaaaaaaackadaaaafjaaaaaeegiocaaa
 aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaa
 acaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaa
 aaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaa
@@ -18029,8 +18024,7 @@ ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
 abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaa
 abaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaa
 dicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaa
-baaaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaai
-ccaabaaaabaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaai
+bacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaai
 ccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaaf
 ccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
 abaaaaaaakiacaaaaaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaa
@@ -18094,7 +18088,7 @@ Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 117 ALU, 6 TEX
+; 116 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -18204,16 +18198,15 @@ add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
 dp3 r1.w, r2, r2
 rsq r2.x, r2.w
-mov r3.xyz, v3
+add r3.xyz, -v0, c1
 rsq r1.w, r1.w
-dp3 r2.w, v5, r3
+dp3 r2.w, r3, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
 mad r1.w, -r1, c19.x, r2.x
-add r2.xyz, -v0, c1
-dp3 r2.y, r2, r2
-abs_sat r2.x, r2.w
-rsq r2.y, r2.y
+mov r2.xyz, v3
+dp3_sat r2.x, v5, r2
+rsq r2.y, r2.w
 rcp r3.y, r2.y
 mul r3.x, r2, c7
 pow_sat r2, r3.x, c6.x
@@ -18253,12 +18246,12 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-// 94 instructions, 4 temp regs, 0 temp arrays:
-// ALU 84 float, 0 int, 4 uint
+// 93 instructions, 4 temp regs, 0 temp arrays:
+// ALU 83 float, 0 int, 4 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedlbnkoahpilpoigcapngoogndahdpgalcabaaaaaabiaoaaaaadaaaaaa
+eefiecedpiemahpmkldegjncjeaonlcanfmcgdneabaaaaaapianaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -18268,7 +18261,7 @@ adaaaaaaaeaaaaaaahahaaaaneaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefckiamaaaaeaaaaaaackadaaaafjaaaaaeegiocaaa
 aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaa
 acaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaa
 aaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaa
@@ -18347,8 +18340,7 @@ ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
 abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaa
 abaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaa
 dicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaa
-baaaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaai
-ccaabaaaabaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaai
+bacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaai
 ccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaaf
 ccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
 abaaaaaaakiacaaaaaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaa
@@ -18412,7 +18404,7 @@ Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 117 ALU, 6 TEX
+; 116 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -18522,16 +18514,15 @@ add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
 dp3 r1.w, r2, r2
 rsq r2.x, r2.w
-mov r3.xyz, v3
+add r3.xyz, -v0, c1
 rsq r1.w, r1.w
-dp3 r2.w, v5, r3
+dp3 r2.w, r3, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
 mad r1.w, -r1, c19.x, r2.x
-add r2.xyz, -v0, c1
-dp3 r2.y, r2, r2
-abs_sat r2.x, r2.w
-rsq r2.y, r2.y
+mov r2.xyz, v3
+dp3_sat r2.x, v5, r2
+rsq r2.y, r2.w
 rcp r3.y, r2.y
 mul r3.x, r2, c7
 pow_sat r2, r3.x, c6.x
@@ -18571,12 +18562,12 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-// 94 instructions, 4 temp regs, 0 temp arrays:
-// ALU 84 float, 0 int, 4 uint
+// 93 instructions, 4 temp regs, 0 temp arrays:
+// ALU 83 float, 0 int, 4 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedmlghajnikemmgpmneiekcfeheoncklklabaaaaaabiaoaaaaadaaaaaa
+eefiecedlkieichfmannnkiidlpmmlhjmjbecnngabaaaaaapianaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -18586,7 +18577,7 @@ adaaaaaaaeaaaaaaahahaaaaneaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaadaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefckiamaaaaeaaaaaaackadaaaafjaaaaaeegiocaaa
 aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaa
 acaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaa
 aaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaa
@@ -18665,8 +18656,7 @@ ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
 abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaa
 abaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaa
 dicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaa
-baaaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaai
-ccaabaaaabaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaai
+bacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaai
 ccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaaf
 ccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
 abaaaaaaakiacaaaaaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaa
@@ -18730,7 +18720,7 @@ Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 117 ALU, 6 TEX
+; 116 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -18840,16 +18830,15 @@ add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
 dp3 r1.w, r2, r2
 rsq r2.x, r2.w
-mov r3.xyz, v3
+add r3.xyz, -v0, c1
 rsq r1.w, r1.w
-dp3 r2.w, v5, r3
+dp3 r2.w, r3, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
 mad r1.w, -r1, c19.x, r2.x
-add r2.xyz, -v0, c1
-dp3 r2.y, r2, r2
-abs_sat r2.x, r2.w
-rsq r2.y, r2.y
+mov r2.xyz, v3
+dp3_sat r2.x, v5, r2
+rsq r2.y, r2.w
 rcp r3.y, r2.y
 mul r3.x, r2, c7
 pow_sat r2, r3.x, c6.x
@@ -18889,12 +18878,12 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-// 94 instructions, 4 temp regs, 0 temp arrays:
-// ALU 84 float, 0 int, 4 uint
+// 93 instructions, 4 temp regs, 0 temp arrays:
+// ALU 83 float, 0 int, 4 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedbfadcajkndbcnfdcbjibcecgpcnmciefabaaaaaadaaoaaaaadaaaaaa
+eefiecedgjhiflmlmhnhhgmkdmehkhgceagaphegabaaaaaabaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -18905,7 +18894,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
+fdeieefckiamaaaaeaaaaaaackadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -18983,9 +18972,8 @@ aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
 ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
-abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabaaaaaahccaabaaa
-abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
-bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabacaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaa
 bkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaa
 bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
 aaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
@@ -19049,7 +19037,7 @@ Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 117 ALU, 6 TEX
+; 116 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -19159,16 +19147,15 @@ add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
 dp3 r1.w, r2, r2
 rsq r2.x, r2.w
-mov r3.xyz, v3
+add r3.xyz, -v0, c1
 rsq r1.w, r1.w
-dp3 r2.w, v5, r3
+dp3 r2.w, r3, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
 mad r1.w, -r1, c19.x, r2.x
-add r2.xyz, -v0, c1
-dp3 r2.y, r2, r2
-abs_sat r2.x, r2.w
-rsq r2.y, r2.y
+mov r2.xyz, v3
+dp3_sat r2.x, v5, r2
+rsq r2.y, r2.w
 rcp r3.y, r2.y
 mul r3.x, r2, c7
 pow_sat r2, r3.x, c6.x
@@ -19208,12 +19195,12 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-// 94 instructions, 4 temp regs, 0 temp arrays:
-// ALU 84 float, 0 int, 4 uint
+// 93 instructions, 4 temp regs, 0 temp arrays:
+// ALU 83 float, 0 int, 4 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedbfadcajkndbcnfdcbjibcecgpcnmciefabaaaaaadaaoaaaaadaaaaaa
+eefiecedgjhiflmlmhnhhgmkdmehkhgceagaphegabaaaaaabaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -19224,7 +19211,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
+fdeieefckiamaaaaeaaaaaaackadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -19302,9 +19289,8 @@ aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
 ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
-abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabaaaaaahccaabaaa
-abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
-bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabacaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaa
 bkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaa
 bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
 aaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
@@ -19363,7 +19349,7 @@ Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 117 ALU, 6 TEX
+; 116 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -19473,16 +19459,15 @@ add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
 dp3 r1.w, r2, r2
 rsq r2.x, r2.w
-mov r3.xyz, v3
+add r3.xyz, -v0, c1
 rsq r1.w, r1.w
-dp3 r2.w, v5, r3
+dp3 r2.w, r3, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
 mad r1.w, -r1, c19.x, r2.x
-add r2.xyz, -v0, c1
-dp3 r2.y, r2, r2
-abs_sat r2.x, r2.w
-rsq r2.y, r2.y
+mov r2.xyz, v3
+dp3_sat r2.x, v5, r2
+rsq r2.y, r2.w
 rcp r3.y, r2.y
 mul r3.x, r2, c7
 pow_sat r2, r3.x, c6.x
@@ -19522,12 +19507,12 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-// 94 instructions, 4 temp regs, 0 temp arrays:
-// ALU 84 float, 0 int, 4 uint
+// 93 instructions, 4 temp regs, 0 temp arrays:
+// ALU 83 float, 0 int, 4 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedipfmnecajkjidgefkbgcooejlbdcdidjabaaaaaabiaoaaaaadaaaaaa
+eefiecedppjhbpclambncnmkpnphmbnmhfjggnlhabaaaaaapianaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -19537,7 +19522,7 @@ adaaaaaaaeaaaaaaahahaaaaneaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefckiamaaaaeaaaaaaackadaaaafjaaaaaeegiocaaa
 aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaa
 acaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaa
 aaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaa
@@ -19616,8 +19601,7 @@ ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
 abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaa
 abaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaa
 dicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaa
-baaaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaai
-ccaabaaaabaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaai
+bacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaai
 ccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaaf
 ccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
 abaaaaaaakiacaaaaaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaa
@@ -19681,7 +19665,7 @@ Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 117 ALU, 6 TEX
+; 116 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -19791,16 +19775,15 @@ add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
 dp3 r1.w, r2, r2
 rsq r2.x, r2.w
-mov r3.xyz, v3
+add r3.xyz, -v0, c1
 rsq r1.w, r1.w
-dp3 r2.w, v5, r3
+dp3 r2.w, r3, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
 mad r1.w, -r1, c19.x, r2.x
-add r2.xyz, -v0, c1
-dp3 r2.y, r2, r2
-abs_sat r2.x, r2.w
-rsq r2.y, r2.y
+mov r2.xyz, v3
+dp3_sat r2.x, v5, r2
+rsq r2.y, r2.w
 rcp r3.y, r2.y
 mul r3.x, r2, c7
 pow_sat r2, r3.x, c6.x
@@ -19840,12 +19823,12 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-// 94 instructions, 4 temp regs, 0 temp arrays:
-// ALU 84 float, 0 int, 4 uint
+// 93 instructions, 4 temp regs, 0 temp arrays:
+// ALU 83 float, 0 int, 4 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedmccloakhmajbpphipajopjaannnljaflabaaaaaadaaoaaaaadaaaaaa
+eefiecedfjmgipekkdbbmhepbaphbflbplnfedoiabaaaaaabaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -19856,7 +19839,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaadaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaapaaaaaa
+fdeieefckiamaaaaeaaaaaaackadaaaafjaaaaaeegiocaaaaaaaaaaaapaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -19934,9 +19917,8 @@ aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
 ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
-abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaaoaaaaaabaaaaaahccaabaaa
-abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
-bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaaoaaaaaabacaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaa
 bkaabaaaabaaaaaabkiacaaaaaaaaaaaanaaaaaacpaaaaafccaabaaaabaaaaaa
 bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
 aaaaaaaaanaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
@@ -20000,7 +19982,7 @@ Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 117 ALU, 6 TEX
+; 116 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -20110,16 +20092,15 @@ add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
 dp3 r1.w, r2, r2
 rsq r2.x, r2.w
-mov r3.xyz, v3
+add r3.xyz, -v0, c1
 rsq r1.w, r1.w
-dp3 r2.w, v5, r3
+dp3 r2.w, r3, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
 mad r1.w, -r1, c19.x, r2.x
-add r2.xyz, -v0, c1
-dp3 r2.y, r2, r2
-abs_sat r2.x, r2.w
-rsq r2.y, r2.y
+mov r2.xyz, v3
+dp3_sat r2.x, v5, r2
+rsq r2.y, r2.w
 rcp r3.y, r2.y
 mul r3.x, r2, c7
 pow_sat r2, r3.x, c6.x
@@ -20159,12 +20140,12 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-// 94 instructions, 4 temp regs, 0 temp arrays:
-// ALU 84 float, 0 int, 4 uint
+// 93 instructions, 4 temp regs, 0 temp arrays:
+// ALU 83 float, 0 int, 4 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedlngfphaodlkmjoiopnpfmpmaikmjkmhgabaaaaaadaaoaaaaadaaaaaa
+eefiecedchnmihofjgmmkahamaiplbaegimjpeikabaaaaaabaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -20175,7 +20156,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaahaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
+fdeieefckiamaaaaeaaaaaaackadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -20253,9 +20234,8 @@ aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
 ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
-abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabaaaaaahccaabaaa
-abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
-bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabacaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaa
 bkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaa
 bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
 aaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
@@ -20319,7 +20299,7 @@ Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 117 ALU, 6 TEX
+; 116 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -20429,16 +20409,15 @@ add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
 dp3 r1.w, r2, r2
 rsq r2.x, r2.w
-mov r3.xyz, v3
+add r3.xyz, -v0, c1
 rsq r1.w, r1.w
-dp3 r2.w, v5, r3
+dp3 r2.w, r3, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
 mad r1.w, -r1, c19.x, r2.x
-add r2.xyz, -v0, c1
-dp3 r2.y, r2, r2
-abs_sat r2.x, r2.w
-rsq r2.y, r2.y
+mov r2.xyz, v3
+dp3_sat r2.x, v5, r2
+rsq r2.y, r2.w
 rcp r3.y, r2.y
 mul r3.x, r2, c7
 pow_sat r2, r3.x, c6.x
@@ -20478,12 +20457,12 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-// 94 instructions, 4 temp regs, 0 temp arrays:
-// ALU 84 float, 0 int, 4 uint
+// 93 instructions, 4 temp regs, 0 temp arrays:
+// ALU 83 float, 0 int, 4 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedlngfphaodlkmjoiopnpfmpmaikmjkmhgabaaaaaadaaoaaaaadaaaaaa
+eefiecedchnmihofjgmmkahamaiplbaegimjpeikabaaaaaabaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -20494,7 +20473,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaahaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
+fdeieefckiamaaaaeaaaaaaackadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -20572,9 +20551,8 @@ aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
 ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
-abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabaaaaaahccaabaaa
-abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
-bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabacaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaa
 bkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaa
 bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
 aaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
@@ -20638,7 +20616,7 @@ Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 117 ALU, 6 TEX
+; 116 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -20748,16 +20726,15 @@ add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
 dp3 r1.w, r2, r2
 rsq r2.x, r2.w
-mov r3.xyz, v3
+add r3.xyz, -v0, c1
 rsq r1.w, r1.w
-dp3 r2.w, v5, r3
+dp3 r2.w, r3, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
 mad r1.w, -r1, c19.x, r2.x
-add r2.xyz, -v0, c1
-dp3 r2.y, r2, r2
-abs_sat r2.x, r2.w
-rsq r2.y, r2.y
+mov r2.xyz, v3
+dp3_sat r2.x, v5, r2
+rsq r2.y, r2.w
 rcp r3.y, r2.y
 mul r3.x, r2, c7
 pow_sat r2, r3.x, c6.x
@@ -20797,12 +20774,12 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-// 94 instructions, 4 temp regs, 0 temp arrays:
-// ALU 84 float, 0 int, 4 uint
+// 93 instructions, 4 temp regs, 0 temp arrays:
+// ALU 83 float, 0 int, 4 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecediadjoopgicgacbpkemkgaejoofoiijmeabaaaaaadaaoaaaaadaaaaaa
+eefiecedeeidnccifkfkpiambpaleccppacbokdcabaaaaaabaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -20813,7 +20790,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaapaaaaaa
+fdeieefckiamaaaaeaaaaaaackadaaaafjaaaaaeegiocaaaaaaaaaaaapaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -20891,9 +20868,8 @@ aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
 ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
-abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaaoaaaaaabaaaaaahccaabaaa
-abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
-bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaaoaaaaaabacaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaa
 bkaabaaaabaaaaaabkiacaaaaaaaaaaaanaaaaaacpaaaaafccaabaaaabaaaaaa
 bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
 aaaaaaaaanaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
@@ -20957,7 +20933,7 @@ Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 117 ALU, 6 TEX
+; 116 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -21067,16 +21043,15 @@ add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
 dp3 r1.w, r2, r2
 rsq r2.x, r2.w
-mov r3.xyz, v3
+add r3.xyz, -v0, c1
 rsq r1.w, r1.w
-dp3 r2.w, v5, r3
+dp3 r2.w, r3, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
 mad r1.w, -r1, c19.x, r2.x
-add r2.xyz, -v0, c1
-dp3 r2.y, r2, r2
-abs_sat r2.x, r2.w
-rsq r2.y, r2.y
+mov r2.xyz, v3
+dp3_sat r2.x, v5, r2
+rsq r2.y, r2.w
 rcp r3.y, r2.y
 mul r3.x, r2, c7
 pow_sat r2, r3.x, c6.x
@@ -21116,12 +21091,12 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-// 94 instructions, 4 temp regs, 0 temp arrays:
-// ALU 84 float, 0 int, 4 uint
+// 93 instructions, 4 temp regs, 0 temp arrays:
+// ALU 83 float, 0 int, 4 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecediadjoopgicgacbpkemkgaejoofoiijmeabaaaaaadaaoaaaaadaaaaaa
+eefiecedeeidnccifkfkpiambpaleccppacbokdcabaaaaaabaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -21132,7 +21107,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaapaaaaaa
+fdeieefckiamaaaaeaaaaaaackadaaaafjaaaaaeegiocaaaaaaaaaaaapaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -21210,9 +21185,8 @@ aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
 ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
-abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaaoaaaaaabaaaaaahccaabaaa
-abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
-bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaaoaaaaaabacaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaa
 bkaabaaaabaaaaaabkiacaaaaaaaaaaaanaaaaaacpaaaaafccaabaaaabaaaaaa
 bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
 aaaaaaaaanaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
@@ -21271,7 +21245,7 @@ Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 117 ALU, 6 TEX
+; 116 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -21381,16 +21355,15 @@ add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
 dp3 r1.w, r2, r2
 rsq r2.x, r2.w
-mov r3.xyz, v3
+add r3.xyz, -v0, c1
 rsq r1.w, r1.w
-dp3 r2.w, v5, r3
+dp3 r2.w, r3, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
 mad r1.w, -r1, c19.x, r2.x
-add r2.xyz, -v0, c1
-dp3 r2.y, r2, r2
-abs_sat r2.x, r2.w
-rsq r2.y, r2.y
+mov r2.xyz, v3
+dp3_sat r2.x, v5, r2
+rsq r2.y, r2.w
 rcp r3.y, r2.y
 mul r3.x, r2, c7
 pow_sat r2, r3.x, c6.x
@@ -21430,12 +21403,12 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-// 94 instructions, 4 temp regs, 0 temp arrays:
-// ALU 84 float, 0 int, 4 uint
+// 93 instructions, 4 temp regs, 0 temp arrays:
+// ALU 83 float, 0 int, 4 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedlngfphaodlkmjoiopnpfmpmaikmjkmhgabaaaaaadaaoaaaaadaaaaaa
+eefiecedchnmihofjgmmkahamaiplbaegimjpeikabaaaaaabaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -21446,7 +21419,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaahaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
+fdeieefckiamaaaaeaaaaaaackadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -21524,9 +21497,8 @@ aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
 ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
-abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabaaaaaahccaabaaa
-abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
-bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabacaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaa
 bkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaa
 bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
 aaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
@@ -21590,7 +21562,7 @@ Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 117 ALU, 6 TEX
+; 116 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -21700,16 +21672,15 @@ add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
 dp3 r1.w, r2, r2
 rsq r2.x, r2.w
-mov r3.xyz, v3
+add r3.xyz, -v0, c1
 rsq r1.w, r1.w
-dp3 r2.w, v5, r3
+dp3 r2.w, r3, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
 mad r1.w, -r1, c19.x, r2.x
-add r2.xyz, -v0, c1
-dp3 r2.y, r2, r2
-abs_sat r2.x, r2.w
-rsq r2.y, r2.y
+mov r2.xyz, v3
+dp3_sat r2.x, v5, r2
+rsq r2.y, r2.w
 rcp r3.y, r2.y
 mul r3.x, r2, c7
 pow_sat r2, r3.x, c6.x
@@ -21749,12 +21720,12 @@ BindCB "UnityLighting" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-// 94 instructions, 4 temp regs, 0 temp arrays:
-// ALU 84 float, 0 int, 4 uint
+// 93 instructions, 4 temp regs, 0 temp arrays:
+// ALU 83 float, 0 int, 4 uint
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedlngfphaodlkmjoiopnpfmpmaikmjkmhgabaaaaaadaaoaaaaadaaaaaa
+eefiecedchnmihofjgmmkahamaiplbaegimjpeikabaaaaaabaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -21765,7 +21736,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaahaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
+fdeieefckiamaaaaeaaaaaaackadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -21843,9 +21814,8 @@ aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
 ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
-abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabaaaaaahccaabaaa
-abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
-bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabacaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaa
 bkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaa
 bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
 aaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah

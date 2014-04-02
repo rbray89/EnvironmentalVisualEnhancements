@@ -33,6 +33,7 @@ namespace Clouds
         private ShaderFloats shaderFloats;
         private Overlay CloudOverlay;
         private VolumeManager volume = null;
+        private bool useVolume = false;
 
         public ConfigNode ConfigNode { get { return node; } }
         public TextureSet MainTexture { get { return mainTexture; } }
@@ -42,6 +43,7 @@ namespace Clouds
         public ShaderFloats ScaledShaderFloats { get { return scaledShaderFloats; } }
         public ShaderFloats ShaderFloats { get { return shaderFloats; } }
         public static Shader CloudParticleShader { get { return GlobalCloudParticleShader; } }
+        public bool UseVolume { get { return useVolume; } }
 
         internal void ApplyGUIUpdate(CloudGUI cloudGUI)
         {
@@ -51,13 +53,24 @@ namespace Clouds
             shaderFloats.Clone(cloudGUI.ShaderFloats);
             altitude = cloudGUI.Altitude.AltitudeF;
             color = cloudGUI.Color.Color;
+            useVolume = cloudGUI.UseVolume;
             UpdateTextures();
             UpdateFloats();
             CloudOverlay.UpdateAltitude(true, altitude);
-            if (volume != null)
+            if (useVolume)
             {
-                volume.Destroy();
-                volume = new VolumeManager(CloudOverlay.Radius, (Texture2D)this.mainTexture.Texture, CloudParticleMaterial, this.CloudOverlay.Transform);
+                CloudOverlay.MacroCallback = MacroCallback;
+                CloudOverlay.DominantCallback = DominantCallback;
+                if(volume != null)
+                {
+                    volume.Destroy();
+                    volume = null;
+                }
+            }
+            else
+            {
+                CloudOverlay.MacroCallback = null;
+                CloudOverlay.DominantCallback = null;
             }
         }
 
@@ -65,7 +78,8 @@ namespace Clouds
             TextureSet mainTexture,
             TextureSet detailTexture,
             ShaderFloats ShaderFloats,
-            ShaderFloats PQSShaderFloats)
+            ShaderFloats PQSShaderFloats,
+            bool useVolume)
         {
             if (!BodyDatabase.ContainsKey(body))
             {
@@ -93,6 +107,8 @@ namespace Clouds
 
             this.scaledShaderFloats = ShaderFloats;
             this.shaderFloats = PQSShaderFloats;
+
+            this.useVolume = useVolume;
             Init();
         }
 
@@ -166,18 +182,37 @@ namespace Clouds
             UpdateTextures();
             Log("Generating Overlay...");
             CloudOverlay = Overlay.GeneratePlanetOverlay(body, altitude, ScaledCloudMaterial, CloudMaterial, this.mainTexture.StartOffset);
-            CloudOverlay.MacroCallback = MacroCallback;
+
+            if (useVolume)
+            {
+                CloudOverlay.MacroCallback = MacroCallback;
+                CloudOverlay.DominantCallback = DominantCallback;
+            }
+
             UpdateFloats();
             Log("Textures initialized");
 
         }
 
-        private void MacroCallback(bool value)
+        private void DominantCallback(bool value)
         {
             if (volume != null && !value)
             {
                 volume.Destroy();
                 volume = null;
+            }
+            else if (volume == null && value)
+            {
+                volume = new VolumeManager(CloudOverlay.Radius, (Texture2D)this.mainTexture.Texture, CloudParticleMaterial, this.CloudOverlay.Transform);
+            }
+        }
+
+        private void MacroCallback(bool value)
+        {
+            if (volume != null)
+            {
+                volume.Enabled = value;
+                CloudLayer.Log("Volume Enabled=" + value);
             }
             else if(volume == null && value)
             {

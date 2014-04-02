@@ -110,6 +110,10 @@ namespace OverlaySystem
             {
                 foreach (Overlay overlay in Overlay.OverlayDatabase[CurrentBodyName])
                 {
+                    if (overlay.DominantCallback != null)
+                    {
+                        overlay.DominantCallback(false);
+                    }
                     overlay.SwitchToScaled();
                 }
             }
@@ -123,6 +127,10 @@ namespace OverlaySystem
             {
                 foreach (Overlay overlay in Overlay.OverlayDatabase[CurrentBodyName])
                 {
+                    if (overlay.DominantCallback != null)
+                    {
+                        overlay.DominantCallback(false);
+                    }
                     overlay.UpdateTranform();
                 }
             }
@@ -269,7 +277,8 @@ namespace OverlaySystem
 
         public float Radius { get { return altitude + (float)celestialBody.Radius; } }
         public float ScaledRadius { get { return (float)(1f + (this.altitude / celestialBody.Radius)); } }
-        public BoolCallback MacroCallback; 
+        public BoolCallback MacroCallback;
+        public BoolCallback DominantCallback;
 
         public Overlay(string planet, float altitude, Material scaledMaterial, Material macroMaterial, Vector2 rotation, int layer, Transform celestialTransform, bool mainMenu, bool matchTerrain)
         {

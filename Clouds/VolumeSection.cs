@@ -88,10 +88,10 @@ namespace Clouds
         public Vector3 Offset { get { return offset; } set { offset = value; } }
         public bool Enabled { get { return segment.activeSelf; } set { segment.SetActive(value); } }
 
-        public VolumeSection(Texture2D tex, Material cloudParticleMaterial, Transform parent, Vector3 pos, float magnitude, Vector3 offset, float radius)
+        public VolumeSection(Texture2D tex, Material cloudParticleMaterial, Transform parent, Vector3 pos, float magnitude, Vector3 offset, float radius, int divisions)
         {
             segment = new GameObject();
-            HexSeg hexGeometry = new HexSeg(radius, 4);
+            HexSeg hexGeometry = new HexSeg(radius, divisions);
 
             Reassign(pos, offset, parent, magnitude);
 
@@ -142,5 +142,6 @@ namespace Clouds
             }
             GameObject.DestroyImmediate(segment);
         }
+
     }
 }

@@ -36,8 +36,13 @@ namespace Clouds
             Center.parent = transform;
             Recenter(pos, true);
 
+            ConfigNode volumeConfig = GameDatabase.Instance.GetConfigNodes("ENVIRONMENTAL_VISUAL_ENHANCEMENTS")[0];
+
             this.Texture = texture;
-            radius = 20000;
+            radius = 12000;
+            float.TryParse(volumeConfig.GetValue("volumeHexRadius"), out radius);
+            int divisions = 3;
+            int.TryParse(volumeConfig.GetValue("volumeSegmentDiv"), out divisions);
             halfRad = radius / 2f;
             opp = Mathf.Sqrt(.75f) * radius;
             outCheck = opp*2f;
@@ -47,10 +52,11 @@ namespace Clouds
             moveSections = new VolumeSection[3];
             unchangedSections = new VolumeSection[3];
 
-            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(-radius, 0, 0), radius));
-            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, opp), radius));
-            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, -opp), radius));
+            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(-radius, 0, 0), radius, divisions));
+            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, opp), radius, divisions));
+            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, -opp), radius, divisions));
             forceUpdate = true;
+            CloudLayer.Log("Volume Initialized");
         }
 
         public void Update(Vector3 pos)
@@ -129,7 +135,6 @@ namespace Clouds
                 Center.up = worldUp.normalized;
                 Center.localPosition = Magnitude * Center.localPosition.normalized;
             }
-            CloudLayer.Log("Recenter: " + Center.localPosition);
         }
 
         internal void Destroy()
@@ -139,6 +144,8 @@ namespace Clouds
             {
                 vs.Destroy();
             }
+
+            CloudLayer.Log("Volume Destroyed");
         }
     }
 }
