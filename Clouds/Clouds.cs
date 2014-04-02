@@ -394,7 +394,7 @@ namespace Clouds
 
                     nextLine = HandleAltitudeGUI(CloudGUI.Altitude, nextLine);
                     CloudGUI.UseVolume = GUI.Toggle(
-                        new Rect(80, nextLine, 50, 25), CloudGUI.UseVolume, "Volumetric Clouds");
+                        new Rect(10, nextLine, 125, 25), CloudGUI.UseVolume, "Volumetric Clouds");
                     nextLine += 30;
                     nextLine = HandleColorGUI(CloudGUI.Color, nextLine);
 
