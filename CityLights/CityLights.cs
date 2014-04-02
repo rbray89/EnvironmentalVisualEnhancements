@@ -14,7 +14,6 @@ namespace CityLights
     {
 
         static bool setup = false;
-        static ConfigNode config;
         static List<Overlay> overlayList = new List<Overlay>();
 
         protected void Awake()
@@ -22,10 +21,9 @@ namespace CityLights
             if (HighLogic.LoadedScene == GameScenes.FLIGHT && !setup)
             {
                 OverlayMgr.Init();
-                config = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/BoulderCo/CityLights/cityLights.cfg");
-                ConfigNode[] cloudLayersConfigs = config.GetNodes("CITY_LIGHTS");
-
-                foreach (ConfigNode node in cloudLayersConfigs)
+                ConfigNode[] cityLightsConfigs = GameDatabase.Instance.GetConfigNodes("CITY_LIGHTS");
+                
+                foreach (ConfigNode node in cityLightsConfigs)
                 {
                     float altitude = float.Parse(node.GetValue("altitude"));
                     float fadeDistance = float.Parse(node.GetValue("fadeDistance"));
