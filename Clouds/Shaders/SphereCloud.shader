@@ -11,7 +11,7 @@
 		_MinLight ("Minimum Light", Range(0,1)) = .5
 		_FadeDist ("Fade Distance", Range(0,100)) = 10
 		_FadeScale ("Fade Scale", Range(0,1)) = .002
-		_RimDist ("Rim Distance", Range(0,100000)) = 1000
+		_RimDist ("Rim Distance", Range(0,1)) = 1
 	}
 
 Category {
@@ -128,7 +128,7 @@ SubShader {
 			float rim = saturate(abs(dot(IN.viewDir, IN.worldNormal)));
 			rim = saturate(pow(_FalloffScale*rim,_FalloffPow));
 			float dist = distance(IN.worldVert,_WorldSpaceCameraPos);
-			float distLerp = saturate(.0001*(distance(IN.worldOrigin,_WorldSpaceCameraPos)-1.05*distance(IN.worldVert,IN.worldOrigin)));
+			float distLerp = saturate(_RimDist*(distance(IN.worldOrigin,_WorldSpaceCameraPos)-1.01*distance(IN.worldVert,IN.worldOrigin)));
 			float distFade = saturate((_FadeScale*dist)-_FadeDist);
 	   	   	float distAlpha = lerp(distFade, rim, distLerp);
 

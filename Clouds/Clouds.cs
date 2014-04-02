@@ -19,6 +19,7 @@ namespace Clouds
         static bool AdvancedGUI = false;
         static Vector2 ScrollPosLayerList = Vector2.zero;
         static int SelectedLayer = 0;
+        static int SelectedConfig = 0;
         static CloudGUI CloudGUI = new CloudGUI();
         static CelestialBody currentBody = null;
         static CelestialBody oldBody = null;
@@ -32,30 +33,15 @@ namespace Clouds
             }
             CloudLayer.Layers.Clear();
 
-            ConfigNode settings = GameDatabase.Instance.GetConfigNode("BoulderCo/Clouds/cloudLayers/CLOUDS_SETTINGS");
-            String keycodeString = settings.GetValue("GUI_KEYCODE");
-            if (keycodeString != null)
-            {
-                GUI_KEYCODE = (KeyCode)Enum.Parse(typeof(KeyCode), keycodeString);
-            }
-            else
-            {
-                GUI_KEYCODE = KeyCode.N;
-            }
-            String cloudPack = settings.GetValue("CLOUD_PACK");
-
             UrlDir.UrlConfig[] packLayersConfigs = GameDatabase.Instance.GetConfigs("CLOUD_LAYER_PACK");
             foreach (UrlDir.UrlConfig node in packLayersConfigs)
             {
                 ConfigNodeList.Add(node);
-                CloudLayer.Log(node.url + " " + cloudPack);
-                if (node.url == cloudPack)
+                foreach (ConfigNode configNode in node.config.nodes)
                 {
-                    foreach (ConfigNode configNode in node.config.nodes)
-                    {
-                        LoadConfigNode(configNode, node.url, defaults);
-                    }
+                    LoadConfigNode(configNode, node.url, defaults);
                 }
+                
             }
         }
 
@@ -297,7 +283,7 @@ namespace Clouds
                 gs.alignment = TextAnchor.MiddleCenter;
 
                 AdvancedGUI = GUI.Toggle(
-                        new Rect(10, 50, 125, 25), AdvancedGUI, "Advanced Settings");
+                        new Rect(10, 110, 125, 25), AdvancedGUI, "Advanced Settings");
                 float itemFullWidth = AdvancedGUI ? (_mainWindowRect.width / 2) - 20 : _mainWindowRect.width - 20;
 
                 GUI.Label(new Rect(35, 20, itemFullWidth - 50, 25), currentBody.name, gs);
@@ -313,27 +299,26 @@ namespace Clouds
                         MapView.MapCamera.SetTarget(OverlayMgr.GetNextBody(currentBody).name);
                     }
                 }
-                float halfWidth;
-                if (AdvancedGUI)
+                float halfWidth = (itemFullWidth / 2) - 5;
+
+                if (GUI.Button(new Rect(10, 50, halfWidth, 25), "Reset to Save"))
                 {
-                    halfWidth = (itemFullWidth / 2);
-                    if (GUI.Button(new Rect(itemFullWidth + 30, 20, halfWidth, 25), "Reset to Save"))
-                    {
-                        loadCloudLayers(false);
-                        oldBody = null;
-                    }
-                    if (GUI.Button(new Rect(itemFullWidth + halfWidth + 35, 20, halfWidth-5, 25), "Reset to Default"))
-                    {
-                        loadCloudLayers(true);
-                        oldBody = null;
-                    }
+                    loadCloudLayers(false);
+                    oldBody = null;
                 }
+                if (GUI.Button(new Rect(halfWidth + 20, 50, halfWidth, 25), "Reset to Default"))
+                {
+                    loadCloudLayers(true);
+                    oldBody = null;
+                }
+
+                GUI.Button(new Rect(10, 80, itemFullWidth-30, 25), ConfigNodeList[SelectedConfig].parent.url);
 
                 int layerCount = CloudLayer.GetBodyLayerCount(currentBody.name);
                 bool hasLayers = layerCount != 0;
 
                 halfWidth = hasLayers ? (itemFullWidth / 2) - 5 : itemFullWidth;
-                if (GUI.Button(new Rect(10, 80, halfWidth, 25), "Add"))
+                if (GUI.Button(new Rect(10, 140, halfWidth, 25), "Add"))
                 {
                     ConfigNode newNode = new ConfigNode("CLOUD_LAYER");
                     ConfigNodeList.First(n => n.url == "BoulderCo/Clouds/cloudLayers/CLOUD_LAYER_PACK").config.AddNode(newNode);
@@ -344,16 +329,16 @@ namespace Clouds
                 if (hasLayers)
                 {
 
-                    GUI.Box(new Rect(10, 110, itemFullWidth, 115), "");
+                    GUI.Box(new Rect(10, 170, itemFullWidth, 115), "");
                     String[] layerList = CloudLayer.GetBodyLayerStringList(currentBody.name);
-                    ScrollPosLayerList = GUI.BeginScrollView(new Rect(15, 115, itemFullWidth - 10, 100), ScrollPosLayerList, new Rect(0, 0, itemFullWidth - 30, 25 * layerList.Length));
+                    ScrollPosLayerList = GUI.BeginScrollView(new Rect(15, 175, itemFullWidth - 10, 100), ScrollPosLayerList, new Rect(0, 0, itemFullWidth - 30, 25 * layerList.Length));
                     float layerWidth = layerCount > 4 ? itemFullWidth - 30 : itemFullWidth - 10;
                     int OldSelectedLayer = SelectedLayer;
                     SelectedLayer = SelectedLayer >= layerCount ? 0 : SelectedLayer;
                     SelectedLayer = GUI.SelectionGrid(new Rect(0, 0, layerWidth, 25 * layerList.Length), SelectedLayer, layerList, 1);
                     GUI.EndScrollView();
 
-                    if (GUI.Button(new Rect(halfWidth + 20, 80, halfWidth, 25), "Remove"))
+                    if (GUI.Button(new Rect(halfWidth + 20, 140, halfWidth, 25), "Remove"))
                     {
                         CloudLayer.RemoveLayer(currentBody.name, SelectedLayer);
                         SelectedLayer = -1;
@@ -375,25 +360,28 @@ namespace Clouds
 
                     if (CloudGUI.IsValid())
                     {
-                        if (GUI.Button(new Rect(145, 50, 50, 25), "Apply"))
+                        if (GUI.Button(new Rect(145, 110, 50, 25), "Apply"))
                         {
                             CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ApplyGUIUpdate(CloudGUI);
                         }
-                        if (GUI.Button(new Rect(200, 50, 50, 25), "Save"))
+                        if (GUI.Button(new Rect(200, 110, 50, 25), "Save"))
                         {
                             CloudLayer.BodyDatabase[currentBody.name][SelectedLayer].ApplyGUIUpdate(CloudGUI);
                             saveCloudLayers();
                         }
                     }
 
-                    int nextLine = 230;
+                    
                     gs.alignment = TextAnchor.MiddleRight;
                     if (AdvancedGUI)
                     {
+                        GUI.Label(new Rect((_mainWindowRect.width / 2) + 10, 20, itemFullWidth, 25), "Settings:");
                         int advancedNextLine = HandleAdvancedGUI(CloudGUI.ShaderFloats, 50, _mainWindowRect.width / 2);
                         GUI.Label(new Rect((_mainWindowRect.width / 2) + 10, advancedNextLine, itemFullWidth, 25), "Scaled Settings:");
                         HandleAdvancedGUI(CloudGUI.ScaledShaderFloats, advancedNextLine + 30, _mainWindowRect.width / 2);
                     }
+
+                    int nextLine = 290;
 
                     nextLine = HandleAltitudeGUI(CloudGUI.Altitude, nextLine);
                     nextLine = HandleColorGUI(CloudGUI.Color, nextLine);
@@ -417,6 +405,9 @@ namespace Clouds
                     }
 
                 }
+
+                
+
             }
             else
             {
@@ -531,7 +522,27 @@ namespace Clouds
             string SFadeDist = GUI.TextField(new Rect(offset + 80, y, 50, 25), floats.FadeDistanceString, texFieldGS);
             float FFadeDist = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.FadeDistance, 0, 100);
 
-            floats.Update(SFalloffPower, FFalloffPower, SFalloffScale, FFalloffScale, SDetailDistance, FDetailDistance, SMinimumLight, FMinimumLight, SFadeDist, FFadeDist);
+            y += 30;
+            GUI.Label(
+                new Rect(offset + 10, y, 65, 25), "RimDist: ", gs);
+            if (float.TryParse(floats.RimDistanceString, out dummyFloat))
+            {
+                texFieldGS.normal.textColor = normalColor;
+                texFieldGS.hover.textColor = normalColor;
+                texFieldGS.active.textColor = normalColor;
+                texFieldGS.focused.textColor = normalColor;
+            }
+            else
+            {
+                texFieldGS.normal.textColor = errorColor;
+                texFieldGS.hover.textColor = errorColor;
+                texFieldGS.active.textColor = errorColor;
+                texFieldGS.focused.textColor = errorColor;
+            }
+            string SRimDist = GUI.TextField(new Rect(offset + 80, y, 50, 25), floats.RimDistanceString, texFieldGS);
+            float FRimDist = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.RimDistance, 0, 100);
+
+            floats.Update(SFalloffPower, FFalloffPower, SFalloffScale, FFalloffScale, SDetailDistance, FDetailDistance, SMinimumLight, FMinimumLight, SFadeDist, FFadeDist, SRimDist, FRimDist);
 
             return y + 30;
         }
@@ -776,6 +787,7 @@ namespace Clouds
         public float DetailDistance;
         public float MinimumLight;
         public float FadeDistance;
+        public float RimDistance;
 
         public ShaderFloats()
         {
@@ -784,15 +796,17 @@ namespace Clouds
             this.DetailDistance = 0;
             this.MinimumLight = 0;
             this.FadeDistance = 0;
+            this.RimDistance = 0;
         }
 
-        public ShaderFloats(float FalloffPower, float FalloffScale, float DetailDistance, float MinimumLight, float FadeDistance)
+        public ShaderFloats(float FalloffPower, float FalloffScale, float DetailDistance, float MinimumLight, float FadeDistance, float RimDistance)
         {
             this.FalloffPower = FalloffPower;
             this.FalloffScale = FalloffScale;
             this.DetailDistance = DetailDistance;
             this.MinimumLight = MinimumLight;
             this.FadeDistance = FadeDistance;
+            this.RimDistance = RimDistance;
         }
 
         public ShaderFloats(ConfigNode configNode)
@@ -802,6 +816,7 @@ namespace Clouds
             this.DetailDistance = float.Parse(configNode.GetValue("detailDistance"));
             this.MinimumLight = float.Parse(configNode.GetValue("minimumLight"));
             this.FadeDistance = float.Parse(configNode.GetValue("fadeDistance"));
+            this.RimDistance = float.Parse(configNode.GetValue("rimDistance"));
         }
 
         public void Clone(ShaderFloatsGUI toClone)
@@ -811,6 +826,7 @@ namespace Clouds
             DetailDistance = toClone.DetailDistance;
             MinimumLight = toClone.MinimumLight;
             FadeDistance = toClone.FadeDistance;
+            RimDistance = toClone.RimDistance;
         }
 
         internal ConfigNode GetNode(string name)
@@ -821,6 +837,7 @@ namespace Clouds
             newNode.AddValue("detailDistance", this.DetailDistance);
             newNode.AddValue("minimumLight", this.MinimumLight);
             newNode.AddValue("fadeDistance", this.FadeDistance);
+            newNode.AddValue("rimDistance", this.RimDistance);
             return newNode;
         }
     }
@@ -832,11 +849,13 @@ namespace Clouds
         public float DetailDistance;
         public float MinimumLight;
         public float FadeDistance;
+        public float RimDistance;
         public String FalloffPowerString;
         public String FalloffScaleString;
         public String DetailDistanceString;
         public String MinimumLightString;
         public String FadeDistanceString;
+        public String RimDistanceString;
 
         public ShaderFloatsGUI()
         {
@@ -845,25 +864,29 @@ namespace Clouds
             this.DetailDistance = 0;
             this.MinimumLight = 0;
             this.FadeDistance = 0;
+            this.RimDistance = 0;
             this.FalloffPowerString = "0";
             this.FalloffScaleString = "0";
             this.DetailDistanceString = "0";
             this.MinimumLightString = "0";
             this.FadeDistanceString = "0";
+            this.RimDistanceString = "0";
         }
 
-        public ShaderFloatsGUI(float FalloffPower, float FalloffScale, float DetailDistance, float MinimumLight, float FadeDistance)
+        public ShaderFloatsGUI(float FalloffPower, float FalloffScale, float DetailDistance, float MinimumLight, float FadeDistance, float RimDistance)
         {
             this.FalloffPower = FalloffPower;
             this.FalloffScale = FalloffScale;
             this.DetailDistance = DetailDistance;
             this.MinimumLight = MinimumLight;
             this.FadeDistance = FadeDistance;
+            this.RimDistance = RimDistance;
             FalloffPowerString = FalloffPower.ToString("R");
             FalloffScaleString = FalloffScale.ToString("R");
             DetailDistanceString = DetailDistance.ToString("R");
             MinimumLightString = MinimumLight.ToString("R");
             FadeDistanceString = FadeDistance.ToString("R");
+            RimDistanceString = RimDistance.ToString("R");
         }
 
         public void Clone(ShaderFloats toClone)
@@ -873,14 +896,16 @@ namespace Clouds
             DetailDistance = toClone.DetailDistance;
             MinimumLight = toClone.MinimumLight;
             FadeDistance = toClone.FadeDistance;
+            RimDistance = toClone.RimDistance;
             FalloffPowerString = FalloffPower.ToString("R");
             FalloffScaleString = FalloffScale.ToString("R");
             DetailDistanceString = DetailDistance.ToString("R");
             MinimumLightString = MinimumLight.ToString("R");
             FadeDistanceString = FadeDistance.ToString("R");
+            RimDistanceString = FadeDistance.ToString("R");
         }
 
-        internal void Update(string SFalloffPower, float FFalloffPower, string SFalloffScale, float FFalloffScale, string SDetailDistance, float FDetailDistance, string SMinimumLight, float FMinimumLight, string SFadeDist, float FFadeDist)
+        internal void Update(string SFalloffPower, float FFalloffPower, string SFalloffScale, float FFalloffScale, string SDetailDistance, float FDetailDistance, string SMinimumLight, float FMinimumLight, string SFadeDist, float FFadeDist, string SRimDist, float FRimDist)
         {
             if (this.FalloffPowerString != SFalloffPower)
             {
@@ -932,6 +957,16 @@ namespace Clouds
                 this.FadeDistance = FFadeDist;
                 this.FadeDistanceString = FFadeDist.ToString("R");
             }
+            if (this.RimDistanceString != SRimDist)
+            {
+                this.RimDistanceString = SRimDist;
+                float.TryParse(SRimDist, out this.RimDistance);
+            }
+            else if (this.RimDistance != FRimDist)
+            {
+                this.RimDistance = FRimDist;
+                this.RimDistanceString = FRimDist.ToString("R");
+            }
         }
 
         internal bool IsValid()
@@ -942,7 +977,8 @@ namespace Clouds
                 float.TryParse(FalloffScaleString, out dummy) &&
                 float.TryParse(DetailDistanceString, out dummy) &&
                 float.TryParse(MinimumLightString, out dummy) &&
-                float.TryParse(FadeDistanceString, out dummy))
+                float.TryParse(FadeDistanceString, out dummy) &&
+                float.TryParse(RimDistanceString, out dummy))
             {
                 return true;
             }

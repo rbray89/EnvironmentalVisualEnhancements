@@ -135,7 +135,6 @@ namespace Clouds
             CloudMaterial = new Material(GlobalCloudShader);
             CloudParticleMaterial = new Material(GlobalCloudParticleShader);
 
-
             scaledShaderFloats = GetDefault(true);
             shaderFloats = GetDefault(false);
 
@@ -185,10 +184,11 @@ namespace Clouds
                 ScaledCloudMaterial.SetFloat("_MinLight", scaledShaderFloats.MinimumLight);
                 ScaledCloudMaterial.SetFloat("_FadeDist", scaledShaderFloats.FadeDistance);
                 ScaledCloudMaterial.SetFloat("_FadeScale", 0.1f/ scaledShaderFloats.FadeDistance);
+                ScaledCloudMaterial.SetFloat("_RimDist", scaledShaderFloats.RimDistance);
             }
             else
             {
-                this.scaledShaderFloats = new ShaderFloats(ScaledCloudMaterial.GetFloat("_FalloffPow"), ScaledCloudMaterial.GetFloat("_FalloffScale"), ScaledCloudMaterial.GetFloat("_DetailDist"), ScaledCloudMaterial.GetFloat("_MinLight"), ScaledCloudMaterial.GetFloat("_FadeDist"));
+                this.scaledShaderFloats = new ShaderFloats(ScaledCloudMaterial.GetFloat("_FalloffPow"), ScaledCloudMaterial.GetFloat("_FalloffScale"), ScaledCloudMaterial.GetFloat("_DetailDist"), ScaledCloudMaterial.GetFloat("_MinLight"), ScaledCloudMaterial.GetFloat("_FadeDist"), ScaledCloudMaterial.GetFloat("_RimDist"));
             }
             if (this.shaderFloats != null)
             {
@@ -199,10 +199,11 @@ namespace Clouds
                 CloudMaterial.SetFloat("_FadeDist", shaderFloats.FadeDistance);
                 CloudMaterial.SetFloat("_FadeScale", 0.1f/shaderFloats.FadeDistance);
                 CloudParticleMaterial.SetFloat("_MinLight", shaderFloats.MinimumLight);
+                CloudParticleMaterial.SetFloat("_RimDist", shaderFloats.RimDistance);
             }
             else
             {
-                this.shaderFloats = new ShaderFloats(CloudMaterial.GetFloat("_FalloffPow"), CloudMaterial.GetFloat("_FalloffScale"), CloudMaterial.GetFloat("_DetailDist"), CloudMaterial.GetFloat("_MinLight"), CloudMaterial.GetFloat("_FadeDist"));
+                this.shaderFloats = new ShaderFloats(CloudMaterial.GetFloat("_FalloffPow"), CloudMaterial.GetFloat("_FalloffScale"), CloudMaterial.GetFloat("_DetailDist"), CloudMaterial.GetFloat("_MinLight"), CloudMaterial.GetFloat("_FadeDist"), CloudMaterial.GetFloat("_RimDist"));
             }
             
         }
@@ -285,11 +286,11 @@ namespace Clouds
             Material compareMaterial = new Material(GlobalCloudShader);
             if (isScaled)
             {
-                return new ShaderFloats(compareMaterial.GetFloat("_FalloffPow"), compareMaterial.GetFloat("_FalloffScale"), compareMaterial.GetFloat("_DetailDist"), compareMaterial.GetFloat("_MinLight"), 0.4f);
+                return new ShaderFloats(compareMaterial.GetFloat("_FalloffPow"), compareMaterial.GetFloat("_FalloffScale"), compareMaterial.GetFloat("_DetailDist"), compareMaterial.GetFloat("_MinLight"), 0.4f, compareMaterial.GetFloat("_RimDist"));
             }
             else
             {
-                return new ShaderFloats(compareMaterial.GetFloat("_FalloffPow"), compareMaterial.GetFloat("_FalloffScale"), 0.000002f, compareMaterial.GetFloat("_MinLight"), 0.8f);
+                return new ShaderFloats(compareMaterial.GetFloat("_FalloffPow"), compareMaterial.GetFloat("_FalloffScale"), 0.000002f, compareMaterial.GetFloat("_MinLight"), 0.8f, 0.0001f);
             }
 
         }

@@ -11,7 +11,7 @@
 		_MinLight ("Minimum Light", Range(0,1)) = .5
 		_FadeDist ("Fade Distance", Range(0,100)) = 10
 		_FadeScale ("Fade Scale", Range(0,1)) = .002
-		_RimDist ("Rim Distance", Range(0,100000)) = 1000
+		_RimDist ("Rim Distance", Range(0,1)) = 1
 	}
 
 Category {
@@ -76,6 +76,7 @@ varying vec3 xlv_TEXCOORD3;
 varying float xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying vec3 xlv_TEXCOORD0;
+uniform float _RimDist;
 uniform float _FadeScale;
 uniform float _FadeDist;
 uniform float _MinLight;
@@ -158,7 +159,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_19, p_19)) - (1.05 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -320,6 +321,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -440,7 +442,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -515,6 +517,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -635,7 +638,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -1143,7 +1146,7 @@ lowp vec4 frag( in v2f IN ) {
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 469
-    highp float distLerp = xll_saturate_f((0.0001 * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.05 * distance( IN.worldVert, IN.worldOrigin)))));
+    highp float distLerp = xll_saturate_f((_RimDist * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.01 * distance( IN.worldVert, IN.worldOrigin)))));
     highp float distFade = xll_saturate_f(((_FadeScale * dist) - _FadeDist));
     highp float distAlpha = mix( distFade, rim, distLerp);
     color.w = mix( 0.0, color.w, distAlpha);
@@ -1223,6 +1226,7 @@ varying vec3 xlv_TEXCOORD3;
 varying float xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying vec3 xlv_TEXCOORD0;
+uniform float _RimDist;
 uniform float _FadeScale;
 uniform float _FadeDist;
 uniform float _MinLight;
@@ -1305,7 +1309,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_19, p_19)) - (1.05 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -1463,6 +1467,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -1583,7 +1588,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -1655,6 +1660,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -1775,7 +1781,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -2273,7 +2279,7 @@ lowp vec4 frag( in v2f IN ) {
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 466
-    highp float distLerp = xll_saturate_f((0.0001 * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.05 * distance( IN.worldVert, IN.worldOrigin)))));
+    highp float distLerp = xll_saturate_f((_RimDist * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.01 * distance( IN.worldVert, IN.worldOrigin)))));
     highp float distFade = xll_saturate_f(((_FadeScale * dist) - _FadeDist));
     highp float distAlpha = mix( distFade, rim, distLerp);
     color.w = mix( 0.0, color.w, distAlpha);
@@ -2354,6 +2360,7 @@ varying vec3 xlv_TEXCOORD3;
 varying float xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying vec3 xlv_TEXCOORD0;
+uniform float _RimDist;
 uniform float _FadeScale;
 uniform float _FadeDist;
 uniform float _MinLight;
@@ -2436,7 +2443,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_19, p_19)) - (1.05 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -2598,6 +2605,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -2718,7 +2726,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -2793,6 +2801,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -2913,7 +2922,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -3423,7 +3432,7 @@ lowp vec4 frag( in v2f IN ) {
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 478
-    highp float distLerp = xll_saturate_f((0.0001 * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.05 * distance( IN.worldVert, IN.worldOrigin)))));
+    highp float distLerp = xll_saturate_f((_RimDist * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.01 * distance( IN.worldVert, IN.worldOrigin)))));
     highp float distFade = xll_saturate_f(((_FadeScale * dist) - _FadeDist));
     highp float distAlpha = mix( distFade, rim, distLerp);
     color.w = mix( 0.0, color.w, distAlpha);
@@ -3506,6 +3515,7 @@ varying vec3 xlv_TEXCOORD3;
 varying float xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying vec3 xlv_TEXCOORD0;
+uniform float _RimDist;
 uniform float _FadeScale;
 uniform float _FadeDist;
 uniform float _MinLight;
@@ -3588,7 +3598,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_19, p_19)) - (1.05 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -3750,6 +3760,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -3870,7 +3881,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -3945,6 +3956,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -4065,7 +4077,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -4575,7 +4587,7 @@ lowp vec4 frag( in v2f IN ) {
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 470
-    highp float distLerp = xll_saturate_f((0.0001 * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.05 * distance( IN.worldVert, IN.worldOrigin)))));
+    highp float distLerp = xll_saturate_f((_RimDist * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.01 * distance( IN.worldVert, IN.worldOrigin)))));
     highp float distFade = xll_saturate_f(((_FadeScale * dist) - _FadeDist));
     highp float distAlpha = mix( distFade, rim, distLerp);
     color.w = mix( 0.0, color.w, distAlpha);
@@ -4658,6 +4670,7 @@ varying vec3 xlv_TEXCOORD3;
 varying float xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying vec3 xlv_TEXCOORD0;
+uniform float _RimDist;
 uniform float _FadeScale;
 uniform float _FadeDist;
 uniform float _MinLight;
@@ -4740,7 +4753,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_19, p_19)) - (1.05 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -4902,6 +4915,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -5022,7 +5036,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -5097,6 +5111,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -5217,7 +5232,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -5725,7 +5740,7 @@ lowp vec4 frag( in v2f IN ) {
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 469
-    highp float distLerp = xll_saturate_f((0.0001 * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.05 * distance( IN.worldVert, IN.worldOrigin)))));
+    highp float distLerp = xll_saturate_f((_RimDist * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.01 * distance( IN.worldVert, IN.worldOrigin)))));
     highp float distFade = xll_saturate_f(((_FadeScale * dist) - _FadeDist));
     highp float distAlpha = mix( distFade, rim, distLerp);
     color.w = mix( 0.0, color.w, distAlpha);
@@ -5811,6 +5826,7 @@ varying vec3 xlv_TEXCOORD3;
 varying float xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying vec3 xlv_TEXCOORD0;
+uniform float _RimDist;
 uniform float _FadeScale;
 uniform float _FadeDist;
 uniform float _MinLight;
@@ -5893,7 +5909,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_19, p_19)) - (1.05 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -6058,6 +6074,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -6178,7 +6195,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -6256,6 +6273,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -6376,7 +6394,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -6896,7 +6914,7 @@ lowp vec4 frag( in v2f IN ) {
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 485
-    highp float distLerp = xll_saturate_f((0.0001 * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.05 * distance( IN.worldVert, IN.worldOrigin)))));
+    highp float distLerp = xll_saturate_f((_RimDist * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.01 * distance( IN.worldVert, IN.worldOrigin)))));
     highp float distFade = xll_saturate_f(((_FadeScale * dist) - _FadeDist));
     highp float distAlpha = mix( distFade, rim, distLerp);
     color.w = mix( 0.0, color.w, distAlpha);
@@ -6984,6 +7002,7 @@ varying vec3 xlv_TEXCOORD3;
 varying float xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying vec3 xlv_TEXCOORD0;
+uniform float _RimDist;
 uniform float _FadeScale;
 uniform float _FadeDist;
 uniform float _MinLight;
@@ -7066,7 +7085,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_19, p_19)) - (1.05 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -7233,6 +7252,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -7353,7 +7373,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -7871,7 +7891,7 @@ lowp vec4 frag( in v2f IN ) {
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 486
-    highp float distLerp = xll_saturate_f((0.0001 * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.05 * distance( IN.worldVert, IN.worldOrigin)))));
+    highp float distLerp = xll_saturate_f((_RimDist * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.01 * distance( IN.worldVert, IN.worldOrigin)))));
     highp float distFade = xll_saturate_f(((_FadeScale * dist) - _FadeDist));
     highp float distAlpha = mix( distFade, rim, distLerp);
     color.w = mix( 0.0, color.w, distAlpha);
@@ -7956,6 +7976,7 @@ varying vec3 xlv_TEXCOORD3;
 varying float xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying vec3 xlv_TEXCOORD0;
+uniform float _RimDist;
 uniform float _FadeScale;
 uniform float _FadeDist;
 uniform float _MinLight;
@@ -8038,7 +8059,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_19, p_19)) - (1.05 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -8200,6 +8221,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -8320,7 +8342,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -8395,6 +8417,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -8515,7 +8538,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -9023,7 +9046,7 @@ lowp vec4 frag( in v2f IN ) {
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 475
-    highp float distLerp = xll_saturate_f((0.0001 * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.05 * distance( IN.worldVert, IN.worldOrigin)))));
+    highp float distLerp = xll_saturate_f((_RimDist * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.01 * distance( IN.worldVert, IN.worldOrigin)))));
     highp float distFade = xll_saturate_f(((_FadeScale * dist) - _FadeDist));
     highp float distAlpha = mix( distFade, rim, distLerp);
     color.w = mix( 0.0, color.w, distAlpha);
@@ -9109,6 +9132,7 @@ varying vec3 xlv_TEXCOORD3;
 varying float xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying vec3 xlv_TEXCOORD0;
+uniform float _RimDist;
 uniform float _FadeScale;
 uniform float _FadeDist;
 uniform float _MinLight;
@@ -9191,7 +9215,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_19, p_19)) - (1.05 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -9356,6 +9380,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -9476,7 +9501,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -9554,6 +9579,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -9674,7 +9700,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -10192,7 +10218,7 @@ lowp vec4 frag( in v2f IN ) {
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 478
-    highp float distLerp = xll_saturate_f((0.0001 * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.05 * distance( IN.worldVert, IN.worldOrigin)))));
+    highp float distLerp = xll_saturate_f((_RimDist * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.01 * distance( IN.worldVert, IN.worldOrigin)))));
     highp float distFade = xll_saturate_f(((_FadeScale * dist) - _FadeDist));
     highp float distAlpha = mix( distFade, rim, distLerp);
     color.w = mix( 0.0, color.w, distAlpha);
@@ -10280,6 +10306,7 @@ varying vec3 xlv_TEXCOORD3;
 varying float xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying vec3 xlv_TEXCOORD0;
+uniform float _RimDist;
 uniform float _FadeScale;
 uniform float _FadeDist;
 uniform float _MinLight;
@@ -10362,7 +10389,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_19, p_19)) - (1.05 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -10527,6 +10554,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -10647,7 +10675,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -10725,6 +10753,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -10845,7 +10874,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -11361,7 +11390,7 @@ lowp vec4 frag( in v2f IN ) {
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 483
-    highp float distLerp = xll_saturate_f((0.0001 * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.05 * distance( IN.worldVert, IN.worldOrigin)))));
+    highp float distLerp = xll_saturate_f((_RimDist * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.01 * distance( IN.worldVert, IN.worldOrigin)))));
     highp float distFade = xll_saturate_f(((_FadeScale * dist) - _FadeDist));
     highp float distAlpha = mix( distFade, rim, distLerp);
     color.w = mix( 0.0, color.w, distAlpha);
@@ -11449,6 +11478,7 @@ varying vec3 xlv_TEXCOORD3;
 varying float xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying vec3 xlv_TEXCOORD0;
+uniform float _RimDist;
 uniform float _FadeScale;
 uniform float _FadeDist;
 uniform float _MinLight;
@@ -11531,7 +11561,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_19, p_19)) - (1.05 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -11696,6 +11726,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -11816,7 +11847,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -11894,6 +11925,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -12014,7 +12046,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -12532,7 +12564,7 @@ lowp vec4 frag( in v2f IN ) {
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 484
-    highp float distLerp = xll_saturate_f((0.0001 * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.05 * distance( IN.worldVert, IN.worldOrigin)))));
+    highp float distLerp = xll_saturate_f((_RimDist * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.01 * distance( IN.worldVert, IN.worldOrigin)))));
     highp float distFade = xll_saturate_f(((_FadeScale * dist) - _FadeDist));
     highp float distAlpha = mix( distFade, rim, distLerp);
     color.w = mix( 0.0, color.w, distAlpha);
@@ -12620,6 +12652,7 @@ varying vec3 xlv_TEXCOORD3;
 varying float xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying vec3 xlv_TEXCOORD0;
+uniform float _RimDist;
 uniform float _FadeScale;
 uniform float _FadeDist;
 uniform float _MinLight;
@@ -12702,7 +12735,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_19, p_19)) - (1.05 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -12867,6 +12900,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -12987,7 +13021,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -13065,6 +13099,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -13185,7 +13220,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -13707,7 +13742,7 @@ lowp vec4 frag( in v2f IN ) {
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 493
-    highp float distLerp = xll_saturate_f((0.0001 * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.05 * distance( IN.worldVert, IN.worldOrigin)))));
+    highp float distLerp = xll_saturate_f((_RimDist * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.01 * distance( IN.worldVert, IN.worldOrigin)))));
     highp float distFade = xll_saturate_f(((_FadeScale * dist) - _FadeDist));
     highp float distAlpha = mix( distFade, rim, distLerp);
     color.w = mix( 0.0, color.w, distAlpha);
@@ -13795,6 +13830,7 @@ varying vec3 xlv_TEXCOORD3;
 varying float xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying vec3 xlv_TEXCOORD0;
+uniform float _RimDist;
 uniform float _FadeScale;
 uniform float _FadeDist;
 uniform float _MinLight;
@@ -13877,7 +13913,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_19, p_19)) - (1.05 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -14044,6 +14080,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -14164,7 +14201,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -14686,7 +14723,7 @@ lowp vec4 frag( in v2f IN ) {
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 493
-    highp float distLerp = xll_saturate_f((0.0001 * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.05 * distance( IN.worldVert, IN.worldOrigin)))));
+    highp float distLerp = xll_saturate_f((_RimDist * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.01 * distance( IN.worldVert, IN.worldOrigin)))));
     highp float distFade = xll_saturate_f(((_FadeScale * dist) - _FadeDist));
     highp float distAlpha = mix( distFade, rim, distLerp);
     color.w = mix( 0.0, color.w, distAlpha);
@@ -14774,6 +14811,7 @@ varying vec3 xlv_TEXCOORD3;
 varying float xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying vec3 xlv_TEXCOORD0;
+uniform float _RimDist;
 uniform float _FadeScale;
 uniform float _FadeDist;
 uniform float _MinLight;
@@ -14856,7 +14894,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_19, p_19)) - (1.05 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -15021,6 +15059,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -15141,7 +15180,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -15219,6 +15258,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -15339,7 +15379,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -15855,7 +15895,7 @@ lowp vec4 frag( in v2f IN ) {
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 489
-    highp float distLerp = xll_saturate_f((0.0001 * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.05 * distance( IN.worldVert, IN.worldOrigin)))));
+    highp float distLerp = xll_saturate_f((_RimDist * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.01 * distance( IN.worldVert, IN.worldOrigin)))));
     highp float distFade = xll_saturate_f(((_FadeScale * dist) - _FadeDist));
     highp float distAlpha = mix( distFade, rim, distLerp);
     color.w = mix( 0.0, color.w, distAlpha);
@@ -15943,6 +15983,7 @@ varying vec3 xlv_TEXCOORD3;
 varying float xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying vec3 xlv_TEXCOORD0;
+uniform float _RimDist;
 uniform float _FadeScale;
 uniform float _FadeDist;
 uniform float _MinLight;
@@ -16025,7 +16066,7 @@ void main ()
   p_19 = (xlv_TEXCOORD1 - _WorldSpaceCameraPos);
   vec3 p_20;
   p_20 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
-  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_19, p_19)) - (1.05 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
+  color_2.w = mix (0.0, tmpvar_17.w, mix (clamp (((_FadeScale * sqrt(dot (p_18, p_18))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_19, p_19)) - (1.01 * sqrt(dot (p_20, p_20))))), 0.0, 1.0)));
   color_2.xyz = (tmpvar_17.xyz * clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
@@ -16190,6 +16231,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -16310,7 +16352,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -16388,6 +16430,7 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp float xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec3 xlv_TEXCOORD0;
+uniform highp float _RimDist;
 uniform highp float _FadeScale;
 uniform highp float _FadeDist;
 uniform highp float _MinLight;
@@ -16508,7 +16551,7 @@ void main ()
   highp vec3 p_40;
   p_40 = (xlv_TEXCOORD0 - xlv_TEXCOORD1);
   highp float tmpvar_41;
-  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((0.0001 * (sqrt(dot (p_39, p_39)) - (1.05 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
+  tmpvar_41 = mix (0.0, tmpvar_37.w, mix (clamp (((_FadeScale * sqrt(dot (p_38, p_38))) - _FadeDist), 0.0, 1.0), clamp (pow ((_FalloffScale * clamp (abs(dot (xlv_TEXCOORD5, xlv_TEXCOORD3)), 0.0, 1.0)), _FalloffPow), 0.0, 1.0), clamp ((_RimDist * (sqrt(dot (p_39, p_39)) - (1.01 * sqrt(dot (p_40, p_40))))), 0.0, 1.0)));
   color_12.w = tmpvar_41;
   highp vec3 tmpvar_42;
   tmpvar_42 = glstate_lightmodel_ambient.xyz;
@@ -17026,7 +17069,7 @@ lowp vec4 frag( in v2f IN ) {
     rim = xll_saturate_f(pow( (_FalloffScale * rim), _FalloffPow));
     highp float dist = distance( IN.worldVert, _WorldSpaceCameraPos);
     #line 490
-    highp float distLerp = xll_saturate_f((0.0001 * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.05 * distance( IN.worldVert, IN.worldOrigin)))));
+    highp float distLerp = xll_saturate_f((_RimDist * (distance( IN.worldOrigin, _WorldSpaceCameraPos) - (1.01 * distance( IN.worldVert, IN.worldOrigin)))));
     highp float distFade = xll_saturate_f(((_FadeScale * dist) - _FadeDist));
     highp float distAlpha = mix( distFade, rim, distLerp);
     color.w = mix( 0.0, color.w, distAlpha);
@@ -17093,18 +17136,19 @@ Float 9 [_DetailDist]
 Float 10 [_MinLight]
 Float 11 [_FadeDist]
 Float 12 [_FadeScale]
+Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
 ; 117 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
-def c13, 0.00000000, 1.00000000, 3.14159298, -0.21211439
-def c14, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, 1.04999995, 0.00010000, 0, 0
+def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c19, 1.00999999, 0, 0, 0
 dcl_texcoord0 v0.xyz
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.x
@@ -17127,57 +17171,57 @@ add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r2, r2, -r1
 mad_pp r2, r0.z, r2, r1
-mad r3.y, r0, c15, c15.z
-mad r1.z, r3.y, r0.y, c15.w
-mad r1.z, r1, r0.y, c16.x
-mad r3.y, r1.z, r0, c16
+mad r3.y, r0, c16, c16.z
+mad r1.z, r3.y, r0.y, c16.w
+mad r1.z, r1, r0.y, c17.x
+mad r3.y, r1.z, r0, c17
 mul r1.xy, v4.zxzw, c8.x
 add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r1, r1, -r2
 mad_pp r2, r0.w, r1, r2
-mad r0.y, r3, r0, c16.z
+mad r0.y, r3, r0, c17.z
 mul r0.w, r0.y, r3.x
 add r0.y, r0.x, -r0.z
-add r3.x, -r0.w, c16.w
+add r3.x, -r0.w, c17.w
 cmp r0.z, -r0.y, r0.w, r3.x
-add r0.y, -r0.z, c13.z
+add r0.y, -r0.z, c14.z
 cmp r0.y, v4.x, r0.z, r0
 cmp r0.y, v4.z, r0, -r0
-mad r3.x, r0.y, c17, c17.y
-mad r0.y, r0.x, c14.x, c14
+mad r3.x, r0.y, c18, c18.y
+mad r0.y, r0.x, c15.x, c15
 mul r0.w, v2.x, c9.x
 dp4 r0.z, c2, c2
-add_pp r1, -r2, c13.y
-mul_sat r0.w, r0, c14
+add_pp r1, -r2, c14.y
+mul_sat r0.w, r0, c15
 mad_pp r1, r0.w, r1, r2
 abs r0.w, -v4.y
 rsq r0.z, r0.z
 mul r2.xyz, r0.z, c2
 dp3_sat r2.x, v3, r2
-add r0.z, -r0.x, c13.y
-mad r0.y, r0.x, r0, c13.w
-add r3.y, -r0.w, c13
-mad r2.w, r0, c14.x, c14.y
-mad r2.w, r2, r0, c13
+add r0.z, -r0.x, c14.y
+mad r0.y, r0.x, r0, c14.w
+add r3.y, -r0.w, c14
+mad r2.w, r0, c15.x, c15.y
+mad r2.w, r2, r0, c14
 rsq r0.z, r0.z
 rsq r3.y, r3.y
-mad r0.x, r0, r0.y, c14.z
+mad r0.x, r0, r0.y, c15.z
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v4.z, c13, c13.y
+cmp r0.x, v4.z, c14, c14.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c14.w, r0.y
-mad r0.w, r2, r0, c14.z
+mad r0.z, -r0, c15.w, r0.y
+mad r0.w, r2, r0, c15.z
 rcp r3.y, r3.y
 mul r2.w, r0, r3.y
-cmp r0.w, -v4.y, c13.x, c13.y
+cmp r0.w, -v4.y, c14.x, c14.y
 mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c14.w, r2.w
-mad r0.z, r0.x, c13, r0
-mad r0.x, r0.w, c13.z, r0.y
-mul r0.y, r0.z, c15.x
-mul r3.y, r0.x, c15.x
+mad r0.y, -r3, c15.w, r2.w
+mad r0.z, r0.x, c14, r0
+mad r0.x, r0.w, c14.z, r0.y
+mul r0.y, r0.z, c16.x
+mul r3.y, r0.x, c16.x
 dsx r0.w, r0.y
 dsx r0.xz, v4.xyyw
 mul r0.xz, r0, r0
@@ -17188,19 +17232,19 @@ rsq r0.z, r0.z
 rsq r0.x, r0.x
 rcp r2.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c17.x
-mul r0.x, r2.w, c17
+mul r0.z, r0.x, c18.x
+mul r0.x, r2.w, c18
 dsy r0.y, r0
 texldd r0, r3, s0, r0.zwzw, r0
 add r3.xyz, -v1, c1
 dp3 r2.w, r3, r3
 mul r0, r0, c4
 mul_pp r0, r0, r1
-add_pp r2.x, r2, c17.z
+add_pp r2.x, r2, c18.z
 mul_pp r1.y, r2.x, c3.w
 mov r2.xyz, v0
 add r2.xyz, v1, -r2
-mul_pp_sat r1.w, r1.y, c17
+mul_pp_sat r1.w, r1.y, c18
 mov r1.x, c10
 add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
@@ -17211,7 +17255,7 @@ rsq r1.w, r1.w
 dp3 r2.w, v5, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
-mad r1.w, -r1, c18.x, r2.x
+mad r1.w, -r1, c19.x, r2.x
 add r2.xyz, -v0, c1
 dp3 r2.y, r2, r2
 abs_sat r2.x, r2.w
@@ -17222,7 +17266,7 @@ pow_sat r2, r3.x, c6.x
 mul r2.y, r3, c12.x
 add_sat r2.y, r2, -c11.x
 add r2.x, r2, -r2.y
-mul_sat r1.w, r1, c18.y
+mul_sat r1.w, r1, c13.x
 mad r1.w, r1, r2.x, r2.y
 mul_pp oC0.xyz, r0, r1
 mul_pp oC0.w, r0, r1
@@ -17231,7 +17275,7 @@ mul_pp oC0.w, r0, r1
 
 SubProgram "d3d11 " {
 Keywords { "POINT" "SHADOWS_OFF" }
-ConstBuffer "$Globals" 176 // 172 used size, 14 vars
+ConstBuffer "$Globals" 176 // 176 used size, 14 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Vector 128 [_DetailOffset] 4
@@ -17242,6 +17286,7 @@ Float 156 [_DetailDist]
 Float 160 [_MinLight]
 Float 164 [_FadeDist]
 Float 168 [_FadeScale]
+Float 172 [_RimDist]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
@@ -17259,7 +17304,7 @@ SetTexture 1 [_DetailTex] 2D 1
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedpcpgfnphhmoglcheedanihfedepeijeiabaaaaaabeaoaaaaadaaaaaa
+eefiecedlbnkoahpilpoigcapngoogndahdpgalcabaaaaaabiaoaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -17269,7 +17314,7 @@ adaaaaaaaeaaaaaaahahaaaaneaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcmeamaaaaeaaaaaaadbadaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaa
 aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaa
 acaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaa
 aaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaa
@@ -17346,32 +17391,32 @@ ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
 egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
 ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
 abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaa
-abaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaaggggigdpakaabaaaabaaaaaa
-dicaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaabhlhnbdibaaaaaah
-ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaa
-abaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaa
-abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaa
-abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
-akiacaaaaaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
-ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
-hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
-baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
-ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
-aaaaaaaaakaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaa
-aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
-dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
-abaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
-aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
-abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
-aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
-aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaa
-agiacaaaaaaaaaaaakaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
-pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
-egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
+abaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaa
+dicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaa
+baaaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaai
+ccaabaaaabaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaai
+ccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaaf
+ccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
+abaaaaaaakiacaaaaaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaa
+abaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadp
+aaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaa
+aeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaa
+elaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaa
+ckiacaaaaaaaaaaaakaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaa
+akaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaa
+abaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaa
+ckaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaa
+acaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaai
+hcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaah
+icaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaa
+aaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaa
+afaaaaaaagiacaaaaaaaaaaaakaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaa
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -17409,18 +17454,19 @@ Float 9 [_DetailDist]
 Float 10 [_MinLight]
 Float 11 [_FadeDist]
 Float 12 [_FadeScale]
+Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
 ; 117 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
-def c13, 0.00000000, 1.00000000, 3.14159298, -0.21211439
-def c14, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, 1.04999995, 0.00010000, 0, 0
+def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c19, 1.00999999, 0, 0, 0
 dcl_texcoord0 v0.xyz
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.x
@@ -17443,57 +17489,57 @@ add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r2, r2, -r1
 mad_pp r2, r0.z, r2, r1
-mad r3.y, r0, c15, c15.z
-mad r1.z, r3.y, r0.y, c15.w
-mad r1.z, r1, r0.y, c16.x
-mad r3.y, r1.z, r0, c16
+mad r3.y, r0, c16, c16.z
+mad r1.z, r3.y, r0.y, c16.w
+mad r1.z, r1, r0.y, c17.x
+mad r3.y, r1.z, r0, c17
 mul r1.xy, v4.zxzw, c8.x
 add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r1, r1, -r2
 mad_pp r2, r0.w, r1, r2
-mad r0.y, r3, r0, c16.z
+mad r0.y, r3, r0, c17.z
 mul r0.w, r0.y, r3.x
 add r0.y, r0.x, -r0.z
-add r3.x, -r0.w, c16.w
+add r3.x, -r0.w, c17.w
 cmp r0.z, -r0.y, r0.w, r3.x
-add r0.y, -r0.z, c13.z
+add r0.y, -r0.z, c14.z
 cmp r0.y, v4.x, r0.z, r0
 cmp r0.y, v4.z, r0, -r0
-mad r3.x, r0.y, c17, c17.y
-mad r0.y, r0.x, c14.x, c14
+mad r3.x, r0.y, c18, c18.y
+mad r0.y, r0.x, c15.x, c15
 mul r0.w, v2.x, c9.x
 dp4_pp r0.z, c2, c2
-add_pp r1, -r2, c13.y
-mul_sat r0.w, r0, c14
+add_pp r1, -r2, c14.y
+mul_sat r0.w, r0, c15
 mad_pp r1, r0.w, r1, r2
 abs r0.w, -v4.y
 rsq_pp r0.z, r0.z
 mul_pp r2.xyz, r0.z, c2
 dp3_sat r2.x, v3, r2
-add r0.z, -r0.x, c13.y
-mad r0.y, r0.x, r0, c13.w
-add r3.y, -r0.w, c13
-mad r2.w, r0, c14.x, c14.y
-mad r2.w, r2, r0, c13
+add r0.z, -r0.x, c14.y
+mad r0.y, r0.x, r0, c14.w
+add r3.y, -r0.w, c14
+mad r2.w, r0, c15.x, c15.y
+mad r2.w, r2, r0, c14
 rsq r0.z, r0.z
 rsq r3.y, r3.y
-mad r0.x, r0, r0.y, c14.z
+mad r0.x, r0, r0.y, c15.z
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v4.z, c13, c13.y
+cmp r0.x, v4.z, c14, c14.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c14.w, r0.y
-mad r0.w, r2, r0, c14.z
+mad r0.z, -r0, c15.w, r0.y
+mad r0.w, r2, r0, c15.z
 rcp r3.y, r3.y
 mul r2.w, r0, r3.y
-cmp r0.w, -v4.y, c13.x, c13.y
+cmp r0.w, -v4.y, c14.x, c14.y
 mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c14.w, r2.w
-mad r0.z, r0.x, c13, r0
-mad r0.x, r0.w, c13.z, r0.y
-mul r0.y, r0.z, c15.x
-mul r3.y, r0.x, c15.x
+mad r0.y, -r3, c15.w, r2.w
+mad r0.z, r0.x, c14, r0
+mad r0.x, r0.w, c14.z, r0.y
+mul r0.y, r0.z, c16.x
+mul r3.y, r0.x, c16.x
 dsx r0.w, r0.y
 dsx r0.xz, v4.xyyw
 mul r0.xz, r0, r0
@@ -17504,19 +17550,19 @@ rsq r0.z, r0.z
 rsq r0.x, r0.x
 rcp r2.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c17.x
-mul r0.x, r2.w, c17
+mul r0.z, r0.x, c18.x
+mul r0.x, r2.w, c18
 dsy r0.y, r0
 texldd r0, r3, s0, r0.zwzw, r0
 add r3.xyz, -v1, c1
 dp3 r2.w, r3, r3
 mul r0, r0, c4
 mul_pp r0, r0, r1
-add_pp r2.x, r2, c17.z
+add_pp r2.x, r2, c18.z
 mul_pp r1.y, r2.x, c3.w
 mov r2.xyz, v0
 add r2.xyz, v1, -r2
-mul_pp_sat r1.w, r1.y, c17
+mul_pp_sat r1.w, r1.y, c18
 mov r1.x, c10
 add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
@@ -17527,7 +17573,7 @@ rsq r1.w, r1.w
 dp3 r2.w, v5, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
-mad r1.w, -r1, c18.x, r2.x
+mad r1.w, -r1, c19.x, r2.x
 add r2.xyz, -v0, c1
 dp3 r2.y, r2, r2
 abs_sat r2.x, r2.w
@@ -17538,7 +17584,7 @@ pow_sat r2, r3.x, c6.x
 mul r2.y, r3, c12.x
 add_sat r2.y, r2, -c11.x
 add r2.x, r2, -r2.y
-mul_sat r1.w, r1, c18.y
+mul_sat r1.w, r1, c13.x
 mad r1.w, r1, r2.x, r2.y
 mul_pp oC0.xyz, r0, r1
 mul_pp oC0.w, r0, r1
@@ -17547,7 +17593,7 @@ mul_pp oC0.w, r0, r1
 
 SubProgram "d3d11 " {
 Keywords { "DIRECTIONAL" "SHADOWS_OFF" }
-ConstBuffer "$Globals" 112 // 108 used size, 13 vars
+ConstBuffer "$Globals" 112 // 112 used size, 13 vars
 Vector 16 [_LightColor0] 4
 Vector 48 [_Color] 4
 Vector 64 [_DetailOffset] 4
@@ -17558,6 +17604,7 @@ Float 92 [_DetailDist]
 Float 96 [_MinLight]
 Float 100 [_FadeDist]
 Float 104 [_FadeScale]
+Float 108 [_RimDist]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
@@ -17575,7 +17622,7 @@ SetTexture 1 [_DetailTex] 2D 1
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedkhgpigjalfkjoclgjmdlcleadcimihnjabaaaaaapmanaaaaadaaaaaa
+eefiecedjlombolmckidlecpegegcmibphbjhlfiabaaaaaaaaaoaaaaadaaaaaa
 cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaalmaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -17584,7 +17631,7 @@ adaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaalmaaaaaaaeaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaahahaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahahaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
 cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcmeamaaaaeaaaaaaadbadaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcmiamaaaaeaaaaaaadcadaaaa
 fjaaaaaeegiocaaaaaaaaaaaahaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaa
 fjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaaafaaaaaa
 fkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaa
@@ -17661,32 +17708,33 @@ acaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaa
 egacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaa
 abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
 abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
-dcaaaaakbcaabaaaabaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaaggggigdp
-akaabaaaabaaaaaadicaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaa
-bhlhnbdibaaaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaa
-ddaaaaaiccaabaaaabaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadp
-diaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaafaaaaaa
-cpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaa
-bkaabaaaabaaaaaaakiacaaaaaaaaaaaafaaaaaabjaaaaafccaabaaaabaaaaaa
-bkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
-aaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaa
-abaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-acaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaa
-abaaaaaackiacaaaaaaaaaaaagaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaa
-aaaaaaaaagaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
-bkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
-abaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
-egiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-bacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkiacaaaaaaaaaaaabaaaaaadicaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaa
-aaaaaaaaabaaaaaaagiacaaaaaaaaaaaagaaaaaadccaaaakhcaabaaaabaaaaaa
-egacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaah
-hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
+dcaaaaakbcaabaaaabaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaakoehibdp
+akaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaa
+aaaaaaaaagaaaaaabaaaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaa
+adaaaaaaddaaaaaiccaabaaaabaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaa
+aaaaiadpdiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaa
+afaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaa
+abaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaafaaaaaabjaaaaafccaabaaa
+abaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaa
+abeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaia
+ebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaa
+egacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaam
+ecaabaaaabaaaaaackiacaaaaaaaaaaaagaaaaaackaabaaaabaaaaaabkiacaia
+ebaaaaaaaaaaaaaaagaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaa
+abaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+bkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaa
+aaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaa
+aaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaa
+aaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaa
+aaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaabaaaaaadicaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaa
+egiccaaaaaaaaaaaabaaaaaaagiacaaaaaaaaaaaagaaaaaadccaaaakhcaabaaa
+abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaa
+diaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab
+"
 }
 
 SubProgram "gles " {
@@ -17724,18 +17772,19 @@ Float 9 [_DetailDist]
 Float 10 [_MinLight]
 Float 11 [_FadeDist]
 Float 12 [_FadeScale]
+Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
 ; 117 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
-def c13, 0.00000000, 1.00000000, 3.14159298, -0.21211439
-def c14, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, 1.04999995, 0.00010000, 0, 0
+def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c19, 1.00999999, 0, 0, 0
 dcl_texcoord0 v0.xyz
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.x
@@ -17758,57 +17807,57 @@ add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r2, r2, -r1
 mad_pp r2, r0.z, r2, r1
-mad r3.y, r0, c15, c15.z
-mad r1.z, r3.y, r0.y, c15.w
-mad r1.z, r1, r0.y, c16.x
-mad r3.y, r1.z, r0, c16
+mad r3.y, r0, c16, c16.z
+mad r1.z, r3.y, r0.y, c16.w
+mad r1.z, r1, r0.y, c17.x
+mad r3.y, r1.z, r0, c17
 mul r1.xy, v4.zxzw, c8.x
 add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r1, r1, -r2
 mad_pp r2, r0.w, r1, r2
-mad r0.y, r3, r0, c16.z
+mad r0.y, r3, r0, c17.z
 mul r0.w, r0.y, r3.x
 add r0.y, r0.x, -r0.z
-add r3.x, -r0.w, c16.w
+add r3.x, -r0.w, c17.w
 cmp r0.z, -r0.y, r0.w, r3.x
-add r0.y, -r0.z, c13.z
+add r0.y, -r0.z, c14.z
 cmp r0.y, v4.x, r0.z, r0
 cmp r0.y, v4.z, r0, -r0
-mad r3.x, r0.y, c17, c17.y
-mad r0.y, r0.x, c14.x, c14
+mad r3.x, r0.y, c18, c18.y
+mad r0.y, r0.x, c15.x, c15
 mul r0.w, v2.x, c9.x
 dp4 r0.z, c2, c2
-add_pp r1, -r2, c13.y
-mul_sat r0.w, r0, c14
+add_pp r1, -r2, c14.y
+mul_sat r0.w, r0, c15
 mad_pp r1, r0.w, r1, r2
 abs r0.w, -v4.y
 rsq r0.z, r0.z
 mul r2.xyz, r0.z, c2
 dp3_sat r2.x, v3, r2
-add r0.z, -r0.x, c13.y
-mad r0.y, r0.x, r0, c13.w
-add r3.y, -r0.w, c13
-mad r2.w, r0, c14.x, c14.y
-mad r2.w, r2, r0, c13
+add r0.z, -r0.x, c14.y
+mad r0.y, r0.x, r0, c14.w
+add r3.y, -r0.w, c14
+mad r2.w, r0, c15.x, c15.y
+mad r2.w, r2, r0, c14
 rsq r0.z, r0.z
 rsq r3.y, r3.y
-mad r0.x, r0, r0.y, c14.z
+mad r0.x, r0, r0.y, c15.z
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v4.z, c13, c13.y
+cmp r0.x, v4.z, c14, c14.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c14.w, r0.y
-mad r0.w, r2, r0, c14.z
+mad r0.z, -r0, c15.w, r0.y
+mad r0.w, r2, r0, c15.z
 rcp r3.y, r3.y
 mul r2.w, r0, r3.y
-cmp r0.w, -v4.y, c13.x, c13.y
+cmp r0.w, -v4.y, c14.x, c14.y
 mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c14.w, r2.w
-mad r0.z, r0.x, c13, r0
-mad r0.x, r0.w, c13.z, r0.y
-mul r0.y, r0.z, c15.x
-mul r3.y, r0.x, c15.x
+mad r0.y, -r3, c15.w, r2.w
+mad r0.z, r0.x, c14, r0
+mad r0.x, r0.w, c14.z, r0.y
+mul r0.y, r0.z, c16.x
+mul r3.y, r0.x, c16.x
 dsx r0.w, r0.y
 dsx r0.xz, v4.xyyw
 mul r0.xz, r0, r0
@@ -17819,19 +17868,19 @@ rsq r0.z, r0.z
 rsq r0.x, r0.x
 rcp r2.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c17.x
-mul r0.x, r2.w, c17
+mul r0.z, r0.x, c18.x
+mul r0.x, r2.w, c18
 dsy r0.y, r0
 texldd r0, r3, s0, r0.zwzw, r0
 add r3.xyz, -v1, c1
 dp3 r2.w, r3, r3
 mul r0, r0, c4
 mul_pp r0, r0, r1
-add_pp r2.x, r2, c17.z
+add_pp r2.x, r2, c18.z
 mul_pp r1.y, r2.x, c3.w
 mov r2.xyz, v0
 add r2.xyz, v1, -r2
-mul_pp_sat r1.w, r1.y, c17
+mul_pp_sat r1.w, r1.y, c18
 mov r1.x, c10
 add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
@@ -17842,7 +17891,7 @@ rsq r1.w, r1.w
 dp3 r2.w, v5, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
-mad r1.w, -r1, c18.x, r2.x
+mad r1.w, -r1, c19.x, r2.x
 add r2.xyz, -v0, c1
 dp3 r2.y, r2, r2
 abs_sat r2.x, r2.w
@@ -17853,7 +17902,7 @@ pow_sat r2, r3.x, c6.x
 mul r2.y, r3, c12.x
 add_sat r2.y, r2, -c11.x
 add r2.x, r2, -r2.y
-mul_sat r1.w, r1, c18.y
+mul_sat r1.w, r1, c13.x
 mad r1.w, r1, r2.x, r2.y
 mul_pp oC0.xyz, r0, r1
 mul_pp oC0.w, r0, r1
@@ -17862,7 +17911,7 @@ mul_pp oC0.w, r0, r1
 
 SubProgram "d3d11 " {
 Keywords { "SPOT" "SHADOWS_OFF" }
-ConstBuffer "$Globals" 176 // 172 used size, 14 vars
+ConstBuffer "$Globals" 176 // 176 used size, 14 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Vector 128 [_DetailOffset] 4
@@ -17873,6 +17922,7 @@ Float 156 [_DetailDist]
 Float 160 [_MinLight]
 Float 164 [_FadeDist]
 Float 168 [_FadeScale]
+Float 172 [_RimDist]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
@@ -17890,7 +17940,7 @@ SetTexture 1 [_DetailTex] 2D 1
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedjmkopjbjplmdbjkcilcngeocgmlholhhabaaaaaabeaoaaaaadaaaaaa
+eefiecedipfmnecajkjidgefkbgcooejlbdcdidjabaaaaaabiaoaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -17900,7 +17950,7 @@ adaaaaaaaeaaaaaaahahaaaaneaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcmeamaaaaeaaaaaaadbadaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaa
 aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaa
 acaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaa
 aaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaa
@@ -17977,32 +18027,32 @@ ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
 egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
 ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
 abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaa
-abaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaaggggigdpakaabaaaabaaaaaa
-dicaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaabhlhnbdibaaaaaah
-ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaa
-abaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaa
-abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaa
-abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
-akiacaaaaaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
-ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
-hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
-baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
-ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
-aaaaaaaaakaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaa
-aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
-dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
-abaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
-aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
-abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
-aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
-aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaa
-agiacaaaaaaaaaaaakaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
-pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
-egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
+abaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaa
+dicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaa
+baaaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaai
+ccaabaaaabaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaai
+ccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaaf
+ccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
+abaaaaaaakiacaaaaaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaa
+abaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadp
+aaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaa
+aeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaa
+elaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaa
+ckiacaaaaaaaaaaaakaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaa
+akaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaa
+abaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaa
+ckaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaa
+acaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaai
+hcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaah
+icaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaa
+aaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaa
+afaaaaaaagiacaaaaaaaaaaaakaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaa
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -18040,18 +18090,19 @@ Float 9 [_DetailDist]
 Float 10 [_MinLight]
 Float 11 [_FadeDist]
 Float 12 [_FadeScale]
+Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
 ; 117 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
-def c13, 0.00000000, 1.00000000, 3.14159298, -0.21211439
-def c14, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, 1.04999995, 0.00010000, 0, 0
+def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c19, 1.00999999, 0, 0, 0
 dcl_texcoord0 v0.xyz
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.x
@@ -18074,57 +18125,57 @@ add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r2, r2, -r1
 mad_pp r2, r0.z, r2, r1
-mad r3.y, r0, c15, c15.z
-mad r1.z, r3.y, r0.y, c15.w
-mad r1.z, r1, r0.y, c16.x
-mad r3.y, r1.z, r0, c16
+mad r3.y, r0, c16, c16.z
+mad r1.z, r3.y, r0.y, c16.w
+mad r1.z, r1, r0.y, c17.x
+mad r3.y, r1.z, r0, c17
 mul r1.xy, v4.zxzw, c8.x
 add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r1, r1, -r2
 mad_pp r2, r0.w, r1, r2
-mad r0.y, r3, r0, c16.z
+mad r0.y, r3, r0, c17.z
 mul r0.w, r0.y, r3.x
 add r0.y, r0.x, -r0.z
-add r3.x, -r0.w, c16.w
+add r3.x, -r0.w, c17.w
 cmp r0.z, -r0.y, r0.w, r3.x
-add r0.y, -r0.z, c13.z
+add r0.y, -r0.z, c14.z
 cmp r0.y, v4.x, r0.z, r0
 cmp r0.y, v4.z, r0, -r0
-mad r3.x, r0.y, c17, c17.y
-mad r0.y, r0.x, c14.x, c14
+mad r3.x, r0.y, c18, c18.y
+mad r0.y, r0.x, c15.x, c15
 mul r0.w, v2.x, c9.x
 dp4 r0.z, c2, c2
-add_pp r1, -r2, c13.y
-mul_sat r0.w, r0, c14
+add_pp r1, -r2, c14.y
+mul_sat r0.w, r0, c15
 mad_pp r1, r0.w, r1, r2
 abs r0.w, -v4.y
 rsq r0.z, r0.z
 mul r2.xyz, r0.z, c2
 dp3_sat r2.x, v3, r2
-add r0.z, -r0.x, c13.y
-mad r0.y, r0.x, r0, c13.w
-add r3.y, -r0.w, c13
-mad r2.w, r0, c14.x, c14.y
-mad r2.w, r2, r0, c13
+add r0.z, -r0.x, c14.y
+mad r0.y, r0.x, r0, c14.w
+add r3.y, -r0.w, c14
+mad r2.w, r0, c15.x, c15.y
+mad r2.w, r2, r0, c14
 rsq r0.z, r0.z
 rsq r3.y, r3.y
-mad r0.x, r0, r0.y, c14.z
+mad r0.x, r0, r0.y, c15.z
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v4.z, c13, c13.y
+cmp r0.x, v4.z, c14, c14.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c14.w, r0.y
-mad r0.w, r2, r0, c14.z
+mad r0.z, -r0, c15.w, r0.y
+mad r0.w, r2, r0, c15.z
 rcp r3.y, r3.y
 mul r2.w, r0, r3.y
-cmp r0.w, -v4.y, c13.x, c13.y
+cmp r0.w, -v4.y, c14.x, c14.y
 mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c14.w, r2.w
-mad r0.z, r0.x, c13, r0
-mad r0.x, r0.w, c13.z, r0.y
-mul r0.y, r0.z, c15.x
-mul r3.y, r0.x, c15.x
+mad r0.y, -r3, c15.w, r2.w
+mad r0.z, r0.x, c14, r0
+mad r0.x, r0.w, c14.z, r0.y
+mul r0.y, r0.z, c16.x
+mul r3.y, r0.x, c16.x
 dsx r0.w, r0.y
 dsx r0.xz, v4.xyyw
 mul r0.xz, r0, r0
@@ -18135,19 +18186,19 @@ rsq r0.z, r0.z
 rsq r0.x, r0.x
 rcp r2.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c17.x
-mul r0.x, r2.w, c17
+mul r0.z, r0.x, c18.x
+mul r0.x, r2.w, c18
 dsy r0.y, r0
 texldd r0, r3, s0, r0.zwzw, r0
 add r3.xyz, -v1, c1
 dp3 r2.w, r3, r3
 mul r0, r0, c4
 mul_pp r0, r0, r1
-add_pp r2.x, r2, c17.z
+add_pp r2.x, r2, c18.z
 mul_pp r1.y, r2.x, c3.w
 mov r2.xyz, v0
 add r2.xyz, v1, -r2
-mul_pp_sat r1.w, r1.y, c17
+mul_pp_sat r1.w, r1.y, c18
 mov r1.x, c10
 add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
@@ -18158,7 +18209,7 @@ rsq r1.w, r1.w
 dp3 r2.w, v5, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
-mad r1.w, -r1, c18.x, r2.x
+mad r1.w, -r1, c19.x, r2.x
 add r2.xyz, -v0, c1
 dp3 r2.y, r2, r2
 abs_sat r2.x, r2.w
@@ -18169,7 +18220,7 @@ pow_sat r2, r3.x, c6.x
 mul r2.y, r3, c12.x
 add_sat r2.y, r2, -c11.x
 add r2.x, r2, -r2.y
-mul_sat r1.w, r1, c18.y
+mul_sat r1.w, r1, c13.x
 mad r1.w, r1, r2.x, r2.y
 mul_pp oC0.xyz, r0, r1
 mul_pp oC0.w, r0, r1
@@ -18178,7 +18229,7 @@ mul_pp oC0.w, r0, r1
 
 SubProgram "d3d11 " {
 Keywords { "POINT_COOKIE" "SHADOWS_OFF" }
-ConstBuffer "$Globals" 176 // 172 used size, 14 vars
+ConstBuffer "$Globals" 176 // 176 used size, 14 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Vector 128 [_DetailOffset] 4
@@ -18189,6 +18240,7 @@ Float 156 [_DetailDist]
 Float 160 [_MinLight]
 Float 164 [_FadeDist]
 Float 168 [_FadeScale]
+Float 172 [_RimDist]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
@@ -18206,7 +18258,7 @@ SetTexture 1 [_DetailTex] 2D 1
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedpcpgfnphhmoglcheedanihfedepeijeiabaaaaaabeaoaaaaadaaaaaa
+eefiecedlbnkoahpilpoigcapngoogndahdpgalcabaaaaaabiaoaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -18216,7 +18268,7 @@ adaaaaaaaeaaaaaaahahaaaaneaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcmeamaaaaeaaaaaaadbadaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaa
 aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaa
 acaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaa
 aaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaa
@@ -18293,32 +18345,32 @@ ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
 egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
 ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
 abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaa
-abaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaaggggigdpakaabaaaabaaaaaa
-dicaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaabhlhnbdibaaaaaah
-ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaa
-abaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaa
-abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaa
-abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
-akiacaaaaaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
-ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
-hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
-baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
-ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
-aaaaaaaaakaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaa
-aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
-dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
-abaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
-aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
-abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
-aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
-aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaa
-agiacaaaaaaaaaaaakaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
-pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
-egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
+abaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaa
+dicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaa
+baaaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaai
+ccaabaaaabaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaai
+ccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaaf
+ccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
+abaaaaaaakiacaaaaaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaa
+abaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadp
+aaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaa
+aeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaa
+elaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaa
+ckiacaaaaaaaaaaaakaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaa
+akaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaa
+abaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaa
+ckaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaa
+acaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaai
+hcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaah
+icaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaa
+aaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaa
+afaaaaaaagiacaaaaaaaaaaaakaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaa
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -18356,18 +18408,19 @@ Float 9 [_DetailDist]
 Float 10 [_MinLight]
 Float 11 [_FadeDist]
 Float 12 [_FadeScale]
+Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
 ; 117 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
-def c13, 0.00000000, 1.00000000, 3.14159298, -0.21211439
-def c14, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, 1.04999995, 0.00010000, 0, 0
+def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c19, 1.00999999, 0, 0, 0
 dcl_texcoord0 v0.xyz
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.x
@@ -18390,57 +18443,57 @@ add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r2, r2, -r1
 mad_pp r2, r0.z, r2, r1
-mad r3.y, r0, c15, c15.z
-mad r1.z, r3.y, r0.y, c15.w
-mad r1.z, r1, r0.y, c16.x
-mad r3.y, r1.z, r0, c16
+mad r3.y, r0, c16, c16.z
+mad r1.z, r3.y, r0.y, c16.w
+mad r1.z, r1, r0.y, c17.x
+mad r3.y, r1.z, r0, c17
 mul r1.xy, v4.zxzw, c8.x
 add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r1, r1, -r2
 mad_pp r2, r0.w, r1, r2
-mad r0.y, r3, r0, c16.z
+mad r0.y, r3, r0, c17.z
 mul r0.w, r0.y, r3.x
 add r0.y, r0.x, -r0.z
-add r3.x, -r0.w, c16.w
+add r3.x, -r0.w, c17.w
 cmp r0.z, -r0.y, r0.w, r3.x
-add r0.y, -r0.z, c13.z
+add r0.y, -r0.z, c14.z
 cmp r0.y, v4.x, r0.z, r0
 cmp r0.y, v4.z, r0, -r0
-mad r3.x, r0.y, c17, c17.y
-mad r0.y, r0.x, c14.x, c14
+mad r3.x, r0.y, c18, c18.y
+mad r0.y, r0.x, c15.x, c15
 mul r0.w, v2.x, c9.x
 dp4_pp r0.z, c2, c2
-add_pp r1, -r2, c13.y
-mul_sat r0.w, r0, c14
+add_pp r1, -r2, c14.y
+mul_sat r0.w, r0, c15
 mad_pp r1, r0.w, r1, r2
 abs r0.w, -v4.y
 rsq_pp r0.z, r0.z
 mul_pp r2.xyz, r0.z, c2
 dp3_sat r2.x, v3, r2
-add r0.z, -r0.x, c13.y
-mad r0.y, r0.x, r0, c13.w
-add r3.y, -r0.w, c13
-mad r2.w, r0, c14.x, c14.y
-mad r2.w, r2, r0, c13
+add r0.z, -r0.x, c14.y
+mad r0.y, r0.x, r0, c14.w
+add r3.y, -r0.w, c14
+mad r2.w, r0, c15.x, c15.y
+mad r2.w, r2, r0, c14
 rsq r0.z, r0.z
 rsq r3.y, r3.y
-mad r0.x, r0, r0.y, c14.z
+mad r0.x, r0, r0.y, c15.z
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v4.z, c13, c13.y
+cmp r0.x, v4.z, c14, c14.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c14.w, r0.y
-mad r0.w, r2, r0, c14.z
+mad r0.z, -r0, c15.w, r0.y
+mad r0.w, r2, r0, c15.z
 rcp r3.y, r3.y
 mul r2.w, r0, r3.y
-cmp r0.w, -v4.y, c13.x, c13.y
+cmp r0.w, -v4.y, c14.x, c14.y
 mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c14.w, r2.w
-mad r0.z, r0.x, c13, r0
-mad r0.x, r0.w, c13.z, r0.y
-mul r0.y, r0.z, c15.x
-mul r3.y, r0.x, c15.x
+mad r0.y, -r3, c15.w, r2.w
+mad r0.z, r0.x, c14, r0
+mad r0.x, r0.w, c14.z, r0.y
+mul r0.y, r0.z, c16.x
+mul r3.y, r0.x, c16.x
 dsx r0.w, r0.y
 dsx r0.xz, v4.xyyw
 mul r0.xz, r0, r0
@@ -18451,19 +18504,19 @@ rsq r0.z, r0.z
 rsq r0.x, r0.x
 rcp r2.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c17.x
-mul r0.x, r2.w, c17
+mul r0.z, r0.x, c18.x
+mul r0.x, r2.w, c18
 dsy r0.y, r0
 texldd r0, r3, s0, r0.zwzw, r0
 add r3.xyz, -v1, c1
 dp3 r2.w, r3, r3
 mul r0, r0, c4
 mul_pp r0, r0, r1
-add_pp r2.x, r2, c17.z
+add_pp r2.x, r2, c18.z
 mul_pp r1.y, r2.x, c3.w
 mov r2.xyz, v0
 add r2.xyz, v1, -r2
-mul_pp_sat r1.w, r1.y, c17
+mul_pp_sat r1.w, r1.y, c18
 mov r1.x, c10
 add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
@@ -18474,7 +18527,7 @@ rsq r1.w, r1.w
 dp3 r2.w, v5, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
-mad r1.w, -r1, c18.x, r2.x
+mad r1.w, -r1, c19.x, r2.x
 add r2.xyz, -v0, c1
 dp3 r2.y, r2, r2
 abs_sat r2.x, r2.w
@@ -18485,7 +18538,7 @@ pow_sat r2, r3.x, c6.x
 mul r2.y, r3, c12.x
 add_sat r2.y, r2, -c11.x
 add r2.x, r2, -r2.y
-mul_sat r1.w, r1, c18.y
+mul_sat r1.w, r1, c13.x
 mad r1.w, r1, r2.x, r2.y
 mul_pp oC0.xyz, r0, r1
 mul_pp oC0.w, r0, r1
@@ -18494,7 +18547,7 @@ mul_pp oC0.w, r0, r1
 
 SubProgram "d3d11 " {
 Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
-ConstBuffer "$Globals" 176 // 172 used size, 14 vars
+ConstBuffer "$Globals" 176 // 176 used size, 14 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Vector 128 [_DetailOffset] 4
@@ -18505,6 +18558,7 @@ Float 156 [_DetailDist]
 Float 160 [_MinLight]
 Float 164 [_FadeDist]
 Float 168 [_FadeScale]
+Float 172 [_RimDist]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
@@ -18522,7 +18576,7 @@ SetTexture 1 [_DetailTex] 2D 1
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedgdnhbefdmiagifgjljkcladgkddfmiagabaaaaaabeaoaaaaadaaaaaa
+eefiecedmlghajnikemmgpmneiekcfeheoncklklabaaaaaabiaoaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -18532,7 +18586,7 @@ adaaaaaaaeaaaaaaahahaaaaneaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaadaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcmeamaaaaeaaaaaaadbadaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaa
 aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaa
 acaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaa
 aaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaa
@@ -18609,32 +18663,32 @@ ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
 egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
 ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
 abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaa
-abaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaaggggigdpakaabaaaabaaaaaa
-dicaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaabhlhnbdibaaaaaah
-ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaa
-abaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaa
-abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaa
-abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
-akiacaaaaaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
-ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
-hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
-baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
-ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
-aaaaaaaaakaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaa
-aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
-dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
-abaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
-aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
-abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
-aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
-aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaa
-agiacaaaaaaaaaaaakaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
-pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
-egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
+abaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaa
+dicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaa
+baaaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaai
+ccaabaaaabaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaai
+ccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaaf
+ccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
+abaaaaaaakiacaaaaaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaa
+abaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadp
+aaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaa
+aeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaa
+elaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaa
+ckiacaaaaaaaaaaaakaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaa
+akaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaa
+abaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaa
+ckaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaa
+acaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaai
+hcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaah
+icaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaa
+aaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaa
+afaaaaaaagiacaaaaaaaaaaaakaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaa
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -18672,18 +18726,19 @@ Float 9 [_DetailDist]
 Float 10 [_MinLight]
 Float 11 [_FadeDist]
 Float 12 [_FadeScale]
+Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
 ; 117 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
-def c13, 0.00000000, 1.00000000, 3.14159298, -0.21211439
-def c14, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, 1.04999995, 0.00010000, 0, 0
+def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c19, 1.00999999, 0, 0, 0
 dcl_texcoord0 v0.xyz
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.x
@@ -18706,57 +18761,57 @@ add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r2, r2, -r1
 mad_pp r2, r0.z, r2, r1
-mad r3.y, r0, c15, c15.z
-mad r1.z, r3.y, r0.y, c15.w
-mad r1.z, r1, r0.y, c16.x
-mad r3.y, r1.z, r0, c16
+mad r3.y, r0, c16, c16.z
+mad r1.z, r3.y, r0.y, c16.w
+mad r1.z, r1, r0.y, c17.x
+mad r3.y, r1.z, r0, c17
 mul r1.xy, v4.zxzw, c8.x
 add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r1, r1, -r2
 mad_pp r2, r0.w, r1, r2
-mad r0.y, r3, r0, c16.z
+mad r0.y, r3, r0, c17.z
 mul r0.w, r0.y, r3.x
 add r0.y, r0.x, -r0.z
-add r3.x, -r0.w, c16.w
+add r3.x, -r0.w, c17.w
 cmp r0.z, -r0.y, r0.w, r3.x
-add r0.y, -r0.z, c13.z
+add r0.y, -r0.z, c14.z
 cmp r0.y, v4.x, r0.z, r0
 cmp r0.y, v4.z, r0, -r0
-mad r3.x, r0.y, c17, c17.y
-mad r0.y, r0.x, c14.x, c14
+mad r3.x, r0.y, c18, c18.y
+mad r0.y, r0.x, c15.x, c15
 mul r0.w, v2.x, c9.x
 dp4 r0.z, c2, c2
-add_pp r1, -r2, c13.y
-mul_sat r0.w, r0, c14
+add_pp r1, -r2, c14.y
+mul_sat r0.w, r0, c15
 mad_pp r1, r0.w, r1, r2
 abs r0.w, -v4.y
 rsq r0.z, r0.z
 mul r2.xyz, r0.z, c2
 dp3_sat r2.x, v3, r2
-add r0.z, -r0.x, c13.y
-mad r0.y, r0.x, r0, c13.w
-add r3.y, -r0.w, c13
-mad r2.w, r0, c14.x, c14.y
-mad r2.w, r2, r0, c13
+add r0.z, -r0.x, c14.y
+mad r0.y, r0.x, r0, c14.w
+add r3.y, -r0.w, c14
+mad r2.w, r0, c15.x, c15.y
+mad r2.w, r2, r0, c14
 rsq r0.z, r0.z
 rsq r3.y, r3.y
-mad r0.x, r0, r0.y, c14.z
+mad r0.x, r0, r0.y, c15.z
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v4.z, c13, c13.y
+cmp r0.x, v4.z, c14, c14.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c14.w, r0.y
-mad r0.w, r2, r0, c14.z
+mad r0.z, -r0, c15.w, r0.y
+mad r0.w, r2, r0, c15.z
 rcp r3.y, r3.y
 mul r2.w, r0, r3.y
-cmp r0.w, -v4.y, c13.x, c13.y
+cmp r0.w, -v4.y, c14.x, c14.y
 mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c14.w, r2.w
-mad r0.z, r0.x, c13, r0
-mad r0.x, r0.w, c13.z, r0.y
-mul r0.y, r0.z, c15.x
-mul r3.y, r0.x, c15.x
+mad r0.y, -r3, c15.w, r2.w
+mad r0.z, r0.x, c14, r0
+mad r0.x, r0.w, c14.z, r0.y
+mul r0.y, r0.z, c16.x
+mul r3.y, r0.x, c16.x
 dsx r0.w, r0.y
 dsx r0.xz, v4.xyyw
 mul r0.xz, r0, r0
@@ -18767,19 +18822,19 @@ rsq r0.z, r0.z
 rsq r0.x, r0.x
 rcp r2.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c17.x
-mul r0.x, r2.w, c17
+mul r0.z, r0.x, c18.x
+mul r0.x, r2.w, c18
 dsy r0.y, r0
 texldd r0, r3, s0, r0.zwzw, r0
 add r3.xyz, -v1, c1
 dp3 r2.w, r3, r3
 mul r0, r0, c4
 mul_pp r0, r0, r1
-add_pp r2.x, r2, c17.z
+add_pp r2.x, r2, c18.z
 mul_pp r1.y, r2.x, c3.w
 mov r2.xyz, v0
 add r2.xyz, v1, -r2
-mul_pp_sat r1.w, r1.y, c17
+mul_pp_sat r1.w, r1.y, c18
 mov r1.x, c10
 add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
@@ -18790,7 +18845,7 @@ rsq r1.w, r1.w
 dp3 r2.w, v5, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
-mad r1.w, -r1, c18.x, r2.x
+mad r1.w, -r1, c19.x, r2.x
 add r2.xyz, -v0, c1
 dp3 r2.y, r2, r2
 abs_sat r2.x, r2.w
@@ -18801,7 +18856,7 @@ pow_sat r2, r3.x, c6.x
 mul r2.y, r3, c12.x
 add_sat r2.y, r2, -c11.x
 add r2.x, r2, -r2.y
-mul_sat r1.w, r1, c18.y
+mul_sat r1.w, r1, c13.x
 mad r1.w, r1, r2.x, r2.y
 mul_pp oC0.xyz, r0, r1
 mul_pp oC0.w, r0, r1
@@ -18810,7 +18865,7 @@ mul_pp oC0.w, r0, r1
 
 SubProgram "d3d11 " {
 Keywords { "SPOT" "SHADOWS_DEPTH" }
-ConstBuffer "$Globals" 176 // 172 used size, 14 vars
+ConstBuffer "$Globals" 176 // 176 used size, 14 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Vector 128 [_DetailOffset] 4
@@ -18821,6 +18876,7 @@ Float 156 [_DetailDist]
 Float 160 [_MinLight]
 Float 164 [_FadeDist]
 Float 168 [_FadeScale]
+Float 172 [_RimDist]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
@@ -18838,7 +18894,7 @@ SetTexture 1 [_DetailTex] 2D 1
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedglghnmcilfcfmncoifhnhhhlllfkekdpabaaaaaacmaoaaaaadaaaaaa
+eefiecedbfadcajkndbcnfdcbjibcecgpcnmciefabaaaaaadaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -18849,7 +18905,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmeamaaaaeaaaaaaadbadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
+fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -18926,32 +18982,32 @@ aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
 aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
-ebaaaaaaabaaaaaaabeaaaaaggggigdpakaabaaaabaaaaaadicaaaahbcaabaaa
-abaaaaaaakaabaaaabaaaaaaabeaaaaabhlhnbdibaaaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaabkaabaia
-ibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-ajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaakaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
-aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
-adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
-afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
-akaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaabaaaaaadoaaaaab"
+ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabaaaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
+bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
+aaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
+ccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaa
+acaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
+ecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaa
+abaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaa
+akaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaaaaaaaaai
+ccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaaj
+icaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
+eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaa
+aaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+aaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaa
+aaaaaaaaakaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -18989,18 +19045,19 @@ Float 9 [_DetailDist]
 Float 10 [_MinLight]
 Float 11 [_FadeDist]
 Float 12 [_FadeScale]
+Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
 ; 117 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
-def c13, 0.00000000, 1.00000000, 3.14159298, -0.21211439
-def c14, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, 1.04999995, 0.00010000, 0, 0
+def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c19, 1.00999999, 0, 0, 0
 dcl_texcoord0 v0.xyz
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.x
@@ -19023,57 +19080,57 @@ add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r2, r2, -r1
 mad_pp r2, r0.z, r2, r1
-mad r3.y, r0, c15, c15.z
-mad r1.z, r3.y, r0.y, c15.w
-mad r1.z, r1, r0.y, c16.x
-mad r3.y, r1.z, r0, c16
+mad r3.y, r0, c16, c16.z
+mad r1.z, r3.y, r0.y, c16.w
+mad r1.z, r1, r0.y, c17.x
+mad r3.y, r1.z, r0, c17
 mul r1.xy, v4.zxzw, c8.x
 add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r1, r1, -r2
 mad_pp r2, r0.w, r1, r2
-mad r0.y, r3, r0, c16.z
+mad r0.y, r3, r0, c17.z
 mul r0.w, r0.y, r3.x
 add r0.y, r0.x, -r0.z
-add r3.x, -r0.w, c16.w
+add r3.x, -r0.w, c17.w
 cmp r0.z, -r0.y, r0.w, r3.x
-add r0.y, -r0.z, c13.z
+add r0.y, -r0.z, c14.z
 cmp r0.y, v4.x, r0.z, r0
 cmp r0.y, v4.z, r0, -r0
-mad r3.x, r0.y, c17, c17.y
-mad r0.y, r0.x, c14.x, c14
+mad r3.x, r0.y, c18, c18.y
+mad r0.y, r0.x, c15.x, c15
 mul r0.w, v2.x, c9.x
 dp4 r0.z, c2, c2
-add_pp r1, -r2, c13.y
-mul_sat r0.w, r0, c14
+add_pp r1, -r2, c14.y
+mul_sat r0.w, r0, c15
 mad_pp r1, r0.w, r1, r2
 abs r0.w, -v4.y
 rsq r0.z, r0.z
 mul r2.xyz, r0.z, c2
 dp3_sat r2.x, v3, r2
-add r0.z, -r0.x, c13.y
-mad r0.y, r0.x, r0, c13.w
-add r3.y, -r0.w, c13
-mad r2.w, r0, c14.x, c14.y
-mad r2.w, r2, r0, c13
+add r0.z, -r0.x, c14.y
+mad r0.y, r0.x, r0, c14.w
+add r3.y, -r0.w, c14
+mad r2.w, r0, c15.x, c15.y
+mad r2.w, r2, r0, c14
 rsq r0.z, r0.z
 rsq r3.y, r3.y
-mad r0.x, r0, r0.y, c14.z
+mad r0.x, r0, r0.y, c15.z
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v4.z, c13, c13.y
+cmp r0.x, v4.z, c14, c14.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c14.w, r0.y
-mad r0.w, r2, r0, c14.z
+mad r0.z, -r0, c15.w, r0.y
+mad r0.w, r2, r0, c15.z
 rcp r3.y, r3.y
 mul r2.w, r0, r3.y
-cmp r0.w, -v4.y, c13.x, c13.y
+cmp r0.w, -v4.y, c14.x, c14.y
 mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c14.w, r2.w
-mad r0.z, r0.x, c13, r0
-mad r0.x, r0.w, c13.z, r0.y
-mul r0.y, r0.z, c15.x
-mul r3.y, r0.x, c15.x
+mad r0.y, -r3, c15.w, r2.w
+mad r0.z, r0.x, c14, r0
+mad r0.x, r0.w, c14.z, r0.y
+mul r0.y, r0.z, c16.x
+mul r3.y, r0.x, c16.x
 dsx r0.w, r0.y
 dsx r0.xz, v4.xyyw
 mul r0.xz, r0, r0
@@ -19084,19 +19141,19 @@ rsq r0.z, r0.z
 rsq r0.x, r0.x
 rcp r2.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c17.x
-mul r0.x, r2.w, c17
+mul r0.z, r0.x, c18.x
+mul r0.x, r2.w, c18
 dsy r0.y, r0
 texldd r0, r3, s0, r0.zwzw, r0
 add r3.xyz, -v1, c1
 dp3 r2.w, r3, r3
 mul r0, r0, c4
 mul_pp r0, r0, r1
-add_pp r2.x, r2, c17.z
+add_pp r2.x, r2, c18.z
 mul_pp r1.y, r2.x, c3.w
 mov r2.xyz, v0
 add r2.xyz, v1, -r2
-mul_pp_sat r1.w, r1.y, c17
+mul_pp_sat r1.w, r1.y, c18
 mov r1.x, c10
 add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
@@ -19107,7 +19164,7 @@ rsq r1.w, r1.w
 dp3 r2.w, v5, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
-mad r1.w, -r1, c18.x, r2.x
+mad r1.w, -r1, c19.x, r2.x
 add r2.xyz, -v0, c1
 dp3 r2.y, r2, r2
 abs_sat r2.x, r2.w
@@ -19118,7 +19175,7 @@ pow_sat r2, r3.x, c6.x
 mul r2.y, r3, c12.x
 add_sat r2.y, r2, -c11.x
 add r2.x, r2, -r2.y
-mul_sat r1.w, r1, c18.y
+mul_sat r1.w, r1, c13.x
 mad r1.w, r1, r2.x, r2.y
 mul_pp oC0.xyz, r0, r1
 mul_pp oC0.w, r0, r1
@@ -19127,7 +19184,7 @@ mul_pp oC0.w, r0, r1
 
 SubProgram "d3d11 " {
 Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-ConstBuffer "$Globals" 176 // 172 used size, 14 vars
+ConstBuffer "$Globals" 176 // 176 used size, 14 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Vector 128 [_DetailOffset] 4
@@ -19138,6 +19195,7 @@ Float 156 [_DetailDist]
 Float 160 [_MinLight]
 Float 164 [_FadeDist]
 Float 168 [_FadeScale]
+Float 172 [_RimDist]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
@@ -19155,7 +19213,7 @@ SetTexture 1 [_DetailTex] 2D 1
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedglghnmcilfcfmncoifhnhhhlllfkekdpabaaaaaacmaoaaaaadaaaaaa
+eefiecedbfadcajkndbcnfdcbjibcecgpcnmciefabaaaaaadaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -19166,7 +19224,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmeamaaaaeaaaaaaadbadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
+fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -19243,32 +19301,32 @@ aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
 aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
-ebaaaaaaabaaaaaaabeaaaaaggggigdpakaabaaaabaaaaaadicaaaahbcaabaaa
-abaaaaaaakaabaaaabaaaaaaabeaaaaabhlhnbdibaaaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaabkaabaia
-ibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-ajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaakaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
-aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
-adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
-afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
-akaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaabaaaaaadoaaaaab"
+ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabaaaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
+bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
+aaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
+ccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaa
+acaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
+ecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaa
+abaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaa
+akaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaaaaaaaaai
+ccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaaj
+icaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
+eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaa
+aaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+aaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaa
+aaaaaaaaakaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19301,18 +19359,19 @@ Float 9 [_DetailDist]
 Float 10 [_MinLight]
 Float 11 [_FadeDist]
 Float 12 [_FadeScale]
+Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
 ; 117 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
-def c13, 0.00000000, 1.00000000, 3.14159298, -0.21211439
-def c14, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, 1.04999995, 0.00010000, 0, 0
+def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c19, 1.00999999, 0, 0, 0
 dcl_texcoord0 v0.xyz
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.x
@@ -19335,57 +19394,57 @@ add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r2, r2, -r1
 mad_pp r2, r0.z, r2, r1
-mad r3.y, r0, c15, c15.z
-mad r1.z, r3.y, r0.y, c15.w
-mad r1.z, r1, r0.y, c16.x
-mad r3.y, r1.z, r0, c16
+mad r3.y, r0, c16, c16.z
+mad r1.z, r3.y, r0.y, c16.w
+mad r1.z, r1, r0.y, c17.x
+mad r3.y, r1.z, r0, c17
 mul r1.xy, v4.zxzw, c8.x
 add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r1, r1, -r2
 mad_pp r2, r0.w, r1, r2
-mad r0.y, r3, r0, c16.z
+mad r0.y, r3, r0, c17.z
 mul r0.w, r0.y, r3.x
 add r0.y, r0.x, -r0.z
-add r3.x, -r0.w, c16.w
+add r3.x, -r0.w, c17.w
 cmp r0.z, -r0.y, r0.w, r3.x
-add r0.y, -r0.z, c13.z
+add r0.y, -r0.z, c14.z
 cmp r0.y, v4.x, r0.z, r0
 cmp r0.y, v4.z, r0, -r0
-mad r3.x, r0.y, c17, c17.y
-mad r0.y, r0.x, c14.x, c14
+mad r3.x, r0.y, c18, c18.y
+mad r0.y, r0.x, c15.x, c15
 mul r0.w, v2.x, c9.x
 dp4_pp r0.z, c2, c2
-add_pp r1, -r2, c13.y
-mul_sat r0.w, r0, c14
+add_pp r1, -r2, c14.y
+mul_sat r0.w, r0, c15
 mad_pp r1, r0.w, r1, r2
 abs r0.w, -v4.y
 rsq_pp r0.z, r0.z
 mul_pp r2.xyz, r0.z, c2
 dp3_sat r2.x, v3, r2
-add r0.z, -r0.x, c13.y
-mad r0.y, r0.x, r0, c13.w
-add r3.y, -r0.w, c13
-mad r2.w, r0, c14.x, c14.y
-mad r2.w, r2, r0, c13
+add r0.z, -r0.x, c14.y
+mad r0.y, r0.x, r0, c14.w
+add r3.y, -r0.w, c14
+mad r2.w, r0, c15.x, c15.y
+mad r2.w, r2, r0, c14
 rsq r0.z, r0.z
 rsq r3.y, r3.y
-mad r0.x, r0, r0.y, c14.z
+mad r0.x, r0, r0.y, c15.z
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v4.z, c13, c13.y
+cmp r0.x, v4.z, c14, c14.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c14.w, r0.y
-mad r0.w, r2, r0, c14.z
+mad r0.z, -r0, c15.w, r0.y
+mad r0.w, r2, r0, c15.z
 rcp r3.y, r3.y
 mul r2.w, r0, r3.y
-cmp r0.w, -v4.y, c13.x, c13.y
+cmp r0.w, -v4.y, c14.x, c14.y
 mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c14.w, r2.w
-mad r0.z, r0.x, c13, r0
-mad r0.x, r0.w, c13.z, r0.y
-mul r0.y, r0.z, c15.x
-mul r3.y, r0.x, c15.x
+mad r0.y, -r3, c15.w, r2.w
+mad r0.z, r0.x, c14, r0
+mad r0.x, r0.w, c14.z, r0.y
+mul r0.y, r0.z, c16.x
+mul r3.y, r0.x, c16.x
 dsx r0.w, r0.y
 dsx r0.xz, v4.xyyw
 mul r0.xz, r0, r0
@@ -19396,19 +19455,19 @@ rsq r0.z, r0.z
 rsq r0.x, r0.x
 rcp r2.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c17.x
-mul r0.x, r2.w, c17
+mul r0.z, r0.x, c18.x
+mul r0.x, r2.w, c18
 dsy r0.y, r0
 texldd r0, r3, s0, r0.zwzw, r0
 add r3.xyz, -v1, c1
 dp3 r2.w, r3, r3
 mul r0, r0, c4
 mul_pp r0, r0, r1
-add_pp r2.x, r2, c17.z
+add_pp r2.x, r2, c18.z
 mul_pp r1.y, r2.x, c3.w
 mov r2.xyz, v0
 add r2.xyz, v1, -r2
-mul_pp_sat r1.w, r1.y, c17
+mul_pp_sat r1.w, r1.y, c18
 mov r1.x, c10
 add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
@@ -19419,7 +19478,7 @@ rsq r1.w, r1.w
 dp3 r2.w, v5, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
-mad r1.w, -r1, c18.x, r2.x
+mad r1.w, -r1, c19.x, r2.x
 add r2.xyz, -v0, c1
 dp3 r2.y, r2, r2
 abs_sat r2.x, r2.w
@@ -19430,7 +19489,7 @@ pow_sat r2, r3.x, c6.x
 mul r2.y, r3, c12.x
 add_sat r2.y, r2, -c11.x
 add r2.x, r2, -r2.y
-mul_sat r1.w, r1, c18.y
+mul_sat r1.w, r1, c13.x
 mad r1.w, r1, r2.x, r2.y
 mul_pp oC0.xyz, r0, r1
 mul_pp oC0.w, r0, r1
@@ -19439,7 +19498,7 @@ mul_pp oC0.w, r0, r1
 
 SubProgram "d3d11 " {
 Keywords { "DIRECTIONAL" "SHADOWS_SCREEN" }
-ConstBuffer "$Globals" 176 // 172 used size, 14 vars
+ConstBuffer "$Globals" 176 // 176 used size, 14 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Vector 128 [_DetailOffset] 4
@@ -19450,6 +19509,7 @@ Float 156 [_DetailDist]
 Float 160 [_MinLight]
 Float 164 [_FadeDist]
 Float 168 [_FadeScale]
+Float 172 [_RimDist]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
@@ -19467,7 +19527,7 @@ SetTexture 1 [_DetailTex] 2D 1
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedjmkopjbjplmdbjkcilcngeocgmlholhhabaaaaaabeaoaaaaadaaaaaa
+eefiecedipfmnecajkjidgefkbgcooejlbdcdidjabaaaaaabiaoaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -19477,7 +19537,7 @@ adaaaaaaaeaaaaaaahahaaaaneaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcmeamaaaaeaaaaaaadbadaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaa
 aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaa
 acaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaa
 aaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaa
@@ -19554,32 +19614,32 @@ ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
 egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
 ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
 abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaa
-abaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaaggggigdpakaabaaaabaaaaaa
-dicaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaabhlhnbdibaaaaaah
-ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaa
-abaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaa
-abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaa
-abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
-akiacaaaaaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
-ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
-hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
-baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
-ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
-aaaaaaaaakaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaa
-aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
-dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
-abaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
-aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
-abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
-aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
-aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaa
-agiacaaaaaaaaaaaakaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
-pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
-egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
+abaaaaaabkaabaiaebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaa
+dicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaa
+baaaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaai
+ccaabaaaabaaaaaabkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaai
+ccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaaf
+ccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
+abaaaaaaakiacaaaaaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaa
+abaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadp
+aaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaa
+aeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaa
+elaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaa
+ckiacaaaaaaaaaaaakaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaa
+akaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaa
+abaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaa
+ckaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaa
+acaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaai
+hcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaah
+icaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaa
+aaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaa
+afaaaaaaagiacaaaaaaaaaaaakaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaa
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19617,18 +19677,19 @@ Float 9 [_DetailDist]
 Float 10 [_MinLight]
 Float 11 [_FadeDist]
 Float 12 [_FadeScale]
+Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
 ; 117 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
-def c13, 0.00000000, 1.00000000, 3.14159298, -0.21211439
-def c14, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, 1.04999995, 0.00010000, 0, 0
+def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c19, 1.00999999, 0, 0, 0
 dcl_texcoord0 v0.xyz
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.x
@@ -19651,57 +19712,57 @@ add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r2, r2, -r1
 mad_pp r2, r0.z, r2, r1
-mad r3.y, r0, c15, c15.z
-mad r1.z, r3.y, r0.y, c15.w
-mad r1.z, r1, r0.y, c16.x
-mad r3.y, r1.z, r0, c16
+mad r3.y, r0, c16, c16.z
+mad r1.z, r3.y, r0.y, c16.w
+mad r1.z, r1, r0.y, c17.x
+mad r3.y, r1.z, r0, c17
 mul r1.xy, v4.zxzw, c8.x
 add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r1, r1, -r2
 mad_pp r2, r0.w, r1, r2
-mad r0.y, r3, r0, c16.z
+mad r0.y, r3, r0, c17.z
 mul r0.w, r0.y, r3.x
 add r0.y, r0.x, -r0.z
-add r3.x, -r0.w, c16.w
+add r3.x, -r0.w, c17.w
 cmp r0.z, -r0.y, r0.w, r3.x
-add r0.y, -r0.z, c13.z
+add r0.y, -r0.z, c14.z
 cmp r0.y, v4.x, r0.z, r0
 cmp r0.y, v4.z, r0, -r0
-mad r3.x, r0.y, c17, c17.y
-mad r0.y, r0.x, c14.x, c14
+mad r3.x, r0.y, c18, c18.y
+mad r0.y, r0.x, c15.x, c15
 mul r0.w, v2.x, c9.x
 dp4_pp r0.z, c2, c2
-add_pp r1, -r2, c13.y
-mul_sat r0.w, r0, c14
+add_pp r1, -r2, c14.y
+mul_sat r0.w, r0, c15
 mad_pp r1, r0.w, r1, r2
 abs r0.w, -v4.y
 rsq_pp r0.z, r0.z
 mul_pp r2.xyz, r0.z, c2
 dp3_sat r2.x, v3, r2
-add r0.z, -r0.x, c13.y
-mad r0.y, r0.x, r0, c13.w
-add r3.y, -r0.w, c13
-mad r2.w, r0, c14.x, c14.y
-mad r2.w, r2, r0, c13
+add r0.z, -r0.x, c14.y
+mad r0.y, r0.x, r0, c14.w
+add r3.y, -r0.w, c14
+mad r2.w, r0, c15.x, c15.y
+mad r2.w, r2, r0, c14
 rsq r0.z, r0.z
 rsq r3.y, r3.y
-mad r0.x, r0, r0.y, c14.z
+mad r0.x, r0, r0.y, c15.z
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v4.z, c13, c13.y
+cmp r0.x, v4.z, c14, c14.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c14.w, r0.y
-mad r0.w, r2, r0, c14.z
+mad r0.z, -r0, c15.w, r0.y
+mad r0.w, r2, r0, c15.z
 rcp r3.y, r3.y
 mul r2.w, r0, r3.y
-cmp r0.w, -v4.y, c13.x, c13.y
+cmp r0.w, -v4.y, c14.x, c14.y
 mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c14.w, r2.w
-mad r0.z, r0.x, c13, r0
-mad r0.x, r0.w, c13.z, r0.y
-mul r0.y, r0.z, c15.x
-mul r3.y, r0.x, c15.x
+mad r0.y, -r3, c15.w, r2.w
+mad r0.z, r0.x, c14, r0
+mad r0.x, r0.w, c14.z, r0.y
+mul r0.y, r0.z, c16.x
+mul r3.y, r0.x, c16.x
 dsx r0.w, r0.y
 dsx r0.xz, v4.xyyw
 mul r0.xz, r0, r0
@@ -19712,19 +19773,19 @@ rsq r0.z, r0.z
 rsq r0.x, r0.x
 rcp r2.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c17.x
-mul r0.x, r2.w, c17
+mul r0.z, r0.x, c18.x
+mul r0.x, r2.w, c18
 dsy r0.y, r0
 texldd r0, r3, s0, r0.zwzw, r0
 add r3.xyz, -v1, c1
 dp3 r2.w, r3, r3
 mul r0, r0, c4
 mul_pp r0, r0, r1
-add_pp r2.x, r2, c17.z
+add_pp r2.x, r2, c18.z
 mul_pp r1.y, r2.x, c3.w
 mov r2.xyz, v0
 add r2.xyz, v1, -r2
-mul_pp_sat r1.w, r1.y, c17
+mul_pp_sat r1.w, r1.y, c18
 mov r1.x, c10
 add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
@@ -19735,7 +19796,7 @@ rsq r1.w, r1.w
 dp3 r2.w, v5, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
-mad r1.w, -r1, c18.x, r2.x
+mad r1.w, -r1, c19.x, r2.x
 add r2.xyz, -v0, c1
 dp3 r2.y, r2, r2
 abs_sat r2.x, r2.w
@@ -19746,7 +19807,7 @@ pow_sat r2, r3.x, c6.x
 mul r2.y, r3, c12.x
 add_sat r2.y, r2, -c11.x
 add r2.x, r2, -r2.y
-mul_sat r1.w, r1, c18.y
+mul_sat r1.w, r1, c13.x
 mad r1.w, r1, r2.x, r2.y
 mul_pp oC0.xyz, r0, r1
 mul_pp oC0.w, r0, r1
@@ -19755,7 +19816,7 @@ mul_pp oC0.w, r0, r1
 
 SubProgram "d3d11 " {
 Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
-ConstBuffer "$Globals" 240 // 236 used size, 15 vars
+ConstBuffer "$Globals" 240 // 240 used size, 15 vars
 Vector 144 [_LightColor0] 4
 Vector 176 [_Color] 4
 Vector 192 [_DetailOffset] 4
@@ -19766,6 +19827,7 @@ Float 220 [_DetailDist]
 Float 224 [_MinLight]
 Float 228 [_FadeDist]
 Float 232 [_FadeScale]
+Float 236 [_RimDist]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
@@ -19783,7 +19845,7 @@ SetTexture 1 [_DetailTex] 2D 1
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedcnbcekoflldipnmgkmeldknpdhcdhlcgabaaaaaacmaoaaaaadaaaaaa
+eefiecedmccloakhmajbpphipajopjaannnljaflabaaaaaadaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -19794,7 +19856,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaadaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmeamaaaaeaaaaaaadbadaaaafjaaaaaeegiocaaaaaaaaaaaapaaaaaa
+fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaapaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -19871,32 +19933,32 @@ aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
 aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
-ebaaaaaaabaaaaaaabeaaaaaggggigdpakaabaaaabaaaaaadicaaaahbcaabaaa
-abaaaaaaakaabaaaabaaaaaaabeaaaaabhlhnbdibaaaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaabkaabaia
-ibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaanaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-anaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaaoaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaaoaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
-aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
-adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
-ajaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaajaaaaaaagiacaaaaaaaaaaa
-aoaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaabaaaaaadoaaaaab"
+ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaaoaaaaaabaaaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
+bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaabkiacaaaaaaaaaaaanaaaaaacpaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
+aaaaaaaaanaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
+ccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaa
+acaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
+ecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaa
+abaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaa
+aoaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaaoaaaaaaaaaaaaai
+ccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaaj
+icaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
+eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaa
+aaaaaaaaajaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+aaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaajaaaaaaagiacaaa
+aaaaaaaaaoaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19934,18 +19996,19 @@ Float 9 [_DetailDist]
 Float 10 [_MinLight]
 Float 11 [_FadeDist]
 Float 12 [_FadeScale]
+Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
 ; 117 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
-def c13, 0.00000000, 1.00000000, 3.14159298, -0.21211439
-def c14, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, 1.04999995, 0.00010000, 0, 0
+def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c19, 1.00999999, 0, 0, 0
 dcl_texcoord0 v0.xyz
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.x
@@ -19968,57 +20031,57 @@ add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r2, r2, -r1
 mad_pp r2, r0.z, r2, r1
-mad r3.y, r0, c15, c15.z
-mad r1.z, r3.y, r0.y, c15.w
-mad r1.z, r1, r0.y, c16.x
-mad r3.y, r1.z, r0, c16
+mad r3.y, r0, c16, c16.z
+mad r1.z, r3.y, r0.y, c16.w
+mad r1.z, r1, r0.y, c17.x
+mad r3.y, r1.z, r0, c17
 mul r1.xy, v4.zxzw, c8.x
 add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r1, r1, -r2
 mad_pp r2, r0.w, r1, r2
-mad r0.y, r3, r0, c16.z
+mad r0.y, r3, r0, c17.z
 mul r0.w, r0.y, r3.x
 add r0.y, r0.x, -r0.z
-add r3.x, -r0.w, c16.w
+add r3.x, -r0.w, c17.w
 cmp r0.z, -r0.y, r0.w, r3.x
-add r0.y, -r0.z, c13.z
+add r0.y, -r0.z, c14.z
 cmp r0.y, v4.x, r0.z, r0
 cmp r0.y, v4.z, r0, -r0
-mad r3.x, r0.y, c17, c17.y
-mad r0.y, r0.x, c14.x, c14
+mad r3.x, r0.y, c18, c18.y
+mad r0.y, r0.x, c15.x, c15
 mul r0.w, v2.x, c9.x
 dp4 r0.z, c2, c2
-add_pp r1, -r2, c13.y
-mul_sat r0.w, r0, c14
+add_pp r1, -r2, c14.y
+mul_sat r0.w, r0, c15
 mad_pp r1, r0.w, r1, r2
 abs r0.w, -v4.y
 rsq r0.z, r0.z
 mul r2.xyz, r0.z, c2
 dp3_sat r2.x, v3, r2
-add r0.z, -r0.x, c13.y
-mad r0.y, r0.x, r0, c13.w
-add r3.y, -r0.w, c13
-mad r2.w, r0, c14.x, c14.y
-mad r2.w, r2, r0, c13
+add r0.z, -r0.x, c14.y
+mad r0.y, r0.x, r0, c14.w
+add r3.y, -r0.w, c14
+mad r2.w, r0, c15.x, c15.y
+mad r2.w, r2, r0, c14
 rsq r0.z, r0.z
 rsq r3.y, r3.y
-mad r0.x, r0, r0.y, c14.z
+mad r0.x, r0, r0.y, c15.z
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v4.z, c13, c13.y
+cmp r0.x, v4.z, c14, c14.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c14.w, r0.y
-mad r0.w, r2, r0, c14.z
+mad r0.z, -r0, c15.w, r0.y
+mad r0.w, r2, r0, c15.z
 rcp r3.y, r3.y
 mul r2.w, r0, r3.y
-cmp r0.w, -v4.y, c13.x, c13.y
+cmp r0.w, -v4.y, c14.x, c14.y
 mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c14.w, r2.w
-mad r0.z, r0.x, c13, r0
-mad r0.x, r0.w, c13.z, r0.y
-mul r0.y, r0.z, c15.x
-mul r3.y, r0.x, c15.x
+mad r0.y, -r3, c15.w, r2.w
+mad r0.z, r0.x, c14, r0
+mad r0.x, r0.w, c14.z, r0.y
+mul r0.y, r0.z, c16.x
+mul r3.y, r0.x, c16.x
 dsx r0.w, r0.y
 dsx r0.xz, v4.xyyw
 mul r0.xz, r0, r0
@@ -20029,19 +20092,19 @@ rsq r0.z, r0.z
 rsq r0.x, r0.x
 rcp r2.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c17.x
-mul r0.x, r2.w, c17
+mul r0.z, r0.x, c18.x
+mul r0.x, r2.w, c18
 dsy r0.y, r0
 texldd r0, r3, s0, r0.zwzw, r0
 add r3.xyz, -v1, c1
 dp3 r2.w, r3, r3
 mul r0, r0, c4
 mul_pp r0, r0, r1
-add_pp r2.x, r2, c17.z
+add_pp r2.x, r2, c18.z
 mul_pp r1.y, r2.x, c3.w
 mov r2.xyz, v0
 add r2.xyz, v1, -r2
-mul_pp_sat r1.w, r1.y, c17
+mul_pp_sat r1.w, r1.y, c18
 mov r1.x, c10
 add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
@@ -20052,7 +20115,7 @@ rsq r1.w, r1.w
 dp3 r2.w, v5, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
-mad r1.w, -r1, c18.x, r2.x
+mad r1.w, -r1, c19.x, r2.x
 add r2.xyz, -v0, c1
 dp3 r2.y, r2, r2
 abs_sat r2.x, r2.w
@@ -20063,7 +20126,7 @@ pow_sat r2, r3.x, c6.x
 mul r2.y, r3, c12.x
 add_sat r2.y, r2, -c11.x
 add r2.x, r2, -r2.y
-mul_sat r1.w, r1, c18.y
+mul_sat r1.w, r1, c13.x
 mad r1.w, r1, r2.x, r2.y
 mul_pp oC0.xyz, r0, r1
 mul_pp oC0.w, r0, r1
@@ -20072,7 +20135,7 @@ mul_pp oC0.w, r0, r1
 
 SubProgram "d3d11 " {
 Keywords { "POINT" "SHADOWS_CUBE" }
-ConstBuffer "$Globals" 176 // 172 used size, 14 vars
+ConstBuffer "$Globals" 176 // 176 used size, 14 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Vector 128 [_DetailOffset] 4
@@ -20083,6 +20146,7 @@ Float 156 [_DetailDist]
 Float 160 [_MinLight]
 Float 164 [_FadeDist]
 Float 168 [_FadeScale]
+Float 172 [_RimDist]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
@@ -20100,7 +20164,7 @@ SetTexture 1 [_DetailTex] 2D 1
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedkoemoldghhmpajfllldbheahghnncgclabaaaaaacmaoaaaaadaaaaaa
+eefiecedlngfphaodlkmjoiopnpfmpmaikmjkmhgabaaaaaadaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -20111,7 +20175,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaahaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmeamaaaaeaaaaaaadbadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
+fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -20188,32 +20252,32 @@ aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
 aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
-ebaaaaaaabaaaaaaabeaaaaaggggigdpakaabaaaabaaaaaadicaaaahbcaabaaa
-abaaaaaaakaabaaaabaaaaaaabeaaaaabhlhnbdibaaaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaabkaabaia
-ibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-ajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaakaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
-aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
-adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
-afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
-akaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaabaaaaaadoaaaaab"
+ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabaaaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
+bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
+aaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
+ccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaa
+acaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
+ecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaa
+abaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaa
+akaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaaaaaaaaai
+ccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaaj
+icaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
+eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaa
+aaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+aaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaa
+aaaaaaaaakaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -20251,18 +20315,19 @@ Float 9 [_DetailDist]
 Float 10 [_MinLight]
 Float 11 [_FadeDist]
 Float 12 [_FadeScale]
+Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
 ; 117 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
-def c13, 0.00000000, 1.00000000, 3.14159298, -0.21211439
-def c14, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, 1.04999995, 0.00010000, 0, 0
+def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c19, 1.00999999, 0, 0, 0
 dcl_texcoord0 v0.xyz
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.x
@@ -20285,57 +20350,57 @@ add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r2, r2, -r1
 mad_pp r2, r0.z, r2, r1
-mad r3.y, r0, c15, c15.z
-mad r1.z, r3.y, r0.y, c15.w
-mad r1.z, r1, r0.y, c16.x
-mad r3.y, r1.z, r0, c16
+mad r3.y, r0, c16, c16.z
+mad r1.z, r3.y, r0.y, c16.w
+mad r1.z, r1, r0.y, c17.x
+mad r3.y, r1.z, r0, c17
 mul r1.xy, v4.zxzw, c8.x
 add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r1, r1, -r2
 mad_pp r2, r0.w, r1, r2
-mad r0.y, r3, r0, c16.z
+mad r0.y, r3, r0, c17.z
 mul r0.w, r0.y, r3.x
 add r0.y, r0.x, -r0.z
-add r3.x, -r0.w, c16.w
+add r3.x, -r0.w, c17.w
 cmp r0.z, -r0.y, r0.w, r3.x
-add r0.y, -r0.z, c13.z
+add r0.y, -r0.z, c14.z
 cmp r0.y, v4.x, r0.z, r0
 cmp r0.y, v4.z, r0, -r0
-mad r3.x, r0.y, c17, c17.y
-mad r0.y, r0.x, c14.x, c14
+mad r3.x, r0.y, c18, c18.y
+mad r0.y, r0.x, c15.x, c15
 mul r0.w, v2.x, c9.x
 dp4 r0.z, c2, c2
-add_pp r1, -r2, c13.y
-mul_sat r0.w, r0, c14
+add_pp r1, -r2, c14.y
+mul_sat r0.w, r0, c15
 mad_pp r1, r0.w, r1, r2
 abs r0.w, -v4.y
 rsq r0.z, r0.z
 mul r2.xyz, r0.z, c2
 dp3_sat r2.x, v3, r2
-add r0.z, -r0.x, c13.y
-mad r0.y, r0.x, r0, c13.w
-add r3.y, -r0.w, c13
-mad r2.w, r0, c14.x, c14.y
-mad r2.w, r2, r0, c13
+add r0.z, -r0.x, c14.y
+mad r0.y, r0.x, r0, c14.w
+add r3.y, -r0.w, c14
+mad r2.w, r0, c15.x, c15.y
+mad r2.w, r2, r0, c14
 rsq r0.z, r0.z
 rsq r3.y, r3.y
-mad r0.x, r0, r0.y, c14.z
+mad r0.x, r0, r0.y, c15.z
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v4.z, c13, c13.y
+cmp r0.x, v4.z, c14, c14.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c14.w, r0.y
-mad r0.w, r2, r0, c14.z
+mad r0.z, -r0, c15.w, r0.y
+mad r0.w, r2, r0, c15.z
 rcp r3.y, r3.y
 mul r2.w, r0, r3.y
-cmp r0.w, -v4.y, c13.x, c13.y
+cmp r0.w, -v4.y, c14.x, c14.y
 mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c14.w, r2.w
-mad r0.z, r0.x, c13, r0
-mad r0.x, r0.w, c13.z, r0.y
-mul r0.y, r0.z, c15.x
-mul r3.y, r0.x, c15.x
+mad r0.y, -r3, c15.w, r2.w
+mad r0.z, r0.x, c14, r0
+mad r0.x, r0.w, c14.z, r0.y
+mul r0.y, r0.z, c16.x
+mul r3.y, r0.x, c16.x
 dsx r0.w, r0.y
 dsx r0.xz, v4.xyyw
 mul r0.xz, r0, r0
@@ -20346,19 +20411,19 @@ rsq r0.z, r0.z
 rsq r0.x, r0.x
 rcp r2.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c17.x
-mul r0.x, r2.w, c17
+mul r0.z, r0.x, c18.x
+mul r0.x, r2.w, c18
 dsy r0.y, r0
 texldd r0, r3, s0, r0.zwzw, r0
 add r3.xyz, -v1, c1
 dp3 r2.w, r3, r3
 mul r0, r0, c4
 mul_pp r0, r0, r1
-add_pp r2.x, r2, c17.z
+add_pp r2.x, r2, c18.z
 mul_pp r1.y, r2.x, c3.w
 mov r2.xyz, v0
 add r2.xyz, v1, -r2
-mul_pp_sat r1.w, r1.y, c17
+mul_pp_sat r1.w, r1.y, c18
 mov r1.x, c10
 add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
@@ -20369,7 +20434,7 @@ rsq r1.w, r1.w
 dp3 r2.w, v5, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
-mad r1.w, -r1, c18.x, r2.x
+mad r1.w, -r1, c19.x, r2.x
 add r2.xyz, -v0, c1
 dp3 r2.y, r2, r2
 abs_sat r2.x, r2.w
@@ -20380,7 +20445,7 @@ pow_sat r2, r3.x, c6.x
 mul r2.y, r3, c12.x
 add_sat r2.y, r2, -c11.x
 add r2.x, r2, -r2.y
-mul_sat r1.w, r1, c18.y
+mul_sat r1.w, r1, c13.x
 mad r1.w, r1, r2.x, r2.y
 mul_pp oC0.xyz, r0, r1
 mul_pp oC0.w, r0, r1
@@ -20389,7 +20454,7 @@ mul_pp oC0.w, r0, r1
 
 SubProgram "d3d11 " {
 Keywords { "POINT_COOKIE" "SHADOWS_CUBE" }
-ConstBuffer "$Globals" 176 // 172 used size, 14 vars
+ConstBuffer "$Globals" 176 // 176 used size, 14 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Vector 128 [_DetailOffset] 4
@@ -20400,6 +20465,7 @@ Float 156 [_DetailDist]
 Float 160 [_MinLight]
 Float 164 [_FadeDist]
 Float 168 [_FadeScale]
+Float 172 [_RimDist]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
@@ -20417,7 +20483,7 @@ SetTexture 1 [_DetailTex] 2D 1
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedkoemoldghhmpajfllldbheahghnncgclabaaaaaacmaoaaaaadaaaaaa
+eefiecedlngfphaodlkmjoiopnpfmpmaikmjkmhgabaaaaaadaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -20428,7 +20494,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaahaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmeamaaaaeaaaaaaadbadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
+fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -20505,32 +20571,32 @@ aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
 aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
-ebaaaaaaabaaaaaaabeaaaaaggggigdpakaabaaaabaaaaaadicaaaahbcaabaaa
-abaaaaaaakaabaaaabaaaaaaabeaaaaabhlhnbdibaaaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaabkaabaia
-ibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-ajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaakaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
-aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
-adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
-afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
-akaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaabaaaaaadoaaaaab"
+ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabaaaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
+bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
+aaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
+ccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaa
+acaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
+ecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaa
+abaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaa
+akaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaaaaaaaaai
+ccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaaj
+icaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
+eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaa
+aaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+aaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaa
+aaaaaaaaakaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -20568,18 +20634,19 @@ Float 9 [_DetailDist]
 Float 10 [_MinLight]
 Float 11 [_FadeDist]
 Float 12 [_FadeScale]
+Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
 ; 117 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
-def c13, 0.00000000, 1.00000000, 3.14159298, -0.21211439
-def c14, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, 1.04999995, 0.00010000, 0, 0
+def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c19, 1.00999999, 0, 0, 0
 dcl_texcoord0 v0.xyz
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.x
@@ -20602,57 +20669,57 @@ add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r2, r2, -r1
 mad_pp r2, r0.z, r2, r1
-mad r3.y, r0, c15, c15.z
-mad r1.z, r3.y, r0.y, c15.w
-mad r1.z, r1, r0.y, c16.x
-mad r3.y, r1.z, r0, c16
+mad r3.y, r0, c16, c16.z
+mad r1.z, r3.y, r0.y, c16.w
+mad r1.z, r1, r0.y, c17.x
+mad r3.y, r1.z, r0, c17
 mul r1.xy, v4.zxzw, c8.x
 add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r1, r1, -r2
 mad_pp r2, r0.w, r1, r2
-mad r0.y, r3, r0, c16.z
+mad r0.y, r3, r0, c17.z
 mul r0.w, r0.y, r3.x
 add r0.y, r0.x, -r0.z
-add r3.x, -r0.w, c16.w
+add r3.x, -r0.w, c17.w
 cmp r0.z, -r0.y, r0.w, r3.x
-add r0.y, -r0.z, c13.z
+add r0.y, -r0.z, c14.z
 cmp r0.y, v4.x, r0.z, r0
 cmp r0.y, v4.z, r0, -r0
-mad r3.x, r0.y, c17, c17.y
-mad r0.y, r0.x, c14.x, c14
+mad r3.x, r0.y, c18, c18.y
+mad r0.y, r0.x, c15.x, c15
 mul r0.w, v2.x, c9.x
 dp4 r0.z, c2, c2
-add_pp r1, -r2, c13.y
-mul_sat r0.w, r0, c14
+add_pp r1, -r2, c14.y
+mul_sat r0.w, r0, c15
 mad_pp r1, r0.w, r1, r2
 abs r0.w, -v4.y
 rsq r0.z, r0.z
 mul r2.xyz, r0.z, c2
 dp3_sat r2.x, v3, r2
-add r0.z, -r0.x, c13.y
-mad r0.y, r0.x, r0, c13.w
-add r3.y, -r0.w, c13
-mad r2.w, r0, c14.x, c14.y
-mad r2.w, r2, r0, c13
+add r0.z, -r0.x, c14.y
+mad r0.y, r0.x, r0, c14.w
+add r3.y, -r0.w, c14
+mad r2.w, r0, c15.x, c15.y
+mad r2.w, r2, r0, c14
 rsq r0.z, r0.z
 rsq r3.y, r3.y
-mad r0.x, r0, r0.y, c14.z
+mad r0.x, r0, r0.y, c15.z
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v4.z, c13, c13.y
+cmp r0.x, v4.z, c14, c14.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c14.w, r0.y
-mad r0.w, r2, r0, c14.z
+mad r0.z, -r0, c15.w, r0.y
+mad r0.w, r2, r0, c15.z
 rcp r3.y, r3.y
 mul r2.w, r0, r3.y
-cmp r0.w, -v4.y, c13.x, c13.y
+cmp r0.w, -v4.y, c14.x, c14.y
 mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c14.w, r2.w
-mad r0.z, r0.x, c13, r0
-mad r0.x, r0.w, c13.z, r0.y
-mul r0.y, r0.z, c15.x
-mul r3.y, r0.x, c15.x
+mad r0.y, -r3, c15.w, r2.w
+mad r0.z, r0.x, c14, r0
+mad r0.x, r0.w, c14.z, r0.y
+mul r0.y, r0.z, c16.x
+mul r3.y, r0.x, c16.x
 dsx r0.w, r0.y
 dsx r0.xz, v4.xyyw
 mul r0.xz, r0, r0
@@ -20663,19 +20730,19 @@ rsq r0.z, r0.z
 rsq r0.x, r0.x
 rcp r2.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c17.x
-mul r0.x, r2.w, c17
+mul r0.z, r0.x, c18.x
+mul r0.x, r2.w, c18
 dsy r0.y, r0
 texldd r0, r3, s0, r0.zwzw, r0
 add r3.xyz, -v1, c1
 dp3 r2.w, r3, r3
 mul r0, r0, c4
 mul_pp r0, r0, r1
-add_pp r2.x, r2, c17.z
+add_pp r2.x, r2, c18.z
 mul_pp r1.y, r2.x, c3.w
 mov r2.xyz, v0
 add r2.xyz, v1, -r2
-mul_pp_sat r1.w, r1.y, c17
+mul_pp_sat r1.w, r1.y, c18
 mov r1.x, c10
 add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
@@ -20686,7 +20753,7 @@ rsq r1.w, r1.w
 dp3 r2.w, v5, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
-mad r1.w, -r1, c18.x, r2.x
+mad r1.w, -r1, c19.x, r2.x
 add r2.xyz, -v0, c1
 dp3 r2.y, r2, r2
 abs_sat r2.x, r2.w
@@ -20697,7 +20764,7 @@ pow_sat r2, r3.x, c6.x
 mul r2.y, r3, c12.x
 add_sat r2.y, r2, -c11.x
 add r2.x, r2, -r2.y
-mul_sat r1.w, r1, c18.y
+mul_sat r1.w, r1, c13.x
 mad r1.w, r1, r2.x, r2.y
 mul_pp oC0.xyz, r0, r1
 mul_pp oC0.w, r0, r1
@@ -20706,7 +20773,7 @@ mul_pp oC0.w, r0, r1
 
 SubProgram "d3d11 " {
 Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
-ConstBuffer "$Globals" 240 // 236 used size, 15 vars
+ConstBuffer "$Globals" 240 // 240 used size, 15 vars
 Vector 144 [_LightColor0] 4
 Vector 176 [_Color] 4
 Vector 192 [_DetailOffset] 4
@@ -20717,6 +20784,7 @@ Float 220 [_DetailDist]
 Float 224 [_MinLight]
 Float 228 [_FadeDist]
 Float 232 [_FadeScale]
+Float 236 [_RimDist]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
@@ -20734,7 +20802,7 @@ SetTexture 1 [_DetailTex] 2D 1
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedibonnlmjhfhpbnabfiaemjijdffeicieabaaaaaacmaoaaaaadaaaaaa
+eefiecediadjoopgicgacbpkemkgaejoofoiijmeabaaaaaadaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -20745,7 +20813,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmeamaaaaeaaaaaaadbadaaaafjaaaaaeegiocaaaaaaaaaaaapaaaaaa
+fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaapaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -20822,32 +20890,32 @@ aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
 aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
-ebaaaaaaabaaaaaaabeaaaaaggggigdpakaabaaaabaaaaaadicaaaahbcaabaaa
-abaaaaaaakaabaaaabaaaaaaabeaaaaabhlhnbdibaaaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaabkaabaia
-ibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaanaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-anaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaaoaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaaoaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
-aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
-adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
-ajaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaajaaaaaaagiacaaaaaaaaaaa
-aoaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaabaaaaaadoaaaaab"
+ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaaoaaaaaabaaaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
+bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaabkiacaaaaaaaaaaaanaaaaaacpaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
+aaaaaaaaanaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
+ccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaa
+acaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
+ecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaa
+abaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaa
+aoaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaaoaaaaaaaaaaaaai
+ccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaaj
+icaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
+eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaa
+aaaaaaaaajaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+aaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaajaaaaaaagiacaaa
+aaaaaaaaaoaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -20885,18 +20953,19 @@ Float 9 [_DetailDist]
 Float 10 [_MinLight]
 Float 11 [_FadeDist]
 Float 12 [_FadeScale]
+Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
 ; 117 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
-def c13, 0.00000000, 1.00000000, 3.14159298, -0.21211439
-def c14, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, 1.04999995, 0.00010000, 0, 0
+def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c19, 1.00999999, 0, 0, 0
 dcl_texcoord0 v0.xyz
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.x
@@ -20919,57 +20988,57 @@ add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r2, r2, -r1
 mad_pp r2, r0.z, r2, r1
-mad r3.y, r0, c15, c15.z
-mad r1.z, r3.y, r0.y, c15.w
-mad r1.z, r1, r0.y, c16.x
-mad r3.y, r1.z, r0, c16
+mad r3.y, r0, c16, c16.z
+mad r1.z, r3.y, r0.y, c16.w
+mad r1.z, r1, r0.y, c17.x
+mad r3.y, r1.z, r0, c17
 mul r1.xy, v4.zxzw, c8.x
 add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r1, r1, -r2
 mad_pp r2, r0.w, r1, r2
-mad r0.y, r3, r0, c16.z
+mad r0.y, r3, r0, c17.z
 mul r0.w, r0.y, r3.x
 add r0.y, r0.x, -r0.z
-add r3.x, -r0.w, c16.w
+add r3.x, -r0.w, c17.w
 cmp r0.z, -r0.y, r0.w, r3.x
-add r0.y, -r0.z, c13.z
+add r0.y, -r0.z, c14.z
 cmp r0.y, v4.x, r0.z, r0
 cmp r0.y, v4.z, r0, -r0
-mad r3.x, r0.y, c17, c17.y
-mad r0.y, r0.x, c14.x, c14
+mad r3.x, r0.y, c18, c18.y
+mad r0.y, r0.x, c15.x, c15
 mul r0.w, v2.x, c9.x
 dp4 r0.z, c2, c2
-add_pp r1, -r2, c13.y
-mul_sat r0.w, r0, c14
+add_pp r1, -r2, c14.y
+mul_sat r0.w, r0, c15
 mad_pp r1, r0.w, r1, r2
 abs r0.w, -v4.y
 rsq r0.z, r0.z
 mul r2.xyz, r0.z, c2
 dp3_sat r2.x, v3, r2
-add r0.z, -r0.x, c13.y
-mad r0.y, r0.x, r0, c13.w
-add r3.y, -r0.w, c13
-mad r2.w, r0, c14.x, c14.y
-mad r2.w, r2, r0, c13
+add r0.z, -r0.x, c14.y
+mad r0.y, r0.x, r0, c14.w
+add r3.y, -r0.w, c14
+mad r2.w, r0, c15.x, c15.y
+mad r2.w, r2, r0, c14
 rsq r0.z, r0.z
 rsq r3.y, r3.y
-mad r0.x, r0, r0.y, c14.z
+mad r0.x, r0, r0.y, c15.z
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v4.z, c13, c13.y
+cmp r0.x, v4.z, c14, c14.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c14.w, r0.y
-mad r0.w, r2, r0, c14.z
+mad r0.z, -r0, c15.w, r0.y
+mad r0.w, r2, r0, c15.z
 rcp r3.y, r3.y
 mul r2.w, r0, r3.y
-cmp r0.w, -v4.y, c13.x, c13.y
+cmp r0.w, -v4.y, c14.x, c14.y
 mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c14.w, r2.w
-mad r0.z, r0.x, c13, r0
-mad r0.x, r0.w, c13.z, r0.y
-mul r0.y, r0.z, c15.x
-mul r3.y, r0.x, c15.x
+mad r0.y, -r3, c15.w, r2.w
+mad r0.z, r0.x, c14, r0
+mad r0.x, r0.w, c14.z, r0.y
+mul r0.y, r0.z, c16.x
+mul r3.y, r0.x, c16.x
 dsx r0.w, r0.y
 dsx r0.xz, v4.xyyw
 mul r0.xz, r0, r0
@@ -20980,19 +21049,19 @@ rsq r0.z, r0.z
 rsq r0.x, r0.x
 rcp r2.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c17.x
-mul r0.x, r2.w, c17
+mul r0.z, r0.x, c18.x
+mul r0.x, r2.w, c18
 dsy r0.y, r0
 texldd r0, r3, s0, r0.zwzw, r0
 add r3.xyz, -v1, c1
 dp3 r2.w, r3, r3
 mul r0, r0, c4
 mul_pp r0, r0, r1
-add_pp r2.x, r2, c17.z
+add_pp r2.x, r2, c18.z
 mul_pp r1.y, r2.x, c3.w
 mov r2.xyz, v0
 add r2.xyz, v1, -r2
-mul_pp_sat r1.w, r1.y, c17
+mul_pp_sat r1.w, r1.y, c18
 mov r1.x, c10
 add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
@@ -21003,7 +21072,7 @@ rsq r1.w, r1.w
 dp3 r2.w, v5, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
-mad r1.w, -r1, c18.x, r2.x
+mad r1.w, -r1, c19.x, r2.x
 add r2.xyz, -v0, c1
 dp3 r2.y, r2, r2
 abs_sat r2.x, r2.w
@@ -21014,7 +21083,7 @@ pow_sat r2, r3.x, c6.x
 mul r2.y, r3, c12.x
 add_sat r2.y, r2, -c11.x
 add r2.x, r2, -r2.y
-mul_sat r1.w, r1, c18.y
+mul_sat r1.w, r1, c13.x
 mad r1.w, r1, r2.x, r2.y
 mul_pp oC0.xyz, r0, r1
 mul_pp oC0.w, r0, r1
@@ -21023,7 +21092,7 @@ mul_pp oC0.w, r0, r1
 
 SubProgram "d3d11 " {
 Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
-ConstBuffer "$Globals" 240 // 236 used size, 15 vars
+ConstBuffer "$Globals" 240 // 240 used size, 15 vars
 Vector 144 [_LightColor0] 4
 Vector 176 [_Color] 4
 Vector 192 [_DetailOffset] 4
@@ -21034,6 +21103,7 @@ Float 220 [_DetailDist]
 Float 224 [_MinLight]
 Float 228 [_FadeDist]
 Float 232 [_FadeScale]
+Float 236 [_RimDist]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
@@ -21051,7 +21121,7 @@ SetTexture 1 [_DetailTex] 2D 1
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedibonnlmjhfhpbnabfiaemjijdffeicieabaaaaaacmaoaaaaadaaaaaa
+eefiecediadjoopgicgacbpkemkgaejoofoiijmeabaaaaaadaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -21062,7 +21132,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmeamaaaaeaaaaaaadbadaaaafjaaaaaeegiocaaaaaaaaaaaapaaaaaa
+fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaapaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -21139,32 +21209,32 @@ aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
 aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
-ebaaaaaaabaaaaaaabeaaaaaggggigdpakaabaaaabaaaaaadicaaaahbcaabaaa
-abaaaaaaakaabaaaabaaaaaaabeaaaaabhlhnbdibaaaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaabkaabaia
-ibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaanaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-anaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaaoaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaaoaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
-aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
-adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
-ajaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaajaaaaaaagiacaaaaaaaaaaa
-aoaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaabaaaaaadoaaaaab"
+ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaaoaaaaaabaaaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
+bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaabkiacaaaaaaaaaaaanaaaaaacpaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
+aaaaaaaaanaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
+ccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaa
+acaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
+ecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaa
+abaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaa
+aoaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaaoaaaaaaaaaaaaai
+ccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaaj
+icaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
+eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaa
+aaaaaaaaajaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+aaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaajaaaaaaagiacaaa
+aaaaaaaaaoaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -21197,18 +21267,19 @@ Float 9 [_DetailDist]
 Float 10 [_MinLight]
 Float 11 [_FadeDist]
 Float 12 [_FadeScale]
+Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
 ; 117 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
-def c13, 0.00000000, 1.00000000, 3.14159298, -0.21211439
-def c14, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, 1.04999995, 0.00010000, 0, 0
+def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c19, 1.00999999, 0, 0, 0
 dcl_texcoord0 v0.xyz
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.x
@@ -21231,57 +21302,57 @@ add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r2, r2, -r1
 mad_pp r2, r0.z, r2, r1
-mad r3.y, r0, c15, c15.z
-mad r1.z, r3.y, r0.y, c15.w
-mad r1.z, r1, r0.y, c16.x
-mad r3.y, r1.z, r0, c16
+mad r3.y, r0, c16, c16.z
+mad r1.z, r3.y, r0.y, c16.w
+mad r1.z, r1, r0.y, c17.x
+mad r3.y, r1.z, r0, c17
 mul r1.xy, v4.zxzw, c8.x
 add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r1, r1, -r2
 mad_pp r2, r0.w, r1, r2
-mad r0.y, r3, r0, c16.z
+mad r0.y, r3, r0, c17.z
 mul r0.w, r0.y, r3.x
 add r0.y, r0.x, -r0.z
-add r3.x, -r0.w, c16.w
+add r3.x, -r0.w, c17.w
 cmp r0.z, -r0.y, r0.w, r3.x
-add r0.y, -r0.z, c13.z
+add r0.y, -r0.z, c14.z
 cmp r0.y, v4.x, r0.z, r0
 cmp r0.y, v4.z, r0, -r0
-mad r3.x, r0.y, c17, c17.y
-mad r0.y, r0.x, c14.x, c14
+mad r3.x, r0.y, c18, c18.y
+mad r0.y, r0.x, c15.x, c15
 mul r0.w, v2.x, c9.x
 dp4 r0.z, c2, c2
-add_pp r1, -r2, c13.y
-mul_sat r0.w, r0, c14
+add_pp r1, -r2, c14.y
+mul_sat r0.w, r0, c15
 mad_pp r1, r0.w, r1, r2
 abs r0.w, -v4.y
 rsq r0.z, r0.z
 mul r2.xyz, r0.z, c2
 dp3_sat r2.x, v3, r2
-add r0.z, -r0.x, c13.y
-mad r0.y, r0.x, r0, c13.w
-add r3.y, -r0.w, c13
-mad r2.w, r0, c14.x, c14.y
-mad r2.w, r2, r0, c13
+add r0.z, -r0.x, c14.y
+mad r0.y, r0.x, r0, c14.w
+add r3.y, -r0.w, c14
+mad r2.w, r0, c15.x, c15.y
+mad r2.w, r2, r0, c14
 rsq r0.z, r0.z
 rsq r3.y, r3.y
-mad r0.x, r0, r0.y, c14.z
+mad r0.x, r0, r0.y, c15.z
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v4.z, c13, c13.y
+cmp r0.x, v4.z, c14, c14.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c14.w, r0.y
-mad r0.w, r2, r0, c14.z
+mad r0.z, -r0, c15.w, r0.y
+mad r0.w, r2, r0, c15.z
 rcp r3.y, r3.y
 mul r2.w, r0, r3.y
-cmp r0.w, -v4.y, c13.x, c13.y
+cmp r0.w, -v4.y, c14.x, c14.y
 mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c14.w, r2.w
-mad r0.z, r0.x, c13, r0
-mad r0.x, r0.w, c13.z, r0.y
-mul r0.y, r0.z, c15.x
-mul r3.y, r0.x, c15.x
+mad r0.y, -r3, c15.w, r2.w
+mad r0.z, r0.x, c14, r0
+mad r0.x, r0.w, c14.z, r0.y
+mul r0.y, r0.z, c16.x
+mul r3.y, r0.x, c16.x
 dsx r0.w, r0.y
 dsx r0.xz, v4.xyyw
 mul r0.xz, r0, r0
@@ -21292,19 +21363,19 @@ rsq r0.z, r0.z
 rsq r0.x, r0.x
 rcp r2.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c17.x
-mul r0.x, r2.w, c17
+mul r0.z, r0.x, c18.x
+mul r0.x, r2.w, c18
 dsy r0.y, r0
 texldd r0, r3, s0, r0.zwzw, r0
 add r3.xyz, -v1, c1
 dp3 r2.w, r3, r3
 mul r0, r0, c4
 mul_pp r0, r0, r1
-add_pp r2.x, r2, c17.z
+add_pp r2.x, r2, c18.z
 mul_pp r1.y, r2.x, c3.w
 mov r2.xyz, v0
 add r2.xyz, v1, -r2
-mul_pp_sat r1.w, r1.y, c17
+mul_pp_sat r1.w, r1.y, c18
 mov r1.x, c10
 add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
@@ -21315,7 +21386,7 @@ rsq r1.w, r1.w
 dp3 r2.w, v5, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
-mad r1.w, -r1, c18.x, r2.x
+mad r1.w, -r1, c19.x, r2.x
 add r2.xyz, -v0, c1
 dp3 r2.y, r2, r2
 abs_sat r2.x, r2.w
@@ -21326,7 +21397,7 @@ pow_sat r2, r3.x, c6.x
 mul r2.y, r3, c12.x
 add_sat r2.y, r2, -c11.x
 add r2.x, r2, -r2.y
-mul_sat r1.w, r1, c18.y
+mul_sat r1.w, r1, c13.x
 mad r1.w, r1, r2.x, r2.y
 mul_pp oC0.xyz, r0, r1
 mul_pp oC0.w, r0, r1
@@ -21335,7 +21406,7 @@ mul_pp oC0.w, r0, r1
 
 SubProgram "d3d11 " {
 Keywords { "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-ConstBuffer "$Globals" 176 // 172 used size, 14 vars
+ConstBuffer "$Globals" 176 // 176 used size, 14 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Vector 128 [_DetailOffset] 4
@@ -21346,6 +21417,7 @@ Float 156 [_DetailDist]
 Float 160 [_MinLight]
 Float 164 [_FadeDist]
 Float 168 [_FadeScale]
+Float 172 [_RimDist]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
@@ -21363,7 +21435,7 @@ SetTexture 1 [_DetailTex] 2D 1
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedkoemoldghhmpajfllldbheahghnncgclabaaaaaacmaoaaaaadaaaaaa
+eefiecedlngfphaodlkmjoiopnpfmpmaikmjkmhgabaaaaaadaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -21374,7 +21446,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaahaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmeamaaaaeaaaaaaadbadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
+fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -21451,32 +21523,32 @@ aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
 aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
-ebaaaaaaabaaaaaaabeaaaaaggggigdpakaabaaaabaaaaaadicaaaahbcaabaaa
-abaaaaaaakaabaaaabaaaaaaabeaaaaabhlhnbdibaaaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaabkaabaia
-ibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-ajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaakaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
-aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
-adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
-afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
-akaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaabaaaaaadoaaaaab"
+ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabaaaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
+bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
+aaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
+ccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaa
+acaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
+ecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaa
+abaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaa
+akaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaaaaaaaaai
+ccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaaj
+icaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
+eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaa
+aaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+aaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaa
+aaaaaaaaakaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -21514,18 +21586,19 @@ Float 9 [_DetailDist]
 Float 10 [_MinLight]
 Float 11 [_FadeDist]
 Float 12 [_FadeScale]
+Float 13 [_RimDist]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
 ; 117 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
-def c13, 0.00000000, 1.00000000, 3.14159298, -0.21211439
-def c14, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, 1.04999995, 0.00010000, 0, 0
+def c14, 0.00000000, 1.00000000, 3.14159298, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c19, 1.00999999, 0, 0, 0
 dcl_texcoord0 v0.xyz
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.x
@@ -21548,57 +21621,57 @@ add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r2, r2, -r1
 mad_pp r2, r0.z, r2, r1
-mad r3.y, r0, c15, c15.z
-mad r1.z, r3.y, r0.y, c15.w
-mad r1.z, r1, r0.y, c16.x
-mad r3.y, r1.z, r0, c16
+mad r3.y, r0, c16, c16.z
+mad r1.z, r3.y, r0.y, c16.w
+mad r1.z, r1, r0.y, c17.x
+mad r3.y, r1.z, r0, c17
 mul r1.xy, v4.zxzw, c8.x
 add r1.xy, r1, c5
 texld r1, r1, s1
 add_pp r1, r1, -r2
 mad_pp r2, r0.w, r1, r2
-mad r0.y, r3, r0, c16.z
+mad r0.y, r3, r0, c17.z
 mul r0.w, r0.y, r3.x
 add r0.y, r0.x, -r0.z
-add r3.x, -r0.w, c16.w
+add r3.x, -r0.w, c17.w
 cmp r0.z, -r0.y, r0.w, r3.x
-add r0.y, -r0.z, c13.z
+add r0.y, -r0.z, c14.z
 cmp r0.y, v4.x, r0.z, r0
 cmp r0.y, v4.z, r0, -r0
-mad r3.x, r0.y, c17, c17.y
-mad r0.y, r0.x, c14.x, c14
+mad r3.x, r0.y, c18, c18.y
+mad r0.y, r0.x, c15.x, c15
 mul r0.w, v2.x, c9.x
 dp4 r0.z, c2, c2
-add_pp r1, -r2, c13.y
-mul_sat r0.w, r0, c14
+add_pp r1, -r2, c14.y
+mul_sat r0.w, r0, c15
 mad_pp r1, r0.w, r1, r2
 abs r0.w, -v4.y
 rsq r0.z, r0.z
 mul r2.xyz, r0.z, c2
 dp3_sat r2.x, v3, r2
-add r0.z, -r0.x, c13.y
-mad r0.y, r0.x, r0, c13.w
-add r3.y, -r0.w, c13
-mad r2.w, r0, c14.x, c14.y
-mad r2.w, r2, r0, c13
+add r0.z, -r0.x, c14.y
+mad r0.y, r0.x, r0, c14.w
+add r3.y, -r0.w, c14
+mad r2.w, r0, c15.x, c15.y
+mad r2.w, r2, r0, c14
 rsq r0.z, r0.z
 rsq r3.y, r3.y
-mad r0.x, r0, r0.y, c14.z
+mad r0.x, r0, r0.y, c15.z
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v4.z, c13, c13.y
+cmp r0.x, v4.z, c14, c14.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c14.w, r0.y
-mad r0.w, r2, r0, c14.z
+mad r0.z, -r0, c15.w, r0.y
+mad r0.w, r2, r0, c15.z
 rcp r3.y, r3.y
 mul r2.w, r0, r3.y
-cmp r0.w, -v4.y, c13.x, c13.y
+cmp r0.w, -v4.y, c14.x, c14.y
 mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c14.w, r2.w
-mad r0.z, r0.x, c13, r0
-mad r0.x, r0.w, c13.z, r0.y
-mul r0.y, r0.z, c15.x
-mul r3.y, r0.x, c15.x
+mad r0.y, -r3, c15.w, r2.w
+mad r0.z, r0.x, c14, r0
+mad r0.x, r0.w, c14.z, r0.y
+mul r0.y, r0.z, c16.x
+mul r3.y, r0.x, c16.x
 dsx r0.w, r0.y
 dsx r0.xz, v4.xyyw
 mul r0.xz, r0, r0
@@ -21609,19 +21682,19 @@ rsq r0.z, r0.z
 rsq r0.x, r0.x
 rcp r2.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c17.x
-mul r0.x, r2.w, c17
+mul r0.z, r0.x, c18.x
+mul r0.x, r2.w, c18
 dsy r0.y, r0
 texldd r0, r3, s0, r0.zwzw, r0
 add r3.xyz, -v1, c1
 dp3 r2.w, r3, r3
 mul r0, r0, c4
 mul_pp r0, r0, r1
-add_pp r2.x, r2, c17.z
+add_pp r2.x, r2, c18.z
 mul_pp r1.y, r2.x, c3.w
 mov r2.xyz, v0
 add r2.xyz, v1, -r2
-mul_pp_sat r1.w, r1.y, c17
+mul_pp_sat r1.w, r1.y, c18
 mov r1.x, c10
 add r1.xyz, c3, r1.x
 mad_sat r1.xyz, r1, r1.w, c0
@@ -21632,7 +21705,7 @@ rsq r1.w, r1.w
 dp3 r2.w, v5, r3
 rcp r2.x, r2.x
 rcp r1.w, r1.w
-mad r1.w, -r1, c18.x, r2.x
+mad r1.w, -r1, c19.x, r2.x
 add r2.xyz, -v0, c1
 dp3 r2.y, r2, r2
 abs_sat r2.x, r2.w
@@ -21643,7 +21716,7 @@ pow_sat r2, r3.x, c6.x
 mul r2.y, r3, c12.x
 add_sat r2.y, r2, -c11.x
 add r2.x, r2, -r2.y
-mul_sat r1.w, r1, c18.y
+mul_sat r1.w, r1, c13.x
 mad r1.w, r1, r2.x, r2.y
 mul_pp oC0.xyz, r0, r1
 mul_pp oC0.w, r0, r1
@@ -21652,7 +21725,7 @@ mul_pp oC0.w, r0, r1
 
 SubProgram "d3d11 " {
 Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-ConstBuffer "$Globals" 176 // 172 used size, 14 vars
+ConstBuffer "$Globals" 176 // 176 used size, 14 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Vector 128 [_DetailOffset] 4
@@ -21663,6 +21736,7 @@ Float 156 [_DetailDist]
 Float 160 [_MinLight]
 Float 164 [_FadeDist]
 Float 168 [_FadeScale]
+Float 172 [_RimDist]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
@@ -21680,7 +21754,7 @@ SetTexture 1 [_DetailTex] 2D 1
 // TEX 3 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedkoemoldghhmpajfllldbheahghnncgclabaaaaaacmaoaaaaadaaaaaa
+eefiecedlngfphaodlkmjoiopnpfmpmaikmjkmhgabaaaaaadaaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -21691,7 +21765,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaomaaaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaahaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcmeamaaaaeaaaaaaadbadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
+fdeieefcmiamaaaaeaaaaaaadcadaaaafjaaaaaeegiocaaaaaaaaaaaalaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
@@ -21768,32 +21842,32 @@ aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
 aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
 baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
 dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaakbcaabaaaabaaaaaabkaabaia
-ebaaaaaaabaaaaaaabeaaaaaggggigdpakaabaaaabaaaaaadicaaaahbcaabaaa
-abaaaaaaakaabaaaabaaaaaaabeaaaaabhlhnbdibaaaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaabkaabaia
-ibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-ajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaakaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
-aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
-adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
-afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
-akaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaabaaaaaadoaaaaab"
+ebaaaaaaabaaaaaaabeaaaaakoehibdpakaabaaaabaaaaaadicaaaaibcaabaaa
+abaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaakaaaaaabaaaaaahccaabaaa
+abaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaaddaaaaaiccaabaaaabaaaaaa
+bkaabaiaibaaaaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaabkiacaaaaaaaaaaaajaaaaaacpaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaa
+aaaaaaaaajaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaah
+ccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaa
+acaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
+ecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaa
+abaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaa
+akaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaakaaaaaaaaaaaaai
+ccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaaj
+icaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
+eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaa
+aaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+aaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaa
+aaaaaaaaakaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
