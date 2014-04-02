@@ -1,4 +1,4 @@
-VisualEnhancements
+EnvironmentalVisualEnhancements
 ==================
 
 Visual enhancements including clouds, lights, etc.
