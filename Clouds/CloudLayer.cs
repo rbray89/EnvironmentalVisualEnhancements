@@ -204,7 +204,7 @@ namespace Clouds
                 CloudMaterial.SetFloat("_DetailDist", shaderFloats.DetailDistance);
                 CloudMaterial.SetFloat("_MinLight", shaderFloats.MinimumLight);
                 CloudMaterial.SetFloat("_FadeDist", shaderFloats.FadeDistance);
-                CloudMaterial.SetFloat("_FadeScale", 0.1f/shaderFloats.FadeDistance);
+                CloudMaterial.SetFloat("_FadeScale", 0.03f/shaderFloats.FadeDistance);
                 CloudMaterial.SetFloat("_MinLight", shaderFloats.MinimumLight);
                 CloudMaterial.SetFloat("_RimDist", shaderFloats.RimDistance);
             }
@@ -291,7 +291,7 @@ namespace Clouds
             }
             else
             {
-                return new ShaderFloats(compareMaterial.GetFloat("_FalloffPow"), compareMaterial.GetFloat("_FalloffScale"), 0.000002f, compareMaterial.GetFloat("_MinLight"), 0.8f, 0.0001f);
+                return new ShaderFloats(compareMaterial.GetFloat("_FalloffPow"), compareMaterial.GetFloat("_FalloffScale"), 0.000002f, compareMaterial.GetFloat("_MinLight"), 8f, 0.0001f);
             }
 
         }

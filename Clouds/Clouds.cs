@@ -541,7 +541,7 @@ namespace Clouds
                 texFieldGS.focused.textColor = errorColor;
             }
             string SRimDist = GUI.TextField(new Rect(offset + 80, y, 50, 25), floats.RimDistanceString, texFieldGS);
-            float FRimDist = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.RimDistance, 0, 100);
+            float FRimDist = GUI.HorizontalSlider(new Rect(offset + 135, y + 5, 115, 25), floats.RimDistance, 0, 1);
 
             floats.Update(SFalloffPower, FFalloffPower, SFalloffScale, FFalloffScale, SDetailDistance, FDetailDistance, SMinimumLight, FMinimumLight, SFadeDist, FFadeDist, SRimDist, FRimDist);
 
@@ -903,7 +903,7 @@ namespace Clouds
             DetailDistanceString = DetailDistance.ToString("R");
             MinimumLightString = MinimumLight.ToString("R");
             FadeDistanceString = FadeDistance.ToString("R");
-            RimDistanceString = FadeDistance.ToString("R");
+            RimDistanceString = RimDistance.ToString("R");
         }
 
         internal void Update(string SFalloffPower, float FFalloffPower, string SFalloffScale, float FFalloffScale, string SDetailDistance, float FDetailDistance, string SMinimumLight, float FMinimumLight, string SFadeDist, float FFadeDist, string SRimDist, float FRimDist)
