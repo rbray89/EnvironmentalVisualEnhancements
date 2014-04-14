@@ -22,6 +22,8 @@ namespace OverlaySystem
         static PQS CurrentPQS = null;
         static bool ScaledEnabled = true;
 
+        static bool isScaledEnabled { get { return (CurrentPQS != null && CurrentPQS.isActive); } }
+
         public static bool MainMenuOverlay
         {
             get{return mainMenuOverlay;}
@@ -76,6 +78,7 @@ namespace OverlaySystem
                         CurrentPQS = cb.pqsController;
                     }
                 }
+
                 setup = true;
             }
 
@@ -117,11 +120,11 @@ namespace OverlaySystem
                     overlay.SwitchToScaled();
                 }
             }
-            ScaledEnabled = true;
             CurrentBodyName = body;
 
             CelestialBody celestialBody = CelestialBodyList.First(n => n.bodyName == CurrentBodyName);
             CurrentPQS = celestialBody.pqsController;
+            ScaledEnabled = !isScaledEnabled;
 
             if (Overlay.OverlayDatabase.ContainsKey(CurrentBodyName))
             {
@@ -129,12 +132,13 @@ namespace OverlaySystem
                 {
                     if (overlay.DominantCallback != null)
                     {
-                        overlay.DominantCallback(false);
+                        bool hasPQS = (CurrentPQS != null);
+                        overlay.DominantCallback(true);
                     }
                     overlay.UpdateTranform();
                 }
             }
-            ScaledEnabled = !(CurrentPQS != null && CurrentPQS.isActive && !MapView.MapIsEnabled);
+            
         }
 
         private void EnterMapView()
@@ -188,9 +192,9 @@ namespace OverlaySystem
         {
             if ((HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.FLIGHT ) && Overlay.OverlayDatabase.ContainsKey(CurrentBodyName))
             {
-                bool inNeedOfUpdate = (CurrentPQS != null && CurrentPQS.isActive && !MapView.MapIsEnabled) == ScaledEnabled;
+                bool inNeedOfUpdate = (isScaledEnabled && !MapView.MapIsEnabled) == ScaledEnabled;
                 inNeedOfUpdate |= (!ScaledEnabled && MapView.MapIsEnabled);
-                if (inNeedOfUpdate && CurrentPQS != null && CurrentPQS.isActive && !MapView.MapIsEnabled)
+                if (inNeedOfUpdate && isScaledEnabled)
                 {
                     foreach (Overlay overlay in Overlay.OverlayDatabase[CurrentBodyName])
                     {
@@ -376,7 +380,7 @@ namespace OverlaySystem
 
         public void UpdateTranform()
         {
-            if (celestialBody.pqsController != null && celestialBody.pqsController.isActive && !MapView.MapIsEnabled)
+            if ((celestialBody.pqsController != null && celestialBody.pqsController.isActive) && !MapView.MapIsEnabled)
             {
                 SwitchToMacro();
             }

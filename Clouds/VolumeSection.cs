@@ -13,7 +13,7 @@ namespace Clouds
         private static System.Random Random = new System.Random();
 
         GameObject particle;
-        public CloudParticle(Texture2D tex, Material cloudParticleMaterial, Transform parent, Vector3 pos, float magnitude)
+        public CloudParticle(Material cloudParticleMaterial, Transform parent, Vector3 pos, float magnitude)
         {
             particle = new GameObject();
 
@@ -68,10 +68,25 @@ namespace Clouds
             };
         }
 
+        internal void Update(Color color)
+        {
+            MeshFilter filter = particle.GetComponent<MeshFilter>();
+            Mesh mesh = filter.mesh;
+            mesh.colors = new Color[4]
+            {
+                new Color(color.r, color.g, color.b, color.a),
+                new Color(color.r, color.g, color.b, color.a),
+                new Color(color.r, color.g, color.b, color.a),
+                new Color(color.r, color.g, color.b, color.a)
+            };
+        }
+
         internal void Destroy()
         {
             GameObject.DestroyImmediate(particle);
         }
+
+        
     }
 
     class VolumeSection
@@ -83,6 +98,7 @@ namespace Clouds
         Vector3 offset;
         float magnitude;
         List<CloudParticle> Particles = new List<CloudParticle>();
+        Texture2D texture;
 
         public Vector3 Center { get { return segment.transform.localPosition; } }
         public Vector3 Offset { get { return offset; } set { offset = value; } }
@@ -90,19 +106,35 @@ namespace Clouds
 
         public VolumeSection(Texture2D tex, Material cloudParticleMaterial, Transform parent, Vector3 pos, float magnitude, Vector3 offset, float radius, int divisions)
         {
+            texture = tex;
             segment = new GameObject();
             HexSeg hexGeometry = new HexSeg(radius, divisions);
 
-            Reassign(pos, offset, parent, magnitude);
+            Reassign(pos, offset, magnitude, parent);
 
             List<Vector3> positions = hexGeometry.GetPoints();
             foreach (Vector3 position in positions)
             {
-                Particles.Add(new CloudParticle(tex, cloudParticleMaterial, segment.transform, position, magnitude));
+                Particles.Add(new CloudParticle(cloudParticleMaterial, segment.transform, position, magnitude));
             }
         }
 
-        public void Reassign(Vector3 pos, Vector3 offset, Transform parent = null, float magnitude = -1)
+        public VolumeSection(Material cloudParticleMaterial, Transform parent, Vector3 pos, float magnitude, Vector3 offset, float radius, int divisions)
+        {
+            texture = null;
+            segment = new GameObject();
+            HexSeg hexGeometry = new HexSeg(radius, divisions);
+
+            Reassign(pos, offset, magnitude, parent);
+
+            List<Vector3> positions = hexGeometry.GetPoints();
+            foreach (Vector3 position in positions)
+            {
+                Particles.Add(new CloudParticle(cloudParticleMaterial, segment.transform, position, magnitude));
+            }
+        }
+
+        public void Reassign(Vector3 pos, Vector3 offset, float magnitude = -1, Transform parent = null)
         {
             if(parent != null)
             {
@@ -126,11 +158,19 @@ namespace Clouds
 
         }
 
-        public void UpdateTexture(Texture2D texture)
+        public void Update()
         {
             foreach (CloudParticle particle in Particles)
             {
                 particle.Update(texture);
+            }
+        }
+
+        public void UpdateColor(Color color)
+        {
+            foreach (CloudParticle particle in Particles)
+            {
+                particle.Update(color);
             }
         }
 

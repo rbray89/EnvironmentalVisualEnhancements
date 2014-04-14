@@ -9,12 +9,15 @@ namespace Clouds
     class VolumeManager
     {
         private List<VolumeSection> VolumeList = new List<VolumeSection>();
+        private List<VolumeSection> VolumeListBottom = new List<VolumeSection>();
         float radius;
+        int divisions;
         float halfRad;
         float outCheck;
         float opp;
         bool forceUpdate;
-        Texture2D Texture;
+
+        bool atmosphere = true;
 
         float Magnitude;
         VolumeSection[] moveSections;
@@ -26,7 +29,7 @@ namespace Clouds
         bool enabled;
         public bool Enabled { get { return enabled; } set { enabled = value; foreach (VolumeSection vs in VolumeList) { vs.Enabled = value; } } }
 
-        public VolumeManager(float cloudSphereRadius, Texture2D texture, Material cloudParticleMaterial, Transform transform)
+        public VolumeManager(float cloudSphereRadius, Transform transform)
         {
             Magnitude = cloudSphereRadius;
             Vector3 pos = Vector3.up * Magnitude;
@@ -37,21 +40,24 @@ namespace Clouds
             Recenter(pos, true);
 
             ConfigNode volumeConfig = GameDatabase.Instance.GetConfigNodes("ENVIRONMENTAL_VISUAL_ENHANCEMENTS")[0];
-
-            this.Texture = texture;
             radius = 12000;
             float.TryParse(volumeConfig.GetValue("volumeHexRadius"), out radius);
-            int divisions = 3;
+            divisions = 3;
             int.TryParse(volumeConfig.GetValue("volumeSegmentDiv"), out divisions);
             halfRad = radius / 2f;
             opp = Mathf.Sqrt(.75f) * radius;
-            outCheck = opp*2f;
-            
+            outCheck = opp * 2f;
+
             enabled = true;
-            
+
             moveSections = new VolumeSection[3];
             unchangedSections = new VolumeSection[3];
+        }
 
+        public VolumeManager(float cloudSphereRadius, Texture2D texture, Material cloudParticleMaterial, Transform transform)
+            : this(cloudSphereRadius, transform)
+        {
+            atmosphere = false;
             VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(-radius, 0, 0), radius, divisions));
             VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, opp), radius, divisions));
             VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, -opp), radius, divisions));
@@ -59,9 +65,47 @@ namespace Clouds
             CloudLayer.Log("Volume Initialized");
         }
 
+        public VolumeManager(float cloudSphereRadius, Material cloudParticleMaterial, Transform transform)
+            : this(cloudSphereRadius, transform)
+        {
+            atmosphere = true;
+            VolumeList.Add(new VolumeSection(cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(-radius, 0, 0), radius, divisions));
+            VolumeList.Add(new VolumeSection(cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, opp), radius, divisions));
+            VolumeList.Add(new VolumeSection(cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, -opp), radius, divisions));
+            VolumeListBottom.Add(new VolumeSection(cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(-radius, 0, 0), radius, divisions));
+            VolumeListBottom.Add(new VolumeSection(cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, opp), radius, divisions));
+            VolumeListBottom.Add(new VolumeSection(cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, -opp), radius, divisions));
+            
+            forceUpdate = true;
+            CloudLayer.Log("Volume Initialized");
+        }
+
         public void Update(Vector3 pos)
         {
-            Vector3 place = pos * Magnitude;
+            Vector3 place = pos;
+            if (atmosphere)
+            {
+                if(forceUpdate)
+                {
+                    Recenter(pos, true);
+                    Magnitude = pos.magnitude;
+                    VolumeList[0].Reassign(Center.localPosition, new Vector3(-radius, 0, 0), Magnitude);
+                    VolumeList[1].Reassign(Center.localPosition, new Vector3(halfRad, 0, opp), Magnitude);
+                    VolumeList[2].Reassign(Center.localPosition, new Vector3(halfRad, 0, -opp), Magnitude);
+                }
+
+                int mag = (int)pos.magnitude;
+                int i = mag / 3000;
+                mag = 3000 * i;
+                Magnitude = mag;
+                
+                pos.Normalize();
+            }
+            else
+            {
+                place *= Magnitude;
+            }
+            
             int moveCount = 0;
             int unchangedCount = 0;
 
@@ -83,39 +127,49 @@ namespace Clouds
             if (moveCount > 0)
             {
                 Vector3 tmp;
-               switch(moveCount)
-               {
-                   case 1:
-                       Recenter(-moveSections[0].Offset);
+                switch (moveCount)
+                {
+                    case 1:
+                        Recenter(-moveSections[0].Offset);
 
-                       tmp = unchangedSections[0].Offset;
-                       unchangedSections[0].Offset = -unchangedSections[1].Offset;
-                       unchangedSections[1].Offset = -tmp;
-                       moveSections[0].Reassign(Center.localPosition, -moveSections[0].Offset);
-                       moveSections[0].UpdateTexture(Texture);
-                       break;
-                   case 2:
-                       Recenter(2f * unchangedSections[0].Offset);
-                       
-                       unchangedSections[0].Offset *= -1f;
-                       tmp = moveSections[0].Offset;
-                       moveSections[0].Reassign(Center.localPosition, -moveSections[1].Offset);
-                       moveSections[1].Reassign(Center.localPosition, -tmp);
-                       moveSections[0].UpdateTexture(Texture);
-                       moveSections[1].UpdateTexture(Texture);
-                       break;
-                   case 3:
-                       Recenter(place, true);
-                       moveSections[0].Reassign(Center.localPosition, new Vector3(-radius, 0, 0));
-                       moveSections[1].Reassign(Center.localPosition, new Vector3(halfRad, 0, opp));
-                       moveSections[2].Reassign(Center.localPosition, new Vector3(halfRad, 0, -opp));
-                       moveSections[0].UpdateTexture(Texture);
-                       moveSections[1].UpdateTexture(Texture);
-                       moveSections[2].UpdateTexture(Texture);
-                       break;
-               }
-               
+                        tmp = unchangedSections[0].Offset;
+                        unchangedSections[0].Offset = -unchangedSections[1].Offset;
+                        unchangedSections[1].Offset = -tmp;
+                        moveSections[0].Reassign(Center.localPosition, -moveSections[0].Offset, Magnitude);
+                        if (!atmosphere)
+                        {
+                            moveSections[0].Update();
+                        }
+                        break;
+                    case 2:
+                        Recenter(2f * unchangedSections[0].Offset);
+
+                        unchangedSections[0].Offset *= -1f;
+                        tmp = moveSections[0].Offset;
+                        moveSections[0].Reassign(Center.localPosition, -moveSections[1].Offset, Magnitude);
+                        moveSections[1].Reassign(Center.localPosition, -tmp, Magnitude);
+                        if (!atmosphere)
+                        {
+                            moveSections[0].Update();
+                            moveSections[1].Update();
+                        }
+                        break;
+                    case 3:
+                        Recenter(place, true);
+                        moveSections[0].Reassign(Center.localPosition, new Vector3(-radius, 0, 0), Magnitude);
+                        moveSections[1].Reassign(Center.localPosition, new Vector3(halfRad, 0, opp), Magnitude);
+                        moveSections[2].Reassign(Center.localPosition, new Vector3(halfRad, 0, -opp), Magnitude);
+                        if (!atmosphere)
+                        {
+                            moveSections[0].Update();
+                            moveSections[1].Update();
+                            moveSections[2].Update();
+                        }
+                        break;
+                }
+
             }
+            
         }
 
         private void Recenter(Vector3 vector, bool abs = false)

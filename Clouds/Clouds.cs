@@ -20,6 +20,7 @@ namespace Clouds
         static Vector2 ScrollPosLayerList = Vector2.zero;
         static int SelectedLayer = 0;
         static int SelectedConfig = 0;
+        //static bool CameraInitialized = false;
         static CloudGUI CloudGUI = new CloudGUI();
         static CelestialBody currentBody = null;
         static CelestialBody oldBody = null;
@@ -87,7 +88,7 @@ namespace Clouds
                 {
                     shaderFloats = new ShaderFloats(floatsConfig);
                 }
-                ConfigNode scaledfloatsConfig = loadNode.GetNode("shader_floats");
+                ConfigNode scaledfloatsConfig = loadNode.GetNode("scaled_shader_floats");
                 ShaderFloats scaledShaderFloats = null;
                 if (scaledfloatsConfig != null)
                 {
@@ -175,6 +176,7 @@ namespace Clouds
             }
         }
 
+        //static AtmosphereVolume test;
         protected void Awake()
         {
             if (HighLogic.LoadedScene == GameScenes.MAINMENU && !Loaded)
@@ -182,11 +184,8 @@ namespace Clouds
 
                 OverlayMgr.Init();
                 loadCloudLayers(false);
-                
+                //test = new AtmosphereVolume("Kerbin", new Vector2(0,0));
                 Loaded = true;
-            }
-            else if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
-            {
             }
         }
 
@@ -210,23 +209,34 @@ namespace Clouds
                 if (FlightGlobals.ActiveVessel != null && CloudLayer.BodyDatabase.ContainsKey(FlightGlobals.currentMainBody.name))
                 {
                     Vector3 COM = FlightGlobals.ActiveVessel.findWorldCenterOfMass();
-                    foreach (CloudLayer cl in CloudLayer.BodyDatabase[FlightGlobals.currentMainBody.name])
+                    foreach (CloudLayer layer in CloudLayer.BodyDatabase[FlightGlobals.currentMainBody.name])
                     {
-                        cl.UpdateParticleClouds(COM);
+                        layer.UpdateParticleClouds(COM);
                     }
+                    //test.PerformUpdate(COM);
                 }
             }
-/*            else if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
+            else if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
                 if (CloudLayer.BodyDatabase.ContainsKey(FlightGlobals.currentMainBody.name))
                 {
                     foreach (CloudLayer cl in CloudLayer.BodyDatabase[FlightGlobals.currentMainBody.name])
                     {
-                        cl.UpdateParticleClouds(((SpaceCenterMain)Resources.FindObjectsOfTypeAll(typeof(SpaceCenterMain))[0]).transform.position);
+                        cl.UpdateParticleClouds(GameObject.Find("KSC").transform.position);
                     }
                 }
             }
- */
+            /*if (HighLogic.LoadedScene == GameScenes.FLIGHT && !CameraInitialized)
+            {
+                foreach (Camera cam in Camera.allCameras)
+                {
+                    if (cam.name == "Camera 01" || cam.name == "Camera 00")
+                    {
+                        cam.depthTextureMode = DepthTextureMode.Depth;
+                        CameraInitialized = true;
+                    }
+                }
+            }*/
         }
 
 
@@ -319,8 +329,20 @@ namespace Clouds
                     oldBody = null;
                 }
 
+                bool selectedConfigChanged = false;
+                if (GUI.Button(new Rect(itemFullWidth - 15, 80, 25, 25), ">"))
+                {
+                    SelectedConfig++;
+                    if(ConfigNodeList.Count <= SelectedConfig)
+                    {
+                        SelectedConfig = 0;
+                    }
+                    selectedConfigChanged = true;
+                }
+
                 string configUrl = ConfigNodeList[SelectedConfig].url;
                 GUI.Button(new Rect(10, 80, itemFullWidth-30, 25), ConfigNodeList[SelectedConfig].parent.url);
+                
 
                 int layerCount = CloudLayer.GetBodyLayerCount(configUrl, currentBody.name);
                 bool hasLayers = layerCount != 0;
@@ -353,7 +375,7 @@ namespace Clouds
                         return;
                     }
 
-                    if (SelectedLayer != OldSelectedLayer || currentBody != oldBody)
+                    if (SelectedLayer != OldSelectedLayer || currentBody != oldBody || selectedConfigChanged)
                     {
                         if (CloudLayer.ConfigBodyDatabase[configUrl].ContainsKey(currentBody.name) && CloudLayer.ConfigBodyDatabase[configUrl][currentBody.name].Count > SelectedLayer)
                         {

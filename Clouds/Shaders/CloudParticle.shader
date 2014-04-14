@@ -3,7 +3,6 @@ Properties {
 	_TopTex ("Particle Texture", 2D) = "white" {}
 	_LeftTex ("Particle Texture", 2D) = "white" {}
 	_FrontTex ("Particle Texture", 2D) = "white" {}
-	_InvFade ("Soft Particles Factor", Range(0.01,3.0)) = 1.0
 	_DistFade ("Distance Fade Near", Range(0,1)) = 1.0
 	_DistFadeVert ("Distance Fade Vertical", Range(0,1)) = 0.00004
 	_LightScatter ("Light Scatter", Range(0,1)) = 0.55 
@@ -28,10 +27,8 @@ Category {
 			
 			CGPROGRAM
 			
-			#include "UnityCG.cginc"
-			#include "AutoLight.cginc"
-			#include "Lighting.cginc"
 			#pragma target 3.0
+			#pragma glsl
 			#pragma vertex vert
 			#pragma fragment frag
 			#define MAG_ONE 1.4142135623730950488016887242097
@@ -39,6 +36,9 @@ Category {
 			#pragma multi_compile_fwdbase
 			#pragma multi_compile_fwdadd_fullshadows
 			
+			#include "UnityCG.cginc"
+			#include "AutoLight.cginc"
+			#include "Lighting.cginc"
 			
 			sampler2D _TopTex;
 			sampler2D _BotTex;
@@ -47,7 +47,6 @@ Category {
 			sampler2D _FrontTex;
 			sampler2D _BackTex;
 			fixed4 _Color;
-			float _InvFade;
 			float _DistFade;
 			float _DistFadeVert;
 			float _LightScatter;
@@ -68,7 +67,7 @@ Category {
 				float2 texcoordZY : TEXCOORD1;
 				float2 texcoordXZ : TEXCOORD2;
 				float2 texcoordXY : TEXCOORD3;
-				float3 projPos : TEXCOORD4;
+				float3 camPos : TEXCOORD4;
 				half3 baseLight : TEXCOORD5;
 				LIGHTING_COORDS(6,7)
 			};
@@ -88,7 +87,7 @@ Category {
 				float3 viewDir = normalize(UNITY_MATRIX_MV[2].xyz);
 				o.viewDir = abs(viewDir);
 				
-				o.projPos = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, float4(0, 0, 0, v.vertex.w)).xyz);
+				o.camPos = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, float4(0, 0, 0, v.vertex.w)).xyz);
 
 				float2 texcoodOffsetxy = ((2*v.texcoord)- 1);
 				float4 texcoordOffset = float4(texcoodOffsetxy.x, texcoodOffsetxy.y, 0, v.vertex.w);
@@ -156,7 +155,7 @@ Category {
 //		        float3 lightDir = normalize(_WorldSpaceLightPos0);
 //		        
 //		        float  atten = LIGHT_ATTENUATION(i);
-//		        float  NL = saturate(.5*(1+dot(i.projPos, lightDir)));
+//		        float  NL = saturate(.5*(1+dot(i.camPos, lightDir)));
 //				float  lightIntensity = saturate(_LightColor0.a * (NL * atten * 4));
 //		 		float  lightScatter = saturate(1-(lightIntensity*_LightScatter*prev.a));
 		 		

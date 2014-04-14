@@ -16,7 +16,39 @@ namespace Clouds
         public static Dictionary<string, Dictionary<string, List<CloudLayer>>> ConfigBodyDatabase = new Dictionary<string, Dictionary<string, List<CloudLayer>>>();
         public static List<CloudLayer> Layers = new List<CloudLayer>();
         private static Shader GlobalCloudShader;
+        public static Shader CloudShader
+        {
+            get
+            {
+                if (GlobalCloudShader == null)
+                {
+                    OverlayMgr.Log("Initializing Textures");
+                    Assembly assembly = Assembly.GetExecutingAssembly();
+
+                    StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-SphereCloud.shader"));
+
+                    OverlayMgr.Log("reading stream...");
+                    String shaderTxt = shaderStreamReader.ReadToEnd();
+                    GlobalCloudShader = new Material(shaderTxt).shader;
+                }
+                return GlobalCloudShader;
+            }
+        }
         private static Shader GlobalCloudParticleShader;
+        public static Shader CloudParticleShader { get {
+            if (CloudLayer.GlobalCloudParticleShader == null)
+            {
+                OverlayMgr.Log("Initializing Textures");
+                Assembly assembly = Assembly.GetExecutingAssembly();
+
+                StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-CloudParticle.shader"));
+
+                OverlayMgr.Log("reading stream...");
+                String shaderTxt = shaderStreamReader.ReadToEnd();
+                GlobalCloudParticleShader = new Material(shaderTxt).shader;
+            }
+            return GlobalCloudParticleShader; 
+        } }
                 
         private Material ScaledCloudMaterial;
         private Material CloudMaterial;
@@ -42,7 +74,6 @@ namespace Clouds
         public float Altitude { get { return altitude; } }
         public ShaderFloats ScaledShaderFloats { get { return scaledShaderFloats; } }
         public ShaderFloats ShaderFloats { get { return shaderFloats; } }
-        public static Shader CloudParticleShader { get { return GlobalCloudParticleShader; } }
         public bool UseVolume { get { return useVolume; } }
 
         internal void ApplyGUIUpdate(CloudGUI cloudGUI)
@@ -77,8 +108,8 @@ namespace Clouds
         public CloudLayer(String url, ConfigNode node, String body, Color color, float altitude,
             TextureSet mainTexture,
             TextureSet detailTexture,
+            ShaderFloats ScaledShaderFloats,
             ShaderFloats ShaderFloats,
-            ShaderFloats PQSShaderFloats,
             bool useVolume)
         {
             if (!BodyDatabase.ContainsKey(body))
@@ -105,8 +136,8 @@ namespace Clouds
 
             this.detailTexture = detailTexture;
 
-            this.scaledShaderFloats = ShaderFloats;
-            this.shaderFloats = PQSShaderFloats;
+            this.scaledShaderFloats = ScaledShaderFloats;
+            this.shaderFloats = ShaderFloats;
 
             this.useVolume = useVolume;
             Init();
@@ -133,37 +164,20 @@ namespace Clouds
 
         public void Init()
         {
-            if (GlobalCloudShader == null)
-            {
-                OverlayMgr.Log("Initializing Textures");
-                Assembly assembly = Assembly.GetExecutingAssembly();
+            
+            ScaledCloudMaterial = new Material(CloudShader);
+            CloudMaterial = new Material(CloudShader);
+            CloudParticleMaterial = new Material(CloudParticleShader);
 
-                StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-SphereCloud.shader"));
-                
-                OverlayMgr.Log("reading stream...");
-                String shaderTxt = shaderStreamReader.ReadToEnd();
-                GlobalCloudShader = new Material(shaderTxt).shader;
-                
+            if (scaledShaderFloats == null)
+            {
+                scaledShaderFloats = GetDefault(true);
             }
 
-            if (GlobalCloudParticleShader == null)
+            if (shaderFloats == null)
             {
-                OverlayMgr.Log("Initializing Textures");
-                Assembly assembly = Assembly.GetExecutingAssembly();
-
-                StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-CloudParticle.shader"));
-
-                OverlayMgr.Log("reading stream...");
-                String shaderTxt = shaderStreamReader.ReadToEnd();
-                GlobalCloudParticleShader = new Material(shaderTxt).shader;
+                shaderFloats = GetDefault(false);
             }
-
-            ScaledCloudMaterial = new Material(GlobalCloudShader);
-            CloudMaterial = new Material(GlobalCloudShader);
-            CloudParticleMaterial = new Material(GlobalCloudParticleShader);
-
-            scaledShaderFloats = GetDefault(true);
-            shaderFloats = GetDefault(false);
 
             Texture2D tex1 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/1", false);
             Texture2D tex2 = GameDatabase.Instance.GetTexture("BoulderCo/Clouds/Textures/particle/2", false);
@@ -194,27 +208,27 @@ namespace Clouds
 
         }
 
-        private void DominantCallback(bool value)
+        private void DominantCallback(bool isDominant)
         {
-            if (volume != null && !value)
+            if (volume != null && !isDominant)
             {
                 volume.Destroy();
                 volume = null;
             }
-            else if (volume == null && value)
+            else if (volume == null && isDominant)
             {
                 volume = new VolumeManager(CloudOverlay.Radius, (Texture2D)this.mainTexture.Texture, CloudParticleMaterial, this.CloudOverlay.Transform);
             }
         }
 
-        private void MacroCallback(bool value)
+        private void MacroCallback(bool isNotScaled)
         {
             if (volume != null)
             {
-                volume.Enabled = value;
-                CloudLayer.Log("Volume Enabled=" + value);
+                volume.Enabled = isNotScaled;
+                CloudLayer.Log("Volume Enabled=" + isNotScaled);
             }
-            else if(volume == null && value)
+            else if (volume == null && isNotScaled)
             {
                 volume = new VolumeManager(CloudOverlay.Radius, (Texture2D)this.mainTexture.Texture, CloudParticleMaterial, this.CloudOverlay.Transform);
             }
@@ -279,9 +293,16 @@ namespace Clouds
 
         public static int GetBodyLayerCount(string url, string body)
         {
-            if (ConfigBodyDatabase[url].ContainsKey(body))
+            if (ConfigBodyDatabase.ContainsKey(url))
             {
-                return ConfigBodyDatabase[url][body].Count;
+                if (ConfigBodyDatabase[url].ContainsKey(body))
+                {
+                    return ConfigBodyDatabase[url][body].Count;
+                }
+                else
+                {
+                    return 0;
+                }
             }
             else
             {
