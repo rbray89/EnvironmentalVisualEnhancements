@@ -170,7 +170,7 @@ namespace OverlaySystem
         {
             if (!mainMenuOverlay)
             {
-                var objects = GameObject.FindSceneObjectsOfType(typeof(GameObject));
+                var objects = GameObject.FindObjectsOfType(typeof(GameObject));
                 if (objects.Any(o => o.name == "LoadingBuffer")) { return; }
                 var kerbin = objects.OfType<GameObject>().Where(b => b.name == "Kerbin").LastOrDefault();
                 if (kerbin != null && Overlay.OverlayDatabase.ContainsKey("Kerbin"))

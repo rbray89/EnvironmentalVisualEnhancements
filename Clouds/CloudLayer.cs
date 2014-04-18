@@ -25,7 +25,8 @@ namespace Clouds
                     OverlayMgr.Log("Initializing Textures");
                     Assembly assembly = Assembly.GetExecutingAssembly();
 
-                    StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-SphereCloud.shader"));
+                    //StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-SphereCloud.shader"));
+                    StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-SphereAtmosphere.shader"));
 
                     OverlayMgr.Log("reading stream...");
                     String shaderTxt = shaderStreamReader.ReadToEnd();

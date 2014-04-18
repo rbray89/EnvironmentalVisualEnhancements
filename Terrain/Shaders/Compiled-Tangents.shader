@@ -6,17 +6,17 @@ Program "vp" {
 // Vertex combos: 1
 //   opengl - ALU: 5 to 5
 //   d3d9 - ALU: 5 to 5
-//   d3d11 - ALU: 5 to 5, TEX: 0 to 0, FLOW: 1 to 1
-//   d3d11_9x - ALU: 5 to 5, TEX: 0 to 0, FLOW: 1 to 1
+//   d3d11 - ALU: 4 to 4, TEX: 0 to 0, FLOW: 1 to 1
+//   d3d11_9x - ALU: 4 to 4, TEX: 0 to 0, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { }
 Bind "vertex" Vertex
 Bind "tangent" ATTR14
 "!!ARBvp1.0
 # 5 ALU
-PARAM c[5] = { { 0.5 },
+PARAM c[5] = { program.local[0],
 		state.matrix.mvp };
-MAD result.color, vertex.attrib[14], c[0].x, c[0].x;
+MOV result.color, vertex.attrib[14];
 DP4 result.position.w, vertex.position, c[4];
 DP4 result.position.z, vertex.position, c[3];
 DP4 result.position.y, vertex.position, c[2];
@@ -33,10 +33,9 @@ Bind "tangent" TexCoord2
 Matrix 0 [glstate_matrix_mvp]
 "vs_2_0
 ; 5 ALU
-def c4, 0.50000000, 0, 0, 0
 dcl_position0 v0
 dcl_tangent0 v1
-mad oD0, v1, c4.x, c4.x
+mov oD0, v1
 dp4 oPos.w, v0, c3
 dp4 oPos.z, v0, c2
 dp4 oPos.y, v0, c1
@@ -52,27 +51,26 @@ ConstBuffer "UnityPerDraw" 336 // 64 used size, 6 vars
 Matrix 0 [glstate_matrix_mvp] 4
 BindCB "UnityPerDraw" 0
 // 6 instructions, 1 temp regs, 0 temp arrays:
-// ALU 5 float, 0 int, 0 uint
+// ALU 4 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjdfccmheocfnnlcmjallneodfgienopcabaaaaaaaiacaaaaadaaaaaa
+eefiecediajllcfdjgeeonhkomoijllgaidiiombabaaaaaaoaabaaaaadaaaaaa
 cmaaaaaaiaaaaaaaneaaaaaaejfdeheoemaaaaaaacaaaaaaaiaaaaaadiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaebaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaafaepfdejfeejepeoaafeebeoehefeofeaaklklkl
 epfdeheoemaaaaaaacaaaaaaaiaaaaaadiaaaaaaaaaaaaaaabaaaaaaadaaaaaa
 aaaaaaaaapaaaaaaeeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapaaaaaa
-fdfgfpfaepfdejfeejepeoaaedepemepfcaaklklfdeieefccmabaaaaeaaaabaa
-elaaaaaafjaaaaaeegiocaaaaaaaaaaaaeaaaaaafpaaaaadpcbabaaaaaaaaaaa
+fdfgfpfaepfdejfeejepeoaaedepemepfcaaklklfdeieefcaeabaaaaeaaaabaa
+ebaaaaaafjaaaaaeegiocaaaaaaaaaaaaeaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaad
 pccabaaaabaaaaaagiaaaaacabaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaa
 aaaaaaaaegiocaaaaaaaaaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
 aaaaaaaaaaaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaa
 aaaaaaaaegiocaaaaaaaaaaaacaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaa
 dcaaaaakpccabaaaaaaaaaaaegiocaaaaaaaaaaaadaaaaaapgbpbaaaaaaaaaaa
-egaobaaaaaaaaaaadcaaaaappccabaaaabaaaaaaegbobaaaabaaaaaaaceaaaaa
-aaaaaadpaaaaaadpaaaaaadpaaaaaadpaceaaaaaaaaaaadpaaaaaadpaaaaaadp
-aaaaaadpdoaaaaab"
+egaobaaaaaaaaaaadgaaaaafpccabaaaabaaaaaaegbobaaaabaaaaaadoaaaaab
+"
 }
 
 SubProgram "gles " {
@@ -91,12 +89,8 @@ void main ()
   vec4 tmpvar_1;
   tmpvar_1.xyz = normalize(_glesTANGENT.xyz);
   tmpvar_1.w = _glesTANGENT.w;
-  lowp vec4 tmpvar_2;
-  highp vec4 tmpvar_3;
-  tmpvar_3 = ((tmpvar_1 * 0.5) + 0.5);
-  tmpvar_2 = tmpvar_3;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_COLOR = tmpvar_2;
+  xlv_COLOR = tmpvar_1;
 }
 
 
@@ -131,12 +125,8 @@ void main ()
   vec4 tmpvar_1;
   tmpvar_1.xyz = normalize(_glesTANGENT.xyz);
   tmpvar_1.w = _glesTANGENT.w;
-  lowp vec4 tmpvar_2;
-  highp vec4 tmpvar_3;
-  tmpvar_3 = ((tmpvar_1 * 0.5) + 0.5);
-  tmpvar_2 = tmpvar_3;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_COLOR = tmpvar_2;
+  xlv_COLOR = tmpvar_1;
 }
 
 
@@ -161,10 +151,8 @@ Bind "vertex" Vertex
 Bind "tangent" TexCoord2
 Matrix 0 [glstate_matrix_mvp]
 "agal_vs
-c4 0.5 0.0 0.0 0.0
 [bc]
-adaaaaaaaaaaapacafaaaaoeaaaaaaaaaeaaaaaaabaaaaaa mul r0, a5, c4.x
-abaaaaaaahaaapaeaaaaaaoeacaaaaaaaeaaaaaaabaaaaaa add v7, r0, c4.x
+aaaaaaaaahaaapaeafaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov v7, a5
 bdaaaaaaaaaaaiadaaaaaaoeaaaaaaaaadaaaaoeabaaaaaa dp4 o0.w, a0, c3
 bdaaaaaaaaaaaeadaaaaaaoeaaaaaaaaacaaaaoeabaaaaaa dp4 o0.z, a0, c2
 bdaaaaaaaaaaacadaaaaaaoeaaaaaaaaabaaaaoeabaaaaaa dp4 o0.y, a0, c1
@@ -180,35 +168,32 @@ ConstBuffer "UnityPerDraw" 336 // 64 used size, 6 vars
 Matrix 0 [glstate_matrix_mvp] 4
 BindCB "UnityPerDraw" 0
 // 6 instructions, 1 temp regs, 0 temp arrays:
-// ALU 5 float, 0 int, 0 uint
+// ALU 4 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0_level_9_1
-eefiecedjjpbnfmkabdcchoddkabifjdpoelofnfabaaaaaaaaadaaaaaeaaaaaa
-daaaaaaaceabaaaafiacaaaakmacaaaaebgpgodjomaaaaaaomaaaaaaaaacpopp
-liaaaaaadeaaaaaaabaaceaaaaaadaaaaaaadaaaaaaaceaaabaadaaaaaaaaaaa
-aeaaabaaaaaaaaaaaaaaaaaaaaacpoppfbaaaaafafaaapkaaaaaaadpaaaaaaaa
-aaaaaaaaaaaaaaaabpaaaaacafaaaaiaaaaaapjabpaaaaacafaaabiaabaaapja
-aeaaaaaeaaaaapoaabaaoejaafaaaakaafaaaakaafaaaaadaaaaapiaaaaaffja
-acaaoekaaeaaaaaeaaaaapiaabaaoekaaaaaaajaaaaaoeiaaeaaaaaeaaaaapia
-adaaoekaaaaakkjaaaaaoeiaaeaaaaaeaaaaapiaaeaaoekaaaaappjaaaaaoeia
-aeaaaaaeaaaaadmaaaaappiaaaaaoekaaaaaoeiaabaaaaacaaaaammaaaaaoeia
-ppppaaaafdeieefccmabaaaaeaaaabaaelaaaaaafjaaaaaeegiocaaaaaaaaaaa
+eefiecedgmdmhhpcahjmcccehgefbbljjdajoeomabaaaaaaliacaaaaaeaaaaaa
+daaaaaaaaeabaaaabaacaaaageacaaaaebgpgodjmmaaaaaammaaaaaaaaacpopp
+jiaaaaaadeaaaaaaabaaceaaaaaadaaaaaaadaaaaaaaceaaabaadaaaaaaaaaaa
+aeaaabaaaaaaaaaaaaaaaaaaaaacpoppbpaaaaacafaaaaiaaaaaapjabpaaaaac
+afaaabiaabaaapjaafaaaaadaaaaapiaaaaaffjaacaaoekaaeaaaaaeaaaaapia
+abaaoekaaaaaaajaaaaaoeiaaeaaaaaeaaaaapiaadaaoekaaaaakkjaaaaaoeia
+aeaaaaaeaaaaapiaaeaaoekaaaaappjaaaaaoeiaaeaaaaaeaaaaadmaaaaappia
+aaaaoekaaaaaoeiaabaaaaacaaaaammaaaaaoeiaabaaaaacaaaaapoaabaaoeja
+ppppaaaafdeieefcaeabaaaaeaaaabaaebaaaaaafjaaaaaeegiocaaaaaaaaaaa
 aeaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaaghaaaaae
 pccabaaaaaaaaaaaabaaaaaagfaaaaadpccabaaaabaaaaaagiaaaaacabaaaaaa
 diaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaaaaaaaaaabaaaaaa
 dcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaaaaaaaaaaagbabaaaaaaaaaaa
 egaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaaacaaaaaa
 kgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaaaaaaaaaegiocaaa
-aaaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaappccabaaa
-abaaaaaaegbobaaaabaaaaaaaceaaaaaaaaaaadpaaaaaadpaaaaaadpaaaaaadp
-aceaaaaaaaaaaadpaaaaaadpaaaaaadpaaaaaadpdoaaaaabejfdeheoemaaaaaa
-acaaaaaaaiaaaaaadiaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaa
-ebaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapapaaaafaepfdejfeejepeo
-aafeebeoehefeofeaaklklklepfdeheoemaaaaaaacaaaaaaaiaaaaaadiaaaaaa
-aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaeeaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaabaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaaedepemepfcaaklkl
-"
+aaaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadgaaaaafpccabaaa
+abaaaaaaegbobaaaabaaaaaadoaaaaabejfdeheoemaaaaaaacaaaaaaaiaaaaaa
+diaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaebaaaaaaaaaaaaaa
+aaaaaaaaadaaaaaaabaaaaaaapapaaaafaepfdejfeejepeoaafeebeoehefeofe
+aaklklklepfdeheoemaaaaaaacaaaaaaaiaaaaaadiaaaaaaaaaaaaaaabaaaaaa
+adaaaaaaaaaaaaaaapaaaaaaeeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+apaaaaaafdfgfpfaepfdejfeejepeoaaedepemepfcaaklkl"
 }
 
 SubProgram "gles3 " {
@@ -220,7 +205,7 @@ Keywords { }
 
 #define gl_Vertex _glesVertex
 in vec4 _glesVertex;
-#define TANGENT vec4(normalize(_glesTANGENT.xyz), _glesTANGENT.w)
+#define tangent vec4(normalize(_glesTANGENT.xyz), _glesTANGENT.w)
 in vec4 _glesTANGENT;
 
 #line 57
@@ -303,11 +288,10 @@ uniform highp mat4 unity_MatrixVP;
 v2f vert( in appdata v ) {
     v2f o;
     o.pos = (glstate_matrix_mvp * v.vertex);
-    #line 67
-    o.color = ((v.tangent * 0.5) + 0.5);
+    #l
     return o;
 }
-
+in vec4 TANGENT;
 out lowp vec4 xlv_COLOR;
 void main() {
     v2f xl_retval;

@@ -20,7 +20,7 @@ namespace Clouds
         static Vector2 ScrollPosLayerList = Vector2.zero;
         static int SelectedLayer = 0;
         static int SelectedConfig = 0;
-        //static bool CameraInitialized = false;
+        static bool CameraInitialized = false;
         static CloudGUI CloudGUI = new CloudGUI();
         static CelestialBody currentBody = null;
         static CelestialBody oldBody = null;
@@ -226,17 +226,22 @@ namespace Clouds
                     }
                 }
             }
-            /*if (HighLogic.LoadedScene == GameScenes.FLIGHT && !CameraInitialized)
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT && !CameraInitialized)
             {
                 foreach (Camera cam in Camera.allCameras)
                 {
-                    if (cam.name == "Camera 01" || cam.name == "Camera 00")
+                    CloudLayer.Log("Camera Name: " + cam.name);
+                    if ( cam.name == "Camera 01")//FAR
+                    {
+                        cam.depthTextureMode = DepthTextureMode.Depth;
+                    }
+                    if (cam.name == "Camera 00")//NEAR
                     {
                         cam.depthTextureMode = DepthTextureMode.Depth;
                         CameraInitialized = true;
                     }
                 }
-            }*/
+            }
         }
 
 

@@ -58,6 +58,12 @@
   <ItemGroup>
     <EmbeddedResource Include="Shaders\Compiled-Terrain.shader" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Geometry\Geometry.csproj">
+      <Project>{8b24314b-4b75-43f3-b31c-ffa9fc83fb70}</Project>
+      <Name>Geometry</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /Y $(TargetFileName) "$(SolutionDir)\GameData\EnvironmentalVisualEnhancements\Plugins\";</PostBuildEvent>
