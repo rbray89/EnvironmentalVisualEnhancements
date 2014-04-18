@@ -1,4 +1,4 @@
-﻿Shader "Sphere/Cloud" {
+Shader "Sphere/Cloud" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_MainTex ("Main (RGB)", 2D) = "white" {}
@@ -6,7 +6,7 @@
 		_FalloffPow ("Falloff Power", Range(0,3)) = 2
 		_FalloffScale ("Falloff Scale", Range(0,20)) = 3
 		_DetailScale ("Detail Scale", Range(0,1000)) = 100
-		_DetailOffset ("Detail Offset", Color) = (0,0,0,0)
+		_DetailOffset ("Detail Offset", Vector) = (0,0,0,0)
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
 		_MinLight ("Minimum Light", Range(0,1)) = .5
 		_FadeDist ("Fade Distance", Range(0,100)) = 10
@@ -89,7 +89,7 @@ SubShader {
 	   	   o.worldOrigin = origin;
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
 	   	   o.worldNormal = normalize(vertexPos-origin);
-	   	   o.objNormal = normalize( v.vertex);
+	   	   o.objNormal = -normalize( v.vertex);
 	   	   o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
 	   	   return o;
 	 	}
@@ -112,8 +112,8 @@ SubShader {
 			half4 color;
 			float3 objNrm = IN.objNormal;
 		 	float2 uv;
-		 	uv.x = .5 + (INV_2PI*atan2(objNrm.z, objNrm.x));
-		 	uv.y = INV_PI*acos(-objNrm.y);
+		 	uv.x = .5 + (INV_2PI*atan2(objNrm.x, objNrm.z));
+		 	uv.y = INV_PI*acos(objNrm.y);
 		 	float4 uvdd = Derivatives(objNrm);
 		    half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw)*_Color;
 			half4 detailX = tex2D (_DetailTex, objNrm.zy*_DetailScale + _DetailOffset.xy);

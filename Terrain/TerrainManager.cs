@@ -82,7 +82,7 @@ namespace Terrain
                 //StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-Tangents.shader"));
                 //StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-uv1.shader"));
                 //StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-uv2.shader"));
-                StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-Terrain.shader"));
+                StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-SphereTerrain.shader"));
 
                 String shaderTxt = shaderStreamReader.ReadToEnd();
                 //String vertShaderTxt = vertshaderStreamReader.ReadToEnd();

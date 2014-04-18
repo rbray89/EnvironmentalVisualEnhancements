@@ -352,7 +352,6 @@ namespace OverlaySystem
         public static Overlay GeneratePlanetOverlay(String planet, float altitude, Material scaledMaterial, Material macroMaterial, Vector2 rotation, bool mainMenu = false, bool matchTerrain = false)
         {
             Vector2 Rotation = new Vector2(rotation.x, rotation.y);
-            Rotation.x += .25f;
             
             Transform celestialTransform = ScaledSpace.Instance.scaledSpaceTransforms.Single(t => t.name == planet);
             Overlay overlay = new Overlay(planet, altitude, scaledMaterial, macroMaterial, Rotation, OverlayMgr.MAP_LAYER, celestialTransform, mainMenu, matchTerrain);

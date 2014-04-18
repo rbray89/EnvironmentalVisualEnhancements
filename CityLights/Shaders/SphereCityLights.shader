@@ -35,6 +35,8 @@
 	 fixed4 _DetailOffset;
 	 float _FadeDist;
 	 float _FadeScale;
+	 float _SwapFadeDist;
+	 float _SwapFadeScale;
 	 float _Opacity;
 	 fixed4 _Color;
 	 
@@ -49,7 +51,7 @@
       {
 		half NdotL = dot (s.Normal, lightDir);
 		half diff = (NdotL - 0.01) / 0.99;
-		float lightIntensity = _LightColor0.a * (diff * atten * 16);
+		float lightIntensity = _LightColor0.a * (diff * atten * 4);
 		float satLight = saturate(lightIntensity);
 		float invlight = 1-satLight;
         
@@ -65,7 +67,7 @@
 	   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 	   float dist = abs(distance(origin, vertexPos) - (distance(origin,_WorldSpaceCameraPos)));
    	   o.viewDist = dist;
-	   o.nrm = normalize(v.vertex.xyz);
+	   o.nrm = -normalize(v.vertex.xyz);
 	 }
 	
 	float4 Derivatives( float3 pos )  
@@ -84,8 +86,8 @@
 	 void surf (Input IN, inout SurfaceOutput o) {
 	 	float3 nrm = IN.nrm;
 	 	float2 uv;
-	 	uv.x = .5 + (INV_2PI*atan2(nrm.z, nrm.x));
-	 	uv.y = INV_PI*acos(-nrm.y);
+	 	uv.x = .5 + (INV_2PI*atan2(nrm.x, nrm.z));
+	 	uv.y = INV_PI*acos(nrm.y);
 	    float4 uvdd = Derivatives(nrm);
 		half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw)*_Color;
 		half4 detailX = tex2D (_DetailTex, nrm.zy*_DetailScale + _DetailOffset.xy);

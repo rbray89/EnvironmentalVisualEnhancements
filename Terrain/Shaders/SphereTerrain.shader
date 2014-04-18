@@ -7,16 +7,21 @@
 		_DetailOffset ("Detail Offset", Vector) = (0,0,0,0)
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
 		_MinLight ("Minimum Light", Range(0,1)) = .5
+		_DarkOverlayTex ("Overlay (RGB)", 2D) = "white" {}
+		_DarkOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
+		_DarkOverlayDetailScale ("Overlay Detail Scale", Range(0,1000)) = 80
+		_DarkOverlayDetailOffset ("Overlay Detail Offset", Color) = (0,0,0,0)
 	}
 
 Category {
 	
-	Tags { "Queue"="Opaque" "RenderType"="Geometry" }
+SubShader {
+
+Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	Fog { Mode Global}
 	ColorMask RGB
 	Cull Back Lighting On ZWrite On
 	
-SubShader {
 	Pass {
 
 		Lighting On
@@ -35,6 +40,7 @@ SubShader {
 		#pragma fragmentoption ARB_precision_hint_fastest
 		#pragma multi_compile_fwdbase
 		#pragma multi_compile_fwdadd_fullshadows
+		#pragma multi_compile CITYOVERLAY_OFF CITYOVERLAY_ON
 		#define PI 3.1415926535897932384626
 		#define INV_PI (1.0/PI)
 		#define TWOPI (2.0*PI) 
@@ -47,6 +53,13 @@ SubShader {
 		fixed4 _DetailOffset;
 		float _DetailDist;
 		float _MinLight;
+		
+		#ifdef CITYOVERLAY_ON
+		sampler2D _DarkOverlayTex;
+		sampler2D _DarkOverlayDetailTex;
+		float _DarkOverlayDetailScale;
+		fixed4 _DarkOverlayDetailOffset;
+		#endif
 		
 		struct appdata_t {
 				float4 vertex : POSITION;
@@ -101,22 +114,40 @@ SubShader {
 			half4 detailX = tex2D (_DetailTex, objNrm.zy*_DetailScale + _DetailOffset.xy);
 			half4 detailY = tex2D (_DetailTex, objNrm.zx*_DetailScale + _DetailOffset.xy);
 			half4 detailZ = tex2D (_DetailTex, objNrm.xy*_DetailScale + _DetailOffset.xy);
+			
+			#ifdef CITYOVERLAY_ON
+			half4 darkoverlay = tex2D(_DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
+			half4 darkoverlaydetailX = tex2D (_DarkOverlayDetailTex, objNrm.zy*_DarkOverlayDetailScale + _DarkOverlayDetailOffset.xy);
+			half4 darkoverlaydetailY = tex2D (_DarkOverlayDetailTex, objNrm.zx*_DarkOverlayDetailScale + _DarkOverlayDetailOffset.xy);
+			half4 darkoverlaydetailZ = tex2D (_DarkOverlayDetailTex, objNrm.xy*_DarkOverlayDetailScale + _DarkOverlayDetailOffset.xy);
+			#endif
+			
 			objNrm = abs(objNrm);
 			half4 detail = lerp(detailZ, detailX, objNrm.x);
 			detail = lerp(detail, detailY, objNrm.y);
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
 			color = main.rgba * lerp(detail.rgba, 1, detailLevel);
-
-			color.a = 1;
-
+			#ifdef CITYOVERLAY_ON
+			detail = lerp(darkoverlaydetailZ, darkoverlaydetailX, objNrm.x);
+			detail = lerp(detail, darkoverlaydetailY, objNrm.y);
+			darkoverlay = darkoverlay*detail;
+			#endif
+			
           	//lighting
 			half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
 			half3 lightDirection = normalize(_WorldSpaceLightPos0);
 			half NdotL = saturate(dot (IN.worldNormal, lightDirection));
 	        half diff = (NdotL - 0.01) / 0.99;
 			half lightIntensity = saturate(_LightColor0.a * diff * 4);
-			color.rgb *= saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
-
+			half3 light = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
+			color.rgb *= light;
+			
+			#ifdef CITYOVERLAY_ON
+			darkoverlay.a *= 1-saturate(lightIntensity*1.5);
+			color = lerp(color, darkoverlay, darkoverlay.a);
+			#endif
+			color.a = 1;
+			
           	return color;
 		}
 		ENDCG

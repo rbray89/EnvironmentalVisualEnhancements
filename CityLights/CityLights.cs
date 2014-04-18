@@ -65,7 +65,15 @@ namespace CityLights
             pqsLightMaterial.SetFloat("_FadeDist", pqsfadeDistance);
             pqsLightMaterial.SetFloat("_FadeScale", .02f);
 
-            overlayList.Add(Overlay.GeneratePlanetOverlay("Kerbin", altitude, lightMaterial, pqsLightMaterial, mTexture.StartOffset, false, true));
+            CelestialBody[] celestialBodies = (CelestialBody[])CelestialBody.FindObjectsOfType(typeof(CelestialBody));
+            CelestialBody celestialBody = celestialBodies.First(n => n.bodyName == "Kerbin");
+            celestialBody.pqsController.surfaceMaterial.EnableKeyword("CITYOVERLAY_ON");
+            celestialBody.pqsController.surfaceMaterial.SetTexture("_DarkOverlayTex", mTexture.Texture);
+            celestialBody.pqsController.surfaceMaterial.SetTexture("_DarkOverlayDetailTex", dTexture.Texture);
+            celestialBody.pqsController.surfaceMaterial.SetFloat("_DarkOverlayDetailScale", dTexture.Scale);
+            celestialBody.pqsController.surfaceMaterial.SetVector("_DarkOverlayDetailOffset", dTexture.Offset);
+
+            //overlayList.Add(Overlay.GeneratePlanetOverlay("Kerbin", altitude, lightMaterial, pqsLightMaterial, mTexture.StartOffset, false, true));
         }
 
         public static void Log(String message)
