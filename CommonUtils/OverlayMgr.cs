@@ -393,7 +393,7 @@ namespace OverlaySystem
 
         public void UpdateAltitude(bool meshUpdate, float altitude = -1)
         {
-            if (altitude != -1.0)
+            if (altitude > 0)
             {
                 this.altitude = altitude;
             }
@@ -412,8 +412,7 @@ namespace OverlaySystem
             if(!matchTerrain && meshUpdate)
             {
                 IsoSphere.UpdateRadius(OverlayGameObject, Radius);
-                OverlayMgr.Log("radius: " + Radius);
-                OverlayMgr.Log("radius: " + celestialBody.Radius);
+                OverlayMgr.Log(celestialBody.name+" radius+Altitude: " + Radius);
             }
         }
 

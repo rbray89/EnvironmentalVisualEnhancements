@@ -102,6 +102,11 @@ namespace Clouds
             {
                 CloudOverlay.MacroCallback = null;
                 CloudOverlay.DominantCallback = null;
+                if (volume != null)
+                {
+                    volume.Destroy();
+                    volume = null;
+                }
             }
         }
 
