@@ -13,8 +13,6 @@ namespace Terrain
     [AddComponentMenu("PQuadSphere/Mods/Terrain/Land Control custom")]
     public class PQSLandControlCustom : PQSMod
     {
-    
-
         public static void Log(String message)
         {
             UnityEngine.Debug.Log("PQSLandControlCustom: " + message);
@@ -22,15 +20,11 @@ namespace Terrain
         
         private void assignTangent(PQ quad)
         {
-            //LC.OnQuadBuilt(quad);
             Vector4[] tangents = quad.mesh.tangents;
             Vector3[] verts = quad.mesh.vertices;
-            //Log("tangents " + tangents.Length + " verts " + verts.Length);
-            Log("p " + quad.transform.localPosition);
-            Log("planet " + quad.positionPlanet + " " + quad.positionPlanetRelative);
             for (int i = 0; i < tangents.Length; i++)
             {
-                //Log("V "+verts[i]);
+                //Log("C " + colors[i]);
                 Vector3 normal = this.sphere.transform.InverseTransformPoint(quad.transform.TransformPoint(verts[i])).normalized;
                 tangents[i] = normal;
             }
@@ -43,11 +37,10 @@ namespace Terrain
         public override void OnQuadBuilt(PQ quad)
         {
             assignTangent(quad);
-            
         }
         public override void OnQuadUpdate(PQ quad)
         {
-         //   assignTangent(quad);
+            assignTangent(quad);
         }
         public override void OnQuadPreBuild(PQ quad)
         {
@@ -75,7 +68,7 @@ namespace Terrain
             if (!setup)
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                //StreamReader vertshaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-Vertex.shader"));
+                //StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-Vertex.shader"));
                 //StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-uv1.shader"));
                 //StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-Normals.shader"));
                 
@@ -119,33 +112,33 @@ namespace Terrain
                             PQSLandControl landControl = (PQSLandControl)pqs.transform.GetComponentInChildren(typeof(PQSLandControl));
                             PQSMod_HeightColorMap heightColorMap = (PQSMod_HeightColorMap)pqs.transform.GetComponentInChildren(typeof(PQSMod_HeightColorMap));
                             PQSMod_VertexPlanet vertexPlanet = (PQSMod_VertexPlanet)pqs.transform.GetComponentInChildren(typeof(PQSMod_VertexPlanet));
-                            if (landControl != null)
+                            if (landControl)
                             {
                                 //PQSLandControl landControl = (PQSLandControl)cb.GetComponent(typeof(PQSLandControl));
                                 PQSLandControl.LandClass[] landClasses = landControl.landClasses;
                                 foreach (PQSLandControl.LandClass lc in landClasses)
                                 {
-                                    Log("Land Class: " + lc.landClassName + " " + lc.color);
+                                    Log("LandControl Land Class: " + lc.landClassName + " " + lc.color);
                                 }
                                 GameObject go = new GameObject("PQSLandControlCustom");
 
                                 PQSLandControlCustom lcc = (PQSLandControlCustom)go.AddComponent(typeof(PQSLandControlCustom));
                                 go.transform.parent = cb.pqsController.transform;
                             }
-                            else if (heightColorMap)
+                            if (heightColorMap)
                             {
                                 PQSMod_HeightColorMap.LandClass[] landClasses = heightColorMap.landClasses;
                                 foreach (PQSMod_HeightColorMap.LandClass lc in landClasses)
                                 {
-                                    Log("Land Class: " + lc.name + " " + lc.color);
+                                    Log("HeightColorMap Land Class: " + lc.name + " " + lc.color);
                                 }
                             }
-                            else if (vertexPlanet)
+                            if (vertexPlanet)
                             {
                                 PQSMod_VertexPlanet.LandClass[] landClasses = vertexPlanet.landClasses;
                                 foreach (PQSMod_VertexPlanet.LandClass lc in landClasses)
                                 {
-                                    Log("Land Class: " + lc.name + " " + lc.baseColor);
+                                    Log("VertexPlanet Land Class: " + lc.name + " " + lc.baseColor);
                                 }
                             }
 
@@ -162,7 +155,11 @@ namespace Terrain
                                 Log("2");
                             }
                             pqs.surfaceMaterial.shader = new Material(shaderTxt).shader;
-                            pqs.surfaceMaterial.mainTexture = mainTexture;
+                            //pqs.surfaceMaterial.mainTexture = mainTexture;
+                            pqs.surfaceMaterial.SetTexture("_DetailTex", GameDatabase.Instance.GetTexture("BoulderCo/Terrain/grass",false));
+                            pqs.surfaceMaterial.SetTexture("_DetailVertTex", GameDatabase.Instance.GetTexture("BoulderCo/Terrain/rock", false));
+                            pqs.surfaceMaterial.SetFloat("_DetailScale", 4000f);
+                            pqs.surfaceMaterial.SetFloat("_DetailDist", .00005f);
                         }
                         
                 }

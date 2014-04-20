@@ -3,8 +3,9 @@
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
-		_DetailScale ("Detail Scale", Range(0,1000)) = 100
-		_DetailOffset ("Detail Offset", Vector) = (0,0,0,0)
+		_DetailVertTex ("Detail for Vertical Surfaces (RGB)", 2D) = "white" {}
+		_DetailScale ("Detail Scale", Range(0,1000)) = 200
+		_DetailVertScale ("Detail Scale", Range(0,1000)) = 200
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
 		_MinLight ("Minimum Light", Range(0,1)) = .5
 		_DarkOverlayTex ("Overlay (RGB)", 2D) = "white" {}
@@ -41,6 +42,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		#pragma multi_compile_fwdbase
 		#pragma multi_compile_fwdadd_fullshadows
 		#pragma multi_compile CITYOVERLAY_OFF CITYOVERLAY_ON
+		#pragma multi_compile DETAIL_MAP_OFF DETAIL_MAP_ON
 		#define PI 3.1415926535897932384626
 		#define INV_PI (1.0/PI)
 		#define TWOPI (2.0*PI) 
@@ -49,8 +51,9 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		fixed4 _Color;
 		sampler2D _MainTex;
 		sampler2D _DetailTex;
+		sampler2D _DetailVertTex;
 		float _DetailScale;
-		fixed4 _DetailOffset;
+		float _DetailVertScale;
 		float _DetailDist;
 		float _MinLight;
 		
@@ -71,9 +74,11 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		struct v2f {
 			float4 pos : SV_POSITION;
 			float  viewDist : TEXCOORD1;
-			float3 worldNormal : TEXCOORD2;
-			float3 objNormal : TEXCOORD3;
-			LIGHTING_COORDS(4,5)
+			float3 objNormal : TEXCOORD2;
+			float3 worldNormal : TEXCOORD3;
+			float3 sphereNormal : TEXCOORD4;
+			float4 color : TEXCOORD5;
+			LIGHTING_COORDS(6,7)
 		};	
 		
 
@@ -84,8 +89,10 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
+	   	   o.objNormal = normalize(v.normal);
 	   	   o.worldNormal = mul( _Object2World, float4( v.normal, 0.0 ) ).xyz;
-	   	   o.objNormal = -normalize( v.tangent);
+	   	   o.sphereNormal = -normalize(v.tangent);
+	   	   o.color = v.color;
 	   	   return o;
 	 	}
 	 	
@@ -105,31 +112,38 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		fixed4 frag (v2f IN) : COLOR
 			{
 			half4 color;
-			float3 objNrm = IN.objNormal;
+			float3 sphereNrm = IN.sphereNormal;
 		 	float2 uv;
-		 	uv.x = .5 + (INV_2PI*atan2(objNrm.x, objNrm.z));
-		 	uv.y = INV_PI*acos(objNrm.y);
-		 	float4 uvdd = Derivatives(objNrm);
-		    half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw)*_Color;
-			half4 detailX = tex2D (_DetailTex, objNrm.zy*_DetailScale + _DetailOffset.xy);
-			half4 detailY = tex2D (_DetailTex, objNrm.zx*_DetailScale + _DetailOffset.xy);
-			half4 detailZ = tex2D (_DetailTex, objNrm.xy*_DetailScale + _DetailOffset.xy);
+		 	uv.x = .5 + (INV_2PI*atan2(sphereNrm.x, sphereNrm.z));
+		 	uv.y = INV_PI*acos(sphereNrm.y);
+		 	float4 uvdd = Derivatives(sphereNrm);
+		    half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw);
+		    half2 detailnrmzy = sphereNrm.zy*_DetailScale;
+		    half2 detailnrmzx = sphereNrm.zx*_DetailScale;
+		    half2 detailnrmxy = sphereNrm.xy*_DetailScale;
+		    half2 detailvertnrmzy = sphereNrm.zy*_DetailVertScale;
+		    half2 detailvertnrmzx = sphereNrm.zx*_DetailVertScale;
+		    half2 detailvertnrmxy = sphereNrm.xy*_DetailVertScale;
+		    half vertLerp = saturate((32*(saturate(dot(IN.objNormal, -IN.sphereNormal))-.95))+.5);
+			half4 detailX = lerp(tex2D (_DetailVertTex, detailvertnrmzy), tex2D (_DetailTex, detailnrmzy), vertLerp);
+			half4 detailY = lerp(tex2D (_DetailVertTex, detailvertnrmzx), tex2D (_DetailTex, detailnrmzx), vertLerp);
+			half4 detailZ = lerp(tex2D (_DetailVertTex, detailvertnrmxy), tex2D (_DetailTex, detailnrmxy), vertLerp);
 			
 			#ifdef CITYOVERLAY_ON
 			half4 darkoverlay = tex2D(_DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-			half4 darkoverlaydetailX = tex2D (_DarkOverlayDetailTex, objNrm.zy*_DarkOverlayDetailScale + _DarkOverlayDetailOffset.xy);
-			half4 darkoverlaydetailY = tex2D (_DarkOverlayDetailTex, objNrm.zx*_DarkOverlayDetailScale + _DarkOverlayDetailOffset.xy);
-			half4 darkoverlaydetailZ = tex2D (_DarkOverlayDetailTex, objNrm.xy*_DarkOverlayDetailScale + _DarkOverlayDetailOffset.xy);
+			half4 darkoverlaydetailX = tex2D (_DarkOverlayDetailTex, sphereNrm.zy*_DarkOverlayDetailScale + _DarkOverlayDetailOffset.xy);
+			half4 darkoverlaydetailY = tex2D (_DarkOverlayDetailTex, sphereNrm.zx*_DarkOverlayDetailScale + _DarkOverlayDetailOffset.xy);
+			half4 darkoverlaydetailZ = tex2D (_DarkOverlayDetailTex, sphereNrm.xy*_DarkOverlayDetailScale + _DarkOverlayDetailOffset.xy);
 			#endif
 			
-			objNrm = abs(objNrm);
-			half4 detail = lerp(detailZ, detailX, objNrm.x);
-			detail = lerp(detail, detailY, objNrm.y);
+			sphereNrm = abs(sphereNrm);
+			half4 detail = lerp(detailZ, detailX, sphereNrm.x);
+			detail = lerp(detail, detailY, sphereNrm.y);
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
-			color = main.rgba * lerp(detail.rgba, 1, detailLevel);
+			color = main.rgba * lerp(detail.rgba, 1, detailLevel)*IN.color*_Color;
 			#ifdef CITYOVERLAY_ON
-			detail = lerp(darkoverlaydetailZ, darkoverlaydetailX, objNrm.x);
-			detail = lerp(detail, darkoverlaydetailY, objNrm.y);
+			detail = lerp(darkoverlaydetailZ, darkoverlaydetailX, sphereNrm.x);
+			detail = lerp(detail, darkoverlaydetailY, sphereNrm.y);
 			darkoverlay = darkoverlay*detail;
 			#endif
 			
