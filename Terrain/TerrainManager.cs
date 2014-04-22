@@ -10,12 +10,27 @@ using UnityEngine;
 
 namespace Terrain
 {
-    [AddComponentMenu("PQuadSphere/Mods/Terrain/Land Control custom")]
-    public class PQSLandControlCustom : PQSMod
+    public class PQSCloudTest : PQSMod
     {
         public static void Log(String message)
         {
-            UnityEngine.Debug.Log("PQSLandControlCustom: " + message);
+            UnityEngine.Debug.Log("PQSCloudTest: " + message);
+        }
+        public override void OnSphereActive()
+        {
+            Log("PQS Activated!");
+        }
+        public override void OnSphereInactive()
+        {
+            Log("PQS Deactivated!");
+        }
+    }
+
+    public class PQSTangentAssigner : PQSMod
+    {
+        public static void Log(String message)
+        {
+            UnityEngine.Debug.Log("PQSTangentAssigner: " + message);
         }
         
         private void assignTangent(PQ quad)
@@ -80,7 +95,7 @@ namespace Terrain
                 String shaderTxt = shaderStreamReader.ReadToEnd();
                 //String vertShaderTxt = vertshaderStreamReader.ReadToEnd();
 
-                UnityEngine.Object[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody));
+                CelestialBody[] celestialBodies = (CelestialBody[])CelestialBody.FindObjectsOfType(typeof(CelestialBody));
                 GameObject[] gameObjects = (GameObject[])Resources.FindObjectsOfTypeAll(typeof(GameObject));
                 List<Transform> transforms = ScaledSpace.Instance.scaledSpaceTransforms;
                 foreach (CelestialBody cb in celestialBodies)
@@ -122,8 +137,10 @@ namespace Terrain
                                 }
                                 GameObject go = new GameObject("PQSLandControlCustom");
 
-                                PQSLandControlCustom lcc = (PQSLandControlCustom)go.AddComponent(typeof(PQSLandControlCustom));
+                                PQSTangentAssigner lcc = (PQSTangentAssigner)go.AddComponent(typeof(PQSTangentAssigner));
+                                go.AddComponent(typeof(PQSCloudTest));
                                 go.transform.parent = cb.pqsController.transform;
+                                
                             }
                             if (heightColorMap)
                             {
@@ -160,6 +177,42 @@ namespace Terrain
                             pqs.surfaceMaterial.SetTexture("_DetailVertTex", GameDatabase.Instance.GetTexture("BoulderCo/Terrain/rock", false));
                             pqs.surfaceMaterial.SetFloat("_DetailScale", 4000f);
                             pqs.surfaceMaterial.SetFloat("_DetailDist", .00005f);
+                        }
+                        else
+                        {
+                            GameObject go = new GameObject();
+                            go.name = cb.bodyName;
+                            pqs = (PQS)go.AddComponent<PQS>();
+                            go.transform.parent = cb.transform;
+
+                            pqs.surfaceMaterial = new Material(shaderTxt);
+                            cb.pqsController = pqs ;
+                            
+                            
+                            /*PQSMod[] mods = pqs.transform.GetComponentsInChildren(typeof(PQSMod)) as PQSMod[];
+                            foreach(PQSMod mod in mods)
+                            {
+                                Log(mod.name + " " + mod.GetType());
+                            }*/
+                            go = new GameObject();
+                            PQSMod_CelestialBodyTransform cbt = (PQSMod_CelestialBodyTransform)go.AddComponent(typeof(PQSMod_CelestialBodyTransform));
+                            go.transform.parent = pqs.transform;
+                            go = new GameObject();
+                            PQSCloudTest lcc = (PQSCloudTest)go.AddComponent(typeof(PQSCloudTest));
+                            go.transform.parent = pqs.transform;
+
+                            cbt.planetFade = new PQSMod_CelestialBodyTransform.AltitudeFade();
+                            cbt.planetFade.secondaryRenderers = new List<GameObject>();
+                            cbt.secondaryFades = new PQSMod_CelestialBodyTransform.AltitudeFade[1];
+                            cbt.secondaryFades[0] = cbt.planetFade;
+                            cbt.deactivateAltitude = 200000;
+                            cbt.modEnabled = true;
+                            cbt.planetFade.Setup(pqs);
+                            Log("mapFilename: " + pqs.mapFilename);
+                            
+                            pqs.ResetSphere();
+                            pqs.EnableSphere();
+                            
                         }
                         
                 }
