@@ -7,7 +7,7 @@
     <ProjectGuid>{8B24314B-4B75-43F3-B31C-FFA9FC83FB70}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Geometry</RootNamespace>
+    <RootNamespace>Utils</RootNamespace>
     <AssemblyName>Geometry</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -51,6 +51,7 @@
     <Compile Include="HexSeg.cs" />
     <Compile Include="IsoSphere.cs" />
     <Compile Include="Quad.cs" />
+    <Compile Include="TextureManager.cs" />
     <Compile Include="Tools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

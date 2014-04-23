@@ -10,8 +10,7 @@
 		_MinLight ("Minimum Light", Range(0,1)) = .5
 		_DarkOverlayTex ("Overlay (RGB)", 2D) = "white" {}
 		_DarkOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
-		_DarkOverlayDetailScale ("Overlay Detail Scale", Range(0,1000)) = 80
-		_DarkOverlayDetailOffset ("Overlay Detail Offset", Color) = (0,0,0,0)
+		_DarkOverlayDetailScale ("Overlay Detail Scale", Range(0,1000)) = 80)
 	}
 
 Category {
@@ -131,9 +130,9 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			
 			#ifdef CITYOVERLAY_ON
 			half4 darkoverlay = tex2D(_DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-			half4 darkoverlaydetailX = tex2D (_DarkOverlayDetailTex, sphereNrm.zy*_DarkOverlayDetailScale + _DarkOverlayDetailOffset.xy);
-			half4 darkoverlaydetailY = tex2D (_DarkOverlayDetailTex, sphereNrm.zx*_DarkOverlayDetailScale + _DarkOverlayDetailOffset.xy);
-			half4 darkoverlaydetailZ = tex2D (_DarkOverlayDetailTex, sphereNrm.xy*_DarkOverlayDetailScale + _DarkOverlayDetailOffset.xy);
+			half4 darkoverlaydetailX = tex2D (_DarkOverlayDetailTex, sphereNrm.zy*_DarkOverlayDetailScale);
+			half4 darkoverlaydetailY = tex2D (_DarkOverlayDetailTex, sphereNrm.zx*_DarkOverlayDetailScale);
+			half4 darkoverlaydetailZ = tex2D (_DarkOverlayDetailTex, sphereNrm.xy*_DarkOverlayDetailScale);
 			#endif
 			
 			sphereNrm = abs(sphereNrm);

@@ -1,30 +1,15 @@
-﻿using Geometry;
+﻿using Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
+using EveManager;
 
 namespace Terrain
 {
-    public class PQSCloudTest : PQSMod
-    {
-        public static void Log(String message)
-        {
-            UnityEngine.Debug.Log("PQSCloudTest: " + message);
-        }
-        public override void OnSphereActive()
-        {
-            Log("PQS Activated!");
-        }
-        public override void OnSphereInactive()
-        {
-            Log("PQS Deactivated!");
-        }
-    }
 
     public class PQSTangentAssigner : PQSMod
     {
@@ -67,11 +52,85 @@ namespace Terrain
         }
     }
 
-    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
-    public class TerrainManager : MonoBehaviour
+    public class TerrainObj
     {
-        static List<CelestialBody> CelestialBodyList = new List<CelestialBody>();
-        static bool setup = false;
+        private String body;
+        [Persistent] TextureManager detailTexture;
+        [Persistent] TextureManager verticalTexture;
+        private static Shader originalShader;
+        private static Shader terrainShader = null;
+        private static Shader TerrainShader
+        {
+            get
+            {
+                if (terrainShader == null)
+                {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-SphereTerrain.shader"));
+            String shaderTxt = shaderStreamReader.ReadToEnd();
+            terrainShader = new Material(shaderTxt).shader;
+                } return terrainShader;
+            }
+        }
+
+        public TerrainObj(ConfigNode node)
+        {
+            ConfigNode.LoadObjectFromConfig(this, node);
+            body = node.name;
+        }
+        public ConfigNode GetConfigNode()
+        {
+            return ConfigNode.CreateConfigFromObject(this, new ConfigNode(body));
+        }
+
+        public void Apply()
+        {
+            CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
+            List<Transform> transforms = ScaledSpace.Instance.scaledSpaceTransforms;
+            CelestialBody celestialBody = celestialBodies.Single(n => n.bodyName == body);
+            Transform transform = transforms.Single(n => n.name == body);
+            Texture mainTexture = null;
+            PQS pqs = celestialBody.pqsController;
+            if (pqs != null)
+            {
+                MeshRenderer mr = (MeshRenderer)transform.GetComponent(typeof(MeshRenderer));
+                if (mr != null)
+                {
+                    mainTexture = mr.material.mainTexture;
+                }
+                GameObject go = new GameObject("PQSTangentAssigner");
+                go.AddComponent<PQSTangentAssigner>();
+                go.transform.parent = pqs.transform;
+
+                originalShader = pqs.surfaceMaterial.shader;
+                pqs.surfaceMaterial.shader = TerrainShader;
+                //pqs.surfaceMaterial.mainTexture = mainTexture;
+                TerrainManager.Log("Replacing Terrain: " + TerrainShader);
+                pqs.surfaceMaterial.SetTexture("_DetailTex", detailTexture.GetTexture());
+                pqs.surfaceMaterial.SetFloat("_DetailScale", detailTexture.Scale);
+                pqs.surfaceMaterial.SetTexture("_DetailVertTex", verticalTexture.GetTexture());
+                pqs.surfaceMaterial.SetFloat("_DetailVertScale", verticalTexture.Scale);
+                pqs.surfaceMaterial.SetFloat("_DetailDist", .00005f);
+            }
+        }
+
+        public void Remove()
+        {
+            CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
+            CelestialBody celestialBody = celestialBodies.Single(n => n.bodyName == body);
+            PQS pqs = celestialBody.pqsController;
+            if (pqs != null)
+            {
+                pqs.surfaceMaterial.shader = originalShader;
+            }
+        }
+    }
+
+    public class TerrainManager : EveManagerType
+    {
+        static bool Initialized = false;
+        static List<TerrainObj> TerrainList = new List<TerrainObj>();
+        static UrlDir.UrlConfig[] configs;
 
         public static void Log(String message)
         {
@@ -80,143 +139,59 @@ namespace Terrain
 
         protected void Awake()
         {
-            if (!setup)
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU && !Initialized)
             {
-                Assembly assembly = Assembly.GetExecutingAssembly();
-                //StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-Vertex.shader"));
-                //StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-uv1.shader"));
-                //StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-Normals.shader"));
-                
-                //StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-Tangents.shader"));
-                //StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-uv1.shader"));
-                //StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-uv2.shader"));
-                StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-SphereTerrain.shader"));
+                Setup();
+            }
+        }
 
-                String shaderTxt = shaderStreamReader.ReadToEnd();
-                //String vertShaderTxt = vertshaderStreamReader.ReadToEnd();
+        public static void StaticSetup()
+        {
+            TerrainManager tm = new TerrainManager();
+            tm.Setup();
+        }
 
-                CelestialBody[] celestialBodies = (CelestialBody[])CelestialBody.FindObjectsOfType(typeof(CelestialBody));
-                GameObject[] gameObjects = (GameObject[])Resources.FindObjectsOfTypeAll(typeof(GameObject));
-                List<Transform> transforms = ScaledSpace.Instance.scaledSpaceTransforms;
-                foreach (CelestialBody cb in celestialBodies)
+        public void Setup()
+        {
+            Initialized = true;
+            Managers.Add(this);
+            LoadConfig();
+        }
+
+        public override void LoadConfig()
+        {
+            configs = GameDatabase.Instance.GetConfigs("EVE_TERRAIN");
+            Clean();
+            foreach (UrlDir.UrlConfig config in configs)
+            {
+                foreach (ConfigNode node in config.config.nodes)
                 {
-                        CelestialBodyList.Add(cb);
-                        Texture mainTexture = null;
-                        PQS pqs = cb.pqsController;
-                        if (pqs != null)
-                        {
-                            
-                            Log(cb.name);
-
-                            foreach (Transform t in transforms)
-                            {
-                                if(t.name == cb.name)
-                                {
-                                    Log("t: " + t.name);
-                                    MeshRenderer mr = (MeshRenderer)t.GetComponent(typeof(MeshRenderer));
-                                    if (mr != null)
-                                    {
-                                        Log("Has MR! " + mr.name);
-                                        mainTexture = mr.material.mainTexture;
-                                        Log("Texture: "+mr.material.name);
-                                       // mr.material.shader = new Material(vertShaderTxt).shader;
-                                    }
-                                }
-                            }
-
-                            PQSLandControl landControl = (PQSLandControl)pqs.transform.GetComponentInChildren(typeof(PQSLandControl));
-                            PQSMod_HeightColorMap heightColorMap = (PQSMod_HeightColorMap)pqs.transform.GetComponentInChildren(typeof(PQSMod_HeightColorMap));
-                            PQSMod_VertexPlanet vertexPlanet = (PQSMod_VertexPlanet)pqs.transform.GetComponentInChildren(typeof(PQSMod_VertexPlanet));
-                            if (landControl)
-                            {
-                                //PQSLandControl landControl = (PQSLandControl)cb.GetComponent(typeof(PQSLandControl));
-                                PQSLandControl.LandClass[] landClasses = landControl.landClasses;
-                                foreach (PQSLandControl.LandClass lc in landClasses)
-                                {
-                                    Log("LandControl Land Class: " + lc.landClassName + " " + lc.color);
-                                }
-                                GameObject go = new GameObject("PQSLandControlCustom");
-
-                                PQSTangentAssigner lcc = (PQSTangentAssigner)go.AddComponent(typeof(PQSTangentAssigner));
-                                go.AddComponent(typeof(PQSCloudTest));
-                                go.transform.parent = cb.pqsController.transform;
-                                
-                            }
-                            if (heightColorMap)
-                            {
-                                PQSMod_HeightColorMap.LandClass[] landClasses = heightColorMap.landClasses;
-                                foreach (PQSMod_HeightColorMap.LandClass lc in landClasses)
-                                {
-                                    Log("HeightColorMap Land Class: " + lc.name + " " + lc.color);
-                                }
-                            }
-                            if (vertexPlanet)
-                            {
-                                PQSMod_VertexPlanet.LandClass[] landClasses = vertexPlanet.landClasses;
-                                foreach (PQSMod_VertexPlanet.LandClass lc in landClasses)
-                                {
-                                    Log("VertexPlanet Land Class: " + lc.name + " " + lc.baseColor);
-                                }
-                            }
-
-                            if (pqs.surfaceMaterial.GetTexture("_DetailMap") != null)
-                            {
-                                Log("map!");
-                            }
-                            if (pqs.surfaceMaterial.GetTexture("_Detail1") != null)
-                            {
-                                Log("1");
-                            }
-                            if (pqs.surfaceMaterial.GetTexture("_detail1") != null)
-                            {
-                                Log("2");
-                            }
-                            pqs.surfaceMaterial.shader = new Material(shaderTxt).shader;
-                            //pqs.surfaceMaterial.mainTexture = mainTexture;
-                            pqs.surfaceMaterial.SetTexture("_DetailTex", GameDatabase.Instance.GetTexture("BoulderCo/Terrain/grass",false));
-                            pqs.surfaceMaterial.SetTexture("_DetailVertTex", GameDatabase.Instance.GetTexture("BoulderCo/Terrain/rock", false));
-                            pqs.surfaceMaterial.SetFloat("_DetailScale", 4000f);
-                            pqs.surfaceMaterial.SetFloat("_DetailDist", .00005f);
-                        }
-                        else
-                        {
-                            GameObject go = new GameObject();
-                            go.name = cb.bodyName;
-                            pqs = (PQS)go.AddComponent<PQS>();
-                            go.transform.parent = cb.transform;
-
-                            pqs.surfaceMaterial = new Material(shaderTxt);
-                            cb.pqsController = pqs ;
-                            
-                            
-                            /*PQSMod[] mods = pqs.transform.GetComponentsInChildren(typeof(PQSMod)) as PQSMod[];
-                            foreach(PQSMod mod in mods)
-                            {
-                                Log(mod.name + " " + mod.GetType());
-                            }*/
-                            go = new GameObject();
-                            PQSMod_CelestialBodyTransform cbt = (PQSMod_CelestialBodyTransform)go.AddComponent(typeof(PQSMod_CelestialBodyTransform));
-                            go.transform.parent = pqs.transform;
-                            go = new GameObject();
-                            PQSCloudTest lcc = (PQSCloudTest)go.AddComponent(typeof(PQSCloudTest));
-                            go.transform.parent = pqs.transform;
-
-                            cbt.planetFade = new PQSMod_CelestialBodyTransform.AltitudeFade();
-                            cbt.planetFade.secondaryRenderers = new List<GameObject>();
-                            cbt.secondaryFades = new PQSMod_CelestialBodyTransform.AltitudeFade[1];
-                            cbt.secondaryFades[0] = cbt.planetFade;
-                            cbt.deactivateAltitude = 200000;
-                            cbt.modEnabled = true;
-                            cbt.planetFade.Setup(pqs);
-                            Log("mapFilename: " + pqs.mapFilename);
-                            
-                            pqs.ResetSphere();
-                            pqs.EnableSphere();
-                            
-                        }
-                        
+                    TerrainObj terrain = new TerrainObj(node);
+                    TerrainList.Add(terrain);
+                    terrain.Apply();
                 }
-                setup = true;
+            }
+        }
+
+        private void Clean()
+        {
+            foreach (TerrainObj terrain in TerrainList)
+            {
+                terrain.Remove();
+            }
+            TerrainList.Clear();
+        }
+
+        public override void SaveConfig()
+        {
+            Log("Saving...");
+            foreach (UrlDir.UrlConfig config in configs)
+            {
+                config.config.ClearNodes();
+                foreach (TerrainObj terrain in TerrainList)
+                {
+                    config.config.AddNode(terrain.GetConfigNode());
+                }
             }
         }
     }

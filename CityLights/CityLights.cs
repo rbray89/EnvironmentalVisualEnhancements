@@ -1,84 +1,119 @@
-﻿using OverlaySystem;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
+using Utils;
+using EveManager;
+using Terrain;
 
 namespace CityLights
 {
-    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
-    public class CityLights: MonoBehaviour
+    class CityLightsObj
     {
+        private String body;
+        [Persistent] TextureManager mainTexture;
+        [Persistent] TextureManager detailTexture;
 
-        static bool setup = false;
-        static List<Overlay> overlayList = new List<Overlay>();
-
-        protected void Awake()
+        public CityLightsObj(ConfigNode node)
         {
-            if (HighLogic.LoadedScene == GameScenes.FLIGHT && !setup)
-            {
-                OverlayMgr.Init();
-                ConfigNode[] cityLightsConfigs = GameDatabase.Instance.GetConfigNodes("CITY_LIGHTS");
-                
-                foreach (ConfigNode node in cityLightsConfigs)
-                {
-                    float altitude = float.Parse(node.GetValue("altitude"));
-                    float fadeDistance = float.Parse(node.GetValue("fadeDistance"));
-                    float pqsfadeDistance = float.Parse(node.GetValue("pqsFadeDistance"));
+            ConfigNode.LoadObjectFromConfig(this, node);
+            body = node.name;
+        }
+        public ConfigNode GetConfigNode()
+        {
+            return ConfigNode.CreateConfigFromObject(this, new ConfigNode(body));
+        }
 
-                    TextureSet mTexture = new TextureSet(node.GetNode("main_texture"), false);
-                    TextureSet dTexture = new TextureSet(node.GetNode("detail_texture"), false);
-                    
-                    AddOverlay(mTexture, dTexture, altitude, fadeDistance, pqsfadeDistance);
-                }
-                
-                setup = true;
+        public void Apply()
+        {
+            CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
+            CelestialBody celestialBody = celestialBodies.Single(n => n.bodyName == body);
+            if (celestialBody != null)
+            {
+                CityLightsManager.Log("Enabling City Lights...");
+                celestialBody.pqsController.surfaceMaterial.EnableKeyword("CITYOVERLAY_ON");
+                celestialBody.pqsController.surfaceMaterial.SetTexture("_DarkOverlayTex", mainTexture.GetTexture());
+                celestialBody.pqsController.surfaceMaterial.SetTexture("_DarkOverlayDetailTex", detailTexture.GetTexture());
             }
         }
 
-        private void AddOverlay(TextureSet mTexture, TextureSet dTexture, float altitude, float fadeDistance, float pqsfadeDistance)
+        public void Remove()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            string[] resources = assembly.GetManifestResourceNames();
+            CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
+            CelestialBody celestialBody = celestialBodies.Single(n => n.bodyName == body);
+            if (celestialBody != null)
+            {
+                celestialBody.pqsController.surfaceMaterial.DisableKeyword("CITYOVERLAY_ON");
+            }
+        }
+    }
 
-            StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("CityLights.Shaders.Compiled-SphereCityLights.shader"));
-            
-            Log("read stream");
-            String shaderString = shaderStreamReader.ReadToEnd();
-            Material lightMaterial = new Material(shaderString);
-            Material pqsLightMaterial = new Material(shaderString);
+    public class CityLightsManager: EveManagerType   
+    {
+        static bool Initialized = false;
+        static List<CityLightsObj> CityLightsList = new List<CityLightsObj>();
+        UrlDir.UrlConfig[] configs;
 
-            lightMaterial.SetTexture("_MainTex", mTexture.Texture);
-            lightMaterial.SetTexture("_DetailTex", dTexture.Texture);
-            lightMaterial.SetFloat("_DetailScale", dTexture.Scale);
-            lightMaterial.SetVector("_DetailOffset", dTexture.Offset);
-            lightMaterial.SetFloat("_FadeDist", fadeDistance);
-            lightMaterial.SetFloat("_FadeScale", 1);
+        protected void Awake()
+        {
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU && !Initialized)
+            {
+                Setup();
+            }
+        }
 
-            pqsLightMaterial.SetTexture("_MainTex", mTexture.Texture);
-            pqsLightMaterial.SetTexture("_DetailTex", dTexture.Texture);
-            pqsLightMaterial.SetFloat("_DetailScale", dTexture.Scale);
-            pqsLightMaterial.SetVector("_DetailOffset", dTexture.Offset);
-            pqsLightMaterial.SetFloat("_FadeDist", pqsfadeDistance);
-            pqsLightMaterial.SetFloat("_FadeScale", .02f);
+        public void Setup()
+        {
+            TerrainManager.StaticSetup();
+            Initialized = true;
+            Managers.Add(this);
+            LoadConfig();
+        }
 
-            CelestialBody[] celestialBodies = (CelestialBody[])CelestialBody.FindObjectsOfType(typeof(CelestialBody));
-            CelestialBody celestialBody = celestialBodies.First(n => n.bodyName == "Kerbin");
-            celestialBody.pqsController.surfaceMaterial.EnableKeyword("CITYOVERLAY_ON");
-            celestialBody.pqsController.surfaceMaterial.SetTexture("_DarkOverlayTex", mTexture.Texture);
-            celestialBody.pqsController.surfaceMaterial.SetTexture("_DarkOverlayDetailTex", dTexture.Texture);
-            celestialBody.pqsController.surfaceMaterial.SetFloat("_DarkOverlayDetailScale", dTexture.Scale);
-            celestialBody.pqsController.surfaceMaterial.SetVector("_DarkOverlayDetailOffset", dTexture.Offset);
+        public override void LoadConfig()
+        {
+            configs = GameDatabase.Instance.GetConfigs("CITY_LIGHTS");
+            Clean();
+            foreach(UrlDir.UrlConfig config in configs)
+            {
+                foreach(ConfigNode node in config.config.nodes)
+                {
+                    CityLightsObj newCityLights = new CityLightsObj(node);
+                    CityLightsList.Add(newCityLights);
+                    newCityLights.Apply();
+                }
+            }
+        }
 
-            //overlayList.Add(Overlay.GeneratePlanetOverlay("Kerbin", altitude, lightMaterial, pqsLightMaterial, mTexture.StartOffset, false, true));
+        private void Clean()
+        {
+            foreach(CityLightsObj cityLights in CityLightsList)
+            {
+                cityLights.Remove();
+            }
+            CityLightsList.Clear();
+        }
+
+        public override void SaveConfig()
+        {
+            Log("Saving...");
+            foreach (UrlDir.UrlConfig config in configs)
+            {
+                config.config.ClearNodes();
+                foreach (CityLightsObj cityLights in CityLightsList)
+                {
+                    config.config.AddNode(cityLights.GetConfigNode());
+                }
+            }
         }
 
         public static void Log(String message)
         {
             UnityEngine.Debug.Log("CityLights: " + message);
         }
+
     }
 }

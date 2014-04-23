@@ -222,7 +222,11 @@ namespace Clouds
                 {
                     foreach (CloudLayer cl in CloudLayer.BodyDatabase[FlightGlobals.currentMainBody.name])
                     {
-                        cl.UpdateParticleClouds(GameObject.Find("KSC").transform.position);
+                        GameObject ksc = GameObject.Find("KSC");
+                        if (ksc != null && ksc.transform != null && ksc.transform.position != null)
+                        {
+                            cl.UpdateParticleClouds(ksc.transform.position);
+                        }
                     }
                 }
             }

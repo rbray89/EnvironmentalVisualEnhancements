@@ -68,9 +68,9 @@
       <Project>{6b877ddf-ebc6-4efd-a0f7-01f7cad8cf87}</Project>
       <Name>OverlayMgr</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Geometry\Geometry.csproj">
+    <ProjectReference Include="..\Geometry\Utils.csproj">
       <Project>{8b24314b-4b75-43f3-b31c-ffa9fc83fb70}</Project>
-      <Name>Geometry</Name>
+      <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

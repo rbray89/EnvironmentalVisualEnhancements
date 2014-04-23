@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Geometry
+namespace Utils
 {
     //Sphere code from http://wiki.unity3d.com/index.php/ProceduralPrimitives
     public static class IsoSphere
