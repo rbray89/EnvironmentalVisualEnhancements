@@ -67,11 +67,9 @@ namespace Terrain
 
         public void Apply()
         {
-            CelestialBody[] celestialBodies = (CelestialBody[])CelestialBody.FindObjectsOfType(typeof(CelestialBody));
-            TerrainManager.Log("CB: "+celestialBodies.Length);
-            List<Transform> transforms = ScaledSpace.Instance.scaledSpaceTransforms;
-            CelestialBody celestialBody = celestialBodies.Single(n => n.bodyName == body);
-            Transform transform = transforms.Single(n => n.name == body);
+
+            CelestialBody celestialBody = EVEManager.GetCelestialBody(body);
+            Transform transform = EVEManager.GetScaledTransform(body);
             Texture mainTexture = null;
             PQS pqs = celestialBody.pqsController;
             if (pqs != null)
@@ -98,8 +96,7 @@ namespace Terrain
 
         public void Remove()
         {
-            CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
-            CelestialBody celestialBody = celestialBodies.Single(n => n.bodyName == body);
+            CelestialBody celestialBody = EVEManager.GetCelestialBody(body);
             PQS pqs = celestialBody.pqsController;
             if (pqs != null)
             {

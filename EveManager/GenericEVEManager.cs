@@ -26,6 +26,7 @@ namespace EveManager
 
         public void LoadConfig()
         {
+            Log("Loading...");
             configs = GameDatabase.Instance.GetConfigs(configName);
             Clean();
             foreach (UrlDir.UrlConfig config in configs)
@@ -33,6 +34,7 @@ namespace EveManager
                 foreach (ConfigNode node in config.config.nodes)
                 {
                     T newObject = new T();
+                    newObject.LoadConfigNode(node);
                     ObjectList.Add(newObject);
                     newObject.Apply();
                 }

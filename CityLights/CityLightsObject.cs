@@ -28,8 +28,7 @@ namespace CityLights
 
         public void Apply()
         {
-            CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
-            CelestialBody celestialBody = celestialBodies.Single(n => n.bodyName == body);
+            CelestialBody celestialBody = EVEManager.GetCelestialBody(body);
             if (celestialBody != null)
             {
                 celestialBody.pqsController.surfaceMaterial.EnableKeyword("CITYOVERLAY_ON");
@@ -40,8 +39,7 @@ namespace CityLights
 
         public void Remove()
         {
-            CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
-            CelestialBody celestialBody = celestialBodies.Single(n => n.bodyName == body);
+            CelestialBody celestialBody = EVEManager.GetCelestialBody(body);
             if (celestialBody != null)
             {
                 celestialBody.pqsController.surfaceMaterial.DisableKeyword("CITYOVERLAY_ON");

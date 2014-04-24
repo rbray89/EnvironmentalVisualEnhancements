@@ -11,5 +11,16 @@ namespace EveManager
     {
         public static List<EVEManager> Managers = new List<EVEManager>();
 
+        public static CelestialBody GetCelestialBody(String body)
+        {
+            CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
+            return celestialBodies.Single(n => n.bodyName == body);
+        }
+
+        public static Transform GetScaledTransform(string body)
+        {
+            List<Transform> transforms = ScaledSpace.Instance.scaledSpaceTransforms;
+            return transforms.Single(n => n.name == body);
+        }
     }
 }
