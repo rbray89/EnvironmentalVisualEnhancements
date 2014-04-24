@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,10 +30,10 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\ksp-win-0-23-5\KSP_win_dev\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -50,7 +51,11 @@
   <ItemGroup>
     <Compile Include="AtmosphereVolume.cs" />
     <Compile Include="CloudLayer.cs" />
+    <Compile Include="CloudsManager.cs" />
     <Compile Include="Clouds.cs" />
+    <Compile Include="CloudsObject.cs" />
+    <Compile Include="Clouds2D.cs" />
+    <Compile Include="CloudsVolume.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VolumeManager.cs" />
     <Compile Include="VolumeSection.cs" />
@@ -64,14 +69,21 @@
     <None Include="Shaders\CloudParticle.shader" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonUtils\OverlayMgr.csproj">
+    <ProjectReference Include="..\CommonUtils\OverlayManager.csproj">
       <Project>{6b877ddf-ebc6-4efd-a0f7-01f7cad8cf87}</Project>
-      <Name>OverlayMgr</Name>
+      <Name>OverlayManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EveManager\EveManager.csproj">
+      <Project>{499e8c5c-c83e-4aea-bb01-eed705bd747f}</Project>
+      <Name>EveManager</Name>
     </ProjectReference>
     <ProjectReference Include="..\Geometry\Utils.csproj">
       <Project>{8b24314b-4b75-43f3-b31c-ffa9fc83fb70}</Project>
       <Name>Utils</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

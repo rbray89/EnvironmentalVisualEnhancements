@@ -1,19 +1,23 @@
-﻿using Utils;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
+using Utils;
 using EveManager;
+using Terrain;
 
-namespace Terrain
+namespace CityLights
 {
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
-    public class TerrainManager : GenericEVEManager<TerrainObject>
+    public class CityLightsManager: GenericEVEManager<CityLightsObject>   
     {
-        protected override String configName { get { return "EVE_TERRAIN"; } }
+        protected override String configName { get { return "EVE_CITY_LIGHTS"; } }
+
+        public CityLightsManager()
+        { }
 
         protected void Awake()
         {
@@ -23,11 +27,12 @@ namespace Terrain
             }
         }
 
-        public static void StaticSetup()
+        public override void Setup()
         {
-            TerrainManager tm = new TerrainManager();
-            tm.Setup();
+            TerrainManager.StaticSetup();
+            base.Setup();
         }
+
 
     }
 }
