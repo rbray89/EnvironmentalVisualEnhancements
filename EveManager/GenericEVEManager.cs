@@ -65,7 +65,7 @@ namespace EveManager
 
         public static void Log(String message)
         {
-            UnityEngine.Debug.Log(typeof(T).Name + message);
+            UnityEngine.Debug.Log(typeof(T).Name +": "+ message);
         }
 
     }

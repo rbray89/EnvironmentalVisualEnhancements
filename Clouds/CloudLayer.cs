@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 
-namespace Clouds
+namespace Atmosphere
 {
     internal class CloudLayer
     {
@@ -25,8 +25,8 @@ namespace Clouds
                     OverlayMgr.Log("Initializing Textures");
                     Assembly assembly = Assembly.GetExecutingAssembly();
 
-                    //StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-SphereCloud.shader"));
-                    StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-SphereAtmosphere.shader"));
+                    //StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Atmosphere.Shaders.Compiled-SphereCloud.shader"));
+                    StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Atmosphere.Shaders.Compiled-SphereAtmosphere.shader"));
 
                     OverlayMgr.Log("reading stream...");
                     String shaderTxt = shaderStreamReader.ReadToEnd();
@@ -42,7 +42,7 @@ namespace Clouds
                 OverlayMgr.Log("Initializing Textures");
                 Assembly assembly = Assembly.GetExecutingAssembly();
 
-                StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Clouds.Shaders.Compiled-CloudParticle.shader"));
+                StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Atmosphere.Shaders.Compiled-CloudParticle.shader"));
 
                 OverlayMgr.Log("reading stream...");
                 String shaderTxt = shaderStreamReader.ReadToEnd();

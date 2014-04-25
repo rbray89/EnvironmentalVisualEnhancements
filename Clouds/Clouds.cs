@@ -7,7 +7,7 @@ using UnityEngine;
 using System.IO;
 using OverlaySystem;
 
-namespace Clouds
+namespace Atmosphere
 {
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class Clouds : MonoBehaviour

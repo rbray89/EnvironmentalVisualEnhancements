@@ -7,8 +7,8 @@
     <ProjectGuid>{8DF6A385-18E6-4E76-A060-4C3847CA3046}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Clouds</RootNamespace>
-    <AssemblyName>Clouds</AssemblyName>
+    <RootNamespace>Atmosphere</RootNamespace>
+    <AssemblyName>Atmosphere</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -51,9 +51,9 @@
   <ItemGroup>
     <Compile Include="AtmosphereVolume.cs" />
     <Compile Include="CloudLayer.cs" />
-    <Compile Include="CloudsManager.cs" />
+    <Compile Include="AtmosphereManager.cs" />
     <Compile Include="Clouds.cs" />
-    <Compile Include="CloudsObject.cs" />
+    <Compile Include="AtmosphereObject.cs" />
     <Compile Include="Clouds2D.cs" />
     <Compile Include="CloudsVolume.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -11,6 +11,7 @@ namespace CityLights
     public class CityLightsObject : IEVEObject
     {
         private String body;
+        private ConfigNode node;
         [Persistent]
         TextureManager mainTexture = null;
         [Persistent]
@@ -18,6 +19,7 @@ namespace CityLights
 
         public void LoadConfigNode(ConfigNode node)
         {
+            this.node = node;
             ConfigNode.LoadObjectFromConfig(this, node);
             body = node.name;
         }

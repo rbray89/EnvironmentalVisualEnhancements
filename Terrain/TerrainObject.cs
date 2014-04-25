@@ -37,6 +37,7 @@ namespace Terrain
     public class TerrainObject : IEVEObject
     {
         private String body;
+        private ConfigNode node;
         [Persistent] TextureManager detailTexture = null;
         [Persistent] TextureManager verticalTexture = null;
         private static Shader originalShader;
@@ -57,6 +58,7 @@ namespace Terrain
 
         public void LoadConfigNode(ConfigNode node)
         {
+            this.node = node;
             ConfigNode.LoadObjectFromConfig(this, node);
             body = node.name;
         }
