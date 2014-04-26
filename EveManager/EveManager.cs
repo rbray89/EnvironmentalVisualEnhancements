@@ -10,6 +10,8 @@ namespace EveManager
     public class EVEManager : MonoBehaviour
     {
         public static List<EVEManager> Managers = new List<EVEManager>();
+        public static int MAP_LAYER = 10;
+        public static int MACRO_LAYER = 15;
 
         public static CelestialBody GetCelestialBody(String body)
         {
@@ -22,5 +24,6 @@ namespace EveManager
             List<Transform> transforms = ScaledSpace.Instance.scaledSpaceTransforms;
             return transforms.Single(n => n.name == body);
         }
+
     }
 }

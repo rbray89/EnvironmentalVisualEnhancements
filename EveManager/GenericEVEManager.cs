@@ -24,7 +24,7 @@ namespace EveManager
             }
         }
 
-        public void LoadConfig()
+        public virtual void LoadConfig()
         {
             Log("Loading...");
             configs = GameDatabase.Instance.GetConfigs(configName);
@@ -41,7 +41,7 @@ namespace EveManager
             }
         }
 
-        private void Clean()
+        protected void Clean()
         {
             foreach (T obj in ObjectList)
             {

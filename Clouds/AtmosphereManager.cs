@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace Atmosphere
 {
@@ -15,6 +16,24 @@ namespace Atmosphere
             if (HighLogic.LoadedScene == GameScenes.MAINMENU && !Initialized)
             {
                 Setup();
+            }
+        }
+
+        public override void LoadConfig()
+        {
+            Log("Loading...");
+            configs = GameDatabase.Instance.GetConfigs(configName);
+            Clean();
+            foreach (UrlDir.UrlConfig config in configs)
+            {
+                foreach (ConfigNode node in config.config.nodes)
+                {
+                    GameObject go = new GameObject();
+                    AtmosphereObject newObject = go.AddComponent<AtmosphereObject>();
+                    newObject.LoadConfigNode(node);
+                    ObjectList.Add(newObject);
+                    newObject.Apply();
+                }
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EveManager;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -30,17 +31,17 @@ namespace Atmosphere
         }
         public void Apply(float radius, Transform parent)
         {
-            CloudMesh = new GameObject();
-            IsoSphere.Create(CloudMesh, radius, null);
-
-            var mr = CloudMesh.AddComponent<MeshRenderer>();
-            mr.sharedMaterial = new Material(CloudShader);
-            mr.castShadows = false;
-            mr.receiveShadows = false;
-            //mr.enabled = mainMenu;
-            mr.enabled = true;
-
+            HalfSphere hp = new HalfSphere(radius, new Material("VertexLit"));
+            CloudMesh = hp.GameObject;
             CloudMesh.transform.parent = parent;
+            CloudMesh.transform.localPosition = Vector3.zero;
+            CloudMesh.transform.localScale = Vector3.one;
+            CloudMesh.layer = EVEManager.MACRO_LAYER;
+        }
+
+        internal void UpdateRotation(Quaternion quaternion)
+        {
+            CloudMesh.transform.rotation = quaternion;
         }
     }
 }

@@ -7,10 +7,10 @@ using UnityEngine;
 namespace Utils
 {
     //Sphere code from http://wiki.unity3d.com/index.php/ProceduralPrimitives
-    public static class IsoSphere
+    public class IsoSphere
     {
 
-        private struct TriangleIndices
+        protected struct TriangleIndices
         {
             public int v1;
             public int v2;
@@ -25,7 +25,7 @@ namespace Utils
         }
 
         // return index of point in the middle of p1 and p2
-        private static int getMiddlePoint(int p1, int p2, ref List<Vector3> vertices, ref Dictionary<long, int> cache, float altitude)
+        protected static int getMiddlePoint(int p1, int p2, ref List<Vector3> vertices, ref Dictionary<long, int> cache, float altitude)
         {
             // first check if we have it already
             bool firstIsSmaller = p1 < p2;

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace Atmosphere
 {
@@ -31,20 +32,24 @@ namespace Atmosphere
         { }
         protected void Update()
         {
-            if(sphere.isActive)
+            if (this.sphere != null && sphere.isActive)
             {
-
+                if (layer2D != null)
+                {
+                    layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, -this.sphere.relativeTargetPosition));
+                }
             }
         }
 
         public void Apply()
         {
             CelestialBody celestialBody = EVEManager.GetCelestialBody(body);
-            if (celestialBody != null)
+            if (celestialBody != null && celestialBody.pqsController != null)
             {
+                this.transform.parent = celestialBody.pqsController.transform;
                 if (layer2D != null)
                 {
-                    layer2D.Apply((float)celestialBody.Radius + 4000f, celestialBody.bodyTransform);
+                    layer2D.Apply((float)celestialBody.Radius + 4000f, celestialBody.transform);
                 }
             }
         }
@@ -56,5 +61,18 @@ namespace Atmosphere
             {
             }
         }
+        /*
+        private static Transform GetTargetPos()
+        {
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT)
+            {
+                Vector3 COM = FlightGlobals.ActiveVessel.findWorldCenterOfMass();
+            }
+            else if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
+            {
+                GameObject ksc = GameObject.Find("KSC");
+                ksc.transform.position;
+            }
+        }*/
     }
 }
