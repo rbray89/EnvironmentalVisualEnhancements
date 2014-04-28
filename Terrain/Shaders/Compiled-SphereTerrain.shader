@@ -11,7 +11,6 @@
 		_DarkOverlayTex ("Overlay (RGB)", 2D) = "white" {}
 		_DarkOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
 		_DarkOverlayDetailScale ("Overlay Detail Scale", Range(0,1000)) = 80
-		_DarkOverlayDetailOffset ("Overlay Detail Offset", Color) = (0,0,0,0)
 	}
 
 Category {
@@ -34790,7 +34789,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -34869,7 +34867,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -35048,7 +35046,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -35184,17 +35181,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -35303,7 +35300,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -35439,17 +35435,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -35982,10 +35978,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 465
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 469
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -36071,7 +36067,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -36150,7 +36145,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -36326,7 +36321,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -36462,17 +36456,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -36578,7 +36572,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -36714,17 +36707,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -37247,10 +37240,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 462
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 466
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -37337,7 +37330,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -37416,7 +37408,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -37595,7 +37587,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -37731,17 +37722,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -37850,7 +37841,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -37986,17 +37976,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -38531,10 +38521,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 474
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 478
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -38623,7 +38613,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -38702,7 +38691,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -38881,7 +38870,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -39017,17 +39005,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -39136,7 +39124,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -39272,17 +39259,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -39817,10 +39804,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 466
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 470
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -39909,7 +39896,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -39988,7 +39974,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -40167,7 +40153,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -40303,17 +40288,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -40422,7 +40407,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -40558,17 +40542,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -41101,10 +41085,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 465
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 469
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -41196,7 +41180,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -41275,7 +41258,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -41458,7 +41441,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -41594,17 +41576,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -41716,7 +41698,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -41852,17 +41833,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -42407,10 +42388,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 481
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 485
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -42504,7 +42485,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -42583,7 +42563,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -42768,7 +42748,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -42904,17 +42883,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -43457,10 +43436,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 482
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 486
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -43551,7 +43530,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -43630,7 +43608,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -43809,7 +43787,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -43945,17 +43922,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -44064,7 +44041,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -44200,17 +44176,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -44743,10 +44719,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 471
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 475
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -44838,7 +44814,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -44917,7 +44892,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -45100,7 +45075,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -45236,17 +45210,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -45358,7 +45332,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -45494,17 +45467,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -46047,10 +46020,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 474
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 478
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -46144,7 +46117,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -46223,7 +46195,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -46406,7 +46378,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -46542,17 +46513,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -46664,7 +46635,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -46800,17 +46770,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -47351,10 +47321,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 479
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 483
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -47448,7 +47418,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -47527,7 +47496,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -47710,7 +47679,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -47846,17 +47814,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -47968,7 +47936,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -48104,17 +48071,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -48657,10 +48624,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 480
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 484
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -48754,7 +48721,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -48833,7 +48799,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -49016,7 +48982,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -49152,17 +49117,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -49274,7 +49239,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -49410,17 +49374,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -49967,10 +49931,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 489
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 493
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -50064,7 +50028,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -50143,7 +50106,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -50328,7 +50291,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -50464,17 +50426,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -51021,10 +50983,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 489
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 493
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -51118,7 +51080,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -51197,7 +51158,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -51380,7 +51341,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -51516,17 +51476,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -51638,7 +51598,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -51774,17 +51733,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -52325,10 +52284,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 485
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 489
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -52422,7 +52381,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -52501,7 +52459,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -52684,7 +52642,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -52820,17 +52777,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -52942,7 +52899,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -53078,17 +53034,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -53631,10 +53587,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 486
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 490
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -53725,7 +53681,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -53804,7 +53759,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -53983,7 +53938,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -54119,17 +54073,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -54238,7 +54192,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -54374,17 +54327,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -54917,10 +54870,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 465
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 469
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -55006,7 +54959,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -55085,7 +55037,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -55261,7 +55213,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -55397,17 +55348,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -55513,7 +55464,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -55649,17 +55599,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -56182,10 +56132,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 462
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 466
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -56272,7 +56222,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -56351,7 +56300,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -56530,7 +56479,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -56666,17 +56614,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -56785,7 +56733,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -56921,17 +56868,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -57466,10 +57413,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 474
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 478
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -57558,7 +57505,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -57637,7 +57583,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -57816,7 +57762,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -57952,17 +57897,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -58071,7 +58016,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -58207,17 +58151,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -58752,10 +58696,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 466
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 470
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -58844,7 +58788,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -58923,7 +58866,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -59102,7 +59045,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -59238,17 +59180,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -59357,7 +59299,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -59493,17 +59434,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -60036,10 +59977,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 465
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 469
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -60131,7 +60072,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -60210,7 +60150,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -60393,7 +60333,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -60529,17 +60468,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -60651,7 +60590,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -60787,17 +60725,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -61342,10 +61280,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 481
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 485
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -61439,7 +61377,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -61518,7 +61455,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -61703,7 +61640,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -61839,17 +61775,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -62392,10 +62328,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 482
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 486
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -62486,7 +62422,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -62565,7 +62500,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -62744,7 +62679,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -62880,17 +62814,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -62999,7 +62933,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -63135,17 +63068,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -63678,10 +63611,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 471
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 475
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -63773,7 +63706,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -63852,7 +63784,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -64035,7 +63967,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -64171,17 +64102,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -64293,7 +64224,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -64429,17 +64359,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -64982,10 +64912,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 474
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 478
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -65079,7 +65009,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -65158,7 +65087,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -65341,7 +65270,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -65477,17 +65405,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -65599,7 +65527,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -65735,17 +65662,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -66286,10 +66213,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 479
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 483
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -66383,7 +66310,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -66462,7 +66388,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -66645,7 +66571,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -66781,17 +66706,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -66903,7 +66828,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -67039,17 +66963,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -67592,10 +67516,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 480
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 484
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -67689,7 +67613,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -67768,7 +67691,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -67951,7 +67874,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -68087,17 +68009,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -68209,7 +68131,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -68345,17 +68266,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -68902,10 +68823,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 489
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 493
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -68999,7 +68920,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -69078,7 +68998,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -69263,7 +69183,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -69399,17 +69318,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -69956,10 +69875,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 489
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 493
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -70053,7 +69972,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -70132,7 +70050,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -70315,7 +70233,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -70451,17 +70368,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -70573,7 +70490,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -70709,17 +70625,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -71260,10 +71176,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 485
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 489
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -71357,7 +71273,6 @@ varying vec3 xlv_TEXCOORD4;
 varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
-uniform vec4 _DarkOverlayDetailOffset;
 uniform float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -71436,7 +71351,7 @@ void main ()
   tmpvar_18 = (((texture2DGradARB (_MainTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (mix (mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.xy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.xy * _DetailScale)), vec4(tmpvar_16)), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zy * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zy * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.xxxx), mix (texture2D (_DetailVertTex, (xlv_TEXCOORD4.zx * _DetailVertScale)), texture2D (_DetailTex, (xlv_TEXCOORD4.zx * _DetailScale)), vec4(tmpvar_16)), tmpvar_17.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1), 0.0, 1.0)))) * xlv_TEXCOORD5) * _Color);
   color_3.w = tmpvar_18.w;
   vec4 tmpvar_19;
-  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy)), tmpvar_17.yyyy));
+  tmpvar_19 = (texture2DGradARB (_DarkOverlayTex, uv_2, tmpvar_15.xy, tmpvar_15.zw) * mix (mix (texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale)), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale)), tmpvar_17.xxxx), texture2D (_DarkOverlayDetailTex, (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale)), tmpvar_17.yyyy));
   darkoverlay_1.xyz = tmpvar_19.xyz;
   float tmpvar_20;
   tmpvar_20 = clamp (((_LightColor0.w * ((clamp (dot (xlv_TEXCOORD3, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0) - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
@@ -71619,7 +71534,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -71755,17 +71669,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -71877,7 +71791,6 @@ varying highp vec3 xlv_TEXCOORD4;
 varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
-uniform lowp vec4 _DarkOverlayDetailOffset;
 uniform highp float _DarkOverlayDetailScale;
 uniform sampler2D _DarkOverlayDetailTex;
 uniform sampler2D _DarkOverlayTex;
@@ -72013,17 +71926,17 @@ void main ()
   darkoverlay_11 = tmpvar_51;
   lowp vec4 tmpvar_52;
   highp vec2 P_53;
-  P_53 = ((xlv_TEXCOORD4.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_53 = (xlv_TEXCOORD4.zy * _DarkOverlayDetailScale);
   tmpvar_52 = texture2D (_DarkOverlayDetailTex, P_53);
   darkoverlaydetailX_10 = tmpvar_52;
   lowp vec4 tmpvar_54;
   highp vec2 P_55;
-  P_55 = ((xlv_TEXCOORD4.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_55 = (xlv_TEXCOORD4.zx * _DarkOverlayDetailScale);
   tmpvar_54 = texture2D (_DarkOverlayDetailTex, P_55);
   darkoverlaydetailY_9 = tmpvar_54;
   lowp vec4 tmpvar_56;
   highp vec2 P_57;
-  P_57 = ((xlv_TEXCOORD4.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy);
+  P_57 = (xlv_TEXCOORD4.xy * _DarkOverlayDetailScale);
   tmpvar_56 = texture2D (_DarkOverlayDetailTex, P_57);
   darkoverlaydetailZ_8 = tmpvar_56;
   highp vec3 tmpvar_58;
@@ -72566,10 +72479,10 @@ lowp vec4 frag( in v2f IN ) {
     #line 486
     mediump vec4 detailZ = mix( texture( _DetailVertTex, detailvertnrmxy), texture( _DetailTex, detailnrmxy), vec4( vertLerp));
     mediump vec4 darkoverlay = xll_tex2Dgrad( _DarkOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, ((sphereNrm.zy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
-    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, ((sphereNrm.zx * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailX = texture( _DarkOverlayDetailTex, (sphereNrm.zy * _DarkOverlayDetailScale));
+    mediump vec4 darkoverlaydetailY = texture( _DarkOverlayDetailTex, (sphereNrm.zx * _DarkOverlayDetailScale));
     #line 490
-    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, ((sphereNrm.xy * _DarkOverlayDetailScale) + _DarkOverlayDetailOffset.xy));
+    mediump vec4 darkoverlaydetailZ = texture( _DarkOverlayDetailTex, (sphereNrm.xy * _DarkOverlayDetailScale));
     sphereNrm = abs(sphereNrm);
     mediump vec4 detail = mix( detailZ, detailX, vec4( sphereNrm.x));
     detail = mix( detail, detailY, vec4( sphereNrm.y));
@@ -72623,7 +72536,7 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 60
-//   d3d9 - ALU: 102 to 118, TEX: 9 to 15
+//   d3d9 - ALU: 102 to 115, TEX: 9 to 15
 //   d3d11 - ALU: 76 to 89, TEX: 6 to 9, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "POINT" "SHADOWS_OFF" }
@@ -81277,25 +81190,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -81303,10 +81215,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -81314,14 +81225,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -81338,48 +81249,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -81390,48 +81301,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_OFF" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -81439,7 +81348,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -81457,7 +81365,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedpmgoojldliblplepehinnihdlbhilmbgabaaaaaakmapaaaaadaaaaaa
+eefiecedifnnphbmmikobkchcmbfbgffgpckdkniabaaaaaajeapaaaaadaaaaaa
 cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaalmaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -81466,8 +81374,8 @@ aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaalmaaaaaaafaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaapahaaaalmaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
 cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaa
-fjaaaaaeegiocaaaaaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaa
+fjaaaaaeegiocaaaaaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
 fjaaaaaeegiocaaaacaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaa
 fkaaaaadaagabaaaaeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -81566,23 +81474,22 @@ dccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
 acaaaaaaaeaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
 aaaamadpddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
 aaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
-diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaal
-pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaa
-aeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaa
-eghobaaaaeaaaaaaaagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaa
-adaaaaaaagiacaaaaaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaaj
-pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
-aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
-egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
-ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
-egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
-abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
-aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
-abeaaaaaaaaaiadpdoaaaaab"
+diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaai
+pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+efaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
+aeaaaaaadiaaaaaidcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaa
+ajaaaaaaefaaaaajpcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaa
+aagabaaaaeaaaaaaaaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaia
+ebaaaaaaaeaaaaaadcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaa
+egaobaaaadaaaaaaegaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaa
+abaaaaaaegaobaiaebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaia
+ibaaaaaaadaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaa
+abaaaaaaegacbaaaacaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaa
+diaaaaahicaabaaaabaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaa
+aaaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaf
+iccabaaaaaaaaaaaabeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -81616,25 +81523,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -81642,10 +81548,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -81653,14 +81558,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -81677,48 +81582,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4_pp r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -81729,48 +81634,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq_pp r2.w, r2.w
 mul_pp r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_OFF" }
-ConstBuffer "$Globals" 112 // 112 used size, 10 vars
+ConstBuffer "$Globals" 112 // 84 used size, 10 vars
 Vector 16 [_LightColor0] 4
 Vector 48 [_Color] 4
 Float 64 [_DetailScale]
@@ -81778,7 +81681,6 @@ Float 68 [_DetailVertScale]
 Float 72 [_DetailDist]
 Float 76 [_MinLight]
 Float 80 [_DarkOverlayDetailScale]
-Vector 96 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -81796,7 +81698,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedgceilpjeehppjpajjlgcamocbipackcjabaaaaaajeapaaaaadaaaaaa
+eefiecednapeenmdepkgfajonmjhkbdcifjfiiciabaaaaaahmapaaaaadaaaaaa
 cmaaaaaaoeaaaaaabiabaaaaejfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -81804,8 +81706,8 @@ aoaoaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaakeaaaaaa
 aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaakeaaaaaaafaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaapahaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcheaoaaaa
-eaaaaaaajnadaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcfmaoaaaa
+eaaaaaaajhadaaaafjaaaaaeegiocaaaaaaaaaaaagaaaaaafjaaaaaeegiocaaa
 abaaaaaaabaaaaaafjaaaaaeegiocaaaacaaaaaaafaaaaaafkaaaaadaagabaaa
 aaaaaaaafkaaaaadaagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafkaaaaad
 aagabaaaadaaaaaafkaaaaadaagabaaaaeaaaaaafibiaaaeaahabaaaaaaaaaaa
@@ -81905,12 +81807,344 @@ aaaaaaaaegiccaaaacaaaaaaaeaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaa
 aaaaaaaaabeaaaaaaaaamadpddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
 abeaaaaaaaaaiadpaaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
 abeaaaaaaaaaiadpdiaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
-abaaaaaadcaaaaalpcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaa
-afaaaaaaegiecaaaaaaaaaaaagaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaa
-abaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaa
-ogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadcaaaaaldcaabaaa
-aeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaafaaaaaaegiacaaaaaaaaaaa
-agaaaaaaefaaaaajpcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaa
+abaaaaaadiaaaaaipcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaa
+afaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaa
+aagabaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaa
+aeaaaaaaaagabaaaaeaaaaaadiaaaaaidcaabaaaaeaaaaaaegbabaaaadaaaaaa
+agiacaaaaaaaaaaaafaaaaaaefaaaaajpcaabaaaaeaaaaaaegaabaaaaeaaaaaa
+eghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaaadaaaaaaegaobaaa
+adaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaaadaaaaaaagbabaia
+ibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaaaaaaaaaipcaabaaa
+abaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaadcaaaaakpcaabaaa
+abaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaa
+dcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaabaaaaaaegacbaia
+ebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaaabaaaaaadkaabaaa
+acaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaaaabaaaaaa
+dcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaa
+aaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadpdoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_OFF" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_OFF" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_OFF" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightColor0]
+Vector 3 [_Color]
+Float 4 [_DetailScale]
+Float 5 [_DetailVertScale]
+Float 6 [_DetailDist]
+Float 7 [_MinLight]
+Float 8 [_DarkOverlayDetailScale]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailVertTex] 2D
+SetTexture 2 [_DetailTex] 2D
+SetTexture 3 [_DarkOverlayTex] 2D
+SetTexture 4 [_DarkOverlayDetailTex] 2D
+"ps_3_0
+; 115 ALU, 15 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+dcl_texcoord1 v0.x
+dcl_texcoord2 v1.xyz
+dcl_texcoord3 v2.xyz
+dcl_texcoord4 v3.xyz
+dcl_texcoord5 v4.xyz
+mov r2.xyz, v3
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c14
+mul r0.xy, v3.zyzw, c5.x
+mul r1.xy, v3.zyzw, c4.x
+abs r0.w, v3.z
+abs r4.zw, v3.xyxy
+max r1.w, r4.z, r0
+rcp r2.x, r1.w
+min r1.w, r4.z, r0
+mul r1.w, r1, r2.x
+mul r2.w, r1, r1
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
+texld r0.xyz, r0, s1
+texld r1.xyz, r1, s2
+add r1.xyz, r1, -r0
+mad_sat r3.x, r2.y, c14.z, c14.w
+mad r2.xyz, r3.x, r1, r0
+mul r1.xy, v3, c5.x
+mul r0.xy, v3, c4.x
+texld r1.xyz, r1, s1
+texld r0.xyz, r0, s2
+add r0.xyz, r0, -r1
+mad r0.xyz, r3.x, r0, r1
+add_pp r1.xyz, r2, -r0
+mad_pp r2.xyz, r4.z, r1, r0
+mul r1.xy, v3.zxzw, c5.x
+mul r0.xy, v3.zxzw, c4.x
+texld r1.xyz, r1, s1
+texld r0.xyz, r0, s2
+add r0.xyz, r0, -r1
+mad r0.xyz, r3.x, r0, r1
+add_pp r0.xyz, r0, -r2
+mad r2.w, r3.y, r2, c12.z
+mul r1.y, r2.w, r1.w
+dp4 r2.w, c1, c1
+mad_pp r0.xyz, r4.w, r0, r2
+add r1.x, r4.z, -r0.w
+add r1.z, -r1.y, c12.w
+cmp r1.w, -r1.x, r1.y, r1.z
+add r2.x, -r1.w, c10.w
+cmp r1.w, v3.z, r1, r2.x
+cmp r1.w, v3.x, r1, -r1
+mul r2.x, v0, c6
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
+mad_pp r1.xyz, r2.x, r1, r0
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
+rsq r0.y, r0.y
+mad r4.x, r1.w, c13, c13.y
+rcp r0.y, r0.y
+mul r1.w, r0.x, r0.y
+abs r0.x, v3.y
+cmp r0.w, v3.z, c9.x, c9.y
+mul r2.x, r0.w, r1.w
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
+rsq r0.z, r0.z
+mad r0.x, r0.y, r0, c10.y
+rcp r0.z, r0.z
+mul r0.y, r0.x, r0.z
+cmp r0.x, v3.y, c9, c9.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
+dsy r0.zw, v3.xyxy
+mul r0.zw, r0, r0
+mul r4.y, r0.x, c11.x
+dsx r3.w, r0.y
+dsy r3.y, r0
+dsx r0.xy, v3
+mul r0.xy, r0, r0
+add r0.x, r0, r0.y
+add r0.y, r0.z, r0.w
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
+texldd r0.xyz, r4, s0, r3.zwzw, r3
+mul_pp r0.xyz, r0, r1
+mul r0.xyz, r0, v4
+mul r2.xyz, r0, c3
+mul r1.xy, v3, c8.x
+mul r0.xy, v3.zyzw, c8.x
+texld r1, r1, s4
+texld r0, r0, s4
+add_pp r0, r0, -r1
+mad_pp r1, r4.z, r0, r1
+mul r5.xy, v3.zxzw, c8.x
+texld r0, r5, s4
+add_pp r0, r0, -r1
+mad_pp r0, r4.w, r0, r1
+rsq r2.w, r2.w
+mul r1.xyz, r2.w, c1
+dp3_sat r1.x, v2, r1
+add_pp r1.x, r1, c13.z
+mul_pp r1.w, r1.x, c2
+texldd r3, r4, s3, r3.zwzw, r3
+mov r1.y, c7.x
+mul_pp r0, r3, r0
+mul_pp_sat r1.w, r1, c13
+add r1.xyz, c2, r1.y
+mad_sat r1.xyz, r1.w, r1, c0
+mad_pp r0.xyz, -r2, r1, r0
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
+mul_pp r1.xyz, r2, r1
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
+mov_pp oC0.w, c9.y
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_OFF" }
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
+Vector 80 [_LightColor0] 4
+Vector 112 [_Color] 4
+Float 128 [_DetailScale]
+Float 132 [_DetailVertScale]
+Float 136 [_DetailDist]
+Float 140 [_MinLight]
+Float 144 [_DarkOverlayDetailScale]
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
+Vector 64 [glstate_lightmodel_ambient] 4
+BindCB "$Globals" 0
+BindCB "UnityLighting" 1
+BindCB "UnityPerFrame" 2
+SetTexture 0 [_MainTex] 2D 0
+SetTexture 1 [_DetailVertTex] 2D 2
+SetTexture 2 [_DetailTex] 2D 1
+SetTexture 3 [_DarkOverlayTex] 2D 3
+SetTexture 4 [_DarkOverlayDetailTex] 2D 4
+// 103 instructions, 5 temp regs, 0 temp arrays:
+// ALU 85 float, 0 int, 4 uint
+// TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0
+eefiecedldcidbplmodealmhpimdgjiljpcicadlabaaaaaajeapaaaaadaaaaaa
+cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaababaaaalmaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+aoaoaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaalmaaaaaa
+aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaalmaaaaaaafaaaaaaaaaaaaaa
+adaaaaaaaeaaaaaaapahaaaalmaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
+apaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
+cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaa
+fjaaaaaeegiocaaaaaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
+fjaaaaaeegiocaaaacaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
+aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaa
+fkaaaaadaagabaaaaeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
+aahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaafibiaaae
+aahabaaaadaaaaaaffffaaaafibiaaaeaahabaaaaeaaaaaaffffaaaagcbaaaad
+bcbabaaaabaaaaaagcbaaaadocbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
+gcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagfaaaaadpccabaaa
+aaaaaaaagiaaaaacafaaaaaadiaaaaaipcaabaaaaaaaaaaaggbcbaaaadaaaaaa
+agiacaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaaaaaaaaa
+eghobaaaacaaaaaaaagabaaaabaaaaaaefaaaaajpcaabaaaaaaaaaaaogakbaaa
+aaaaaaaaeghobaaaacaaaaaaaagabaaaabaaaaaadiaaaaaipcaabaaaacaaaaaa
+egbgbaaaadaaaaaaagifcaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaaadaaaaaa
+ogakbaaaacaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaaefaaaaajpcaabaaa
+acaaaaaaegaabaaaacaaaaaaeghobaaaacaaaaaaaagabaaaabaaaaaaaaaaaaai
+hcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaadaaaaaabacaaaai
+icaabaaaaaaaaaaajgbhbaaaabaaaaaaegbcbaiaebaaaaaaadaaaaaaaaaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaddddhdlpdccaaaajicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaaaecabeaaaaaaaaaaadpdcaaaaaj
+hcaabaaaabaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaadaaaaaa
+diaaaaaipcaabaaaadaaaaaacgbebaaaadaaaaaafgifcaaaaaaaaaaaaiaaaaaa
+efaaaaajpcaabaaaaeaaaaaaogakbaaaadaaaaaaeghobaaaabaaaaaaaagabaaa
+acaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaadaaaaaaeghobaaaabaaaaaa
+aagabaaaacaaaaaaaaaaaaaihcaabaaaacaaaaaaegacbaaaacaaaaaaegacbaia
+ebaaaaaaaeaaaaaadcaaaaajhcaabaaaacaaaaaapgapbaaaaaaaaaaaegacbaaa
+acaaaaaaegacbaaaaeaaaaaaaaaaaaaihcaabaaaabaaaaaaegacbaaaabaaaaaa
+egacbaiaebaaaaaaacaaaaaadcaaaaakhcaabaaaabaaaaaaagbabaiaibaaaaaa
+adaaaaaaegacbaaaabaaaaaaegacbaaaacaaaaaaaaaaaaaihcaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaiaebaaaaaaadaaaaaadcaaaaajhcaabaaaaaaaaaaa
+pgapbaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaadaaaaaaaaaaaaaihcaabaaa
+aaaaaaaaegacbaiaebaaaaaaabaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaafgbfbaiaibaaaaaaadaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
+aaaaaaalhcaabaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaaaceaaaaaaaaaiadp
+aaaaiadpaaaaiadpaaaaaaaaapcaaaaiicaabaaaaaaaaaaaagbabaaaabaaaaaa
+kgikcaaaaaaaaaaaaiaaaaaadcaaaaajhcaabaaaaaaaaaaapgapbaaaaaaaaaaa
+egacbaaaabaaaaaaegacbaaaaaaaaaaadeaaaaajicaabaaaaaaaaaaackbabaia
+ibaaaaaaadaaaaaaakbabaiaibaaaaaaadaaaaaaaoaaaaakicaabaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpdkaabaaaaaaaaaaaddaaaaaj
+bcaabaaaabaaaaaackbabaiaibaaaaaaadaaaaaaakbabaiaibaaaaaaadaaaaaa
+diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaah
+bcaabaaaabaaaaaadkaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajccaabaaa
+abaaaaaaakaabaaaabaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
+ccaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaochgdido
+dcaaaaajccaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aebnkjlodcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaa
+abeaaaaadiphhpdpdiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaadcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapmjdpdbaaaaajecaabaaaabaaaaaackbabaiaibaaaaaaadaaaaaa
+akbabaiaibaaaaaaadaaaaaaabaaaaahccaabaaaabaaaaaackaabaaaabaaaaaa
+bkaabaaaabaaaaaadcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaabkaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaajgbfbaaaadaaaaaa
+jgbfbaiaebaaaaaaadaaaaaaabaaaaahecaabaaaabaaaaaabkaabaaaabaaaaaa
+abeaaaaanlapejmaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
+abaaaaaaddaaaaahecaabaaaabaaaaaackbabaaaadaaaaaaakbabaaaadaaaaaa
+dbaaaaaiecaabaaaabaaaaaackaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+deaaaaahicaabaaaabaaaaaackbabaaaadaaaaaaakbabaaaadaaaaaabnaaaaai
+icaabaaaabaaaaaadkaabaaaabaaaaaadkaabaiaebaaaaaaabaaaaaaabaaaaah
+ecaabaaaabaaaaaadkaabaaaabaaaaaackaabaaaabaaaaaadhaaaaakicaabaaa
+aaaaaaaackaabaaaabaaaaaadkaabaiaebaaaaaaaaaaaaaadkaabaaaaaaaaaaa
+dcaaaaajbcaabaaaacaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
+aaaaaadpalaaaaafmcaabaaaabaaaaaaagbebaaaadaaaaaaapaaaaahicaabaaa
+aaaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahbcaabaaaadaaaaaadkaabaaaaaaaaaaaabeaaaaa
+idpjccdoamaaaaafmcaabaaaabaaaaaaagbebaaaadaaaaaaapaaaaahicaabaaa
+aaaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahbcaabaaaaeaaaaaadkaabaaaaaaaaaaaabeaaaaa
+idpjccdodcaaaabamcaabaaaabaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaa
+aaaaaaaaaaaaaaaadagojjlmdagojjlmaceaaaaaaaaaaaaaaaaaaaaachbgjidn
+chbgjidndcaaaaanmcaabaaaabaaaaaakgaobaaaabaaaaaafgbjbaiaibaaaaaa
+adaaaaaaaceaaaaaaaaaaaaaaaaaaaaaiedefjloiedefjlodcaaaaanmcaabaaa
+abaaaaaakgaobaaaabaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaaaaaaaaaa
+aaaaaaaakeanmjdpkeanmjdpaaaaaaalmcaabaaaadaaaaaafgbjbaiambaaaaaa
+adaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaiadpaaaaiadpelaaaaafmcaabaaa
+adaaaaaakgaobaaaadaaaaaadiaaaaahmcaabaaaaeaaaaaakgaobaaaabaaaaaa
+kgaobaaaadaaaaaadcaaaaapmcaabaaaaeaaaaaakgaobaaaaeaaaaaaaceaaaaa
+aaaaaaaaaaaaaaaaaaaaaamaaaaaaamaaceaaaaaaaaaaaaaaaaaaaaanlapejea
+nlapejeaabaaaaahdcaabaaaabaaaaaaegaabaaaabaaaaaaogakbaaaaeaaaaaa
+dcaaaaajdcaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaadaaaaaaegaabaaa
+abaaaaaadiaaaaakgcaabaaaacaaaaaaagabbaaaabaaaaaaaceaaaaaaaaaaaaa
+idpjkcdoidpjkcdoaaaaaaaaalaaaaafccaabaaaadaaaaaackaabaaaacaaaaaa
+amaaaaafccaabaaaaeaaaaaackaabaaaacaaaaaaejaaaaanpcaabaaaabaaaaaa
+egaabaaaacaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaaadaaaaaa
+egaabaaaaeaaaaaaejaaaaanpcaabaaaacaaaaaaegaabaaaacaaaaaaeghobaaa
+adaaaaaaaagabaaaadaaaaaaegaabaaaadaaaaaaegaabaaaaeaaaaaadiaaaaah
+hcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaahhcaabaaa
+aaaaaaaaegacbaaaaaaaaaaaegbcbaaaaeaaaaaadiaaaaaihcaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegiccaaaaaaaaaaaahaaaaaabbaaaaajicaabaaaaaaaaaaa
+egiocaaaabaaaaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaaeeaaaaaficaabaaa
+aaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaa
+egiccaaaabaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaacaaaaaa
+egacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+aknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdp
+diaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaa
+dicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaaj
+hcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaaaiaaaaaa
+dccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
+acaaaaaaaeaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+aaaamadpddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
+aaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
+diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaai
+pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+efaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
+aeaaaaaadiaaaaaidcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaa
+ajaaaaaaefaaaaajpcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaa
 aagabaaaaeaaaaaaaaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaia
 ebaaaaaaaeaaaaaadcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaa
 egaobaaaadaaaaaaegaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaa
@@ -81924,345 +82158,6 @@ iccabaaaaaaaaaaaabeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_OFF" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_OFF" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_OFF" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_OFF" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_OFF" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightColor0]
-Vector 3 [_Color]
-Float 4 [_DetailScale]
-Float 5 [_DetailVertScale]
-Float 6 [_DetailDist]
-Float 7 [_MinLight]
-Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailVertTex] 2D
-SetTexture 2 [_DetailTex] 2D
-SetTexture 3 [_DarkOverlayTex] 2D
-SetTexture 4 [_DarkOverlayDetailTex] 2D
-"ps_3_0
-; 118 ALU, 15 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
-dcl_texcoord1 v0.x
-dcl_texcoord2 v1.xyz
-dcl_texcoord3 v2.xyz
-dcl_texcoord4 v3.xyz
-dcl_texcoord5 v4.xyz
-mov r2.xyz, v3
-dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
-mul r0.xy, v3.zyzw, c5.x
-mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
-abs r0.w, v3.z
-abs r4.zw, v3.xyxy
-max r1.w, r4.z, r0
-rcp r2.x, r1.w
-min r1.w, r4.z, r0
-mul r1.w, r1, r2.x
-mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
-texld r0.xyz, r0, s1
-texld r1.xyz, r1, s2
-add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
-mad r2.xyz, r3.x, r1, r0
-mul r1.xy, v3, c5.x
-mul r0.xy, v3, c4.x
-texld r1.xyz, r1, s1
-texld r0.xyz, r0, s2
-add r0.xyz, r0, -r1
-mad r0.xyz, r3.x, r0, r1
-add_pp r1.xyz, r2, -r0
-mad_pp r2.xyz, r4.z, r1, r0
-mul r1.xy, v3.zxzw, c5.x
-mul r0.xy, v3.zxzw, c4.x
-texld r1.xyz, r1, s1
-texld r0.xyz, r0, s2
-add r0.xyz, r0, -r1
-mad r0.xyz, r3.x, r0, r1
-add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
-mul r1.y, r2.w, r1.w
-dp4 r2.w, c1, c1
-mad_pp r0.xyz, r4.w, r0, r2
-add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
-cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
-cmp r1.w, v3.z, r1, r2.x
-cmp r1.w, v3.x, r1, -r1
-mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
-mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
-rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
-rcp r0.y, r0.y
-mul r1.w, r0.x, r0.y
-abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
-mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
-rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
-dsy r0.zw, v3.xyxy
-mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
-dsx r3.w, r0.y
-dsy r3.y, r0
-dsx r0.xy, v3
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
-texldd r0.xyz, r4, s0, r3.zwzw, r3
-mul_pp r0.xyz, r0, r1
-mul r0.xyz, r0, v4
-mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
-mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
-texld r1, r1, s4
-texld r0, r0, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
-texld r0, r5, s4
-add_pp r0, r0, -r1
-mad_pp r0, r4.w, r0, r1
-rsq r2.w, r2.w
-mul r1.xyz, r2.w, c1
-dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
-mul_pp r1.w, r1.x, c2
-texldd r3, r4, s3, r3.zwzw, r3
-mov r1.y, c7.x
-mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
-add r1.xyz, c2, r1.y
-mad_sat r1.xyz, r1.w, r1, c0
-mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
-mul_pp r1.xyz, r2, r1
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
-"
-}
-
-SubProgram "d3d11 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_OFF" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
-Vector 80 [_LightColor0] 4
-Vector 112 [_Color] 4
-Float 128 [_DetailScale]
-Float 132 [_DetailVertScale]
-Float 136 [_DetailDist]
-Float 140 [_MinLight]
-Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
-ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
-Vector 0 [_WorldSpaceLightPos0] 4
-ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
-Vector 64 [glstate_lightmodel_ambient] 4
-BindCB "$Globals" 0
-BindCB "UnityLighting" 1
-BindCB "UnityPerFrame" 2
-SetTexture 0 [_MainTex] 2D 0
-SetTexture 1 [_DetailVertTex] 2D 2
-SetTexture 2 [_DetailTex] 2D 1
-SetTexture 3 [_DarkOverlayTex] 2D 3
-SetTexture 4 [_DarkOverlayDetailTex] 2D 4
-// 103 instructions, 5 temp regs, 0 temp arrays:
-// ALU 85 float, 0 int, 4 uint
-// TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
-// FLOW 1 static, 0 dynamic
-"ps_4_0
-eefiecedhhpmcjehhhnilnpdgdololeondcgfdanabaaaaaakmapaaaaadaaaaaa
-cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
-aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaabaaaaaaaaaaaaaa
-adaaaaaaabaaaaaaababaaaalmaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
-aoaoaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaalmaaaaaa
-aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaalmaaaaaaafaaaaaaaaaaaaaa
-adaaaaaaaeaaaaaaapahaaaalmaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
-apaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
-cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaa
-fjaaaaaeegiocaaaaaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
-fjaaaaaeegiocaaaacaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
-aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaa
-fkaaaaadaagabaaaaeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
-aahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaafibiaaae
-aahabaaaadaaaaaaffffaaaafibiaaaeaahabaaaaeaaaaaaffffaaaagcbaaaad
-bcbabaaaabaaaaaagcbaaaadocbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
-gcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagfaaaaadpccabaaa
-aaaaaaaagiaaaaacafaaaaaadiaaaaaipcaabaaaaaaaaaaaggbcbaaaadaaaaaa
-agiacaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaaaaaaaaa
-eghobaaaacaaaaaaaagabaaaabaaaaaaefaaaaajpcaabaaaaaaaaaaaogakbaaa
-aaaaaaaaeghobaaaacaaaaaaaagabaaaabaaaaaadiaaaaaipcaabaaaacaaaaaa
-egbgbaaaadaaaaaaagifcaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaaadaaaaaa
-ogakbaaaacaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaaefaaaaajpcaabaaa
-acaaaaaaegaabaaaacaaaaaaeghobaaaacaaaaaaaagabaaaabaaaaaaaaaaaaai
-hcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaadaaaaaabacaaaai
-icaabaaaaaaaaaaajgbhbaaaabaaaaaaegbcbaiaebaaaaaaadaaaaaaaaaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaddddhdlpdccaaaajicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaaaecabeaaaaaaaaaaadpdcaaaaaj
-hcaabaaaabaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaadaaaaaa
-diaaaaaipcaabaaaadaaaaaacgbebaaaadaaaaaafgifcaaaaaaaaaaaaiaaaaaa
-efaaaaajpcaabaaaaeaaaaaaogakbaaaadaaaaaaeghobaaaabaaaaaaaagabaaa
-acaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaadaaaaaaeghobaaaabaaaaaa
-aagabaaaacaaaaaaaaaaaaaihcaabaaaacaaaaaaegacbaaaacaaaaaaegacbaia
-ebaaaaaaaeaaaaaadcaaaaajhcaabaaaacaaaaaapgapbaaaaaaaaaaaegacbaaa
-acaaaaaaegacbaaaaeaaaaaaaaaaaaaihcaabaaaabaaaaaaegacbaaaabaaaaaa
-egacbaiaebaaaaaaacaaaaaadcaaaaakhcaabaaaabaaaaaaagbabaiaibaaaaaa
-adaaaaaaegacbaaaabaaaaaaegacbaaaacaaaaaaaaaaaaaihcaabaaaaaaaaaaa
-egacbaaaaaaaaaaaegacbaiaebaaaaaaadaaaaaadcaaaaajhcaabaaaaaaaaaaa
-pgapbaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaadaaaaaaaaaaaaaihcaabaaa
-aaaaaaaaegacbaiaebaaaaaaabaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
-aaaaaaaafgbfbaiaibaaaaaaadaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
-aaaaaaalhcaabaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaaaceaaaaaaaaaiadp
-aaaaiadpaaaaiadpaaaaaaaaapcaaaaiicaabaaaaaaaaaaaagbabaaaabaaaaaa
-kgikcaaaaaaaaaaaaiaaaaaadcaaaaajhcaabaaaaaaaaaaapgapbaaaaaaaaaaa
-egacbaaaabaaaaaaegacbaaaaaaaaaaadeaaaaajicaabaaaaaaaaaaackbabaia
-ibaaaaaaadaaaaaaakbabaiaibaaaaaaadaaaaaaaoaaaaakicaabaaaaaaaaaaa
-aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpdkaabaaaaaaaaaaaddaaaaaj
-bcaabaaaabaaaaaackbabaiaibaaaaaaadaaaaaaakbabaiaibaaaaaaadaaaaaa
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaah
-bcaabaaaabaaaaaadkaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajccaabaaa
-abaaaaaaakaabaaaabaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
-ccaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaochgdido
-dcaaaaajccaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
-aebnkjlodcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaa
-abeaaaaadiphhpdpdiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaa
-abaaaaaadcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaama
-abeaaaaanlapmjdpdbaaaaajecaabaaaabaaaaaackbabaiaibaaaaaaadaaaaaa
-akbabaiaibaaaaaaadaaaaaaabaaaaahccaabaaaabaaaaaackaabaaaabaaaaaa
-bkaabaaaabaaaaaadcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
-abaaaaaabkaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaajgbfbaaaadaaaaaa
-jgbfbaiaebaaaaaaadaaaaaaabaaaaahecaabaaaabaaaaaabkaabaaaabaaaaaa
-abeaaaaanlapejmaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
-abaaaaaaddaaaaahecaabaaaabaaaaaackbabaaaadaaaaaaakbabaaaadaaaaaa
-dbaaaaaiecaabaaaabaaaaaackaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
-deaaaaahicaabaaaabaaaaaackbabaaaadaaaaaaakbabaaaadaaaaaabnaaaaai
-icaabaaaabaaaaaadkaabaaaabaaaaaadkaabaiaebaaaaaaabaaaaaaabaaaaah
-ecaabaaaabaaaaaadkaabaaaabaaaaaackaabaaaabaaaaaadhaaaaakicaabaaa
-aaaaaaaackaabaaaabaaaaaadkaabaiaebaaaaaaaaaaaaaadkaabaaaaaaaaaaa
-dcaaaaajbcaabaaaacaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
-aaaaaadpalaaaaafmcaabaaaabaaaaaaagbebaaaadaaaaaaapaaaaahicaabaaa
-aaaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaahbcaabaaaadaaaaaadkaabaaaaaaaaaaaabeaaaaa
-idpjccdoamaaaaafmcaabaaaabaaaaaaagbebaaaadaaaaaaapaaaaahicaabaaa
-aaaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaahbcaabaaaaeaaaaaadkaabaaaaaaaaaaaabeaaaaa
-idpjccdodcaaaabamcaabaaaabaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaa
-aaaaaaaaaaaaaaaadagojjlmdagojjlmaceaaaaaaaaaaaaaaaaaaaaachbgjidn
-chbgjidndcaaaaanmcaabaaaabaaaaaakgaobaaaabaaaaaafgbjbaiaibaaaaaa
-adaaaaaaaceaaaaaaaaaaaaaaaaaaaaaiedefjloiedefjlodcaaaaanmcaabaaa
-abaaaaaakgaobaaaabaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaaaaaaaaaa
-aaaaaaaakeanmjdpkeanmjdpaaaaaaalmcaabaaaadaaaaaafgbjbaiambaaaaaa
-adaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaiadpaaaaiadpelaaaaafmcaabaaa
-adaaaaaakgaobaaaadaaaaaadiaaaaahmcaabaaaaeaaaaaakgaobaaaabaaaaaa
-kgaobaaaadaaaaaadcaaaaapmcaabaaaaeaaaaaakgaobaaaaeaaaaaaaceaaaaa
-aaaaaaaaaaaaaaaaaaaaaamaaaaaaamaaceaaaaaaaaaaaaaaaaaaaaanlapejea
-nlapejeaabaaaaahdcaabaaaabaaaaaaegaabaaaabaaaaaaogakbaaaaeaaaaaa
-dcaaaaajdcaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaadaaaaaaegaabaaa
-abaaaaaadiaaaaakgcaabaaaacaaaaaaagabbaaaabaaaaaaaceaaaaaaaaaaaaa
-idpjkcdoidpjkcdoaaaaaaaaalaaaaafccaabaaaadaaaaaackaabaaaacaaaaaa
-amaaaaafccaabaaaaeaaaaaackaabaaaacaaaaaaejaaaaanpcaabaaaabaaaaaa
-egaabaaaacaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaaadaaaaaa
-egaabaaaaeaaaaaaejaaaaanpcaabaaaacaaaaaaegaabaaaacaaaaaaeghobaaa
-adaaaaaaaagabaaaadaaaaaaegaabaaaadaaaaaaegaabaaaaeaaaaaadiaaaaah
-hcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegbcbaaaaeaaaaaadiaaaaaihcaabaaaaaaaaaaa
-egacbaaaaaaaaaaaegiccaaaaaaaaaaaahaaaaaabbaaaaajicaabaaaaaaaaaaa
-egiocaaaabaaaaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaaeeaaaaaficaabaaa
-aaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaabaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaacaaaaaa
-egacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-aknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdp
-diaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaa
-dicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaaj
-hcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaaaiaaaaaa
-dccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaeaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-aaaamadpddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
-aaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
-diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaal
-pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaa
-aeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaa
-eghobaaaaeaaaaaaaagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaa
-adaaaaaaagiacaaaaaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaaj
-pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
-aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
-egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
-ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
-egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
-abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
-aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
-abeaaaaaaaaaiadpdoaaaaab"
-}
-
-SubProgram "gles " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_OFF" }
 "!!GLES"
 }
@@ -82293,25 +82188,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -82319,10 +82213,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -82330,14 +82223,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -82354,48 +82247,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -82406,48 +82299,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_OFF" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -82455,7 +82346,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -82473,7 +82363,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedpmgoojldliblplepehinnihdlbhilmbgabaaaaaakmapaaaaadaaaaaa
+eefiecedifnnphbmmikobkchcmbfbgffgpckdkniabaaaaaajeapaaaaadaaaaaa
 cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaalmaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -82482,8 +82372,8 @@ aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaalmaaaaaaafaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaapahaaaalmaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
 cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaa
-fjaaaaaeegiocaaaaaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaa
+fjaaaaaeegiocaaaaaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
 fjaaaaaeegiocaaaacaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaa
 fkaaaaadaagabaaaaeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -82582,23 +82472,22 @@ dccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
 acaaaaaaaeaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
 aaaamadpddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
 aaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
-diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaal
-pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaa
-aeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaa
-eghobaaaaeaaaaaaaagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaa
-adaaaaaaagiacaaaaaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaaj
-pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
-aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
-egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
-ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
-egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
-abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
-aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
-abeaaaaaaaaaiadpdoaaaaab"
+diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaai
+pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+efaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
+aeaaaaaadiaaaaaidcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaa
+ajaaaaaaefaaaaajpcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaa
+aagabaaaaeaaaaaaaaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaia
+ebaaaaaaaeaaaaaadcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaa
+egaobaaaadaaaaaaegaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaa
+abaaaaaaegaobaiaebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaia
+ibaaaaaaadaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaa
+abaaaaaaegacbaaaacaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaa
+diaaaaahicaabaaaabaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaa
+aaaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaf
+iccabaaaaaaaaaaaabeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -82632,25 +82521,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -82658,10 +82546,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -82669,14 +82556,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -82693,48 +82580,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4_pp r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -82745,48 +82632,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq_pp r2.w, r2.w
 mul_pp r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -82794,7 +82679,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -82812,7 +82696,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecednljjhdnhgnkejppdmlpaniobcpnjidifabaaaaaakmapaaaaadaaaaaa
+eefieceddbflknboinkccfjapdnhblkodkghdakgabaaaaaajeapaaaaadaaaaaa
 cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaalmaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -82821,8 +82705,8 @@ aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaalmaaaaaaafaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaapahaaaalmaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 adaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
 cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaa
-fjaaaaaeegiocaaaaaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaa
+fjaaaaaeegiocaaaaaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
 fjaaaaaeegiocaaaacaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaa
 fkaaaaadaagabaaaaeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -82921,12 +82805,345 @@ dccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
 acaaaaaaaeaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
 aaaamadpddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
 aaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
-diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaal
-pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaa
-aeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaa
-eghobaaaaeaaaaaaaagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaa
-adaaaaaaagiacaaaaaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaaj
+diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaai
+pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+efaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
+aeaaaaaadiaaaaaidcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaa
+ajaaaaaaefaaaaajpcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaa
+aagabaaaaeaaaaaaaaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaia
+ebaaaaaaaeaaaaaadcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaa
+egaobaaaadaaaaaaegaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaa
+abaaaaaaegaobaiaebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaia
+ibaaaaaaadaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaa
+abaaaaaaegacbaaaacaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaa
+diaaaaahicaabaaaabaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaa
+aaaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaf
+iccabaaaaaaaaaaaabeaaaaaaaaaiadpdoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightColor0]
+Vector 3 [_Color]
+Float 4 [_DetailScale]
+Float 5 [_DetailVertScale]
+Float 6 [_DetailDist]
+Float 7 [_MinLight]
+Float 8 [_DarkOverlayDetailScale]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailVertTex] 2D
+SetTexture 2 [_DetailTex] 2D
+SetTexture 3 [_DarkOverlayTex] 2D
+SetTexture 4 [_DarkOverlayDetailTex] 2D
+"ps_3_0
+; 115 ALU, 15 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+dcl_texcoord1 v0.x
+dcl_texcoord2 v1.xyz
+dcl_texcoord3 v2.xyz
+dcl_texcoord4 v3.xyz
+dcl_texcoord5 v4.xyz
+mov r2.xyz, v3
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c14
+mul r0.xy, v3.zyzw, c5.x
+mul r1.xy, v3.zyzw, c4.x
+abs r0.w, v3.z
+abs r4.zw, v3.xyxy
+max r1.w, r4.z, r0
+rcp r2.x, r1.w
+min r1.w, r4.z, r0
+mul r1.w, r1, r2.x
+mul r2.w, r1, r1
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
+texld r0.xyz, r0, s1
+texld r1.xyz, r1, s2
+add r1.xyz, r1, -r0
+mad_sat r3.x, r2.y, c14.z, c14.w
+mad r2.xyz, r3.x, r1, r0
+mul r1.xy, v3, c5.x
+mul r0.xy, v3, c4.x
+texld r1.xyz, r1, s1
+texld r0.xyz, r0, s2
+add r0.xyz, r0, -r1
+mad r0.xyz, r3.x, r0, r1
+add_pp r1.xyz, r2, -r0
+mad_pp r2.xyz, r4.z, r1, r0
+mul r1.xy, v3.zxzw, c5.x
+mul r0.xy, v3.zxzw, c4.x
+texld r1.xyz, r1, s1
+texld r0.xyz, r0, s2
+add r0.xyz, r0, -r1
+mad r0.xyz, r3.x, r0, r1
+add_pp r0.xyz, r0, -r2
+mad r2.w, r3.y, r2, c12.z
+mul r1.y, r2.w, r1.w
+dp4 r2.w, c1, c1
+mad_pp r0.xyz, r4.w, r0, r2
+add r1.x, r4.z, -r0.w
+add r1.z, -r1.y, c12.w
+cmp r1.w, -r1.x, r1.y, r1.z
+add r2.x, -r1.w, c10.w
+cmp r1.w, v3.z, r1, r2.x
+cmp r1.w, v3.x, r1, -r1
+mul r2.x, v0, c6
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
+mad_pp r1.xyz, r2.x, r1, r0
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
+rsq r0.y, r0.y
+mad r4.x, r1.w, c13, c13.y
+rcp r0.y, r0.y
+mul r1.w, r0.x, r0.y
+abs r0.x, v3.y
+cmp r0.w, v3.z, c9.x, c9.y
+mul r2.x, r0.w, r1.w
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
+rsq r0.z, r0.z
+mad r0.x, r0.y, r0, c10.y
+rcp r0.z, r0.z
+mul r0.y, r0.x, r0.z
+cmp r0.x, v3.y, c9, c9.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
+dsy r0.zw, v3.xyxy
+mul r0.zw, r0, r0
+mul r4.y, r0.x, c11.x
+dsx r3.w, r0.y
+dsy r3.y, r0
+dsx r0.xy, v3
+mul r0.xy, r0, r0
+add r0.x, r0, r0.y
+add r0.y, r0.z, r0.w
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
+texldd r0.xyz, r4, s0, r3.zwzw, r3
+mul_pp r0.xyz, r0, r1
+mul r0.xyz, r0, v4
+mul r2.xyz, r0, c3
+mul r1.xy, v3, c8.x
+mul r0.xy, v3.zyzw, c8.x
+texld r1, r1, s4
+texld r0, r0, s4
+add_pp r0, r0, -r1
+mad_pp r1, r4.z, r0, r1
+mul r5.xy, v3.zxzw, c8.x
+texld r0, r5, s4
+add_pp r0, r0, -r1
+mad_pp r0, r4.w, r0, r1
+rsq r2.w, r2.w
+mul r1.xyz, r2.w, c1
+dp3_sat r1.x, v2, r1
+add_pp r1.x, r1, c13.z
+mul_pp r1.w, r1.x, c2
+texldd r3, r4, s3, r3.zwzw, r3
+mov r1.y, c7.x
+mul_pp r0, r3, r0
+mul_pp_sat r1.w, r1, c13
+add r1.xyz, c2, r1.y
+mad_sat r1.xyz, r1.w, r1, c0
+mad_pp r0.xyz, -r2, r1, r0
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
+mul_pp r1.xyz, r2, r1
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
+mov_pp oC0.w, c9.y
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
+Vector 80 [_LightColor0] 4
+Vector 112 [_Color] 4
+Float 128 [_DetailScale]
+Float 132 [_DetailVertScale]
+Float 136 [_DetailDist]
+Float 140 [_MinLight]
+Float 144 [_DarkOverlayDetailScale]
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
+Vector 64 [glstate_lightmodel_ambient] 4
+BindCB "$Globals" 0
+BindCB "UnityLighting" 1
+BindCB "UnityPerFrame" 2
+SetTexture 0 [_MainTex] 2D 0
+SetTexture 1 [_DetailVertTex] 2D 2
+SetTexture 2 [_DetailTex] 2D 1
+SetTexture 3 [_DarkOverlayTex] 2D 3
+SetTexture 4 [_DarkOverlayDetailTex] 2D 4
+// 103 instructions, 5 temp regs, 0 temp arrays:
+// ALU 85 float, 0 int, 4 uint
+// TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0
+eefiecedekpmokbnbjnnpoipeeiilnagofhknbenabaaaaaakmapaaaaadaaaaaa
+cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+aoaoaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaaneaaaaaa
+aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaaneaaaaaaafaaaaaaaaaaaaaa
+adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
+apaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
+aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
+fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
+aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
+ffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaafibiaaaeaahabaaaadaaaaaa
+ffffaaaafibiaaaeaahabaaaaeaaaaaaffffaaaagcbaaaadbcbabaaaabaaaaaa
+gcbaaaadocbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaa
+adaaaaaagcbaaaadhcbabaaaaeaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
+afaaaaaadiaaaaaipcaabaaaaaaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaa
+aiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaaaaaaaaaeghobaaaacaaaaaa
+aagabaaaabaaaaaaefaaaaajpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
+acaaaaaaaagabaaaabaaaaaadiaaaaaipcaabaaaacaaaaaaegbgbaaaadaaaaaa
+agifcaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaaadaaaaaaogakbaaaacaaaaaa
+eghobaaaabaaaaaaaagabaaaacaaaaaaefaaaaajpcaabaaaacaaaaaaegaabaaa
+acaaaaaaeghobaaaacaaaaaaaagabaaaabaaaaaaaaaaaaaihcaabaaaabaaaaaa
+egacbaaaabaaaaaaegacbaiaebaaaaaaadaaaaaabacaaaaiicaabaaaaaaaaaaa
+jgbhbaaaabaaaaaaegbcbaiaebaaaaaaadaaaaaaaaaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaddddhdlpdccaaaajicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaaaaaaaaecabeaaaaaaaaaaadpdcaaaaajhcaabaaaabaaaaaa
+pgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaadaaaaaadiaaaaaipcaabaaa
+adaaaaaacgbebaaaadaaaaaafgifcaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaa
+aeaaaaaaogakbaaaadaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaaefaaaaaj
+pcaabaaaadaaaaaaegaabaaaadaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaa
+aaaaaaaihcaabaaaacaaaaaaegacbaaaacaaaaaaegacbaiaebaaaaaaaeaaaaaa
+dcaaaaajhcaabaaaacaaaaaapgapbaaaaaaaaaaaegacbaaaacaaaaaaegacbaaa
+aeaaaaaaaaaaaaaihcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaa
+acaaaaaadcaaaaakhcaabaaaabaaaaaaagbabaiaibaaaaaaadaaaaaaegacbaaa
+abaaaaaaegacbaaaacaaaaaaaaaaaaaihcaabaaaaaaaaaaaegacbaaaaaaaaaaa
+egacbaiaebaaaaaaadaaaaaadcaaaaajhcaabaaaaaaaaaaapgapbaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaadaaaaaaaaaaaaaihcaabaaaaaaaaaaaegacbaia
+ebaaaaaaabaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaafgbfbaia
+ibaaaaaaadaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaaaaaaaaalhcaabaaa
+abaaaaaaegacbaiaebaaaaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
+aaaaaaaaapcaaaaiicaabaaaaaaaaaaaagbabaaaabaaaaaakgikcaaaaaaaaaaa
+aiaaaaaadcaaaaajhcaabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaa
+egacbaaaaaaaaaaadeaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaaadaaaaaa
+akbabaiaibaaaaaaadaaaaaaaoaaaaakicaabaaaaaaaaaaaaceaaaaaaaaaiadp
+aaaaiadpaaaaiadpaaaaiadpdkaabaaaaaaaaaaaddaaaaajbcaabaaaabaaaaaa
+ckbabaiaibaaaaaaadaaaaaaakbabaiaibaaaaaaadaaaaaadiaaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaa
+dkaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajccaabaaaabaaaaaaakaabaaa
+abaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajccaabaaaabaaaaaa
+akaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajccaabaaa
+abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaadiphhpdp
+diaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaaj
+ccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdp
+dbaaaaajecaabaaaabaaaaaackbabaiaibaaaaaaadaaaaaaakbabaiaibaaaaaa
+adaaaaaaabaaaaahccaabaaaabaaaaaackaabaaaabaaaaaabkaabaaaabaaaaaa
+dcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaadbaaaaaidcaabaaaabaaaaaajgbfbaaaadaaaaaajgbfbaiaebaaaaaa
+adaaaaaaabaaaaahecaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaanlapejma
+aaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaabaaaaaaddaaaaah
+ecaabaaaabaaaaaackbabaaaadaaaaaaakbabaaaadaaaaaadbaaaaaiecaabaaa
+abaaaaaackaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaadeaaaaahicaabaaa
+abaaaaaackbabaaaadaaaaaaakbabaaaadaaaaaabnaaaaaiicaabaaaabaaaaaa
+dkaabaaaabaaaaaadkaabaiaebaaaaaaabaaaaaaabaaaaahecaabaaaabaaaaaa
+dkaabaaaabaaaaaackaabaaaabaaaaaadhaaaaakicaabaaaaaaaaaaackaabaaa
+abaaaaaadkaabaiaebaaaaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajbcaabaaa
+acaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpalaaaaaf
+mcaabaaaabaaaaaaagbebaaaadaaaaaaapaaaaahicaabaaaaaaaaaaaogakbaaa
+abaaaaaaogakbaaaabaaaaaaelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
+diaaaaahbcaabaaaadaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdoamaaaaaf
+mcaabaaaabaaaaaaagbebaaaadaaaaaaapaaaaahicaabaaaaaaaaaaaogakbaaa
+abaaaaaaogakbaaaabaaaaaaelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
+diaaaaahbcaabaaaaeaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdodcaaaaba
+mcaabaaaabaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
+dagojjlmdagojjlmaceaaaaaaaaaaaaaaaaaaaaachbgjidnchbgjidndcaaaaan
+mcaabaaaabaaaaaakgaobaaaabaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaa
+aaaaaaaaaaaaaaaaiedefjloiedefjlodcaaaaanmcaabaaaabaaaaaakgaobaaa
+abaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaakeanmjdp
+keanmjdpaaaaaaalmcaabaaaadaaaaaafgbjbaiambaaaaaaadaaaaaaaceaaaaa
+aaaaaaaaaaaaaaaaaaaaiadpaaaaiadpelaaaaafmcaabaaaadaaaaaakgaobaaa
+adaaaaaadiaaaaahmcaabaaaaeaaaaaakgaobaaaabaaaaaakgaobaaaadaaaaaa
+dcaaaaapmcaabaaaaeaaaaaakgaobaaaaeaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
+aaaaaamaaaaaaamaaceaaaaaaaaaaaaaaaaaaaaanlapejeanlapejeaabaaaaah
+dcaabaaaabaaaaaaegaabaaaabaaaaaaogakbaaaaeaaaaaadcaaaaajdcaabaaa
+abaaaaaaogakbaaaabaaaaaaogakbaaaadaaaaaaegaabaaaabaaaaaadiaaaaak
+gcaabaaaacaaaaaaagabbaaaabaaaaaaaceaaaaaaaaaaaaaidpjkcdoidpjkcdo
+aaaaaaaaalaaaaafccaabaaaadaaaaaackaabaaaacaaaaaaamaaaaafccaabaaa
+aeaaaaaackaabaaaacaaaaaaejaaaaanpcaabaaaabaaaaaaegaabaaaacaaaaaa
+eghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaaadaaaaaaegaabaaaaeaaaaaa
+ejaaaaanpcaabaaaacaaaaaaegaabaaaacaaaaaaeghobaaaadaaaaaaaagabaaa
+adaaaaaaegaabaaaadaaaaaaegaabaaaaeaaaaaadiaaaaahhcaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaahhcaabaaaaaaaaaaaegacbaaa
+aaaaaaaaegbcbaaaaeaaaaaadiaaaaaihcaabaaaaaaaaaaaegacbaaaaaaaaaaa
+egiccaaaaaaaaaaaahaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaabaaaaaa
+aaaaaaaaegiocaaaabaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaabaaaaaa
+aaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaacaaaaaaegacbaaaabaaaaaa
+aaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaa
+aaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaa
+egiccaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaaaiaaaaaadccaaaakhcaabaaa
+abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
+diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
+aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
 pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
 aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
 dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
@@ -82941,27 +83158,27 @@ abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
 "!!GLES"
 }
 
 SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
 "!!GLES"
 }
 
 SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
 "!!GLES3"
 }
 
 SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
 "!!GLSL"
 }
 
 SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
 Vector 0 [glstate_lightmodel_ambient]
 Vector 1 [_WorldSpaceLightPos0]
 Vector 2 [_LightColor0]
@@ -82971,25 +83188,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -82997,10 +83213,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -83008,14 +83223,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -83032,48 +83247,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -83084,48 +83299,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -83133,7 +83346,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -83151,7 +83363,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedfhhcccolhkjgggadicpnjolgegonpgklabaaaaaameapaaaaadaaaaaa
+eefiecedekpmokbnbjnnpoipeeiilnagofhknbenabaaaaaakmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -83161,8 +83373,8 @@ adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 apaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
 acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
 aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
@@ -83261,363 +83473,22 @@ abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
 diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
 icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
 aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightColor0]
-Vector 3 [_Color]
-Float 4 [_DetailScale]
-Float 5 [_DetailVertScale]
-Float 6 [_DetailDist]
-Float 7 [_MinLight]
-Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailVertTex] 2D
-SetTexture 2 [_DetailTex] 2D
-SetTexture 3 [_DarkOverlayTex] 2D
-SetTexture 4 [_DarkOverlayDetailTex] 2D
-"ps_3_0
-; 118 ALU, 15 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
-dcl_texcoord1 v0.x
-dcl_texcoord2 v1.xyz
-dcl_texcoord3 v2.xyz
-dcl_texcoord4 v3.xyz
-dcl_texcoord5 v4.xyz
-mov r2.xyz, v3
-dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
-mul r0.xy, v3.zyzw, c5.x
-mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
-abs r0.w, v3.z
-abs r4.zw, v3.xyxy
-max r1.w, r4.z, r0
-rcp r2.x, r1.w
-min r1.w, r4.z, r0
-mul r1.w, r1, r2.x
-mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
-texld r0.xyz, r0, s1
-texld r1.xyz, r1, s2
-add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
-mad r2.xyz, r3.x, r1, r0
-mul r1.xy, v3, c5.x
-mul r0.xy, v3, c4.x
-texld r1.xyz, r1, s1
-texld r0.xyz, r0, s2
-add r0.xyz, r0, -r1
-mad r0.xyz, r3.x, r0, r1
-add_pp r1.xyz, r2, -r0
-mad_pp r2.xyz, r4.z, r1, r0
-mul r1.xy, v3.zxzw, c5.x
-mul r0.xy, v3.zxzw, c4.x
-texld r1.xyz, r1, s1
-texld r0.xyz, r0, s2
-add r0.xyz, r0, -r1
-mad r0.xyz, r3.x, r0, r1
-add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
-mul r1.y, r2.w, r1.w
-dp4 r2.w, c1, c1
-mad_pp r0.xyz, r4.w, r0, r2
-add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
-cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
-cmp r1.w, v3.z, r1, r2.x
-cmp r1.w, v3.x, r1, -r1
-mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
-mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
-rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
-rcp r0.y, r0.y
-mul r1.w, r0.x, r0.y
-abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
-mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
-rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
-dsy r0.zw, v3.xyxy
-mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
-dsx r3.w, r0.y
-dsy r3.y, r0
-dsx r0.xy, v3
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
-texldd r0.xyz, r4, s0, r3.zwzw, r3
-mul_pp r0.xyz, r0, r1
-mul r0.xyz, r0, v4
-mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
-mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
-texld r1, r1, s4
-texld r0, r0, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
-texld r0, r5, s4
-add_pp r0, r0, -r1
-mad_pp r0, r4.w, r0, r1
-rsq r2.w, r2.w
-mul r1.xyz, r2.w, c1
-dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
-mul_pp r1.w, r1.x, c2
-texldd r3, r4, s3, r3.zwzw, r3
-mov r1.y, c7.x
-mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
-add r1.xyz, c2, r1.y
-mad_sat r1.xyz, r1.w, r1, c0
-mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
-mul_pp r1.xyz, r2, r1
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
-"
-}
-
-SubProgram "d3d11 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
-Vector 80 [_LightColor0] 4
-Vector 112 [_Color] 4
-Float 128 [_DetailScale]
-Float 132 [_DetailVertScale]
-Float 136 [_DetailDist]
-Float 140 [_MinLight]
-Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
-ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
-Vector 0 [_WorldSpaceLightPos0] 4
-ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
-Vector 64 [glstate_lightmodel_ambient] 4
-BindCB "$Globals" 0
-BindCB "UnityLighting" 1
-BindCB "UnityPerFrame" 2
-SetTexture 0 [_MainTex] 2D 0
-SetTexture 1 [_DetailVertTex] 2D 2
-SetTexture 2 [_DetailTex] 2D 1
-SetTexture 3 [_DarkOverlayTex] 2D 3
-SetTexture 4 [_DarkOverlayDetailTex] 2D 4
-// 103 instructions, 5 temp regs, 0 temp arrays:
-// ALU 85 float, 0 int, 4 uint
-// TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
-// FLOW 1 static, 0 dynamic
-"ps_4_0
-eefiecedfhhcccolhkjgggadicpnjolgegonpgklabaaaaaameapaaaaadaaaaaa
-cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
-aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
-adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
-aoaoaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaaneaaaaaa
-aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaaneaaaaaaafaaaaaaaaaaaaaa
-adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
-apaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
-epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
-aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
-acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
-fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
-aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
-ffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaafibiaaaeaahabaaaadaaaaaa
-ffffaaaafibiaaaeaahabaaaaeaaaaaaffffaaaagcbaaaadbcbabaaaabaaaaaa
-gcbaaaadocbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaa
-adaaaaaagcbaaaadhcbabaaaaeaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-afaaaaaadiaaaaaipcaabaaaaaaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaa
-aiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaaaaaaaaaeghobaaaacaaaaaa
-aagabaaaabaaaaaaefaaaaajpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
-acaaaaaaaagabaaaabaaaaaadiaaaaaipcaabaaaacaaaaaaegbgbaaaadaaaaaa
-agifcaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaaadaaaaaaogakbaaaacaaaaaa
-eghobaaaabaaaaaaaagabaaaacaaaaaaefaaaaajpcaabaaaacaaaaaaegaabaaa
-acaaaaaaeghobaaaacaaaaaaaagabaaaabaaaaaaaaaaaaaihcaabaaaabaaaaaa
-egacbaaaabaaaaaaegacbaiaebaaaaaaadaaaaaabacaaaaiicaabaaaaaaaaaaa
-jgbhbaaaabaaaaaaegbcbaiaebaaaaaaadaaaaaaaaaaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaddddhdlpdccaaaajicaabaaaaaaaaaaadkaabaaa
-aaaaaaaaabeaaaaaaaaaaaecabeaaaaaaaaaaadpdcaaaaajhcaabaaaabaaaaaa
-pgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaadaaaaaadiaaaaaipcaabaaa
-adaaaaaacgbebaaaadaaaaaafgifcaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaa
-aeaaaaaaogakbaaaadaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaaefaaaaaj
-pcaabaaaadaaaaaaegaabaaaadaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaa
-aaaaaaaihcaabaaaacaaaaaaegacbaaaacaaaaaaegacbaiaebaaaaaaaeaaaaaa
-dcaaaaajhcaabaaaacaaaaaapgapbaaaaaaaaaaaegacbaaaacaaaaaaegacbaaa
-aeaaaaaaaaaaaaaihcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaa
-acaaaaaadcaaaaakhcaabaaaabaaaaaaagbabaiaibaaaaaaadaaaaaaegacbaaa
-abaaaaaaegacbaaaacaaaaaaaaaaaaaihcaabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaiaebaaaaaaadaaaaaadcaaaaajhcaabaaaaaaaaaaapgapbaaaaaaaaaaa
-egacbaaaaaaaaaaaegacbaaaadaaaaaaaaaaaaaihcaabaaaaaaaaaaaegacbaia
-ebaaaaaaabaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaafgbfbaia
-ibaaaaaaadaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaaaaaaaaalhcaabaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
-aaaaaaaaapcaaaaiicaabaaaaaaaaaaaagbabaaaabaaaaaakgikcaaaaaaaaaaa
-aiaaaaaadcaaaaajhcaabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaa
-egacbaaaaaaaaaaadeaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaaadaaaaaa
-akbabaiaibaaaaaaadaaaaaaaoaaaaakicaabaaaaaaaaaaaaceaaaaaaaaaiadp
-aaaaiadpaaaaiadpaaaaiadpdkaabaaaaaaaaaaaddaaaaajbcaabaaaabaaaaaa
-ckbabaiaibaaaaaaadaaaaaaakbabaiaibaaaaaaadaaaaaadiaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaa
-dkaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajccaabaaaabaaaaaaakaabaaa
-abaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajccaabaaaabaaaaaa
-akaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajccaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaaj
-bcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaadiphhpdp
-diaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaaj
-ccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdp
-dbaaaaajecaabaaaabaaaaaackbabaiaibaaaaaaadaaaaaaakbabaiaibaaaaaa
-adaaaaaaabaaaaahccaabaaaabaaaaaackaabaaaabaaaaaabkaabaaaabaaaaaa
-dcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabkaabaaa
-abaaaaaadbaaaaaidcaabaaaabaaaaaajgbfbaaaadaaaaaajgbfbaiaebaaaaaa
-adaaaaaaabaaaaahecaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaanlapejma
-aaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaabaaaaaaddaaaaah
-ecaabaaaabaaaaaackbabaaaadaaaaaaakbabaaaadaaaaaadbaaaaaiecaabaaa
-abaaaaaackaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaadeaaaaahicaabaaa
-abaaaaaackbabaaaadaaaaaaakbabaaaadaaaaaabnaaaaaiicaabaaaabaaaaaa
-dkaabaaaabaaaaaadkaabaiaebaaaaaaabaaaaaaabaaaaahecaabaaaabaaaaaa
-dkaabaaaabaaaaaackaabaaaabaaaaaadhaaaaakicaabaaaaaaaaaaackaabaaa
-abaaaaaadkaabaiaebaaaaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajbcaabaaa
-acaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpalaaaaaf
-mcaabaaaabaaaaaaagbebaaaadaaaaaaapaaaaahicaabaaaaaaaaaaaogakbaaa
-abaaaaaaogakbaaaabaaaaaaelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaahbcaabaaaadaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdoamaaaaaf
-mcaabaaaabaaaaaaagbebaaaadaaaaaaapaaaaahicaabaaaaaaaaaaaogakbaaa
-abaaaaaaogakbaaaabaaaaaaelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaahbcaabaaaaeaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdodcaaaaba
-mcaabaaaabaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
-dagojjlmdagojjlmaceaaaaaaaaaaaaaaaaaaaaachbgjidnchbgjidndcaaaaan
-mcaabaaaabaaaaaakgaobaaaabaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaa
-aaaaaaaaaaaaaaaaiedefjloiedefjlodcaaaaanmcaabaaaabaaaaaakgaobaaa
-abaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaakeanmjdp
-keanmjdpaaaaaaalmcaabaaaadaaaaaafgbjbaiambaaaaaaadaaaaaaaceaaaaa
-aaaaaaaaaaaaaaaaaaaaiadpaaaaiadpelaaaaafmcaabaaaadaaaaaakgaobaaa
-adaaaaaadiaaaaahmcaabaaaaeaaaaaakgaobaaaabaaaaaakgaobaaaadaaaaaa
-dcaaaaapmcaabaaaaeaaaaaakgaobaaaaeaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
-aaaaaamaaaaaaamaaceaaaaaaaaaaaaaaaaaaaaanlapejeanlapejeaabaaaaah
-dcaabaaaabaaaaaaegaabaaaabaaaaaaogakbaaaaeaaaaaadcaaaaajdcaabaaa
-abaaaaaaogakbaaaabaaaaaaogakbaaaadaaaaaaegaabaaaabaaaaaadiaaaaak
-gcaabaaaacaaaaaaagabbaaaabaaaaaaaceaaaaaaaaaaaaaidpjkcdoidpjkcdo
-aaaaaaaaalaaaaafccaabaaaadaaaaaackaabaaaacaaaaaaamaaaaafccaabaaa
-aeaaaaaackaabaaaacaaaaaaejaaaaanpcaabaaaabaaaaaaegaabaaaacaaaaaa
-eghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaaadaaaaaaegaabaaaaeaaaaaa
-ejaaaaanpcaabaaaacaaaaaaegaabaaaacaaaaaaeghobaaaadaaaaaaaagabaaa
-adaaaaaaegaabaaaadaaaaaaegaabaaaaeaaaaaadiaaaaahhcaabaaaaaaaaaaa
-egacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaahhcaabaaaaaaaaaaaegacbaaa
-aaaaaaaaegbcbaaaaeaaaaaadiaaaaaihcaabaaaaaaaaaaaegacbaaaaaaaaaaa
-egiccaaaaaaaaaaaahaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaabaaaaaa
-aaaaaaaaegiocaaaabaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
-aaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaabaaaaaa
-aaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaacaaaaaaegacbaaaabaaaaaa
-aaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaa
-aaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaa
-egiccaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaaaiaaaaaadccaaaakhcaabaaa
-abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
+egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
+ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
+egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -83646,25 +83517,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -83672,10 +83542,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -83683,14 +83552,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -83707,48 +83576,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4_pp r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -83759,48 +83628,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq_pp r2.w, r2.w
 mul_pp r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_SCREEN" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -83808,7 +83675,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -83826,7 +83692,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedhhpmcjehhhnilnpdgdololeondcgfdanabaaaaaakmapaaaaadaaaaaa
+eefiecedldcidbplmodealmhpimdgjiljpcicadlabaaaaaajeapaaaaadaaaaaa
 cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaalmaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -83835,8 +83701,8 @@ aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaalmaaaaaaafaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaapahaaaalmaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 apaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
 cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaa
-fjaaaaaeegiocaaaaaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaa
+fjaaaaaeegiocaaaaaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
 fjaaaaaeegiocaaaacaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaa
 fkaaaaadaagabaaaaeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -83935,23 +83801,22 @@ dccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
 acaaaaaaaeaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
 aaaamadpddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
 aaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
-diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaal
-pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaa
-aeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaa
-eghobaaaaeaaaaaaaagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaa
-adaaaaaaagiacaaaaaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaaj
-pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
-aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
-egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
-ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
-egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
-abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
-aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
-abeaaaaaaaaaiadpdoaaaaab"
+diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaai
+pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+efaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
+aeaaaaaadiaaaaaidcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaa
+ajaaaaaaefaaaaajpcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaa
+aagabaaaaeaaaaaaaaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaia
+ebaaaaaaaeaaaaaadcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaa
+egaobaaaadaaaaaaegaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaa
+abaaaaaaegaobaiaebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaia
+ibaaaaaaadaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaa
+abaaaaaaegacbaaaacaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaa
+diaaaaahicaabaaaabaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaa
+aaaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaf
+iccabaaaaaaaaaaaabeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -83985,25 +83850,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -84011,10 +83875,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -84022,14 +83885,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -84046,48 +83909,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4_pp r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -84098,48 +83961,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq_pp r2.w, r2.w
 mul_pp r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
-ConstBuffer "$Globals" 240 // 240 used size, 12 vars
+ConstBuffer "$Globals" 240 // 212 used size, 12 vars
 Vector 144 [_LightColor0] 4
 Vector 176 [_Color] 4
 Float 192 [_DetailScale]
@@ -84147,7 +84008,6 @@ Float 196 [_DetailVertScale]
 Float 200 [_DetailDist]
 Float 204 [_MinLight]
 Float 208 [_DarkOverlayDetailScale]
-Vector 224 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -84165,7 +84025,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedmkbcgioiljfdiadgcnjloodnfcmkniggabaaaaaameapaaaaadaaaaaa
+eefiecedpogkofmflgloianlfocaimlnnlbiajlaabaaaaaakmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -84175,8 +84035,8 @@ adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 adaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaapaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaaoaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
 acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
 aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
@@ -84275,23 +84135,22 @@ abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
 diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
 icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
 aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaegiecaaaaaaaaaaaaoaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaanaaaaaaegiacaaaaaaaaaaaaoaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaefaaaaaj
+pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
+egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
+ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
+egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -84325,25 +84184,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -84351,10 +84209,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -84362,14 +84219,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -84386,48 +84243,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -84438,48 +84295,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -84487,7 +84342,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -84505,7 +84359,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedfgpajcelmhedaemljbfkiapeaagpfjanabaaaaaameapaaaaadaaaaaa
+eefiecedpngihdeiiffmncgilhglmpplmkbpmifpabaaaaaakmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -84515,8 +84369,8 @@ adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
 acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
 aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
@@ -84615,23 +84469,22 @@ abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
 diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
 icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
 aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
+egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
+ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
+egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -84665,25 +84518,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -84691,10 +84543,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -84702,14 +84553,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -84726,48 +84577,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -84778,48 +84629,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -84827,7 +84676,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -84845,7 +84693,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedfgpajcelmhedaemljbfkiapeaagpfjanabaaaaaameapaaaaadaaaaaa
+eefiecedpngihdeiiffmncgilhglmpplmkbpmifpabaaaaaakmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -84855,8 +84703,8 @@ adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
 acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
 aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
@@ -84955,23 +84803,22 @@ abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
 diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
 icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
 aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
+egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
+ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
+egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -85005,25 +84852,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -85031,10 +84877,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -85042,14 +84887,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -85066,48 +84911,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -85118,48 +84963,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
-ConstBuffer "$Globals" 240 // 240 used size, 12 vars
+ConstBuffer "$Globals" 240 // 212 used size, 12 vars
 Vector 144 [_LightColor0] 4
 Vector 176 [_Color] 4
 Float 192 [_DetailScale]
@@ -85167,7 +85010,6 @@ Float 196 [_DetailVertScale]
 Float 200 [_DetailDist]
 Float 204 [_MinLight]
 Float 208 [_DarkOverlayDetailScale]
-Vector 224 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -85185,7 +85027,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedgmaakgcfdaaloeeokenggebcdihiicelabaaaaaameapaaaaadaaaaaa
+eefiecedceellfgjjmjhplddghpmihnaigkclpajabaaaaaakmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -85195,8 +85037,8 @@ adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 apaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaapaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaaoaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
 acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
 aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
@@ -85295,23 +85137,22 @@ abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
 diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
 icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
 aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaegiecaaaaaaaaaaaaoaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaanaaaaaaegiacaaaaaaaaaaaaoaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaefaaaaaj
+pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
+egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
+ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
+egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -85345,25 +85186,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -85371,10 +85211,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -85382,14 +85221,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -85406,48 +85245,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -85458,48 +85297,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
-ConstBuffer "$Globals" 240 // 240 used size, 12 vars
+ConstBuffer "$Globals" 240 // 212 used size, 12 vars
 Vector 144 [_LightColor0] 4
 Vector 176 [_Color] 4
 Float 192 [_DetailScale]
@@ -85507,7 +85344,6 @@ Float 196 [_DetailVertScale]
 Float 200 [_DetailDist]
 Float 204 [_MinLight]
 Float 208 [_DarkOverlayDetailScale]
-Vector 224 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -85525,7 +85361,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedgmaakgcfdaaloeeokenggebcdihiicelabaaaaaameapaaaaadaaaaaa
+eefiecedceellfgjjmjhplddghpmihnaigkclpajabaaaaaakmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -85535,8 +85371,8 @@ adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 apaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaapaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaaoaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
 acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
 aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
@@ -85635,23 +85471,22 @@ abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
 diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
 icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
 aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaegiecaaaaaaaaaaaaoaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaanaaaaaaegiacaaaaaaaaaaaaoaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaefaaaaaj
+pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
+egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
+ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
+egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -85680,25 +85515,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -85706,10 +85540,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -85717,14 +85550,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -85741,48 +85574,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -85793,48 +85626,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -85842,7 +85673,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -85860,7 +85690,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedfgpajcelmhedaemljbfkiapeaagpfjanabaaaaaameapaaaaadaaaaaa
+eefiecedpngihdeiiffmncgilhglmpplmkbpmifpabaaaaaakmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -85870,8 +85700,8 @@ adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
 acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
 aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
@@ -85970,23 +85800,22 @@ abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
 diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
 icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
 aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
+egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
+ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
+egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -86020,25 +85849,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -86046,10 +85874,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -86057,14 +85884,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -86081,48 +85908,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -86133,48 +85960,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -86182,7 +86007,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -86200,7 +86024,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedfgpajcelmhedaemljbfkiapeaagpfjanabaaaaaameapaaaaadaaaaaa
+eefiecedpngihdeiiffmncgilhglmpplmkbpmifpabaaaaaakmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -86210,8 +86034,8 @@ adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
 acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
 aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
@@ -86310,23 +86134,22 @@ abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
 diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
 icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
 aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
+egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
+ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
+egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -86360,25 +86183,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -86386,10 +86208,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -86397,14 +86218,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -86421,48 +86242,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -86473,48 +86294,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "POINT" "SHADOWS_OFF" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -86522,7 +86341,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -86540,7 +86358,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedpmgoojldliblplepehinnihdlbhilmbgabaaaaaakmapaaaaadaaaaaa
+eefiecedifnnphbmmikobkchcmbfbgffgpckdkniabaaaaaajeapaaaaadaaaaaa
 cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaalmaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -86549,8 +86367,8 @@ aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaalmaaaaaaafaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaapahaaaalmaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
 cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaa
-fjaaaaaeegiocaaaaaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaa
+fjaaaaaeegiocaaaaaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
 fjaaaaaeegiocaaaacaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaa
 fkaaaaadaagabaaaaeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -86649,23 +86467,22 @@ dccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
 acaaaaaaaeaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
 aaaamadpddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
 aaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
-diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaal
-pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaa
-aeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaa
-eghobaaaaeaaaaaaaagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaa
-adaaaaaaagiacaaaaaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaaj
-pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
-aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
-egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
-ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
-egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
-abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
-aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
-abeaaaaaaaaaiadpdoaaaaab"
+diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaai
+pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+efaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
+aeaaaaaadiaaaaaidcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaa
+ajaaaaaaefaaaaajpcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaa
+aagabaaaaeaaaaaaaaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaia
+ebaaaaaaaeaaaaaadcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaa
+egaobaaaadaaaaaaegaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaa
+abaaaaaaegaobaiaebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaia
+ibaaaaaaadaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaa
+abaaaaaaegacbaaaacaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaa
+diaaaaahicaabaaaabaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaa
+aaaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaf
+iccabaaaaaaaaaaaabeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -86699,25 +86516,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -86725,10 +86541,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -86736,14 +86551,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -86760,48 +86575,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4_pp r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -86812,48 +86627,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq_pp r2.w, r2.w
 mul_pp r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "DIRECTIONAL" "SHADOWS_OFF" }
-ConstBuffer "$Globals" 112 // 112 used size, 10 vars
+ConstBuffer "$Globals" 112 // 84 used size, 10 vars
 Vector 16 [_LightColor0] 4
 Vector 48 [_Color] 4
 Float 64 [_DetailScale]
@@ -86861,7 +86674,6 @@ Float 68 [_DetailVertScale]
 Float 72 [_DetailDist]
 Float 76 [_MinLight]
 Float 80 [_DarkOverlayDetailScale]
-Vector 96 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -86879,7 +86691,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedgceilpjeehppjpajjlgcamocbipackcjabaaaaaajeapaaaaadaaaaaa
+eefiecednapeenmdepkgfajonmjhkbdcifjfiiciabaaaaaahmapaaaaadaaaaaa
 cmaaaaaaoeaaaaaabiabaaaaejfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -86887,8 +86699,8 @@ aoaoaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaakeaaaaaa
 aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaakeaaaaaaafaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaapahaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcheaoaaaa
-eaaaaaaajnadaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcfmaoaaaa
+eaaaaaaajhadaaaafjaaaaaeegiocaaaaaaaaaaaagaaaaaafjaaaaaeegiocaaa
 abaaaaaaabaaaaaafjaaaaaeegiocaaaacaaaaaaafaaaaaafkaaaaadaagabaaa
 aaaaaaaafkaaaaadaagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafkaaaaad
 aagabaaaadaaaaaafkaaaaadaagabaaaaeaaaaaafibiaaaeaahabaaaaaaaaaaa
@@ -86988,12 +86800,344 @@ aaaaaaaaegiccaaaacaaaaaaaeaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaa
 aaaaaaaaabeaaaaaaaaamadpddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
 abeaaaaaaaaaiadpaaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
 abeaaaaaaaaaiadpdiaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
-abaaaaaadcaaaaalpcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaa
-afaaaaaaegiecaaaaaaaaaaaagaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaa
-abaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaa
-ogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadcaaaaaldcaabaaa
-aeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaafaaaaaaegiacaaaaaaaaaaa
-agaaaaaaefaaaaajpcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaa
+abaaaaaadiaaaaaipcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaa
+afaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaa
+aagabaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaa
+aeaaaaaaaagabaaaaeaaaaaadiaaaaaidcaabaaaaeaaaaaaegbabaaaadaaaaaa
+agiacaaaaaaaaaaaafaaaaaaefaaaaajpcaabaaaaeaaaaaaegaabaaaaeaaaaaa
+eghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaaadaaaaaaegaobaaa
+adaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaaadaaaaaaagbabaia
+ibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaaaaaaaaaipcaabaaa
+abaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaadcaaaaakpcaabaaa
+abaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaa
+dcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaabaaaaaaegacbaia
+ebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaaabaaaaaadkaabaaa
+acaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaaaabaaaaaa
+dcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaa
+aaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadpdoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "DIRECTIONAL" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "DIRECTIONAL" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "DIRECTIONAL" "SHADOWS_OFF" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_OFF" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_OFF" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightColor0]
+Vector 3 [_Color]
+Float 4 [_DetailScale]
+Float 5 [_DetailVertScale]
+Float 6 [_DetailDist]
+Float 7 [_MinLight]
+Float 8 [_DarkOverlayDetailScale]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailVertTex] 2D
+SetTexture 2 [_DetailTex] 2D
+SetTexture 3 [_DarkOverlayTex] 2D
+SetTexture 4 [_DarkOverlayDetailTex] 2D
+"ps_3_0
+; 115 ALU, 15 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+dcl_texcoord1 v0.x
+dcl_texcoord2 v1.xyz
+dcl_texcoord3 v2.xyz
+dcl_texcoord4 v3.xyz
+dcl_texcoord5 v4.xyz
+mov r2.xyz, v3
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c14
+mul r0.xy, v3.zyzw, c5.x
+mul r1.xy, v3.zyzw, c4.x
+abs r0.w, v3.z
+abs r4.zw, v3.xyxy
+max r1.w, r4.z, r0
+rcp r2.x, r1.w
+min r1.w, r4.z, r0
+mul r1.w, r1, r2.x
+mul r2.w, r1, r1
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
+texld r0.xyz, r0, s1
+texld r1.xyz, r1, s2
+add r1.xyz, r1, -r0
+mad_sat r3.x, r2.y, c14.z, c14.w
+mad r2.xyz, r3.x, r1, r0
+mul r1.xy, v3, c5.x
+mul r0.xy, v3, c4.x
+texld r1.xyz, r1, s1
+texld r0.xyz, r0, s2
+add r0.xyz, r0, -r1
+mad r0.xyz, r3.x, r0, r1
+add_pp r1.xyz, r2, -r0
+mad_pp r2.xyz, r4.z, r1, r0
+mul r1.xy, v3.zxzw, c5.x
+mul r0.xy, v3.zxzw, c4.x
+texld r1.xyz, r1, s1
+texld r0.xyz, r0, s2
+add r0.xyz, r0, -r1
+mad r0.xyz, r3.x, r0, r1
+add_pp r0.xyz, r0, -r2
+mad r2.w, r3.y, r2, c12.z
+mul r1.y, r2.w, r1.w
+dp4 r2.w, c1, c1
+mad_pp r0.xyz, r4.w, r0, r2
+add r1.x, r4.z, -r0.w
+add r1.z, -r1.y, c12.w
+cmp r1.w, -r1.x, r1.y, r1.z
+add r2.x, -r1.w, c10.w
+cmp r1.w, v3.z, r1, r2.x
+cmp r1.w, v3.x, r1, -r1
+mul r2.x, v0, c6
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
+mad_pp r1.xyz, r2.x, r1, r0
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
+rsq r0.y, r0.y
+mad r4.x, r1.w, c13, c13.y
+rcp r0.y, r0.y
+mul r1.w, r0.x, r0.y
+abs r0.x, v3.y
+cmp r0.w, v3.z, c9.x, c9.y
+mul r2.x, r0.w, r1.w
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
+rsq r0.z, r0.z
+mad r0.x, r0.y, r0, c10.y
+rcp r0.z, r0.z
+mul r0.y, r0.x, r0.z
+cmp r0.x, v3.y, c9, c9.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
+dsy r0.zw, v3.xyxy
+mul r0.zw, r0, r0
+mul r4.y, r0.x, c11.x
+dsx r3.w, r0.y
+dsy r3.y, r0
+dsx r0.xy, v3
+mul r0.xy, r0, r0
+add r0.x, r0, r0.y
+add r0.y, r0.z, r0.w
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
+texldd r0.xyz, r4, s0, r3.zwzw, r3
+mul_pp r0.xyz, r0, r1
+mul r0.xyz, r0, v4
+mul r2.xyz, r0, c3
+mul r1.xy, v3, c8.x
+mul r0.xy, v3.zyzw, c8.x
+texld r1, r1, s4
+texld r0, r0, s4
+add_pp r0, r0, -r1
+mad_pp r1, r4.z, r0, r1
+mul r5.xy, v3.zxzw, c8.x
+texld r0, r5, s4
+add_pp r0, r0, -r1
+mad_pp r0, r4.w, r0, r1
+rsq r2.w, r2.w
+mul r1.xyz, r2.w, c1
+dp3_sat r1.x, v2, r1
+add_pp r1.x, r1, c13.z
+mul_pp r1.w, r1.x, c2
+texldd r3, r4, s3, r3.zwzw, r3
+mov r1.y, c7.x
+mul_pp r0, r3, r0
+mul_pp_sat r1.w, r1, c13
+add r1.xyz, c2, r1.y
+mad_sat r1.xyz, r1.w, r1, c0
+mad_pp r0.xyz, -r2, r1, r0
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
+mul_pp r1.xyz, r2, r1
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
+mov_pp oC0.w, c9.y
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_OFF" }
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
+Vector 80 [_LightColor0] 4
+Vector 112 [_Color] 4
+Float 128 [_DetailScale]
+Float 132 [_DetailVertScale]
+Float 136 [_DetailDist]
+Float 140 [_MinLight]
+Float 144 [_DarkOverlayDetailScale]
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
+Vector 64 [glstate_lightmodel_ambient] 4
+BindCB "$Globals" 0
+BindCB "UnityLighting" 1
+BindCB "UnityPerFrame" 2
+SetTexture 0 [_MainTex] 2D 0
+SetTexture 1 [_DetailVertTex] 2D 2
+SetTexture 2 [_DetailTex] 2D 1
+SetTexture 3 [_DarkOverlayTex] 2D 3
+SetTexture 4 [_DarkOverlayDetailTex] 2D 4
+// 103 instructions, 5 temp regs, 0 temp arrays:
+// ALU 85 float, 0 int, 4 uint
+// TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0
+eefiecedldcidbplmodealmhpimdgjiljpcicadlabaaaaaajeapaaaaadaaaaaa
+cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaababaaaalmaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+aoaoaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaalmaaaaaa
+aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaalmaaaaaaafaaaaaaaaaaaaaa
+adaaaaaaaeaaaaaaapahaaaalmaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
+apaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
+cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaa
+fjaaaaaeegiocaaaaaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
+fjaaaaaeegiocaaaacaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
+aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaa
+fkaaaaadaagabaaaaeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
+aahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaafibiaaae
+aahabaaaadaaaaaaffffaaaafibiaaaeaahabaaaaeaaaaaaffffaaaagcbaaaad
+bcbabaaaabaaaaaagcbaaaadocbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
+gcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagfaaaaadpccabaaa
+aaaaaaaagiaaaaacafaaaaaadiaaaaaipcaabaaaaaaaaaaaggbcbaaaadaaaaaa
+agiacaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaaaaaaaaa
+eghobaaaacaaaaaaaagabaaaabaaaaaaefaaaaajpcaabaaaaaaaaaaaogakbaaa
+aaaaaaaaeghobaaaacaaaaaaaagabaaaabaaaaaadiaaaaaipcaabaaaacaaaaaa
+egbgbaaaadaaaaaaagifcaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaaadaaaaaa
+ogakbaaaacaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaaefaaaaajpcaabaaa
+acaaaaaaegaabaaaacaaaaaaeghobaaaacaaaaaaaagabaaaabaaaaaaaaaaaaai
+hcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaadaaaaaabacaaaai
+icaabaaaaaaaaaaajgbhbaaaabaaaaaaegbcbaiaebaaaaaaadaaaaaaaaaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaddddhdlpdccaaaajicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaaaecabeaaaaaaaaaaadpdcaaaaaj
+hcaabaaaabaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaadaaaaaa
+diaaaaaipcaabaaaadaaaaaacgbebaaaadaaaaaafgifcaaaaaaaaaaaaiaaaaaa
+efaaaaajpcaabaaaaeaaaaaaogakbaaaadaaaaaaeghobaaaabaaaaaaaagabaaa
+acaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaadaaaaaaeghobaaaabaaaaaa
+aagabaaaacaaaaaaaaaaaaaihcaabaaaacaaaaaaegacbaaaacaaaaaaegacbaia
+ebaaaaaaaeaaaaaadcaaaaajhcaabaaaacaaaaaapgapbaaaaaaaaaaaegacbaaa
+acaaaaaaegacbaaaaeaaaaaaaaaaaaaihcaabaaaabaaaaaaegacbaaaabaaaaaa
+egacbaiaebaaaaaaacaaaaaadcaaaaakhcaabaaaabaaaaaaagbabaiaibaaaaaa
+adaaaaaaegacbaaaabaaaaaaegacbaaaacaaaaaaaaaaaaaihcaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaiaebaaaaaaadaaaaaadcaaaaajhcaabaaaaaaaaaaa
+pgapbaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaadaaaaaaaaaaaaaihcaabaaa
+aaaaaaaaegacbaiaebaaaaaaabaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaafgbfbaiaibaaaaaaadaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
+aaaaaaalhcaabaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaaaceaaaaaaaaaiadp
+aaaaiadpaaaaiadpaaaaaaaaapcaaaaiicaabaaaaaaaaaaaagbabaaaabaaaaaa
+kgikcaaaaaaaaaaaaiaaaaaadcaaaaajhcaabaaaaaaaaaaapgapbaaaaaaaaaaa
+egacbaaaabaaaaaaegacbaaaaaaaaaaadeaaaaajicaabaaaaaaaaaaackbabaia
+ibaaaaaaadaaaaaaakbabaiaibaaaaaaadaaaaaaaoaaaaakicaabaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpdkaabaaaaaaaaaaaddaaaaaj
+bcaabaaaabaaaaaackbabaiaibaaaaaaadaaaaaaakbabaiaibaaaaaaadaaaaaa
+diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaah
+bcaabaaaabaaaaaadkaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajccaabaaa
+abaaaaaaakaabaaaabaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
+ccaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaochgdido
+dcaaaaajccaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aebnkjlodcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaa
+abeaaaaadiphhpdpdiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaadcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapmjdpdbaaaaajecaabaaaabaaaaaackbabaiaibaaaaaaadaaaaaa
+akbabaiaibaaaaaaadaaaaaaabaaaaahccaabaaaabaaaaaackaabaaaabaaaaaa
+bkaabaaaabaaaaaadcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaabkaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaajgbfbaaaadaaaaaa
+jgbfbaiaebaaaaaaadaaaaaaabaaaaahecaabaaaabaaaaaabkaabaaaabaaaaaa
+abeaaaaanlapejmaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
+abaaaaaaddaaaaahecaabaaaabaaaaaackbabaaaadaaaaaaakbabaaaadaaaaaa
+dbaaaaaiecaabaaaabaaaaaackaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+deaaaaahicaabaaaabaaaaaackbabaaaadaaaaaaakbabaaaadaaaaaabnaaaaai
+icaabaaaabaaaaaadkaabaaaabaaaaaadkaabaiaebaaaaaaabaaaaaaabaaaaah
+ecaabaaaabaaaaaadkaabaaaabaaaaaackaabaaaabaaaaaadhaaaaakicaabaaa
+aaaaaaaackaabaaaabaaaaaadkaabaiaebaaaaaaaaaaaaaadkaabaaaaaaaaaaa
+dcaaaaajbcaabaaaacaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
+aaaaaadpalaaaaafmcaabaaaabaaaaaaagbebaaaadaaaaaaapaaaaahicaabaaa
+aaaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahbcaabaaaadaaaaaadkaabaaaaaaaaaaaabeaaaaa
+idpjccdoamaaaaafmcaabaaaabaaaaaaagbebaaaadaaaaaaapaaaaahicaabaaa
+aaaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahbcaabaaaaeaaaaaadkaabaaaaaaaaaaaabeaaaaa
+idpjccdodcaaaabamcaabaaaabaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaa
+aaaaaaaaaaaaaaaadagojjlmdagojjlmaceaaaaaaaaaaaaaaaaaaaaachbgjidn
+chbgjidndcaaaaanmcaabaaaabaaaaaakgaobaaaabaaaaaafgbjbaiaibaaaaaa
+adaaaaaaaceaaaaaaaaaaaaaaaaaaaaaiedefjloiedefjlodcaaaaanmcaabaaa
+abaaaaaakgaobaaaabaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaaaaaaaaaa
+aaaaaaaakeanmjdpkeanmjdpaaaaaaalmcaabaaaadaaaaaafgbjbaiambaaaaaa
+adaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaiadpaaaaiadpelaaaaafmcaabaaa
+adaaaaaakgaobaaaadaaaaaadiaaaaahmcaabaaaaeaaaaaakgaobaaaabaaaaaa
+kgaobaaaadaaaaaadcaaaaapmcaabaaaaeaaaaaakgaobaaaaeaaaaaaaceaaaaa
+aaaaaaaaaaaaaaaaaaaaaamaaaaaaamaaceaaaaaaaaaaaaaaaaaaaaanlapejea
+nlapejeaabaaaaahdcaabaaaabaaaaaaegaabaaaabaaaaaaogakbaaaaeaaaaaa
+dcaaaaajdcaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaadaaaaaaegaabaaa
+abaaaaaadiaaaaakgcaabaaaacaaaaaaagabbaaaabaaaaaaaceaaaaaaaaaaaaa
+idpjkcdoidpjkcdoaaaaaaaaalaaaaafccaabaaaadaaaaaackaabaaaacaaaaaa
+amaaaaafccaabaaaaeaaaaaackaabaaaacaaaaaaejaaaaanpcaabaaaabaaaaaa
+egaabaaaacaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaaadaaaaaa
+egaabaaaaeaaaaaaejaaaaanpcaabaaaacaaaaaaegaabaaaacaaaaaaeghobaaa
+adaaaaaaaagabaaaadaaaaaaegaabaaaadaaaaaaegaabaaaaeaaaaaadiaaaaah
+hcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaahhcaabaaa
+aaaaaaaaegacbaaaaaaaaaaaegbcbaaaaeaaaaaadiaaaaaihcaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegiccaaaaaaaaaaaahaaaaaabbaaaaajicaabaaaaaaaaaaa
+egiocaaaabaaaaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaaeeaaaaaficaabaaa
+aaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaa
+egiccaaaabaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaacaaaaaa
+egacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+aknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdp
+diaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaa
+dicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaaj
+hcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaaaiaaaaaa
+dccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
+acaaaaaaaeaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+aaaamadpddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
+aaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
+diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaai
+pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+efaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
+aeaaaaaadiaaaaaidcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaa
+ajaaaaaaefaaaaajpcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaa
 aagabaaaaeaaaaaaaaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaia
 ebaaaaaaaeaaaaaadcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaa
 egaobaaaadaaaaaaegaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaa
@@ -87007,345 +87151,6 @@ iccabaaaaaaaaaaaabeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "DIRECTIONAL" "SHADOWS_OFF" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "DIRECTIONAL" "SHADOWS_OFF" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "DIRECTIONAL" "SHADOWS_OFF" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_OFF" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_OFF" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightColor0]
-Vector 3 [_Color]
-Float 4 [_DetailScale]
-Float 5 [_DetailVertScale]
-Float 6 [_DetailDist]
-Float 7 [_MinLight]
-Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailVertTex] 2D
-SetTexture 2 [_DetailTex] 2D
-SetTexture 3 [_DarkOverlayTex] 2D
-SetTexture 4 [_DarkOverlayDetailTex] 2D
-"ps_3_0
-; 118 ALU, 15 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
-dcl_texcoord1 v0.x
-dcl_texcoord2 v1.xyz
-dcl_texcoord3 v2.xyz
-dcl_texcoord4 v3.xyz
-dcl_texcoord5 v4.xyz
-mov r2.xyz, v3
-dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
-mul r0.xy, v3.zyzw, c5.x
-mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
-abs r0.w, v3.z
-abs r4.zw, v3.xyxy
-max r1.w, r4.z, r0
-rcp r2.x, r1.w
-min r1.w, r4.z, r0
-mul r1.w, r1, r2.x
-mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
-texld r0.xyz, r0, s1
-texld r1.xyz, r1, s2
-add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
-mad r2.xyz, r3.x, r1, r0
-mul r1.xy, v3, c5.x
-mul r0.xy, v3, c4.x
-texld r1.xyz, r1, s1
-texld r0.xyz, r0, s2
-add r0.xyz, r0, -r1
-mad r0.xyz, r3.x, r0, r1
-add_pp r1.xyz, r2, -r0
-mad_pp r2.xyz, r4.z, r1, r0
-mul r1.xy, v3.zxzw, c5.x
-mul r0.xy, v3.zxzw, c4.x
-texld r1.xyz, r1, s1
-texld r0.xyz, r0, s2
-add r0.xyz, r0, -r1
-mad r0.xyz, r3.x, r0, r1
-add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
-mul r1.y, r2.w, r1.w
-dp4 r2.w, c1, c1
-mad_pp r0.xyz, r4.w, r0, r2
-add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
-cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
-cmp r1.w, v3.z, r1, r2.x
-cmp r1.w, v3.x, r1, -r1
-mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
-mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
-rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
-rcp r0.y, r0.y
-mul r1.w, r0.x, r0.y
-abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
-mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
-rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
-dsy r0.zw, v3.xyxy
-mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
-dsx r3.w, r0.y
-dsy r3.y, r0
-dsx r0.xy, v3
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
-texldd r0.xyz, r4, s0, r3.zwzw, r3
-mul_pp r0.xyz, r0, r1
-mul r0.xyz, r0, v4
-mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
-mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
-texld r1, r1, s4
-texld r0, r0, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
-texld r0, r5, s4
-add_pp r0, r0, -r1
-mad_pp r0, r4.w, r0, r1
-rsq r2.w, r2.w
-mul r1.xyz, r2.w, c1
-dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
-mul_pp r1.w, r1.x, c2
-texldd r3, r4, s3, r3.zwzw, r3
-mov r1.y, c7.x
-mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
-add r1.xyz, c2, r1.y
-mad_sat r1.xyz, r1.w, r1, c0
-mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
-mul_pp r1.xyz, r2, r1
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
-"
-}
-
-SubProgram "d3d11 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_OFF" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
-Vector 80 [_LightColor0] 4
-Vector 112 [_Color] 4
-Float 128 [_DetailScale]
-Float 132 [_DetailVertScale]
-Float 136 [_DetailDist]
-Float 140 [_MinLight]
-Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
-ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
-Vector 0 [_WorldSpaceLightPos0] 4
-ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
-Vector 64 [glstate_lightmodel_ambient] 4
-BindCB "$Globals" 0
-BindCB "UnityLighting" 1
-BindCB "UnityPerFrame" 2
-SetTexture 0 [_MainTex] 2D 0
-SetTexture 1 [_DetailVertTex] 2D 2
-SetTexture 2 [_DetailTex] 2D 1
-SetTexture 3 [_DarkOverlayTex] 2D 3
-SetTexture 4 [_DarkOverlayDetailTex] 2D 4
-// 103 instructions, 5 temp regs, 0 temp arrays:
-// ALU 85 float, 0 int, 4 uint
-// TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
-// FLOW 1 static, 0 dynamic
-"ps_4_0
-eefiecedhhpmcjehhhnilnpdgdololeondcgfdanabaaaaaakmapaaaaadaaaaaa
-cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
-aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaabaaaaaaaaaaaaaa
-adaaaaaaabaaaaaaababaaaalmaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
-aoaoaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaalmaaaaaa
-aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaalmaaaaaaafaaaaaaaaaaaaaa
-adaaaaaaaeaaaaaaapahaaaalmaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
-apaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
-cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaa
-fjaaaaaeegiocaaaaaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
-fjaaaaaeegiocaaaacaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
-aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaa
-fkaaaaadaagabaaaaeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
-aahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaafibiaaae
-aahabaaaadaaaaaaffffaaaafibiaaaeaahabaaaaeaaaaaaffffaaaagcbaaaad
-bcbabaaaabaaaaaagcbaaaadocbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
-gcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagfaaaaadpccabaaa
-aaaaaaaagiaaaaacafaaaaaadiaaaaaipcaabaaaaaaaaaaaggbcbaaaadaaaaaa
-agiacaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaaaaaaaaa
-eghobaaaacaaaaaaaagabaaaabaaaaaaefaaaaajpcaabaaaaaaaaaaaogakbaaa
-aaaaaaaaeghobaaaacaaaaaaaagabaaaabaaaaaadiaaaaaipcaabaaaacaaaaaa
-egbgbaaaadaaaaaaagifcaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaaadaaaaaa
-ogakbaaaacaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaaefaaaaajpcaabaaa
-acaaaaaaegaabaaaacaaaaaaeghobaaaacaaaaaaaagabaaaabaaaaaaaaaaaaai
-hcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaadaaaaaabacaaaai
-icaabaaaaaaaaaaajgbhbaaaabaaaaaaegbcbaiaebaaaaaaadaaaaaaaaaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaddddhdlpdccaaaajicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaaaecabeaaaaaaaaaaadpdcaaaaaj
-hcaabaaaabaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaadaaaaaa
-diaaaaaipcaabaaaadaaaaaacgbebaaaadaaaaaafgifcaaaaaaaaaaaaiaaaaaa
-efaaaaajpcaabaaaaeaaaaaaogakbaaaadaaaaaaeghobaaaabaaaaaaaagabaaa
-acaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaadaaaaaaeghobaaaabaaaaaa
-aagabaaaacaaaaaaaaaaaaaihcaabaaaacaaaaaaegacbaaaacaaaaaaegacbaia
-ebaaaaaaaeaaaaaadcaaaaajhcaabaaaacaaaaaapgapbaaaaaaaaaaaegacbaaa
-acaaaaaaegacbaaaaeaaaaaaaaaaaaaihcaabaaaabaaaaaaegacbaaaabaaaaaa
-egacbaiaebaaaaaaacaaaaaadcaaaaakhcaabaaaabaaaaaaagbabaiaibaaaaaa
-adaaaaaaegacbaaaabaaaaaaegacbaaaacaaaaaaaaaaaaaihcaabaaaaaaaaaaa
-egacbaaaaaaaaaaaegacbaiaebaaaaaaadaaaaaadcaaaaajhcaabaaaaaaaaaaa
-pgapbaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaadaaaaaaaaaaaaaihcaabaaa
-aaaaaaaaegacbaiaebaaaaaaabaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
-aaaaaaaafgbfbaiaibaaaaaaadaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
-aaaaaaalhcaabaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaaaceaaaaaaaaaiadp
-aaaaiadpaaaaiadpaaaaaaaaapcaaaaiicaabaaaaaaaaaaaagbabaaaabaaaaaa
-kgikcaaaaaaaaaaaaiaaaaaadcaaaaajhcaabaaaaaaaaaaapgapbaaaaaaaaaaa
-egacbaaaabaaaaaaegacbaaaaaaaaaaadeaaaaajicaabaaaaaaaaaaackbabaia
-ibaaaaaaadaaaaaaakbabaiaibaaaaaaadaaaaaaaoaaaaakicaabaaaaaaaaaaa
-aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpdkaabaaaaaaaaaaaddaaaaaj
-bcaabaaaabaaaaaackbabaiaibaaaaaaadaaaaaaakbabaiaibaaaaaaadaaaaaa
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaah
-bcaabaaaabaaaaaadkaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajccaabaaa
-abaaaaaaakaabaaaabaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
-ccaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaochgdido
-dcaaaaajccaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
-aebnkjlodcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaa
-abeaaaaadiphhpdpdiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaa
-abaaaaaadcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaama
-abeaaaaanlapmjdpdbaaaaajecaabaaaabaaaaaackbabaiaibaaaaaaadaaaaaa
-akbabaiaibaaaaaaadaaaaaaabaaaaahccaabaaaabaaaaaackaabaaaabaaaaaa
-bkaabaaaabaaaaaadcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
-abaaaaaabkaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaajgbfbaaaadaaaaaa
-jgbfbaiaebaaaaaaadaaaaaaabaaaaahecaabaaaabaaaaaabkaabaaaabaaaaaa
-abeaaaaanlapejmaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
-abaaaaaaddaaaaahecaabaaaabaaaaaackbabaaaadaaaaaaakbabaaaadaaaaaa
-dbaaaaaiecaabaaaabaaaaaackaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
-deaaaaahicaabaaaabaaaaaackbabaaaadaaaaaaakbabaaaadaaaaaabnaaaaai
-icaabaaaabaaaaaadkaabaaaabaaaaaadkaabaiaebaaaaaaabaaaaaaabaaaaah
-ecaabaaaabaaaaaadkaabaaaabaaaaaackaabaaaabaaaaaadhaaaaakicaabaaa
-aaaaaaaackaabaaaabaaaaaadkaabaiaebaaaaaaaaaaaaaadkaabaaaaaaaaaaa
-dcaaaaajbcaabaaaacaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
-aaaaaadpalaaaaafmcaabaaaabaaaaaaagbebaaaadaaaaaaapaaaaahicaabaaa
-aaaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaahbcaabaaaadaaaaaadkaabaaaaaaaaaaaabeaaaaa
-idpjccdoamaaaaafmcaabaaaabaaaaaaagbebaaaadaaaaaaapaaaaahicaabaaa
-aaaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaahbcaabaaaaeaaaaaadkaabaaaaaaaaaaaabeaaaaa
-idpjccdodcaaaabamcaabaaaabaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaa
-aaaaaaaaaaaaaaaadagojjlmdagojjlmaceaaaaaaaaaaaaaaaaaaaaachbgjidn
-chbgjidndcaaaaanmcaabaaaabaaaaaakgaobaaaabaaaaaafgbjbaiaibaaaaaa
-adaaaaaaaceaaaaaaaaaaaaaaaaaaaaaiedefjloiedefjlodcaaaaanmcaabaaa
-abaaaaaakgaobaaaabaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaaaaaaaaaa
-aaaaaaaakeanmjdpkeanmjdpaaaaaaalmcaabaaaadaaaaaafgbjbaiambaaaaaa
-adaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaiadpaaaaiadpelaaaaafmcaabaaa
-adaaaaaakgaobaaaadaaaaaadiaaaaahmcaabaaaaeaaaaaakgaobaaaabaaaaaa
-kgaobaaaadaaaaaadcaaaaapmcaabaaaaeaaaaaakgaobaaaaeaaaaaaaceaaaaa
-aaaaaaaaaaaaaaaaaaaaaamaaaaaaamaaceaaaaaaaaaaaaaaaaaaaaanlapejea
-nlapejeaabaaaaahdcaabaaaabaaaaaaegaabaaaabaaaaaaogakbaaaaeaaaaaa
-dcaaaaajdcaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaadaaaaaaegaabaaa
-abaaaaaadiaaaaakgcaabaaaacaaaaaaagabbaaaabaaaaaaaceaaaaaaaaaaaaa
-idpjkcdoidpjkcdoaaaaaaaaalaaaaafccaabaaaadaaaaaackaabaaaacaaaaaa
-amaaaaafccaabaaaaeaaaaaackaabaaaacaaaaaaejaaaaanpcaabaaaabaaaaaa
-egaabaaaacaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaaadaaaaaa
-egaabaaaaeaaaaaaejaaaaanpcaabaaaacaaaaaaegaabaaaacaaaaaaeghobaaa
-adaaaaaaaagabaaaadaaaaaaegaabaaaadaaaaaaegaabaaaaeaaaaaadiaaaaah
-hcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegbcbaaaaeaaaaaadiaaaaaihcaabaaaaaaaaaaa
-egacbaaaaaaaaaaaegiccaaaaaaaaaaaahaaaaaabbaaaaajicaabaaaaaaaaaaa
-egiocaaaabaaaaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaaeeaaaaaficaabaaa
-aaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaabaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaacaaaaaa
-egacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-aknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdp
-diaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaa
-dicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaaj
-hcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaaaiaaaaaa
-dccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaeaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-aaaamadpddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
-aaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
-diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaal
-pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaa
-aeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaa
-eghobaaaaeaaaaaaaagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaa
-adaaaaaaagiacaaaaaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaaj
-pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
-aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
-egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
-ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
-egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
-abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
-aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
-abeaaaaaaaaaiadpdoaaaaab"
-}
-
-SubProgram "gles " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_OFF" }
 "!!GLES"
 }
@@ -87376,25 +87181,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -87402,10 +87206,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -87413,14 +87216,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -87437,48 +87240,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -87489,48 +87292,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "POINT_COOKIE" "SHADOWS_OFF" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -87538,7 +87339,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -87556,7 +87356,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedpmgoojldliblplepehinnihdlbhilmbgabaaaaaakmapaaaaadaaaaaa
+eefiecedifnnphbmmikobkchcmbfbgffgpckdkniabaaaaaajeapaaaaadaaaaaa
 cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaalmaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -87565,8 +87365,8 @@ aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaalmaaaaaaafaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaapahaaaalmaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
 cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaa
-fjaaaaaeegiocaaaaaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaa
+fjaaaaaeegiocaaaaaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
 fjaaaaaeegiocaaaacaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaa
 fkaaaaadaagabaaaaeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -87665,23 +87465,22 @@ dccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
 acaaaaaaaeaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
 aaaamadpddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
 aaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
-diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaal
-pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaa
-aeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaa
-eghobaaaaeaaaaaaaagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaa
-adaaaaaaagiacaaaaaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaaj
-pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
-aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
-egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
-ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
-egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
-abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
-aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
-abeaaaaaaaaaiadpdoaaaaab"
+diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaai
+pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+efaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
+aeaaaaaadiaaaaaidcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaa
+ajaaaaaaefaaaaajpcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaa
+aagabaaaaeaaaaaaaaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaia
+ebaaaaaaaeaaaaaadcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaa
+egaobaaaadaaaaaaegaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaa
+abaaaaaaegaobaiaebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaia
+ibaaaaaaadaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaa
+abaaaaaaegacbaaaacaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaa
+diaaaaahicaabaaaabaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaa
+aaaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaf
+iccabaaaaaaaaaaaabeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -87715,25 +87514,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -87741,10 +87539,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -87752,14 +87549,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -87776,48 +87573,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4_pp r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -87828,48 +87625,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq_pp r2.w, r2.w
 mul_pp r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -87877,7 +87672,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -87895,7 +87689,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecednljjhdnhgnkejppdmlpaniobcpnjidifabaaaaaakmapaaaaadaaaaaa
+eefieceddbflknboinkccfjapdnhblkodkghdakgabaaaaaajeapaaaaadaaaaaa
 cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaalmaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -87904,8 +87698,8 @@ aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaalmaaaaaaafaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaapahaaaalmaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 adaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
 cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaa
-fjaaaaaeegiocaaaaaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaa
+fjaaaaaeegiocaaaaaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
 fjaaaaaeegiocaaaacaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaa
 fkaaaaadaagabaaaaeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -88004,12 +87798,345 @@ dccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
 acaaaaaaaeaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
 aaaamadpddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
 aaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
-diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaal
-pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaa
-aeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaa
-eghobaaaaeaaaaaaaagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaa
-adaaaaaaagiacaaaaaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaaj
+diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaai
+pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+efaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
+aeaaaaaadiaaaaaidcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaa
+ajaaaaaaefaaaaajpcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaa
+aagabaaaaeaaaaaaaaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaia
+ebaaaaaaaeaaaaaadcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaa
+egaobaaaadaaaaaaegaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaa
+abaaaaaaegaobaiaebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaia
+ibaaaaaaadaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaa
+abaaaaaaegacbaaaacaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaa
+diaaaaahicaabaaaabaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaa
+aaaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaf
+iccabaaaaaaaaaaaabeaaaaaaaaaiadpdoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightColor0]
+Vector 3 [_Color]
+Float 4 [_DetailScale]
+Float 5 [_DetailVertScale]
+Float 6 [_DetailDist]
+Float 7 [_MinLight]
+Float 8 [_DarkOverlayDetailScale]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailVertTex] 2D
+SetTexture 2 [_DetailTex] 2D
+SetTexture 3 [_DarkOverlayTex] 2D
+SetTexture 4 [_DarkOverlayDetailTex] 2D
+"ps_3_0
+; 115 ALU, 15 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+dcl_texcoord1 v0.x
+dcl_texcoord2 v1.xyz
+dcl_texcoord3 v2.xyz
+dcl_texcoord4 v3.xyz
+dcl_texcoord5 v4.xyz
+mov r2.xyz, v3
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c14
+mul r0.xy, v3.zyzw, c5.x
+mul r1.xy, v3.zyzw, c4.x
+abs r0.w, v3.z
+abs r4.zw, v3.xyxy
+max r1.w, r4.z, r0
+rcp r2.x, r1.w
+min r1.w, r4.z, r0
+mul r1.w, r1, r2.x
+mul r2.w, r1, r1
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
+texld r0.xyz, r0, s1
+texld r1.xyz, r1, s2
+add r1.xyz, r1, -r0
+mad_sat r3.x, r2.y, c14.z, c14.w
+mad r2.xyz, r3.x, r1, r0
+mul r1.xy, v3, c5.x
+mul r0.xy, v3, c4.x
+texld r1.xyz, r1, s1
+texld r0.xyz, r0, s2
+add r0.xyz, r0, -r1
+mad r0.xyz, r3.x, r0, r1
+add_pp r1.xyz, r2, -r0
+mad_pp r2.xyz, r4.z, r1, r0
+mul r1.xy, v3.zxzw, c5.x
+mul r0.xy, v3.zxzw, c4.x
+texld r1.xyz, r1, s1
+texld r0.xyz, r0, s2
+add r0.xyz, r0, -r1
+mad r0.xyz, r3.x, r0, r1
+add_pp r0.xyz, r0, -r2
+mad r2.w, r3.y, r2, c12.z
+mul r1.y, r2.w, r1.w
+dp4 r2.w, c1, c1
+mad_pp r0.xyz, r4.w, r0, r2
+add r1.x, r4.z, -r0.w
+add r1.z, -r1.y, c12.w
+cmp r1.w, -r1.x, r1.y, r1.z
+add r2.x, -r1.w, c10.w
+cmp r1.w, v3.z, r1, r2.x
+cmp r1.w, v3.x, r1, -r1
+mul r2.x, v0, c6
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
+mad_pp r1.xyz, r2.x, r1, r0
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
+rsq r0.y, r0.y
+mad r4.x, r1.w, c13, c13.y
+rcp r0.y, r0.y
+mul r1.w, r0.x, r0.y
+abs r0.x, v3.y
+cmp r0.w, v3.z, c9.x, c9.y
+mul r2.x, r0.w, r1.w
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
+rsq r0.z, r0.z
+mad r0.x, r0.y, r0, c10.y
+rcp r0.z, r0.z
+mul r0.y, r0.x, r0.z
+cmp r0.x, v3.y, c9, c9.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
+dsy r0.zw, v3.xyxy
+mul r0.zw, r0, r0
+mul r4.y, r0.x, c11.x
+dsx r3.w, r0.y
+dsy r3.y, r0
+dsx r0.xy, v3
+mul r0.xy, r0, r0
+add r0.x, r0, r0.y
+add r0.y, r0.z, r0.w
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
+texldd r0.xyz, r4, s0, r3.zwzw, r3
+mul_pp r0.xyz, r0, r1
+mul r0.xyz, r0, v4
+mul r2.xyz, r0, c3
+mul r1.xy, v3, c8.x
+mul r0.xy, v3.zyzw, c8.x
+texld r1, r1, s4
+texld r0, r0, s4
+add_pp r0, r0, -r1
+mad_pp r1, r4.z, r0, r1
+mul r5.xy, v3.zxzw, c8.x
+texld r0, r5, s4
+add_pp r0, r0, -r1
+mad_pp r0, r4.w, r0, r1
+rsq r2.w, r2.w
+mul r1.xyz, r2.w, c1
+dp3_sat r1.x, v2, r1
+add_pp r1.x, r1, c13.z
+mul_pp r1.w, r1.x, c2
+texldd r3, r4, s3, r3.zwzw, r3
+mov r1.y, c7.x
+mul_pp r0, r3, r0
+mul_pp_sat r1.w, r1, c13
+add r1.xyz, c2, r1.y
+mad_sat r1.xyz, r1.w, r1, c0
+mad_pp r0.xyz, -r2, r1, r0
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
+mul_pp r1.xyz, r2, r1
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
+mov_pp oC0.w, c9.y
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
+Vector 80 [_LightColor0] 4
+Vector 112 [_Color] 4
+Float 128 [_DetailScale]
+Float 132 [_DetailVertScale]
+Float 136 [_DetailDist]
+Float 140 [_MinLight]
+Float 144 [_DarkOverlayDetailScale]
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
+Vector 64 [glstate_lightmodel_ambient] 4
+BindCB "$Globals" 0
+BindCB "UnityLighting" 1
+BindCB "UnityPerFrame" 2
+SetTexture 0 [_MainTex] 2D 0
+SetTexture 1 [_DetailVertTex] 2D 2
+SetTexture 2 [_DetailTex] 2D 1
+SetTexture 3 [_DarkOverlayTex] 2D 3
+SetTexture 4 [_DarkOverlayDetailTex] 2D 4
+// 103 instructions, 5 temp regs, 0 temp arrays:
+// ALU 85 float, 0 int, 4 uint
+// TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0
+eefiecedekpmokbnbjnnpoipeeiilnagofhknbenabaaaaaakmapaaaaadaaaaaa
+cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+aoaoaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaaneaaaaaa
+aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaaneaaaaaaafaaaaaaaaaaaaaa
+adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
+apaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
+aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
+fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
+aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
+ffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaafibiaaaeaahabaaaadaaaaaa
+ffffaaaafibiaaaeaahabaaaaeaaaaaaffffaaaagcbaaaadbcbabaaaabaaaaaa
+gcbaaaadocbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaa
+adaaaaaagcbaaaadhcbabaaaaeaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
+afaaaaaadiaaaaaipcaabaaaaaaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaa
+aiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaaaaaaaaaeghobaaaacaaaaaa
+aagabaaaabaaaaaaefaaaaajpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
+acaaaaaaaagabaaaabaaaaaadiaaaaaipcaabaaaacaaaaaaegbgbaaaadaaaaaa
+agifcaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaaadaaaaaaogakbaaaacaaaaaa
+eghobaaaabaaaaaaaagabaaaacaaaaaaefaaaaajpcaabaaaacaaaaaaegaabaaa
+acaaaaaaeghobaaaacaaaaaaaagabaaaabaaaaaaaaaaaaaihcaabaaaabaaaaaa
+egacbaaaabaaaaaaegacbaiaebaaaaaaadaaaaaabacaaaaiicaabaaaaaaaaaaa
+jgbhbaaaabaaaaaaegbcbaiaebaaaaaaadaaaaaaaaaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaddddhdlpdccaaaajicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaaaaaaaaecabeaaaaaaaaaaadpdcaaaaajhcaabaaaabaaaaaa
+pgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaadaaaaaadiaaaaaipcaabaaa
+adaaaaaacgbebaaaadaaaaaafgifcaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaa
+aeaaaaaaogakbaaaadaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaaefaaaaaj
+pcaabaaaadaaaaaaegaabaaaadaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaa
+aaaaaaaihcaabaaaacaaaaaaegacbaaaacaaaaaaegacbaiaebaaaaaaaeaaaaaa
+dcaaaaajhcaabaaaacaaaaaapgapbaaaaaaaaaaaegacbaaaacaaaaaaegacbaaa
+aeaaaaaaaaaaaaaihcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaa
+acaaaaaadcaaaaakhcaabaaaabaaaaaaagbabaiaibaaaaaaadaaaaaaegacbaaa
+abaaaaaaegacbaaaacaaaaaaaaaaaaaihcaabaaaaaaaaaaaegacbaaaaaaaaaaa
+egacbaiaebaaaaaaadaaaaaadcaaaaajhcaabaaaaaaaaaaapgapbaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaadaaaaaaaaaaaaaihcaabaaaaaaaaaaaegacbaia
+ebaaaaaaabaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaafgbfbaia
+ibaaaaaaadaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaaaaaaaaalhcaabaaa
+abaaaaaaegacbaiaebaaaaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
+aaaaaaaaapcaaaaiicaabaaaaaaaaaaaagbabaaaabaaaaaakgikcaaaaaaaaaaa
+aiaaaaaadcaaaaajhcaabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaa
+egacbaaaaaaaaaaadeaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaaadaaaaaa
+akbabaiaibaaaaaaadaaaaaaaoaaaaakicaabaaaaaaaaaaaaceaaaaaaaaaiadp
+aaaaiadpaaaaiadpaaaaiadpdkaabaaaaaaaaaaaddaaaaajbcaabaaaabaaaaaa
+ckbabaiaibaaaaaaadaaaaaaakbabaiaibaaaaaaadaaaaaadiaaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaa
+dkaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajccaabaaaabaaaaaaakaabaaa
+abaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajccaabaaaabaaaaaa
+akaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajccaabaaa
+abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaadiphhpdp
+diaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaaj
+ccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdp
+dbaaaaajecaabaaaabaaaaaackbabaiaibaaaaaaadaaaaaaakbabaiaibaaaaaa
+adaaaaaaabaaaaahccaabaaaabaaaaaackaabaaaabaaaaaabkaabaaaabaaaaaa
+dcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaadbaaaaaidcaabaaaabaaaaaajgbfbaaaadaaaaaajgbfbaiaebaaaaaa
+adaaaaaaabaaaaahecaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaanlapejma
+aaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaabaaaaaaddaaaaah
+ecaabaaaabaaaaaackbabaaaadaaaaaaakbabaaaadaaaaaadbaaaaaiecaabaaa
+abaaaaaackaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaadeaaaaahicaabaaa
+abaaaaaackbabaaaadaaaaaaakbabaaaadaaaaaabnaaaaaiicaabaaaabaaaaaa
+dkaabaaaabaaaaaadkaabaiaebaaaaaaabaaaaaaabaaaaahecaabaaaabaaaaaa
+dkaabaaaabaaaaaackaabaaaabaaaaaadhaaaaakicaabaaaaaaaaaaackaabaaa
+abaaaaaadkaabaiaebaaaaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajbcaabaaa
+acaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpalaaaaaf
+mcaabaaaabaaaaaaagbebaaaadaaaaaaapaaaaahicaabaaaaaaaaaaaogakbaaa
+abaaaaaaogakbaaaabaaaaaaelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
+diaaaaahbcaabaaaadaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdoamaaaaaf
+mcaabaaaabaaaaaaagbebaaaadaaaaaaapaaaaahicaabaaaaaaaaaaaogakbaaa
+abaaaaaaogakbaaaabaaaaaaelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
+diaaaaahbcaabaaaaeaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdodcaaaaba
+mcaabaaaabaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
+dagojjlmdagojjlmaceaaaaaaaaaaaaaaaaaaaaachbgjidnchbgjidndcaaaaan
+mcaabaaaabaaaaaakgaobaaaabaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaa
+aaaaaaaaaaaaaaaaiedefjloiedefjlodcaaaaanmcaabaaaabaaaaaakgaobaaa
+abaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaakeanmjdp
+keanmjdpaaaaaaalmcaabaaaadaaaaaafgbjbaiambaaaaaaadaaaaaaaceaaaaa
+aaaaaaaaaaaaaaaaaaaaiadpaaaaiadpelaaaaafmcaabaaaadaaaaaakgaobaaa
+adaaaaaadiaaaaahmcaabaaaaeaaaaaakgaobaaaabaaaaaakgaobaaaadaaaaaa
+dcaaaaapmcaabaaaaeaaaaaakgaobaaaaeaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
+aaaaaamaaaaaaamaaceaaaaaaaaaaaaaaaaaaaaanlapejeanlapejeaabaaaaah
+dcaabaaaabaaaaaaegaabaaaabaaaaaaogakbaaaaeaaaaaadcaaaaajdcaabaaa
+abaaaaaaogakbaaaabaaaaaaogakbaaaadaaaaaaegaabaaaabaaaaaadiaaaaak
+gcaabaaaacaaaaaaagabbaaaabaaaaaaaceaaaaaaaaaaaaaidpjkcdoidpjkcdo
+aaaaaaaaalaaaaafccaabaaaadaaaaaackaabaaaacaaaaaaamaaaaafccaabaaa
+aeaaaaaackaabaaaacaaaaaaejaaaaanpcaabaaaabaaaaaaegaabaaaacaaaaaa
+eghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaaadaaaaaaegaabaaaaeaaaaaa
+ejaaaaanpcaabaaaacaaaaaaegaabaaaacaaaaaaeghobaaaadaaaaaaaagabaaa
+adaaaaaaegaabaaaadaaaaaaegaabaaaaeaaaaaadiaaaaahhcaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaahhcaabaaaaaaaaaaaegacbaaa
+aaaaaaaaegbcbaaaaeaaaaaadiaaaaaihcaabaaaaaaaaaaaegacbaaaaaaaaaaa
+egiccaaaaaaaaaaaahaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaabaaaaaa
+aaaaaaaaegiocaaaabaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaabaaaaaa
+aaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaacaaaaaaegacbaaaabaaaaaa
+aaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaa
+aaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaa
+egiccaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaaaiaaaaaadccaaaakhcaabaaa
+abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
+diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
+aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
 pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
 aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
 dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
@@ -88024,27 +88151,27 @@ abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
 "!!GLES"
 }
 
 SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
 "!!GLES"
 }
 
 SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
 "!!GLES3"
 }
 
 SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
 "!!GLSL"
 }
 
 SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
 Vector 0 [glstate_lightmodel_ambient]
 Vector 1 [_WorldSpaceLightPos0]
 Vector 2 [_LightColor0]
@@ -88054,25 +88181,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -88080,10 +88206,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -88091,14 +88216,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -88115,48 +88240,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -88167,48 +88292,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -88216,7 +88339,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -88234,7 +88356,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedfhhcccolhkjgggadicpnjolgegonpgklabaaaaaameapaaaaadaaaaaa
+eefiecedekpmokbnbjnnpoipeeiilnagofhknbenabaaaaaakmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -88244,8 +88366,8 @@ adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 apaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
 acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
 aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
@@ -88344,363 +88466,22 @@ abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
 diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
 icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
 aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightColor0]
-Vector 3 [_Color]
-Float 4 [_DetailScale]
-Float 5 [_DetailVertScale]
-Float 6 [_DetailDist]
-Float 7 [_MinLight]
-Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailVertTex] 2D
-SetTexture 2 [_DetailTex] 2D
-SetTexture 3 [_DarkOverlayTex] 2D
-SetTexture 4 [_DarkOverlayDetailTex] 2D
-"ps_3_0
-; 118 ALU, 15 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
-dcl_texcoord1 v0.x
-dcl_texcoord2 v1.xyz
-dcl_texcoord3 v2.xyz
-dcl_texcoord4 v3.xyz
-dcl_texcoord5 v4.xyz
-mov r2.xyz, v3
-dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
-mul r0.xy, v3.zyzw, c5.x
-mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
-abs r0.w, v3.z
-abs r4.zw, v3.xyxy
-max r1.w, r4.z, r0
-rcp r2.x, r1.w
-min r1.w, r4.z, r0
-mul r1.w, r1, r2.x
-mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
-texld r0.xyz, r0, s1
-texld r1.xyz, r1, s2
-add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
-mad r2.xyz, r3.x, r1, r0
-mul r1.xy, v3, c5.x
-mul r0.xy, v3, c4.x
-texld r1.xyz, r1, s1
-texld r0.xyz, r0, s2
-add r0.xyz, r0, -r1
-mad r0.xyz, r3.x, r0, r1
-add_pp r1.xyz, r2, -r0
-mad_pp r2.xyz, r4.z, r1, r0
-mul r1.xy, v3.zxzw, c5.x
-mul r0.xy, v3.zxzw, c4.x
-texld r1.xyz, r1, s1
-texld r0.xyz, r0, s2
-add r0.xyz, r0, -r1
-mad r0.xyz, r3.x, r0, r1
-add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
-mul r1.y, r2.w, r1.w
-dp4 r2.w, c1, c1
-mad_pp r0.xyz, r4.w, r0, r2
-add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
-cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
-cmp r1.w, v3.z, r1, r2.x
-cmp r1.w, v3.x, r1, -r1
-mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
-mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
-rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
-rcp r0.y, r0.y
-mul r1.w, r0.x, r0.y
-abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
-mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
-rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
-dsy r0.zw, v3.xyxy
-mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
-dsx r3.w, r0.y
-dsy r3.y, r0
-dsx r0.xy, v3
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
-texldd r0.xyz, r4, s0, r3.zwzw, r3
-mul_pp r0.xyz, r0, r1
-mul r0.xyz, r0, v4
-mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
-mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
-texld r1, r1, s4
-texld r0, r0, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
-texld r0, r5, s4
-add_pp r0, r0, -r1
-mad_pp r0, r4.w, r0, r1
-rsq r2.w, r2.w
-mul r1.xyz, r2.w, c1
-dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
-mul_pp r1.w, r1.x, c2
-texldd r3, r4, s3, r3.zwzw, r3
-mov r1.y, c7.x
-mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
-add r1.xyz, c2, r1.y
-mad_sat r1.xyz, r1.w, r1, c0
-mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
-mul_pp r1.xyz, r2, r1
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
-"
-}
-
-SubProgram "d3d11 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
-Vector 80 [_LightColor0] 4
-Vector 112 [_Color] 4
-Float 128 [_DetailScale]
-Float 132 [_DetailVertScale]
-Float 136 [_DetailDist]
-Float 140 [_MinLight]
-Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
-ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
-Vector 0 [_WorldSpaceLightPos0] 4
-ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
-Vector 64 [glstate_lightmodel_ambient] 4
-BindCB "$Globals" 0
-BindCB "UnityLighting" 1
-BindCB "UnityPerFrame" 2
-SetTexture 0 [_MainTex] 2D 0
-SetTexture 1 [_DetailVertTex] 2D 2
-SetTexture 2 [_DetailTex] 2D 1
-SetTexture 3 [_DarkOverlayTex] 2D 3
-SetTexture 4 [_DarkOverlayDetailTex] 2D 4
-// 103 instructions, 5 temp regs, 0 temp arrays:
-// ALU 85 float, 0 int, 4 uint
-// TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
-// FLOW 1 static, 0 dynamic
-"ps_4_0
-eefiecedfhhcccolhkjgggadicpnjolgegonpgklabaaaaaameapaaaaadaaaaaa
-cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
-aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
-adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
-aoaoaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaaneaaaaaa
-aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaaneaaaaaaafaaaaaaaaaaaaaa
-adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
-apaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
-epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
-aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
-acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
-fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
-aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
-ffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaafibiaaaeaahabaaaadaaaaaa
-ffffaaaafibiaaaeaahabaaaaeaaaaaaffffaaaagcbaaaadbcbabaaaabaaaaaa
-gcbaaaadocbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaa
-adaaaaaagcbaaaadhcbabaaaaeaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-afaaaaaadiaaaaaipcaabaaaaaaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaa
-aiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaaaaaaaaaeghobaaaacaaaaaa
-aagabaaaabaaaaaaefaaaaajpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
-acaaaaaaaagabaaaabaaaaaadiaaaaaipcaabaaaacaaaaaaegbgbaaaadaaaaaa
-agifcaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaaadaaaaaaogakbaaaacaaaaaa
-eghobaaaabaaaaaaaagabaaaacaaaaaaefaaaaajpcaabaaaacaaaaaaegaabaaa
-acaaaaaaeghobaaaacaaaaaaaagabaaaabaaaaaaaaaaaaaihcaabaaaabaaaaaa
-egacbaaaabaaaaaaegacbaiaebaaaaaaadaaaaaabacaaaaiicaabaaaaaaaaaaa
-jgbhbaaaabaaaaaaegbcbaiaebaaaaaaadaaaaaaaaaaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaddddhdlpdccaaaajicaabaaaaaaaaaaadkaabaaa
-aaaaaaaaabeaaaaaaaaaaaecabeaaaaaaaaaaadpdcaaaaajhcaabaaaabaaaaaa
-pgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaadaaaaaadiaaaaaipcaabaaa
-adaaaaaacgbebaaaadaaaaaafgifcaaaaaaaaaaaaiaaaaaaefaaaaajpcaabaaa
-aeaaaaaaogakbaaaadaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaaefaaaaaj
-pcaabaaaadaaaaaaegaabaaaadaaaaaaeghobaaaabaaaaaaaagabaaaacaaaaaa
-aaaaaaaihcaabaaaacaaaaaaegacbaaaacaaaaaaegacbaiaebaaaaaaaeaaaaaa
-dcaaaaajhcaabaaaacaaaaaapgapbaaaaaaaaaaaegacbaaaacaaaaaaegacbaaa
-aeaaaaaaaaaaaaaihcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaa
-acaaaaaadcaaaaakhcaabaaaabaaaaaaagbabaiaibaaaaaaadaaaaaaegacbaaa
-abaaaaaaegacbaaaacaaaaaaaaaaaaaihcaabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaiaebaaaaaaadaaaaaadcaaaaajhcaabaaaaaaaaaaapgapbaaaaaaaaaaa
-egacbaaaaaaaaaaaegacbaaaadaaaaaaaaaaaaaihcaabaaaaaaaaaaaegacbaia
-ebaaaaaaabaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaafgbfbaia
-ibaaaaaaadaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaaaaaaaaalhcaabaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
-aaaaaaaaapcaaaaiicaabaaaaaaaaaaaagbabaaaabaaaaaakgikcaaaaaaaaaaa
-aiaaaaaadcaaaaajhcaabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaa
-egacbaaaaaaaaaaadeaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaaadaaaaaa
-akbabaiaibaaaaaaadaaaaaaaoaaaaakicaabaaaaaaaaaaaaceaaaaaaaaaiadp
-aaaaiadpaaaaiadpaaaaiadpdkaabaaaaaaaaaaaddaaaaajbcaabaaaabaaaaaa
-ckbabaiaibaaaaaaadaaaaaaakbabaiaibaaaaaaadaaaaaadiaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaa
-dkaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajccaabaaaabaaaaaaakaabaaa
-abaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajccaabaaaabaaaaaa
-akaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajccaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaaj
-bcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaadiphhpdp
-diaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaaj
-ccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdp
-dbaaaaajecaabaaaabaaaaaackbabaiaibaaaaaaadaaaaaaakbabaiaibaaaaaa
-adaaaaaaabaaaaahccaabaaaabaaaaaackaabaaaabaaaaaabkaabaaaabaaaaaa
-dcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabkaabaaa
-abaaaaaadbaaaaaidcaabaaaabaaaaaajgbfbaaaadaaaaaajgbfbaiaebaaaaaa
-adaaaaaaabaaaaahecaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaanlapejma
-aaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaabaaaaaaddaaaaah
-ecaabaaaabaaaaaackbabaaaadaaaaaaakbabaaaadaaaaaadbaaaaaiecaabaaa
-abaaaaaackaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaadeaaaaahicaabaaa
-abaaaaaackbabaaaadaaaaaaakbabaaaadaaaaaabnaaaaaiicaabaaaabaaaaaa
-dkaabaaaabaaaaaadkaabaiaebaaaaaaabaaaaaaabaaaaahecaabaaaabaaaaaa
-dkaabaaaabaaaaaackaabaaaabaaaaaadhaaaaakicaabaaaaaaaaaaackaabaaa
-abaaaaaadkaabaiaebaaaaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajbcaabaaa
-acaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpalaaaaaf
-mcaabaaaabaaaaaaagbebaaaadaaaaaaapaaaaahicaabaaaaaaaaaaaogakbaaa
-abaaaaaaogakbaaaabaaaaaaelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaahbcaabaaaadaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdoamaaaaaf
-mcaabaaaabaaaaaaagbebaaaadaaaaaaapaaaaahicaabaaaaaaaaaaaogakbaaa
-abaaaaaaogakbaaaabaaaaaaelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaahbcaabaaaaeaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdodcaaaaba
-mcaabaaaabaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
-dagojjlmdagojjlmaceaaaaaaaaaaaaaaaaaaaaachbgjidnchbgjidndcaaaaan
-mcaabaaaabaaaaaakgaobaaaabaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaa
-aaaaaaaaaaaaaaaaiedefjloiedefjlodcaaaaanmcaabaaaabaaaaaakgaobaaa
-abaaaaaafgbjbaiaibaaaaaaadaaaaaaaceaaaaaaaaaaaaaaaaaaaaakeanmjdp
-keanmjdpaaaaaaalmcaabaaaadaaaaaafgbjbaiambaaaaaaadaaaaaaaceaaaaa
-aaaaaaaaaaaaaaaaaaaaiadpaaaaiadpelaaaaafmcaabaaaadaaaaaakgaobaaa
-adaaaaaadiaaaaahmcaabaaaaeaaaaaakgaobaaaabaaaaaakgaobaaaadaaaaaa
-dcaaaaapmcaabaaaaeaaaaaakgaobaaaaeaaaaaaaceaaaaaaaaaaaaaaaaaaaaa
-aaaaaamaaaaaaamaaceaaaaaaaaaaaaaaaaaaaaanlapejeanlapejeaabaaaaah
-dcaabaaaabaaaaaaegaabaaaabaaaaaaogakbaaaaeaaaaaadcaaaaajdcaabaaa
-abaaaaaaogakbaaaabaaaaaaogakbaaaadaaaaaaegaabaaaabaaaaaadiaaaaak
-gcaabaaaacaaaaaaagabbaaaabaaaaaaaceaaaaaaaaaaaaaidpjkcdoidpjkcdo
-aaaaaaaaalaaaaafccaabaaaadaaaaaackaabaaaacaaaaaaamaaaaafccaabaaa
-aeaaaaaackaabaaaacaaaaaaejaaaaanpcaabaaaabaaaaaaegaabaaaacaaaaaa
-eghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaaadaaaaaaegaabaaaaeaaaaaa
-ejaaaaanpcaabaaaacaaaaaaegaabaaaacaaaaaaeghobaaaadaaaaaaaagabaaa
-adaaaaaaegaabaaaadaaaaaaegaabaaaaeaaaaaadiaaaaahhcaabaaaaaaaaaaa
-egacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaahhcaabaaaaaaaaaaaegacbaaa
-aaaaaaaaegbcbaaaaeaaaaaadiaaaaaihcaabaaaaaaaaaaaegacbaaaaaaaaaaa
-egiccaaaaaaaaaaaahaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaabaaaaaa
-aaaaaaaaegiocaaaabaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
-aaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaabaaaaaa
-aaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaacaaaaaaegacbaaaabaaaaaa
-aaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaa
-aaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaa
-egiccaaaaaaaaaaaafaaaaaapgipcaaaaaaaaaaaaiaaaaaadccaaaakhcaabaaa
-abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
+egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
+ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
+egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -88729,25 +88510,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -88755,10 +88535,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -88766,14 +88545,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -88790,48 +88569,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4_pp r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -88842,48 +88621,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq_pp r2.w, r2.w
 mul_pp r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "DIRECTIONAL" "SHADOWS_SCREEN" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -88891,7 +88668,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -88909,7 +88685,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedhhpmcjehhhnilnpdgdololeondcgfdanabaaaaaakmapaaaaadaaaaaa
+eefiecedldcidbplmodealmhpimdgjiljpcicadlabaaaaaajeapaaaaadaaaaaa
 cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaalmaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -88918,8 +88694,8 @@ aeaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaalmaaaaaaafaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaapahaaaalmaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 apaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
 cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaa
-fjaaaaaeegiocaaaaaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaa
+fjaaaaaeegiocaaaaaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
 fjaaaaaeegiocaaaacaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaa
 fkaaaaadaagabaaaaeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -89018,23 +88794,22 @@ dccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
 acaaaaaaaeaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
 aaaamadpddaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
 aaaaaaaiicaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
-diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaal
-pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaa
-aeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaa
-eghobaaaaeaaaaaaaagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaa
-adaaaaaaagiacaaaaaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaaj
-pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
-aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
-egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
-ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
-egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
-abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
-aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
-abeaaaaaaaaaiadpdoaaaaab"
+diaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaai
+pcaabaaaabaaaaaaggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+efaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
+aeaaaaaadiaaaaaidcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaa
+ajaaaaaaefaaaaajpcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaa
+aagabaaaaeaaaaaaaaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaia
+ebaaaaaaaeaaaaaadcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaa
+egaobaaaadaaaaaaegaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaa
+abaaaaaaegaobaiaebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaia
+ibaaaaaaadaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaa
+abaaaaaaegacbaaaacaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaa
+diaaaaahicaabaaaabaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaa
+aaaaaaaapgapbaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaf
+iccabaaaaaaaaaaaabeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -89068,25 +88843,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -89094,10 +88868,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -89105,14 +88878,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -89129,48 +88902,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4_pp r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -89181,48 +88954,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq_pp r2.w, r2.w
 mul_pp r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
-ConstBuffer "$Globals" 240 // 240 used size, 12 vars
+ConstBuffer "$Globals" 240 // 212 used size, 12 vars
 Vector 144 [_LightColor0] 4
 Vector 176 [_Color] 4
 Float 192 [_DetailScale]
@@ -89230,7 +89001,6 @@ Float 196 [_DetailVertScale]
 Float 200 [_DetailDist]
 Float 204 [_MinLight]
 Float 208 [_DarkOverlayDetailScale]
-Vector 224 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -89248,7 +89018,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedmkbcgioiljfdiadgcnjloodnfcmkniggabaaaaaameapaaaaadaaaaaa
+eefiecedpogkofmflgloianlfocaimlnnlbiajlaabaaaaaakmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -89258,8 +89028,8 @@ adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 adaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaapaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaaoaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
 acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
 aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
@@ -89358,23 +89128,22 @@ abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
 diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
 icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
 aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaegiecaaaaaaaaaaaaoaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaanaaaaaaegiacaaaaaaaaaaaaoaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaefaaaaaj
+pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
+egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
+ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
+egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -89408,25 +89177,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -89434,10 +89202,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -89445,14 +89212,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -89469,48 +89236,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -89521,48 +89288,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "POINT" "SHADOWS_CUBE" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -89570,7 +89335,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -89588,7 +89352,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedfgpajcelmhedaemljbfkiapeaagpfjanabaaaaaameapaaaaadaaaaaa
+eefiecedpngihdeiiffmncgilhglmpplmkbpmifpabaaaaaakmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -89598,8 +89362,8 @@ adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
 acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
 aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
@@ -89698,23 +89462,22 @@ abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
 diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
 icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
 aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
+egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
+ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
+egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -89748,25 +89511,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -89774,10 +89536,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -89785,14 +89546,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -89809,48 +89570,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -89861,48 +89622,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "POINT_COOKIE" "SHADOWS_CUBE" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -89910,7 +89669,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -89928,7 +89686,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedfgpajcelmhedaemljbfkiapeaagpfjanabaaaaaameapaaaaadaaaaaa
+eefiecedpngihdeiiffmncgilhglmpplmkbpmifpabaaaaaakmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -89938,8 +89696,8 @@ adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
 acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
 aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
@@ -90038,23 +89796,22 @@ abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
 diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
 icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
 aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
+egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
+ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
+egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -90088,25 +89845,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -90114,10 +89870,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -90125,14 +89880,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -90149,48 +89904,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -90201,48 +89956,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
-ConstBuffer "$Globals" 240 // 240 used size, 12 vars
+ConstBuffer "$Globals" 240 // 212 used size, 12 vars
 Vector 144 [_LightColor0] 4
 Vector 176 [_Color] 4
 Float 192 [_DetailScale]
@@ -90250,7 +90003,6 @@ Float 196 [_DetailVertScale]
 Float 200 [_DetailDist]
 Float 204 [_MinLight]
 Float 208 [_DarkOverlayDetailScale]
-Vector 224 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -90268,7 +90020,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedgmaakgcfdaaloeeokenggebcdihiicelabaaaaaameapaaaaadaaaaaa
+eefiecedceellfgjjmjhplddghpmihnaigkclpajabaaaaaakmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -90278,8 +90030,8 @@ adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 apaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaapaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaaoaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
 acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
 aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
@@ -90378,23 +90130,22 @@ abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
 diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
 icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
 aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaegiecaaaaaaaaaaaaoaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaanaaaaaaegiacaaaaaaaaaaaaoaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaefaaaaaj
+pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
+egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
+ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
+egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -90428,25 +90179,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -90454,10 +90204,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -90465,14 +90214,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -90489,48 +90238,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -90541,48 +90290,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
-ConstBuffer "$Globals" 240 // 240 used size, 12 vars
+ConstBuffer "$Globals" 240 // 212 used size, 12 vars
 Vector 144 [_LightColor0] 4
 Vector 176 [_Color] 4
 Float 192 [_DetailScale]
@@ -90590,7 +90337,6 @@ Float 196 [_DetailVertScale]
 Float 200 [_DetailDist]
 Float 204 [_MinLight]
 Float 208 [_DarkOverlayDetailScale]
-Vector 224 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -90608,7 +90354,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedgmaakgcfdaaloeeokenggebcdihiicelabaaaaaameapaaaaadaaaaaa
+eefiecedceellfgjjmjhplddghpmihnaigkclpajabaaaaaakmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -90618,8 +90364,8 @@ adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 apaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaapaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaaoaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
 acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
 aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
@@ -90718,23 +90464,22 @@ abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
 diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
 icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
 aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaegiecaaaaaaaaaaaaoaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaanaaaaaaegiacaaaaaaaaaaaaoaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaanaaaaaaefaaaaaj
+pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
+egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
+ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
+egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -90763,25 +90508,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -90789,10 +90533,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -90800,14 +90543,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -90824,48 +90567,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -90876,48 +90619,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -90925,7 +90666,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -90943,7 +90683,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedfgpajcelmhedaemljbfkiapeaagpfjanabaaaaaameapaaaaadaaaaaa
+eefiecedpngihdeiiffmncgilhglmpplmkbpmifpabaaaaaakmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -90953,8 +90693,8 @@ adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
 acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
 aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
@@ -91053,23 +90793,22 @@ abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
 diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
 icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
 aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
+egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
+ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
+egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -91103,25 +90842,24 @@ Float 5 [_DetailVertScale]
 Float 6 [_DetailDist]
 Float 7 [_MinLight]
 Float 8 [_DarkOverlayDetailScale]
-Vector 9 [_DarkOverlayDetailOffset]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailVertTex] 2D
 SetTexture 2 [_DetailTex] 2D
 SetTexture 3 [_DarkOverlayTex] 2D
 SetTexture 4 [_DarkOverlayDetailTex] 2D
 "ps_3_0
-; 118 ALU, 15 TEX
+; 115 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c11, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c12, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c13, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c14, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c15, 1.50000000, -0.94999999, 32.00000000, 0.50000000
+def c9, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c10, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c11, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c12, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c13, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c14, 1.50000000, -0.94999999, 32.00000000, 0.50000000
 dcl_texcoord1 v0.x
 dcl_texcoord2 v1.xyz
 dcl_texcoord3 v2.xyz
@@ -91129,10 +90867,9 @@ dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
 mov r2.xyz, v3
 dp3_sat r2.x, v1, -r2
-add r2.y, r2.x, c15
+add r2.y, r2.x, c14
 mul r0.xy, v3.zyzw, c5.x
 mul r1.xy, v3.zyzw, c4.x
-mul r5.xy, v3.zxzw, c8.x
 abs r0.w, v3.z
 abs r4.zw, v3.xyxy
 max r1.w, r4.z, r0
@@ -91140,14 +90877,14 @@ rcp r2.x, r1.w
 min r1.w, r4.z, r0
 mul r1.w, r1, r2.x
 mul r2.w, r1, r1
-mad r3.y, r2.w, c12, c12.z
-mad r3.y, r3, r2.w, c12.w
-mad r3.y, r3, r2.w, c13.x
-mad r3.y, r3, r2.w, c13
+mad r3.y, r2.w, c11, c11.z
+mad r3.y, r3, r2.w, c11.w
+mad r3.y, r3, r2.w, c12.x
+mad r3.y, r3, r2.w, c12
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s2
 add r1.xyz, r1, -r0
-mad_sat r3.x, r2.y, c15.z, c15.w
+mad_sat r3.x, r2.y, c14.z, c14.w
 mad r2.xyz, r3.x, r1, r0
 mul r1.xy, v3, c5.x
 mul r0.xy, v3, c4.x
@@ -91164,48 +90901,48 @@ texld r0.xyz, r0, s2
 add r0.xyz, r0, -r1
 mad r0.xyz, r3.x, r0, r1
 add_pp r0.xyz, r0, -r2
-mad r2.w, r3.y, r2, c13.z
+mad r2.w, r3.y, r2, c12.z
 mul r1.y, r2.w, r1.w
 dp4 r2.w, c1, c1
 mad_pp r0.xyz, r4.w, r0, r2
 add r1.x, r4.z, -r0.w
-add r1.z, -r1.y, c13.w
+add r1.z, -r1.y, c12.w
 cmp r1.w, -r1.x, r1.y, r1.z
-add r2.x, -r1.w, c11.w
+add r2.x, -r1.w, c10.w
 cmp r1.w, v3.z, r1, r2.x
 cmp r1.w, v3.x, r1, -r1
 mul r2.x, v0, c6
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.x, r2, c11.z
+add_pp r1.xyz, -r0, c9.y
+mul_sat r2.x, r2, c10.z
 mad_pp r1.xyz, r2.x, r1, r0
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
+add r0.y, -r0.w, c9
+mad r0.x, r0.w, c9.z, c9.w
+mad r0.x, r0.w, r0, c10
+mad r0.x, r0.w, r0, c10.y
 rsq r0.y, r0.y
-mad r4.x, r1.w, c14, c14.y
+mad r4.x, r1.w, c13, c13.y
 rcp r0.y, r0.y
 mul r1.w, r0.x, r0.y
 abs r0.x, v3.y
-cmp r0.w, v3.z, c10.x, c10.y
+cmp r0.w, v3.z, c9.x, c9.y
 mul r2.x, r0.w, r1.w
-add r0.z, -r0.x, c10.y
-mad r0.y, r0.x, c10.z, c10.w
-mad r0.y, r0, r0.x, c11.x
+add r0.z, -r0.x, c9.y
+mad r0.y, r0.x, c9.z, c9.w
+mad r0.y, r0, r0.x, c10.x
 rsq r0.z, r0.z
-mad r0.x, r0.y, r0, c11.y
+mad r0.x, r0.y, r0, c10.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
-cmp r0.x, v3.y, c10, c10.y
+cmp r0.x, v3.y, c9, c9.y
 mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c11.z, r0
-mad r0.x, r0, c11.w, r0.y
-mad r1.w, -r2.x, c11.z, r1
-mad r0.z, r0.w, c11.w, r1.w
-mul r0.y, r0.z, c12.x
+mad r0.y, -r0.z, c10.z, r0
+mad r0.x, r0, c10.w, r0.y
+mad r1.w, -r2.x, c10.z, r1
+mad r0.z, r0.w, c10.w, r1.w
+mul r0.y, r0.z, c11.x
 dsy r0.zw, v3.xyxy
 mul r0.zw, r0, r0
-mul r4.y, r0.x, c12.x
+mul r4.y, r0.x, c11.x
 dsx r3.w, r0.y
 dsy r3.y, r0
 dsx r0.xy, v3
@@ -91216,48 +90953,46 @@ rsq r0.x, r0.x
 rcp r0.x, r0.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.z, r0.x, c14.x
-mul r3.x, r0.y, c14
+mul r3.z, r0.x, c13.x
+mul r3.x, r0.y, c13
 texldd r0.xyz, r4, s0, r3.zwzw, r3
 mul_pp r0.xyz, r0, r1
 mul r0.xyz, r0, v4
 mul r2.xyz, r0, c3
-mul r0.zw, v3.xyxy, c8.x
-add r1.xy, r0.zwzw, c9
+mul r1.xy, v3, c8.x
 mul r0.xy, v3.zyzw, c8.x
-add r0.xy, r0, c9
 texld r1, r1, s4
 texld r0, r0, s4
 add_pp r0, r0, -r1
 mad_pp r1, r4.z, r0, r1
-add r5.xy, r5, c9
+mul r5.xy, v3.zxzw, c8.x
 texld r0, r5, s4
 add_pp r0, r0, -r1
 mad_pp r0, r4.w, r0, r1
 rsq r2.w, r2.w
 mul r1.xyz, r2.w, c1
 dp3_sat r1.x, v2, r1
-add_pp r1.x, r1, c14.z
+add_pp r1.x, r1, c13.z
 mul_pp r1.w, r1.x, c2
 texldd r3, r4, s3, r3.zwzw, r3
 mov r1.y, c7.x
 mul_pp r0, r3, r0
-mul_pp_sat r1.w, r1, c14
+mul_pp_sat r1.w, r1, c13
 add r1.xyz, c2, r1.y
 mad_sat r1.xyz, r1.w, r1, c0
 mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r1, c15.x
-add_pp r1.w, -r1, c10.y
+mul_pp_sat r1.w, r1, c14.x
+add_pp r1.w, -r1, c9.y
 mul_pp r1.xyz, r2, r1
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c10.y
+mov_pp oC0.w, c9.y
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-ConstBuffer "$Globals" 176 // 176 used size, 11 vars
+ConstBuffer "$Globals" 176 // 148 used size, 11 vars
 Vector 80 [_LightColor0] 4
 Vector 112 [_Color] 4
 Float 128 [_DetailScale]
@@ -91265,7 +91000,6 @@ Float 132 [_DetailVertScale]
 Float 136 [_DetailDist]
 Float 140 [_MinLight]
 Float 144 [_DarkOverlayDetailScale]
-Vector 160 [_DarkOverlayDetailOffset] 4
 ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
 Vector 0 [_WorldSpaceLightPos0] 4
 ConstBuffer "UnityPerFrame" 208 // 80 used size, 4 vars
@@ -91283,7 +91017,7 @@ SetTexture 4 [_DarkOverlayDetailTex] 2D 4
 // TEX 9 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedfgpajcelmhedaemljbfkiapeaagpfjanabaaaaaameapaaaaadaaaaaa
+eefiecedpngihdeiiffmncgilhglmpplmkbpmifpabaaaaaakmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaababaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -91293,8 +91027,8 @@ adaaaaaaaeaaaaaaapahaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahaaaaaaneaaaaaaahaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcheaoaaaaeaaaaaaajnadaaaafjaaaaaeegiocaaa
-aaaaaaaaalaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcfmaoaaaaeaaaaaaajhadaaaafjaaaaaeegiocaaa
+aaaaaaaaakaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaa
 acaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafkaaaaadaagabaaaadaaaaaafkaaaaadaagabaaa
 aeaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
@@ -91393,23 +91127,22 @@ abaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaeaaaaaa
 diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaamadpddaaaaah
 icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaaiicaabaaa
 aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaalpcaabaaaabaaaaaa
-ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaegiecaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaadaaaaaaegaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaa
-aeaaaaaaefaaaaajpcaabaaaabaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaa
-aagabaaaaeaaaaaadcaaaaaldcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaa
-aaaaaaaaajaaaaaaegiacaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaaeaaaaaa
-egaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaaaaaaaaipcaabaaa
-adaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaadcaaaaakpcaabaaa
-adaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaaegaobaaaaeaaaaaa
-aaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaiaebaaaaaaadaaaaaa
-dcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaaegaobaaaabaaaaaa
-egaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-abaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaaabaaaaaadkaabaaa
-abaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-abaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaaabeaaaaaaaaaiadp
-doaaaaab"
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadiaaaaaipcaabaaaabaaaaaa
+ggbcbaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaajpcaabaaaadaaaaaa
+egaabaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaaogakbaaaabaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaadiaaaaai
+dcaabaaaaeaaaaaaegbabaaaadaaaaaaagiacaaaaaaaaaaaajaaaaaaefaaaaaj
+pcaabaaaaeaaaaaaegaabaaaaeaaaaaaeghobaaaaeaaaaaaaagabaaaaeaaaaaa
+aaaaaaaipcaabaaaadaaaaaaegaobaaaadaaaaaaegaobaiaebaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaadaaaaaaagbabaiaibaaaaaaadaaaaaaegaobaaaadaaaaaa
+egaobaaaaeaaaaaaaaaaaaaipcaabaaaabaaaaaaegaobaaaabaaaaaaegaobaia
+ebaaaaaaadaaaaaadcaaaaakpcaabaaaabaaaaaafgbfbaiaibaaaaaaadaaaaaa
+egaobaaaabaaaaaaegaobaaaadaaaaaadcaaaaakhcaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaabaaaaaaegacbaiaebaaaaaaaaaaaaaadiaaaaahicaabaaa
+abaaaaaadkaabaaaabaaaaaadkaabaaaacaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaabaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+abeaaaaaaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -91429,7 +91162,7 @@ Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "POINT_COOKIE" "SHADOWS_CUBE" "SHADO
 
 }
 
-#LINE 167
+#LINE 166
 
 	
 		}

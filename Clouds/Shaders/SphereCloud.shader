@@ -59,6 +59,7 @@ SubShader {
 		float _FadeDist;
 		float _FadeScale;
 		float _RimDist;
+		uniform float4x4 _Rotation;
 		
 		struct appdata_t {
 				float4 vertex : POSITION;
@@ -81,16 +82,18 @@ SubShader {
 		v2f vert (appdata_t v)
 		{
 			v2f o;
-			o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+			float4 vertex = mul(_Rotation, v.vertex);
+			o.pos = mul(UNITY_MATRIX_MVP, vertex);
 			
-		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
+		   
+		   float3 vertexPos = mul(_Object2World, vertex).xyz;
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 	   	   o.worldVert = vertexPos;
 	   	   o.worldOrigin = origin;
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
 	   	   o.worldNormal = normalize(vertexPos-origin);
-	   	   o.objNormal = -normalize( v.vertex);
-	   	   o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
+	   	   o.objNormal = -normalize( vertex);
+	   	   o.viewDir = normalize(WorldSpaceViewDir(vertex));
 	   	   return o;
 	 	}
 	 	

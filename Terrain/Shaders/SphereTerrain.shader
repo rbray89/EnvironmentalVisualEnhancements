@@ -10,7 +10,7 @@
 		_MinLight ("Minimum Light", Range(0,1)) = .5
 		_DarkOverlayTex ("Overlay (RGB)", 2D) = "white" {}
 		_DarkOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
-		_DarkOverlayDetailScale ("Overlay Detail Scale", Range(0,1000)) = 80)
+		_DarkOverlayDetailScale ("Overlay Detail Scale", Range(0,1000)) = 80
 	}
 
 Category {

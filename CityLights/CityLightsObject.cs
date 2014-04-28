@@ -8,14 +8,22 @@ using Utils;
 
 namespace CityLights
 {
+    public class CityLightsMaterial : MaterialManager
+    {
+        [Persistent]
+        String _DarkOverlayTex = "";
+        [Persistent]
+        String _DarkOverlayDetailTex = "";
+        [Persistent]
+        float _DarkOverlayDetailScale = 80f;
+    }
+
     public class CityLightsObject : IEVEObject
     {
         private String body;
         private ConfigNode node;
         [Persistent]
-        TextureManager mainTexture = null;
-        [Persistent]
-        TextureManager detailTexture = null;
+        CityLightsMaterial cityLightsMaterial = null;
 
         public void LoadConfigNode(ConfigNode node)
         {
@@ -34,8 +42,7 @@ namespace CityLights
             if (celestialBody != null)
             {
                 celestialBody.pqsController.surfaceMaterial.EnableKeyword("CITYOVERLAY_ON");
-                celestialBody.pqsController.surfaceMaterial.SetTexture("_DarkOverlayTex", mainTexture.GetTexture());
-                celestialBody.pqsController.surfaceMaterial.SetTexture("_DarkOverlayDetailTex", detailTexture.GetTexture());
+                cityLightsMaterial.ApplyMaterialProperties(celestialBody.pqsController.surfaceMaterial);
             }
         }
 

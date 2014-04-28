@@ -33,13 +33,29 @@ namespace Terrain
         }
     }
 
+    public class TerrainMaterial : MaterialManager
+    {
+        [Persistent] 
+        Color _Color = Color.white;
+		[Persistent] 
+        String _DetailTex = "";
+		[Persistent] 
+        String _DetailVertTex = "";
+        [Persistent]
+        float _DetailScale = 4000f;
+        [Persistent]
+        float _DetailVertScale = 200f;
+        [Persistent]
+        float _DetailDist = 0.00875f;
+        [Persistent]
+        float _MinLight = .5f;
+    }
 
     public class TerrainObject : IEVEObject
     {
         private String body;
         private ConfigNode node;
-        [Persistent] TextureManager detailTexture = null;
-        [Persistent] TextureManager verticalTexture = null;
+        [Persistent] TerrainMaterial terrainMaterial = null;
         private static Shader originalShader;
         private static Shader terrainShader = null;
         private static Shader TerrainShader
@@ -88,11 +104,7 @@ namespace Terrain
                 originalShader = pqs.surfaceMaterial.shader;
                 pqs.surfaceMaterial.shader = TerrainShader;
                 //pqs.surfaceMaterial.mainTexture = mainTexture;
-                pqs.surfaceMaterial.SetTexture("_DetailTex", detailTexture.GetTexture());
-                pqs.surfaceMaterial.SetFloat("_DetailScale", detailTexture.Scale);
-                pqs.surfaceMaterial.SetTexture("_DetailVertTex", verticalTexture.GetTexture());
-                pqs.surfaceMaterial.SetFloat("_DetailVertScale", verticalTexture.Scale);
-                pqs.surfaceMaterial.SetFloat("_DetailDist", .00005f);
+                terrainMaterial.ApplyMaterialProperties(pqs.surfaceMaterial);
             }
         }
 

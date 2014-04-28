@@ -31,7 +31,9 @@ namespace Atmosphere
         }
         public void Apply(float radius, Transform parent)
         {
-            HalfSphere hp = new HalfSphere(radius, new Material("VertexLit"));
+            Material newmat = new Material(CloudShader);
+            newmat.mainTexture = mainTexture.GetTexture();
+            HalfSphere hp = new HalfSphere(radius, newmat);
             CloudMesh = hp.GameObject;
             CloudMesh.transform.parent = parent;
             CloudMesh.transform.localPosition = Vector3.zero;
@@ -39,9 +41,14 @@ namespace Atmosphere
             CloudMesh.layer = EVEManager.MACRO_LAYER;
         }
 
-        internal void UpdateRotation(Quaternion quaternion)
+        internal void UpdateRotation(Quaternion rotation)
         {
-            CloudMesh.transform.rotation = quaternion;
+            CloudMesh.transform.rotation = rotation;
+            Matrix4x4 mtrx = Matrix4x4.TRS(Vector3.zero, rotation, new Vector3(1, 1, 1));
+		    // Update the rotation matrix.
+            //mtrx = Matrix4x4.identity;
+            CloudMesh.GetComponent<MeshRenderer>().material.SetMatrix("_Rotation", mtrx);
+
         }
     }
 }

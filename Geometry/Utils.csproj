@@ -53,6 +53,7 @@
     <Compile Include="HalfSphere.cs" />
     <Compile Include="HexSeg.cs" />
     <Compile Include="IsoSphere.cs" />
+    <Compile Include="MaterialManager.cs" />
     <Compile Include="Quad.cs" />
     <Compile Include="TextureManager.cs" />
     <Compile Include="Tools.cs" />
