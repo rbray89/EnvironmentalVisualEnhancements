@@ -10,11 +10,39 @@ using Utils;
 
 namespace Atmosphere
 {
+    public class Clouds2DMaterial : MaterialManager
+    {
+        [Persistent] 
+        Color _Color = new Color(1,1,1,1);
+        [Persistent]
+        String _MainTex = "";
+        [Persistent]
+        String _DetailTex = "";
+        [Persistent]
+        float _FalloffPow = 2f;
+        [Persistent]
+        float _FalloffScale = 3f;
+        [Persistent]
+        float _DetailScale = 100f;
+        [Persistent]
+        Vector3 _DetailOffset = new Vector3(0, 0, 0);
+        [Persistent]
+        float _DetailDist = 0.00875f;
+        [Persistent]
+        float _MinLight = .5f;
+        [Persistent]
+        float _FadeDist = 10f;
+        [Persistent]
+        float _FadeScale = .002f;
+        [Persistent]
+        float _RimDist = 1f;
+    }
+
     class Clouds2D
     {
         GameObject CloudMesh;
         [Persistent]
-        TextureManager mainTexture;
+        Clouds2DMaterial cloudMaterial;
         private static Shader cloudShader = null;
         private static Shader CloudShader
         {
@@ -32,7 +60,7 @@ namespace Atmosphere
         public void Apply(float radius, Transform parent)
         {
             Material newmat = new Material(CloudShader);
-            newmat.mainTexture = mainTexture.GetTexture();
+            cloudMaterial.ApplyMaterialProperties(newmat);
             HalfSphere hp = new HalfSphere(radius, newmat);
             CloudMesh = hp.GameObject;
             CloudMesh.transform.parent = parent;
