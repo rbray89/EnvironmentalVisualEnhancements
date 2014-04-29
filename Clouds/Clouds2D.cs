@@ -41,8 +41,11 @@ namespace Atmosphere
     class Clouds2D
     {
         GameObject CloudMesh;
+        Material CloudMaterial;
         [Persistent]
         Clouds2DMaterial cloudMaterial;
+        [Persistent]
+        Vector3 speed;
         private static Shader cloudShader = null;
         private static Shader CloudShader
         {
@@ -59,9 +62,9 @@ namespace Atmosphere
         }
         public void Apply(float radius, Transform parent)
         {
-            Material newmat = new Material(CloudShader);
-            cloudMaterial.ApplyMaterialProperties(newmat);
-            HalfSphere hp = new HalfSphere(radius, newmat);
+            CloudMaterial = new Material(CloudShader);
+            cloudMaterial.ApplyMaterialProperties(CloudMaterial);
+            HalfSphere hp = new HalfSphere(radius, CloudMaterial);
             CloudMesh = hp.GameObject;
             CloudMesh.transform.parent = parent;
             CloudMesh.transform.localPosition = Vector3.zero;
@@ -71,12 +74,22 @@ namespace Atmosphere
 
         internal void UpdateRotation(Quaternion rotation)
         {
-            CloudMesh.transform.rotation = rotation;
-            Matrix4x4 mtrx = Matrix4x4.TRS(Vector3.zero, rotation, new Vector3(1, 1, 1));
-		    // Update the rotation matrix.
-            //mtrx = Matrix4x4.identity;
-            CloudMesh.GetComponent<MeshRenderer>().material.SetMatrix("_Rotation", mtrx);
-
+            if (rotation != null)
+            {
+                CloudMesh.transform.rotation = rotation;
+                Matrix4x4 mtrx = Matrix4x4.TRS(Vector3.zero, rotation, new Vector3(1, 1, 1));
+                // Update the rotation matrix.
+                //mtrx = Matrix4x4.identity;
+                CloudMaterial.SetMatrix("_Rotation", mtrx);
+            }
+            double ut =  Planetarium.GetUniversalTime();
+            double x = (ut * speed.x);
+            x -= (int)x;
+            double y = (ut * speed.y);
+            y -= (int)y;
+            Vector2 texOffset = new Vector2((float)x, (float)y);
+            AtmosphereManager.Log("Offset: " + texOffset.x);
+            CloudMaterial.SetVector("_MainOffset", texOffset);
         }
     }
 }

@@ -2,6 +2,7 @@ Shader "Sphere/Cloud" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_MainTex ("Main (RGB)", 2D) = "white" {}
+		_MainOffset ("Main Offset", Vector) = (0,0,0,0)
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
 		_FalloffPow ("Falloff Power", Range(0,3)) = 2
 		_FalloffScale ("Falloff Scale", Range(0,20)) = 3
@@ -50,6 +51,7 @@ SubShader {
 		sampler2D _MainTex;
 		sampler2D _DetailTex;
 		fixed4 _Color;
+		fixed4 _MainOffset;
 		fixed4 _DetailOffset;
 		float _FalloffPow;
 		float _FalloffScale;
@@ -82,18 +84,18 @@ SubShader {
 		v2f vert (appdata_t v)
 		{
 			v2f o;
-			float4 vertex = mul(_Rotation, v.vertex);
-			o.pos = mul(UNITY_MATRIX_MVP, vertex);
 			
-		   
-		   float3 vertexPos = mul(_Object2World, vertex).xyz;
+			o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+			
+		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 	   	   o.worldVert = vertexPos;
 	   	   o.worldOrigin = origin;
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
 	   	   o.worldNormal = normalize(vertexPos-origin);
+	   	   float4 vertex = mul(_Rotation, v.vertex);
 	   	   o.objNormal = -normalize( vertex);
-	   	   o.viewDir = normalize(WorldSpaceViewDir(vertex));
+	   	   o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
 	   	   return o;
 	 	}
 	 	
@@ -118,7 +120,7 @@ SubShader {
 		 	uv.x = .5 + (INV_2PI*atan2(objNrm.x, objNrm.z));
 		 	uv.y = INV_PI*acos(objNrm.y);
 		 	float4 uvdd = Derivatives(objNrm);
-		    half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw)*_Color;
+		    half4 main = tex2D(_MainTex, uv + _MainOffset.xy, uvdd.xy, uvdd.zw)*_Color;
 			half4 detailX = tex2D (_DetailTex, objNrm.zy*_DetailScale + _DetailOffset.xy);
 			half4 detailY = tex2D (_DetailTex, objNrm.zx*_DetailScale + _DetailOffset.xy);
 			half4 detailZ = tex2D (_DetailTex, objNrm.xy*_DetailScale + _DetailOffset.xy);
