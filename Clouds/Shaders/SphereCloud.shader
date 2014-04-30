@@ -99,13 +99,11 @@ SubShader {
 	   	   return o;
 	 	}
 	 	
-		float4 Derivatives( float3 pos )  
+		float4 Derivatives( float lat, float lon, float3 pos)  
 		{  
-		    float lat = INV_2PI*atan2( pos.y, pos.x );  
-		    float lon = INV_PI*acos( pos.z );  
 		    float2 latLong = float2( lat, lon );  
-		    float latDdx = INV_2PI*length( ddx( pos.xy ) );  
-		    float latDdy = INV_2PI*length( ddy( pos.xy ) );  
+		    float latDdx = INV_2PI*length( ddx( pos.xz ) );  
+		    float latDdy = INV_2PI*length( ddy( pos.xz ) );  
 		    float longDdx = ddx( lon );  
 		    float longDdy = ddy( lon );  
 		 	
@@ -119,11 +117,12 @@ SubShader {
 		 	float2 uv;
 		 	uv.x = .5 + (INV_2PI*atan2(objNrm.x, objNrm.z));
 		 	uv.y = INV_PI*acos(objNrm.y);
-		 	float4 uvdd = Derivatives(objNrm);
-		    half4 main = tex2D(_MainTex, uv + _MainOffset.xy, uvdd.xy, uvdd.zw)*_Color;
-			half4 detailX = tex2D (_DetailTex, objNrm.zy*_DetailScale + _DetailOffset.xy);
-			half4 detailY = tex2D (_DetailTex, objNrm.zx*_DetailScale + _DetailOffset.xy);
-			half4 detailZ = tex2D (_DetailTex, objNrm.xy*_DetailScale + _DetailOffset.xy);
+		 	uv+=_MainOffset.xy;
+		 	float4 uvdd = Derivatives(uv.x-.5, uv.y, objNrm);
+		    half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw)*_Color;
+			half4 detailX = tex2D (_DetailTex, (objNrm.zy+ _DetailOffset.xy) *_DetailScale);
+			half4 detailY = tex2D (_DetailTex, (objNrm.zx + _DetailOffset.xy) *_DetailScale);
+			half4 detailZ = tex2D (_DetailTex, (objNrm.xy + _DetailOffset.xy) *_DetailScale);
 			objNrm = abs(objNrm);
 			half4 detail = lerp(detailZ, detailX, objNrm.x);
 			detail = lerp(detail, detailY, objNrm.y);

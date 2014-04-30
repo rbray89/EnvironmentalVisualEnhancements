@@ -12,6 +12,14 @@ namespace EveManager
         public static List<EVEManager> Managers = new List<EVEManager>();
         public static int MAP_LAYER = 10;
         public static int MACRO_LAYER = 15;
+        public static int ROTATION_PROPERTY;
+        public static int MAINOFFSET_PROPERTY;
+
+        internal void Awake()
+        {
+            ROTATION_PROPERTY = Shader.PropertyToID("_Rotation");
+            MAINOFFSET_PROPERTY = Shader.PropertyToID("_MainOffset");
+        }
 
         public static CelestialBody GetCelestialBody(String body)
         {
@@ -25,5 +33,9 @@ namespace EveManager
             return transforms.Single(n => n.name == body);
         }
 
+        public static void Log(String message)
+        {
+            UnityEngine.Debug.Log("EVEManager: " + message);
+        }
     }
 }

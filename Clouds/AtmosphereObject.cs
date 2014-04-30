@@ -36,7 +36,7 @@ namespace Atmosphere
             {
                 if (layer2D != null)
                 {
-                    layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, -this.sphere.relativeTargetPosition));
+                    layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition));
                 }
             }
         }
