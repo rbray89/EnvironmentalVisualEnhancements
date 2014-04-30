@@ -53,9 +53,9 @@ namespace Atmosphere
         
         public void Update(Texture2D tex)
         {
-            Vector3 point = particle.transform.parent.parent.InverseTransformPoint(particle.transform.position).normalized;
-            float u = (float)(.5 + (Mathf.Atan2(point.z, point.x) / (2f * Mathf.PI)));
-            float v = Mathf.Acos(-point.y) / Mathf.PI;
+            Vector3 point = -particle.transform.parent.parent.InverseTransformPoint(particle.transform.position).normalized;
+            float u = (float)(.5 + (Mathf.Atan2(point.x, point.z) / (2f * Mathf.PI)));
+            float v = Mathf.Acos(point.y) / Mathf.PI;
             Color color = tex.GetPixelBilinear(u, v);
             MeshFilter filter = particle.GetComponent<MeshFilter>();
             Mesh mesh = filter.mesh;

@@ -67,6 +67,7 @@ namespace Atmosphere
         }
         public void Apply(float radius, Transform parent)
         {
+            Remove();
             CloudMaterial = new Material(CloudShader);
             cloudMaterial.ApplyMaterialProperties(CloudMaterial);
             HalfSphere hp = new HalfSphere(radius, CloudMaterial);
@@ -80,31 +81,46 @@ namespace Atmosphere
             mainPeriodOffset = (-detailSpeed) / circumference;
         }
 
+        public void Remove()
+        {
+            if (CloudMesh != null)
+            {
+                CloudMesh.transform.parent = null;
+                GameObject.Destroy(CloudMesh);
+                CloudMesh = null;
+            }
+        }
+
         internal void UpdateRotation(Quaternion rotation)
         {
             if (rotation != null)
             {
-                CloudMesh.transform.localRotation = rotation;
-                double ut = Planetarium.GetUniversalTime();
-                double x = (ut * globalPeriod);
-                x -= (int)x;
-                CloudMesh.transform.Rotate(CloudMesh.transform.parent.TransformDirection(Vector3.up), (float)(360f*x), Space.World);
-                Quaternion rotationForMatrix = CloudMesh.transform.localRotation;
-                
-                CloudMesh.transform.localRotation = rotation;
-                Matrix4x4 mtrx = Matrix4x4.TRS(Vector3.zero, rotationForMatrix, new Vector3(1, 1, 1));
-                // Update the rotation matrix.
-                CloudMaterial.SetMatrix(EVEManager.ROTATION_PROPERTY, mtrx);
+                SetMeshRotation(rotation);
             }
-            SetTextureOffset(EVEManager.MAINOFFSET_PROPERTY, mainPeriodOffset);
+            SetTextureOffset();
         }
 
-        private void SetTextureOffset(int id, float speed)
+        private void SetMeshRotation(Quaternion rotation)
+        {
+            CloudMesh.transform.localRotation = rotation;
+            double ut = Planetarium.GetUniversalTime();
+            double x = (ut * globalPeriod);
+            x -= (int)x;
+            CloudMesh.transform.Rotate(CloudMesh.transform.parent.TransformDirection(Vector3.up), (float)(360f * x), Space.World);
+            Quaternion rotationForMatrix = CloudMesh.transform.localRotation;
+
+            CloudMesh.transform.localRotation = rotation;
+            Matrix4x4 mtrx = Matrix4x4.TRS(Vector3.zero, rotationForMatrix, new Vector3(1, 1, 1));
+            // Update the rotation matrix.
+            CloudMaterial.SetMatrix(EVEManager.ROTATION_PROPERTY, mtrx);
+        }
+
+        private void SetTextureOffset()
         {
             double ut = Planetarium.GetUniversalTime();
-            double x = (ut * speed);
+            double x = (ut * mainPeriodOffset);
             x -= (int)x;
-            CloudMaterial.SetVector(id, new Vector2((float)x, (float)0));
+            CloudMaterial.SetVector(EVEManager.MAINOFFSET_PROPERTY, new Vector2((float)x, (float)0));
         }
     }
 }

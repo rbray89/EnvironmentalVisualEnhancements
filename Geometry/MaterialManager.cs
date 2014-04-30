@@ -9,7 +9,7 @@ namespace Utils
 {
     public class MaterialManager
     {
-        public Material ApplyMaterialProperties(Material material)
+        public Material ApplyMaterialProperties(Material material, bool clampTextures = false)
         {
             FieldInfo[] fields = this.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
             foreach (FieldInfo field in fields)
@@ -21,6 +21,10 @@ namespace Utils
                     String textureName = (String)field.GetValue(this);
                     bool isNormal = textureName.Contains("Bump") | textureName.Contains("Bmp") | textureName.Contains("Normal") | textureName.Contains("Nrm");
                     Texture2D texture = GameDatabase.Instance.GetTexture(textureName, isNormal);
+                    if (clampTextures)
+                    {
+                        texture.wrapMode = TextureWrapMode.Clamp;
+                    }
                     material.SetTexture(name, texture);
                 }
                 //float

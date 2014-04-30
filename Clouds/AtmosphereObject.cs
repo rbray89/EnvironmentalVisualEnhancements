@@ -26,10 +26,31 @@ namespace Atmosphere
             return ConfigNode.CreateConfigFromObject(this, new ConfigNode(body));
         }
 
-        public override void OnSphereActive() 
-        { }
-        public override void OnSphereInactive() 
-        { }
+        public override void OnSphereActive()
+        {
+            AtmosphereManager.Log("Active.");
+            CelestialBody celestialBody = EVEManager.GetCelestialBody(body);
+            if (layer2D != null)
+            {
+                layer2D.Apply((float)celestialBody.Radius + 4000f, celestialBody.transform);
+            }
+            if (layerVolume != null)
+            {
+                layerVolume.Apply((float)celestialBody.Radius + 4000f, celestialBody.transform);
+            }
+        }
+        public override void OnSphereInactive()
+        {
+            AtmosphereManager.Log("Inactive.");
+            if (layer2D != null)
+            {
+                layer2D.Remove();
+            }
+            if (layerVolume != null)
+            {
+                layerVolume.Remove();
+            }
+        }
         protected void Update()
         {
             if (this.sphere != null && sphere.isActive)
@@ -37,6 +58,10 @@ namespace Atmosphere
                 if (layer2D != null)
                 {
                     layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition));
+                }
+                if (layerVolume != null)
+                {
+                    layerVolume.UpdatePos(this.sphere.target.position);
                 }
             }
         }
@@ -47,10 +72,6 @@ namespace Atmosphere
             if (celestialBody != null && celestialBody.pqsController != null)
             {
                 this.transform.parent = celestialBody.pqsController.transform;
-                if (layer2D != null)
-                {
-                    layer2D.Apply((float)celestialBody.Radius + 4000f, celestialBody.transform);
-                }
             }
         }
 
