@@ -13,7 +13,7 @@
 		_DarkOverlayDetailScale ("Overlay Detail Scale", Range(0,1000)) = 80
 	}
 
-Category {
+
 	
 SubShader {
 
@@ -72,12 +72,12 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 
 		struct v2f {
 			float4 pos : SV_POSITION;
-			float  viewDist : TEXCOORD1;
-			float3 objNormal : TEXCOORD2;
-			float3 worldNormal : TEXCOORD3;
-			float3 sphereNormal : TEXCOORD4;
-			float4 color : TEXCOORD5;
-			LIGHTING_COORDS(6,7)
+			float  viewDist : TEXCOORD0;
+			float4 color : TEXCOORD1;
+			float3 normal : TEXCOORD2;
+			LIGHTING_COORDS(3,4)
+			float3 worldNormal : TEXCOORD5;
+			float3 sphereNormal : TEXCOORD6;
 		};	
 		
 
@@ -88,10 +88,15 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
-	   	   o.objNormal = normalize(v.normal);
+	   	   
 	   	   o.worldNormal = mul( _Object2World, float4( v.normal, 0.0 ) ).xyz;
 	   	   o.sphereNormal = -normalize(v.tangent);
 	   	   o.color = v.color;
+					
+			o.normal = v.normal;
+    
+    		TRANSFER_VERTEX_TO_FRAGMENT(o);                 // Macro to send shadow & attenuation to the fragment shader.
+    
 	   	   return o;
 	 	}
 	 	
@@ -123,7 +128,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		    half2 detailvertnrmzy = sphereNrm.zy*_DetailVertScale;
 		    half2 detailvertnrmzx = sphereNrm.zx*_DetailVertScale;
 		    half2 detailvertnrmxy = sphereNrm.xy*_DetailVertScale;
-		    half vertLerp = saturate((32*(saturate(dot(IN.objNormal, -IN.sphereNormal))-.95))+.5);
+		    half vertLerp = saturate((32*(saturate(dot(IN.normal, -IN.sphereNormal))-.95))+.5);
 			half4 detailX = lerp(tex2D (_DetailVertTex, detailvertnrmzy), tex2D (_DetailTex, detailnrmzy), vertLerp);
 			half4 detailY = lerp(tex2D (_DetailVertTex, detailvertnrmzx), tex2D (_DetailTex, detailnrmzx), vertLerp);
 			half4 detailZ = lerp(tex2D (_DetailVertTex, detailvertnrmxy), tex2D (_DetailTex, detailnrmxy), vertLerp);
@@ -139,19 +144,22 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half4 detail = lerp(detailZ, detailX, sphereNrm.x);
 			detail = lerp(detail, detailY, sphereNrm.y);
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
-			color = main.rgba * lerp(detail.rgba, 1, detailLevel)*IN.color*_Color;
+			color = main.rgba * lerp(detail.rgba, 1, detailLevel)*IN.color;
 			#ifdef CITYOVERLAY_ON
 			detail = lerp(darkoverlaydetailZ, darkoverlaydetailX, sphereNrm.x);
 			detail = lerp(detail, darkoverlaydetailY, sphereNrm.y);
 			darkoverlay = darkoverlay*detail;
 			#endif
 			
+            color *= _Color;
+            
           	//lighting
-			half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
+            half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
 			half3 lightDirection = normalize(_WorldSpaceLightPos0);
 			half NdotL = saturate(dot (IN.worldNormal, lightDirection));
 	        half diff = (NdotL - 0.01) / 0.99;
-			half lightIntensity = saturate(_LightColor0.a * diff * 4);
+	        fixed atten = LIGHT_ATTENUATION(IN); 
+			half lightIntensity = saturate(_LightColor0.a * diff * 4 * atten);
 			half3 light = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
 			color.rgb *= light;
 			
@@ -167,7 +175,66 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	
 		}
 		
+		Pass {
+            Tags {"LightMode" = "ForwardAdd"} 
+            Blend One One                                      
+            CGPROGRAM
+                #pragma vertex vert
+                #pragma fragment frag
+                #pragma multi_compile_fwdadd 
+                
+                #include "UnityCG.cginc"
+                #include "AutoLight.cginc"
+                
+                struct appdata_t {
+				float4 vertex : POSITION;
+				fixed4 color : COLOR;
+				float3 normal : NORMAL;
+				float3 tangent : TANGENT;
+				};
+                
+                struct v2f
+                {
+                    float4  pos         : SV_POSITION;
+                    float2  uv          : TEXCOORD0;
+                    float3  lightDir    : TEXCOORD2;
+                    float3 normal		: TEXCOORD1;
+                    LIGHTING_COORDS(3,4)
+                    float4 color : TEXCOORD5;
+                };
+ 
+                v2f vert (appdata_t v)
+                {
+                    v2f o;
+                    
+                    o.pos = mul( UNITY_MATRIX_MVP, v.vertex);
+                   	
+					o.lightDir = ObjSpaceLightDir(v.vertex);
+					o.color = v.color;
+					o.normal =  v.normal;
+                    TRANSFER_VERTEX_TO_FRAGMENT(o);
+                    return o;
+                }
+ 
+                fixed4 _Color;
+ 
+                fixed4 _LightColor0;
+ 
+                fixed4 frag(v2f IN) : COLOR
+                {
+                    IN.lightDir = normalize(IN.lightDir);
+                    fixed atten = LIGHT_ATTENUATION(IN);
+					fixed3 normal = IN.normal;                    
+                    fixed diff = saturate(dot(normal, IN.lightDir));
+                    
+                    fixed4 c;
+                    c.rgb = (IN.color.rgb * _LightColor0.rgb * diff) * (atten * 2);
+                    c.a = IN.color.a;
+                    return c;
+                }
+            ENDCG
+        }
 	} 
 	
-}
+	FallBack "VertexLit"    // Use VertexLit's shadow caster/receiver passes.
 }
