@@ -29,7 +29,7 @@ namespace Atmosphere
         public override void OnSphereActive()
         {
             AtmosphereManager.Log("Active.");
-            CelestialBody celestialBody = EVEManager.GetCelestialBody(body);
+            CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
             if (layer2D != null)
             {
                 layer2D.Apply((float)celestialBody.Radius + 4000f, celestialBody.transform);
@@ -68,7 +68,7 @@ namespace Atmosphere
 
         public void Apply()
         {
-            CelestialBody celestialBody = EVEManager.GetCelestialBody(body);
+            CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
             if (celestialBody != null && celestialBody.pqsController != null)
             {
                 this.transform.parent = celestialBody.pqsController.transform;
@@ -77,7 +77,7 @@ namespace Atmosphere
 
         public void Remove()
         {
-            CelestialBody celestialBody = EVEManager.GetCelestialBody(body);
+            CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
             if (celestialBody != null)
             {
             }

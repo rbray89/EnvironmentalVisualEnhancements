@@ -38,7 +38,7 @@ namespace CityLights
 
         public void Apply()
         {
-            CelestialBody celestialBody = EVEManager.GetCelestialBody(body);
+            CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
             if (celestialBody != null)
             {
                 celestialBody.pqsController.surfaceMaterial.EnableKeyword("CITYOVERLAY_ON");
@@ -48,7 +48,7 @@ namespace CityLights
 
         public void Remove()
         {
-            CelestialBody celestialBody = EVEManager.GetCelestialBody(body);
+            CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
             if (celestialBody != null)
             {
                 celestialBody.pqsController.surfaceMaterial.DisableKeyword("CITYOVERLAY_ON");

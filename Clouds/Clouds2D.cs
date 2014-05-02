@@ -75,7 +75,7 @@ namespace Atmosphere
             CloudMesh.transform.parent = parent;
             CloudMesh.transform.localPosition = Vector3.zero;
             CloudMesh.transform.localScale = Vector3.one;
-            CloudMesh.layer = EVEManager.MACRO_LAYER;
+            CloudMesh.layer = EVEManagerClass.MACRO_LAYER;
             float circumference = 2f * Mathf.PI * radius;
             globalPeriod = (speed+detailSpeed) / circumference;
             mainPeriodOffset = (-detailSpeed) / circumference;
@@ -112,7 +112,7 @@ namespace Atmosphere
             CloudMesh.transform.localRotation = rotation;
             Matrix4x4 mtrx = Matrix4x4.TRS(Vector3.zero, rotationForMatrix, new Vector3(1, 1, 1));
             // Update the rotation matrix.
-            CloudMaterial.SetMatrix(EVEManager.ROTATION_PROPERTY, mtrx);
+            CloudMaterial.SetMatrix(EVEManagerClass.ROTATION_PROPERTY, mtrx);
         }
 
         private void SetTextureOffset()
@@ -120,7 +120,7 @@ namespace Atmosphere
             double ut = Planetarium.GetUniversalTime();
             double x = (ut * mainPeriodOffset);
             x -= (int)x;
-            CloudMaterial.SetVector(EVEManager.MAINOFFSET_PROPERTY, new Vector2((float)x, (float)0));
+            CloudMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, new Vector2((float)x, (float)0));
         }
     }
 }

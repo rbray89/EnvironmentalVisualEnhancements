@@ -86,8 +86,8 @@ namespace Terrain
         public void Apply()
         {
 
-            CelestialBody celestialBody = EVEManager.GetCelestialBody(body);
-            Transform transform = EVEManager.GetScaledTransform(body);
+            CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
+            Transform transform = EVEManagerClass.GetScaledTransform(body);
             Texture mainTexture = null;
             PQS pqs = celestialBody.pqsController;
             if (pqs != null)
@@ -110,7 +110,7 @@ namespace Terrain
 
         public void Remove()
         {
-            CelestialBody celestialBody = EVEManager.GetCelestialBody(body);
+            CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
             PQS pqs = celestialBody.pqsController;
             if (pqs != null)
             {
