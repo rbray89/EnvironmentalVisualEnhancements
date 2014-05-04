@@ -49,10 +49,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AtmosphereVolume.cs" />
-    <Compile Include="CloudLayer.cs" />
     <Compile Include="AtmosphereManager.cs" />
-    <Compile Include="Clouds.cs" />
     <Compile Include="AtmosphereObject.cs" />
     <Compile Include="Clouds2D.cs" />
     <Compile Include="CloudsVolume.cs" />

@@ -33,9 +33,9 @@ namespace Atmosphere
     class CloudsVolume
     {
         [Persistent]
-        float speed;
-        [Persistent]
         String texture;
+        [Persistent]
+        float speed;
         [Persistent]
         particleVolumeMaterial particleMaterial;
 
@@ -90,15 +90,18 @@ namespace Atmosphere
 
         internal void UpdatePos(Vector3 WorldPos)
         {
-            double ut = Planetarium.GetUniversalTime();
-            double x = (ut * globalPeriod);
-            x -= (int)x;
-            Quaternion rotation = new Quaternion();
-            rotation.eulerAngles = new Vector3(0,(float)(-360f * x),0);
-            volumeHolder.transform.localRotation = rotation;
-            Vector3 intendedPoint = volumeHolder.transform.InverseTransformPoint(WorldPos);
-            intendedPoint.Normalize();
-            volumeManager.Update(intendedPoint);
+            if (HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER)
+            {
+                double ut = Planetarium.GetUniversalTime();
+                double x = (ut * globalPeriod);
+                x -= (int)x;
+                Quaternion rotation = new Quaternion();
+                rotation.eulerAngles = new Vector3(0, (float)(-360f * x), 0);
+                volumeHolder.transform.localRotation = rotation;
+                Vector3 intendedPoint = volumeHolder.transform.InverseTransformPoint(WorldPos);
+                intendedPoint.Normalize();
+                volumeManager.Update(intendedPoint);
+            }
         }
 
     }

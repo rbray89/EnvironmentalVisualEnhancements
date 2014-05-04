@@ -43,11 +43,11 @@ namespace Atmosphere
         GameObject CloudMesh;
         Material CloudMaterial;
         [Persistent]
-        Clouds2DMaterial cloudMaterial;
-        [Persistent]
         float speed;
         [Persistent]
         float detailSpeed;
+        [Persistent]
+        Clouds2DMaterial cloudMaterial;
 
         float globalPeriod;
         float mainPeriodOffset;
@@ -93,7 +93,7 @@ namespace Atmosphere
 
         internal void UpdateRotation(Quaternion rotation)
         {
-            if (rotation != null)
+            if (rotation != null && (HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER))
             {
                 SetMeshRotation(rotation);
             }
@@ -106,12 +106,11 @@ namespace Atmosphere
             double ut = Planetarium.GetUniversalTime();
             double x = (ut * globalPeriod);
             x -= (int)x;
+
             CloudMesh.transform.Rotate(CloudMesh.transform.parent.TransformDirection(Vector3.up), (float)(360f * x), Space.World);
             Quaternion rotationForMatrix = CloudMesh.transform.localRotation;
-
             CloudMesh.transform.localRotation = rotation;
             Matrix4x4 mtrx = Matrix4x4.TRS(Vector3.zero, rotationForMatrix, new Vector3(1, 1, 1));
-            // Update the rotation matrix.
             CloudMaterial.SetMatrix(EVEManagerClass.ROTATION_PROPERTY, mtrx);
         }
 

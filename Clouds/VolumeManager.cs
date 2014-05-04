@@ -62,7 +62,6 @@ namespace Atmosphere
             VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, opp), radius, divisions));
             VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, -opp), radius, divisions));
             forceUpdate = true;
-            CloudLayer.Log("Volume Initialized");
         }
 
         public VolumeManager(float cloudSphereRadius, Material cloudParticleMaterial, Transform transform)
@@ -77,7 +76,6 @@ namespace Atmosphere
             VolumeListBottom.Add(new VolumeSection(cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, -opp), radius, divisions));
             
             forceUpdate = true;
-            CloudLayer.Log("Volume Initialized");
         }
 
         public void Update(Vector3 pos)
@@ -199,7 +197,7 @@ namespace Atmosphere
                 vs.Destroy();
             }
 
-            CloudLayer.Log("Volume Destroyed");
+
         }
     }
 }

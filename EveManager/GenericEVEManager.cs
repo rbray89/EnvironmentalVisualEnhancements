@@ -92,7 +92,7 @@ namespace EveManager
             return fieldCount;
         }
 
-        private Rect GetRect(Rect placementBase, ref Rect placement, FieldInfo container = null)
+        private Rect GetSplitRect(Rect placementBase, ref Rect placement, FieldInfo container = null)
         {
             if(container != null)
             {
@@ -118,15 +118,16 @@ namespace EveManager
 
         private void SplitRect(ref Rect rect1, ref Rect rect2, float ratio)
         {
+            float width = rect1.width;
             rect1.width *= ratio;
-            rect2.width *= 1 - ratio;
-            rect2.x += rect1.width;
+            rect2.width = width * (1 - ratio);
+            rect2.x = rect1.x + rect1.width;
         }
 
         private void HandleGUI(object obj, FieldInfo field, Rect placementBase, ref Rect placement)
         {
-            Rect labelRect = GetRect(placementBase, ref placement);
-            Rect fieldRect = GetRect(placementBase, ref placement);
+            Rect labelRect = GetSplitRect(placementBase, ref placement);
+            Rect fieldRect = GetSplitRect(placementBase, ref placement);
             SplitRect(ref labelRect, ref fieldRect, 3f / 7);
             if(field.FieldType == typeof(String))
             {
@@ -157,10 +158,10 @@ namespace EveManager
                 GUIStyle gsCenter = new GUIStyle(GUI.skin.label);
                 gsCenter.alignment = TextAnchor.MiddleCenter;
                 
-                Rect boxRect = GetRect(placementBase, ref placement, field);
+                Rect boxRect = GetSplitRect(placementBase, ref placement, field);
                 GUI.Box(boxRect, "");
                 placement.height = 1;
-                Rect titleRect = GetRect(placementBase, ref placement);
+                Rect titleRect = GetSplitRect(placementBase, ref placement);
 
                 Rect boxPlacementBase = new Rect(placementBase);
                 boxPlacementBase.x += 10;
@@ -180,27 +181,110 @@ namespace EveManager
             }
         }
 
+        public void DrawBodySelector(Rect placementBase, ref Rect placement)
+        {
+            CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
+            GUIStyle gsCenter = new GUIStyle(GUI.skin.label);
+            gsCenter.alignment = TextAnchor.MiddleCenter;
+
+            currentBody = GetMapBody();
+                
+            Rect leftRect = GetSplitRect(placementBase, ref placement);
+            Rect centerRect = GetSplitRect(placementBase, ref placement);
+            Rect rightRect = GetSplitRect(placementBase, ref placement);
+            SplitRect(ref leftRect, ref centerRect, 1f / 4);
+            SplitRect(ref centerRect, ref rightRect, 2f / 3);
+            if (MapView.MapIsEnabled || HighLogic.LoadedScene == GameScenes.TRACKSTATION)
+            {
+                if (GUI.Button(leftRect, "<"))
+                {
+                    selectedBodyIndex--;
+                    if (selectedBodyIndex < 0)
+                    {
+                        selectedBodyIndex = celestialBodies.Length - 1;
+                    }
+                    currentBody = celestialBodies[selectedBodyIndex];
+                    MapView.MapCamera.SetTarget(currentBody.bodyName);
+                }
+                if (GUI.Button(rightRect, ">"))
+                {
+                    selectedBodyIndex++;
+                    if (selectedBodyIndex >= celestialBodies.Length)
+                    {
+                        selectedBodyIndex = 0;
+                    }
+                    currentBody = celestialBodies[selectedBodyIndex];
+                    MapView.MapCamera.SetTarget(currentBody.bodyName);
+                }
+            }
+            else
+            {
+                if (FlightGlobals.currentMainBody != null)
+                {
+                    currentBody = FlightGlobals.currentMainBody;
+                    selectedBodyIndex = Array.FindIndex<CelestialBody>(celestialBodies, cb => cb.name == currentBody.name);
+                }
+            }
+            if (currentBody != null)
+            {
+                GUI.Label(centerRect, currentBody.bodyName, gsCenter);
+            }
+            placement.y++;
+        }
+
+        private CelestialBody GetMapBody()
+        {
+            if (MapView.MapIsEnabled)
+            {
+                MapObject target = MapView.MapCamera.target;
+                switch (target.type)
+                {
+                    case MapObject.MapObjectType.CELESTIALBODY:
+                        return target.celestialBody;
+                    case MapObject.MapObjectType.MANEUVERNODE:
+                        return target.maneuverNode.patch.referenceBody;
+                    case MapObject.MapObjectType.VESSEL:
+                        return target.vessel.mainBody;
+                }
+            }
+            else
+            {
+                return currentBody = FlightGlobals.currentMainBody;
+            }
+            return null;
+        }
+
         public override void DrawGUI(Rect placementBase)
         {
-            Rect placement = new Rect(0,0,0,1);
+            Rect placement = new Rect(0, 0, 0, 1);
+            DrawBodySelector(placementBase, ref placement);
+
             var fields = this.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
                 field => Attribute.IsDefined(field, typeof(Persistent)));
             foreach(FieldInfo fi in fields)
             {
-                Log(fi.Name +" = "+ fi.GetValue(this).ToString());
+                HandleGUI(this, fi, placementBase, ref placement);
             }
+            
             foreach(T obj in ObjectList)
             {
                 var objfields = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
                 field => Attribute.IsDefined(field, typeof(Persistent)));
                 foreach (FieldInfo fi in objfields)
                 {
-                    HandleGUI(obj, fi, placementBase, ref placement);
+                    if (fi.Name != "body")
+                    {
+                        HandleGUI(obj, fi, placementBase, ref placement);
+                    }
                 }
             }
         }
 
-        internal new void Update()
+        protected void OnGUI()
+        {
+        }
+
+        protected void Update()
         {
         }
 

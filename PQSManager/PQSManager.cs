@@ -11,7 +11,7 @@ namespace PQSManager
     {
         protected override String configName { get { return ""; } }
 
-        protected void Update()
+        protected new void Update()
         {
             foreach (PQSModWrapper mod in ObjectList)
             {
