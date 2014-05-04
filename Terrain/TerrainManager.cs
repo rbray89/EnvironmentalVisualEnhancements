@@ -15,14 +15,6 @@ namespace Terrain
     {
         protected override String configName { get { return "EVE_TERRAIN"; } }
 
-        protected void Awake()
-        {
-            if (HighLogic.LoadedScene == GameScenes.MAINMENU && !Initialized)
-            {
-                Setup();
-            }
-        }
-
         public static void StaticSetup()
         {
             TerrainManager tm = new TerrainManager();

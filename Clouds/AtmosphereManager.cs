@@ -11,13 +11,6 @@ namespace Atmosphere
     public class AtmosphereManager : GenericEVEManager<AtmosphereObject>
     {
         protected override String configName { get{return "EVE_ATMOSPHERE";} }
-        protected void Awake()
-        {
-            if (HighLogic.LoadedScene == GameScenes.MAINMENU && !Initialized)
-            {
-                Setup();
-            }
-        }
 
         public override void LoadConfig()
         {

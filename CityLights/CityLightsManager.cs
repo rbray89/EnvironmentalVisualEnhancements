@@ -19,14 +19,6 @@ namespace CityLights
         public CityLightsManager()
         { }
 
-        protected void Awake()
-        {
-            if (HighLogic.LoadedScene == GameScenes.MAINMENU && !Initialized)
-            {
-                Setup();
-            }
-        }
-
         public override void Setup()
         {
             TerrainManager.StaticSetup();

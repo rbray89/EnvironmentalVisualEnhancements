@@ -77,9 +77,13 @@ namespace Atmosphere
 
         public void Remove()
         {
-            CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
-            if (celestialBody != null)
+            if (layer2D != null)
             {
+                layer2D.Remove();
+            }
+            if (layerVolume != null)
+            {
+                layerVolume.Remove();
             }
         }
         /*
