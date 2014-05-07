@@ -242,12 +242,30 @@ namespace EveManager
             }
         }
 
+        private void DrawConfigManagement(Rect placementBase, ref Rect placement)
+        {
+            Rect applyRect = GUIHelper.GetSplitRect(placementBase, ref placement);
+            Rect saveRect = GUIHelper.GetSplitRect(placementBase, ref placement);
+            GUIHelper.SplitRect(ref applyRect, ref saveRect, 1f / 2);
+            if(GUI.Button(applyRect, "Apply"))
+            {
+                this.Apply();
+            }
+            if (GUI.Button(saveRect, "Save"))
+            {
+                this.SaveConfig();
+            }
+            placement.y++;
+        }
+
         public override void DrawGUI(Rect placementBase, Rect placement)
         {
             string body = null;
             T objEdit = default(T);
             
             ConfigWrapper selectedConfig = GUIHelper.DrawSelector<ConfigWrapper>(ConfigFiles, ref selectedConfigIndex, 16, placementBase, ref placement);
+
+            DrawConfigManagement(placementBase, ref placement);
 
             if ((objectType & ObjectType.PLANET) == ObjectType.PLANET)
             {
@@ -290,6 +308,8 @@ namespace EveManager
             HandleGUI(objEdit, objEdit.ConfigNode, placementBase, ref placement);
             
         }
+
+        
 
         protected void OnGUI()
         {

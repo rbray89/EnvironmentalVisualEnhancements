@@ -16,6 +16,8 @@ namespace Atmosphere
         private new String name;
         private ConfigNode node;
         private String body;
+        [Persistent]
+        float altitude = 1000f;
         [Persistent, Optional]
         CloudsVolume layerVolume = null;
         [Persistent, Optional]
@@ -39,11 +41,11 @@ namespace Atmosphere
             CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
             if (layer2D != null)
             {
-                layer2D.Apply((float)celestialBody.Radius + 4000f, celestialBody.transform);
+                layer2D.Apply((float)celestialBody.Radius + altitude, celestialBody.transform);
             }
             if (layerVolume != null)
             {
-                layerVolume.Apply((float)celestialBody.Radius + 4000f, celestialBody.transform);
+                layerVolume.Apply((float)celestialBody.Radius + altitude, celestialBody.transform);
             }
         }
         public override void OnSphereInactive()
@@ -80,6 +82,10 @@ namespace Atmosphere
             {
                 this.transform.parent = celestialBody.pqsController.transform;
             }
+            if (this.sphere != null && sphere.isActive)
+            {
+                OnSphereActive();
+            }
         }
 
         public void Remove()
@@ -92,6 +98,8 @@ namespace Atmosphere
             {
                 layerVolume.Remove();
             }
+            this.transform.parent = null;
+            GameObject.Destroy(this.gameObject);
         }
         /*
         private static Transform GetTargetPos()
