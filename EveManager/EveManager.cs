@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using UnityEngine;
+using Utils;
 
 namespace EveManager
 {
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
-    public class EVEManagerClass : MonoBehaviour
+    public class EVEManagerClass : MonoBehaviour, INamed
     {
         private static bool useEditor = false;
         public static List<EVEManagerClass> Managers = new List<EVEManagerClass>();
@@ -15,6 +17,9 @@ namespace EveManager
         public static int MACRO_LAYER = 15;
         public static int ROTATION_PROPERTY;
         public static int MAINOFFSET_PROPERTY;
+
+
+        public String Name { get { return this.GetType().Name; } }
 
         private void Awake()
         {
@@ -47,19 +52,17 @@ namespace EveManager
         }
 
         private GUISkin _mySkin;
-        private Rect _mainWindowRect = new Rect(20, 20, 260, 800);
-        
-        protected static int selectedBodyIndex = 0;
-        protected static int selectedManagerIndex = 0;
-        protected static CelestialBody currentBody;
+        private Rect _mainWindowRect = new Rect(0, 0, 840, 800);
 
+        protected static int selectedManagerIndex = 0;
+        
         private void OnGUI()
         {
             GUI.skin = _mySkin;
             if (useEditor)
             {
                 _mainWindowRect.width = 840;
-                _mainWindowRect.height = 640;
+                _mainWindowRect.height = 800;
                 _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "EVE Manager");
             }
         }
@@ -68,38 +71,23 @@ namespace EveManager
         {
             CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
             EVEManagerClass currentManager;
-            GUIStyle gsCenter = new GUIStyle(GUI.skin.label);
-            gsCenter.alignment = TextAnchor.MiddleCenter;
 
-            if(GUI.Button(new Rect(10, 25, 25, 25),"<"))
-            {
-                selectedManagerIndex--;
-                if (selectedManagerIndex < 0)
-                {
-                    selectedManagerIndex = Managers.Count - 1;
-                }
-            }
-            if (GUI.Button(new Rect(270, 25, 25, 25), ">"))
-            {
-                selectedManagerIndex++;
-                if (selectedManagerIndex >= Managers.Count)
-                {
-                    selectedManagerIndex = 0;
-                }
-            }
-            currentManager = Managers[selectedManagerIndex];
+            Rect placement = new Rect(0, 0, 0, 1);
+            float width = _mainWindowRect.width - 10;
+            float height = _mainWindowRect.height - 10;
+            Rect placementBase = new Rect(10, 25, width, height);
+
+            currentManager = GUIHelper.DrawSelector<EVEManagerClass>(Managers, ref selectedManagerIndex, 4, placementBase, ref placement);
+
             if (currentManager != null)
             {
-                GUI.Label(new Rect(25, 25, 240, 25), currentManager.GetType().Name, gsCenter);
-                float width = _mainWindowRect.width - 30;
-                float height = _mainWindowRect.height - 10;
-                currentManager.DrawGUI(new Rect(10, 55, width, height));
+                currentManager.DrawGUI(placementBase, placement);
             }
 
             GUI.DragWindow(new Rect(0, 0, 10000, 10000));
         }
 
-        public virtual void DrawGUI(Rect val)
+        public virtual void DrawGUI(Rect val, Rect val2)
         {
         }
 

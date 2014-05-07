@@ -10,24 +10,16 @@ namespace Atmosphere
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class AtmosphereManager : GenericEVEManager<AtmosphereObject>
     {
+        protected override ObjectType objectType { get { return ObjectType.PLANET | ObjectType.MULTIPLE; } }
         protected override String configName { get{return "EVE_ATMOSPHERE";} }
 
-        public override void LoadConfig()
+        protected override void ApplyConfigNode(ConfigNode node, String body)
         {
-            Log("Loading...");
-            configs = GameDatabase.Instance.GetConfigs(configName);
-            Clean();
-            foreach (UrlDir.UrlConfig config in configs)
-            {
-                foreach (ConfigNode node in config.config.nodes)
-                {
-                    GameObject go = new GameObject();
-                    AtmosphereObject newObject = go.AddComponent<AtmosphereObject>();
-                    newObject.LoadConfigNode(node);
-                    ObjectList.Add(newObject);
-                    newObject.Apply();
-                }
-            }
+            GameObject go = new GameObject();
+            AtmosphereObject newObject = go.AddComponent<AtmosphereObject>();
+            newObject.LoadConfigNode(node, body);
+            ObjectList.Add(newObject);
+            newObject.Apply();
         }
 
     }

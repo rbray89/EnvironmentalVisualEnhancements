@@ -4,21 +4,28 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Utils;
 
 namespace Atmosphere
 {
     public class AtmosphereObject : PQSMod, IEVEObject
     {
+        public String Name { get { return name; } }
+        public ConfigNode ConfigNode { get { return node; } }
+        public String Body { get { return body; } }
         private new String name;
         private ConfigNode node;
-        [Persistent] String body = null;
-        [Persistent] Clouds2D layer2D = null;
-        [Persistent] CloudsVolume layerVolume = null;
+        private String body;
+        [Persistent, Optional]
+        CloudsVolume layerVolume = null;
+        [Persistent, Optional]
+        Clouds2D layer2D = null;
 
-        public void LoadConfigNode(ConfigNode node)
+        public void LoadConfigNode(ConfigNode node, String body)
         {
-            this.node = node;
             ConfigNode.LoadObjectFromConfig(this, node);
+            this.node = node;
+            this.body = body;
             name = node.name;
         }
         public ConfigNode GetConfigNode()

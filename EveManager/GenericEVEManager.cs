@@ -4,18 +4,40 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
+using Utils;
 
 namespace EveManager
 {
+    public class Optional : System.Attribute
+    {
+    }
+
     [KSPAddon(KSPAddon.Startup.Instantly, true)]
     public class GenericEVEManager<T> : EVEManagerClass where T : IEVEObject, new()
     {
+        [Flags] protected enum ObjectType
+        {
+            NONE = 0,
+            PLANET = 1,
+            GLOBAL = 2,
+            MULTIPLE = 4
+        }
+        protected virtual ObjectType objectType { get { return ObjectType.NONE; } }
         protected virtual String configName { get { return ""; } }
         protected static List<T> ObjectList = new List<T>();
         protected static UrlDir.UrlConfig[] configs;
 
-        public virtual void GenerateGUI(){}
+        protected ConfigNode ConfigNode { get { return configNode; } }
+        protected ConfigNode configNode;
+        private static List<ConfigWrapper> ConfigFiles = new List<ConfigWrapper>();
+        private static int selectedConfigIndex = 0;
 
+        protected static Vector2 objListPos = Vector2.zero;
+        protected static int selectedObjIndex = 0;
+        protected static String objNameEditString = "";
+
+        public virtual void GenerateGUI(){}
+        
         internal void Awake()
         {
             if (HighLogic.LoadedScene >= GameScenes.MAINMENU)
@@ -35,17 +57,42 @@ namespace EveManager
         {
             Log("Loading...");
             configs = GameDatabase.Instance.GetConfigs(configName);
+            ConfigFiles.Clear();
+            foreach(UrlDir.UrlConfig config in configs)
+            {
+                ConfigFiles.Add(new ConfigWrapper(config));
+            }
+            Apply();
+        }
+
+        public virtual void Apply()
+        {
             Clean();
             foreach (UrlDir.UrlConfig config in configs)
             {
                 foreach (ConfigNode node in config.config.nodes)
                 {
-                    T newObject = new T();
-                    newObject.LoadConfigNode(node);
-                    ObjectList.Add(newObject);
-                    newObject.Apply();
+                    if ((objectType & ObjectType.MULTIPLE) == ObjectType.MULTIPLE)
+                    {
+                        foreach (ConfigNode bodyNode in node.nodes)
+                        {
+                            ApplyConfigNode(bodyNode, node.name);
+                        }
+                    }
+                    else
+                    {
+                        ApplyConfigNode(node, node.name);
+                    }
                 }
             }
+        }
+
+        protected virtual void ApplyConfigNode(ConfigNode node, String body)
+        {
+            T newObject = new T();
+            newObject.LoadConfigNode(node, body);
+            ObjectList.Add(newObject);
+            newObject.Apply();
         }
 
         protected void Clean()
@@ -70,66 +117,14 @@ namespace EveManager
             }
         }
 
-        private float GetFieldCount(FieldInfo container)
+        private void HandleGUI(object obj, ConfigNode configNode, Rect placementBase, ref Rect placement)
         {
-            float fieldCount = 1;
-            var objfields = container.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
-                f => Attribute.IsDefined(f, typeof(Persistent)));
-            foreach (FieldInfo fi in objfields)
-            {
-                if (fi.FieldType == typeof(String) ||
-                    fi.FieldType == typeof(Vector3) ||
-                    fi.FieldType == typeof(Color) ||
-                    fi.FieldType == typeof(float))
-                {
-                    fieldCount++;
-                }
-                else
-                {
-                    fieldCount += GetFieldCount(fi);
-                }
-            }
-            return fieldCount;
-        }
-
-        private Rect GetSplitRect(Rect placementBase, ref Rect placement, FieldInfo container = null)
-        {
-            if(container != null)
-            {
-                placement.height = GetFieldCount(container);
-            }
-            float width = placementBase.width / 2;
-            float height = 30;
-            if (((placement.y+placement.height) * height) + placementBase.y + 25 > placementBase.height)
-            {
-                placement.x++;
-                placement.y = 0;
-            }
-            float x = (placement.x * width) + placementBase.x;
-            float y = (placement.y * height) + placementBase.y;
-            width += placement.width;
-            height = height * placement.height;
-            if (container == null)
-            {
-                height -= 5;
-            }
-            return new Rect(x, y, width - 10, height);
-        }
-
-        private void SplitRect(ref Rect rect1, ref Rect rect2, float ratio)
-        {
-            float width = rect1.width;
-            rect1.width *= ratio;
-            rect2.width = width * (1 - ratio);
-            rect2.x = rect1.x + rect1.width;
-        }
-
-        private void HandleGUI(object obj, FieldInfo field, Rect placementBase, ref Rect placement)
-        {
-            Rect labelRect = GetSplitRect(placementBase, ref placement);
-            Rect fieldRect = GetSplitRect(placementBase, ref placement);
-            SplitRect(ref labelRect, ref fieldRect, 3f / 7);
-            if(field.FieldType == typeof(String))
+            /*
+            var objfields = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
+                    field => Attribute.IsDefined(field, typeof(Persistent)));
+                    foreach (FieldInfo fi in objfields)
+                        */
+            /*if(field.FieldType == typeof(String))
             {
                 GUI.Label(labelRect, field.Name);
                 GUI.TextField(fieldRect, field.GetValue(obj).ToString());
@@ -153,131 +148,147 @@ namespace EveManager
                 GUI.TextField(fieldRect, ((float)field.GetValue(obj)).ToString("F3"));
                 placement.y++;
             }
-            else
-            {
-                GUIStyle gsCenter = new GUIStyle(GUI.skin.label);
-                gsCenter.alignment = TextAnchor.MiddleCenter;
-                
-                Rect boxRect = GetSplitRect(placementBase, ref placement, field);
-                GUI.Box(boxRect, "");
-                placement.height = 1;
-                Rect titleRect = GetSplitRect(placementBase, ref placement);
-
-                Rect boxPlacementBase = new Rect(placementBase);
-                boxPlacementBase.x += 10;
-                Rect boxPlacement = new Rect(placement);
-                boxPlacement.width -= 20;
-                GUI.Label(titleRect, field.Name, gsCenter);
-                boxPlacement.y++;
-
-                var objfields = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
-                f => Attribute.IsDefined(f, typeof(Persistent)));
-                foreach (FieldInfo fi in objfields)
-                {
-                    HandleGUI(field.GetValue(obj), fi, boxPlacementBase, ref boxPlacement);
-                }
-                placement.y = boxPlacement.y;
-                placement.x = boxPlacement.x;
-            }
-        }
-
-        public void DrawBodySelector(Rect placementBase, ref Rect placement)
-        {
-            CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
-            GUIStyle gsCenter = new GUIStyle(GUI.skin.label);
-            gsCenter.alignment = TextAnchor.MiddleCenter;
-
-            currentBody = GetMapBody();
-                
-            Rect leftRect = GetSplitRect(placementBase, ref placement);
-            Rect centerRect = GetSplitRect(placementBase, ref placement);
-            Rect rightRect = GetSplitRect(placementBase, ref placement);
-            SplitRect(ref leftRect, ref centerRect, 1f / 4);
-            SplitRect(ref centerRect, ref rightRect, 2f / 3);
-            if (MapView.MapIsEnabled || HighLogic.LoadedScene == GameScenes.TRACKSTATION)
-            {
-                if (GUI.Button(leftRect, "<"))
-                {
-                    selectedBodyIndex--;
-                    if (selectedBodyIndex < 0)
-                    {
-                        selectedBodyIndex = celestialBodies.Length - 1;
-                    }
-                    currentBody = celestialBodies[selectedBodyIndex];
-                    MapView.MapCamera.SetTarget(currentBody.bodyName);
-                }
-                if (GUI.Button(rightRect, ">"))
-                {
-                    selectedBodyIndex++;
-                    if (selectedBodyIndex >= celestialBodies.Length)
-                    {
-                        selectedBodyIndex = 0;
-                    }
-                    currentBody = celestialBodies[selectedBodyIndex];
-                    MapView.MapCamera.SetTarget(currentBody.bodyName);
-                }
-            }
-            else
-            {
-                if (FlightGlobals.currentMainBody != null)
-                {
-                    currentBody = FlightGlobals.currentMainBody;
-                    selectedBodyIndex = Array.FindIndex<CelestialBody>(celestialBodies, cb => cb.name == currentBody.name);
-                }
-            }
-            if (currentBody != null)
-            {
-                GUI.Label(centerRect, currentBody.bodyName, gsCenter);
-            }
-            placement.y++;
-        }
-
-        private CelestialBody GetMapBody()
-        {
-            if (MapView.MapIsEnabled)
-            {
-                MapObject target = MapView.MapCamera.target;
-                switch (target.type)
-                {
-                    case MapObject.MapObjectType.CELESTIALBODY:
-                        return target.celestialBody;
-                    case MapObject.MapObjectType.MANEUVERNODE:
-                        return target.maneuverNode.patch.referenceBody;
-                    case MapObject.MapObjectType.VESSEL:
-                        return target.vessel.mainBody;
-                }
-            }
-            else
-            {
-                return currentBody = FlightGlobals.currentMainBody;
-            }
-            return null;
-        }
-
-        public override void DrawGUI(Rect placementBase)
-        {
-            Rect placement = new Rect(0, 0, 0, 1);
-            DrawBodySelector(placementBase, ref placement);
-
-            var fields = this.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
-                field => Attribute.IsDefined(field, typeof(Persistent)));
-            foreach(FieldInfo fi in fields)
-            {
-                HandleGUI(this, fi, placementBase, ref placement);
-            }
+             */
             
-            foreach(T obj in ObjectList)
+            var objfields = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
+                    field => Attribute.IsDefined(field, typeof(Persistent)));
+            foreach (FieldInfo field in objfields)
             {
-                var objfields = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
-                field => Attribute.IsDefined(field, typeof(Persistent)));
-                foreach (FieldInfo fi in objfields)
+                bool isNode = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
+                    fi => Attribute.IsDefined(fi, typeof(Persistent))).Count() > 0 ? true : false;
+
+                if(!isNode)
                 {
-                    if (fi.Name != "body")
+                    if (field.Name != "body")
                     {
-                        HandleGUI(obj, fi, placementBase, ref placement);
+                        String value = configNode.GetValue(field.Name);
+                        if(value == null)
+                        {
+                            value = ConfigNode.CreateConfigFromObject(obj, new ConfigNode("TMP")).GetValue(field.Name);
+                            configNode.AddValue(field.Name, value);
+                        }
+                        
+                        Rect labelRect = GUIHelper.GetSplitRect(placementBase, ref placement);
+                        Rect fieldRect = GUIHelper.GetSplitRect(placementBase, ref placement);
+                        GUIHelper.SplitRect(ref labelRect, ref fieldRect, 3f / 7);
+                        GUI.Label(labelRect, field.Name);
+                        value = GUI.TextField(fieldRect, value);
+                        configNode.SetValue(field.Name, value);
+                        placement.y++;
                     }
                 }
+                else
+                {
+                    bool isOptional = Attribute.IsDefined(field, typeof(Optional));
+                    ConfigNode node = configNode.GetNode(field.Name);
+                    GUIStyle gsRight = new GUIStyle(GUI.skin.label);
+                    gsRight.alignment = TextAnchor.MiddleCenter;
+
+                    Rect boxRect = GUIHelper.GetSplitRect(placementBase, ref placement, node);
+                    GUI.Box(boxRect, "");
+                    placement.height = 1;
+
+                    Rect boxPlacementBase = new Rect(placementBase);
+                    boxPlacementBase.x += 10;
+                    Rect boxPlacement = new Rect(placement);
+                    boxPlacement.width -= 20;
+
+                    Rect toggleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
+                    Rect titleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
+                    GUIHelper.SplitRect(ref toggleRect, ref titleRect, (1f / 16));
+
+                    GUI.Label(titleRect, field.Name);
+                    bool removeable = node == null ? false : true;
+                    if (isOptional)
+                    {
+                        if(removeable != GUI.Toggle(toggleRect, removeable, ""))
+                        {
+                            if(removeable)
+                            {
+                                configNode.RemoveNode(field.Name);
+                                node = null;
+                            }
+                            else
+                            {
+                                node = configNode.AddNode(new ConfigNode(field.Name));
+                            }
+                        }
+                    }
+                    else if(node == null)
+                    {
+                        
+                        node = configNode.AddNode(new ConfigNode(field.Name));
+                    }
+                    float height = boxPlacement.y + 1;
+                    if(node != null)
+                    {
+                        height = boxPlacement.y + GUIHelper.GetFieldCount(node) + .25f;
+                        boxPlacement.y++;
+
+                        object subObj = field.GetValue(obj);
+                        if(subObj == null)
+                        {
+                            ConstructorInfo ctor = field.FieldType.GetConstructor(System.Type.EmptyTypes);
+                            subObj = ctor.Invoke(null);
+                        }
+                        
+                        HandleGUI(subObj, node, boxPlacementBase, ref boxPlacement);
+                        
+                    }
+
+                    placement.y = height;
+                    placement.x = boxPlacement.x;
+                }
             }
+        }
+
+        public override void DrawGUI(Rect placementBase, Rect placement)
+        {
+            string body = null;
+            T objEdit = default(T);
+            
+            ConfigWrapper selectedConfig = GUIHelper.DrawSelector<ConfigWrapper>(ConfigFiles, ref selectedConfigIndex, 16, placementBase, ref placement);
+
+            if ((objectType & ObjectType.PLANET) == ObjectType.PLANET)
+            {
+                body = GUIHelper.DrawBodySelector(placementBase, ref placement);
+            }
+
+            if ((objectType & ObjectType.MULTIPLE) == ObjectType.MULTIPLE)
+            {
+                T removed = default(T);
+                List<T> list = ObjectList.Where(n => selectedConfig.Node.GetNode(body).HasNodeID(n.ConfigNode.id)).ToList();
+                objEdit = GUIHelper.DrawObjectSelector<T>(list, ref removed, ref selectedObjIndex, ref objNameEditString, ref objListPos, placementBase, ref placement);
+                foreach(T item in list)
+                {
+                    if (ObjectList.Contains(item))
+                    {
+                        ObjectList.Remove(item);
+                    }
+                    ObjectList.Add(item);
+                }
+                if (objEdit != null && objEdit.ConfigNode == null)
+                {
+                    objEdit.LoadConfigNode(selectedConfig.Node.AddNode(new ConfigNode(objNameEditString)), body);
+                }
+                if(removed != null)
+                {
+                    selectedConfig.Node.GetNode(body).RemoveNode(removed.Name);
+                    ObjectList.Remove(removed);
+                }
+            }
+            else
+            {
+                objEdit = ObjectList.First(o => o.Body == body);
+            }
+
+            if (this.configNode != null)
+            {
+                HandleGUI(this, this.configNode, placementBase, ref placement);
+            }
+
+            HandleGUI(objEdit, objEdit.ConfigNode, placementBase, ref placement);
+            
         }
 
         protected void OnGUI()

@@ -50,6 +50,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GUIHelper.cs" />
     <Compile Include="HalfSphere.cs" />
     <Compile Include="HexSeg.cs" />
     <Compile Include="IsoSphere.cs" />

@@ -57,6 +57,10 @@
       <Project>{499e8c5c-c83e-4aea-bb01-eed705bd747f}</Project>
       <Name>EveManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Geometry\Utils.csproj">
+      <Project>{8b24314b-4b75-43f3-b31c-ffa9fc83fb70}</Project>
+      <Name>Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

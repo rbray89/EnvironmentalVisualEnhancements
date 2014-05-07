@@ -20,16 +20,19 @@ namespace CityLights
 
     public class CityLightsObject : IEVEObject
     {
+        public String Name { get { return body; } }
+        public ConfigNode ConfigNode { get { return node; } }
+        public String Body { get { return body; } }
         private String body;
         private ConfigNode node;
         [Persistent]
         CityLightsMaterial cityLightsMaterial = null;
 
-        public void LoadConfigNode(ConfigNode node)
+        public void LoadConfigNode(ConfigNode node, String body)
         {
-            this.node = node;
             ConfigNode.LoadObjectFromConfig(this, node);
-            body = node.name;
+            this.node = node;
+            this.body = body;
         }
         public ConfigNode GetConfigNode()
         {
