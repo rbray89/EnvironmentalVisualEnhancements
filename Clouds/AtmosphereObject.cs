@@ -81,11 +81,12 @@ namespace Atmosphere
             if (celestialBody != null && celestialBody.pqsController != null)
             {
                 this.transform.parent = celestialBody.pqsController.transform;
-            }
-            if (this.sphere != null && sphere.isActive)
-            {
-                OnSphereActive();
-            }
+                sphere = celestialBody.pqsController;
+                if(sphere.isActive)
+                {
+                    this.OnSphereActive();
+                }
+            }            
         }
 
         public void Remove()
