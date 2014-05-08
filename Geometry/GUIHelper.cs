@@ -9,12 +9,12 @@ namespace Utils
 {
     public interface INamed
     {
-        String Name { get; }
+        String Name { get; set; }
     }
 
     public class ConfigWrapper : INamed
     {
-        public String Name{get{return name;}}
+        public String Name { get { return name; } set { } }
         public ConfigNode Node { get { return node; } }
         string name;
         ConfigNode node;
@@ -190,26 +190,33 @@ namespace Utils
             }
 
             objListPos = GUI.BeginScrollView(selectBoxRect, objListPos, selectBoxItemsRect);
+            int oldselectedObjIndex = selectedObjIndex;
+            if (selectedObjIndex == -1)
+            {
+                selectedObjIndex = 0;
+            }
             selectedObjIndex = GUI.SelectionGrid(selectBoxItemsRect, selectedObjIndex, objList, 1);
             GUI.EndScrollView();
             placement.y += 4;
 
             optButtonRect.x -= 5;
             optButtonRect.y += 10;
-            if (GUI.Button(optButtonRect, "^") && selectedObjIndex > 0)
+            if (objectList.Count > 0)
             {
-                T item = objectList[selectedObjIndex];
-                objectList.Remove(item);
-                objectList.Insert(--selectedObjIndex, item);
+                if (GUI.Button(optButtonRect, "^") && selectedObjIndex > 0)
+                {
+                    T item = objectList[selectedObjIndex];
+                    objectList.Remove(item);
+                    objectList.Insert(--selectedObjIndex, item);
+                }
+                optButtonRect.y += 60;
+                if (GUI.Button(optButtonRect, "v") && selectedObjIndex < objectList.Count - 1)
+                {
+                    T item = objectList[selectedObjIndex];
+                    objectList.Remove(item);
+                    objectList.Insert(++selectedObjIndex, item);
+                }
             }
-            optButtonRect.y += 60;
-            if (GUI.Button(optButtonRect, "v") && selectedObjIndex < objectList.Count - 1)
-            {
-                T item = objectList[selectedObjIndex];
-                objectList.Remove(item);
-                objectList.Insert(++selectedObjIndex, item);
-            }
-
             Rect listEditTextRect = GetSplitRect(placementBase, ref placement);
             listEditTextRect.x += 10;
             listEditTextRect.width -= 20;
@@ -228,13 +235,17 @@ namespace Utils
             listAddRect.width -= 5;
             listRemoveRect.width -= 5;
 
+            if (selectedObjIndex != oldselectedObjIndex && objectList.Count > 0)
+            {
+                objString = objectList[selectedObjIndex].Name;
+            }
             objString = GUI.TextField(listEditTextRect, objString);
             String name = objString;
-            if (objString.Length > 0 && !objString.Contains(' ') && objectList.Find(o => o.Name == name) == null)
+            if (objString.Length > 0 && !objString.Contains(' ') && (objectList.Count == 0 || objectList.Find(o => o.Name == name) == null))
             {
-                if(GUI.Button(listEditRect, "Edit"))
+                if(objectList.Count > 0 && GUI.Button(listEditRect, "Edit"))
                 {
-
+                    objectList[selectedObjIndex].Name = objString;
                 }
                 if(GUI.Button(listAddRect, "Add"))
                 {
@@ -247,13 +258,13 @@ namespace Utils
                 listEditRect.width += listAddRect.width;
                 GUI.Label(listEditRect, "Invalid Name!");
             }
-            if(GUI.Button(listRemoveRect, "Remove"))
+            if (objectList.Count > 0 && GUI.Button(listRemoveRect, "Remove"))
             {
                 T item = objectList[selectedObjIndex];
                 objectList.Remove(item);
-                if(selectedObjIndex >= objectList.Count && selectedObjIndex > 0)
+                if(selectedObjIndex >= objectList.Count)
                 {
-                    selectedObjIndex--;
+                    selectedObjIndex = objectList.Count -1;
                 }
                 removed = item;
             }

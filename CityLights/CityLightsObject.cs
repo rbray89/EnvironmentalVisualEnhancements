@@ -20,7 +20,7 @@ namespace CityLights
 
     public class CityLightsObject : IEVEObject
     {
-        public String Name { get { return body; } }
+        public String Name { get { return body; } set { } }
         public ConfigNode ConfigNode { get { return node; } }
         public String Body { get { return body; } }
         private String body;

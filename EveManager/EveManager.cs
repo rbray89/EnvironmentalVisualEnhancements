@@ -19,7 +19,7 @@ namespace EveManager
         public static int MAINOFFSET_PROPERTY;
 
 
-        public String Name { get { return this.GetType().Name; } }
+        public String Name { get { return this.GetType().Name; } set { } }
 
         private void Awake()
         {

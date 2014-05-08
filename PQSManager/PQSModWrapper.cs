@@ -8,7 +8,7 @@ namespace PQSManager
 {
     public class PQSModWrapper : IEVEObject
     {
-        public String Name { get { return null; } }
+        public String Name { get { return null; } set { } }
         static List<PQS> fakePQSList = new List<PQS>();
         public ConfigNode ConfigNode { get { return null; } }
         public String Body { get { return null; } }

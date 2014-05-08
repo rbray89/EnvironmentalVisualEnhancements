@@ -12,10 +12,14 @@ namespace Atmosphere
 {
     public class Clouds2DMaterial : MaterialManager
     {
+        public Vector2 MainOffset { get { return _MainOffset;} }
+
         [Persistent] 
         Color _Color = new Color(1,1,1,1);
         [Persistent]
         String _MainTex = "";
+        [Persistent]
+        Vector3 _MainOffset = new Vector3(0, 0, 0);
         [Persistent]
         String _DetailTex = "";
         [Persistent]
@@ -119,7 +123,7 @@ namespace Atmosphere
             double ut = Planetarium.GetUniversalTime();
             double x = (ut * mainPeriodOffset);
             x -= (int)x;
-            CloudMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, new Vector2((float)x, (float)0));
+            CloudMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, new Vector2((float)x+cloudMaterial.MainOffset.x, cloudMaterial.MainOffset.y));
         }
     }
 }
