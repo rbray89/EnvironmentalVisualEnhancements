@@ -35,8 +35,6 @@ namespace Atmosphere
         [Persistent]
         String texture;
         [Persistent]
-        float speed;
-        [Persistent]
         particleVolumeMaterial particleMaterial;
 
         Material ParticleMaterial;
@@ -59,7 +57,7 @@ namespace Atmosphere
             }
         }
 
-        public void Apply(float radius, Transform parent)
+        public void Apply(float radius, float speed, Transform parent)
         {
             Remove();
             ParticleMaterial = new Material(ParticleCloudShader);

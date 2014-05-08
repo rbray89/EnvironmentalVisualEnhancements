@@ -25,6 +25,7 @@ namespace Utils
                     {
                         texture.wrapMode = TextureWrapMode.Clamp;
                     }
+
                     material.SetTexture(name, texture);
                 }
                 //float

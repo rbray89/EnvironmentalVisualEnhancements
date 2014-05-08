@@ -1,10 +1,10 @@
 ﻿using Utils;
-using OverlaySystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using EveManager;
 
 namespace Atmosphere
 {
@@ -38,7 +38,7 @@ namespace Atmosphere
             particle.transform.localRotation = Quaternion.Euler(x, y, z);
 
             particle.transform.localScale = Vector3.one;
-            particle.layer = OverlayMgr.MACRO_LAYER;
+            particle.layer = EVEManagerClass.MACRO_LAYER;
 
             Vector3 up = particle.transform.InverseTransformDirection(worldUp);
             Quad.Create(particle, Random.Next(2500, 4500), Color.white, up);

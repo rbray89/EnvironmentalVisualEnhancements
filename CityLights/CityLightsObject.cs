@@ -11,11 +11,13 @@ namespace CityLights
     public class CityLightsMaterial : MaterialManager
     {
         [Persistent]
-        String _DarkOverlayTex = "";
+        String _CityOverlayTex = "";
         [Persistent]
-        String _DarkOverlayDetailTex = "";
+        float _CityOverlayDetailScale = 80f;
         [Persistent]
-        float _DarkOverlayDetailScale = 80f;
+        String _CityDarkOverlayDetailTex = "";
+        [Persistent]
+        String _CityLightOverlayDetailTex = "";
     }
 
     public class CityLightsObject : IEVEObject

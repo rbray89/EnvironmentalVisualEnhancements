@@ -54,7 +54,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Geometry\Utils.csproj">
+    <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{8b24314b-4b75-43f3-b31c-ffa9fc83fb70}</Project>
       <Name>Utils</Name>
     </ProjectReference>

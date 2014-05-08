@@ -18,6 +18,8 @@ namespace Atmosphere
         private String body;
         [Persistent]
         float altitude = 1000f;
+        [Persistent]
+        float speed = 30;
         [Persistent, Optional]
         CloudsVolume layerVolume = null;
         [Persistent, Optional]
@@ -41,11 +43,11 @@ namespace Atmosphere
             CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
             if (layer2D != null)
             {
-                layer2D.Apply((float)celestialBody.Radius + altitude, celestialBody.transform);
+                layer2D.Apply((float)celestialBody.Radius + altitude, speed, celestialBody.transform);
             }
             if (layerVolume != null)
             {
-                layerVolume.Apply((float)celestialBody.Radius + altitude, celestialBody.transform);
+                layerVolume.Apply((float)celestialBody.Radius + altitude, speed, celestialBody.transform);
             }
         }
         public override void OnSphereInactive()

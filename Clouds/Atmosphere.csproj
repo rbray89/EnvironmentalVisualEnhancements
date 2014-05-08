@@ -66,15 +66,11 @@
     <None Include="Shaders\CloudParticle.shader" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CommonUtils\OverlayManager.csproj">
-      <Project>{6b877ddf-ebc6-4efd-a0f7-01f7cad8cf87}</Project>
-      <Name>OverlayManager</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EveManager\EveManager.csproj">
       <Project>{499e8c5c-c83e-4aea-bb01-eed705bd747f}</Project>
       <Name>EveManager</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Geometry\Utils.csproj">
+    <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{8b24314b-4b75-43f3-b31c-ffa9fc83fb70}</Project>
       <Name>Utils</Name>
     </ProjectReference>

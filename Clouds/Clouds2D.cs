@@ -46,8 +46,7 @@ namespace Atmosphere
     {
         GameObject CloudMesh;
         Material CloudMaterial;
-        [Persistent]
-        float speed;
+
         [Persistent]
         float detailSpeed;
         [Persistent]
@@ -69,7 +68,7 @@ namespace Atmosphere
                 } return cloudShader;
             }
         }
-        public void Apply(float radius, Transform parent)
+        public void Apply(float radius, float speed, Transform parent)
         {
             Remove();
             CloudMaterial = new Material(CloudShader);
