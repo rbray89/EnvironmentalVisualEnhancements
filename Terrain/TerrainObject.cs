@@ -135,7 +135,15 @@ namespace Terrain
                 if (mr != null)
                 {
                     mainTexture = mr.material.mainTexture;
-                    mr.material = new Material(PlanetShader);
+                    mr.material.shader = new Material(PlanetShader).shader;
+                    if (planetMaterial == null)
+                    {
+                        terrainMaterial.ApplyMaterialProperties(mr.material);
+                    }
+                    else
+                    {
+                        planetMaterial.ApplyMaterialProperties(mr.material);
+                    }
                 }
                 pqsContainer = new GameObject("PQSTangentAssigner");
                 pqsContainer.AddComponent<PQSTangentAssigner>();

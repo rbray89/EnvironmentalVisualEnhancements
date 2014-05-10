@@ -94,10 +94,9 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	   	   o.sphereNormal = -normalize(v.tangent);
 	   	   o.color = v.color;
 					
-			o.normal = v.normal;
+		   o.normal = v.normal;
     
-    		TRANSFER_VERTEX_TO_FRAGMENT(o);                 // Macro to send shadow & attenuation to the fragment shader.
-    
+    	   TRANSFER_VERTEX_TO_FRAGMENT(o);
 	   	   return o;
 	 	}
 	 	
@@ -245,5 +244,5 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
         }
 	} 
 	
-	FallBack "VertexLit"    // Use VertexLit's shadow caster/receiver passes.
+	FallBack "VertexLit"
 }

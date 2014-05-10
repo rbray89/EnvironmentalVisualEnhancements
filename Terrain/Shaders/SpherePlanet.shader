@@ -67,19 +67,17 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		
 		struct appdata_t {
 				float4 vertex : POSITION;
-				fixed4 color : COLOR;
 				float3 normal : NORMAL;
 			};
 
 		struct v2f {
 			float4 pos : SV_POSITION;
 			float  viewDist : TEXCOORD0;
-			float4 color : TEXCOORD1;
+			float3 viewDir : TEXCOORD1;
 			float3 normal : TEXCOORD2;
 			LIGHTING_COORDS(3,4)
 			float3 worldNormal : TEXCOORD5;
 			float3 sphereNormal : TEXCOORD6;
-			float3 viewDir : TEXCOORD7;
 		};	
 		
 
@@ -91,13 +89,15 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
 	   	   
-	   	   o.worldNormal = mul( _Object2World, float4( v.normal, 0.0 ) ).xyz;
+	   	   half3 nrm = normalize(v.normal);
+
+		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
+	   	   o.worldNormal = normalize(vertexPos-origin);
 	   	   o.sphereNormal = -normalize(v.vertex);
-	   	   o.color = v.color;
-		   o.viewDir = normalize(UNITY_MATRIX_MV[2].xyz);
-		   o.normal = v.normal;
+		   o.viewDir = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, v.vertex).xyz);
+		   o.normal = nrm;
     
-    	   TRANSFER_VERTEX_TO_FRAGMENT(o);                 // Macro to send shadow & attenuation to the fragment shader.
+    	   TRANSFER_VERTEX_TO_FRAGMENT(o);
     
 	   	   return o;
 	 	}
@@ -149,7 +149,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half4 detail = lerp(detailZ, detailX, sphereNrm.x);
 			detail = lerp(detail, detailY, sphereNrm.y);
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
-			color = main.rgba * lerp(detail.rgba, 1, detailLevel)*IN.color;
+			color = main.rgba * lerp(detail.rgba, 1, detailLevel);
 			#ifdef CITYOVERLAY_ON
 			detail = lerp(citydarkoverlaydetailZ, citydarkoverlaydetailX, sphereNrm.x);
 			detail = lerp(detail, citydarkoverlaydetailY, sphereNrm.y);
@@ -197,5 +197,5 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		
 	} 
 	
-	FallBack "VertexLit"    // Use VertexLit's shadow caster/receiver passes.
+	FallBack "VertexLit"
 }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 using Utils;
 
 namespace CityLights
@@ -49,6 +50,16 @@ namespace CityLights
                 celestialBody.pqsController.surfaceMaterial.EnableKeyword("CITYOVERLAY_ON");
                 cityLightsMaterial.ApplyMaterialProperties(celestialBody.pqsController.surfaceMaterial);
             }
+            Transform transform = EVEManagerClass.GetScaledTransform(body);
+            if (transform != null)
+            {
+                MeshRenderer mr = (MeshRenderer)transform.GetComponent(typeof(MeshRenderer));
+                if (mr != null)
+                {
+                    mr.material.EnableKeyword("CITYOVERLAY_ON");
+                    cityLightsMaterial.ApplyMaterialProperties(mr.material);
+                }
+            }
         }
 
         public void Remove()
@@ -57,6 +68,15 @@ namespace CityLights
             if (celestialBody != null)
             {
                 celestialBody.pqsController.surfaceMaterial.DisableKeyword("CITYOVERLAY_ON");
+            }
+            Transform transform = EVEManagerClass.GetScaledTransform(body);
+            if (transform != null)
+            {
+                MeshRenderer mr = (MeshRenderer)transform.GetComponent(typeof(MeshRenderer));
+                if (mr != null)
+                {
+                    mr.material.DisableKeyword("CITYOVERLAY_ON");
+                }
             }
         }
     }
