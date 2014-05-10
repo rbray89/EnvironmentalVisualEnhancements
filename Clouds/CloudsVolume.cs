@@ -1,4 +1,4 @@
-﻿using EveManager;
+﻿using EVEManager;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -50,9 +50,7 @@ namespace Atmosphere
                 if (particleCloudShader == null)
                 {
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Atmosphere.Shaders.Compiled-CloudParticle.shader"));
-                    String shaderTxt = shaderStreamReader.ReadToEnd();
-                    particleCloudShader = new Material(shaderTxt).shader;
+                    particleCloudShader = EVEManagerClass.GetShader(assembly, "Atmosphere.Shaders.Compiled-CloudParticle.shader");
                 } return particleCloudShader;
             }
         }

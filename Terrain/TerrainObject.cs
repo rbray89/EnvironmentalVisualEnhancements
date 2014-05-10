@@ -1,4 +1,4 @@
-﻿using EveManager;
+﻿using EVEManager;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -51,6 +51,28 @@ namespace Terrain
         float _MinLight = .5f;
     }
 
+    public class PlanetMaterial : MaterialManager
+    {
+        [Persistent]
+        Color _Color = Color.white;
+        [Persistent]
+        Color _SpecColor = Color.white;
+        [Persistent]
+		float _Shininess = 10;
+        [Persistent]
+        String _DetailTex = "";
+        [Persistent]
+        String _DetailVertTex = "";
+        [Persistent]
+        float _DetailScale = 4000f;
+        [Persistent]
+        float _DetailVertScale = 200f;
+        [Persistent]
+        float _DetailDist = 0.00875f;
+        [Persistent]
+        float _MinLight = .5f;
+    }
+
     public class TerrainObject : IEVEObject
     {
         public String Name { get { return body; } set { } }
@@ -58,23 +80,37 @@ namespace Terrain
         public String Body { get { return body; } }
         private String body;
         private ConfigNode node;
-        [Persistent] TerrainMaterial terrainMaterial = null;
-        private static Shader originalShader;
+        [Persistent] 
+        TerrainMaterial terrainMaterial = null;
+        [Persistent]
+        PlanetMaterial planetMaterial = null;
+
+        private GameObject pqsContainer;
+        private Shader originalShader;
+        private static Shader planetShader = null;
         private static Shader terrainShader = null;
+        private static Shader PlanetShader
+        {
+            get
+            {
+                if (planetShader == null)
+                {
+                    Assembly assembly = Assembly.GetExecutingAssembly();
+                    planetShader = EVEManagerClass.GetShader(assembly, "Terrain.Shaders.Compiled-SpherePlanet.shader");
+                } return planetShader;
+            }
+        }
         private static Shader TerrainShader
         {
             get
             {
                 if (terrainShader == null)
                 {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream("Terrain.Shaders.Compiled-SphereTerrain.shader"));
-            String shaderTxt = shaderStreamReader.ReadToEnd();
-            terrainShader = new Material(shaderTxt).shader;
+                    Assembly assembly = Assembly.GetExecutingAssembly();
+                    terrainShader = EVEManagerClass.GetShader(assembly, "Terrain.Shaders.Compiled-SphereTerrain.shader");
                 } return terrainShader;
             }
         }
-
         public void LoadConfigNode(ConfigNode node, String body)
         {
             ConfigNode.LoadObjectFromConfig(this, node);
@@ -99,10 +135,11 @@ namespace Terrain
                 if (mr != null)
                 {
                     mainTexture = mr.material.mainTexture;
+                    mr.material = new Material(PlanetShader);
                 }
-                GameObject go = new GameObject("PQSTangentAssigner");
-                go.AddComponent<PQSTangentAssigner>();
-                go.transform.parent = pqs.transform;
+                pqsContainer = new GameObject("PQSTangentAssigner");
+                pqsContainer.AddComponent<PQSTangentAssigner>();
+                pqsContainer.transform.parent = pqs.transform;
 
                 originalShader = pqs.surfaceMaterial.shader;
                 pqs.surfaceMaterial.shader = TerrainShader;
@@ -118,6 +155,8 @@ namespace Terrain
             if (pqs != null)
             {
                 pqs.surfaceMaterial.shader = originalShader;
+                pqsContainer.transform.parent = null;
+                GameObject.Destroy(pqsContainer);
             }
         }
     }

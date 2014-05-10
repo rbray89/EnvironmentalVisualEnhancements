@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityLights", "CityLights\Ci
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Terrain", "Terrain\Terrain.csproj", "{00BDFD23-EC77-4876-AC73-11AA9124EA35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EveManager", "EveManager\EveManager.csproj", "{499E8C5C-C83E-4AEA-BB01-EED705BD747F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EVEManager", "EveManager\EVEManager.csproj", "{499E8C5C-C83E-4AEA-BB01-EED705BD747F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PQSManager", "PQSManager\PQSManager.csproj", "{BDC8381A-C16B-4FD1-AFB4-D30EA906E367}"
 EndProject

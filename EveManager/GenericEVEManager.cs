@@ -6,7 +6,7 @@ using System.Text;
 using UnityEngine;
 using Utils;
 
-namespace EveManager
+namespace EVEManager
 {
     public class Optional : System.Attribute
     {

@@ -7,8 +7,8 @@
     <ProjectGuid>{499E8C5C-C83E-4AEA-BB01-EED705BD747F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EveManager</RootNamespace>
-    <AssemblyName>EveManager</AssemblyName>
+    <RootNamespace>EVEManager</RootNamespace>
+    <AssemblyName>EVEManager</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

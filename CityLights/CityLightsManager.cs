@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using Utils;
-using EveManager;
+using EVEManager;
 using Terrain;
 
 namespace CityLights

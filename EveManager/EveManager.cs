@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
 using Utils;
 
-namespace EveManager
+namespace EVEManager
 {
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class EVEManagerClass : MonoBehaviour, INamed
@@ -51,6 +52,12 @@ namespace EveManager
             return transforms.Single(n => n.name == body);
         }
 
+        public static Shader GetShader(Assembly assembly, String resource)
+        {
+            StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream(resource));
+            String shaderTxt = shaderStreamReader.ReadToEnd();
+            return new Material(shaderTxt).shader;
+        }
         private GUISkin _mySkin;
         private Rect _mainWindowRect = new Rect(0, 0, 840, 800);
 

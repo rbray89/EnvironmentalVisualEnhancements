@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Utils;
 
-namespace EveManager
+namespace EVEManager
 {
     public interface IEVEObject : INamed
     {

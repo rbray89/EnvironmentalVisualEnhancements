@@ -150,6 +150,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
 			color = main.rgba * lerp(detail.rgba, 1, detailLevel)*IN.color;
 			#ifdef CITYOVERLAY_ON
+			cityoverlay.a *= saturate(floor(IN.color.a+.99));
 			detail = lerp(citydarkoverlaydetailZ, citydarkoverlaydetailX, sphereNrm.x);
 			detail = lerp(detail, citydarkoverlaydetailY, sphereNrm.y);
 			half4 citydarkoverlay = cityoverlay*detail;
