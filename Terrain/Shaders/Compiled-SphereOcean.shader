@@ -13,12 +13,12 @@
 	
 SubShader {
 
-Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "OceanReplace"="True"}
+Tags { "Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="TransparentOcean" "OceanReplace"="True"}
 	Blend SrcAlpha OneMinusSrcAlpha
 	Fog { Mode Global}
 	AlphaTest Greater 0
 	ColorMask RGB
-	Cull Back Lighting On ZWrite Off
+	Cull Back Lighting On ZWrite On
 	
 	Pass {
 
@@ -173,7 +173,7 @@ void main ()
   vec3 i_20;
   i_20 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  color_2.w = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -487,7 +487,7 @@ void main ()
   tmpvar_57 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_57;
   highp float tmpvar_58;
-  tmpvar_58 = mix (0.8, tmpvar_57, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_58 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_57, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_58;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -734,7 +734,7 @@ void main ()
   tmpvar_57 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_57;
   highp float tmpvar_58;
-  tmpvar_58 = mix (0.8, tmpvar_57, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_58 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_57, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_58;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -1265,7 +1265,8 @@ lowp vec4 frag( in v2f IN ) {
     depth -= IN.scrPos.z;
     depth = xll_saturate_f((_Clarity * depth));
     #line 489
-    color.w = mix( 0.8, depth, satDepth);
+    highp float refrac = (1.0 - (0.75 * dot( IN.viewDir, IN.worldNormal)));
+    color.w = mix( refrac, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -1434,7 +1435,7 @@ void main ()
   vec3 i_19;
   i_19 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot ((i_19 - (2.0 * (dot (xlv_TEXCOORD2, i_19) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  color_2.w = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -1732,7 +1733,7 @@ void main ()
   tmpvar_55 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_55;
   highp float tmpvar_56;
-  tmpvar_56 = mix (0.8, tmpvar_55, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_56 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_55, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_56;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -1970,7 +1971,7 @@ void main ()
   tmpvar_55 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_55;
   highp float tmpvar_56;
-  tmpvar_56 = mix (0.8, tmpvar_55, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_56 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_55, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_56;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -2489,7 +2490,9 @@ lowp vec4 frag( in v2f IN ) {
     #line 483
     depth -= IN.scrPos.z;
     depth = xll_saturate_f((_Clarity * depth));
-    color.w = mix( 0.8, depth, satDepth);
+    highp float refrac = (1.0 - (0.75 * dot( IN.viewDir, IN.worldNormal)));
+    color.w = mix( refrac, depth, satDepth);
+    #line 487
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -2664,7 +2667,7 @@ void main ()
   vec3 i_20;
   i_20 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  color_2.w = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -2988,7 +2991,7 @@ void main ()
   tmpvar_61 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_61;
   highp float tmpvar_62;
-  tmpvar_62 = mix (0.8, tmpvar_61, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_62 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_61, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_62;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -3244,7 +3247,7 @@ void main ()
   tmpvar_61 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_61;
   highp float tmpvar_62;
-  tmpvar_62 = mix (0.8, tmpvar_61, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_62 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_61, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_62;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -3787,7 +3790,8 @@ lowp vec4 frag( in v2f IN ) {
     depth -= IN.scrPos.z;
     depth = xll_saturate_f((_Clarity * depth));
     #line 498
-    color.w = mix( 0.8, depth, satDepth);
+    highp float refrac = (1.0 - (0.75 * dot( IN.viewDir, IN.worldNormal)));
+    color.w = mix( refrac, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -3964,7 +3968,7 @@ void main ()
   vec3 i_20;
   i_20 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  color_2.w = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -4279,7 +4283,7 @@ void main ()
   tmpvar_57 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_57;
   highp float tmpvar_58;
-  tmpvar_58 = mix (0.8, tmpvar_57, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_58 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_57, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_58;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -4527,7 +4531,7 @@ void main ()
   tmpvar_57 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_57;
   highp float tmpvar_58;
-  tmpvar_58 = mix (0.8, tmpvar_57, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_58 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_57, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_58;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -5060,7 +5064,8 @@ lowp vec4 frag( in v2f IN ) {
     depth -= IN.scrPos.z;
     depth = xll_saturate_f((_Clarity * depth));
     #line 490
-    color.w = mix( 0.8, depth, satDepth);
+    highp float refrac = (1.0 - (0.75 * dot( IN.viewDir, IN.worldNormal)));
+    color.w = mix( refrac, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -5236,7 +5241,7 @@ void main ()
   vec3 i_20;
   i_20 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  color_2.w = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -5547,7 +5552,7 @@ void main ()
   tmpvar_56 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_56;
   highp float tmpvar_57;
-  tmpvar_57 = mix (0.8, tmpvar_56, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_57 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_56, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_57;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -5792,7 +5797,7 @@ void main ()
   tmpvar_56 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_56;
   highp float tmpvar_57;
-  tmpvar_57 = mix (0.8, tmpvar_56, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_57 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_56, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_57;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -6323,7 +6328,8 @@ lowp vec4 frag( in v2f IN ) {
     depth -= IN.scrPos.z;
     depth = xll_saturate_f((_Clarity * depth));
     #line 489
-    color.w = mix( 0.8, depth, satDepth);
+    highp float refrac = (1.0 - (0.75 * dot( IN.viewDir, IN.worldNormal)));
+    color.w = mix( refrac, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -6523,7 +6529,7 @@ void main ()
   vec3 i_26;
   i_26 = -(tmpvar_18.xyz);
   color_2.xyz = (tmpvar_17.xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_20) * 4.0) * tmpvar_25), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_25 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_26 - (2.0 * (dot (xlv_TEXCOORD2, i_26) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  color_2.w = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -6873,7 +6879,7 @@ void main ()
   tmpvar_66 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_66;
   highp float tmpvar_67;
-  tmpvar_67 = mix (0.8, tmpvar_66, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_67 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_66, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_67;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -7149,7 +7155,7 @@ void main ()
   tmpvar_66 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_66;
   highp float tmpvar_67;
-  tmpvar_67 = mix (0.8, tmpvar_66, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_67 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_66, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_67;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -7707,7 +7713,8 @@ lowp vec4 frag( in v2f IN ) {
     depth -= IN.scrPos.z;
     depth = xll_saturate_f((_Clarity * depth));
     #line 506
-    color.w = mix( 0.8, depth, satDepth);
+    highp float refrac = (1.0 - (0.75 * dot( IN.viewDir, IN.worldNormal)));
+    color.w = mix( refrac, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -7892,7 +7899,7 @@ void main ()
   vec3 i_20;
   i_20 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  color_2.w = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -8239,7 +8246,7 @@ void main ()
   tmpvar_65 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_65;
   highp float tmpvar_66;
-  tmpvar_66 = mix (0.8, tmpvar_65, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_66 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_65, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_66;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -8799,7 +8806,8 @@ lowp vec4 frag( in v2f IN ) {
     depth -= IN.scrPos.z;
     depth = xll_saturate_f((_Clarity * depth));
     #line 507
-    color.w = mix( 0.8, depth, satDepth);
+    highp float refrac = (1.0 - (0.75 * dot( IN.viewDir, IN.worldNormal)));
+    color.w = mix( refrac, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -8984,7 +8992,7 @@ void main ()
   vec3 i_20;
   i_20 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0) * tmpvar_19.x), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  color_2.w = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -9304,7 +9312,7 @@ void main ()
   tmpvar_61 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_61;
   highp float tmpvar_62;
-  tmpvar_62 = mix (0.8, tmpvar_61, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_62 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_61, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_62;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -9556,7 +9564,7 @@ void main ()
   tmpvar_56 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_56;
   highp float tmpvar_57;
-  tmpvar_57 = mix (0.8, tmpvar_56, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_57 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_56, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_57;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -10094,7 +10102,8 @@ lowp vec4 frag( in v2f IN ) {
     depth -= IN.scrPos.z;
     depth = xll_saturate_f((_Clarity * depth));
     #line 495
-    color.w = mix( 0.8, depth, satDepth);
+    highp float refrac = (1.0 - (0.75 * dot( IN.viewDir, IN.worldNormal)));
+    color.w = mix( refrac, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -10282,7 +10291,7 @@ void main ()
   vec3 i_20;
   i_20 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  color_2.w = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -10614,7 +10623,7 @@ void main ()
   tmpvar_62 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_62;
   highp float tmpvar_63;
-  tmpvar_63 = mix (0.8, tmpvar_62, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_63 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_62, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_63;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -10871,7 +10880,7 @@ void main ()
   tmpvar_56 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_56;
   highp float tmpvar_57;
-  tmpvar_57 = mix (0.8, tmpvar_56, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_57 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_56, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_57;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -11420,7 +11429,8 @@ lowp vec4 frag( in v2f IN ) {
     depth -= IN.scrPos.z;
     depth = xll_saturate_f((_Clarity * depth));
     #line 499
-    color.w = mix( 0.8, depth, satDepth);
+    highp float refrac = (1.0 - (0.75 * dot( IN.viewDir, IN.worldNormal)));
+    color.w = mix( refrac, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -11622,7 +11632,7 @@ void main ()
   vec3 i_26;
   i_26 = -(tmpvar_18.xyz);
   color_2.xyz = (tmpvar_17.xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_20) * 4.0) * tmpvar_25), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_25 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_26 - (2.0 * (dot (xlv_TEXCOORD2, i_26) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  color_2.w = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -11966,7 +11976,7 @@ void main ()
   tmpvar_65 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_65;
   highp float tmpvar_66;
-  tmpvar_66 = mix (0.8, tmpvar_65, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_66 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_65, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_66;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -12240,7 +12250,7 @@ void main ()
   tmpvar_65 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_65;
   highp float tmpvar_66;
-  tmpvar_66 = mix (0.8, tmpvar_65, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_66 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_65, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_66;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -12799,7 +12809,8 @@ lowp vec4 frag( in v2f IN ) {
     depth -= IN.scrPos.z;
     depth = xll_saturate_f((_Clarity * depth));
     #line 504
-    color.w = mix( 0.8, depth, satDepth);
+    highp float refrac = (1.0 - (0.75 * dot( IN.viewDir, IN.worldNormal)));
+    color.w = mix( refrac, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -13004,7 +13015,7 @@ void main ()
   vec3 i_27;
   i_27 = -(tmpvar_18.xyz);
   color_2.xyz = (tmpvar_17.xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_20) * 4.0) * tmpvar_26), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_26 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_27 - (2.0 * (dot (xlv_TEXCOORD2, i_27) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  color_2.w = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -13351,7 +13362,7 @@ void main ()
   tmpvar_66 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_66;
   highp float tmpvar_67;
-  tmpvar_67 = mix (0.8, tmpvar_66, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_67 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_66, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_67;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -13628,7 +13639,7 @@ void main ()
   tmpvar_66 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_66;
   highp float tmpvar_67;
-  tmpvar_67 = mix (0.8, tmpvar_66, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_67 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_66, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_67;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -14189,7 +14200,8 @@ lowp vec4 frag( in v2f IN ) {
     depth -= IN.scrPos.z;
     depth = xll_saturate_f((_Clarity * depth));
     #line 505
-    color.w = mix( 0.8, depth, satDepth);
+    highp float refrac = (1.0 - (0.75 * dot( IN.viewDir, IN.worldNormal)));
+    color.w = mix( refrac, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -14424,7 +14436,7 @@ void main ()
   vec3 i_33;
   i_33 = -(tmpvar_18.xyz);
   color_2.xyz = (tmpvar_17.xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_20) * 4.0) * tmpvar_32), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_32 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_33 - (2.0 * (dot (xlv_TEXCOORD2, i_33) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  color_2.w = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -14825,7 +14837,7 @@ void main ()
   tmpvar_82 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_82;
   highp float tmpvar_83;
-  tmpvar_83 = mix (0.8, tmpvar_82, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_83 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_82, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_83;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -15152,7 +15164,7 @@ void main ()
   tmpvar_82 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_82;
   highp float tmpvar_83;
-  tmpvar_83 = mix (0.8, tmpvar_82, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_83 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_82, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_83;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -15730,7 +15742,8 @@ lowp vec4 frag( in v2f IN ) {
     depth -= IN.scrPos.z;
     depth = xll_saturate_f((_Clarity * depth));
     #line 514
-    color.w = mix( 0.8, depth, satDepth);
+    highp float refrac = (1.0 - (0.75 * dot( IN.viewDir, IN.worldNormal)));
+    color.w = mix( refrac, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -15926,7 +15939,7 @@ void main ()
   vec3 i_23;
   i_23 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0) * tmpvar_22), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_22 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_23 - (2.0 * (dot (xlv_TEXCOORD2, i_23) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  color_2.w = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -16295,7 +16308,7 @@ void main ()
   tmpvar_74 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_74;
   highp float tmpvar_75;
-  tmpvar_75 = mix (0.8, tmpvar_74, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_75 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_74, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_75;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -16865,7 +16878,8 @@ lowp vec4 frag( in v2f IN ) {
     depth -= IN.scrPos.z;
     depth = xll_saturate_f((_Clarity * depth));
     #line 514
-    color.w = mix( 0.8, depth, satDepth);
+    highp float refrac = (1.0 - (0.75 * dot( IN.viewDir, IN.worldNormal)));
+    color.w = mix( refrac, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -17095,7 +17109,7 @@ void main ()
   vec3 i_31;
   i_31 = -(tmpvar_18.xyz);
   color_2.xyz = (tmpvar_17.xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_20) * 4.0) * tmpvar_30), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_30 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_31 - (2.0 * (dot (xlv_TEXCOORD2, i_31) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  color_2.w = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -17495,7 +17509,7 @@ void main ()
   tmpvar_84 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_84;
   highp float tmpvar_85;
-  tmpvar_85 = mix (0.8, tmpvar_84, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_85 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_84, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_85;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -17825,7 +17839,7 @@ void main ()
   tmpvar_84 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_84;
   highp float tmpvar_85;
-  tmpvar_85 = mix (0.8, tmpvar_84, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_85 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_84, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_85;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -18401,7 +18415,8 @@ lowp vec4 frag( in v2f IN ) {
     depth -= IN.scrPos.z;
     depth = xll_saturate_f((_Clarity * depth));
     #line 510
-    color.w = mix( 0.8, depth, satDepth);
+    highp float refrac = (1.0 - (0.75 * dot( IN.viewDir, IN.worldNormal)));
+    color.w = mix( refrac, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -18634,7 +18649,7 @@ void main ()
   vec3 i_32;
   i_32 = -(tmpvar_18.xyz);
   color_2.xyz = (tmpvar_17.xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_20) * 4.0) * tmpvar_31), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_31 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_32 - (2.0 * (dot (xlv_TEXCOORD2, i_32) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  color_2.w = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -19037,7 +19052,7 @@ void main ()
   tmpvar_85 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_85;
   highp float tmpvar_86;
-  tmpvar_86 = mix (0.8, tmpvar_85, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_86 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_85, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_86;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -19370,7 +19385,7 @@ void main ()
   tmpvar_85 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_85;
   highp float tmpvar_86;
-  tmpvar_86 = mix (0.8, tmpvar_85, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
+  tmpvar_86 = mix ((1.0 - (0.75 * dot (xlv_TEXCOORD1, xlv_TEXCOORD2))), tmpvar_85, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_86;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -19948,7 +19963,8 @@ lowp vec4 frag( in v2f IN ) {
     depth -= IN.scrPos.z;
     depth = xll_saturate_f((_Clarity * depth));
     #line 511
-    color.w = mix( 0.8, depth, satDepth);
+    highp float refrac = (1.0 - (0.75 * dot( IN.viewDir, IN.worldNormal)));
+    color.w = mix( refrac, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -19984,7 +20000,7 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 15
-//   d3d9 - ALU: 113 to 133, TEX: 7 to 13
+//   d3d9 - ALU: 116 to 136, TEX: 7 to 13
 SubProgram "opengl " {
 Keywords { "POINT" "SHADOWS_OFF" }
 "!!GLSL"
@@ -20008,12 +20024,12 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTexture0] 2D
 SetTexture 3 [_CameraDepthTexture] 2D
 "ps_3_0
-; 115 ALU, 8 TEX
+; 118 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
-def c11, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c11, -600.00000000, 0.00200000, 0.75000000, 1.00000000
 def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
 def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
 def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
@@ -20048,7 +20064,7 @@ mul r0.xy, v4.zxzw, c7.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c12.y
+add_pp r1.xyz, -r0, c11.w
 mul_sat r2.z, r2, c13
 mad_pp r1.xyz, r2.z, r1, r0
 mad r2.y, r2, r2.x, c15.x
@@ -20064,18 +20080,18 @@ dp3_pp r2.w, v2, -r2
 cmp r1.w, -r0.x, r0.y, r0.z
 mul_pp r0.xyz, v2, r2.w
 mad_pp r0.xyz, -r0, c13.z, -r2
-dp3_pp_sat r0.y, r0, v1
+dp3_pp_sat r0.y, v1, r0
 pow_pp r3, r0.y, c6.x
 add r2.w, -r1, c13
 cmp r1.w, v4.z, r1, r2
 cmp r0.x, v4, r1.w, -r1.w
 mad r3.z, r0.x, c16.x, c16.y
-add r0.y, -r0.w, c12
+add r0.y, -r0.w, c11.w
 mad r0.x, r0.w, c12.z, c12.w
 mad r0.x, r0.w, r0, c13
 mad r0.x, r0.w, r0, c13.y
 abs r0.w, v4.y
-add r2.w, -r0, c12.y
+add r2.w, -r0, c11
 mad r1.w, r0, c12.z, c12
 mad r1.w, r1, r0, c13.x
 rsq r0.y, r0.y
@@ -20110,37 +20126,40 @@ dsy r0.y, r0
 texldd r0, r3.zwzw, s0, r0.zwzw, r0
 mul_pp r1.xyz, r0, r1
 dp3_pp_sat r0.y, v2, r2
-add_pp r0.z, r0.y, c12.y
+add_pp r0.z, r0.y, c11.w
 dp3 r0.x, v3, v3
 texld r0.x, r0.x, s2
 mul r2.xyz, r0.x, c3
 frc_pp r1.w, r0.z
-mul r2.xyz, r2, c4
+add_pp r0.y, r0, c16.z
+mul_pp r0.y, r0, c3.w
+mul_pp r0.y, r0, r0.x
 mov_pp r2.w, r3.x
-mul r3.xyz, r2, r2.w
+mul r2.xyz, r2, c4
 add_pp_sat r0.z, r0, -r1.w
-mul r3.xyz, r0.z, r3
-add_pp r0.z, r0.y, c16
-mul r2.xyz, v5, c5
-mul_pp r1.xyz, r1, r2
-mov r0.y, c9.x
-add r2.xyz, c3, r0.y
-mul_pp r0.z, r0, c3.w
-mul_pp r0.y, r0.z, r0.x
-mul r3.xyz, r0.w, r3
+mul r2.xyz, r2, r2.w
+mul r2.xyz, r0.z, r2
+mul r2.xyz, r0.w, r2
+mul_pp_sat r0.w, r0.y, c16
+mov r0.x, c9
+add r0.xyz, c3, r0.x
+mad_sat r3.xyz, r0, r0.w, c0
+mul r0.xyz, v5, c5
+mul_pp r0.xyz, r1, r0
+add_pp r2.xyz, r3, r2
+mul_pp oC0.xyz, r0, r2
 texldp r0.x, v6, s3
-mad r0.w, r0.x, c1.z, c1
-mul_pp_sat r0.y, r0, c16.w
-mad_sat r0.xyz, r2, r0.y, c0
-add_pp r2.xyz, r0, r3
-rcp r0.w, r0.w
-add r0.x, r0.w, -v6.z
-mul_sat r0.y, r0.x, c10.x
+mov r1.xyz, v2
+dp3 r0.y, v1, r1
+mad r0.x, r0, c1.z, c1.w
+mad r0.z, -r0.y, c11, c11.w
+rcp r0.x, r0.x
+add r0.y, r0.x, -v6.z
 add r0.x, v0, c11
-add r0.y, r0, c11.z
+mul_sat r0.y, r0, c10.x
+add r0.y, r0, -r0.z
 mul_sat r0.x, r0, c11.y
-mul_pp oC0.xyz, r1, r2
-mad oC0.w, r0.x, r0.y, c11
+mad oC0.w, r0.x, r0.y, r0.z
 "
 }
 
@@ -20181,11 +20200,11 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 113 ALU, 7 TEX
+; 116 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c11, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c11, -600.00000000, 0.00200000, 0.75000000, 1.00000000
 def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
 def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
 def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
@@ -20218,7 +20237,7 @@ mad r2.w, r1, c14.y, c14.z
 mad r1.y, r2.w, r1.w, c14.w
 mad r1.y, r1, r1.w, c15.x
 mul r2.w, v0.x, c8.x
-add_pp r2.xyz, -r0, c12.y
+add_pp r2.xyz, -r0, c11.w
 mul_sat r2.w, r2, c13.z
 mad_pp r2.xyz, r2.w, r2, r0
 mad r1.y, r1, r1.w, c15
@@ -20235,13 +20254,13 @@ cmp r1.x, v3.z, r1, r1.y
 dp3_pp r0.x, v2, -r3
 mul_pp r0.xyz, v2, r0.x
 mad_pp r0.xyz, -r0, c13.z, -r3
-dp3_pp_sat r2.w, r0, v1
-add r0.y, -r0.w, c12
+dp3_pp_sat r2.w, v1, r0
+add r0.y, -r0.w, c11.w
 mad r0.x, r0.w, c12.z, c12.w
 mad r0.x, r0.w, r0, c13
 mad r0.x, r0.w, r0, c13.y
 abs r0.w, v3.y
-add r1.z, -r0.w, c12.y
+add r1.z, -r0.w, c11.w
 mad r1.y, r0.w, c12.z, c12.w
 mad r1.y, r1, r0.w, c13.x
 cmp r1.x, v3, r1, -r1
@@ -20280,35 +20299,38 @@ mad r1.x, r1, c16, c16.y
 texldd r1, r1, s0, r0.zwzw, r0
 pow_pp r0, r2.w, c6.x
 mul_pp r1.xyz, r1, r2
-dp3_pp_sat r0.w, v2, r3
-add_pp r3.x, r0.w, c12.y
-mov_pp r2.x, r0
-frc_pp r2.w, r3.x
-add_pp_sat r2.w, r3.x, -r2
-mov r0.xyz, c3
-mul r0.xyz, c4, r0
-mul r2.xyz, r0, r2.x
+dp3_pp_sat r0.y, v2, r3
+mov r2.xyz, c3
+add_pp r0.z, r0.y, c11.w
+mov_pp r0.w, r0.x
+frc_pp r0.x, r0.z
+mul r2.xyz, c4, r2
+mul r2.xyz, r2, r0.w
+add_pp_sat r0.x, r0.z, -r0
+mul r2.xyz, r0.x, r2
+add_pp r0.x, r0.y, c16.z
+mul_pp r0.y, r0.x, c3.w
+mul r3.xyz, r1.w, r2
+mul_pp_sat r0.w, r0.y, c16
+mov r0.x, c9
+add r0.xyz, c3, r0.x
+mad_sat r2.xyz, r0, r0.w, c0
 mul r0.xyz, v4, c5
-add_pp r0.w, r0, c16.z
 mul_pp r0.xyz, r1, r0
-mul r2.xyz, r2.w, r2
-mul r1.xyz, r1.w, r2
-mov r1.w, c9.x
-add r2.xyz, c3, r1.w
-mul_pp r0.w, r0, c3
-mul_pp_sat r1.w, r0, c16
-texldp r3.x, v5, s2
-mad r0.w, r3.x, c1.z, c1
-mad_sat r2.xyz, r2, r1.w, c0
-rcp r0.w, r0.w
-add_pp r1.xyz, r2, r1
-mul_pp oC0.xyz, r0, r1
-add r0.w, r0, -v5.z
-mul_sat r0.y, r0.w, c10.x
+add_pp r2.xyz, r2, r3
+mul_pp oC0.xyz, r0, r2
+texldp r0.x, v5, s2
+mov r1.xyz, v2
+dp3 r0.y, v1, r1
+mad r0.x, r0, c1.z, c1.w
+mad r0.z, -r0.y, c11, c11.w
+rcp r0.x, r0.x
+add r0.y, r0.x, -v5.z
 add r0.x, v0, c11
-add r0.y, r0, c11.z
+mul_sat r0.y, r0, c10.x
+add r0.y, r0, -r0.z
 mul_sat r0.x, r0, c11.y
-mad oC0.w, r0.x, r0.y, c11
+mad oC0.w, r0.x, r0.y, r0.z
 "
 }
 
@@ -20351,13 +20373,13 @@ SetTexture 2 [_LightTexture0] 2D
 SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_CameraDepthTexture] 2D
 "ps_3_0
-; 120 ALU, 9 TEX
+; 123 ALU, 9 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c11, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c11, -600.00000000, 0.00200000, 0.75000000, 1.00000000
 def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
 def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
 def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
@@ -20392,7 +20414,7 @@ mul r0.xy, v4.zxzw, c7.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c12.y
+add_pp r1.xyz, -r0, c11.w
 mul_sat r2.z, r2, c13
 mad_pp r1.xyz, r2.z, r1, r0
 mad r2.y, r2, r2.x, c15.x
@@ -20400,8 +20422,8 @@ mad r0.x, r2.y, r2, c15.y
 dp4 r0.y, c2, c2
 mad r0.x, r0, r2, c15.z
 rsq r0.z, r0.y
-mul r2.xyz, r0.z, c2
 mul r0.y, r0.x, r0.w
+mul r2.xyz, r0.z, c2
 dp3_pp r2.w, v2, -r2
 add r0.x, r3, -r1.w
 add r0.z, -r0.y, c15.w
@@ -20411,15 +20433,15 @@ mad_pp r0.xyz, -r0, c13.z, -r2
 add r2.w, -r0, c13
 cmp r0.w, v4.z, r0, r2
 cmp r2.w, v4.x, r0, -r0
-dp3_pp_sat r3.x, r0, v1
+dp3_pp_sat r3.x, v1, r0
 pow_pp r0, r3.x, c6.x
-add r0.z, -r1.w, c12.y
+add r0.z, -r1.w, c11.w
 mad r0.y, r1.w, c12.z, c12.w
 mad r0.y, r1.w, r0, c13.x
 mad r0.y, r1.w, r0, c13
 abs r1.w, v4.y
 mad r3.z, r2.w, c16.x, c16.y
-add r3.x, -r1.w, c12.y
+add r3.x, -r1.w, c11.w
 mad r2.w, r1, c12.z, c12
 mad r2.w, r2, r1, c13.x
 rsq r0.z, r0.z
@@ -20429,6 +20451,7 @@ cmp r0.y, v4.z, c12.x, c12
 mul r0.w, r0.y, r0.z
 mad r0.w, -r0, c13.z, r0.z
 rsq r3.x, r3.x
+dp3_pp_sat r2.z, v2, r2
 mad r1.w, r2, r1, c13.y
 rcp r3.x, r3.x
 mul r2.w, r1, r3.x
@@ -20439,7 +20462,6 @@ mad r0.w, r0.y, c13, r0
 mad r0.y, r1.w, c13.w, r0.z
 mul r0.z, r0.w, c14.x
 dsy r0.w, r0.z
-dp3_pp_sat r1.w, v2, r2
 mul r3.w, r0.y, c14.x
 mul r4.xy, r4, r4
 add r0.y, r4.x, r4
@@ -20453,44 +20475,47 @@ rcp r0.z, r0.z
 mul r0.z, r0, c16.x
 mul r3.x, r0.y, c16
 texldd r3, r3.zwzw, s0, r3, r0.zwzw
-mul_pp r1.xyz, r3, r1
-mov_pp r2.w, r0.x
-add_pp r3.x, r1.w, c12.y
+mov_pp r1.w, r0.x
 rcp r0.x, v3.w
 mad r2.xy, v3, r0.x, c16.y
-dp3 r0.x, v3, v3
 texld r0.w, r2, s2
+add_pp r2.x, r2.z, c11.w
+frc_pp r2.y, r2.x
+dp3 r0.x, v3, v3
 cmp r0.y, -v3.z, c12.x, c12
 mul_pp r0.y, r0, r0.w
 texld r0.x, r0.x, s3
 mul_pp r0.w, r0.y, r0.x
 mul r0.xyz, r0.w, c3
 mul r0.xyz, r0, c4
-mul r2.xyz, r0, r2.w
-mul r0.xyz, v5, c5
-mul_pp r1.xyz, r1, r0
-frc_pp r3.y, r3.x
-add_pp_sat r2.w, r3.x, -r3.y
+mul r0.xyz, r0, r1.w
+add_pp_sat r2.x, r2, -r2.y
+add_pp r1.w, r2.z, c16.z
+mul r0.xyz, r2.x, r0
+mul_pp r1.xyz, r3, r1
+mul r3.xyz, r3.w, r0
+mul_pp r1.w, r1, c3
+mul_pp r0.y, r1.w, r0.w
+mul_pp_sat r0.w, r0.y, c16
 mov r0.x, c9
-add r3.xyz, c3, r0.x
-mul r2.xyz, r2.w, r2
-add_pp r0.y, r1.w, c16.z
-mul_pp r0.y, r0, c3.w
-mul_pp r0.y, r0, r0.w
+add r0.xyz, c3, r0.x
+mad_sat r2.xyz, r0, r0.w, c0
+mul r0.xyz, v5, c5
+mul_pp r0.xyz, r1, r0
+add_pp r2.xyz, r2, r3
+mul_pp oC0.xyz, r0, r2
 texldp r0.x, v6, s4
-mad r0.w, r0.x, c1.z, c1
-mul_pp_sat r0.y, r0, c16.w
-mad_sat r0.xyz, r3, r0.y, c0
-mul r2.xyz, r3.w, r2
-add_pp r2.xyz, r0, r2
-rcp r0.w, r0.w
-add r0.x, r0.w, -v6.z
-mul_sat r0.y, r0.x, c10.x
+mov r1.xyz, v2
+dp3 r0.y, v1, r1
+mad r0.x, r0, c1.z, c1.w
+mad r0.z, -r0.y, c11, c11.w
+rcp r0.x, r0.x
+add r0.y, r0.x, -v6.z
 add r0.x, v0, c11
-add r0.y, r0, c11.z
+mul_sat r0.y, r0, c10.x
+add r0.y, r0, -r0.z
 mul_sat r0.x, r0, c11.y
-mul_pp oC0.xyz, r1, r2
-mad oC0.w, r0.x, r0.y, c11
+mad oC0.w, r0.x, r0.y, r0.z
 "
 }
 
@@ -20533,13 +20558,13 @@ SetTexture 2 [_LightTextureB0] 2D
 SetTexture 3 [_LightTexture0] CUBE
 SetTexture 4 [_CameraDepthTexture] 2D
 "ps_3_0
-; 116 ALU, 9 TEX
+; 119 ALU, 9 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_cube s3
 dcl_2d s4
-def c11, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c11, -600.00000000, 0.00200000, 0.75000000, 1.00000000
 def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
 def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
 def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
@@ -20574,7 +20599,7 @@ mul r0.xy, v4.zxzw, c7.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c12.y
+add_pp r1.xyz, -r0, c11.w
 mul_sat r2.z, r2, c13
 mad_pp r1.xyz, r2.z, r1, r0
 mad r2.y, r2, r2.x, c15.x
@@ -20593,15 +20618,15 @@ mad_pp r0.xyz, -r0, c13.z, -r2
 add r2.w, -r0, c13
 cmp r0.w, v4.z, r0, r2
 cmp r2.w, v4.x, r0, -r0
-dp3_pp_sat r3.x, r0, v1
+dp3_pp_sat r3.x, v1, r0
 pow_pp r0, r3.x, c6.x
-add r0.z, -r1.w, c12.y
+add r0.z, -r1.w, c11.w
 mad r0.y, r1.w, c12.z, c12.w
 mad r0.y, r1.w, r0, c13.x
 mad r0.y, r1.w, r0, c13
 abs r1.w, v4.y
 mad r3.z, r2.w, c16.x, c16.y
-add r3.x, -r1.w, c12.y
+add r3.x, -r1.w, c11.w
 mad r2.w, r1, c12.z, c12
 mad r2.w, r2, r1, c13.x
 rsq r0.z, r0.z
@@ -20621,7 +20646,6 @@ mad r0.w, r0.y, c13, r0
 mad r0.y, r1.w, c13.w, r0.z
 mul r0.z, r0.w, c14.x
 dsy r0.w, r0.z
-dp3_pp_sat r1.w, v2, r2
 mul r3.w, r0.y, c14.x
 mul r4.xy, r4, r4
 add r0.y, r4.x, r4
@@ -20633,42 +20657,46 @@ add r0.z, r4, r4.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
 mul r0.z, r0, c16.x
-mov_pp r2.w, r0.x
 mul r3.x, r0.y, c16
 texldd r3, r3.zwzw, s0, r3, r0.zwzw
-mul_pp r1.xyz, r3, r1
-add_pp r3.x, r1.w, c12.y
+mov_pp r0.z, r0.x
 dp3 r0.x, v3, v3
-texld r0.x, r0.x, s2
+mul_pp r1.xyz, r3, r1
+dp3_pp_sat r0.y, v2, r2
 texld r0.w, v3, s3
-mul r0.w, r0.x, r0
-mul r0.xyz, r0.w, c3
-mul r0.xyz, r0, c4
-mul r2.xyz, r0, r2.w
-mul r0.xyz, v5, c5
-mul_pp r1.xyz, r1, r0
-frc_pp r3.y, r3.x
-add_pp_sat r2.w, r3.x, -r3.y
-mov r0.x, c9
-add r3.xyz, c3, r0.x
-mul r2.xyz, r2.w, r2
-add_pp r0.y, r1.w, c16.z
+texld r0.x, r0.x, s2
+mul r0.x, r0, r0.w
+add_pp r0.w, r0.y, c11
+mul r2.xyz, r0.x, c3
+mul r2.xyz, r2, c4
+add_pp r0.y, r0, c16.z
 mul_pp r0.y, r0, c3.w
-mul_pp r0.y, r0, r0.w
+mul_pp r0.y, r0, r0.x
+mul r2.xyz, r2, r0.z
+frc_pp r1.w, r0
+add_pp_sat r0.z, r0.w, -r1.w
+mul r2.xyz, r0.z, r2
+mul r3.xyz, r3.w, r2
+mul_pp_sat r0.w, r0.y, c16
+mov r0.x, c9
+add r0.xyz, c3, r0.x
+mad_sat r2.xyz, r0, r0.w, c0
+mul r0.xyz, v5, c5
+mul_pp r0.xyz, r1, r0
+add_pp r2.xyz, r2, r3
+mul_pp oC0.xyz, r0, r2
 texldp r0.x, v6, s4
-mad r0.w, r0.x, c1.z, c1
-mul_pp_sat r0.y, r0, c16.w
-mad_sat r0.xyz, r3, r0.y, c0
-mul r2.xyz, r3.w, r2
-add_pp r2.xyz, r0, r2
-rcp r0.w, r0.w
-add r0.x, r0.w, -v6.z
-mul_sat r0.y, r0.x, c10.x
+mov r1.xyz, v2
+dp3 r0.y, v1, r1
+mad r0.x, r0, c1.z, c1.w
+mad r0.z, -r0.y, c11, c11.w
+rcp r0.x, r0.x
+add r0.y, r0.x, -v6.z
 add r0.x, v0, c11
-add r0.y, r0, c11.z
+mul_sat r0.y, r0, c10.x
+add r0.y, r0, -r0.z
 mul_sat r0.x, r0, c11.y
-mul_pp oC0.xyz, r1, r2
-mad oC0.w, r0.x, r0.y, c11
+mad oC0.w, r0.x, r0.y, r0.z
 "
 }
 
@@ -20710,12 +20738,12 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTexture0] 2D
 SetTexture 3 [_CameraDepthTexture] 2D
 "ps_3_0
-; 114 ALU, 8 TEX
+; 117 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
-def c11, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c11, -600.00000000, 0.00200000, 0.75000000, 1.00000000
 def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
 def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
 def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
@@ -20754,33 +20782,37 @@ mad r1.y, r1, r1.w, c15.x
 mad r1.y, r1, r1.w, c15
 mad r1.y, r1, r1.w, c15.z
 mul r1.y, r1, r1.z
-add_pp r2.xyz, -r0, c12.y
+add_pp r2.xyz, -r0, c11.w
 mul_sat r2.w, r2, c13.z
 mad_pp r0.xyz, r2.w, r2, r0
 dp4_pp r2.x, c2, c2
 rsq_pp r1.w, r2.x
 mul_pp r2.xyz, r1.w, c2
+dp3_pp r2.w, v2, -r2
 add r1.x, r1, -r0.w
 add r1.z, -r1.y, c15.w
-dp3_pp r2.w, v2, -r2
 cmp r1.w, -r1.x, r1.y, r1.z
 mul_pp r1.xyz, v2, r2.w
 mad_pp r1.xyz, -r1, c13.z, -r2
-dp3_pp_sat r1.y, r1, v1
+dp3_pp_sat r1.y, v1, r1
 pow_pp r3, r1.y, c6.x
+dp3_pp_sat r2.x, v2, r2
+add_pp r2.y, r2.x, c11.w
 add r2.w, -r1, c13
 cmp r1.w, v4.z, r1, r2
 abs r1.z, v4.y
 cmp r1.x, v4, r1.w, -r1.w
 mad r3.z, r1.x, c16.x, c16.y
-add r1.y, -r0.w, c12
+frc_pp r2.z, r2.y
+add r1.y, -r0.w, c11.w
 mad r1.x, r0.w, c12.z, c12.w
 mad r1.x, r0.w, r1, c13
-add r2.w, -r1.z, c12.y
+add r2.w, -r1.z, c11
 mad r1.w, r1.z, c12.z, c12
 mad r1.w, r1, r1.z, c13.x
 rsq r1.y, r1.y
 rsq r2.w, r2.w
+add_pp r2.x, r2, c16.z
 mad r0.w, r0, r1.x, c13.y
 rcp r1.y, r1.y
 mul r1.x, r0.w, r1.y
@@ -20802,7 +20834,6 @@ add r0.w, r4.x, r4.y
 rsq r0.w, r0.w
 rcp r0.w, r0.w
 mul r1.z, r0.w, c16.x
-dp3_pp_sat r2.w, v2, r2
 texld r0.w, v3, s2
 dsx r1.w, r1.x
 dsy r1.y, r1.x
@@ -20813,35 +20844,35 @@ rcp r1.x, r1.x
 mul r1.x, r1, c16
 texldd r1, r3.zwzw, s0, r1.zwzw, r1
 mul_pp r0.xyz, r1, r0
-mov_pp r3.z, r3.x
-add_pp r3.x, r2.w, c12.y
-frc_pp r3.y, r3.x
 mul r1.xyz, r0.w, c3
+mov_pp r2.w, r3.x
 mul r1.xyz, r1, c4
-mul r2.xyz, r1, r3.z
-add_pp_sat r3.x, r3, -r3.y
-mul r2.xyz, r3.x, r2
-mul r1.xyz, v5, c5
-mul_pp r1.xyz, r0, r1
-add_pp r0.y, r2.w, c16.z
-mul_pp r0.y, r0, c3.w
-mul_pp r0.y, r0, r0.w
-mul r3.xyz, r1.w, r2
-mov r0.x, c9
-add r2.xyz, c3, r0.x
+add_pp_sat r2.y, r2, -r2.z
+mul r1.xyz, r1, r2.w
+mul r1.xyz, r2.y, r1
+mul_pp r2.x, r2, c3.w
+mul r1.xyz, r1.w, r1
+mul_pp r1.w, r2.x, r0
+mov r0.w, c9.x
+add r2.xyz, c3, r0.w
+mul_pp_sat r1.w, r1, c16
+mad_sat r3.xyz, r2, r1.w, c0
+mul r2.xyz, v5, c5
+mul_pp r0.xyz, r0, r2
+add_pp r1.xyz, r3, r1
+mul_pp oC0.xyz, r0, r1
 texldp r0.x, v6, s3
-mad r0.w, r0.x, c1.z, c1
-mul_pp_sat r0.y, r0, c16.w
-mad_sat r0.xyz, r2, r0.y, c0
-add_pp r2.xyz, r0, r3
-rcp r0.w, r0.w
-add r0.x, r0.w, -v6.z
-mul_sat r0.y, r0.x, c10.x
+mov r1.xyz, v2
+dp3 r0.y, v1, r1
+mad r0.x, r0, c1.z, c1.w
+mad r0.z, -r0.y, c11, c11.w
+rcp r0.x, r0.x
+add r0.y, r0.x, -v6.z
 add r0.x, v0, c11
-add r0.y, r0, c11.z
+mul_sat r0.y, r0, c10.x
+add r0.y, r0, -r0.z
 mul_sat r0.x, r0, c11.y
-mul_pp oC0.xyz, r1, r2
-mad oC0.w, r0.x, r0.y, c11
+mad oC0.w, r0.x, r0.y, r0.z
 "
 }
 
@@ -20886,14 +20917,14 @@ SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_ShadowMapTexture] 2D
 SetTexture 5 [_CameraDepthTexture] 2D
 "ps_3_0
-; 125 ALU, 10 TEX
+; 128 ALU, 10 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
 dcl_2d s5
-def c12, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c12, -600.00000000, 0.00200000, 0.75000000, 1.00000000
 def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
 def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
 def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
@@ -20907,133 +20938,136 @@ dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.xyz
 dcl_texcoord7 v7
-mul r1.xy, v5, c8.x
-dsx r4.zw, v5.xyxy
-abs r0.w, v5.z
-abs r2.xy, v5
-max r0.x, r2, r0.w
-rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
-mul r0.xy, v5.zyzw, c8.x
-mul r2.z, r1.w, r1.w
-texld r1.xyz, r1, s1
+mul r0.xy, v5, c8.x
+mul r1.xy, v5.zyzw, c8.x
+mul r2.z, v0.x, c9.x
+dsx r4.xy, v5
+dsy r4.zw, v5.xyxy
+abs r1.w, v5.z
+abs r3.xy, v5
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2, c15.y, c15
-mad r2.w, r0.z, r2.z, c15
+texld r1.xyz, r1, s1
+add_pp r1.xyz, r1, -r0
+mad_pp r1.xyz, r3.x, r1, r0
+max r0.z, r3.x, r1.w
+rcp r0.w, r0.z
+min r0.z, r3.x, r1.w
+mul r0.w, r0.z, r0
+mul r2.x, r0.w, r0.w
+mad r2.y, r2.x, c15, c15.z
+mad r2.y, r2, r2.x, c15.w
 mul r0.xy, v5.zxzw, c8.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-mad r2.w, r2, r2.z, c16.x
-mad r2.y, r2.w, r2.z, c16
-mad r2.y, r2, r2.z, c16.z
-add_pp r1.xyz, -r0, c13.y
-mul r1.w, r2.y, r1
-mul r2.z, v0.x, c9.x
-mul_sat r2.y, r2.z, c14.z
-mad_pp r0.xyz, r2.y, r1, r0
-dp4 r1.z, c2, c2
-add r1.x, r2, -r0.w
-add r1.y, -r1.w, c16.w
-cmp r1.w, -r1.x, r1, r1.y
-add r2.x, -r1.w, c14.w
-cmp r1.w, v5.z, r1, r2.x
-cmp r1.w, v5.x, r1, -r1
-mad r4.x, r1.w, c17, c17.y
-mad r1.w, r0, c13.z, c13
-rsq r1.z, r1.z
-mul r1.xyz, r1.z, c2
-dp3_pp r2.y, v2, -r1
-mul_pp r2.xyz, v2, r2.y
-mad_pp r3.xyz, -r2, c14.z, -r1
-abs r2.y, v5
-add r2.x, -r0.w, c13.y
-mad r1.w, r0, r1, c14.x
-add r2.w, -r2.y, c13.y
-mad r2.z, r2.y, c13, c13.w
-mad r2.z, r2, r2.y, c14.x
-rsq r2.x, r2.x
-rsq r2.w, r2.w
-mad r0.w, r0, r1, c14.y
-rcp r2.x, r2.x
-mul r1.w, r0, r2.x
-cmp r0.w, v5.z, c13.x, c13.y
-mul r2.x, r0.w, r1.w
-mad r2.x, -r2, c14.z, r1.w
-mad r2.y, r2.z, r2, c14
-rcp r2.w, r2.w
-mul r2.z, r2.y, r2.w
-cmp r2.y, v5, c13.x, c13
-mul r2.w, r2.y, r2.z
-mad r1.w, -r2, c14.z, r2.z
-mad r2.x, r0.w, c14.w, r2
-mad r0.w, r2.y, c14, r1
-mul r1.w, r2.x, c15.x
-dsy r2.xz, v5.xyyw
-mul r2.xz, r2, r2
-mul r4.y, r0.w, c15.x
+mad_pp r0.xyz, r3.y, r0, r1
+add_pp r1.xyz, -r0, c12.w
+mul_sat r2.z, r2, c14
+mad_pp r1.xyz, r2.z, r1, r0
+mad r2.y, r2, r2.x, c16.x
+mad r0.x, r2.y, r2, c16.y
+dp4 r0.y, c2, c2
+mad r0.x, r0, r2, c16.z
+rsq r0.z, r0.y
+mul r2.xyz, r0.z, c2
+mul r0.y, r0.x, r0.w
+dp3_pp r2.w, v2, -r2
+add r0.x, r3, -r1.w
+add r0.z, -r0.y, c16.w
+cmp r0.w, -r0.x, r0.y, r0.z
+mul_pp r0.xyz, v2, r2.w
+mad_pp r0.xyz, -r0, c14.z, -r2
+add r2.w, -r0, c14
+cmp r0.w, v5.z, r0, r2
+cmp r2.w, v5.x, r0, -r0
+dp3_pp_sat r3.x, v1, r0
+pow_pp r0, r3.x, c7.x
+add r0.z, -r1.w, c12.w
+mad r0.y, r1.w, c13.z, c13.w
+mad r0.y, r1.w, r0, c14.x
+mad r0.y, r1.w, r0, c14
+abs r1.w, v5.y
+mad r3.z, r2.w, c17.x, c17.y
+add r3.x, -r1.w, c12.w
+mad r2.w, r1, c13.z, c13
+mad r2.w, r2, r1, c14.x
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r0.z, r0.y, r0
+cmp r0.y, v5.z, c13.x, c13
+mul r0.w, r0.y, r0.z
+mad r0.w, -r0, c14.z, r0.z
+rsq r3.x, r3.x
+mad r1.w, r2, r1, c14.y
+rcp r3.x, r3.x
+mul r2.w, r1, r3.x
+cmp r1.w, v5.y, c13.x, c13.y
+mul r3.x, r1.w, r2.w
+mad r0.z, -r3.x, c14, r2.w
+mad r0.w, r0.y, c14, r0
+mad r0.y, r1.w, c14.w, r0.z
+mul r0.z, r0.w, c15.x
+dsy r0.w, r0.z
+mul r3.w, r0.y, c15.x
+mul r4.xy, r4, r4
+add r0.y, r4.x, r4
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+dsx r3.y, r0.z
 mul r4.zw, r4, r4
-add r0.w, r4.z, r4
-rsq r0.w, r0.w
-dsx r2.w, r1
-dsy r2.y, r1.w
-add r1.w, r2.x, r2.z
-rcp r0.w, r0.w
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r2.x, r1.w, c17
-dp3_pp_sat r1.w, r3, v1
-mul r2.z, r0.w, c17.x
-texldd r2, r4, s0, r2.zwzw, r2
-mul_pp r2.xyz, r2, r0
-pow_pp r0, r1.w, c7.x
-mul r3.xyz, v6, c6
+add r0.z, r4, r4.w
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r0.z, r0, c17.x
+mul r3.x, r0.y, c17
+texldd r3, r3.zwzw, s0, r3, r0.zwzw
 mov_pp r0.y, r0.x
-mul_pp r2.xyz, r2, r3
+dp3_pp_sat r0.z, v2, r2
+mul_pp r1.xyz, r3, r1
 texldp r0.x, v4, s4
-rcp r0.z, v4.w
-mad r0.z, -v4, r0, r0.x
-mov r0.w, c3.x
-cmp r1.w, r0.z, c13.y, r0
+rcp r0.w, v4.w
+mad r0.w, -v4.z, r0, r0.x
+mov r1.w, c3.x
+cmp r2.z, r0.w, c12.w, r1.w
 rcp r0.x, v3.w
-mad r3.xy, v3, r0.x, c17.y
+mad r2.xy, v3, r0.x, c17.y
 dp3 r0.x, v3, v3
-texld r0.w, r3, s2
-cmp r0.z, -v3, c13.x, c13.y
-mul_pp r0.z, r0, r0.w
+texld r0.w, r2, s2
+cmp r1.w, -v3.z, c13.x, c13.y
+mul_pp r0.w, r1, r0
 texld r0.x, r0.x, s3
-mul_pp r0.x, r0.z, r0
-dp3_pp_sat r0.z, v2, r1
-mul_pp r0.x, r0, r1.w
-add_pp r0.w, r0.z, c13.y
-mul r1.xyz, r0.x, c4
-mul r1.xyz, r1, c5
-mul r1.xyz, r1, r0.y
-add_pp r0.y, r0.z, c17.z
+mul_pp r0.x, r0.w, r0
+mul_pp r0.x, r0, r2.z
+add_pp r0.w, r0.z, c12
+mul r2.xyz, r0.x, c4
 frc_pp r1.w, r0
-add_pp_sat r0.z, r0.w, -r1.w
-mul r1.xyz, r0.z, r1
+mul r2.xyz, r2, c5
+mul r2.xyz, r2, r0.y
+add_pp_sat r0.w, r0, -r1
+mul r2.xyz, r0.w, r2
+add_pp r0.y, r0.z, c17.z
 mul_pp r0.y, r0, c4.w
-mul_pp r0.x, r0.y, r0
-mul_pp_sat r0.z, r0.x, c17.w
+mul_pp r0.y, r0, r0.x
+mul r3.xyz, r3.w, r2
+mul_pp_sat r0.w, r0.y, c17
+mov r0.x, c10
+add r0.xyz, c4, r0.x
+mad_sat r2.xyz, r0, r0.w, c0
+mul r0.xyz, v6, c6
+mul_pp r0.xyz, r1, r0
+add_pp r2.xyz, r2, r3
+mul_pp oC0.xyz, r0, r2
 texldp r0.x, v7, s5
-mad r0.w, r0.x, c1.z, c1
-mul r3.xyz, r2.w, r1
-mov r0.y, c10.x
-add r1.xyz, c4, r0.y
-mad_sat r0.xyz, r1, r0.z, c0
-add_pp r1.xyz, r0, r3
-rcp r0.w, r0.w
-add r0.x, r0.w, -v7.z
-mul_sat r0.y, r0.x, c11.x
+mov r1.xyz, v2
+dp3 r0.y, v1, r1
+mad r0.x, r0, c1.z, c1.w
+mad r0.z, -r0.y, c12, c12.w
+rcp r0.x, r0.x
+add r0.y, r0.x, -v7.z
 add r0.x, v0, c12
-add r0.y, r0, c12.z
+mul_sat r0.y, r0, c11.x
+add r0.y, r0, -r0.z
 mul_sat r0.x, r0, c12.y
-mul_pp oC0.xyz, r2, r1
-mad oC0.w, r0.x, r0.y, c12
+mad oC0.w, r0.x, r0.y, r0.z
 "
 }
 
@@ -21078,14 +21112,14 @@ SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_ShadowMapTexture] 2D
 SetTexture 5 [_CameraDepthTexture] 2D
 "ps_3_0
-; 124 ALU, 10 TEX
+; 127 ALU, 10 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
 dcl_2d s5
-def c12, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c12, -600.00000000, 0.00200000, 0.75000000, 1.00000000
 def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
 def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
 def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
@@ -21099,132 +21133,135 @@ dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.xyz
 dcl_texcoord7 v7
-mul r1.xy, v5, c8.x
-dsx r4.zw, v5.xyxy
-abs r0.w, v5.z
-abs r2.xy, v5
-max r0.x, r2, r0.w
-rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
-mul r0.xy, v5.zyzw, c8.x
-mul r2.z, r1.w, r1.w
-texld r1.xyz, r1, s1
+mul r0.xy, v5, c8.x
+mul r1.xy, v5.zyzw, c8.x
+mul r2.z, v0.x, c9.x
+dsx r4.xy, v5
+dsy r4.zw, v5.xyxy
+abs r1.w, v5.z
+abs r3.xy, v5
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2, c15.y, c15
-mad r2.w, r0.z, r2.z, c15
+texld r1.xyz, r1, s1
+add_pp r1.xyz, r1, -r0
+mad_pp r1.xyz, r3.x, r1, r0
+max r0.z, r3.x, r1.w
+rcp r0.w, r0.z
+min r0.z, r3.x, r1.w
+mul r0.w, r0.z, r0
+mul r2.x, r0.w, r0.w
+mad r2.y, r2.x, c15, c15.z
+mad r2.y, r2, r2.x, c15.w
 mul r0.xy, v5.zxzw, c8.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-mad r2.w, r2, r2.z, c16.x
-mad r2.y, r2.w, r2.z, c16
-mad r2.y, r2, r2.z, c16.z
-add_pp r1.xyz, -r0, c13.y
-mul r1.w, r2.y, r1
-mul r2.z, v0.x, c9.x
-mul_sat r2.y, r2.z, c14.z
-mad_pp r0.xyz, r2.y, r1, r0
-dp4 r1.z, c2, c2
-add r1.x, r2, -r0.w
-add r1.y, -r1.w, c16.w
-cmp r1.w, -r1.x, r1, r1.y
-add r2.x, -r1.w, c14.w
-cmp r1.w, v5.z, r1, r2.x
-cmp r1.w, v5.x, r1, -r1
-mad r4.x, r1.w, c17, c17.y
-mad r1.w, r0, c13.z, c13
-rsq r1.z, r1.z
-mul r1.xyz, r1.z, c2
-dp3_pp r2.y, v2, -r1
-mul_pp r2.xyz, v2, r2.y
-mad_pp r3.xyz, -r2, c14.z, -r1
-abs r2.y, v5
-add r2.x, -r0.w, c13.y
-mad r1.w, r0, r1, c14.x
-add r2.w, -r2.y, c13.y
-mad r2.z, r2.y, c13, c13.w
-mad r2.z, r2, r2.y, c14.x
-rsq r2.x, r2.x
-rsq r2.w, r2.w
-mad r0.w, r0, r1, c14.y
-rcp r2.x, r2.x
-mul r1.w, r0, r2.x
-cmp r0.w, v5.z, c13.x, c13.y
-mul r2.x, r0.w, r1.w
-mad r2.x, -r2, c14.z, r1.w
-mad r2.y, r2.z, r2, c14
-rcp r2.w, r2.w
-mul r2.z, r2.y, r2.w
-cmp r2.y, v5, c13.x, c13
-mul r2.w, r2.y, r2.z
-mad r1.w, -r2, c14.z, r2.z
-mad r2.x, r0.w, c14.w, r2
-mad r0.w, r2.y, c14, r1
-mul r1.w, r2.x, c15.x
-dsy r2.xz, v5.xyyw
-mul r2.xz, r2, r2
-mul r4.y, r0.w, c15.x
+mad_pp r0.xyz, r3.y, r0, r1
+add_pp r1.xyz, -r0, c12.w
+mul_sat r2.z, r2, c14
+mad_pp r1.xyz, r2.z, r1, r0
+mad r2.y, r2, r2.x, c16.x
+mad r0.x, r2.y, r2, c16.y
+dp4 r0.y, c2, c2
+mad r0.x, r0, r2, c16.z
+rsq r0.z, r0.y
+mul r2.xyz, r0.z, c2
+mul r0.y, r0.x, r0.w
+dp3_pp r2.w, v2, -r2
+add r0.x, r3, -r1.w
+add r0.z, -r0.y, c16.w
+cmp r0.w, -r0.x, r0.y, r0.z
+mul_pp r0.xyz, v2, r2.w
+mad_pp r0.xyz, -r0, c14.z, -r2
+add r2.w, -r0, c14
+cmp r0.w, v5.z, r0, r2
+cmp r2.w, v5.x, r0, -r0
+dp3_pp_sat r3.x, v1, r0
+pow_pp r0, r3.x, c7.x
+add r0.z, -r1.w, c12.w
+mad r0.y, r1.w, c13.z, c13.w
+mad r0.y, r1.w, r0, c14.x
+mad r0.y, r1.w, r0, c14
+abs r1.w, v5.y
+mad r3.z, r2.w, c17.x, c17.y
+add r3.x, -r1.w, c12.w
+mad r2.w, r1, c13.z, c13
+mad r2.w, r2, r1, c14.x
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r0.z, r0.y, r0
+cmp r0.y, v5.z, c13.x, c13
+mul r0.w, r0.y, r0.z
+mad r0.w, -r0, c14.z, r0.z
+rsq r3.x, r3.x
+mad r1.w, r2, r1, c14.y
+rcp r3.x, r3.x
+mul r2.w, r1, r3.x
+cmp r1.w, v5.y, c13.x, c13.y
+mul r3.x, r1.w, r2.w
+mad r0.z, -r3.x, c14, r2.w
+mad r0.w, r0.y, c14, r0
+mad r0.y, r1.w, c14.w, r0.z
+mul r0.z, r0.w, c15.x
+dsy r0.w, r0.z
+mul r3.w, r0.y, c15.x
+mul r4.xy, r4, r4
+add r0.y, r4.x, r4
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+dsx r3.y, r0.z
 mul r4.zw, r4, r4
-add r0.w, r4.z, r4
-rsq r0.w, r0.w
-dsx r2.w, r1
-dsy r2.y, r1.w
-add r1.w, r2.x, r2.z
-rcp r0.w, r0.w
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r2.x, r1.w, c17
-dp3_pp_sat r1.w, r3, v1
-mul r2.z, r0.w, c17.x
-texldd r2, r4, s0, r2.zwzw, r2
-mul_pp r2.xyz, r2, r0
-pow_pp r0, r1.w, c7.x
-mul r3.xyz, v6, c6
+add r0.z, r4, r4.w
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r0.z, r0, c17.x
+mul r3.x, r0.y, c17
+texldd r3, r3.zwzw, s0, r3, r0.zwzw
 mov_pp r0.y, r0.x
 mov r0.x, c3
-add r0.w, c13.y, -r0.x
+add r1.w, c12, -r0.x
+dp3_pp_sat r0.z, v2, r2
+rcp r0.w, v3.w
+mad r2.xy, v3, r0.w, c17.y
 texldp r0.x, v4, s4
-mad r1.w, r0.x, r0, c3.x
+mad r2.z, r0.x, r1.w, c3.x
 dp3 r0.x, v3, v3
-mul_pp r2.xyz, r2, r3
-rcp r0.z, v3.w
-mad r3.xy, v3, r0.z, c17.y
-texld r0.w, r3, s2
-cmp r0.z, -v3, c13.x, c13.y
-mul_pp r0.z, r0, r0.w
+mul_pp r1.xyz, r3, r1
+texld r0.w, r2, s2
+cmp r1.w, -v3.z, c13.x, c13.y
+mul_pp r0.w, r1, r0
 texld r0.x, r0.x, s3
-mul_pp r0.x, r0.z, r0
-dp3_pp_sat r0.z, v2, r1
-mul_pp r0.x, r0, r1.w
-add_pp r0.w, r0.z, c13.y
-mul r1.xyz, r0.x, c4
-mul r1.xyz, r1, c5
-mul r1.xyz, r1, r0.y
-add_pp r0.y, r0.z, c17.z
+mul_pp r0.x, r0.w, r0
+mul_pp r0.x, r0, r2.z
+add_pp r0.w, r0.z, c12
+mul r2.xyz, r0.x, c4
 frc_pp r1.w, r0
-add_pp_sat r0.z, r0.w, -r1.w
-mul r1.xyz, r0.z, r1
+mul r2.xyz, r2, c5
+mul r2.xyz, r2, r0.y
+add_pp_sat r0.w, r0, -r1
+mul r2.xyz, r0.w, r2
+add_pp r0.y, r0.z, c17.z
 mul_pp r0.y, r0, c4.w
-mul_pp r0.x, r0.y, r0
-mul_pp_sat r0.z, r0.x, c17.w
+mul_pp r0.y, r0, r0.x
+mul r3.xyz, r3.w, r2
+mul_pp_sat r0.w, r0.y, c17
+mov r0.x, c10
+add r0.xyz, c4, r0.x
+mad_sat r2.xyz, r0, r0.w, c0
+mul r0.xyz, v6, c6
+mul_pp r0.xyz, r1, r0
+add_pp r2.xyz, r2, r3
+mul_pp oC0.xyz, r0, r2
 texldp r0.x, v7, s5
-mad r0.w, r0.x, c1.z, c1
-mul r3.xyz, r2.w, r1
-mov r0.y, c10.x
-add r1.xyz, c4, r0.y
-mad_sat r0.xyz, r1, r0.z, c0
-add_pp r1.xyz, r0, r3
-rcp r0.w, r0.w
-add r0.x, r0.w, -v7.z
-mul_sat r0.y, r0.x, c11.x
+mov r1.xyz, v2
+dp3 r0.y, v1, r1
+mad r0.x, r0, c1.z, c1.w
+mad r0.z, -r0.y, c12, c12.w
+rcp r0.x, r0.x
+add r0.y, r0.x, -v7.z
 add r0.x, v0, c12
-add r0.y, r0, c12.z
+mul_sat r0.y, r0, c11.x
+add r0.y, r0, -r0.z
 mul_sat r0.x, r0, c12.y
-mul_pp oC0.xyz, r2, r1
-mad oC0.w, r0.x, r0.y, c12
+mad oC0.w, r0.x, r0.y, r0.z
 "
 }
 
@@ -21261,12 +21298,12 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_ShadowMapTexture] 2D
 SetTexture 3 [_CameraDepthTexture] 2D
 "ps_3_0
-; 114 ALU, 8 TEX
+; 117 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
-def c11, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c11, -600.00000000, 0.00200000, 0.75000000, 1.00000000
 def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
 def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
 def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
@@ -21301,7 +21338,7 @@ mul r0.xy, v4.zxzw, c7.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c12.y
+add_pp r1.xyz, -r0, c11.w
 mul_sat r2.z, r2, c13
 mad_pp r1.xyz, r2.z, r1, r0
 mad r2.y, r2, r2.x, c15.x
@@ -21317,18 +21354,18 @@ dp3_pp r2.w, v2, -r2
 cmp r1.w, -r0.x, r0.y, r0.z
 mul_pp r0.xyz, v2, r2.w
 mad_pp r0.xyz, -r0, c13.z, -r2
-dp3_pp_sat r0.y, r0, v1
+dp3_pp_sat r0.y, v1, r0
 pow_pp r3, r0.y, c6.x
 add r2.w, -r1, c13
 cmp r1.w, v4.z, r1, r2
 cmp r0.x, v4, r1.w, -r1.w
 mad r3.z, r0.x, c16.x, c16.y
-add r0.y, -r0.w, c12
+add r0.y, -r0.w, c11.w
 mad r0.x, r0.w, c12.z, c12.w
 mad r0.x, r0.w, r0, c13
 mad r0.x, r0.w, r0, c13.y
 abs r0.w, v4.y
-add r2.w, -r0, c12.y
+add r2.w, -r0, c11
 mad r1.w, r0, c12.z, c12
 mad r1.w, r1, r0, c13.x
 rsq r0.y, r0.y
@@ -21363,36 +21400,39 @@ dsy r0.y, r0
 texldd r0, r3.zwzw, s0, r0.zwzw, r0
 mul_pp r1.xyz, r0, r1
 dp3_pp_sat r0.y, v2, r2
+add_pp r0.z, r0.y, c11.w
 texldp r0.x, v3, s2
-add_pp r0.z, r0.y, c12.y
 mul r2.xyz, r0.x, c3
 frc_pp r1.w, r0.z
-mul r2.xyz, r2, c4
+add_pp r0.y, r0, c16.z
+mul_pp r0.y, r0, c3.w
+mul_pp r0.y, r0, r0.x
 mov_pp r2.w, r3.x
-mul r3.xyz, r2, r2.w
+mul r2.xyz, r2, c4
 add_pp_sat r0.z, r0, -r1.w
-mul r3.xyz, r0.z, r3
-add_pp r0.z, r0.y, c16
-mul r2.xyz, v5, c5
-mul_pp r1.xyz, r1, r2
-mov r0.y, c9.x
-add r2.xyz, c3, r0.y
-mul_pp r0.z, r0, c3.w
-mul_pp r0.y, r0.z, r0.x
-mul r3.xyz, r0.w, r3
+mul r2.xyz, r2, r2.w
+mul r2.xyz, r0.z, r2
+mul r2.xyz, r0.w, r2
+mul_pp_sat r0.w, r0.y, c16
+mov r0.x, c9
+add r0.xyz, c3, r0.x
+mad_sat r3.xyz, r0, r0.w, c0
+mul r0.xyz, v5, c5
+mul_pp r0.xyz, r1, r0
+add_pp r2.xyz, r3, r2
+mul_pp oC0.xyz, r0, r2
 texldp r0.x, v6, s3
-mad r0.w, r0.x, c1.z, c1
-mul_pp_sat r0.y, r0, c16.w
-mad_sat r0.xyz, r2, r0.y, c0
-add_pp r2.xyz, r0, r3
-rcp r0.w, r0.w
-add r0.x, r0.w, -v6.z
-mul_sat r0.y, r0.x, c10.x
+mov r1.xyz, v2
+dp3 r0.y, v1, r1
+mad r0.x, r0, c1.z, c1.w
+mad r0.z, -r0.y, c11, c11.w
+rcp r0.x, r0.x
+add r0.y, r0.x, -v6.z
 add r0.x, v0, c11
-add r0.y, r0, c11.z
+mul_sat r0.y, r0, c10.x
+add r0.y, r0, -r0.z
 mul_sat r0.x, r0, c11.y
-mul_pp oC0.xyz, r1, r2
-mad oC0.w, r0.x, r0.y, c11
+mad oC0.w, r0.x, r0.y, r0.z
 "
 }
 
@@ -21435,13 +21475,13 @@ SetTexture 2 [_ShadowMapTexture] 2D
 SetTexture 3 [_LightTexture0] 2D
 SetTexture 4 [_CameraDepthTexture] 2D
 "ps_3_0
-; 115 ALU, 9 TEX
+; 118 ALU, 9 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c11, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c11, -600.00000000, 0.00200000, 0.75000000, 1.00000000
 def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
 def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
 def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
@@ -21477,7 +21517,7 @@ mul r0.xy, v5.zxzw, c7.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c12.y
+add_pp r1.xyz, -r0, c11.w
 mul_sat r2.z, r2, c13
 mad_pp r1.xyz, r2.z, r1, r0
 mad r2.y, r2, r2.x, c15.x
@@ -21496,15 +21536,15 @@ mad_pp r0.xyz, -r0, c13.z, -r2
 add r2.w, -r0, c13
 cmp r0.w, v5.z, r0, r2
 cmp r2.w, v5.x, r0, -r0
-dp3_pp_sat r3.x, r0, v1
+dp3_pp_sat r3.x, v1, r0
 pow_pp r0, r3.x, c6.x
-add r0.z, -r1.w, c12.y
+add r0.z, -r1.w, c11.w
 mad r0.y, r1.w, c12.z, c12.w
 mad r0.y, r1.w, r0, c13.x
 mad r0.y, r1.w, r0, c13
 abs r1.w, v5.y
 mad r3.z, r2.w, c16.x, c16.y
-add r3.x, -r1.w, c12.y
+add r3.x, -r1.w, c11.w
 mad r2.w, r1, c12.z, c12
 mad r2.w, r2, r1, c13.x
 rsq r0.z, r0.z
@@ -21523,7 +21563,6 @@ mad r0.z, -r3.x, c13, r2.w
 mad r0.w, r0.y, c13, r0
 mad r0.y, r1.w, c13.w, r0.z
 mul r0.z, r0.w, c14.x
-dp3_pp_sat r1.w, v2, r2
 dsy r0.w, r0.z
 mul r3.w, r0.y, c14.x
 mul r4.xy, r4, r4
@@ -21538,39 +21577,43 @@ rcp r0.z, r0.z
 mul r0.z, r0, c16.x
 mul r3.x, r0.y, c16
 texldd r3, r3.zwzw, s0, r3, r0.zwzw
+dp3_pp_sat r0.y, v2, r2
+add_pp r0.z, r0.y, c11.w
+mov_pp r1.w, r0.x
+add_pp r0.y, r0, c16.z
 mul_pp r1.xyz, r3, r1
-mov_pp r3.y, r0.x
-add_pp r2.w, r1, c12.y
-frc_pp r3.x, r2.w
-texldp r0.x, v4, s2
 texld r0.w, v3, s3
-mul r0.w, r0, r0.x
-mul r0.xyz, r0.w, c3
-mul r0.xyz, r0, c4
-mul r2.xyz, r0, r3.y
-mul r0.xyz, v6, c5
-mul_pp r1.xyz, r1, r0
-add_pp_sat r2.w, r2, -r3.x
-mul r2.xyz, r2.w, r2
-add_pp r0.y, r1.w, c16.z
+texldp r0.x, v4, s2
+mul r0.x, r0.w, r0
+frc_pp r0.w, r0.z
+mul r2.xyz, r0.x, c3
+mul r2.xyz, r2, c4
 mul_pp r0.y, r0, c3.w
-mul_pp r0.y, r0, r0.w
+mul_pp r0.y, r0, r0.x
+add_pp_sat r0.z, r0, -r0.w
+mul r2.xyz, r2, r1.w
+mul r2.xyz, r0.z, r2
 mul r3.xyz, r3.w, r2
+mul_pp_sat r0.w, r0.y, c16
 mov r0.x, c9
-add r2.xyz, c3, r0.x
+add r0.xyz, c3, r0.x
+mad_sat r2.xyz, r0, r0.w, c0
+mul r0.xyz, v6, c5
+mul_pp r0.xyz, r1, r0
+add_pp r2.xyz, r2, r3
+mul_pp oC0.xyz, r0, r2
 texldp r0.x, v7, s4
-mad r0.w, r0.x, c1.z, c1
-mul_pp_sat r0.y, r0, c16.w
-mad_sat r0.xyz, r2, r0.y, c0
-add_pp r2.xyz, r0, r3
-rcp r0.w, r0.w
-add r0.x, r0.w, -v7.z
-mul_sat r0.y, r0.x, c10.x
+mov r1.xyz, v2
+dp3 r0.y, v1, r1
+mad r0.x, r0, c1.z, c1.w
+mad r0.z, -r0.y, c11, c11.w
+rcp r0.x, r0.x
+add r0.y, r0.x, -v7.z
 add r0.x, v0, c11
-add r0.y, r0, c11.z
+mul_sat r0.y, r0, c10.x
+add r0.y, r0, -r0.z
 mul_sat r0.x, r0, c11.y
-mul_pp oC0.xyz, r1, r2
-mad oC0.w, r0.x, r0.y, c11
+mad oC0.w, r0.x, r0.y, r0.z
 "
 }
 
@@ -21615,13 +21658,13 @@ SetTexture 2 [_ShadowMapTexture] CUBE
 SetTexture 3 [_LightTexture0] 2D
 SetTexture 4 [_CameraDepthTexture] 2D
 "ps_3_0
-; 124 ALU, 9 TEX
+; 127 ALU, 9 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
 dcl_2d s3
 dcl_2d s4
-def c13, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c13, -600.00000000, 0.00200000, 0.75000000, 1.00000000
 def c14, 0.00000000, 1.00000000, -0.01872930, 0.07426100
 def c15, -0.21211439, 1.57072902, 2.00000000, 3.14159298
 def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
@@ -21637,131 +21680,134 @@ dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.xyz
 dcl_texcoord7 v7
-mul r1.xy, v5, c9.x
-abs r1.w, v5.z
-abs r2.xy, v5
-max r0.x, r2, r1.w
-rcp r0.y, r0.x
-min r0.x, r2, r1.w
-mul r0.w, r0.x, r0.y
-mul r2.z, r0.w, r0.w
-mad r2.w, r2.z, c16.y, c16.z
-mul r0.xy, v5.zyzw, c9.x
-mad r2.w, r2, r2.z, c16
-texld r1.xyz, r1, s1
+mul r0.xy, v5, c9.x
+mul r1.xy, v5.zyzw, c9.x
+abs r0.w, v5.z
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2.w, r2, c17.x
-mad r2.w, r0.z, r2.z, c17.y
+texld r1.xyz, r1, s1
+add_pp r2.xyz, r1, -r0
+abs r1.xy, v5
+mad_pp r2.xyz, r1.x, r2, r0
+max r1.z, r1.x, r0.w
+min r0.x, r1, r0.w
+rcp r0.y, r1.z
+mul r1.z, r0.x, r0.y
+mul r1.w, r1.z, r1.z
 mul r0.xy, v5.zxzw, c9.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-mad r2.z, r2.w, r2, c17
-mul r2.y, r2.z, r0.w
-add r0.w, r2.x, -r1
-add r2.z, -r2.y, c17.w
-mul r2.x, v0, c10
-add_pp r1.xyz, -r0, c14.y
-mul_sat r2.x, r2, c15.z
-mad_pp r0.xyz, r2.x, r1, r0
-cmp r0.w, -r0, r2.y, r2.z
-add r1.x, -r0.w, c15.w
-cmp r0.w, v5.z, r0, r1.x
-dp4 r1.y, c2, c2
-rsq r1.x, r1.y
-mul r3.xyz, r1.x, c2
-cmp r0.w, v5.x, r0, -r0
-mad r2.x, r0.w, c18, c18.y
-add r1.y, -r1.w, c14
-mad r1.x, r1.w, c14.z, c14.w
-mad r1.x, r1.w, r1, c15
-mad r1.x, r1.w, r1, c15.y
-abs r1.w, v5.y
-add r2.z, -r1.w, c14.y
-mad r2.y, r1.w, c14.z, c14.w
-mad r2.y, r2, r1.w, c15.x
-rsq r1.y, r1.y
-rcp r1.y, r1.y
-mul r1.y, r1.x, r1
-cmp r1.x, v5.z, c14, c14.y
-mul r1.z, r1.x, r1.y
-mad r1.z, -r1, c15, r1.y
-rsq r2.z, r2.z
-dp3_pp r0.w, v2, -r3
-mad r1.w, r2.y, r1, c15.y
-rcp r2.z, r2.z
-mul r2.y, r1.w, r2.z
-cmp r1.w, v5.y, c14.x, c14.y
-mul r2.z, r1.w, r2.y
-mad r1.y, -r2.z, c15.z, r2
-mad r1.z, r1.x, c15.w, r1
-mad r1.x, r1.w, c15.w, r1.y
-mul r1.y, r1.z, c16.x
-mul r2.y, r1.x, c16.x
-dsx r1.w, r1.y
-dsx r2.zw, v5.xyxy
-mul r2.zw, r2, r2
-dsy r1.xz, v5.xyyw
-mul r1.xz, r1, r1
-add r1.z, r1.x, r1
-add r2.z, r2, r2.w
-rsq r1.x, r2.z
+add_pp r0.xyz, r0, -r2
+mad_pp r0.xyz, r1.y, r0, r2
+mad r2.w, r1, c16.y, c16.z
+mad r1.y, r2.w, r1.w, c16.w
+mad r1.y, r1, r1.w, c17.x
+mul r2.w, v0.x, c10.x
+add_pp r2.xyz, -r0, c13.w
+mul_sat r2.w, r2, c15.z
+mad_pp r3.xyz, r2.w, r2, r0
+mad r1.y, r1, r1.w, c17
+mad r0.x, r1.y, r1.w, c17.z
+mul r0.y, r0.x, r1.z
+dp4 r0.z, c2, c2
+rsq r0.x, r0.z
+mul r2.xyz, r0.x, c2
+add r0.x, r1, -r0.w
+add r0.z, -r0.y, c17.w
+cmp r1.x, -r0, r0.y, r0.z
+dp3_pp r0.x, v2, -r2
+add r1.y, -r1.x, c15.w
+cmp r1.x, v5.z, r1, r1.y
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c15.z, -r2
+dp3_pp_sat r2.w, v1, r0
+add r0.y, -r0.w, c13.w
+mad r0.x, r0.w, c14.z, c14.w
+mad r0.x, r0.w, r0, c15
+mad r0.x, r0.w, r0, c15.y
+abs r0.w, v5.y
+add r1.z, -r0.w, c13.w
+mad r1.y, r0.w, c14.z, c14.w
+mad r1.y, r1, r0.w, c15.x
+cmp r1.x, v5, r1, -r1
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+mul r0.y, r0.x, r0
+cmp r0.x, v5.z, c14, c14.y
+mul r0.z, r0.x, r0.y
+mad r0.z, -r0, c15, r0.y
 rsq r1.z, r1.z
-rcp r2.z, r1.z
-rcp r1.x, r1.x
-mul r1.z, r1.x, c18.x
-mul r1.x, r2.z, c18
-dsy r1.y, r1
-texldd r1, r2, s0, r1.zwzw, r1
-mul_pp r0.xyz, r1, r0
-mul_pp r2.xyz, v2, r0.w
-mad_pp r2.xyz, -r2, c15.z, -r3
-dp3_pp_sat r0.w, r2, v1
-pow_pp r2, r0.w, c8.x
-mul r1.xyz, v6, c7
-mul_pp r1.xyz, r0, r1
+mad r0.w, r1.y, r0, c15.y
+rcp r1.z, r1.z
+mul r1.y, r0.w, r1.z
+cmp r0.w, v5.y, c14.x, c14.y
+mul r1.z, r0.w, r1.y
+mad r0.y, -r1.z, c15.z, r1
+mad r0.z, r0.x, c15.w, r0
+mad r0.x, r0.w, c15.w, r0.y
+mul r0.y, r0.z, c16.x
+mul r1.y, r0.x, c16.x
+dsx r0.w, r0.y
+dsx r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+dsy r0.xz, v5.xyyw
+mul r0.xz, r0, r0
+add r0.z, r0.x, r0
+add r1.z, r1, r1.w
+rsq r0.x, r1.z
+rsq r0.z, r0.z
+rcp r1.z, r0.z
+rcp r0.x, r0.x
+mul r0.z, r0.x, c18.x
+mad r1.x, r1, c18, c18.y
+mul r0.x, r1.z, c18
+dsy r0.y, r0
+texldd r0, r1, s0, r0.zwzw, r0
+mul_pp r3.xyz, r0, r3
+pow_pp r1, r2.w, c8.x
+mov_pp r0.y, r1.x
+texld r1, v4, s2
+dp4 r0.z, r1, c19
 dp3 r0.x, v4, v4
-rsq r2.y, r0.x
-texld r0, v4, s2
-dp4 r0.y, r0, c19
-rcp r2.y, r2.y
-mul r0.x, r2.y, c3.w
-mov_pp r2.y, r2.x
-dp3_pp_sat r2.x, v2, r3
-add_pp r2.z, r2.x, c14.y
-mad r0.y, -r0.x, c18.w, r0
-mov r0.z, c4.x
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r0.x, r0, c3.w
+mad r0.z, -r0.x, c18.w, r0
+mov r1.x, c4
 dp3 r0.x, v3, v3
-add_pp r2.x, r2, c18.z
-cmp r0.y, r0, c14, r0.z
+cmp r0.z, r0, c13.w, r1.x
 texld r0.x, r0.x, s3
-mul r0.w, r0.x, r0.y
-mul r0.xyz, r0.w, c5
-mul_pp r2.x, r2, c5.w
-mul r0.xyz, r0, c6
-mul r0.xyz, r0, r2.y
-frc_pp r2.y, r2.z
-add_pp_sat r2.y, r2.z, -r2
-mul r0.xyz, r2.y, r0
-mul r3.xyz, r1.w, r0
-mul_pp r0.w, r2.x, r0
-mov r0.y, c11.x
-add r2.xyz, c5, r0.y
-mul_pp_sat r0.z, r0.w, c20.x
+mul r0.x, r0, r0.z
+dp3_pp_sat r0.z, v2, r2
+add_pp r1.w, r0.z, c13
+frc_pp r2.x, r1.w
+mul r1.xyz, r0.x, c5
+mul r1.xyz, r1, c6
+mul r1.xyz, r1, r0.y
+add_pp_sat r1.w, r1, -r2.x
+add_pp r0.y, r0.z, c18.z
+mul r1.xyz, r1.w, r1
+mul_pp r0.y, r0, c5.w
+mul_pp r0.y, r0, r0.x
+mul r2.xyz, r0.w, r1
+mul_pp_sat r0.w, r0.y, c20.x
+mov r0.x, c11
+add r0.xyz, c5, r0.x
+mad_sat r1.xyz, r0, r0.w, c0
+mul r0.xyz, v6, c7
+mul_pp r0.xyz, r3, r0
+add_pp r1.xyz, r1, r2
+mul_pp oC0.xyz, r0, r1
 texldp r0.x, v7, s4
-mad r0.w, r0.x, c1.z, c1
-mad_sat r0.xyz, r2, r0.z, c0
-add_pp r2.xyz, r0, r3
-rcp r0.w, r0.w
-add r0.x, r0.w, -v7.z
-mul_sat r0.y, r0.x, c12.x
+mov r1.xyz, v2
+dp3 r0.y, v1, r1
+mad r0.x, r0, c1.z, c1.w
+mad r0.z, -r0.y, c13, c13.w
+rcp r0.x, r0.x
+add r0.y, r0.x, -v7.z
 add r0.x, v0, c13
-add r0.y, r0, c13.z
+mul_sat r0.y, r0, c12.x
+add r0.y, r0, -r0.z
 mul_sat r0.x, r0, c13.y
-mul_pp oC0.xyz, r1, r2
-mad oC0.w, r0.x, r0.y, c13
+mad oC0.w, r0.x, r0.y, r0.z
 "
 }
 
@@ -21807,14 +21853,14 @@ SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_LightTexture0] CUBE
 SetTexture 5 [_CameraDepthTexture] 2D
 "ps_3_0
-; 125 ALU, 10 TEX
+; 128 ALU, 10 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
 dcl_2d s3
 dcl_cube s4
 dcl_2d s5
-def c13, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c13, -600.00000000, 0.00200000, 0.75000000, 1.00000000
 def c14, 0.00000000, 1.00000000, -0.01872930, 0.07426100
 def c15, -0.21211439, 1.57072902, 2.00000000, 3.14159298
 def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
@@ -21830,133 +21876,136 @@ dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.xyz
 dcl_texcoord7 v7
-mul r1.xy, v5, c9.x
-dsx r4.zw, v5.xyxy
-abs r0.w, v5.z
+mul r0.xy, v5, c9.x
+mul r1.xy, v5.zyzw, c9.x
+mul r2.w, v0.x, c10.x
+dsx r4.xy, v5
+dsy r4.zw, v5.xyxy
 abs r2.xy, v5
-max r0.x, r2, r0.w
-rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
-mul r0.xy, v5.zyzw, c9.x
-mul r2.z, r1.w, r1.w
-texld r1.xyz, r1, s1
+abs r0.w, v5.z
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2, c16.y, c16
-mad r2.w, r0.z, r2.z, c16
+texld r1.xyz, r1, s1
+add_pp r1.xyz, r1, -r0
+mad_pp r1.xyz, r2.x, r1, r0
+max r0.z, r2.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r2.x, r0.w
+mul r1.w, r0.z, r1
 mul r0.xy, v5.zxzw, c9.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r2.y, r0, r1
-mad r2.w, r2, r2.z, c17.x
-mad r2.y, r2.w, r2.z, c17
-mad r2.y, r2, r2.z, c17.z
-add_pp r1.xyz, -r0, c14.y
-mul r1.w, r2.y, r1
-mul r2.z, v0.x, c10.x
-mul_sat r2.y, r2.z, c15.z
-mad_pp r0.xyz, r2.y, r1, r0
-dp4 r1.z, c2, c2
-add r1.y, -r1.w, c17.w
-add r1.x, r2, -r0.w
-cmp r1.x, -r1, r1.w, r1.y
-add r1.y, -r1.x, c15.w
-cmp r1.x, v5.z, r1, r1.y
-rsq r1.z, r1.z
-mul r2.xyz, r1.z, c2
-abs r1.z, v5.y
-dp3_pp r1.y, v2, -r2
-mul_pp r3.xyz, v2, r1.y
-mad_pp r3.xyz, -r3, c15.z, -r2
-dp3_pp_sat r2.x, v2, r2
-add_pp r2.y, r2.x, c14
-frc_pp r2.z, r2.y
-cmp r1.x, v5, r1, -r1
-mad r4.x, r1, c18, c18.y
-add r1.y, -r0.w, c14
-mad r1.x, r0.w, c14.z, c14.w
-mad r1.x, r0.w, r1, c15
-add r2.w, -r1.z, c14.y
-mad r1.w, r1.z, c14.z, c14
-mad r1.w, r1, r1.z, c15.x
+mul r2.z, r1.w, r1.w
+mad r2.y, r2.z, c16, c16.z
+mad r2.y, r2, r2.z, c16.w
+add_pp r1.xyz, -r0, c13.w
+mul_sat r2.w, r2, c15.z
+mad_pp r0.xyz, r2.w, r1, r0
+mad r2.y, r2, r2.z, c17.x
+mad r1.x, r2.y, r2.z, c17.y
+mad r1.x, r1, r2.z, c17.z
+mul r2.y, r1.x, r1.w
+dp4 r1.y, c2, c2
 rsq r1.y, r1.y
+mul r1.xyz, r1.y, c2
+dp3_pp r2.w, v2, -r1
+add r1.w, r2.x, -r0
+add r2.z, -r2.y, c17.w
+cmp r1.w, -r1, r2.y, r2.z
+mul_pp r2.xyz, v2, r2.w
+mad_pp r2.xyz, -r2, c15.z, -r1
+dp3_pp_sat r2.x, v1, r2
+pow_pp r3, r2.x, c8.x
+abs r2.y, v5
+add r2.w, -r1, c15
+cmp r1.w, v5.z, r1, r2
+cmp r1.w, v5.x, r1, -r1
+mad r3.z, r1.w, c18.x, c18.y
+add r2.x, -r0.w, c13.w
+mad r1.w, r0, c14.z, c14
+mad r1.w, r0, r1, c15.x
+add r2.w, -r2.y, c13
+mad r2.z, r2.y, c14, c14.w
+mad r2.z, r2, r2.y, c15.x
+rsq r2.x, r2.x
 rsq r2.w, r2.w
-add_pp r2.x, r2, c18.z
-mad r0.w, r0, r1.x, c15.y
-rcp r1.y, r1.y
-mul r1.x, r0.w, r1.y
+mad r0.w, r0, r1, c15.y
+rcp r2.x, r2.x
+mul r1.w, r0, r2.x
 cmp r0.w, v5.z, c14.x, c14.y
-mul r1.y, r0.w, r1.x
-mad r1.y, -r1, c15.z, r1.x
-mad r1.z, r1.w, r1, c15.y
+mul r2.x, r0.w, r1.w
+mad r2.x, -r2, c15.z, r1.w
+mad r2.y, r2.z, r2, c15
 rcp r2.w, r2.w
-mul r1.w, r1.z, r2
-cmp r1.z, v5.y, c14.x, c14.y
-mul r2.w, r1.z, r1
-mad r1.x, -r2.w, c15.z, r1.w
-mad r1.y, r0.w, c15.w, r1
-mad r0.w, r1.z, c15, r1.x
-mul r1.x, r1.y, c16
-dp3 r2.w, v4, v4
-mul r4.y, r0.w, c16.x
-mul r4.zw, r4, r4
-add r0.w, r4.z, r4
+mul r2.z, r2.y, r2.w
+cmp r2.y, v5, c14.x, c14
+mul r2.w, r2.y, r2.z
+mad r1.w, -r2, c15.z, r2.z
+mad r2.x, r0.w, c15.w, r2
+mad r0.w, r2.y, c15, r1
+mul r1.w, r2.x, c16.x
+mul r3.w, r0, c16.x
+mul r4.xy, r4, r4
+add r0.w, r4.x, r4.y
 rsq r0.w, r0.w
-dsx r1.w, r1.x
-dsy r1.y, r1.x
-dsy r1.xz, v5.xyyw
-mul r1.xz, r1, r1
-add r1.x, r1, r1.z
 rcp r0.w, r0.w
-mul r1.z, r0.w, c18.x
-dp3_pp_sat r0.w, r3, v1
-pow_pp r3, r0.w, c8.x
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-mul r1.x, r1, c18
-texldd r1, r4, s0, r1.zwzw, r1
-mul_pp r0.xyz, r1, r0
-mul r1.xyz, v6, c7
-mul_pp r1.xyz, r0, r1
+dsx r2.w, r1
+dsy r2.y, r1.w
+mul r4.zw, r4, r4
+add r1.w, r4.z, r4
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r2.x, r1.w, c18
+mul r2.z, r0.w, c18.x
+texldd r2, r3.zwzw, s0, r2.zwzw, r2
+mul_pp r2.xyz, r2, r0
 texld r0, v4, s2
 dp4 r0.y, r0, c19
-rsq r2.w, r2.w
-rcp r0.x, r2.w
+mov_pp r1.w, r3.x
+dp3 r3.x, v4, v4
+rsq r3.x, r3.x
+rcp r0.x, r3.x
 mul r0.x, r0, c3.w
 mad r0.x, -r0, c18.w, r0.y
 mov r0.z, c4.x
-cmp r0.y, r0.x, c14, r0.z
+cmp r0.y, r0.x, c13.w, r0.z
 dp3 r0.x, v3, v3
 texld r0.w, v3, s4
 texld r0.x, r0.x, s3
 mul r0.x, r0, r0.w
-mul r0.w, r0.x, r0.y
-mul r0.xyz, r0.w, c5
-mul_pp r2.x, r2, c5.w
-mul_pp r0.w, r2.x, r0
-mov_pp r2.w, r3.x
-mul r0.xyz, r0, c6
-add_pp_sat r2.y, r2, -r2.z
-mul r0.xyz, r0, r2.w
-mul r0.xyz, r2.y, r0
-mul r3.xyz, r1.w, r0
-mov r0.y, c11.x
-add r2.xyz, c5, r0.y
-mul_pp_sat r0.z, r0.w, c20.x
+mul r0.x, r0, r0.y
+dp3_pp_sat r0.y, v2, r1
+add_pp r0.z, r0.y, c13.w
+frc_pp r0.w, r0.z
+mul r1.xyz, r0.x, c5
+mul r1.xyz, r1, c6
+add_pp r0.y, r0, c18.z
+mul_pp r0.y, r0, c5.w
+mul_pp r0.y, r0, r0.x
+add_pp_sat r0.z, r0, -r0.w
+mul r1.xyz, r1, r1.w
+mul r1.xyz, r0.z, r1
+mul r3.xyz, r2.w, r1
+mul_pp_sat r0.w, r0.y, c20.x
+mov r0.x, c11
+add r0.xyz, c5, r0.x
+mad_sat r1.xyz, r0, r0.w, c0
+mul r0.xyz, v6, c7
+mul_pp r0.xyz, r2, r0
+add_pp r1.xyz, r1, r3
+mul_pp oC0.xyz, r0, r1
 texldp r0.x, v7, s5
-mad r0.w, r0.x, c1.z, c1
-mad_sat r0.xyz, r2, r0.z, c0
-add_pp r2.xyz, r0, r3
-rcp r0.w, r0.w
-add r0.x, r0.w, -v7.z
-mul_sat r0.y, r0.x, c12.x
+mov r1.xyz, v2
+dp3 r0.y, v1, r1
+mad r0.x, r0, c1.z, c1.w
+mad r0.z, -r0.y, c13, c13.w
+rcp r0.x, r0.x
+add r0.y, r0.x, -v7.z
 add r0.x, v0, c13
-add r0.y, r0, c13.z
+mul_sat r0.y, r0, c12.x
+add r0.y, r0, -r0.z
 mul_sat r0.x, r0, c13.y
-mul_pp oC0.xyz, r1, r2
-mad oC0.w, r0.x, r0.y, c13
+mad oC0.w, r0.x, r0.y, r0.z
 "
 }
 
@@ -22005,14 +22054,14 @@ SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_ShadowMapTexture] 2D
 SetTexture 5 [_CameraDepthTexture] 2D
 "ps_3_0
-; 133 ALU, 13 TEX
+; 136 ALU, 13 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
 dcl_2d s5
-def c16, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c16, -600.00000000, 0.00200000, 0.75000000, 1.00000000
 def c17, 0.00000000, 1.00000000, -0.01872930, 0.07426100
 def c18, -0.21211439, 1.57072902, 2.00000000, 3.14159298
 def c19, 0.31830987, -0.01348047, 0.05747731, -0.12123910
@@ -22028,52 +22077,53 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.xyz
 dcl_texcoord7 v7
 mul r1.xy, v5, c12.x
-dsx r3.zw, v5.xyxy
-dsy r4.xy, v5
+dsx r4.zw, v5.xyxy
 abs r0.w, v5.z
 abs r2.xy, v5
 max r0.x, r2, r0.w
 rcp r0.y, r0.x
 min r0.x, r2, r0.w
 mul r1.w, r0.x, r0.y
-mul r2.z, r1.w, r1.w
-mad r2.w, r2.z, c19.y, c19.z
 mul r0.xy, v5.zyzw, c12.x
-mul r3.zw, r3, r3
-mad r2.w, r2, r2.z, c19
+mul r2.z, r1.w, r1.w
 texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2.w, r2, c20.x
-mad r2.w, r0.z, r2.z, c20.y
+mad r0.z, r2, c19.y, c19
+mad r2.w, r0.z, r2.z, c19
 mul r0.xy, v5.zxzw, c12.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r2.y, r0, r1
-mad r2.z, r2.w, r2, c20
-mul r2.y, r2.z, r1.w
-add_pp r1.xyz, -r0, c17.y
-add r2.z, -r2.y, c20.w
-add r1.w, r2.x, -r0
-cmp r1.w, -r1, r2.y, r2.z
-mul r2.y, v0.x, c13.x
-mul_sat r2.y, r2, c18.z
+mad r2.w, r2, r2.z, c20.x
+mad r2.y, r2.w, r2.z, c20
+mad r2.y, r2, r2.z, c20.z
+add_pp r1.xyz, -r0, c16.w
+mul r1.w, r2.y, r1
+mul r2.z, v0.x, c13.x
+mul_sat r2.y, r2.z, c18.z
 mad_pp r0.xyz, r2.y, r1, r0
+dp4 r1.z, c2, c2
+add r1.y, -r1.w, c20.w
+add r1.x, r2, -r0.w
+cmp r1.x, -r1, r1.w, r1.y
+rsq r1.z, r1.z
+mul r2.xyz, r1.z, c2
+add r1.y, -r1.x, c18.w
+cmp r1.w, v5.z, r1.x, r1.y
+dp3_pp r1.z, v2, -r2
+mul_pp r1.xyz, v2, r1.z
+mad_pp r3.xyz, -r1, c18.z, -r2
 abs r1.z, v5.y
-add r2.x, -r1.w, c18.w
-cmp r1.x, v5.z, r1.w, r2
-cmp r1.x, v5, r1, -r1
-mad r3.x, r1, c21, c21.y
+cmp r1.w, v5.x, r1, -r1
+mad r4.x, r1.w, c21, c21.y
+add r1.y, -r0.w, c16.w
 mad r1.x, r0.w, c17.z, c17.w
-add r2.w, -r1.z, c17.y
+mad r1.x, r0.w, r1, c18
+add r2.w, -r1.z, c16
 mad r1.w, r1.z, c17.z, c17
 mad r1.w, r1, r1.z, c18.x
-dp4 r1.y, c2, c2
-rsq r1.y, r1.y
-mul r2.xyz, r1.y, c2
-add r1.y, -r0.w, c17
-mad r1.x, r0.w, r1, c18
 rsq r1.y, r1.y
 rsq r2.w, r2.w
 mad r0.w, r0, r1.x, c18.y
@@ -22088,83 +22138,85 @@ mul r1.w, r1.z, r2
 cmp r1.z, v5.y, c17.x, c17.y
 mul r2.w, r1.z, r1
 mad r1.x, -r2.w, c18.z, r1.w
+dp3_pp_sat r2.w, v1, r3
+rcp r3.z, v4.w
 mad r1.y, r0.w, c18.w, r1
 mad r0.w, r1.z, c18, r1.x
 mul r1.x, r1.y, c19
-mul r3.y, r0.w, c19.x
-add r0.w, r3.z, r3
+mad r3.xy, v4, r3.z, c7
+mul r4.y, r0.w, c19.x
+mul r4.zw, r4, r4
+add r0.w, r4.z, r4
 rsq r0.w, r0.w
-rcp r0.w, r0.w
-mul r1.z, r0.w, c21.x
-rcp r2.w, v4.w
-dp3_pp r0.w, v2, -r2
 dsx r1.w, r1.x
 dsy r1.y, r1.x
-mul r4.xy, r4, r4
-add r1.x, r4, r4.y
+dsy r1.xz, v5.xyyw
+mul r1.xz, r1, r1
+add r1.x, r1, r1.z
+rcp r0.w, r0.w
 rsq r1.x, r1.x
 rcp r1.x, r1.x
+mul r1.z, r0.w, c21.x
 mul r1.x, r1, c21
-texldd r1, r3, s0, r1.zwzw, r1
+texldd r1, r4, s0, r1.zwzw, r1
 mul_pp r1.xyz, r1, r0
-mul_pp r0.xyz, v2, r0.w
-mad_pp r0.xyz, -r0, c18.z, -r2
-dp3_pp_sat r2.x, v2, r2
-add_pp r2.y, r2.x, c17
-frc_pp r2.z, r2.y
-mul r3.xyz, v6, c10
-add_pp r2.x, r2, c21.z
-dp3_pp_sat r0.x, r0, v1
-mul_pp r1.xyz, r1, r3
-pow_pp r3, r0.x, c11.x
-mad r0.xy, v4, r2.w, c7
-texld r0.x, r0, s4
-mad r4.xy, v4, r2.w, c6
+pow_pp r0, r2.w, c11.x
+mov_pp r2.w, r0.x
+texld r0.x, r3, s4
+mad r3.xy, v4, r3.z, c6
 mov r0.w, r0.x
-texld r0.x, r4, s4
-mad r4.xy, v4, r2.w, c5
+texld r0.x, r3, s4
+mad r3.xy, v4, r3.z, c5
 mov r0.z, r0.x
-texld r0.x, r4, s4
-mad r4.xy, v4, r2.w, c4
+texld r0.x, r3, s4
+mad r3.xy, v4, r3.z, c4
 mov r0.y, r0.x
-texld r0.x, r4, s4
-mad r0, -v4.z, r2.w, r0
-mov r3.y, c3.x
-cmp r0, r0, c17.y, r3.y
-dp4_pp r0.y, r0, c21.w
-rcp r2.w, v3.w
-mad r4.xy, v3, r2.w, c21.y
+texld r0.x, r3, s4
+mov r3.x, c3
+mad r0, -v4.z, r3.z, r0
+cmp r0, r0, c16.w, r3.x
+dp4_pp r0.z, r0, c21.w
+rcp r3.x, v3.w
+mad r3.xy, v3, r3.x, c21.y
 dp3 r0.x, v3, v3
-texld r0.w, r4, s2
-cmp r0.z, -v3, c17.x, c17.y
-mul_pp r0.z, r0, r0.w
+texld r0.w, r3, s2
+cmp r0.y, -v3.z, c17.x, c17
+mul_pp r0.y, r0, r0.w
 texld r0.x, r0.x, s3
-mul_pp r0.x, r0.z, r0
-mul_pp r0.w, r0.x, r0.y
-mul r0.xyz, r0.w, c8
-mul_pp r2.x, r2, c8.w
-mul_pp r0.w, r2.x, r0
-mov_pp r2.w, r3.x
-mul r0.xyz, r0, c9
-add_pp_sat r2.y, r2, -r2.z
-mul r0.xyz, r0, r2.w
-mul r0.xyz, r2.y, r0
-mul r3.xyz, r1.w, r0
-mov r0.y, c14.x
-add r2.xyz, c8, r0.y
-mul_pp_sat r0.z, r0.w, c22.x
+mul_pp r0.x, r0.y, r0
+mul_pp r0.x, r0, r0.z
+dp3_pp_sat r0.y, v2, r2
+add_pp r0.z, r0.y, c16.w
+frc_pp r0.w, r0.z
+mul r2.xyz, r0.x, c8
+mul r2.xyz, r2, c9
+add_pp r0.y, r0, c21.z
+mul_pp r0.y, r0, c8.w
+mul_pp r0.y, r0, r0.x
+add_pp_sat r0.z, r0, -r0.w
+mul r2.xyz, r2, r2.w
+mul r2.xyz, r0.z, r2
+mul r3.xyz, r1.w, r2
+mul_pp_sat r0.w, r0.y, c22.x
+mov r0.x, c14
+add r0.xyz, c8, r0.x
+mad_sat r2.xyz, r0, r0.w, c0
+mul r0.xyz, v6, c10
+mul_pp r0.xyz, r1, r0
+add_pp r2.xyz, r2, r3
+mul_pp oC0.xyz, r0, r2
 texldp r0.x, v7, s5
-mad r0.w, r0.x, c1.z, c1
-mad_sat r0.xyz, r2, r0.z, c0
-add_pp r2.xyz, r0, r3
-rcp r0.w, r0.w
-add r0.x, r0.w, -v7.z
-mul_sat r0.y, r0.x, c15.x
+mov r1.xyz, v2
+dp3 r0.y, v1, r1
+mad r0.x, r0, c1.z, c1.w
+mad r0.z, -r0.y, c16, c16.w
+rcp r0.x, r0.x
+add r0.y, r0.x, -v7.z
 add r0.x, v0, c16
-add r0.y, r0, c16.z
+mul_sat r0.y, r0, c15.x
+add r0.y, r0, -r0.z
 mul_sat r0.x, r0, c16.y
-mul_pp oC0.xyz, r1, r2
-mad oC0.w, r0.x, r0.y, c16
+mad oC0.w, r0.x, r0.y, r0.z
 "
 }
 
@@ -22213,14 +22265,14 @@ SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_ShadowMapTexture] 2D
 SetTexture 5 [_CameraDepthTexture] 2D
 "ps_3_0
-; 132 ALU, 13 TEX
+; 135 ALU, 13 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
 dcl_2d s5
-def c16, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c16, -600.00000000, 0.00200000, 0.75000000, 1.00000000
 def c17, 0.00000000, 1.00000000, -0.01872930, 0.07426100
 def c18, -0.21211439, 1.57072902, 2.00000000, 3.14159298
 def c19, 0.31830987, -0.01348047, 0.05747731, -0.12123910
@@ -22254,124 +22306,127 @@ texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r1.xyz, r2.x, r0, r1
 mad r0.z, r2.w, r2, c20
-mul r2.z, r0, r1.w
+mul r1.w, r0.z, r1
 mul r0.xy, v5.zxzw, c12.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r2.y, r0, r1
-add_pp r1.xyz, -r0, c17.y
-add r1.w, r2.x, -r0
-add r2.w, -r2.z, c20
-cmp r1.w, -r1, r2.z, r2
+add_pp r1.xyz, -r0, c16.w
+rcp r2.w, v4.w
+add r2.x, r2, -r0.w
+add r2.z, -r1.w, c20.w
+cmp r1.w, -r2.x, r1, r2.z
 add r2.x, -r1.w, c18.w
 cmp r1.w, v5.z, r1, r2.x
 mul r2.x, v0, c13
 mul_sat r2.x, r2, c18.z
-mad_pp r0.xyz, r2.x, r1, r0
+mad_pp r2.xyz, r2.x, r1, r0
 cmp r1.w, v5.x, r1, -r1
-mad r1.x, r1.w, c21, c21.y
-add r1.z, -r0.w, c17.y
-mad r1.y, r0.w, c17.z, c17.w
-mad r1.y, r0.w, r1, c18.x
-rsq r1.z, r1.z
-dsx r2.zw, v5.xyxy
-mul r2.zw, r2, r2
-mad r0.w, r0, r1.y, c18.y
-rcp r1.z, r1.z
-mul r2.x, r0.w, r1.z
+add r0.y, -r0.w, c16.w
+mad r0.x, r0.w, c17.z, c17.w
+mad r0.x, r0.w, r0, c18
+mad r0.x, r0.w, r0, c18.y
 abs r0.w, v5.y
-cmp r1.w, v5.z, c17.x, c17.y
-mul r2.y, r1.w, r2.x
-add r1.z, -r0.w, c17.y
+add r1.z, -r0.w, c16.w
 mad r1.y, r0.w, c17.z, c17.w
 mad r1.y, r1, r0.w, c18.x
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+mul r0.y, r0.x, r0
+cmp r0.x, v5.z, c17, c17.y
+mul r0.z, r0.x, r0.y
+mad r0.z, -r0, c18, r0.y
 rsq r1.z, r1.z
 mad r0.w, r1.y, r0, c18.y
 rcp r1.z, r1.z
 mul r1.y, r0.w, r1.z
 cmp r0.w, v5.y, c17.x, c17.y
 mul r1.z, r0.w, r1.y
-mad r1.y, -r1.z, c18.z, r1
-mad r0.w, r0, c18, r1.y
-mad r2.x, -r2.y, c18.z, r2
-mad r1.z, r1.w, c18.w, r2.x
-mul r1.z, r1, c19.x
-mul r1.y, r0.w, c19.x
-add r0.w, r2.z, r2
-rsq r0.w, r0.w
-rcp r2.w, v4.w
-dsy r2.y, r1.z
-dsx r1.w, r1.z
+mad r0.y, -r1.z, c18.z, r1
+mad r0.z, r0.x, c18.w, r0
+mad r0.x, r0.w, c18.w, r0.y
+mul r0.y, r0.z, c19.x
+dsx r0.w, r0.y
+mad r1.x, r1.w, c21, c21.y
 mul r3.xy, r3, r3
-add r1.z, r3.x, r3.y
-rsq r1.z, r1.z
-rcp r2.x, r1.z
-rcp r0.w, r0.w
-mul r1.z, r0.w, c21.x
-mul r2.x, r2, c21
-texldd r1, r1, s0, r1.zwzw, r2
-mul_pp r0.xyz, r1, r0
-mul r1.xyz, v6, c10
-mul_pp r2.xyz, r0, r1
+add r0.z, r3.x, r3.y
+dsx r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+mul r1.y, r0.x, c19.x
+add r0.x, r1.z, r1.w
+rsq r0.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
+rcp r0.x, r0.x
+mul r0.z, r0.x, c21.x
+mul r0.x, r1.z, c21
+dsy r0.y, r0
+texldd r1, r1, s0, r0.zwzw, r0
 mad r0.xyz, v4, r2.w, c7
-dp4 r0.w, c2, c2
-rsq r0.w, r0.w
-mul r3.xyz, r0.w, c2
-dp3_pp r0.w, v2, -r3
-mul_pp r1.xyz, v2, r0.w
-mad_pp r4.xyz, -r1, c18.z, -r3
-mad r1.xyz, v4, r2.w, c5
+mul_pp r1.xyz, r1, r2
 texld r0.x, r0, s4
+mad r2.xyz, v4, r2.w, c6
 mov_pp r0.w, r0.x
-mad r0.xyz, v4, r2.w, c6
-texld r0.x, r0, s4
-texld r1.x, r1, s4
+texld r0.x, r2, s4
+mad r2.xyz, v4, r2.w, c5
 mov_pp r0.z, r0.x
-mov_pp r0.y, r1.x
-mad r1.xyz, v4, r2.w, c4
-mov r0.x, c3
-add r2.w, c17.y, -r0.x
-texld r0.x, r1, s4
-mad r0, r0, r2.w, c3.x
-dp4_pp r0.z, r0, c21.w
-rcp r1.x, v3.w
-mad r1.xy, v3, r1.x, c21.y
+texld r0.x, r2, s4
+mad r2.xyz, v4, r2.w, c4
+mov_pp r0.y, r0.x
+texld r0.x, r2, s4
+mov r2.y, c3.x
+add r2.y, c16.w, -r2
+mad r0, r0, r2.y, c3.x
+dp4_pp r0.y, r0, c21.w
+rcp r0.x, v3.w
+mad r4.xy, v3, r0.x, c21.y
+dp4 r2.x, c2, c2
+rsq r2.x, r2.x
+mul r2.xyz, r2.x, c2
+dp3_pp r0.z, v2, -r2
+mul_pp r3.xyz, v2, r0.z
+mad_pp r3.xyz, -r3, c18.z, -r2
 dp3 r0.x, v3, v3
-texld r0.w, r1, s2
-cmp r0.y, -v3.z, c17.x, c17
-mul_pp r0.y, r0, r0.w
+texld r0.w, r4, s2
+cmp r0.z, -v3, c17.x, c17.y
+mul_pp r0.z, r0, r0.w
 texld r0.x, r0.x, s3
-mul_pp r0.x, r0.y, r0
-mul_pp r2.w, r0.x, r0.z
-dp3_pp_sat r3.w, r4, v1
+mul_pp r0.x, r0.z, r0
+mul_pp r2.w, r0.x, r0.y
+mul r0.xyz, r2.w, c8
+dp3_pp_sat r3.w, v1, r3
+mul r3.xyz, r0, c9
 pow_pp r0, r3.w, c11.x
-dp3_pp_sat r0.w, v2, r3
-add_pp r3.x, r0.w, c17.y
-mul r1.xyz, r2.w, c8
-mul r1.xyz, r1, c9
-mul r0.xyz, r1, r0.x
-frc_pp r1.x, r3
-add_pp_sat r1.x, r3, -r1
-mul r0.xyz, r1.x, r0
-mul r3.xyz, r1.w, r0
-mov r0.y, c14.x
+dp3_pp_sat r0.w, v2, r2
+add_pp r2.x, r0.w, c16.w
+frc_pp r2.y, r2.x
 add_pp r0.w, r0, c21.z
+mul r0.xyz, r3, r0.x
+add_pp_sat r2.x, r2, -r2.y
+mul r0.xyz, r2.x, r0
+mul r3.xyz, r1.w, r0
 mul_pp r0.w, r0, c8
-mul_pp r0.w, r0, r2
-add r1.xyz, c8, r0.y
-mul_pp_sat r0.z, r0.w, c22.x
+mul_pp r0.y, r0.w, r2.w
+mul_pp_sat r0.w, r0.y, c22.x
+mov r0.x, c14
+add r0.xyz, c8, r0.x
+mad_sat r2.xyz, r0, r0.w, c0
+mul r0.xyz, v6, c10
+mul_pp r0.xyz, r1, r0
+add_pp r2.xyz, r2, r3
+mul_pp oC0.xyz, r0, r2
 texldp r0.x, v7, s5
-mad r0.w, r0.x, c1.z, c1
-mad_sat r0.xyz, r1, r0.z, c0
-add_pp r1.xyz, r0, r3
-rcp r0.w, r0.w
-add r0.x, r0.w, -v7.z
-mul_sat r0.y, r0.x, c15.x
+mov r1.xyz, v2
+dp3 r0.y, v1, r1
+mad r0.x, r0, c1.z, c1.w
+mad r0.z, -r0.y, c16, c16.w
+rcp r0.x, r0.x
+add r0.y, r0.x, -v7.z
 add r0.x, v0, c16
-add r0.y, r0, c16.z
+mul_sat r0.y, r0, c15.x
+add r0.y, r0, -r0.z
 mul_sat r0.x, r0, c16.y
-mul_pp oC0.xyz, r2, r1
-mad oC0.w, r0.x, r0.y, c16
+mad oC0.w, r0.x, r0.y, r0.z
 "
 }
 
@@ -22411,13 +22466,13 @@ SetTexture 2 [_ShadowMapTexture] CUBE
 SetTexture 3 [_LightTexture0] 2D
 SetTexture 4 [_CameraDepthTexture] 2D
 "ps_3_0
-; 131 ALU, 12 TEX
+; 134 ALU, 12 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
 dcl_2d s3
 dcl_2d s4
-def c13, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c13, -600.00000000, 0.00200000, 0.75000000, 1.00000000
 def c14, 0.00000000, 1.00000000, -0.01872930, 0.07426100
 def c15, -0.21211439, 1.57072902, 2.00000000, 3.14159298
 def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
@@ -22435,7 +22490,7 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.xyz
 dcl_texcoord7 v7
 mul r1.xy, v5, c9.x
-dsy r3.xy, v5
+dsx r3.zw, v5.xyxy
 abs r0.w, v5.z
 abs r2.xy, v5
 max r0.x, r2, r0.w
@@ -22447,7 +22502,7 @@ mad r0.x, r2.z, c16.y, c16.z
 mad r0.x, r0, r2.z, c16.w
 mad r2.w, r0.x, r2.z, c17.x
 mul r0.xy, v5.zyzw, c9.x
-mul r3.xy, r3, r3
+mul r3.zw, r3, r3
 mad r2.w, r2, r2.z, c17.y
 texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
@@ -22459,116 +22514,119 @@ mul r0.xy, v5.zxzw, c9.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r2.y, r0, r1
-add_pp r1.xyz, -r0, c14.y
+abs r2.y, v5
+add r2.w, -r2.y, c13
+rsq r2.w, r2.w
 add r2.x, r2, -r0.w
 add r2.z, -r1.w, c17.w
 cmp r1.w, -r2.x, r1, r2.z
 add r2.x, -r1.w, c15.w
 cmp r1.w, v5.z, r1, r2.x
-mul r2.x, v0, c10
-mul_sat r2.x, r2, c15.z
-mad_pp r0.xyz, r2.x, r1, r0
 cmp r1.w, v5.x, r1, -r1
-mad r1.x, r1.w, c18, c18.y
-abs r1.w, v5.y
-add r1.z, -r0.w, c14.y
-mad r1.y, r0.w, c14.z, c14.w
-mad r1.y, r0.w, r1, c15.x
-add r2.y, -r1.w, c14
-mad r2.x, r1.w, c14.z, c14.w
-mad r2.x, r2, r1.w, c15
-rsq r1.z, r1.z
-rsq r2.y, r2.y
-dsx r2.zw, v5.xyxy
-mul r2.zw, r2, r2
-mad r0.w, r0, r1.y, c15.y
-rcp r1.z, r1.z
-mul r1.y, r0.w, r1.z
+mad r3.x, r1.w, c18, c18.y
+mad r1.w, r0, c14.z, c14
+mad r2.z, r2.y, c14, c14.w
+mad r2.z, r2, r2.y, c15.x
+mul r2.x, v0, c10
+mad r1.w, r0, r1, c15.x
+mad r2.y, r2.z, r2, c15
+rcp r2.w, r2.w
+mul r2.z, r2.y, r2.w
+cmp r2.y, v5, c14.x, c14
+mul r2.w, r2.y, r2.z
+add_pp r1.xyz, -r0, c13.w
+mul_sat r2.x, r2, c15.z
+mad_pp r1.xyz, r2.x, r1, r0
+add r2.x, -r0.w, c13.w
+rsq r2.x, r2.x
+mad r0.w, r0, r1, c15.y
+rcp r2.x, r2.x
+mul r1.w, r0, r2.x
 cmp r0.w, v5.z, c14.x, c14.y
-mul r1.z, r0.w, r1.y
-mad r1.z, -r1, c15, r1.y
-mad r1.z, r0.w, c15.w, r1
-mad r1.w, r2.x, r1, c15.y
-rcp r2.y, r2.y
-mul r2.x, r1.w, r2.y
-cmp r1.w, v5.y, c14.x, c14.y
-mul r2.y, r1.w, r2.x
-mad r1.y, -r2, c15.z, r2.x
-mad r0.w, r1, c15, r1.y
-mul r1.z, r1, c16.x
-mul r1.y, r0.w, c16.x
-add r0.w, r2.z, r2
+mul r2.x, r0.w, r1.w
+mad r2.x, -r2, c15.z, r1.w
+mad r1.w, -r2, c15.z, r2.z
+mad r2.x, r0.w, c15.w, r2
+mad r0.w, r2.y, c15, r1
+mul r1.w, r2.x, c16.x
+mul r3.y, r0.w, c16.x
+add r0.w, r3.z, r3
+dsy r2.xz, v5.xyyw
 rsq r0.w, r0.w
-dsy r2.y, r1.z
-dsx r1.w, r1.z
-add r1.z, r3.x, r3.y
-rsq r1.z, r1.z
-rcp r2.x, r1.z
+mul r2.xz, r2, r2
+dsx r2.w, r1
+dsy r2.y, r1.w
+add r1.w, r2.x, r2.z
 rcp r0.w, r0.w
-mul r1.z, r0.w, c18.x
-mul r2.x, r2, c18
-texldd r1, r1, s0, r1.zwzw, r2
-mul_pp r1.xyz, r1, r0
-mul r2.xyz, v6, c7
-mul_pp r1.xyz, r1, r2
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r2.z, r0.w, c18.x
+mul r2.x, r1.w, c18
+texldd r2, r3, s0, r2.zwzw, r2
+mul_pp r2.xyz, r2, r1
 add r0.xyz, v4, c19.xyyw
 texld r0, r0, s2
 dp4 r3.w, r0, c20
 add r0.xyz, v4, c19.yxyw
 texld r0, r0, s2
 dp4 r3.z, r0, c20
-add r2.xyz, v4, c19.yyxw
-texld r2, r2, s2
-dp4 r3.y, r2, c20
+add r1.xyz, v4, c19.yyxw
+texld r1, r1, s2
+dp4 r3.y, r1, c20
+dp3 r0.w, v4, v4
+rsq r1.x, r0.w
 add r0.xyz, v4, c18.w
 texld r0, r0, s2
-dp3 r2.x, v4, v4
 dp4 r3.x, r0, c20
-rsq r2.x, r2.x
-rcp r0.x, r2.x
-dp4 r2.x, c2, c2
-mul r0.x, r0, c3.w
-rsq r2.x, r2.x
-mul r2.xyz, r2.x, c2
+rcp r1.x, r1.x
+mul r0.x, r1, c3.w
+dp4 r1.x, c2, c2
 mad r0, -r0.x, c19.z, r3
-mov r2.w, c4.x
-cmp r0, r0, c14.y, r2.w
-dp3_pp r2.w, v2, -r2
+mov r1.y, c4.x
+cmp r0, r0, c13.w, r1.y
 dp4_pp r0.y, r0, c19.w
-mul_pp r3.xyz, v2, r2.w
-mad_pp r3.xyz, -r3, c15.z, -r2
+rsq r1.x, r1.x
+mul r1.xyz, r1.x, c2
+dp3_pp r0.z, v2, -r1
+mul_pp r3.xyz, v2, r0.z
+mad_pp r3.xyz, -r3, c15.z, -r1
 dp3 r0.x, v3, v3
 texld r0.x, r0.x, s3
-mul r2.w, r0.x, r0.y
-dp3_pp_sat r3.w, r3, v1
+mul r1.w, r0.x, r0.y
+mul r0.xyz, r1.w, c5
+dp3_pp_sat r3.w, v1, r3
+mul r3.xyz, r0, c6
 pow_pp r0, r3.w, c8.x
-dp3_pp_sat r0.w, v2, r2
-add_pp r2.x, r0.w, c14.y
-frc_pp r2.y, r2.x
-mul r3.xyz, r2.w, c5
-mul r3.xyz, r3, c6
+dp3_pp_sat r0.w, v2, r1
+add_pp r1.x, r0.w, c13.w
+frc_pp r1.y, r1.x
 add_pp r0.w, r0, c18.z
-mul_pp r0.w, r0, c5
 mul r0.xyz, r3, r0.x
-add_pp_sat r2.x, r2, -r2.y
-mul r0.xyz, r2.x, r0
-mul r3.xyz, r1.w, r0
-mul_pp r0.w, r0, r2
-mov r0.y, c11.x
-add r2.xyz, c5, r0.y
-mul_pp_sat r0.z, r0.w, c21.x
+add_pp_sat r1.x, r1, -r1.y
+mul r0.xyz, r1.x, r0
+mul r3.xyz, r2.w, r0
+mul_pp r0.w, r0, c5
+mul_pp r0.y, r0.w, r1.w
+mul_pp_sat r0.w, r0.y, c21.x
+mov r0.x, c11
+add r0.xyz, c5, r0.x
+mad_sat r1.xyz, r0, r0.w, c0
+mul r0.xyz, v6, c7
+mul_pp r0.xyz, r2, r0
+add_pp r1.xyz, r1, r3
+mul_pp oC0.xyz, r0, r1
 texldp r0.x, v7, s4
-mad r0.w, r0.x, c1.z, c1
-mad_sat r0.xyz, r2, r0.z, c0
-add_pp r2.xyz, r0, r3
-rcp r0.w, r0.w
-add r0.x, r0.w, -v7.z
-mul_sat r0.y, r0.x, c12.x
+mov r1.xyz, v2
+dp3 r0.y, v1, r1
+mad r0.x, r0, c1.z, c1.w
+mad r0.z, -r0.y, c13, c13.w
+rcp r0.x, r0.x
+add r0.y, r0.x, -v7.z
 add r0.x, v0, c13
-add r0.y, r0, c13.z
+mul_sat r0.y, r0, c12.x
+add r0.y, r0, -r0.z
 mul_sat r0.x, r0, c13.y
-mul_pp oC0.xyz, r1, r2
-mad oC0.w, r0.x, r0.y, c13
+mad oC0.w, r0.x, r0.y, r0.z
 "
 }
 
@@ -22614,14 +22672,14 @@ SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_LightTexture0] CUBE
 SetTexture 5 [_CameraDepthTexture] 2D
 "ps_3_0
-; 132 ALU, 13 TEX
+; 135 ALU, 13 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
 dcl_2d s3
 dcl_cube s4
 dcl_2d s5
-def c13, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c13, -600.00000000, 0.00200000, 0.75000000, 1.00000000
 def c14, 0.00000000, 1.00000000, -0.01872930, 0.07426100
 def c15, -0.21211439, 1.57072902, 2.00000000, 3.14159298
 def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
@@ -22639,7 +22697,7 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.xyz
 dcl_texcoord7 v7
 mul r1.xy, v5, c9.x
-dsy r3.xy, v5
+dsx r3.zw, v5.xyxy
 abs r0.w, v5.z
 abs r2.xy, v5
 max r0.x, r2, r0.w
@@ -22651,7 +22709,7 @@ mad r0.x, r2.z, c16.y, c16.z
 mad r0.x, r0, r2.z, c16.w
 mad r2.w, r0.x, r2.z, c17.x
 mul r0.xy, v5.zyzw, c9.x
-mul r3.xy, r3, r3
+mul r3.zw, r3, r3
 mad r2.w, r2, r2.z, c17.y
 texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
@@ -22663,80 +22721,78 @@ mul r0.xy, v5.zxzw, c9.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r2.y, r0, r1
-add_pp r1.xyz, -r0, c14.y
+add_pp r1.xyz, -r0, c13.w
 add r2.x, r2, -r0.w
 add r2.z, -r1.w, c17.w
 cmp r1.w, -r2.x, r1, r2.z
 add r2.x, -r1.w, c15.w
 cmp r1.w, v5.z, r1, r2.x
+cmp r1.w, v5.x, r1, -r1
 mul r2.x, v0, c10
 mul_sat r2.x, r2, c15.z
-mad_pp r0.xyz, r2.x, r1, r0
-cmp r1.w, v5.x, r1, -r1
-mad r1.x, r1.w, c18, c18.y
-abs r1.w, v5.y
-add r1.z, -r0.w, c14.y
-mad r1.y, r0.w, c14.z, c14.w
-mad r1.y, r0.w, r1, c15.x
-add r2.y, -r1.w, c14
-mad r2.x, r1.w, c14.z, c14.w
-mad r2.x, r2, r1.w, c15
-rsq r1.z, r1.z
-rsq r2.y, r2.y
-dsx r2.zw, v5.xyxy
-mul r2.zw, r2, r2
-mad r0.w, r0, r1.y, c15.y
-rcp r1.z, r1.z
-mul r1.y, r0.w, r1.z
+mad_pp r2.xyz, r2.x, r1, r0
+abs r1.z, v5.y
+mad r3.x, r1.w, c18, c18.y
+add r1.y, -r0.w, c13.w
+mad r1.x, r0.w, c14.z, c14.w
+mad r1.x, r0.w, r1, c15
+add r2.w, -r1.z, c13
+mad r1.w, r1.z, c14.z, c14
+mad r1.w, r1, r1.z, c15.x
+rsq r1.y, r1.y
+rsq r2.w, r2.w
+mad r0.w, r0, r1.x, c15.y
+rcp r1.y, r1.y
+mul r1.x, r0.w, r1.y
 cmp r0.w, v5.z, c14.x, c14.y
-mul r1.z, r0.w, r1.y
-mad r1.z, -r1, c15, r1.y
-mad r1.z, r0.w, c15.w, r1
-mad r1.w, r2.x, r1, c15.y
-rcp r2.y, r2.y
-mul r2.x, r1.w, r2.y
-cmp r1.w, v5.y, c14.x, c14.y
-mul r2.y, r1.w, r2.x
-mad r1.y, -r2, c15.z, r2.x
-mad r0.w, r1, c15, r1.y
-mul r1.z, r1, c16.x
-mul r1.y, r0.w, c16.x
-add r0.w, r2.z, r2
+mul r1.y, r0.w, r1.x
+mad r1.y, -r1, c15.z, r1.x
+mad r1.z, r1.w, r1, c15.y
+rcp r2.w, r2.w
+mul r1.w, r1.z, r2
+cmp r1.z, v5.y, c14.x, c14.y
+mul r2.w, r1.z, r1
+mad r1.x, -r2.w, c15.z, r1.w
+mad r1.y, r0.w, c15.w, r1
+mad r0.w, r1.z, c15, r1.x
+mul r1.x, r1.y, c16
+mul r3.y, r0.w, c16.x
+add r0.w, r3.z, r3
 rsq r0.w, r0.w
-dsy r2.y, r1.z
-dsx r1.w, r1.z
-add r1.z, r3.x, r3.y
-rsq r1.z, r1.z
-rcp r2.x, r1.z
+dsx r1.w, r1.x
+dsy r1.y, r1.x
+dsy r1.xz, v5.xyyw
+mul r1.xz, r1, r1
+add r1.x, r1, r1.z
 rcp r0.w, r0.w
+rsq r1.x, r1.x
+rcp r1.x, r1.x
 mul r1.z, r0.w, c18.x
-mul r2.x, r2, c18
-texldd r1, r1, s0, r1.zwzw, r2
-mul_pp r1.xyz, r1, r0
-mul r2.xyz, v6, c7
-mul_pp r1.xyz, r1, r2
 add r0.xyz, v4, c19.xyyw
 texld r0, r0, s2
 dp4 r3.w, r0, c20
-add r2.xyz, v4, c19.yxyw
-texld r0, r2, s2
+mul r1.x, r1, c18
+texldd r1, r3, s0, r1.zwzw, r1
+mul_pp r1.xyz, r1, r2
+add r0.xyz, v4, c19.yxyw
+texld r0, r0, s2
 dp4 r3.z, r0, c20
 add r2.xyz, v4, c19.yyxw
-texld r0, r2, s2
-add r2.xyz, v4, c18.w
-dp4 r3.y, r0, c20
-texld r0, r2, s2
-dp4 r3.x, r0, c20
+texld r2, r2, s2
+dp4 r3.y, r2, c20
+add r0.xyz, v4, c18.w
+texld r0, r0, s2
 dp3 r2.x, v4, v4
-rsq r0.y, r2.x
-dp4 r0.x, c2, c2
-rsq r2.x, r0.x
+dp4 r3.x, r0, c20
+rsq r2.x, r2.x
+rcp r0.x, r2.x
+dp4 r2.x, c2, c2
+mul r0.x, r0, c3.w
+rsq r2.x, r2.x
 mul r2.xyz, r2.x, c2
-rcp r0.y, r0.y
-mul r0.x, r0.y, c3.w
 mad r0, -r0.x, c19.z, r3
-mov r3.x, c4
-cmp r0, r0, c14.y, r3.x
+mov r2.w, c4.x
+cmp r0, r0, c13.w, r2.w
 dp4_pp r0.y, r0, c19.w
 dp3_pp r2.w, v2, -r2
 mul_pp r3.xyz, v2, r2.w
@@ -22746,35 +22802,40 @@ texld r0.w, v3, s4
 texld r0.x, r0.x, s3
 mul r0.x, r0, r0.w
 mul r2.w, r0.x, r0.y
-dp3_pp_sat r3.w, r3, v1
+mul r0.xyz, r2.w, c5
+dp3_pp_sat r3.w, v1, r3
+mul r3.xyz, r0, c6
 pow_pp r0, r3.w, c8.x
 dp3_pp_sat r0.w, v2, r2
-add_pp r2.x, r0.w, c14.y
+add_pp r2.x, r0.w, c13.w
 frc_pp r2.y, r2.x
-mul r3.xyz, r2.w, c5
-mul r3.xyz, r3, c6
 add_pp r0.w, r0, c18.z
-mul_pp r0.w, r0, c5
 mul r0.xyz, r3, r0.x
 add_pp_sat r2.x, r2, -r2.y
 mul r0.xyz, r2.x, r0
 mul r3.xyz, r1.w, r0
-mul_pp r0.w, r0, r2
-mov r0.y, c11.x
-add r2.xyz, c5, r0.y
-mul_pp_sat r0.z, r0.w, c21.x
+mul_pp r0.w, r0, c5
+mul_pp r0.y, r0.w, r2.w
+mul_pp_sat r0.w, r0.y, c21.x
+mov r0.x, c11
+add r0.xyz, c5, r0.x
+mad_sat r2.xyz, r0, r0.w, c0
+mul r0.xyz, v6, c7
+mul_pp r0.xyz, r1, r0
+add_pp r2.xyz, r2, r3
+mul_pp oC0.xyz, r0, r2
 texldp r0.x, v7, s5
-mad r0.w, r0.x, c1.z, c1
-mad_sat r0.xyz, r2, r0.z, c0
-add_pp r2.xyz, r0, r3
-rcp r0.w, r0.w
-add r0.x, r0.w, -v7.z
-mul_sat r0.y, r0.x, c12.x
+mov r1.xyz, v2
+dp3 r0.y, v1, r1
+mad r0.x, r0, c1.z, c1.w
+mad r0.z, -r0.y, c13, c13.w
+rcp r0.x, r0.x
+add r0.y, r0.x, -v7.z
 add r0.x, v0, c13
-add r0.y, r0, c13.z
+mul_sat r0.y, r0, c12.x
+add r0.y, r0, -r0.z
 mul_sat r0.x, r0, c13.y
-mul_pp oC0.xyz, r1, r2
-mad oC0.w, r0.x, r0.y, c13
+mad oC0.w, r0.x, r0.y, r0.z
 "
 }
 
@@ -22795,10 +22856,4711 @@ Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
 
 }
 
-#LINE 165
+#LINE 166
 
 	
 		}
+		
+		Pass {
+            Tags {"LightMode" = "ForwardAdd"} 
+            Blend One One                                      
+            Program "vp" {
+// Vertex combos: 5
+//   opengl - ALU: 10 to 19
+//   d3d9 - ALU: 12 to 21
+//   d3d11 - ALU: 8 to 17, TEX: 0 to 0, FLOW: 1 to 1
+//   d3d11_9x - ALU: 8 to 17, TEX: 0 to 0, FLOW: 1 to 1
+SubProgram "opengl " {
+Keywords { "POINT" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+Vector 17 [_WorldSpaceLightPos0]
+Matrix 5 [_Object2World]
+Matrix 9 [_World2Object]
+Vector 18 [unity_Scale]
+Matrix 13 [_LightMatrix0]
+"!!ARBvp1.0
+# 18 ALU
+PARAM c[19] = { program.local[0],
+		state.matrix.mvp,
+		program.local[5..18] };
+TEMP R0;
+TEMP R1;
+MOV R1, c[17];
+DP4 R0.w, vertex.position, c[8];
+DP4 R0.z, R1, c[11];
+DP4 R0.x, R1, c[9];
+DP4 R0.y, R1, c[10];
+MAD result.texcoord[2].xyz, R0, c[18].w, -vertex.position;
+DP4 R0.z, vertex.position, c[7];
+DP4 R0.x, vertex.position, c[5];
+DP4 R0.y, vertex.position, c[6];
+DP4 result.texcoord[3].z, R0, c[15];
+DP4 result.texcoord[3].y, R0, c[14];
+DP4 result.texcoord[3].x, R0, c[13];
+MOV result.texcoord[5], vertex.color;
+MOV result.texcoord[1].xyz, vertex.normal;
+DP4 result.position.w, vertex.position, c[4];
+DP4 result.position.z, vertex.position, c[3];
+DP4 result.position.y, vertex.position, c[2];
+DP4 result.position.x, vertex.position, c[1];
+END
+# 18 instructions, 2 R-regs
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "POINT" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+Matrix 0 [glstate_matrix_mvp]
+Vector 16 [_WorldSpaceLightPos0]
+Matrix 4 [_Object2World]
+Matrix 8 [_World2Object]
+Vector 17 [unity_Scale]
+Matrix 12 [_LightMatrix0]
+"vs_2_0
+; 20 ALU
+dcl_position0 v0
+dcl_color0 v1
+dcl_normal0 v2
+mov r0, c10
+dp4 r2.z, c16, r0
+mov r0, c9
+dp4 r2.y, c16, r0
+mov r1, c8
+dp4 r2.x, c16, r1
+dp4 r0.w, v0, c7
+dp4 r0.z, v0, c6
+dp4 r0.x, v0, c4
+dp4 r0.y, v0, c5
+mad oT2.xyz, r2, c17.w, -v0
+dp4 oT3.z, r0, c14
+dp4 oT3.y, r0, c13
+dp4 oT3.x, r0, c12
+mov oT5, v1
+mov oT1.xyz, v2
+dp4 oPos.w, v0, c3
+dp4 oPos.z, v0, c2
+dp4 oPos.y, v0, c1
+dp4 oPos.x, v0, c0
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "POINT" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+ConstBuffer "$Globals" 112 // 80 used size, 4 vars
+Matrix 16 [_LightMatrix0] 4
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 192 [_Object2World] 4
+Matrix 256 [_World2Object] 4
+Vector 320 [unity_Scale] 4
+BindCB "$Globals" 0
+BindCB "UnityLighting" 1
+BindCB "UnityPerDraw" 2
+// 20 instructions, 2 temp regs, 0 temp arrays:
+// ALU 17 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0
+eefiecedmjjpegplcgemohadockdciemelndpjpbabaaaaaaoiaeaaaaadaaaaaa
+cmaaaaaalmaaaaaaheabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahahaaaahoaaaaaaaaaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaaaaaafaepfdej
+feejepeoaaedepemepfcaaeoepfcenebemaafeebeoehefeofeaaklklepfdeheo
+laaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaa
+apaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadapaaaakeaaaaaa
+acaaaaaaaaaaaaaaadaaaaaaacaaaaaaahaiaaaakeaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaadaaaaaaahaiaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaa
+ahaiaaaakeaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaaapaaaaaafdfgfpfa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcgmadaaaaeaaaabaa
+nlaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
+abaaaaaafjaaaaaeegiocaaaacaaaaaabfaaaaaafpaaaaadpcbabaaaaaaaaaaa
+fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaaghaaaaaepccabaaa
+aaaaaaaaabaaaaaagfaaaaadhccabaaaacaaaaaagfaaaaadhccabaaaadaaaaaa
+gfaaaaadhccabaaaaeaaaaaagfaaaaadpccabaaaafaaaaaagiaaaaacacaaaaaa
+diaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaacaaaaaaabaaaaaa
+dcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaagbabaaaaaaaaaaa
+egaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaacaaaaaa
+kgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaaaaaaaaaegiocaaa
+acaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaajhcaabaaa
+aaaaaaaafgifcaaaabaaaaaaaaaaaaaaegiccaaaacaaaaaabbaaaaaadcaaaaal
+hcaabaaaaaaaaaaaegiccaaaacaaaaaabaaaaaaaagiacaaaabaaaaaaaaaaaaaa
+egacbaaaaaaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaaacaaaaaabcaaaaaa
+kgikcaaaabaaaaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaalhcaabaaaaaaaaaaa
+egiccaaaacaaaaaabdaaaaaapgipcaaaabaaaaaaaaaaaaaaegacbaaaaaaaaaaa
+dcaaaaalhccabaaaacaaaaaaegacbaaaaaaaaaaapgipcaaaacaaaaaabeaaaaaa
+egbcbaiaebaaaaaaaaaaaaaadgaaaaafhccabaaaadaaaaaaegbcbaaaacaaaaaa
+diaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaacaaaaaaanaaaaaa
+dcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaamaaaaaaagbabaaaaaaaaaaa
+egaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaaoaaaaaa
+kgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+acaaaaaaapaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaaihcaabaaa
+abaaaaaafgafbaaaaaaaaaaaegiccaaaaaaaaaaaacaaaaaadcaaaaakhcaabaaa
+abaaaaaaegiccaaaaaaaaaaaabaaaaaaagaabaaaaaaaaaaaegacbaaaabaaaaaa
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
+egacbaaaabaaaaaadcaaaaakhccabaaaaeaaaaaaegiccaaaaaaaaaaaaeaaaaaa
+pgapbaaaaaaaaaaaegacbaaaaaaaaaaadgaaaaafpccabaaaafaaaaaaegbobaaa
+abaaaaaadoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "POINT" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec3 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp mat4 _LightMatrix0;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _World2Object;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp vec4 _WorldSpaceLightPos0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesColor;
+attribute vec4 _glesVertex;
+void main ()
+{
+  highp vec2 tmpvar_1;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = tmpvar_1;
+  xlv_TEXCOORD2 = (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz);
+  xlv_TEXCOORD1 = normalize(_glesNormal);
+  xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
+  xlv_TEXCOORD5 = _glesColor;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec3 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+uniform lowp vec4 _LightColor0;
+uniform sampler2D _LightTexture0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float diff_2;
+  lowp vec3 normal_3;
+  highp float tmpvar_4;
+  tmpvar_4 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp float tmpvar_5;
+  tmpvar_5 = texture2D (_LightTexture0, vec2(tmpvar_4)).w;
+  normal_3 = xlv_TEXCOORD1;
+  highp float tmpvar_6;
+  tmpvar_6 = clamp (dot (normal_3, normalize(xlv_TEXCOORD2)), 0.0, 1.0);
+  diff_2 = tmpvar_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = (((xlv_TEXCOORD5.xyz * _LightColor0.xyz) * diff_2) * (tmpvar_5 * 2.0));
+  c_1.xyz = tmpvar_7;
+  highp float tmpvar_8;
+  tmpvar_8 = xlv_TEXCOORD5.w;
+  c_1.w = tmpvar_8;
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "POINT" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec3 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp mat4 _LightMatrix0;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _World2Object;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp vec4 _WorldSpaceLightPos0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesColor;
+attribute vec4 _glesVertex;
+void main ()
+{
+  highp vec2 tmpvar_1;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = tmpvar_1;
+  xlv_TEXCOORD2 = (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz);
+  xlv_TEXCOORD1 = normalize(_glesNormal);
+  xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
+  xlv_TEXCOORD5 = _glesColor;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec3 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+uniform lowp vec4 _LightColor0;
+uniform sampler2D _LightTexture0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float diff_2;
+  lowp vec3 normal_3;
+  highp float tmpvar_4;
+  tmpvar_4 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp float tmpvar_5;
+  tmpvar_5 = texture2D (_LightTexture0, vec2(tmpvar_4)).w;
+  normal_3 = xlv_TEXCOORD1;
+  highp float tmpvar_6;
+  tmpvar_6 = clamp (dot (normal_3, normalize(xlv_TEXCOORD2)), 0.0, 1.0);
+  diff_2 = tmpvar_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = (((xlv_TEXCOORD5.xyz * _LightColor0.xyz) * diff_2) * (tmpvar_5 * 2.0));
+  c_1.xyz = tmpvar_7;
+  highp float tmpvar_8;
+  tmpvar_8 = xlv_TEXCOORD5.w;
+  c_1.w = tmpvar_8;
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "flash " {
+Keywords { "POINT" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+Matrix 0 [glstate_matrix_mvp]
+Vector 16 [_WorldSpaceLightPos0]
+Matrix 4 [_Object2World]
+Matrix 8 [_World2Object]
+Vector 17 [unity_Scale]
+Matrix 12 [_LightMatrix0]
+"agal_vs
+[bc]
+aaaaaaaaaaaaapacakaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r0, c10
+bdaaaaaaacaaaeacbaaaaaoeabaaaaaaaaaaaaoeacaaaaaa dp4 r2.z, c16, r0
+aaaaaaaaaaaaapacajaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r0, c9
+bdaaaaaaacaaacacbaaaaaoeabaaaaaaaaaaaaoeacaaaaaa dp4 r2.y, c16, r0
+aaaaaaaaabaaapacaiaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r1, c8
+bdaaaaaaacaaabacbaaaaaoeabaaaaaaabaaaaoeacaaaaaa dp4 r2.x, c16, r1
+bdaaaaaaaaaaaiacaaaaaaoeaaaaaaaaahaaaaoeabaaaaaa dp4 r0.w, a0, c7
+bdaaaaaaaaaaaeacaaaaaaoeaaaaaaaaagaaaaoeabaaaaaa dp4 r0.z, a0, c6
+bdaaaaaaaaaaabacaaaaaaoeaaaaaaaaaeaaaaoeabaaaaaa dp4 r0.x, a0, c4
+bdaaaaaaaaaaacacaaaaaaoeaaaaaaaaafaaaaoeabaaaaaa dp4 r0.y, a0, c5
+adaaaaaaabaaahacacaaaakeacaaaaaabbaaaappabaaaaaa mul r1.xyz, r2.xyzz, c17.w
+acaaaaaaacaaahaeabaaaakeacaaaaaaaaaaaaoeaaaaaaaa sub v2.xyz, r1.xyzz, a0
+bdaaaaaaadaaaeaeaaaaaaoeacaaaaaaaoaaaaoeabaaaaaa dp4 v3.z, r0, c14
+bdaaaaaaadaaacaeaaaaaaoeacaaaaaaanaaaaoeabaaaaaa dp4 v3.y, r0, c13
+bdaaaaaaadaaabaeaaaaaaoeacaaaaaaamaaaaoeabaaaaaa dp4 v3.x, r0, c12
+aaaaaaaaafaaapaeacaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov v5, a2
+aaaaaaaaabaaahaeabaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov v1.xyz, a1
+bdaaaaaaaaaaaiadaaaaaaoeaaaaaaaaadaaaaoeabaaaaaa dp4 o0.w, a0, c3
+bdaaaaaaaaaaaeadaaaaaaoeaaaaaaaaacaaaaoeabaaaaaa dp4 o0.z, a0, c2
+bdaaaaaaaaaaacadaaaaaaoeaaaaaaaaabaaaaoeabaaaaaa dp4 o0.y, a0, c1
+bdaaaaaaaaaaabadaaaaaaoeaaaaaaaaaaaaaaoeabaaaaaa dp4 o0.x, a0, c0
+aaaaaaaaabaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v1.w, c0
+aaaaaaaaacaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v2.w, c0
+aaaaaaaaadaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v3.w, c0
+"
+}
+
+SubProgram "d3d11_9x " {
+Keywords { "POINT" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+ConstBuffer "$Globals" 112 // 80 used size, 4 vars
+Matrix 16 [_LightMatrix0] 4
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 192 [_Object2World] 4
+Matrix 256 [_World2Object] 4
+Vector 320 [unity_Scale] 4
+BindCB "$Globals" 0
+BindCB "UnityLighting" 1
+BindCB "UnityPerDraw" 2
+// 20 instructions, 2 temp regs, 0 temp arrays:
+// ALU 17 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0_level_9_1
+eefiecedakhailhlejdgcnafjjmlpemddlfdopddabaaaaaaaaahaaaaaeaaaaaa
+daaaaaaaeeacaaaaliafaaaaeiagaaaaebgpgodjamacaaaaamacaaaaaaacpopp
+leabaaaafiaaaaaaaeaaceaaaaaafeaaaaaafeaaaaaaceaaabaafeaaaaaaabaa
+aeaaabaaaaaaaaaaabaaaaaaabaaafaaaaaaaaaaacaaaaaaaeaaagaaaaaaaaaa
+acaaamaaajaaakaaaaaaaaaaaaaaaaaaaaacpoppbpaaaaacafaaaaiaaaaaapja
+bpaaaaacafaaabiaabaaapjabpaaaaacafaaaciaacaaapjaabaaaaacaaaaapia
+afaaoekaafaaaaadabaaahiaaaaaffiaapaaoekaaeaaaaaeabaaahiaaoaaoeka
+aaaaaaiaabaaoeiaaeaaaaaeaaaaahiabaaaoekaaaaakkiaabaaoeiaaeaaaaae
+aaaaahiabbaaoekaaaaappiaaaaaoeiaaeaaaaaeabaaahoaaaaaoeiabcaappka
+aaaaoejbafaaaaadaaaaapiaaaaaffjaalaaoekaaeaaaaaeaaaaapiaakaaoeka
+aaaaaajaaaaaoeiaaeaaaaaeaaaaapiaamaaoekaaaaakkjaaaaaoeiaaeaaaaae
+aaaaapiaanaaoekaaaaappjaaaaaoeiaafaaaaadabaaahiaaaaaffiaacaaoeka
+aeaaaaaeabaaahiaabaaoekaaaaaaaiaabaaoeiaaeaaaaaeaaaaahiaadaaoeka
+aaaakkiaabaaoeiaaeaaaaaeadaaahoaaeaaoekaaaaappiaaaaaoeiaafaaaaad
+aaaaapiaaaaaffjaahaaoekaaeaaaaaeaaaaapiaagaaoekaaaaaaajaaaaaoeia
+aeaaaaaeaaaaapiaaiaaoekaaaaakkjaaaaaoeiaaeaaaaaeaaaaapiaajaaoeka
+aaaappjaaaaaoeiaaeaaaaaeaaaaadmaaaaappiaaaaaoekaaaaaoeiaabaaaaac
+aaaaammaaaaaoeiaabaaaaacacaaahoaacaaoejaabaaaaacaeaaapoaabaaoeja
+ppppaaaafdeieefcgmadaaaaeaaaabaanlaaaaaafjaaaaaeegiocaaaaaaaaaaa
+afaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaaacaaaaaa
+bfaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaad
+hcbabaaaacaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaadhccabaaa
+acaaaaaagfaaaaadhccabaaaadaaaaaagfaaaaadhccabaaaaeaaaaaagfaaaaad
+pccabaaaafaaaaaagiaaaaacacaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaa
+aaaaaaaaegiocaaaacaaaaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+acaaaaaaaaaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaa
+aaaaaaaaegiocaaaacaaaaaaacaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaa
+dcaaaaakpccabaaaaaaaaaaaegiocaaaacaaaaaaadaaaaaapgbpbaaaaaaaaaaa
+egaobaaaaaaaaaaadiaaaaajhcaabaaaaaaaaaaafgifcaaaabaaaaaaaaaaaaaa
+egiccaaaacaaaaaabbaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaaacaaaaaa
+baaaaaaaagiacaaaabaaaaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaalhcaabaaa
+aaaaaaaaegiccaaaacaaaaaabcaaaaaakgikcaaaabaaaaaaaaaaaaaaegacbaaa
+aaaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaaacaaaaaabdaaaaaapgipcaaa
+abaaaaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaalhccabaaaacaaaaaaegacbaaa
+aaaaaaaapgipcaaaacaaaaaabeaaaaaaegbcbaiaebaaaaaaaaaaaaaadgaaaaaf
+hccabaaaadaaaaaaegbcbaaaacaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaa
+aaaaaaaaegiocaaaacaaaaaaanaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+acaaaaaaamaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaa
+aaaaaaaaegiocaaaacaaaaaaaoaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaa
+dcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaapaaaaaapgbpbaaaaaaaaaaa
+egaobaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaafgafbaaaaaaaaaaaegiccaaa
+aaaaaaaaacaaaaaadcaaaaakhcaabaaaabaaaaaaegiccaaaaaaaaaaaabaaaaaa
+agaabaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
+aaaaaaaaadaaaaaakgakbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhccabaaa
+aeaaaaaaegiccaaaaaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+dgaaaaafpccabaaaafaaaaaaegbobaaaabaaaaaadoaaaaabejfdeheoiiaaaaaa
+aeaaaaaaaiaaaaaagiaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaa
+hbaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaa
+aaaaaaaaadaaaaaaacaaaaaaahahaaaahoaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
+adaaaaaaahaaaaaafaepfdejfeejepeoaaedepemepfcaaeoepfcenebemaafeeb
+eoehefeofeaaklklepfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaa
+abaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
+abaaaaaaadapaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaahaiaaaa
+keaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaakeaaaaaaadaaaaaa
+aaaaaaaaadaaaaaaaeaaaaaaahaiaaaakeaaaaaaafaaaaaaaaaaaaaaadaaaaaa
+afaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklkl
+"
+}
+
+SubProgram "gles3 " {
+Keywords { "POINT" }
+"!!GLES3#version 300 es
+
+
+#ifdef VERTEX
+
+#define gl_Vertex _glesVertex
+in vec4 _glesVertex;
+#define gl_Color _glesColor
+in vec4 _glesColor;
+#define gl_Normal (normalize(_glesNormal))
+in vec3 _glesNormal;
+#define TANGENT vec4(normalize(_glesTANGENT.xyz), _glesTANGENT.w)
+in vec4 _glesTANGENT;
+
+#line 151
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 187
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 181
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 325
+struct v2f {
+    highp vec4 pos;
+    highp vec2 uv;
+    highp vec3 lightDir;
+    highp vec3 normal;
+    highp vec3 _LightCoord;
+    highp vec4 color;
+};
+#line 317
+struct appdata_t {
+    highp vec4 vertex;
+    lowp vec4 color;
+    highp vec3 normal;
+    highp vec3 tangent;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform highp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
+#line 19
+uniform highp vec4 unity_SpotDirection[8];
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+#line 23
+uniform highp vec4 unity_SHBr;
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+#line 27
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+#line 31
+uniform highp vec4 _LightSplitsNear;
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+#line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+#line 39
+uniform highp mat4 _Object2World;
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+#line 43
+uniform highp mat4 glstate_matrix_texture0;
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+#line 47
+uniform highp mat4 glstate_matrix_projection;
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+#line 51
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 315
+uniform sampler2D _LightTexture0;
+uniform highp mat4 _LightMatrix0;
+#line 335
+uniform lowp vec4 _Color;
+uniform lowp vec4 _LightColor0;
+#line 348
+#line 82
+highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
+    highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
+    return ((objSpaceLightPos.xyz * unity_Scale.w) - v.xyz);
+}
+#line 335
+v2f vert( in appdata_t v ) {
+    v2f o;
+    o.pos = (glstate_matrix_mvp * v.vertex);
+    #line 339
+    o.lightDir = ObjSpaceLightDir( v.vertex);
+    o.color = v.color;
+    o.normal = v.normal;
+    o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
+    #line 344
+    return o;
+}
+
+out highp vec2 xlv_TEXCOORD0;
+out highp vec3 xlv_TEXCOORD2;
+out highp vec3 xlv_TEXCOORD1;
+out highp vec3 xlv_TEXCOORD3;
+out highp vec4 xlv_TEXCOORD5;
+void main() {
+    v2f xl_retval;
+    appdata_t xlt_v;
+    xlt_v.vertex = vec4(gl_Vertex);
+    xlt_v.color = vec4(gl_Color);
+    xlt_v.normal = vec3(gl_Normal);
+    xlt_v.tangent = vec3(TANGENT);
+    xl_retval = vert( xlt_v);
+    gl_Position = vec4(xl_retval.pos);
+    xlv_TEXCOORD0 = vec2(xl_retval.uv);
+    xlv_TEXCOORD2 = vec3(xl_retval.lightDir);
+    xlv_TEXCOORD1 = vec3(xl_retval.normal);
+    xlv_TEXCOORD3 = vec3(xl_retval._LightCoord);
+    xlv_TEXCOORD5 = vec4(xl_retval.color);
+}
+
+
+#endif
+#ifdef FRAGMENT
+
+#define gl_FragData _glesFragData
+layout(location = 0) out mediump vec4 _glesFragData[4];
+float xll_saturate_f( float x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec2 xll_saturate_vf2( vec2 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec3 xll_saturate_vf3( vec3 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec4 xll_saturate_vf4( vec4 x) {
+  return clamp( x, 0.0, 1.0);
+}
+mat2 xll_saturate_mf2x2(mat2 m) {
+  return mat2( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0));
+}
+mat3 xll_saturate_mf3x3(mat3 m) {
+  return mat3( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0));
+}
+mat4 xll_saturate_mf4x4(mat4 m) {
+  return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
+}
+#line 151
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 187
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 181
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 325
+struct v2f {
+    highp vec4 pos;
+    highp vec2 uv;
+    highp vec3 lightDir;
+    highp vec3 normal;
+    highp vec3 _LightCoord;
+    highp vec4 color;
+};
+#line 317
+struct appdata_t {
+    highp vec4 vertex;
+    lowp vec4 color;
+    highp vec3 normal;
+    highp vec3 tangent;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform highp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
+#line 19
+uniform highp vec4 unity_SpotDirection[8];
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+#line 23
+uniform highp vec4 unity_SHBr;
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+#line 27
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+#line 31
+uniform highp vec4 _LightSplitsNear;
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+#line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+#line 39
+uniform highp mat4 _Object2World;
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+#line 43
+uniform highp mat4 glstate_matrix_texture0;
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+#line 47
+uniform highp mat4 glstate_matrix_projection;
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+#line 51
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 315
+uniform sampler2D _LightTexture0;
+uniform highp mat4 _LightMatrix0;
+#line 335
+uniform lowp vec4 _Color;
+uniform lowp vec4 _LightColor0;
+#line 348
+#line 348
+lowp vec4 frag( in v2f IN ) {
+    IN.lightDir = normalize(IN.lightDir);
+    lowp float atten = (texture( _LightTexture0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * 1.0);
+    #line 352
+    lowp vec3 normal = IN.normal;
+    lowp float diff = xll_saturate_f(dot( normal, IN.lightDir));
+    lowp vec4 c;
+    c.xyz = (((IN.color.xyz * _LightColor0.xyz) * diff) * (atten * 2.0));
+    #line 356
+    c.w = IN.color.w;
+    return c;
+}
+in highp vec2 xlv_TEXCOORD0;
+in highp vec3 xlv_TEXCOORD2;
+in highp vec3 xlv_TEXCOORD1;
+in highp vec3 xlv_TEXCOORD3;
+in highp vec4 xlv_TEXCOORD5;
+void main() {
+    lowp vec4 xl_retval;
+    v2f xlt_IN;
+    xlt_IN.pos = vec4(0.0);
+    xlt_IN.uv = vec2(xlv_TEXCOORD0);
+    xlt_IN.lightDir = vec3(xlv_TEXCOORD2);
+    xlt_IN.normal = vec3(xlv_TEXCOORD1);
+    xlt_IN._LightCoord = vec3(xlv_TEXCOORD3);
+    xlt_IN.color = vec4(xlv_TEXCOORD5);
+    xl_retval = frag( xlt_IN);
+    gl_FragData[0] = vec4(xl_retval);
+}
+
+
+#endif"
+}
+
+SubProgram "opengl " {
+Keywords { "DIRECTIONAL" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+Vector 9 [_WorldSpaceLightPos0]
+Matrix 5 [_World2Object]
+"!!ARBvp1.0
+# 10 ALU
+PARAM c[10] = { program.local[0],
+		state.matrix.mvp,
+		program.local[5..9] };
+TEMP R0;
+MOV R0, c[9];
+DP4 result.texcoord[2].z, R0, c[7];
+DP4 result.texcoord[2].y, R0, c[6];
+DP4 result.texcoord[2].x, R0, c[5];
+MOV result.texcoord[5], vertex.color;
+MOV result.texcoord[1].xyz, vertex.normal;
+DP4 result.position.w, vertex.position, c[4];
+DP4 result.position.z, vertex.position, c[3];
+DP4 result.position.y, vertex.position, c[2];
+DP4 result.position.x, vertex.position, c[1];
+END
+# 10 instructions, 1 R-regs
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "DIRECTIONAL" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+Matrix 0 [glstate_matrix_mvp]
+Vector 8 [_WorldSpaceLightPos0]
+Matrix 4 [_World2Object]
+"vs_2_0
+; 12 ALU
+dcl_position0 v0
+dcl_color0 v1
+dcl_normal0 v2
+mov r0, c6
+dp4 oT2.z, c8, r0
+mov r0, c5
+mov r1, c4
+dp4 oT2.y, c8, r0
+dp4 oT2.x, c8, r1
+mov oT5, v1
+mov oT1.xyz, v2
+dp4 oPos.w, v0, c3
+dp4 oPos.z, v0, c2
+dp4 oPos.y, v0, c1
+dp4 oPos.x, v0, c0
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "DIRECTIONAL" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+ConstBuffer "UnityPerDraw" 336 // 320 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 256 [_World2Object] 4
+BindCB "UnityLighting" 0
+BindCB "UnityPerDraw" 1
+// 11 instructions, 1 temp regs, 0 temp arrays:
+// ALU 8 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0
+eefiecedhlffamgibkghgdhcndobnoaidcnlmladabaaaaaafiadaaaaadaaaaaa
+cmaaaaaalmaaaaaafmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahahaaaahoaaaaaaaaaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaaaaaafaepfdej
+feejepeoaaedepemepfcaaeoepfcenebemaafeebeoehefeofeaaklklepfdeheo
+jiaaaaaaafaaaaaaaiaaaaaaiaaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaa
+apaaaaaaimaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadapaaaaimaaaaaa
+acaaaaaaaaaaaaaaadaaaaaaacaaaaaaahaiaaaaimaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaadaaaaaaahaiaaaaimaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaa
+apaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefc
+peabaaaaeaaaabaahnaaaaaafjaaaaaeegiocaaaaaaaaaaaabaaaaaafjaaaaae
+egiocaaaabaaaaaabeaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
+abaaaaaafpaaaaadhcbabaaaacaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaa
+gfaaaaadhccabaaaacaaaaaagfaaaaadhccabaaaadaaaaaagfaaaaadpccabaaa
+aeaaaaaagiaaaaacabaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaa
+egiocaaaabaaaaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaa
+aaaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaa
+egiocaaaabaaaaaaacaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaak
+pccabaaaaaaaaaaaegiocaaaabaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaa
+aaaaaaaadiaaaaajhcaabaaaaaaaaaaafgifcaaaaaaaaaaaaaaaaaaaegiccaaa
+abaaaaaabbaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaaabaaaaaabaaaaaaa
+agiacaaaaaaaaaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaalhcaabaaaaaaaaaaa
+egiccaaaabaaaaaabcaaaaaakgikcaaaaaaaaaaaaaaaaaaaegacbaaaaaaaaaaa
+dcaaaaalhccabaaaacaaaaaaegiccaaaabaaaaaabdaaaaaapgipcaaaaaaaaaaa
+aaaaaaaaegacbaaaaaaaaaaadgaaaaafhccabaaaadaaaaaaegbcbaaaacaaaaaa
+dgaaaaafpccabaaaaeaaaaaaegbobaaaabaaaaaadoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "DIRECTIONAL" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp mat4 _World2Object;
+uniform highp mat4 glstate_matrix_mvp;
+uniform lowp vec4 _WorldSpaceLightPos0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesColor;
+attribute vec4 _glesVertex;
+void main ()
+{
+  highp vec2 tmpvar_1;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = tmpvar_1;
+  xlv_TEXCOORD2 = (_World2Object * _WorldSpaceLightPos0).xyz;
+  xlv_TEXCOORD1 = normalize(_glesNormal);
+  xlv_TEXCOORD5 = _glesColor;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+uniform lowp vec4 _LightColor0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float diff_2;
+  lowp vec3 normal_3;
+  normal_3 = xlv_TEXCOORD1;
+  highp float tmpvar_4;
+  tmpvar_4 = clamp (dot (normal_3, normalize(xlv_TEXCOORD2)), 0.0, 1.0);
+  diff_2 = tmpvar_4;
+  highp vec3 tmpvar_5;
+  tmpvar_5 = (((xlv_TEXCOORD5.xyz * _LightColor0.xyz) * diff_2) * 2.0);
+  c_1.xyz = tmpvar_5;
+  highp float tmpvar_6;
+  tmpvar_6 = xlv_TEXCOORD5.w;
+  c_1.w = tmpvar_6;
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "DIRECTIONAL" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp mat4 _World2Object;
+uniform highp mat4 glstate_matrix_mvp;
+uniform lowp vec4 _WorldSpaceLightPos0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesColor;
+attribute vec4 _glesVertex;
+void main ()
+{
+  highp vec2 tmpvar_1;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = tmpvar_1;
+  xlv_TEXCOORD2 = (_World2Object * _WorldSpaceLightPos0).xyz;
+  xlv_TEXCOORD1 = normalize(_glesNormal);
+  xlv_TEXCOORD5 = _glesColor;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+uniform lowp vec4 _LightColor0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float diff_2;
+  lowp vec3 normal_3;
+  normal_3 = xlv_TEXCOORD1;
+  highp float tmpvar_4;
+  tmpvar_4 = clamp (dot (normal_3, normalize(xlv_TEXCOORD2)), 0.0, 1.0);
+  diff_2 = tmpvar_4;
+  highp vec3 tmpvar_5;
+  tmpvar_5 = (((xlv_TEXCOORD5.xyz * _LightColor0.xyz) * diff_2) * 2.0);
+  c_1.xyz = tmpvar_5;
+  highp float tmpvar_6;
+  tmpvar_6 = xlv_TEXCOORD5.w;
+  c_1.w = tmpvar_6;
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "flash " {
+Keywords { "DIRECTIONAL" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+Matrix 0 [glstate_matrix_mvp]
+Vector 8 [_WorldSpaceLightPos0]
+Matrix 4 [_World2Object]
+"agal_vs
+[bc]
+aaaaaaaaaaaaapacagaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r0, c6
+bdaaaaaaacaaaeaeaiaaaaoeabaaaaaaaaaaaaoeacaaaaaa dp4 v2.z, c8, r0
+aaaaaaaaaaaaapacafaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r0, c5
+aaaaaaaaabaaapacaeaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r1, c4
+bdaaaaaaacaaacaeaiaaaaoeabaaaaaaaaaaaaoeacaaaaaa dp4 v2.y, c8, r0
+bdaaaaaaacaaabaeaiaaaaoeabaaaaaaabaaaaoeacaaaaaa dp4 v2.x, c8, r1
+aaaaaaaaafaaapaeacaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov v5, a2
+aaaaaaaaabaaahaeabaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov v1.xyz, a1
+bdaaaaaaaaaaaiadaaaaaaoeaaaaaaaaadaaaaoeabaaaaaa dp4 o0.w, a0, c3
+bdaaaaaaaaaaaeadaaaaaaoeaaaaaaaaacaaaaoeabaaaaaa dp4 o0.z, a0, c2
+bdaaaaaaaaaaacadaaaaaaoeaaaaaaaaabaaaaoeabaaaaaa dp4 o0.y, a0, c1
+bdaaaaaaaaaaabadaaaaaaoeaaaaaaaaaaaaaaoeabaaaaaa dp4 o0.x, a0, c0
+aaaaaaaaabaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v1.w, c0
+aaaaaaaaacaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v2.w, c0
+"
+}
+
+SubProgram "d3d11_9x " {
+Keywords { "DIRECTIONAL" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+ConstBuffer "UnityPerDraw" 336 // 320 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 256 [_World2Object] 4
+BindCB "UnityLighting" 0
+BindCB "UnityPerDraw" 1
+// 11 instructions, 1 temp regs, 0 temp arrays:
+// ALU 8 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0_level_9_1
+eefiecedjnmaggkionlfmiffnkeilonkceebjlmlabaaaaaaliaeaaaaaeaaaaaa
+daaaaaaaimabaaaaiiadaaaabiaeaaaaebgpgodjfeabaaaafeabaaaaaaacpopp
+aiabaaaaemaaaaaaadaaceaaaaaaeiaaaaaaeiaaaaaaceaaabaaeiaaaaaaaaaa
+abaaabaaaaaaaaaaabaaaaaaaeaaacaaaaaaaaaaabaabaaaaeaaagaaaaaaaaaa
+aaaaaaaaaaacpoppbpaaaaacafaaaaiaaaaaapjabpaaaaacafaaabiaabaaapja
+bpaaaaacafaaaciaacaaapjaabaaaaacaaaaapiaabaaoekaafaaaaadabaaahia
+aaaaffiaahaaoekaaeaaaaaeabaaahiaagaaoekaaaaaaaiaabaaoeiaaeaaaaae
+aaaaahiaaiaaoekaaaaakkiaabaaoeiaaeaaaaaeabaaahoaajaaoekaaaaappia
+aaaaoeiaafaaaaadaaaaapiaaaaaffjaadaaoekaaeaaaaaeaaaaapiaacaaoeka
+aaaaaajaaaaaoeiaaeaaaaaeaaaaapiaaeaaoekaaaaakkjaaaaaoeiaaeaaaaae
+aaaaapiaafaaoekaaaaappjaaaaaoeiaaeaaaaaeaaaaadmaaaaappiaaaaaoeka
+aaaaoeiaabaaaaacaaaaammaaaaaoeiaabaaaaacacaaahoaacaaoejaabaaaaac
+adaaapoaabaaoejappppaaaafdeieefcpeabaaaaeaaaabaahnaaaaaafjaaaaae
+egiocaaaaaaaaaaaabaaaaaafjaaaaaeegiocaaaabaaaaaabeaaaaaafpaaaaad
+pcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaa
+ghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaadhccabaaaacaaaaaagfaaaaad
+hccabaaaadaaaaaagfaaaaadpccabaaaaeaaaaaagiaaaaacabaaaaaadiaaaaai
+pcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaabaaaaaaabaaaaaadcaaaaak
+pcaabaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaaagbabaaaaaaaaaaaegaobaaa
+aaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaacaaaaaakgbkbaaa
+aaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaaaaaaaaaegiocaaaabaaaaaa
+adaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaajhcaabaaaaaaaaaaa
+fgifcaaaaaaaaaaaaaaaaaaaegiccaaaabaaaaaabbaaaaaadcaaaaalhcaabaaa
+aaaaaaaaegiccaaaabaaaaaabaaaaaaaagiacaaaaaaaaaaaaaaaaaaaegacbaaa
+aaaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaaabaaaaaabcaaaaaakgikcaaa
+aaaaaaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaalhccabaaaacaaaaaaegiccaaa
+abaaaaaabdaaaaaapgipcaaaaaaaaaaaaaaaaaaaegacbaaaaaaaaaaadgaaaaaf
+hccabaaaadaaaaaaegbcbaaaacaaaaaadgaaaaafpccabaaaaeaaaaaaegbobaaa
+abaaaaaadoaaaaabejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaaaaaaaaaa
+aaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
+abaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaa
+hoaaaaaaaaaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaaaaaafaepfdejfeejepeo
+aaedepemepfcaaeoepfcenebemaafeebeoehefeofeaaklklepfdeheojiaaaaaa
+afaaaaaaaiaaaaaaiaaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaa
+imaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadapaaaaimaaaaaaacaaaaaa
+aaaaaaaaadaaaaaaacaaaaaaahaiaaaaimaaaaaaabaaaaaaaaaaaaaaadaaaaaa
+adaaaaaaahaiaaaaimaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaa
+fdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklkl"
+}
+
+SubProgram "gles3 " {
+Keywords { "DIRECTIONAL" }
+"!!GLES3#version 300 es
+
+
+#ifdef VERTEX
+
+#define gl_Vertex _glesVertex
+in vec4 _glesVertex;
+#define gl_Color _glesColor
+in vec4 _glesColor;
+#define gl_Normal (normalize(_glesNormal))
+in vec3 _glesNormal;
+#define TANGENT vec4(normalize(_glesTANGENT.xyz), _glesTANGENT.w)
+in vec4 _glesTANGENT;
+
+#line 151
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 187
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 181
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 323
+struct v2f {
+    highp vec4 pos;
+    highp vec2 uv;
+    highp vec3 lightDir;
+    highp vec3 normal;
+    highp vec4 color;
+};
+#line 315
+struct appdata_t {
+    highp vec4 vertex;
+    lowp vec4 color;
+    highp vec3 normal;
+    highp vec3 tangent;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform lowp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
+#line 19
+uniform highp vec4 unity_SpotDirection[8];
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+#line 23
+uniform highp vec4 unity_SHBr;
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+#line 27
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+#line 31
+uniform highp vec4 _LightSplitsNear;
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+#line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+#line 39
+uniform highp mat4 _Object2World;
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+#line 43
+uniform highp mat4 glstate_matrix_texture0;
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+#line 47
+uniform highp mat4 glstate_matrix_projection;
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+#line 51
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 332
+uniform lowp vec4 _Color;
+uniform lowp vec4 _LightColor0;
+#line 344
+#line 82
+highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
+    highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
+    return objSpaceLightPos.xyz;
+}
+#line 332
+v2f vert( in appdata_t v ) {
+    v2f o;
+    o.pos = (glstate_matrix_mvp * v.vertex);
+    #line 336
+    o.lightDir = ObjSpaceLightDir( v.vertex);
+    o.color = v.color;
+    o.normal = v.normal;
+    #line 340
+    return o;
+}
+
+out highp vec2 xlv_TEXCOORD0;
+out highp vec3 xlv_TEXCOORD2;
+out highp vec3 xlv_TEXCOORD1;
+out highp vec4 xlv_TEXCOORD5;
+void main() {
+    v2f xl_retval;
+    appdata_t xlt_v;
+    xlt_v.vertex = vec4(gl_Vertex);
+    xlt_v.color = vec4(gl_Color);
+    xlt_v.normal = vec3(gl_Normal);
+    xlt_v.tangent = vec3(TANGENT);
+    xl_retval = vert( xlt_v);
+    gl_Position = vec4(xl_retval.pos);
+    xlv_TEXCOORD0 = vec2(xl_retval.uv);
+    xlv_TEXCOORD2 = vec3(xl_retval.lightDir);
+    xlv_TEXCOORD1 = vec3(xl_retval.normal);
+    xlv_TEXCOORD5 = vec4(xl_retval.color);
+}
+
+
+#endif
+#ifdef FRAGMENT
+
+#define gl_FragData _glesFragData
+layout(location = 0) out mediump vec4 _glesFragData[4];
+float xll_saturate_f( float x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec2 xll_saturate_vf2( vec2 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec3 xll_saturate_vf3( vec3 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec4 xll_saturate_vf4( vec4 x) {
+  return clamp( x, 0.0, 1.0);
+}
+mat2 xll_saturate_mf2x2(mat2 m) {
+  return mat2( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0));
+}
+mat3 xll_saturate_mf3x3(mat3 m) {
+  return mat3( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0));
+}
+mat4 xll_saturate_mf4x4(mat4 m) {
+  return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
+}
+#line 151
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 187
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 181
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 323
+struct v2f {
+    highp vec4 pos;
+    highp vec2 uv;
+    highp vec3 lightDir;
+    highp vec3 normal;
+    highp vec4 color;
+};
+#line 315
+struct appdata_t {
+    highp vec4 vertex;
+    lowp vec4 color;
+    highp vec3 normal;
+    highp vec3 tangent;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform lowp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
+#line 19
+uniform highp vec4 unity_SpotDirection[8];
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+#line 23
+uniform highp vec4 unity_SHBr;
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+#line 27
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+#line 31
+uniform highp vec4 _LightSplitsNear;
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+#line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+#line 39
+uniform highp mat4 _Object2World;
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+#line 43
+uniform highp mat4 glstate_matrix_texture0;
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+#line 47
+uniform highp mat4 glstate_matrix_projection;
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+#line 51
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 332
+uniform lowp vec4 _Color;
+uniform lowp vec4 _LightColor0;
+#line 344
+#line 344
+lowp vec4 frag( in v2f IN ) {
+    IN.lightDir = normalize(IN.lightDir);
+    lowp float atten = 1.0;
+    #line 348
+    lowp vec3 normal = IN.normal;
+    lowp float diff = xll_saturate_f(dot( normal, IN.lightDir));
+    lowp vec4 c;
+    c.xyz = (((IN.color.xyz * _LightColor0.xyz) * diff) * (atten * 2.0));
+    #line 352
+    c.w = IN.color.w;
+    return c;
+}
+in highp vec2 xlv_TEXCOORD0;
+in highp vec3 xlv_TEXCOORD2;
+in highp vec3 xlv_TEXCOORD1;
+in highp vec4 xlv_TEXCOORD5;
+void main() {
+    lowp vec4 xl_retval;
+    v2f xlt_IN;
+    xlt_IN.pos = vec4(0.0);
+    xlt_IN.uv = vec2(xlv_TEXCOORD0);
+    xlt_IN.lightDir = vec3(xlv_TEXCOORD2);
+    xlt_IN.normal = vec3(xlv_TEXCOORD1);
+    xlt_IN.color = vec4(xlv_TEXCOORD5);
+    xl_retval = frag( xlt_IN);
+    gl_FragData[0] = vec4(xl_retval);
+}
+
+
+#endif"
+}
+
+SubProgram "opengl " {
+Keywords { "SPOT" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+Vector 17 [_WorldSpaceLightPos0]
+Matrix 5 [_Object2World]
+Matrix 9 [_World2Object]
+Vector 18 [unity_Scale]
+Matrix 13 [_LightMatrix0]
+"!!ARBvp1.0
+# 19 ALU
+PARAM c[19] = { program.local[0],
+		state.matrix.mvp,
+		program.local[5..18] };
+TEMP R0;
+TEMP R1;
+MOV R1, c[17];
+DP4 R0.w, vertex.position, c[8];
+DP4 R0.z, R1, c[11];
+DP4 R0.x, R1, c[9];
+DP4 R0.y, R1, c[10];
+MAD result.texcoord[2].xyz, R0, c[18].w, -vertex.position;
+DP4 R0.z, vertex.position, c[7];
+DP4 R0.x, vertex.position, c[5];
+DP4 R0.y, vertex.position, c[6];
+DP4 result.texcoord[3].w, R0, c[16];
+DP4 result.texcoord[3].z, R0, c[15];
+DP4 result.texcoord[3].y, R0, c[14];
+DP4 result.texcoord[3].x, R0, c[13];
+MOV result.texcoord[5], vertex.color;
+MOV result.texcoord[1].xyz, vertex.normal;
+DP4 result.position.w, vertex.position, c[4];
+DP4 result.position.z, vertex.position, c[3];
+DP4 result.position.y, vertex.position, c[2];
+DP4 result.position.x, vertex.position, c[1];
+END
+# 19 instructions, 2 R-regs
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "SPOT" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+Matrix 0 [glstate_matrix_mvp]
+Vector 16 [_WorldSpaceLightPos0]
+Matrix 4 [_Object2World]
+Matrix 8 [_World2Object]
+Vector 17 [unity_Scale]
+Matrix 12 [_LightMatrix0]
+"vs_2_0
+; 21 ALU
+dcl_position0 v0
+dcl_color0 v1
+dcl_normal0 v2
+mov r0, c10
+dp4 r2.z, c16, r0
+mov r0, c9
+dp4 r2.y, c16, r0
+mov r1, c8
+dp4 r2.x, c16, r1
+dp4 r0.w, v0, c7
+dp4 r0.z, v0, c6
+dp4 r0.x, v0, c4
+dp4 r0.y, v0, c5
+mad oT2.xyz, r2, c17.w, -v0
+dp4 oT3.w, r0, c15
+dp4 oT3.z, r0, c14
+dp4 oT3.y, r0, c13
+dp4 oT3.x, r0, c12
+mov oT5, v1
+mov oT1.xyz, v2
+dp4 oPos.w, v0, c3
+dp4 oPos.z, v0, c2
+dp4 oPos.y, v0, c1
+dp4 oPos.x, v0, c0
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "SPOT" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+ConstBuffer "$Globals" 112 // 80 used size, 4 vars
+Matrix 16 [_LightMatrix0] 4
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 192 [_Object2World] 4
+Matrix 256 [_World2Object] 4
+Vector 320 [unity_Scale] 4
+BindCB "$Globals" 0
+BindCB "UnityLighting" 1
+BindCB "UnityPerDraw" 2
+// 20 instructions, 2 temp regs, 0 temp arrays:
+// ALU 17 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0
+eefieceddiemkimndippbbnjeipihbehkfmhcbkpabaaaaaaoiaeaaaaadaaaaaa
+cmaaaaaalmaaaaaaheabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahahaaaahoaaaaaaaaaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaaaaaafaepfdej
+feejepeoaaedepemepfcaaeoepfcenebemaafeebeoehefeofeaaklklepfdeheo
+laaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaa
+apaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadapaaaakeaaaaaa
+acaaaaaaaaaaaaaaadaaaaaaacaaaaaaahaiaaaakeaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaadaaaaaaahaiaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaa
+apaaaaaakeaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaaapaaaaaafdfgfpfa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcgmadaaaaeaaaabaa
+nlaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
+abaaaaaafjaaaaaeegiocaaaacaaaaaabfaaaaaafpaaaaadpcbabaaaaaaaaaaa
+fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaaghaaaaaepccabaaa
+aaaaaaaaabaaaaaagfaaaaadhccabaaaacaaaaaagfaaaaadhccabaaaadaaaaaa
+gfaaaaadpccabaaaaeaaaaaagfaaaaadpccabaaaafaaaaaagiaaaaacacaaaaaa
+diaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaacaaaaaaabaaaaaa
+dcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaagbabaaaaaaaaaaa
+egaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaacaaaaaa
+kgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaaaaaaaaaegiocaaa
+acaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaajhcaabaaa
+aaaaaaaafgifcaaaabaaaaaaaaaaaaaaegiccaaaacaaaaaabbaaaaaadcaaaaal
+hcaabaaaaaaaaaaaegiccaaaacaaaaaabaaaaaaaagiacaaaabaaaaaaaaaaaaaa
+egacbaaaaaaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaaacaaaaaabcaaaaaa
+kgikcaaaabaaaaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaalhcaabaaaaaaaaaaa
+egiccaaaacaaaaaabdaaaaaapgipcaaaabaaaaaaaaaaaaaaegacbaaaaaaaaaaa
+dcaaaaalhccabaaaacaaaaaaegacbaaaaaaaaaaapgipcaaaacaaaaaabeaaaaaa
+egbcbaiaebaaaaaaaaaaaaaadgaaaaafhccabaaaadaaaaaaegbcbaaaacaaaaaa
+diaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaacaaaaaaanaaaaaa
+dcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaamaaaaaaagbabaaaaaaaaaaa
+egaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaaoaaaaaa
+kgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+acaaaaaaapaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaaipcaabaaa
+abaaaaaafgafbaaaaaaaaaaaegiocaaaaaaaaaaaacaaaaaadcaaaaakpcaabaaa
+abaaaaaaegiocaaaaaaaaaaaabaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaa
+dcaaaaakpcaabaaaabaaaaaaegiocaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
+egaobaaaabaaaaaadcaaaaakpccabaaaaeaaaaaaegiocaaaaaaaaaaaaeaaaaaa
+pgapbaaaaaaaaaaaegaobaaaabaaaaaadgaaaaafpccabaaaafaaaaaaegbobaaa
+abaaaaaadoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "SPOT" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec4 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp mat4 _LightMatrix0;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _World2Object;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp vec4 _WorldSpaceLightPos0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesColor;
+attribute vec4 _glesVertex;
+void main ()
+{
+  highp vec2 tmpvar_1;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = tmpvar_1;
+  xlv_TEXCOORD2 = (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz);
+  xlv_TEXCOORD1 = normalize(_glesNormal);
+  xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
+  xlv_TEXCOORD5 = _glesColor;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec4 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+uniform lowp vec4 _LightColor0;
+uniform sampler2D _LightTextureB0;
+uniform sampler2D _LightTexture0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float diff_2;
+  lowp vec3 normal_3;
+  lowp float atten_4;
+  lowp vec4 tmpvar_5;
+  highp vec2 P_6;
+  P_6 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_5 = texture2D (_LightTexture0, P_6);
+  highp float tmpvar_7;
+  tmpvar_7 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
+  lowp vec4 tmpvar_8;
+  tmpvar_8 = texture2D (_LightTextureB0, vec2(tmpvar_7));
+  highp float tmpvar_9;
+  tmpvar_9 = ((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_5.w) * tmpvar_8.w);
+  atten_4 = tmpvar_9;
+  normal_3 = xlv_TEXCOORD1;
+  highp float tmpvar_10;
+  tmpvar_10 = clamp (dot (normal_3, normalize(xlv_TEXCOORD2)), 0.0, 1.0);
+  diff_2 = tmpvar_10;
+  highp vec3 tmpvar_11;
+  tmpvar_11 = (((xlv_TEXCOORD5.xyz * _LightColor0.xyz) * diff_2) * (atten_4 * 2.0));
+  c_1.xyz = tmpvar_11;
+  highp float tmpvar_12;
+  tmpvar_12 = xlv_TEXCOORD5.w;
+  c_1.w = tmpvar_12;
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "SPOT" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec4 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp mat4 _LightMatrix0;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _World2Object;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp vec4 _WorldSpaceLightPos0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesColor;
+attribute vec4 _glesVertex;
+void main ()
+{
+  highp vec2 tmpvar_1;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = tmpvar_1;
+  xlv_TEXCOORD2 = (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz);
+  xlv_TEXCOORD1 = normalize(_glesNormal);
+  xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
+  xlv_TEXCOORD5 = _glesColor;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec4 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+uniform lowp vec4 _LightColor0;
+uniform sampler2D _LightTextureB0;
+uniform sampler2D _LightTexture0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float diff_2;
+  lowp vec3 normal_3;
+  lowp float atten_4;
+  lowp vec4 tmpvar_5;
+  highp vec2 P_6;
+  P_6 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_5 = texture2D (_LightTexture0, P_6);
+  highp float tmpvar_7;
+  tmpvar_7 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
+  lowp vec4 tmpvar_8;
+  tmpvar_8 = texture2D (_LightTextureB0, vec2(tmpvar_7));
+  highp float tmpvar_9;
+  tmpvar_9 = ((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_5.w) * tmpvar_8.w);
+  atten_4 = tmpvar_9;
+  normal_3 = xlv_TEXCOORD1;
+  highp float tmpvar_10;
+  tmpvar_10 = clamp (dot (normal_3, normalize(xlv_TEXCOORD2)), 0.0, 1.0);
+  diff_2 = tmpvar_10;
+  highp vec3 tmpvar_11;
+  tmpvar_11 = (((xlv_TEXCOORD5.xyz * _LightColor0.xyz) * diff_2) * (atten_4 * 2.0));
+  c_1.xyz = tmpvar_11;
+  highp float tmpvar_12;
+  tmpvar_12 = xlv_TEXCOORD5.w;
+  c_1.w = tmpvar_12;
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "flash " {
+Keywords { "SPOT" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+Matrix 0 [glstate_matrix_mvp]
+Vector 16 [_WorldSpaceLightPos0]
+Matrix 4 [_Object2World]
+Matrix 8 [_World2Object]
+Vector 17 [unity_Scale]
+Matrix 12 [_LightMatrix0]
+"agal_vs
+[bc]
+aaaaaaaaaaaaapacakaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r0, c10
+bdaaaaaaacaaaeacbaaaaaoeabaaaaaaaaaaaaoeacaaaaaa dp4 r2.z, c16, r0
+aaaaaaaaaaaaapacajaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r0, c9
+bdaaaaaaacaaacacbaaaaaoeabaaaaaaaaaaaaoeacaaaaaa dp4 r2.y, c16, r0
+aaaaaaaaabaaapacaiaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r1, c8
+bdaaaaaaacaaabacbaaaaaoeabaaaaaaabaaaaoeacaaaaaa dp4 r2.x, c16, r1
+bdaaaaaaaaaaaiacaaaaaaoeaaaaaaaaahaaaaoeabaaaaaa dp4 r0.w, a0, c7
+bdaaaaaaaaaaaeacaaaaaaoeaaaaaaaaagaaaaoeabaaaaaa dp4 r0.z, a0, c6
+bdaaaaaaaaaaabacaaaaaaoeaaaaaaaaaeaaaaoeabaaaaaa dp4 r0.x, a0, c4
+bdaaaaaaaaaaacacaaaaaaoeaaaaaaaaafaaaaoeabaaaaaa dp4 r0.y, a0, c5
+adaaaaaaabaaahacacaaaakeacaaaaaabbaaaappabaaaaaa mul r1.xyz, r2.xyzz, c17.w
+acaaaaaaacaaahaeabaaaakeacaaaaaaaaaaaaoeaaaaaaaa sub v2.xyz, r1.xyzz, a0
+bdaaaaaaadaaaiaeaaaaaaoeacaaaaaaapaaaaoeabaaaaaa dp4 v3.w, r0, c15
+bdaaaaaaadaaaeaeaaaaaaoeacaaaaaaaoaaaaoeabaaaaaa dp4 v3.z, r0, c14
+bdaaaaaaadaaacaeaaaaaaoeacaaaaaaanaaaaoeabaaaaaa dp4 v3.y, r0, c13
+bdaaaaaaadaaabaeaaaaaaoeacaaaaaaamaaaaoeabaaaaaa dp4 v3.x, r0, c12
+aaaaaaaaafaaapaeacaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov v5, a2
+aaaaaaaaabaaahaeabaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov v1.xyz, a1
+bdaaaaaaaaaaaiadaaaaaaoeaaaaaaaaadaaaaoeabaaaaaa dp4 o0.w, a0, c3
+bdaaaaaaaaaaaeadaaaaaaoeaaaaaaaaacaaaaoeabaaaaaa dp4 o0.z, a0, c2
+bdaaaaaaaaaaacadaaaaaaoeaaaaaaaaabaaaaoeabaaaaaa dp4 o0.y, a0, c1
+bdaaaaaaaaaaabadaaaaaaoeaaaaaaaaaaaaaaoeabaaaaaa dp4 o0.x, a0, c0
+aaaaaaaaabaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v1.w, c0
+aaaaaaaaacaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v2.w, c0
+"
+}
+
+SubProgram "d3d11_9x " {
+Keywords { "SPOT" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+ConstBuffer "$Globals" 112 // 80 used size, 4 vars
+Matrix 16 [_LightMatrix0] 4
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 192 [_Object2World] 4
+Matrix 256 [_World2Object] 4
+Vector 320 [unity_Scale] 4
+BindCB "$Globals" 0
+BindCB "UnityLighting" 1
+BindCB "UnityPerDraw" 2
+// 20 instructions, 2 temp regs, 0 temp arrays:
+// ALU 17 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0_level_9_1
+eefiecedeikidmidnabnlgbjbikkomfoibegjdckabaaaaaaaaahaaaaaeaaaaaa
+daaaaaaaeeacaaaaliafaaaaeiagaaaaebgpgodjamacaaaaamacaaaaaaacpopp
+leabaaaafiaaaaaaaeaaceaaaaaafeaaaaaafeaaaaaaceaaabaafeaaaaaaabaa
+aeaaabaaaaaaaaaaabaaaaaaabaaafaaaaaaaaaaacaaaaaaaeaaagaaaaaaaaaa
+acaaamaaajaaakaaaaaaaaaaaaaaaaaaaaacpoppbpaaaaacafaaaaiaaaaaapja
+bpaaaaacafaaabiaabaaapjabpaaaaacafaaaciaacaaapjaabaaaaacaaaaapia
+afaaoekaafaaaaadabaaahiaaaaaffiaapaaoekaaeaaaaaeabaaahiaaoaaoeka
+aaaaaaiaabaaoeiaaeaaaaaeaaaaahiabaaaoekaaaaakkiaabaaoeiaaeaaaaae
+aaaaahiabbaaoekaaaaappiaaaaaoeiaaeaaaaaeabaaahoaaaaaoeiabcaappka
+aaaaoejbafaaaaadaaaaapiaaaaaffjaalaaoekaaeaaaaaeaaaaapiaakaaoeka
+aaaaaajaaaaaoeiaaeaaaaaeaaaaapiaamaaoekaaaaakkjaaaaaoeiaaeaaaaae
+aaaaapiaanaaoekaaaaappjaaaaaoeiaafaaaaadabaaapiaaaaaffiaacaaoeka
+aeaaaaaeabaaapiaabaaoekaaaaaaaiaabaaoeiaaeaaaaaeabaaapiaadaaoeka
+aaaakkiaabaaoeiaaeaaaaaeadaaapoaaeaaoekaaaaappiaabaaoeiaafaaaaad
+aaaaapiaaaaaffjaahaaoekaaeaaaaaeaaaaapiaagaaoekaaaaaaajaaaaaoeia
+aeaaaaaeaaaaapiaaiaaoekaaaaakkjaaaaaoeiaaeaaaaaeaaaaapiaajaaoeka
+aaaappjaaaaaoeiaaeaaaaaeaaaaadmaaaaappiaaaaaoekaaaaaoeiaabaaaaac
+aaaaammaaaaaoeiaabaaaaacacaaahoaacaaoejaabaaaaacaeaaapoaabaaoeja
+ppppaaaafdeieefcgmadaaaaeaaaabaanlaaaaaafjaaaaaeegiocaaaaaaaaaaa
+afaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaaacaaaaaa
+bfaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaad
+hcbabaaaacaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaadhccabaaa
+acaaaaaagfaaaaadhccabaaaadaaaaaagfaaaaadpccabaaaaeaaaaaagfaaaaad
+pccabaaaafaaaaaagiaaaaacacaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaa
+aaaaaaaaegiocaaaacaaaaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+acaaaaaaaaaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaa
+aaaaaaaaegiocaaaacaaaaaaacaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaa
+dcaaaaakpccabaaaaaaaaaaaegiocaaaacaaaaaaadaaaaaapgbpbaaaaaaaaaaa
+egaobaaaaaaaaaaadiaaaaajhcaabaaaaaaaaaaafgifcaaaabaaaaaaaaaaaaaa
+egiccaaaacaaaaaabbaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaaacaaaaaa
+baaaaaaaagiacaaaabaaaaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaalhcaabaaa
+aaaaaaaaegiccaaaacaaaaaabcaaaaaakgikcaaaabaaaaaaaaaaaaaaegacbaaa
+aaaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaaacaaaaaabdaaaaaapgipcaaa
+abaaaaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaalhccabaaaacaaaaaaegacbaaa
+aaaaaaaapgipcaaaacaaaaaabeaaaaaaegbcbaiaebaaaaaaaaaaaaaadgaaaaaf
+hccabaaaadaaaaaaegbcbaaaacaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaa
+aaaaaaaaegiocaaaacaaaaaaanaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+acaaaaaaamaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaa
+aaaaaaaaegiocaaaacaaaaaaaoaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaa
+dcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaapaaaaaapgbpbaaaaaaaaaaa
+egaobaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaafgafbaaaaaaaaaaaegiocaaa
+aaaaaaaaacaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaaaaaaaaaabaaaaaa
+agaabaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaa
+aaaaaaaaadaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpccabaaa
+aeaaaaaaegiocaaaaaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegaobaaaabaaaaaa
+dgaaaaafpccabaaaafaaaaaaegbobaaaabaaaaaadoaaaaabejfdeheoiiaaaaaa
+aeaaaaaaaiaaaaaagiaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaa
+hbaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaa
+aaaaaaaaadaaaaaaacaaaaaaahahaaaahoaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
+adaaaaaaahaaaaaafaepfdejfeejepeoaaedepemepfcaaeoepfcenebemaafeeb
+eoehefeofeaaklklepfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaa
+abaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
+abaaaaaaadapaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaahaiaaaa
+keaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaakeaaaaaaadaaaaaa
+aaaaaaaaadaaaaaaaeaaaaaaapaaaaaakeaaaaaaafaaaaaaaaaaaaaaadaaaaaa
+afaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklkl
+"
+}
+
+SubProgram "gles3 " {
+Keywords { "SPOT" }
+"!!GLES3#version 300 es
+
+
+#ifdef VERTEX
+
+#define gl_Vertex _glesVertex
+in vec4 _glesVertex;
+#define gl_Color _glesColor
+in vec4 _glesColor;
+#define gl_Normal (normalize(_glesNormal))
+in vec3 _glesNormal;
+#define TANGENT vec4(normalize(_glesTANGENT.xyz), _glesTANGENT.w)
+in vec4 _glesTANGENT;
+
+#line 151
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 187
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 181
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 334
+struct v2f {
+    highp vec4 pos;
+    highp vec2 uv;
+    highp vec3 lightDir;
+    highp vec3 normal;
+    highp vec4 _LightCoord;
+    highp vec4 color;
+};
+#line 326
+struct appdata_t {
+    highp vec4 vertex;
+    lowp vec4 color;
+    highp vec3 normal;
+    highp vec3 tangent;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform highp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
+#line 19
+uniform highp vec4 unity_SpotDirection[8];
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+#line 23
+uniform highp vec4 unity_SHBr;
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+#line 27
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+#line 31
+uniform highp vec4 _LightSplitsNear;
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+#line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+#line 39
+uniform highp mat4 _Object2World;
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+#line 43
+uniform highp mat4 glstate_matrix_texture0;
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+#line 47
+uniform highp mat4 glstate_matrix_projection;
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+#line 51
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 315
+uniform sampler2D _LightTexture0;
+uniform highp mat4 _LightMatrix0;
+uniform sampler2D _LightTextureB0;
+#line 344
+uniform lowp vec4 _Color;
+uniform lowp vec4 _LightColor0;
+#line 357
+#line 82
+highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
+    highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
+    return ((objSpaceLightPos.xyz * unity_Scale.w) - v.xyz);
+}
+#line 344
+v2f vert( in appdata_t v ) {
+    v2f o;
+    o.pos = (glstate_matrix_mvp * v.vertex);
+    #line 348
+    o.lightDir = ObjSpaceLightDir( v.vertex);
+    o.color = v.color;
+    o.normal = v.normal;
+    o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
+    #line 353
+    return o;
+}
+
+out highp vec2 xlv_TEXCOORD0;
+out highp vec3 xlv_TEXCOORD2;
+out highp vec3 xlv_TEXCOORD1;
+out highp vec4 xlv_TEXCOORD3;
+out highp vec4 xlv_TEXCOORD5;
+void main() {
+    v2f xl_retval;
+    appdata_t xlt_v;
+    xlt_v.vertex = vec4(gl_Vertex);
+    xlt_v.color = vec4(gl_Color);
+    xlt_v.normal = vec3(gl_Normal);
+    xlt_v.tangent = vec3(TANGENT);
+    xl_retval = vert( xlt_v);
+    gl_Position = vec4(xl_retval.pos);
+    xlv_TEXCOORD0 = vec2(xl_retval.uv);
+    xlv_TEXCOORD2 = vec3(xl_retval.lightDir);
+    xlv_TEXCOORD1 = vec3(xl_retval.normal);
+    xlv_TEXCOORD3 = vec4(xl_retval._LightCoord);
+    xlv_TEXCOORD5 = vec4(xl_retval.color);
+}
+
+
+#endif
+#ifdef FRAGMENT
+
+#define gl_FragData _glesFragData
+layout(location = 0) out mediump vec4 _glesFragData[4];
+float xll_saturate_f( float x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec2 xll_saturate_vf2( vec2 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec3 xll_saturate_vf3( vec3 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec4 xll_saturate_vf4( vec4 x) {
+  return clamp( x, 0.0, 1.0);
+}
+mat2 xll_saturate_mf2x2(mat2 m) {
+  return mat2( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0));
+}
+mat3 xll_saturate_mf3x3(mat3 m) {
+  return mat3( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0));
+}
+mat4 xll_saturate_mf4x4(mat4 m) {
+  return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
+}
+#line 151
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 187
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 181
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 334
+struct v2f {
+    highp vec4 pos;
+    highp vec2 uv;
+    highp vec3 lightDir;
+    highp vec3 normal;
+    highp vec4 _LightCoord;
+    highp vec4 color;
+};
+#line 326
+struct appdata_t {
+    highp vec4 vertex;
+    lowp vec4 color;
+    highp vec3 normal;
+    highp vec3 tangent;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform highp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
+#line 19
+uniform highp vec4 unity_SpotDirection[8];
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+#line 23
+uniform highp vec4 unity_SHBr;
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+#line 27
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+#line 31
+uniform highp vec4 _LightSplitsNear;
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+#line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+#line 39
+uniform highp mat4 _Object2World;
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+#line 43
+uniform highp mat4 glstate_matrix_texture0;
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+#line 47
+uniform highp mat4 glstate_matrix_projection;
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+#line 51
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 315
+uniform sampler2D _LightTexture0;
+uniform highp mat4 _LightMatrix0;
+uniform sampler2D _LightTextureB0;
+#line 344
+uniform lowp vec4 _Color;
+uniform lowp vec4 _LightColor0;
+#line 357
+#line 322
+lowp float UnitySpotAttenuate( in highp vec3 LightCoord ) {
+    #line 324
+    return texture( _LightTextureB0, vec2( dot( LightCoord, LightCoord))).w;
+}
+#line 318
+lowp float UnitySpotCookie( in highp vec4 LightCoord ) {
+    #line 320
+    return texture( _LightTexture0, ((LightCoord.xy / LightCoord.w) + 0.5)).w;
+}
+#line 357
+lowp vec4 frag( in v2f IN ) {
+    IN.lightDir = normalize(IN.lightDir);
+    lowp float atten = (((float((IN._LightCoord.z > 0.0)) * UnitySpotCookie( IN._LightCoord)) * UnitySpotAttenuate( IN._LightCoord.xyz)) * 1.0);
+    #line 361
+    lowp vec3 normal = IN.normal;
+    lowp float diff = xll_saturate_f(dot( normal, IN.lightDir));
+    lowp vec4 c;
+    c.xyz = (((IN.color.xyz * _LightColor0.xyz) * diff) * (atten * 2.0));
+    #line 365
+    c.w = IN.color.w;
+    return c;
+}
+in highp vec2 xlv_TEXCOORD0;
+in highp vec3 xlv_TEXCOORD2;
+in highp vec3 xlv_TEXCOORD1;
+in highp vec4 xlv_TEXCOORD3;
+in highp vec4 xlv_TEXCOORD5;
+void main() {
+    lowp vec4 xl_retval;
+    v2f xlt_IN;
+    xlt_IN.pos = vec4(0.0);
+    xlt_IN.uv = vec2(xlv_TEXCOORD0);
+    xlt_IN.lightDir = vec3(xlv_TEXCOORD2);
+    xlt_IN.normal = vec3(xlv_TEXCOORD1);
+    xlt_IN._LightCoord = vec4(xlv_TEXCOORD3);
+    xlt_IN.color = vec4(xlv_TEXCOORD5);
+    xl_retval = frag( xlt_IN);
+    gl_FragData[0] = vec4(xl_retval);
+}
+
+
+#endif"
+}
+
+SubProgram "opengl " {
+Keywords { "POINT_COOKIE" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+Vector 17 [_WorldSpaceLightPos0]
+Matrix 5 [_Object2World]
+Matrix 9 [_World2Object]
+Vector 18 [unity_Scale]
+Matrix 13 [_LightMatrix0]
+"!!ARBvp1.0
+# 18 ALU
+PARAM c[19] = { program.local[0],
+		state.matrix.mvp,
+		program.local[5..18] };
+TEMP R0;
+TEMP R1;
+MOV R1, c[17];
+DP4 R0.w, vertex.position, c[8];
+DP4 R0.z, R1, c[11];
+DP4 R0.x, R1, c[9];
+DP4 R0.y, R1, c[10];
+MAD result.texcoord[2].xyz, R0, c[18].w, -vertex.position;
+DP4 R0.z, vertex.position, c[7];
+DP4 R0.x, vertex.position, c[5];
+DP4 R0.y, vertex.position, c[6];
+DP4 result.texcoord[3].z, R0, c[15];
+DP4 result.texcoord[3].y, R0, c[14];
+DP4 result.texcoord[3].x, R0, c[13];
+MOV result.texcoord[5], vertex.color;
+MOV result.texcoord[1].xyz, vertex.normal;
+DP4 result.position.w, vertex.position, c[4];
+DP4 result.position.z, vertex.position, c[3];
+DP4 result.position.y, vertex.position, c[2];
+DP4 result.position.x, vertex.position, c[1];
+END
+# 18 instructions, 2 R-regs
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "POINT_COOKIE" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+Matrix 0 [glstate_matrix_mvp]
+Vector 16 [_WorldSpaceLightPos0]
+Matrix 4 [_Object2World]
+Matrix 8 [_World2Object]
+Vector 17 [unity_Scale]
+Matrix 12 [_LightMatrix0]
+"vs_2_0
+; 20 ALU
+dcl_position0 v0
+dcl_color0 v1
+dcl_normal0 v2
+mov r0, c10
+dp4 r2.z, c16, r0
+mov r0, c9
+dp4 r2.y, c16, r0
+mov r1, c8
+dp4 r2.x, c16, r1
+dp4 r0.w, v0, c7
+dp4 r0.z, v0, c6
+dp4 r0.x, v0, c4
+dp4 r0.y, v0, c5
+mad oT2.xyz, r2, c17.w, -v0
+dp4 oT3.z, r0, c14
+dp4 oT3.y, r0, c13
+dp4 oT3.x, r0, c12
+mov oT5, v1
+mov oT1.xyz, v2
+dp4 oPos.w, v0, c3
+dp4 oPos.z, v0, c2
+dp4 oPos.y, v0, c1
+dp4 oPos.x, v0, c0
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "POINT_COOKIE" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+ConstBuffer "$Globals" 112 // 80 used size, 4 vars
+Matrix 16 [_LightMatrix0] 4
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 192 [_Object2World] 4
+Matrix 256 [_World2Object] 4
+Vector 320 [unity_Scale] 4
+BindCB "$Globals" 0
+BindCB "UnityLighting" 1
+BindCB "UnityPerDraw" 2
+// 20 instructions, 2 temp regs, 0 temp arrays:
+// ALU 17 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0
+eefiecedmjjpegplcgemohadockdciemelndpjpbabaaaaaaoiaeaaaaadaaaaaa
+cmaaaaaalmaaaaaaheabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahahaaaahoaaaaaaaaaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaaaaaafaepfdej
+feejepeoaaedepemepfcaaeoepfcenebemaafeebeoehefeofeaaklklepfdeheo
+laaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaa
+apaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadapaaaakeaaaaaa
+acaaaaaaaaaaaaaaadaaaaaaacaaaaaaahaiaaaakeaaaaaaabaaaaaaaaaaaaaa
+adaaaaaaadaaaaaaahaiaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaa
+ahaiaaaakeaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaaapaaaaaafdfgfpfa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcgmadaaaaeaaaabaa
+nlaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
+abaaaaaafjaaaaaeegiocaaaacaaaaaabfaaaaaafpaaaaadpcbabaaaaaaaaaaa
+fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaaghaaaaaepccabaaa
+aaaaaaaaabaaaaaagfaaaaadhccabaaaacaaaaaagfaaaaadhccabaaaadaaaaaa
+gfaaaaadhccabaaaaeaaaaaagfaaaaadpccabaaaafaaaaaagiaaaaacacaaaaaa
+diaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaacaaaaaaabaaaaaa
+dcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaagbabaaaaaaaaaaa
+egaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaacaaaaaa
+kgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaaaaaaaaaegiocaaa
+acaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaajhcaabaaa
+aaaaaaaafgifcaaaabaaaaaaaaaaaaaaegiccaaaacaaaaaabbaaaaaadcaaaaal
+hcaabaaaaaaaaaaaegiccaaaacaaaaaabaaaaaaaagiacaaaabaaaaaaaaaaaaaa
+egacbaaaaaaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaaacaaaaaabcaaaaaa
+kgikcaaaabaaaaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaalhcaabaaaaaaaaaaa
+egiccaaaacaaaaaabdaaaaaapgipcaaaabaaaaaaaaaaaaaaegacbaaaaaaaaaaa
+dcaaaaalhccabaaaacaaaaaaegacbaaaaaaaaaaapgipcaaaacaaaaaabeaaaaaa
+egbcbaiaebaaaaaaaaaaaaaadgaaaaafhccabaaaadaaaaaaegbcbaaaacaaaaaa
+diaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaacaaaaaaanaaaaaa
+dcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaamaaaaaaagbabaaaaaaaaaaa
+egaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaaoaaaaaa
+kgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+acaaaaaaapaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaaihcaabaaa
+abaaaaaafgafbaaaaaaaaaaaegiccaaaaaaaaaaaacaaaaaadcaaaaakhcaabaaa
+abaaaaaaegiccaaaaaaaaaaaabaaaaaaagaabaaaaaaaaaaaegacbaaaabaaaaaa
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
+egacbaaaabaaaaaadcaaaaakhccabaaaaeaaaaaaegiccaaaaaaaaaaaaeaaaaaa
+pgapbaaaaaaaaaaaegacbaaaaaaaaaaadgaaaaafpccabaaaafaaaaaaegbobaaa
+abaaaaaadoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "POINT_COOKIE" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec3 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp mat4 _LightMatrix0;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _World2Object;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp vec4 _WorldSpaceLightPos0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesColor;
+attribute vec4 _glesVertex;
+void main ()
+{
+  highp vec2 tmpvar_1;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = tmpvar_1;
+  xlv_TEXCOORD2 = (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz);
+  xlv_TEXCOORD1 = normalize(_glesNormal);
+  xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
+  xlv_TEXCOORD5 = _glesColor;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec3 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+uniform lowp vec4 _LightColor0;
+uniform sampler2D _LightTextureB0;
+uniform samplerCube _LightTexture0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float diff_2;
+  lowp vec3 normal_3;
+  highp float tmpvar_4;
+  tmpvar_4 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp float tmpvar_5;
+  tmpvar_5 = (texture2D (_LightTextureB0, vec2(tmpvar_4)).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
+  normal_3 = xlv_TEXCOORD1;
+  highp float tmpvar_6;
+  tmpvar_6 = clamp (dot (normal_3, normalize(xlv_TEXCOORD2)), 0.0, 1.0);
+  diff_2 = tmpvar_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = (((xlv_TEXCOORD5.xyz * _LightColor0.xyz) * diff_2) * (tmpvar_5 * 2.0));
+  c_1.xyz = tmpvar_7;
+  highp float tmpvar_8;
+  tmpvar_8 = xlv_TEXCOORD5.w;
+  c_1.w = tmpvar_8;
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "POINT_COOKIE" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec3 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp mat4 _LightMatrix0;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 _World2Object;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp vec4 _WorldSpaceLightPos0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesColor;
+attribute vec4 _glesVertex;
+void main ()
+{
+  highp vec2 tmpvar_1;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = tmpvar_1;
+  xlv_TEXCOORD2 = (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz);
+  xlv_TEXCOORD1 = normalize(_glesNormal);
+  xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
+  xlv_TEXCOORD5 = _glesColor;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec3 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+uniform lowp vec4 _LightColor0;
+uniform sampler2D _LightTextureB0;
+uniform samplerCube _LightTexture0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float diff_2;
+  lowp vec3 normal_3;
+  highp float tmpvar_4;
+  tmpvar_4 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp float tmpvar_5;
+  tmpvar_5 = (texture2D (_LightTextureB0, vec2(tmpvar_4)).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
+  normal_3 = xlv_TEXCOORD1;
+  highp float tmpvar_6;
+  tmpvar_6 = clamp (dot (normal_3, normalize(xlv_TEXCOORD2)), 0.0, 1.0);
+  diff_2 = tmpvar_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = (((xlv_TEXCOORD5.xyz * _LightColor0.xyz) * diff_2) * (tmpvar_5 * 2.0));
+  c_1.xyz = tmpvar_7;
+  highp float tmpvar_8;
+  tmpvar_8 = xlv_TEXCOORD5.w;
+  c_1.w = tmpvar_8;
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "flash " {
+Keywords { "POINT_COOKIE" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+Matrix 0 [glstate_matrix_mvp]
+Vector 16 [_WorldSpaceLightPos0]
+Matrix 4 [_Object2World]
+Matrix 8 [_World2Object]
+Vector 17 [unity_Scale]
+Matrix 12 [_LightMatrix0]
+"agal_vs
+[bc]
+aaaaaaaaaaaaapacakaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r0, c10
+bdaaaaaaacaaaeacbaaaaaoeabaaaaaaaaaaaaoeacaaaaaa dp4 r2.z, c16, r0
+aaaaaaaaaaaaapacajaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r0, c9
+bdaaaaaaacaaacacbaaaaaoeabaaaaaaaaaaaaoeacaaaaaa dp4 r2.y, c16, r0
+aaaaaaaaabaaapacaiaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r1, c8
+bdaaaaaaacaaabacbaaaaaoeabaaaaaaabaaaaoeacaaaaaa dp4 r2.x, c16, r1
+bdaaaaaaaaaaaiacaaaaaaoeaaaaaaaaahaaaaoeabaaaaaa dp4 r0.w, a0, c7
+bdaaaaaaaaaaaeacaaaaaaoeaaaaaaaaagaaaaoeabaaaaaa dp4 r0.z, a0, c6
+bdaaaaaaaaaaabacaaaaaaoeaaaaaaaaaeaaaaoeabaaaaaa dp4 r0.x, a0, c4
+bdaaaaaaaaaaacacaaaaaaoeaaaaaaaaafaaaaoeabaaaaaa dp4 r0.y, a0, c5
+adaaaaaaabaaahacacaaaakeacaaaaaabbaaaappabaaaaaa mul r1.xyz, r2.xyzz, c17.w
+acaaaaaaacaaahaeabaaaakeacaaaaaaaaaaaaoeaaaaaaaa sub v2.xyz, r1.xyzz, a0
+bdaaaaaaadaaaeaeaaaaaaoeacaaaaaaaoaaaaoeabaaaaaa dp4 v3.z, r0, c14
+bdaaaaaaadaaacaeaaaaaaoeacaaaaaaanaaaaoeabaaaaaa dp4 v3.y, r0, c13
+bdaaaaaaadaaabaeaaaaaaoeacaaaaaaamaaaaoeabaaaaaa dp4 v3.x, r0, c12
+aaaaaaaaafaaapaeacaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov v5, a2
+aaaaaaaaabaaahaeabaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov v1.xyz, a1
+bdaaaaaaaaaaaiadaaaaaaoeaaaaaaaaadaaaaoeabaaaaaa dp4 o0.w, a0, c3
+bdaaaaaaaaaaaeadaaaaaaoeaaaaaaaaacaaaaoeabaaaaaa dp4 o0.z, a0, c2
+bdaaaaaaaaaaacadaaaaaaoeaaaaaaaaabaaaaoeabaaaaaa dp4 o0.y, a0, c1
+bdaaaaaaaaaaabadaaaaaaoeaaaaaaaaaaaaaaoeabaaaaaa dp4 o0.x, a0, c0
+aaaaaaaaabaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v1.w, c0
+aaaaaaaaacaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v2.w, c0
+aaaaaaaaadaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v3.w, c0
+"
+}
+
+SubProgram "d3d11_9x " {
+Keywords { "POINT_COOKIE" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+ConstBuffer "$Globals" 112 // 80 used size, 4 vars
+Matrix 16 [_LightMatrix0] 4
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+ConstBuffer "UnityPerDraw" 336 // 336 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 192 [_Object2World] 4
+Matrix 256 [_World2Object] 4
+Vector 320 [unity_Scale] 4
+BindCB "$Globals" 0
+BindCB "UnityLighting" 1
+BindCB "UnityPerDraw" 2
+// 20 instructions, 2 temp regs, 0 temp arrays:
+// ALU 17 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0_level_9_1
+eefiecedakhailhlejdgcnafjjmlpemddlfdopddabaaaaaaaaahaaaaaeaaaaaa
+daaaaaaaeeacaaaaliafaaaaeiagaaaaebgpgodjamacaaaaamacaaaaaaacpopp
+leabaaaafiaaaaaaaeaaceaaaaaafeaaaaaafeaaaaaaceaaabaafeaaaaaaabaa
+aeaaabaaaaaaaaaaabaaaaaaabaaafaaaaaaaaaaacaaaaaaaeaaagaaaaaaaaaa
+acaaamaaajaaakaaaaaaaaaaaaaaaaaaaaacpoppbpaaaaacafaaaaiaaaaaapja
+bpaaaaacafaaabiaabaaapjabpaaaaacafaaaciaacaaapjaabaaaaacaaaaapia
+afaaoekaafaaaaadabaaahiaaaaaffiaapaaoekaaeaaaaaeabaaahiaaoaaoeka
+aaaaaaiaabaaoeiaaeaaaaaeaaaaahiabaaaoekaaaaakkiaabaaoeiaaeaaaaae
+aaaaahiabbaaoekaaaaappiaaaaaoeiaaeaaaaaeabaaahoaaaaaoeiabcaappka
+aaaaoejbafaaaaadaaaaapiaaaaaffjaalaaoekaaeaaaaaeaaaaapiaakaaoeka
+aaaaaajaaaaaoeiaaeaaaaaeaaaaapiaamaaoekaaaaakkjaaaaaoeiaaeaaaaae
+aaaaapiaanaaoekaaaaappjaaaaaoeiaafaaaaadabaaahiaaaaaffiaacaaoeka
+aeaaaaaeabaaahiaabaaoekaaaaaaaiaabaaoeiaaeaaaaaeaaaaahiaadaaoeka
+aaaakkiaabaaoeiaaeaaaaaeadaaahoaaeaaoekaaaaappiaaaaaoeiaafaaaaad
+aaaaapiaaaaaffjaahaaoekaaeaaaaaeaaaaapiaagaaoekaaaaaaajaaaaaoeia
+aeaaaaaeaaaaapiaaiaaoekaaaaakkjaaaaaoeiaaeaaaaaeaaaaapiaajaaoeka
+aaaappjaaaaaoeiaaeaaaaaeaaaaadmaaaaappiaaaaaoekaaaaaoeiaabaaaaac
+aaaaammaaaaaoeiaabaaaaacacaaahoaacaaoejaabaaaaacaeaaapoaabaaoeja
+ppppaaaafdeieefcgmadaaaaeaaaabaanlaaaaaafjaaaaaeegiocaaaaaaaaaaa
+afaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaafjaaaaaeegiocaaaacaaaaaa
+bfaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaad
+hcbabaaaacaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaadhccabaaa
+acaaaaaagfaaaaadhccabaaaadaaaaaagfaaaaadhccabaaaaeaaaaaagfaaaaad
+pccabaaaafaaaaaagiaaaaacacaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaa
+aaaaaaaaegiocaaaacaaaaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+acaaaaaaaaaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaa
+aaaaaaaaegiocaaaacaaaaaaacaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaa
+dcaaaaakpccabaaaaaaaaaaaegiocaaaacaaaaaaadaaaaaapgbpbaaaaaaaaaaa
+egaobaaaaaaaaaaadiaaaaajhcaabaaaaaaaaaaafgifcaaaabaaaaaaaaaaaaaa
+egiccaaaacaaaaaabbaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaaacaaaaaa
+baaaaaaaagiacaaaabaaaaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaalhcaabaaa
+aaaaaaaaegiccaaaacaaaaaabcaaaaaakgikcaaaabaaaaaaaaaaaaaaegacbaaa
+aaaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaaacaaaaaabdaaaaaapgipcaaa
+abaaaaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaalhccabaaaacaaaaaaegacbaaa
+aaaaaaaapgipcaaaacaaaaaabeaaaaaaegbcbaiaebaaaaaaaaaaaaaadgaaaaaf
+hccabaaaadaaaaaaegbcbaaaacaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaa
+aaaaaaaaegiocaaaacaaaaaaanaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+acaaaaaaamaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaa
+aaaaaaaaegiocaaaacaaaaaaaoaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaa
+dcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaapaaaaaapgbpbaaaaaaaaaaa
+egaobaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaafgafbaaaaaaaaaaaegiccaaa
+aaaaaaaaacaaaaaadcaaaaakhcaabaaaabaaaaaaegiccaaaaaaaaaaaabaaaaaa
+agaabaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
+aaaaaaaaadaaaaaakgakbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhccabaaa
+aeaaaaaaegiccaaaaaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+dgaaaaafpccabaaaafaaaaaaegbobaaaabaaaaaadoaaaaabejfdeheoiiaaaaaa
+aeaaaaaaaiaaaaaagiaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaa
+hbaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaa
+aaaaaaaaadaaaaaaacaaaaaaahahaaaahoaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
+adaaaaaaahaaaaaafaepfdejfeejepeoaaedepemepfcaaeoepfcenebemaafeeb
+eoehefeofeaaklklepfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaa
+abaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
+abaaaaaaadapaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaahaiaaaa
+keaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaiaaaakeaaaaaaadaaaaaa
+aaaaaaaaadaaaaaaaeaaaaaaahaiaaaakeaaaaaaafaaaaaaaaaaaaaaadaaaaaa
+afaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklkl
+"
+}
+
+SubProgram "gles3 " {
+Keywords { "POINT_COOKIE" }
+"!!GLES3#version 300 es
+
+
+#ifdef VERTEX
+
+#define gl_Vertex _glesVertex
+in vec4 _glesVertex;
+#define gl_Color _glesColor
+in vec4 _glesColor;
+#define gl_Normal (normalize(_glesNormal))
+in vec3 _glesNormal;
+#define TANGENT vec4(normalize(_glesTANGENT.xyz), _glesTANGENT.w)
+in vec4 _glesTANGENT;
+
+#line 151
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 187
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 181
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 326
+struct v2f {
+    highp vec4 pos;
+    highp vec2 uv;
+    highp vec3 lightDir;
+    highp vec3 normal;
+    highp vec3 _LightCoord;
+    highp vec4 color;
+};
+#line 318
+struct appdata_t {
+    highp vec4 vertex;
+    lowp vec4 color;
+    highp vec3 normal;
+    highp vec3 tangent;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform highp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
+#line 19
+uniform highp vec4 unity_SpotDirection[8];
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+#line 23
+uniform highp vec4 unity_SHBr;
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+#line 27
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+#line 31
+uniform highp vec4 _LightSplitsNear;
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+#line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+#line 39
+uniform highp mat4 _Object2World;
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+#line 43
+uniform highp mat4 glstate_matrix_texture0;
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+#line 47
+uniform highp mat4 glstate_matrix_projection;
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+#line 51
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 315
+uniform samplerCube _LightTexture0;
+uniform highp mat4 _LightMatrix0;
+uniform sampler2D _LightTextureB0;
+#line 336
+uniform lowp vec4 _Color;
+uniform lowp vec4 _LightColor0;
+#line 349
+#line 82
+highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
+    highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
+    return ((objSpaceLightPos.xyz * unity_Scale.w) - v.xyz);
+}
+#line 336
+v2f vert( in appdata_t v ) {
+    v2f o;
+    o.pos = (glstate_matrix_mvp * v.vertex);
+    #line 340
+    o.lightDir = ObjSpaceLightDir( v.vertex);
+    o.color = v.color;
+    o.normal = v.normal;
+    o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
+    #line 345
+    return o;
+}
+
+out highp vec2 xlv_TEXCOORD0;
+out highp vec3 xlv_TEXCOORD2;
+out highp vec3 xlv_TEXCOORD1;
+out highp vec3 xlv_TEXCOORD3;
+out highp vec4 xlv_TEXCOORD5;
+void main() {
+    v2f xl_retval;
+    appdata_t xlt_v;
+    xlt_v.vertex = vec4(gl_Vertex);
+    xlt_v.color = vec4(gl_Color);
+    xlt_v.normal = vec3(gl_Normal);
+    xlt_v.tangent = vec3(TANGENT);
+    xl_retval = vert( xlt_v);
+    gl_Position = vec4(xl_retval.pos);
+    xlv_TEXCOORD0 = vec2(xl_retval.uv);
+    xlv_TEXCOORD2 = vec3(xl_retval.lightDir);
+    xlv_TEXCOORD1 = vec3(xl_retval.normal);
+    xlv_TEXCOORD3 = vec3(xl_retval._LightCoord);
+    xlv_TEXCOORD5 = vec4(xl_retval.color);
+}
+
+
+#endif
+#ifdef FRAGMENT
+
+#define gl_FragData _glesFragData
+layout(location = 0) out mediump vec4 _glesFragData[4];
+float xll_saturate_f( float x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec2 xll_saturate_vf2( vec2 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec3 xll_saturate_vf3( vec3 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec4 xll_saturate_vf4( vec4 x) {
+  return clamp( x, 0.0, 1.0);
+}
+mat2 xll_saturate_mf2x2(mat2 m) {
+  return mat2( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0));
+}
+mat3 xll_saturate_mf3x3(mat3 m) {
+  return mat3( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0));
+}
+mat4 xll_saturate_mf4x4(mat4 m) {
+  return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
+}
+#line 151
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 187
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 181
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 326
+struct v2f {
+    highp vec4 pos;
+    highp vec2 uv;
+    highp vec3 lightDir;
+    highp vec3 normal;
+    highp vec3 _LightCoord;
+    highp vec4 color;
+};
+#line 318
+struct appdata_t {
+    highp vec4 vertex;
+    lowp vec4 color;
+    highp vec3 normal;
+    highp vec3 tangent;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform highp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
+#line 19
+uniform highp vec4 unity_SpotDirection[8];
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+#line 23
+uniform highp vec4 unity_SHBr;
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+#line 27
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+#line 31
+uniform highp vec4 _LightSplitsNear;
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+#line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+#line 39
+uniform highp mat4 _Object2World;
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+#line 43
+uniform highp mat4 glstate_matrix_texture0;
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+#line 47
+uniform highp mat4 glstate_matrix_projection;
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+#line 51
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 315
+uniform samplerCube _LightTexture0;
+uniform highp mat4 _LightMatrix0;
+uniform sampler2D _LightTextureB0;
+#line 336
+uniform lowp vec4 _Color;
+uniform lowp vec4 _LightColor0;
+#line 349
+#line 349
+lowp vec4 frag( in v2f IN ) {
+    IN.lightDir = normalize(IN.lightDir);
+    lowp float atten = ((texture( _LightTextureB0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * texture( _LightTexture0, IN._LightCoord).w) * 1.0);
+    #line 353
+    lowp vec3 normal = IN.normal;
+    lowp float diff = xll_saturate_f(dot( normal, IN.lightDir));
+    lowp vec4 c;
+    c.xyz = (((IN.color.xyz * _LightColor0.xyz) * diff) * (atten * 2.0));
+    #line 357
+    c.w = IN.color.w;
+    return c;
+}
+in highp vec2 xlv_TEXCOORD0;
+in highp vec3 xlv_TEXCOORD2;
+in highp vec3 xlv_TEXCOORD1;
+in highp vec3 xlv_TEXCOORD3;
+in highp vec4 xlv_TEXCOORD5;
+void main() {
+    lowp vec4 xl_retval;
+    v2f xlt_IN;
+    xlt_IN.pos = vec4(0.0);
+    xlt_IN.uv = vec2(xlv_TEXCOORD0);
+    xlt_IN.lightDir = vec3(xlv_TEXCOORD2);
+    xlt_IN.normal = vec3(xlv_TEXCOORD1);
+    xlt_IN._LightCoord = vec3(xlv_TEXCOORD3);
+    xlt_IN.color = vec4(xlv_TEXCOORD5);
+    xl_retval = frag( xlt_IN);
+    gl_FragData[0] = vec4(xl_retval);
+}
+
+
+#endif"
+}
+
+SubProgram "opengl " {
+Keywords { "DIRECTIONAL_COOKIE" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+Vector 17 [_WorldSpaceLightPos0]
+Matrix 5 [_Object2World]
+Matrix 9 [_World2Object]
+Matrix 13 [_LightMatrix0]
+"!!ARBvp1.0
+# 16 ALU
+PARAM c[18] = { program.local[0],
+		state.matrix.mvp,
+		program.local[5..17] };
+TEMP R0;
+MOV R0, c[17];
+DP4 result.texcoord[2].z, R0, c[11];
+DP4 result.texcoord[2].y, R0, c[10];
+DP4 result.texcoord[2].x, R0, c[9];
+DP4 R0.w, vertex.position, c[8];
+DP4 R0.z, vertex.position, c[7];
+DP4 R0.x, vertex.position, c[5];
+DP4 R0.y, vertex.position, c[6];
+DP4 result.texcoord[3].y, R0, c[14];
+DP4 result.texcoord[3].x, R0, c[13];
+MOV result.texcoord[5], vertex.color;
+MOV result.texcoord[1].xyz, vertex.normal;
+DP4 result.position.w, vertex.position, c[4];
+DP4 result.position.z, vertex.position, c[3];
+DP4 result.position.y, vertex.position, c[2];
+DP4 result.position.x, vertex.position, c[1];
+END
+# 16 instructions, 1 R-regs
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "DIRECTIONAL_COOKIE" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+Matrix 0 [glstate_matrix_mvp]
+Vector 16 [_WorldSpaceLightPos0]
+Matrix 4 [_Object2World]
+Matrix 8 [_World2Object]
+Matrix 12 [_LightMatrix0]
+"vs_2_0
+; 18 ALU
+dcl_position0 v0
+dcl_color0 v1
+dcl_normal0 v2
+mov r0, c10
+dp4 oT2.z, c16, r0
+mov r0, c9
+dp4 oT2.y, c16, r0
+mov r1, c8
+dp4 r0.w, v0, c7
+dp4 r0.z, v0, c6
+dp4 r0.x, v0, c4
+dp4 r0.y, v0, c5
+dp4 oT2.x, c16, r1
+dp4 oT3.y, r0, c13
+dp4 oT3.x, r0, c12
+mov oT5, v1
+mov oT1.xyz, v2
+dp4 oPos.w, v0, c3
+dp4 oPos.z, v0, c2
+dp4 oPos.y, v0, c1
+dp4 oPos.x, v0, c0
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "DIRECTIONAL_COOKIE" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+ConstBuffer "$Globals" 112 // 80 used size, 4 vars
+Matrix 16 [_LightMatrix0] 4
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+ConstBuffer "UnityPerDraw" 336 // 320 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 192 [_Object2World] 4
+Matrix 256 [_World2Object] 4
+BindCB "$Globals" 0
+BindCB "UnityLighting" 1
+BindCB "UnityPerDraw" 2
+// 19 instructions, 2 temp regs, 0 temp arrays:
+// ALU 16 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0
+eefieceddmhacdconjpjameeinopjabeejblfbnhabaaaaaalmaeaaaaadaaaaaa
+cmaaaaaalmaaaaaaheabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahahaaaahoaaaaaaaaaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaaaaaafaepfdej
+feejepeoaaedepemepfcaaeoepfcenebemaafeebeoehefeofeaaklklepfdeheo
+laaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaa
+apaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadapaaaakeaaaaaa
+adaaaaaaaaaaaaaaadaaaaaaabaaaaaaamadaaaakeaaaaaaacaaaaaaaaaaaaaa
+adaaaaaaacaaaaaaahaiaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaa
+ahaiaaaakeaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaafdfgfpfa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefceaadaaaaeaaaabaa
+naaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
+abaaaaaafjaaaaaeegiocaaaacaaaaaabeaaaaaafpaaaaadpcbabaaaaaaaaaaa
+fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaaghaaaaaepccabaaa
+aaaaaaaaabaaaaaagfaaaaadmccabaaaabaaaaaagfaaaaadhccabaaaacaaaaaa
+gfaaaaadhccabaaaadaaaaaagfaaaaadpccabaaaaeaaaaaagiaaaaacacaaaaaa
+diaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaacaaaaaaabaaaaaa
+dcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaagbabaaaaaaaaaaa
+egaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaacaaaaaa
+kgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaaaaaaaaaegiocaaa
+acaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaajhcaabaaa
+aaaaaaaafgifcaaaabaaaaaaaaaaaaaaegiccaaaacaaaaaabbaaaaaadcaaaaal
+hcaabaaaaaaaaaaaegiccaaaacaaaaaabaaaaaaaagiacaaaabaaaaaaaaaaaaaa
+egacbaaaaaaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaaacaaaaaabcaaaaaa
+kgikcaaaabaaaaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaalhccabaaaacaaaaaa
+egiccaaaacaaaaaabdaaaaaapgipcaaaabaaaaaaaaaaaaaaegacbaaaaaaaaaaa
+dgaaaaafhccabaaaadaaaaaaegbcbaaaacaaaaaadiaaaaaipcaabaaaaaaaaaaa
+fgbfbaaaaaaaaaaaegiocaaaacaaaaaaanaaaaaadcaaaaakpcaabaaaaaaaaaaa
+egiocaaaacaaaaaaamaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaak
+pcaabaaaaaaaaaaaegiocaaaacaaaaaaaoaaaaaakgbkbaaaaaaaaaaaegaobaaa
+aaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaapaaaaaapgbpbaaa
+aaaaaaaaegaobaaaaaaaaaaadiaaaaaidcaabaaaabaaaaaafgafbaaaaaaaaaaa
+egiacaaaaaaaaaaaacaaaaaadcaaaaakdcaabaaaaaaaaaaaegiacaaaaaaaaaaa
+abaaaaaaagaabaaaaaaaaaaaegaabaaaabaaaaaadcaaaaakdcaabaaaaaaaaaaa
+egiacaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaaegaabaaaaaaaaaaadcaaaaak
+mccabaaaabaaaaaaagiecaaaaaaaaaaaaeaaaaaapgapbaaaaaaaaaaaagaebaaa
+aaaaaaaadgaaaaafpccabaaaaeaaaaaaegbobaaaabaaaaaadoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "DIRECTIONAL_COOKIE" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec2 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp mat4 _LightMatrix0;
+uniform highp mat4 _World2Object;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+uniform lowp vec4 _WorldSpaceLightPos0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesColor;
+attribute vec4 _glesVertex;
+void main ()
+{
+  highp vec2 tmpvar_1;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = tmpvar_1;
+  xlv_TEXCOORD2 = (_World2Object * _WorldSpaceLightPos0).xyz;
+  xlv_TEXCOORD1 = normalize(_glesNormal);
+  xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
+  xlv_TEXCOORD5 = _glesColor;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec2 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+uniform lowp vec4 _LightColor0;
+uniform sampler2D _LightTexture0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float diff_2;
+  lowp vec3 normal_3;
+  lowp float tmpvar_4;
+  tmpvar_4 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
+  normal_3 = xlv_TEXCOORD1;
+  highp float tmpvar_5;
+  tmpvar_5 = clamp (dot (normal_3, normalize(xlv_TEXCOORD2)), 0.0, 1.0);
+  diff_2 = tmpvar_5;
+  highp vec3 tmpvar_6;
+  tmpvar_6 = (((xlv_TEXCOORD5.xyz * _LightColor0.xyz) * diff_2) * (tmpvar_4 * 2.0));
+  c_1.xyz = tmpvar_6;
+  highp float tmpvar_7;
+  tmpvar_7 = xlv_TEXCOORD5.w;
+  c_1.w = tmpvar_7;
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "DIRECTIONAL_COOKIE" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec2 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+varying highp vec2 xlv_TEXCOORD0;
+uniform highp mat4 _LightMatrix0;
+uniform highp mat4 _World2Object;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+uniform lowp vec4 _WorldSpaceLightPos0;
+attribute vec3 _glesNormal;
+attribute vec4 _glesColor;
+attribute vec4 _glesVertex;
+void main ()
+{
+  highp vec2 tmpvar_1;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = tmpvar_1;
+  xlv_TEXCOORD2 = (_World2Object * _WorldSpaceLightPos0).xyz;
+  xlv_TEXCOORD1 = normalize(_glesNormal);
+  xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
+  xlv_TEXCOORD5 = _glesColor;
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+varying highp vec4 xlv_TEXCOORD5;
+varying highp vec2 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp vec3 xlv_TEXCOORD2;
+uniform lowp vec4 _LightColor0;
+uniform sampler2D _LightTexture0;
+void main ()
+{
+  lowp vec4 c_1;
+  lowp float diff_2;
+  lowp vec3 normal_3;
+  lowp float tmpvar_4;
+  tmpvar_4 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
+  normal_3 = xlv_TEXCOORD1;
+  highp float tmpvar_5;
+  tmpvar_5 = clamp (dot (normal_3, normalize(xlv_TEXCOORD2)), 0.0, 1.0);
+  diff_2 = tmpvar_5;
+  highp vec3 tmpvar_6;
+  tmpvar_6 = (((xlv_TEXCOORD5.xyz * _LightColor0.xyz) * diff_2) * (tmpvar_4 * 2.0));
+  c_1.xyz = tmpvar_6;
+  highp float tmpvar_7;
+  tmpvar_7 = xlv_TEXCOORD5.w;
+  c_1.w = tmpvar_7;
+  gl_FragData[0] = c_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "flash " {
+Keywords { "DIRECTIONAL_COOKIE" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+Matrix 0 [glstate_matrix_mvp]
+Vector 16 [_WorldSpaceLightPos0]
+Matrix 4 [_Object2World]
+Matrix 8 [_World2Object]
+Matrix 12 [_LightMatrix0]
+"agal_vs
+[bc]
+aaaaaaaaaaaaapacakaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r0, c10
+bdaaaaaaacaaaeaebaaaaaoeabaaaaaaaaaaaaoeacaaaaaa dp4 v2.z, c16, r0
+aaaaaaaaaaaaapacajaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r0, c9
+bdaaaaaaacaaacaebaaaaaoeabaaaaaaaaaaaaoeacaaaaaa dp4 v2.y, c16, r0
+aaaaaaaaabaaapacaiaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov r1, c8
+bdaaaaaaaaaaaiacaaaaaaoeaaaaaaaaahaaaaoeabaaaaaa dp4 r0.w, a0, c7
+bdaaaaaaaaaaaeacaaaaaaoeaaaaaaaaagaaaaoeabaaaaaa dp4 r0.z, a0, c6
+bdaaaaaaaaaaabacaaaaaaoeaaaaaaaaaeaaaaoeabaaaaaa dp4 r0.x, a0, c4
+bdaaaaaaaaaaacacaaaaaaoeaaaaaaaaafaaaaoeabaaaaaa dp4 r0.y, a0, c5
+bdaaaaaaacaaabaebaaaaaoeabaaaaaaabaaaaoeacaaaaaa dp4 v2.x, c16, r1
+bdaaaaaaadaaacaeaaaaaaoeacaaaaaaanaaaaoeabaaaaaa dp4 v3.y, r0, c13
+bdaaaaaaadaaabaeaaaaaaoeacaaaaaaamaaaaoeabaaaaaa dp4 v3.x, r0, c12
+aaaaaaaaafaaapaeacaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov v5, a2
+aaaaaaaaabaaahaeabaaaaoeaaaaaaaaaaaaaaaaaaaaaaaa mov v1.xyz, a1
+bdaaaaaaaaaaaiadaaaaaaoeaaaaaaaaadaaaaoeabaaaaaa dp4 o0.w, a0, c3
+bdaaaaaaaaaaaeadaaaaaaoeaaaaaaaaacaaaaoeabaaaaaa dp4 o0.z, a0, c2
+bdaaaaaaaaaaacadaaaaaaoeaaaaaaaaabaaaaoeabaaaaaa dp4 o0.y, a0, c1
+bdaaaaaaaaaaabadaaaaaaoeaaaaaaaaaaaaaaoeabaaaaaa dp4 o0.x, a0, c0
+aaaaaaaaabaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v1.w, c0
+aaaaaaaaacaaaiaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v2.w, c0
+aaaaaaaaadaaamaeaaaaaaoeabaaaaaaaaaaaaaaaaaaaaaa mov v3.zw, c0
+"
+}
+
+SubProgram "d3d11_9x " {
+Keywords { "DIRECTIONAL_COOKIE" }
+Bind "vertex" Vertex
+Bind "color" Color
+Bind "normal" Normal
+ConstBuffer "$Globals" 112 // 80 used size, 4 vars
+Matrix 16 [_LightMatrix0] 4
+ConstBuffer "UnityLighting" 720 // 16 used size, 17 vars
+Vector 0 [_WorldSpaceLightPos0] 4
+ConstBuffer "UnityPerDraw" 336 // 320 used size, 6 vars
+Matrix 0 [glstate_matrix_mvp] 4
+Matrix 192 [_Object2World] 4
+Matrix 256 [_World2Object] 4
+BindCB "$Globals" 0
+BindCB "UnityLighting" 1
+BindCB "UnityPerDraw" 2
+// 19 instructions, 2 temp regs, 0 temp arrays:
+// ALU 16 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"vs_4_0_level_9_1
+eefiecedfdghapkdldpokkagfeafamaifeehnmmfabaaaaaamaagaaaaaeaaaaaa
+daaaaaaadaacaaaahiafaaaaaiagaaaaebgpgodjpiabaaaapiabaaaaaaacpopp
+kaabaaaafiaaaaaaaeaaceaaaaaafeaaaaaafeaaaaaaceaaabaafeaaaaaaabaa
+aeaaabaaaaaaaaaaabaaaaaaabaaafaaaaaaaaaaacaaaaaaaeaaagaaaaaaaaaa
+acaaamaaaiaaakaaaaaaaaaaaaaaaaaaaaacpoppbpaaaaacafaaaaiaaaaaapja
+bpaaaaacafaaabiaabaaapjabpaaaaacafaaaciaacaaapjaabaaaaacaaaaapia
+afaaoekaafaaaaadabaaahiaaaaaffiaapaaoekaaeaaaaaeabaaahiaaoaaoeka
+aaaaaaiaabaaoeiaaeaaaaaeaaaaahiabaaaoekaaaaakkiaabaaoeiaaeaaaaae
+abaaahoabbaaoekaaaaappiaaaaaoeiaafaaaaadaaaaapiaaaaaffjaalaaoeka
+aeaaaaaeaaaaapiaakaaoekaaaaaaajaaaaaoeiaaeaaaaaeaaaaapiaamaaoeka
+aaaakkjaaaaaoeiaaeaaaaaeaaaaapiaanaaoekaaaaappjaaaaaoeiaafaaaaad
+abaaadiaaaaaffiaacaaobkaaeaaaaaeaaaaadiaabaaobkaaaaaaaiaabaaoeia
+aeaaaaaeaaaaadiaadaaobkaaaaakkiaaaaaoeiaaeaaaaaeaaaaamoaaeaabeka
+aaaappiaaaaaeeiaafaaaaadaaaaapiaaaaaffjaahaaoekaaeaaaaaeaaaaapia
+agaaoekaaaaaaajaaaaaoeiaaeaaaaaeaaaaapiaaiaaoekaaaaakkjaaaaaoeia
+aeaaaaaeaaaaapiaajaaoekaaaaappjaaaaaoeiaaeaaaaaeaaaaadmaaaaappia
+aaaaoekaaaaaoeiaabaaaaacaaaaammaaaaaoeiaabaaaaacacaaahoaacaaoeja
+abaaaaacadaaapoaabaaoejappppaaaafdeieefceaadaaaaeaaaabaanaaaaaaa
+fjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaabaaaaaa
+fjaaaaaeegiocaaaacaaaaaabeaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaad
+pcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaaghaaaaaepccabaaaaaaaaaaa
+abaaaaaagfaaaaadmccabaaaabaaaaaagfaaaaadhccabaaaacaaaaaagfaaaaad
+hccabaaaadaaaaaagfaaaaadpccabaaaaeaaaaaagiaaaaacacaaaaaadiaaaaai
+pcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaacaaaaaaabaaaaaadcaaaaak
+pcaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaagbabaaaaaaaaaaaegaobaaa
+aaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaacaaaaaakgbkbaaa
+aaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaaaaaaaaaegiocaaaacaaaaaa
+adaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaajhcaabaaaaaaaaaaa
+fgifcaaaabaaaaaaaaaaaaaaegiccaaaacaaaaaabbaaaaaadcaaaaalhcaabaaa
+aaaaaaaaegiccaaaacaaaaaabaaaaaaaagiacaaaabaaaaaaaaaaaaaaegacbaaa
+aaaaaaaadcaaaaalhcaabaaaaaaaaaaaegiccaaaacaaaaaabcaaaaaakgikcaaa
+abaaaaaaaaaaaaaaegacbaaaaaaaaaaadcaaaaalhccabaaaacaaaaaaegiccaaa
+acaaaaaabdaaaaaapgipcaaaabaaaaaaaaaaaaaaegacbaaaaaaaaaaadgaaaaaf
+hccabaaaadaaaaaaegbcbaaaacaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaa
+aaaaaaaaegiocaaaacaaaaaaanaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+acaaaaaaamaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaa
+aaaaaaaaegiocaaaacaaaaaaaoaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaa
+dcaaaaakpcaabaaaaaaaaaaaegiocaaaacaaaaaaapaaaaaapgbpbaaaaaaaaaaa
+egaobaaaaaaaaaaadiaaaaaidcaabaaaabaaaaaafgafbaaaaaaaaaaaegiacaaa
+aaaaaaaaacaaaaaadcaaaaakdcaabaaaaaaaaaaaegiacaaaaaaaaaaaabaaaaaa
+agaabaaaaaaaaaaaegaabaaaabaaaaaadcaaaaakdcaabaaaaaaaaaaaegiacaaa
+aaaaaaaaadaaaaaakgakbaaaaaaaaaaaegaabaaaaaaaaaaadcaaaaakmccabaaa
+abaaaaaaagiecaaaaaaaaaaaaeaaaaaapgapbaaaaaaaaaaaagaebaaaaaaaaaaa
+dgaaaaafpccabaaaaeaaaaaaegbobaaaabaaaaaadoaaaaabejfdeheoiiaaaaaa
+aeaaaaaaaiaaaaaagiaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaa
+hbaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaa
+aaaaaaaaadaaaaaaacaaaaaaahahaaaahoaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
+adaaaaaaahaaaaaafaepfdejfeejepeoaaedepemepfcaaeoepfcenebemaafeeb
+eoehefeofeaaklklepfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaa
+abaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
+abaaaaaaadapaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaabaaaaaaamadaaaa
+keaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaahaiaaaakeaaaaaaabaaaaaa
+aaaaaaaaadaaaaaaadaaaaaaahaiaaaakeaaaaaaafaaaaaaaaaaaaaaadaaaaaa
+aeaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklkl
+"
+}
+
+SubProgram "gles3 " {
+Keywords { "DIRECTIONAL_COOKIE" }
+"!!GLES3#version 300 es
+
+
+#ifdef VERTEX
+
+#define gl_Vertex _glesVertex
+in vec4 _glesVertex;
+#define gl_Color _glesColor
+in vec4 _glesColor;
+#define gl_Normal (normalize(_glesNormal))
+in vec3 _glesNormal;
+#define TANGENT vec4(normalize(_glesTANGENT.xyz), _glesTANGENT.w)
+in vec4 _glesTANGENT;
+
+#line 151
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 187
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 181
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 325
+struct v2f {
+    highp vec4 pos;
+    highp vec2 uv;
+    highp vec3 lightDir;
+    highp vec3 normal;
+    highp vec2 _LightCoord;
+    highp vec4 color;
+};
+#line 317
+struct appdata_t {
+    highp vec4 vertex;
+    lowp vec4 color;
+    highp vec3 normal;
+    highp vec3 tangent;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform lowp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
+#line 19
+uniform highp vec4 unity_SpotDirection[8];
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+#line 23
+uniform highp vec4 unity_SHBr;
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+#line 27
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+#line 31
+uniform highp vec4 _LightSplitsNear;
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+#line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+#line 39
+uniform highp mat4 _Object2World;
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+#line 43
+uniform highp mat4 glstate_matrix_texture0;
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+#line 47
+uniform highp mat4 glstate_matrix_projection;
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+#line 51
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 315
+uniform sampler2D _LightTexture0;
+uniform highp mat4 _LightMatrix0;
+#line 335
+uniform lowp vec4 _Color;
+uniform lowp vec4 _LightColor0;
+#line 348
+#line 82
+highp vec3 ObjSpaceLightDir( in highp vec4 v ) {
+    highp vec3 objSpaceLightPos = (_World2Object * _WorldSpaceLightPos0).xyz;
+    return objSpaceLightPos.xyz;
+}
+#line 335
+v2f vert( in appdata_t v ) {
+    v2f o;
+    o.pos = (glstate_matrix_mvp * v.vertex);
+    #line 339
+    o.lightDir = ObjSpaceLightDir( v.vertex);
+    o.color = v.color;
+    o.normal = v.normal;
+    o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xy;
+    #line 344
+    return o;
+}
+
+out highp vec2 xlv_TEXCOORD0;
+out highp vec3 xlv_TEXCOORD2;
+out highp vec3 xlv_TEXCOORD1;
+out highp vec2 xlv_TEXCOORD3;
+out highp vec4 xlv_TEXCOORD5;
+void main() {
+    v2f xl_retval;
+    appdata_t xlt_v;
+    xlt_v.vertex = vec4(gl_Vertex);
+    xlt_v.color = vec4(gl_Color);
+    xlt_v.normal = vec3(gl_Normal);
+    xlt_v.tangent = vec3(TANGENT);
+    xl_retval = vert( xlt_v);
+    gl_Position = vec4(xl_retval.pos);
+    xlv_TEXCOORD0 = vec2(xl_retval.uv);
+    xlv_TEXCOORD2 = vec3(xl_retval.lightDir);
+    xlv_TEXCOORD1 = vec3(xl_retval.normal);
+    xlv_TEXCOORD3 = vec2(xl_retval._LightCoord);
+    xlv_TEXCOORD5 = vec4(xl_retval.color);
+}
+
+
+#endif
+#ifdef FRAGMENT
+
+#define gl_FragData _glesFragData
+layout(location = 0) out mediump vec4 _glesFragData[4];
+float xll_saturate_f( float x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec2 xll_saturate_vf2( vec2 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec3 xll_saturate_vf3( vec3 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec4 xll_saturate_vf4( vec4 x) {
+  return clamp( x, 0.0, 1.0);
+}
+mat2 xll_saturate_mf2x2(mat2 m) {
+  return mat2( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0));
+}
+mat3 xll_saturate_mf3x3(mat3 m) {
+  return mat3( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0));
+}
+mat4 xll_saturate_mf4x4(mat4 m) {
+  return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
+}
+#line 151
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 187
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 181
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 325
+struct v2f {
+    highp vec4 pos;
+    highp vec2 uv;
+    highp vec3 lightDir;
+    highp vec3 normal;
+    highp vec2 _LightCoord;
+    highp vec4 color;
+};
+#line 317
+struct appdata_t {
+    highp vec4 vertex;
+    lowp vec4 color;
+    highp vec3 normal;
+    highp vec3 tangent;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform lowp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
+#line 19
+uniform highp vec4 unity_SpotDirection[8];
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+#line 23
+uniform highp vec4 unity_SHBr;
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+#line 27
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+#line 31
+uniform highp vec4 _LightSplitsNear;
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+#line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+#line 39
+uniform highp mat4 _Object2World;
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+#line 43
+uniform highp mat4 glstate_matrix_texture0;
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+#line 47
+uniform highp mat4 glstate_matrix_projection;
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+#line 51
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 315
+uniform sampler2D _LightTexture0;
+uniform highp mat4 _LightMatrix0;
+#line 335
+uniform lowp vec4 _Color;
+uniform lowp vec4 _LightColor0;
+#line 348
+#line 348
+lowp vec4 frag( in v2f IN ) {
+    IN.lightDir = normalize(IN.lightDir);
+    lowp float atten = (texture( _LightTexture0, IN._LightCoord).w * 1.0);
+    #line 352
+    lowp vec3 normal = IN.normal;
+    lowp float diff = xll_saturate_f(dot( normal, IN.lightDir));
+    lowp vec4 c;
+    c.xyz = (((IN.color.xyz * _LightColor0.xyz) * diff) * (atten * 2.0));
+    #line 356
+    c.w = IN.color.w;
+    return c;
+}
+in highp vec2 xlv_TEXCOORD0;
+in highp vec3 xlv_TEXCOORD2;
+in highp vec3 xlv_TEXCOORD1;
+in highp vec2 xlv_TEXCOORD3;
+in highp vec4 xlv_TEXCOORD5;
+void main() {
+    lowp vec4 xl_retval;
+    v2f xlt_IN;
+    xlt_IN.pos = vec4(0.0);
+    xlt_IN.uv = vec2(xlv_TEXCOORD0);
+    xlt_IN.lightDir = vec3(xlv_TEXCOORD2);
+    xlt_IN.normal = vec3(xlv_TEXCOORD1);
+    xlt_IN._LightCoord = vec2(xlv_TEXCOORD3);
+    xlt_IN.color = vec4(xlv_TEXCOORD5);
+    xl_retval = frag( xlt_IN);
+    gl_FragData[0] = vec4(xl_retval);
+}
+
+
+#endif"
+}
+
+}
+Program "fp" {
+// Fragment combos: 5
+//   opengl - ALU: 8 to 17, TEX: 0 to 2
+//   d3d9 - ALU: 9 to 17, TEX: 1 to 2
+//   d3d11 - ALU: 7 to 14, TEX: 0 to 2, FLOW: 1 to 1
+//   d3d11_9x - ALU: 7 to 14, TEX: 0 to 2, FLOW: 1 to 1
+SubProgram "opengl " {
+Keywords { "POINT" }
+Vector 0 [_LightColor0]
+SetTexture 0 [_LightTexture0] 2D
+"!!ARBfp1.0
+# 11 ALU, 1 TEX
+PARAM c[2] = { program.local[0],
+		{ 2 } };
+TEMP R0;
+TEMP R1;
+DP3 R0.x, fragment.texcoord[3], fragment.texcoord[3];
+MOV result.color.w, fragment.texcoord[5];
+TEX R0.w, R0.x, texture[0], 2D;
+DP3 R0.x, fragment.texcoord[2], fragment.texcoord[2];
+RSQ R0.x, R0.x;
+MUL R1.xyz, R0.x, fragment.texcoord[2];
+MUL R0.xyz, fragment.texcoord[5], c[0];
+DP3_SAT R1.x, fragment.texcoord[1], R1;
+MUL R0.w, R0, c[1].x;
+MUL R0.xyz, R0, R1.x;
+MUL result.color.xyz, R0, R0.w;
+END
+# 11 instructions, 2 R-regs
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "POINT" }
+Vector 0 [_LightColor0]
+SetTexture 0 [_LightTexture0] 2D
+"ps_2_0
+; 12 ALU, 1 TEX
+dcl_2d s0
+def c1, 2.00000000, 0, 0, 0
+dcl t2.xyz
+dcl t1.xyz
+dcl t3.xyz
+dcl t5
+dp3 r0.x, t3, t3
+mov r0.xy, r0.x
+dp3 r1.x, t2, t2
+rsq r1.x, r1.x
+mul r1.xyz, r1.x, t2
+dp3_pp_sat r1.x, t1, r1
+mul r2.xyz, t5, c0
+mul r1.xyz, r2, r1.x
+texld r0, r0, s0
+mul_pp r0.x, r0, c1
+mul r0.xyz, r1, r0.x
+mov_pp r0.w, t5
+mov_pp oC0, r0
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "POINT" }
+ConstBuffer "$Globals" 112 // 112 used size, 4 vars
+Vector 96 [_LightColor0] 4
+BindCB "$Globals" 0
+SetTexture 0 [_LightTexture0] 2D 0
+// 12 instructions, 2 temp regs, 0 temp arrays:
+// ALU 9 float, 0 int, 0 uint
+// TEX 1 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0
+eefiecedbioionpndiclbpbkjhaodjppefcaogpfabaaaaaammacaaaaadaaaaaa
+cmaaaaaaoeaaaaaabiabaaaaejfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadaaaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahahaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaakeaaaaaa
+adaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahahaaaakeaaaaaaafaaaaaaaaaaaaaa
+adaaaaaaafaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
+aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefckmabaaaa
+eaaaaaaaglaaaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaafkaaaaadaagabaaa
+aaaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaagcbaaaadhcbabaaaacaaaaaa
+gcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaadpcbabaaa
+afaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacacaaaaaabaaaaaahbcaabaaa
+aaaaaaaaegbcbaaaacaaaaaaegbcbaaaacaaaaaaeeaaaaafbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaa
+acaaaaaabacaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaaaaaaaaa
+diaaaaaiocaabaaaaaaaaaaaagbjbaaaafaaaaaaagijcaaaaaaaaaaaagaaaaaa
+diaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaabaaaaaah
+icaabaaaaaaaaaaaegbcbaaaaeaaaaaaegbcbaaaaeaaaaaaefaaaaajpcaabaaa
+abaaaaaapgapbaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaaaaaaaah
+icaabaaaaaaaaaaaakaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaahhccabaaa
+aaaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+dkbabaaaafaaaaaadoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "POINT" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "POINT" }
+"!!GLES"
+}
+
+SubProgram "flash " {
+Keywords { "POINT" }
+Vector 0 [_LightColor0]
+SetTexture 0 [_LightTexture0] 2D
+"agal_ps
+c1 2.0 0.0 0.0 0.0
+[bc]
+bcaaaaaaaaaaabacadaaaaoeaeaaaaaaadaaaaoeaeaaaaaa dp3 r0.x, v3, v3
+aaaaaaaaaaaaadacaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaa mov r0.xy, r0.x
+adaaaaaaacaaahacafaaaaoeaeaaaaaaaaaaaaoeabaaaaaa mul r2.xyz, v5, c0
+ciaaaaaaaaaaapacaaaaaafeacaaaaaaaaaaaaaaafaababb tex r0, r0.xyyy, s0 <2d wrap linear point>
+bcaaaaaaaaaaabacacaaaaoeaeaaaaaaacaaaaoeaeaaaaaa dp3 r0.x, v2, v2
+akaaaaaaaaaaabacaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaa rsq r0.x, r0.x
+adaaaaaaabaaahacaaaaaaaaacaaaaaaacaaaaoeaeaaaaaa mul r1.xyz, r0.x, v2
+adaaaaaaaaaaabacaaaaaappacaaaaaaabaaaaoeabaaaaaa mul r0.x, r0.w, c1
+bcaaaaaaabaaabacabaaaaoeaeaaaaaaabaaaakeacaaaaaa dp3 r1.x, v1, r1.xyzz
+bgaaaaaaabaaabacabaaaaaaacaaaaaaaaaaaaaaaaaaaaaa sat r1.x, r1.x
+adaaaaaaabaaahacacaaaakeacaaaaaaabaaaaaaacaaaaaa mul r1.xyz, r2.xyzz, r1.x
+adaaaaaaaaaaahacabaaaakeacaaaaaaaaaaaaaaacaaaaaa mul r0.xyz, r1.xyzz, r0.x
+aaaaaaaaaaaaaiacafaaaaoeaeaaaaaaaaaaaaaaaaaaaaaa mov r0.w, v5
+aaaaaaaaaaaaapadaaaaaaoeacaaaaaaaaaaaaaaaaaaaaaa mov o0, r0
+"
+}
+
+SubProgram "d3d11_9x " {
+Keywords { "POINT" }
+ConstBuffer "$Globals" 112 // 112 used size, 4 vars
+Vector 96 [_LightColor0] 4
+BindCB "$Globals" 0
+SetTexture 0 [_LightTexture0] 2D 0
+// 12 instructions, 2 temp regs, 0 temp arrays:
+// ALU 9 float, 0 int, 0 uint
+// TEX 1 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0_level_9_1
+eefiecedalemgnichmemlepajpfbeadidmiehekdabaaaaaapaadaaaaaeaaaaaa
+daaaaaaafaabaaaaaeadaaaalmadaaaaebgpgodjbiabaaaabiabaaaaaaacpppp
+oeaaaaaadeaaaaaaabaaciaaaaaadeaaaaaadeaaabaaceaaaaaadeaaaaaaaaaa
+aaaaagaaabaaaaaaaaaaaaaaaaacppppbpaaaaacaaaaaaiaabaaahlabpaaaaac
+aaaaaaiaacaachlabpaaaaacaaaaaaiaadaaahlabpaaaaacaaaaaaiaaeaacpla
+bpaaaaacaaaaaajaaaaiapkaceaaaaacaaaaahiaabaaoelaaiaaaaadaaaadbia
+acaaoelaaaaaoeiaafaaaaadaaaaaoiaaeaabllaaaaablkaafaaaaadaaaaahia
+aaaaaaiaaaaabliaaiaaaaadaaaaaiiaadaaoelaadaaoelaabaaaaacabaaadia
+aaaappiaecaaaaadabaacpiaabaaoeiaaaaioekaacaaaaadaaaaaiiaabaaaaia
+abaaaaiaafaaaaadaaaachiaaaaappiaaaaaoeiaabaaaaacaaaaciiaaeaappla
+abaaaaacaaaicpiaaaaaoeiappppaaaafdeieefckmabaaaaeaaaaaaaglaaaaaa
+fjaaaaaeegiocaaaaaaaaaaaahaaaaaafkaaaaadaagabaaaaaaaaaaafibiaaae
+aahabaaaaaaaaaaaffffaaaagcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaa
+adaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaadpcbabaaaafaaaaaagfaaaaad
+pccabaaaaaaaaaaagiaaaaacacaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaa
+acaaaaaaegbcbaaaacaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+diaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaacaaaaaabacaaaah
+bcaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaaaaaaaaadiaaaaaiocaabaaa
+aaaaaaaaagbjbaaaafaaaaaaagijcaaaaaaaaaaaagaaaaaadiaaaaahhcaabaaa
+aaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egbcbaaaaeaaaaaaegbcbaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaapgapbaaa
+aaaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaaaaaaaahicaabaaaaaaaaaaa
+akaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaahhccabaaaaaaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaadkbabaaaafaaaaaa
+doaaaaabejfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaaabaaaaaa
+adaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+adaaaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaakeaaaaaa
+abaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaakeaaaaaaadaaaaaaaaaaaaaa
+adaaaaaaaeaaaaaaahahaaaakeaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
+apapaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
+cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklkl"
+}
+
+SubProgram "gles3 " {
+Keywords { "POINT" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "DIRECTIONAL" }
+Vector 0 [_LightColor0]
+"!!ARBfp1.0
+# 8 ALU, 0 TEX
+PARAM c[2] = { program.local[0],
+		{ 2 } };
+TEMP R0;
+DP3 R0.x, fragment.texcoord[2], fragment.texcoord[2];
+RSQ R0.x, R0.x;
+MUL R0.xyz, R0.x, fragment.texcoord[2];
+DP3_SAT R0.w, fragment.texcoord[1], R0;
+MUL R0.xyz, fragment.texcoord[5], c[0];
+MUL R0.xyz, R0, R0.w;
+MUL result.color.xyz, R0, c[1].x;
+MOV result.color.w, fragment.texcoord[5];
+END
+# 8 instructions, 1 R-regs
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "DIRECTIONAL" }
+Vector 0 [_LightColor0]
+"ps_2_0
+; 9 ALU
+def c1, 2.00000000, 0, 0, 0
+dcl t2.xyz
+dcl t1.xyz
+dcl t5
+dp3 r0.x, t2, t2
+rsq r0.x, r0.x
+mul r0.xyz, r0.x, t2
+dp3_pp_sat r0.x, t1, r0
+mul r1.xyz, t5, c0
+mul r0.xyz, r1, r0.x
+mul r0.xyz, r0, c1.x
+mov_pp r0.w, t5
+mov_pp oC0, r0
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "DIRECTIONAL" }
+ConstBuffer "$Globals" 48 // 48 used size, 3 vars
+Vector 32 [_LightColor0] 4
+BindCB "$Globals" 0
+// 9 instructions, 1 temp regs, 0 temp arrays:
+// ALU 7 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0
+eefiecedloieipnbkbffnjnmagdbeekmebefinkdabaaaaaadaacaaaaadaaaaaa
+cmaaaaaammaaaaaaaaabaaaaejfdeheojiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadaaaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahahaaaaimaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaaimaaaaaa
+afaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaa
+feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
+fdeieefcciabaaaaeaaaaaaaekaaaaaafjaaaaaeegiocaaaaaaaaaaaadaaaaaa
+gcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadpcbabaaa
+aeaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacabaaaaaabaaaaaahbcaabaaa
+aaaaaaaaegbcbaaaacaaaaaaegbcbaaaacaaaaaaeeaaaaafbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaa
+acaaaaaabacaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaaaaaaaaa
+diaaaaaiocaabaaaaaaaaaaaagbjbaaaaeaaaaaaagijcaaaaaaaaaaaacaaaaaa
+diaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaaaaaaaaah
+hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaa
+aaaaaaaadkbabaaaaeaaaaaadoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "DIRECTIONAL" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "DIRECTIONAL" }
+"!!GLES"
+}
+
+SubProgram "flash " {
+Keywords { "DIRECTIONAL" }
+Vector 0 [_LightColor0]
+"agal_ps
+c1 2.0 0.0 0.0 0.0
+[bc]
+bcaaaaaaaaaaabacacaaaaoeaeaaaaaaacaaaaoeaeaaaaaa dp3 r0.x, v2, v2
+akaaaaaaaaaaabacaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaa rsq r0.x, r0.x
+adaaaaaaaaaaahacaaaaaaaaacaaaaaaacaaaaoeaeaaaaaa mul r0.xyz, r0.x, v2
+bcaaaaaaaaaaabacabaaaaoeaeaaaaaaaaaaaakeacaaaaaa dp3 r0.x, v1, r0.xyzz
+bgaaaaaaaaaaabacaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaa sat r0.x, r0.x
+adaaaaaaabaaahacafaaaaoeaeaaaaaaaaaaaaoeabaaaaaa mul r1.xyz, v5, c0
+adaaaaaaaaaaahacabaaaakeacaaaaaaaaaaaaaaacaaaaaa mul r0.xyz, r1.xyzz, r0.x
+adaaaaaaaaaaahacaaaaaakeacaaaaaaabaaaaaaabaaaaaa mul r0.xyz, r0.xyzz, c1.x
+aaaaaaaaaaaaaiacafaaaaoeaeaaaaaaaaaaaaaaaaaaaaaa mov r0.w, v5
+aaaaaaaaaaaaapadaaaaaaoeacaaaaaaaaaaaaaaaaaaaaaa mov o0, r0
+"
+}
+
+SubProgram "d3d11_9x " {
+Keywords { "DIRECTIONAL" }
+ConstBuffer "$Globals" 48 // 48 used size, 3 vars
+Vector 32 [_LightColor0] 4
+BindCB "$Globals" 0
+// 9 instructions, 1 temp regs, 0 temp arrays:
+// ALU 7 float, 0 int, 0 uint
+// TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0_level_9_1
+eefiecedhmbgndkhekjafmbnlllfoeplpaliaonaabaaaaaapmacaaaaaeaaaaaa
+daaaaaaapiaaaaaaciacaaaamiacaaaaebgpgodjmaaaaaaamaaaaaaaaaacpppp
+jaaaaaaadaaaaaaaabaaceaaaaaadaaaaaaadaaaaaaaceaaaaaadaaaaaaaacaa
+abaaaaaaaaaaaaaaaaacppppbpaaaaacaaaaaaiaabaaahlabpaaaaacaaaaaaia
+acaachlabpaaaaacaaaaaaiaadaacplaceaaaaacaaaaahiaabaaoelaaiaaaaad
+aaaadbiaacaaoelaaaaaoeiaafaaaaadaaaaaoiaadaabllaaaaablkaafaaaaad
+aaaaahiaaaaaaaiaaaaabliaacaaaaadaaaachiaaaaaoeiaaaaaoeiaabaaaaac
+aaaaciiaadaapplaabaaaaacaaaicpiaaaaaoeiappppaaaafdeieefcciabaaaa
+eaaaaaaaekaaaaaafjaaaaaeegiocaaaaaaaaaaaadaaaaaagcbaaaadhcbabaaa
+acaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadpcbabaaaaeaaaaaagfaaaaad
+pccabaaaaaaaaaaagiaaaaacabaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaa
+acaaaaaaegbcbaaaacaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+diaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaacaaaaaabacaaaah
+bcaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaaaaaaaaadiaaaaaiocaabaaa
+aaaaaaaaagbjbaaaaeaaaaaaagijcaaaaaaaaaaaacaaaaaadiaaaaahhcaabaaa
+aaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaaaaaaaaahhccabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaadkbabaaa
+aeaaaaaadoaaaaabejfdeheojiaaaaaaafaaaaaaaiaaaaaaiaaaaaaaaaaaaaaa
+abaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaaaaaaaaaaaaaaaaaaadaaaaaa
+abaaaaaaadaaaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaa
+imaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaaimaaaaaaafaaaaaa
+aaaaaaaaadaaaaaaaeaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaafeeffied
+epepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaa
+aaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl"
+}
+
+SubProgram "gles3 " {
+Keywords { "DIRECTIONAL" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "SPOT" }
+Vector 0 [_LightColor0]
+SetTexture 0 [_LightTexture0] 2D
+SetTexture 1 [_LightTextureB0] 2D
+"!!ARBfp1.0
+# 17 ALU, 2 TEX
+PARAM c[2] = { program.local[0],
+		{ 0, 0.5, 2 } };
+TEMP R0;
+TEMP R1;
+TEMP R2;
+DP3 R0.z, fragment.texcoord[3], fragment.texcoord[3];
+RCP R0.x, fragment.texcoord[3].w;
+MAD R0.xy, fragment.texcoord[3], R0.x, c[1].y;
+SLT R2.x, c[1], fragment.texcoord[3].z;
+MOV result.color.w, fragment.texcoord[5];
+TEX R0.w, R0, texture[0], 2D;
+TEX R1.w, R0.z, texture[1], 2D;
+DP3 R0.x, fragment.texcoord[2], fragment.texcoord[2];
+RSQ R1.x, R0.x;
+MUL R0.w, R2.x, R0;
+MUL R1.xyz, R1.x, fragment.texcoord[2];
+MUL R1.w, R0, R1;
+DP3_SAT R0.w, fragment.texcoord[1], R1;
+MUL R0.xyz, fragment.texcoord[5], c[0];
+MUL R1.x, R1.w, c[1].z;
+MUL R0.xyz, R0, R0.w;
+MUL result.color.xyz, R0, R1.x;
+END
+# 17 instructions, 3 R-regs
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "SPOT" }
+Vector 0 [_LightColor0]
+SetTexture 0 [_LightTexture0] 2D
+SetTexture 1 [_LightTextureB0] 2D
+"ps_2_0
+; 17 ALU, 2 TEX
+dcl_2d s0
+dcl_2d s1
+def c1, 0.50000000, 0.00000000, 1.00000000, 2.00000000
+dcl t2.xyz
+dcl t1.xyz
+dcl t3
+dcl t5
+rcp r1.x, t3.w
+mad r2.xy, t3, r1.x, c1.x
+dp3 r0.x, t3, t3
+mov r1.xy, r0.x
+texld r0, r2, s0
+texld r2, r1, s1
+cmp r0.x, -t3.z, c1.y, c1.z
+mul_pp r0.x, r0, r0.w
+mul_pp r0.x, r0, r2
+dp3 r1.x, t2, t2
+rsq r1.x, r1.x
+mul r1.xyz, r1.x, t2
+mul_pp r0.x, r0, c1.w
+dp3_pp_sat r1.x, t1, r1
+mul r2.xyz, t5, c0
+mul r1.xyz, r2, r1.x
+mul r0.xyz, r1, r0.x
+mov_pp r0.w, t5
+mov_pp oC0, r0
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "SPOT" }
+ConstBuffer "$Globals" 112 // 112 used size, 4 vars
+Vector 96 [_LightColor0] 4
+BindCB "$Globals" 0
+SetTexture 0 [_LightTexture0] 2D 0
+SetTexture 1 [_LightTextureB0] 2D 1
+// 18 instructions, 2 temp regs, 0 temp arrays:
+// ALU 13 float, 0 int, 1 uint
+// TEX 2 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0
+eefiecednbeijpebpeecdfmohlgldkeeefgcibieabaaaaaakeadaaaaadaaaaaa
+cmaaaaaaoeaaaaaabiabaaaaejfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadaaaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahahaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaakeaaaaaa
+adaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapapaaaakeaaaaaaafaaaaaaaaaaaaaa
+adaaaaaaafaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
+aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcieacaaaa
+eaaaaaaakbaaaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaafkaaaaadaagabaaa
+aaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaa
+fibiaaaeaahabaaaabaaaaaaffffaaaagcbaaaadhcbabaaaacaaaaaagcbaaaad
+hcbabaaaadaaaaaagcbaaaadpcbabaaaaeaaaaaagcbaaaadpcbabaaaafaaaaaa
+gfaaaaadpccabaaaaaaaaaaagiaaaaacacaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+egbabaaaaeaaaaaapgbpbaaaaeaaaaaaaaaaaaakdcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaaceaaaaaaaaaaadpaaaaaadpaaaaaaaaaaaaaaaaefaaaaajpcaabaaa
+aaaaaaaaegaabaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaadbaaaaah
+bcaabaaaaaaaaaaaabeaaaaaaaaaaaaackbabaaaaeaaaaaaabaaaaahbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahbcaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaaaaaaaaabaaaaaahccaabaaaaaaaaaaaegbcbaaa
+aeaaaaaaegbcbaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaafgafbaaaaaaaaaaa
+eghobaaaabaaaaaaaagabaaaabaaaaaaapaaaaahbcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaagaabaaaabaaaaaabaaaaaahccaabaaaaaaaaaaaegbcbaaaacaaaaaa
+egbcbaaaacaaaaaaeeaaaaafccaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaah
+ocaabaaaaaaaaaaafgafbaaaaaaaaaaaagbjbaaaacaaaaaabacaaaahccaabaaa
+aaaaaaaaegbcbaaaadaaaaaajgahbaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaa
+egbcbaaaafaaaaaaegiccaaaaaaaaaaaagaaaaaadiaaaaahocaabaaaaaaaaaaa
+fgafbaaaaaaaaaaaagajbaaaabaaaaaadiaaaaahhccabaaaaaaaaaaaagaabaaa
+aaaaaaaajgahbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaadkbabaaaafaaaaaa
+doaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "SPOT" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "SPOT" }
+"!!GLES"
+}
+
+SubProgram "flash " {
+Keywords { "SPOT" }
+Vector 0 [_LightColor0]
+SetTexture 0 [_LightTexture0] 2D
+SetTexture 1 [_LightTextureB0] 2D
+"agal_ps
+c1 0.5 0.0 1.0 2.0
+[bc]
+afaaaaaaabaaabacadaaaappaeaaaaaaaaaaaaaaaaaaaaaa rcp r1.x, v3.w
+bcaaaaaaaaaaabacadaaaaoeaeaaaaaaadaaaaoeaeaaaaaa dp3 r0.x, v3, v3
+adaaaaaaabaaadacadaaaaoeaeaaaaaaabaaaaaaacaaaaaa mul r1.xy, v3, r1.x
+abaaaaaaabaaadacabaaaafeacaaaaaaabaaaaaaabaaaaaa add r1.xy, r1.xyyy, c1.x
+aaaaaaaaaaaaadacaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaa mov r0.xy, r0.x
+adaaaaaaacaaahacafaaaaoeaeaaaaaaaaaaaaoeabaaaaaa mul r2.xyz, v5, c0
+ciaaaaaaabaaapacabaaaafeacaaaaaaaaaaaaaaafaababb tex r1, r1.xyyy, s0 <2d wrap linear point>
+ciaaaaaaaaaaapacaaaaaafeacaaaaaaabaaaaaaafaababb tex r0, r0.xyyy, s1 <2d wrap linear point>
+bfaaaaaaacaaaiacadaaaakkaeaaaaaaaaaaaaaaaaaaaaaa neg r2.w, v3.z
+ckaaaaaaaaaaabacacaaaappacaaaaaaabaaaaffabaaaaaa slt r0.x, r2.w, c1.y
+adaaaaaaaaaaabacaaaaaaaaacaaaaaaabaaaappacaaaaaa mul r0.x, r0.x, r1.w
+adaaaaaaaaaaabacaaaaaaaaacaaaaaaaaaaaappacaaaaaa mul r0.x, r0.x, r0.w
+bcaaaaaaabaaabacacaaaaoeaeaaaaaaacaaaaoeaeaaaaaa dp3 r1.x, v2, v2
+akaaaaaaabaaabacabaaaaaaacaaaaaaaaaaaaaaaaaaaaaa rsq r1.x, r1.x
+adaaaaaaabaaahacabaaaaaaacaaaaaaacaaaaoeaeaaaaaa mul r1.xyz, r1.x, v2
+bcaaaaaaabaaabacabaaaaoeaeaaaaaaabaaaakeacaaaaaa dp3 r1.x, v1, r1.xyzz
+bgaaaaaaabaaabacabaaaaaaacaaaaaaaaaaaaaaaaaaaaaa sat r1.x, r1.x
+adaaaaaaaaaaabacaaaaaaaaacaaaaaaabaaaappabaaaaaa mul r0.x, r0.x, c1.w
+adaaaaaaabaaahacacaaaakeacaaaaaaabaaaaaaacaaaaaa mul r1.xyz, r2.xyzz, r1.x
+adaaaaaaaaaaahacabaaaakeacaaaaaaaaaaaaaaacaaaaaa mul r0.xyz, r1.xyzz, r0.x
+aaaaaaaaaaaaaiacafaaaaoeaeaaaaaaaaaaaaaaaaaaaaaa mov r0.w, v5
+aaaaaaaaaaaaapadaaaaaaoeacaaaaaaaaaaaaaaaaaaaaaa mov o0, r0
+"
+}
+
+SubProgram "d3d11_9x " {
+Keywords { "SPOT" }
+ConstBuffer "$Globals" 112 // 112 used size, 4 vars
+Vector 96 [_LightColor0] 4
+BindCB "$Globals" 0
+SetTexture 0 [_LightTexture0] 2D 0
+SetTexture 1 [_LightTextureB0] 2D 1
+// 18 instructions, 2 temp regs, 0 temp arrays:
+// ALU 13 float, 0 int, 1 uint
+// TEX 2 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0_level_9_1
+eefiecediebbibeaffknnoffjkdbkppjakhalgobabaaaaaaeeafaaaaaeaaaaaa
+daaaaaaammabaaaafiaeaaaabaafaaaaebgpgodjjeabaaaajeabaaaaaaacpppp
+fmabaaaadiaaaaaaabaacmaaaaaadiaaaaaadiaaacaaceaaaaaadiaaaaaaaaaa
+abababaaaaaaagaaabaaaaaaaaaaaaaaaaacppppfbaaaaafabaaapkaaaaaaadp
+aaaaaaaaaaaaaaaaaaaaaaaabpaaaaacaaaaaaiaabaaahlabpaaaaacaaaaaaia
+acaachlabpaaaaacaaaaaaiaadaaaplabpaaaaacaaaaaaiaaeaacplabpaaaaac
+aaaaaajaaaaiapkabpaaaaacaaaaaajaabaiapkaagaaaaacaaaaaiiaadaappla
+aeaaaaaeaaaaadiaadaaoelaaaaappiaabaaaakaaiaaaaadabaaaiiaadaaoela
+adaaoelaabaaaaacabaaadiaabaappiaecaaaaadaaaacpiaaaaaoeiaaaaioeka
+ecaaaaadabaacpiaabaaoeiaabaioekaafaaaaadaaaacbiaaaaappiaabaaaaia
+fiaaaaaeaaaacbiaadaakklbabaaffkaaaaaaaiaacaaaaadaaaaabiaaaaaaaia
+aaaaaaiaceaaaaacabaaahiaabaaoelaaiaaaaadaaaadciaacaaoelaabaaoeia
+afaaaaadabaaahiaaeaaoelaaaaaoekaafaaaaadaaaaaoiaaaaaffiaabaablia
+afaaaaadaaaachiaaaaaaaiaaaaabliaabaaaaacaaaaciiaaeaapplaabaaaaac
+aaaicpiaaaaaoeiappppaaaafdeieefcieacaaaaeaaaaaaakbaaaaaafjaaaaae
+egiocaaaaaaaaaaaahaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaa
+abaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaa
+ffffaaaagcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaad
+pcbabaaaaeaaaaaagcbaaaadpcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaa
+giaaaaacacaaaaaaaoaaaaahdcaabaaaaaaaaaaaegbabaaaaeaaaaaapgbpbaaa
+aeaaaaaaaaaaaaakdcaabaaaaaaaaaaaegaabaaaaaaaaaaaaceaaaaaaaaaaadp
+aaaaaadpaaaaaaaaaaaaaaaaefaaaaajpcaabaaaaaaaaaaaegaabaaaaaaaaaaa
+eghobaaaaaaaaaaaaagabaaaaaaaaaaadbaaaaahbcaabaaaaaaaaaaaabeaaaaa
+aaaaaaaackbabaaaaeaaaaaaabaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+abeaaaaaaaaaiadpdiaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+aaaaaaaabaaaaaahccaabaaaaaaaaaaaegbcbaaaaeaaaaaaegbcbaaaaeaaaaaa
+efaaaaajpcaabaaaabaaaaaafgafbaaaaaaaaaaaeghobaaaabaaaaaaaagabaaa
+abaaaaaaapaaaaahbcaabaaaaaaaaaaaagaabaaaaaaaaaaaagaabaaaabaaaaaa
+baaaaaahccaabaaaaaaaaaaaegbcbaaaacaaaaaaegbcbaaaacaaaaaaeeaaaaaf
+ccaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahocaabaaaaaaaaaaafgafbaaa
+aaaaaaaaagbjbaaaacaaaaaabacaaaahccaabaaaaaaaaaaaegbcbaaaadaaaaaa
+jgahbaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaaegbcbaaaafaaaaaaegiccaaa
+aaaaaaaaagaaaaaadiaaaaahocaabaaaaaaaaaaafgafbaaaaaaaaaaaagajbaaa
+abaaaaaadiaaaaahhccabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaa
+dgaaaaaficcabaaaaaaaaaaadkbabaaaafaaaaaadoaaaaabejfdeheolaaaaaaa
+agaaaaaaaiaaaaaajiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaa
+keaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadaaaaaakeaaaaaaacaaaaaa
+aaaaaaaaadaaaaaaacaaaaaaahahaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaa
+adaaaaaaahahaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapapaaaa
+keaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaaapapaaaafdfgfpfaepfdejfe
+ejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaa
+caaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgf
+heaaklkl"
+}
+
+SubProgram "gles3 " {
+Keywords { "SPOT" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "POINT_COOKIE" }
+Vector 0 [_LightColor0]
+SetTexture 0 [_LightTextureB0] 2D
+SetTexture 1 [_LightTexture0] CUBE
+"!!ARBfp1.0
+# 13 ALU, 2 TEX
+PARAM c[2] = { program.local[0],
+		{ 2 } };
+TEMP R0;
+TEMP R1;
+TEX R1.w, fragment.texcoord[3], texture[1], CUBE;
+DP3 R0.x, fragment.texcoord[3], fragment.texcoord[3];
+MOV result.color.w, fragment.texcoord[5];
+TEX R0.w, R0.x, texture[0], 2D;
+DP3 R0.x, fragment.texcoord[2], fragment.texcoord[2];
+RSQ R1.x, R0.x;
+MUL R1.xyz, R1.x, fragment.texcoord[2];
+MUL R1.w, R0, R1;
+DP3_SAT R0.w, fragment.texcoord[1], R1;
+MUL R0.xyz, fragment.texcoord[5], c[0];
+MUL R1.x, R1.w, c[1];
+MUL R0.xyz, R0, R0.w;
+MUL result.color.xyz, R0, R1.x;
+END
+# 13 instructions, 2 R-regs
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "POINT_COOKIE" }
+Vector 0 [_LightColor0]
+SetTexture 0 [_LightTextureB0] 2D
+SetTexture 1 [_LightTexture0] CUBE
+"ps_2_0
+; 13 ALU, 2 TEX
+dcl_2d s0
+dcl_cube s1
+def c1, 2.00000000, 0, 0, 0
+dcl t2.xyz
+dcl t1.xyz
+dcl t3.xyz
+dcl t5
+dp3 r0.x, t3, t3
+mov r0.xy, r0.x
+texld r2, r0, s0
+texld r0, t3, s1
+dp3 r0.x, t2, t2
+rsq r1.x, r0.x
+mul r1.xyz, r1.x, t2
+mul r0.x, r2, r0.w
+mul_pp r0.x, r0, c1
+dp3_pp_sat r1.x, t1, r1
+mul r2.xyz, t5, c0
+mul r1.xyz, r2, r1.x
+mul r0.xyz, r1, r0.x
+mov_pp r0.w, t5
+mov_pp oC0, r0
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "POINT_COOKIE" }
+ConstBuffer "$Globals" 112 // 112 used size, 4 vars
+Vector 96 [_LightColor0] 4
+BindCB "$Globals" 0
+SetTexture 0 [_LightTextureB0] 2D 1
+SetTexture 1 [_LightTexture0] CUBE 0
+// 13 instructions, 3 temp regs, 0 temp arrays:
+// ALU 9 float, 0 int, 0 uint
+// TEX 2 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0
+eefiecedmibmaanhegfhgebjgfckekinpiclngbeabaaaaaaamadaaaaadaaaaaa
+cmaaaaaaoeaaaaaabiabaaaaejfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadaaaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ahahaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaakeaaaaaa
+adaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahahaaaakeaaaaaaafaaaaaaaaaaaaaa
+adaaaaaaafaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
+aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcomabaaaa
+eaaaaaaahlaaaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaafkaaaaadaagabaaa
+aaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaa
+fidaaaaeaahabaaaabaaaaaaffffaaaagcbaaaadhcbabaaaacaaaaaagcbaaaad
+hcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaadpcbabaaaafaaaaaa
+gfaaaaadpccabaaaaaaaaaaagiaaaaacadaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaacaaaaaaegbcbaaaacaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaacaaaaaa
+bacaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaaaaaaaaadiaaaaai
+ocaabaaaaaaaaaaaagbjbaaaafaaaaaaagijcaaaaaaaaaaaagaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaabaaaaaahicaabaaa
+aaaaaaaaegbcbaaaaeaaaaaaegbcbaaaaeaaaaaaefaaaaajpcaabaaaabaaaaaa
+pgapbaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaaabaaaaaaefaaaaajpcaabaaa
+acaaaaaaegbcbaaaaeaaaaaaeghobaaaabaaaaaaaagabaaaaaaaaaaaapaaaaah
+icaabaaaaaaaaaaaagaabaaaabaaaaaapgapbaaaacaaaaaadiaaaaahhccabaaa
+aaaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaaaaaaaaaa
+dkbabaaaafaaaaaadoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "POINT_COOKIE" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "POINT_COOKIE" }
+"!!GLES"
+}
+
+SubProgram "flash " {
+Keywords { "POINT_COOKIE" }
+Vector 0 [_LightColor0]
+SetTexture 0 [_LightTextureB0] 2D
+SetTexture 1 [_LightTexture0] CUBE
+"agal_ps
+c1 2.0 0.0 0.0 0.0
+[bc]
+bcaaaaaaaaaaabacadaaaaoeaeaaaaaaadaaaaoeaeaaaaaa dp3 r0.x, v3, v3
+aaaaaaaaaaaaadacaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaa mov r0.xy, r0.x
+adaaaaaaacaaahacafaaaaoeaeaaaaaaaaaaaaoeabaaaaaa mul r2.xyz, v5, c0
+ciaaaaaaabaaapacaaaaaafeacaaaaaaaaaaaaaaafaababb tex r1, r0.xyyy, s0 <2d wrap linear point>
+ciaaaaaaaaaaapacadaaaaoeaeaaaaaaabaaaaaaafbababb tex r0, v3, s1 <cube wrap linear point>
+bcaaaaaaaaaaabacacaaaaoeaeaaaaaaacaaaaoeaeaaaaaa dp3 r0.x, v2, v2
+akaaaaaaabaaabacaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaa rsq r1.x, r0.x
+adaaaaaaaaaaabacabaaaappacaaaaaaaaaaaappacaaaaaa mul r0.x, r1.w, r0.w
+adaaaaaaabaaahacabaaaaaaacaaaaaaacaaaaoeaeaaaaaa mul r1.xyz, r1.x, v2
+bcaaaaaaabaaabacabaaaaoeaeaaaaaaabaaaakeacaaaaaa dp3 r1.x, v1, r1.xyzz
+bgaaaaaaabaaabacabaaaaaaacaaaaaaaaaaaaaaaaaaaaaa sat r1.x, r1.x
+adaaaaaaaaaaabacaaaaaaaaacaaaaaaabaaaaoeabaaaaaa mul r0.x, r0.x, c1
+adaaaaaaabaaahacacaaaakeacaaaaaaabaaaaaaacaaaaaa mul r1.xyz, r2.xyzz, r1.x
+adaaaaaaaaaaahacabaaaakeacaaaaaaaaaaaaaaacaaaaaa mul r0.xyz, r1.xyzz, r0.x
+aaaaaaaaaaaaaiacafaaaaoeaeaaaaaaaaaaaaaaaaaaaaaa mov r0.w, v5
+aaaaaaaaaaaaapadaaaaaaoeacaaaaaaaaaaaaaaaaaaaaaa mov o0, r0
+"
+}
+
+SubProgram "d3d11_9x " {
+Keywords { "POINT_COOKIE" }
+ConstBuffer "$Globals" 112 // 112 used size, 4 vars
+Vector 96 [_LightColor0] 4
+BindCB "$Globals" 0
+SetTexture 0 [_LightTextureB0] 2D 1
+SetTexture 1 [_LightTexture0] CUBE 0
+// 13 instructions, 3 temp regs, 0 temp arrays:
+// ALU 9 float, 0 int, 0 uint
+// TEX 2 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0_level_9_1
+eefiecedllanjeideokngnjhhgonjfkkfphknfmoabaaaaaagaaeaaaaaeaaaaaa
+daaaaaaaiaabaaaaheadaaaacmaeaaaaebgpgodjeiabaaaaeiabaaaaaaacpppp
+baabaaaadiaaaaaaabaacmaaaaaadiaaaaaadiaaacaaceaaaaaadiaaabaaaaaa
+aaababaaaaaaagaaabaaaaaaaaaaaaaaaaacppppbpaaaaacaaaaaaiaabaaahla
+bpaaaaacaaaaaaiaacaachlabpaaaaacaaaaaaiaadaaahlabpaaaaacaaaaaaia
+aeaacplabpaaaaacaaaaaajiaaaiapkabpaaaaacaaaaaajaabaiapkaaiaaaaad
+aaaaaiiaadaaoelaadaaoelaabaaaaacaaaaadiaaaaappiaecaaaaadaaaaapia
+aaaaoeiaabaioekaecaaaaadabaaapiaadaaoelaaaaioekaafaaaaadaaaacbia
+aaaaaaiaabaappiaacaaaaadaaaaabiaaaaaaaiaaaaaaaiaceaaaaacabaaahia
+abaaoelaaiaaaaadaaaadciaacaaoelaabaaoeiaafaaaaadabaaahiaaeaaoela
+aaaaoekaafaaaaadaaaaaoiaaaaaffiaabaabliaafaaaaadaaaachiaaaaaaaia
+aaaabliaabaaaaacaaaaciiaaeaapplaabaaaaacaaaicpiaaaaaoeiappppaaaa
+fdeieefcomabaaaaeaaaaaaahlaaaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaa
+fkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaa
+aaaaaaaaffffaaaafidaaaaeaahabaaaabaaaaaaffffaaaagcbaaaadhcbabaaa
+acaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaad
+pcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacadaaaaaabaaaaaah
+bcaabaaaaaaaaaaaegbcbaaaacaaaaaaegbcbaaaacaaaaaaeeaaaaafbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaa
+egbcbaaaacaaaaaabacaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaa
+aaaaaaaadiaaaaaiocaabaaaaaaaaaaaagbjbaaaafaaaaaaagijcaaaaaaaaaaa
+agaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegbcbaaaaeaaaaaaegbcbaaaaeaaaaaaefaaaaaj
+pcaabaaaabaaaaaapgapbaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaaabaaaaaa
+efaaaaajpcaabaaaacaaaaaaegbcbaaaaeaaaaaaeghobaaaabaaaaaaaagabaaa
+aaaaaaaaapaaaaahicaabaaaaaaaaaaaagaabaaaabaaaaaapgapbaaaacaaaaaa
+diaaaaahhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaadgaaaaaf
+iccabaaaaaaaaaaadkbabaaaafaaaaaadoaaaaabejfdeheolaaaaaaaagaaaaaa
+aiaaaaaajiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadaaaaaakeaaaaaaacaaaaaaaaaaaaaa
+adaaaaaaacaaaaaaahahaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaa
+ahahaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahahaaaakeaaaaaa
+afaaaaaaaaaaaaaaadaaaaaaafaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaa
+feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
+aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
+"
+}
+
+SubProgram "gles3 " {
+Keywords { "POINT_COOKIE" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "DIRECTIONAL_COOKIE" }
+Vector 0 [_LightColor0]
+SetTexture 0 [_LightTexture0] 2D
+"!!ARBfp1.0
+# 10 ALU, 1 TEX
+PARAM c[2] = { program.local[0],
+		{ 2 } };
+TEMP R0;
+TEMP R1;
+TEX R0.w, fragment.texcoord[3], texture[0], 2D;
+DP3 R0.x, fragment.texcoord[2], fragment.texcoord[2];
+RSQ R0.x, R0.x;
+MUL R1.xyz, R0.x, fragment.texcoord[2];
+MUL R0.xyz, fragment.texcoord[5], c[0];
+DP3_SAT R1.x, fragment.texcoord[1], R1;
+MUL R0.w, R0, c[1].x;
+MUL R0.xyz, R0, R1.x;
+MUL result.color.xyz, R0, R0.w;
+MOV result.color.w, fragment.texcoord[5];
+END
+# 10 instructions, 2 R-regs
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "DIRECTIONAL_COOKIE" }
+Vector 0 [_LightColor0]
+SetTexture 0 [_LightTexture0] 2D
+"ps_2_0
+; 10 ALU, 1 TEX
+dcl_2d s0
+def c1, 2.00000000, 0, 0, 0
+dcl t2.xyz
+dcl t1.xyz
+dcl t3.xy
+dcl t5
+texld r0, t3, s0
+dp3 r0.x, t2, t2
+rsq r0.x, r0.x
+mul r1.xyz, r0.x, t2
+mul_pp r0.x, r0.w, c1
+dp3_pp_sat r1.x, t1, r1
+mul r2.xyz, t5, c0
+mul r1.xyz, r2, r1.x
+mul r0.xyz, r1, r0.x
+mov_pp r0.w, t5
+mov_pp oC0, r0
+"
+}
+
+SubProgram "d3d11 " {
+Keywords { "DIRECTIONAL_COOKIE" }
+ConstBuffer "$Globals" 112 // 112 used size, 4 vars
+Vector 96 [_LightColor0] 4
+BindCB "$Globals" 0
+SetTexture 0 [_LightTexture0] 2D 0
+// 11 instructions, 2 temp regs, 0 temp arrays:
+// ALU 8 float, 0 int, 0 uint
+// TEX 1 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0
+eefieceddlagaeffgggjojnblaiknbdlaooljhknabaaaaaalaacaaaaadaaaaaa
+cmaaaaaaoeaaaaaabiabaaaaejfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaadaaaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaabaaaaaa
+amamaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaahahaaaakeaaaaaa
+abaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaakeaaaaaaafaaaaaaaaaaaaaa
+adaaaaaaaeaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
+aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcjaabaaaa
+eaaaaaaageaaaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaafkaaaaadaagabaaa
+aaaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaagcbaaaadmcbabaaaabaaaaaa
+gcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadpcbabaaa
+aeaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacacaaaaaabaaaaaahbcaabaaa
+aaaaaaaaegbcbaaaacaaaaaaegbcbaaaacaaaaaaeeaaaaafbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaa
+acaaaaaabacaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaaaaaaaaa
+diaaaaaiocaabaaaaaaaaaaaagbjbaaaaeaaaaaaagijcaaaaaaaaaaaagaaaaaa
+diaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaaefaaaaaj
+pcaabaaaabaaaaaaogbkbaaaabaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaa
+aaaaaaahicaabaaaaaaaaaaadkaabaaaabaaaaaadkaabaaaabaaaaaadiaaaaah
+hccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaadgaaaaaficcabaaa
+aaaaaaaadkbabaaaaeaaaaaadoaaaaab"
+}
+
+SubProgram "gles " {
+Keywords { "DIRECTIONAL_COOKIE" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "DIRECTIONAL_COOKIE" }
+"!!GLES"
+}
+
+SubProgram "flash " {
+Keywords { "DIRECTIONAL_COOKIE" }
+Vector 0 [_LightColor0]
+SetTexture 0 [_LightTexture0] 2D
+"agal_ps
+c1 2.0 0.0 0.0 0.0
+[bc]
+ciaaaaaaaaaaapacadaaaaoeaeaaaaaaaaaaaaaaafaababb tex r0, v3, s0 <2d wrap linear point>
+bcaaaaaaaaaaabacacaaaaoeaeaaaaaaacaaaaoeaeaaaaaa dp3 r0.x, v2, v2
+akaaaaaaaaaaabacaaaaaaaaacaaaaaaaaaaaaaaaaaaaaaa rsq r0.x, r0.x
+adaaaaaaabaaahacaaaaaaaaacaaaaaaacaaaaoeaeaaaaaa mul r1.xyz, r0.x, v2
+adaaaaaaaaaaabacaaaaaappacaaaaaaabaaaaoeabaaaaaa mul r0.x, r0.w, c1
+bcaaaaaaabaaabacabaaaaoeaeaaaaaaabaaaakeacaaaaaa dp3 r1.x, v1, r1.xyzz
+bgaaaaaaabaaabacabaaaaaaacaaaaaaaaaaaaaaaaaaaaaa sat r1.x, r1.x
+adaaaaaaacaaahacafaaaaoeaeaaaaaaaaaaaaoeabaaaaaa mul r2.xyz, v5, c0
+adaaaaaaabaaahacacaaaakeacaaaaaaabaaaaaaacaaaaaa mul r1.xyz, r2.xyzz, r1.x
+adaaaaaaaaaaahacabaaaakeacaaaaaaaaaaaaaaacaaaaaa mul r0.xyz, r1.xyzz, r0.x
+aaaaaaaaaaaaaiacafaaaaoeaeaaaaaaaaaaaaaaaaaaaaaa mov r0.w, v5
+aaaaaaaaaaaaapadaaaaaaoeacaaaaaaaaaaaaaaaaaaaaaa mov o0, r0
+"
+}
+
+SubProgram "d3d11_9x " {
+Keywords { "DIRECTIONAL_COOKIE" }
+ConstBuffer "$Globals" 112 // 112 used size, 4 vars
+Vector 96 [_LightColor0] 4
+BindCB "$Globals" 0
+SetTexture 0 [_LightTexture0] 2D 0
+// 11 instructions, 2 temp regs, 0 temp arrays:
+// ALU 8 float, 0 int, 0 uint
+// TEX 1 (0 load, 0 comp, 0 bias, 0 grad)
+// FLOW 1 static, 0 dynamic
+"ps_4_0_level_9_1
+eefieceddjfbacnndndbchhbkadbfkdckhdefnbcabaaaaaameadaaaaaeaaaaaa
+daaaaaaaeaabaaaaniacaaaajaadaaaaebgpgodjaiabaaaaaiabaaaaaaacpppp
+neaaaaaadeaaaaaaabaaciaaaaaadeaaaaaadeaaabaaceaaaaaadeaaaaaaaaaa
+aaaaagaaabaaaaaaaaaaaaaaaaacppppbpaaaaacaaaaaaiaaaaaaplabpaaaaac
+aaaaaaiaabaaahlabpaaaaacaaaaaaiaacaachlabpaaaaacaaaaaaiaadaacpla
+bpaaaaacaaaaaajaaaaiapkaceaaaaacaaaaahiaabaaoelaaiaaaaadaaaadbia
+acaaoelaaaaaoeiaafaaaaadaaaaaoiaadaabllaaaaablkaafaaaaadaaaaahia
+aaaaaaiaaaaabliaabaaaaacabaaadiaaaaabllaecaaaaadabaacpiaabaaoeia
+aaaioekaacaaaaadaaaaaiiaabaappiaabaappiaafaaaaadaaaachiaaaaappia
+aaaaoeiaabaaaaacaaaaciiaadaapplaabaaaaacaaaicpiaaaaaoeiappppaaaa
+fdeieefcjaabaaaaeaaaaaaageaaaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaa
+fkaaaaadaagabaaaaaaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaagcbaaaad
+mcbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaa
+gcbaaaadpcbabaaaaeaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacacaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaacaaaaaaegbcbaaaacaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaacaaaaaabacaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egacbaaaaaaaaaaadiaaaaaiocaabaaaaaaaaaaaagbjbaaaaeaaaaaaagijcaaa
+aaaaaaaaagaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaa
+aaaaaaaaefaaaaajpcaabaaaabaaaaaaogbkbaaaabaaaaaaeghobaaaaaaaaaaa
+aagabaaaaaaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaabaaaaaadkaabaaa
+abaaaaaadiaaaaahhccabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+dgaaaaaficcabaaaaaaaaaaadkbabaaaaeaaaaaadoaaaaabejfdeheolaaaaaaa
+agaaaaaaaiaaaaaajiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaa
+keaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaadaaaaaakeaaaaaaadaaaaaa
+aaaaaaaaadaaaaaaabaaaaaaamamaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaa
+acaaaaaaahahaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaadaaaaaaahahaaaa
+keaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapapaaaafdfgfpfaepfdejfe
+ejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaa
+caaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgf
+heaaklkl"
+}
+
+SubProgram "gles3 " {
+Keywords { "DIRECTIONAL_COOKIE" }
+"!!GLES3"
+}
+
+}
+
+#LINE 227
+
+        }
 		
 	} 
 	

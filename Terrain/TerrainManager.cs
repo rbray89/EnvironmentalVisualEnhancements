@@ -10,32 +10,14 @@ using EVEManager;
 
 namespace Terrain
 {
-    public class OceanReplacementShader : MonoBehaviour
-    {
-        private GameObject shaderReplacementCamera;
-
-        void OnPostRender()
-        {
-            if(shaderReplacementCamera == null)
-            {
-                shaderReplacementCamera = new GameObject("shaderReplacementCamera");
-                shaderReplacementCamera.AddComponent<Camera>();
-                shaderReplacementCamera.camera.enabled = false; 
-            }
-            Camera cam = shaderReplacementCamera.camera;
-            cam.CopyFrom(camera);
-            cam.backgroundColor = new Color(0, 0, 0, 0);
-            cam.clearFlags = CameraClearFlags.Nothing;
-
-            cam.RenderWithShader(TerrainManager.OceanShaderNear, "OceanReplace");
-        }
-    }
+    
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class TerrainManager : GenericEVEManager<TerrainObject>
     {
         protected override ObjectType objectType { get { return ObjectType.PLANET; } }
         protected override String configName { get { return "EVE_TERRAIN"; } }
 
+        private bool camerasInitialized = false;
         private static Shader oceanShader = null;
         private static Shader oceanShaderNear = null;
         private static Shader planetShader = null;
@@ -85,16 +67,18 @@ namespace Terrain
             }
         }
 
-        protected override void SingleSetup()
+        protected new void Update()
         {
-            Log("SingleSetup ");
-            Camera[] cameras = Camera.allCameras;
-            foreach (Camera cam in cameras)
+            if(!camerasInitialized)
             {
-                Log("updating " + cam.name+" far "+cam.farClipPlane);
-                if (cam.name == "Camera 01" || cam.name == "Camera 00")
+                Camera[] cameras = Camera.allCameras;
+                foreach (Camera cam in cameras)
                 {
-                    cam.depthTextureMode = DepthTextureMode.Depth;
+                    if (cam.name == "Camera 01" || cam.name == "Camera 00")
+                    {
+                        cam.depthTextureMode = DepthTextureMode.Depth;
+                        camerasInitialized = true;
+                    }
                 }
             }
         }

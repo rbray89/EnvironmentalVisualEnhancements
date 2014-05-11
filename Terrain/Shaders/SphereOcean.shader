@@ -13,12 +13,12 @@
 	
 SubShader {
 
-Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "OceanReplace"="True"}
+Tags { "Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="TransparentOcean" "OceanReplace"="True"}
 	Blend SrcAlpha OneMinusSrcAlpha
 	Fog { Mode Global}
 	AlphaTest Greater 0
 	ColorMask RGB
-	Cull Back Lighting On ZWrite Off
+	Cull Back Lighting On ZWrite On
 	
 	Pass {
 
@@ -158,13 +158,74 @@ Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"
 			
 			depth -= IN.scrPos.z;
     		depth = saturate(_Clarity*depth);
-			color.a = lerp(.8, depth, satDepth);
+    		float refrac = 1-(.75*dot(IN.viewDir, IN.worldNormal));
+			color.a = lerp(refrac, depth, satDepth);
 			
           	return color;
 		}
 		ENDCG
 	
 		}
+		
+		Pass {
+            Tags {"LightMode" = "ForwardAdd"} 
+            Blend One One                                      
+            CGPROGRAM
+                #pragma vertex vert
+                #pragma fragment frag
+                #pragma multi_compile_fwdadd 
+                
+                #include "UnityCG.cginc"
+                #include "AutoLight.cginc"
+                
+                struct appdata_t {
+				float4 vertex : POSITION;
+				fixed4 color : COLOR;
+				float3 normal : NORMAL;
+				float3 tangent : TANGENT;
+				};
+                
+                struct v2f
+                {
+                    float4  pos         : SV_POSITION;
+                    float2  uv          : TEXCOORD0;
+                    float3  lightDir    : TEXCOORD2;
+                    float3 normal		: TEXCOORD1;
+                    LIGHTING_COORDS(3,4)
+                    float4 color : TEXCOORD5;
+                };
+ 
+                v2f vert (appdata_t v)
+                {
+                    v2f o;
+                    
+                    o.pos = mul( UNITY_MATRIX_MVP, v.vertex);
+                   	
+					o.lightDir = ObjSpaceLightDir(v.vertex);
+					o.color = v.color;
+					o.normal =  v.normal;
+                    TRANSFER_VERTEX_TO_FRAGMENT(o);
+                    return o;
+                }
+ 
+                fixed4 _Color;
+ 
+                fixed4 _LightColor0;
+ 
+                fixed4 frag(v2f IN) : COLOR
+                {
+                    IN.lightDir = normalize(IN.lightDir);
+                    fixed atten = LIGHT_ATTENUATION(IN);
+					fixed3 normal = IN.normal;                    
+                    fixed diff = saturate(dot(normal, IN.lightDir));
+                    
+                    fixed4 c;
+                    c.rgb = (IN.color.rgb * _LightColor0.rgb * diff) * (atten * 2);
+                    c.a = IN.color.a;
+                    return c;
+                }
+            ENDCG
+        }
 		
 	} 
 	
