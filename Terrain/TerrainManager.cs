@@ -96,14 +96,6 @@ namespace Terrain
                 {
                     cam.depthTextureMode = DepthTextureMode.Depth;
                 }
-                if (cam.name == "Camera 01")
-                {
-                    cam.nearClipPlane -= 3f;
-                }
-                if (cam.name == "Camera 00")
-                {
-               //     cam.gameObject.AddComponent<OceanReplacementShader>();
-                }
             }
         }
 
