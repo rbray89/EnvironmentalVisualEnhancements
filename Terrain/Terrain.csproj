@@ -72,6 +72,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Shaders\Compiled-SphereTerrain.shader" />
     <EmbeddedResource Include="Shaders\Compiled-SpherePlanet.shader" />
+    <EmbeddedResource Include="Shaders\Compiled-SphereOcean.shader" />
+    <None Include="Shaders\SphereOcean.shader" />
     <None Include="Shaders\SpherePlanet.shader" />
     <None Include="Shaders\SphereTerrain.shader" />
   </ItemGroup>

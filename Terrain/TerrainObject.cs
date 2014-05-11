@@ -73,6 +73,26 @@ namespace Terrain
         float _MinLight = .5f;
     }
 
+    public class OceanMaterial : MaterialManager
+    {
+        [Persistent]
+        Color _Color = Color.white;
+        [Persistent]
+        Color _SpecColor = Color.white;
+        [Persistent]
+        float _Shininess = 10;
+        [Persistent]
+        String _DetailTex = "";
+        [Persistent]
+        float _DetailScale = 4000f;
+        [Persistent]
+        float _DetailDist = 0.00875f;
+        [Persistent]
+        float _MinLight = .5f;
+        [Persistent]
+        float _Clarity = .005f;
+    }
+
     public class TerrainObject : IEVEObject
     {
         public String Name { get { return body; } set { } }
@@ -82,13 +102,28 @@ namespace Terrain
         private ConfigNode node;
         [Persistent] 
         TerrainMaterial terrainMaterial = null;
-        [Persistent]
+        [Persistent, Optional]
         PlanetMaterial planetMaterial = null;
+        [Persistent, Optional]
+        OceanMaterial oceanMaterial = null;
 
-        private GameObject pqsContainer;
+        private GameObject pqsTerrainContainer;
+        private GameObject pqsOceanContainer;
         private Shader originalShader;
+        private static Shader oceanShader = null;
         private static Shader planetShader = null;
         private static Shader terrainShader = null;
+        private static Shader OceanShader
+        {
+            get
+            {
+                if (oceanShader == null)
+                {
+                    Assembly assembly = Assembly.GetExecutingAssembly();
+                    oceanShader = EVEManagerClass.GetShader(assembly, "Terrain.Shaders.Compiled-SphereOcean.shader");
+                } return oceanShader;
+            }
+        }
         private static Shader PlanetShader
         {
             get
@@ -145,14 +180,46 @@ namespace Terrain
                         planetMaterial.ApplyMaterialProperties(mr.material);
                     }
                 }
-                pqsContainer = new GameObject("PQSTangentAssigner");
-                pqsContainer.AddComponent<PQSTangentAssigner>();
-                pqsContainer.transform.parent = pqs.transform;
+                pqsTerrainContainer = new GameObject("PQSTangentAssigner");
+                pqsTerrainContainer.AddComponent<PQSTangentAssigner>();
+                pqsTerrainContainer.transform.parent = pqs.transform;
 
                 originalShader = pqs.surfaceMaterial.shader;
+                String[] keywords = pqs.surfaceMaterial.shaderKeywords;
                 pqs.surfaceMaterial.shader = TerrainShader;
+                foreach(String keyword in keywords)
+                {
+                    pqs.surfaceMaterial.EnableKeyword(keyword);
+                }
                 //pqs.surfaceMaterial.mainTexture = mainTexture;
                 terrainMaterial.ApplyMaterialProperties(pqs.surfaceMaterial);
+                
+                if (oceanMaterial != null && pqs.ChildSpheres.Length > 0)
+                {
+                    PQS ocean = pqs.ChildSpheres[0];
+
+                    pqsOceanContainer = new GameObject("PQSTangentAssigner");
+                    pqsOceanContainer.AddComponent<PQSTangentAssigner>();
+                    pqsOceanContainer.transform.parent = ocean.transform;
+
+                    keywords = ocean.surfaceMaterial.shaderKeywords;
+                    ocean.surfaceMaterial.shader = OceanShader;
+                    foreach (String keyword in keywords)
+                    {
+                        ocean.surfaceMaterial.EnableKeyword(keyword);
+                    }
+                    //ocean.surfaceMaterial.mainTexture = mainTexture;
+                    oceanMaterial.ApplyMaterialProperties(ocean.surfaceMaterial);
+                }
+                PQSLandControl landControl = (PQSLandControl)pqs.transform.GetComponentInChildren(typeof(PQSLandControl));
+                if (landControl != null)
+                {
+                    PQSLandControl.LandClass[] landClasses = landControl.landClasses;
+                    PQSLandControl.LandClass lcBeach = landControl.landClasses.First(lc => lc.landClassName == "BaseBeach");
+                    PQSLandControl.LandClass lcOcean = landControl.landClasses.First(lc => lc.landClassName == "Ocean Bottom");
+                    lcOcean.color = lcBeach.color;
+                }
+
             }
         }
 
@@ -163,8 +230,8 @@ namespace Terrain
             if (pqs != null)
             {
                 pqs.surfaceMaterial.shader = originalShader;
-                pqsContainer.transform.parent = null;
-                GameObject.Destroy(pqsContainer);
+                pqsTerrainContainer.transform.parent = null;
+                GameObject.Destroy(pqsTerrainContainer);
             }
         }
     }

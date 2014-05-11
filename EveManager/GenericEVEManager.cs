@@ -53,6 +53,11 @@ namespace EVEManager
             LoadConfig();
         }
 
+        protected virtual void SingleSetup()
+        {
+
+        }
+
         public virtual void LoadConfig()
         {
             Log("Loading...");
@@ -68,6 +73,7 @@ namespace EVEManager
         public virtual void Apply()
         {
             Clean();
+            SingleSetup();
             foreach (UrlDir.UrlConfig config in configs)
             {
                 foreach (ConfigNode node in config.config.nodes)
@@ -276,8 +282,7 @@ namespace EVEManager
             }
             else if (obj != null && GUI.Button(applyRect, "Remove"))
             {
-                node.GetNode(body).RemoveNode(obj.Name);
-                ObjectList.Remove(obj);
+                node.RemoveNode(body);
             }
             placement.y++;
             return obj;
@@ -326,8 +331,7 @@ namespace EVEManager
                 }
                 if(removed != null)
                 {
-                    selectedConfig.Node.GetNode(body).RemoveNode(removed.Name);
-                    ObjectList.Remove(removed);
+                    bodyNode.RemoveNode(removed.Name);
                 }
             }
             else

@@ -74,10 +74,9 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			float4 pos : SV_POSITION;
 			float  viewDist : TEXCOORD0;
 			float3 viewDir : TEXCOORD1;
-			float3 normal : TEXCOORD2;
+			float3 worldNormal : TEXCOORD2;
 			LIGHTING_COORDS(3,4)
-			float3 worldNormal : TEXCOORD5;
-			float3 sphereNormal : TEXCOORD6;
+			float3 sphereNormal : TEXCOORD5;
 		};	
 		
 
@@ -88,14 +87,11 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
-	   	   
-	   	   half3 nrm = normalize(v.normal);
 
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
-	   	   o.worldNormal = normalize(vertexPos-origin);
+	   	   o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
 	   	   o.sphereNormal = -normalize(v.vertex);
 		   o.viewDir = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, v.vertex).xyz);
-		   o.normal = nrm;
     
     	   TRANSFER_VERTEX_TO_FRAGMENT(o);
     
@@ -130,10 +126,9 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		    half2 detailvertnrmzy = sphereNrm.zy*_DetailVertScale;
 		    half2 detailvertnrmzx = sphereNrm.zx*_DetailVertScale;
 		    half2 detailvertnrmxy = sphereNrm.xy*_DetailVertScale;
-		    half vertLerp = saturate((32*(saturate(dot(IN.normal, -IN.sphereNormal))-.95))+.5);
-			half4 detailX = lerp(tex2D (_DetailVertTex, detailvertnrmzy), tex2D (_DetailTex, detailnrmzy), vertLerp);
-			half4 detailY = lerp(tex2D (_DetailVertTex, detailvertnrmzx), tex2D (_DetailTex, detailnrmzx), vertLerp);
-			half4 detailZ = lerp(tex2D (_DetailVertTex, detailvertnrmxy), tex2D (_DetailTex, detailnrmxy), vertLerp);
+			half4 detailX = tex2D (_DetailTex, detailnrmzy);
+			half4 detailY = tex2D (_DetailTex, detailnrmzx);
+			half4 detailZ = tex2D (_DetailTex, detailnrmxy);
 			
 			#ifdef CITYOVERLAY_ON
 			half4 cityoverlay = tex2D(_CityOverlayTex, uv, uvdd.xy, uvdd.zw);

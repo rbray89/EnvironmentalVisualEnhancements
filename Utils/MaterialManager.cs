@@ -25,6 +25,12 @@ namespace Utils
                     {
                         texture.wrapMode = TextureWrapMode.Clamp;
                     }
+                    try
+                    {
+                        texture.GetPixel(0, 0);
+                        texture.Apply(true);
+                    }
+                    catch { }
 
                     material.SetTexture(name, texture);
                 }

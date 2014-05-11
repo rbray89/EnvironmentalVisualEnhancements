@@ -90,10 +90,9 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
 	   	   
-	   	   o.worldNormal = mul( _Object2World, float4( v.normal, 0.0 ) ).xyz;
+	   	   o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
 	   	   o.sphereNormal = -normalize(v.tangent);
-	   	   o.color = v.color;
-					
+	   	   o.color = v.color;	
 		   o.normal = v.normal;
     
     	   TRANSFER_VERTEX_TO_FRAGMENT(o);

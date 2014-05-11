@@ -30,8 +30,8 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		
 		Program "vp" {
 // Vertex combos: 60
-//   d3d9 - ALU: 22 to 31
-//   d3d11 - ALU: 18 to 30, TEX: 0 to 0, FLOW: 1 to 1
+//   d3d9 - ALU: 25 to 34
+//   d3d11 - ALU: 21 to 33, TEX: 0 to 0, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "POINT" "SHADOWS_OFF" }
 "!!GLSL
@@ -59,7 +59,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -165,7 +165,7 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 26 ALU
+; 29 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -178,26 +178,29 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c13.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o5.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.w, c13.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c12
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o5.z, r1, c6
-dp4 o5.y, r1, c5
-dp4 o5.x, r1, c4
 mov o3.xyz, v2
 mov o6.xyz, -r0
 dp4 o0.w, v0, c3
@@ -223,12 +226,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 29 instructions, 2 temp regs, 0 temp arrays:
-// ALU 26 float, 0 int, 0 uint
+// 32 instructions, 2 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjngbjlnheefidpgefkacjllfmflmaphlabaaaaaabaagaaaaadaaaaaa
+eefiecedbnejkobfienlflhlnfekjfpkfafbillmabaaaaaafmagaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -240,7 +243,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefchmaeaaaaeaaaabaabpabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcmiaeaaaaeaaaabaadcabaaaafjaaaaae
 egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaae
 egiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
 abaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaae
@@ -272,11 +275,13 @@ kgakbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaa
 aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaa
 aaaaaaaafgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaa
 aaaaaaaaegiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaa
-dcaaaaakhccabaaaaeaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
-egacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaa
-adaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaa
-egacbaiaebaaaaaaaaaaaaaadoaaaaab"
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
+egacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+aeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
+dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -317,7 +322,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -541,7 +546,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -902,7 +907,7 @@ v2f vert( in appdata_t v ) {
     #line 424
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 428
     o.color = v.color;
@@ -1264,7 +1269,7 @@ void main ()
   xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -1367,7 +1372,7 @@ Matrix 0 [glstate_matrix_mvp]
 Vector 8 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 "vs_3_0
-; 22 ALU
+; 25 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -1379,18 +1384,21 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
-mov r0.xyz, v2
-mov r0.w, c9.x
-dp4 o4.z, r0, c6
-dp4 o4.y, r0, c5
-dp4 o4.x, r0, c4
-dp3 r0.y, v3, v3
-dp4 r1.z, v0, c6
-dp4 r1.x, v0, c4
-dp4 r1.y, v0, c5
-add r1.xyz, -r1, c8
-dp3 r0.x, r1, r1
+mov r1.w, c9.x
+mov r1.xyz, v2
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o4.xyz, r0.w, r0
+dp4 r0.z, v0, c6
+dp4 r0.x, v0, c4
+dp4 r0.y, v0, c5
+add r0.xyz, -r0, c8
+dp3 r0.x, r0, r0
 rsq r0.x, r0.x
+dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
@@ -1417,12 +1425,12 @@ Matrix 0 [glstate_matrix_mvp] 4
 Matrix 192 [_Object2World] 4
 BindCB "UnityPerCamera" 0
 BindCB "UnityPerDraw" 1
-// 21 instructions, 1 temp regs, 0 temp arrays:
-// ALU 18 float, 0 int, 0 uint
+// 24 instructions, 1 temp regs, 0 temp arrays:
+// ALU 21 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedellchjpccbpgdfajoollnnijhnfogonfabaaaaaakmaeaaaaadaaaaaa
+eefiecediapopkioojboekpkcodldfhijppeeonoabaaaaaapiaeaaaaadaaaaaa
 cmaaaaaalmaaaaaaheabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -1433,8 +1441,8 @@ apaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaabaoaaaakeaaaaaa
 acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaakeaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaakeaaaaaaafaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaakeaaaaaaagaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaafdfgfpfa
-epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcdaadaaaaeaaaabaa
-mmaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefchmadaaaaeaaaabaa
+npaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
 baaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaad
 hcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaa
 abaaaaaagfaaaaadbccabaaaabaaaaaagfaaaaadoccabaaaabaaaaaagfaaaaad
@@ -1455,11 +1463,13 @@ abaaaaaaakaabaaaaaaaaaaadgaaaaafoccabaaaabaaaaaaagbjbaaaacaaaaaa
 dgaaaaafpccabaaaacaaaaaaegbobaaaabaaaaaadiaaaaaihcaabaaaaaaaaaaa
 fgbfbaaaacaaaaaaegiccaaaabaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaa
 egiccaaaabaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaak
-hccabaaaadaaaaaaegiccaaaabaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaa
-aaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaa
-eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
-agaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaaeaaaaaaegacbaia
-ebaaaaaaaaaaaaaadoaaaaab"
+hcaabaaaaaaaaaaaegiccaaaabaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaa
+aaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaa
+eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaadaaaaaa
+pgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaa
+adaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+diaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaag
+hccabaaaaeaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -1497,7 +1507,7 @@ void main ()
   xlv_TEXCOORD0 = sqrt(dot (p_3, p_3));
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -1712,7 +1722,7 @@ void main ()
   xlv_TEXCOORD0 = sqrt(dot (p_3, p_3));
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -2063,7 +2073,7 @@ v2f vert( in appdata_t v ) {
     #line 421
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 425
     o.color = v.color;
@@ -2419,7 +2429,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -2526,7 +2536,7 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -2539,27 +2549,30 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c13.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o5.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.w, c13.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c12
 dp4 o4.w, r0, c11
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o5.z, r1, c6
-dp4 o5.y, r1, c5
-dp4 o5.x, r1, c4
 mov o3.xyz, v2
 mov o6.xyz, -r0
 dp4 o0.w, v0, c3
@@ -2585,12 +2598,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 29 instructions, 2 temp regs, 0 temp arrays:
-// ALU 26 float, 0 int, 0 uint
+// 32 instructions, 2 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedphhlnncfjlhnepfofknmgpepamejhimmabaaaaaabaagaaaaadaaaaaa
+eefieceddkkcfibbnbjalfnbjmkbdechcjifglglabaaaaaafmagaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -2602,7 +2615,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefchmaeaaaaeaaaabaabpabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcmiaeaaaaeaaaabaadcabaaaafjaaaaae
 egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaae
 egiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
 abaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaae
@@ -2634,11 +2647,13 @@ kgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpccabaaaadaaaaaaegiocaaa
 aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegaobaaaabaaaaaadiaaaaaihcaabaaa
 aaaaaaaafgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaa
 aaaaaaaaegiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaa
-dcaaaaakhccabaaaaeaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
-egacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaa
-adaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaa
-egacbaiaebaaaaaaaaaaaaaadoaaaaab"
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
+egacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+aeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
+dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -2679,7 +2694,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -2912,7 +2927,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -3283,7 +3298,7 @@ v2f vert( in appdata_t v ) {
     #line 433
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 437
     o.color = v.color;
@@ -3659,7 +3674,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -3766,7 +3781,7 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 26 ALU
+; 29 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -3779,26 +3794,29 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c13.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o5.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.w, c13.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c12
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o5.z, r1, c6
-dp4 o5.y, r1, c5
-dp4 o5.x, r1, c4
 mov o3.xyz, v2
 mov o6.xyz, -r0
 dp4 o0.w, v0, c3
@@ -3824,12 +3842,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 29 instructions, 2 temp regs, 0 temp arrays:
-// ALU 26 float, 0 int, 0 uint
+// 32 instructions, 2 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjngbjlnheefidpgefkacjllfmflmaphlabaaaaaabaagaaaaadaaaaaa
+eefiecedbnejkobfienlflhlnfekjfpkfafbillmabaaaaaafmagaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -3841,7 +3859,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefchmaeaaaaeaaaabaabpabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcmiaeaaaaeaaaabaadcabaaaafjaaaaae
 egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaae
 egiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
 abaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaae
@@ -3873,11 +3891,13 @@ kgakbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaa
 aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaa
 aaaaaaaafgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaa
 aaaaaaaaegiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaa
-dcaaaaakhccabaaaaeaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
-egacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaa
-adaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaa
-egacbaiaebaaaaaaaaaaaaaadoaaaaab"
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
+egacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+aeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
+dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -3918,7 +3938,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -4143,7 +4163,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -4506,7 +4526,7 @@ v2f vert( in appdata_t v ) {
     #line 425
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 429
     o.color = v.color;
@@ -4872,7 +4892,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -4978,7 +4998,7 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 25 ALU
+; 28 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -4991,25 +5011,28 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c13.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o5.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.w, c13.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c12
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o5.z, r1, c6
-dp4 o5.y, r1, c5
-dp4 o5.x, r1, c4
 mov o3.xyz, v2
 mov o6.xyz, -r0
 dp4 o0.w, v0, c3
@@ -5035,12 +5058,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 29 instructions, 2 temp regs, 0 temp arrays:
-// ALU 26 float, 0 int, 0 uint
+// 32 instructions, 2 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjjihcmfoheihdapnnheholfjjiojfgiaabaaaaaabaagaaaaadaaaaaa
+eefiecedhjipbhblkaekfkmmkahbafmhfflocoababaaaaaafmagaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -5052,7 +5075,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 adamaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefchmaeaaaaeaaaabaabpabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcmiaeaaaaeaaaabaadcabaaaafjaaaaae
 egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaae
 egiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
 abaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaae
@@ -5084,11 +5107,13 @@ kgakbaaaaaaaaaaaegaabaaaaaaaaaaadcaaaaakdccabaaaadaaaaaaegiacaaa
 aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegaabaaaaaaaaaaadiaaaaaihcaabaaa
 aaaaaaaafgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaa
 aaaaaaaaegiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaa
-dcaaaaakhccabaaaaeaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
-egacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaa
-adaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaa
-egacbaiaebaaaaaaaaaaaaaadoaaaaab"
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
+egacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+aeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
+dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -5129,7 +5154,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -5351,7 +5376,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -5710,7 +5735,7 @@ v2f vert( in appdata_t v ) {
     #line 424
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 428
     o.color = v.color;
@@ -6078,7 +6103,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -6206,7 +6231,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 34 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -6220,12 +6245,19 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c17.x
+dp4 r0.z, r1, c10
+dp4 r0.x, r1, c8
+dp4 r0.y, r1, c9
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
 dp4 r0.w, v0, c11
-mov r1.w, c17.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c16
 dp4 o4.w, r0, c15
 dp4 o4.z, r0, c14
 dp4 o4.y, r0, c13
@@ -6234,17 +6266,13 @@ dp4 o5.w, r0, c7
 dp4 o5.z, r0, c6
 dp4 o5.y, r0, c5
 dp4 o5.x, r0, c4
-add r0.xyz, -r0, c16
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c10
-dp4 o6.y, r1, c9
-dp4 o6.x, r1, c8
 mov o3.xyz, v2
 mov o7.xyz, -r0
 dp4 o0.w, v0, c3
@@ -6276,12 +6304,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityShadows" 2
 BindCB "UnityPerDraw" 3
-// 33 instructions, 2 temp regs, 0 temp arrays:
-// ALU 30 float, 0 int, 0 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 33 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedokogcikjllhpnbadkndmodehjechnpieabaaaaaanmagaaaaadaaaaaa
+eefiecedjiljiffimpneejaodciihkilfjlcljhiabaaaaaaciahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -6294,7 +6322,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcdaafaaaaeaaaabaaemabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefchmafaaaaeaaaabaafpabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 amaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -6331,11 +6359,14 @@ egiocaaaacaaaaaaakaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
 pccabaaaaeaaaaaaegiocaaaacaaaaaaalaaaaaapgapbaaaaaaaaaaaegaobaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaadaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaaadaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -6379,7 +6410,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -6635,7 +6666,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -7030,7 +7061,7 @@ v2f vert( in appdata_t v ) {
     #line 440
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 444
     o.color = v.color;
@@ -7422,7 +7453,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -7533,7 +7564,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 34 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -7547,12 +7578,19 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c17.x
+dp4 r0.z, r1, c10
+dp4 r0.x, r1, c8
+dp4 r0.y, r1, c9
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
 dp4 r0.w, v0, c11
-mov r1.w, c17.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c16
 dp4 o4.w, r0, c15
 dp4 o4.z, r0, c14
 dp4 o4.y, r0, c13
@@ -7561,17 +7599,13 @@ dp4 o5.w, r0, c7
 dp4 o5.z, r0, c6
 dp4 o5.y, r0, c5
 dp4 o5.x, r0, c4
-add r0.xyz, -r0, c16
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c10
-dp4 o6.y, r1, c9
-dp4 o6.x, r1, c8
 mov o3.xyz, v2
 mov o7.xyz, -r0
 dp4 o0.w, v0, c3
@@ -7603,12 +7637,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityShadows" 2
 BindCB "UnityPerDraw" 3
-// 33 instructions, 2 temp regs, 0 temp arrays:
-// ALU 30 float, 0 int, 0 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 33 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedokogcikjllhpnbadkndmodehjechnpieabaaaaaanmagaaaaadaaaaaa
+eefiecedjiljiffimpneejaodciihkilfjlcljhiabaaaaaaciahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -7621,7 +7655,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcdaafaaaaeaaaabaaemabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefchmafaaaaeaaaabaafpabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 amaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -7658,11 +7692,14 @@ egiocaaaacaaaaaaakaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
 pccabaaaaeaaaaaaegiocaaaacaaaaaaalaaaaaapgapbaaaaaaaaaaaegaobaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaadaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaaadaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -7707,7 +7744,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -8094,7 +8131,7 @@ v2f vert( in appdata_t v ) {
     #line 441
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 445
     o.color = v.color;
@@ -8496,7 +8533,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = o_4;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_3).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_3).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -8603,7 +8640,7 @@ Vector 9 [_ProjectionParams]
 Vector 10 [_ScreenParams]
 Matrix 4 [_Object2World]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -8616,20 +8653,22 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r0.xyz, v2
+mov r0.w, c11.x
+dp4 r2.z, r0, c6
+dp4 r2.x, r0, c4
+dp4 r2.y, r0, c5
+dp3 r0.x, r2, r2
+rsq r0.z, r0.x
+mul o5.xyz, r0.z, r2
 dp4 r0.w, v0, c3
 dp4 r0.z, v0, c2
 dp4 r0.x, v0, c0
 dp4 r0.y, v0, c1
 mul r1.xyz, r0.xyww, c11.y
+mov o0, r0
 mul r1.y, r1, c9.x
 mad o4.xy, r1.z, c10.zwzw, r1
-mov o0, r0
-mov o4.zw, r0
-mov r0.xyz, v2
-mov r0.w, c11.x
-dp4 o5.z, r0, c6
-dp4 o5.y, r0, c5
-dp4 o5.x, r0, c4
 dp3 r0.y, v3, v3
 dp4 r1.z, v0, c6
 dp4 r1.x, v0, c4
@@ -8637,6 +8676,7 @@ dp4 r1.y, v0, c5
 add r1.xyz, -r1, c8
 dp3 r0.x, r1, r1
 rsq r0.x, r0.x
+mov o4.zw, r0
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
@@ -8660,12 +8700,12 @@ Matrix 0 [glstate_matrix_mvp] 4
 Matrix 192 [_Object2World] 4
 BindCB "UnityPerCamera" 0
 BindCB "UnityPerDraw" 1
-// 26 instructions, 2 temp regs, 0 temp arrays:
-// ALU 21 float, 0 int, 0 uint
+// 29 instructions, 2 temp regs, 0 temp arrays:
+// ALU 24 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedlofnbhkcomeomceafaiamnanheikdkimabaaaaaafmafaaaaadaaaaaa
+eefiecedcbpldilioogkeboomelohjemheclncdjabaaaaaakiafaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -8677,7 +8717,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefcmiadaaaaeaaaabaapcaaaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcbeaeaaaaeaaaabaaafabaaaafjaaaaae
 egiocaaaaaaaaaaaagaaaaaafjaaaaaeegiocaaaabaaaaaabaaaaaaafpaaaaad
 pcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaa
 fpaaaaadhcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaad
@@ -8703,11 +8743,14 @@ aceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaaadaaaaaa
 kgaobaaaaaaaaaaaaaaaaaahdccabaaaadaaaaaakgakbaaaabaaaaaamgaabaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaabaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaabaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaaeaaaaaaegiccaaaabaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaabaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaaeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -8748,7 +8791,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -8991,7 +9034,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = o_6;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_5).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_5).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -9350,7 +9393,7 @@ v2f vert( in appdata_t v ) {
     #line 430
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 434
     o.color = v.color;
@@ -9735,7 +9778,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
   xlv_TEXCOORD4 = o_4;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_3).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_3).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -9845,7 +9888,7 @@ Vector 14 [_ScreenParams]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 30 ALU
+; 33 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -9859,34 +9902,37 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
-dp4 r1.w, v0, c3
-dp4 r1.z, v0, c2
-dp4 r1.x, v0, c0
-dp4 r1.y, v0, c1
-mul r0.xyz, r1.xyww, c15.y
-mul r0.y, r0, c13.x
-mad o5.xy, r0.z, c14.zwzw, r0
-dp4 r0.z, v0, c6
-dp4 r0.x, v0, c4
-dp4 r0.y, v0, c5
-dp4 r0.w, v0, c7
-mov o0, r1
-mov o5.zw, r1
-mov r1.w, c15.x
-mov r1.xyz, v2
-dp4 o4.y, r0, c9
-dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
-rsq r0.x, r0.x
+mov r0.xyz, v2
+mov r0.w, c15.x
+dp4 r2.z, r0, c6
+dp4 r2.x, r0, c4
+dp4 r2.y, r0, c5
+dp3 r0.x, r2, r2
+rsq r0.z, r0.x
+mul o6.xyz, r0.z, r2
+dp4 r0.w, v0, c3
+dp4 r0.z, v0, c2
+dp4 r0.x, v0, c0
+dp4 r0.y, v0, c1
+mul r1.xyz, r0.xyww, c15.y
+mov o0, r0
+mul r1.y, r1, c13.x
+mad o5.xy, r1.z, c14.zwzw, r1
 dp3 r0.y, v3, v3
+dp4 r1.z, v0, c6
+dp4 r1.x, v0, c4
+dp4 r1.y, v0, c5
+dp4 r1.w, v0, c7
+dp4 o4.y, r1, c9
+dp4 o4.x, r1, c8
+add r1.xyz, -r1, c12
+dp3 r0.x, r1, r1
+rsq r0.x, r0.x
+mov o5.zw, r0
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
 mov o3.xyz, v2
 mov o7.xyz, -r0
 "
@@ -9909,12 +9955,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 34 instructions, 3 temp regs, 0 temp arrays:
-// ALU 29 float, 0 int, 0 uint
+// 37 instructions, 3 temp regs, 0 temp arrays:
+// ALU 32 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjamhpjngpamgjafehoebffggmonaaahjabaaaaaamaagaaaaadaaaaaa
+eefiecedbbaeaopojimeogpjbddfpghkemabekmjabaaaaaaamahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -9927,7 +9973,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 adamaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcbeafaaaaeaaaabaaefabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcgaafaaaaeaaaabaafiabaaaafjaaaaaeegiocaaaaaaaaaaa
 ajaaaaaafjaaaaaeegiocaaaabaaaaaaagaaaaaafjaaaaaeegiocaaaacaaaaaa
 baaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaad
 hcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaa
@@ -9963,12 +10009,14 @@ aaaaaaaaaceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaa
 aeaaaaaakgaobaaaaaaaaaaaaaaaaaahdccabaaaaeaaaaaakgakbaaaabaaaaaa
 mgaabaaaabaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaa
 acaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaamaaaaaa
-agbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaa
-acaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaa
-aaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaa
-adaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab
-"
+agbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
+acaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaa
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaa
+aaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaa
+eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
+agaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaia
+ebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -10012,7 +10060,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -10262,7 +10310,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD4 = o_6;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_5).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_5).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -10627,7 +10675,7 @@ v2f vert( in appdata_t v ) {
     #line 433
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 437
     o.color = v.color;
@@ -11011,7 +11059,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -11139,7 +11187,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -11153,22 +11201,25 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c14.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.xyz, v2
-mov r1.w, c14.x
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
-dp3 r1.x, v3, v3
+add r1.xyz, -r0, c12
+dp3 r1.x, r1, r1
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r2.xyz, -r0, c12
-dp3 r0.w, r2, r2
-rsq r0.w, r0.w
+rsq r0.w, r1.x
+dp3 r1.x, v3, v3
 rcp o1.x, r0.w
 rsq r0.w, r1.x
 mul r1.xyz, r0.w, v3
@@ -11202,12 +11253,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
-// 30 instructions, 2 temp regs, 0 temp arrays:
-// ALU 27 float, 0 int, 0 uint
+// 33 instructions, 2 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkelpkoflfiddcmahafaoohgolnadhlghabaaaaaagiagaaaaadaaaaaa
+eefiecedojekdmflnnflpgalalimefklajhndahmabaaaaaaleagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -11220,7 +11271,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefclmaeaaaaeaaaabaacpabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcaiafaaaaeaaaabaaecabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 acaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -11253,12 +11304,14 @@ dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
 egacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaaaaaaaaaaaeaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaa
 acaaaaaaegiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
-adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaa
-afaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
-baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
-aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
-aaaaaaaadoaaaaab"
+adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaa
+agaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -11302,7 +11355,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -11556,7 +11609,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -11947,7 +12000,7 @@ v2f vert( in appdata_t v ) {
     #line 438
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 442
     o.color = v.color;
@@ -12342,7 +12395,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -12473,7 +12526,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -12487,22 +12540,25 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c14.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.xyz, v2
-mov r1.w, c14.x
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
-dp3 r1.x, v3, v3
+add r1.xyz, -r0, c12
+dp3 r1.x, r1, r1
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r2.xyz, -r0, c12
-dp3 r0.w, r2, r2
-rsq r0.w, r0.w
+rsq r0.w, r1.x
+dp3 r1.x, v3, v3
 rcp o1.x, r0.w
 rsq r0.w, r1.x
 mul r1.xyz, r0.w, v3
@@ -12536,12 +12592,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
-// 30 instructions, 2 temp regs, 0 temp arrays:
-// ALU 27 float, 0 int, 0 uint
+// 33 instructions, 2 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkelpkoflfiddcmahafaoohgolnadhlghabaaaaaagiagaaaaadaaaaaa
+eefiecedojekdmflnnflpgalalimefklajhndahmabaaaaaaleagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -12554,7 +12610,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefclmaeaaaaeaaaabaacpabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcaiafaaaaeaaaabaaecabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 acaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -12587,12 +12643,14 @@ dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
 egacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaaaaaaaaaaaeaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaa
 acaaaaaaegiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
-adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaa
-afaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
-baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
-aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
-aaaaaaaadoaaaaab"
+adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaa
+agaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -12636,7 +12694,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -12893,7 +12951,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -13288,7 +13346,7 @@ v2f vert( in appdata_t v ) {
     #line 439
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 443
     o.color = v.color;
@@ -13684,7 +13742,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -13845,7 +13903,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 34 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -13859,12 +13917,19 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c17.x
+dp4 r0.z, r1, c10
+dp4 r0.x, r1, c8
+dp4 r0.y, r1, c9
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
 dp4 r0.w, v0, c11
-mov r1.w, c17.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c16
 dp4 o4.w, r0, c15
 dp4 o4.z, r0, c14
 dp4 o4.y, r0, c13
@@ -13873,17 +13938,13 @@ dp4 o5.w, r0, c7
 dp4 o5.z, r0, c6
 dp4 o5.y, r0, c5
 dp4 o5.x, r0, c4
-add r0.xyz, -r0, c16
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c10
-dp4 o6.y, r1, c9
-dp4 o6.x, r1, c8
 mov o3.xyz, v2
 mov o7.xyz, -r0
 dp4 o0.w, v0, c3
@@ -13915,12 +13976,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityShadows" 2
 BindCB "UnityPerDraw" 3
-// 33 instructions, 2 temp regs, 0 temp arrays:
-// ALU 30 float, 0 int, 0 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 33 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedcapnndjcokdkakjbgbhjallnebhfbchlabaaaaaanmagaaaaadaaaaaa
+eefiecedagfmeiefoamligifhjimnanpaflifkdnabaaaaaaciahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -13933,7 +13994,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcdaafaaaaeaaaabaaemabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefchmafaaaaeaaaabaafpabaaaafjaaaaaeegiocaaaaaaaaaaa
 ajaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 amaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -13970,11 +14031,14 @@ egiocaaaacaaaaaaakaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
 pccabaaaaeaaaaaaegiocaaaacaaaaaaalaaaaaapgapbaaaaaaaaaaaegaobaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaadaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaaadaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -14018,7 +14082,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -14325,7 +14389,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -14772,7 +14836,7 @@ v2f vert( in appdata_t v ) {
     #line 448
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 452
     o.color = v.color;
@@ -15183,7 +15247,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -15305,7 +15369,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 34 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -15319,12 +15383,19 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c17.x
+dp4 r0.z, r1, c10
+dp4 r0.x, r1, c8
+dp4 r0.y, r1, c9
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
 dp4 r0.w, v0, c11
-mov r1.w, c17.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c16
 dp4 o4.w, r0, c15
 dp4 o4.z, r0, c14
 dp4 o4.y, r0, c13
@@ -15333,17 +15404,13 @@ dp4 o5.w, r0, c7
 dp4 o5.z, r0, c6
 dp4 o5.y, r0, c5
 dp4 o5.x, r0, c4
-add r0.xyz, -r0, c16
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c10
-dp4 o6.y, r1, c9
-dp4 o6.x, r1, c8
 mov o3.xyz, v2
 mov o7.xyz, -r0
 dp4 o0.w, v0, c3
@@ -15375,12 +15442,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityShadows" 2
 BindCB "UnityPerDraw" 3
-// 33 instructions, 2 temp regs, 0 temp arrays:
-// ALU 30 float, 0 int, 0 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 33 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedcapnndjcokdkakjbgbhjallnebhfbchlabaaaaaanmagaaaaadaaaaaa
+eefiecedagfmeiefoamligifhjimnanpaflifkdnabaaaaaaciahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -15393,7 +15460,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcdaafaaaaeaaaabaaemabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefchmafaaaaeaaaabaafpabaaaafjaaaaaeegiocaaaaaaaaaaa
 ajaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 amaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -15430,11 +15497,14 @@ egiocaaaacaaaaaaakaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
 pccabaaaaeaaaaaaegiocaaaacaaaaaaalaaaaaapgapbaaaaaaaaaaaegaobaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaadaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaaadaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -15479,7 +15549,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -15890,7 +15960,7 @@ v2f vert( in appdata_t v ) {
     #line 448
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 452
     o.color = v.color;
@@ -16293,7 +16363,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -16449,7 +16519,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -16463,22 +16533,25 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c14.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.xyz, v2
-mov r1.w, c14.x
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
-dp3 r1.x, v3, v3
+add r1.xyz, -r0, c12
+dp3 r1.x, r1, r1
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r2.xyz, -r0, c12
-dp3 r0.w, r2, r2
-rsq r0.w, r0.w
+rsq r0.w, r1.x
+dp3 r1.x, v3, v3
 rcp o1.x, r0.w
 rsq r0.w, r1.x
 mul r1.xyz, r0.w, v3
@@ -16512,12 +16585,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
-// 30 instructions, 2 temp regs, 0 temp arrays:
-// ALU 27 float, 0 int, 0 uint
+// 33 instructions, 2 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkelpkoflfiddcmahafaoohgolnadhlghabaaaaaagiagaaaaadaaaaaa
+eefiecedojekdmflnnflpgalalimefklajhndahmabaaaaaaleagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -16530,7 +16603,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefclmaeaaaaeaaaabaacpabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcaiafaaaaeaaaabaaecabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 acaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -16563,12 +16636,14 @@ dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
 egacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaaaaaaaaaaaeaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaa
 acaaaaaaegiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
-adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaa
-afaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
-baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
-aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
-aaaaaaaadoaaaaab"
+adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaa
+agaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -16612,7 +16687,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -16922,7 +16997,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -17369,7 +17444,7 @@ v2f vert( in appdata_t v ) {
     #line 444
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 448
     o.color = v.color;
@@ -17781,7 +17856,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -17940,7 +18015,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -17954,22 +18029,25 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c14.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.xyz, v2
-mov r1.w, c14.x
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
-dp3 r1.x, v3, v3
+add r1.xyz, -r0, c12
+dp3 r1.x, r1, r1
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r2.xyz, -r0, c12
-dp3 r0.w, r2, r2
-rsq r0.w, r0.w
+rsq r0.w, r1.x
+dp3 r1.x, v3, v3
 rcp o1.x, r0.w
 rsq r0.w, r1.x
 mul r1.xyz, r0.w, v3
@@ -18003,12 +18081,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
-// 30 instructions, 2 temp regs, 0 temp arrays:
-// ALU 27 float, 0 int, 0 uint
+// 33 instructions, 2 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkelpkoflfiddcmahafaoohgolnadhlghabaaaaaagiagaaaaadaaaaaa
+eefiecedojekdmflnnflpgalalimefklajhndahmabaaaaaaleagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -18021,7 +18099,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefclmaeaaaaeaaaabaacpabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcaiafaaaaeaaaabaaecabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 acaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -18054,12 +18132,14 @@ dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
 egacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaaaaaaaaaaaeaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaa
 acaaaaaaegiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
-adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaa
-afaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
-baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
-aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
-aaaaaaaadoaaaaab"
+adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaa
+agaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -18103,7 +18183,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -18416,7 +18496,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -18867,7 +18947,7 @@ v2f vert( in appdata_t v ) {
     #line 445
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 449
     o.color = v.color;
@@ -19277,7 +19357,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -19383,7 +19463,7 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 26 ALU
+; 29 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -19396,26 +19476,29 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c13.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o5.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.w, c13.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c12
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o5.z, r1, c6
-dp4 o5.y, r1, c5
-dp4 o5.x, r1, c4
 mov o3.xyz, v2
 mov o6.xyz, -r0
 dp4 o0.w, v0, c3
@@ -19441,12 +19524,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 29 instructions, 2 temp regs, 0 temp arrays:
-// ALU 26 float, 0 int, 0 uint
+// 32 instructions, 2 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjngbjlnheefidpgefkacjllfmflmaphlabaaaaaabaagaaaaadaaaaaa
+eefiecedbnejkobfienlflhlnfekjfpkfafbillmabaaaaaafmagaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19458,7 +19541,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefchmaeaaaaeaaaabaabpabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcmiaeaaaaeaaaabaadcabaaaafjaaaaae
 egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaae
 egiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
 abaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaae
@@ -19490,11 +19573,13 @@ kgakbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaa
 aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaa
 aaaaaaaafgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaa
 aaaaaaaaegiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaa
-dcaaaaakhccabaaaaeaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
-egacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaa
-adaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaa
-egacbaiaebaaaaaaaaaaaaaadoaaaaab"
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
+egacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+aeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
+dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -19535,7 +19620,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -19759,7 +19844,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -20120,7 +20205,7 @@ v2f vert( in appdata_t v ) {
     #line 424
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 428
     o.color = v.color;
@@ -20482,7 +20567,7 @@ void main ()
   xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -20585,7 +20670,7 @@ Matrix 0 [glstate_matrix_mvp]
 Vector 8 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 "vs_3_0
-; 22 ALU
+; 25 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -20597,18 +20682,21 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
-mov r0.xyz, v2
-mov r0.w, c9.x
-dp4 o4.z, r0, c6
-dp4 o4.y, r0, c5
-dp4 o4.x, r0, c4
-dp3 r0.y, v3, v3
-dp4 r1.z, v0, c6
-dp4 r1.x, v0, c4
-dp4 r1.y, v0, c5
-add r1.xyz, -r1, c8
-dp3 r0.x, r1, r1
+mov r1.w, c9.x
+mov r1.xyz, v2
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o4.xyz, r0.w, r0
+dp4 r0.z, v0, c6
+dp4 r0.x, v0, c4
+dp4 r0.y, v0, c5
+add r0.xyz, -r0, c8
+dp3 r0.x, r0, r0
 rsq r0.x, r0.x
+dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
@@ -20635,12 +20723,12 @@ Matrix 0 [glstate_matrix_mvp] 4
 Matrix 192 [_Object2World] 4
 BindCB "UnityPerCamera" 0
 BindCB "UnityPerDraw" 1
-// 21 instructions, 1 temp regs, 0 temp arrays:
-// ALU 18 float, 0 int, 0 uint
+// 24 instructions, 1 temp regs, 0 temp arrays:
+// ALU 21 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedellchjpccbpgdfajoollnnijhnfogonfabaaaaaakmaeaaaaadaaaaaa
+eefiecediapopkioojboekpkcodldfhijppeeonoabaaaaaapiaeaaaaadaaaaaa
 cmaaaaaalmaaaaaaheabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -20651,8 +20739,8 @@ apaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaabaoaaaakeaaaaaa
 acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaakeaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaakeaaaaaaafaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaakeaaaaaaagaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaafdfgfpfa
-epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcdaadaaaaeaaaabaa
-mmaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefchmadaaaaeaaaabaa
+npaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
 baaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaad
 hcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaa
 abaaaaaagfaaaaadbccabaaaabaaaaaagfaaaaadoccabaaaabaaaaaagfaaaaad
@@ -20673,11 +20761,13 @@ abaaaaaaakaabaaaaaaaaaaadgaaaaafoccabaaaabaaaaaaagbjbaaaacaaaaaa
 dgaaaaafpccabaaaacaaaaaaegbobaaaabaaaaaadiaaaaaihcaabaaaaaaaaaaa
 fgbfbaaaacaaaaaaegiccaaaabaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaa
 egiccaaaabaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaak
-hccabaaaadaaaaaaegiccaaaabaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaa
-aaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaa
-eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
-agaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaaeaaaaaaegacbaia
-ebaaaaaaaaaaaaaadoaaaaab"
+hcaabaaaaaaaaaaaegiccaaaabaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaa
+aaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaa
+eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaadaaaaaa
+pgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaa
+adaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+diaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaag
+hccabaaaaeaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -20715,7 +20805,7 @@ void main ()
   xlv_TEXCOORD0 = sqrt(dot (p_3, p_3));
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -20930,7 +21020,7 @@ void main ()
   xlv_TEXCOORD0 = sqrt(dot (p_3, p_3));
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -21281,7 +21371,7 @@ v2f vert( in appdata_t v ) {
     #line 421
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 425
     o.color = v.color;
@@ -21637,7 +21727,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -21744,7 +21834,7 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -21757,27 +21847,30 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c13.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o5.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.w, c13.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c12
 dp4 o4.w, r0, c11
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o5.z, r1, c6
-dp4 o5.y, r1, c5
-dp4 o5.x, r1, c4
 mov o3.xyz, v2
 mov o6.xyz, -r0
 dp4 o0.w, v0, c3
@@ -21803,12 +21896,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 29 instructions, 2 temp regs, 0 temp arrays:
-// ALU 26 float, 0 int, 0 uint
+// 32 instructions, 2 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedphhlnncfjlhnepfofknmgpepamejhimmabaaaaaabaagaaaaadaaaaaa
+eefieceddkkcfibbnbjalfnbjmkbdechcjifglglabaaaaaafmagaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -21820,7 +21913,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefchmaeaaaaeaaaabaabpabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcmiaeaaaaeaaaabaadcabaaaafjaaaaae
 egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaae
 egiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
 abaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaae
@@ -21852,11 +21945,13 @@ kgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpccabaaaadaaaaaaegiocaaa
 aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegaobaaaabaaaaaadiaaaaaihcaabaaa
 aaaaaaaafgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaa
 aaaaaaaaegiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaa
-dcaaaaakhccabaaaaeaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
-egacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaa
-adaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaa
-egacbaiaebaaaaaaaaaaaaaadoaaaaab"
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
+egacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+aeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
+dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -21897,7 +21992,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -22130,7 +22225,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -22501,7 +22596,7 @@ v2f vert( in appdata_t v ) {
     #line 433
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 437
     o.color = v.color;
@@ -22877,7 +22972,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -22984,7 +23079,7 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 26 ALU
+; 29 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -22997,26 +23092,29 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c13.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o5.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.w, c13.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c12
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o5.z, r1, c6
-dp4 o5.y, r1, c5
-dp4 o5.x, r1, c4
 mov o3.xyz, v2
 mov o6.xyz, -r0
 dp4 o0.w, v0, c3
@@ -23042,12 +23140,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 29 instructions, 2 temp regs, 0 temp arrays:
-// ALU 26 float, 0 int, 0 uint
+// 32 instructions, 2 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjngbjlnheefidpgefkacjllfmflmaphlabaaaaaabaagaaaaadaaaaaa
+eefiecedbnejkobfienlflhlnfekjfpkfafbillmabaaaaaafmagaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -23059,7 +23157,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefchmaeaaaaeaaaabaabpabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcmiaeaaaaeaaaabaadcabaaaafjaaaaae
 egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaae
 egiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
 abaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaae
@@ -23091,11 +23189,13 @@ kgakbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaa
 aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaa
 aaaaaaaafgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaa
 aaaaaaaaegiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaa
-dcaaaaakhccabaaaaeaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
-egacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaa
-adaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaa
-egacbaiaebaaaaaaaaaaaaaadoaaaaab"
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
+egacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+aeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
+dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -23136,7 +23236,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -23361,7 +23461,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -23724,7 +23824,7 @@ v2f vert( in appdata_t v ) {
     #line 425
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 429
     o.color = v.color;
@@ -24090,7 +24190,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -24196,7 +24296,7 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 25 ALU
+; 28 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -24209,25 +24309,28 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c13.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o5.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.w, c13.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c12
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o5.z, r1, c6
-dp4 o5.y, r1, c5
-dp4 o5.x, r1, c4
 mov o3.xyz, v2
 mov o6.xyz, -r0
 dp4 o0.w, v0, c3
@@ -24253,12 +24356,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 29 instructions, 2 temp regs, 0 temp arrays:
-// ALU 26 float, 0 int, 0 uint
+// 32 instructions, 2 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjjihcmfoheihdapnnheholfjjiojfgiaabaaaaaabaagaaaaadaaaaaa
+eefiecedhjipbhblkaekfkmmkahbafmhfflocoababaaaaaafmagaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -24270,7 +24373,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 adamaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefchmaeaaaaeaaaabaabpabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcmiaeaaaaeaaaabaadcabaaaafjaaaaae
 egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaae
 egiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
 abaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaae
@@ -24302,11 +24405,13 @@ kgakbaaaaaaaaaaaegaabaaaaaaaaaaadcaaaaakdccabaaaadaaaaaaegiacaaa
 aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegaabaaaaaaaaaaadiaaaaaihcaabaaa
 aaaaaaaafgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaa
 aaaaaaaaegiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaa
-dcaaaaakhccabaaaaeaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
-egacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaa
-adaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaa
-egacbaiaebaaaaaaaaaaaaaadoaaaaab"
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
+egacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+aeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
+dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -24347,7 +24452,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -24569,7 +24674,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -24928,7 +25033,7 @@ v2f vert( in appdata_t v ) {
     #line 424
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 428
     o.color = v.color;
@@ -25296,7 +25401,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -25424,7 +25529,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 34 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -25438,12 +25543,19 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c17.x
+dp4 r0.z, r1, c10
+dp4 r0.x, r1, c8
+dp4 r0.y, r1, c9
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
 dp4 r0.w, v0, c11
-mov r1.w, c17.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c16
 dp4 o4.w, r0, c15
 dp4 o4.z, r0, c14
 dp4 o4.y, r0, c13
@@ -25452,17 +25564,13 @@ dp4 o5.w, r0, c7
 dp4 o5.z, r0, c6
 dp4 o5.y, r0, c5
 dp4 o5.x, r0, c4
-add r0.xyz, -r0, c16
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c10
-dp4 o6.y, r1, c9
-dp4 o6.x, r1, c8
 mov o3.xyz, v2
 mov o7.xyz, -r0
 dp4 o0.w, v0, c3
@@ -25494,12 +25602,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityShadows" 2
 BindCB "UnityPerDraw" 3
-// 33 instructions, 2 temp regs, 0 temp arrays:
-// ALU 30 float, 0 int, 0 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 33 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedokogcikjllhpnbadkndmodehjechnpieabaaaaaanmagaaaaadaaaaaa
+eefiecedjiljiffimpneejaodciihkilfjlcljhiabaaaaaaciahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -25512,7 +25620,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcdaafaaaaeaaaabaaemabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefchmafaaaaeaaaabaafpabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 amaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -25549,11 +25657,14 @@ egiocaaaacaaaaaaakaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
 pccabaaaaeaaaaaaegiocaaaacaaaaaaalaaaaaapgapbaaaaaaaaaaaegaobaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaadaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaaadaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -25597,7 +25708,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -25853,7 +25964,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -26248,7 +26359,7 @@ v2f vert( in appdata_t v ) {
     #line 440
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 444
     o.color = v.color;
@@ -26640,7 +26751,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -26751,7 +26862,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 34 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -26765,12 +26876,19 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c17.x
+dp4 r0.z, r1, c10
+dp4 r0.x, r1, c8
+dp4 r0.y, r1, c9
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
 dp4 r0.w, v0, c11
-mov r1.w, c17.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c16
 dp4 o4.w, r0, c15
 dp4 o4.z, r0, c14
 dp4 o4.y, r0, c13
@@ -26779,17 +26897,13 @@ dp4 o5.w, r0, c7
 dp4 o5.z, r0, c6
 dp4 o5.y, r0, c5
 dp4 o5.x, r0, c4
-add r0.xyz, -r0, c16
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c10
-dp4 o6.y, r1, c9
-dp4 o6.x, r1, c8
 mov o3.xyz, v2
 mov o7.xyz, -r0
 dp4 o0.w, v0, c3
@@ -26821,12 +26935,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityShadows" 2
 BindCB "UnityPerDraw" 3
-// 33 instructions, 2 temp regs, 0 temp arrays:
-// ALU 30 float, 0 int, 0 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 33 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedokogcikjllhpnbadkndmodehjechnpieabaaaaaanmagaaaaadaaaaaa
+eefiecedjiljiffimpneejaodciihkilfjlcljhiabaaaaaaciahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -26839,7 +26953,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcdaafaaaaeaaaabaaemabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefchmafaaaaeaaaabaafpabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 amaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -26876,11 +26990,14 @@ egiocaaaacaaaaaaakaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
 pccabaaaaeaaaaaaegiocaaaacaaaaaaalaaaaaapgapbaaaaaaaaaaaegaobaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaadaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaaadaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -26925,7 +27042,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -27312,7 +27429,7 @@ v2f vert( in appdata_t v ) {
     #line 441
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 445
     o.color = v.color;
@@ -27714,7 +27831,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = o_4;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_3).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_3).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -27821,7 +27938,7 @@ Vector 9 [_ProjectionParams]
 Vector 10 [_ScreenParams]
 Matrix 4 [_Object2World]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -27834,20 +27951,22 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r0.xyz, v2
+mov r0.w, c11.x
+dp4 r2.z, r0, c6
+dp4 r2.x, r0, c4
+dp4 r2.y, r0, c5
+dp3 r0.x, r2, r2
+rsq r0.z, r0.x
+mul o5.xyz, r0.z, r2
 dp4 r0.w, v0, c3
 dp4 r0.z, v0, c2
 dp4 r0.x, v0, c0
 dp4 r0.y, v0, c1
 mul r1.xyz, r0.xyww, c11.y
+mov o0, r0
 mul r1.y, r1, c9.x
 mad o4.xy, r1.z, c10.zwzw, r1
-mov o0, r0
-mov o4.zw, r0
-mov r0.xyz, v2
-mov r0.w, c11.x
-dp4 o5.z, r0, c6
-dp4 o5.y, r0, c5
-dp4 o5.x, r0, c4
 dp3 r0.y, v3, v3
 dp4 r1.z, v0, c6
 dp4 r1.x, v0, c4
@@ -27855,6 +27974,7 @@ dp4 r1.y, v0, c5
 add r1.xyz, -r1, c8
 dp3 r0.x, r1, r1
 rsq r0.x, r0.x
+mov o4.zw, r0
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
@@ -27878,12 +27998,12 @@ Matrix 0 [glstate_matrix_mvp] 4
 Matrix 192 [_Object2World] 4
 BindCB "UnityPerCamera" 0
 BindCB "UnityPerDraw" 1
-// 26 instructions, 2 temp regs, 0 temp arrays:
-// ALU 21 float, 0 int, 0 uint
+// 29 instructions, 2 temp regs, 0 temp arrays:
+// ALU 24 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedlofnbhkcomeomceafaiamnanheikdkimabaaaaaafmafaaaaadaaaaaa
+eefiecedcbpldilioogkeboomelohjemheclncdjabaaaaaakiafaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -27895,7 +28015,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefcmiadaaaaeaaaabaapcaaaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcbeaeaaaaeaaaabaaafabaaaafjaaaaae
 egiocaaaaaaaaaaaagaaaaaafjaaaaaeegiocaaaabaaaaaabaaaaaaafpaaaaad
 pcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaa
 fpaaaaadhcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaad
@@ -27921,11 +28041,14 @@ aceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaaadaaaaaa
 kgaobaaaaaaaaaaaaaaaaaahdccabaaaadaaaaaakgakbaaaabaaaaaamgaabaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaabaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaabaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaaeaaaaaaegiccaaaabaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaabaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaaeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -27966,7 +28089,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -28209,7 +28332,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = o_6;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_5).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_5).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -28568,7 +28691,7 @@ v2f vert( in appdata_t v ) {
     #line 430
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 434
     o.color = v.color;
@@ -28953,7 +29076,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
   xlv_TEXCOORD4 = o_4;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_3).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_3).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -29063,7 +29186,7 @@ Vector 14 [_ScreenParams]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 30 ALU
+; 33 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -29077,34 +29200,37 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
-dp4 r1.w, v0, c3
-dp4 r1.z, v0, c2
-dp4 r1.x, v0, c0
-dp4 r1.y, v0, c1
-mul r0.xyz, r1.xyww, c15.y
-mul r0.y, r0, c13.x
-mad o5.xy, r0.z, c14.zwzw, r0
-dp4 r0.z, v0, c6
-dp4 r0.x, v0, c4
-dp4 r0.y, v0, c5
-dp4 r0.w, v0, c7
-mov o0, r1
-mov o5.zw, r1
-mov r1.w, c15.x
-mov r1.xyz, v2
-dp4 o4.y, r0, c9
-dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
-rsq r0.x, r0.x
+mov r0.xyz, v2
+mov r0.w, c15.x
+dp4 r2.z, r0, c6
+dp4 r2.x, r0, c4
+dp4 r2.y, r0, c5
+dp3 r0.x, r2, r2
+rsq r0.z, r0.x
+mul o6.xyz, r0.z, r2
+dp4 r0.w, v0, c3
+dp4 r0.z, v0, c2
+dp4 r0.x, v0, c0
+dp4 r0.y, v0, c1
+mul r1.xyz, r0.xyww, c15.y
+mov o0, r0
+mul r1.y, r1, c13.x
+mad o5.xy, r1.z, c14.zwzw, r1
 dp3 r0.y, v3, v3
+dp4 r1.z, v0, c6
+dp4 r1.x, v0, c4
+dp4 r1.y, v0, c5
+dp4 r1.w, v0, c7
+dp4 o4.y, r1, c9
+dp4 o4.x, r1, c8
+add r1.xyz, -r1, c12
+dp3 r0.x, r1, r1
+rsq r0.x, r0.x
+mov o5.zw, r0
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
 mov o3.xyz, v2
 mov o7.xyz, -r0
 "
@@ -29127,12 +29253,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 34 instructions, 3 temp regs, 0 temp arrays:
-// ALU 29 float, 0 int, 0 uint
+// 37 instructions, 3 temp regs, 0 temp arrays:
+// ALU 32 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjamhpjngpamgjafehoebffggmonaaahjabaaaaaamaagaaaaadaaaaaa
+eefiecedbbaeaopojimeogpjbddfpghkemabekmjabaaaaaaamahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -29145,7 +29271,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 adamaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcbeafaaaaeaaaabaaefabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcgaafaaaaeaaaabaafiabaaaafjaaaaaeegiocaaaaaaaaaaa
 ajaaaaaafjaaaaaeegiocaaaabaaaaaaagaaaaaafjaaaaaeegiocaaaacaaaaaa
 baaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaad
 hcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaa
@@ -29181,12 +29307,14 @@ aaaaaaaaaceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaa
 aeaaaaaakgaobaaaaaaaaaaaaaaaaaahdccabaaaaeaaaaaakgakbaaaabaaaaaa
 mgaabaaaabaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaa
 acaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaamaaaaaa
-agbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaa
-acaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaa
-aaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaa
-adaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab
-"
+agbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
+acaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaa
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaa
+aaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaa
+eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
+agaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaia
+ebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -29230,7 +29358,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -29480,7 +29608,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD4 = o_6;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_5).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_5).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -29845,7 +29973,7 @@ v2f vert( in appdata_t v ) {
     #line 433
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 437
     o.color = v.color;
@@ -30229,7 +30357,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -30357,7 +30485,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -30371,22 +30499,25 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c14.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.xyz, v2
-mov r1.w, c14.x
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
-dp3 r1.x, v3, v3
+add r1.xyz, -r0, c12
+dp3 r1.x, r1, r1
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r2.xyz, -r0, c12
-dp3 r0.w, r2, r2
-rsq r0.w, r0.w
+rsq r0.w, r1.x
+dp3 r1.x, v3, v3
 rcp o1.x, r0.w
 rsq r0.w, r1.x
 mul r1.xyz, r0.w, v3
@@ -30420,12 +30551,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
-// 30 instructions, 2 temp regs, 0 temp arrays:
-// ALU 27 float, 0 int, 0 uint
+// 33 instructions, 2 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkelpkoflfiddcmahafaoohgolnadhlghabaaaaaagiagaaaaadaaaaaa
+eefiecedojekdmflnnflpgalalimefklajhndahmabaaaaaaleagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -30438,7 +30569,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefclmaeaaaaeaaaabaacpabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcaiafaaaaeaaaabaaecabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 acaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -30471,12 +30602,14 @@ dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
 egacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaaaaaaaaaaaeaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaa
 acaaaaaaegiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
-adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaa
-afaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
-baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
-aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
-aaaaaaaadoaaaaab"
+adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaa
+agaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -30520,7 +30653,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -30774,7 +30907,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -31165,7 +31298,7 @@ v2f vert( in appdata_t v ) {
     #line 438
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 442
     o.color = v.color;
@@ -31560,7 +31693,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -31691,7 +31824,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -31705,22 +31838,25 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c14.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.xyz, v2
-mov r1.w, c14.x
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
-dp3 r1.x, v3, v3
+add r1.xyz, -r0, c12
+dp3 r1.x, r1, r1
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r2.xyz, -r0, c12
-dp3 r0.w, r2, r2
-rsq r0.w, r0.w
+rsq r0.w, r1.x
+dp3 r1.x, v3, v3
 rcp o1.x, r0.w
 rsq r0.w, r1.x
 mul r1.xyz, r0.w, v3
@@ -31754,12 +31890,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
-// 30 instructions, 2 temp regs, 0 temp arrays:
-// ALU 27 float, 0 int, 0 uint
+// 33 instructions, 2 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkelpkoflfiddcmahafaoohgolnadhlghabaaaaaagiagaaaaadaaaaaa
+eefiecedojekdmflnnflpgalalimefklajhndahmabaaaaaaleagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -31772,7 +31908,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefclmaeaaaaeaaaabaacpabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcaiafaaaaeaaaabaaecabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 acaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -31805,12 +31941,14 @@ dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
 egacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaaaaaaaaaaaeaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaa
 acaaaaaaegiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
-adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaa
-afaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
-baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
-aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
-aaaaaaaadoaaaaab"
+adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaa
+agaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -31854,7 +31992,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -32111,7 +32249,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -32506,7 +32644,7 @@ v2f vert( in appdata_t v ) {
     #line 439
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 443
     o.color = v.color;
@@ -32902,7 +33040,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -33063,7 +33201,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 34 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -33077,12 +33215,19 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c17.x
+dp4 r0.z, r1, c10
+dp4 r0.x, r1, c8
+dp4 r0.y, r1, c9
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
 dp4 r0.w, v0, c11
-mov r1.w, c17.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c16
 dp4 o4.w, r0, c15
 dp4 o4.z, r0, c14
 dp4 o4.y, r0, c13
@@ -33091,17 +33236,13 @@ dp4 o5.w, r0, c7
 dp4 o5.z, r0, c6
 dp4 o5.y, r0, c5
 dp4 o5.x, r0, c4
-add r0.xyz, -r0, c16
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c10
-dp4 o6.y, r1, c9
-dp4 o6.x, r1, c8
 mov o3.xyz, v2
 mov o7.xyz, -r0
 dp4 o0.w, v0, c3
@@ -33133,12 +33274,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityShadows" 2
 BindCB "UnityPerDraw" 3
-// 33 instructions, 2 temp regs, 0 temp arrays:
-// ALU 30 float, 0 int, 0 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 33 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedcapnndjcokdkakjbgbhjallnebhfbchlabaaaaaanmagaaaaadaaaaaa
+eefiecedagfmeiefoamligifhjimnanpaflifkdnabaaaaaaciahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -33151,7 +33292,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcdaafaaaaeaaaabaaemabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefchmafaaaaeaaaabaafpabaaaafjaaaaaeegiocaaaaaaaaaaa
 ajaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 amaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -33188,11 +33329,14 @@ egiocaaaacaaaaaaakaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
 pccabaaaaeaaaaaaegiocaaaacaaaaaaalaaaaaapgapbaaaaaaaaaaaegaobaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaadaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaaadaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -33236,7 +33380,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -33543,7 +33687,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -33990,7 +34134,7 @@ v2f vert( in appdata_t v ) {
     #line 448
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 452
     o.color = v.color;
@@ -34401,7 +34545,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -34523,7 +34667,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 34 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -34537,12 +34681,19 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c17.x
+dp4 r0.z, r1, c10
+dp4 r0.x, r1, c8
+dp4 r0.y, r1, c9
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
 dp4 r0.w, v0, c11
-mov r1.w, c17.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c16
 dp4 o4.w, r0, c15
 dp4 o4.z, r0, c14
 dp4 o4.y, r0, c13
@@ -34551,17 +34702,13 @@ dp4 o5.w, r0, c7
 dp4 o5.z, r0, c6
 dp4 o5.y, r0, c5
 dp4 o5.x, r0, c4
-add r0.xyz, -r0, c16
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c10
-dp4 o6.y, r1, c9
-dp4 o6.x, r1, c8
 mov o3.xyz, v2
 mov o7.xyz, -r0
 dp4 o0.w, v0, c3
@@ -34593,12 +34740,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityShadows" 2
 BindCB "UnityPerDraw" 3
-// 33 instructions, 2 temp regs, 0 temp arrays:
-// ALU 30 float, 0 int, 0 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 33 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedcapnndjcokdkakjbgbhjallnebhfbchlabaaaaaanmagaaaaadaaaaaa
+eefiecedagfmeiefoamligifhjimnanpaflifkdnabaaaaaaciahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -34611,7 +34758,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcdaafaaaaeaaaabaaemabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefchmafaaaaeaaaabaafpabaaaafjaaaaaeegiocaaaaaaaaaaa
 ajaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 amaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -34648,11 +34795,14 @@ egiocaaaacaaaaaaakaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
 pccabaaaaeaaaaaaegiocaaaacaaaaaaalaaaaaapgapbaaaaaaaaaaaegaobaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaadaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaaadaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -34697,7 +34847,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -35108,7 +35258,7 @@ v2f vert( in appdata_t v ) {
     #line 448
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 452
     o.color = v.color;
@@ -35511,7 +35661,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -35667,7 +35817,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -35681,22 +35831,25 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c14.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.xyz, v2
-mov r1.w, c14.x
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
-dp3 r1.x, v3, v3
+add r1.xyz, -r0, c12
+dp3 r1.x, r1, r1
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r2.xyz, -r0, c12
-dp3 r0.w, r2, r2
-rsq r0.w, r0.w
+rsq r0.w, r1.x
+dp3 r1.x, v3, v3
 rcp o1.x, r0.w
 rsq r0.w, r1.x
 mul r1.xyz, r0.w, v3
@@ -35730,12 +35883,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
-// 30 instructions, 2 temp regs, 0 temp arrays:
-// ALU 27 float, 0 int, 0 uint
+// 33 instructions, 2 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkelpkoflfiddcmahafaoohgolnadhlghabaaaaaagiagaaaaadaaaaaa
+eefiecedojekdmflnnflpgalalimefklajhndahmabaaaaaaleagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -35748,7 +35901,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefclmaeaaaaeaaaabaacpabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcaiafaaaaeaaaabaaecabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 acaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -35781,12 +35934,14 @@ dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
 egacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaaaaaaaaaaaeaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaa
 acaaaaaaegiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
-adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaa
-afaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
-baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
-aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
-aaaaaaaadoaaaaab"
+adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaa
+agaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -35830,7 +35985,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -36140,7 +36295,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -36587,7 +36742,7 @@ v2f vert( in appdata_t v ) {
     #line 444
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 448
     o.color = v.color;
@@ -36999,7 +37154,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -37158,7 +37313,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -37172,22 +37327,25 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c14.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.xyz, v2
-mov r1.w, c14.x
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
-dp3 r1.x, v3, v3
+add r1.xyz, -r0, c12
+dp3 r1.x, r1, r1
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r2.xyz, -r0, c12
-dp3 r0.w, r2, r2
-rsq r0.w, r0.w
+rsq r0.w, r1.x
+dp3 r1.x, v3, v3
 rcp o1.x, r0.w
 rsq r0.w, r1.x
 mul r1.xyz, r0.w, v3
@@ -37221,12 +37379,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
-// 30 instructions, 2 temp regs, 0 temp arrays:
-// ALU 27 float, 0 int, 0 uint
+// 33 instructions, 2 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkelpkoflfiddcmahafaoohgolnadhlghabaaaaaagiagaaaaadaaaaaa
+eefiecedojekdmflnnflpgalalimefklajhndahmabaaaaaaleagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -37239,7 +37397,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefclmaeaaaaeaaaabaacpabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcaiafaaaaeaaaabaaecabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 acaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -37272,12 +37430,14 @@ dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
 egacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaaaaaaaaaaaeaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaa
 acaaaaaaegiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
-adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaa
-afaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
-baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
-aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
-aaaaaaaadoaaaaab"
+adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaa
+agaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -37321,7 +37481,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -37634,7 +37794,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -38085,7 +38245,7 @@ v2f vert( in appdata_t v ) {
     #line 445
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 449
     o.color = v.color;
@@ -38495,7 +38655,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -38623,7 +38783,7 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 26 ALU
+; 29 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -38636,26 +38796,29 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c13.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o5.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.w, c13.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c12
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o5.z, r1, c6
-dp4 o5.y, r1, c5
-dp4 o5.x, r1, c4
 mov o3.xyz, v2
 mov o6.xyz, -r0
 dp4 o0.w, v0, c3
@@ -38681,12 +38844,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 29 instructions, 2 temp regs, 0 temp arrays:
-// ALU 26 float, 0 int, 0 uint
+// 32 instructions, 2 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjngbjlnheefidpgefkacjllfmflmaphlabaaaaaabaagaaaaadaaaaaa
+eefiecedbnejkobfienlflhlnfekjfpkfafbillmabaaaaaafmagaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -38698,7 +38861,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefchmaeaaaaeaaaabaabpabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcmiaeaaaaeaaaabaadcabaaaafjaaaaae
 egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaae
 egiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
 abaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaae
@@ -38730,11 +38893,13 @@ kgakbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaa
 aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaa
 aaaaaaaafgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaa
 aaaaaaaaegiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaa
-dcaaaaakhccabaaaaeaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
-egacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaa
-adaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaa
-egacbaiaebaaaaaaaaaaaaaadoaaaaab"
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
+egacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+aeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
+dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -38775,7 +38940,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -39069,7 +39234,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -39505,7 +39670,7 @@ v2f vert( in appdata_t v ) {
     #line 428
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 432
     o.color = v.color;
@@ -39893,7 +40058,7 @@ void main ()
   xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -40018,7 +40183,7 @@ Matrix 0 [glstate_matrix_mvp]
 Vector 8 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 "vs_3_0
-; 22 ALU
+; 25 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -40030,18 +40195,21 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
-mov r0.xyz, v2
-mov r0.w, c9.x
-dp4 o4.z, r0, c6
-dp4 o4.y, r0, c5
-dp4 o4.x, r0, c4
-dp3 r0.y, v3, v3
-dp4 r1.z, v0, c6
-dp4 r1.x, v0, c4
-dp4 r1.y, v0, c5
-add r1.xyz, -r1, c8
-dp3 r0.x, r1, r1
+mov r1.w, c9.x
+mov r1.xyz, v2
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o4.xyz, r0.w, r0
+dp4 r0.z, v0, c6
+dp4 r0.x, v0, c4
+dp4 r0.y, v0, c5
+add r0.xyz, -r0, c8
+dp3 r0.x, r0, r0
 rsq r0.x, r0.x
+dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
@@ -40068,12 +40236,12 @@ Matrix 0 [glstate_matrix_mvp] 4
 Matrix 192 [_Object2World] 4
 BindCB "UnityPerCamera" 0
 BindCB "UnityPerDraw" 1
-// 21 instructions, 1 temp regs, 0 temp arrays:
-// ALU 18 float, 0 int, 0 uint
+// 24 instructions, 1 temp regs, 0 temp arrays:
+// ALU 21 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedellchjpccbpgdfajoollnnijhnfogonfabaaaaaakmaeaaaaadaaaaaa
+eefiecediapopkioojboekpkcodldfhijppeeonoabaaaaaapiaeaaaaadaaaaaa
 cmaaaaaalmaaaaaaheabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -40084,8 +40252,8 @@ apaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaabaoaaaakeaaaaaa
 acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaakeaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaakeaaaaaaafaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaakeaaaaaaagaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaafdfgfpfa
-epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcdaadaaaaeaaaabaa
-mmaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefchmadaaaaeaaaabaa
+npaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
 baaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaad
 hcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaa
 abaaaaaagfaaaaadbccabaaaabaaaaaagfaaaaadoccabaaaabaaaaaagfaaaaad
@@ -40106,11 +40274,13 @@ abaaaaaaakaabaaaaaaaaaaadgaaaaafoccabaaaabaaaaaaagbjbaaaacaaaaaa
 dgaaaaafpccabaaaacaaaaaaegbobaaaabaaaaaadiaaaaaihcaabaaaaaaaaaaa
 fgbfbaaaacaaaaaaegiccaaaabaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaa
 egiccaaaabaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaak
-hccabaaaadaaaaaaegiccaaaabaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaa
-aaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaa
-eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
-agaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaaeaaaaaaegacbaia
-ebaaaaaaaaaaaaaadoaaaaab"
+hcaabaaaaaaaaaaaegiccaaaabaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaa
+aaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaa
+eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaadaaaaaa
+pgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaa
+adaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+diaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaag
+hccabaaaaeaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -40148,7 +40318,7 @@ void main ()
   xlv_TEXCOORD0 = sqrt(dot (p_3, p_3));
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -40433,7 +40603,7 @@ void main ()
   xlv_TEXCOORD0 = sqrt(dot (p_3, p_3));
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -40859,7 +41029,7 @@ v2f vert( in appdata_t v ) {
     #line 425
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 429
     o.color = v.color;
@@ -41241,7 +41411,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -41370,7 +41540,7 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -41383,27 +41553,30 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c13.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o5.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.w, c13.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c12
 dp4 o4.w, r0, c11
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o5.z, r1, c6
-dp4 o5.y, r1, c5
-dp4 o5.x, r1, c4
 mov o3.xyz, v2
 mov o6.xyz, -r0
 dp4 o0.w, v0, c3
@@ -41429,12 +41602,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 29 instructions, 2 temp regs, 0 temp arrays:
-// ALU 26 float, 0 int, 0 uint
+// 32 instructions, 2 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedphhlnncfjlhnepfofknmgpepamejhimmabaaaaaabaagaaaaadaaaaaa
+eefieceddkkcfibbnbjalfnbjmkbdechcjifglglabaaaaaafmagaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -41446,7 +41619,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefchmaeaaaaeaaaabaabpabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcmiaeaaaaeaaaabaadcabaaaafjaaaaae
 egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaae
 egiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
 abaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaae
@@ -41478,11 +41651,13 @@ kgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpccabaaaadaaaaaaegiocaaa
 aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegaobaaaabaaaaaadiaaaaaihcaabaaa
 aaaaaaaafgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaa
 aaaaaaaaegiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaa
-dcaaaaakhccabaaaaeaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
-egacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaa
-adaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaa
-egacbaiaebaaaaaaaaaaaaaadoaaaaab"
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
+egacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+aeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
+dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -41523,7 +41698,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -41826,7 +42001,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -42272,7 +42447,7 @@ v2f vert( in appdata_t v ) {
     #line 437
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 441
     o.color = v.color;
@@ -42674,7 +42849,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -42803,7 +42978,7 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 26 ALU
+; 29 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -42816,26 +42991,29 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c13.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o5.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.w, c13.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c12
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o5.z, r1, c6
-dp4 o5.y, r1, c5
-dp4 o5.x, r1, c4
 mov o3.xyz, v2
 mov o6.xyz, -r0
 dp4 o0.w, v0, c3
@@ -42861,12 +43039,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 29 instructions, 2 temp regs, 0 temp arrays:
-// ALU 26 float, 0 int, 0 uint
+// 32 instructions, 2 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjngbjlnheefidpgefkacjllfmflmaphlabaaaaaabaagaaaaadaaaaaa
+eefiecedbnejkobfienlflhlnfekjfpkfafbillmabaaaaaafmagaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -42878,7 +43056,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefchmaeaaaaeaaaabaabpabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcmiaeaaaaeaaaabaadcabaaaafjaaaaae
 egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaae
 egiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
 abaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaae
@@ -42910,11 +43088,13 @@ kgakbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaa
 aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaa
 aaaaaaaafgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaa
 aaaaaaaaegiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaa
-dcaaaaakhccabaaaaeaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
-egacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaa
-adaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaa
-egacbaiaebaaaaaaaaaaaaaadoaaaaab"
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
+egacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+aeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
+dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -42955,7 +43135,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -43250,7 +43430,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -43688,7 +43868,7 @@ v2f vert( in appdata_t v ) {
     #line 429
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 433
     o.color = v.color;
@@ -44080,7 +44260,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -44208,7 +44388,7 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 25 ALU
+; 28 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -44221,25 +44401,28 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c13.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o5.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.w, c13.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c12
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o5.z, r1, c6
-dp4 o5.y, r1, c5
-dp4 o5.x, r1, c4
 mov o3.xyz, v2
 mov o6.xyz, -r0
 dp4 o0.w, v0, c3
@@ -44265,12 +44448,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 29 instructions, 2 temp regs, 0 temp arrays:
-// ALU 26 float, 0 int, 0 uint
+// 32 instructions, 2 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjjihcmfoheihdapnnheholfjjiojfgiaabaaaaaabaagaaaaadaaaaaa
+eefiecedhjipbhblkaekfkmmkahbafmhfflocoababaaaaaafmagaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -44282,7 +44465,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 adamaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefchmaeaaaaeaaaabaabpabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcmiaeaaaaeaaaabaadcabaaaafjaaaaae
 egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaae
 egiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
 abaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaae
@@ -44314,11 +44497,13 @@ kgakbaaaaaaaaaaaegaabaaaaaaaaaaadcaaaaakdccabaaaadaaaaaaegiacaaa
 aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegaabaaaaaaaaaaadiaaaaaihcaabaaa
 aaaaaaaafgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaa
 aaaaaaaaegiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaa
-dcaaaaakhccabaaaaeaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
-egacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaa
-adaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaa
-egacbaiaebaaaaaaaaaaaaaadoaaaaab"
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
+egacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+aeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
+dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -44359,7 +44544,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -44651,7 +44836,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -45085,7 +45270,7 @@ v2f vert( in appdata_t v ) {
     #line 428
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 432
     o.color = v.color;
@@ -45479,7 +45664,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -45626,7 +45811,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 34 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -45640,12 +45825,19 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c17.x
+dp4 r0.z, r1, c10
+dp4 r0.x, r1, c8
+dp4 r0.y, r1, c9
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
 dp4 r0.w, v0, c11
-mov r1.w, c17.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c16
 dp4 o4.w, r0, c15
 dp4 o4.z, r0, c14
 dp4 o4.y, r0, c13
@@ -45654,17 +45846,13 @@ dp4 o5.w, r0, c7
 dp4 o5.z, r0, c6
 dp4 o5.y, r0, c5
 dp4 o5.x, r0, c4
-add r0.xyz, -r0, c16
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c10
-dp4 o6.y, r1, c9
-dp4 o6.x, r1, c8
 mov o3.xyz, v2
 mov o7.xyz, -r0
 dp4 o0.w, v0, c3
@@ -45696,12 +45884,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityShadows" 2
 BindCB "UnityPerDraw" 3
-// 33 instructions, 2 temp regs, 0 temp arrays:
-// ALU 30 float, 0 int, 0 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 33 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedokogcikjllhpnbadkndmodehjechnpieabaaaaaanmagaaaaadaaaaaa
+eefiecedjiljiffimpneejaodciihkilfjlcljhiabaaaaaaciahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -45714,7 +45902,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcdaafaaaaeaaaabaaemabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefchmafaaaaeaaaabaafpabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 amaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -45751,11 +45939,14 @@ egiocaaaacaaaaaaakaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
 pccabaaaaeaaaaaaegiocaaaacaaaaaaalaaaaaapgapbaaaaaaaaaaaegaobaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaadaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaaadaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -45799,7 +45990,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -46122,7 +46313,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -46589,7 +46780,7 @@ v2f vert( in appdata_t v ) {
     #line 444
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 448
     o.color = v.color;
@@ -47007,7 +47198,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -47140,7 +47331,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 34 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -47154,12 +47345,19 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c17.x
+dp4 r0.z, r1, c10
+dp4 r0.x, r1, c8
+dp4 r0.y, r1, c9
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
 dp4 r0.w, v0, c11
-mov r1.w, c17.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c16
 dp4 o4.w, r0, c15
 dp4 o4.z, r0, c14
 dp4 o4.y, r0, c13
@@ -47168,17 +47366,13 @@ dp4 o5.w, r0, c7
 dp4 o5.z, r0, c6
 dp4 o5.y, r0, c5
 dp4 o5.x, r0, c4
-add r0.xyz, -r0, c16
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c10
-dp4 o6.y, r1, c9
-dp4 o6.x, r1, c8
 mov o3.xyz, v2
 mov o7.xyz, -r0
 dp4 o0.w, v0, c3
@@ -47210,12 +47404,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityShadows" 2
 BindCB "UnityPerDraw" 3
-// 33 instructions, 2 temp regs, 0 temp arrays:
-// ALU 30 float, 0 int, 0 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 33 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedokogcikjllhpnbadkndmodehjechnpieabaaaaaanmagaaaaadaaaaaa
+eefiecedjiljiffimpneejaodciihkilfjlcljhiabaaaaaaciahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -47228,7 +47422,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcdaafaaaaeaaaabaaemabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefchmafaaaaeaaaabaafpabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 amaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -47265,11 +47459,14 @@ egiocaaaacaaaaaaakaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
 pccabaaaaeaaaaaaegiocaaaacaaaaaaalaaaaaapgapbaaaaaaaaaaaegaobaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaadaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaaadaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -47314,7 +47511,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -47776,7 +47973,7 @@ v2f vert( in appdata_t v ) {
     #line 445
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 449
     o.color = v.color;
@@ -48204,7 +48401,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = o_4;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_3).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_3).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -48333,7 +48530,7 @@ Vector 9 [_ProjectionParams]
 Vector 10 [_ScreenParams]
 Matrix 4 [_Object2World]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -48346,20 +48543,22 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r0.xyz, v2
+mov r0.w, c11.x
+dp4 r2.z, r0, c6
+dp4 r2.x, r0, c4
+dp4 r2.y, r0, c5
+dp3 r0.x, r2, r2
+rsq r0.z, r0.x
+mul o5.xyz, r0.z, r2
 dp4 r0.w, v0, c3
 dp4 r0.z, v0, c2
 dp4 r0.x, v0, c0
 dp4 r0.y, v0, c1
 mul r1.xyz, r0.xyww, c11.y
+mov o0, r0
 mul r1.y, r1, c9.x
 mad o4.xy, r1.z, c10.zwzw, r1
-mov o0, r0
-mov o4.zw, r0
-mov r0.xyz, v2
-mov r0.w, c11.x
-dp4 o5.z, r0, c6
-dp4 o5.y, r0, c5
-dp4 o5.x, r0, c4
 dp3 r0.y, v3, v3
 dp4 r1.z, v0, c6
 dp4 r1.x, v0, c4
@@ -48367,6 +48566,7 @@ dp4 r1.y, v0, c5
 add r1.xyz, -r1, c8
 dp3 r0.x, r1, r1
 rsq r0.x, r0.x
+mov o4.zw, r0
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
@@ -48390,12 +48590,12 @@ Matrix 0 [glstate_matrix_mvp] 4
 Matrix 192 [_Object2World] 4
 BindCB "UnityPerCamera" 0
 BindCB "UnityPerDraw" 1
-// 26 instructions, 2 temp regs, 0 temp arrays:
-// ALU 21 float, 0 int, 0 uint
+// 29 instructions, 2 temp regs, 0 temp arrays:
+// ALU 24 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedlofnbhkcomeomceafaiamnanheikdkimabaaaaaafmafaaaaadaaaaaa
+eefiecedcbpldilioogkeboomelohjemheclncdjabaaaaaakiafaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -48407,7 +48607,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefcmiadaaaaeaaaabaapcaaaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcbeaeaaaaeaaaabaaafabaaaafjaaaaae
 egiocaaaaaaaaaaaagaaaaaafjaaaaaeegiocaaaabaaaaaabaaaaaaafpaaaaad
 pcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaa
 fpaaaaadhcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaad
@@ -48433,11 +48633,14 @@ aceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaaadaaaaaa
 kgaobaaaaaaaaaaaaaaaaaahdccabaaaadaaaaaakgakbaaaabaaaaaamgaabaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaabaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaabaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaaeaaaaaaegiccaaaabaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaabaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaaeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -48478,7 +48681,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -48791,7 +48994,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = o_6;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_5).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_5).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -49225,7 +49428,7 @@ v2f vert( in appdata_t v ) {
     #line 434
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 438
     o.color = v.color;
@@ -49636,7 +49839,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
   xlv_TEXCOORD4 = o_4;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_3).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_3).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -49768,7 +49971,7 @@ Vector 14 [_ScreenParams]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 30 ALU
+; 33 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -49782,34 +49985,37 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
-dp4 r1.w, v0, c3
-dp4 r1.z, v0, c2
-dp4 r1.x, v0, c0
-dp4 r1.y, v0, c1
-mul r0.xyz, r1.xyww, c15.y
-mul r0.y, r0, c13.x
-mad o5.xy, r0.z, c14.zwzw, r0
-dp4 r0.z, v0, c6
-dp4 r0.x, v0, c4
-dp4 r0.y, v0, c5
-dp4 r0.w, v0, c7
-mov o0, r1
-mov o5.zw, r1
-mov r1.w, c15.x
-mov r1.xyz, v2
-dp4 o4.y, r0, c9
-dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
-rsq r0.x, r0.x
+mov r0.xyz, v2
+mov r0.w, c15.x
+dp4 r2.z, r0, c6
+dp4 r2.x, r0, c4
+dp4 r2.y, r0, c5
+dp3 r0.x, r2, r2
+rsq r0.z, r0.x
+mul o6.xyz, r0.z, r2
+dp4 r0.w, v0, c3
+dp4 r0.z, v0, c2
+dp4 r0.x, v0, c0
+dp4 r0.y, v0, c1
+mul r1.xyz, r0.xyww, c15.y
+mov o0, r0
+mul r1.y, r1, c13.x
+mad o5.xy, r1.z, c14.zwzw, r1
 dp3 r0.y, v3, v3
+dp4 r1.z, v0, c6
+dp4 r1.x, v0, c4
+dp4 r1.y, v0, c5
+dp4 r1.w, v0, c7
+dp4 o4.y, r1, c9
+dp4 o4.x, r1, c8
+add r1.xyz, -r1, c12
+dp3 r0.x, r1, r1
+rsq r0.x, r0.x
+mov o5.zw, r0
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
 mov o3.xyz, v2
 mov o7.xyz, -r0
 "
@@ -49832,12 +50038,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 34 instructions, 3 temp regs, 0 temp arrays:
-// ALU 29 float, 0 int, 0 uint
+// 37 instructions, 3 temp regs, 0 temp arrays:
+// ALU 32 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjamhpjngpamgjafehoebffggmonaaahjabaaaaaamaagaaaaadaaaaaa
+eefiecedbbaeaopojimeogpjbddfpghkemabekmjabaaaaaaamahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -49850,7 +50056,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 adamaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcbeafaaaaeaaaabaaefabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcgaafaaaaeaaaabaafiabaaaafjaaaaaeegiocaaaaaaaaaaa
 ajaaaaaafjaaaaaeegiocaaaabaaaaaaagaaaaaafjaaaaaeegiocaaaacaaaaaa
 baaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaad
 hcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaa
@@ -49886,12 +50092,14 @@ aaaaaaaaaceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaa
 aeaaaaaakgaobaaaaaaaaaaaaaaaaaahdccabaaaaeaaaaaakgakbaaaabaaaaaa
 mgaabaaaabaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaa
 acaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaamaaaaaa
-agbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaa
-acaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaa
-aaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaa
-adaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab
-"
+agbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
+acaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaa
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaa
+aaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaa
+eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
+agaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaia
+ebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -49935,7 +50143,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -50255,7 +50463,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD4 = o_6;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_5).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_5).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -50695,7 +50903,7 @@ v2f vert( in appdata_t v ) {
     #line 437
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 441
     o.color = v.color;
@@ -51105,7 +51313,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -51252,7 +51460,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -51266,22 +51474,25 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c14.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.xyz, v2
-mov r1.w, c14.x
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
-dp3 r1.x, v3, v3
+add r1.xyz, -r0, c12
+dp3 r1.x, r1, r1
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r2.xyz, -r0, c12
-dp3 r0.w, r2, r2
-rsq r0.w, r0.w
+rsq r0.w, r1.x
+dp3 r1.x, v3, v3
 rcp o1.x, r0.w
 rsq r0.w, r1.x
 mul r1.xyz, r0.w, v3
@@ -51315,12 +51526,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
-// 30 instructions, 2 temp regs, 0 temp arrays:
-// ALU 27 float, 0 int, 0 uint
+// 33 instructions, 2 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkelpkoflfiddcmahafaoohgolnadhlghabaaaaaagiagaaaaadaaaaaa
+eefiecedojekdmflnnflpgalalimefklajhndahmabaaaaaaleagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -51333,7 +51544,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefclmaeaaaaeaaaabaacpabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcaiafaaaaeaaaabaaecabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 acaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -51366,12 +51577,14 @@ dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
 egacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaaaaaaaaaaaeaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaa
 acaaaaaaegiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
-adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaa
-afaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
-baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
-aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
-aaaaaaaadoaaaaab"
+adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaa
+agaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -51415,7 +51628,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -51736,7 +51949,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -52199,7 +52412,7 @@ v2f vert( in appdata_t v ) {
     #line 442
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 446
     o.color = v.color;
@@ -52620,7 +52833,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -52770,7 +52983,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -52784,22 +52997,25 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c14.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.xyz, v2
-mov r1.w, c14.x
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
-dp3 r1.x, v3, v3
+add r1.xyz, -r0, c12
+dp3 r1.x, r1, r1
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r2.xyz, -r0, c12
-dp3 r0.w, r2, r2
-rsq r0.w, r0.w
+rsq r0.w, r1.x
+dp3 r1.x, v3, v3
 rcp o1.x, r0.w
 rsq r0.w, r1.x
 mul r1.xyz, r0.w, v3
@@ -52833,12 +53049,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
-// 30 instructions, 2 temp regs, 0 temp arrays:
-// ALU 27 float, 0 int, 0 uint
+// 33 instructions, 2 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkelpkoflfiddcmahafaoohgolnadhlghabaaaaaagiagaaaaadaaaaaa
+eefiecedojekdmflnnflpgalalimefklajhndahmabaaaaaaleagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -52851,7 +53067,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefclmaeaaaaeaaaabaacpabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcaiafaaaaeaaaabaaecabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 acaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -52884,12 +53100,14 @@ dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
 egacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaaaaaaaaaaaeaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaa
 acaaaaaaegiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
-adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaa
-afaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
-baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
-aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
-aaaaaaaadoaaaaab"
+adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaa
+agaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -52933,7 +53151,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -53257,7 +53475,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -53724,7 +53942,7 @@ v2f vert( in appdata_t v ) {
     #line 443
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 447
     o.color = v.color;
@@ -54146,7 +54364,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -54326,7 +54544,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 34 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -54340,12 +54558,19 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c17.x
+dp4 r0.z, r1, c10
+dp4 r0.x, r1, c8
+dp4 r0.y, r1, c9
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
 dp4 r0.w, v0, c11
-mov r1.w, c17.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c16
 dp4 o4.w, r0, c15
 dp4 o4.z, r0, c14
 dp4 o4.y, r0, c13
@@ -54354,17 +54579,13 @@ dp4 o5.w, r0, c7
 dp4 o5.z, r0, c6
 dp4 o5.y, r0, c5
 dp4 o5.x, r0, c4
-add r0.xyz, -r0, c16
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c10
-dp4 o6.y, r1, c9
-dp4 o6.x, r1, c8
 mov o3.xyz, v2
 mov o7.xyz, -r0
 dp4 o0.w, v0, c3
@@ -54396,12 +54617,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityShadows" 2
 BindCB "UnityPerDraw" 3
-// 33 instructions, 2 temp regs, 0 temp arrays:
-// ALU 30 float, 0 int, 0 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 33 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedcapnndjcokdkakjbgbhjallnebhfbchlabaaaaaanmagaaaaadaaaaaa
+eefiecedagfmeiefoamligifhjimnanpaflifkdnabaaaaaaciahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -54414,7 +54635,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcdaafaaaaeaaaabaaemabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefchmafaaaaeaaaabaafpabaaaafjaaaaaeegiocaaaaaaaaaaa
 ajaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 amaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -54451,11 +54672,14 @@ egiocaaaacaaaaaaakaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
 pccabaaaaeaaaaaaegiocaaaacaaaaaaalaaaaaapgapbaaaaaaaaaaaegaobaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaadaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaaadaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -54499,7 +54723,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -54873,7 +55097,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -55392,7 +55616,7 @@ v2f vert( in appdata_t v ) {
     #line 452
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 456
     o.color = v.color;
@@ -55829,7 +56053,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -55973,7 +56197,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 34 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -55987,12 +56211,19 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c17.x
+dp4 r0.z, r1, c10
+dp4 r0.x, r1, c8
+dp4 r0.y, r1, c9
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
 dp4 r0.w, v0, c11
-mov r1.w, c17.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c16
 dp4 o4.w, r0, c15
 dp4 o4.z, r0, c14
 dp4 o4.y, r0, c13
@@ -56001,17 +56232,13 @@ dp4 o5.w, r0, c7
 dp4 o5.z, r0, c6
 dp4 o5.y, r0, c5
 dp4 o5.x, r0, c4
-add r0.xyz, -r0, c16
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c10
-dp4 o6.y, r1, c9
-dp4 o6.x, r1, c8
 mov o3.xyz, v2
 mov o7.xyz, -r0
 dp4 o0.w, v0, c3
@@ -56043,12 +56270,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityShadows" 2
 BindCB "UnityPerDraw" 3
-// 33 instructions, 2 temp regs, 0 temp arrays:
-// ALU 30 float, 0 int, 0 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 33 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedcapnndjcokdkakjbgbhjallnebhfbchlabaaaaaanmagaaaaadaaaaaa
+eefiecedagfmeiefoamligifhjimnanpaflifkdnabaaaaaaciahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -56061,7 +56288,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcdaafaaaaeaaaabaaemabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefchmafaaaaeaaaabaafpabaaaafjaaaaaeegiocaaaaaaaaaaa
 ajaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 amaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -56098,11 +56325,14 @@ egiocaaaacaaaaaaakaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
 pccabaaaaeaaaaaaegiocaaaacaaaaaaalaaaaaapgapbaaaaaaaaaaaegaobaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaadaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaaadaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -56147,7 +56377,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -56633,7 +56863,7 @@ v2f vert( in appdata_t v ) {
     #line 452
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 456
     o.color = v.color;
@@ -57062,7 +57292,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -57237,7 +57467,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -57251,22 +57481,25 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c14.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.xyz, v2
-mov r1.w, c14.x
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
-dp3 r1.x, v3, v3
+add r1.xyz, -r0, c12
+dp3 r1.x, r1, r1
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r2.xyz, -r0, c12
-dp3 r0.w, r2, r2
-rsq r0.w, r0.w
+rsq r0.w, r1.x
+dp3 r1.x, v3, v3
 rcp o1.x, r0.w
 rsq r0.w, r1.x
 mul r1.xyz, r0.w, v3
@@ -57300,12 +57533,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
-// 30 instructions, 2 temp regs, 0 temp arrays:
-// ALU 27 float, 0 int, 0 uint
+// 33 instructions, 2 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkelpkoflfiddcmahafaoohgolnadhlghabaaaaaagiagaaaaadaaaaaa
+eefiecedojekdmflnnflpgalalimefklajhndahmabaaaaaaleagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -57318,7 +57551,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefclmaeaaaaeaaaabaacpabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcaiafaaaaeaaaabaaecabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 acaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -57351,12 +57584,14 @@ dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
 egacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaaaaaaaaaaaeaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaa
 acaaaaaaegiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
-adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaa
-afaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
-baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
-aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
-aaaaaaaadoaaaaab"
+adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaa
+agaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -57400,7 +57635,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -57777,7 +58012,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -58296,7 +58531,7 @@ v2f vert( in appdata_t v ) {
     #line 448
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 452
     o.color = v.color;
@@ -58734,7 +58969,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -58912,7 +59147,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -58926,22 +59161,25 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c14.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.xyz, v2
-mov r1.w, c14.x
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
-dp3 r1.x, v3, v3
+add r1.xyz, -r0, c12
+dp3 r1.x, r1, r1
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r2.xyz, -r0, c12
-dp3 r0.w, r2, r2
-rsq r0.w, r0.w
+rsq r0.w, r1.x
+dp3 r1.x, v3, v3
 rcp o1.x, r0.w
 rsq r0.w, r1.x
 mul r1.xyz, r0.w, v3
@@ -58975,12 +59213,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
-// 30 instructions, 2 temp regs, 0 temp arrays:
-// ALU 27 float, 0 int, 0 uint
+// 33 instructions, 2 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkelpkoflfiddcmahafaoohgolnadhlghabaaaaaagiagaaaaadaaaaaa
+eefiecedojekdmflnnflpgalalimefklajhndahmabaaaaaaleagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -58993,7 +59231,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefclmaeaaaaeaaaabaacpabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcaiafaaaaeaaaabaaecabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 acaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -59026,12 +59264,14 @@ dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
 egacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaaaaaaaaaaaeaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaa
 acaaaaaaegiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
-adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaa
-afaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
-baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
-aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
-aaaaaaaadoaaaaab"
+adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaa
+agaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -59075,7 +59315,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -59455,7 +59695,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -59978,7 +60218,7 @@ v2f vert( in appdata_t v ) {
     #line 449
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 453
     o.color = v.color;
@@ -60414,7 +60654,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -60542,7 +60782,7 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 26 ALU
+; 29 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -60555,26 +60795,29 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c13.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o5.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.w, c13.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c12
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o5.z, r1, c6
-dp4 o5.y, r1, c5
-dp4 o5.x, r1, c4
 mov o3.xyz, v2
 mov o6.xyz, -r0
 dp4 o0.w, v0, c3
@@ -60600,12 +60843,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 29 instructions, 2 temp regs, 0 temp arrays:
-// ALU 26 float, 0 int, 0 uint
+// 32 instructions, 2 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjngbjlnheefidpgefkacjllfmflmaphlabaaaaaabaagaaaaadaaaaaa
+eefiecedbnejkobfienlflhlnfekjfpkfafbillmabaaaaaafmagaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -60617,7 +60860,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefchmaeaaaaeaaaabaabpabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcmiaeaaaaeaaaabaadcabaaaafjaaaaae
 egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaae
 egiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
 abaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaae
@@ -60649,11 +60892,13 @@ kgakbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaa
 aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaa
 aaaaaaaafgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaa
 aaaaaaaaegiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaa
-dcaaaaakhccabaaaaeaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
-egacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaa
-adaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaa
-egacbaiaebaaaaaaaaaaaaaadoaaaaab"
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
+egacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+aeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
+dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -60694,7 +60939,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -60988,7 +61233,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -61424,7 +61669,7 @@ v2f vert( in appdata_t v ) {
     #line 428
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 432
     o.color = v.color;
@@ -61812,7 +62057,7 @@ void main ()
   xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -61937,7 +62182,7 @@ Matrix 0 [glstate_matrix_mvp]
 Vector 8 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 "vs_3_0
-; 22 ALU
+; 25 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -61949,18 +62194,21 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
-mov r0.xyz, v2
-mov r0.w, c9.x
-dp4 o4.z, r0, c6
-dp4 o4.y, r0, c5
-dp4 o4.x, r0, c4
-dp3 r0.y, v3, v3
-dp4 r1.z, v0, c6
-dp4 r1.x, v0, c4
-dp4 r1.y, v0, c5
-add r1.xyz, -r1, c8
-dp3 r0.x, r1, r1
+mov r1.w, c9.x
+mov r1.xyz, v2
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o4.xyz, r0.w, r0
+dp4 r0.z, v0, c6
+dp4 r0.x, v0, c4
+dp4 r0.y, v0, c5
+add r0.xyz, -r0, c8
+dp3 r0.x, r0, r0
 rsq r0.x, r0.x
+dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
@@ -61987,12 +62235,12 @@ Matrix 0 [glstate_matrix_mvp] 4
 Matrix 192 [_Object2World] 4
 BindCB "UnityPerCamera" 0
 BindCB "UnityPerDraw" 1
-// 21 instructions, 1 temp regs, 0 temp arrays:
-// ALU 18 float, 0 int, 0 uint
+// 24 instructions, 1 temp regs, 0 temp arrays:
+// ALU 21 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedellchjpccbpgdfajoollnnijhnfogonfabaaaaaakmaeaaaaadaaaaaa
+eefiecediapopkioojboekpkcodldfhijppeeonoabaaaaaapiaeaaaaadaaaaaa
 cmaaaaaalmaaaaaaheabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -62003,8 +62251,8 @@ apaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaabaoaaaakeaaaaaa
 acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaakeaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaakeaaaaaaafaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaakeaaaaaaagaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaafdfgfpfa
-epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcdaadaaaaeaaaabaa
-mmaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefchmadaaaaeaaaabaa
+npaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaa
 baaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaad
 hcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaa
 abaaaaaagfaaaaadbccabaaaabaaaaaagfaaaaadoccabaaaabaaaaaagfaaaaad
@@ -62025,11 +62273,13 @@ abaaaaaaakaabaaaaaaaaaaadgaaaaafoccabaaaabaaaaaaagbjbaaaacaaaaaa
 dgaaaaafpccabaaaacaaaaaaegbobaaaabaaaaaadiaaaaaihcaabaaaaaaaaaaa
 fgbfbaaaacaaaaaaegiccaaaabaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaa
 egiccaaaabaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaak
-hccabaaaadaaaaaaegiccaaaabaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaa
-aaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaa
-eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
-agaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaaeaaaaaaegacbaia
-ebaaaaaaaaaaaaaadoaaaaab"
+hcaabaaaaaaaaaaaegiccaaaabaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaa
+aaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaa
+eeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaadaaaaaa
+pgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaa
+adaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+diaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaag
+hccabaaaaeaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -62067,7 +62317,7 @@ void main ()
   xlv_TEXCOORD0 = sqrt(dot (p_3, p_3));
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -62352,7 +62602,7 @@ void main ()
   xlv_TEXCOORD0 = sqrt(dot (p_3, p_3));
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -62778,7 +63028,7 @@ v2f vert( in appdata_t v ) {
     #line 425
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 429
     o.color = v.color;
@@ -63160,7 +63410,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -63289,7 +63539,7 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -63302,27 +63552,30 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c13.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o5.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.w, c13.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c12
 dp4 o4.w, r0, c11
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o5.z, r1, c6
-dp4 o5.y, r1, c5
-dp4 o5.x, r1, c4
 mov o3.xyz, v2
 mov o6.xyz, -r0
 dp4 o0.w, v0, c3
@@ -63348,12 +63601,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 29 instructions, 2 temp regs, 0 temp arrays:
-// ALU 26 float, 0 int, 0 uint
+// 32 instructions, 2 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedphhlnncfjlhnepfofknmgpepamejhimmabaaaaaabaagaaaaadaaaaaa
+eefieceddkkcfibbnbjalfnbjmkbdechcjifglglabaaaaaafmagaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -63365,7 +63618,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefchmaeaaaaeaaaabaabpabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcmiaeaaaaeaaaabaadcabaaaafjaaaaae
 egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaae
 egiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
 abaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaae
@@ -63397,11 +63650,13 @@ kgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpccabaaaadaaaaaaegiocaaa
 aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegaobaaaabaaaaaadiaaaaaihcaabaaa
 aaaaaaaafgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaa
 aaaaaaaaegiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaa
-dcaaaaakhccabaaaaeaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
-egacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaa
-adaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaa
-egacbaiaebaaaaaaaaaaaaaadoaaaaab"
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
+egacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+aeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
+dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -63442,7 +63697,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -63745,7 +64000,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -64191,7 +64446,7 @@ v2f vert( in appdata_t v ) {
     #line 437
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 441
     o.color = v.color;
@@ -64593,7 +64848,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -64722,7 +64977,7 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 26 ALU
+; 29 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -64735,26 +64990,29 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c13.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o5.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.w, c13.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c12
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o5.z, r1, c6
-dp4 o5.y, r1, c5
-dp4 o5.x, r1, c4
 mov o3.xyz, v2
 mov o6.xyz, -r0
 dp4 o0.w, v0, c3
@@ -64780,12 +65038,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 29 instructions, 2 temp regs, 0 temp arrays:
-// ALU 26 float, 0 int, 0 uint
+// 32 instructions, 2 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjngbjlnheefidpgefkacjllfmflmaphlabaaaaaabaagaaaaadaaaaaa
+eefiecedbnejkobfienlflhlnfekjfpkfafbillmabaaaaaafmagaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -64797,7 +65055,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefchmaeaaaaeaaaabaabpabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcmiaeaaaaeaaaabaadcabaaaafjaaaaae
 egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaae
 egiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
 abaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaae
@@ -64829,11 +65087,13 @@ kgakbaaaaaaaaaaaegacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaa
 aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaa
 aaaaaaaafgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaa
 aaaaaaaaegiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaa
-dcaaaaakhccabaaaaeaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
-egacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaa
-adaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaa
-egacbaiaebaaaaaaaaaaaaaadoaaaaab"
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
+egacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+aeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
+dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -64874,7 +65134,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -65169,7 +65429,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -65607,7 +65867,7 @@ v2f vert( in appdata_t v ) {
     #line 429
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 433
     o.color = v.color;
@@ -65999,7 +66259,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -66127,7 +66387,7 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 25 ALU
+; 28 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -66140,25 +66400,28 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c13.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o5.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.w, c13.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c12
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o5.z, r1, c6
-dp4 o5.y, r1, c5
-dp4 o5.x, r1, c4
 mov o3.xyz, v2
 mov o6.xyz, -r0
 dp4 o0.w, v0, c3
@@ -66184,12 +66447,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 29 instructions, 2 temp regs, 0 temp arrays:
-// ALU 26 float, 0 int, 0 uint
+// 32 instructions, 2 temp regs, 0 temp arrays:
+// ALU 29 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjjihcmfoheihdapnnheholfjjiojfgiaabaaaaaabaagaaaaadaaaaaa
+eefiecedhjipbhblkaekfkmmkahbafmhfflocoababaaaaaafmagaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -66201,7 +66464,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 adamaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefchmaeaaaaeaaaabaabpabaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcmiaeaaaaeaaaabaadcabaaaafjaaaaae
 egiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaae
 egiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaa
 abaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaae
@@ -66233,11 +66496,13 @@ kgakbaaaaaaaaaaaegaabaaaaaaaaaaadcaaaaakdccabaaaadaaaaaaegiacaaa
 aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegaabaaaaaaaaaaadiaaaaaihcaabaaa
 aaaaaaaafgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaa
 aaaaaaaaegiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaa
-dcaaaaakhccabaaaaeaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
-egacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaa
-adaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
-aaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaa
-egacbaiaebaaaaaaaaaaaaaadoaaaaab"
+dcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaaoaaaaaakgbkbaaaacaaaaaa
+egacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaa
+aeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
+dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -66278,7 +66543,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -66570,7 +66835,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -67004,7 +67269,7 @@ v2f vert( in appdata_t v ) {
     #line 428
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 432
     o.color = v.color;
@@ -67398,7 +67663,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -67545,7 +67810,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 34 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -67559,12 +67824,19 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c17.x
+dp4 r0.z, r1, c10
+dp4 r0.x, r1, c8
+dp4 r0.y, r1, c9
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
 dp4 r0.w, v0, c11
-mov r1.w, c17.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c16
 dp4 o4.w, r0, c15
 dp4 o4.z, r0, c14
 dp4 o4.y, r0, c13
@@ -67573,17 +67845,13 @@ dp4 o5.w, r0, c7
 dp4 o5.z, r0, c6
 dp4 o5.y, r0, c5
 dp4 o5.x, r0, c4
-add r0.xyz, -r0, c16
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c10
-dp4 o6.y, r1, c9
-dp4 o6.x, r1, c8
 mov o3.xyz, v2
 mov o7.xyz, -r0
 dp4 o0.w, v0, c3
@@ -67615,12 +67883,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityShadows" 2
 BindCB "UnityPerDraw" 3
-// 33 instructions, 2 temp regs, 0 temp arrays:
-// ALU 30 float, 0 int, 0 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 33 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedokogcikjllhpnbadkndmodehjechnpieabaaaaaanmagaaaaadaaaaaa
+eefiecedjiljiffimpneejaodciihkilfjlcljhiabaaaaaaciahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -67633,7 +67901,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcdaafaaaaeaaaabaaemabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefchmafaaaaeaaaabaafpabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 amaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -67670,11 +67938,14 @@ egiocaaaacaaaaaaakaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
 pccabaaaaeaaaaaaegiocaaaacaaaaaaalaaaaaapgapbaaaaaaaaaaaegaobaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaadaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaaadaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -67718,7 +67989,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -68041,7 +68312,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -68508,7 +68779,7 @@ v2f vert( in appdata_t v ) {
     #line 444
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 448
     o.color = v.color;
@@ -68926,7 +69197,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -69059,7 +69330,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 34 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -69073,12 +69344,19 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c17.x
+dp4 r0.z, r1, c10
+dp4 r0.x, r1, c8
+dp4 r0.y, r1, c9
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
 dp4 r0.w, v0, c11
-mov r1.w, c17.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c16
 dp4 o4.w, r0, c15
 dp4 o4.z, r0, c14
 dp4 o4.y, r0, c13
@@ -69087,17 +69365,13 @@ dp4 o5.w, r0, c7
 dp4 o5.z, r0, c6
 dp4 o5.y, r0, c5
 dp4 o5.x, r0, c4
-add r0.xyz, -r0, c16
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c10
-dp4 o6.y, r1, c9
-dp4 o6.x, r1, c8
 mov o3.xyz, v2
 mov o7.xyz, -r0
 dp4 o0.w, v0, c3
@@ -69129,12 +69403,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityShadows" 2
 BindCB "UnityPerDraw" 3
-// 33 instructions, 2 temp regs, 0 temp arrays:
-// ALU 30 float, 0 int, 0 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 33 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedokogcikjllhpnbadkndmodehjechnpieabaaaaaanmagaaaaadaaaaaa
+eefiecedjiljiffimpneejaodciihkilfjlcljhiabaaaaaaciahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -69147,7 +69421,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcdaafaaaaeaaaabaaemabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefchmafaaaaeaaaabaafpabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 amaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -69184,11 +69458,14 @@ egiocaaaacaaaaaaakaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
 pccabaaaaeaaaaaaegiocaaaacaaaaaaalaaaaaapgapbaaaaaaaaaaaegaobaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaadaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaaadaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -69233,7 +69510,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -69695,7 +69972,7 @@ v2f vert( in appdata_t v ) {
     #line 445
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 449
     o.color = v.color;
@@ -70123,7 +70400,7 @@ void main ()
   xlv_TEXCOORD1 = gl_Color;
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = o_4;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_3).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_3).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -70252,7 +70529,7 @@ Vector 9 [_ProjectionParams]
 Vector 10 [_ScreenParams]
 Matrix 4 [_Object2World]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -70265,20 +70542,22 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r0.xyz, v2
+mov r0.w, c11.x
+dp4 r2.z, r0, c6
+dp4 r2.x, r0, c4
+dp4 r2.y, r0, c5
+dp3 r0.x, r2, r2
+rsq r0.z, r0.x
+mul o5.xyz, r0.z, r2
 dp4 r0.w, v0, c3
 dp4 r0.z, v0, c2
 dp4 r0.x, v0, c0
 dp4 r0.y, v0, c1
 mul r1.xyz, r0.xyww, c11.y
+mov o0, r0
 mul r1.y, r1, c9.x
 mad o4.xy, r1.z, c10.zwzw, r1
-mov o0, r0
-mov o4.zw, r0
-mov r0.xyz, v2
-mov r0.w, c11.x
-dp4 o5.z, r0, c6
-dp4 o5.y, r0, c5
-dp4 o5.x, r0, c4
 dp3 r0.y, v3, v3
 dp4 r1.z, v0, c6
 dp4 r1.x, v0, c4
@@ -70286,6 +70565,7 @@ dp4 r1.y, v0, c5
 add r1.xyz, -r1, c8
 dp3 r0.x, r1, r1
 rsq r0.x, r0.x
+mov o4.zw, r0
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
@@ -70309,12 +70589,12 @@ Matrix 0 [glstate_matrix_mvp] 4
 Matrix 192 [_Object2World] 4
 BindCB "UnityPerCamera" 0
 BindCB "UnityPerDraw" 1
-// 26 instructions, 2 temp regs, 0 temp arrays:
-// ALU 21 float, 0 int, 0 uint
+// 29 instructions, 2 temp regs, 0 temp arrays:
+// ALU 24 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedlofnbhkcomeomceafaiamnanheikdkimabaaaaaafmafaaaaadaaaaaa
+eefiecedcbpldilioogkeboomelohjemheclncdjabaaaaaakiafaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -70326,7 +70606,7 @@ acaaaaaaaaaaaaaaadaaaaaaabaaaaaaaoabaaaalmaaaaaaabaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaapaaaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaalmaaaaaa
 agaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefcmiadaaaaeaaaabaapcaaaaaafjaaaaae
+feeffiedepepfceeaaklklklfdeieefcbeaeaaaaeaaaabaaafabaaaafjaaaaae
 egiocaaaaaaaaaaaagaaaaaafjaaaaaeegiocaaaabaaaaaabaaaaaaafpaaaaad
 pcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaa
 fpaaaaadhcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaad
@@ -70352,11 +70632,14 @@ aceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaaadaaaaaa
 kgaobaaaaaaaaaaaaaaaaaahdccabaaaadaaaaaakgakbaaaabaaaaaamgaabaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaabaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaabaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaaeaaaaaaegiccaaaabaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaabaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaaeaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -70397,7 +70680,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -70710,7 +70993,7 @@ void main ()
   xlv_TEXCOORD1 = _glesColor;
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = o_6;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_5).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_5).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -71144,7 +71427,7 @@ v2f vert( in appdata_t v ) {
     #line 434
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 438
     o.color = v.color;
@@ -71555,7 +71838,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
   xlv_TEXCOORD4 = o_4;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_3).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_3).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -71687,7 +71970,7 @@ Vector 14 [_ScreenParams]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 30 ALU
+; 33 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -71701,34 +71984,37 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
-dp4 r1.w, v0, c3
-dp4 r1.z, v0, c2
-dp4 r1.x, v0, c0
-dp4 r1.y, v0, c1
-mul r0.xyz, r1.xyww, c15.y
-mul r0.y, r0, c13.x
-mad o5.xy, r0.z, c14.zwzw, r0
-dp4 r0.z, v0, c6
-dp4 r0.x, v0, c4
-dp4 r0.y, v0, c5
-dp4 r0.w, v0, c7
-mov o0, r1
-mov o5.zw, r1
-mov r1.w, c15.x
-mov r1.xyz, v2
-dp4 o4.y, r0, c9
-dp4 o4.x, r0, c8
-add r0.xyz, -r0, c12
-dp3 r0.x, r0, r0
-rsq r0.x, r0.x
+mov r0.xyz, v2
+mov r0.w, c15.x
+dp4 r2.z, r0, c6
+dp4 r2.x, r0, c4
+dp4 r2.y, r0, c5
+dp3 r0.x, r2, r2
+rsq r0.z, r0.x
+mul o6.xyz, r0.z, r2
+dp4 r0.w, v0, c3
+dp4 r0.z, v0, c2
+dp4 r0.x, v0, c0
+dp4 r0.y, v0, c1
+mul r1.xyz, r0.xyww, c15.y
+mov o0, r0
+mul r1.y, r1, c13.x
+mad o5.xy, r1.z, c14.zwzw, r1
 dp3 r0.y, v3, v3
+dp4 r1.z, v0, c6
+dp4 r1.x, v0, c4
+dp4 r1.y, v0, c5
+dp4 r1.w, v0, c7
+dp4 o4.y, r1, c9
+dp4 o4.x, r1, c8
+add r1.xyz, -r1, c12
+dp3 r0.x, r1, r1
+rsq r0.x, r0.x
+mov o5.zw, r0
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
 mov o3.xyz, v2
 mov o7.xyz, -r0
 "
@@ -71751,12 +72037,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 34 instructions, 3 temp regs, 0 temp arrays:
-// ALU 29 float, 0 int, 0 uint
+// 37 instructions, 3 temp regs, 0 temp arrays:
+// ALU 32 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedjamhpjngpamgjafehoebffggmonaaahjabaaaaaamaagaaaaadaaaaaa
+eefiecedbbaeaopojimeogpjbddfpghkemabekmjabaaaaaaamahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -71769,7 +72055,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 adamaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcbeafaaaaeaaaabaaefabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcgaafaaaaeaaaabaafiabaaaafjaaaaaeegiocaaaaaaaaaaa
 ajaaaaaafjaaaaaeegiocaaaabaaaaaaagaaaaaafjaaaaaeegiocaaaacaaaaaa
 baaaaaaafpaaaaadpcbabaaaaaaaaaaafpaaaaadpcbabaaaabaaaaaafpaaaaad
 hcbabaaaacaaaaaafpaaaaadhcbabaaaadaaaaaaghaaaaaepccabaaaaaaaaaaa
@@ -71805,12 +72091,14 @@ aaaaaaaaaceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaa
 aeaaaaaakgaobaaaaaaaaaaaaaaaaaahdccabaaaaeaaaaaakgakbaaaabaaaaaa
 mgaabaaaabaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaa
 acaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaacaaaaaaamaaaaaa
-agbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaa
-acaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaa
-aaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaa
-adaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab
-"
+agbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
+acaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaa
+aaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaa
+aaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaa
+eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
+agaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaia
+ebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -71854,7 +72142,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -72174,7 +72462,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD4 = o_6;
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_5).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_5).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -72614,7 +72902,7 @@ v2f vert( in appdata_t v ) {
     #line 437
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 441
     o.color = v.color;
@@ -73024,7 +73312,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -73171,7 +73459,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -73185,22 +73473,25 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c14.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.xyz, v2
-mov r1.w, c14.x
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
-dp3 r1.x, v3, v3
+add r1.xyz, -r0, c12
+dp3 r1.x, r1, r1
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r2.xyz, -r0, c12
-dp3 r0.w, r2, r2
-rsq r0.w, r0.w
+rsq r0.w, r1.x
+dp3 r1.x, v3, v3
 rcp o1.x, r0.w
 rsq r0.w, r1.x
 mul r1.xyz, r0.w, v3
@@ -73234,12 +73525,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
-// 30 instructions, 2 temp regs, 0 temp arrays:
-// ALU 27 float, 0 int, 0 uint
+// 33 instructions, 2 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkelpkoflfiddcmahafaoohgolnadhlghabaaaaaagiagaaaaadaaaaaa
+eefiecedojekdmflnnflpgalalimefklajhndahmabaaaaaaleagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -73252,7 +73543,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefclmaeaaaaeaaaabaacpabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcaiafaaaaeaaaabaaecabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 acaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -73285,12 +73576,14 @@ dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
 egacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaaaaaaaaaaaeaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaa
 acaaaaaaegiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
-adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaa
-afaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
-baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
-aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
-aaaaaaaadoaaaaab"
+adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaa
+agaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -73334,7 +73627,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -73655,7 +73948,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -74118,7 +74411,7 @@ v2f vert( in appdata_t v ) {
     #line 442
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 446
     o.color = v.color;
@@ -74539,7 +74832,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -74689,7 +74982,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -74703,22 +74996,25 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c14.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.xyz, v2
-mov r1.w, c14.x
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
-dp3 r1.x, v3, v3
+add r1.xyz, -r0, c12
+dp3 r1.x, r1, r1
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r2.xyz, -r0, c12
-dp3 r0.w, r2, r2
-rsq r0.w, r0.w
+rsq r0.w, r1.x
+dp3 r1.x, v3, v3
 rcp o1.x, r0.w
 rsq r0.w, r1.x
 mul r1.xyz, r0.w, v3
@@ -74752,12 +75048,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
-// 30 instructions, 2 temp regs, 0 temp arrays:
-// ALU 27 float, 0 int, 0 uint
+// 33 instructions, 2 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkelpkoflfiddcmahafaoohgolnadhlghabaaaaaagiagaaaaadaaaaaa
+eefiecedojekdmflnnflpgalalimefklajhndahmabaaaaaaleagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -74770,7 +75066,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefclmaeaaaaeaaaabaacpabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcaiafaaaaeaaaabaaecabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 acaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -74803,12 +75099,14 @@ dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
 egacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaaaaaaaaaaaeaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaa
 acaaaaaaegiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
-adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaa
-afaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
-baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
-aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
-aaaaaaaadoaaaaab"
+adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaa
+agaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -74852,7 +75150,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -75176,7 +75474,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -75643,7 +75941,7 @@ v2f vert( in appdata_t v ) {
     #line 443
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 447
     o.color = v.color;
@@ -76065,7 +76363,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -76245,7 +76543,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 34 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -76259,12 +76557,19 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c17.x
+dp4 r0.z, r1, c10
+dp4 r0.x, r1, c8
+dp4 r0.y, r1, c9
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
 dp4 r0.w, v0, c11
-mov r1.w, c17.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c16
 dp4 o4.w, r0, c15
 dp4 o4.z, r0, c14
 dp4 o4.y, r0, c13
@@ -76273,17 +76578,13 @@ dp4 o5.w, r0, c7
 dp4 o5.z, r0, c6
 dp4 o5.y, r0, c5
 dp4 o5.x, r0, c4
-add r0.xyz, -r0, c16
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c10
-dp4 o6.y, r1, c9
-dp4 o6.x, r1, c8
 mov o3.xyz, v2
 mov o7.xyz, -r0
 dp4 o0.w, v0, c3
@@ -76315,12 +76616,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityShadows" 2
 BindCB "UnityPerDraw" 3
-// 33 instructions, 2 temp regs, 0 temp arrays:
-// ALU 30 float, 0 int, 0 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 33 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedcapnndjcokdkakjbgbhjallnebhfbchlabaaaaaanmagaaaaadaaaaaa
+eefiecedagfmeiefoamligifhjimnanpaflifkdnabaaaaaaciahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -76333,7 +76634,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcdaafaaaaeaaaabaaemabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefchmafaaaaeaaaabaafpabaaaafjaaaaaeegiocaaaaaaaaaaa
 ajaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 amaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -76370,11 +76671,14 @@ egiocaaaacaaaaaaakaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
 pccabaaaaeaaaaaaegiocaaaacaaaaaaalaaaaaapgapbaaaaaaaaaaaegaobaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaadaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaaadaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -76418,7 +76722,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -76792,7 +77096,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -77311,7 +77615,7 @@ v2f vert( in appdata_t v ) {
     #line 452
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 456
     o.color = v.color;
@@ -77748,7 +78052,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -77892,7 +78196,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 34 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -77906,12 +78210,19 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c17.x
+dp4 r0.z, r1, c10
+dp4 r0.x, r1, c8
+dp4 r0.y, r1, c9
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
 dp4 r0.w, v0, c11
-mov r1.w, c17.x
-mov r1.xyz, v2
+add r1.xyz, -r0, c16
 dp4 o4.w, r0, c15
 dp4 o4.z, r0, c14
 dp4 o4.y, r0, c13
@@ -77920,17 +78231,13 @@ dp4 o5.w, r0, c7
 dp4 o5.z, r0, c6
 dp4 o5.y, r0, c5
 dp4 o5.x, r0, c4
-add r0.xyz, -r0, c16
-dp3 r0.x, r0, r0
+dp3 r0.x, r1, r1
 rsq r0.x, r0.x
 dp3 r0.y, v3, v3
 rsq r0.y, r0.y
 rcp o1.x, r0.x
 mul r0.xyz, r0.y, v3
 mov o2, v1
-dp4 o6.z, r1, c10
-dp4 o6.y, r1, c9
-dp4 o6.x, r1, c8
 mov o3.xyz, v2
 mov o7.xyz, -r0
 dp4 o0.w, v0, c3
@@ -77962,12 +78269,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityShadows" 2
 BindCB "UnityPerDraw" 3
-// 33 instructions, 2 temp regs, 0 temp arrays:
-// ALU 30 float, 0 int, 0 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 33 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedcapnndjcokdkakjbgbhjallnebhfbchlabaaaaaanmagaaaaadaaaaaa
+eefiecedagfmeiefoamligifhjimnanpaflifkdnabaaaaaaciahaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -77980,7 +78287,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefcdaafaaaaeaaaabaaemabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefchmafaaaaeaaaabaafpabaaaafjaaaaaeegiocaaaaaaaaaaa
 ajaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 amaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -78017,11 +78324,14 @@ egiocaaaacaaaaaaakaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
 pccabaaaaeaaaaaaegiocaaaacaaaaaaalaaaaaapgapbaaaaaaaaaaaegaobaaa
 abaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaaegiccaaaadaaaaaa
 anaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaaamaaaaaaagbabaaa
-acaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaaafaaaaaaegiccaaaadaaaaaa
-aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
-dgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
+acaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
+aoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaa
+baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
+aaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -78066,7 +78376,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -78552,7 +78862,7 @@ v2f vert( in appdata_t v ) {
     #line 452
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 456
     o.color = v.color;
@@ -78981,7 +79291,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -79156,7 +79466,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -79170,22 +79480,25 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c14.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.xyz, v2
-mov r1.w, c14.x
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
-dp3 r1.x, v3, v3
+add r1.xyz, -r0, c12
+dp3 r1.x, r1, r1
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r2.xyz, -r0, c12
-dp3 r0.w, r2, r2
-rsq r0.w, r0.w
+rsq r0.w, r1.x
+dp3 r1.x, v3, v3
 rcp o1.x, r0.w
 rsq r0.w, r1.x
 mul r1.xyz, r0.w, v3
@@ -79219,12 +79532,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
-// 30 instructions, 2 temp regs, 0 temp arrays:
-// ALU 27 float, 0 int, 0 uint
+// 33 instructions, 2 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkelpkoflfiddcmahafaoohgolnadhlghabaaaaaagiagaaaaadaaaaaa
+eefiecedojekdmflnnflpgalalimefklajhndahmabaaaaaaleagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -79237,7 +79550,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefclmaeaaaaeaaaabaacpabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcaiafaaaaeaaaabaaecabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 acaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -79270,12 +79583,14 @@ dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
 egacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaaaaaaaaaaaeaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaa
 acaaaaaaegiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
-adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaa
-afaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
-baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
-aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
-aaaaaaaadoaaaaab"
+adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaa
+agaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -79319,7 +79634,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -79696,7 +80011,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -80215,7 +80530,7 @@ v2f vert( in appdata_t v ) {
     #line 448
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 452
     o.color = v.color;
@@ -80653,7 +80968,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_2).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = -(normalize(TANGENT));
 }
 
@@ -80831,7 +81146,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 27 ALU
+; 30 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -80845,22 +81160,25 @@ dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
 dcl_tangent0 v3
+mov r1.xyz, v2
+mov r1.w, c14.x
+dp4 r0.z, r1, c6
+dp4 r0.x, r1, c4
+dp4 r0.y, r1, c5
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul o6.xyz, r0.w, r0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
 dp4 r0.w, v0, c7
-mov r1.xyz, v2
-mov r1.w, c14.x
-dp4 o6.z, r1, c6
-dp4 o6.y, r1, c5
-dp4 o6.x, r1, c4
-dp3 r1.x, v3, v3
+add r1.xyz, -r0, c12
+dp3 r1.x, r1, r1
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
-add r2.xyz, -r0, c12
-dp3 r0.w, r2, r2
-rsq r0.w, r0.w
+rsq r0.w, r1.x
+dp3 r1.x, v3, v3
 rcp o1.x, r0.w
 rsq r0.w, r1.x
 mul r1.xyz, r0.w, v3
@@ -80894,12 +81212,12 @@ BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityLighting" 2
 BindCB "UnityPerDraw" 3
-// 30 instructions, 2 temp regs, 0 temp arrays:
-// ALU 27 float, 0 int, 0 uint
+// 33 instructions, 2 temp regs, 0 temp arrays:
+// ALU 30 float, 0 int, 0 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedkelpkoflfiddcmahafaoohgolnadhlghabaaaaaagiagaaaaadaaaaaa
+eefiecedojekdmflnnflpgalalimefklajhndahmabaaaaaaleagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -80912,7 +81230,7 @@ adaaaaaaacaaaaaaapaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 ahaiaaaaneaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaahaiaaaaneaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaahaiaaaaneaaaaaaagaaaaaaaaaaaaaa
 adaaaaaaagaaaaaaahaiaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
-aaklklklfdeieefclmaeaaaaeaaaabaacpabaaaafjaaaaaeegiocaaaaaaaaaaa
+aaklklklfdeieefcaiafaaaaeaaaabaaecabaaaafjaaaaaeegiocaaaaaaaaaaa
 afaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaa
 acaaaaaafjaaaaaeegiocaaaadaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadpcbabaaaabaaaaaafpaaaaadhcbabaaaacaaaaaafpaaaaadhcbabaaa
@@ -80945,12 +81263,14 @@ dcaaaaakhcaabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
 egacbaaaabaaaaaadcaaaaakhccabaaaadaaaaaaegiccaaaaaaaaaaaaeaaaaaa
 pgapbaaaaaaaaaaaegacbaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaa
 acaaaaaaegiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaa
-adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhccabaaa
-afaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
-baaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaaf
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaa
-aaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaa
-aaaaaaaadoaaaaab"
+adaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaa
+aaaaaaaaegiccaaaadaaaaaaaoaaaaaakgbkbaaaacaaaaaaegacbaaaaaaaaaaa
+baaaaaahicaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahhccabaaaafaaaaaapgapbaaa
+aaaaaaaaegacbaaaaaaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaadaaaaaa
+egbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+hcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaadgaaaaaghccabaaa
+agaaaaaaegacbaiaebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -80994,7 +81314,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -81374,7 +81694,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = (_Object2World * tmpvar_4).xyz;
+  xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = -(normalize(tmpvar_2.xyz));
 }
 
@@ -81897,7 +82217,7 @@ v2f vert( in appdata_t v ) {
     #line 449
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = (_Object2World * vec4( v.normal, 0.0)).xyz;
+    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
     o.sphereNormal = (-normalize(v.tangent));
     #line 453
     o.color = v.color;
@@ -104253,7 +104573,7 @@ Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "POINT_COOKIE" "SHADOWS_CUBE" "SHADO
 
 }
 
-#LINE 183
+#LINE 181
 
 	
 		}
@@ -108955,10 +109275,10 @@ Keywords { "DIRECTIONAL_COOKIE" }
 
 }
 
-#LINE 244
+#LINE 242
 
         }
 	} 
 	
-	FallBack "VertexLit"    // Use VertexLit's shadow caster/receiver passes.
+	FallBack "VertexLit"
 }

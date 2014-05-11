@@ -16,10 +16,19 @@ namespace Terrain
         protected override ObjectType objectType { get { return ObjectType.PLANET; } }
         protected override String configName { get { return "EVE_TERRAIN"; } }
 
-        public static void StaticSetup()
+        protected override void SingleSetup()
         {
-            TerrainManager tm = new TerrainManager();
-            tm.Setup();
+            Log("SingleSetup ");
+            Camera[] cameras = Camera.allCameras;
+            foreach (Camera cam in cameras)
+            {
+                Log("updating " + cam.name+" far "+cam.farClipPlane);
+                if (cam.name == "Camera 01" || cam.name == "Camera 00")
+                {
+                    cam.depthTextureMode = DepthTextureMode.Depth;
+                }
+                
+            }
         }
 
     }

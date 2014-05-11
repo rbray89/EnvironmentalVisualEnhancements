@@ -20,12 +20,5 @@ namespace CityLights
         public CityLightsManager()
         { }
 
-        public override void Setup()
-        {
-            TerrainManager.StaticSetup();
-            base.Setup();
-        }
-
-
     }
 }
