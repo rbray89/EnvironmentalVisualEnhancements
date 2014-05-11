@@ -1,4 +1,4 @@
-﻿Shader "Sphere/Planet" {
+﻿Shader "Sphere/Ocean" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_SpecColor ("Specular tint", Color) = (1,1,1,1)
@@ -13,7 +13,7 @@
 	
 SubShader {
 
-Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
+Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "OceanReplace"="True"}
 	Blend SrcAlpha OneMinusSrcAlpha
 	Fog { Mode Global}
 	AlphaTest Greater 0
@@ -52,7 +52,8 @@ Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"
 		float _MinLight;
 		float _Clarity;
 		sampler2D _CameraDepthTexture;
-		
+		float4x4 _CameraToWorld;
+
 		struct appdata_t {
 				float4 vertex : POSITION;
 				float3 normal : NORMAL;
@@ -68,7 +69,8 @@ Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"
 			LIGHTING_COORDS(3,4)
 			float3 sphereNormal : TEXCOORD5;
 			float4 color : TEXCOORD6;
-			float3 scrPos : TEXCOORD7;
+			float4 scrPos : TEXCOORD7;
+			float3 ray : TEXCOORD8;
 		};	
 		
 
@@ -147,11 +149,16 @@ Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"
  
             light += main.a*specularReflection;
 			
-			float depth = LinearEyeDepth(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.scrPos)).r)-IN.scrPos.z;
-			
 			color.rgb *= light;
 			
-			color.a = saturate(_Clarity*depth);
+			//depth opacity
+			float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.scrPos)));
+			float satDepth = saturate(.002*(IN.viewDist-600));
+			depth = LinearEyeDepth(depth);
+			
+			depth -= IN.scrPos.z;
+    		depth = saturate(_Clarity*depth);
+			color.a = lerp(.8, depth, satDepth);
 			
           	return color;
 		}

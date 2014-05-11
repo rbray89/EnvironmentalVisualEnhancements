@@ -110,42 +110,7 @@ namespace Terrain
         private GameObject pqsTerrainContainer;
         private GameObject pqsOceanContainer;
         private Shader originalShader;
-        private static Shader oceanShader = null;
-        private static Shader planetShader = null;
-        private static Shader terrainShader = null;
-        private static Shader OceanShader
-        {
-            get
-            {
-                if (oceanShader == null)
-                {
-                    Assembly assembly = Assembly.GetExecutingAssembly();
-                    oceanShader = EVEManagerClass.GetShader(assembly, "Terrain.Shaders.Compiled-SphereOcean.shader");
-                } return oceanShader;
-            }
-        }
-        private static Shader PlanetShader
-        {
-            get
-            {
-                if (planetShader == null)
-                {
-                    Assembly assembly = Assembly.GetExecutingAssembly();
-                    planetShader = EVEManagerClass.GetShader(assembly, "Terrain.Shaders.Compiled-SpherePlanet.shader");
-                } return planetShader;
-            }
-        }
-        private static Shader TerrainShader
-        {
-            get
-            {
-                if (terrainShader == null)
-                {
-                    Assembly assembly = Assembly.GetExecutingAssembly();
-                    terrainShader = EVEManagerClass.GetShader(assembly, "Terrain.Shaders.Compiled-SphereTerrain.shader");
-                } return terrainShader;
-            }
-        }
+        
         public void LoadConfigNode(ConfigNode node, String body)
         {
             ConfigNode.LoadObjectFromConfig(this, node);
@@ -170,7 +135,7 @@ namespace Terrain
                 if (mr != null)
                 {
                     mainTexture = mr.material.mainTexture;
-                    mr.material.shader = new Material(PlanetShader).shader;
+                    mr.material.shader = new Material(TerrainManager.PlanetShader).shader;
                     if (planetMaterial == null)
                     {
                         terrainMaterial.ApplyMaterialProperties(mr.material);
@@ -186,7 +151,7 @@ namespace Terrain
 
                 originalShader = pqs.surfaceMaterial.shader;
                 String[] keywords = pqs.surfaceMaterial.shaderKeywords;
-                pqs.surfaceMaterial.shader = TerrainShader;
+                pqs.surfaceMaterial.shader = TerrainManager.TerrainShader;
                 foreach(String keyword in keywords)
                 {
                     pqs.surfaceMaterial.EnableKeyword(keyword);
@@ -203,7 +168,7 @@ namespace Terrain
                     pqsOceanContainer.transform.parent = ocean.transform;
 
                     keywords = ocean.surfaceMaterial.shaderKeywords;
-                    ocean.surfaceMaterial.shader = OceanShader;
+                    ocean.surfaceMaterial.shader = TerrainManager.OceanShader;
                     foreach (String keyword in keywords)
                     {
                         ocean.surfaceMaterial.EnableKeyword(keyword);

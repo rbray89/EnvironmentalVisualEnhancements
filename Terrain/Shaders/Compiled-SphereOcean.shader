@@ -1,4 +1,4 @@
-﻿Shader "Sphere/Planet" {
+﻿Shader "Sphere/Ocean" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_SpecColor ("Specular tint", Color) = (1,1,1,1)
@@ -13,7 +13,7 @@
 	
 SubShader {
 
-Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
+Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "OceanReplace"="True"}
 	Blend SrcAlpha OneMinusSrcAlpha
 	Fog { Mode Global}
 	AlphaTest Greater 0
@@ -173,7 +173,7 @@ void main ()
   vec3 i_20;
   i_20 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = clamp ((_Clarity * (((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z))), 0.0, 1.0);
+  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -479,15 +479,15 @@ void main ()
   highp vec3 tmpvar_55;
   tmpvar_55 = (light_4 + (main_16.w * tmpvar_54));
   light_4 = tmpvar_55;
+  color_18.xyz = (color_18.xyz * light_4);
   lowp float tmpvar_56;
   tmpvar_56 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_56;
   highp float tmpvar_57;
-  tmpvar_57 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_57 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_57;
-  color_18.xyz = (color_18.xyz * light_4);
   highp float tmpvar_58;
-  tmpvar_58 = clamp ((_Clarity * tmpvar_57), 0.0, 1.0);
+  tmpvar_58 = mix (0.8, tmpvar_57, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_58;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -726,15 +726,15 @@ void main ()
   highp vec3 tmpvar_55;
   tmpvar_55 = (light_4 + (main_16.w * tmpvar_54));
   light_4 = tmpvar_55;
+  color_18.xyz = (color_18.xyz * light_4);
   lowp float tmpvar_56;
   tmpvar_56 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_56;
   highp float tmpvar_57;
-  tmpvar_57 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_57 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_57;
-  color_18.xyz = (color_18.xyz * light_4);
   highp float tmpvar_58;
-  tmpvar_58 = clamp ((_Clarity * tmpvar_57), 0.0, 1.0);
+  tmpvar_58 = mix (0.8, tmpvar_57, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_58;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -1257,14 +1257,15 @@ lowp vec4 frag( in v2f IN ) {
     #line 481
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
-    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
-    depth = LinearEyeDepth( depth);
-    #line 485
-    depth -= IN.scrPos.z;
-    depth *= (IN.viewDist / IN.scrPos.z);
     color.xyz *= light;
-    color.w = xll_saturate_f((_Clarity * depth));
+    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
+    #line 485
+    highp float satDepth = xll_saturate_f((0.002 * (IN.viewDist - 600.0)));
+    depth = LinearEyeDepth( depth);
+    depth -= IN.scrPos.z;
+    depth = xll_saturate_f((_Clarity * depth));
     #line 489
+    color.w = mix( 0.8, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -1433,7 +1434,7 @@ void main ()
   vec3 i_19;
   i_19 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot ((i_19 - (2.0 * (dot (xlv_TEXCOORD2, i_19) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = clamp ((_Clarity * (((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z))), 0.0, 1.0);
+  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -1723,15 +1724,15 @@ void main ()
   highp vec3 tmpvar_53;
   tmpvar_53 = (light_4 + (main_16.w * tmpvar_52));
   light_4 = tmpvar_53;
+  color_18.xyz = (color_18.xyz * light_4);
   lowp float tmpvar_54;
   tmpvar_54 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_54;
   highp float tmpvar_55;
-  tmpvar_55 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_55 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_55;
-  color_18.xyz = (color_18.xyz * light_4);
   highp float tmpvar_56;
-  tmpvar_56 = clamp ((_Clarity * tmpvar_55), 0.0, 1.0);
+  tmpvar_56 = mix (0.8, tmpvar_55, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_56;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -1961,15 +1962,15 @@ void main ()
   highp vec3 tmpvar_53;
   tmpvar_53 = (light_4 + (main_16.w * tmpvar_52));
   light_4 = tmpvar_53;
+  color_18.xyz = (color_18.xyz * light_4);
   lowp float tmpvar_54;
   tmpvar_54 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_54;
   highp float tmpvar_55;
-  tmpvar_55 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_55 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_55;
-  color_18.xyz = (color_18.xyz * light_4);
   highp float tmpvar_56;
-  tmpvar_56 = clamp ((_Clarity * tmpvar_55), 0.0, 1.0);
+  tmpvar_56 = mix (0.8, tmpvar_55, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_56;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -2481,13 +2482,14 @@ lowp vec4 frag( in v2f IN ) {
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
     #line 479
-    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
-    depth = LinearEyeDepth( depth);
-    depth -= IN.scrPos.z;
-    depth *= (IN.viewDist / IN.scrPos.z);
-    #line 483
     color.xyz *= light;
-    color.w = xll_saturate_f((_Clarity * depth));
+    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
+    highp float satDepth = xll_saturate_f((0.002 * (IN.viewDist - 600.0)));
+    depth = LinearEyeDepth( depth);
+    #line 483
+    depth -= IN.scrPos.z;
+    depth = xll_saturate_f((_Clarity * depth));
+    color.w = mix( 0.8, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -2662,7 +2664,7 @@ void main ()
   vec3 i_20;
   i_20 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = clamp ((_Clarity * (((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z))), 0.0, 1.0);
+  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -2978,15 +2980,15 @@ void main ()
   highp vec3 tmpvar_59;
   tmpvar_59 = (light_4 + (main_17.w * tmpvar_58));
   light_4 = tmpvar_59;
+  color_19.xyz = (color_19.xyz * light_4);
   lowp float tmpvar_60;
   tmpvar_60 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_60;
   highp float tmpvar_61;
-  tmpvar_61 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_61 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_61;
-  color_19.xyz = (color_19.xyz * light_4);
   highp float tmpvar_62;
-  tmpvar_62 = clamp ((_Clarity * tmpvar_61), 0.0, 1.0);
+  tmpvar_62 = mix (0.8, tmpvar_61, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_62;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -3234,15 +3236,15 @@ void main ()
   highp vec3 tmpvar_59;
   tmpvar_59 = (light_4 + (main_17.w * tmpvar_58));
   light_4 = tmpvar_59;
+  color_19.xyz = (color_19.xyz * light_4);
   lowp float tmpvar_60;
   tmpvar_60 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_60;
   highp float tmpvar_61;
-  tmpvar_61 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_61 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_61;
-  color_19.xyz = (color_19.xyz * light_4);
   highp float tmpvar_62;
-  tmpvar_62 = clamp ((_Clarity * tmpvar_61), 0.0, 1.0);
+  tmpvar_62 = mix (0.8, tmpvar_61, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_62;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -3777,14 +3779,15 @@ lowp vec4 frag( in v2f IN ) {
     #line 490
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
-    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
-    depth = LinearEyeDepth( depth);
-    #line 494
-    depth -= IN.scrPos.z;
-    depth *= (IN.viewDist / IN.scrPos.z);
     color.xyz *= light;
-    color.w = xll_saturate_f((_Clarity * depth));
+    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
+    #line 494
+    highp float satDepth = xll_saturate_f((0.002 * (IN.viewDist - 600.0)));
+    depth = LinearEyeDepth( depth);
+    depth -= IN.scrPos.z;
+    depth = xll_saturate_f((_Clarity * depth));
     #line 498
+    color.w = mix( 0.8, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -3961,7 +3964,7 @@ void main ()
   vec3 i_20;
   i_20 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = clamp ((_Clarity * (((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z))), 0.0, 1.0);
+  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -4268,15 +4271,15 @@ void main ()
   highp vec3 tmpvar_55;
   tmpvar_55 = (light_4 + (main_16.w * tmpvar_54));
   light_4 = tmpvar_55;
+  color_18.xyz = (color_18.xyz * light_4);
   lowp float tmpvar_56;
   tmpvar_56 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_56;
   highp float tmpvar_57;
-  tmpvar_57 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_57 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_57;
-  color_18.xyz = (color_18.xyz * light_4);
   highp float tmpvar_58;
-  tmpvar_58 = clamp ((_Clarity * tmpvar_57), 0.0, 1.0);
+  tmpvar_58 = mix (0.8, tmpvar_57, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_58;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -4516,15 +4519,15 @@ void main ()
   highp vec3 tmpvar_55;
   tmpvar_55 = (light_4 + (main_16.w * tmpvar_54));
   light_4 = tmpvar_55;
+  color_18.xyz = (color_18.xyz * light_4);
   lowp float tmpvar_56;
   tmpvar_56 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_56;
   highp float tmpvar_57;
-  tmpvar_57 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_57 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_57;
-  color_18.xyz = (color_18.xyz * light_4);
   highp float tmpvar_58;
-  tmpvar_58 = clamp ((_Clarity * tmpvar_57), 0.0, 1.0);
+  tmpvar_58 = mix (0.8, tmpvar_57, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_58;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -5049,14 +5052,15 @@ lowp vec4 frag( in v2f IN ) {
     #line 482
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
-    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
-    depth = LinearEyeDepth( depth);
-    #line 486
-    depth -= IN.scrPos.z;
-    depth *= (IN.viewDist / IN.scrPos.z);
     color.xyz *= light;
-    color.w = xll_saturate_f((_Clarity * depth));
+    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
+    #line 486
+    highp float satDepth = xll_saturate_f((0.002 * (IN.viewDist - 600.0)));
+    depth = LinearEyeDepth( depth);
+    depth -= IN.scrPos.z;
+    depth = xll_saturate_f((_Clarity * depth));
     #line 490
+    color.w = mix( 0.8, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -5232,7 +5236,7 @@ void main ()
   vec3 i_20;
   i_20 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = clamp ((_Clarity * (((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z))), 0.0, 1.0);
+  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -5535,15 +5539,15 @@ void main ()
   highp vec3 tmpvar_54;
   tmpvar_54 = (light_4 + (main_16.w * tmpvar_53));
   light_4 = tmpvar_54;
+  color_18.xyz = (color_18.xyz * light_4);
   lowp float tmpvar_55;
   tmpvar_55 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_55;
   highp float tmpvar_56;
-  tmpvar_56 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_56 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_56;
-  color_18.xyz = (color_18.xyz * light_4);
   highp float tmpvar_57;
-  tmpvar_57 = clamp ((_Clarity * tmpvar_56), 0.0, 1.0);
+  tmpvar_57 = mix (0.8, tmpvar_56, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_57;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -5780,15 +5784,15 @@ void main ()
   highp vec3 tmpvar_54;
   tmpvar_54 = (light_4 + (main_16.w * tmpvar_53));
   light_4 = tmpvar_54;
+  color_18.xyz = (color_18.xyz * light_4);
   lowp float tmpvar_55;
   tmpvar_55 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_55;
   highp float tmpvar_56;
-  tmpvar_56 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_56 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_56;
-  color_18.xyz = (color_18.xyz * light_4);
   highp float tmpvar_57;
-  tmpvar_57 = clamp ((_Clarity * tmpvar_56), 0.0, 1.0);
+  tmpvar_57 = mix (0.8, tmpvar_56, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_57;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -6311,14 +6315,15 @@ lowp vec4 frag( in v2f IN ) {
     #line 481
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
-    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
-    depth = LinearEyeDepth( depth);
-    #line 485
-    depth -= IN.scrPos.z;
-    depth *= (IN.viewDist / IN.scrPos.z);
     color.xyz *= light;
-    color.w = xll_saturate_f((_Clarity * depth));
+    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
+    #line 485
+    highp float satDepth = xll_saturate_f((0.002 * (IN.viewDist - 600.0)));
+    depth = LinearEyeDepth( depth);
+    depth -= IN.scrPos.z;
+    depth = xll_saturate_f((_Clarity * depth));
     #line 489
+    color.w = mix( 0.8, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -6518,7 +6523,7 @@ void main ()
   vec3 i_26;
   i_26 = -(tmpvar_18.xyz);
   color_2.xyz = (tmpvar_17.xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_20) * 4.0) * tmpvar_25), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_25 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_26 - (2.0 * (dot (xlv_TEXCOORD2, i_26) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = clamp ((_Clarity * (((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z))), 0.0, 1.0);
+  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -6860,15 +6865,15 @@ void main ()
   highp vec3 tmpvar_64;
   tmpvar_64 = (light_4 + (main_17.w * tmpvar_63));
   light_4 = tmpvar_64;
+  color_19.xyz = (color_19.xyz * light_4);
   lowp float tmpvar_65;
   tmpvar_65 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_65;
   highp float tmpvar_66;
-  tmpvar_66 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_66 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_66;
-  color_19.xyz = (color_19.xyz * light_4);
   highp float tmpvar_67;
-  tmpvar_67 = clamp ((_Clarity * tmpvar_66), 0.0, 1.0);
+  tmpvar_67 = mix (0.8, tmpvar_66, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_67;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -7136,15 +7141,15 @@ void main ()
   highp vec3 tmpvar_64;
   tmpvar_64 = (light_4 + (main_17.w * tmpvar_63));
   light_4 = tmpvar_64;
+  color_19.xyz = (color_19.xyz * light_4);
   lowp float tmpvar_65;
   tmpvar_65 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_65;
   highp float tmpvar_66;
-  tmpvar_66 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_66 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_66;
-  color_19.xyz = (color_19.xyz * light_4);
   highp float tmpvar_67;
-  tmpvar_67 = clamp ((_Clarity * tmpvar_66), 0.0, 1.0);
+  tmpvar_67 = mix (0.8, tmpvar_66, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_67;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -7694,14 +7699,15 @@ lowp vec4 frag( in v2f IN ) {
     #line 498
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
-    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
-    depth = LinearEyeDepth( depth);
-    #line 502
-    depth -= IN.scrPos.z;
-    depth *= (IN.viewDist / IN.scrPos.z);
     color.xyz *= light;
-    color.w = xll_saturate_f((_Clarity * depth));
+    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
+    #line 502
+    highp float satDepth = xll_saturate_f((0.002 * (IN.viewDist - 600.0)));
+    depth = LinearEyeDepth( depth);
+    depth -= IN.scrPos.z;
+    depth = xll_saturate_f((_Clarity * depth));
     #line 506
+    color.w = mix( 0.8, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -7886,7 +7892,7 @@ void main ()
   vec3 i_20;
   i_20 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = clamp ((_Clarity * (((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z))), 0.0, 1.0);
+  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -8225,15 +8231,15 @@ void main ()
   highp vec3 tmpvar_63;
   tmpvar_63 = (light_4 + (main_17.w * tmpvar_62));
   light_4 = tmpvar_63;
+  color_19.xyz = (color_19.xyz * light_4);
   lowp float tmpvar_64;
   tmpvar_64 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_64;
   highp float tmpvar_65;
-  tmpvar_65 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_65 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_65;
-  color_19.xyz = (color_19.xyz * light_4);
   highp float tmpvar_66;
-  tmpvar_66 = clamp ((_Clarity * tmpvar_65), 0.0, 1.0);
+  tmpvar_66 = mix (0.8, tmpvar_65, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_66;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -8785,14 +8791,15 @@ lowp vec4 frag( in v2f IN ) {
     #line 499
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
-    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
-    depth = LinearEyeDepth( depth);
-    #line 503
-    depth -= IN.scrPos.z;
-    depth *= (IN.viewDist / IN.scrPos.z);
     color.xyz *= light;
-    color.w = xll_saturate_f((_Clarity * depth));
+    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
+    #line 503
+    highp float satDepth = xll_saturate_f((0.002 * (IN.viewDist - 600.0)));
+    depth = LinearEyeDepth( depth);
+    depth -= IN.scrPos.z;
+    depth = xll_saturate_f((_Clarity * depth));
     #line 507
+    color.w = mix( 0.8, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -8977,7 +8984,7 @@ void main ()
   vec3 i_20;
   i_20 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0) * tmpvar_19.x), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = clamp ((_Clarity * (((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z))), 0.0, 1.0);
+  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -9289,15 +9296,15 @@ void main ()
   highp vec3 tmpvar_59;
   tmpvar_59 = (light_4 + (main_16.w * tmpvar_58));
   light_4 = tmpvar_59;
+  color_18.xyz = (color_18.xyz * light_4);
   lowp float tmpvar_60;
   tmpvar_60 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_60;
   highp float tmpvar_61;
-  tmpvar_61 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_61 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_61;
-  color_18.xyz = (color_18.xyz * light_4);
   highp float tmpvar_62;
-  tmpvar_62 = clamp ((_Clarity * tmpvar_61), 0.0, 1.0);
+  tmpvar_62 = mix (0.8, tmpvar_61, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_62;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -9541,15 +9548,15 @@ void main ()
   highp vec3 tmpvar_54;
   tmpvar_54 = (light_4 + (main_16.w * tmpvar_53));
   light_4 = tmpvar_54;
+  color_18.xyz = (color_18.xyz * light_4);
   lowp float tmpvar_55;
   tmpvar_55 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_55;
   highp float tmpvar_56;
-  tmpvar_56 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_56 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_56;
-  color_18.xyz = (color_18.xyz * light_4);
   highp float tmpvar_57;
-  tmpvar_57 = clamp ((_Clarity * tmpvar_56), 0.0, 1.0);
+  tmpvar_57 = mix (0.8, tmpvar_56, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_57;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -10079,14 +10086,15 @@ lowp vec4 frag( in v2f IN ) {
     #line 487
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
-    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
-    depth = LinearEyeDepth( depth);
-    #line 491
-    depth -= IN.scrPos.z;
-    depth *= (IN.viewDist / IN.scrPos.z);
     color.xyz *= light;
-    color.w = xll_saturate_f((_Clarity * depth));
+    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
+    #line 491
+    highp float satDepth = xll_saturate_f((0.002 * (IN.viewDist - 600.0)));
+    depth = LinearEyeDepth( depth);
+    depth -= IN.scrPos.z;
+    depth = xll_saturate_f((_Clarity * depth));
     #line 495
+    color.w = mix( 0.8, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -10274,7 +10282,7 @@ void main ()
   vec3 i_20;
   i_20 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = clamp ((_Clarity * (((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z))), 0.0, 1.0);
+  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -10598,15 +10606,15 @@ void main ()
   highp vec3 tmpvar_60;
   tmpvar_60 = (light_4 + (main_16.w * tmpvar_59));
   light_4 = tmpvar_60;
+  color_18.xyz = (color_18.xyz * light_4);
   lowp float tmpvar_61;
   tmpvar_61 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_61;
   highp float tmpvar_62;
-  tmpvar_62 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_62 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_62;
-  color_18.xyz = (color_18.xyz * light_4);
   highp float tmpvar_63;
-  tmpvar_63 = clamp ((_Clarity * tmpvar_62), 0.0, 1.0);
+  tmpvar_63 = mix (0.8, tmpvar_62, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_63;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -10855,15 +10863,15 @@ void main ()
   highp vec3 tmpvar_54;
   tmpvar_54 = (light_4 + (main_16.w * tmpvar_53));
   light_4 = tmpvar_54;
+  color_18.xyz = (color_18.xyz * light_4);
   lowp float tmpvar_55;
   tmpvar_55 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_55;
   highp float tmpvar_56;
-  tmpvar_56 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_56 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_56;
-  color_18.xyz = (color_18.xyz * light_4);
   highp float tmpvar_57;
-  tmpvar_57 = clamp ((_Clarity * tmpvar_56), 0.0, 1.0);
+  tmpvar_57 = mix (0.8, tmpvar_56, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_18.w = tmpvar_57;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -11404,14 +11412,15 @@ lowp vec4 frag( in v2f IN ) {
     #line 491
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
-    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
-    depth = LinearEyeDepth( depth);
-    #line 495
-    depth -= IN.scrPos.z;
-    depth *= (IN.viewDist / IN.scrPos.z);
     color.xyz *= light;
-    color.w = xll_saturate_f((_Clarity * depth));
+    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
+    #line 495
+    highp float satDepth = xll_saturate_f((0.002 * (IN.viewDist - 600.0)));
+    depth = LinearEyeDepth( depth);
+    depth -= IN.scrPos.z;
+    depth = xll_saturate_f((_Clarity * depth));
     #line 499
+    color.w = mix( 0.8, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -11613,7 +11622,7 @@ void main ()
   vec3 i_26;
   i_26 = -(tmpvar_18.xyz);
   color_2.xyz = (tmpvar_17.xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_20) * 4.0) * tmpvar_25), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_25 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_26 - (2.0 * (dot (xlv_TEXCOORD2, i_26) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = clamp ((_Clarity * (((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z))), 0.0, 1.0);
+  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -11949,15 +11958,15 @@ void main ()
   highp vec3 tmpvar_63;
   tmpvar_63 = (light_4 + (main_17.w * tmpvar_62));
   light_4 = tmpvar_63;
+  color_19.xyz = (color_19.xyz * light_4);
   lowp float tmpvar_64;
   tmpvar_64 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_64;
   highp float tmpvar_65;
-  tmpvar_65 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_65 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_65;
-  color_19.xyz = (color_19.xyz * light_4);
   highp float tmpvar_66;
-  tmpvar_66 = clamp ((_Clarity * tmpvar_65), 0.0, 1.0);
+  tmpvar_66 = mix (0.8, tmpvar_65, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_66;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -12223,15 +12232,15 @@ void main ()
   highp vec3 tmpvar_63;
   tmpvar_63 = (light_4 + (main_17.w * tmpvar_62));
   light_4 = tmpvar_63;
+  color_19.xyz = (color_19.xyz * light_4);
   lowp float tmpvar_64;
   tmpvar_64 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_64;
   highp float tmpvar_65;
-  tmpvar_65 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_65 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_65;
-  color_19.xyz = (color_19.xyz * light_4);
   highp float tmpvar_66;
-  tmpvar_66 = clamp ((_Clarity * tmpvar_65), 0.0, 1.0);
+  tmpvar_66 = mix (0.8, tmpvar_65, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_66;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -12782,14 +12791,15 @@ lowp vec4 frag( in v2f IN ) {
     #line 496
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
-    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
-    depth = LinearEyeDepth( depth);
-    #line 500
-    depth -= IN.scrPos.z;
-    depth *= (IN.viewDist / IN.scrPos.z);
     color.xyz *= light;
-    color.w = xll_saturate_f((_Clarity * depth));
+    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
+    #line 500
+    highp float satDepth = xll_saturate_f((0.002 * (IN.viewDist - 600.0)));
+    depth = LinearEyeDepth( depth);
+    depth -= IN.scrPos.z;
+    depth = xll_saturate_f((_Clarity * depth));
     #line 504
+    color.w = mix( 0.8, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -12994,7 +13004,7 @@ void main ()
   vec3 i_27;
   i_27 = -(tmpvar_18.xyz);
   color_2.xyz = (tmpvar_17.xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_20) * 4.0) * tmpvar_26), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_26 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_27 - (2.0 * (dot (xlv_TEXCOORD2, i_27) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = clamp ((_Clarity * (((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z))), 0.0, 1.0);
+  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -13333,15 +13343,15 @@ void main ()
   highp vec3 tmpvar_64;
   tmpvar_64 = (light_4 + (main_17.w * tmpvar_63));
   light_4 = tmpvar_64;
+  color_19.xyz = (color_19.xyz * light_4);
   lowp float tmpvar_65;
   tmpvar_65 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_65;
   highp float tmpvar_66;
-  tmpvar_66 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_66 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_66;
-  color_19.xyz = (color_19.xyz * light_4);
   highp float tmpvar_67;
-  tmpvar_67 = clamp ((_Clarity * tmpvar_66), 0.0, 1.0);
+  tmpvar_67 = mix (0.8, tmpvar_66, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_67;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -13610,15 +13620,15 @@ void main ()
   highp vec3 tmpvar_64;
   tmpvar_64 = (light_4 + (main_17.w * tmpvar_63));
   light_4 = tmpvar_64;
+  color_19.xyz = (color_19.xyz * light_4);
   lowp float tmpvar_65;
   tmpvar_65 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_65;
   highp float tmpvar_66;
-  tmpvar_66 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_66 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_66;
-  color_19.xyz = (color_19.xyz * light_4);
   highp float tmpvar_67;
-  tmpvar_67 = clamp ((_Clarity * tmpvar_66), 0.0, 1.0);
+  tmpvar_67 = mix (0.8, tmpvar_66, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_67;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -14171,14 +14181,15 @@ lowp vec4 frag( in v2f IN ) {
     #line 497
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
-    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
-    depth = LinearEyeDepth( depth);
-    #line 501
-    depth -= IN.scrPos.z;
-    depth *= (IN.viewDist / IN.scrPos.z);
     color.xyz *= light;
-    color.w = xll_saturate_f((_Clarity * depth));
+    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
+    #line 501
+    highp float satDepth = xll_saturate_f((0.002 * (IN.viewDist - 600.0)));
+    depth = LinearEyeDepth( depth);
+    depth -= IN.scrPos.z;
+    depth = xll_saturate_f((_Clarity * depth));
     #line 505
+    color.w = mix( 0.8, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -14413,7 +14424,7 @@ void main ()
   vec3 i_33;
   i_33 = -(tmpvar_18.xyz);
   color_2.xyz = (tmpvar_17.xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_20) * 4.0) * tmpvar_32), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_32 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_33 - (2.0 * (dot (xlv_TEXCOORD2, i_33) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = clamp ((_Clarity * (((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z))), 0.0, 1.0);
+  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -14806,15 +14817,15 @@ void main ()
   highp vec3 tmpvar_80;
   tmpvar_80 = (light_4 + (main_17.w * tmpvar_79));
   light_4 = tmpvar_80;
+  color_19.xyz = (color_19.xyz * light_4);
   lowp float tmpvar_81;
   tmpvar_81 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_81;
   highp float tmpvar_82;
-  tmpvar_82 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_82 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_82;
-  color_19.xyz = (color_19.xyz * light_4);
   highp float tmpvar_83;
-  tmpvar_83 = clamp ((_Clarity * tmpvar_82), 0.0, 1.0);
+  tmpvar_83 = mix (0.8, tmpvar_82, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_83;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -15133,15 +15144,15 @@ void main ()
   highp vec3 tmpvar_80;
   tmpvar_80 = (light_4 + (main_17.w * tmpvar_79));
   light_4 = tmpvar_80;
+  color_19.xyz = (color_19.xyz * light_4);
   lowp float tmpvar_81;
   tmpvar_81 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_81;
   highp float tmpvar_82;
-  tmpvar_82 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_82 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_82;
-  color_19.xyz = (color_19.xyz * light_4);
   highp float tmpvar_83;
-  tmpvar_83 = clamp ((_Clarity * tmpvar_82), 0.0, 1.0);
+  tmpvar_83 = mix (0.8, tmpvar_82, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_83;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -15711,14 +15722,15 @@ lowp vec4 frag( in v2f IN ) {
     #line 506
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
-    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
-    depth = LinearEyeDepth( depth);
-    #line 510
-    depth -= IN.scrPos.z;
-    depth *= (IN.viewDist / IN.scrPos.z);
     color.xyz *= light;
-    color.w = xll_saturate_f((_Clarity * depth));
+    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
+    #line 510
+    highp float satDepth = xll_saturate_f((0.002 * (IN.viewDist - 600.0)));
+    depth = LinearEyeDepth( depth);
+    depth -= IN.scrPos.z;
+    depth = xll_saturate_f((_Clarity * depth));
     #line 514
+    color.w = mix( 0.8, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -15914,7 +15926,7 @@ void main ()
   vec3 i_23;
   i_23 = -(tmpvar_17.xyz);
   color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * (_Color * xlv_TEXCOORD6)).xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_18 - 0.01) / 0.99)) * 4.0) * tmpvar_22), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_22 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_23 - (2.0 * (dot (xlv_TEXCOORD2, i_23) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = clamp ((_Clarity * (((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z))), 0.0, 1.0);
+  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -16275,15 +16287,15 @@ void main ()
   highp vec3 tmpvar_72;
   tmpvar_72 = (light_4 + (main_17.w * tmpvar_71));
   light_4 = tmpvar_72;
+  color_19.xyz = (color_19.xyz * light_4);
   lowp float tmpvar_73;
   tmpvar_73 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_73;
   highp float tmpvar_74;
-  tmpvar_74 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_74 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_74;
-  color_19.xyz = (color_19.xyz * light_4);
   highp float tmpvar_75;
-  tmpvar_75 = clamp ((_Clarity * tmpvar_74), 0.0, 1.0);
+  tmpvar_75 = mix (0.8, tmpvar_74, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_75;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -16845,14 +16857,15 @@ lowp vec4 frag( in v2f IN ) {
     #line 506
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
-    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
-    depth = LinearEyeDepth( depth);
-    #line 510
-    depth -= IN.scrPos.z;
-    depth *= (IN.viewDist / IN.scrPos.z);
     color.xyz *= light;
-    color.w = xll_saturate_f((_Clarity * depth));
+    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
+    #line 510
+    highp float satDepth = xll_saturate_f((0.002 * (IN.viewDist - 600.0)));
+    depth = LinearEyeDepth( depth);
+    depth -= IN.scrPos.z;
+    depth = xll_saturate_f((_Clarity * depth));
     #line 514
+    color.w = mix( 0.8, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -17082,7 +17095,7 @@ void main ()
   vec3 i_31;
   i_31 = -(tmpvar_18.xyz);
   color_2.xyz = (tmpvar_17.xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_20) * 4.0) * tmpvar_30), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_30 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_31 - (2.0 * (dot (xlv_TEXCOORD2, i_31) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = clamp ((_Clarity * (((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z))), 0.0, 1.0);
+  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -17474,15 +17487,15 @@ void main ()
   highp vec3 tmpvar_82;
   tmpvar_82 = (light_4 + (main_17.w * tmpvar_81));
   light_4 = tmpvar_82;
+  color_19.xyz = (color_19.xyz * light_4);
   lowp float tmpvar_83;
   tmpvar_83 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_83;
   highp float tmpvar_84;
-  tmpvar_84 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_84 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_84;
-  color_19.xyz = (color_19.xyz * light_4);
   highp float tmpvar_85;
-  tmpvar_85 = clamp ((_Clarity * tmpvar_84), 0.0, 1.0);
+  tmpvar_85 = mix (0.8, tmpvar_84, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_85;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -17804,15 +17817,15 @@ void main ()
   highp vec3 tmpvar_82;
   tmpvar_82 = (light_4 + (main_17.w * tmpvar_81));
   light_4 = tmpvar_82;
+  color_19.xyz = (color_19.xyz * light_4);
   lowp float tmpvar_83;
   tmpvar_83 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_83;
   highp float tmpvar_84;
-  tmpvar_84 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_84 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_84;
-  color_19.xyz = (color_19.xyz * light_4);
   highp float tmpvar_85;
-  tmpvar_85 = clamp ((_Clarity * tmpvar_84), 0.0, 1.0);
+  tmpvar_85 = mix (0.8, tmpvar_84, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_85;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -18380,14 +18393,15 @@ lowp vec4 frag( in v2f IN ) {
     #line 502
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
-    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
-    depth = LinearEyeDepth( depth);
-    #line 506
-    depth -= IN.scrPos.z;
-    depth *= (IN.viewDist / IN.scrPos.z);
     color.xyz *= light;
-    color.w = xll_saturate_f((_Clarity * depth));
+    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
+    #line 506
+    highp float satDepth = xll_saturate_f((0.002 * (IN.viewDist - 600.0)));
+    depth = LinearEyeDepth( depth);
+    depth -= IN.scrPos.z;
+    depth = xll_saturate_f((_Clarity * depth));
     #line 510
+    color.w = mix( 0.8, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -18620,7 +18634,7 @@ void main ()
   vec3 i_32;
   i_32 = -(tmpvar_18.xyz);
   color_2.xyz = (tmpvar_17.xyz * (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_20) * 4.0) * tmpvar_31), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_31 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_32 - (2.0 * (dot (xlv_TEXCOORD2, i_32) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
-  color_2.w = clamp ((_Clarity * (((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z))), 0.0, 1.0);
+  color_2.w = mix (0.8, clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0), clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   gl_FragData[0] = color_2;
 }
 
@@ -19015,15 +19029,15 @@ void main ()
   highp vec3 tmpvar_83;
   tmpvar_83 = (light_4 + (main_17.w * tmpvar_82));
   light_4 = tmpvar_83;
+  color_19.xyz = (color_19.xyz * light_4);
   lowp float tmpvar_84;
   tmpvar_84 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_84;
   highp float tmpvar_85;
-  tmpvar_85 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_85 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_85;
-  color_19.xyz = (color_19.xyz * light_4);
   highp float tmpvar_86;
-  tmpvar_86 = clamp ((_Clarity * tmpvar_85), 0.0, 1.0);
+  tmpvar_86 = mix (0.8, tmpvar_85, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_86;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -19348,15 +19362,15 @@ void main ()
   highp vec3 tmpvar_83;
   tmpvar_83 = (light_4 + (main_17.w * tmpvar_82));
   light_4 = tmpvar_83;
+  color_19.xyz = (color_19.xyz * light_4);
   lowp float tmpvar_84;
   tmpvar_84 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD7).x;
   depth_2 = tmpvar_84;
   highp float tmpvar_85;
-  tmpvar_85 = (((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z) * (xlv_TEXCOORD0 / xlv_TEXCOORD7.z));
+  tmpvar_85 = clamp ((_Clarity * ((1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))) - xlv_TEXCOORD7.z)), 0.0, 1.0);
   depth_2 = tmpvar_85;
-  color_19.xyz = (color_19.xyz * light_4);
   highp float tmpvar_86;
-  tmpvar_86 = clamp ((_Clarity * tmpvar_85), 0.0, 1.0);
+  tmpvar_86 = mix (0.8, tmpvar_85, clamp ((0.002 * (xlv_TEXCOORD0 - 600.0)), 0.0, 1.0));
   color_19.w = tmpvar_86;
   tmpvar_1 = color_19;
   gl_FragData[0] = tmpvar_1;
@@ -19926,14 +19940,15 @@ lowp vec4 frag( in v2f IN ) {
     #line 503
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
-    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
-    depth = LinearEyeDepth( depth);
-    #line 507
-    depth -= IN.scrPos.z;
-    depth *= (IN.viewDist / IN.scrPos.z);
     color.xyz *= light;
-    color.w = xll_saturate_f((_Clarity * depth));
+    highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
+    #line 507
+    highp float satDepth = xll_saturate_f((0.002 * (IN.viewDist - 600.0)));
+    depth = LinearEyeDepth( depth);
+    depth -= IN.scrPos.z;
+    depth = xll_saturate_f((_Clarity * depth));
     #line 511
+    color.w = mix( 0.8, depth, satDepth);
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -19969,7 +19984,7 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 15
-//   d3d9 - ALU: 112 to 132, TEX: 7 to 13
+//   d3d9 - ALU: 113 to 133, TEX: 7 to 13
 SubProgram "opengl " {
 Keywords { "POINT" "SHADOWS_OFF" }
 "!!GLSL"
@@ -19993,16 +20008,17 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTexture0] 2D
 SetTexture 3 [_CameraDepthTexture] 2D
 "ps_3_0
-; 113 ALU, 8 TEX
+; 115 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
-def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c15, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c11, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -20010,119 +20026,121 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord5 v4.xyz
 dcl_texcoord6 v5.xyz
 dcl_texcoord7 v6
-mul r1.xy, v4, c7.x
-dsx r4.zw, v4.xyxy
+mul r0.xy, v4, c7.x
+mul r1.xy, v4.zyzw, c7.x
+mul r2.z, v0.x, c8.x
+dsx r4.xy, v4
+dsy r4.zw, v4.xyxy
 abs r0.w, v4.z
 abs r3.xy, v4
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul r0.xy, v4.zyzw, c7.x
-mul r2.x, r1.w, r1.w
-texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r3.x, r0, r1
-mad r0.z, r2.x, c13.y, c13
-mad r2.y, r0.z, r2.x, c13.w
-mad r2.y, r2, r2.x, c14.x
-mad r2.y, r2, r2.x, c14
-mad r2.x, r2.y, r2, c14.z
+texld r1.xyz, r1, s1
+add_pp r1.xyz, r1, -r0
+mad_pp r1.xyz, r3.x, r1, r0
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.x, r1.w, r1.w
+mad r2.y, r2.x, c14, c14.z
+mad r2.y, r2, r2.x, c14.w
 mul r0.xy, v4.zxzw, c7.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c11.y
-mul r1.w, r2.x, r1
-mul r2.y, v0.x, c8.x
-mul_sat r2.x, r2.y, c12.z
-mad_pp r2.xyz, r2.x, r1, r0
-dp4 r0.z, c2, c2
-rsq r0.z, r0.z
-mul r1.xyz, r0.z, c2
-add r0.y, -r1.w, c14.w
+add_pp r1.xyz, -r0, c12.y
+mul_sat r2.z, r2, c13
+mad_pp r1.xyz, r2.z, r1, r0
+mad r2.y, r2, r2.x, c15.x
+mad r0.x, r2.y, r2, c15.y
+dp4 r0.y, c2, c2
+mad r0.x, r0, r2, c15.z
+rsq r0.z, r0.y
+mul r0.y, r0.x, r1.w
+mul r2.xyz, r0.z, c2
 add r0.x, r3, -r0.w
-cmp r0.x, -r0, r1.w, r0.y
-add r0.y, -r0.x, c12.w
-cmp r1.w, v4.z, r0.x, r0.y
-dp3_pp r0.z, v2, -r1
-mul_pp r0.xyz, v2, r0.z
-mad_pp r3.xyz, -r0, c12.z, -r1
-cmp r1.w, v4.x, r1, -r1
-add r0.y, -r0.w, c11
-mad r0.x, r0.w, c11.z, c11.w
-mad r0.x, r0.w, r0, c12
-mad r0.x, r0.w, r0, c12.y
+add r0.z, -r0.y, c15.w
+dp3_pp r2.w, v2, -r2
+cmp r1.w, -r0.x, r0.y, r0.z
+mul_pp r0.xyz, v2, r2.w
+mad_pp r0.xyz, -r0, c13.z, -r2
+dp3_pp_sat r0.y, r0, v1
+pow_pp r3, r0.y, c6.x
+add r2.w, -r1, c13
+cmp r1.w, v4.z, r1, r2
+cmp r0.x, v4, r1.w, -r1.w
+mad r3.z, r0.x, c16.x, c16.y
+add r0.y, -r0.w, c12
+mad r0.x, r0.w, c12.z, c12.w
+mad r0.x, r0.w, r0, c13
+mad r0.x, r0.w, r0, c13.y
 abs r0.w, v4.y
-mad r4.x, r1.w, c15, c15.y
-add r2.w, -r0, c11.y
-mad r1.w, r0, c11.z, c11
-mad r1.w, r1, r0, c12.x
+add r2.w, -r0, c12.y
+mad r1.w, r0, c12.z, c12
+mad r1.w, r1, r0, c13.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
 mul r0.y, r0.x, r0
-cmp r0.x, v4.z, c11, c11.y
+cmp r0.x, v4.z, c12, c12.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c12, r0.y
+mad r0.z, -r0, c13, r0.y
 rsq r2.w, r2.w
-mad r0.w, r1, r0, c12.y
+mad r0.w, r1, r0, c13.y
 rcp r2.w, r2.w
 mul r1.w, r0, r2
-cmp r0.w, v4.y, c11.x, c11.y
+cmp r0.w, v4.y, c12.x, c12.y
 mul r2.w, r0, r1
-mad r0.y, -r2.w, c12.z, r1.w
-mad r0.z, r0.x, c12.w, r0
-mad r0.x, r0.w, c12.w, r0.y
-mul r0.y, r0.z, c13.x
-mul r4.y, r0.x, c13.x
+mad r0.y, -r2.w, c13.z, r1.w
+mad r0.z, r0.x, c13.w, r0
+mad r0.x, r0.w, c13.w, r0.y
+mul r0.y, r0.z, c14.x
+mul r3.w, r0.x, c14.x
 dsx r0.w, r0.y
-dsy r0.xz, v4.xyyw
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
+mul r4.xy, r4, r4
 mul r4.zw, r4, r4
-add r1.w, r4.z, r4
-rsq r0.x, r1.w
+add r0.x, r4, r4.y
+add r0.z, r4, r4.w
 rsq r0.z, r0.z
+rsq r0.x, r0.x
 rcp r1.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c15.x
-mul r0.x, r1.w, c15
-dp3_pp_sat r1.w, r3, v1
+mul r0.z, r0.x, c16.x
+mul r0.x, r1.w, c16
 dsy r0.y, r0
-texldd r0, r4, s0, r0.zwzw, r0
-mul_pp r0.xyz, r0, r2
-pow_pp r2, r1.w, c6.x
-mul r3.xyz, v5, c5
-mul_pp r3.xyz, r0, r3
-dp3_pp_sat r0.y, v2, r1
-add_pp r0.z, r0.y, c11.y
+texldd r0, r3.zwzw, s0, r0.zwzw, r0
+mul_pp r1.xyz, r0, r1
+dp3_pp_sat r0.y, v2, r2
+add_pp r0.z, r0.y, c12.y
 dp3 r0.x, v3, v3
 texld r0.x, r0.x, s2
-mul r1.xyz, r0.x, c3
+mul r2.xyz, r0.x, c3
 frc_pp r1.w, r0.z
-add_pp r0.y, r0, c15.z
-mul_pp r0.y, r0, c3.w
-mul_pp r0.y, r0, r0.x
-mul r1.xyz, r1, c4
-mul r1.xyz, r1, r2.x
+mul r2.xyz, r2, c4
+mov_pp r2.w, r3.x
+mul r3.xyz, r2, r2.w
 add_pp_sat r0.z, r0, -r1.w
-mul r1.xyz, r0.z, r1
-mul r1.xyz, r0.w, r1
-mul_pp_sat r0.w, r0.y, c15
-mov r0.x, c9
-add r0.xyz, c3, r0.x
-mad_sat r2.xyz, r0, r0.w, c0
+mul r3.xyz, r0.z, r3
+add_pp r0.z, r0.y, c16
+mul r2.xyz, v5, c5
+mul_pp r1.xyz, r1, r2
+mov r0.y, c9.x
+add r2.xyz, c3, r0.y
+mul_pp r0.z, r0, c3.w
+mul_pp r0.y, r0.z, r0.x
+mul r3.xyz, r0.w, r3
 texldp r0.x, v6, s3
-add_pp r1.xyz, r2, r1
-mad r0.x, r0, c1.z, c1.w
-rcp r0.y, v6.z
-rcp r0.x, r0.x
-mul r0.y, v0.x, r0
-add r0.x, r0, -v6.z
-mul r0.x, r0, r0.y
-mul_pp oC0.xyz, r3, r1
-mul_sat oC0.w, r0.x, c10.x
+mad r0.w, r0.x, c1.z, c1
+mul_pp_sat r0.y, r0, c16.w
+mad_sat r0.xyz, r2, r0.y, c0
+add_pp r2.xyz, r0, r3
+rcp r0.w, r0.w
+add r0.x, r0.w, -v6.z
+mul_sat r0.y, r0.x, c10.x
+add r0.x, v0, c11
+add r0.y, r0, c11.z
+mul_sat r0.x, r0, c11.y
+mul_pp oC0.xyz, r1, r2
+mad oC0.w, r0.x, r0.y, c11
 "
 }
 
@@ -20163,132 +20181,134 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 112 ALU, 7 TEX
+; 113 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c15, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c11, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
 dcl_texcoord5 v3.xyz
 dcl_texcoord6 v4.xyz
 dcl_texcoord7 v5
-mul r1.xy, v3, c7.x
-dsx r4.zw, v3.xyxy
+mul r0.xy, v3, c7.x
+mul r1.xy, v3.zyzw, c7.x
 abs r0.w, v3.z
-abs r3.xy, v3
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul r0.xy, v3.zyzw, c7.x
-mul r2.x, r1.w, r1.w
-texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r3.x, r0, r1
-mad r0.z, r2.x, c13.y, c13
-mad r2.y, r0.z, r2.x, c13.w
-mad r2.y, r2, r2.x, c14.x
-mad r2.y, r2, r2.x, c14
-mad r2.x, r2.y, r2, c14.z
+texld r1.xyz, r1, s1
+add_pp r2.xyz, r1, -r0
+abs r1.xy, v3
+mad_pp r2.xyz, r1.x, r2, r0
+max r1.z, r1.x, r0.w
+min r0.x, r1, r0.w
+rcp r0.y, r1.z
+mul r1.z, r0.x, r0.y
+mul r1.w, r1.z, r1.z
 mul r0.xy, v3.zxzw, c7.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c11.y
-mul r1.w, r2.x, r1
-mul r2.y, v0.x, c8.x
-mul_sat r2.x, r2.y, c12.z
-mad_pp r2.xyz, r2.x, r1, r0
-abs r1.z, v3.y
-add r1.y, -r0.w, c11
-mad r1.x, r0.w, c11.z, c11.w
-add r2.w, -r1.z, c11.y
+add_pp r0.xyz, r0, -r2
+mad_pp r0.xyz, r1.y, r0, r2
+mad r2.w, r1, c14.y, c14.z
+mad r1.y, r2.w, r1.w, c14.w
+mad r1.y, r1, r1.w, c15.x
+mul r2.w, v0.x, c8.x
+add_pp r2.xyz, -r0, c12.y
+mul_sat r2.w, r2, c13.z
+mad_pp r2.xyz, r2.w, r2, r0
+mad r1.y, r1, r1.w, c15
+mad r0.x, r1.y, r1.w, c15.z
+mul r0.y, r0.x, r1.z
 dp4_pp r0.z, c2, c2
-rsq r1.y, r1.y
-rsq r2.w, r2.w
-add r0.y, -r1.w, c14.w
-add r0.x, r3, -r0.w
-cmp r0.x, -r0, r1.w, r0.y
-add r0.y, -r0.x, c12.w
-cmp r0.x, v3.z, r0, r0.y
-mad r1.x, r0.w, r1, c12
-rsq_pp r0.z, r0.z
-mul_pp r3.xyz, r0.z, c2
-cmp r0.x, v3, r0, -r0
-mad r1.w, r1.z, c11.z, c11
-mad r1.w, r1, r1.z, c12.x
-mad r0.w, r0, r1.x, c12.y
-rcp r1.y, r1.y
-mul r1.x, r0.w, r1.y
-cmp r0.w, v3.z, c11.x, c11.y
-mul r1.y, r0.w, r1.x
-mad r1.y, -r1, c12.z, r1.x
-mad r1.z, r1.w, r1, c12.y
-rcp r2.w, r2.w
-mul r1.w, r1.z, r2
-cmp r1.z, v3.y, c11.x, c11.y
-mul r2.w, r1.z, r1
-mad r1.x, -r2.w, c12.z, r1.w
-mad r1.y, r0.w, c12.w, r1
-mad r0.w, r1.z, c12, r1.x
-mul r1.x, r1.y, c13
-dp3_pp r0.y, v2, -r3
-mad r4.x, r0, c15, c15.y
-mul_pp r0.xyz, v2, r0.y
-mad_pp r0.xyz, -r0, c12.z, -r3
-mul r4.y, r0.w, c13.x
-mul r4.zw, r4, r4
-add r0.w, r4.z, r4
-rsq r0.w, r0.w
-dsx r1.w, r1.x
-dsy r1.y, r1.x
-dsy r1.xz, v3.xyyw
-mul r1.xz, r1, r1
-add r1.x, r1, r1.z
-rcp r0.w, r0.w
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-mul r1.z, r0.w, c15.x
-mul r1.x, r1, c15
-texldd r1, r4, s0, r1.zwzw, r1
-mul_pp r1.xyz, r1, r2
-mul r2.xyz, v4, c5
+rsq_pp r0.x, r0.z
+mul_pp r3.xyz, r0.x, c2
+add r0.x, r1, -r0.w
+add r0.z, -r0.y, c15.w
+cmp r1.x, -r0, r0.y, r0.z
+add r1.y, -r1.x, c13.w
+cmp r1.x, v3.z, r1, r1.y
+dp3_pp r0.x, v2, -r3
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c13.z, -r3
 dp3_pp_sat r2.w, r0, v1
+add r0.y, -r0.w, c12
+mad r0.x, r0.w, c12.z, c12.w
+mad r0.x, r0.w, r0, c13
+mad r0.x, r0.w, r0, c13.y
+abs r0.w, v3.y
+add r1.z, -r0.w, c12.y
+mad r1.y, r0.w, c12.z, c12.w
+mad r1.y, r1, r0.w, c13.x
+cmp r1.x, v3, r1, -r1
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+mul r0.y, r0.x, r0
+cmp r0.x, v3.z, c12, c12.y
+mul r0.z, r0.x, r0.y
+mad r0.z, -r0, c13, r0.y
+rsq r1.z, r1.z
+mad r0.w, r1.y, r0, c13.y
+rcp r1.z, r1.z
+mul r1.y, r0.w, r1.z
+cmp r0.w, v3.y, c12.x, c12.y
+mul r1.z, r0.w, r1.y
+mad r0.y, -r1.z, c13.z, r1
+mad r0.z, r0.x, c13.w, r0
+mad r0.x, r0.w, c13.w, r0.y
+mul r0.y, r0.z, c14.x
+dsx r0.w, r0.y
+mul r1.y, r0.x, c14.x
+dsx r1.zw, v3.xyxy
+mul r1.zw, r1, r1
+dsy r0.xz, v3.xyyw
+mul r0.xz, r0, r0
+add r0.z, r0.x, r0
+add r1.z, r1, r1.w
+rsq r0.x, r1.z
+rsq r0.z, r0.z
+rcp r1.z, r0.z
+rcp r0.x, r0.x
+mul r0.z, r0.x, c16.x
+mul r0.x, r1.z, c16
+dsy r0.y, r0
+mad r1.x, r1, c16, c16.y
+texldd r1, r1, s0, r0.zwzw, r0
 pow_pp r0, r2.w, c6.x
 mul_pp r1.xyz, r1, r2
 dp3_pp_sat r0.w, v2, r3
-mov_pp r2.z, r0.x
-add_pp r2.x, r0.w, c11.y
-frc_pp r2.y, r2.x
+add_pp r3.x, r0.w, c12.y
+mov_pp r2.x, r0
+frc_pp r2.w, r3.x
+add_pp_sat r2.w, r3.x, -r2
 mov r0.xyz, c3
 mul r0.xyz, c4, r0
-mul r0.xyz, r0, r2.z
-add_pp_sat r2.x, r2, -r2.y
-mul r2.xyz, r2.x, r0
-add_pp r0.x, r0.w, c15.z
-mul_pp r0.y, r0.x, c3.w
-mul r2.xyz, r1.w, r2
-rcp r1.w, v5.z
-mul_pp_sat r0.w, r0.y, c15
-mov r0.x, c9
-add r0.xyz, c3, r0.x
-mad_sat r0.xyz, r0, r0.w, c0
+mul r2.xyz, r0, r2.x
+mul r0.xyz, v4, c5
+add_pp r0.w, r0, c16.z
+mul_pp r0.xyz, r1, r0
+mul r2.xyz, r2.w, r2
+mul r1.xyz, r1.w, r2
+mov r1.w, c9.x
+add r2.xyz, c3, r1.w
+mul_pp r0.w, r0, c3
+mul_pp_sat r1.w, r0, c16
 texldp r3.x, v5, s2
-add_pp r0.xyz, r0, r2
 mad r0.w, r3.x, c1.z, c1
+mad_sat r2.xyz, r2, r1.w, c0
 rcp r0.w, r0.w
-mul r1.w, v0.x, r1
+add_pp r1.xyz, r2, r1
+mul_pp oC0.xyz, r0, r1
 add r0.w, r0, -v5.z
-mul r0.w, r0, r1
-mul_pp oC0.xyz, r1, r0
-mul_sat oC0.w, r0, c10.x
+mul_sat r0.y, r0.w, c10.x
+add r0.x, v0, c11
+add r0.y, r0, c11.z
+mul_sat r0.x, r0, c11.y
+mad oC0.w, r0.x, r0.y, c11
 "
 }
 
@@ -20331,17 +20351,18 @@ SetTexture 2 [_LightTexture0] 2D
 SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_CameraDepthTexture] 2D
 "ps_3_0
-; 119 ALU, 9 TEX
+; 120 ALU, 9 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c15, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c11, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -20349,126 +20370,127 @@ dcl_texcoord3 v3
 dcl_texcoord5 v4.xyz
 dcl_texcoord6 v5.xyz
 dcl_texcoord7 v6
-mul r1.xy, v4, c7.x
-dsx r4.zw, v4.xyxy
-abs r0.w, v4.z
-abs r2.xy, v4
-max r0.x, r2, r0.w
-rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
-mul r0.xy, v4.zyzw, c7.x
-mul r2.z, r1.w, r1.w
-texld r1.xyz, r1, s1
+mul r0.xy, v4, c7.x
+mul r1.xy, v4.zyzw, c7.x
+mul r2.z, v0.x, c8.x
+dsx r4.xy, v4
+dsy r4.zw, v4.xyxy
+abs r1.w, v4.z
+abs r3.xy, v4
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2, c13.y, c13
-mad r2.w, r0.z, r2.z, c13
+texld r1.xyz, r1, s1
+add_pp r1.xyz, r1, -r0
+mad_pp r1.xyz, r3.x, r1, r0
+max r0.z, r3.x, r1.w
+rcp r0.w, r0.z
+min r0.z, r3.x, r1.w
+mul r0.w, r0.z, r0
+mul r2.x, r0.w, r0.w
+mad r2.y, r2.x, c14, c14.z
+mad r2.y, r2, r2.x, c14.w
 mul r0.xy, v4.zxzw, c7.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-mad r2.w, r2, r2.z, c14.x
-mad r2.y, r2.w, r2.z, c14
-mad r2.y, r2, r2.z, c14.z
-add_pp r1.xyz, -r0, c11.y
-mul r1.w, r2.y, r1
-mul r2.z, v0.x, c8.x
-mul_sat r2.y, r2.z, c12.z
-mad_pp r1.xyz, r2.y, r1, r0
-dp4 r0.z, c2, c2
-add r0.y, -r1.w, c14.w
-add r0.x, r2, -r0.w
-cmp r0.x, -r0, r1.w, r0.y
-rsq r0.z, r0.z
+mad_pp r0.xyz, r3.y, r0, r1
+add_pp r1.xyz, -r0, c12.y
+mul_sat r2.z, r2, c13
+mad_pp r1.xyz, r2.z, r1, r0
+mad r2.y, r2, r2.x, c15.x
+mad r0.x, r2.y, r2, c15.y
+dp4 r0.y, c2, c2
+mad r0.x, r0, r2, c15.z
+rsq r0.z, r0.y
 mul r2.xyz, r0.z, c2
-add r0.y, -r0.x, c12.w
-cmp r1.w, v4.z, r0.x, r0.y
-dp3_pp r0.z, v2, -r2
-mul_pp r0.xyz, v2, r0.z
-mad_pp r3.xyz, -r0, c12.z, -r2
-cmp r1.w, v4.x, r1, -r1
-add r0.y, -r0.w, c11
-mad r0.x, r0.w, c11.z, c11.w
-mad r0.x, r0.w, r0, c12
-mad r0.x, r0.w, r0, c12.y
-abs r0.w, v4.y
-mad r4.x, r1.w, c15, c15.y
-add r2.w, -r0, c11.y
-mad r1.w, r0, c11.z, c11
-mad r1.w, r1, r0, c12.x
+mul r0.y, r0.x, r0.w
+dp3_pp r2.w, v2, -r2
+add r0.x, r3, -r1.w
+add r0.z, -r0.y, c15.w
+cmp r0.w, -r0.x, r0.y, r0.z
+mul_pp r0.xyz, v2, r2.w
+mad_pp r0.xyz, -r0, c13.z, -r2
+add r2.w, -r0, c13
+cmp r0.w, v4.z, r0, r2
+cmp r2.w, v4.x, r0, -r0
+dp3_pp_sat r3.x, r0, v1
+pow_pp r0, r3.x, c6.x
+add r0.z, -r1.w, c12.y
+mad r0.y, r1.w, c12.z, c12.w
+mad r0.y, r1.w, r0, c13.x
+mad r0.y, r1.w, r0, c13
+abs r1.w, v4.y
+mad r3.z, r2.w, c16.x, c16.y
+add r3.x, -r1.w, c12.y
+mad r2.w, r1, c12.z, c12
+mad r2.w, r2, r1, c13.x
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r0.z, r0.y, r0
+cmp r0.y, v4.z, c12.x, c12
+mul r0.w, r0.y, r0.z
+mad r0.w, -r0, c13.z, r0.z
+rsq r3.x, r3.x
+mad r1.w, r2, r1, c13.y
+rcp r3.x, r3.x
+mul r2.w, r1, r3.x
+cmp r1.w, v4.y, c12.x, c12.y
+mul r3.x, r1.w, r2.w
+mad r0.z, -r3.x, c13, r2.w
+mad r0.w, r0.y, c13, r0
+mad r0.y, r1.w, c13.w, r0.z
+mul r0.z, r0.w, c14.x
+dsy r0.w, r0.z
+dp3_pp_sat r1.w, v2, r2
+mul r3.w, r0.y, c14.x
+mul r4.xy, r4, r4
+add r0.y, r4.x, r4
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v4.z, c11, c11.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c12, r0.y
-rsq r2.w, r2.w
-dp3_pp_sat r2.z, v2, r2
-mad r0.w, r1, r0, c12.y
-rcp r2.w, r2.w
-mul r1.w, r0, r2
-cmp r0.w, v4.y, c11.x, c11.y
-mul r2.w, r0, r1
-mad r0.y, -r2.w, c12.z, r1.w
-mad r0.z, r0.x, c12.w, r0
-mad r0.x, r0.w, c12.w, r0.y
-mul r0.y, r0.z, c13.x
-mul r4.y, r0.x, c13.x
-dsx r0.w, r0.y
-dsy r0.xz, v4.xyyw
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
+dsx r3.y, r0.z
 mul r4.zw, r4, r4
-add r1.w, r4.z, r4
-rsq r0.x, r1.w
+add r0.z, r4, r4.w
 rsq r0.z, r0.z
-rcp r1.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c15.x
-mul r0.x, r1.w, c15
-dp3_pp_sat r1.w, r3, v1
-pow_pp r3, r1.w, c6.x
-dsy r0.y, r0
-texldd r0, r4, s0, r0.zwzw, r0
-mul_pp r0.xyz, r0, r1
-mul r1.xyz, v5, c5
-mul_pp r1.xyz, r0, r1
+rcp r0.z, r0.z
+mul r0.z, r0, c16.x
+mul r3.x, r0.y, c16
+texldd r3, r3.zwzw, s0, r3, r0.zwzw
+mul_pp r1.xyz, r3, r1
+mov_pp r2.w, r0.x
+add_pp r3.x, r1.w, c12.y
 rcp r0.x, v3.w
-mad r2.xy, v3, r0.x, c15.y
-texld r1.w, r2, s2
-add_pp r2.x, r2.z, c11.y
-frc_pp r2.y, r2.x
-add_pp_sat r2.y, r2.x, -r2
-add_pp r2.x, r2.z, c15.z
+mad r2.xy, v3, r0.x, c16.y
 dp3 r0.x, v3, v3
-cmp r0.y, -v3.z, c11.x, c11
-mul_pp r0.y, r0, r1.w
+texld r0.w, r2, s2
+cmp r0.y, -v3.z, c12.x, c12
+mul_pp r0.y, r0, r0.w
 texld r0.x, r0.x, s3
-mul_pp r1.w, r0.y, r0.x
-mul r0.xyz, r1.w, c3
-mov_pp r2.w, r3.x
+mul_pp r0.w, r0.y, r0.x
+mul r0.xyz, r0.w, c3
 mul r0.xyz, r0, c4
-mul r0.xyz, r0, r2.w
-mul r0.xyz, r2.y, r0
-mul r3.xyz, r0.w, r0
-mul_pp r2.x, r2, c3.w
-mul_pp r0.y, r2.x, r1.w
-mul_pp_sat r0.w, r0.y, c15
+mul r2.xyz, r0, r2.w
+mul r0.xyz, v5, c5
+mul_pp r1.xyz, r1, r0
+frc_pp r3.y, r3.x
+add_pp_sat r2.w, r3.x, -r3.y
 mov r0.x, c9
-add r0.xyz, c3, r0.x
-mad_sat r2.xyz, r0, r0.w, c0
+add r3.xyz, c3, r0.x
+mul r2.xyz, r2.w, r2
+add_pp r0.y, r1.w, c16.z
+mul_pp r0.y, r0, c3.w
+mul_pp r0.y, r0, r0.w
 texldp r0.x, v6, s4
-add_pp r2.xyz, r2, r3
-mad r0.x, r0, c1.z, c1.w
-rcp r0.y, v6.z
-rcp r0.x, r0.x
-mul r0.y, v0.x, r0
-add r0.x, r0, -v6.z
-mul r0.x, r0, r0.y
+mad r0.w, r0.x, c1.z, c1
+mul_pp_sat r0.y, r0, c16.w
+mad_sat r0.xyz, r3, r0.y, c0
+mul r2.xyz, r3.w, r2
+add_pp r2.xyz, r0, r2
+rcp r0.w, r0.w
+add r0.x, r0.w, -v6.z
+mul_sat r0.y, r0.x, c10.x
+add r0.x, v0, c11
+add r0.y, r0, c11.z
+mul_sat r0.x, r0, c11.y
 mul_pp oC0.xyz, r1, r2
-mul_sat oC0.w, r0.x, c10.x
+mad oC0.w, r0.x, r0.y, c11
 "
 }
 
@@ -20511,17 +20533,18 @@ SetTexture 2 [_LightTextureB0] 2D
 SetTexture 3 [_LightTexture0] CUBE
 SetTexture 4 [_CameraDepthTexture] 2D
 "ps_3_0
-; 115 ALU, 9 TEX
+; 116 ALU, 9 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_cube s3
 dcl_2d s4
-def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c15, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c11, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -20529,122 +20552,123 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord5 v4.xyz
 dcl_texcoord6 v5.xyz
 dcl_texcoord7 v6
-mul r1.xy, v4, c7.x
-dsx r4.zw, v4.xyxy
-abs r0.w, v4.z
-abs r2.xy, v4
-max r0.x, r2, r0.w
-rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
-mul r0.xy, v4.zyzw, c7.x
-mul r2.z, r1.w, r1.w
-texld r1.xyz, r1, s1
+mul r0.xy, v4, c7.x
+mul r1.xy, v4.zyzw, c7.x
+mul r2.z, v0.x, c8.x
+dsx r4.xy, v4
+dsy r4.zw, v4.xyxy
+abs r1.w, v4.z
+abs r3.xy, v4
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2, c13.y, c13
-mad r2.w, r0.z, r2.z, c13
+texld r1.xyz, r1, s1
+add_pp r1.xyz, r1, -r0
+mad_pp r1.xyz, r3.x, r1, r0
+max r0.z, r3.x, r1.w
+rcp r0.w, r0.z
+min r0.z, r3.x, r1.w
+mul r0.w, r0.z, r0
+mul r2.x, r0.w, r0.w
+mad r2.y, r2.x, c14, c14.z
+mad r2.y, r2, r2.x, c14.w
 mul r0.xy, v4.zxzw, c7.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-mad r2.w, r2, r2.z, c14.x
-mad r2.y, r2.w, r2.z, c14
-mad r2.y, r2, r2.z, c14.z
-add_pp r1.xyz, -r0, c11.y
-mul r1.w, r2.y, r1
-mul r2.z, v0.x, c8.x
-mul_sat r2.y, r2.z, c12.z
-mad_pp r1.xyz, r2.y, r1, r0
-dp4 r0.z, c2, c2
-add r0.y, -r1.w, c14.w
-add r0.x, r2, -r0.w
-cmp r0.x, -r0, r1.w, r0.y
-rsq r0.z, r0.z
+mad_pp r0.xyz, r3.y, r0, r1
+add_pp r1.xyz, -r0, c12.y
+mul_sat r2.z, r2, c13
+mad_pp r1.xyz, r2.z, r1, r0
+mad r2.y, r2, r2.x, c15.x
+mad r0.x, r2.y, r2, c15.y
+dp4 r0.y, c2, c2
+mad r0.x, r0, r2, c15.z
+rsq r0.z, r0.y
+mul r0.y, r0.x, r0.w
 mul r2.xyz, r0.z, c2
-add r0.y, -r0.x, c12.w
-cmp r1.w, v4.z, r0.x, r0.y
-dp3_pp r0.z, v2, -r2
-mul_pp r0.xyz, v2, r0.z
-mad_pp r3.xyz, -r0, c12.z, -r2
-cmp r1.w, v4.x, r1, -r1
-add r0.y, -r0.w, c11
-mad r0.x, r0.w, c11.z, c11.w
-mad r0.x, r0.w, r0, c12
-mad r0.x, r0.w, r0, c12.y
-abs r0.w, v4.y
-mad r4.x, r1.w, c15, c15.y
-add r2.w, -r0, c11.y
-mad r1.w, r0, c11.z, c11
-mad r1.w, r1, r0, c12.x
+add r0.x, r3, -r1.w
+add r0.z, -r0.y, c15.w
+dp3_pp r2.w, v2, -r2
+cmp r0.w, -r0.x, r0.y, r0.z
+mul_pp r0.xyz, v2, r2.w
+mad_pp r0.xyz, -r0, c13.z, -r2
+add r2.w, -r0, c13
+cmp r0.w, v4.z, r0, r2
+cmp r2.w, v4.x, r0, -r0
+dp3_pp_sat r3.x, r0, v1
+pow_pp r0, r3.x, c6.x
+add r0.z, -r1.w, c12.y
+mad r0.y, r1.w, c12.z, c12.w
+mad r0.y, r1.w, r0, c13.x
+mad r0.y, r1.w, r0, c13
+abs r1.w, v4.y
+mad r3.z, r2.w, c16.x, c16.y
+add r3.x, -r1.w, c12.y
+mad r2.w, r1, c12.z, c12
+mad r2.w, r2, r1, c13.x
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r0.z, r0.y, r0
+cmp r0.y, v4.z, c12.x, c12
+mul r0.w, r0.y, r0.z
+mad r0.w, -r0, c13.z, r0.z
+rsq r3.x, r3.x
+mad r1.w, r2, r1, c13.y
+rcp r3.x, r3.x
+mul r2.w, r1, r3.x
+cmp r1.w, v4.y, c12.x, c12.y
+mul r3.x, r1.w, r2.w
+mad r0.z, -r3.x, c13, r2.w
+mad r0.w, r0.y, c13, r0
+mad r0.y, r1.w, c13.w, r0.z
+mul r0.z, r0.w, c14.x
+dsy r0.w, r0.z
+dp3_pp_sat r1.w, v2, r2
+mul r3.w, r0.y, c14.x
+mul r4.xy, r4, r4
+add r0.y, r4.x, r4
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v4.z, c11, c11.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c12, r0.y
-rsq r2.w, r2.w
-mad r0.w, r1, r0, c12.y
-rcp r2.w, r2.w
-mul r1.w, r0, r2
-cmp r0.w, v4.y, c11.x, c11.y
-mul r2.w, r0, r1
-mad r0.y, -r2.w, c12.z, r1.w
-mad r0.z, r0.x, c12.w, r0
-mad r0.x, r0.w, c12.w, r0.y
-mul r0.y, r0.z, c13.x
-mul r4.y, r0.x, c13.x
-dsx r0.w, r0.y
-dsy r0.xz, v4.xyyw
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
+dsx r3.y, r0.z
 mul r4.zw, r4, r4
-add r1.w, r4.z, r4
-rsq r0.x, r1.w
+add r0.z, r4, r4.w
 rsq r0.z, r0.z
-rcp r1.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c15.x
-mul r0.x, r1.w, c15
-dp3_pp_sat r1.w, r3, v1
-pow_pp r3, r1.w, c6.x
-dsy r0.y, r0
-texldd r0, r4, s0, r0.zwzw, r0
-mul_pp r0.xyz, r0, r1
-mul r1.xyz, v5, c5
-mul_pp r1.xyz, r0, r1
+rcp r0.z, r0.z
+mul r0.z, r0, c16.x
+mov_pp r2.w, r0.x
+mul r3.x, r0.y, c16
+texldd r3, r3.zwzw, s0, r3, r0.zwzw
+mul_pp r1.xyz, r3, r1
+add_pp r3.x, r1.w, c12.y
 dp3 r0.x, v3, v3
-mov_pp r0.z, r3.x
-dp3_pp_sat r0.y, v2, r2
-texld r1.w, v3, s3
 texld r0.x, r0.x, s2
-mul r0.x, r0, r1.w
-add_pp r1.w, r0.y, c11.y
-mul r2.xyz, r0.x, c3
-mul r2.xyz, r2, c4
-add_pp r0.y, r0, c15.z
-mul_pp r0.y, r0, c3.w
-mul_pp r0.y, r0, r0.x
-mul r2.xyz, r2, r0.z
-frc_pp r2.w, r1
-add_pp_sat r0.z, r1.w, -r2.w
-mul r2.xyz, r0.z, r2
-mul r3.xyz, r0.w, r2
-mul_pp_sat r0.w, r0.y, c15
+texld r0.w, v3, s3
+mul r0.w, r0.x, r0
+mul r0.xyz, r0.w, c3
+mul r0.xyz, r0, c4
+mul r2.xyz, r0, r2.w
+mul r0.xyz, v5, c5
+mul_pp r1.xyz, r1, r0
+frc_pp r3.y, r3.x
+add_pp_sat r2.w, r3.x, -r3.y
 mov r0.x, c9
-add r0.xyz, c3, r0.x
-mad_sat r2.xyz, r0, r0.w, c0
+add r3.xyz, c3, r0.x
+mul r2.xyz, r2.w, r2
+add_pp r0.y, r1.w, c16.z
+mul_pp r0.y, r0, c3.w
+mul_pp r0.y, r0, r0.w
 texldp r0.x, v6, s4
-add_pp r2.xyz, r2, r3
-mad r0.x, r0, c1.z, c1.w
-rcp r0.y, v6.z
-rcp r0.x, r0.x
-mul r0.y, v0.x, r0
-add r0.x, r0, -v6.z
-mul r0.x, r0, r0.y
+mad r0.w, r0.x, c1.z, c1
+mul_pp_sat r0.y, r0, c16.w
+mad_sat r0.xyz, r3, r0.y, c0
+mul r2.xyz, r3.w, r2
+add_pp r2.xyz, r0, r2
+rcp r0.w, r0.w
+add r0.x, r0.w, -v6.z
+mul_sat r0.y, r0.x, c10.x
+add r0.x, v0, c11
+add r0.y, r0, c11.z
+mul_sat r0.x, r0, c11.y
 mul_pp oC0.xyz, r1, r2
-mul_sat oC0.w, r0.x, c10.x
+mad oC0.w, r0.x, r0.y, c11
 "
 }
 
@@ -20686,16 +20710,17 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTexture0] 2D
 SetTexture 3 [_CameraDepthTexture] 2D
 "ps_3_0
-; 113 ALU, 8 TEX
+; 114 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
-def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c15, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c11, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -20703,119 +20728,120 @@ dcl_texcoord3 v3.xy
 dcl_texcoord5 v4.xyz
 dcl_texcoord6 v5.xyz
 dcl_texcoord7 v6
-mul r1.xy, v4, c7.x
-dsx r4.zw, v4.xyxy
+mul r0.xy, v4, c7.x
+mul r1.xy, v4.zyzw, c7.x
+mul r2.w, v0.x, c8.x
+dsx r4.xy, v4
+dsy r4.zw, v4.xyxy
 abs r0.w, v4.z
-abs r2.xy, v4
-max r0.x, r2, r0.w
-rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
-mul r0.xy, v4.zyzw, c7.x
-mul r2.z, r1.w, r1.w
-texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2, c13.y, c13
-mad r2.w, r0.z, r2.z, c13
+texld r1.xyz, r1, s1
+add_pp r2.xyz, r1, -r0
+abs r1.xy, v4
+mad_pp r2.xyz, r1.x, r2, r0
+max r0.z, r1.x, r0.w
+rcp r1.z, r0.z
+min r0.z, r1.x, r0.w
+mul r1.z, r0, r1
 mul r0.xy, v4.zxzw, c7.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-mad r2.w, r2, r2.z, c14.x
-mad r2.y, r2.w, r2.z, c14
-mad r2.y, r2, r2.z, c14.z
-add_pp r1.xyz, -r0, c11.y
-mul r1.w, r2.y, r1
-mul r2.z, v0.x, c8.x
-mul_sat r2.y, r2.z, c12.z
-mad_pp r0.xyz, r2.y, r1, r0
-dp4_pp r1.z, c2, c2
-add r1.y, -r1.w, c14.w
-add r1.x, r2, -r0.w
-cmp r1.x, -r1, r1.w, r1.y
-rsq_pp r1.z, r1.z
-mul_pp r2.xyz, r1.z, c2
-add r1.y, -r1.x, c12.w
-cmp r1.w, v4.z, r1.x, r1.y
-dp3_pp r1.z, v2, -r2
-mul_pp r1.xyz, v2, r1.z
-mad_pp r3.xyz, -r1, c12.z, -r2
-dp3_pp_sat r2.x, v2, r2
-add_pp r2.y, r2.x, c11
+add_pp r0.xyz, r0, -r2
+mad_pp r0.xyz, r1.y, r0, r2
+mul r1.w, r1.z, r1.z
+mad r1.y, r1.w, c14, c14.z
+mad r1.y, r1, r1.w, c14.w
+mad r1.y, r1, r1.w, c15.x
+mad r1.y, r1, r1.w, c15
+mad r1.y, r1, r1.w, c15.z
+mul r1.y, r1, r1.z
+add_pp r2.xyz, -r0, c12.y
+mul_sat r2.w, r2, c13.z
+mad_pp r0.xyz, r2.w, r2, r0
+dp4_pp r2.x, c2, c2
+rsq_pp r1.w, r2.x
+mul_pp r2.xyz, r1.w, c2
+add r1.x, r1, -r0.w
+add r1.z, -r1.y, c15.w
+dp3_pp r2.w, v2, -r2
+cmp r1.w, -r1.x, r1.y, r1.z
+mul_pp r1.xyz, v2, r2.w
+mad_pp r1.xyz, -r1, c13.z, -r2
+dp3_pp_sat r1.y, r1, v1
+pow_pp r3, r1.y, c6.x
+add r2.w, -r1, c13
+cmp r1.w, v4.z, r1, r2
 abs r1.z, v4.y
-frc_pp r2.z, r2.y
-cmp r1.w, v4.x, r1, -r1
-mad r4.x, r1.w, c15, c15.y
-add r1.y, -r0.w, c11
-mad r1.x, r0.w, c11.z, c11.w
-mad r1.x, r0.w, r1, c12
-add r2.w, -r1.z, c11.y
-mad r1.w, r1.z, c11.z, c11
-mad r1.w, r1, r1.z, c12.x
+cmp r1.x, v4, r1.w, -r1.w
+mad r3.z, r1.x, c16.x, c16.y
+add r1.y, -r0.w, c12
+mad r1.x, r0.w, c12.z, c12.w
+mad r1.x, r0.w, r1, c13
+add r2.w, -r1.z, c12.y
+mad r1.w, r1.z, c12.z, c12
+mad r1.w, r1, r1.z, c13.x
 rsq r1.y, r1.y
 rsq r2.w, r2.w
-mad r0.w, r0, r1.x, c12.y
+mad r0.w, r0, r1.x, c13.y
 rcp r1.y, r1.y
 mul r1.x, r0.w, r1.y
-cmp r0.w, v4.z, c11.x, c11.y
+cmp r0.w, v4.z, c12.x, c12.y
 mul r1.y, r0.w, r1.x
-mad r1.y, -r1, c12.z, r1.x
-mad r1.z, r1.w, r1, c12.y
+mad r1.y, -r1, c13.z, r1.x
+mad r1.z, r1.w, r1, c13.y
 rcp r2.w, r2.w
 mul r1.w, r1.z, r2
-cmp r1.z, v4.y, c11.x, c11.y
+cmp r1.z, v4.y, c12.x, c12.y
 mul r2.w, r1.z, r1
-mad r1.x, -r2.w, c12.z, r1.w
-mad r1.y, r0.w, c12.w, r1
-mad r0.w, r1.z, c12, r1.x
-mul r1.x, r1.y, c13
-dp3_pp_sat r2.w, r3, v1
-mul r4.y, r0.w, c13.x
-mul r4.zw, r4, r4
-add r0.w, r4.z, r4
+mad r1.x, -r2.w, c13.z, r1.w
+mad r1.y, r0.w, c13.w, r1
+mad r0.w, r1.z, c13, r1.x
+mul r1.x, r1.y, c14
+mul r3.w, r0, c14.x
+mul r4.xy, r4, r4
+add r0.w, r4.x, r4.y
 rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r1.z, r0.w, c16.x
+dp3_pp_sat r2.w, v2, r2
+texld r0.w, v3, s2
 dsx r1.w, r1.x
 dsy r1.y, r1.x
-dsy r1.xz, v4.xyyw
-mul r1.xz, r1, r1
-add r1.x, r1, r1.z
-rcp r0.w, r0.w
+mul r4.zw, r4, r4
+add r1.x, r4.z, r4.w
 rsq r1.x, r1.x
 rcp r1.x, r1.x
-mul r1.z, r0.w, c15.x
-mul r1.x, r1, c15
-texldd r1, r4, s0, r1.zwzw, r1
-mul_pp r1.xyz, r1, r0
-pow_pp r0, r2.w, c6.x
-mul r3.xyz, v5, c5
-mov_pp r2.w, r0.x
-texld r0.w, v3, s2
-mul r0.xyz, r0.w, c3
-mul r0.xyz, r0, c4
-mul r0.xyz, r0, r2.w
-add_pp_sat r2.y, r2, -r2.z
-add_pp r2.x, r2, c15.z
-mul r0.xyz, r2.y, r0
-mul_pp r2.w, r2.x, c3
-mul r2.xyz, r1.w, r0
-mul_pp r0.y, r2.w, r0.w
-mul_pp r1.xyz, r1, r3
-mul_pp_sat r0.w, r0.y, c15
+mul r1.x, r1, c16
+texldd r1, r3.zwzw, s0, r1.zwzw, r1
+mul_pp r0.xyz, r1, r0
+mov_pp r3.z, r3.x
+add_pp r3.x, r2.w, c12.y
+frc_pp r3.y, r3.x
+mul r1.xyz, r0.w, c3
+mul r1.xyz, r1, c4
+mul r2.xyz, r1, r3.z
+add_pp_sat r3.x, r3, -r3.y
+mul r2.xyz, r3.x, r2
+mul r1.xyz, v5, c5
+mul_pp r1.xyz, r0, r1
+add_pp r0.y, r2.w, c16.z
+mul_pp r0.y, r0, c3.w
+mul_pp r0.y, r0, r0.w
+mul r3.xyz, r1.w, r2
 mov r0.x, c9
-add r0.xyz, c3, r0.x
-mad_sat r3.xyz, r0, r0.w, c0
+add r2.xyz, c3, r0.x
 texldp r0.x, v6, s3
-add_pp r2.xyz, r3, r2
-mad r0.x, r0, c1.z, c1.w
-rcp r0.y, v6.z
-rcp r0.x, r0.x
-mul r0.y, v0.x, r0
-add r0.x, r0, -v6.z
-mul r0.x, r0, r0.y
+mad r0.w, r0.x, c1.z, c1
+mul_pp_sat r0.y, r0, c16.w
+mad_sat r0.xyz, r2, r0.y, c0
+add_pp r2.xyz, r0, r3
+rcp r0.w, r0.w
+add r0.x, r0.w, -v6.z
+mul_sat r0.y, r0.x, c10.x
+add r0.x, v0, c11
+add r0.y, r0, c11.z
+mul_sat r0.x, r0, c11.y
 mul_pp oC0.xyz, r1, r2
-mul_sat oC0.w, r0.x, c10.x
+mad oC0.w, r0.x, r0.y, c11
 "
 }
 
@@ -20841,6 +20867,198 @@ Keywords { "SPOT" "SHADOWS_DEPTH" }
 
 SubProgram "d3d9 " {
 Keywords { "SPOT" "SHADOWS_DEPTH" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_ZBufferParams]
+Vector 2 [_WorldSpaceLightPos0]
+Vector 3 [_LightShadowData]
+Vector 4 [_LightColor0]
+Vector 5 [_SpecColor]
+Vector 6 [_Color]
+Float 7 [_Shininess]
+Float 8 [_DetailScale]
+Float 9 [_DetailDist]
+Float 10 [_MinLight]
+Float 11 [_Clarity]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_LightTexture0] 2D
+SetTexture 3 [_LightTextureB0] 2D
+SetTexture 4 [_ShadowMapTexture] 2D
+SetTexture 5 [_CameraDepthTexture] 2D
+"ps_3_0
+; 125 ALU, 10 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+dcl_2d s5
+def c12, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3
+dcl_texcoord4 v4
+dcl_texcoord5 v5.xyz
+dcl_texcoord6 v6.xyz
+dcl_texcoord7 v7
+mul r1.xy, v5, c8.x
+dsx r4.zw, v5.xyxy
+abs r0.w, v5.z
+abs r2.xy, v5
+max r0.x, r2, r0.w
+rcp r0.y, r0.x
+min r0.x, r2, r0.w
+mul r1.w, r0.x, r0.y
+mul r0.xy, v5.zyzw, c8.x
+mul r2.z, r1.w, r1.w
+texld r1.xyz, r1, s1
+texld r0.xyz, r0, s1
+add_pp r0.xyz, r0, -r1
+mad_pp r1.xyz, r2.x, r0, r1
+mad r0.z, r2, c15.y, c15
+mad r2.w, r0.z, r2.z, c15
+mul r0.xy, v5.zxzw, c8.x
+texld r0.xyz, r0, s1
+add_pp r0.xyz, r0, -r1
+mad_pp r0.xyz, r2.y, r0, r1
+mad r2.w, r2, r2.z, c16.x
+mad r2.y, r2.w, r2.z, c16
+mad r2.y, r2, r2.z, c16.z
+add_pp r1.xyz, -r0, c13.y
+mul r1.w, r2.y, r1
+mul r2.z, v0.x, c9.x
+mul_sat r2.y, r2.z, c14.z
+mad_pp r0.xyz, r2.y, r1, r0
+dp4 r1.z, c2, c2
+add r1.x, r2, -r0.w
+add r1.y, -r1.w, c16.w
+cmp r1.w, -r1.x, r1, r1.y
+add r2.x, -r1.w, c14.w
+cmp r1.w, v5.z, r1, r2.x
+cmp r1.w, v5.x, r1, -r1
+mad r4.x, r1.w, c17, c17.y
+mad r1.w, r0, c13.z, c13
+rsq r1.z, r1.z
+mul r1.xyz, r1.z, c2
+dp3_pp r2.y, v2, -r1
+mul_pp r2.xyz, v2, r2.y
+mad_pp r3.xyz, -r2, c14.z, -r1
+abs r2.y, v5
+add r2.x, -r0.w, c13.y
+mad r1.w, r0, r1, c14.x
+add r2.w, -r2.y, c13.y
+mad r2.z, r2.y, c13, c13.w
+mad r2.z, r2, r2.y, c14.x
+rsq r2.x, r2.x
+rsq r2.w, r2.w
+mad r0.w, r0, r1, c14.y
+rcp r2.x, r2.x
+mul r1.w, r0, r2.x
+cmp r0.w, v5.z, c13.x, c13.y
+mul r2.x, r0.w, r1.w
+mad r2.x, -r2, c14.z, r1.w
+mad r2.y, r2.z, r2, c14
+rcp r2.w, r2.w
+mul r2.z, r2.y, r2.w
+cmp r2.y, v5, c13.x, c13
+mul r2.w, r2.y, r2.z
+mad r1.w, -r2, c14.z, r2.z
+mad r2.x, r0.w, c14.w, r2
+mad r0.w, r2.y, c14, r1
+mul r1.w, r2.x, c15.x
+dsy r2.xz, v5.xyyw
+mul r2.xz, r2, r2
+mul r4.y, r0.w, c15.x
+mul r4.zw, r4, r4
+add r0.w, r4.z, r4
+rsq r0.w, r0.w
+dsx r2.w, r1
+dsy r2.y, r1.w
+add r1.w, r2.x, r2.z
+rcp r0.w, r0.w
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r2.x, r1.w, c17
+dp3_pp_sat r1.w, r3, v1
+mul r2.z, r0.w, c17.x
+texldd r2, r4, s0, r2.zwzw, r2
+mul_pp r2.xyz, r2, r0
+pow_pp r0, r1.w, c7.x
+mul r3.xyz, v6, c6
+mov_pp r0.y, r0.x
+mul_pp r2.xyz, r2, r3
+texldp r0.x, v4, s4
+rcp r0.z, v4.w
+mad r0.z, -v4, r0, r0.x
+mov r0.w, c3.x
+cmp r1.w, r0.z, c13.y, r0
+rcp r0.x, v3.w
+mad r3.xy, v3, r0.x, c17.y
+dp3 r0.x, v3, v3
+texld r0.w, r3, s2
+cmp r0.z, -v3, c13.x, c13.y
+mul_pp r0.z, r0, r0.w
+texld r0.x, r0.x, s3
+mul_pp r0.x, r0.z, r0
+dp3_pp_sat r0.z, v2, r1
+mul_pp r0.x, r0, r1.w
+add_pp r0.w, r0.z, c13.y
+mul r1.xyz, r0.x, c4
+mul r1.xyz, r1, c5
+mul r1.xyz, r1, r0.y
+add_pp r0.y, r0.z, c17.z
+frc_pp r1.w, r0
+add_pp_sat r0.z, r0.w, -r1.w
+mul r1.xyz, r0.z, r1
+mul_pp r0.y, r0, c4.w
+mul_pp r0.x, r0.y, r0
+mul_pp_sat r0.z, r0.x, c17.w
+texldp r0.x, v7, s5
+mad r0.w, r0.x, c1.z, c1
+mul r3.xyz, r2.w, r1
+mov r0.y, c10.x
+add r1.xyz, c4, r0.y
+mad_sat r0.xyz, r1, r0.z, c0
+add_pp r1.xyz, r0, r3
+rcp r0.w, r0.w
+add r0.x, r0.w, -v7.z
+mul_sat r0.y, r0.x, c11.x
+add r0.x, v0, c12
+add r0.y, r0, c12.z
+mul_sat r0.x, r0, c12.y
+mul_pp oC0.xyz, r2, r1
+mad oC0.w, r0.x, r0.y, c12
+"
+}
+
+SubProgram "gles " {
+Keywords { "SPOT" "SHADOWS_DEPTH" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "SPOT" "SHADOWS_DEPTH" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "SPOT" "SHADOWS_DEPTH" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
 Vector 0 [glstate_lightmodel_ambient]
 Vector 1 [_ZBufferParams]
 Vector 2 [_WorldSpaceLightPos0]
@@ -20867,11 +21085,12 @@ dcl_2d s2
 dcl_2d s3
 dcl_2d s4
 dcl_2d s5
-def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c12, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -20894,307 +21113,118 @@ texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2, c14.y, c14
-mad r2.w, r0.z, r2.z, c14
+mad r0.z, r2, c15.y, c15
+mad r2.w, r0.z, r2.z, c15
 mul r0.xy, v5.zxzw, c8.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r2.y, r0, r1
-mad r2.w, r2, r2.z, c15.x
-mad r2.y, r2.w, r2.z, c15
-mad r2.y, r2, r2.z, c15.z
-add_pp r1.xyz, -r0, c12.y
+mad r2.w, r2, r2.z, c16.x
+mad r2.y, r2.w, r2.z, c16
+mad r2.y, r2, r2.z, c16.z
+add_pp r1.xyz, -r0, c13.y
 mul r1.w, r2.y, r1
 mul r2.z, v0.x, c9.x
-mul_sat r2.y, r2.z, c13.z
+mul_sat r2.y, r2.z, c14.z
 mad_pp r0.xyz, r2.y, r1, r0
 dp4 r1.z, c2, c2
-add r1.y, -r1.w, c15.w
 add r1.x, r2, -r0.w
-cmp r1.x, -r1, r1.w, r1.y
-rsq r1.z, r1.z
-mul r2.xyz, r1.z, c2
-add r1.y, -r1.x, c13.w
-cmp r1.w, v5.z, r1.x, r1.y
-dp3_pp r1.z, v2, -r2
-mul_pp r1.xyz, v2, r1.z
-mad_pp r3.xyz, -r1, c13.z, -r2
-abs r1.z, v5.y
+add r1.y, -r1.w, c16.w
+cmp r1.w, -r1.x, r1, r1.y
+add r2.x, -r1.w, c14.w
+cmp r1.w, v5.z, r1, r2.x
 cmp r1.w, v5.x, r1, -r1
-mad r4.x, r1.w, c16, c16.y
-add r1.y, -r0.w, c12
-mad r1.x, r0.w, c12.z, c12.w
-mad r1.x, r0.w, r1, c13
-add r2.w, -r1.z, c12.y
-mad r1.w, r1.z, c12.z, c12
-mad r1.w, r1, r1.z, c13.x
-rsq r1.y, r1.y
+mad r4.x, r1.w, c17, c17.y
+mad r1.w, r0, c13.z, c13
+rsq r1.z, r1.z
+mul r1.xyz, r1.z, c2
+dp3_pp r2.y, v2, -r1
+mul_pp r2.xyz, v2, r2.y
+mad_pp r3.xyz, -r2, c14.z, -r1
+abs r2.y, v5
+add r2.x, -r0.w, c13.y
+mad r1.w, r0, r1, c14.x
+add r2.w, -r2.y, c13.y
+mad r2.z, r2.y, c13, c13.w
+mad r2.z, r2, r2.y, c14.x
+rsq r2.x, r2.x
 rsq r2.w, r2.w
-mad r0.w, r0, r1.x, c13.y
-rcp r1.y, r1.y
-mul r1.x, r0.w, r1.y
-cmp r0.w, v5.z, c12.x, c12.y
-mul r1.y, r0.w, r1.x
-mad r1.y, -r1, c13.z, r1.x
-mad r1.z, r1.w, r1, c13.y
+mad r0.w, r0, r1, c14.y
+rcp r2.x, r2.x
+mul r1.w, r0, r2.x
+cmp r0.w, v5.z, c13.x, c13.y
+mul r2.x, r0.w, r1.w
+mad r2.x, -r2, c14.z, r1.w
+mad r2.y, r2.z, r2, c14
 rcp r2.w, r2.w
-mul r1.w, r1.z, r2
-cmp r1.z, v5.y, c12.x, c12.y
-mul r2.w, r1.z, r1
-mad r1.x, -r2.w, c13.z, r1.w
-mad r1.y, r0.w, c13.w, r1
-mad r0.w, r1.z, c13, r1.x
-mul r1.x, r1.y, c14
-dp3_pp_sat r2.w, r3, v1
-mul r4.y, r0.w, c14.x
+mul r2.z, r2.y, r2.w
+cmp r2.y, v5, c13.x, c13
+mul r2.w, r2.y, r2.z
+mad r1.w, -r2, c14.z, r2.z
+mad r2.x, r0.w, c14.w, r2
+mad r0.w, r2.y, c14, r1
+mul r1.w, r2.x, c15.x
+dsy r2.xz, v5.xyyw
+mul r2.xz, r2, r2
+mul r4.y, r0.w, c15.x
 mul r4.zw, r4, r4
 add r0.w, r4.z, r4
 rsq r0.w, r0.w
-dsx r1.w, r1.x
-dsy r1.y, r1.x
-dsy r1.xz, v5.xyyw
-mul r1.xz, r1, r1
-add r1.x, r1, r1.z
+dsx r2.w, r1
+dsy r2.y, r1.w
+add r1.w, r2.x, r2.z
 rcp r0.w, r0.w
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-mul r1.z, r0.w, c16.x
-mul r1.x, r1, c16
-texldd r1, r4, s0, r1.zwzw, r1
-mul_pp r1.xyz, r1, r0
-pow_pp r0, r2.w, c7.x
-dp3_pp_sat r0.z, v2, r2
-mov_pp r0.y, r0.x
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r2.x, r1.w, c17
+dp3_pp_sat r1.w, r3, v1
+mul r2.z, r0.w, c17.x
+texldd r2, r4, s0, r2.zwzw, r2
+mul_pp r2.xyz, r2, r0
+pow_pp r0, r1.w, c7.x
 mul r3.xyz, v6, c6
-mul_pp r1.xyz, r1, r3
-texldp r0.x, v4, s4
-rcp r0.w, v4.w
-mad r0.w, -v4.z, r0, r0.x
-mov r2.x, c3
-cmp r2.z, r0.w, c12.y, r2.x
-rcp r0.x, v3.w
-mad r2.xy, v3, r0.x, c16.y
-texld r0.w, r2, s2
-cmp r2.x, -v3.z, c12, c12.y
-dp3 r0.x, v3, v3
-mul_pp r0.w, r2.x, r0
-texld r0.x, r0.x, s3
-mul_pp r0.x, r0.w, r0
-mul_pp r0.x, r0, r2.z
-add_pp r0.w, r0.z, c12.y
-mul r2.xyz, r0.x, c4
-frc_pp r2.w, r0
-mul r2.xyz, r2, c5
-mul r2.xyz, r2, r0.y
-add_pp_sat r0.w, r0, -r2
-mul r2.xyz, r0.w, r2
-add_pp r0.y, r0.z, c16.z
-mul_pp r0.y, r0, c4.w
-mul_pp r0.y, r0, r0.x
-mul r3.xyz, r1.w, r2
-mul_pp_sat r0.w, r0.y, c16
-mov r0.x, c10
-add r0.xyz, c4, r0.x
-mad_sat r2.xyz, r0, r0.w, c0
-texldp r0.x, v7, s5
-add_pp r2.xyz, r2, r3
-mad r0.x, r0, c1.z, c1.w
-rcp r0.y, v7.z
-rcp r0.x, r0.x
-mul r0.y, v0.x, r0
-add r0.x, r0, -v7.z
-mul r0.x, r0, r0.y
-mul_pp oC0.xyz, r1, r2
-mul_sat oC0.w, r0.x, c11.x
-"
-}
-
-SubProgram "gles " {
-Keywords { "SPOT" "SHADOWS_DEPTH" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "SPOT" "SHADOWS_DEPTH" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "SPOT" "SHADOWS_DEPTH" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_ZBufferParams]
-Vector 2 [_WorldSpaceLightPos0]
-Vector 3 [_LightShadowData]
-Vector 4 [_LightColor0]
-Vector 5 [_SpecColor]
-Vector 6 [_Color]
-Float 7 [_Shininess]
-Float 8 [_DetailScale]
-Float 9 [_DetailDist]
-Float 10 [_MinLight]
-Float 11 [_Clarity]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_LightTexture0] 2D
-SetTexture 3 [_LightTextureB0] 2D
-SetTexture 4 [_ShadowMapTexture] 2D
-SetTexture 5 [_CameraDepthTexture] 2D
-"ps_3_0
-; 123 ALU, 10 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-dcl_2d s5
-def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3
-dcl_texcoord4 v4
-dcl_texcoord5 v5.xyz
-dcl_texcoord6 v6.xyz
-dcl_texcoord7 v7
-mul r1.xy, v5, c8.x
-dsx r4.zw, v5.xyxy
-abs r0.w, v5.z
-abs r2.xy, v5
-max r0.x, r2, r0.w
-rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
-mul r0.xy, v5.zyzw, c8.x
-mul r2.z, r1.w, r1.w
-texld r1.xyz, r1, s1
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2, c14.y, c14
-mad r2.w, r0.z, r2.z, c14
-mul r0.xy, v5.zxzw, c8.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-mad r2.w, r2, r2.z, c15.x
-mad r2.y, r2.w, r2.z, c15
-mad r2.y, r2, r2.z, c15.z
-add_pp r1.xyz, -r0, c12.y
-mul r1.w, r2.y, r1
-mul r2.z, v0.x, c9.x
-mul_sat r2.y, r2.z, c13.z
-mad_pp r0.xyz, r2.y, r1, r0
-dp4 r1.z, c2, c2
-add r1.y, -r1.w, c15.w
-add r1.x, r2, -r0.w
-cmp r1.x, -r1, r1.w, r1.y
-rsq r1.z, r1.z
-mul r2.xyz, r1.z, c2
-add r1.y, -r1.x, c13.w
-cmp r1.w, v5.z, r1.x, r1.y
-dp3_pp r1.z, v2, -r2
-mul_pp r1.xyz, v2, r1.z
-mad_pp r3.xyz, -r1, c13.z, -r2
-abs r1.z, v5.y
-cmp r1.w, v5.x, r1, -r1
-mad r4.x, r1.w, c16, c16.y
-add r1.y, -r0.w, c12
-mad r1.x, r0.w, c12.z, c12.w
-mad r1.x, r0.w, r1, c13
-add r2.w, -r1.z, c12.y
-mad r1.w, r1.z, c12.z, c12
-mad r1.w, r1, r1.z, c13.x
-rsq r1.y, r1.y
-rsq r2.w, r2.w
-mad r0.w, r0, r1.x, c13.y
-rcp r1.y, r1.y
-mul r1.x, r0.w, r1.y
-cmp r0.w, v5.z, c12.x, c12.y
-mul r1.y, r0.w, r1.x
-mad r1.y, -r1, c13.z, r1.x
-mad r1.z, r1.w, r1, c13.y
-rcp r2.w, r2.w
-mul r1.w, r1.z, r2
-cmp r1.z, v5.y, c12.x, c12.y
-mul r2.w, r1.z, r1
-mad r1.x, -r2.w, c13.z, r1.w
-mad r1.y, r0.w, c13.w, r1
-mad r0.w, r1.z, c13, r1.x
-mul r1.x, r1.y, c14
-dp3_pp_sat r2.w, r3, v1
-mul r4.y, r0.w, c14.x
-mul r4.zw, r4, r4
-add r0.w, r4.z, r4
-rsq r0.w, r0.w
-dsx r1.w, r1.x
-dsy r1.y, r1.x
-dsy r1.xz, v5.xyyw
-mul r1.xz, r1, r1
-add r1.x, r1, r1.z
-rcp r0.w, r0.w
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-mul r1.z, r0.w, c16.x
-mul r1.x, r1, c16
-texldd r1, r4, s0, r1.zwzw, r1
-mul_pp r1.xyz, r1, r0
-pow_pp r0, r2.w, c7.x
 mov_pp r0.y, r0.x
-mul r3.xyz, v6, c6
-dp3_pp_sat r0.z, v2, r2
 mov r0.x, c3
-add r2.x, c12.y, -r0
+add r0.w, c13.y, -r0.x
 texldp r0.x, v4, s4
-mad r2.z, r0.x, r2.x, c3.x
-rcp r0.w, v3.w
-mad r2.xy, v3, r0.w, c16.y
-texld r0.w, r2, s2
-cmp r2.x, -v3.z, c12, c12.y
+mad r1.w, r0.x, r0, c3.x
 dp3 r0.x, v3, v3
-mul_pp r0.w, r2.x, r0
+mul_pp r2.xyz, r2, r3
+rcp r0.z, v3.w
+mad r3.xy, v3, r0.z, c17.y
+texld r0.w, r3, s2
+cmp r0.z, -v3, c13.x, c13.y
+mul_pp r0.z, r0, r0.w
 texld r0.x, r0.x, s3
-mul_pp r0.x, r0.w, r0
-mul_pp r0.x, r0, r2.z
-add_pp r0.w, r0.z, c12.y
-mul r2.xyz, r0.x, c4
-frc_pp r2.w, r0
-mul r2.xyz, r2, c5
-mul r2.xyz, r2, r0.y
-add_pp_sat r0.w, r0, -r2
-add_pp r0.y, r0.z, c16.z
+mul_pp r0.x, r0.z, r0
+dp3_pp_sat r0.z, v2, r1
+mul_pp r0.x, r0, r1.w
+add_pp r0.w, r0.z, c13.y
+mul r1.xyz, r0.x, c4
+mul r1.xyz, r1, c5
+mul r1.xyz, r1, r0.y
+add_pp r0.y, r0.z, c17.z
+frc_pp r1.w, r0
+add_pp_sat r0.z, r0.w, -r1.w
+mul r1.xyz, r0.z, r1
 mul_pp r0.y, r0, c4.w
-mul_pp r0.y, r0, r0.x
-mul r2.xyz, r0.w, r2
-mul_pp r1.xyz, r1, r3
-mul r3.xyz, r1.w, r2
-mul_pp_sat r0.w, r0.y, c16
-mov r0.x, c10
-add r0.xyz, c4, r0.x
-mad_sat r2.xyz, r0, r0.w, c0
+mul_pp r0.x, r0.y, r0
+mul_pp_sat r0.z, r0.x, c17.w
 texldp r0.x, v7, s5
-add_pp r2.xyz, r2, r3
-mad r0.x, r0, c1.z, c1.w
-rcp r0.y, v7.z
-rcp r0.x, r0.x
-mul r0.y, v0.x, r0
-add r0.x, r0, -v7.z
-mul r0.x, r0, r0.y
-mul_pp oC0.xyz, r1, r2
-mul_sat oC0.w, r0.x, c11.x
+mad r0.w, r0.x, c1.z, c1
+mul r3.xyz, r2.w, r1
+mov r0.y, c10.x
+add r1.xyz, c4, r0.y
+mad_sat r0.xyz, r1, r0.z, c0
+add_pp r1.xyz, r0, r3
+rcp r0.w, r0.w
+add r0.x, r0.w, -v7.z
+mul_sat r0.y, r0.x, c11.x
+add r0.x, v0, c12
+add r0.y, r0, c12.z
+mul_sat r0.x, r0, c12.y
+mul_pp oC0.xyz, r2, r1
+mad oC0.w, r0.x, r0.y, c12
 "
 }
 
@@ -21231,16 +21261,17 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_ShadowMapTexture] 2D
 SetTexture 3 [_CameraDepthTexture] 2D
 "ps_3_0
-; 113 ALU, 8 TEX
+; 114 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
-def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c15, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c11, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -21248,119 +21279,120 @@ dcl_texcoord3 v3
 dcl_texcoord5 v4.xyz
 dcl_texcoord6 v5.xyz
 dcl_texcoord7 v6
-mul r1.xy, v4, c7.x
-dsx r4.zw, v4.xyxy
+mul r0.xy, v4, c7.x
+mul r1.xy, v4.zyzw, c7.x
+mul r2.z, v0.x, c8.x
+dsx r4.xy, v4
+dsy r4.zw, v4.xyxy
 abs r0.w, v4.z
-abs r2.xy, v4
-max r0.x, r2, r0.w
-rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
-mul r0.xy, v4.zyzw, c7.x
-mul r2.z, r1.w, r1.w
-texld r1.xyz, r1, s1
+abs r3.xy, v4
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2, c13.y, c13
-mad r2.w, r0.z, r2.z, c13
+texld r1.xyz, r1, s1
+add_pp r1.xyz, r1, -r0
+mad_pp r1.xyz, r3.x, r1, r0
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.x, r1.w, r1.w
+mad r2.y, r2.x, c14, c14.z
+mad r2.y, r2, r2.x, c14.w
 mul r0.xy, v4.zxzw, c7.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-mad r2.w, r2, r2.z, c14.x
-mad r2.y, r2.w, r2.z, c14
-mad r2.y, r2, r2.z, c14.z
-add_pp r1.xyz, -r0, c11.y
-mul r1.w, r2.y, r1
-mul r2.z, v0.x, c8.x
-mul_sat r2.y, r2.z, c12.z
-mad_pp r1.xyz, r2.y, r1, r0
-dp4_pp r0.z, c2, c2
-add r0.y, -r1.w, c14.w
-add r0.x, r2, -r0.w
-cmp r0.x, -r0, r1.w, r0.y
-rsq_pp r0.z, r0.z
+mad_pp r0.xyz, r3.y, r0, r1
+add_pp r1.xyz, -r0, c12.y
+mul_sat r2.z, r2, c13
+mad_pp r1.xyz, r2.z, r1, r0
+mad r2.y, r2, r2.x, c15.x
+mad r0.x, r2.y, r2, c15.y
+dp4_pp r0.y, c2, c2
+mad r0.x, r0, r2, c15.z
+rsq_pp r0.z, r0.y
+mul r0.y, r0.x, r1.w
 mul_pp r2.xyz, r0.z, c2
-add r0.y, -r0.x, c12.w
-cmp r1.w, v4.z, r0.x, r0.y
-dp3_pp r0.z, v2, -r2
-mul_pp r0.xyz, v2, r0.z
-mad_pp r3.xyz, -r0, c12.z, -r2
-cmp r1.w, v4.x, r1, -r1
-add r0.y, -r0.w, c11
-mad r0.x, r0.w, c11.z, c11.w
-mad r0.x, r0.w, r0, c12
-mad r0.x, r0.w, r0, c12.y
+add r0.x, r3, -r0.w
+add r0.z, -r0.y, c15.w
+dp3_pp r2.w, v2, -r2
+cmp r1.w, -r0.x, r0.y, r0.z
+mul_pp r0.xyz, v2, r2.w
+mad_pp r0.xyz, -r0, c13.z, -r2
+dp3_pp_sat r0.y, r0, v1
+pow_pp r3, r0.y, c6.x
+add r2.w, -r1, c13
+cmp r1.w, v4.z, r1, r2
+cmp r0.x, v4, r1.w, -r1.w
+mad r3.z, r0.x, c16.x, c16.y
+add r0.y, -r0.w, c12
+mad r0.x, r0.w, c12.z, c12.w
+mad r0.x, r0.w, r0, c13
+mad r0.x, r0.w, r0, c13.y
 abs r0.w, v4.y
-mad r4.x, r1.w, c15, c15.y
-add r2.w, -r0, c11.y
-mad r1.w, r0, c11.z, c11
-mad r1.w, r1, r0, c12.x
+add r2.w, -r0, c12.y
+mad r1.w, r0, c12.z, c12
+mad r1.w, r1, r0, c13.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
 mul r0.y, r0.x, r0
-cmp r0.x, v4.z, c11, c11.y
+cmp r0.x, v4.z, c12, c12.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c12, r0.y
+mad r0.z, -r0, c13, r0.y
 rsq r2.w, r2.w
-mad r0.w, r1, r0, c12.y
+mad r0.w, r1, r0, c13.y
 rcp r2.w, r2.w
 mul r1.w, r0, r2
-cmp r0.w, v4.y, c11.x, c11.y
+cmp r0.w, v4.y, c12.x, c12.y
 mul r2.w, r0, r1
-mad r0.y, -r2.w, c12.z, r1.w
-mad r0.z, r0.x, c12.w, r0
-mad r0.x, r0.w, c12.w, r0.y
-mul r0.y, r0.z, c13.x
-dp3_pp_sat r2.w, r3, v1
-mul r4.y, r0.x, c13.x
+mad r0.y, -r2.w, c13.z, r1.w
+mad r0.z, r0.x, c13.w, r0
+mad r0.x, r0.w, c13.w, r0.y
+mul r0.y, r0.z, c14.x
+mul r3.w, r0.x, c14.x
 dsx r0.w, r0.y
-dsy r0.xz, v4.xyyw
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
+mul r4.xy, r4, r4
 mul r4.zw, r4, r4
-add r1.w, r4.z, r4
-rsq r0.x, r1.w
+add r0.x, r4, r4.y
+add r0.z, r4, r4.w
 rsq r0.z, r0.z
+rsq r0.x, r0.x
 rcp r1.w, r0.z
 rcp r0.x, r0.x
-mul r0.z, r0.x, c15.x
-mul r0.x, r1.w, c15
+mul r0.z, r0.x, c16.x
+mul r0.x, r1.w, c16
 dsy r0.y, r0
-texldd r0, r4, s0, r0.zwzw, r0
-mul_pp r0.xyz, r0, r1
-pow_pp r1, r2.w, c6.x
-mul r3.xyz, v5, c5
-mul_pp r3.xyz, r0, r3
+texldd r0, r3.zwzw, s0, r0.zwzw, r0
+mul_pp r1.xyz, r0, r1
 dp3_pp_sat r0.y, v2, r2
-add_pp r0.z, r0.y, c11.y
-frc_pp r1.w, r0.z
-add_pp r0.y, r0, c15.z
 texldp r0.x, v3, s2
-mov_pp r2.w, r1.x
-mul r1.xyz, r0.x, c3
-mul r1.xyz, r1, c4
-mul_pp r0.y, r0, c3.w
-mul_pp r0.y, r0, r0.x
+add_pp r0.z, r0.y, c12.y
+mul r2.xyz, r0.x, c3
+frc_pp r1.w, r0.z
+mul r2.xyz, r2, c4
+mov_pp r2.w, r3.x
+mul r3.xyz, r2, r2.w
 add_pp_sat r0.z, r0, -r1.w
-mul r1.xyz, r1, r2.w
-mul r1.xyz, r0.z, r1
-mul r1.xyz, r0.w, r1
-mul_pp_sat r0.w, r0.y, c15
-mov r0.x, c9
-add r0.xyz, c3, r0.x
-mad_sat r2.xyz, r0, r0.w, c0
+mul r3.xyz, r0.z, r3
+add_pp r0.z, r0.y, c16
+mul r2.xyz, v5, c5
+mul_pp r1.xyz, r1, r2
+mov r0.y, c9.x
+add r2.xyz, c3, r0.y
+mul_pp r0.z, r0, c3.w
+mul_pp r0.y, r0.z, r0.x
+mul r3.xyz, r0.w, r3
 texldp r0.x, v6, s3
-add_pp r1.xyz, r2, r1
-mad r0.x, r0, c1.z, c1.w
-rcp r0.y, v6.z
-rcp r0.x, r0.x
-mul r0.y, v0.x, r0
-add r0.x, r0, -v6.z
-mul r0.x, r0, r0.y
-mul_pp oC0.xyz, r3, r1
-mul_sat oC0.w, r0.x, c10.x
+mad r0.w, r0.x, c1.z, c1
+mul_pp_sat r0.y, r0, c16.w
+mad_sat r0.xyz, r2, r0.y, c0
+add_pp r2.xyz, r0, r3
+rcp r0.w, r0.w
+add r0.x, r0.w, -v6.z
+mul_sat r0.y, r0.x, c10.x
+add r0.x, v0, c11
+add r0.y, r0, c11.z
+mul_sat r0.x, r0, c11.y
+mul_pp oC0.xyz, r1, r2
+mad oC0.w, r0.x, r0.y, c11
 "
 }
 
@@ -21403,17 +21435,18 @@ SetTexture 2 [_ShadowMapTexture] 2D
 SetTexture 3 [_LightTexture0] 2D
 SetTexture 4 [_CameraDepthTexture] 2D
 "ps_3_0
-; 114 ALU, 9 TEX
+; 115 ALU, 9 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c15, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c11, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -21422,121 +21455,122 @@ dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.xyz
 dcl_texcoord7 v7
-mul r1.xy, v5, c7.x
-dsx r4.zw, v5.xyxy
-abs r0.w, v5.z
-abs r2.xy, v5
-max r0.x, r2, r0.w
-rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
-mul r0.xy, v5.zyzw, c7.x
-mul r2.z, r1.w, r1.w
-texld r1.xyz, r1, s1
+mul r0.xy, v5, c7.x
+mul r1.xy, v5.zyzw, c7.x
+mul r2.z, v0.x, c8.x
+dsx r4.xy, v5
+dsy r4.zw, v5.xyxy
+abs r1.w, v5.z
+abs r3.xy, v5
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2, c13.y, c13
-mad r2.w, r0.z, r2.z, c13
+texld r1.xyz, r1, s1
+add_pp r1.xyz, r1, -r0
+mad_pp r1.xyz, r3.x, r1, r0
+max r0.z, r3.x, r1.w
+rcp r0.w, r0.z
+min r0.z, r3.x, r1.w
+mul r0.w, r0.z, r0
+mul r2.x, r0.w, r0.w
+mad r2.y, r2.x, c14, c14.z
+mad r2.y, r2, r2.x, c14.w
 mul r0.xy, v5.zxzw, c7.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-mad r2.w, r2, r2.z, c14.x
-mad r2.y, r2.w, r2.z, c14
-mad r2.y, r2, r2.z, c14.z
-add_pp r1.xyz, -r0, c11.y
-mul r1.w, r2.y, r1
-mul r2.z, v0.x, c8.x
-mul_sat r2.y, r2.z, c12.z
-mad_pp r1.xyz, r2.y, r1, r0
-dp4_pp r0.z, c2, c2
-add r0.y, -r1.w, c14.w
-add r0.x, r2, -r0.w
-cmp r0.x, -r0, r1.w, r0.y
-rsq_pp r0.z, r0.z
+mad_pp r0.xyz, r3.y, r0, r1
+add_pp r1.xyz, -r0, c12.y
+mul_sat r2.z, r2, c13
+mad_pp r1.xyz, r2.z, r1, r0
+mad r2.y, r2, r2.x, c15.x
+mad r0.x, r2.y, r2, c15.y
+dp4_pp r0.y, c2, c2
+mad r0.x, r0, r2, c15.z
+rsq_pp r0.z, r0.y
+mul r0.y, r0.x, r0.w
 mul_pp r2.xyz, r0.z, c2
-add r0.y, -r0.x, c12.w
-cmp r1.w, v5.z, r0.x, r0.y
-dp3_pp r0.z, v2, -r2
-mul_pp r0.xyz, v2, r0.z
-mad_pp r3.xyz, -r0, c12.z, -r2
-cmp r1.w, v5.x, r1, -r1
-add r0.y, -r0.w, c11
-mad r0.x, r0.w, c11.z, c11.w
-mad r0.x, r0.w, r0, c12
-mad r0.x, r0.w, r0, c12.y
-abs r0.w, v5.y
-mad r4.x, r1.w, c15, c15.y
-add r2.w, -r0, c11.y
-mad r1.w, r0, c11.z, c11
-mad r1.w, r1, r0, c12.x
+add r0.x, r3, -r1.w
+add r0.z, -r0.y, c15.w
+dp3_pp r2.w, v2, -r2
+cmp r0.w, -r0.x, r0.y, r0.z
+mul_pp r0.xyz, v2, r2.w
+mad_pp r0.xyz, -r0, c13.z, -r2
+add r2.w, -r0, c13
+cmp r0.w, v5.z, r0, r2
+cmp r2.w, v5.x, r0, -r0
+dp3_pp_sat r3.x, r0, v1
+pow_pp r0, r3.x, c6.x
+add r0.z, -r1.w, c12.y
+mad r0.y, r1.w, c12.z, c12.w
+mad r0.y, r1.w, r0, c13.x
+mad r0.y, r1.w, r0, c13
+abs r1.w, v5.y
+mad r3.z, r2.w, c16.x, c16.y
+add r3.x, -r1.w, c12.y
+mad r2.w, r1, c12.z, c12
+mad r2.w, r2, r1, c13.x
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r0.z, r0.y, r0
+cmp r0.y, v5.z, c12.x, c12
+mul r0.w, r0.y, r0.z
+mad r0.w, -r0, c13.z, r0.z
+rsq r3.x, r3.x
+mad r1.w, r2, r1, c13.y
+rcp r3.x, r3.x
+mul r2.w, r1, r3.x
+cmp r1.w, v5.y, c12.x, c12.y
+mul r3.x, r1.w, r2.w
+mad r0.z, -r3.x, c13, r2.w
+mad r0.w, r0.y, c13, r0
+mad r0.y, r1.w, c13.w, r0.z
+mul r0.z, r0.w, c14.x
+dp3_pp_sat r1.w, v2, r2
+dsy r0.w, r0.z
+mul r3.w, r0.y, c14.x
+mul r4.xy, r4, r4
+add r0.y, r4.x, r4
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v5.z, c11, c11.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c12, r0.y
-rsq r2.w, r2.w
-mad r0.w, r1, r0, c12.y
-rcp r2.w, r2.w
-mul r1.w, r0, r2
-cmp r0.w, v5.y, c11.x, c11.y
-mul r2.w, r0, r1
-mad r0.y, -r2.w, c12.z, r1.w
-mad r0.z, r0.x, c12.w, r0
-mad r0.x, r0.w, c12.w, r0.y
-mul r0.y, r0.z, c13.x
-dp3_pp_sat r2.w, r3, v1
-mul r4.y, r0.x, c13.x
-dsx r0.w, r0.y
-dsy r0.xz, v5.xyyw
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
+dsx r3.y, r0.z
 mul r4.zw, r4, r4
-add r1.w, r4.z, r4
-rsq r0.x, r1.w
+add r0.z, r4, r4.w
 rsq r0.z, r0.z
-rcp r1.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c15.x
-mul r0.x, r1.w, c15
-dsy r0.y, r0
-texldd r0, r4, s0, r0.zwzw, r0
-mul_pp r0.xyz, r0, r1
-pow_pp r1, r2.w, c6.x
-mul r3.xyz, v6, c5
-mul_pp r3.xyz, r0, r3
-dp3_pp_sat r0.y, v2, r2
-add_pp r0.z, r0.y, c11.y
-add_pp r0.y, r0, c15.z
-mov_pp r2.w, r1.x
-texld r1.w, v3, s3
+rcp r0.z, r0.z
+mul r0.z, r0, c16.x
+mul r3.x, r0.y, c16
+texldd r3, r3.zwzw, s0, r3, r0.zwzw
+mul_pp r1.xyz, r3, r1
+mov_pp r3.y, r0.x
+add_pp r2.w, r1, c12.y
+frc_pp r3.x, r2.w
 texldp r0.x, v4, s2
-mul r0.x, r1.w, r0
-mul r1.xyz, r0.x, c3
-frc_pp r1.w, r0.z
-mul r1.xyz, r1, c4
+texld r0.w, v3, s3
+mul r0.w, r0, r0.x
+mul r0.xyz, r0.w, c3
+mul r0.xyz, r0, c4
+mul r2.xyz, r0, r3.y
+mul r0.xyz, v6, c5
+mul_pp r1.xyz, r1, r0
+add_pp_sat r2.w, r2, -r3.x
+mul r2.xyz, r2.w, r2
+add_pp r0.y, r1.w, c16.z
 mul_pp r0.y, r0, c3.w
-mul_pp r0.y, r0, r0.x
-add_pp_sat r0.z, r0, -r1.w
-mul r1.xyz, r1, r2.w
-mul r1.xyz, r0.z, r1
-mul r2.xyz, r0.w, r1
-mul_pp_sat r0.w, r0.y, c15
+mul_pp r0.y, r0, r0.w
+mul r3.xyz, r3.w, r2
 mov r0.x, c9
-add r0.xyz, c3, r0.x
-mad_sat r1.xyz, r0, r0.w, c0
+add r2.xyz, c3, r0.x
 texldp r0.x, v7, s4
-add_pp r1.xyz, r1, r2
-mad r0.x, r0, c1.z, c1.w
-rcp r0.y, v7.z
-rcp r0.x, r0.x
-mul r0.y, v0.x, r0
-add r0.x, r0, -v7.z
-mul r0.x, r0, r0.y
-mul_pp oC0.xyz, r3, r1
-mul_sat oC0.w, r0.x, c10.x
+mad r0.w, r0.x, c1.z, c1
+mul_pp_sat r0.y, r0, c16.w
+mad_sat r0.xyz, r2, r0.y, c0
+add_pp r2.xyz, r0, r3
+rcp r0.w, r0.w
+add r0.x, r0.w, -v7.z
+mul_sat r0.y, r0.x, c10.x
+add r0.x, v0, c11
+add r0.y, r0, c11.z
+mul_sat r0.x, r0, c11.y
+mul_pp oC0.xyz, r1, r2
+mad oC0.w, r0.x, r0.y, c11
 "
 }
 
@@ -21581,19 +21615,20 @@ SetTexture 2 [_ShadowMapTexture] CUBE
 SetTexture 3 [_LightTexture0] 2D
 SetTexture 4 [_CameraDepthTexture] 2D
 "ps_3_0
-; 123 ALU, 9 TEX
+; 124 ALU, 9 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
 dcl_2d s3
 dcl_2d s4
-def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 0.97000003
-def c18, 1.00000000, 0.00392157, 0.00001538, 0.00000001
-def c19, 4.03944778, 0, 0, 0
+def c13, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c14, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c15, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 0.97000003
+def c19, 1.00000000, 0.00392157, 0.00001538, 0.00000001
+def c20, 4.03944778, 0, 0, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -21603,129 +21638,130 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.xyz
 dcl_texcoord7 v7
 mul r1.xy, v5, c9.x
-dsx r4.zw, v5.xyxy
-abs r0.w, v5.z
+abs r1.w, v5.z
 abs r2.xy, v5
-max r0.x, r2, r0.w
+max r0.x, r2, r1.w
 rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
+min r0.x, r2, r1.w
+mul r0.w, r0.x, r0.y
+mul r2.z, r0.w, r0.w
+mad r2.w, r2.z, c16.y, c16.z
 mul r0.xy, v5.zyzw, c9.x
-mul r2.z, r1.w, r1.w
+mad r2.w, r2, r2.z, c16
 texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2, c15.y, c15
-mad r2.w, r0.z, r2.z, c15
+mad r0.z, r2.w, r2, c17.x
+mad r2.w, r0.z, r2.z, c17.y
 mul r0.xy, v5.zxzw, c9.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r2.y, r0, r1
-mad r2.w, r2, r2.z, c16.x
-mad r2.y, r2.w, r2.z, c16
-mad r2.y, r2, r2.z, c16.z
-add_pp r1.xyz, -r0, c13.y
-mul r1.w, r2.y, r1
-mul r2.z, v0.x, c10.x
-mul_sat r2.y, r2.z, c14.z
-mad_pp r3.xyz, r2.y, r1, r0
-abs r2.y, v5
-add r0.x, r2, -r0.w
-add r0.y, -r1.w, c16.w
-cmp r0.x, -r0, r1.w, r0.y
-add r0.y, -r0.x, c14.w
-cmp r0.x, v5.z, r0, r0.y
-cmp r0.x, v5, r0, -r0
-add r2.x, -r0.w, c13.y
-mad r1.w, r0, c13.z, c13
-mad r1.w, r0, r1, c14.x
-add r2.w, -r2.y, c13.y
-mad r2.z, r2.y, c13, c13.w
-mad r2.z, r2, r2.y, c14.x
-dp4 r0.z, c2, c2
-rsq r0.z, r0.z
-mul r1.xyz, r0.z, c2
-rsq r2.x, r2.x
-rsq r2.w, r2.w
-mad r0.w, r0, r1, c14.y
-rcp r2.x, r2.x
-mul r1.w, r0, r2.x
-cmp r0.w, v5.z, c13.x, c13.y
-mul r2.x, r0.w, r1.w
-mad r2.x, -r2, c14.z, r1.w
-mad r2.y, r2.z, r2, c14
-rcp r2.w, r2.w
-mul r2.z, r2.y, r2.w
-cmp r2.y, v5, c13.x, c13
-mul r2.w, r2.y, r2.z
-mad r1.w, -r2, c14.z, r2.z
-mad r2.x, r0.w, c14.w, r2
-mad r0.w, r2.y, c14, r1
-mul r1.w, r2.x, c15.x
-dsy r2.xz, v5.xyyw
-mul r2.xz, r2, r2
-dp3_pp r0.y, v2, -r1
-mad r4.x, r0, c17, c17.y
-mul_pp r0.xyz, v2, r0.y
-mad_pp r0.xyz, -r0, c14.z, -r1
-mul r4.y, r0.w, c15.x
-mul r4.zw, r4, r4
-add r0.w, r4.z, r4
-rsq r0.w, r0.w
-dsx r2.w, r1
-dsy r2.y, r1.w
-add r1.w, r2.x, r2.z
-rcp r0.w, r0.w
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r2.x, r1.w, c17
-mul r2.z, r0.w, c17.x
-texldd r2, r4, s0, r2.zwzw, r2
-mul_pp r2.xyz, r2, r3
-dp3_pp_sat r1.w, r0, v1
-pow_pp r0, r1.w, c8.x
-mul r3.xyz, v6, c7
-mul_pp r2.xyz, r2, r3
-dp3 r0.y, v4, v4
-rsq r3.x, r0.y
-mov_pp r1.w, r0.x
+mad r2.z, r2.w, r2, c17
+mul r2.y, r2.z, r0.w
+add r0.w, r2.x, -r1
+add r2.z, -r2.y, c17.w
+mul r2.x, v0, c10
+add_pp r1.xyz, -r0, c14.y
+mul_sat r2.x, r2, c15.z
+mad_pp r0.xyz, r2.x, r1, r0
+cmp r0.w, -r0, r2.y, r2.z
+add r1.x, -r0.w, c15.w
+cmp r0.w, v5.z, r0, r1.x
+dp4 r1.y, c2, c2
+rsq r1.x, r1.y
+mul r3.xyz, r1.x, c2
+cmp r0.w, v5.x, r0, -r0
+mad r2.x, r0.w, c18, c18.y
+add r1.y, -r1.w, c14
+mad r1.x, r1.w, c14.z, c14.w
+mad r1.x, r1.w, r1, c15
+mad r1.x, r1.w, r1, c15.y
+abs r1.w, v5.y
+add r2.z, -r1.w, c14.y
+mad r2.y, r1.w, c14.z, c14.w
+mad r2.y, r2, r1.w, c15.x
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r1.y, r1.x, r1
+cmp r1.x, v5.z, c14, c14.y
+mul r1.z, r1.x, r1.y
+mad r1.z, -r1, c15, r1.y
+rsq r2.z, r2.z
+dp3_pp r0.w, v2, -r3
+mad r1.w, r2.y, r1, c15.y
+rcp r2.z, r2.z
+mul r2.y, r1.w, r2.z
+cmp r1.w, v5.y, c14.x, c14.y
+mul r2.z, r1.w, r2.y
+mad r1.y, -r2.z, c15.z, r2
+mad r1.z, r1.x, c15.w, r1
+mad r1.x, r1.w, c15.w, r1.y
+mul r1.y, r1.z, c16.x
+mul r2.y, r1.x, c16.x
+dsx r1.w, r1.y
+dsx r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+dsy r1.xz, v5.xyyw
+mul r1.xz, r1, r1
+add r1.z, r1.x, r1
+add r2.z, r2, r2.w
+rsq r1.x, r2.z
+rsq r1.z, r1.z
+rcp r2.z, r1.z
+rcp r1.x, r1.x
+mul r1.z, r1.x, c18.x
+mul r1.x, r2.z, c18
+dsy r1.y, r1
+texldd r1, r2, s0, r1.zwzw, r1
+mul_pp r0.xyz, r1, r0
+mul_pp r2.xyz, v2, r0.w
+mad_pp r2.xyz, -r2, c15.z, -r3
+dp3_pp_sat r0.w, r2, v1
+pow_pp r2, r0.w, c8.x
+mul r1.xyz, v6, c7
+mul_pp r1.xyz, r0, r1
+dp3 r0.x, v4, v4
+rsq r2.y, r0.x
 texld r0, v4, s2
-dp4 r0.y, r0, c18
-rcp r3.x, r3.x
-mul r0.x, r3, c3.w
-mad r0.y, -r0.x, c17.w, r0
+dp4 r0.y, r0, c19
+rcp r2.y, r2.y
+mul r0.x, r2.y, c3.w
+mov_pp r2.y, r2.x
+dp3_pp_sat r2.x, v2, r3
+add_pp r2.z, r2.x, c14.y
+mad r0.y, -r0.x, c18.w, r0
 mov r0.z, c4.x
 dp3 r0.x, v3, v3
-cmp r0.y, r0, c13, r0.z
+add_pp r2.x, r2, c18.z
+cmp r0.y, r0, c14, r0.z
 texld r0.x, r0.x, s3
-mul r0.x, r0, r0.y
-dp3_pp_sat r0.y, v2, r1
-add_pp r0.z, r0.y, c13.y
-frc_pp r0.w, r0.z
-mul r1.xyz, r0.x, c5
-mul r1.xyz, r1, c6
-add_pp r0.y, r0, c17.z
-mul_pp r0.y, r0, c5.w
-mul_pp r0.y, r0, r0.x
-add_pp_sat r0.z, r0, -r0.w
-mul r1.xyz, r1, r1.w
-mul r1.xyz, r0.z, r1
-mul r3.xyz, r2.w, r1
-mul_pp_sat r0.w, r0.y, c19.x
-mov r0.x, c11
-add r0.xyz, c5, r0.x
-mad_sat r1.xyz, r0, r0.w, c0
+mul r0.w, r0.x, r0.y
+mul r0.xyz, r0.w, c5
+mul_pp r2.x, r2, c5.w
+mul r0.xyz, r0, c6
+mul r0.xyz, r0, r2.y
+frc_pp r2.y, r2.z
+add_pp_sat r2.y, r2.z, -r2
+mul r0.xyz, r2.y, r0
+mul r3.xyz, r1.w, r0
+mul_pp r0.w, r2.x, r0
+mov r0.y, c11.x
+add r2.xyz, c5, r0.y
+mul_pp_sat r0.z, r0.w, c20.x
 texldp r0.x, v7, s4
-add_pp r1.xyz, r1, r3
-mad r0.x, r0, c1.z, c1.w
-rcp r0.y, v7.z
-rcp r0.x, r0.x
-mul r0.y, v0.x, r0
-add r0.x, r0, -v7.z
-mul r0.x, r0, r0.y
-mul_pp oC0.xyz, r2, r1
-mul_sat oC0.w, r0.x, c12.x
+mad r0.w, r0.x, c1.z, c1
+mad_sat r0.xyz, r2, r0.z, c0
+add_pp r2.xyz, r0, r3
+rcp r0.w, r0.w
+add r0.x, r0.w, -v7.z
+mul_sat r0.y, r0.x, c12.x
+add r0.x, v0, c13
+add r0.y, r0, c13.z
+mul_sat r0.x, r0, c13.y
+mul_pp oC0.xyz, r1, r2
+mad oC0.w, r0.x, r0.y, c13
 "
 }
 
@@ -21771,20 +21807,21 @@ SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_LightTexture0] CUBE
 SetTexture 5 [_CameraDepthTexture] 2D
 "ps_3_0
-; 124 ALU, 10 TEX
+; 125 ALU, 10 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
 dcl_2d s3
 dcl_cube s4
 dcl_2d s5
-def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 0.97000003
-def c18, 1.00000000, 0.00392157, 0.00001538, 0.00000001
-def c19, 4.03944778, 0, 0, 0
+def c13, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c14, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c15, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 0.97000003
+def c19, 1.00000000, 0.00392157, 0.00001538, 0.00000001
+def c20, 4.03944778, 0, 0, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -21807,60 +21844,63 @@ texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2, c15.y, c15
-mad r2.w, r0.z, r2.z, c15
+mad r0.z, r2, c16.y, c16
+mad r2.w, r0.z, r2.z, c16
 mul r0.xy, v5.zxzw, c9.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r2.y, r0, r1
-mad r2.w, r2, r2.z, c16.x
-mad r2.y, r2.w, r2.z, c16
-mad r2.y, r2, r2.z, c16.z
-add_pp r1.xyz, -r0, c13.y
+mad r2.w, r2, r2.z, c17.x
+mad r2.y, r2.w, r2.z, c17
+mad r2.y, r2, r2.z, c17.z
+add_pp r1.xyz, -r0, c14.y
 mul r1.w, r2.y, r1
 mul r2.z, v0.x, c10.x
-mul_sat r2.y, r2.z, c14.z
+mul_sat r2.y, r2.z, c15.z
 mad_pp r0.xyz, r2.y, r1, r0
 dp4 r1.z, c2, c2
-add r1.y, -r1.w, c16.w
+add r1.y, -r1.w, c17.w
 add r1.x, r2, -r0.w
 cmp r1.x, -r1, r1.w, r1.y
+add r1.y, -r1.x, c15.w
+cmp r1.x, v5.z, r1, r1.y
 rsq r1.z, r1.z
 mul r2.xyz, r1.z, c2
-add r1.y, -r1.x, c14.w
-cmp r1.w, v5.z, r1.x, r1.y
-dp3_pp r1.z, v2, -r2
-mul_pp r1.xyz, v2, r1.z
-mad_pp r3.xyz, -r1, c14.z, -r2
 abs r1.z, v5.y
-cmp r1.w, v5.x, r1, -r1
-mad r4.x, r1.w, c17, c17.y
-add r1.y, -r0.w, c13
-mad r1.x, r0.w, c13.z, c13.w
-mad r1.x, r0.w, r1, c14
-add r2.w, -r1.z, c13.y
-mad r1.w, r1.z, c13.z, c13
-mad r1.w, r1, r1.z, c14.x
+dp3_pp r1.y, v2, -r2
+mul_pp r3.xyz, v2, r1.y
+mad_pp r3.xyz, -r3, c15.z, -r2
+dp3_pp_sat r2.x, v2, r2
+add_pp r2.y, r2.x, c14
+frc_pp r2.z, r2.y
+cmp r1.x, v5, r1, -r1
+mad r4.x, r1, c18, c18.y
+add r1.y, -r0.w, c14
+mad r1.x, r0.w, c14.z, c14.w
+mad r1.x, r0.w, r1, c15
+add r2.w, -r1.z, c14.y
+mad r1.w, r1.z, c14.z, c14
+mad r1.w, r1, r1.z, c15.x
 rsq r1.y, r1.y
 rsq r2.w, r2.w
-mad r0.w, r0, r1.x, c14.y
+add_pp r2.x, r2, c18.z
+mad r0.w, r0, r1.x, c15.y
 rcp r1.y, r1.y
 mul r1.x, r0.w, r1.y
-cmp r0.w, v5.z, c13.x, c13.y
+cmp r0.w, v5.z, c14.x, c14.y
 mul r1.y, r0.w, r1.x
-mad r1.y, -r1, c14.z, r1.x
-mad r1.z, r1.w, r1, c14.y
+mad r1.y, -r1, c15.z, r1.x
+mad r1.z, r1.w, r1, c15.y
 rcp r2.w, r2.w
 mul r1.w, r1.z, r2
-cmp r1.z, v5.y, c13.x, c13.y
+cmp r1.z, v5.y, c14.x, c14.y
 mul r2.w, r1.z, r1
-mad r1.x, -r2.w, c14.z, r1.w
-mad r1.y, r0.w, c14.w, r1
-mad r0.w, r1.z, c14, r1.x
-mul r1.x, r1.y, c15
-dp3_pp_sat r2.w, r3, v1
-mul r3.xyz, v6, c7
-mul r4.y, r0.w, c15.x
+mad r1.x, -r2.w, c15.z, r1.w
+mad r1.y, r0.w, c15.w, r1
+mad r0.w, r1.z, c15, r1.x
+mul r1.x, r1.y, c16
+dp3 r2.w, v4, v4
+mul r4.y, r0.w, c16.x
 mul r4.zw, r4, r4
 add r0.w, r4.z, r4
 rsq r0.w, r0.w
@@ -21870,55 +21910,53 @@ dsy r1.xz, v5.xyyw
 mul r1.xz, r1, r1
 add r1.x, r1, r1.z
 rcp r0.w, r0.w
+mul r1.z, r0.w, c18.x
+dp3_pp_sat r0.w, r3, v1
+pow_pp r3, r0.w, c8.x
 rsq r1.x, r1.x
 rcp r1.x, r1.x
-mul r1.z, r0.w, c17.x
-mul r1.x, r1, c17
+mul r1.x, r1, c18
 texldd r1, r4, s0, r1.zwzw, r1
-mul_pp r1.xyz, r1, r0
-pow_pp r0, r2.w, c8.x
-mul_pp r1.xyz, r1, r3
-mov_pp r2.w, r0.x
+mul_pp r0.xyz, r1, r0
+mul r1.xyz, v6, c7
+mul_pp r1.xyz, r0, r1
 texld r0, v4, s2
-dp4 r0.y, r0, c18
-dp3 r3.x, v4, v4
-rsq r3.x, r3.x
-rcp r0.x, r3.x
+dp4 r0.y, r0, c19
+rsq r2.w, r2.w
+rcp r0.x, r2.w
 mul r0.x, r0, c3.w
-mad r0.x, -r0, c17.w, r0.y
+mad r0.x, -r0, c18.w, r0.y
 mov r0.z, c4.x
-cmp r0.y, r0.x, c13, r0.z
+cmp r0.y, r0.x, c14, r0.z
 dp3 r0.x, v3, v3
 texld r0.w, v3, s4
 texld r0.x, r0.x, s3
 mul r0.x, r0, r0.w
-mul r0.x, r0, r0.y
-dp3_pp_sat r0.y, v2, r2
-add_pp r0.z, r0.y, c13.y
-frc_pp r0.w, r0.z
-mul r2.xyz, r0.x, c5
-mul r2.xyz, r2, c6
-add_pp r0.y, r0, c17.z
-mul_pp r0.y, r0, c5.w
-mul_pp r0.y, r0, r0.x
-add_pp_sat r0.z, r0, -r0.w
-mul r2.xyz, r2, r2.w
-mul r2.xyz, r0.z, r2
-mul r3.xyz, r1.w, r2
-mul_pp_sat r0.w, r0.y, c19.x
-mov r0.x, c11
-add r0.xyz, c5, r0.x
-mad_sat r2.xyz, r0, r0.w, c0
+mul r0.w, r0.x, r0.y
+mul r0.xyz, r0.w, c5
+mul_pp r2.x, r2, c5.w
+mul_pp r0.w, r2.x, r0
+mov_pp r2.w, r3.x
+mul r0.xyz, r0, c6
+add_pp_sat r2.y, r2, -r2.z
+mul r0.xyz, r0, r2.w
+mul r0.xyz, r2.y, r0
+mul r3.xyz, r1.w, r0
+mov r0.y, c11.x
+add r2.xyz, c5, r0.y
+mul_pp_sat r0.z, r0.w, c20.x
 texldp r0.x, v7, s5
-add_pp r2.xyz, r2, r3
-mad r0.x, r0, c1.z, c1.w
-rcp r0.y, v7.z
-rcp r0.x, r0.x
-mul r0.y, v0.x, r0
-add r0.x, r0, -v7.z
-mul r0.x, r0, r0.y
+mad r0.w, r0.x, c1.z, c1
+mad_sat r0.xyz, r2, r0.z, c0
+add_pp r2.xyz, r0, r3
+rcp r0.w, r0.w
+add r0.x, r0.w, -v7.z
+mul_sat r0.y, r0.x, c12.x
+add r0.x, v0, c13
+add r0.y, r0, c13.z
+mul_sat r0.x, r0, c13.y
 mul_pp oC0.xyz, r1, r2
-mul_sat oC0.w, r0.x, c12.x
+mad oC0.w, r0.x, r0.y, c13
 "
 }
 
@@ -21944,6 +21982,214 @@ Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
 
 SubProgram "d3d9 " {
 Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_ZBufferParams]
+Vector 2 [_WorldSpaceLightPos0]
+Vector 3 [_LightShadowData]
+Vector 4 [_ShadowOffsets0]
+Vector 5 [_ShadowOffsets1]
+Vector 6 [_ShadowOffsets2]
+Vector 7 [_ShadowOffsets3]
+Vector 8 [_LightColor0]
+Vector 9 [_SpecColor]
+Vector 10 [_Color]
+Float 11 [_Shininess]
+Float 12 [_DetailScale]
+Float 13 [_DetailDist]
+Float 14 [_MinLight]
+Float 15 [_Clarity]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_LightTexture0] 2D
+SetTexture 3 [_LightTextureB0] 2D
+SetTexture 4 [_ShadowMapTexture] 2D
+SetTexture 5 [_CameraDepthTexture] 2D
+"ps_3_0
+; 133 ALU, 13 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+dcl_2d s5
+def c16, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c17, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c18, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c19, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c20, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c21, 0.15915494, 0.50000000, -0.01000214, 0.25000000
+def c22, 4.03944778, 0, 0, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3
+dcl_texcoord4 v4
+dcl_texcoord5 v5.xyz
+dcl_texcoord6 v6.xyz
+dcl_texcoord7 v7
+mul r1.xy, v5, c12.x
+dsx r3.zw, v5.xyxy
+dsy r4.xy, v5
+abs r0.w, v5.z
+abs r2.xy, v5
+max r0.x, r2, r0.w
+rcp r0.y, r0.x
+min r0.x, r2, r0.w
+mul r1.w, r0.x, r0.y
+mul r2.z, r1.w, r1.w
+mad r2.w, r2.z, c19.y, c19.z
+mul r0.xy, v5.zyzw, c12.x
+mul r3.zw, r3, r3
+mad r2.w, r2, r2.z, c19
+texld r1.xyz, r1, s1
+texld r0.xyz, r0, s1
+add_pp r0.xyz, r0, -r1
+mad_pp r1.xyz, r2.x, r0, r1
+mad r0.z, r2.w, r2, c20.x
+mad r2.w, r0.z, r2.z, c20.y
+mul r0.xy, v5.zxzw, c12.x
+texld r0.xyz, r0, s1
+add_pp r0.xyz, r0, -r1
+mad_pp r0.xyz, r2.y, r0, r1
+mad r2.z, r2.w, r2, c20
+mul r2.y, r2.z, r1.w
+add_pp r1.xyz, -r0, c17.y
+add r2.z, -r2.y, c20.w
+add r1.w, r2.x, -r0
+cmp r1.w, -r1, r2.y, r2.z
+mul r2.y, v0.x, c13.x
+mul_sat r2.y, r2, c18.z
+mad_pp r0.xyz, r2.y, r1, r0
+abs r1.z, v5.y
+add r2.x, -r1.w, c18.w
+cmp r1.x, v5.z, r1.w, r2
+cmp r1.x, v5, r1, -r1
+mad r3.x, r1, c21, c21.y
+mad r1.x, r0.w, c17.z, c17.w
+add r2.w, -r1.z, c17.y
+mad r1.w, r1.z, c17.z, c17
+mad r1.w, r1, r1.z, c18.x
+dp4 r1.y, c2, c2
+rsq r1.y, r1.y
+mul r2.xyz, r1.y, c2
+add r1.y, -r0.w, c17
+mad r1.x, r0.w, r1, c18
+rsq r1.y, r1.y
+rsq r2.w, r2.w
+mad r0.w, r0, r1.x, c18.y
+rcp r1.y, r1.y
+mul r1.x, r0.w, r1.y
+cmp r0.w, v5.z, c17.x, c17.y
+mul r1.y, r0.w, r1.x
+mad r1.y, -r1, c18.z, r1.x
+mad r1.z, r1.w, r1, c18.y
+rcp r2.w, r2.w
+mul r1.w, r1.z, r2
+cmp r1.z, v5.y, c17.x, c17.y
+mul r2.w, r1.z, r1
+mad r1.x, -r2.w, c18.z, r1.w
+mad r1.y, r0.w, c18.w, r1
+mad r0.w, r1.z, c18, r1.x
+mul r1.x, r1.y, c19
+mul r3.y, r0.w, c19.x
+add r0.w, r3.z, r3
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r1.z, r0.w, c21.x
+rcp r2.w, v4.w
+dp3_pp r0.w, v2, -r2
+dsx r1.w, r1.x
+dsy r1.y, r1.x
+mul r4.xy, r4, r4
+add r1.x, r4, r4.y
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+mul r1.x, r1, c21
+texldd r1, r3, s0, r1.zwzw, r1
+mul_pp r1.xyz, r1, r0
+mul_pp r0.xyz, v2, r0.w
+mad_pp r0.xyz, -r0, c18.z, -r2
+dp3_pp_sat r2.x, v2, r2
+add_pp r2.y, r2.x, c17
+frc_pp r2.z, r2.y
+mul r3.xyz, v6, c10
+add_pp r2.x, r2, c21.z
+dp3_pp_sat r0.x, r0, v1
+mul_pp r1.xyz, r1, r3
+pow_pp r3, r0.x, c11.x
+mad r0.xy, v4, r2.w, c7
+texld r0.x, r0, s4
+mad r4.xy, v4, r2.w, c6
+mov r0.w, r0.x
+texld r0.x, r4, s4
+mad r4.xy, v4, r2.w, c5
+mov r0.z, r0.x
+texld r0.x, r4, s4
+mad r4.xy, v4, r2.w, c4
+mov r0.y, r0.x
+texld r0.x, r4, s4
+mad r0, -v4.z, r2.w, r0
+mov r3.y, c3.x
+cmp r0, r0, c17.y, r3.y
+dp4_pp r0.y, r0, c21.w
+rcp r2.w, v3.w
+mad r4.xy, v3, r2.w, c21.y
+dp3 r0.x, v3, v3
+texld r0.w, r4, s2
+cmp r0.z, -v3, c17.x, c17.y
+mul_pp r0.z, r0, r0.w
+texld r0.x, r0.x, s3
+mul_pp r0.x, r0.z, r0
+mul_pp r0.w, r0.x, r0.y
+mul r0.xyz, r0.w, c8
+mul_pp r2.x, r2, c8.w
+mul_pp r0.w, r2.x, r0
+mov_pp r2.w, r3.x
+mul r0.xyz, r0, c9
+add_pp_sat r2.y, r2, -r2.z
+mul r0.xyz, r0, r2.w
+mul r0.xyz, r2.y, r0
+mul r3.xyz, r1.w, r0
+mov r0.y, c14.x
+add r2.xyz, c8, r0.y
+mul_pp_sat r0.z, r0.w, c22.x
+texldp r0.x, v7, s5
+mad r0.w, r0.x, c1.z, c1
+mad_sat r0.xyz, r2, r0.z, c0
+add_pp r2.xyz, r0, r3
+rcp r0.w, r0.w
+add r0.x, r0.w, -v7.z
+mul_sat r0.y, r0.x, c15.x
+add r0.x, v0, c16
+add r0.y, r0, c16.z
+mul_sat r0.x, r0, c16.y
+mul_pp oC0.xyz, r1, r2
+mad oC0.w, r0.x, r0.y, c16
+"
+}
+
+SubProgram "gles " {
+Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
 Vector 0 [glstate_lightmodel_ambient]
 Vector 1 [_ZBufferParams]
 Vector 2 [_WorldSpaceLightPos0]
@@ -21974,218 +22220,13 @@ dcl_2d s2
 dcl_2d s3
 dcl_2d s4
 dcl_2d s5
-def c16, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c17, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c18, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c19, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c20, 0.15915494, 0.50000000, -0.01000214, 0.25000000
-def c21, 4.03944778, 0, 0, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3
-dcl_texcoord4 v4
-dcl_texcoord5 v5.xyz
-dcl_texcoord6 v6.xyz
-dcl_texcoord7 v7
-mul r1.xy, v5, c12.x
-dsx r3.zw, v5.xyxy
-abs r1.w, v5.z
-abs r2.xy, v5
-max r0.x, r2, r1.w
-rcp r0.y, r0.x
-min r0.x, r2, r1.w
-mul r0.w, r0.x, r0.y
-mul r2.z, r0.w, r0.w
-mad r2.w, r2.z, c18.y, c18.z
-mul r0.xy, v5.zyzw, c12.x
-mad r2.w, r2, r2.z, c18
-texld r1.xyz, r1, s1
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2.w, r2, c19.x
-mad r2.w, r0.z, r2.z, c19.y
-mul r0.xy, v5.zxzw, c12.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-mad r2.z, r2.w, r2, c19
-mul r2.y, r2.z, r0.w
-add r0.w, r2.x, -r1
-add r2.z, -r2.y, c19.w
-mul r2.x, v0, c13
-add_pp r1.xyz, -r0, c16.y
-mul_sat r2.x, r2, c17.z
-mad_pp r0.xyz, r2.x, r1, r0
-cmp r0.w, -r0, r2.y, r2.z
-add r1.x, -r0.w, c17.w
-cmp r0.w, v5.z, r0, r1.x
-dp4 r1.y, c2, c2
-rsq r1.x, r1.y
-mul r2.xyz, r1.x, c2
-cmp r0.w, v5.x, r0, -r0
-mad r3.x, r0.w, c20, c20.y
-add r1.y, -r1.w, c16
-mad r1.x, r1.w, c16.z, c16.w
-mad r1.x, r1.w, r1, c17
-mad r1.x, r1.w, r1, c17.y
-abs r1.w, v5.y
-add r3.y, -r1.w, c16
-mad r2.w, r1, c16.z, c16
-mad r2.w, r2, r1, c17.x
-rsq r1.y, r1.y
-rcp r1.y, r1.y
-mul r1.y, r1.x, r1
-cmp r1.x, v5.z, c16, c16.y
-mul r1.z, r1.x, r1.y
-mad r1.z, -r1, c17, r1.y
-rsq r3.y, r3.y
-dp3_pp r0.w, v2, -r2
-mad r1.w, r2, r1, c17.y
-rcp r3.y, r3.y
-mul r2.w, r1, r3.y
-cmp r1.w, v5.y, c16.x, c16.y
-mul r3.y, r1.w, r2.w
-mad r1.y, -r3, c17.z, r2.w
-mad r1.z, r1.x, c17.w, r1
-mad r1.x, r1.w, c17.w, r1.y
-mul r1.y, r1.z, c18.x
-mul r3.y, r1.x, c18.x
-dsx r1.w, r1.y
-mul r3.zw, r3, r3
-dsy r1.xz, v5.xyyw
-mul r1.xz, r1, r1
-add r1.z, r1.x, r1
-add r2.w, r3.z, r3
-rsq r1.x, r2.w
-rsq r1.z, r1.z
-rcp r2.w, r1.z
-rcp r1.x, r1.x
-mul r1.z, r1.x, c20.x
-mul r1.x, r2.w, c20
-dsy r1.y, r1
-texldd r1, r3, s0, r1.zwzw, r1
-mul_pp r0.xyz, r1, r0
-mul_pp r3.xyz, v2, r0.w
-mad_pp r3.xyz, -r3, c17.z, -r2
-dp3_pp_sat r2.x, v2, r2
-add_pp r2.y, r2.x, c16
-dp3_pp_sat r2.w, r3, v1
-rcp r3.z, v4.w
-frc_pp r2.z, r2.y
-mul r1.xyz, v6, c10
-mul_pp r1.xyz, r0, r1
-pow_pp r0, r2.w, c11.x
-add_pp r2.x, r2, c20.z
-mad r3.xy, v4, r3.z, c7
-mov_pp r2.w, r0.x
-texld r0.x, r3, s4
-mad r3.xy, v4, r3.z, c6
-mov r0.w, r0.x
-texld r0.x, r3, s4
-mad r3.xy, v4, r3.z, c5
-mov r0.z, r0.x
-texld r0.x, r3, s4
-mad r3.xy, v4, r3.z, c4
-mov r0.y, r0.x
-texld r0.x, r3, s4
-mov r3.x, c3
-mad r0, -v4.z, r3.z, r0
-cmp r0, r0, c16.y, r3.x
-dp4_pp r0.y, r0, c20.w
-rcp r3.x, v3.w
-mad r3.xy, v3, r3.x, c20.y
-dp3 r0.x, v3, v3
-texld r0.w, r3, s2
-cmp r0.z, -v3, c16.x, c16.y
-mul_pp r0.z, r0, r0.w
-texld r0.x, r0.x, s3
-mul_pp r0.x, r0.z, r0
-mul_pp r0.w, r0.x, r0.y
-mul r0.xyz, r0.w, c8
-mul r0.xyz, r0, c9
-add_pp_sat r2.y, r2, -r2.z
-mul r0.xyz, r0, r2.w
-mul r0.xyz, r2.y, r0
-mul r3.xyz, r1.w, r0
-mul_pp r2.x, r2, c8.w
-mul_pp r0.y, r2.x, r0.w
-mul_pp_sat r0.w, r0.y, c21.x
-mov r0.x, c14
-add r0.xyz, c8, r0.x
-mad_sat r2.xyz, r0, r0.w, c0
-texldp r0.x, v7, s5
-add_pp r2.xyz, r2, r3
-mad r0.x, r0, c1.z, c1.w
-rcp r0.y, v7.z
-rcp r0.x, r0.x
-mul r0.y, v0.x, r0
-add r0.x, r0, -v7.z
-mul r0.x, r0, r0.y
-mul_pp oC0.xyz, r1, r2
-mul_sat oC0.w, r0.x, c15.x
-"
-}
-
-SubProgram "gles " {
-Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_ZBufferParams]
-Vector 2 [_WorldSpaceLightPos0]
-Vector 3 [_LightShadowData]
-Vector 4 [_ShadowOffsets0]
-Vector 5 [_ShadowOffsets1]
-Vector 6 [_ShadowOffsets2]
-Vector 7 [_ShadowOffsets3]
-Vector 8 [_LightColor0]
-Vector 9 [_SpecColor]
-Vector 10 [_Color]
-Float 11 [_Shininess]
-Float 12 [_DetailScale]
-Float 13 [_DetailDist]
-Float 14 [_MinLight]
-Float 15 [_Clarity]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_LightTexture0] 2D
-SetTexture 3 [_LightTextureB0] 2D
-SetTexture 4 [_ShadowMapTexture] 2D
-SetTexture 5 [_CameraDepthTexture] 2D
-"ps_3_0
-; 131 ALU, 13 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-dcl_2d s5
-def c16, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c17, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c18, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c19, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c20, 0.15915494, 0.50000000, -0.01000214, 0.25000000
-def c21, 4.03944778, 0, 0, 0
+def c16, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c17, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c18, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c19, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c20, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c21, 0.15915494, 0.50000000, -0.01000214, 0.25000000
+def c22, 4.03944778, 0, 0, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -22203,59 +22244,59 @@ rcp r0.y, r0.x
 min r0.x, r2, r0.w
 mul r1.w, r0.x, r0.y
 mul r2.z, r1.w, r1.w
-mad r0.x, r2.z, c18.y, c18.z
-mad r0.x, r0, r2.z, c18.w
-mad r2.w, r0.x, r2.z, c19.x
+mad r0.x, r2.z, c19.y, c19.z
+mad r0.x, r0, r2.z, c19.w
+mad r2.w, r0.x, r2.z, c20.x
 mul r0.xy, v5.zyzw, c12.x
-mad r2.w, r2, r2.z, c19.y
+mad r2.w, r2, r2.z, c20.y
 texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2.w, r2, c19
-mul r1.w, r0.z, r1
+mad r0.z, r2.w, r2, c20
+mul r2.z, r0, r1.w
 mul r0.xy, v5.zxzw, c12.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r2.y, r0, r1
-add_pp r1.xyz, -r0, c16.y
-add r2.x, r2, -r0.w
-add r2.z, -r1.w, c19.w
-cmp r1.w, -r2.x, r1, r2.z
-add r2.x, -r1.w, c17.w
+add_pp r1.xyz, -r0, c17.y
+add r1.w, r2.x, -r0
+add r2.w, -r2.z, c20
+cmp r1.w, -r1, r2.z, r2
+add r2.x, -r1.w, c18.w
 cmp r1.w, v5.z, r1, r2.x
 mul r2.x, v0, c13
-mul_sat r2.x, r2, c17.z
+mul_sat r2.x, r2, c18.z
 mad_pp r0.xyz, r2.x, r1, r0
 cmp r1.w, v5.x, r1, -r1
-mad r1.x, r1.w, c20, c20.y
-abs r1.w, v5.y
-add r1.z, -r0.w, c16.y
-mad r1.y, r0.w, c16.z, c16.w
-mad r1.y, r0.w, r1, c17.x
-add r2.y, -r1.w, c16
-mad r2.x, r1.w, c16.z, c16.w
-mad r2.x, r2, r1.w, c17
+mad r1.x, r1.w, c21, c21.y
+add r1.z, -r0.w, c17.y
+mad r1.y, r0.w, c17.z, c17.w
+mad r1.y, r0.w, r1, c18.x
 rsq r1.z, r1.z
-rsq r2.y, r2.y
 dsx r2.zw, v5.xyxy
 mul r2.zw, r2, r2
-mad r0.w, r0, r1.y, c17.y
+mad r0.w, r0, r1.y, c18.y
+rcp r1.z, r1.z
+mul r2.x, r0.w, r1.z
+abs r0.w, v5.y
+cmp r1.w, v5.z, c17.x, c17.y
+mul r2.y, r1.w, r2.x
+add r1.z, -r0.w, c17.y
+mad r1.y, r0.w, c17.z, c17.w
+mad r1.y, r1, r0.w, c18.x
+rsq r1.z, r1.z
+mad r0.w, r1.y, r0, c18.y
 rcp r1.z, r1.z
 mul r1.y, r0.w, r1.z
-cmp r0.w, v5.z, c16.x, c16.y
+cmp r0.w, v5.y, c17.x, c17.y
 mul r1.z, r0.w, r1.y
-mad r1.z, -r1, c17, r1.y
-mad r1.z, r0.w, c17.w, r1
-mad r1.w, r2.x, r1, c17.y
-rcp r2.y, r2.y
-mul r2.x, r1.w, r2.y
-cmp r1.w, v5.y, c16.x, c16.y
-mul r2.y, r1.w, r2.x
-mad r1.y, -r2, c17.z, r2.x
-mad r0.w, r1, c17, r1.y
-mul r1.z, r1, c18.x
-mul r1.y, r0.w, c18.x
+mad r1.y, -r1.z, c18.z, r1
+mad r0.w, r0, c18, r1.y
+mad r2.x, -r2.y, c18.z, r2
+mad r1.z, r1.w, c18.w, r2.x
+mul r1.z, r1, c19.x
+mul r1.y, r0.w, c19.x
 add r0.w, r2.z, r2
 rsq r0.w, r0.w
 rcp r2.w, v4.w
@@ -22266,70 +22307,71 @@ add r1.z, r3.x, r3.y
 rsq r1.z, r1.z
 rcp r2.x, r1.z
 rcp r0.w, r0.w
-mul r1.z, r0.w, c20.x
-mul r2.x, r2, c20
+mul r1.z, r0.w, c21.x
+mul r2.x, r2, c21
 texldd r1, r1, s0, r1.zwzw, r2
-mul_pp r1.xyz, r1, r0
+mul_pp r0.xyz, r1, r0
+mul r1.xyz, v6, c10
+mul_pp r2.xyz, r0, r1
 mad r0.xyz, v4, r2.w, c7
+dp4 r0.w, c2, c2
+rsq r0.w, r0.w
+mul r3.xyz, r0.w, c2
+dp3_pp r0.w, v2, -r3
+mul_pp r1.xyz, v2, r0.w
+mad_pp r4.xyz, -r1, c18.z, -r3
+mad r1.xyz, v4, r2.w, c5
 texld r0.x, r0, s4
-mul r2.xyz, v6, c10
-mul_pp r1.xyz, r1, r2
-mad r2.xyz, v4, r2.w, c6
 mov_pp r0.w, r0.x
-texld r0.x, r2, s4
-mad r2.xyz, v4, r2.w, c5
+mad r0.xyz, v4, r2.w, c6
+texld r0.x, r0, s4
+texld r1.x, r1, s4
 mov_pp r0.z, r0.x
-texld r0.x, r2, s4
-mad r2.xyz, v4, r2.w, c4
-mov_pp r0.y, r0.x
-texld r0.x, r2, s4
-mov r2.y, c3.x
-add r2.y, c16, -r2
-mad r0, r0, r2.y, c3.x
-dp4_pp r0.y, r0, c20.w
-rcp r0.x, v3.w
-mad r4.xy, v3, r0.x, c20.y
-dp4 r2.x, c2, c2
-rsq r2.x, r2.x
-mul r2.xyz, r2.x, c2
-dp3_pp r0.z, v2, -r2
-mul_pp r3.xyz, v2, r0.z
-mad_pp r3.xyz, -r3, c17.z, -r2
+mov_pp r0.y, r1.x
+mad r1.xyz, v4, r2.w, c4
+mov r0.x, c3
+add r2.w, c17.y, -r0.x
+texld r0.x, r1, s4
+mad r0, r0, r2.w, c3.x
+dp4_pp r0.z, r0, c21.w
+rcp r1.x, v3.w
+mad r1.xy, v3, r1.x, c21.y
 dp3 r0.x, v3, v3
-texld r0.w, r4, s2
-cmp r0.z, -v3, c16.x, c16.y
-mul_pp r0.z, r0, r0.w
+texld r0.w, r1, s2
+cmp r0.y, -v3.z, c17.x, c17
+mul_pp r0.y, r0, r0.w
 texld r0.x, r0.x, s3
-mul_pp r0.x, r0.z, r0
-mul_pp r2.w, r0.x, r0.y
-mul r0.xyz, r2.w, c8
-dp3_pp_sat r3.w, r3, v1
-mul r3.xyz, r0, c9
+mul_pp r0.x, r0.y, r0
+mul_pp r2.w, r0.x, r0.z
+dp3_pp_sat r3.w, r4, v1
 pow_pp r0, r3.w, c11.x
-dp3_pp_sat r0.w, v2, r2
-add_pp r2.x, r0.w, c16.y
-frc_pp r2.y, r2.x
-add_pp r0.w, r0, c20.z
-mul r0.xyz, r3, r0.x
-add_pp_sat r2.x, r2, -r2.y
-mul r0.xyz, r2.x, r0
-mul r2.xyz, r1.w, r0
+dp3_pp_sat r0.w, v2, r3
+add_pp r3.x, r0.w, c17.y
+mul r1.xyz, r2.w, c8
+mul r1.xyz, r1, c9
+mul r0.xyz, r1, r0.x
+frc_pp r1.x, r3
+add_pp_sat r1.x, r3, -r1
+mul r0.xyz, r1.x, r0
+mul r3.xyz, r1.w, r0
+mov r0.y, c14.x
+add_pp r0.w, r0, c21.z
 mul_pp r0.w, r0, c8
-mul_pp r0.y, r0.w, r2.w
-mul_pp_sat r0.w, r0.y, c21.x
-mov r0.x, c14
-add r0.xyz, c8, r0.x
-mad_sat r3.xyz, r0, r0.w, c0
+mul_pp r0.w, r0, r2
+add r1.xyz, c8, r0.y
+mul_pp_sat r0.z, r0.w, c22.x
 texldp r0.x, v7, s5
-add_pp r2.xyz, r3, r2
-mad r0.x, r0, c1.z, c1.w
-rcp r0.y, v7.z
-rcp r0.x, r0.x
-mul r0.y, v0.x, r0
-add r0.x, r0, -v7.z
-mul r0.x, r0, r0.y
-mul_pp oC0.xyz, r1, r2
-mul_sat oC0.w, r0.x, c15.x
+mad r0.w, r0.x, c1.z, c1
+mad_sat r0.xyz, r1, r0.z, c0
+add_pp r1.xyz, r0, r3
+rcp r0.w, r0.w
+add r0.x, r0.w, -v7.z
+mul_sat r0.y, r0.x, c15.x
+add r0.x, v0, c16
+add r0.y, r0, c16.z
+mul_sat r0.x, r0, c16.y
+mul_pp oC0.xyz, r2, r1
+mad oC0.w, r0.x, r0.y, c16
 "
 }
 
@@ -22369,20 +22411,21 @@ SetTexture 2 [_ShadowMapTexture] CUBE
 SetTexture 3 [_LightTexture0] 2D
 SetTexture 4 [_CameraDepthTexture] 2D
 "ps_3_0
-; 130 ALU, 12 TEX
+; 131 ALU, 12 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
 dcl_2d s3
 dcl_2d s4
-def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 0.00781250
-def c18, 0.00781250, -0.00781250, 0.97000003, 0.25000000
-def c19, 1.00000000, 0.00392157, 0.00001538, 0.00000001
-def c20, 4.03944778, 0, 0, 0
+def c13, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c14, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c15, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 0.00781250
+def c19, 0.00781250, -0.00781250, 0.97000003, 0.25000000
+def c20, 1.00000000, 0.00392157, 0.00001538, 0.00000001
+def c21, 4.03944778, 0, 0, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -22400,60 +22443,60 @@ rcp r0.y, r0.x
 min r0.x, r2, r0.w
 mul r1.w, r0.x, r0.y
 mul r2.z, r1.w, r1.w
-mad r0.x, r2.z, c15.y, c15.z
-mad r0.x, r0, r2.z, c15.w
-mad r2.w, r0.x, r2.z, c16.x
+mad r0.x, r2.z, c16.y, c16.z
+mad r0.x, r0, r2.z, c16.w
+mad r2.w, r0.x, r2.z, c17.x
 mul r0.xy, v5.zyzw, c9.x
 mul r3.xy, r3, r3
-mad r2.w, r2, r2.z, c16.y
+mad r2.w, r2, r2.z, c17.y
 texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2.w, r2, c16
+mad r0.z, r2.w, r2, c17
 mul r1.w, r0.z, r1
 mul r0.xy, v5.zxzw, c9.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r2.y, r0, r1
-add_pp r1.xyz, -r0, c13.y
+add_pp r1.xyz, -r0, c14.y
 add r2.x, r2, -r0.w
-add r2.z, -r1.w, c16.w
+add r2.z, -r1.w, c17.w
 cmp r1.w, -r2.x, r1, r2.z
-add r2.x, -r1.w, c14.w
+add r2.x, -r1.w, c15.w
 cmp r1.w, v5.z, r1, r2.x
 mul r2.x, v0, c10
-mul_sat r2.x, r2, c14.z
+mul_sat r2.x, r2, c15.z
 mad_pp r0.xyz, r2.x, r1, r0
 cmp r1.w, v5.x, r1, -r1
-mad r1.x, r1.w, c17, c17.y
+mad r1.x, r1.w, c18, c18.y
 abs r1.w, v5.y
-add r1.z, -r0.w, c13.y
-mad r1.y, r0.w, c13.z, c13.w
-mad r1.y, r0.w, r1, c14.x
-add r2.y, -r1.w, c13
-mad r2.x, r1.w, c13.z, c13.w
-mad r2.x, r2, r1.w, c14
+add r1.z, -r0.w, c14.y
+mad r1.y, r0.w, c14.z, c14.w
+mad r1.y, r0.w, r1, c15.x
+add r2.y, -r1.w, c14
+mad r2.x, r1.w, c14.z, c14.w
+mad r2.x, r2, r1.w, c15
 rsq r1.z, r1.z
 rsq r2.y, r2.y
 dsx r2.zw, v5.xyxy
 mul r2.zw, r2, r2
-mad r0.w, r0, r1.y, c14.y
+mad r0.w, r0, r1.y, c15.y
 rcp r1.z, r1.z
 mul r1.y, r0.w, r1.z
-cmp r0.w, v5.z, c13.x, c13.y
+cmp r0.w, v5.z, c14.x, c14.y
 mul r1.z, r0.w, r1.y
-mad r1.z, -r1, c14, r1.y
-mad r1.z, r0.w, c14.w, r1
-mad r1.w, r2.x, r1, c14.y
+mad r1.z, -r1, c15, r1.y
+mad r1.z, r0.w, c15.w, r1
+mad r1.w, r2.x, r1, c15.y
 rcp r2.y, r2.y
 mul r2.x, r1.w, r2.y
-cmp r1.w, v5.y, c13.x, c13.y
+cmp r1.w, v5.y, c14.x, c14.y
 mul r2.y, r1.w, r2.x
-mad r1.y, -r2, c14.z, r2.x
-mad r0.w, r1, c14, r1.y
-mul r1.z, r1, c15.x
-mul r1.y, r0.w, c15.x
+mad r1.y, -r2, c15.z, r2.x
+mad r0.w, r1, c15, r1.y
+mul r1.z, r1, c16.x
+mul r1.y, r0.w, c16.x
 add r0.w, r2.z, r2
 rsq r0.w, r0.w
 dsy r2.y, r1.z
@@ -22462,69 +22505,70 @@ add r1.z, r3.x, r3.y
 rsq r1.z, r1.z
 rcp r2.x, r1.z
 rcp r0.w, r0.w
-mul r1.z, r0.w, c17.x
-mul r2.x, r2, c17
+mul r1.z, r0.w, c18.x
+mul r2.x, r2, c18
 texldd r1, r1, s0, r1.zwzw, r2
 mul_pp r1.xyz, r1, r0
 mul r2.xyz, v6, c7
 mul_pp r1.xyz, r1, r2
-add r0.xyz, v4, c18.xyyw
+add r0.xyz, v4, c19.xyyw
 texld r0, r0, s2
-dp4 r3.w, r0, c19
-add r0.xyz, v4, c18.yxyw
+dp4 r3.w, r0, c20
+add r0.xyz, v4, c19.yxyw
 texld r0, r0, s2
-dp4 r3.z, r0, c19
-add r2.xyz, v4, c18.yyxw
+dp4 r3.z, r0, c20
+add r2.xyz, v4, c19.yyxw
 texld r2, r2, s2
-dp4 r3.y, r2, c19
-dp3 r0.w, v4, v4
-rsq r2.x, r0.w
-add r0.xyz, v4, c17.w
+dp4 r3.y, r2, c20
+add r0.xyz, v4, c18.w
 texld r0, r0, s2
-dp4 r3.x, r0, c19
-rcp r2.x, r2.x
-mul r0.x, r2, c3.w
+dp3 r2.x, v4, v4
+dp4 r3.x, r0, c20
+rsq r2.x, r2.x
+rcp r0.x, r2.x
 dp4 r2.x, c2, c2
-mad r0, -r0.x, c18.z, r3
-mov r2.y, c4.x
-cmp r0, r0, c13.y, r2.y
-dp4_pp r0.y, r0, c18.w
+mul r0.x, r0, c3.w
 rsq r2.x, r2.x
 mul r2.xyz, r2.x, c2
-dp3_pp r0.z, v2, -r2
-mul_pp r3.xyz, v2, r0.z
-mad_pp r3.xyz, -r3, c14.z, -r2
+mad r0, -r0.x, c19.z, r3
+mov r2.w, c4.x
+cmp r0, r0, c14.y, r2.w
+dp3_pp r2.w, v2, -r2
+dp4_pp r0.y, r0, c19.w
+mul_pp r3.xyz, v2, r2.w
+mad_pp r3.xyz, -r3, c15.z, -r2
 dp3 r0.x, v3, v3
 texld r0.x, r0.x, s3
 mul r2.w, r0.x, r0.y
-mul r0.xyz, r2.w, c5
 dp3_pp_sat r3.w, r3, v1
-mul r3.xyz, r0, c6
 pow_pp r0, r3.w, c8.x
 dp3_pp_sat r0.w, v2, r2
-add_pp r2.x, r0.w, c13.y
+add_pp r2.x, r0.w, c14.y
 frc_pp r2.y, r2.x
-add_pp r0.w, r0, c17.z
+mul r3.xyz, r2.w, c5
+mul r3.xyz, r3, c6
+add_pp r0.w, r0, c18.z
+mul_pp r0.w, r0, c5
 mul r0.xyz, r3, r0.x
 add_pp_sat r2.x, r2, -r2.y
 mul r0.xyz, r2.x, r0
-mul r2.xyz, r1.w, r0
-mul_pp r0.w, r0, c5
-mul_pp r0.y, r0.w, r2.w
-mul_pp_sat r0.w, r0.y, c20.x
-mov r0.x, c11
-add r0.xyz, c5, r0.x
-mad_sat r3.xyz, r0, r0.w, c0
+mul r3.xyz, r1.w, r0
+mul_pp r0.w, r0, r2
+mov r0.y, c11.x
+add r2.xyz, c5, r0.y
+mul_pp_sat r0.z, r0.w, c21.x
 texldp r0.x, v7, s4
-add_pp r2.xyz, r3, r2
-mad r0.x, r0, c1.z, c1.w
-rcp r0.y, v7.z
-rcp r0.x, r0.x
-mul r0.y, v0.x, r0
-add r0.x, r0, -v7.z
-mul r0.x, r0, r0.y
+mad r0.w, r0.x, c1.z, c1
+mad_sat r0.xyz, r2, r0.z, c0
+add_pp r2.xyz, r0, r3
+rcp r0.w, r0.w
+add r0.x, r0.w, -v7.z
+mul_sat r0.y, r0.x, c12.x
+add r0.x, v0, c13
+add r0.y, r0, c13.z
+mul_sat r0.x, r0, c13.y
 mul_pp oC0.xyz, r1, r2
-mul_sat oC0.w, r0.x, c12.x
+mad oC0.w, r0.x, r0.y, c13
 "
 }
 
@@ -22570,21 +22614,22 @@ SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_LightTexture0] CUBE
 SetTexture 5 [_CameraDepthTexture] 2D
 "ps_3_0
-; 131 ALU, 13 TEX
+; 132 ALU, 13 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
 dcl_2d s3
 dcl_cube s4
 dcl_2d s5
-def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 0.00781250
-def c18, 0.00781250, -0.00781250, 0.97000003, 0.25000000
-def c19, 1.00000000, 0.00392157, 0.00001538, 0.00000001
-def c20, 4.03944778, 0, 0, 0
+def c13, -600.00000000, 0.00200000, -0.80000001, 0.80000001
+def c14, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c15, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c18, 0.15915494, 0.50000000, -0.01000214, 0.00781250
+def c19, 0.00781250, -0.00781250, 0.97000003, 0.25000000
+def c20, 1.00000000, 0.00392157, 0.00001538, 0.00000001
+def c21, 4.03944778, 0, 0, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -22602,60 +22647,60 @@ rcp r0.y, r0.x
 min r0.x, r2, r0.w
 mul r1.w, r0.x, r0.y
 mul r2.z, r1.w, r1.w
-mad r0.x, r2.z, c15.y, c15.z
-mad r0.x, r0, r2.z, c15.w
-mad r2.w, r0.x, r2.z, c16.x
+mad r0.x, r2.z, c16.y, c16.z
+mad r0.x, r0, r2.z, c16.w
+mad r2.w, r0.x, r2.z, c17.x
 mul r0.xy, v5.zyzw, c9.x
 mul r3.xy, r3, r3
-mad r2.w, r2, r2.z, c16.y
+mad r2.w, r2, r2.z, c17.y
 texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2.w, r2, c16
+mad r0.z, r2.w, r2, c17
 mul r1.w, r0.z, r1
 mul r0.xy, v5.zxzw, c9.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r0.xyz, r2.y, r0, r1
-add_pp r1.xyz, -r0, c13.y
+add_pp r1.xyz, -r0, c14.y
 add r2.x, r2, -r0.w
-add r2.z, -r1.w, c16.w
+add r2.z, -r1.w, c17.w
 cmp r1.w, -r2.x, r1, r2.z
-add r2.x, -r1.w, c14.w
+add r2.x, -r1.w, c15.w
 cmp r1.w, v5.z, r1, r2.x
 mul r2.x, v0, c10
-mul_sat r2.x, r2, c14.z
+mul_sat r2.x, r2, c15.z
 mad_pp r0.xyz, r2.x, r1, r0
 cmp r1.w, v5.x, r1, -r1
-mad r1.x, r1.w, c17, c17.y
+mad r1.x, r1.w, c18, c18.y
 abs r1.w, v5.y
-add r1.z, -r0.w, c13.y
-mad r1.y, r0.w, c13.z, c13.w
-mad r1.y, r0.w, r1, c14.x
-add r2.y, -r1.w, c13
-mad r2.x, r1.w, c13.z, c13.w
-mad r2.x, r2, r1.w, c14
+add r1.z, -r0.w, c14.y
+mad r1.y, r0.w, c14.z, c14.w
+mad r1.y, r0.w, r1, c15.x
+add r2.y, -r1.w, c14
+mad r2.x, r1.w, c14.z, c14.w
+mad r2.x, r2, r1.w, c15
 rsq r1.z, r1.z
 rsq r2.y, r2.y
 dsx r2.zw, v5.xyxy
 mul r2.zw, r2, r2
-mad r0.w, r0, r1.y, c14.y
+mad r0.w, r0, r1.y, c15.y
 rcp r1.z, r1.z
 mul r1.y, r0.w, r1.z
-cmp r0.w, v5.z, c13.x, c13.y
+cmp r0.w, v5.z, c14.x, c14.y
 mul r1.z, r0.w, r1.y
-mad r1.z, -r1, c14, r1.y
-mad r1.z, r0.w, c14.w, r1
-mad r1.w, r2.x, r1, c14.y
+mad r1.z, -r1, c15, r1.y
+mad r1.z, r0.w, c15.w, r1
+mad r1.w, r2.x, r1, c15.y
 rcp r2.y, r2.y
 mul r2.x, r1.w, r2.y
-cmp r1.w, v5.y, c13.x, c13.y
+cmp r1.w, v5.y, c14.x, c14.y
 mul r2.y, r1.w, r2.x
-mad r1.y, -r2, c14.z, r2.x
-mad r0.w, r1, c14, r1.y
-mul r1.z, r1, c15.x
-mul r1.y, r0.w, c15.x
+mad r1.y, -r2, c15.z, r2.x
+mad r0.w, r1, c15, r1.y
+mul r1.z, r1, c16.x
+mul r1.y, r0.w, c16.x
 add r0.w, r2.z, r2
 rsq r0.w, r0.w
 dsy r2.y, r1.z
@@ -22664,71 +22709,72 @@ add r1.z, r3.x, r3.y
 rsq r1.z, r1.z
 rcp r2.x, r1.z
 rcp r0.w, r0.w
-mul r1.z, r0.w, c17.x
-mul r2.x, r2, c17
+mul r1.z, r0.w, c18.x
+mul r2.x, r2, c18
 texldd r1, r1, s0, r1.zwzw, r2
 mul_pp r1.xyz, r1, r0
 mul r2.xyz, v6, c7
 mul_pp r1.xyz, r1, r2
-add r0.xyz, v4, c18.xyyw
+add r0.xyz, v4, c19.xyyw
 texld r0, r0, s2
-dp4 r3.w, r0, c19
-add r0.xyz, v4, c18.yxyw
-texld r0, r0, s2
-dp4 r3.z, r0, c19
-add r2.xyz, v4, c18.yyxw
-texld r2, r2, s2
-dp4 r3.y, r2, c19
-add r0.xyz, v4, c17.w
-texld r0, r0, s2
+dp4 r3.w, r0, c20
+add r2.xyz, v4, c19.yxyw
+texld r0, r2, s2
+dp4 r3.z, r0, c20
+add r2.xyz, v4, c19.yyxw
+texld r0, r2, s2
+add r2.xyz, v4, c18.w
+dp4 r3.y, r0, c20
+texld r0, r2, s2
+dp4 r3.x, r0, c20
 dp3 r2.x, v4, v4
-dp4 r3.x, r0, c19
-rsq r2.x, r2.x
-rcp r0.x, r2.x
-dp4 r2.x, c2, c2
-mul r0.x, r0, c3.w
-rsq r2.x, r2.x
+rsq r0.y, r2.x
+dp4 r0.x, c2, c2
+rsq r2.x, r0.x
 mul r2.xyz, r2.x, c2
-mad r0, -r0.x, c18.z, r3
-mov r2.w, c4.x
-cmp r0, r0, c13.y, r2.w
-dp4_pp r0.y, r0, c18.w
+rcp r0.y, r0.y
+mul r0.x, r0.y, c3.w
+mad r0, -r0.x, c19.z, r3
+mov r3.x, c4
+cmp r0, r0, c14.y, r3.x
+dp4_pp r0.y, r0, c19.w
 dp3_pp r2.w, v2, -r2
 mul_pp r3.xyz, v2, r2.w
-mad_pp r3.xyz, -r3, c14.z, -r2
+mad_pp r3.xyz, -r3, c15.z, -r2
 dp3 r0.x, v3, v3
 texld r0.w, v3, s4
 texld r0.x, r0.x, s3
 mul r0.x, r0, r0.w
 mul r2.w, r0.x, r0.y
-mul r0.xyz, r2.w, c5
 dp3_pp_sat r3.w, r3, v1
-mul r3.xyz, r0, c6
 pow_pp r0, r3.w, c8.x
 dp3_pp_sat r0.w, v2, r2
-add_pp r2.x, r0.w, c13.y
+add_pp r2.x, r0.w, c14.y
 frc_pp r2.y, r2.x
-add_pp r0.w, r0, c17.z
+mul r3.xyz, r2.w, c5
+mul r3.xyz, r3, c6
+add_pp r0.w, r0, c18.z
+mul_pp r0.w, r0, c5
 mul r0.xyz, r3, r0.x
 add_pp_sat r2.x, r2, -r2.y
 mul r0.xyz, r2.x, r0
-mul r2.xyz, r1.w, r0
-mul_pp r0.w, r0, c5
-mul_pp r0.y, r0.w, r2.w
-mul_pp_sat r0.w, r0.y, c20.x
-mov r0.x, c11
-add r0.xyz, c5, r0.x
-mad_sat r3.xyz, r0, r0.w, c0
+mul r3.xyz, r1.w, r0
+mul_pp r0.w, r0, r2
+mov r0.y, c11.x
+add r2.xyz, c5, r0.y
+mul_pp_sat r0.z, r0.w, c21.x
 texldp r0.x, v7, s5
-add_pp r2.xyz, r3, r2
-mad r0.x, r0, c1.z, c1.w
-rcp r0.y, v7.z
-rcp r0.x, r0.x
-mul r0.y, v0.x, r0
-add r0.x, r0, -v7.z
-mul r0.x, r0, r0.y
+mad r0.w, r0.x, c1.z, c1
+mad_sat r0.xyz, r2, r0.z, c0
+add_pp r2.xyz, r0, r3
+rcp r0.w, r0.w
+add r0.x, r0.w, -v7.z
+mul_sat r0.y, r0.x, c12.x
+add r0.x, v0, c13
+add r0.y, r0, c13.z
+mul_sat r0.x, r0, c13.y
 mul_pp oC0.xyz, r1, r2
-mul_sat oC0.w, r0.x, c12.x
+mad oC0.w, r0.x, r0.y, c13
 "
 }
 
@@ -22749,7 +22795,7 @@ Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
 
 }
 
-#LINE 164
+#LINE 165
 
 	
 		}
