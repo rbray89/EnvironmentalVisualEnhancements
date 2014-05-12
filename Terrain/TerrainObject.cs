@@ -15,6 +15,7 @@ namespace Terrain
         private void assignTangent(PQ quad)
         {
             Vector4[] tangents = quad.mesh.tangents;
+            Vector3[] normals = quad.mesh.normals;
             Vector3[] verts = quad.mesh.vertices;
             for (int i = 0; i < tangents.Length; i++)
             {
@@ -110,7 +111,8 @@ namespace Terrain
         private GameObject pqsTerrainContainer;
         private GameObject pqsOceanContainer;
         private Shader originalShader;
-        
+        private Shader originalOceanShader;
+
         public void LoadConfigNode(ConfigNode node, String body)
         {
             ConfigNode.LoadObjectFromConfig(this, node);
@@ -145,10 +147,11 @@ namespace Terrain
                         planetMaterial.ApplyMaterialProperties(mr.material);
                     }
                 }
+                
                 pqsTerrainContainer = new GameObject("PQSTangentAssigner");
                 pqsTerrainContainer.AddComponent<PQSTangentAssigner>();
                 pqsTerrainContainer.transform.parent = pqs.transform;
-
+                
                 originalShader = pqs.surfaceMaterial.shader;
                 String[] keywords = pqs.surfaceMaterial.shaderKeywords;
                 pqs.surfaceMaterial.shader = TerrainManager.TerrainShader;
@@ -162,12 +165,13 @@ namespace Terrain
                 if (oceanMaterial != null && pqs.ChildSpheres.Length > 0)
                 {
                     PQS ocean = pqs.ChildSpheres[0];
-
+                    
                     pqsOceanContainer = new GameObject("PQSTangentAssigner");
-                    pqsOceanContainer.AddComponent<PQSTangentAssigner>();
+                    PQSTangentAssigner tas = pqsOceanContainer.AddComponent<PQSTangentAssigner>();
                     pqsOceanContainer.transform.parent = ocean.transform;
-
+                    
                     keywords = ocean.surfaceMaterial.shaderKeywords;
+                    originalOceanShader = ocean.surfaceMaterial.shader;
                     ocean.surfaceMaterial.shader = TerrainManager.OceanShader;
                     foreach (String keyword in keywords)
                     {
@@ -197,6 +201,14 @@ namespace Terrain
                 pqs.surfaceMaterial.shader = originalShader;
                 pqsTerrainContainer.transform.parent = null;
                 GameObject.Destroy(pqsTerrainContainer);
+                if (pqsOceanContainer != null)
+                {
+                    PQS ocean = pqs.ChildSpheres[0];
+                    ocean.surfaceMaterial.shader = originalOceanShader;
+                    pqsOceanContainer.transform.parent = null;
+                    GameObject.Destroy(pqsOceanContainer);
+                    pqsOceanContainer = null;
+                }
             }
         }
     }

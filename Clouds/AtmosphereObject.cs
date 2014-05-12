@@ -102,7 +102,7 @@ namespace Atmosphere
                 layerVolume.Remove();
             }
             this.transform.parent = null;
-            GameObject.Destroy(this.gameObject);
+            GameObject.DestroyImmediate(this.gameObject);
         }
         /*
         private static Transform GetTargetPos()

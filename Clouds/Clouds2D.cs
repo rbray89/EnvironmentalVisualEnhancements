@@ -87,7 +87,7 @@ namespace Atmosphere
             if (CloudMesh != null)
             {
                 CloudMesh.transform.parent = null;
-                GameObject.Destroy(CloudMesh);
+                GameObject.DestroyImmediate(CloudMesh);
                 CloudMesh = null;
             }
         }

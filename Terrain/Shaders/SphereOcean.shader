@@ -57,7 +57,6 @@ Tags { "Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="Transparen
 		struct appdata_t {
 				float4 vertex : POSITION;
 				float3 normal : NORMAL;
-				float4 color : COLOR;
 				float3 tangent : TANGENT;
 			};
 
@@ -68,9 +67,7 @@ Tags { "Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="Transparen
 			float3 worldNormal : TEXCOORD2;
 			LIGHTING_COORDS(3,4)
 			float3 sphereNormal : TEXCOORD5;
-			float4 color : TEXCOORD6;
-			float4 scrPos : TEXCOORD7;
-			float3 ray : TEXCOORD8;
+			float4 scrPos : TEXCOORD6;
 		};	
 		
 
@@ -85,7 +82,6 @@ Tags { "Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="Transparen
 	   	   o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
 	   	   o.sphereNormal = -normalize(v.tangent);
 		   o.viewDir = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, v.vertex).xyz);
-    	   o.color = v.color;
     	   o.scrPos=ComputeScreenPos(o.pos);
     	   COMPUTE_EYEDEPTH(o.scrPos.z);
     	   TRANSFER_VERTEX_TO_FRAGMENT(o);
@@ -128,7 +124,7 @@ Tags { "Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="Transparen
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
 			color = main.rgba * lerp(detail.rgba, 1, detailLevel);
 			
-            color *= _Color * IN.color;
+            color *= _Color;
             
           	//lighting
             half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
