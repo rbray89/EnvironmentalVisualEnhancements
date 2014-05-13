@@ -1,6 +1,7 @@
 ﻿Shader "Sphere/Ocean" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
+		_UnderColor ("Color Tint", Color) = (1,1,1,1)
 		_SpecColor ("Specular tint", Color) = (1,1,1,1)
 		_Shininess ("Shininess", Float) = 10
 		_MainTex ("Main (RGB)", 2D) = "white" {}
@@ -20,7 +21,125 @@ Tags { "Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="Transparen
 	ColorMask RGB
 	Cull Back Lighting On ZWrite On
 	
+	
+	//Sub-surface depth
 	Pass {
+
+		Lighting On
+		Tags { "LightMode"="ForwardBase"}
+		
+		CGPROGRAM
+		
+		#include "UnityCG.cginc"
+		#include "AutoLight.cginc"
+		#include "Lighting.cginc"
+		#pragma target 3.0
+		#pragma glsl
+		#pragma vertex vert
+		#pragma fragment frag
+		#define MAG_ONE 1.4142135623730950488016887242097
+		#pragma fragmentoption ARB_precision_hint_fastest
+		#pragma multi_compile_fwdbase
+		#pragma multi_compile_fwdadd_fullshadows
+		#define PI 3.1415926535897932384626
+		#define INV_PI (1.0/PI)
+		#define TWOPI (2.0*PI) 
+		#define INV_2PI (1.0/TWOPI)
+	 
+		fixed4 _UnderColor;
+		float _Shininess;
+		sampler2D _MainTex;
+		sampler2D _DetailTex;
+		float _DetailScale;
+		float _DetailDist;
+		float _MinLight;
+		float _Clarity;
+		sampler2D _CameraDepthTexture;
+		float4x4 _CameraToWorld;
+
+		struct appdata_t {
+				float4 vertex : POSITION;
+				float3 normal : NORMAL;
+				float3 tangent : TANGENT;
+			};
+
+		struct v2f {
+			float4 pos : SV_POSITION;
+			float  viewDist : TEXCOORD0;
+			float3 viewDir : TEXCOORD1;
+			float3 worldNormal : TEXCOORD2;
+			LIGHTING_COORDS(3,4)
+			float3 sphereNormal : TEXCOORD5;
+			float4 scrPos : TEXCOORD6;
+		};	
+		
+
+		v2f vert (appdata_t v)
+		{
+			v2f o;
+			float3 vertexPos = mul(_Object2World, v.vertex).xyz;
+			float viewDist = distance(vertexPos,_WorldSpaceCameraPos);
+			o.viewDist = viewDist;
+			float satDepth = 1-saturate(.002*(viewDist-800));
+			
+			float4 vertex = v.vertex - satDepth*(300*float4(v.normal,0));
+			o.pos = mul(UNITY_MATRIX_MVP, vertex);
+			
+		   vertexPos = mul(_Object2World, vertex).xyz;
+
+	   	   o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
+		   o.viewDir = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, vertex).xyz);
+    	   o.scrPos=ComputeScreenPos(o.pos);
+    	   COMPUTE_EYEDEPTH(o.scrPos.z);
+    	   TRANSFER_VERTEX_TO_FRAGMENT(o);
+    
+	   	   return o;
+	 	}
+	 	
+	 		
+		fixed4 frag (v2f IN) : COLOR
+		{
+			half4 color;
+            color = _UnderColor;
+            
+          	//lighting
+            half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
+			half3 lightDirection = normalize(_WorldSpaceLightPos0);
+			half3 normalDir = IN.worldNormal;
+			half NdotL = saturate(dot (normalDir, lightDirection));
+	        half diff = (NdotL - 0.01) / 0.99;
+	        fixed atten = LIGHT_ATTENUATION(IN); 
+			half lightIntensity = saturate(_LightColor0.a * diff * 4 * atten);
+			half3 light = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
+			
+            float3 specularReflection = saturate(floor(1+NdotL));
+            
+            specularReflection *= atten * float3(_LightColor0) 
+                  * float3(_SpecColor) * pow(saturate( dot(
+                  reflect(-lightDirection, normalDir), 
+                  IN.viewDir)), _Shininess);
+ 
+            light += color.a*specularReflection;
+			
+			color.rgb *= light;
+			
+			//depth opacity
+			float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.scrPos)));
+			float satDepth = saturate(.001*(IN.viewDist-1800));
+			depth = LinearEyeDepth(depth);
+			
+			depth -= IN.scrPos.z;
+    		depth = saturate(_Clarity*depth);
+			color.a = lerp(depth, 0, satDepth);
+			
+          	return color;
+		}
+		ENDCG
+	
+		}
+		
+		//surface
+		Pass {
 
 		Lighting On
 		Tags { "LightMode"="ForwardBase"}
@@ -154,7 +273,7 @@ Tags { "Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="Transparen
 			
 			depth -= IN.scrPos.z;
     		depth = saturate(_Clarity*depth);
-    		float refrac = 1-(.75*dot(IN.viewDir, IN.worldNormal));
+    		float refrac = .45;//.65-(.55*dot(IN.viewDir, IN.worldNormal));
 			color.a = lerp(refrac, depth, satDepth);
 			
           	return color;

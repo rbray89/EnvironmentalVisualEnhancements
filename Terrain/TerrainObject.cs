@@ -79,6 +79,8 @@ namespace Terrain
         [Persistent]
         Color _Color = Color.white;
         [Persistent]
+        Color _UnderColor = Color.white;
+        [Persistent]
         Color _SpecColor = Color.white;
         [Persistent]
         float _Shininess = 10;
