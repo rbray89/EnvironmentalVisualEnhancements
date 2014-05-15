@@ -10,6 +10,15 @@ using EVEManager;
 
 namespace Terrain
 {
+    public class something : GameDatabase.TextureInfo
+    {
+        public new Texture2D  texture { get { return null; } set { } }
+
+        public something(Texture2D texture, bool isNormalMap, bool isReadable, bool isCompressed) : base(texture,isNormalMap, isReadable, isCompressed)
+        {
+
+        }
+    }
     
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class TerrainManager : GenericEVEManager<TerrainObject>

@@ -27,7 +27,11 @@ namespace Utils
                     }
                     try
                     {
-                        texture.GetPixel(0, 0);
+                        Color32[] pixels = texture.GetPixels32();
+                        int width = texture.width;
+                        int height = texture.height;
+                        texture.Resize(width, height, TextureFormat.ARGB32, true);
+                        texture.SetPixels32(pixels);
                         texture.Apply(true);
                     }
                     catch { }

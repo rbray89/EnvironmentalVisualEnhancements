@@ -50,6 +50,8 @@ namespace Terrain
         float _DetailDist = 0.00875f;
         [Persistent]
         float _MinLight = .5f;
+        [Persistent]
+        float _Albedo = 1.2f;
     }
 
     public class PlanetMaterial : MaterialManager
@@ -72,6 +74,8 @@ namespace Terrain
         float _DetailDist = 0.00875f;
         [Persistent]
         float _MinLight = .5f;
+        [Persistent]
+        float _Albedo = 1.2f;
     }
 
     public class OceanMaterial : MaterialManager
@@ -112,7 +116,8 @@ namespace Terrain
 
         private GameObject pqsTerrainContainer;
         private GameObject pqsOceanContainer;
-        private Shader originalShader;
+        private Shader originalTerrainShader;
+        private Shader originalPlanetShader;
         private Shader originalOceanShader;
 
         public void LoadConfigNode(ConfigNode node, String body)
@@ -139,13 +144,10 @@ namespace Terrain
                 if (mr != null)
                 {
                     mainTexture = mr.material.mainTexture;
-                    mr.material.shader = new Material(TerrainManager.PlanetShader).shader;
-                    if (planetMaterial == null)
+                    originalPlanetShader = mr.material.shader;
+                    if (planetMaterial != null)
                     {
-                        terrainMaterial.ApplyMaterialProperties(mr.material);
-                    }
-                    else
-                    {
+                        mr.material.shader = new Material(TerrainManager.PlanetShader).shader;
                         planetMaterial.ApplyMaterialProperties(mr.material);
                     }
                 }
@@ -154,7 +156,7 @@ namespace Terrain
                 pqsTerrainContainer.AddComponent<PQSTangentAssigner>();
                 pqsTerrainContainer.transform.parent = pqs.transform;
                 
-                originalShader = pqs.surfaceMaterial.shader;
+                originalTerrainShader = pqs.surfaceMaterial.shader;
                 String[] keywords = pqs.surfaceMaterial.shaderKeywords;
                 pqs.surfaceMaterial.shader = TerrainManager.TerrainShader;
                 foreach(String keyword in keywords)
@@ -200,16 +202,28 @@ namespace Terrain
             PQS pqs = celestialBody.pqsController;
             if (pqs != null)
             {
-                pqs.surfaceMaterial.shader = originalShader;
-                pqsTerrainContainer.transform.parent = null;
-                GameObject.Destroy(pqsTerrainContainer);
-                if (pqsOceanContainer != null)
+                if (pqsTerrainContainer != null)
                 {
-                    PQS ocean = pqs.ChildSpheres[0];
-                    ocean.surfaceMaterial.shader = originalOceanShader;
-                    pqsOceanContainer.transform.parent = null;
-                    GameObject.Destroy(pqsOceanContainer);
-                    pqsOceanContainer = null;
+                    pqs.surfaceMaterial.shader = originalTerrainShader;
+                    pqsTerrainContainer.transform.parent = null;
+                    GameObject.Destroy(pqsTerrainContainer);
+                    if (pqsOceanContainer != null)
+                    {
+                        PQS ocean = pqs.ChildSpheres[0];
+                        ocean.surfaceMaterial.shader = originalOceanShader;
+                        pqsOceanContainer.transform.parent = null;
+                        GameObject.Destroy(pqsOceanContainer);
+                        pqsOceanContainer = null;
+                    }
+                }
+            }
+            if(planetMaterial != null)
+            {
+                Transform transform = EVEManagerClass.GetScaledTransform(body);
+                MeshRenderer mr = (MeshRenderer)transform.GetComponent(typeof(MeshRenderer));
+                if (mr != null)
+                {
+                    mr.material.shader = originalPlanetShader;
                 }
             }
         }

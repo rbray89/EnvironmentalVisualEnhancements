@@ -22,5 +22,14 @@ namespace Atmosphere
             newObject.Apply();
         }
 
+        protected override void Clean()
+        {
+            foreach (AtmosphereObject obj in ObjectList)
+            {
+                obj.Remove();
+                GameObject.DestroyImmediate(obj);
+            }
+            ObjectList.Clear();
+        }
     }
 }

@@ -101,7 +101,7 @@ namespace EVEManager
             newObject.Apply();
         }
 
-        protected void Clean()
+        protected virtual void Clean()
         {
             foreach (T obj in ObjectList)
             {
@@ -271,13 +271,16 @@ namespace EVEManager
             T obj = default(T);
             if (ObjectList.Count > 0)
             {
-                obj = ObjectList.First(o => o.Body == body);
+                if(ObjectList.Any(o => o.Body == body))
+                {
+                    obj = ObjectList.First(o => o.Body == body);
+                }
             }
             
             if (obj == null && GUI.Button(applyRect, "Add"))
             {
                 obj = new T();
-                obj.LoadConfigNode(node.AddNode(new ConfigNode(body)), body);
+                obj.LoadConfigNode(node.AddNode(body), body);
                 ObjectList.Add(obj);
             }
             else if (obj != null && GUI.Button(applyRect, "Remove"))

@@ -10,11 +10,12 @@
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
 		_MinLight ("Minimum Light", Range(0,1)) = .5
 		_Clarity ("Clarity", Range(0,1)) = .005
+		_ShadowIntensity ("Shadow Strength", Range(0,1)) = .6
 	}
 	
 SubShader {
 
-Tags { "Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="TransparentOcean" "OceanReplace"="True"}
+Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
 	Blend SrcAlpha OneMinusSrcAlpha
 	Fog { Mode Global}
 	AlphaTest Greater 0
@@ -81,19 +82,19 @@ Tags { "Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="Transparen
 			float viewDist = distance(vertexPos,_WorldSpaceCameraPos);
 			o.viewDist = viewDist;
 			float satDepth = 1-saturate(.002*(viewDist-800));
-			
-			float4 vertex = v.vertex - satDepth*(300*float4(v.normal,0));
-			o.pos = mul(UNITY_MATRIX_MVP, vertex);
-			
-		   vertexPos = mul(_Object2World, vertex).xyz;
 
-	   	   o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
-		   o.viewDir = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, vertex).xyz);
-    	   o.scrPos=ComputeScreenPos(o.pos);
-    	   COMPUTE_EYEDEPTH(o.scrPos.z);
-    	   TRANSFER_VERTEX_TO_FRAGMENT(o);
-    
-	   	   return o;
+			float4 vertex = v.vertex - satDepth*(400*float4(v.normal,0));
+			o.pos = mul(UNITY_MATRIX_MVP, vertex);
+
+			vertexPos = mul(_Object2World, vertex).xyz;
+
+			o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
+			o.viewDir = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, vertex).xyz);
+			o.scrPos=ComputeScreenPos(o.pos);
+			COMPUTE_EYEDEPTH(o.scrPos.z);
+			TRANSFER_VERTEX_TO_FRAGMENT(o);
+
+			return o;
 	 	}
 	 	
 	 		
@@ -140,7 +141,6 @@ Tags { "Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="Transparen
 		
 		//surface
 		Pass {
-
 		Lighting On
 		Tags { "LightMode"="ForwardBase"}
 		
@@ -177,6 +177,7 @@ Tags { "Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="Transparen
 				float4 vertex : POSITION;
 				float3 normal : NORMAL;
 				float3 tangent : TANGENT;
+				float4 texcoord : TEXCOORD0;
 			};
 
 		struct v2f {
@@ -193,19 +194,22 @@ Tags { "Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="Transparen
 		v2f vert (appdata_t v)
 		{
 			v2f o;
-			o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+			half c = .25*_Time.z + frac( v.texcoord.xy ).x;
+		    float4 vertex = v.vertex + (2.5*(1+cos(c))*float4(v.normal,0));
 			
-		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
-	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
+			o.pos = mul(UNITY_MATRIX_MVP, vertex);
+			
+			float3 vertexPos = mul(_Object2World, vertex).xyz;
+			o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
 
-	   	   o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
-	   	   o.sphereNormal = -normalize(v.tangent);
-		   o.viewDir = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, v.vertex).xyz);
-    	   o.scrPos=ComputeScreenPos(o.pos);
-    	   COMPUTE_EYEDEPTH(o.scrPos.z);
-    	   TRANSFER_VERTEX_TO_FRAGMENT(o);
-    
-	   	   return o;
+			o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
+			o.sphereNormal = -normalize(v.tangent);
+			o.viewDir = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, vertex).xyz);
+			o.scrPos=ComputeScreenPos(o.pos);
+			COMPUTE_EYEDEPTH(o.scrPos.z);
+			TRANSFER_VERTEX_TO_FRAGMENT(o);
+
+			return o;
 	 	}
 	 	
 		float4 Derivatives( float3 pos )  
@@ -282,6 +286,45 @@ Tags { "Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="Transparen
 	
 		}
 		
+		// Pass to render object as a shadow collector
+		Pass {
+			Name "ShadowCollector"
+			Tags { "LightMode" = "ShadowCollector" }
+			
+			Fog {Mode Off}
+			ZWrite On ZTest LEqual
+
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+			#pragma fragmentoption ARB_precision_hint_fastest
+			#pragma multi_compile_shadowcollector
+
+			#define SHADOW_COLLECTOR_PASS
+			#include "UnityCG.cginc"
+
+			struct v2f {
+				V2F_SHADOW_COLLECTOR;
+			};
+
+
+			v2f vert (appdata_base v)
+			{
+				v2f o;
+				TRANSFER_SHADOW_COLLECTOR(o)
+				return o;
+			}
+
+			uniform fixed4 _Color;
+
+			fixed4 frag (v2f i) : COLOR
+			{
+				SHADOW_COLLECTOR_FRAGMENT(i)
+			}
+			ENDCG
+
+		}
+		
 		Pass {
             Tags {"LightMode" = "ForwardAdd"} 
             Blend One One                                      
@@ -343,6 +386,5 @@ Tags { "Queue"="Transparent-1" "IgnoreProjector"="True" "RenderType"="Transparen
         }
 		
 	} 
-	
-	FallBack "VertexLit"
+
 }

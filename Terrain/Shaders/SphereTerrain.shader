@@ -8,6 +8,7 @@
 		_DetailVertScale ("Detail Scale", Range(0,1000)) = 200
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
 		_MinLight ("Minimum Light", Range(0,1)) = .5
+		_Albedo ("Albedo Index", Range(0,5)) = 1.2
 		_CityOverlayTex ("Overlay (RGB)", 2D) = "white" {}
 		_CityOverlayDetailScale ("Overlay Detail Scale", Range(0,1000)) = 80
 		_CityDarkOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
@@ -56,6 +57,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		float _DetailVertScale;
 		float _DetailDist;
 		float _MinLight;
+		float _Albedo;
 		
 		#ifdef CITYOVERLAY_ON
 		sampler2D _CityOverlayTex;
@@ -164,14 +166,15 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
             half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
 			half3 lightDirection = normalize(_WorldSpaceLightPos0);
 			half NdotL = saturate(dot (IN.worldNormal, lightDirection));
-	        half diff = (NdotL - 0.01) / 0.99;
 	        fixed atten = LIGHT_ATTENUATION(IN); 
-			half lightIntensity = saturate(_LightColor0.a * diff * 4 * atten);
+			half lightIntensity = saturate(_LightColor0.a * NdotL * 4 * atten);
 			half3 light = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
+			light *= _Albedo;
 			color.rgb *= light;
 			
 			#ifdef CITYOVERLAY_ON
-			citydarkoverlay.a *= 1-saturate(lightIntensity*1.5);
+			lightIntensity = saturate(_LightColor0.a * (NdotL - 0.01) / 0.99 * 4 * atten);
+			citydarkoverlay.a *= 1-saturate(lightIntensity);
 			color = lerp(color, citydarkoverlay, citydarkoverlay.a);
 			#endif
 			color.a = 1;

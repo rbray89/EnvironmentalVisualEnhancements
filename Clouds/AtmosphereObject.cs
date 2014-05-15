@@ -83,8 +83,8 @@ namespace Atmosphere
             if (celestialBody != null && celestialBody.pqsController != null)
             {
                 this.transform.parent = celestialBody.pqsController.transform;
-                sphere = celestialBody.pqsController;
-                if(sphere.isActive)
+                this.sphere = celestialBody.pqsController;
+                if (this.sphere.isActive)
                 {
                     this.OnSphereActive();
                 }
@@ -102,7 +102,9 @@ namespace Atmosphere
                 layerVolume.Remove();
             }
             this.transform.parent = null;
-            GameObject.DestroyImmediate(this.gameObject);
+            this.modEnabled = false;
+            this.enabled = false;
+            this.sphere = null;
         }
         /*
         private static Transform GetTargetPos()
