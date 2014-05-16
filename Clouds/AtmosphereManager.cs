@@ -27,7 +27,11 @@ namespace Atmosphere
             foreach (AtmosphereObject obj in ObjectList)
             {
                 obj.Remove();
+                GameObject go = obj.gameObject;
+                go.transform.parent = null;
+
                 GameObject.DestroyImmediate(obj);
+                GameObject.DestroyImmediate(go);
             }
             ObjectList.Clear();
         }

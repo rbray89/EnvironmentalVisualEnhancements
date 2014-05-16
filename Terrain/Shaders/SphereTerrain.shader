@@ -169,7 +169,8 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	        fixed atten = LIGHT_ATTENUATION(IN); 
 			half lightIntensity = saturate(_LightColor0.a * NdotL * 4 * atten);
 			half3 light = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
-			light *= _Albedo;
+			
+			color.rgb += _Albedo*light;
 			color.rgb *= light;
 			
 			#ifdef CITYOVERLAY_ON

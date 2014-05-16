@@ -142,14 +142,20 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
   float tmpvar_19;
-  tmpvar_19 = texture2D (_LightTexture0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3))).w;
-  vec3 i_20;
-  i_20 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_18) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  float tmpvar_20;
+  tmpvar_20 = texture2D (_LightTexture0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3))).w;
+  vec3 i_21;
+  i_21 = -(tmpvar_18.xyz);
+  vec3 tmpvar_22;
+  tmpvar_22 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_20), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_20 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_21 - (2.0 * (dot (xlv_TEXCOORD2, i_21) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_22));
+  color_2.xyz = (color_2.xyz * tmpvar_22);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -369,41 +375,44 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
   highp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  highp float tmpvar_44;
-  tmpvar_44 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp float tmpvar_45;
-  tmpvar_45 = texture2D (_LightTexture0, vec2(tmpvar_44)).w;
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_45), 0.0, 1.0);
-  highp vec3 tmpvar_47;
-  tmpvar_47 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_46)), 0.0, 1.0);
-  light_3 = tmpvar_47;
-  mediump vec3 tmpvar_48;
-  tmpvar_48 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_48;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp float tmpvar_46;
+  tmpvar_46 = texture2D (_LightTexture0, vec2(tmpvar_45)).w;
+  mediump float tmpvar_47;
+  tmpvar_47 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_46), 0.0, 1.0);
+  highp vec3 tmpvar_48;
+  tmpvar_48 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_47)), 0.0, 1.0);
+  light_3 = tmpvar_48;
   mediump vec3 tmpvar_49;
-  mediump vec3 i_50;
-  i_50 = -(lightDirection_5);
-  tmpvar_49 = (i_50 - (2.0 * (dot (normalDir_4, i_50) * normalDir_4)));
-  highp vec3 tmpvar_51;
-  tmpvar_51 = (specularReflection_2 * (((tmpvar_45 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_49, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_51;
+  tmpvar_49 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_49;
+  mediump vec3 tmpvar_50;
+  mediump vec3 i_51;
+  i_51 = -(lightDirection_5);
+  tmpvar_50 = (i_51 - (2.0 * (dot (normalDir_4, i_51) * normalDir_4)));
   highp vec3 tmpvar_52;
-  tmpvar_52 = (light_3 * _Albedo);
-  light_3 = tmpvar_52;
+  tmpvar_52 = (specularReflection_2 * (((tmpvar_46 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_50, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_52;
   highp vec3 tmpvar_53;
-  tmpvar_53 = (light_3 + (main_15.w * tmpvar_51));
+  tmpvar_53 = (light_3 + (main_15.w * tmpvar_52));
   light_3 = tmpvar_53;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_54;
+  tmpvar_54 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_54;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -574,41 +583,44 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
   highp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  highp float tmpvar_44;
-  tmpvar_44 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp float tmpvar_45;
-  tmpvar_45 = texture2D (_LightTexture0, vec2(tmpvar_44)).w;
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_45), 0.0, 1.0);
-  highp vec3 tmpvar_47;
-  tmpvar_47 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_46)), 0.0, 1.0);
-  light_3 = tmpvar_47;
-  mediump vec3 tmpvar_48;
-  tmpvar_48 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_48;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp float tmpvar_46;
+  tmpvar_46 = texture2D (_LightTexture0, vec2(tmpvar_45)).w;
+  mediump float tmpvar_47;
+  tmpvar_47 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_46), 0.0, 1.0);
+  highp vec3 tmpvar_48;
+  tmpvar_48 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_47)), 0.0, 1.0);
+  light_3 = tmpvar_48;
   mediump vec3 tmpvar_49;
-  mediump vec3 i_50;
-  i_50 = -(lightDirection_5);
-  tmpvar_49 = (i_50 - (2.0 * (dot (normalDir_4, i_50) * normalDir_4)));
-  highp vec3 tmpvar_51;
-  tmpvar_51 = (specularReflection_2 * (((tmpvar_45 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_49, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_51;
+  tmpvar_49 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_49;
+  mediump vec3 tmpvar_50;
+  mediump vec3 i_51;
+  i_51 = -(lightDirection_5);
+  tmpvar_50 = (i_51 - (2.0 * (dot (normalDir_4, i_51) * normalDir_4)));
   highp vec3 tmpvar_52;
-  tmpvar_52 = (light_3 * _Albedo);
-  light_3 = tmpvar_52;
+  tmpvar_52 = (specularReflection_2 * (((tmpvar_46 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_50, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_52;
   highp vec3 tmpvar_53;
-  tmpvar_53 = (light_3 + (main_15.w * tmpvar_51));
+  tmpvar_53 = (light_3 + (main_15.w * tmpvar_52));
   light_3 = tmpvar_53;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_54;
+  tmpvar_54 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_54;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -1094,8 +1106,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 476
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 480
     color.w = 1.0;
@@ -1228,12 +1240,18 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
-  vec3 i_19;
-  i_19 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * tmpvar_18) * 4.0), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot ((i_19 - (2.0 * (dot (xlv_TEXCOORD2, i_19) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
+  float tmpvar_19;
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  vec3 i_20;
+  i_20 = -(tmpvar_18.xyz);
+  vec3 tmpvar_21;
+  tmpvar_21 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * tmpvar_19) * 4.0), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_21));
+  color_2.xyz = (color_2.xyz * tmpvar_21);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -1442,37 +1460,40 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
-  lowp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
+  highp vec3 tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
   mediump float tmpvar_44;
-  tmpvar_44 = clamp (((_LightColor0.w * tmpvar_43) * 4.0), 0.0, 1.0);
-  highp vec3 tmpvar_45;
-  tmpvar_45 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_44)), 0.0, 1.0);
-  light_3 = tmpvar_45;
-  mediump vec3 tmpvar_46;
-  tmpvar_46 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_46;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  mediump float tmpvar_45;
+  tmpvar_45 = clamp (((_LightColor0.w * tmpvar_44) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_46;
+  tmpvar_46 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_45)), 0.0, 1.0);
+  light_3 = tmpvar_46;
   mediump vec3 tmpvar_47;
-  mediump vec3 i_48;
-  i_48 = -(lightDirection_5);
-  tmpvar_47 = (i_48 - (2.0 * (dot (normalDir_4, i_48) * normalDir_4)));
-  highp vec3 tmpvar_49;
-  tmpvar_49 = (specularReflection_2 * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot (tmpvar_47, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_49;
+  tmpvar_47 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_47;
+  mediump vec3 tmpvar_48;
+  mediump vec3 i_49;
+  i_49 = -(lightDirection_5);
+  tmpvar_48 = (i_49 - (2.0 * (dot (normalDir_4, i_49) * normalDir_4)));
   highp vec3 tmpvar_50;
-  tmpvar_50 = (light_3 * _Albedo);
-  light_3 = tmpvar_50;
+  tmpvar_50 = (specularReflection_2 * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot (tmpvar_48, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_50;
   highp vec3 tmpvar_51;
-  tmpvar_51 = (light_3 + (main_15.w * tmpvar_49));
+  tmpvar_51 = (light_3 + (main_15.w * tmpvar_50));
   light_3 = tmpvar_51;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_52;
+  tmpvar_52 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_52;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -1638,37 +1659,40 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
-  lowp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
+  highp vec3 tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
   mediump float tmpvar_44;
-  tmpvar_44 = clamp (((_LightColor0.w * tmpvar_43) * 4.0), 0.0, 1.0);
-  highp vec3 tmpvar_45;
-  tmpvar_45 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_44)), 0.0, 1.0);
-  light_3 = tmpvar_45;
-  mediump vec3 tmpvar_46;
-  tmpvar_46 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_46;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  mediump float tmpvar_45;
+  tmpvar_45 = clamp (((_LightColor0.w * tmpvar_44) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_46;
+  tmpvar_46 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_45)), 0.0, 1.0);
+  light_3 = tmpvar_46;
   mediump vec3 tmpvar_47;
-  mediump vec3 i_48;
-  i_48 = -(lightDirection_5);
-  tmpvar_47 = (i_48 - (2.0 * (dot (normalDir_4, i_48) * normalDir_4)));
-  highp vec3 tmpvar_49;
-  tmpvar_49 = (specularReflection_2 * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot (tmpvar_47, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_49;
+  tmpvar_47 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_47;
+  mediump vec3 tmpvar_48;
+  mediump vec3 i_49;
+  i_49 = -(lightDirection_5);
+  tmpvar_48 = (i_49 - (2.0 * (dot (normalDir_4, i_49) * normalDir_4)));
   highp vec3 tmpvar_50;
-  tmpvar_50 = (light_3 * _Albedo);
-  light_3 = tmpvar_50;
+  tmpvar_50 = (specularReflection_2 * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot (tmpvar_48, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_50;
   highp vec3 tmpvar_51;
-  tmpvar_51 = (light_3 + (main_15.w * tmpvar_49));
+  tmpvar_51 = (light_3 + (main_15.w * tmpvar_50));
   light_3 = tmpvar_51;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_52;
+  tmpvar_52 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_52;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -2142,9 +2166,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 474
     light += (main.w * specularReflection);
+    #line 474
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     color.w = 1.0;
     return color;
@@ -2280,14 +2304,20 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
   float tmpvar_19;
-  tmpvar_19 = ((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w);
-  vec3 i_20;
-  i_20 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_18) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  float tmpvar_20;
+  tmpvar_20 = ((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w);
+  vec3 i_21;
+  i_21 = -(tmpvar_18.xyz);
+  vec3 tmpvar_22;
+  tmpvar_22 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_20), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_20 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_21 - (2.0 * (dot (xlv_TEXCOORD2, i_21) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_22));
+  color_2.xyz = (color_2.xyz * tmpvar_22);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -2510,48 +2540,51 @@ void main ()
   highp float tmpvar_41;
   tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_8 = tmpvar_41;
-  highp vec3 tmpvar_42;
-  tmpvar_42 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_42;
+  mediump vec4 tmpvar_42;
+  tmpvar_42 = ((main_16 * mix (detail_9, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8))) * _Color);
+  color_18.w = tmpvar_42.w;
   highp vec3 tmpvar_43;
-  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_43;
+  tmpvar_43 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_7 = tmpvar_43;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_6 = tmpvar_44;
   normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_44;
-  tmpvar_44 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
-  tmpvar_45 = texture2D (_LightTexture0, P_46);
-  highp float tmpvar_47;
-  tmpvar_47 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
-  lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2D (_LightTextureB0, vec2(tmpvar_47));
-  highp float tmpvar_49;
-  tmpvar_49 = ((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_45.w) * tmpvar_48.w);
-  atten_4 = tmpvar_49;
-  mediump float tmpvar_50;
-  tmpvar_50 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_51;
-  tmpvar_51 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_50)), 0.0, 1.0);
-  light_3 = tmpvar_51;
-  mediump vec3 tmpvar_52;
-  tmpvar_52 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_52;
+  mediump float tmpvar_45;
+  tmpvar_45 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
+  lowp vec4 tmpvar_46;
+  highp vec2 P_47;
+  P_47 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_46 = texture2D (_LightTexture0, P_47);
+  highp float tmpvar_48;
+  tmpvar_48 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
+  lowp vec4 tmpvar_49;
+  tmpvar_49 = texture2D (_LightTextureB0, vec2(tmpvar_48));
+  highp float tmpvar_50;
+  tmpvar_50 = ((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_46.w) * tmpvar_49.w);
+  atten_4 = tmpvar_50;
+  mediump float tmpvar_51;
+  tmpvar_51 = clamp ((((_LightColor0.w * tmpvar_45) * 4.0) * atten_4), 0.0, 1.0);
+  highp vec3 tmpvar_52;
+  tmpvar_52 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_51)), 0.0, 1.0);
+  light_3 = tmpvar_52;
   mediump vec3 tmpvar_53;
-  mediump vec3 i_54;
-  i_54 = -(lightDirection_6);
-  tmpvar_53 = (i_54 - (2.0 * (dot (normalDir_5, i_54) * normalDir_5)));
-  highp vec3 tmpvar_55;
-  tmpvar_55 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_53, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_55;
+  tmpvar_53 = vec3(clamp (floor((1.0 + tmpvar_45)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_53;
+  mediump vec3 tmpvar_54;
+  mediump vec3 i_55;
+  i_55 = -(lightDirection_6);
+  tmpvar_54 = (i_55 - (2.0 * (dot (normalDir_5, i_55) * normalDir_5)));
   highp vec3 tmpvar_56;
-  tmpvar_56 = (light_3 * _Albedo);
-  light_3 = tmpvar_56;
+  tmpvar_56 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_54, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_56;
   highp vec3 tmpvar_57;
-  tmpvar_57 = (light_3 + (main_16.w * tmpvar_55));
+  tmpvar_57 = (light_3 + (main_16.w * tmpvar_56));
   light_3 = tmpvar_57;
-  color_18.xyz = (((main_16 * mix (detail_9, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_58;
+  tmpvar_58 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_58;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -2724,48 +2757,51 @@ void main ()
   highp float tmpvar_41;
   tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_8 = tmpvar_41;
-  highp vec3 tmpvar_42;
-  tmpvar_42 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_42;
+  mediump vec4 tmpvar_42;
+  tmpvar_42 = ((main_16 * mix (detail_9, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8))) * _Color);
+  color_18.w = tmpvar_42.w;
   highp vec3 tmpvar_43;
-  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_43;
+  tmpvar_43 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_7 = tmpvar_43;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_6 = tmpvar_44;
   normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_44;
-  tmpvar_44 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
-  tmpvar_45 = texture2D (_LightTexture0, P_46);
-  highp float tmpvar_47;
-  tmpvar_47 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
-  lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2D (_LightTextureB0, vec2(tmpvar_47));
-  highp float tmpvar_49;
-  tmpvar_49 = ((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_45.w) * tmpvar_48.w);
-  atten_4 = tmpvar_49;
-  mediump float tmpvar_50;
-  tmpvar_50 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_51;
-  tmpvar_51 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_50)), 0.0, 1.0);
-  light_3 = tmpvar_51;
-  mediump vec3 tmpvar_52;
-  tmpvar_52 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_52;
+  mediump float tmpvar_45;
+  tmpvar_45 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
+  lowp vec4 tmpvar_46;
+  highp vec2 P_47;
+  P_47 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_46 = texture2D (_LightTexture0, P_47);
+  highp float tmpvar_48;
+  tmpvar_48 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
+  lowp vec4 tmpvar_49;
+  tmpvar_49 = texture2D (_LightTextureB0, vec2(tmpvar_48));
+  highp float tmpvar_50;
+  tmpvar_50 = ((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_46.w) * tmpvar_49.w);
+  atten_4 = tmpvar_50;
+  mediump float tmpvar_51;
+  tmpvar_51 = clamp ((((_LightColor0.w * tmpvar_45) * 4.0) * atten_4), 0.0, 1.0);
+  highp vec3 tmpvar_52;
+  tmpvar_52 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_51)), 0.0, 1.0);
+  light_3 = tmpvar_52;
   mediump vec3 tmpvar_53;
-  mediump vec3 i_54;
-  i_54 = -(lightDirection_6);
-  tmpvar_53 = (i_54 - (2.0 * (dot (normalDir_5, i_54) * normalDir_5)));
-  highp vec3 tmpvar_55;
-  tmpvar_55 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_53, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_55;
+  tmpvar_53 = vec3(clamp (floor((1.0 + tmpvar_45)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_53;
+  mediump vec3 tmpvar_54;
+  mediump vec3 i_55;
+  i_55 = -(lightDirection_6);
+  tmpvar_54 = (i_55 - (2.0 * (dot (normalDir_5, i_55) * normalDir_5)));
   highp vec3 tmpvar_56;
-  tmpvar_56 = (light_3 * _Albedo);
-  light_3 = tmpvar_56;
+  tmpvar_56 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_54, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_56;
   highp vec3 tmpvar_57;
-  tmpvar_57 = (light_3 + (main_16.w * tmpvar_55));
+  tmpvar_57 = (light_3 + (main_16.w * tmpvar_56));
   light_3 = tmpvar_57;
-  color_18.xyz = (((main_16 * mix (detail_9, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_58;
+  tmpvar_58 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_58;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -3263,8 +3299,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 485
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 489
     color.w = 1.0;
@@ -3403,14 +3439,20 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
   float tmpvar_19;
-  tmpvar_19 = (texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3))).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
-  vec3 i_20;
-  i_20 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_18) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  float tmpvar_20;
+  tmpvar_20 = (texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3))).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
+  vec3 i_21;
+  i_21 = -(tmpvar_18.xyz);
+  vec3 tmpvar_22;
+  tmpvar_22 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_20), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_20 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_21 - (2.0 * (dot (xlv_TEXCOORD2, i_21) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_22));
+  color_2.xyz = (color_2.xyz * tmpvar_22);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -3631,41 +3673,44 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
   highp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  highp float tmpvar_44;
-  tmpvar_44 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp float tmpvar_45;
-  tmpvar_45 = (texture2D (_LightTextureB0, vec2(tmpvar_44)).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_45), 0.0, 1.0);
-  highp vec3 tmpvar_47;
-  tmpvar_47 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_46)), 0.0, 1.0);
-  light_3 = tmpvar_47;
-  mediump vec3 tmpvar_48;
-  tmpvar_48 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_48;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp float tmpvar_46;
+  tmpvar_46 = (texture2D (_LightTextureB0, vec2(tmpvar_45)).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
+  mediump float tmpvar_47;
+  tmpvar_47 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_46), 0.0, 1.0);
+  highp vec3 tmpvar_48;
+  tmpvar_48 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_47)), 0.0, 1.0);
+  light_3 = tmpvar_48;
   mediump vec3 tmpvar_49;
-  mediump vec3 i_50;
-  i_50 = -(lightDirection_5);
-  tmpvar_49 = (i_50 - (2.0 * (dot (normalDir_4, i_50) * normalDir_4)));
-  highp vec3 tmpvar_51;
-  tmpvar_51 = (specularReflection_2 * (((tmpvar_45 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_49, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_51;
+  tmpvar_49 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_49;
+  mediump vec3 tmpvar_50;
+  mediump vec3 i_51;
+  i_51 = -(lightDirection_5);
+  tmpvar_50 = (i_51 - (2.0 * (dot (normalDir_4, i_51) * normalDir_4)));
   highp vec3 tmpvar_52;
-  tmpvar_52 = (light_3 * _Albedo);
-  light_3 = tmpvar_52;
+  tmpvar_52 = (specularReflection_2 * (((tmpvar_46 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_50, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_52;
   highp vec3 tmpvar_53;
-  tmpvar_53 = (light_3 + (main_15.w * tmpvar_51));
+  tmpvar_53 = (light_3 + (main_15.w * tmpvar_52));
   light_3 = tmpvar_53;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_54;
+  tmpvar_54 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_54;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -3837,41 +3882,44 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
   highp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  highp float tmpvar_44;
-  tmpvar_44 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp float tmpvar_45;
-  tmpvar_45 = (texture2D (_LightTextureB0, vec2(tmpvar_44)).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_45), 0.0, 1.0);
-  highp vec3 tmpvar_47;
-  tmpvar_47 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_46)), 0.0, 1.0);
-  light_3 = tmpvar_47;
-  mediump vec3 tmpvar_48;
-  tmpvar_48 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_48;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp float tmpvar_46;
+  tmpvar_46 = (texture2D (_LightTextureB0, vec2(tmpvar_45)).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
+  mediump float tmpvar_47;
+  tmpvar_47 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_46), 0.0, 1.0);
+  highp vec3 tmpvar_48;
+  tmpvar_48 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_47)), 0.0, 1.0);
+  light_3 = tmpvar_48;
   mediump vec3 tmpvar_49;
-  mediump vec3 i_50;
-  i_50 = -(lightDirection_5);
-  tmpvar_49 = (i_50 - (2.0 * (dot (normalDir_4, i_50) * normalDir_4)));
-  highp vec3 tmpvar_51;
-  tmpvar_51 = (specularReflection_2 * (((tmpvar_45 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_49, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_51;
+  tmpvar_49 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_49;
+  mediump vec3 tmpvar_50;
+  mediump vec3 i_51;
+  i_51 = -(lightDirection_5);
+  tmpvar_50 = (i_51 - (2.0 * (dot (normalDir_4, i_51) * normalDir_4)));
   highp vec3 tmpvar_52;
-  tmpvar_52 = (light_3 * _Albedo);
-  light_3 = tmpvar_52;
+  tmpvar_52 = (specularReflection_2 * (((tmpvar_46 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_50, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_52;
   highp vec3 tmpvar_53;
-  tmpvar_53 = (light_3 + (main_15.w * tmpvar_51));
+  tmpvar_53 = (light_3 + (main_15.w * tmpvar_52));
   light_3 = tmpvar_53;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_54;
+  tmpvar_54 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_54;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -4359,8 +4407,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 477
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 481
     color.w = 1.0;
@@ -4498,14 +4546,20 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
   float tmpvar_19;
-  tmpvar_19 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
-  vec3 i_20;
-  i_20 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_18) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  float tmpvar_20;
+  tmpvar_20 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
+  vec3 i_21;
+  i_21 = -(tmpvar_18.xyz);
+  vec3 tmpvar_22;
+  tmpvar_22 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_20), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_20 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_21 - (2.0 * (dot (xlv_TEXCOORD2, i_21) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_22));
+  color_2.xyz = (color_2.xyz * tmpvar_22);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -4724,39 +4778,42 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
-  lowp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
+  highp vec3 tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp float tmpvar_44;
-  tmpvar_44 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
-  mediump float tmpvar_45;
-  tmpvar_45 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_44), 0.0, 1.0);
-  highp vec3 tmpvar_46;
-  tmpvar_46 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_45)), 0.0, 1.0);
-  light_3 = tmpvar_46;
-  mediump vec3 tmpvar_47;
-  tmpvar_47 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_47;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  lowp float tmpvar_45;
+  tmpvar_45 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
+  mediump float tmpvar_46;
+  tmpvar_46 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_45), 0.0, 1.0);
+  highp vec3 tmpvar_47;
+  tmpvar_47 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_46)), 0.0, 1.0);
+  light_3 = tmpvar_47;
   mediump vec3 tmpvar_48;
-  mediump vec3 i_49;
-  i_49 = -(lightDirection_5);
-  tmpvar_48 = (i_49 - (2.0 * (dot (normalDir_4, i_49) * normalDir_4)));
-  highp vec3 tmpvar_50;
-  tmpvar_50 = (specularReflection_2 * (((tmpvar_44 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_48, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_50;
+  tmpvar_48 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_48;
+  mediump vec3 tmpvar_49;
+  mediump vec3 i_50;
+  i_50 = -(lightDirection_5);
+  tmpvar_49 = (i_50 - (2.0 * (dot (normalDir_4, i_50) * normalDir_4)));
   highp vec3 tmpvar_51;
-  tmpvar_51 = (light_3 * _Albedo);
-  light_3 = tmpvar_51;
+  tmpvar_51 = (specularReflection_2 * (((tmpvar_45 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_49, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_51;
   highp vec3 tmpvar_52;
-  tmpvar_52 = (light_3 + (main_15.w * tmpvar_50));
+  tmpvar_52 = (light_3 + (main_15.w * tmpvar_51));
   light_3 = tmpvar_52;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_53;
+  tmpvar_53 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_53;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -4927,39 +4984,42 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
-  lowp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
+  highp vec3 tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp float tmpvar_44;
-  tmpvar_44 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
-  mediump float tmpvar_45;
-  tmpvar_45 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_44), 0.0, 1.0);
-  highp vec3 tmpvar_46;
-  tmpvar_46 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_45)), 0.0, 1.0);
-  light_3 = tmpvar_46;
-  mediump vec3 tmpvar_47;
-  tmpvar_47 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_47;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  lowp float tmpvar_45;
+  tmpvar_45 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
+  mediump float tmpvar_46;
+  tmpvar_46 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_45), 0.0, 1.0);
+  highp vec3 tmpvar_47;
+  tmpvar_47 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_46)), 0.0, 1.0);
+  light_3 = tmpvar_47;
   mediump vec3 tmpvar_48;
-  mediump vec3 i_49;
-  i_49 = -(lightDirection_5);
-  tmpvar_48 = (i_49 - (2.0 * (dot (normalDir_4, i_49) * normalDir_4)));
-  highp vec3 tmpvar_50;
-  tmpvar_50 = (specularReflection_2 * (((tmpvar_44 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_48, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_50;
+  tmpvar_48 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_48;
+  mediump vec3 tmpvar_49;
+  mediump vec3 i_50;
+  i_50 = -(lightDirection_5);
+  tmpvar_49 = (i_50 - (2.0 * (dot (normalDir_4, i_50) * normalDir_4)));
   highp vec3 tmpvar_51;
-  tmpvar_51 = (light_3 * _Albedo);
-  light_3 = tmpvar_51;
+  tmpvar_51 = (specularReflection_2 * (((tmpvar_45 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_49, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_51;
   highp vec3 tmpvar_52;
-  tmpvar_52 = (light_3 + (main_15.w * tmpvar_50));
+  tmpvar_52 = (light_3 + (main_15.w * tmpvar_51));
   light_3 = tmpvar_52;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_53;
+  tmpvar_53 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_53;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -5445,8 +5505,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 476
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 480
     color.w = 1.0;
@@ -5613,7 +5673,10 @@ void main ()
   tmpvar_24 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_20.w) * tmpvar_21.w) * tmpvar_23);
   vec3 i_25;
   i_25 = -(tmpvar_18.xyz);
-  color_2.xyz = (tmpvar_17.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_26));
+  color_2.xyz = (color_2.xyz * tmpvar_26);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -5899,12 +5962,12 @@ void main ()
   tmpvar_60 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_58, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_60;
   highp vec3 tmpvar_61;
-  tmpvar_61 = (light_3 * _Albedo);
+  tmpvar_61 = (light_3 + (main_16.w * tmpvar_60));
   light_3 = tmpvar_61;
   highp vec3 tmpvar_62;
-  tmpvar_62 = (light_3 + (main_16.w * tmpvar_60));
-  light_3 = tmpvar_62;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_62 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_62;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -6134,12 +6197,12 @@ void main ()
   tmpvar_60 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_58, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_60;
   highp vec3 tmpvar_61;
-  tmpvar_61 = (light_3 * _Albedo);
+  tmpvar_61 = (light_3 + (main_16.w * tmpvar_60));
   light_3 = tmpvar_61;
   highp vec3 tmpvar_62;
-  tmpvar_62 = (light_3 + (main_16.w * tmpvar_60));
-  light_3 = tmpvar_62;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_62 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_62;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -6652,8 +6715,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 493
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 497
     color.w = 1.0;
@@ -6800,14 +6863,20 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
   float tmpvar_19;
-  tmpvar_19 = (((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w) * (_LightShadowData.x + (shadow2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x * (1.0 - _LightShadowData.x))));
-  vec3 i_20;
-  i_20 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_18) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  float tmpvar_20;
+  tmpvar_20 = (((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w) * (_LightShadowData.x + (shadow2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x * (1.0 - _LightShadowData.x))));
+  vec3 i_21;
+  i_21 = -(tmpvar_18.xyz);
+  vec3 tmpvar_22;
+  tmpvar_22 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_20), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_20 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_21 - (2.0 * (dot (xlv_TEXCOORD2, i_21) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_22));
+  color_2.xyz = (color_2.xyz * tmpvar_22);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -7044,57 +7113,60 @@ void main ()
   highp float tmpvar_41;
   tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_8 = tmpvar_41;
-  highp vec3 tmpvar_42;
-  tmpvar_42 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_42;
+  mediump vec4 tmpvar_42;
+  tmpvar_42 = ((main_16 * mix (detail_9, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8))) * _Color);
+  color_18.w = tmpvar_42.w;
   highp vec3 tmpvar_43;
-  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_43;
+  tmpvar_43 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_7 = tmpvar_43;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_6 = tmpvar_44;
   normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_44;
-  tmpvar_44 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
-  tmpvar_45 = texture2D (_LightTexture0, P_46);
-  highp float tmpvar_47;
-  tmpvar_47 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
-  lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2D (_LightTextureB0, vec2(tmpvar_47));
-  lowp float tmpvar_49;
-  mediump float shadow_50;
-  lowp float tmpvar_51;
-  tmpvar_51 = shadow2DProjEXT (_ShadowMapTexture, xlv_TEXCOORD4);
-  shadow_50 = tmpvar_51;
-  highp float tmpvar_52;
-  tmpvar_52 = (_LightShadowData.x + (shadow_50 * (1.0 - _LightShadowData.x)));
-  shadow_50 = tmpvar_52;
-  tmpvar_49 = shadow_50;
+  mediump float tmpvar_45;
+  tmpvar_45 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
+  lowp vec4 tmpvar_46;
+  highp vec2 P_47;
+  P_47 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_46 = texture2D (_LightTexture0, P_47);
+  highp float tmpvar_48;
+  tmpvar_48 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
+  lowp vec4 tmpvar_49;
+  tmpvar_49 = texture2D (_LightTextureB0, vec2(tmpvar_48));
+  lowp float tmpvar_50;
+  mediump float shadow_51;
+  lowp float tmpvar_52;
+  tmpvar_52 = shadow2DProjEXT (_ShadowMapTexture, xlv_TEXCOORD4);
+  shadow_51 = tmpvar_52;
   highp float tmpvar_53;
-  tmpvar_53 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_45.w) * tmpvar_48.w) * tmpvar_49);
-  atten_4 = tmpvar_53;
-  mediump float tmpvar_54;
-  tmpvar_54 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_55;
-  tmpvar_55 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_54)), 0.0, 1.0);
-  light_3 = tmpvar_55;
-  mediump vec3 tmpvar_56;
-  tmpvar_56 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_56;
+  tmpvar_53 = (_LightShadowData.x + (shadow_51 * (1.0 - _LightShadowData.x)));
+  shadow_51 = tmpvar_53;
+  tmpvar_50 = shadow_51;
+  highp float tmpvar_54;
+  tmpvar_54 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_46.w) * tmpvar_49.w) * tmpvar_50);
+  atten_4 = tmpvar_54;
+  mediump float tmpvar_55;
+  tmpvar_55 = clamp ((((_LightColor0.w * tmpvar_45) * 4.0) * atten_4), 0.0, 1.0);
+  highp vec3 tmpvar_56;
+  tmpvar_56 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_55)), 0.0, 1.0);
+  light_3 = tmpvar_56;
   mediump vec3 tmpvar_57;
-  mediump vec3 i_58;
-  i_58 = -(lightDirection_6);
-  tmpvar_57 = (i_58 - (2.0 * (dot (normalDir_5, i_58) * normalDir_5)));
-  highp vec3 tmpvar_59;
-  tmpvar_59 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_57, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_59;
+  tmpvar_57 = vec3(clamp (floor((1.0 + tmpvar_45)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_57;
+  mediump vec3 tmpvar_58;
+  mediump vec3 i_59;
+  i_59 = -(lightDirection_6);
+  tmpvar_58 = (i_59 - (2.0 * (dot (normalDir_5, i_59) * normalDir_5)));
   highp vec3 tmpvar_60;
-  tmpvar_60 = (light_3 * _Albedo);
-  light_3 = tmpvar_60;
+  tmpvar_60 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_58, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_60;
   highp vec3 tmpvar_61;
-  tmpvar_61 = (light_3 + (main_16.w * tmpvar_59));
+  tmpvar_61 = (light_3 + (main_16.w * tmpvar_60));
   light_3 = tmpvar_61;
-  color_18.xyz = (((main_16 * mix (detail_9, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_62;
+  tmpvar_62 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_62;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -7609,8 +7681,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 494
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 498
     color.w = 1.0;
@@ -7760,14 +7832,20 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
-  vec4 tmpvar_19;
-  tmpvar_19 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3);
-  vec3 i_20;
-  i_20 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_18) * 4.0) * tmpvar_19.x), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
+  float tmpvar_19;
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  vec4 tmpvar_20;
+  tmpvar_20 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3);
+  vec3 i_21;
+  i_21 = -(tmpvar_18.xyz);
+  vec3 tmpvar_22;
+  tmpvar_22 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_20.x), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_20.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_21 - (2.0 * (dot (xlv_TEXCOORD2, i_21) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_22));
+  color_2.xyz = (color_2.xyz * tmpvar_22);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -7991,49 +8069,52 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
-  lowp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
+  highp vec3 tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp float tmpvar_44;
-  mediump float lightShadowDataX_45;
-  highp float dist_46;
-  lowp float tmpvar_47;
-  tmpvar_47 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3).x;
-  dist_46 = tmpvar_47;
-  highp float tmpvar_48;
-  tmpvar_48 = _LightShadowData.x;
-  lightShadowDataX_45 = tmpvar_48;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  lowp float tmpvar_45;
+  mediump float lightShadowDataX_46;
+  highp float dist_47;
+  lowp float tmpvar_48;
+  tmpvar_48 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3).x;
+  dist_47 = tmpvar_48;
   highp float tmpvar_49;
-  tmpvar_49 = max (float((dist_46 > (xlv_TEXCOORD3.z / xlv_TEXCOORD3.w))), lightShadowDataX_45);
-  tmpvar_44 = tmpvar_49;
-  mediump float tmpvar_50;
-  tmpvar_50 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_44), 0.0, 1.0);
-  highp vec3 tmpvar_51;
-  tmpvar_51 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_50)), 0.0, 1.0);
-  light_3 = tmpvar_51;
-  mediump vec3 tmpvar_52;
-  tmpvar_52 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_52;
+  tmpvar_49 = _LightShadowData.x;
+  lightShadowDataX_46 = tmpvar_49;
+  highp float tmpvar_50;
+  tmpvar_50 = max (float((dist_47 > (xlv_TEXCOORD3.z / xlv_TEXCOORD3.w))), lightShadowDataX_46);
+  tmpvar_45 = tmpvar_50;
+  mediump float tmpvar_51;
+  tmpvar_51 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_45), 0.0, 1.0);
+  highp vec3 tmpvar_52;
+  tmpvar_52 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_51)), 0.0, 1.0);
+  light_3 = tmpvar_52;
   mediump vec3 tmpvar_53;
-  mediump vec3 i_54;
-  i_54 = -(lightDirection_5);
-  tmpvar_53 = (i_54 - (2.0 * (dot (normalDir_4, i_54) * normalDir_4)));
-  highp vec3 tmpvar_55;
-  tmpvar_55 = (specularReflection_2 * (((tmpvar_44 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_53, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_55;
+  tmpvar_53 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_53;
+  mediump vec3 tmpvar_54;
+  mediump vec3 i_55;
+  i_55 = -(lightDirection_5);
+  tmpvar_54 = (i_55 - (2.0 * (dot (normalDir_4, i_55) * normalDir_4)));
   highp vec3 tmpvar_56;
-  tmpvar_56 = (light_3 * _Albedo);
-  light_3 = tmpvar_56;
+  tmpvar_56 = (specularReflection_2 * (((tmpvar_45 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_54, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_56;
   highp vec3 tmpvar_57;
-  tmpvar_57 = (light_3 + (main_15.w * tmpvar_55));
+  tmpvar_57 = (light_3 + (main_15.w * tmpvar_56));
   light_3 = tmpvar_57;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_58;
+  tmpvar_58 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_58;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -8214,39 +8295,42 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
-  lowp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
+  highp vec3 tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3);
-  mediump float tmpvar_45;
-  tmpvar_45 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_44.x), 0.0, 1.0);
-  highp vec3 tmpvar_46;
-  tmpvar_46 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_45)), 0.0, 1.0);
-  light_3 = tmpvar_46;
-  mediump vec3 tmpvar_47;
-  tmpvar_47 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_47;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  lowp vec4 tmpvar_45;
+  tmpvar_45 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3);
+  mediump float tmpvar_46;
+  tmpvar_46 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_45.x), 0.0, 1.0);
+  highp vec3 tmpvar_47;
+  tmpvar_47 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_46)), 0.0, 1.0);
+  light_3 = tmpvar_47;
   mediump vec3 tmpvar_48;
-  mediump vec3 i_49;
-  i_49 = -(lightDirection_5);
-  tmpvar_48 = (i_49 - (2.0 * (dot (normalDir_4, i_49) * normalDir_4)));
-  highp vec3 tmpvar_50;
-  tmpvar_50 = (specularReflection_2 * (((tmpvar_44.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_48, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_50;
+  tmpvar_48 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_48;
+  mediump vec3 tmpvar_49;
+  mediump vec3 i_50;
+  i_50 = -(lightDirection_5);
+  tmpvar_49 = (i_50 - (2.0 * (dot (normalDir_4, i_50) * normalDir_4)));
   highp vec3 tmpvar_51;
-  tmpvar_51 = (light_3 * _Albedo);
-  light_3 = tmpvar_51;
+  tmpvar_51 = (specularReflection_2 * (((tmpvar_45.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_49, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_51;
   highp vec3 tmpvar_52;
-  tmpvar_52 = (light_3 + (main_15.w * tmpvar_50));
+  tmpvar_52 = (light_3 + (main_15.w * tmpvar_51));
   light_3 = tmpvar_52;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_53;
+  tmpvar_53 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_53;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -8739,8 +8823,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 482
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 486
     color.w = 1.0;
@@ -8893,14 +8977,20 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
   float tmpvar_19;
-  tmpvar_19 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x);
-  vec3 i_20;
-  i_20 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_18) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  float tmpvar_20;
+  tmpvar_20 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x);
+  vec3 i_21;
+  i_21 = -(tmpvar_18.xyz);
+  vec3 tmpvar_22;
+  tmpvar_22 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_20), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_20 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_21 - (2.0 * (dot (xlv_TEXCOORD2, i_21) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_22));
+  color_2.xyz = (color_2.xyz * tmpvar_22);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -9134,51 +9224,54 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
-  lowp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
+  highp vec3 tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp float tmpvar_44;
-  mediump float lightShadowDataX_45;
-  highp float dist_46;
-  lowp float tmpvar_47;
-  tmpvar_47 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x;
-  dist_46 = tmpvar_47;
-  highp float tmpvar_48;
-  tmpvar_48 = _LightShadowData.x;
-  lightShadowDataX_45 = tmpvar_48;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  lowp float tmpvar_45;
+  mediump float lightShadowDataX_46;
+  highp float dist_47;
+  lowp float tmpvar_48;
+  tmpvar_48 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x;
+  dist_47 = tmpvar_48;
   highp float tmpvar_49;
-  tmpvar_49 = max (float((dist_46 > (xlv_TEXCOORD4.z / xlv_TEXCOORD4.w))), lightShadowDataX_45);
-  tmpvar_44 = tmpvar_49;
-  lowp float tmpvar_50;
-  tmpvar_50 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * tmpvar_44);
-  mediump float tmpvar_51;
-  tmpvar_51 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_50), 0.0, 1.0);
-  highp vec3 tmpvar_52;
-  tmpvar_52 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_51)), 0.0, 1.0);
-  light_3 = tmpvar_52;
-  mediump vec3 tmpvar_53;
-  tmpvar_53 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_53;
+  tmpvar_49 = _LightShadowData.x;
+  lightShadowDataX_46 = tmpvar_49;
+  highp float tmpvar_50;
+  tmpvar_50 = max (float((dist_47 > (xlv_TEXCOORD4.z / xlv_TEXCOORD4.w))), lightShadowDataX_46);
+  tmpvar_45 = tmpvar_50;
+  lowp float tmpvar_51;
+  tmpvar_51 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * tmpvar_45);
+  mediump float tmpvar_52;
+  tmpvar_52 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_51), 0.0, 1.0);
+  highp vec3 tmpvar_53;
+  tmpvar_53 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_52)), 0.0, 1.0);
+  light_3 = tmpvar_53;
   mediump vec3 tmpvar_54;
-  mediump vec3 i_55;
-  i_55 = -(lightDirection_5);
-  tmpvar_54 = (i_55 - (2.0 * (dot (normalDir_4, i_55) * normalDir_4)));
-  highp vec3 tmpvar_56;
-  tmpvar_56 = (specularReflection_2 * (((tmpvar_50 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_54, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_56;
+  tmpvar_54 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_54;
+  mediump vec3 tmpvar_55;
+  mediump vec3 i_56;
+  i_56 = -(lightDirection_5);
+  tmpvar_55 = (i_56 - (2.0 * (dot (normalDir_4, i_56) * normalDir_4)));
   highp vec3 tmpvar_57;
-  tmpvar_57 = (light_3 * _Albedo);
-  light_3 = tmpvar_57;
+  tmpvar_57 = (specularReflection_2 * (((tmpvar_51 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_55, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_57;
   highp vec3 tmpvar_58;
-  tmpvar_58 = (light_3 + (main_15.w * tmpvar_56));
+  tmpvar_58 = (light_3 + (main_15.w * tmpvar_57));
   light_3 = tmpvar_58;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_59;
+  tmpvar_59 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_59;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -9364,39 +9457,42 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
-  lowp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
+  highp vec3 tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp float tmpvar_44;
-  tmpvar_44 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x);
-  mediump float tmpvar_45;
-  tmpvar_45 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_44), 0.0, 1.0);
-  highp vec3 tmpvar_46;
-  tmpvar_46 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_45)), 0.0, 1.0);
-  light_3 = tmpvar_46;
-  mediump vec3 tmpvar_47;
-  tmpvar_47 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_47;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  lowp float tmpvar_45;
+  tmpvar_45 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x);
+  mediump float tmpvar_46;
+  tmpvar_46 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_45), 0.0, 1.0);
+  highp vec3 tmpvar_47;
+  tmpvar_47 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_46)), 0.0, 1.0);
+  light_3 = tmpvar_47;
   mediump vec3 tmpvar_48;
-  mediump vec3 i_49;
-  i_49 = -(lightDirection_5);
-  tmpvar_48 = (i_49 - (2.0 * (dot (normalDir_4, i_49) * normalDir_4)));
-  highp vec3 tmpvar_50;
-  tmpvar_50 = (specularReflection_2 * (((tmpvar_44 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_48, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_50;
+  tmpvar_48 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_48;
+  mediump vec3 tmpvar_49;
+  mediump vec3 i_50;
+  i_50 = -(lightDirection_5);
+  tmpvar_49 = (i_50 - (2.0 * (dot (normalDir_4, i_50) * normalDir_4)));
   highp vec3 tmpvar_51;
-  tmpvar_51 = (light_3 * _Albedo);
-  light_3 = tmpvar_51;
+  tmpvar_51 = (specularReflection_2 * (((tmpvar_45 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_49, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_51;
   highp vec3 tmpvar_52;
-  tmpvar_52 = (light_3 + (main_15.w * tmpvar_50));
+  tmpvar_52 = (light_3 + (main_15.w * tmpvar_51));
   light_3 = tmpvar_52;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_53;
+  tmpvar_53 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_53;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -9900,8 +9996,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 486
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 490
     color.w = 1.0;
@@ -10070,7 +10166,10 @@ void main ()
   tmpvar_24 = (tmpvar_20.w * tmpvar_23);
   vec3 i_25;
   i_25 = -(tmpvar_18.xyz);
-  color_2.xyz = (tmpvar_17.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_26));
+  color_2.xyz = (color_2.xyz * tmpvar_26);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -10350,12 +10449,12 @@ void main ()
   tmpvar_59 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_57, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_59;
   highp vec3 tmpvar_60;
-  tmpvar_60 = (light_3 * _Albedo);
+  tmpvar_60 = (light_3 + (main_16.w * tmpvar_59));
   light_3 = tmpvar_60;
   highp vec3 tmpvar_61;
-  tmpvar_61 = (light_3 + (main_16.w * tmpvar_59));
-  light_3 = tmpvar_61;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_61 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_61;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -10583,12 +10682,12 @@ void main ()
   tmpvar_59 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_57, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_59;
   highp vec3 tmpvar_60;
-  tmpvar_60 = (light_3 * _Albedo);
+  tmpvar_60 = (light_3 + (main_16.w * tmpvar_59));
   light_3 = tmpvar_60;
   highp vec3 tmpvar_61;
-  tmpvar_61 = (light_3 + (main_16.w * tmpvar_59));
-  light_3 = tmpvar_61;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_61 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_61;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -11102,8 +11201,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 491
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 495
     color.w = 1.0;
@@ -11275,7 +11374,10 @@ void main ()
   tmpvar_25 = ((tmpvar_20.w * tmpvar_21.w) * tmpvar_24);
   vec3 i_26;
   i_26 = -(tmpvar_18.xyz);
-  color_2.xyz = (tmpvar_17.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_25), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_25 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_26 - (2.0 * (dot (xlv_TEXCOORD2, i_26) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_27;
+  tmpvar_27 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_25), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_25 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_26 - (2.0 * (dot (xlv_TEXCOORD2, i_26) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_27));
+  color_2.xyz = (color_2.xyz * tmpvar_27);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -11558,12 +11660,12 @@ void main ()
   tmpvar_60 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_58, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_60;
   highp vec3 tmpvar_61;
-  tmpvar_61 = (light_3 * _Albedo);
+  tmpvar_61 = (light_3 + (main_16.w * tmpvar_60));
   light_3 = tmpvar_61;
   highp vec3 tmpvar_62;
-  tmpvar_62 = (light_3 + (main_16.w * tmpvar_60));
-  light_3 = tmpvar_62;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_62 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_62;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -11794,12 +11896,12 @@ void main ()
   tmpvar_60 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_58, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_60;
   highp vec3 tmpvar_61;
-  tmpvar_61 = (light_3 * _Albedo);
+  tmpvar_61 = (light_3 + (main_16.w * tmpvar_60));
   light_3 = tmpvar_61;
   highp vec3 tmpvar_62;
-  tmpvar_62 = (light_3 + (main_16.w * tmpvar_60));
-  light_3 = tmpvar_62;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_62 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_62;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -12315,8 +12417,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 492
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 496
     color.w = 1.0;
@@ -12518,7 +12620,10 @@ void main ()
   tmpvar_31 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_20.w) * tmpvar_21.w) * dot (tmpvar_30, vec4(0.25, 0.25, 0.25, 0.25)));
   vec3 i_32;
   i_32 = -(tmpvar_18.xyz);
-  color_2.xyz = (tmpvar_17.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_31), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_31 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_32 - (2.0 * (dot (xlv_TEXCOORD2, i_32) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_33;
+  tmpvar_33 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_31), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_31 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_32 - (2.0 * (dot (xlv_TEXCOORD2, i_32) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_33));
+  color_2.xyz = (color_2.xyz * tmpvar_33);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -12855,12 +12960,12 @@ void main ()
   tmpvar_76 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_74, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_76;
   highp vec3 tmpvar_77;
-  tmpvar_77 = (light_3 * _Albedo);
+  tmpvar_77 = (light_3 + (main_16.w * tmpvar_76));
   light_3 = tmpvar_77;
   highp vec3 tmpvar_78;
-  tmpvar_78 = (light_3 + (main_16.w * tmpvar_76));
-  light_3 = tmpvar_78;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_78 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_78;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -13141,12 +13246,12 @@ void main ()
   tmpvar_76 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_74, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_76;
   highp vec3 tmpvar_77;
-  tmpvar_77 = (light_3 * _Albedo);
+  tmpvar_77 = (light_3 + (main_16.w * tmpvar_76));
   light_3 = tmpvar_77;
   highp vec3 tmpvar_78;
-  tmpvar_78 = (light_3 + (main_16.w * tmpvar_76));
-  light_3 = tmpvar_78;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_78 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_78;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -13679,8 +13784,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 501
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 505
     color.w = 1.0;
@@ -13828,24 +13933,30 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
-  vec4 shadows_19;
-  vec3 tmpvar_20;
-  tmpvar_20 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
-  shadows_19.x = shadow2D (_ShadowMapTexture, (tmpvar_20 + _ShadowOffsets[0].xyz)).x;
-  shadows_19.y = shadow2D (_ShadowMapTexture, (tmpvar_20 + _ShadowOffsets[1].xyz)).x;
-  shadows_19.z = shadow2D (_ShadowMapTexture, (tmpvar_20 + _ShadowOffsets[2].xyz)).x;
-  shadows_19.w = shadow2D (_ShadowMapTexture, (tmpvar_20 + _ShadowOffsets[3].xyz)).x;
-  vec4 tmpvar_21;
-  tmpvar_21 = (_LightShadowData.xxxx + (shadows_19 * (1.0 - _LightShadowData.xxxx)));
-  shadows_19 = tmpvar_21;
-  float tmpvar_22;
-  tmpvar_22 = (((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w) * dot (tmpvar_21, vec4(0.25, 0.25, 0.25, 0.25)));
-  vec3 i_23;
-  i_23 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_18) * 4.0) * tmpvar_22), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_22 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_23 - (2.0 * (dot (xlv_TEXCOORD2, i_23) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
+  float tmpvar_19;
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  vec4 shadows_20;
+  vec3 tmpvar_21;
+  tmpvar_21 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
+  shadows_20.x = shadow2D (_ShadowMapTexture, (tmpvar_21 + _ShadowOffsets[0].xyz)).x;
+  shadows_20.y = shadow2D (_ShadowMapTexture, (tmpvar_21 + _ShadowOffsets[1].xyz)).x;
+  shadows_20.z = shadow2D (_ShadowMapTexture, (tmpvar_21 + _ShadowOffsets[2].xyz)).x;
+  shadows_20.w = shadow2D (_ShadowMapTexture, (tmpvar_21 + _ShadowOffsets[3].xyz)).x;
+  vec4 tmpvar_22;
+  tmpvar_22 = (_LightShadowData.xxxx + (shadows_20 * (1.0 - _LightShadowData.xxxx)));
+  shadows_20 = tmpvar_22;
+  float tmpvar_23;
+  tmpvar_23 = (((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w) * dot (tmpvar_22, vec4(0.25, 0.25, 0.25, 0.25)));
+  vec3 i_24;
+  i_24 = -(tmpvar_18.xyz);
+  vec3 tmpvar_25;
+  tmpvar_25 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_23), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_23 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_24 - (2.0 * (dot (xlv_TEXCOORD2, i_24) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_25));
+  color_2.xyz = (color_2.xyz * tmpvar_25);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -14083,78 +14194,81 @@ void main ()
   highp float tmpvar_41;
   tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_8 = tmpvar_41;
-  highp vec3 tmpvar_42;
-  tmpvar_42 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_42;
+  mediump vec4 tmpvar_42;
+  tmpvar_42 = ((main_16 * mix (detail_9, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8))) * _Color);
+  color_18.w = tmpvar_42.w;
   highp vec3 tmpvar_43;
-  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_43;
+  tmpvar_43 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_7 = tmpvar_43;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_6 = tmpvar_44;
   normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_44;
-  tmpvar_44 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
-  tmpvar_45 = texture2D (_LightTexture0, P_46);
-  highp float tmpvar_47;
-  tmpvar_47 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
-  lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2D (_LightTextureB0, vec2(tmpvar_47));
-  lowp float tmpvar_49;
-  mediump vec4 shadows_50;
-  highp vec3 tmpvar_51;
-  tmpvar_51 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
-  highp vec3 coord_52;
-  coord_52 = (tmpvar_51 + _ShadowOffsets[0].xyz);
-  lowp float tmpvar_53;
-  tmpvar_53 = shadow2DEXT (_ShadowMapTexture, coord_52);
-  shadows_50.x = tmpvar_53;
-  highp vec3 coord_54;
-  coord_54 = (tmpvar_51 + _ShadowOffsets[1].xyz);
-  lowp float tmpvar_55;
-  tmpvar_55 = shadow2DEXT (_ShadowMapTexture, coord_54);
-  shadows_50.y = tmpvar_55;
-  highp vec3 coord_56;
-  coord_56 = (tmpvar_51 + _ShadowOffsets[2].xyz);
-  lowp float tmpvar_57;
-  tmpvar_57 = shadow2DEXT (_ShadowMapTexture, coord_56);
-  shadows_50.z = tmpvar_57;
-  highp vec3 coord_58;
-  coord_58 = (tmpvar_51 + _ShadowOffsets[3].xyz);
-  lowp float tmpvar_59;
-  tmpvar_59 = shadow2DEXT (_ShadowMapTexture, coord_58);
-  shadows_50.w = tmpvar_59;
-  highp vec4 tmpvar_60;
-  tmpvar_60 = (_LightShadowData.xxxx + (shadows_50 * (1.0 - _LightShadowData.xxxx)));
-  shadows_50 = tmpvar_60;
-  mediump float tmpvar_61;
-  tmpvar_61 = dot (shadows_50, vec4(0.25, 0.25, 0.25, 0.25));
-  tmpvar_49 = tmpvar_61;
-  highp float tmpvar_62;
-  tmpvar_62 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_45.w) * tmpvar_48.w) * tmpvar_49);
-  atten_4 = tmpvar_62;
-  mediump float tmpvar_63;
-  tmpvar_63 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_64;
-  tmpvar_64 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_63)), 0.0, 1.0);
-  light_3 = tmpvar_64;
-  mediump vec3 tmpvar_65;
-  tmpvar_65 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_65;
+  mediump float tmpvar_45;
+  tmpvar_45 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
+  lowp vec4 tmpvar_46;
+  highp vec2 P_47;
+  P_47 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_46 = texture2D (_LightTexture0, P_47);
+  highp float tmpvar_48;
+  tmpvar_48 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
+  lowp vec4 tmpvar_49;
+  tmpvar_49 = texture2D (_LightTextureB0, vec2(tmpvar_48));
+  lowp float tmpvar_50;
+  mediump vec4 shadows_51;
+  highp vec3 tmpvar_52;
+  tmpvar_52 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
+  highp vec3 coord_53;
+  coord_53 = (tmpvar_52 + _ShadowOffsets[0].xyz);
+  lowp float tmpvar_54;
+  tmpvar_54 = shadow2DEXT (_ShadowMapTexture, coord_53);
+  shadows_51.x = tmpvar_54;
+  highp vec3 coord_55;
+  coord_55 = (tmpvar_52 + _ShadowOffsets[1].xyz);
+  lowp float tmpvar_56;
+  tmpvar_56 = shadow2DEXT (_ShadowMapTexture, coord_55);
+  shadows_51.y = tmpvar_56;
+  highp vec3 coord_57;
+  coord_57 = (tmpvar_52 + _ShadowOffsets[2].xyz);
+  lowp float tmpvar_58;
+  tmpvar_58 = shadow2DEXT (_ShadowMapTexture, coord_57);
+  shadows_51.z = tmpvar_58;
+  highp vec3 coord_59;
+  coord_59 = (tmpvar_52 + _ShadowOffsets[3].xyz);
+  lowp float tmpvar_60;
+  tmpvar_60 = shadow2DEXT (_ShadowMapTexture, coord_59);
+  shadows_51.w = tmpvar_60;
+  highp vec4 tmpvar_61;
+  tmpvar_61 = (_LightShadowData.xxxx + (shadows_51 * (1.0 - _LightShadowData.xxxx)));
+  shadows_51 = tmpvar_61;
+  mediump float tmpvar_62;
+  tmpvar_62 = dot (shadows_51, vec4(0.25, 0.25, 0.25, 0.25));
+  tmpvar_50 = tmpvar_62;
+  highp float tmpvar_63;
+  tmpvar_63 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_46.w) * tmpvar_49.w) * tmpvar_50);
+  atten_4 = tmpvar_63;
+  mediump float tmpvar_64;
+  tmpvar_64 = clamp ((((_LightColor0.w * tmpvar_45) * 4.0) * atten_4), 0.0, 1.0);
+  highp vec3 tmpvar_65;
+  tmpvar_65 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_64)), 0.0, 1.0);
+  light_3 = tmpvar_65;
   mediump vec3 tmpvar_66;
-  mediump vec3 i_67;
-  i_67 = -(lightDirection_6);
-  tmpvar_66 = (i_67 - (2.0 * (dot (normalDir_5, i_67) * normalDir_5)));
-  highp vec3 tmpvar_68;
-  tmpvar_68 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_66, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_68;
+  tmpvar_66 = vec3(clamp (floor((1.0 + tmpvar_45)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_66;
+  mediump vec3 tmpvar_67;
+  mediump vec3 i_68;
+  i_68 = -(lightDirection_6);
+  tmpvar_67 = (i_68 - (2.0 * (dot (normalDir_5, i_68) * normalDir_5)));
   highp vec3 tmpvar_69;
-  tmpvar_69 = (light_3 * _Albedo);
-  light_3 = tmpvar_69;
+  tmpvar_69 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_67, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_69;
   highp vec3 tmpvar_70;
-  tmpvar_70 = (light_3 + (main_16.w * tmpvar_68));
+  tmpvar_70 = (light_3 + (main_16.w * tmpvar_69));
   light_3 = tmpvar_70;
-  color_18.xyz = (((main_16 * mix (detail_9, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_71;
+  tmpvar_71 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_71;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -14679,8 +14793,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 501
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 505
     color.w = 1.0;
@@ -14877,7 +14991,10 @@ void main ()
   tmpvar_29 = (tmpvar_20.w * dot (tmpvar_28, vec4(0.25, 0.25, 0.25, 0.25)));
   vec3 i_30;
   i_30 = -(tmpvar_18.xyz);
-  color_2.xyz = (tmpvar_17.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_29), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_29 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_30 - (2.0 * (dot (xlv_TEXCOORD2, i_30) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_31;
+  tmpvar_31 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_29), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_29 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_30 - (2.0 * (dot (xlv_TEXCOORD2, i_30) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_31));
+  color_2.xyz = (color_2.xyz * tmpvar_31);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -15213,12 +15330,12 @@ void main ()
   tmpvar_78 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_76, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_78;
   highp vec3 tmpvar_79;
-  tmpvar_79 = (light_3 * _Albedo);
+  tmpvar_79 = (light_3 + (main_16.w * tmpvar_78));
   light_3 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 + (main_16.w * tmpvar_78));
-  light_3 = tmpvar_80;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_80 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_80;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -15502,12 +15619,12 @@ void main ()
   tmpvar_78 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_76, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_78;
   highp vec3 tmpvar_79;
-  tmpvar_79 = (light_3 * _Albedo);
+  tmpvar_79 = (light_3 + (main_16.w * tmpvar_78));
   light_3 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 + (main_16.w * tmpvar_78));
-  light_3 = tmpvar_80;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_80 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_80;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -16038,8 +16155,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 497
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 501
     color.w = 1.0;
@@ -16239,7 +16356,10 @@ void main ()
   tmpvar_30 = ((tmpvar_20.w * tmpvar_21.w) * dot (tmpvar_29, vec4(0.25, 0.25, 0.25, 0.25)));
   vec3 i_31;
   i_31 = -(tmpvar_18.xyz);
-  color_2.xyz = (tmpvar_17.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_30), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_30 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_31 - (2.0 * (dot (xlv_TEXCOORD2, i_31) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_32;
+  tmpvar_32 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_30), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_30 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_31 - (2.0 * (dot (xlv_TEXCOORD2, i_31) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_32));
+  color_2.xyz = (color_2.xyz * tmpvar_32);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -16578,12 +16698,12 @@ void main ()
   tmpvar_79 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_77, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 * _Albedo);
+  tmpvar_80 = (light_3 + (main_16.w * tmpvar_79));
   light_3 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 + (main_16.w * tmpvar_79));
-  light_3 = tmpvar_81;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_81 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_81;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -16870,12 +16990,12 @@ void main ()
   tmpvar_79 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_77, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 * _Albedo);
+  tmpvar_80 = (light_3 + (main_16.w * tmpvar_79));
   light_3 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 + (main_16.w * tmpvar_79));
-  light_3 = tmpvar_81;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_81 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_81;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -17408,8 +17528,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 498
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 502
     color.w = 1.0;
@@ -17549,14 +17669,20 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
   float tmpvar_19;
-  tmpvar_19 = texture2D (_LightTexture0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3))).w;
-  vec3 i_20;
-  i_20 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_18) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  float tmpvar_20;
+  tmpvar_20 = texture2D (_LightTexture0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3))).w;
+  vec3 i_21;
+  i_21 = -(tmpvar_18.xyz);
+  vec3 tmpvar_22;
+  tmpvar_22 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_20), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_20 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_21 - (2.0 * (dot (xlv_TEXCOORD2, i_21) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_22));
+  color_2.xyz = (color_2.xyz * tmpvar_22);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -17776,41 +17902,44 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
   highp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  highp float tmpvar_44;
-  tmpvar_44 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp float tmpvar_45;
-  tmpvar_45 = texture2D (_LightTexture0, vec2(tmpvar_44)).w;
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_45), 0.0, 1.0);
-  highp vec3 tmpvar_47;
-  tmpvar_47 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_46)), 0.0, 1.0);
-  light_3 = tmpvar_47;
-  mediump vec3 tmpvar_48;
-  tmpvar_48 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_48;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp float tmpvar_46;
+  tmpvar_46 = texture2D (_LightTexture0, vec2(tmpvar_45)).w;
+  mediump float tmpvar_47;
+  tmpvar_47 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_46), 0.0, 1.0);
+  highp vec3 tmpvar_48;
+  tmpvar_48 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_47)), 0.0, 1.0);
+  light_3 = tmpvar_48;
   mediump vec3 tmpvar_49;
-  mediump vec3 i_50;
-  i_50 = -(lightDirection_5);
-  tmpvar_49 = (i_50 - (2.0 * (dot (normalDir_4, i_50) * normalDir_4)));
-  highp vec3 tmpvar_51;
-  tmpvar_51 = (specularReflection_2 * (((tmpvar_45 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_49, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_51;
+  tmpvar_49 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_49;
+  mediump vec3 tmpvar_50;
+  mediump vec3 i_51;
+  i_51 = -(lightDirection_5);
+  tmpvar_50 = (i_51 - (2.0 * (dot (normalDir_4, i_51) * normalDir_4)));
   highp vec3 tmpvar_52;
-  tmpvar_52 = (light_3 * _Albedo);
-  light_3 = tmpvar_52;
+  tmpvar_52 = (specularReflection_2 * (((tmpvar_46 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_50, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_52;
   highp vec3 tmpvar_53;
-  tmpvar_53 = (light_3 + (main_15.w * tmpvar_51));
+  tmpvar_53 = (light_3 + (main_15.w * tmpvar_52));
   light_3 = tmpvar_53;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_54;
+  tmpvar_54 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_54;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -17981,41 +18110,44 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
   highp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  highp float tmpvar_44;
-  tmpvar_44 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp float tmpvar_45;
-  tmpvar_45 = texture2D (_LightTexture0, vec2(tmpvar_44)).w;
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_45), 0.0, 1.0);
-  highp vec3 tmpvar_47;
-  tmpvar_47 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_46)), 0.0, 1.0);
-  light_3 = tmpvar_47;
-  mediump vec3 tmpvar_48;
-  tmpvar_48 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_48;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp float tmpvar_46;
+  tmpvar_46 = texture2D (_LightTexture0, vec2(tmpvar_45)).w;
+  mediump float tmpvar_47;
+  tmpvar_47 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_46), 0.0, 1.0);
+  highp vec3 tmpvar_48;
+  tmpvar_48 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_47)), 0.0, 1.0);
+  light_3 = tmpvar_48;
   mediump vec3 tmpvar_49;
-  mediump vec3 i_50;
-  i_50 = -(lightDirection_5);
-  tmpvar_49 = (i_50 - (2.0 * (dot (normalDir_4, i_50) * normalDir_4)));
-  highp vec3 tmpvar_51;
-  tmpvar_51 = (specularReflection_2 * (((tmpvar_45 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_49, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_51;
+  tmpvar_49 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_49;
+  mediump vec3 tmpvar_50;
+  mediump vec3 i_51;
+  i_51 = -(lightDirection_5);
+  tmpvar_50 = (i_51 - (2.0 * (dot (normalDir_4, i_51) * normalDir_4)));
   highp vec3 tmpvar_52;
-  tmpvar_52 = (light_3 * _Albedo);
-  light_3 = tmpvar_52;
+  tmpvar_52 = (specularReflection_2 * (((tmpvar_46 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_50, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_52;
   highp vec3 tmpvar_53;
-  tmpvar_53 = (light_3 + (main_15.w * tmpvar_51));
+  tmpvar_53 = (light_3 + (main_15.w * tmpvar_52));
   light_3 = tmpvar_53;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_54;
+  tmpvar_54 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_54;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -18501,8 +18633,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 476
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 480
     color.w = 1.0;
@@ -18635,12 +18767,18 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
-  vec3 i_19;
-  i_19 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * tmpvar_18) * 4.0), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot ((i_19 - (2.0 * (dot (xlv_TEXCOORD2, i_19) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
+  float tmpvar_19;
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  vec3 i_20;
+  i_20 = -(tmpvar_18.xyz);
+  vec3 tmpvar_21;
+  tmpvar_21 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * tmpvar_19) * 4.0), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_21));
+  color_2.xyz = (color_2.xyz * tmpvar_21);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -18849,37 +18987,40 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
-  lowp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
+  highp vec3 tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
   mediump float tmpvar_44;
-  tmpvar_44 = clamp (((_LightColor0.w * tmpvar_43) * 4.0), 0.0, 1.0);
-  highp vec3 tmpvar_45;
-  tmpvar_45 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_44)), 0.0, 1.0);
-  light_3 = tmpvar_45;
-  mediump vec3 tmpvar_46;
-  tmpvar_46 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_46;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  mediump float tmpvar_45;
+  tmpvar_45 = clamp (((_LightColor0.w * tmpvar_44) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_46;
+  tmpvar_46 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_45)), 0.0, 1.0);
+  light_3 = tmpvar_46;
   mediump vec3 tmpvar_47;
-  mediump vec3 i_48;
-  i_48 = -(lightDirection_5);
-  tmpvar_47 = (i_48 - (2.0 * (dot (normalDir_4, i_48) * normalDir_4)));
-  highp vec3 tmpvar_49;
-  tmpvar_49 = (specularReflection_2 * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot (tmpvar_47, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_49;
+  tmpvar_47 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_47;
+  mediump vec3 tmpvar_48;
+  mediump vec3 i_49;
+  i_49 = -(lightDirection_5);
+  tmpvar_48 = (i_49 - (2.0 * (dot (normalDir_4, i_49) * normalDir_4)));
   highp vec3 tmpvar_50;
-  tmpvar_50 = (light_3 * _Albedo);
-  light_3 = tmpvar_50;
+  tmpvar_50 = (specularReflection_2 * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot (tmpvar_48, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_50;
   highp vec3 tmpvar_51;
-  tmpvar_51 = (light_3 + (main_15.w * tmpvar_49));
+  tmpvar_51 = (light_3 + (main_15.w * tmpvar_50));
   light_3 = tmpvar_51;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_52;
+  tmpvar_52 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_52;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -19045,37 +19186,40 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
-  lowp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
+  highp vec3 tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
   mediump float tmpvar_44;
-  tmpvar_44 = clamp (((_LightColor0.w * tmpvar_43) * 4.0), 0.0, 1.0);
-  highp vec3 tmpvar_45;
-  tmpvar_45 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_44)), 0.0, 1.0);
-  light_3 = tmpvar_45;
-  mediump vec3 tmpvar_46;
-  tmpvar_46 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_46;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  mediump float tmpvar_45;
+  tmpvar_45 = clamp (((_LightColor0.w * tmpvar_44) * 4.0), 0.0, 1.0);
+  highp vec3 tmpvar_46;
+  tmpvar_46 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_45)), 0.0, 1.0);
+  light_3 = tmpvar_46;
   mediump vec3 tmpvar_47;
-  mediump vec3 i_48;
-  i_48 = -(lightDirection_5);
-  tmpvar_47 = (i_48 - (2.0 * (dot (normalDir_4, i_48) * normalDir_4)));
-  highp vec3 tmpvar_49;
-  tmpvar_49 = (specularReflection_2 * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot (tmpvar_47, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_49;
+  tmpvar_47 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_47;
+  mediump vec3 tmpvar_48;
+  mediump vec3 i_49;
+  i_49 = -(lightDirection_5);
+  tmpvar_48 = (i_49 - (2.0 * (dot (normalDir_4, i_49) * normalDir_4)));
   highp vec3 tmpvar_50;
-  tmpvar_50 = (light_3 * _Albedo);
-  light_3 = tmpvar_50;
+  tmpvar_50 = (specularReflection_2 * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot (tmpvar_48, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_50;
   highp vec3 tmpvar_51;
-  tmpvar_51 = (light_3 + (main_15.w * tmpvar_49));
+  tmpvar_51 = (light_3 + (main_15.w * tmpvar_50));
   light_3 = tmpvar_51;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_52;
+  tmpvar_52 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_52;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -19549,9 +19693,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 474
     light += (main.w * specularReflection);
+    #line 474
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     color.w = 1.0;
     return color;
@@ -19687,14 +19831,20 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
   float tmpvar_19;
-  tmpvar_19 = ((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w);
-  vec3 i_20;
-  i_20 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_18) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  float tmpvar_20;
+  tmpvar_20 = ((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w);
+  vec3 i_21;
+  i_21 = -(tmpvar_18.xyz);
+  vec3 tmpvar_22;
+  tmpvar_22 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_20), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_20 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_21 - (2.0 * (dot (xlv_TEXCOORD2, i_21) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_22));
+  color_2.xyz = (color_2.xyz * tmpvar_22);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -19917,48 +20067,51 @@ void main ()
   highp float tmpvar_41;
   tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_8 = tmpvar_41;
-  highp vec3 tmpvar_42;
-  tmpvar_42 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_42;
+  mediump vec4 tmpvar_42;
+  tmpvar_42 = ((main_16 * mix (detail_9, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8))) * _Color);
+  color_18.w = tmpvar_42.w;
   highp vec3 tmpvar_43;
-  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_43;
+  tmpvar_43 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_7 = tmpvar_43;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_6 = tmpvar_44;
   normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_44;
-  tmpvar_44 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
-  tmpvar_45 = texture2D (_LightTexture0, P_46);
-  highp float tmpvar_47;
-  tmpvar_47 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
-  lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2D (_LightTextureB0, vec2(tmpvar_47));
-  highp float tmpvar_49;
-  tmpvar_49 = ((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_45.w) * tmpvar_48.w);
-  atten_4 = tmpvar_49;
-  mediump float tmpvar_50;
-  tmpvar_50 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_51;
-  tmpvar_51 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_50)), 0.0, 1.0);
-  light_3 = tmpvar_51;
-  mediump vec3 tmpvar_52;
-  tmpvar_52 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_52;
+  mediump float tmpvar_45;
+  tmpvar_45 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
+  lowp vec4 tmpvar_46;
+  highp vec2 P_47;
+  P_47 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_46 = texture2D (_LightTexture0, P_47);
+  highp float tmpvar_48;
+  tmpvar_48 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
+  lowp vec4 tmpvar_49;
+  tmpvar_49 = texture2D (_LightTextureB0, vec2(tmpvar_48));
+  highp float tmpvar_50;
+  tmpvar_50 = ((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_46.w) * tmpvar_49.w);
+  atten_4 = tmpvar_50;
+  mediump float tmpvar_51;
+  tmpvar_51 = clamp ((((_LightColor0.w * tmpvar_45) * 4.0) * atten_4), 0.0, 1.0);
+  highp vec3 tmpvar_52;
+  tmpvar_52 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_51)), 0.0, 1.0);
+  light_3 = tmpvar_52;
   mediump vec3 tmpvar_53;
-  mediump vec3 i_54;
-  i_54 = -(lightDirection_6);
-  tmpvar_53 = (i_54 - (2.0 * (dot (normalDir_5, i_54) * normalDir_5)));
-  highp vec3 tmpvar_55;
-  tmpvar_55 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_53, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_55;
+  tmpvar_53 = vec3(clamp (floor((1.0 + tmpvar_45)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_53;
+  mediump vec3 tmpvar_54;
+  mediump vec3 i_55;
+  i_55 = -(lightDirection_6);
+  tmpvar_54 = (i_55 - (2.0 * (dot (normalDir_5, i_55) * normalDir_5)));
   highp vec3 tmpvar_56;
-  tmpvar_56 = (light_3 * _Albedo);
-  light_3 = tmpvar_56;
+  tmpvar_56 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_54, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_56;
   highp vec3 tmpvar_57;
-  tmpvar_57 = (light_3 + (main_16.w * tmpvar_55));
+  tmpvar_57 = (light_3 + (main_16.w * tmpvar_56));
   light_3 = tmpvar_57;
-  color_18.xyz = (((main_16 * mix (detail_9, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_58;
+  tmpvar_58 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_58;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -20131,48 +20284,51 @@ void main ()
   highp float tmpvar_41;
   tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_8 = tmpvar_41;
-  highp vec3 tmpvar_42;
-  tmpvar_42 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_42;
+  mediump vec4 tmpvar_42;
+  tmpvar_42 = ((main_16 * mix (detail_9, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8))) * _Color);
+  color_18.w = tmpvar_42.w;
   highp vec3 tmpvar_43;
-  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_43;
+  tmpvar_43 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_7 = tmpvar_43;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_6 = tmpvar_44;
   normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_44;
-  tmpvar_44 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
-  tmpvar_45 = texture2D (_LightTexture0, P_46);
-  highp float tmpvar_47;
-  tmpvar_47 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
-  lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2D (_LightTextureB0, vec2(tmpvar_47));
-  highp float tmpvar_49;
-  tmpvar_49 = ((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_45.w) * tmpvar_48.w);
-  atten_4 = tmpvar_49;
-  mediump float tmpvar_50;
-  tmpvar_50 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_51;
-  tmpvar_51 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_50)), 0.0, 1.0);
-  light_3 = tmpvar_51;
-  mediump vec3 tmpvar_52;
-  tmpvar_52 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_52;
+  mediump float tmpvar_45;
+  tmpvar_45 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
+  lowp vec4 tmpvar_46;
+  highp vec2 P_47;
+  P_47 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_46 = texture2D (_LightTexture0, P_47);
+  highp float tmpvar_48;
+  tmpvar_48 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
+  lowp vec4 tmpvar_49;
+  tmpvar_49 = texture2D (_LightTextureB0, vec2(tmpvar_48));
+  highp float tmpvar_50;
+  tmpvar_50 = ((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_46.w) * tmpvar_49.w);
+  atten_4 = tmpvar_50;
+  mediump float tmpvar_51;
+  tmpvar_51 = clamp ((((_LightColor0.w * tmpvar_45) * 4.0) * atten_4), 0.0, 1.0);
+  highp vec3 tmpvar_52;
+  tmpvar_52 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_51)), 0.0, 1.0);
+  light_3 = tmpvar_52;
   mediump vec3 tmpvar_53;
-  mediump vec3 i_54;
-  i_54 = -(lightDirection_6);
-  tmpvar_53 = (i_54 - (2.0 * (dot (normalDir_5, i_54) * normalDir_5)));
-  highp vec3 tmpvar_55;
-  tmpvar_55 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_53, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_55;
+  tmpvar_53 = vec3(clamp (floor((1.0 + tmpvar_45)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_53;
+  mediump vec3 tmpvar_54;
+  mediump vec3 i_55;
+  i_55 = -(lightDirection_6);
+  tmpvar_54 = (i_55 - (2.0 * (dot (normalDir_5, i_55) * normalDir_5)));
   highp vec3 tmpvar_56;
-  tmpvar_56 = (light_3 * _Albedo);
-  light_3 = tmpvar_56;
+  tmpvar_56 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_54, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_56;
   highp vec3 tmpvar_57;
-  tmpvar_57 = (light_3 + (main_16.w * tmpvar_55));
+  tmpvar_57 = (light_3 + (main_16.w * tmpvar_56));
   light_3 = tmpvar_57;
-  color_18.xyz = (((main_16 * mix (detail_9, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_58;
+  tmpvar_58 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_58;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -20670,8 +20826,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 485
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 489
     color.w = 1.0;
@@ -20810,14 +20966,20 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
   float tmpvar_19;
-  tmpvar_19 = (texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3))).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
-  vec3 i_20;
-  i_20 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_18) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  float tmpvar_20;
+  tmpvar_20 = (texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3))).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
+  vec3 i_21;
+  i_21 = -(tmpvar_18.xyz);
+  vec3 tmpvar_22;
+  tmpvar_22 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_20), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_20 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_21 - (2.0 * (dot (xlv_TEXCOORD2, i_21) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_22));
+  color_2.xyz = (color_2.xyz * tmpvar_22);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -21038,41 +21200,44 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
   highp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  highp float tmpvar_44;
-  tmpvar_44 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp float tmpvar_45;
-  tmpvar_45 = (texture2D (_LightTextureB0, vec2(tmpvar_44)).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_45), 0.0, 1.0);
-  highp vec3 tmpvar_47;
-  tmpvar_47 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_46)), 0.0, 1.0);
-  light_3 = tmpvar_47;
-  mediump vec3 tmpvar_48;
-  tmpvar_48 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_48;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp float tmpvar_46;
+  tmpvar_46 = (texture2D (_LightTextureB0, vec2(tmpvar_45)).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
+  mediump float tmpvar_47;
+  tmpvar_47 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_46), 0.0, 1.0);
+  highp vec3 tmpvar_48;
+  tmpvar_48 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_47)), 0.0, 1.0);
+  light_3 = tmpvar_48;
   mediump vec3 tmpvar_49;
-  mediump vec3 i_50;
-  i_50 = -(lightDirection_5);
-  tmpvar_49 = (i_50 - (2.0 * (dot (normalDir_4, i_50) * normalDir_4)));
-  highp vec3 tmpvar_51;
-  tmpvar_51 = (specularReflection_2 * (((tmpvar_45 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_49, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_51;
+  tmpvar_49 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_49;
+  mediump vec3 tmpvar_50;
+  mediump vec3 i_51;
+  i_51 = -(lightDirection_5);
+  tmpvar_50 = (i_51 - (2.0 * (dot (normalDir_4, i_51) * normalDir_4)));
   highp vec3 tmpvar_52;
-  tmpvar_52 = (light_3 * _Albedo);
-  light_3 = tmpvar_52;
+  tmpvar_52 = (specularReflection_2 * (((tmpvar_46 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_50, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_52;
   highp vec3 tmpvar_53;
-  tmpvar_53 = (light_3 + (main_15.w * tmpvar_51));
+  tmpvar_53 = (light_3 + (main_15.w * tmpvar_52));
   light_3 = tmpvar_53;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_54;
+  tmpvar_54 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_54;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -21244,41 +21409,44 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
   highp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  highp float tmpvar_44;
-  tmpvar_44 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp float tmpvar_45;
-  tmpvar_45 = (texture2D (_LightTextureB0, vec2(tmpvar_44)).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_45), 0.0, 1.0);
-  highp vec3 tmpvar_47;
-  tmpvar_47 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_46)), 0.0, 1.0);
-  light_3 = tmpvar_47;
-  mediump vec3 tmpvar_48;
-  tmpvar_48 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_48;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp float tmpvar_46;
+  tmpvar_46 = (texture2D (_LightTextureB0, vec2(tmpvar_45)).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
+  mediump float tmpvar_47;
+  tmpvar_47 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_46), 0.0, 1.0);
+  highp vec3 tmpvar_48;
+  tmpvar_48 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_47)), 0.0, 1.0);
+  light_3 = tmpvar_48;
   mediump vec3 tmpvar_49;
-  mediump vec3 i_50;
-  i_50 = -(lightDirection_5);
-  tmpvar_49 = (i_50 - (2.0 * (dot (normalDir_4, i_50) * normalDir_4)));
-  highp vec3 tmpvar_51;
-  tmpvar_51 = (specularReflection_2 * (((tmpvar_45 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_49, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_51;
+  tmpvar_49 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_49;
+  mediump vec3 tmpvar_50;
+  mediump vec3 i_51;
+  i_51 = -(lightDirection_5);
+  tmpvar_50 = (i_51 - (2.0 * (dot (normalDir_4, i_51) * normalDir_4)));
   highp vec3 tmpvar_52;
-  tmpvar_52 = (light_3 * _Albedo);
-  light_3 = tmpvar_52;
+  tmpvar_52 = (specularReflection_2 * (((tmpvar_46 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_50, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_52;
   highp vec3 tmpvar_53;
-  tmpvar_53 = (light_3 + (main_15.w * tmpvar_51));
+  tmpvar_53 = (light_3 + (main_15.w * tmpvar_52));
   light_3 = tmpvar_53;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_54;
+  tmpvar_54 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_54;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -21766,8 +21934,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 477
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 481
     color.w = 1.0;
@@ -21905,14 +22073,20 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
   float tmpvar_19;
-  tmpvar_19 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
-  vec3 i_20;
-  i_20 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_18) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  float tmpvar_20;
+  tmpvar_20 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
+  vec3 i_21;
+  i_21 = -(tmpvar_18.xyz);
+  vec3 tmpvar_22;
+  tmpvar_22 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_20), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_20 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_21 - (2.0 * (dot (xlv_TEXCOORD2, i_21) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_22));
+  color_2.xyz = (color_2.xyz * tmpvar_22);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -22131,39 +22305,42 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
-  lowp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
+  highp vec3 tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp float tmpvar_44;
-  tmpvar_44 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
-  mediump float tmpvar_45;
-  tmpvar_45 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_44), 0.0, 1.0);
-  highp vec3 tmpvar_46;
-  tmpvar_46 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_45)), 0.0, 1.0);
-  light_3 = tmpvar_46;
-  mediump vec3 tmpvar_47;
-  tmpvar_47 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_47;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  lowp float tmpvar_45;
+  tmpvar_45 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
+  mediump float tmpvar_46;
+  tmpvar_46 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_45), 0.0, 1.0);
+  highp vec3 tmpvar_47;
+  tmpvar_47 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_46)), 0.0, 1.0);
+  light_3 = tmpvar_47;
   mediump vec3 tmpvar_48;
-  mediump vec3 i_49;
-  i_49 = -(lightDirection_5);
-  tmpvar_48 = (i_49 - (2.0 * (dot (normalDir_4, i_49) * normalDir_4)));
-  highp vec3 tmpvar_50;
-  tmpvar_50 = (specularReflection_2 * (((tmpvar_44 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_48, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_50;
+  tmpvar_48 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_48;
+  mediump vec3 tmpvar_49;
+  mediump vec3 i_50;
+  i_50 = -(lightDirection_5);
+  tmpvar_49 = (i_50 - (2.0 * (dot (normalDir_4, i_50) * normalDir_4)));
   highp vec3 tmpvar_51;
-  tmpvar_51 = (light_3 * _Albedo);
-  light_3 = tmpvar_51;
+  tmpvar_51 = (specularReflection_2 * (((tmpvar_45 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_49, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_51;
   highp vec3 tmpvar_52;
-  tmpvar_52 = (light_3 + (main_15.w * tmpvar_50));
+  tmpvar_52 = (light_3 + (main_15.w * tmpvar_51));
   light_3 = tmpvar_52;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_53;
+  tmpvar_53 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_53;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -22334,39 +22511,42 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
-  lowp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
+  highp vec3 tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp float tmpvar_44;
-  tmpvar_44 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
-  mediump float tmpvar_45;
-  tmpvar_45 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_44), 0.0, 1.0);
-  highp vec3 tmpvar_46;
-  tmpvar_46 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_45)), 0.0, 1.0);
-  light_3 = tmpvar_46;
-  mediump vec3 tmpvar_47;
-  tmpvar_47 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_47;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  lowp float tmpvar_45;
+  tmpvar_45 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
+  mediump float tmpvar_46;
+  tmpvar_46 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_45), 0.0, 1.0);
+  highp vec3 tmpvar_47;
+  tmpvar_47 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_46)), 0.0, 1.0);
+  light_3 = tmpvar_47;
   mediump vec3 tmpvar_48;
-  mediump vec3 i_49;
-  i_49 = -(lightDirection_5);
-  tmpvar_48 = (i_49 - (2.0 * (dot (normalDir_4, i_49) * normalDir_4)));
-  highp vec3 tmpvar_50;
-  tmpvar_50 = (specularReflection_2 * (((tmpvar_44 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_48, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_50;
+  tmpvar_48 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_48;
+  mediump vec3 tmpvar_49;
+  mediump vec3 i_50;
+  i_50 = -(lightDirection_5);
+  tmpvar_49 = (i_50 - (2.0 * (dot (normalDir_4, i_50) * normalDir_4)));
   highp vec3 tmpvar_51;
-  tmpvar_51 = (light_3 * _Albedo);
-  light_3 = tmpvar_51;
+  tmpvar_51 = (specularReflection_2 * (((tmpvar_45 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_49, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_51;
   highp vec3 tmpvar_52;
-  tmpvar_52 = (light_3 + (main_15.w * tmpvar_50));
+  tmpvar_52 = (light_3 + (main_15.w * tmpvar_51));
   light_3 = tmpvar_52;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_53;
+  tmpvar_53 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_53;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -22852,8 +23032,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 476
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 480
     color.w = 1.0;
@@ -23020,7 +23200,10 @@ void main ()
   tmpvar_24 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_20.w) * tmpvar_21.w) * tmpvar_23);
   vec3 i_25;
   i_25 = -(tmpvar_18.xyz);
-  color_2.xyz = (tmpvar_17.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_26));
+  color_2.xyz = (color_2.xyz * tmpvar_26);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -23306,12 +23489,12 @@ void main ()
   tmpvar_60 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_58, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_60;
   highp vec3 tmpvar_61;
-  tmpvar_61 = (light_3 * _Albedo);
+  tmpvar_61 = (light_3 + (main_16.w * tmpvar_60));
   light_3 = tmpvar_61;
   highp vec3 tmpvar_62;
-  tmpvar_62 = (light_3 + (main_16.w * tmpvar_60));
-  light_3 = tmpvar_62;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_62 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_62;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -23541,12 +23724,12 @@ void main ()
   tmpvar_60 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_58, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_60;
   highp vec3 tmpvar_61;
-  tmpvar_61 = (light_3 * _Albedo);
+  tmpvar_61 = (light_3 + (main_16.w * tmpvar_60));
   light_3 = tmpvar_61;
   highp vec3 tmpvar_62;
-  tmpvar_62 = (light_3 + (main_16.w * tmpvar_60));
-  light_3 = tmpvar_62;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_62 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_62;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -24059,8 +24242,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 493
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 497
     color.w = 1.0;
@@ -24207,14 +24390,20 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
   float tmpvar_19;
-  tmpvar_19 = (((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w) * (_LightShadowData.x + (shadow2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x * (1.0 - _LightShadowData.x))));
-  vec3 i_20;
-  i_20 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_18) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  float tmpvar_20;
+  tmpvar_20 = (((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w) * (_LightShadowData.x + (shadow2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x * (1.0 - _LightShadowData.x))));
+  vec3 i_21;
+  i_21 = -(tmpvar_18.xyz);
+  vec3 tmpvar_22;
+  tmpvar_22 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_20), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_20 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_21 - (2.0 * (dot (xlv_TEXCOORD2, i_21) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_22));
+  color_2.xyz = (color_2.xyz * tmpvar_22);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -24451,57 +24640,60 @@ void main ()
   highp float tmpvar_41;
   tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_8 = tmpvar_41;
-  highp vec3 tmpvar_42;
-  tmpvar_42 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_42;
+  mediump vec4 tmpvar_42;
+  tmpvar_42 = ((main_16 * mix (detail_9, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8))) * _Color);
+  color_18.w = tmpvar_42.w;
   highp vec3 tmpvar_43;
-  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_43;
+  tmpvar_43 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_7 = tmpvar_43;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_6 = tmpvar_44;
   normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_44;
-  tmpvar_44 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
-  tmpvar_45 = texture2D (_LightTexture0, P_46);
-  highp float tmpvar_47;
-  tmpvar_47 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
-  lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2D (_LightTextureB0, vec2(tmpvar_47));
-  lowp float tmpvar_49;
-  mediump float shadow_50;
-  lowp float tmpvar_51;
-  tmpvar_51 = shadow2DProjEXT (_ShadowMapTexture, xlv_TEXCOORD4);
-  shadow_50 = tmpvar_51;
-  highp float tmpvar_52;
-  tmpvar_52 = (_LightShadowData.x + (shadow_50 * (1.0 - _LightShadowData.x)));
-  shadow_50 = tmpvar_52;
-  tmpvar_49 = shadow_50;
+  mediump float tmpvar_45;
+  tmpvar_45 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
+  lowp vec4 tmpvar_46;
+  highp vec2 P_47;
+  P_47 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_46 = texture2D (_LightTexture0, P_47);
+  highp float tmpvar_48;
+  tmpvar_48 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
+  lowp vec4 tmpvar_49;
+  tmpvar_49 = texture2D (_LightTextureB0, vec2(tmpvar_48));
+  lowp float tmpvar_50;
+  mediump float shadow_51;
+  lowp float tmpvar_52;
+  tmpvar_52 = shadow2DProjEXT (_ShadowMapTexture, xlv_TEXCOORD4);
+  shadow_51 = tmpvar_52;
   highp float tmpvar_53;
-  tmpvar_53 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_45.w) * tmpvar_48.w) * tmpvar_49);
-  atten_4 = tmpvar_53;
-  mediump float tmpvar_54;
-  tmpvar_54 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_55;
-  tmpvar_55 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_54)), 0.0, 1.0);
-  light_3 = tmpvar_55;
-  mediump vec3 tmpvar_56;
-  tmpvar_56 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_56;
+  tmpvar_53 = (_LightShadowData.x + (shadow_51 * (1.0 - _LightShadowData.x)));
+  shadow_51 = tmpvar_53;
+  tmpvar_50 = shadow_51;
+  highp float tmpvar_54;
+  tmpvar_54 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_46.w) * tmpvar_49.w) * tmpvar_50);
+  atten_4 = tmpvar_54;
+  mediump float tmpvar_55;
+  tmpvar_55 = clamp ((((_LightColor0.w * tmpvar_45) * 4.0) * atten_4), 0.0, 1.0);
+  highp vec3 tmpvar_56;
+  tmpvar_56 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_55)), 0.0, 1.0);
+  light_3 = tmpvar_56;
   mediump vec3 tmpvar_57;
-  mediump vec3 i_58;
-  i_58 = -(lightDirection_6);
-  tmpvar_57 = (i_58 - (2.0 * (dot (normalDir_5, i_58) * normalDir_5)));
-  highp vec3 tmpvar_59;
-  tmpvar_59 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_57, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_59;
+  tmpvar_57 = vec3(clamp (floor((1.0 + tmpvar_45)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_57;
+  mediump vec3 tmpvar_58;
+  mediump vec3 i_59;
+  i_59 = -(lightDirection_6);
+  tmpvar_58 = (i_59 - (2.0 * (dot (normalDir_5, i_59) * normalDir_5)));
   highp vec3 tmpvar_60;
-  tmpvar_60 = (light_3 * _Albedo);
-  light_3 = tmpvar_60;
+  tmpvar_60 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_58, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_60;
   highp vec3 tmpvar_61;
-  tmpvar_61 = (light_3 + (main_16.w * tmpvar_59));
+  tmpvar_61 = (light_3 + (main_16.w * tmpvar_60));
   light_3 = tmpvar_61;
-  color_18.xyz = (((main_16 * mix (detail_9, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_62;
+  tmpvar_62 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_62;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -25016,8 +25208,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 494
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 498
     color.w = 1.0;
@@ -25167,14 +25359,20 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
-  vec4 tmpvar_19;
-  tmpvar_19 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3);
-  vec3 i_20;
-  i_20 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_18) * 4.0) * tmpvar_19.x), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
+  float tmpvar_19;
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  vec4 tmpvar_20;
+  tmpvar_20 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3);
+  vec3 i_21;
+  i_21 = -(tmpvar_18.xyz);
+  vec3 tmpvar_22;
+  tmpvar_22 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_20.x), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_20.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_21 - (2.0 * (dot (xlv_TEXCOORD2, i_21) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_22));
+  color_2.xyz = (color_2.xyz * tmpvar_22);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -25398,49 +25596,52 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
-  lowp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
+  highp vec3 tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp float tmpvar_44;
-  mediump float lightShadowDataX_45;
-  highp float dist_46;
-  lowp float tmpvar_47;
-  tmpvar_47 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3).x;
-  dist_46 = tmpvar_47;
-  highp float tmpvar_48;
-  tmpvar_48 = _LightShadowData.x;
-  lightShadowDataX_45 = tmpvar_48;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  lowp float tmpvar_45;
+  mediump float lightShadowDataX_46;
+  highp float dist_47;
+  lowp float tmpvar_48;
+  tmpvar_48 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3).x;
+  dist_47 = tmpvar_48;
   highp float tmpvar_49;
-  tmpvar_49 = max (float((dist_46 > (xlv_TEXCOORD3.z / xlv_TEXCOORD3.w))), lightShadowDataX_45);
-  tmpvar_44 = tmpvar_49;
-  mediump float tmpvar_50;
-  tmpvar_50 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_44), 0.0, 1.0);
-  highp vec3 tmpvar_51;
-  tmpvar_51 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_50)), 0.0, 1.0);
-  light_3 = tmpvar_51;
-  mediump vec3 tmpvar_52;
-  tmpvar_52 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_52;
+  tmpvar_49 = _LightShadowData.x;
+  lightShadowDataX_46 = tmpvar_49;
+  highp float tmpvar_50;
+  tmpvar_50 = max (float((dist_47 > (xlv_TEXCOORD3.z / xlv_TEXCOORD3.w))), lightShadowDataX_46);
+  tmpvar_45 = tmpvar_50;
+  mediump float tmpvar_51;
+  tmpvar_51 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_45), 0.0, 1.0);
+  highp vec3 tmpvar_52;
+  tmpvar_52 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_51)), 0.0, 1.0);
+  light_3 = tmpvar_52;
   mediump vec3 tmpvar_53;
-  mediump vec3 i_54;
-  i_54 = -(lightDirection_5);
-  tmpvar_53 = (i_54 - (2.0 * (dot (normalDir_4, i_54) * normalDir_4)));
-  highp vec3 tmpvar_55;
-  tmpvar_55 = (specularReflection_2 * (((tmpvar_44 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_53, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_55;
+  tmpvar_53 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_53;
+  mediump vec3 tmpvar_54;
+  mediump vec3 i_55;
+  i_55 = -(lightDirection_5);
+  tmpvar_54 = (i_55 - (2.0 * (dot (normalDir_4, i_55) * normalDir_4)));
   highp vec3 tmpvar_56;
-  tmpvar_56 = (light_3 * _Albedo);
-  light_3 = tmpvar_56;
+  tmpvar_56 = (specularReflection_2 * (((tmpvar_45 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_54, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_56;
   highp vec3 tmpvar_57;
-  tmpvar_57 = (light_3 + (main_15.w * tmpvar_55));
+  tmpvar_57 = (light_3 + (main_15.w * tmpvar_56));
   light_3 = tmpvar_57;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_58;
+  tmpvar_58 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_58;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -25621,39 +25822,42 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
-  lowp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
+  highp vec3 tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3);
-  mediump float tmpvar_45;
-  tmpvar_45 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_44.x), 0.0, 1.0);
-  highp vec3 tmpvar_46;
-  tmpvar_46 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_45)), 0.0, 1.0);
-  light_3 = tmpvar_46;
-  mediump vec3 tmpvar_47;
-  tmpvar_47 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_47;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  lowp vec4 tmpvar_45;
+  tmpvar_45 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3);
+  mediump float tmpvar_46;
+  tmpvar_46 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_45.x), 0.0, 1.0);
+  highp vec3 tmpvar_47;
+  tmpvar_47 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_46)), 0.0, 1.0);
+  light_3 = tmpvar_47;
   mediump vec3 tmpvar_48;
-  mediump vec3 i_49;
-  i_49 = -(lightDirection_5);
-  tmpvar_48 = (i_49 - (2.0 * (dot (normalDir_4, i_49) * normalDir_4)));
-  highp vec3 tmpvar_50;
-  tmpvar_50 = (specularReflection_2 * (((tmpvar_44.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_48, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_50;
+  tmpvar_48 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_48;
+  mediump vec3 tmpvar_49;
+  mediump vec3 i_50;
+  i_50 = -(lightDirection_5);
+  tmpvar_49 = (i_50 - (2.0 * (dot (normalDir_4, i_50) * normalDir_4)));
   highp vec3 tmpvar_51;
-  tmpvar_51 = (light_3 * _Albedo);
-  light_3 = tmpvar_51;
+  tmpvar_51 = (specularReflection_2 * (((tmpvar_45.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_49, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_51;
   highp vec3 tmpvar_52;
-  tmpvar_52 = (light_3 + (main_15.w * tmpvar_50));
+  tmpvar_52 = (light_3 + (main_15.w * tmpvar_51));
   light_3 = tmpvar_52;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_53;
+  tmpvar_53 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_53;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -26146,8 +26350,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 482
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 486
     color.w = 1.0;
@@ -26300,14 +26504,20 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
   float tmpvar_19;
-  tmpvar_19 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x);
-  vec3 i_20;
-  i_20 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_18) * 4.0) * tmpvar_19), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_19 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_20 - (2.0 * (dot (xlv_TEXCOORD2, i_20) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  float tmpvar_20;
+  tmpvar_20 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x);
+  vec3 i_21;
+  i_21 = -(tmpvar_18.xyz);
+  vec3 tmpvar_22;
+  tmpvar_22 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_20), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_20 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_21 - (2.0 * (dot (xlv_TEXCOORD2, i_21) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_22));
+  color_2.xyz = (color_2.xyz * tmpvar_22);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -26541,51 +26751,54 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
-  lowp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
+  highp vec3 tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp float tmpvar_44;
-  mediump float lightShadowDataX_45;
-  highp float dist_46;
-  lowp float tmpvar_47;
-  tmpvar_47 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x;
-  dist_46 = tmpvar_47;
-  highp float tmpvar_48;
-  tmpvar_48 = _LightShadowData.x;
-  lightShadowDataX_45 = tmpvar_48;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  lowp float tmpvar_45;
+  mediump float lightShadowDataX_46;
+  highp float dist_47;
+  lowp float tmpvar_48;
+  tmpvar_48 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x;
+  dist_47 = tmpvar_48;
   highp float tmpvar_49;
-  tmpvar_49 = max (float((dist_46 > (xlv_TEXCOORD4.z / xlv_TEXCOORD4.w))), lightShadowDataX_45);
-  tmpvar_44 = tmpvar_49;
-  lowp float tmpvar_50;
-  tmpvar_50 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * tmpvar_44);
-  mediump float tmpvar_51;
-  tmpvar_51 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_50), 0.0, 1.0);
-  highp vec3 tmpvar_52;
-  tmpvar_52 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_51)), 0.0, 1.0);
-  light_3 = tmpvar_52;
-  mediump vec3 tmpvar_53;
-  tmpvar_53 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_53;
+  tmpvar_49 = _LightShadowData.x;
+  lightShadowDataX_46 = tmpvar_49;
+  highp float tmpvar_50;
+  tmpvar_50 = max (float((dist_47 > (xlv_TEXCOORD4.z / xlv_TEXCOORD4.w))), lightShadowDataX_46);
+  tmpvar_45 = tmpvar_50;
+  lowp float tmpvar_51;
+  tmpvar_51 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * tmpvar_45);
+  mediump float tmpvar_52;
+  tmpvar_52 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_51), 0.0, 1.0);
+  highp vec3 tmpvar_53;
+  tmpvar_53 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_52)), 0.0, 1.0);
+  light_3 = tmpvar_53;
   mediump vec3 tmpvar_54;
-  mediump vec3 i_55;
-  i_55 = -(lightDirection_5);
-  tmpvar_54 = (i_55 - (2.0 * (dot (normalDir_4, i_55) * normalDir_4)));
-  highp vec3 tmpvar_56;
-  tmpvar_56 = (specularReflection_2 * (((tmpvar_50 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_54, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_56;
+  tmpvar_54 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_54;
+  mediump vec3 tmpvar_55;
+  mediump vec3 i_56;
+  i_56 = -(lightDirection_5);
+  tmpvar_55 = (i_56 - (2.0 * (dot (normalDir_4, i_56) * normalDir_4)));
   highp vec3 tmpvar_57;
-  tmpvar_57 = (light_3 * _Albedo);
-  light_3 = tmpvar_57;
+  tmpvar_57 = (specularReflection_2 * (((tmpvar_51 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_55, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_57;
   highp vec3 tmpvar_58;
-  tmpvar_58 = (light_3 + (main_15.w * tmpvar_56));
+  tmpvar_58 = (light_3 + (main_15.w * tmpvar_57));
   light_3 = tmpvar_58;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_59;
+  tmpvar_59 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_59;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -26771,39 +26984,42 @@ void main ()
   highp float tmpvar_40;
   tmpvar_40 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_7 = tmpvar_40;
-  highp vec3 tmpvar_41;
-  tmpvar_41 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_41;
-  lowp vec3 tmpvar_42;
-  tmpvar_42 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_42;
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = ((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color);
+  color_17.w = tmpvar_41.w;
+  highp vec3 tmpvar_42;
+  tmpvar_42 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_6 = tmpvar_42;
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_5 = tmpvar_43;
   normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_43;
-  tmpvar_43 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp float tmpvar_44;
-  tmpvar_44 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x);
-  mediump float tmpvar_45;
-  tmpvar_45 = clamp ((((_LightColor0.w * tmpvar_43) * 4.0) * tmpvar_44), 0.0, 1.0);
-  highp vec3 tmpvar_46;
-  tmpvar_46 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_45)), 0.0, 1.0);
-  light_3 = tmpvar_46;
-  mediump vec3 tmpvar_47;
-  tmpvar_47 = vec3(clamp (floor((1.0 + tmpvar_43)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_47;
+  mediump float tmpvar_44;
+  tmpvar_44 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
+  lowp float tmpvar_45;
+  tmpvar_45 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x);
+  mediump float tmpvar_46;
+  tmpvar_46 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * tmpvar_45), 0.0, 1.0);
+  highp vec3 tmpvar_47;
+  tmpvar_47 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_46)), 0.0, 1.0);
+  light_3 = tmpvar_47;
   mediump vec3 tmpvar_48;
-  mediump vec3 i_49;
-  i_49 = -(lightDirection_5);
-  tmpvar_48 = (i_49 - (2.0 * (dot (normalDir_4, i_49) * normalDir_4)));
-  highp vec3 tmpvar_50;
-  tmpvar_50 = (specularReflection_2 * (((tmpvar_44 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_48, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_50;
+  tmpvar_48 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_48;
+  mediump vec3 tmpvar_49;
+  mediump vec3 i_50;
+  i_50 = -(lightDirection_5);
+  tmpvar_49 = (i_50 - (2.0 * (dot (normalDir_4, i_50) * normalDir_4)));
   highp vec3 tmpvar_51;
-  tmpvar_51 = (light_3 * _Albedo);
-  light_3 = tmpvar_51;
+  tmpvar_51 = (specularReflection_2 * (((tmpvar_45 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_49, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_51;
   highp vec3 tmpvar_52;
-  tmpvar_52 = (light_3 + (main_15.w * tmpvar_50));
+  tmpvar_52 = (light_3 + (main_15.w * tmpvar_51));
   light_3 = tmpvar_52;
-  color_17.xyz = (((main_15 * mix (detail_8, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_53;
+  tmpvar_53 = (tmpvar_41.xyz + (_Albedo * light_3));
+  color_17.xyz = tmpvar_53;
+  color_17.xyz = (color_17.xyz * light_3);
   color_17.w = 1.0;
   tmpvar_1 = color_17;
   gl_FragData[0] = tmpvar_1;
@@ -27307,8 +27523,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 486
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 490
     color.w = 1.0;
@@ -27477,7 +27693,10 @@ void main ()
   tmpvar_24 = (tmpvar_20.w * tmpvar_23);
   vec3 i_25;
   i_25 = -(tmpvar_18.xyz);
-  color_2.xyz = (tmpvar_17.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_26));
+  color_2.xyz = (color_2.xyz * tmpvar_26);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -27757,12 +27976,12 @@ void main ()
   tmpvar_59 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_57, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_59;
   highp vec3 tmpvar_60;
-  tmpvar_60 = (light_3 * _Albedo);
+  tmpvar_60 = (light_3 + (main_16.w * tmpvar_59));
   light_3 = tmpvar_60;
   highp vec3 tmpvar_61;
-  tmpvar_61 = (light_3 + (main_16.w * tmpvar_59));
-  light_3 = tmpvar_61;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_61 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_61;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -27990,12 +28209,12 @@ void main ()
   tmpvar_59 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_57, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_59;
   highp vec3 tmpvar_60;
-  tmpvar_60 = (light_3 * _Albedo);
+  tmpvar_60 = (light_3 + (main_16.w * tmpvar_59));
   light_3 = tmpvar_60;
   highp vec3 tmpvar_61;
-  tmpvar_61 = (light_3 + (main_16.w * tmpvar_59));
-  light_3 = tmpvar_61;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_61 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_61;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -28509,8 +28728,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 491
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 495
     color.w = 1.0;
@@ -28682,7 +28901,10 @@ void main ()
   tmpvar_25 = ((tmpvar_20.w * tmpvar_21.w) * tmpvar_24);
   vec3 i_26;
   i_26 = -(tmpvar_18.xyz);
-  color_2.xyz = (tmpvar_17.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_25), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_25 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_26 - (2.0 * (dot (xlv_TEXCOORD2, i_26) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_27;
+  tmpvar_27 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_25), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_25 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_26 - (2.0 * (dot (xlv_TEXCOORD2, i_26) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_27));
+  color_2.xyz = (color_2.xyz * tmpvar_27);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -28965,12 +29187,12 @@ void main ()
   tmpvar_60 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_58, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_60;
   highp vec3 tmpvar_61;
-  tmpvar_61 = (light_3 * _Albedo);
+  tmpvar_61 = (light_3 + (main_16.w * tmpvar_60));
   light_3 = tmpvar_61;
   highp vec3 tmpvar_62;
-  tmpvar_62 = (light_3 + (main_16.w * tmpvar_60));
-  light_3 = tmpvar_62;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_62 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_62;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -29201,12 +29423,12 @@ void main ()
   tmpvar_60 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_58, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_60;
   highp vec3 tmpvar_61;
-  tmpvar_61 = (light_3 * _Albedo);
+  tmpvar_61 = (light_3 + (main_16.w * tmpvar_60));
   light_3 = tmpvar_61;
   highp vec3 tmpvar_62;
-  tmpvar_62 = (light_3 + (main_16.w * tmpvar_60));
-  light_3 = tmpvar_62;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_62 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_62;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -29722,8 +29944,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 492
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 496
     color.w = 1.0;
@@ -29925,7 +30147,10 @@ void main ()
   tmpvar_31 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_20.w) * tmpvar_21.w) * dot (tmpvar_30, vec4(0.25, 0.25, 0.25, 0.25)));
   vec3 i_32;
   i_32 = -(tmpvar_18.xyz);
-  color_2.xyz = (tmpvar_17.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_31), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_31 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_32 - (2.0 * (dot (xlv_TEXCOORD2, i_32) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_33;
+  tmpvar_33 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_31), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_31 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_32 - (2.0 * (dot (xlv_TEXCOORD2, i_32) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_33));
+  color_2.xyz = (color_2.xyz * tmpvar_33);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -30262,12 +30487,12 @@ void main ()
   tmpvar_76 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_74, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_76;
   highp vec3 tmpvar_77;
-  tmpvar_77 = (light_3 * _Albedo);
+  tmpvar_77 = (light_3 + (main_16.w * tmpvar_76));
   light_3 = tmpvar_77;
   highp vec3 tmpvar_78;
-  tmpvar_78 = (light_3 + (main_16.w * tmpvar_76));
-  light_3 = tmpvar_78;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_78 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_78;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -30548,12 +30773,12 @@ void main ()
   tmpvar_76 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_74, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_76;
   highp vec3 tmpvar_77;
-  tmpvar_77 = (light_3 * _Albedo);
+  tmpvar_77 = (light_3 + (main_16.w * tmpvar_76));
   light_3 = tmpvar_77;
   highp vec3 tmpvar_78;
-  tmpvar_78 = (light_3 + (main_16.w * tmpvar_76));
-  light_3 = tmpvar_78;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_78 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_78;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -31086,8 +31311,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 501
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 505
     color.w = 1.0;
@@ -31235,24 +31460,30 @@ void main ()
   vec3 tmpvar_16;
   tmpvar_16 = abs(xlv_TEXCOORD5);
   vec4 tmpvar_17;
-  tmpvar_17 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_18;
-  tmpvar_18 = clamp (dot (xlv_TEXCOORD2, tmpvar_17.xyz), 0.0, 1.0);
-  vec4 shadows_19;
-  vec3 tmpvar_20;
-  tmpvar_20 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
-  shadows_19.x = shadow2D (_ShadowMapTexture, (tmpvar_20 + _ShadowOffsets[0].xyz)).x;
-  shadows_19.y = shadow2D (_ShadowMapTexture, (tmpvar_20 + _ShadowOffsets[1].xyz)).x;
-  shadows_19.z = shadow2D (_ShadowMapTexture, (tmpvar_20 + _ShadowOffsets[2].xyz)).x;
-  shadows_19.w = shadow2D (_ShadowMapTexture, (tmpvar_20 + _ShadowOffsets[3].xyz)).x;
-  vec4 tmpvar_21;
-  tmpvar_21 = (_LightShadowData.xxxx + (shadows_19 * (1.0 - _LightShadowData.xxxx)));
-  shadows_19 = tmpvar_21;
-  float tmpvar_22;
-  tmpvar_22 = (((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w) * dot (tmpvar_21, vec4(0.25, 0.25, 0.25, 0.25)));
-  vec3 i_23;
-  i_23 = -(tmpvar_17.xyz);
-  color_2.xyz = (((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color).xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_18) * 4.0) * tmpvar_22), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_18)), 0.0, 1.0)) * (((tmpvar_22 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_23 - (2.0 * (dot (xlv_TEXCOORD2, i_23) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  tmpvar_17 = ((tmpvar_15 * mix (mix (mix (texture2D (_DetailTex, (xlv_TEXCOORD5.xy * _DetailScale)), texture2D (_DetailTex, (xlv_TEXCOORD5.zy * _DetailScale)), tmpvar_16.xxxx), texture2D (_DetailTex, (xlv_TEXCOORD5.zx * _DetailScale)), tmpvar_16.yyyy), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  color_2.w = tmpvar_17.w;
+  vec4 tmpvar_18;
+  tmpvar_18 = normalize(_WorldSpaceLightPos0);
+  float tmpvar_19;
+  tmpvar_19 = clamp (dot (xlv_TEXCOORD2, tmpvar_18.xyz), 0.0, 1.0);
+  vec4 shadows_20;
+  vec3 tmpvar_21;
+  tmpvar_21 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
+  shadows_20.x = shadow2D (_ShadowMapTexture, (tmpvar_21 + _ShadowOffsets[0].xyz)).x;
+  shadows_20.y = shadow2D (_ShadowMapTexture, (tmpvar_21 + _ShadowOffsets[1].xyz)).x;
+  shadows_20.z = shadow2D (_ShadowMapTexture, (tmpvar_21 + _ShadowOffsets[2].xyz)).x;
+  shadows_20.w = shadow2D (_ShadowMapTexture, (tmpvar_21 + _ShadowOffsets[3].xyz)).x;
+  vec4 tmpvar_22;
+  tmpvar_22 = (_LightShadowData.xxxx + (shadows_20 * (1.0 - _LightShadowData.xxxx)));
+  shadows_20 = tmpvar_22;
+  float tmpvar_23;
+  tmpvar_23 = (((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w) * dot (tmpvar_22, vec4(0.25, 0.25, 0.25, 0.25)));
+  vec3 i_24;
+  i_24 = -(tmpvar_18.xyz);
+  vec3 tmpvar_25;
+  tmpvar_25 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_23), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_23 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_24 - (2.0 * (dot (xlv_TEXCOORD2, i_24) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_25));
+  color_2.xyz = (color_2.xyz * tmpvar_25);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -31490,78 +31721,81 @@ void main ()
   highp float tmpvar_41;
   tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
   detailLevel_8 = tmpvar_41;
-  highp vec3 tmpvar_42;
-  tmpvar_42 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_42;
+  mediump vec4 tmpvar_42;
+  tmpvar_42 = ((main_16 * mix (detail_9, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8))) * _Color);
+  color_18.w = tmpvar_42.w;
   highp vec3 tmpvar_43;
-  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_43;
+  tmpvar_43 = glstate_lightmodel_ambient.xyz;
+  ambientLighting_7 = tmpvar_43;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_6 = tmpvar_44;
   normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_44;
-  tmpvar_44 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
-  tmpvar_45 = texture2D (_LightTexture0, P_46);
-  highp float tmpvar_47;
-  tmpvar_47 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
-  lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2D (_LightTextureB0, vec2(tmpvar_47));
-  lowp float tmpvar_49;
-  mediump vec4 shadows_50;
-  highp vec3 tmpvar_51;
-  tmpvar_51 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
-  highp vec3 coord_52;
-  coord_52 = (tmpvar_51 + _ShadowOffsets[0].xyz);
-  lowp float tmpvar_53;
-  tmpvar_53 = shadow2DEXT (_ShadowMapTexture, coord_52);
-  shadows_50.x = tmpvar_53;
-  highp vec3 coord_54;
-  coord_54 = (tmpvar_51 + _ShadowOffsets[1].xyz);
-  lowp float tmpvar_55;
-  tmpvar_55 = shadow2DEXT (_ShadowMapTexture, coord_54);
-  shadows_50.y = tmpvar_55;
-  highp vec3 coord_56;
-  coord_56 = (tmpvar_51 + _ShadowOffsets[2].xyz);
-  lowp float tmpvar_57;
-  tmpvar_57 = shadow2DEXT (_ShadowMapTexture, coord_56);
-  shadows_50.z = tmpvar_57;
-  highp vec3 coord_58;
-  coord_58 = (tmpvar_51 + _ShadowOffsets[3].xyz);
-  lowp float tmpvar_59;
-  tmpvar_59 = shadow2DEXT (_ShadowMapTexture, coord_58);
-  shadows_50.w = tmpvar_59;
-  highp vec4 tmpvar_60;
-  tmpvar_60 = (_LightShadowData.xxxx + (shadows_50 * (1.0 - _LightShadowData.xxxx)));
-  shadows_50 = tmpvar_60;
-  mediump float tmpvar_61;
-  tmpvar_61 = dot (shadows_50, vec4(0.25, 0.25, 0.25, 0.25));
-  tmpvar_49 = tmpvar_61;
-  highp float tmpvar_62;
-  tmpvar_62 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_45.w) * tmpvar_48.w) * tmpvar_49);
-  atten_4 = tmpvar_62;
-  mediump float tmpvar_63;
-  tmpvar_63 = clamp ((((_LightColor0.w * tmpvar_44) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_64;
-  tmpvar_64 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_63)), 0.0, 1.0);
-  light_3 = tmpvar_64;
-  mediump vec3 tmpvar_65;
-  tmpvar_65 = vec3(clamp (floor((1.0 + tmpvar_44)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_65;
+  mediump float tmpvar_45;
+  tmpvar_45 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
+  lowp vec4 tmpvar_46;
+  highp vec2 P_47;
+  P_47 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_46 = texture2D (_LightTexture0, P_47);
+  highp float tmpvar_48;
+  tmpvar_48 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
+  lowp vec4 tmpvar_49;
+  tmpvar_49 = texture2D (_LightTextureB0, vec2(tmpvar_48));
+  lowp float tmpvar_50;
+  mediump vec4 shadows_51;
+  highp vec3 tmpvar_52;
+  tmpvar_52 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
+  highp vec3 coord_53;
+  coord_53 = (tmpvar_52 + _ShadowOffsets[0].xyz);
+  lowp float tmpvar_54;
+  tmpvar_54 = shadow2DEXT (_ShadowMapTexture, coord_53);
+  shadows_51.x = tmpvar_54;
+  highp vec3 coord_55;
+  coord_55 = (tmpvar_52 + _ShadowOffsets[1].xyz);
+  lowp float tmpvar_56;
+  tmpvar_56 = shadow2DEXT (_ShadowMapTexture, coord_55);
+  shadows_51.y = tmpvar_56;
+  highp vec3 coord_57;
+  coord_57 = (tmpvar_52 + _ShadowOffsets[2].xyz);
+  lowp float tmpvar_58;
+  tmpvar_58 = shadow2DEXT (_ShadowMapTexture, coord_57);
+  shadows_51.z = tmpvar_58;
+  highp vec3 coord_59;
+  coord_59 = (tmpvar_52 + _ShadowOffsets[3].xyz);
+  lowp float tmpvar_60;
+  tmpvar_60 = shadow2DEXT (_ShadowMapTexture, coord_59);
+  shadows_51.w = tmpvar_60;
+  highp vec4 tmpvar_61;
+  tmpvar_61 = (_LightShadowData.xxxx + (shadows_51 * (1.0 - _LightShadowData.xxxx)));
+  shadows_51 = tmpvar_61;
+  mediump float tmpvar_62;
+  tmpvar_62 = dot (shadows_51, vec4(0.25, 0.25, 0.25, 0.25));
+  tmpvar_50 = tmpvar_62;
+  highp float tmpvar_63;
+  tmpvar_63 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_46.w) * tmpvar_49.w) * tmpvar_50);
+  atten_4 = tmpvar_63;
+  mediump float tmpvar_64;
+  tmpvar_64 = clamp ((((_LightColor0.w * tmpvar_45) * 4.0) * atten_4), 0.0, 1.0);
+  highp vec3 tmpvar_65;
+  tmpvar_65 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_64)), 0.0, 1.0);
+  light_3 = tmpvar_65;
   mediump vec3 tmpvar_66;
-  mediump vec3 i_67;
-  i_67 = -(lightDirection_6);
-  tmpvar_66 = (i_67 - (2.0 * (dot (normalDir_5, i_67) * normalDir_5)));
-  highp vec3 tmpvar_68;
-  tmpvar_68 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_66, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_68;
+  tmpvar_66 = vec3(clamp (floor((1.0 + tmpvar_45)), 0.0, 1.0));
+  specularReflection_2 = tmpvar_66;
+  mediump vec3 tmpvar_67;
+  mediump vec3 i_68;
+  i_68 = -(lightDirection_6);
+  tmpvar_67 = (i_68 - (2.0 * (dot (normalDir_5, i_68) * normalDir_5)));
   highp vec3 tmpvar_69;
-  tmpvar_69 = (light_3 * _Albedo);
-  light_3 = tmpvar_69;
+  tmpvar_69 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_67, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
+  specularReflection_2 = tmpvar_69;
   highp vec3 tmpvar_70;
-  tmpvar_70 = (light_3 + (main_16.w * tmpvar_68));
+  tmpvar_70 = (light_3 + (main_16.w * tmpvar_69));
   light_3 = tmpvar_70;
-  color_18.xyz = (((main_16 * mix (detail_9, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8))) * _Color).xyz * light_3);
+  highp vec3 tmpvar_71;
+  tmpvar_71 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_71;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -32086,8 +32320,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 501
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 505
     color.w = 1.0;
@@ -32284,7 +32518,10 @@ void main ()
   tmpvar_29 = (tmpvar_20.w * dot (tmpvar_28, vec4(0.25, 0.25, 0.25, 0.25)));
   vec3 i_30;
   i_30 = -(tmpvar_18.xyz);
-  color_2.xyz = (tmpvar_17.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_29), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_29 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_30 - (2.0 * (dot (xlv_TEXCOORD2, i_30) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_31;
+  tmpvar_31 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_29), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_29 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_30 - (2.0 * (dot (xlv_TEXCOORD2, i_30) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_31));
+  color_2.xyz = (color_2.xyz * tmpvar_31);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -32620,12 +32857,12 @@ void main ()
   tmpvar_78 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_76, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_78;
   highp vec3 tmpvar_79;
-  tmpvar_79 = (light_3 * _Albedo);
+  tmpvar_79 = (light_3 + (main_16.w * tmpvar_78));
   light_3 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 + (main_16.w * tmpvar_78));
-  light_3 = tmpvar_80;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_80 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_80;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -32909,12 +33146,12 @@ void main ()
   tmpvar_78 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_76, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_78;
   highp vec3 tmpvar_79;
-  tmpvar_79 = (light_3 * _Albedo);
+  tmpvar_79 = (light_3 + (main_16.w * tmpvar_78));
   light_3 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 + (main_16.w * tmpvar_78));
-  light_3 = tmpvar_80;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_80 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_80;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -33445,8 +33682,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 497
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 501
     color.w = 1.0;
@@ -33646,7 +33883,10 @@ void main ()
   tmpvar_30 = ((tmpvar_20.w * tmpvar_21.w) * dot (tmpvar_29, vec4(0.25, 0.25, 0.25, 0.25)));
   vec3 i_31;
   i_31 = -(tmpvar_18.xyz);
-  color_2.xyz = (tmpvar_17.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_30), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_30 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_31 - (2.0 * (dot (xlv_TEXCOORD2, i_31) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_32;
+  tmpvar_32 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_19) * 4.0) * tmpvar_30), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_15.w * (vec3(clamp (floor((1.0 + tmpvar_19)), 0.0, 1.0)) * (((tmpvar_30 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_31 - (2.0 * (dot (xlv_TEXCOORD2, i_31) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_2.xyz = (tmpvar_17.xyz + (_Albedo * tmpvar_32));
+  color_2.xyz = (color_2.xyz * tmpvar_32);
   color_2.w = 1.0;
   gl_FragData[0] = color_2;
 }
@@ -33985,12 +34225,12 @@ void main ()
   tmpvar_79 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_77, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 * _Albedo);
+  tmpvar_80 = (light_3 + (main_16.w * tmpvar_79));
   light_3 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 + (main_16.w * tmpvar_79));
-  light_3 = tmpvar_81;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_81 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_81;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -34277,12 +34517,12 @@ void main ()
   tmpvar_79 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_77, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 * _Albedo);
+  tmpvar_80 = (light_3 + (main_16.w * tmpvar_79));
   light_3 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 + (main_16.w * tmpvar_79));
-  light_3 = tmpvar_81;
-  color_18.xyz = (tmpvar_42.xyz * light_3);
+  tmpvar_81 = (tmpvar_42.xyz + (_Albedo * light_3));
+  color_18.xyz = tmpvar_81;
+  color_18.xyz = (color_18.xyz * light_3);
   color_18.w = 1.0;
   tmpvar_1 = color_18;
   gl_FragData[0] = tmpvar_1;
@@ -34815,8 +35055,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 498
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 502
     color.w = 1.0;
@@ -34978,7 +35218,10 @@ void main ()
   tmpvar_24 = texture2D (_LightTexture0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3))).w;
   vec3 i_25;
   i_25 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_26));
+  color_3.xyz = (color_3.xyz * tmpvar_26);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_24), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -35296,12 +35539,12 @@ void main ()
   tmpvar_80 = (specularReflection_2 * (((tmpvar_74 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_78, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 * _Albedo);
+  tmpvar_81 = (light_3 + (main_23.w * tmpvar_80));
   light_3 = tmpvar_81;
   highp vec3 tmpvar_82;
-  tmpvar_82 = (light_3 + (main_23.w * tmpvar_80));
-  light_3 = tmpvar_82;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_82 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_82;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_74), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -35570,12 +35813,12 @@ void main ()
   tmpvar_80 = (specularReflection_2 * (((tmpvar_74 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_78, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 * _Albedo);
+  tmpvar_81 = (light_3 + (main_23.w * tmpvar_80));
   light_3 = tmpvar_81;
   highp vec3 tmpvar_82;
-  tmpvar_82 = (light_3 + (main_23.w * tmpvar_80));
-  light_3 = tmpvar_82;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_82 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_82;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_74), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -36090,9 +36333,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 496
     light += (main.w * specularReflection);
+    #line 496
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -36248,7 +36491,10 @@ void main ()
   tmpvar_23 = clamp (dot (xlv_TEXCOORD2, tmpvar_22.xyz), 0.0, 1.0);
   vec3 i_24;
   i_24 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * tmpvar_23) * 4.0), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot ((i_24 - (2.0 * (dot (xlv_TEXCOORD2, i_24) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_25;
+  tmpvar_25 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * tmpvar_23) * 4.0), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot ((i_24 - (2.0 * (dot (xlv_TEXCOORD2, i_24) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_25));
+  color_3.xyz = (color_3.xyz * tmpvar_25);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp ((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -36551,12 +36797,12 @@ void main ()
   tmpvar_78 = (specularReflection_2 * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot (tmpvar_76, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_78;
   highp vec3 tmpvar_79;
-  tmpvar_79 = (light_3 * _Albedo);
+  tmpvar_79 = (light_3 + (main_23.w * tmpvar_78));
   light_3 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 + (main_23.w * tmpvar_78));
-  light_3 = tmpvar_80;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_80 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_80;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp ((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -36816,12 +37062,12 @@ void main ()
   tmpvar_78 = (specularReflection_2 * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot (tmpvar_76, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_78;
   highp vec3 tmpvar_79;
-  tmpvar_79 = (light_3 * _Albedo);
+  tmpvar_79 = (light_3 + (main_23.w * tmpvar_78));
   light_3 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 + (main_23.w * tmpvar_78));
-  light_3 = tmpvar_80;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_80 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_80;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp ((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -37325,8 +37571,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 490
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 494
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
@@ -37489,7 +37735,10 @@ void main ()
   tmpvar_24 = ((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w);
   vec3 i_25;
   i_25 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_26));
+  color_3.xyz = (color_3.xyz * tmpvar_26);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_24), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -37817,12 +38066,12 @@ void main ()
   tmpvar_84 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_82, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_84;
   highp vec3 tmpvar_85;
-  tmpvar_85 = (light_3 * _Albedo);
+  tmpvar_85 = (light_3 + (main_24.w * tmpvar_84));
   light_3 = tmpvar_85;
   highp vec3 tmpvar_86;
-  tmpvar_86 = (light_3 + (main_24.w * tmpvar_84));
-  light_3 = tmpvar_86;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_86 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_86;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -38100,12 +38349,12 @@ void main ()
   tmpvar_84 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_82, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_84;
   highp vec3 tmpvar_85;
-  tmpvar_85 = (light_3 * _Albedo);
+  tmpvar_85 = (light_3 + (main_24.w * tmpvar_84));
   light_3 = tmpvar_85;
   highp vec3 tmpvar_86;
-  tmpvar_86 = (light_3 + (main_24.w * tmpvar_84));
-  light_3 = tmpvar_86;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_86 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_86;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -38632,9 +38881,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 505
     light += (main.w * specularReflection);
+    #line 505
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -38798,7 +39047,10 @@ void main ()
   tmpvar_24 = (texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3))).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
   vec3 i_25;
   i_25 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_26));
+  color_3.xyz = (color_3.xyz * tmpvar_26);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_24), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -39117,12 +39369,12 @@ void main ()
   tmpvar_80 = (specularReflection_2 * (((tmpvar_74 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_78, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 * _Albedo);
+  tmpvar_81 = (light_3 + (main_23.w * tmpvar_80));
   light_3 = tmpvar_81;
   highp vec3 tmpvar_82;
-  tmpvar_82 = (light_3 + (main_23.w * tmpvar_80));
-  light_3 = tmpvar_82;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_82 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_82;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_74), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -39392,12 +39644,12 @@ void main ()
   tmpvar_80 = (specularReflection_2 * (((tmpvar_74 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_78, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 * _Albedo);
+  tmpvar_81 = (light_3 + (main_23.w * tmpvar_80));
   light_3 = tmpvar_81;
   highp vec3 tmpvar_82;
-  tmpvar_82 = (light_3 + (main_23.w * tmpvar_80));
-  light_3 = tmpvar_82;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_82 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_82;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_74), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -39914,9 +40166,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 497
     light += (main.w * specularReflection);
+    #line 497
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -40079,7 +40331,10 @@ void main ()
   tmpvar_24 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
   vec3 i_25;
   i_25 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_26));
+  color_3.xyz = (color_3.xyz * tmpvar_26);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_24), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -40394,12 +40649,12 @@ void main ()
   tmpvar_79 = (specularReflection_2 * (((tmpvar_73 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_77, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 * _Albedo);
+  tmpvar_80 = (light_3 + (main_23.w * tmpvar_79));
   light_3 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 + (main_23.w * tmpvar_79));
-  light_3 = tmpvar_81;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_81 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_81;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_73), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -40666,12 +40921,12 @@ void main ()
   tmpvar_79 = (specularReflection_2 * (((tmpvar_73 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_77, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 * _Albedo);
+  tmpvar_80 = (light_3 + (main_23.w * tmpvar_79));
   light_3 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 + (main_23.w * tmpvar_79));
-  light_3 = tmpvar_81;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_81 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_81;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_73), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -41186,9 +41441,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 496
     light += (main.w * specularReflection);
+    #line 496
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -41370,7 +41625,10 @@ void main ()
   tmpvar_28 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_24.w) * tmpvar_25.w) * tmpvar_27);
   vec3 i_29;
   i_29 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_28), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_28 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_29 - (2.0 * (dot (xlv_TEXCOORD2, i_29) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_30;
+  tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_28), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_28 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_29 - (2.0 * (dot (xlv_TEXCOORD2, i_29) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_30));
+  color_3.xyz = (color_3.xyz * tmpvar_30);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_28), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -41722,12 +41980,12 @@ void main ()
   tmpvar_88 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_86, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_88;
   highp vec3 tmpvar_89;
-  tmpvar_89 = (light_3 * _Albedo);
+  tmpvar_89 = (light_3 + (main_24.w * tmpvar_88));
   light_3 = tmpvar_89;
   highp vec3 tmpvar_90;
-  tmpvar_90 = (light_3 + (main_24.w * tmpvar_88));
-  light_3 = tmpvar_90;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_90 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_90;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -42023,12 +42281,12 @@ void main ()
   tmpvar_88 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_86, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_88;
   highp vec3 tmpvar_89;
-  tmpvar_89 = (light_3 * _Albedo);
+  tmpvar_89 = (light_3 + (main_24.w * tmpvar_88));
   light_3 = tmpvar_89;
   highp vec3 tmpvar_90;
-  tmpvar_90 = (light_3 + (main_24.w * tmpvar_88));
-  light_3 = tmpvar_90;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_90 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_90;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -42570,9 +42828,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 513
     light += (main.w * specularReflection);
+    #line 513
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -42744,7 +43002,10 @@ void main ()
   tmpvar_24 = (((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w) * (_LightShadowData.x + (shadow2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x * (1.0 - _LightShadowData.x))));
   vec3 i_25;
   i_25 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_26));
+  color_3.xyz = (color_3.xyz * tmpvar_26);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_24), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -43095,12 +43356,12 @@ void main ()
   tmpvar_88 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_86, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_88;
   highp vec3 tmpvar_89;
-  tmpvar_89 = (light_3 * _Albedo);
+  tmpvar_89 = (light_3 + (main_24.w * tmpvar_88));
   light_3 = tmpvar_89;
   highp vec3 tmpvar_90;
-  tmpvar_90 = (light_3 + (main_24.w * tmpvar_88));
-  light_3 = tmpvar_90;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_90 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_90;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -43644,9 +43905,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 514
     light += (main.w * specularReflection);
+    #line 514
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -43821,7 +44082,10 @@ void main ()
   tmpvar_24 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3);
   vec3 i_25;
   i_25 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24.x), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24.x), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_26));
+  color_3.xyz = (color_3.xyz * tmpvar_26);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_24.x), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -44151,12 +44415,12 @@ void main ()
   tmpvar_84 = (specularReflection_2 * (((tmpvar_73 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_82, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_84;
   highp vec3 tmpvar_85;
-  tmpvar_85 = (light_3 * _Albedo);
+  tmpvar_85 = (light_3 + (main_23.w * tmpvar_84));
   light_3 = tmpvar_85;
   highp vec3 tmpvar_86;
-  tmpvar_86 = (light_3 + (main_23.w * tmpvar_84));
-  light_3 = tmpvar_86;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_86 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_86;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_73), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -44433,12 +44697,12 @@ void main ()
   tmpvar_79 = (specularReflection_2 * (((tmpvar_73.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_77, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 * _Albedo);
+  tmpvar_80 = (light_3 + (main_23.w * tmpvar_79));
   light_3 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 + (main_23.w * tmpvar_79));
-  light_3 = tmpvar_81;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_81 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_81;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_73.x), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -44960,9 +45224,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 502
     light += (main.w * specularReflection);
+    #line 502
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -45140,7 +45404,10 @@ void main ()
   tmpvar_24 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x);
   vec3 i_25;
   i_25 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_26));
+  color_3.xyz = (color_3.xyz * tmpvar_26);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_24), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -45482,12 +45749,12 @@ void main ()
   tmpvar_85 = (specularReflection_2 * (((tmpvar_79 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_83, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_85;
   highp vec3 tmpvar_86;
-  tmpvar_86 = (light_3 * _Albedo);
+  tmpvar_86 = (light_3 + (main_23.w * tmpvar_85));
   light_3 = tmpvar_86;
   highp vec3 tmpvar_87;
-  tmpvar_87 = (light_3 + (main_23.w * tmpvar_85));
-  light_3 = tmpvar_87;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_87 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_87;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_79), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -45769,12 +46036,12 @@ void main ()
   tmpvar_79 = (specularReflection_2 * (((tmpvar_73 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_77, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 * _Albedo);
+  tmpvar_80 = (light_3 + (main_23.w * tmpvar_79));
   light_3 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 + (main_23.w * tmpvar_79));
-  light_3 = tmpvar_81;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_81 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_81;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_73), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -46307,9 +46574,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 506
     light += (main.w * specularReflection);
+    #line 506
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -46493,7 +46760,10 @@ void main ()
   tmpvar_28 = (tmpvar_24.w * tmpvar_27);
   vec3 i_29;
   i_29 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_28), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_28 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_29 - (2.0 * (dot (xlv_TEXCOORD2, i_29) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_30;
+  tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_28), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_28 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_29 - (2.0 * (dot (xlv_TEXCOORD2, i_29) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_30));
+  color_3.xyz = (color_3.xyz * tmpvar_30);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_28), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -46839,12 +47109,12 @@ void main ()
   tmpvar_87 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_85, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_87;
   highp vec3 tmpvar_88;
-  tmpvar_88 = (light_3 * _Albedo);
+  tmpvar_88 = (light_3 + (main_24.w * tmpvar_87));
   light_3 = tmpvar_88;
   highp vec3 tmpvar_89;
-  tmpvar_89 = (light_3 + (main_24.w * tmpvar_87));
-  light_3 = tmpvar_89;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_89 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_89;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -47138,12 +47408,12 @@ void main ()
   tmpvar_87 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_85, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_87;
   highp vec3 tmpvar_88;
-  tmpvar_88 = (light_3 * _Albedo);
+  tmpvar_88 = (light_3 + (main_24.w * tmpvar_87));
   light_3 = tmpvar_88;
   highp vec3 tmpvar_89;
-  tmpvar_89 = (light_3 + (main_24.w * tmpvar_87));
-  light_3 = tmpvar_89;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_89 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_89;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -47686,9 +47956,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 511
     light += (main.w * specularReflection);
+    #line 511
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -47875,7 +48145,10 @@ void main ()
   tmpvar_29 = ((tmpvar_24.w * tmpvar_25.w) * tmpvar_28);
   vec3 i_30;
   i_30 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_29), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_29 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_30 - (2.0 * (dot (xlv_TEXCOORD2, i_30) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_31;
+  tmpvar_31 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_29), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_29 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_30 - (2.0 * (dot (xlv_TEXCOORD2, i_30) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_31));
+  color_3.xyz = (color_3.xyz * tmpvar_31);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_29), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -48224,12 +48497,12 @@ void main ()
   tmpvar_88 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_86, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_88;
   highp vec3 tmpvar_89;
-  tmpvar_89 = (light_3 * _Albedo);
+  tmpvar_89 = (light_3 + (main_24.w * tmpvar_88));
   light_3 = tmpvar_89;
   highp vec3 tmpvar_90;
-  tmpvar_90 = (light_3 + (main_24.w * tmpvar_88));
-  light_3 = tmpvar_90;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_90 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_90;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -48526,12 +48799,12 @@ void main ()
   tmpvar_88 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_86, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_88;
   highp vec3 tmpvar_89;
-  tmpvar_89 = (light_3 * _Albedo);
+  tmpvar_89 = (light_3 + (main_24.w * tmpvar_88));
   light_3 = tmpvar_89;
   highp vec3 tmpvar_90;
-  tmpvar_90 = (light_3 + (main_24.w * tmpvar_88));
-  light_3 = tmpvar_90;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_90 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_90;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -49076,9 +49349,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 512
     light += (main.w * specularReflection);
+    #line 512
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -49295,7 +49568,10 @@ void main ()
   tmpvar_35 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_24.w) * tmpvar_25.w) * dot (tmpvar_34, vec4(0.25, 0.25, 0.25, 0.25)));
   vec3 i_36;
   i_36 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_35), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_35 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_36 - (2.0 * (dot (xlv_TEXCOORD2, i_36) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_37;
+  tmpvar_37 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_35), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_35 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_36 - (2.0 * (dot (xlv_TEXCOORD2, i_36) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_37));
+  color_3.xyz = (color_3.xyz * tmpvar_37);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_35), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -49698,12 +49974,12 @@ void main ()
   tmpvar_104 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_102, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_104;
   highp vec3 tmpvar_105;
-  tmpvar_105 = (light_3 * _Albedo);
+  tmpvar_105 = (light_3 + (main_24.w * tmpvar_104));
   light_3 = tmpvar_105;
   highp vec3 tmpvar_106;
-  tmpvar_106 = (light_3 + (main_24.w * tmpvar_104));
-  light_3 = tmpvar_106;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_106 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_106;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -50050,12 +50326,12 @@ void main ()
   tmpvar_104 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_102, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_104;
   highp vec3 tmpvar_105;
-  tmpvar_105 = (light_3 * _Albedo);
+  tmpvar_105 = (light_3 + (main_24.w * tmpvar_104));
   light_3 = tmpvar_105;
   highp vec3 tmpvar_106;
-  tmpvar_106 = (light_3 + (main_24.w * tmpvar_104));
-  light_3 = tmpvar_106;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_106 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_106;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -50617,9 +50893,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 521
     light += (main.w * specularReflection);
+    #line 521
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -50802,7 +51078,10 @@ void main ()
   tmpvar_27 = (((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w) * dot (tmpvar_26, vec4(0.25, 0.25, 0.25, 0.25)));
   vec3 i_28;
   i_28 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_27), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_27 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_28 - (2.0 * (dot (xlv_TEXCOORD2, i_28) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_29;
+  tmpvar_29 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_27), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_27 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_28 - (2.0 * (dot (xlv_TEXCOORD2, i_28) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_29));
+  color_3.xyz = (color_3.xyz * tmpvar_29);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_27), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -51175,12 +51454,12 @@ void main ()
   tmpvar_97 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_95, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_97;
   highp vec3 tmpvar_98;
-  tmpvar_98 = (light_3 * _Albedo);
+  tmpvar_98 = (light_3 + (main_24.w * tmpvar_97));
   light_3 = tmpvar_98;
   highp vec3 tmpvar_99;
-  tmpvar_99 = (light_3 + (main_24.w * tmpvar_97));
-  light_3 = tmpvar_99;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_99 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_99;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -51734,9 +52013,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 521
     light += (main.w * specularReflection);
+    #line 521
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -51948,7 +52227,10 @@ void main ()
   tmpvar_33 = (tmpvar_24.w * dot (tmpvar_32, vec4(0.25, 0.25, 0.25, 0.25)));
   vec3 i_34;
   i_34 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_33), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_33 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_34 - (2.0 * (dot (xlv_TEXCOORD2, i_34) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_35;
+  tmpvar_35 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_33), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_33 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_34 - (2.0 * (dot (xlv_TEXCOORD2, i_34) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_35));
+  color_3.xyz = (color_3.xyz * tmpvar_35);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_33), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -52350,12 +52632,12 @@ void main ()
   tmpvar_106 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_104, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_106;
   highp vec3 tmpvar_107;
-  tmpvar_107 = (light_3 * _Albedo);
+  tmpvar_107 = (light_3 + (main_24.w * tmpvar_106));
   light_3 = tmpvar_107;
   highp vec3 tmpvar_108;
-  tmpvar_108 = (light_3 + (main_24.w * tmpvar_106));
-  light_3 = tmpvar_108;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_108 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_108;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -52705,12 +52987,12 @@ void main ()
   tmpvar_106 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_104, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_106;
   highp vec3 tmpvar_107;
-  tmpvar_107 = (light_3 * _Albedo);
+  tmpvar_107 = (light_3 + (main_24.w * tmpvar_106));
   light_3 = tmpvar_107;
   highp vec3 tmpvar_108;
-  tmpvar_108 = (light_3 + (main_24.w * tmpvar_106));
-  light_3 = tmpvar_108;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_108 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_108;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -53270,9 +53552,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 517
     light += (main.w * specularReflection);
+    #line 517
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -53487,7 +53769,10 @@ void main ()
   tmpvar_34 = ((tmpvar_24.w * tmpvar_25.w) * dot (tmpvar_33, vec4(0.25, 0.25, 0.25, 0.25)));
   vec3 i_35;
   i_35 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_34), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_34 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_35 - (2.0 * (dot (xlv_TEXCOORD2, i_35) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_36;
+  tmpvar_36 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_34), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_34 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_35 - (2.0 * (dot (xlv_TEXCOORD2, i_35) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_36));
+  color_3.xyz = (color_3.xyz * tmpvar_36);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_34), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -53892,12 +54177,12 @@ void main ()
   tmpvar_107 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_105, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_107;
   highp vec3 tmpvar_108;
-  tmpvar_108 = (light_3 * _Albedo);
+  tmpvar_108 = (light_3 + (main_24.w * tmpvar_107));
   light_3 = tmpvar_108;
   highp vec3 tmpvar_109;
-  tmpvar_109 = (light_3 + (main_24.w * tmpvar_107));
-  light_3 = tmpvar_109;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_109 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_109;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -54250,12 +54535,12 @@ void main ()
   tmpvar_107 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_105, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_107;
   highp vec3 tmpvar_108;
-  tmpvar_108 = (light_3 * _Albedo);
+  tmpvar_108 = (light_3 + (main_24.w * tmpvar_107));
   light_3 = tmpvar_108;
   highp vec3 tmpvar_109;
-  tmpvar_109 = (light_3 + (main_24.w * tmpvar_107));
-  light_3 = tmpvar_109;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_109 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_109;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -54817,9 +55102,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 518
     light += (main.w * specularReflection);
+    #line 518
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -54984,7 +55269,10 @@ void main ()
   tmpvar_24 = texture2D (_LightTexture0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3))).w;
   vec3 i_25;
   i_25 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_26));
+  color_3.xyz = (color_3.xyz * tmpvar_26);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_24), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -55302,12 +55590,12 @@ void main ()
   tmpvar_80 = (specularReflection_2 * (((tmpvar_74 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_78, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 * _Albedo);
+  tmpvar_81 = (light_3 + (main_23.w * tmpvar_80));
   light_3 = tmpvar_81;
   highp vec3 tmpvar_82;
-  tmpvar_82 = (light_3 + (main_23.w * tmpvar_80));
-  light_3 = tmpvar_82;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_82 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_82;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_74), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -55576,12 +55864,12 @@ void main ()
   tmpvar_80 = (specularReflection_2 * (((tmpvar_74 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_78, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 * _Albedo);
+  tmpvar_81 = (light_3 + (main_23.w * tmpvar_80));
   light_3 = tmpvar_81;
   highp vec3 tmpvar_82;
-  tmpvar_82 = (light_3 + (main_23.w * tmpvar_80));
-  light_3 = tmpvar_82;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_82 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_82;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_74), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -56096,9 +56384,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 496
     light += (main.w * specularReflection);
+    #line 496
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -56254,7 +56542,10 @@ void main ()
   tmpvar_23 = clamp (dot (xlv_TEXCOORD2, tmpvar_22.xyz), 0.0, 1.0);
   vec3 i_24;
   i_24 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * tmpvar_23) * 4.0), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot ((i_24 - (2.0 * (dot (xlv_TEXCOORD2, i_24) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_25;
+  tmpvar_25 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * tmpvar_23) * 4.0), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot ((i_24 - (2.0 * (dot (xlv_TEXCOORD2, i_24) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_25));
+  color_3.xyz = (color_3.xyz * tmpvar_25);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp ((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -56557,12 +56848,12 @@ void main ()
   tmpvar_78 = (specularReflection_2 * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot (tmpvar_76, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_78;
   highp vec3 tmpvar_79;
-  tmpvar_79 = (light_3 * _Albedo);
+  tmpvar_79 = (light_3 + (main_23.w * tmpvar_78));
   light_3 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 + (main_23.w * tmpvar_78));
-  light_3 = tmpvar_80;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_80 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_80;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp ((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -56822,12 +57113,12 @@ void main ()
   tmpvar_78 = (specularReflection_2 * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot (tmpvar_76, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_78;
   highp vec3 tmpvar_79;
-  tmpvar_79 = (light_3 * _Albedo);
+  tmpvar_79 = (light_3 + (main_23.w * tmpvar_78));
   light_3 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 + (main_23.w * tmpvar_78));
-  light_3 = tmpvar_80;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_80 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_80;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp ((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -57331,8 +57622,8 @@ lowp vec4 frag( in v2f IN ) {
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     #line 490
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
     light += (main.w * specularReflection);
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     #line 494
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
@@ -57495,7 +57786,10 @@ void main ()
   tmpvar_24 = ((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w);
   vec3 i_25;
   i_25 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_26));
+  color_3.xyz = (color_3.xyz * tmpvar_26);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_24), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -57823,12 +58117,12 @@ void main ()
   tmpvar_84 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_82, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_84;
   highp vec3 tmpvar_85;
-  tmpvar_85 = (light_3 * _Albedo);
+  tmpvar_85 = (light_3 + (main_24.w * tmpvar_84));
   light_3 = tmpvar_85;
   highp vec3 tmpvar_86;
-  tmpvar_86 = (light_3 + (main_24.w * tmpvar_84));
-  light_3 = tmpvar_86;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_86 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_86;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -58106,12 +58400,12 @@ void main ()
   tmpvar_84 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_82, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_84;
   highp vec3 tmpvar_85;
-  tmpvar_85 = (light_3 * _Albedo);
+  tmpvar_85 = (light_3 + (main_24.w * tmpvar_84));
   light_3 = tmpvar_85;
   highp vec3 tmpvar_86;
-  tmpvar_86 = (light_3 + (main_24.w * tmpvar_84));
-  light_3 = tmpvar_86;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_86 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_86;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -58638,9 +58932,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 505
     light += (main.w * specularReflection);
+    #line 505
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -58804,7 +59098,10 @@ void main ()
   tmpvar_24 = (texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3))).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
   vec3 i_25;
   i_25 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_26));
+  color_3.xyz = (color_3.xyz * tmpvar_26);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_24), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -59123,12 +59420,12 @@ void main ()
   tmpvar_80 = (specularReflection_2 * (((tmpvar_74 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_78, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 * _Albedo);
+  tmpvar_81 = (light_3 + (main_23.w * tmpvar_80));
   light_3 = tmpvar_81;
   highp vec3 tmpvar_82;
-  tmpvar_82 = (light_3 + (main_23.w * tmpvar_80));
-  light_3 = tmpvar_82;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_82 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_82;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_74), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -59398,12 +59695,12 @@ void main ()
   tmpvar_80 = (specularReflection_2 * (((tmpvar_74 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_78, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 * _Albedo);
+  tmpvar_81 = (light_3 + (main_23.w * tmpvar_80));
   light_3 = tmpvar_81;
   highp vec3 tmpvar_82;
-  tmpvar_82 = (light_3 + (main_23.w * tmpvar_80));
-  light_3 = tmpvar_82;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_82 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_82;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_74), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -59920,9 +60217,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 497
     light += (main.w * specularReflection);
+    #line 497
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -60085,7 +60382,10 @@ void main ()
   tmpvar_24 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
   vec3 i_25;
   i_25 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_26));
+  color_3.xyz = (color_3.xyz * tmpvar_26);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_24), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -60400,12 +60700,12 @@ void main ()
   tmpvar_79 = (specularReflection_2 * (((tmpvar_73 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_77, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 * _Albedo);
+  tmpvar_80 = (light_3 + (main_23.w * tmpvar_79));
   light_3 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 + (main_23.w * tmpvar_79));
-  light_3 = tmpvar_81;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_81 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_81;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_73), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -60672,12 +60972,12 @@ void main ()
   tmpvar_79 = (specularReflection_2 * (((tmpvar_73 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_77, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 * _Albedo);
+  tmpvar_80 = (light_3 + (main_23.w * tmpvar_79));
   light_3 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 + (main_23.w * tmpvar_79));
-  light_3 = tmpvar_81;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_81 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_81;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_73), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -61192,9 +61492,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 496
     light += (main.w * specularReflection);
+    #line 496
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -61376,7 +61676,10 @@ void main ()
   tmpvar_28 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_24.w) * tmpvar_25.w) * tmpvar_27);
   vec3 i_29;
   i_29 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_28), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_28 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_29 - (2.0 * (dot (xlv_TEXCOORD2, i_29) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_30;
+  tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_28), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_28 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_29 - (2.0 * (dot (xlv_TEXCOORD2, i_29) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_30));
+  color_3.xyz = (color_3.xyz * tmpvar_30);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_28), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -61728,12 +62031,12 @@ void main ()
   tmpvar_88 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_86, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_88;
   highp vec3 tmpvar_89;
-  tmpvar_89 = (light_3 * _Albedo);
+  tmpvar_89 = (light_3 + (main_24.w * tmpvar_88));
   light_3 = tmpvar_89;
   highp vec3 tmpvar_90;
-  tmpvar_90 = (light_3 + (main_24.w * tmpvar_88));
-  light_3 = tmpvar_90;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_90 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_90;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -62029,12 +62332,12 @@ void main ()
   tmpvar_88 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_86, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_88;
   highp vec3 tmpvar_89;
-  tmpvar_89 = (light_3 * _Albedo);
+  tmpvar_89 = (light_3 + (main_24.w * tmpvar_88));
   light_3 = tmpvar_89;
   highp vec3 tmpvar_90;
-  tmpvar_90 = (light_3 + (main_24.w * tmpvar_88));
-  light_3 = tmpvar_90;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_90 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_90;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -62576,9 +62879,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 513
     light += (main.w * specularReflection);
+    #line 513
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -62750,7 +63053,10 @@ void main ()
   tmpvar_24 = (((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w) * (_LightShadowData.x + (shadow2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x * (1.0 - _LightShadowData.x))));
   vec3 i_25;
   i_25 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_26));
+  color_3.xyz = (color_3.xyz * tmpvar_26);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_24), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -63101,12 +63407,12 @@ void main ()
   tmpvar_88 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_86, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_88;
   highp vec3 tmpvar_89;
-  tmpvar_89 = (light_3 * _Albedo);
+  tmpvar_89 = (light_3 + (main_24.w * tmpvar_88));
   light_3 = tmpvar_89;
   highp vec3 tmpvar_90;
-  tmpvar_90 = (light_3 + (main_24.w * tmpvar_88));
-  light_3 = tmpvar_90;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_90 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_90;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -63650,9 +63956,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 514
     light += (main.w * specularReflection);
+    #line 514
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -63827,7 +64133,10 @@ void main ()
   tmpvar_24 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3);
   vec3 i_25;
   i_25 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24.x), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24.x), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_26));
+  color_3.xyz = (color_3.xyz * tmpvar_26);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_24.x), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -64157,12 +64466,12 @@ void main ()
   tmpvar_84 = (specularReflection_2 * (((tmpvar_73 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_82, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_84;
   highp vec3 tmpvar_85;
-  tmpvar_85 = (light_3 * _Albedo);
+  tmpvar_85 = (light_3 + (main_23.w * tmpvar_84));
   light_3 = tmpvar_85;
   highp vec3 tmpvar_86;
-  tmpvar_86 = (light_3 + (main_23.w * tmpvar_84));
-  light_3 = tmpvar_86;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_86 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_86;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_73), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -64439,12 +64748,12 @@ void main ()
   tmpvar_79 = (specularReflection_2 * (((tmpvar_73.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_77, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 * _Albedo);
+  tmpvar_80 = (light_3 + (main_23.w * tmpvar_79));
   light_3 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 + (main_23.w * tmpvar_79));
-  light_3 = tmpvar_81;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_81 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_81;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_73.x), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -64966,9 +65275,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 502
     light += (main.w * specularReflection);
+    #line 502
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -65146,7 +65455,10 @@ void main ()
   tmpvar_24 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x);
   vec3 i_25;
   i_25 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_26;
+  tmpvar_26 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_24), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_24 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_25 - (2.0 * (dot (xlv_TEXCOORD2, i_25) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_26));
+  color_3.xyz = (color_3.xyz * tmpvar_26);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_24), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -65488,12 +65800,12 @@ void main ()
   tmpvar_85 = (specularReflection_2 * (((tmpvar_79 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_83, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_85;
   highp vec3 tmpvar_86;
-  tmpvar_86 = (light_3 * _Albedo);
+  tmpvar_86 = (light_3 + (main_23.w * tmpvar_85));
   light_3 = tmpvar_86;
   highp vec3 tmpvar_87;
-  tmpvar_87 = (light_3 + (main_23.w * tmpvar_85));
-  light_3 = tmpvar_87;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_87 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_87;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_79), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -65775,12 +66087,12 @@ void main ()
   tmpvar_79 = (specularReflection_2 * (((tmpvar_73 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_77, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_79;
   highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 * _Albedo);
+  tmpvar_80 = (light_3 + (main_23.w * tmpvar_79));
   light_3 = tmpvar_80;
   highp vec3 tmpvar_81;
-  tmpvar_81 = (light_3 + (main_23.w * tmpvar_79));
-  light_3 = tmpvar_81;
-  color_25.xyz = (tmpvar_69.xyz * light_3);
+  tmpvar_81 = (tmpvar_69.xyz + (_Albedo * light_3));
+  color_25.xyz = tmpvar_81;
+  color_25.xyz = (color_25.xyz * light_3);
   citydarkoverlay_7.w = (tmpvar_65.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_72 - 0.01)) / 0.99) * 4.0) * tmpvar_73), 0.0, 1.0), 0.0, 1.0)));
   color_25.xyz = mix (color_25, citydarkoverlay_7, citydarkoverlay_7.wwww).xyz;
   color_25.w = 1.0;
@@ -66313,9 +66625,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 506
     light += (main.w * specularReflection);
+    #line 506
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -66499,7 +66811,10 @@ void main ()
   tmpvar_28 = (tmpvar_24.w * tmpvar_27);
   vec3 i_29;
   i_29 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_28), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_28 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_29 - (2.0 * (dot (xlv_TEXCOORD2, i_29) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_30;
+  tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_28), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_28 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_29 - (2.0 * (dot (xlv_TEXCOORD2, i_29) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_30));
+  color_3.xyz = (color_3.xyz * tmpvar_30);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_28), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -66845,12 +67160,12 @@ void main ()
   tmpvar_87 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_85, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_87;
   highp vec3 tmpvar_88;
-  tmpvar_88 = (light_3 * _Albedo);
+  tmpvar_88 = (light_3 + (main_24.w * tmpvar_87));
   light_3 = tmpvar_88;
   highp vec3 tmpvar_89;
-  tmpvar_89 = (light_3 + (main_24.w * tmpvar_87));
-  light_3 = tmpvar_89;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_89 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_89;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -67144,12 +67459,12 @@ void main ()
   tmpvar_87 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_85, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_87;
   highp vec3 tmpvar_88;
-  tmpvar_88 = (light_3 * _Albedo);
+  tmpvar_88 = (light_3 + (main_24.w * tmpvar_87));
   light_3 = tmpvar_88;
   highp vec3 tmpvar_89;
-  tmpvar_89 = (light_3 + (main_24.w * tmpvar_87));
-  light_3 = tmpvar_89;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_89 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_89;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -67692,9 +68007,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 511
     light += (main.w * specularReflection);
+    #line 511
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -67881,7 +68196,10 @@ void main ()
   tmpvar_29 = ((tmpvar_24.w * tmpvar_25.w) * tmpvar_28);
   vec3 i_30;
   i_30 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_29), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_29 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_30 - (2.0 * (dot (xlv_TEXCOORD2, i_30) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_31;
+  tmpvar_31 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_29), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_29 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_30 - (2.0 * (dot (xlv_TEXCOORD2, i_30) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_31));
+  color_3.xyz = (color_3.xyz * tmpvar_31);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_29), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -68230,12 +68548,12 @@ void main ()
   tmpvar_88 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_86, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_88;
   highp vec3 tmpvar_89;
-  tmpvar_89 = (light_3 * _Albedo);
+  tmpvar_89 = (light_3 + (main_24.w * tmpvar_88));
   light_3 = tmpvar_89;
   highp vec3 tmpvar_90;
-  tmpvar_90 = (light_3 + (main_24.w * tmpvar_88));
-  light_3 = tmpvar_90;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_90 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_90;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -68532,12 +68850,12 @@ void main ()
   tmpvar_88 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_86, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_88;
   highp vec3 tmpvar_89;
-  tmpvar_89 = (light_3 * _Albedo);
+  tmpvar_89 = (light_3 + (main_24.w * tmpvar_88));
   light_3 = tmpvar_89;
   highp vec3 tmpvar_90;
-  tmpvar_90 = (light_3 + (main_24.w * tmpvar_88));
-  light_3 = tmpvar_90;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_90 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_90;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -69082,9 +69400,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 512
     light += (main.w * specularReflection);
+    #line 512
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -69301,7 +69619,10 @@ void main ()
   tmpvar_35 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_24.w) * tmpvar_25.w) * dot (tmpvar_34, vec4(0.25, 0.25, 0.25, 0.25)));
   vec3 i_36;
   i_36 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_35), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_35 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_36 - (2.0 * (dot (xlv_TEXCOORD2, i_36) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_37;
+  tmpvar_37 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_35), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_35 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_36 - (2.0 * (dot (xlv_TEXCOORD2, i_36) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_37));
+  color_3.xyz = (color_3.xyz * tmpvar_37);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_35), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -69704,12 +70025,12 @@ void main ()
   tmpvar_104 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_102, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_104;
   highp vec3 tmpvar_105;
-  tmpvar_105 = (light_3 * _Albedo);
+  tmpvar_105 = (light_3 + (main_24.w * tmpvar_104));
   light_3 = tmpvar_105;
   highp vec3 tmpvar_106;
-  tmpvar_106 = (light_3 + (main_24.w * tmpvar_104));
-  light_3 = tmpvar_106;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_106 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_106;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -70056,12 +70377,12 @@ void main ()
   tmpvar_104 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_102, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_104;
   highp vec3 tmpvar_105;
-  tmpvar_105 = (light_3 * _Albedo);
+  tmpvar_105 = (light_3 + (main_24.w * tmpvar_104));
   light_3 = tmpvar_105;
   highp vec3 tmpvar_106;
-  tmpvar_106 = (light_3 + (main_24.w * tmpvar_104));
-  light_3 = tmpvar_106;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_106 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_106;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -70623,9 +70944,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 521
     light += (main.w * specularReflection);
+    #line 521
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -70808,7 +71129,10 @@ void main ()
   tmpvar_27 = (((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w) * dot (tmpvar_26, vec4(0.25, 0.25, 0.25, 0.25)));
   vec3 i_28;
   i_28 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_27), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_27 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_28 - (2.0 * (dot (xlv_TEXCOORD2, i_28) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_29;
+  tmpvar_29 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_27), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_27 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_28 - (2.0 * (dot (xlv_TEXCOORD2, i_28) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_29));
+  color_3.xyz = (color_3.xyz * tmpvar_29);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_27), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -71181,12 +71505,12 @@ void main ()
   tmpvar_97 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_95, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_97;
   highp vec3 tmpvar_98;
-  tmpvar_98 = (light_3 * _Albedo);
+  tmpvar_98 = (light_3 + (main_24.w * tmpvar_97));
   light_3 = tmpvar_98;
   highp vec3 tmpvar_99;
-  tmpvar_99 = (light_3 + (main_24.w * tmpvar_97));
-  light_3 = tmpvar_99;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_99 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_99;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -71740,9 +72064,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 521
     light += (main.w * specularReflection);
+    #line 521
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -71954,7 +72278,10 @@ void main ()
   tmpvar_33 = (tmpvar_24.w * dot (tmpvar_32, vec4(0.25, 0.25, 0.25, 0.25)));
   vec3 i_34;
   i_34 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_33), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_33 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_34 - (2.0 * (dot (xlv_TEXCOORD2, i_34) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_35;
+  tmpvar_35 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_33), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_33 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_34 - (2.0 * (dot (xlv_TEXCOORD2, i_34) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_35));
+  color_3.xyz = (color_3.xyz * tmpvar_35);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_33), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -72356,12 +72683,12 @@ void main ()
   tmpvar_106 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_104, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_106;
   highp vec3 tmpvar_107;
-  tmpvar_107 = (light_3 * _Albedo);
+  tmpvar_107 = (light_3 + (main_24.w * tmpvar_106));
   light_3 = tmpvar_107;
   highp vec3 tmpvar_108;
-  tmpvar_108 = (light_3 + (main_24.w * tmpvar_106));
-  light_3 = tmpvar_108;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_108 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_108;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -72711,12 +73038,12 @@ void main ()
   tmpvar_106 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_104, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_106;
   highp vec3 tmpvar_107;
-  tmpvar_107 = (light_3 * _Albedo);
+  tmpvar_107 = (light_3 + (main_24.w * tmpvar_106));
   light_3 = tmpvar_107;
   highp vec3 tmpvar_108;
-  tmpvar_108 = (light_3 + (main_24.w * tmpvar_106));
-  light_3 = tmpvar_108;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_108 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_108;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -73276,9 +73603,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 517
     light += (main.w * specularReflection);
+    #line 517
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -73493,7 +73820,10 @@ void main ()
   tmpvar_34 = ((tmpvar_24.w * tmpvar_25.w) * dot (tmpvar_33, vec4(0.25, 0.25, 0.25, 0.25)));
   vec3 i_35;
   i_35 = -(tmpvar_22.xyz);
-  color_3.xyz = (tmpvar_21.xyz * ((clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_34), 0.0, 1.0))), 0.0, 1.0) * _Albedo) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_34 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_35 - (2.0 * (dot (xlv_TEXCOORD2, i_35) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess))))));
+  vec3 tmpvar_36;
+  tmpvar_36 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_23) * 4.0) * tmpvar_34), 0.0, 1.0))), 0.0, 1.0) + (tmpvar_16.w * (vec3(clamp (floor((1.0 + tmpvar_23)), 0.0, 1.0)) * (((tmpvar_34 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_35 - (2.0 * (dot (xlv_TEXCOORD2, i_35) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
+  color_3.xyz = (tmpvar_21.xyz + (_Albedo * tmpvar_36));
+  color_3.xyz = (color_3.xyz * tmpvar_36);
   citydarkoverlay_1.w = (tmpvar_19.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_23 - 0.01)) / 0.99) * 4.0) * tmpvar_34), 0.0, 1.0), 0.0, 1.0)));
   color_3.xyz = mix (color_3, citydarkoverlay_1, citydarkoverlay_1.wwww).xyz;
   color_3.w = 1.0;
@@ -73898,12 +74228,12 @@ void main ()
   tmpvar_107 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_105, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_107;
   highp vec3 tmpvar_108;
-  tmpvar_108 = (light_3 * _Albedo);
+  tmpvar_108 = (light_3 + (main_24.w * tmpvar_107));
   light_3 = tmpvar_108;
   highp vec3 tmpvar_109;
-  tmpvar_109 = (light_3 + (main_24.w * tmpvar_107));
-  light_3 = tmpvar_109;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_109 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_109;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -74256,12 +74586,12 @@ void main ()
   tmpvar_107 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_105, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
   specularReflection_2 = tmpvar_107;
   highp vec3 tmpvar_108;
-  tmpvar_108 = (light_3 * _Albedo);
+  tmpvar_108 = (light_3 + (main_24.w * tmpvar_107));
   light_3 = tmpvar_108;
   highp vec3 tmpvar_109;
-  tmpvar_109 = (light_3 + (main_24.w * tmpvar_107));
-  light_3 = tmpvar_109;
-  color_26.xyz = (tmpvar_70.xyz * light_3);
+  tmpvar_109 = (tmpvar_70.xyz + (_Albedo * light_3));
+  color_26.xyz = tmpvar_109;
+  color_26.xyz = (color_26.xyz * light_3);
   citydarkoverlay_8.w = (tmpvar_66.w * (1.0 - clamp (clamp (((((_LightColor0.w * (tmpvar_73 - 0.01)) / 0.99) * 4.0) * atten_4), 0.0, 1.0), 0.0, 1.0)));
   color_26.xyz = mix (color_26, citydarkoverlay_8, citydarkoverlay_8.wwww).xyz;
   color_26.w = 1.0;
@@ -74823,9 +75153,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light *= _Albedo;
-    #line 518
     light += (main.w * specularReflection);
+    #line 518
+    color.xyz += (_Albedo * light);
     color.xyz *= light;
     lightIntensity = xll_saturate_f(((((_LightColor0.w * (NdotL - 0.01)) / 0.99) * 4.0) * atten));
     citydarkoverlay.w *= (1.0 - xll_saturate_f(lightIntensity));
@@ -74861,7 +75191,7 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 60
-//   d3d9 - ALU: 104 to 147, TEX: 6 to 21
+//   d3d9 - ALU: 105 to 148, TEX: 6 to 21
 SubProgram "opengl " {
 Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "POINT" "SHADOWS_OFF" }
 "!!GLSL"
@@ -74883,7 +75213,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTexture0] 2D
 "ps_3_0
-; 106 ALU, 7 TEX
+; 107 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -74899,108 +75229,109 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord5 v4.xyz
 mul r0.xy, v4, c6.x
 mul r1.xy, v4.zyzw, c6.x
-mul r2.z, v0.x, c7.x
-dsx r4.xy, v4
-dsy r4.zw, v4.xyxy
-abs r0.w, v4.z
-abs r3.xy, v4
+dsy r5.xy, v4
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r3.x, r1, r0
-max r0.z, r3.x, r0.w
-rcp r1.w, r0.z
-min r0.z, r3.x, r0.w
-mul r1.w, r0.z, r1
-mul r2.x, r1.w, r1.w
-mad r2.y, r2.x, c12, c12.z
-mad r2.y, r2, r2.x, c12.w
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v4.xyxy
+abs r1.x, v4.z
+mad_pp r2.xyz, r1.z, r2, r0
+max r0.w, r1.z, r1.x
+min r0.x, r1.z, r1
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r1.y, r0.w, r0.w
 mul r0.xy, v4.zxzw, c6.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.z, r2, c11
-mad_pp r1.xyz, r2.z, r1, r0
-mad r2.y, r2, r2.x, c13.x
-mad r0.x, r2.y, r2, c13.y
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.w, r0, r2
+mad r2.w, r1.y, c12.y, c12.z
+mad r0.x, r2.w, r1.y, c12.w
+mad r0.x, r0, r1.y, c13
+mad r0.x, r0, r1.y, c13.y
+mad r0.x, r0, r1.y, c13.z
+mul r1.y, r0.x, r0.w
 dp4 r0.y, c1, c1
-mad r0.x, r0, r2, c13.z
-rsq r0.z, r0.y
-mul r0.y, r0.x, r1.w
-mul r2.xyz, r0.z, c1
-add r0.x, r3, -r0.w
-add r0.z, -r0.y, c13.w
-dp3_pp r2.w, v2, -r2
-cmp r1.w, -r0.x, r0.y, r0.z
-mul_pp r0.xyz, v2, r2.w
-mad_pp r0.xyz, -r0, c11.z, -r2
-dp3_pp_sat r0.y, r0, v1
-pow_pp r3, r0.y, c5.x
-add r2.w, -r1, c11
-cmp r1.w, v4.z, r1, r2
-cmp r0.x, v4, r1.w, -r1.w
-mad r3.z, r0.x, c14.x, c14.y
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
-abs r0.w, v4.y
-add r2.w, -r0, c10.y
-mad r1.w, r0, c10.z, c10
-mad r1.w, r1, r0, c11.x
+rsq r0.y, r0.y
+mul r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c11.z, -r4
+add r0.w, r1.z, -r1.x
+add r1.w, -r1.y, c13
+cmp r0.w, -r0, r1.y, r1
+add r1.y, -r0.w, c11.w
+add_pp r3.xyz, -r2, c10.y
+dp3_pp_sat r1.z, r0, v1
+cmp r1.y, v4.z, r0.w, r1
+pow_pp r0, r1.z, c5.x
+cmp r0.y, v4.x, r1, -r1
+mad r1.z, r0.y, c14.x, c14.y
+add r0.z, -r1.x, c10.y
+mad r0.y, r1.x, c10.z, c10.w
+mad r0.y, r1.x, r0, c11.x
+mad r0.y, r1.x, r0, c11
+abs r1.x, v4.y
+add r1.w, -r1.x, c10.y
+mad r1.y, r1.x, c10.z, c10.w
+mad r1.y, r1, r1.x, c11.x
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r0.z, r0.y, r0
+cmp r0.y, v4.z, c10.x, c10
+mul r0.w, r0.y, r0.z
+mad r0.w, -r0, c11.z, r0.z
+rsq r1.w, r1.w
+mad r1.x, r1.y, r1, c11.y
+rcp r1.w, r1.w
+mul r1.y, r1.x, r1.w
+cmp r1.x, v4.y, c10, c10.y
+mul r1.w, r1.x, r1.y
+mad r0.z, -r1.w, c11, r1.y
+mad r0.w, r0.y, c11, r0
+mad r0.y, r1.x, c11.w, r0.z
+mul r0.z, r0.w, c12.x
+dsy r0.w, r0.z
+mul r1.w, r0.y, c12.x
+dsx r1.y, r0.z
+dsx r0.yz, v4.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.y, r5.z, r5.w
+add r0.z, r5.x, r5.y
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v4.z, c10, c10.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c11, r0.y
-rsq r2.w, r2.w
-mad r0.w, r1, r0, c11.y
-rcp r2.w, r2.w
-mul r1.w, r0, r2
-cmp r0.w, v4.y, c10.x, c10.y
-mul r2.w, r0, r1
-mad r0.y, -r2.w, c11.z, r1.w
-mad r0.z, r0.x, c11.w, r0
-mad r0.x, r0.w, c11.w, r0.y
-mul r0.y, r0.z, c12.x
-mul r3.w, r0.x, c12.x
-dsx r0.w, r0.y
-mul r4.xy, r4, r4
-mul r4.zw, r4, r4
-add r0.x, r4, r4.y
-add r0.z, r4, r4.w
+mul r1.x, r0.y, c14
 rsq r0.z, r0.z
-rsq r0.x, r0.x
-rcp r1.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c14.x
-mul r0.x, r1.w, c14
-dsy r0.y, r0
-texldd r0, r3.zwzw, s0, r0.zwzw, r0
-mul_pp r1.xyz, r0, r1
-dp3_pp_sat r0.y, v2, r2
-add_pp r0.z, r0.y, c10.y
+rcp r0.z, r0.z
+mul r0.z, r0, c14.x
+texldd r1, r1.zwzw, s0, r1, r0.zwzw
+mov_pp r0.z, r0.x
+dp3_pp_sat r0.y, v2, r4
+add_pp r0.w, r0.y, c10.y
 dp3 r0.x, v3, v3
 texld r0.x, r0.x, s2
-mul r2.xyz, r0.x, c2
-frc_pp r1.w, r0.z
+mul r4.xyz, r0.x, c2
+mul r4.xyz, r4, c3
 mul_pp r0.y, r0, c2.w
 mul_pp r0.y, r0, r0.x
-add_pp_sat r0.z, r0, -r1.w
-mov_pp r2.w, r3.x
-mul r2.xyz, r2, c3
-mul r2.xyz, r2, r2.w
-mul r2.xyz, r0.z, r2
-mul r2.xyz, r0.w, r2
+mul r4.xyz, r4, r0.z
+frc_pp r2.w, r0
+add_pp_sat r0.z, r0.w, -r2.w
+mul r4.xyz, r0.z, r4
 mul_pp_sat r0.w, r0.y, c14.z
 mov r0.x, c8
 add r0.xyz, c2, r0.x
 mad_sat r0.xyz, r0, r0.w, c0
-mad_pp r2.xyz, r0, c9.x, r2
-mul_pp r0.xyz, r1, c4
-mul_pp oC0.xyz, r0, r2
+mul r4.xyz, r1.w, r4
+mul r0.w, v0.x, c7.x
+mul_sat r0.w, r0, c11.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c9.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c4, r3
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c10.y
 "
 }
@@ -75040,7 +75371,7 @@ Float 9 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 104 ALU, 6 TEX
+; 105 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
@@ -75054,60 +75385,57 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord5 v3.xyz
 mul r0.xy, v3, c6.x
 mul r1.xy, v3.zyzw, c6.x
-mul r2.y, v0.x, c7.x
-dsx r3.zw, v3.xyxy
+dsx r4.zw, v3.xyxy
 abs r2.w, v3.z
-abs r3.xy, v3
-max r0.w, r3.x, r2
-rcp r1.w, r0.w
-min r0.w, r3.x, r2
-mul r0.w, r0, r1
-mul r1.w, r0, r0
-mad r2.x, r1.w, c12.y, c12.z
+abs r4.xy, v3
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
 add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r3.x, r1, r0
+mad_pp r1.xyz, r4.x, r1, r0
+max r0.w, r4.x, r2
+min r0.x, r4, r2.w
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r1.w, r0, r0
 mul r0.xy, v3.zxzw, c6.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.y, r2, c11.z
-mad_pp r1.xyz, r2.y, r1, r0
-mad r2.x, r2, r1.w, c12.w
-mad r0.x, r2, r1.w, c13
+mad_pp r1.xyz, r4.y, r0, r1
+mad r2.x, r1.w, c12.y, c12.z
+mad r0.x, r2, r1.w, c12.w
+mad r0.x, r0, r1.w, c13
 mad r0.x, r0, r1.w, c13.y
 mad r0.x, r0, r1.w, c13.z
 mul r1.w, r0.x, r0
 dp4_pp r0.y, c1, c1
 rsq_pp r0.y, r0.y
-mul_pp r2.xyz, r0.y, c1
-dp3_pp r0.x, v2, -r2
+mul_pp r3.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r3
 mul_pp r0.xyz, v2, r0.x
-mad_pp r0.xyz, -r0, c11.z, -r2
-add r0.w, r3.x, -r2
-add r3.y, -r1.w, c13.w
-cmp r0.w, -r0, r1, r3.y
+mad_pp r0.xyz, -r0, c11.z, -r3
+add_pp r2.xyz, -r1, c10.y
+add r3.w, -r1, c13
+add r0.w, r4.x, -r2
+cmp r0.w, -r0, r1, r3
 add r1.w, -r0, c11
-dp3_pp_sat r3.x, r0, v1
+dp3_pp_sat r3.w, r0, v1
 cmp r1.w, v3.z, r0, r1
-pow_pp r0, r3.x, c5.x
+pow_pp r0, r3.w, c5.x
 cmp r0.w, v3.x, r1, -r1
-dp3_pp_sat r1.w, v2, r2
-add_pp r2.x, r1.w, c10.y
-mov_pp r2.z, r0.x
-frc_pp r2.y, r2.x
-mad r3.x, r0.w, c14, c14.y
+dp3_pp_sat r1.w, v2, r3
+add_pp r3.y, r1.w, c10
+mov_pp r3.z, r0.x
+mad r4.x, r0.w, c14, c14.y
 abs r0.w, v3.y
-add r3.y, -r0.w, c10
+frc_pp r3.x, r3.y
+add r3.w, -r0, c10.y
 mov r0.xyz, c2
 mul r0.xyz, c3, r0
-rsq r3.y, r3.y
+rsq r3.w, r3.w
 mul_pp r1.w, r1, c2
-mul r0.xyz, r0, r2.z
-add_pp_sat r2.x, r2, -r2.y
-mul r2.xyz, r2.x, r0
+mul r0.xyz, r0, r3.z
+add_pp_sat r3.x, r3.y, -r3
+mul r3.xyz, r3.x, r0
 add r0.y, -r2.w, c10
 mad r0.x, r2.w, c10.z, c10.w
 mad r0.x, r2.w, r0, c11
@@ -75121,21 +75449,21 @@ cmp r0.x, v3.z, c10, c10.y
 mul r0.z, r0.x, r0.y
 mad r0.z, -r0, c11, r0.y
 mad r0.w, r2, r0, c11.y
-rcp r3.y, r3.y
-mul r2.w, r0, r3.y
+rcp r3.w, r3.w
+mul r2.w, r0, r3
 cmp r0.w, v3.y, c10.x, c10.y
-mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c11.z, r2.w
+mul r3.w, r0, r2
+mad r0.y, -r3.w, c11.z, r2.w
 mad r0.z, r0.x, c11.w, r0
 mad r0.x, r0.w, c11.w, r0.y
 mul r0.y, r0.z, c12.x
-mul r3.y, r0.x, c12.x
+mul r4.y, r0.x, c12.x
 dsx r0.w, r0.y
+mul r4.zw, r4, r4
 dsy r0.xz, v3.xyyw
 mul r0.xz, r0, r0
 add r0.z, r0.x, r0
-mul r3.zw, r3, r3
-add r2.w, r3.z, r3
+add r2.w, r4.z, r4
 rsq r0.x, r2.w
 rsq r0.z, r0.z
 rcp r0.x, r0.x
@@ -75143,16 +75471,20 @@ rcp r2.w, r0.z
 mul r0.z, r0.x, c14.x
 dsy r0.y, r0
 mul r0.x, r2.w, c14
-texldd r0, r3, s0, r0.zwzw, r0
-mul_pp r0.xyz, r0, r1
-mul r1.xyz, r0.w, r2
+texldd r0, r4, s0, r0.zwzw, r0
+mul r4.xyz, r0.w, r3
 mov r0.w, c8.x
+add r3.xyz, c2, r0.w
 mul_pp_sat r1.w, r1, c14.z
-add r2.xyz, c2, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r1.xyz, r2, c9.x, r1
-mul_pp r0.xyz, r0, c4
-mul_pp oC0.xyz, r0, r1
+mad_sat r3.xyz, r3, r1.w, c0
+mul r0.w, v0.x, c7.x
+mul_sat r0.w, r0, c11.z
+mad_pp r1.xyz, r0.w, r2, r1
+add_pp r3.xyz, r3, r4
+mul r2.xyz, r3, c9.x
+mul_pp r0.xyz, r0, r1
+mad_pp r0.xyz, r0, c4, r2
+mul_pp oC0.xyz, r0, r3
 mov_pp oC0.w, c10.y
 "
 }
@@ -75194,7 +75526,7 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTexture0] 2D
 SetTexture 3 [_LightTextureB0] 2D
 "ps_3_0
-; 111 ALU, 8 TEX
+; 112 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -75211,114 +75543,115 @@ dcl_texcoord3 v3
 dcl_texcoord5 v4.xyz
 mul r0.xy, v4, c6.x
 mul r1.xy, v4.zyzw, c6.x
-mul r2.z, v0.x, c7.x
-dsx r4.xy, v4
-dsy r4.zw, v4.xyxy
-abs r1.w, v4.z
-abs r3.xy, v4
+dsy r5.xy, v4
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r3.x, r1, r0
-max r0.z, r3.x, r1.w
-rcp r0.w, r0.z
-min r0.z, r3.x, r1.w
-mul r0.w, r0.z, r0
-mul r2.x, r0.w, r0.w
-mad r2.y, r2.x, c12, c12.z
-mad r2.y, r2, r2.x, c12.w
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v4.xyxy
+abs r1.x, v4.z
+mad_pp r2.xyz, r1.z, r2, r0
+max r0.w, r1.z, r1.x
+min r0.x, r1.z, r1
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r1.y, r0.w, r0.w
 mul r0.xy, v4.zxzw, c6.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.z, r2, c11
-mad_pp r1.xyz, r2.z, r1, r0
-mad r2.y, r2, r2.x, c13.x
-mad r0.x, r2.y, r2, c13.y
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.w, r0, r2
+mad r2.w, r1.y, c12.y, c12.z
+mad r0.x, r2.w, r1.y, c12.w
+mad r0.x, r0, r1.y, c13
+mad r0.x, r0, r1.y, c13.y
+mad r0.x, r0, r1.y, c13.z
+mul r1.y, r0.x, r0.w
 dp4 r0.y, c1, c1
-mad r0.x, r0, r2, c13.z
-rsq r0.z, r0.y
-mul r0.y, r0.x, r0.w
-mul r2.xyz, r0.z, c1
-dp3_pp r2.w, v2, -r2
-add r0.x, r3, -r1.w
-add r0.z, -r0.y, c13.w
-cmp r0.w, -r0.x, r0.y, r0.z
-mul_pp r0.xyz, v2, r2.w
-mad_pp r0.xyz, -r0, c11.z, -r2
-add r2.w, -r0, c11
-cmp r0.w, v4.z, r0, r2
-cmp r2.w, v4.x, r0, -r0
-dp3_pp_sat r3.x, r0, v1
-pow_pp r0, r3.x, c5.x
-add r0.z, -r1.w, c10.y
-mad r0.y, r1.w, c10.z, c10.w
-mad r0.y, r1.w, r0, c11.x
-mad r0.y, r1.w, r0, c11
-abs r1.w, v4.y
-mad r3.z, r2.w, c14.x, c14.y
-add r3.x, -r1.w, c10.y
-mad r2.w, r1, c10.z, c10
-mad r2.w, r2, r1, c11.x
+rsq r0.y, r0.y
+mul r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c11.z, -r4
+add r0.w, r1.z, -r1.x
+add r1.w, -r1.y, c13
+cmp r0.w, -r0, r1.y, r1
+add r1.y, -r0.w, c11.w
+dp3_pp_sat r2.w, v2, r4
+add_pp r3.xyz, -r2, c10.y
+dp3_pp_sat r1.z, r0, v1
+cmp r1.y, v4.z, r0.w, r1
+pow_pp r0, r1.z, c5.x
+cmp r0.y, v4.x, r1, -r1
+mov_pp r3.w, r0.x
+mad r1.z, r0.y, c14.x, c14.y
+add r0.z, -r1.x, c10.y
+mad r0.y, r1.x, c10.z, c10.w
+mad r0.y, r1.x, r0, c11.x
+mad r0.y, r1.x, r0, c11
+abs r1.x, v4.y
+add r1.w, -r1.x, c10.y
+mad r1.y, r1.x, c10.z, c10.w
+mad r1.y, r1, r1.x, c11.x
+rcp r0.x, v3.w
+mad r4.xy, v3, r0.x, c14.y
 rsq r0.z, r0.z
 rcp r0.z, r0.z
 mul r0.z, r0.y, r0
 cmp r0.y, v4.z, c10.x, c10
 mul r0.w, r0.y, r0.z
 mad r0.w, -r0, c11.z, r0.z
-rsq r3.x, r3.x
-dp3_pp_sat r2.z, v2, r2
-mad r1.w, r2, r1, c11.y
-rcp r3.x, r3.x
-mul r2.w, r1, r3.x
-cmp r1.w, v4.y, c10.x, c10.y
-mul r3.x, r1.w, r2.w
-mad r0.z, -r3.x, c11, r2.w
+rsq r1.w, r1.w
+dp3 r0.x, v3, v3
+mad r1.x, r1.y, r1, c11.y
+rcp r1.w, r1.w
+mul r1.y, r1.x, r1.w
+cmp r1.x, v4.y, c10, c10.y
+mul r1.w, r1.x, r1.y
+mad r0.z, -r1.w, c11, r1.y
 mad r0.w, r0.y, c11, r0
-mad r0.y, r1.w, c11.w, r0.z
+mad r0.y, r1.x, c11.w, r0.z
 mul r0.z, r0.w, c12.x
 dsy r0.w, r0.z
-mul r3.w, r0.y, c12.x
-mul r4.xy, r4, r4
-add r0.y, r4.x, r4
+mul r1.w, r0.y, c12.x
+dsx r1.y, r0.z
+dsx r0.yz, v4.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.y, r5.z, r5.w
+add r0.z, r5.x, r5.y
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-dsx r3.y, r0.z
-mul r4.zw, r4, r4
-add r0.z, r4, r4.w
+mul r1.x, r0.y, c14
 rsq r0.z, r0.z
 rcp r0.z, r0.z
 mul r0.z, r0, c14.x
-mul r3.x, r0.y, c14
-texldd r3, r3.zwzw, s0, r3, r0.zwzw
-mov_pp r1.w, r0.x
-rcp r0.x, v3.w
-mad r2.xy, v3, r0.x, c14.y
-texld r0.w, r2, s2
-add_pp r2.x, r2.z, c10.y
-dp3 r0.x, v3, v3
+texldd r1, r1.zwzw, s0, r1, r0.zwzw
+texld r0.w, r4, s2
+add_pp r4.x, r2.w, c10.y
 cmp r0.y, -v3.z, c10.x, c10
 mul_pp r0.y, r0, r0.w
 texld r0.x, r0.x, s3
 mul_pp r0.w, r0.y, r0.x
 mul r0.xyz, r0.w, c2
 mul r0.xyz, r0, c3
-mul r0.xyz, r0, r1.w
-frc_pp r2.y, r2.x
-add_pp_sat r1.w, r2.x, -r2.y
-mul r0.xyz, r1.w, r0
-mul_pp r1.w, r2.z, c2
-mul_pp r1.w, r1, r0
-mov r0.w, c8.x
+mul r0.xyz, r0, r3.w
+frc_pp r4.y, r4.x
+add_pp_sat r3.w, r4.x, -r4.y
 mul r0.xyz, r3.w, r0
-mul_pp r1.xyz, r3, r1
-mul_pp_sat r1.w, r1, c14.z
-add r2.xyz, c2, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r2.xyz, r2, c9.x, r0
-mul_pp r0.xyz, r1, c4
-mul_pp oC0.xyz, r0, r2
+mul r4.xyz, r1.w, r0
+mul_pp r2.w, r2, c2
+mul_pp r0.y, r2.w, r0.w
+mul_pp_sat r0.w, r0.y, c14.z
+mov r0.x, c8
+add r0.xyz, c2, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+mul r0.w, v0.x, c7.x
+mul_sat r0.w, r0, c11.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c9.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c4, r3
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c10.y
 "
 }
@@ -75360,7 +75693,7 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTextureB0] 2D
 SetTexture 3 [_LightTexture0] CUBE
 "ps_3_0
-; 107 ALU, 8 TEX
+; 108 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -75377,110 +75710,111 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord5 v4.xyz
 mul r0.xy, v4, c6.x
 mul r1.xy, v4.zyzw, c6.x
-mul r2.z, v0.x, c7.x
-dsx r4.xy, v4
-dsy r4.zw, v4.xyxy
-abs r1.w, v4.z
-abs r3.xy, v4
+dsy r5.xy, v4
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r3.x, r1, r0
-max r0.z, r3.x, r1.w
-rcp r0.w, r0.z
-min r0.z, r3.x, r1.w
-mul r0.w, r0.z, r0
-mul r2.x, r0.w, r0.w
-mad r2.y, r2.x, c12, c12.z
-mad r2.y, r2, r2.x, c12.w
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v4.xyxy
+abs r1.x, v4.z
+mad_pp r2.xyz, r1.z, r2, r0
+max r0.w, r1.z, r1.x
+min r0.x, r1.z, r1
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r1.y, r0.w, r0.w
 mul r0.xy, v4.zxzw, c6.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.z, r2, c11
-mad_pp r1.xyz, r2.z, r1, r0
-mad r2.y, r2, r2.x, c13.x
-mad r0.x, r2.y, r2, c13.y
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.w, r0, r2
+mad r2.w, r1.y, c12.y, c12.z
+mad r0.x, r2.w, r1.y, c12.w
+mad r0.x, r0, r1.y, c13
+mad r0.x, r0, r1.y, c13.y
+mad r0.x, r0, r1.y, c13.z
+mul r1.y, r0.x, r0.w
 dp4 r0.y, c1, c1
-mad r0.x, r0, r2, c13.z
-rsq r0.z, r0.y
-mul r0.y, r0.x, r0.w
-mul r2.xyz, r0.z, c1
-add r0.x, r3, -r1.w
-add r0.z, -r0.y, c13.w
-dp3_pp r2.w, v2, -r2
-cmp r0.w, -r0.x, r0.y, r0.z
-mul_pp r0.xyz, v2, r2.w
-mad_pp r0.xyz, -r0, c11.z, -r2
-add r2.w, -r0, c11
-cmp r0.w, v4.z, r0, r2
-cmp r2.w, v4.x, r0, -r0
-dp3_pp_sat r3.x, r0, v1
-pow_pp r0, r3.x, c5.x
-add r0.z, -r1.w, c10.y
-mad r0.y, r1.w, c10.z, c10.w
-mad r0.y, r1.w, r0, c11.x
-mad r0.y, r1.w, r0, c11
-abs r1.w, v4.y
-mad r3.z, r2.w, c14.x, c14.y
-add r3.x, -r1.w, c10.y
-mad r2.w, r1, c10.z, c10
-mad r2.w, r2, r1, c11.x
+rsq r0.y, r0.y
+mul r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c11.z, -r4
+dp3_pp_sat r2.w, v2, r4
+add_pp r4.x, r2.w, c10.y
+add r0.w, r1.z, -r1.x
+add r1.w, -r1.y, c13
+cmp r0.w, -r0, r1.y, r1
+add r1.y, -r0.w, c11.w
+add_pp r3.xyz, -r2, c10.y
+dp3_pp_sat r1.z, r0, v1
+cmp r1.y, v4.z, r0.w, r1
+pow_pp r0, r1.z, c5.x
+cmp r0.y, v4.x, r1, -r1
+mov_pp r3.w, r0.x
+mad r1.z, r0.y, c14.x, c14.y
+add r0.z, -r1.x, c10.y
+mad r0.y, r1.x, c10.z, c10.w
+mad r0.y, r1.x, r0, c11.x
+mad r0.y, r1.x, r0, c11
+abs r1.x, v4.y
+add r1.w, -r1.x, c10.y
+mad r1.y, r1.x, c10.z, c10.w
+mad r1.y, r1, r1.x, c11.x
 rsq r0.z, r0.z
 rcp r0.z, r0.z
 mul r0.z, r0.y, r0
 cmp r0.y, v4.z, c10.x, c10
 mul r0.w, r0.y, r0.z
 mad r0.w, -r0, c11.z, r0.z
-rsq r3.x, r3.x
-mad r1.w, r2, r1, c11.y
-rcp r3.x, r3.x
-mul r2.w, r1, r3.x
-cmp r1.w, v4.y, c10.x, c10.y
-mul r3.x, r1.w, r2.w
-mad r0.z, -r3.x, c11, r2.w
+rsq r1.w, r1.w
+dp3 r0.x, v3, v3
+mad r1.x, r1.y, r1, c11.y
+rcp r1.w, r1.w
+mul r1.y, r1.x, r1.w
+cmp r1.x, v4.y, c10, c10.y
+mul r1.w, r1.x, r1.y
+mad r0.z, -r1.w, c11, r1.y
 mad r0.w, r0.y, c11, r0
-mad r0.y, r1.w, c11.w, r0.z
+mad r0.y, r1.x, c11.w, r0.z
 mul r0.z, r0.w, c12.x
 dsy r0.w, r0.z
-mul r3.w, r0.y, c12.x
-mul r4.xy, r4, r4
-add r0.y, r4.x, r4
+mul r1.w, r0.y, c12.x
+dsx r1.y, r0.z
+dsx r0.yz, v4.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.y, r5.z, r5.w
+add r0.z, r5.x, r5.y
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-dsx r3.y, r0.z
-mul r4.zw, r4, r4
-add r0.z, r4, r4.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
+mul r1.x, r0.y, c14
 mul r0.z, r0, c14.x
-mul r3.x, r0.y, c14
-texldd r3, r3.zwzw, s0, r3, r0.zwzw
-mov_pp r0.z, r0.x
-dp3 r0.x, v3, v3
-dp3_pp_sat r0.y, v2, r2
+texldd r1, r1.zwzw, s0, r1, r0.zwzw
 texld r0.x, r0.x, s2
 texld r0.w, v3, s3
 mul r0.w, r0.x, r0
-add_pp r0.x, r0.y, c10.y
-frc_pp r1.w, r0.x
-add_pp_sat r0.x, r0, -r1.w
-mul r2.xyz, r0.w, c2
-mul_pp r1.w, r0.y, c2
-mul_pp r1.w, r1, r0
-mul r2.xyz, r2, c3
-mul r2.xyz, r2, r0.z
-mul r2.xyz, r0.x, r2
-mul r0.xyz, r3.w, r2
-mov r0.w, c8.x
-mul_pp r1.xyz, r3, r1
-mul_pp_sat r1.w, r1, c14.z
-add r2.xyz, c2, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r2.xyz, r2, c9.x, r0
-mul_pp r0.xyz, r1, c4
-mul_pp oC0.xyz, r0, r2
+mul r0.xyz, r0.w, c2
+mul r0.xyz, r0, c3
+mul r0.xyz, r0, r3.w
+frc_pp r4.y, r4.x
+add_pp_sat r3.w, r4.x, -r4.y
+mul r0.xyz, r3.w, r0
+mul r4.xyz, r1.w, r0
+mul_pp r2.w, r2, c2
+mul_pp r0.y, r2.w, r0.w
+mul_pp_sat r0.w, r0.y, c14.z
+mov r0.x, c8
+add r0.xyz, c2, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+mul r0.w, v0.x, c7.x
+mul_sat r0.w, r0, c11.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c9.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c4, r3
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c10.y
 "
 }
@@ -75521,7 +75855,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTexture0] 2D
 "ps_3_0
-; 105 ALU, 7 TEX
+; 106 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -75537,53 +75871,49 @@ dcl_texcoord3 v3.xy
 dcl_texcoord5 v4.xyz
 mul r0.xy, v4, c6.x
 mul r1.xy, v4.zyzw, c6.x
-mul r2.z, v0.x, c7.x
-dsx r4.xy, v4
-dsy r4.zw, v4.xyxy
+dsy r5.xy, v4
 abs r1.w, v4.z
 abs r3.xy, v4
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
 add_pp r1.xyz, r1, -r0
 mad_pp r1.xyz, r3.x, r1, r0
-max r0.z, r3.x, r1.w
-rcp r0.w, r0.z
-min r0.z, r3.x, r1.w
-mul r0.w, r0.z, r0
-mul r2.x, r0.w, r0.w
-mad r2.y, r2.x, c12, c12.z
-mad r2.y, r2, r2.x, c12.w
+max r0.w, r3.x, r1
+min r0.x, r3, r1.w
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r2.w, r0, r0
 mul r0.xy, v4.zxzw, c6.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.z, r2, c11
-mad_pp r1.xyz, r2.z, r1, r0
-mad r2.y, r2, r2.x, c13.x
-mad r0.x, r2.y, r2, c13.y
+mad_pp r1.xyz, r3.y, r0, r1
+mad r2.x, r2.w, c12.y, c12.z
+mad r0.x, r2, r2.w, c12.w
+mad r0.x, r0, r2.w, c13
+mad r0.x, r0, r2.w, c13.y
+mad r0.x, r0, r2.w, c13.z
+mul r2.w, r0.x, r0
 dp4_pp r0.y, c1, c1
-mad r0.x, r0, r2, c13.z
-rsq_pp r0.z, r0.y
-mul_pp r2.xyz, r0.z, c1
-mul r0.y, r0.x, r0.w
-dp3_pp r2.w, v2, -r2
-add r0.x, r3, -r1.w
-add r0.z, -r0.y, c13.w
-cmp r0.w, -r0.x, r0.y, r0.z
-mul_pp r0.xyz, v2, r2.w
-mad_pp r0.xyz, -r0, c11.z, -r2
+rsq_pp r0.y, r0.y
+mul_pp r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c11.z, -r4
+add r0.w, r3.x, -r1
+add r3.y, -r2.w, c13.w
+cmp r0.w, -r0, r2, r3.y
 add r2.w, -r0, c11
-cmp r0.w, v4.z, r0, r2
-cmp r2.w, v4.x, r0, -r0
+add_pp r2.xyz, -r1, c10.y
 dp3_pp_sat r3.x, r0, v1
+cmp r2.w, v4.z, r0, r2
 pow_pp r0, r3.x, c5.x
+cmp r0.y, v4.x, r2.w, -r2.w
+mad r3.z, r0.y, c14.x, c14.y
 add r0.z, -r1.w, c10.y
 mad r0.y, r1.w, c10.z, c10.w
 mad r0.y, r1.w, r0, c11.x
 mad r0.y, r1.w, r0, c11
 abs r1.w, v4.y
-mad r3.z, r2.w, c14.x, c14.y
 add r3.x, -r1.w, c10.y
 mad r2.w, r1, c10.z, c10
 mad r2.w, r2, r1, c11.x
@@ -75603,41 +75933,46 @@ mad r0.z, -r3.x, c11, r2.w
 mad r0.w, r0.y, c11, r0
 mad r0.y, r1.w, c11.w, r0.z
 mul r0.z, r0.w, c12.x
-dp3_pp_sat r1.w, v2, r2
-add_pp r2.x, r1.w, c10.y
-frc_pp r2.y, r2.x
+dp3_pp_sat r1.w, v2, r4
+add_pp r2.w, r1, c10.y
+frc_pp r4.x, r2.w
 dsy r0.w, r0.z
 mul r3.w, r0.y, c12.x
-mul r4.xy, r4, r4
-add r0.y, r4.x, r4
+dsx r3.y, r0.z
+dsx r0.yz, v4.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.y, r5.z, r5.w
+add r0.z, r5.x, r5.y
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-dsx r3.y, r0.z
-mul r4.zw, r4, r4
-add r0.z, r4, r4.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
-mul r0.z, r0, c14.x
 mul r3.x, r0.y, c14
+mul r0.z, r0, c14.x
 texldd r3, r3.zwzw, s0, r3, r0.zwzw
 texld r0.w, v3, s2
-mov_pp r2.w, r0.x
+mov_pp r4.w, r0.x
 mul r0.xyz, r0.w, c2
 mul r0.xyz, r0, c3
+add_pp_sat r2.w, r2, -r4.x
+mul r0.xyz, r0, r4.w
+mul r0.xyz, r2.w, r0
+mul r4.xyz, r3.w, r0
 mul_pp r1.w, r1, c2
-mul_pp r1.w, r1, r0
-add_pp_sat r2.x, r2, -r2.y
-mul r0.xyz, r0, r2.w
-mul r0.xyz, r2.x, r0
-mov r0.w, c8.x
-mul r0.xyz, r3.w, r0
+mul_pp r0.y, r1.w, r0.w
+mul_pp_sat r0.w, r0.y, c14.z
+mov r0.x, c8
+add r0.xyz, c2, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+mul r0.w, v0.x, c7.x
+mul_sat r0.w, r0, c11.z
+mad_pp r1.xyz, r0.w, r2, r1
+add_pp r0.xyz, r0, r4
+mul r2.xyz, r0, c9.x
 mul_pp r1.xyz, r3, r1
-mul_pp_sat r1.w, r1, c14.z
-add r2.xyz, c2, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r2.xyz, r2, c9.x, r0
-mul_pp r0.xyz, r1, c4
-mul_pp oC0.xyz, r0, r2
+mad_pp r1.xyz, r1, c4, r2
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c10.y
 "
 }
@@ -75664,6 +75999,183 @@ Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
 
 SubProgram "d3d9 " {
 Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightShadowData]
+Vector 3 [_LightColor0]
+Vector 4 [_SpecColor]
+Vector 5 [_Color]
+Float 6 [_Shininess]
+Float 7 [_DetailScale]
+Float 8 [_DetailDist]
+Float 9 [_MinLight]
+Float 10 [_Albedo]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_LightTexture0] 2D
+SetTexture 3 [_LightTextureB0] 2D
+SetTexture 4 [_ShadowMapTexture] 2D
+"ps_3_0
+; 117 ALU, 9 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c15, 0.15915494, 0.50000000, 4.00000000, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3
+dcl_texcoord4 v4
+dcl_texcoord5 v5.xyz
+mul r0.xy, v5, c7.x
+mul r1.xy, v5.zyzw, c7.x
+dsy r5.xy, v5
+texld r0.xyz, r0, s1
+texld r1.xyz, r1, s1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v5.xyxy
+abs r1.x, v5.z
+mad_pp r2.xyz, r1.z, r2, r0
+max r0.w, r1.z, r1.x
+min r0.x, r1.z, r1
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r1.y, r0.w, r0.w
+mul r0.xy, v5.zxzw, c7.x
+texld r0.xyz, r0, s1
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.w, r0, r2
+mad r2.w, r1.y, c13.y, c13.z
+mad r0.x, r2.w, r1.y, c13.w
+mad r0.x, r0, r1.y, c14
+mad r0.x, r0, r1.y, c14.y
+mad r0.x, r0, r1.y, c14.z
+mul r1.y, r0.x, r0.w
+dp4 r0.y, c1, c1
+rsq r0.y, r0.y
+mul r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c12.z, -r4
+add r0.w, r1.z, -r1.x
+add r1.w, -r1.y, c14
+cmp r0.w, -r0, r1.y, r1
+add r1.y, -r0.w, c12.w
+dp3_pp_sat r2.w, v2, r4
+add_pp r3.xyz, -r2, c11.y
+dp3_pp_sat r1.z, r0, v1
+cmp r1.y, v5.z, r0.w, r1
+pow_pp r0, r1.z, c6.x
+cmp r0.y, v5.x, r1, -r1
+mov_pp r3.w, r0.x
+mad r1.z, r0.y, c15.x, c15.y
+add r0.z, -r1.x, c11.y
+mad r0.y, r1.x, c11.z, c11.w
+mad r0.y, r1.x, r0, c12.x
+mad r0.y, r1.x, r0, c12
+abs r1.x, v5.y
+add r1.w, -r1.x, c11.y
+mad r1.y, r1.x, c11.z, c11.w
+mad r1.y, r1, r1.x, c12.x
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r0.z, r0.y, r0
+cmp r0.y, v5.z, c11.x, c11
+mul r0.w, r0.y, r0.z
+mad r0.w, -r0, c12.z, r0.z
+rsq r1.w, r1.w
+mad r1.x, r1.y, r1, c12.y
+rcp r1.w, r1.w
+mul r1.y, r1.x, r1.w
+cmp r1.x, v5.y, c11, c11.y
+mul r1.w, r1.x, r1.y
+mad r0.z, -r1.w, c12, r1.y
+mad r0.w, r0.y, c12, r0
+mad r0.y, r1.x, c12.w, r0.z
+mul r0.z, r0.w, c13.x
+dsy r0.w, r0.z
+mul r1.w, r0.y, c13.x
+dsx r1.y, r0.z
+dsx r0.yz, v5.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.y, r5.z, r5.w
+add r0.z, r5.x, r5.y
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+mul r1.x, r0.y, c15
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r0.z, r0, c15.x
+texldd r1, r1.zwzw, s0, r1, r0.zwzw
+texldp r0.x, v4, s4
+rcp r0.y, v4.w
+mad r0.y, -v4.z, r0, r0.x
+mov r0.z, c2.x
+cmp r0.y, r0, c11, r0.z
+rcp r0.x, v3.w
+mad r4.xy, v3, r0.x, c15.y
+texld r0.w, r4, s2
+add_pp r4.x, r2.w, c11.y
+dp3 r0.x, v3, v3
+cmp r0.z, -v3, c11.x, c11.y
+mul_pp r0.z, r0, r0.w
+texld r0.x, r0.x, s3
+mul_pp r0.x, r0.z, r0
+mul_pp r0.w, r0.x, r0.y
+mul r0.xyz, r0.w, c3
+mul r0.xyz, r0, c4
+mul r0.xyz, r0, r3.w
+frc_pp r4.y, r4.x
+add_pp_sat r3.w, r4.x, -r4.y
+mul r0.xyz, r3.w, r0
+mul r4.xyz, r1.w, r0
+mul_pp r2.w, r2, c3
+mul_pp r0.y, r2.w, r0.w
+mul_pp_sat r0.w, r0.y, c15.z
+mov r0.x, c9
+add r0.xyz, c3, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+mul r0.w, v0.x, c8.x
+mul_sat r0.w, r0, c12.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c10.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c5, r3
+mul_pp oC0.xyz, r1, r0
+mov_pp oC0.w, c11.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
 Vector 0 [glstate_lightmodel_ambient]
 Vector 1 [_WorldSpaceLightPos0]
 Vector 2 [_LightShadowData]
@@ -75700,295 +76212,120 @@ dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
 mul r0.xy, v5, c7.x
 mul r1.xy, v5.zyzw, c7.x
-mul r2.z, v0.x, c8.x
-dsx r4.xy, v5
-dsy r4.zw, v5.xyxy
-abs r1.w, v5.z
-abs r3.xy, v5
+dsy r5.xy, v5
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r3.x, r1, r0
-max r0.z, r3.x, r1.w
-rcp r0.w, r0.z
-min r0.z, r3.x, r1.w
-mul r0.w, r0.z, r0
-mul r2.x, r0.w, r0.w
-mad r2.y, r2.x, c13, c13.z
-mad r2.y, r2, r2.x, c13.w
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v5.xyxy
+abs r1.x, v5.z
+mad_pp r2.xyz, r1.z, r2, r0
+max r0.w, r1.z, r1.x
+min r0.x, r1.z, r1
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r1.y, r0.w, r0.w
 mul r0.xy, v5.zxzw, c7.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c11.y
-mul_sat r2.z, r2, c12
-mad_pp r1.xyz, r2.z, r1, r0
-mad r2.y, r2, r2.x, c14.x
-mad r0.x, r2.y, r2, c14.y
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.w, r0, r2
+mad r2.w, r1.y, c13.y, c13.z
+mad r0.x, r2.w, r1.y, c13.w
+mad r0.x, r0, r1.y, c14
+mad r0.x, r0, r1.y, c14.y
+mad r0.x, r0, r1.y, c14.z
+mul r1.y, r0.x, r0.w
 dp4 r0.y, c1, c1
-mad r0.x, r0, r2, c14.z
-rsq r0.z, r0.y
-mul r2.xyz, r0.z, c1
-mul r0.y, r0.x, r0.w
-dp3_pp r2.w, v2, -r2
-add r0.x, r3, -r1.w
-add r0.z, -r0.y, c14.w
-cmp r0.w, -r0.x, r0.y, r0.z
-mul_pp r0.xyz, v2, r2.w
-mad_pp r0.xyz, -r0, c12.z, -r2
-add r2.w, -r0, c12
-cmp r0.w, v5.z, r0, r2
-cmp r2.w, v5.x, r0, -r0
-dp3_pp_sat r3.x, r0, v1
-pow_pp r0, r3.x, c6.x
-add r0.z, -r1.w, c11.y
-mad r0.y, r1.w, c11.z, c11.w
-mad r0.y, r1.w, r0, c12.x
-mad r0.y, r1.w, r0, c12
-abs r1.w, v5.y
-mad r3.z, r2.w, c15.x, c15.y
-add r3.x, -r1.w, c11.y
-mad r2.w, r1, c11.z, c11
-mad r2.w, r2, r1, c12.x
+rsq r0.y, r0.y
+mul r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c12.z, -r4
+add r0.w, r1.z, -r1.x
+add r1.w, -r1.y, c14
+cmp r0.w, -r0, r1.y, r1
+add r1.y, -r0.w, c12.w
+dp3_pp_sat r2.w, v2, r4
+add_pp r3.xyz, -r2, c11.y
+dp3_pp_sat r1.z, r0, v1
+cmp r1.y, v5.z, r0.w, r1
+pow_pp r0, r1.z, c6.x
+cmp r0.y, v5.x, r1, -r1
+mov_pp r3.w, r0.x
+mad r1.z, r0.y, c15.x, c15.y
+add r0.z, -r1.x, c11.y
+mad r0.y, r1.x, c11.z, c11.w
+mad r0.y, r1.x, r0, c12.x
+mad r0.y, r1.x, r0, c12
+abs r1.x, v5.y
+add r1.w, -r1.x, c11.y
+mad r1.y, r1.x, c11.z, c11.w
+mad r1.y, r1, r1.x, c12.x
 rsq r0.z, r0.z
 rcp r0.z, r0.z
 mul r0.z, r0.y, r0
 cmp r0.y, v5.z, c11.x, c11
 mul r0.w, r0.y, r0.z
 mad r0.w, -r0, c12.z, r0.z
-rsq r3.x, r3.x
-mad r1.w, r2, r1, c12.y
-rcp r3.x, r3.x
-mul r2.w, r1, r3.x
-cmp r1.w, v5.y, c11.x, c11.y
-mul r3.x, r1.w, r2.w
-mad r0.z, -r3.x, c12, r2.w
+rsq r1.w, r1.w
+mad r1.x, r1.y, r1, c12.y
+rcp r1.w, r1.w
+mul r1.y, r1.x, r1.w
+cmp r1.x, v5.y, c11, c11.y
+mul r1.w, r1.x, r1.y
+mad r0.z, -r1.w, c12, r1.y
 mad r0.w, r0.y, c12, r0
-mad r0.y, r1.w, c12.w, r0.z
+mad r0.y, r1.x, c12.w, r0.z
 mul r0.z, r0.w, c13.x
 dsy r0.w, r0.z
-mul r3.w, r0.y, c13.x
-mul r4.xy, r4, r4
-add r0.y, r4.x, r4
+mul r1.w, r0.y, c13.x
+dsx r1.y, r0.z
+dsx r0.yz, v5.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.y, r5.z, r5.w
+add r0.z, r5.x, r5.y
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-dsx r3.y, r0.z
-mul r4.zw, r4, r4
-add r0.z, r4, r4.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
+mul r1.x, r0.y, c15
 mul r0.z, r0, c15.x
-mul r3.x, r0.y, c15
-texldd r3, r3.zwzw, s0, r3, r0.zwzw
-mov_pp r0.y, r0.x
-dp3_pp_sat r0.z, v2, r2
-texldp r0.x, v4, s4
-rcp r0.w, v4.w
-mad r0.w, -v4.z, r0, r0.x
-mov r1.w, c2.x
-cmp r2.z, r0.w, c11.y, r1.w
-rcp r0.x, v3.w
-mad r2.xy, v3, r0.x, c15.y
-dp3 r0.x, v3, v3
-texld r0.w, r2, s2
-cmp r1.w, -v3.z, c11.x, c11.y
-mul_pp r0.w, r1, r0
-texld r0.x, r0.x, s3
-mul_pp r0.x, r0.w, r0
-mul_pp r0.w, r0.x, r2.z
-add_pp r0.x, r0.z, c11.y
-frc_pp r1.w, r0.x
-add_pp_sat r0.x, r0, -r1.w
-mul r2.xyz, r0.w, c3
-mul_pp r1.w, r0.z, c3
-mul_pp r1.w, r1, r0
-mul r2.xyz, r2, c4
-mul r2.xyz, r2, r0.y
-mul r2.xyz, r0.x, r2
-mul r0.xyz, r3.w, r2
-mov r0.w, c9.x
-mul_pp r1.xyz, r3, r1
-mul_pp_sat r1.w, r1, c15.z
-add r2.xyz, c3, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r2.xyz, r2, c10.x, r0
-mul_pp r0.xyz, r1, c5
-mul_pp oC0.xyz, r0, r2
-mov_pp oC0.w, c11.y
-"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightShadowData]
-Vector 3 [_LightColor0]
-Vector 4 [_SpecColor]
-Vector 5 [_Color]
-Float 6 [_Shininess]
-Float 7 [_DetailScale]
-Float 8 [_DetailDist]
-Float 9 [_MinLight]
-Float 10 [_Albedo]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_LightTexture0] 2D
-SetTexture 3 [_LightTextureB0] 2D
-SetTexture 4 [_ShadowMapTexture] 2D
-"ps_3_0
-; 115 ALU, 9 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c15, 0.15915494, 0.50000000, 4.00000000, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3
-dcl_texcoord4 v4
-dcl_texcoord5 v5.xyz
-mul r0.xy, v5, c7.x
-mul r1.xy, v5.zyzw, c7.x
-mul r2.z, v0.x, c8.x
-dsx r4.xy, v5
-dsy r4.zw, v5.xyxy
-abs r1.w, v5.z
-abs r3.xy, v5
-texld r0.xyz, r0, s1
-texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r3.x, r1, r0
-max r0.z, r3.x, r1.w
-rcp r0.w, r0.z
-min r0.z, r3.x, r1.w
-mul r0.w, r0.z, r0
-mul r2.x, r0.w, r0.w
-mad r2.y, r2.x, c13, c13.z
-mad r2.y, r2, r2.x, c13.w
-mul r0.xy, v5.zxzw, c7.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c11.y
-mul_sat r2.z, r2, c12
-mad_pp r1.xyz, r2.z, r1, r0
-mad r2.y, r2, r2.x, c14.x
-mad r0.x, r2.y, r2, c14.y
-dp4 r0.y, c1, c1
-mad r0.x, r0, r2, c14.z
-rsq r0.z, r0.y
-mul r2.xyz, r0.z, c1
-mul r0.y, r0.x, r0.w
-dp3_pp r2.w, v2, -r2
-add r0.x, r3, -r1.w
-add r0.z, -r0.y, c14.w
-cmp r0.w, -r0.x, r0.y, r0.z
-mul_pp r0.xyz, v2, r2.w
-mad_pp r0.xyz, -r0, c12.z, -r2
-add r2.w, -r0, c12
-cmp r0.w, v5.z, r0, r2
-cmp r2.w, v5.x, r0, -r0
-dp3_pp_sat r3.x, r0, v1
-pow_pp r0, r3.x, c6.x
-add r0.z, -r1.w, c11.y
-mad r0.y, r1.w, c11.z, c11.w
-mad r0.y, r1.w, r0, c12.x
-mad r0.y, r1.w, r0, c12
-abs r1.w, v5.y
-mad r3.z, r2.w, c15.x, c15.y
-add r3.x, -r1.w, c11.y
-mad r2.w, r1, c11.z, c11
-mad r2.w, r2, r1, c12.x
-rsq r0.z, r0.z
-rcp r0.z, r0.z
-mul r0.z, r0.y, r0
-cmp r0.y, v5.z, c11.x, c11
-mul r0.w, r0.y, r0.z
-mad r0.w, -r0, c12.z, r0.z
-rsq r3.x, r3.x
-mad r1.w, r2, r1, c12.y
-rcp r3.x, r3.x
-mul r2.w, r1, r3.x
-cmp r1.w, v5.y, c11.x, c11.y
-mul r3.x, r1.w, r2.w
-mad r0.z, -r3.x, c12, r2.w
-mad r0.w, r0.y, c12, r0
-mad r0.y, r1.w, c12.w, r0.z
-mul r0.z, r0.w, c13.x
-dsy r0.w, r0.z
-mul r3.w, r0.y, c13.x
-mul r4.xy, r4, r4
-add r0.y, r4.x, r4
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-dsx r3.y, r0.z
-mul r4.zw, r4, r4
-add r0.z, r4, r4.w
-rsq r0.z, r0.z
-rcp r0.z, r0.z
-mul r0.z, r0, c15.x
-mul r3.x, r0.y, c15
-texldd r3, r3.zwzw, s0, r3, r0.zwzw
-mov_pp r0.y, r0.x
+texldd r1, r1.zwzw, s0, r1, r0.zwzw
 mov r0.x, c2
-add r1.w, c11.y, -r0.x
-dp3_pp_sat r0.z, v2, r2
-rcp r0.w, v3.w
-mad r2.xy, v3, r0.w, c15.y
+rcp r0.z, v3.w
+mad r4.xy, v3, r0.z, c15.y
+texld r0.w, r4, s2
+add_pp r4.x, r2.w, c11.y
+add r0.y, c11, -r0.x
 texldp r0.x, v4, s4
-mad r2.z, r0.x, r1.w, c2.x
+mad r0.y, r0.x, r0, c2.x
 dp3 r0.x, v3, v3
-texld r0.w, r2, s2
-cmp r1.w, -v3.z, c11.x, c11.y
-mul_pp r0.w, r1, r0
+cmp r0.z, -v3, c11.x, c11.y
+mul_pp r0.z, r0, r0.w
 texld r0.x, r0.x, s3
-mul_pp r0.x, r0.w, r0
-mul_pp r0.w, r0.x, r2.z
-add_pp r0.x, r0.z, c11.y
-frc_pp r1.w, r0.x
-add_pp_sat r0.x, r0, -r1.w
-mul r2.xyz, r0.w, c3
-mul_pp r1.w, r0.z, c3
-mul_pp r1.w, r1, r0
-mul r2.xyz, r2, c4
-mul r2.xyz, r2, r0.y
-mul r2.xyz, r0.x, r2
-mul r0.xyz, r3.w, r2
-mov r0.w, c9.x
-mul_pp r1.xyz, r3, r1
-mul_pp_sat r1.w, r1, c15.z
-add r2.xyz, c3, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r2.xyz, r2, c10.x, r0
-mul_pp r0.xyz, r1, c5
-mul_pp oC0.xyz, r0, r2
+mul_pp r0.x, r0.z, r0
+mul_pp r0.w, r0.x, r0.y
+mul r0.xyz, r0.w, c3
+mul r0.xyz, r0, c4
+mul r0.xyz, r0, r3.w
+frc_pp r4.y, r4.x
+add_pp_sat r3.w, r4.x, -r4.y
+mul r0.xyz, r3.w, r0
+mul r4.xyz, r1.w, r0
+mul_pp r2.w, r2, c3
+mul_pp r0.y, r2.w, r0.w
+mul_pp_sat r0.w, r0.y, c15.z
+mov r0.x, c9
+add r0.xyz, c3, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+mul r0.w, v0.x, c8.x
+mul_sat r0.w, r0, c12.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c10.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c5, r3
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c11.y
 "
 }
@@ -76024,7 +76361,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_ShadowMapTexture] 2D
 "ps_3_0
-; 105 ALU, 7 TEX
+; 106 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -76040,53 +76377,49 @@ dcl_texcoord3 v3
 dcl_texcoord5 v4.xyz
 mul r0.xy, v4, c6.x
 mul r1.xy, v4.zyzw, c6.x
-mul r2.z, v0.x, c7.x
-dsx r4.xy, v4
-dsy r4.zw, v4.xyxy
+dsy r5.xy, v4
 abs r1.w, v4.z
 abs r3.xy, v4
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
 add_pp r1.xyz, r1, -r0
 mad_pp r1.xyz, r3.x, r1, r0
-max r0.z, r3.x, r1.w
-rcp r0.w, r0.z
-min r0.z, r3.x, r1.w
-mul r0.w, r0.z, r0
-mul r2.x, r0.w, r0.w
-mad r2.y, r2.x, c12, c12.z
-mad r2.y, r2, r2.x, c12.w
+max r0.w, r3.x, r1
+min r0.x, r3, r1.w
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r2.w, r0, r0
 mul r0.xy, v4.zxzw, c6.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.z, r2, c11
-mad_pp r1.xyz, r2.z, r1, r0
-mad r2.y, r2, r2.x, c13.x
-mad r0.x, r2.y, r2, c13.y
+mad_pp r1.xyz, r3.y, r0, r1
+mad r2.x, r2.w, c12.y, c12.z
+mad r0.x, r2, r2.w, c12.w
+mad r0.x, r0, r2.w, c13
+mad r0.x, r0, r2.w, c13.y
+mad r0.x, r0, r2.w, c13.z
+mul r2.w, r0.x, r0
 dp4_pp r0.y, c1, c1
-mad r0.x, r0, r2, c13.z
-rsq_pp r0.z, r0.y
-mul r0.y, r0.x, r0.w
-mul_pp r2.xyz, r0.z, c1
-add r0.x, r3, -r1.w
-add r0.z, -r0.y, c13.w
-dp3_pp r2.w, v2, -r2
-cmp r0.w, -r0.x, r0.y, r0.z
-mul_pp r0.xyz, v2, r2.w
-mad_pp r0.xyz, -r0, c11.z, -r2
+rsq_pp r0.y, r0.y
+mul_pp r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c11.z, -r4
+add r0.w, r3.x, -r1
+add r3.y, -r2.w, c13.w
+cmp r0.w, -r0, r2, r3.y
 add r2.w, -r0, c11
-cmp r0.w, v4.z, r0, r2
-cmp r2.w, v4.x, r0, -r0
+add_pp r2.xyz, -r1, c10.y
 dp3_pp_sat r3.x, r0, v1
+cmp r2.w, v4.z, r0, r2
 pow_pp r0, r3.x, c5.x
+cmp r0.y, v4.x, r2.w, -r2.w
+mad r3.z, r0.y, c14.x, c14.y
 add r0.z, -r1.w, c10.y
 mad r0.y, r1.w, c10.z, c10.w
 mad r0.y, r1.w, r0, c11.x
 mad r0.y, r1.w, r0, c11
 abs r1.w, v4.y
-mad r3.z, r2.w, c14.x, c14.y
 add r3.x, -r1.w, c10.y
 mad r2.w, r1, c10.z, c10
 mad r2.w, r2, r1, c11.x
@@ -76108,39 +76441,44 @@ mad r0.y, r1.w, c11.w, r0.z
 mul r0.z, r0.w, c12.x
 dsy r0.w, r0.z
 mul r3.w, r0.y, c12.x
-mul r4.xy, r4, r4
-add r0.y, r4.x, r4
+dsx r3.y, r0.z
+dsx r0.yz, v4.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.z, r5.x, r5.y
+add r0.y, r5.z, r5.w
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-dsx r3.y, r0.z
-mul r4.zw, r4, r4
-add r0.z, r4, r4.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
-mul r0.z, r0, c14.x
 mul r3.x, r0.y, c14
+mul r0.z, r0, c14.x
 texldd r3, r3.zwzw, s0, r3, r0.zwzw
-dp3_pp_sat r0.y, v2, r2
-add_pp r0.z, r0.y, c10.y
-frc_pp r0.w, r0.z
-mov_pp r1.w, r0.x
-texldp r0.x, v3, s2
-mul r2.xyz, r0.x, c2
-mul r2.xyz, r2, c3
-mul_pp r0.y, r0, c2.w
-mul_pp r0.y, r0, r0.x
-add_pp_sat r0.z, r0, -r0.w
-mul r2.xyz, r2, r1.w
-mul r2.xyz, r0.z, r2
+dp3_pp_sat r0.w, v2, r4
+add_pp r1.w, r0, c10.y
+frc_pp r2.w, r1
+mov_pp r4.w, r0.x
+texldp r5.x, v3, s2
+mul r0.xyz, r5.x, c2
+mul r0.xyz, r0, c3
+mul_pp r0.w, r0, c2
+mul r0.xyz, r0, r4.w
+add_pp_sat r1.w, r1, -r2
+mul r0.xyz, r1.w, r0
+mul r4.xyz, r3.w, r0
+mul_pp r0.y, r0.w, r5.x
 mul_pp_sat r0.w, r0.y, c14.z
 mov r0.x, c8
 add r0.xyz, c2, r0.x
 mad_sat r0.xyz, r0, r0.w, c0
-mul r2.xyz, r3.w, r2
-mad_pp r2.xyz, r0, c9.x, r2
+mul r0.w, v0.x, c7.x
+mul_sat r0.w, r0, c11.z
+mad_pp r1.xyz, r0.w, r2, r1
+add_pp r0.xyz, r0, r4
+mul r2.xyz, r0, c9.x
 mul_pp r1.xyz, r3, r1
-mul_pp r0.xyz, r1, c4
-mul_pp oC0.xyz, r0, r2
+mad_pp r1.xyz, r1, c4, r2
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c10.y
 "
 }
@@ -76182,7 +76520,7 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_ShadowMapTexture] 2D
 SetTexture 3 [_LightTexture0] 2D
 "ps_3_0
-; 106 ALU, 8 TEX
+; 107 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -76200,109 +76538,110 @@ dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
 mul r0.xy, v5, c6.x
 mul r1.xy, v5.zyzw, c6.x
-mul r2.z, v0.x, c7.x
-dsx r4.xy, v5
-dsy r4.zw, v5.xyxy
-abs r1.w, v5.z
-abs r3.xy, v5
+dsy r5.xy, v5
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r3.x, r1, r0
-max r0.z, r3.x, r1.w
-rcp r0.w, r0.z
-min r0.z, r3.x, r1.w
-mul r0.w, r0.z, r0
-mul r2.x, r0.w, r0.w
-mad r2.y, r2.x, c12, c12.z
-mad r2.y, r2, r2.x, c12.w
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v5.xyxy
+abs r1.x, v5.z
+mad_pp r2.xyz, r1.z, r2, r0
+max r0.w, r1.z, r1.x
+min r0.x, r1.z, r1
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r1.y, r0.w, r0.w
 mul r0.xy, v5.zxzw, c6.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.z, r2, c11
-mad_pp r1.xyz, r2.z, r1, r0
-mad r2.y, r2, r2.x, c13.x
-mad r0.x, r2.y, r2, c13.y
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.w, r0, r2
+mad r2.w, r1.y, c12.y, c12.z
+mad r0.x, r2.w, r1.y, c12.w
+mad r0.x, r0, r1.y, c13
+mad r0.x, r0, r1.y, c13.y
+mad r0.x, r0, r1.y, c13.z
+mul r1.y, r0.x, r0.w
 dp4_pp r0.y, c1, c1
-mad r0.x, r0, r2, c13.z
-rsq_pp r0.z, r0.y
-mul_pp r2.xyz, r0.z, c1
-mul r0.y, r0.x, r0.w
-dp3_pp r2.w, v2, -r2
-add r0.x, r3, -r1.w
-add r0.z, -r0.y, c13.w
-cmp r0.w, -r0.x, r0.y, r0.z
-mul_pp r0.xyz, v2, r2.w
-mad_pp r0.xyz, -r0, c11.z, -r2
-add r2.w, -r0, c11
-cmp r0.w, v5.z, r0, r2
-cmp r2.w, v5.x, r0, -r0
-dp3_pp_sat r3.x, r0, v1
-pow_pp r0, r3.x, c5.x
-add r0.z, -r1.w, c10.y
-mad r0.y, r1.w, c10.z, c10.w
-mad r0.y, r1.w, r0, c11.x
-mad r0.y, r1.w, r0, c11
-abs r1.w, v5.y
-mad r3.z, r2.w, c14.x, c14.y
-add r3.x, -r1.w, c10.y
-mad r2.w, r1, c10.z, c10
-mad r2.w, r2, r1, c11.x
+rsq_pp r0.y, r0.y
+mul_pp r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c11.z, -r4
+dp3_pp_sat r2.w, v2, r4
+add_pp r4.x, r2.w, c10.y
+add r0.w, r1.z, -r1.x
+add r1.w, -r1.y, c13
+cmp r0.w, -r0, r1.y, r1
+add r1.y, -r0.w, c11.w
+add_pp r3.xyz, -r2, c10.y
+dp3_pp_sat r1.z, r0, v1
+cmp r1.y, v5.z, r0.w, r1
+pow_pp r0, r1.z, c5.x
+cmp r0.y, v5.x, r1, -r1
+mov_pp r3.w, r0.x
+mad r1.z, r0.y, c14.x, c14.y
+add r0.z, -r1.x, c10.y
+mad r0.y, r1.x, c10.z, c10.w
+mad r0.y, r1.x, r0, c11.x
+mad r0.y, r1.x, r0, c11
+abs r1.x, v5.y
+add r1.w, -r1.x, c10.y
+mad r1.y, r1.x, c10.z, c10.w
+mad r1.y, r1, r1.x, c11.x
 rsq r0.z, r0.z
 rcp r0.z, r0.z
 mul r0.z, r0.y, r0
 cmp r0.y, v5.z, c10.x, c10
 mul r0.w, r0.y, r0.z
 mad r0.w, -r0, c11.z, r0.z
-rsq r3.x, r3.x
-mad r1.w, r2, r1, c11.y
-rcp r3.x, r3.x
-mul r2.w, r1, r3.x
-cmp r1.w, v5.y, c10.x, c10.y
-mul r3.x, r1.w, r2.w
-mad r0.z, -r3.x, c11, r2.w
+rsq r1.w, r1.w
+mad r1.x, r1.y, r1, c11.y
+rcp r1.w, r1.w
+mul r1.y, r1.x, r1.w
+cmp r1.x, v5.y, c10, c10.y
+mul r1.w, r1.x, r1.y
+mad r0.z, -r1.w, c11, r1.y
 mad r0.w, r0.y, c11, r0
-mad r0.y, r1.w, c11.w, r0.z
+mad r0.y, r1.x, c11.w, r0.z
 mul r0.z, r0.w, c12.x
-dp3_pp_sat r1.w, v2, r2
-add_pp r2.x, r1.w, c10.y
-frc_pp r2.y, r2.x
 dsy r0.w, r0.z
-mul r3.w, r0.y, c12.x
-mul r4.xy, r4, r4
-add r0.y, r4.x, r4
+mul r1.w, r0.y, c12.x
+dsx r1.y, r0.z
+dsx r0.yz, v5.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.y, r5.z, r5.w
+add r0.z, r5.x, r5.y
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-dsx r3.y, r0.z
-mul r4.zw, r4, r4
-add r0.z, r4, r4.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
+mul r1.x, r0.y, c14
 mul r0.z, r0, c14.x
-mul r3.x, r0.y, c14
-texldd r3, r3.zwzw, s0, r3, r0.zwzw
-mov_pp r2.w, r0.x
+texldd r1, r1.zwzw, s0, r1, r0.zwzw
 texldp r0.x, v4, s2
 texld r0.w, v3, s3
 mul r0.w, r0, r0.x
 mul r0.xyz, r0.w, c2
 mul r0.xyz, r0, c3
-mul_pp r1.w, r1, c2
-mul_pp r1.w, r1, r0
-add_pp_sat r2.x, r2, -r2.y
-mul r0.xyz, r0, r2.w
-mul r0.xyz, r2.x, r0
-mov r0.w, c8.x
+mul r0.xyz, r0, r3.w
+frc_pp r4.y, r4.x
+add_pp_sat r3.w, r4.x, -r4.y
 mul r0.xyz, r3.w, r0
-mul_pp r1.xyz, r3, r1
-mul_pp_sat r1.w, r1, c14.z
-add r2.xyz, c2, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r2.xyz, r2, c9.x, r0
-mul_pp r0.xyz, r1, c4
-mul_pp oC0.xyz, r0, r2
+mul r4.xyz, r1.w, r0
+mul_pp r2.w, r2, c2
+mul_pp r0.y, r2.w, r0.w
+mul_pp_sat r0.w, r0.y, c14.z
+mov r0.x, c8
+add r0.xyz, c2, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+mul r0.w, v0.x, c7.x
+mul_sat r0.w, r0, c11.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c9.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c4, r3
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c10.y
 "
 }
@@ -76346,7 +76685,7 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_ShadowMapTexture] CUBE
 SetTexture 3 [_LightTexture0] 2D
 "ps_3_0
-; 115 ALU, 8 TEX
+; 116 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
@@ -76363,119 +76702,120 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-mul r0.xy, v5, c8.x
-mul r1.xy, v5.zyzw, c8.x
-abs r0.w, v5.z
+mul r1.xy, v5, c8.x
+texld r2.xyz, r1, s1
+mul r0.xy, v5.zyzw, c8.x
 texld r0.xyz, r0, s1
-texld r1.xyz, r1, s1
-add_pp r2.xyz, r1, -r0
-abs r1.xy, v5
-mad_pp r2.xyz, r1.x, r2, r0
-max r1.z, r1.x, r0.w
-min r0.x, r1, r0.w
-rcp r0.y, r1.z
-mul r1.z, r0.x, r0.y
-mul r1.w, r1.z, r1.z
+dsx r5.xy, v5
+dsy r5.zw, v5.xyxy
+abs r1.x, v5.z
+abs r1.zw, v5.xyxy
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.z, r0, r2
+max r0.w, r1.z, r1.x
+rcp r1.y, r0.w
+min r0.w, r1.z, r1.x
+mul r0.w, r0, r1.y
+mul r1.y, r0.w, r0.w
+mad r2.w, r1.y, c14.y, c14.z
 mul r0.xy, v5.zxzw, c8.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r1.y, r0, r2
-mad r2.w, r1, c14.y, c14.z
-mad r1.y, r2.w, r1.w, c14.w
-mad r1.y, r1, r1.w, c15.x
-mul r2.w, v0.x, c9.x
-add_pp r2.xyz, -r0, c12.y
-mul_sat r2.w, r2, c13.z
-mad_pp r3.xyz, r2.w, r2, r0
-mad r1.y, r1, r1.w, c15
-mad r0.x, r1.y, r1.w, c15.z
-mul r0.y, r0.x, r1.z
-dp4 r0.z, c1, c1
-rsq r0.x, r0.z
-mul r2.xyz, r0.x, c1
-add r0.x, r1, -r0.w
+mad_pp r2.xyz, r1.w, r0, r2
+mad r2.w, r2, r1.y, c14
+mad r0.x, r2.w, r1.y, c15
+mad r0.x, r0, r1.y, c15.y
+dp4 r0.y, c1, c1
+rsq r0.z, r0.y
+mad r0.x, r0, r1.y, c15.z
+mul r4.xyz, r0.z, c1
+mul r0.y, r0.x, r0.w
+dp3_pp r1.y, v2, -r4
+add r0.x, r1.z, -r1
 add r0.z, -r0.y, c15.w
-cmp r1.x, -r0, r0.y, r0.z
-add r1.y, -r1.x, c13.w
-cmp r1.x, v5.z, r1, r1.y
-dp3_pp r0.x, v2, -r2
-mul_pp r0.xyz, v2, r0.x
-mad_pp r0.xyz, -r0, c13.z, -r2
-dp3_pp_sat r2.w, r0, v1
-add r0.y, -r0.w, c12
-mad r0.x, r0.w, c12.z, c12.w
-mad r0.x, r0.w, r0, c13
-mad r0.x, r0.w, r0, c13.y
-abs r0.w, v5.y
-add r1.z, -r0.w, c12.y
-mad r1.y, r0.w, c12.z, c12.w
-mad r1.y, r1, r0.w, c13.x
-cmp r1.x, v5, r1, -r1
+cmp r0.w, -r0.x, r0.y, r0.z
+mul_pp r0.xyz, v2, r1.y
+mad_pp r0.xyz, -r0, c13.z, -r4
+add r1.y, -r0.w, c13.w
+cmp r0.w, v5.z, r0, r1.y
+add_pp r3.xyz, -r2, c12.y
+dp3_pp_sat r1.z, r0, v1
+cmp r1.y, v5.x, r0.w, -r0.w
+pow_pp r0, r1.z, c7.x
+add r0.z, -r1.x, c12.y
+mad r0.y, r1.x, c12.z, c12.w
+mad r0.y, r1.x, r0, c13.x
+rsq r0.z, r0.z
+mad r0.y, r1.x, r0, c13
+mad r1.z, r1.y, c16.x, c16.y
+rcp r0.z, r0.z
+mul r1.y, r0, r0.z
+abs r0.z, v5.y
+cmp r0.y, v5.z, c12.x, c12
+mul r1.w, r0.y, r1.y
+add r1.x, -r0.z, c12.y
+mad r0.w, r0.z, c12.z, c12
+mad r0.w, r0, r0.z, c13.x
+rsq r1.x, r1.x
+mad r0.z, r0.w, r0, c13.y
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v5.y, c12.x, c12.y
+mul r1.x, r0.z, r0.w
+mad r1.y, -r1.w, c13.z, r1
+mad r0.w, -r1.x, c13.z, r0
+mad r1.x, r0.y, c13.w, r1.y
+mad r0.y, r0.z, c13.w, r0.w
+mul r0.z, r1.x, c14.x
+dsy r0.w, r0.z
+mul r1.w, r0.y, c14.x
+mul r5.xy, r5, r5
+add r0.y, r5.x, r5
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v5.z, c12, c12.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c13, r0.y
-rsq r1.z, r1.z
-mad r0.w, r1.y, r0, c13.y
-rcp r1.z, r1.z
-mul r1.y, r0.w, r1.z
-cmp r0.w, v5.y, c12.x, c12.y
-mul r1.z, r0.w, r1.y
-mad r0.y, -r1.z, c13.z, r1
-mad r0.z, r0.x, c13.w, r0
-mad r0.x, r0.w, c13.w, r0.y
-mul r0.y, r0.z, c14.x
-mul r1.y, r0.x, c14.x
-dsx r0.w, r0.y
-dsx r1.zw, v5.xyxy
-mul r1.zw, r1, r1
-dsy r0.xz, v5.xyyw
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r1.z, r1, r1.w
-rsq r0.x, r1.z
+dsx r1.y, r0.z
+mul r5.zw, r5, r5
+add r0.z, r5, r5.w
 rsq r0.z, r0.z
-rcp r1.z, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c16.x
-mad r1.x, r1, c16, c16.y
-mul r0.x, r1.z, c16
-dsy r0.y, r0
-texldd r0, r1, s0, r0.zwzw, r0
-mul_pp r3.xyz, r0, r3
-pow_pp r1, r2.w, c7.x
-mov_pp r0.y, r1.x
-texld r1, v4, s2
-dp4 r0.z, r1, c17
-dp3 r0.x, v4, v4
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r0.x, r0, c2.w
-mad r0.z, -r0.x, c16, r0
-mov r1.x, c3
+rcp r0.z, r0.z
+mul r0.z, r0, c16.x
+mul r1.x, r0.y, c16
+dp3 r0.y, v4, v4
+rsq r3.w, r0.y
+texldd r1, r1.zwzw, s0, r1, r0.zwzw
+mov_pp r2.w, r0.x
+texld r0, v4, s2
+dp4 r0.y, r0, c17
+rcp r3.w, r3.w
+mul r0.x, r3.w, c2.w
+dp3_pp_sat r3.w, v2, r4
+add_pp r4.x, r3.w, c12.y
+mad r0.y, -r0.x, c16.z, r0
+mov r0.z, c3.x
 dp3 r0.x, v3, v3
-cmp r0.z, r0, c12.y, r1.x
+cmp r0.y, r0, c12, r0.z
 texld r0.x, r0.x, s3
-mul r0.x, r0, r0.z
-dp3_pp_sat r0.z, v2, r2
-add_pp r1.w, r0.z, c12.y
-mul r1.xyz, r0.x, c4
-mul r1.xyz, r1, c5
-mul r1.xyz, r1, r0.y
-frc_pp r2.x, r1.w
-add_pp_sat r0.y, r1.w, -r2.x
-mul r1.xyz, r0.y, r1
-mul_pp r0.y, r0.z, c4.w
-mul_pp r0.y, r0, r0.x
-mul r1.xyz, r0.w, r1
+mul r0.w, r0.x, r0.y
+mul r0.xyz, r0.w, c4
+mul r0.xyz, r0, c5
+mul r0.xyz, r0, r2.w
+frc_pp r4.y, r4.x
+add_pp_sat r2.w, r4.x, -r4.y
+mul r0.xyz, r2.w, r0
+mul r4.xyz, r1.w, r0
+mul_pp r2.w, r3, c4
+mul_pp r0.y, r2.w, r0.w
 mul_pp_sat r0.w, r0.y, c16
 mov r0.x, c10
 add r0.xyz, c4, r0.x
 mad_sat r0.xyz, r0, r0.w, c0
-mad_pp r0.xyz, r0, c11.x, r1
-mul_pp r1.xyz, r3, c6
+mul r0.w, v0.x, c9.x
+mul_sat r0.w, r0, c13.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c11.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c6, r3
 mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c12.y
 "
@@ -76521,7 +76861,7 @@ SetTexture 2 [_ShadowMapTexture] CUBE
 SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_LightTexture0] CUBE
 "ps_3_0
-; 116 ALU, 9 TEX
+; 117 ALU, 9 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
@@ -76541,93 +76881,91 @@ dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 mul r0.xy, v5, c8.x
 mul r1.xy, v5.zyzw, c8.x
-mul r2.w, v0.x, c9.x
-dsx r4.xy, v5
-dsy r4.zw, v5.xyxy
-abs r2.xy, v5
-abs r0.w, v5.z
+dsy r5.xy, v5
+dp3 r3.w, v4, v4
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r2.x, r1, r0
-max r0.z, r2.x, r0.w
-rcp r1.w, r0.z
-min r0.z, r2.x, r0.w
-mul r1.w, r0.z, r1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v5.xyxy
+abs r1.x, v5.z
+mad_pp r2.xyz, r1.z, r2, r0
+max r0.w, r1.z, r1.x
+min r0.x, r1.z, r1
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r1.y, r0.w, r0.w
 mul r0.xy, v5.zxzw, c8.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-mul r2.z, r1.w, r1.w
-mad r2.y, r2.z, c14, c14.z
-mad r2.y, r2, r2.z, c14.w
-add_pp r1.xyz, -r0, c12.y
-mul_sat r2.w, r2, c13.z
-mad_pp r0.xyz, r2.w, r1, r0
-mad r2.y, r2, r2.z, c15.x
-mad r1.x, r2.y, r2.z, c15.y
-mad r1.x, r1, r2.z, c15.z
-mul r2.y, r1.x, r1.w
-dp4 r1.y, c1, c1
-rsq r1.y, r1.y
-mul r1.xyz, r1.y, c1
-dp3_pp r2.w, v2, -r1
-add r1.w, r2.x, -r0
-add r2.z, -r2.y, c15.w
-cmp r1.w, -r1, r2.y, r2.z
-mul_pp r2.xyz, v2, r2.w
-mad_pp r2.xyz, -r2, c13.z, -r1
-dp3_pp_sat r2.x, r2, v1
-pow_pp r3, r2.x, c7.x
-abs r2.y, v5
-add r2.w, -r1, c13
-cmp r1.w, v5.z, r1, r2
-cmp r1.w, v5.x, r1, -r1
-mad r3.z, r1.w, c16.x, c16.y
-add r2.x, -r0.w, c12.y
-mad r1.w, r0, c12.z, c12
-mad r1.w, r0, r1, c13.x
-add r2.w, -r2.y, c12.y
-mad r2.z, r2.y, c12, c12.w
-mad r2.z, r2, r2.y, c13.x
-rsq r2.x, r2.x
-rsq r2.w, r2.w
-mad r0.w, r0, r1, c13.y
-rcp r2.x, r2.x
-mul r1.w, r0, r2.x
-cmp r0.w, v5.z, c12.x, c12.y
-mul r2.x, r0.w, r1.w
-mad r2.x, -r2, c13.z, r1.w
-mad r2.y, r2.z, r2, c13
-rcp r2.w, r2.w
-mul r2.z, r2.y, r2.w
-cmp r2.y, v5, c12.x, c12
-mul r2.w, r2.y, r2.z
-mad r1.w, -r2, c13.z, r2.z
-mad r2.x, r0.w, c13.w, r2
-mad r0.w, r2.y, c13, r1
-mul r1.w, r2.x, c14.x
-mul r3.w, r0, c14.x
-mul r4.xy, r4, r4
-add r0.w, r4.x, r4.y
-rsq r0.w, r0.w
-rcp r0.w, r0.w
-dsx r2.w, r1
-dsy r2.y, r1.w
-mul r4.zw, r4, r4
-add r1.w, r4.z, r4
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.w, r0, r2
+mad r2.w, r1.y, c14.y, c14.z
+mad r0.x, r2.w, r1.y, c14.w
+mad r0.x, r0, r1.y, c15
+mad r0.x, r0, r1.y, c15.y
+mad r0.x, r0, r1.y, c15.z
+mul r1.y, r0.x, r0.w
+dp4 r0.y, c1, c1
+rsq r0.y, r0.y
+mul r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c13.z, -r4
+add r0.w, r1.z, -r1.x
+add r1.w, -r1.y, c15
+cmp r0.w, -r0, r1.y, r1
+add r1.y, -r0.w, c13.w
+add_pp r3.xyz, -r2, c12.y
+dp3_pp_sat r1.z, r0, v1
+cmp r1.y, v5.z, r0.w, r1
+pow_pp r0, r1.z, c7.x
+cmp r0.y, v5.x, r1, -r1
+mad r1.z, r0.y, c16.x, c16.y
+add r0.z, -r1.x, c12.y
+mad r0.y, r1.x, c12.z, c12.w
+mad r0.y, r1.x, r0, c13.x
+mad r0.y, r1.x, r0, c13
+abs r1.x, v5.y
+add r1.w, -r1.x, c12.y
+mad r1.y, r1.x, c12.z, c12.w
+mad r1.y, r1, r1.x, c13.x
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r0.z, r0.y, r0
+cmp r0.y, v5.z, c12.x, c12
+mul r0.w, r0.y, r0.z
+mad r0.w, -r0, c13.z, r0.z
 rsq r1.w, r1.w
+mad r1.x, r1.y, r1, c13.y
 rcp r1.w, r1.w
-mul r2.z, r0.w, c16.x
-mul r2.x, r1.w, c16
-texldd r2, r3.zwzw, s0, r2.zwzw, r2
-mul_pp r2.xyz, r2, r0
+mul r1.y, r1.x, r1.w
+cmp r1.x, v5.y, c12, c12.y
+mul r1.w, r1.x, r1.y
+mad r0.z, -r1.w, c13, r1.y
+mad r0.w, r0.y, c13, r0
+mad r0.y, r1.x, c13.w, r0.z
+mul r0.z, r0.w, c14.x
+dsy r0.w, r0.z
+mov_pp r2.w, r0.x
+mul r1.w, r0.y, c14.x
+dsx r1.y, r0.z
+dsx r0.yz, v5.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.y, r5.z, r5.w
+add r0.z, r5.x, r5.y
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r1.x, r0.y, c16
+mul r0.z, r0, c16.x
+texldd r1, r1.zwzw, s0, r1, r0.zwzw
 texld r0, v4, s2
 dp4 r0.y, r0, c17
-mov_pp r1.w, r3.x
-dp3 r3.x, v4, v4
-rsq r3.x, r3.x
-rcp r0.x, r3.x
+rsq r3.w, r3.w
+rcp r0.x, r3.w
+dp3_pp_sat r3.w, v2, r4
+add_pp r4.x, r3.w, c12.y
 mul r0.x, r0, c2.w
 mad r0.x, -r0, c16.z, r0.y
 mov r0.z, c3.x
@@ -76636,25 +76974,28 @@ dp3 r0.x, v3, v3
 texld r0.w, v3, s4
 texld r0.x, r0.x, s3
 mul r0.x, r0, r0.w
-mul r0.x, r0, r0.y
-dp3_pp_sat r0.y, v2, r1
-add_pp r0.z, r0.y, c12.y
-frc_pp r0.w, r0.z
-mul r1.xyz, r0.x, c4
-mul r1.xyz, r1, c5
-mul_pp r0.y, r0, c4.w
-mul_pp r0.y, r0, r0.x
-add_pp_sat r0.z, r0, -r0.w
-mul r1.xyz, r1, r1.w
-mul r1.xyz, r0.z, r1
+mul r0.w, r0.x, r0.y
+mul r0.xyz, r0.w, c4
+mul r0.xyz, r0, c5
+mul r0.xyz, r0, r2.w
+frc_pp r4.y, r4.x
+add_pp_sat r2.w, r4.x, -r4.y
+mul r0.xyz, r2.w, r0
+mul r4.xyz, r1.w, r0
+mul_pp r2.w, r3, c4
+mul_pp r0.y, r2.w, r0.w
 mul_pp_sat r0.w, r0.y, c16
 mov r0.x, c10
 add r0.xyz, c4, r0.x
 mad_sat r0.xyz, r0, r0.w, c0
-mul r1.xyz, r2.w, r1
-mad_pp r1.xyz, r0, c11.x, r1
-mul_pp r0.xyz, r2, c6
-mul_pp oC0.xyz, r0, r1
+mul r0.w, v0.x, c9.x
+mul_sat r0.w, r0, c13.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c11.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c6, r3
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c12.y
 "
 }
@@ -76681,6 +77022,198 @@ Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SO
 
 SubProgram "d3d9 " {
 Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightShadowData]
+Vector 3 [_ShadowOffsets0]
+Vector 4 [_ShadowOffsets1]
+Vector 5 [_ShadowOffsets2]
+Vector 6 [_ShadowOffsets3]
+Vector 7 [_LightColor0]
+Vector 8 [_SpecColor]
+Vector 9 [_Color]
+Float 10 [_Shininess]
+Float 11 [_DetailScale]
+Float 12 [_DetailDist]
+Float 13 [_MinLight]
+Float 14 [_Albedo]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_LightTexture0] 2D
+SetTexture 3 [_LightTextureB0] 2D
+SetTexture 4 [_ShadowMapTexture] 2D
+"ps_3_0
+; 125 ALU, 12 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+def c15, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c16, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c17, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c18, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c19, 0.15915494, 0.50000000, 0.25000000, 4.00000000
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3
+dcl_texcoord4 v4
+dcl_texcoord5 v5.xyz
+mul r2.xy, v5, c11.x
+dsy r5.xy, v5
+abs r0.w, v5.z
+abs r1.xy, v5
+max r0.x, r1, r0.w
+rcp r0.y, r0.x
+min r0.x, r1, r0.w
+mul r1.z, r0.x, r0.y
+mul r0.xy, v5.zyzw, c11.x
+mul r1.w, r1.z, r1.z
+rcp r3.w, v4.w
+texld r2.xyz, r2, s1
+texld r0.xyz, r0, s1
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.x, r0, r2
+mad r0.z, r1.w, c17.y, c17
+mad r2.w, r0.z, r1, c17
+mul r0.xy, v5.zxzw, c11.x
+texld r0.xyz, r0, s1
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.y, r0, r2
+mad r2.w, r2, r1, c18.x
+mad r0.x, r2.w, r1.w, c18.y
+mad r0.x, r0, r1.w, c18.z
+mul r0.y, r0.x, r1.z
+dp4 r0.z, c1, c1
+rsq r0.x, r0.z
+mul r4.xyz, r0.x, c1
+add r0.x, r1, -r0.w
+add r0.z, -r0.y, c18.w
+cmp r1.x, -r0, r0.y, r0.z
+dp3_pp r0.x, v2, -r4
+add r1.y, -r1.x, c16.w
+cmp r1.x, v5.z, r1, r1.y
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c16.z, -r4
+dp3_pp_sat r2.w, r0, v1
+add r0.y, -r0.w, c15
+mad r0.x, r0.w, c15.z, c15.w
+mad r0.x, r0.w, r0, c16
+mad r0.x, r0.w, r0, c16.y
+abs r0.w, v5.y
+add r1.z, -r0.w, c15.y
+mad r1.y, r0.w, c15.z, c15.w
+mad r1.y, r1, r0.w, c16.x
+cmp r1.x, v5, r1, -r1
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+mul r0.y, r0.x, r0
+cmp r0.x, v5.z, c15, c15.y
+mul r0.z, r0.x, r0.y
+mad r0.z, -r0, c16, r0.y
+rsq r1.z, r1.z
+add_pp r3.xyz, -r2, c15.y
+mad r0.w, r1.y, r0, c16.y
+rcp r1.z, r1.z
+mul r1.y, r0.w, r1.z
+cmp r0.w, v5.y, c15.x, c15.y
+mul r1.z, r0.w, r1.y
+mad r0.y, -r1.z, c16.z, r1
+mad r0.z, r0.x, c16.w, r0
+mad r0.x, r0.w, c16.w, r0.y
+mul r0.y, r0.z, c17.x
+dsx r0.w, r0.y
+mul r5.xy, r5, r5
+add r0.z, r5.x, r5.y
+dsx r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+mul r1.y, r0.x, c17.x
+add r0.x, r1.z, r1.w
+rsq r0.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
+rcp r0.x, r0.x
+mul r0.z, r0.x, c19.x
+mul r0.x, r1.z, c19
+mad r5.xy, v4, r3.w, c6
+dsy r0.y, r0
+mad r1.x, r1, c19, c19.y
+texldd r1, r1, s0, r0.zwzw, r0
+pow_pp r0, r2.w, c10.x
+mov_pp r2.w, r0.x
+texld r0.x, r5, s4
+mad r5.xy, v4, r3.w, c5
+mov r0.w, r0.x
+texld r0.x, r5, s4
+mad r5.xy, v4, r3.w, c4
+mov r0.z, r0.x
+texld r0.x, r5, s4
+mad r5.xy, v4, r3.w, c3
+mov r0.y, r0.x
+texld r0.x, r5, s4
+mad r0, -v4.z, r3.w, r0
+rcp r3.w, v3.w
+mad r5.xy, v3, r3.w, c19.y
+dp3_pp_sat r3.w, v2, r4
+add_pp r4.x, r3.w, c15.y
+mov r4.w, c2.x
+cmp r0, r0, c15.y, r4.w
+dp4_pp r0.y, r0, c19.z
+dp3 r0.x, v3, v3
+texld r0.w, r5, s2
+cmp r0.z, -v3, c15.x, c15.y
+mul_pp r0.z, r0, r0.w
+texld r0.x, r0.x, s3
+mul_pp r0.x, r0.z, r0
+mul_pp r0.w, r0.x, r0.y
+mul r0.xyz, r0.w, c7
+mul r0.xyz, r0, c8
+mul r0.xyz, r0, r2.w
+frc_pp r4.y, r4.x
+add_pp_sat r2.w, r4.x, -r4.y
+mul r0.xyz, r2.w, r0
+mul r4.xyz, r1.w, r0
+mul_pp r2.w, r3, c7
+mul_pp r0.y, r2.w, r0.w
+mul_pp_sat r0.w, r0.y, c19
+mov r0.x, c13
+add r0.xyz, c7, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+mul r0.w, v0.x, c12.x
+mul_sat r0.w, r0, c16.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c14.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c9, r3
+mul_pp oC0.xyz, r1, r0
+mov_pp oC0.w, c15.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
 Vector 0 [glstate_lightmodel_ambient]
 Vector 1 [_WorldSpaceLightPos0]
 Vector 2 [_LightShadowData]
@@ -76721,320 +77254,130 @@ dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
 mul r1.xy, v5, c11.x
 dsx r4.zw, v5.xyxy
+dsy r5.xy, v5
 abs r0.w, v5.z
 abs r2.xy, v5
 max r0.x, r2, r0.w
 rcp r0.y, r0.x
 min r0.x, r2, r0.w
 mul r1.w, r0.x, r0.y
+mul r0.x, r1.w, r1.w
+mad r0.y, r0.x, c17, c17.z
+mad r0.y, r0, r0.x, c17.w
+mad r0.y, r0, r0.x, c18.x
+mad r0.y, r0, r0.x, c18
+mad r2.z, r0.y, r0.x, c18
+mul r1.w, r2.z, r1
 mul r0.xy, v5.zyzw, c11.x
-mul r2.z, r1.w, r1.w
+rcp r2.w, v4.w
+add r2.z, -r1.w, c18.w
 texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2, c17.y, c17
-mad r2.w, r0.z, r2.z, c17
+add r0.z, r2.x, -r0.w
+cmp r1.w, -r0.z, r1, r2.z
 mul r0.xy, v5.zxzw, c11.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-mad r2.w, r2, r2.z, c18.x
-mad r2.y, r2.w, r2.z, c18
-mad r2.y, r2, r2.z, c18.z
-add_pp r1.xyz, -r0, c15.y
-mul r1.w, r2.y, r1
-mul r2.z, v0.x, c12.x
-mul_sat r2.y, r2.z, c16.z
-mad_pp r0.xyz, r2.y, r1, r0
-dp4 r1.z, c1, c1
-add r1.y, -r1.w, c18.w
-add r1.x, r2, -r0.w
-cmp r1.x, -r1, r1.w, r1.y
-rsq r1.z, r1.z
-mul r2.xyz, r1.z, c1
-add r1.y, -r1.x, c16.w
-cmp r1.w, v5.z, r1.x, r1.y
-dp3_pp r1.z, v2, -r2
-mul_pp r1.xyz, v2, r1.z
-mad_pp r3.xyz, -r1, c16.z, -r2
-abs r1.z, v5.y
-cmp r1.w, v5.x, r1, -r1
-mad r4.x, r1.w, c19, c19.y
+add_pp r3.xyz, r0, -r1
+mad_pp r2.xyz, r2.y, r3, r1
+add r0.x, -r1.w, c16.w
+cmp r0.x, v5.z, r1.w, r0
+cmp r0.x, v5, r0, -r0
+mad r4.x, r0, c19, c19.y
+mad r0.xyz, v4, r2.w, c6
 add r1.y, -r0.w, c15
 mad r1.x, r0.w, c15.z, c15.w
 mad r1.x, r0.w, r1, c16
-add r2.w, -r1.z, c15.y
-mad r1.w, r1.z, c15.z, c15
-mad r1.w, r1, r1.z, c16.x
-rsq r1.y, r1.y
-rsq r2.w, r2.w
 mad r0.w, r0, r1.x, c16.y
+abs r1.x, v5.y
+add r1.z, -r1.x, c15.y
+rsq r1.y, r1.y
 rcp r1.y, r1.y
-mul r1.x, r0.w, r1.y
+mul r1.w, r0, r1.y
 cmp r0.w, v5.z, c15.x, c15.y
-mul r1.y, r0.w, r1.x
-mad r1.y, -r1, c16.z, r1.x
-mad r1.z, r1.w, r1, c16.y
-rcp r2.w, r2.w
-mul r1.w, r1.z, r2
-cmp r1.z, v5.y, c15.x, c15.y
-mul r2.w, r1.z, r1
-mad r1.x, -r2.w, c16.z, r1.w
-dp3_pp_sat r2.w, r3, v1
-rcp r3.z, v4.w
-mad r1.y, r0.w, c16.w, r1
-mad r0.w, r1.z, c16, r1.x
-mul r1.x, r1.y, c17
+mul r3.w, r0, r1
+mad r1.w, -r3, c16.z, r1
+mad r1.y, r1.x, c15.z, c15.w
+mad r1.y, r1, r1.x, c16.x
+rsq r1.z, r1.z
+mov r3.w, c2.x
+texld r0.x, r0, s4
+add_pp r3.xyz, -r2, c15.y
+mad r1.x, r1.y, r1, c16.y
+rcp r1.z, r1.z
+mul r1.y, r1.x, r1.z
+cmp r1.x, v5.y, c15, c15.y
+mul r1.z, r1.x, r1.y
+mad r1.y, -r1.z, c16.z, r1
+mad r1.z, r0.w, c16.w, r1.w
+mad r0.w, r1.x, c16, r1.y
+mul r1.x, r1.z, c17
 mul r4.y, r0.w, c17.x
 mul r4.zw, r4, r4
 add r0.w, r4.z, r4
 rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r1.z, r0.w, c19.x
 dsx r1.w, r1.x
 dsy r1.y, r1.x
-dsy r1.xz, v5.xyyw
-mul r1.xz, r1, r1
-add r1.x, r1, r1.z
-rcp r0.w, r0.w
+mul r5.xy, r5, r5
+add r1.x, r5, r5.y
 rsq r1.x, r1.x
 rcp r1.x, r1.x
-mul r1.z, r0.w, c19.x
 mul r1.x, r1, c19
 texldd r1, r4, s0, r1.zwzw, r1
-mul_pp r1.xyz, r1, r0
-pow_pp r0, r2.w, c10.x
-mad r3.xy, v4, r3.z, c6
-mov_pp r2.w, r0.x
-texld r0.x, r3, s4
-mad r3.xy, v4, r3.z, c5
-mov r0.w, r0.x
-texld r0.x, r3, s4
-mad r3.xy, v4, r3.z, c4
-mov r0.z, r0.x
-texld r0.x, r3, s4
-mad r3.xy, v4, r3.z, c3
-mov r0.y, r0.x
-texld r0.x, r3, s4
-mov r3.x, c2
-mad r0, -v4.z, r3.z, r0
-cmp r0, r0, c15.y, r3.x
-dp4_pp r0.z, r0, c19.z
-rcp r3.x, v3.w
-mad r3.xy, v3, r3.x, c19.y
-dp3 r0.x, v3, v3
-texld r0.w, r3, s2
-cmp r0.y, -v3.z, c15.x, c15
-mul_pp r0.y, r0, r0.w
-texld r0.x, r0.x, s3
-mul_pp r0.x, r0.y, r0
-mul_pp r0.x, r0, r0.z
-dp3_pp_sat r0.y, v2, r2
-add_pp r0.z, r0.y, c15.y
-frc_pp r0.w, r0.z
-mul r2.xyz, r0.x, c7
-mul r2.xyz, r2, c8
-mul_pp r0.y, r0, c7.w
-mul_pp r0.y, r0, r0.x
-add_pp_sat r0.z, r0, -r0.w
-mul r2.xyz, r2, r2.w
-mul r2.xyz, r0.z, r2
-mul_pp_sat r0.w, r0.y, c19
-mov r0.x, c13
-add r0.xyz, c7, r0.x
-mad_sat r0.xyz, r0, r0.w, c0
-mul r2.xyz, r1.w, r2
-mad_pp r2.xyz, r0, c14.x, r2
-mul_pp r0.xyz, r1, c9
-mul_pp oC0.xyz, r0, r2
-mov_pp oC0.w, c15.y
-"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightShadowData]
-Vector 3 [_ShadowOffsets0]
-Vector 4 [_ShadowOffsets1]
-Vector 5 [_ShadowOffsets2]
-Vector 6 [_ShadowOffsets3]
-Vector 7 [_LightColor0]
-Vector 8 [_SpecColor]
-Vector 9 [_Color]
-Float 10 [_Shininess]
-Float 11 [_DetailScale]
-Float 12 [_DetailDist]
-Float 13 [_MinLight]
-Float 14 [_Albedo]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_LightTexture0] 2D
-SetTexture 3 [_LightTextureB0] 2D
-SetTexture 4 [_ShadowMapTexture] 2D
-"ps_3_0
-; 123 ALU, 12 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-def c15, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c16, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c17, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c18, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c19, 0.15915494, 0.50000000, 0.25000000, 4.00000000
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3
-dcl_texcoord4 v4
-dcl_texcoord5 v5.xyz
-mul r1.xy, v5, c11.x
-dsy r3.xy, v5
-abs r0.w, v5.z
-abs r2.xy, v5
-max r0.x, r2, r0.w
-rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
-mul r2.z, r1.w, r1.w
-mad r0.x, r2.z, c17.y, c17.z
-mad r0.x, r0, r2.z, c17.w
-mad r2.w, r0.x, r2.z, c18.x
-mul r0.xy, v5.zyzw, c11.x
-mad r2.w, r2, r2.z, c18.y
-texld r1.xyz, r1, s1
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2.w, r2, c18
-mul r1.w, r0.z, r1
-mul r0.xy, v5.zxzw, c11.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-add_pp r1.xyz, -r0, c15.y
-rcp r2.w, v4.w
-add r2.x, r2, -r0.w
-add r2.z, -r1.w, c18.w
-cmp r1.w, -r2.x, r1, r2.z
-add r2.x, -r1.w, c16.w
-cmp r1.w, v5.z, r1, r2.x
-mul r2.x, v0, c12
-mul_sat r2.x, r2, c16.z
-mad_pp r2.xyz, r2.x, r1, r0
-cmp r1.w, v5.x, r1, -r1
-add r0.y, -r0.w, c15
-mad r0.x, r0.w, c15.z, c15.w
-mad r0.x, r0.w, r0, c16
-mad r0.x, r0.w, r0, c16.y
-abs r0.w, v5.y
-add r1.z, -r0.w, c15.y
-mad r1.y, r0.w, c15.z, c15.w
-mad r1.y, r1, r0.w, c16.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v5.z, c15, c15.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c16, r0.y
-rsq r1.z, r1.z
-mad r0.w, r1.y, r0, c16.y
-rcp r1.z, r1.z
-mul r1.y, r0.w, r1.z
-cmp r0.w, v5.y, c15.x, c15.y
-mul r1.z, r0.w, r1.y
-mad r0.y, -r1.z, c16.z, r1
-mad r0.z, r0.x, c16.w, r0
-mad r0.x, r0.w, c16.w, r0.y
-mul r0.y, r0.z, c17.x
-dsx r0.w, r0.y
-mad r1.x, r1.w, c19, c19.y
-mul r3.xy, r3, r3
-add r0.z, r3.x, r3.y
-dsx r1.zw, v5.xyxy
-mul r1.zw, r1, r1
-mul r1.y, r0.x, c17.x
-add r0.x, r1.z, r1.w
-rsq r0.z, r0.z
-rsq r0.x, r0.x
-rcp r1.z, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c19.x
-mul r0.x, r1.z, c19
-dsy r0.y, r0
-texldd r1, r1, s0, r0.zwzw, r0
-mul_pp r1.xyz, r1, r2
-mad r0.xyz, v4, r2.w, c6
-texld r0.x, r0, s4
-mad r2.xyz, v4, r2.w, c5
+mad r4.xyz, v4, r2.w, c5
 mov_pp r0.w, r0.x
-texld r0.x, r2, s4
-mad r2.xyz, v4, r2.w, c4
+texld r0.x, r4, s4
+mad r4.xyz, v4, r2.w, c4
 mov_pp r0.z, r0.x
-texld r0.x, r2, s4
-mad r2.xyz, v4, r2.w, c3
+texld r0.x, r4, s4
+mad r4.xyz, v4, r2.w, c3
 mov_pp r0.y, r0.x
-texld r0.x, r2, s4
-mov r2.y, c2.x
-add r2.y, c15, -r2
-mad r0, r0, r2.y, c2.x
+dp4 r2.w, c1, c1
+texld r0.x, r4, s4
+add r3.w, c15.y, -r3
+mad r0, r0, r3.w, c2.x
 dp4_pp r0.y, r0, c19.z
+rsq r2.w, r2.w
+mul r4.xyz, r2.w, c1
+dp3_pp r0.z, v2, -r4
+mul_pp r5.xyz, v2, r0.z
+mad_pp r5.xyz, -r5, c16.z, -r4
 rcp r0.x, v3.w
-mad r4.xy, v3, r0.x, c19.y
-dp4 r2.x, c1, c1
-rsq r2.x, r2.x
-mul r2.xyz, r2.x, c1
-dp3_pp r0.z, v2, -r2
-mul_pp r3.xyz, v2, r0.z
-mad_pp r3.xyz, -r3, c16.z, -r2
+mad r6.xy, v3, r0.x, c19.y
 dp3 r0.x, v3, v3
-texld r0.w, r4, s2
+dp3_pp_sat r3.w, r5, v1
+texld r0.w, r6, s2
 cmp r0.z, -v3, c15.x, c15.y
 mul_pp r0.z, r0, r0.w
 texld r0.x, r0.x, s3
 mul_pp r0.x, r0.z, r0
 mul_pp r2.w, r0.x, r0.y
 mul r0.xyz, r2.w, c7
-dp3_pp_sat r3.w, r3, v1
-mul r3.xyz, r0, c8
+mul r5.xyz, r0, c8
 pow_pp r0, r3.w, c10.x
-dp3_pp_sat r0.w, v2, r2
-add_pp r2.x, r0.w, c15.y
-frc_pp r2.y, r2.x
-add_pp_sat r2.x, r2, -r2.y
-mul r0.xyz, r3, r0.x
-mul r0.xyz, r2.x, r0
+dp3_pp_sat r0.w, v2, r4
+add_pp r3.w, r0, c15.y
+frc_pp r4.x, r3.w
+add_pp_sat r3.w, r3, -r4.x
+mul r0.xyz, r5, r0.x
+mul r0.xyz, r3.w, r0
+mul r4.xyz, r1.w, r0
 mul_pp r0.w, r0, c7
-mul r0.xyz, r1.w, r0
-mul_pp r1.w, r0, r2
-mov r0.w, c13.x
-mul_pp_sat r1.w, r1, c19
-add r2.xyz, c7, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r0.xyz, r2, c14.x, r0
-mul_pp r1.xyz, r1, c9
+mul_pp r0.y, r0.w, r2.w
+mul_pp_sat r0.w, r0.y, c19
+mov r0.x, c13
+add r0.xyz, c7, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+mul r0.w, v0.x, c12.x
+mul_sat r0.w, r0, c16.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c14.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c9, r3
 mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c15.y
 "
@@ -77074,7 +77417,7 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_ShadowMapTexture] CUBE
 SetTexture 3 [_LightTexture0] 2D
 "ps_3_0
-; 122 ALU, 11 TEX
+; 123 ALU, 11 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
@@ -77092,319 +77435,321 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-mul r1.xy, v5, c8.x
-dsx r3.zw, v5.xyxy
-abs r0.w, v5.z
-abs r2.xy, v5
-max r0.x, r2, r0.w
-rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
-mul r2.z, r1.w, r1.w
-mad r0.x, r2.z, c14.y, c14.z
-mad r0.x, r0, r2.z, c14.w
-mad r2.w, r0.x, r2.z, c15.x
-mul r0.xy, v5.zyzw, c8.x
-mul r3.zw, r3, r3
-mad r2.w, r2, r2.z, c15.y
-texld r1.xyz, r1, s1
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2.w, r2, c15
-mul r1.w, r0.z, r1
-mul r0.xy, v5.zxzw, c8.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-abs r2.y, v5
-add r2.w, -r2.y, c12.y
-rsq r2.w, r2.w
-add r2.x, r2, -r0.w
-add r2.z, -r1.w, c15.w
-cmp r1.w, -r2.x, r1, r2.z
-add r2.x, -r1.w, c13.w
-cmp r1.w, v5.z, r1, r2.x
-cmp r1.w, v5.x, r1, -r1
-mad r3.x, r1.w, c16, c16.y
-mad r1.w, r0, c12.z, c12
-mad r2.z, r2.y, c12, c12.w
-mad r2.z, r2, r2.y, c13.x
-mul r2.x, v0, c9
-mad r1.w, r0, r1, c13.x
-mad r2.y, r2.z, r2, c13
-rcp r2.w, r2.w
-mul r2.z, r2.y, r2.w
-cmp r2.y, v5, c12.x, c12
-mul r2.w, r2.y, r2.z
-add_pp r1.xyz, -r0, c12.y
-mul_sat r2.x, r2, c13.z
-mad_pp r1.xyz, r2.x, r1, r0
-add r2.x, -r0.w, c12.y
-rsq r2.x, r2.x
-mad r0.w, r0, r1, c13.y
-rcp r2.x, r2.x
-mul r1.w, r0, r2.x
-cmp r0.w, v5.z, c12.x, c12.y
-mul r2.x, r0.w, r1.w
-mad r2.x, -r2, c13.z, r1.w
-mad r1.w, -r2, c13.z, r2.z
-mad r2.x, r0.w, c13.w, r2
-mad r0.w, r2.y, c13, r1
-mul r1.w, r2.x, c14.x
-mul r3.y, r0.w, c14.x
-add r0.w, r3.z, r3
-dsy r2.xz, v5.xyyw
-rsq r0.w, r0.w
-mul r2.xz, r2, r2
-dsx r2.w, r1
-dsy r2.y, r1.w
-add r1.w, r2.x, r2.z
-rcp r0.w, r0.w
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r2.z, r0.w, c16.x
-mul r2.x, r1.w, c16
-texldd r2, r3, s0, r2.zwzw, r2
-mul_pp r2.xyz, r2, r1
 add r0.xyz, v4, c16.zwww
 texld r0, r0, s2
-dp4 r3.w, r0, c17
+dp4 r2.w, r0, c17
 add r0.xyz, v4, c16.wzww
 texld r0, r0, s2
-dp4 r3.z, r0, c17
+dp4 r2.z, r0, c17
 add r1.xyz, v4, c16.wwzw
 texld r1, r1, s2
-dp4 r3.y, r1, c17
-dp3 r0.w, v4, v4
-rsq r1.x, r0.w
+dp4 r2.y, r1, c17
 add r0.xyz, v4, c16.z
 texld r0, r0, s2
-dp4 r3.x, r0, c17
-rcp r1.x, r1.x
-mul r0.x, r1, c2.w
-dp4 r1.x, c1, c1
-mad r0, -r0.x, c18.x, r3
-mov r1.y, c3.x
-cmp r0, r0, c12.y, r1.y
-dp4_pp r0.y, r0, c18.y
+dp3 r1.x, v4, v4
+dsy r4.zw, v5.xyxy
+abs r3.w, v5.z
+abs r4.xy, v5
+dp4 r2.x, r0, c17
 rsq r1.x, r1.x
-mul r1.xyz, r1.x, c1
-dp3_pp r0.z, v2, -r1
-mul_pp r3.xyz, v2, r0.z
-mad_pp r3.xyz, -r3, c13.z, -r1
+rcp r0.x, r1.x
+mul r0.x, r0, c2.w
+mad r0, -r0.x, c18.x, r2
+mov r1.x, c3
+cmp r1, r0, c12.y, r1.x
 dp3 r0.x, v3, v3
+dp4_pp r0.y, r1, c18.y
 texld r0.x, r0.x, s3
 mul r1.w, r0.x, r0.y
 mul r0.xyz, r1.w, c4
-dp3_pp_sat r3.w, r3, v1
-mul r3.xyz, r0, c5
-pow_pp r0, r3.w, c7.x
-dp3_pp_sat r0.w, v2, r1
-add_pp r1.x, r0.w, c12.y
-frc_pp r1.y, r1.x
-add_pp_sat r1.x, r1, -r1.y
-mul r0.xyz, r3, r0.x
-mul r0.xyz, r1.x, r0
-mul_pp r0.w, r0, c4
-mul_pp r1.x, r0.w, r1.w
-mul_pp_sat r1.w, r1.x, c18.z
-mov r0.w, c10.x
-add r1.xyz, c4, r0.w
-mad_sat r1.xyz, r1, r1.w, c0
-mul r0.xyz, r2.w, r0
-mad_pp r0.xyz, r1, c11.x, r0
-mul_pp r1.xyz, r2, c6
-mul_pp oC0.xyz, r1, r0
-mov_pp oC0.w, c12.y
-"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightPositionRange]
-Vector 3 [_LightShadowData]
-Vector 4 [_LightColor0]
-Vector 5 [_SpecColor]
-Vector 6 [_Color]
-Float 7 [_Shininess]
-Float 8 [_DetailScale]
-Float 9 [_DetailDist]
-Float 10 [_MinLight]
-Float 11 [_Albedo]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_ShadowMapTexture] CUBE
-SetTexture 3 [_LightTextureB0] 2D
-SetTexture 4 [_LightTexture0] CUBE
-"ps_3_0
-; 123 ALU, 12 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_cube s2
-dcl_2d s3
-dcl_cube s4
-def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c16, 0.15915494, 0.50000000, 0.00781250, -0.00781250
-def c17, 1.00000000, 0.00392157, 0.00001538, 0.00000001
-def c18, 0.97000003, 0.25000000, 4.00000000, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3.xyz
-dcl_texcoord4 v4.xyz
-dcl_texcoord5 v5.xyz
-mul r1.xy, v5, c8.x
-dsx r3.zw, v5.xyxy
-abs r0.w, v5.z
-abs r2.xy, v5
-max r0.x, r2, r0.w
+mul r2.xyz, r0, c5
+dp4 r0.x, c1, c1
+rsq r0.y, r0.x
+mul r1.xyz, r0.y, c1
+max r0.x, r4, r3.w
 rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
-mul r2.z, r1.w, r1.w
-mad r0.x, r2.z, c14.y, c14.z
-mad r0.x, r0, r2.z, c14.w
-mad r2.w, r0.x, r2.z, c15.x
-mul r0.xy, v5.zyzw, c8.x
-mul r3.zw, r3, r3
-mad r2.w, r2, r2.z, c15.y
-texld r1.xyz, r1, s1
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2.w, r2, c15
-mul r1.w, r0.z, r1
-mul r0.xy, v5.zxzw, c8.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-add_pp r1.xyz, -r0, c12.y
-add r2.x, r2, -r0.w
-add r2.z, -r1.w, c15.w
-cmp r1.w, -r2.x, r1, r2.z
-add r2.x, -r1.w, c13.w
-cmp r1.w, v5.z, r1, r2.x
-cmp r1.w, v5.x, r1, -r1
-mul r2.x, v0, c9
-mul_sat r2.x, r2, c13.z
-mad_pp r2.xyz, r2.x, r1, r0
-abs r1.z, v5.y
-mad r3.x, r1.w, c16, c16.y
-add r1.y, -r0.w, c12
-mad r1.x, r0.w, c12.z, c12.w
-mad r1.x, r0.w, r1, c13
-add r2.w, -r1.z, c12.y
-mad r1.w, r1.z, c12.z, c12
-mad r1.w, r1, r1.z, c13.x
-rsq r1.y, r1.y
-rsq r2.w, r2.w
-mad r0.w, r0, r1.x, c13.y
-rcp r1.y, r1.y
-mul r1.x, r0.w, r1.y
-cmp r0.w, v5.z, c12.x, c12.y
-mul r1.y, r0.w, r1.x
-mad r1.y, -r1, c13.z, r1.x
-mad r1.z, r1.w, r1, c13.y
-rcp r2.w, r2.w
-mul r1.w, r1.z, r2
-cmp r1.z, v5.y, c12.x, c12.y
-mul r2.w, r1.z, r1
-mad r1.x, -r2.w, c13.z, r1.w
-mad r1.y, r0.w, c13.w, r1
-mad r0.w, r1.z, c13, r1.x
-mul r1.x, r1.y, c14
-mul r3.y, r0.w, c14.x
-add r0.w, r3.z, r3
-rsq r0.w, r0.w
-dsx r1.w, r1.x
-dsy r1.y, r1.x
-dsy r1.xz, v5.xyyw
-mul r1.xz, r1, r1
-add r1.x, r1, r1.z
-rcp r0.w, r0.w
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-mul r1.z, r0.w, c16.x
-add r0.xyz, v4, c16.zwww
-texld r0, r0, s2
-dp4 r3.w, r0, c17
-mul r1.x, r1, c16
-texldd r1, r3, s0, r1.zwzw, r1
-mul_pp r1.xyz, r1, r2
-add r0.xyz, v4, c16.wzww
-texld r0, r0, s2
-dp4 r3.z, r0, c17
-add r2.xyz, v4, c16.wwzw
-texld r2, r2, s2
-dp4 r3.y, r2, c17
-add r0.xyz, v4, c16.z
-texld r0, r0, s2
-dp3 r2.x, v4, v4
-dp4 r3.x, r0, c17
-rsq r2.x, r2.x
-rcp r0.x, r2.x
-dp4 r2.x, c1, c1
-mul r0.x, r0, c2.w
-rsq r2.x, r2.x
-mul r2.xyz, r2.x, c1
-mad r0, -r0.x, c18.x, r3
-mov r2.w, c3.x
-cmp r0, r0, c12.y, r2.w
-dp4_pp r0.y, r0, c18.y
-dp3_pp r2.w, v2, -r2
-mul_pp r3.xyz, v2, r2.w
-mad_pp r3.xyz, -r3, c13.z, -r2
-dp3 r0.x, v3, v3
-texld r0.w, v3, s4
-texld r0.x, r0.x, s3
-mul r0.x, r0, r0.w
+min r0.x, r4, r3.w
 mul r2.w, r0.x, r0.y
-mul r0.xyz, r2.w, c4
-dp3_pp_sat r3.w, r3, v1
-mul r3.xyz, r0, c5
-pow_pp r0, r3.w, c7.x
-dp3_pp_sat r0.w, v2, r2
-add_pp r2.x, r0.w, c12.y
-frc_pp r2.y, r2.x
-add_pp_sat r2.x, r2, -r2.y
-mul r0.xyz, r3, r0.x
-mul r0.xyz, r2.x, r0
-mul_pp r0.w, r0, c4
-mul r0.xyz, r1.w, r0
-mul_pp r1.w, r0, r2
+mul r3.x, r2.w, r2.w
+dp3_pp r0.x, v2, -r1
+mad r0.w, r3.x, c14.y, c14.z
+mad r0.w, r0, r3.x, c14
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c13.z, -r1
+dp3_pp_sat r3.z, r0, v1
+mad r3.y, r0.w, r3.x, c15.x
+pow_pp r0, r3.z, c7.x
+mad r0.y, r3, r3.x, c15
+mad r0.y, r0, r3.x, c15.z
+mul r2.w, r0.y, r2
+mul r0.xyz, r2, r0.x
+add r2.x, -r2.w, c15.w
+add r0.w, r4.x, -r3
+cmp r0.w, -r0, r2, r2.x
+dp3_pp_sat r2.w, v2, r1
+add r1.x, -r0.w, c13.w
+cmp r0.w, v5.z, r0, r1.x
+add_pp r1.y, r2.w, c12
+frc_pp r1.x, r1.y
+add_pp_sat r1.x, r1.y, -r1
+mul r3.xyz, r1.x, r0
+cmp r0.w, v5.x, r0, -r0
+mad r1.x, r0.w, c16, c16.y
+abs r0.w, v5.y
+add r1.z, -r0.w, c12.y
+mad r1.y, r0.w, c12.z, c12.w
+mad r1.y, r1, r0.w, c13.x
+add r0.y, -r3.w, c12
+mad r0.x, r3.w, c12.z, c12.w
+rsq r0.y, r0.y
+mad r0.x, r3.w, r0, c13
+rsq r1.z, r1.z
+dsx r2.xy, v5
+mad r0.w, r1.y, r0, c13.y
+rcp r1.z, r1.z
+mul r1.y, r0.w, r1.z
+cmp r0.w, v5.y, c12.x, c12.y
+mul r1.z, r0.w, r1.y
+mad r0.x, r3.w, r0, c13.y
+rcp r0.y, r0.y
+mul r0.y, r0.x, r0
+cmp r0.x, v5.z, c12, c12.y
+mul r0.z, r0.x, r0.y
+mad r0.z, -r0, c13, r0.y
+mad r0.y, -r1.z, c13.z, r1
+mad r0.z, r0.x, c13.w, r0
+mad r0.x, r0.w, c13.w, r0.y
+mul r0.y, r0.z, c14.x
+dsx r0.w, r0.y
+mul r4.zw, r4, r4
+add r0.z, r4, r4.w
+rsq r0.z, r0.z
+mul r1.y, r0.x, c14.x
+mul r2.xy, r2, r2
+add r0.x, r2, r2.y
+rsq r0.x, r0.x
+mul r2.xy, v5, c8.x
+texld r2.xyz, r2, s1
+rcp r1.z, r0.z
+rcp r0.x, r0.x
+mul r0.z, r0.x, c16.x
+mul r0.x, r1.z, c16
+dsy r0.y, r0
+texldd r0, r1, s0, r0.zwzw, r0
+mul r3.xyz, r0.w, r3
+mul_pp r0.w, r2, c4
+mul_pp r1.w, r0, r1
+mul r1.xy, v5.zyzw, c8.x
+texld r1.xyz, r1, s1
+add_pp r1.xyz, r1, -r2
+mad_pp r1.xyz, r4.x, r1, r2
 mov r0.w, c10.x
+add r4.xzw, c4.xyyz, r0.w
+mul r2.xy, v5.zxzw, c8.x
+texld r2.xyz, r2, s1
+add_pp r2.xyz, r2, -r1
+mad_pp r1.xyz, r4.y, r2, r1
 mul_pp_sat r1.w, r1, c18.z
-add r2.xyz, c4, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r0.xyz, r2, c11.x, r0
-mul_pp r1.xyz, r1, c6
-mul_pp oC0.xyz, r1, r0
+mad_sat r4.xzw, r4, r1.w, c0.xyyz
+mul r0.w, v0.x, c9.x
+add_pp r2.xyz, -r1, c12.y
+mul_sat r0.w, r0, c13.z
+mad_pp r1.xyz, r0.w, r2, r1
+add_pp r3.xyz, r4.xzww, r3
+mul r2.xyz, r3, c11.x
+mul_pp r0.xyz, r0, r1
+mad_pp r0.xyz, r0, c6, r2
+mul_pp oC0.xyz, r0, r3
+mov_pp oC0.w, c12.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightPositionRange]
+Vector 3 [_LightShadowData]
+Vector 4 [_LightColor0]
+Vector 5 [_SpecColor]
+Vector 6 [_Color]
+Float 7 [_Shininess]
+Float 8 [_DetailScale]
+Float 9 [_DetailDist]
+Float 10 [_MinLight]
+Float 11 [_Albedo]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_ShadowMapTexture] CUBE
+SetTexture 3 [_LightTextureB0] 2D
+SetTexture 4 [_LightTexture0] CUBE
+"ps_3_0
+; 124 ALU, 12 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_cube s2
+dcl_2d s3
+dcl_cube s4
+def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c16, 0.15915494, 0.50000000, 0.00781250, -0.00781250
+def c17, 1.00000000, 0.00392157, 0.00001538, 0.00000001
+def c18, 0.97000003, 0.25000000, 4.00000000, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3.xyz
+dcl_texcoord4 v4.xyz
+dcl_texcoord5 v5.xyz
+add r0.xyz, v4, c16.zwww
+texld r0, r0, s2
+dp4 r2.w, r0, c17
+add r0.xyz, v4, c16.wzww
+texld r0, r0, s2
+dp4 r2.z, r0, c17
+add r1.xyz, v4, c16.wwzw
+texld r1, r1, s2
+dp4 r2.y, r1, c17
+add r0.xyz, v4, c16.z
+texld r0, r0, s2
+dp3 r1.x, v4, v4
+dsy r4.zw, v5.xyxy
+abs r3.w, v5.z
+abs r4.xy, v5
+dp4 r2.x, r0, c17
+rsq r1.x, r1.x
+rcp r0.x, r1.x
+mul r0.x, r0, c2.w
+mad r0, -r0.x, c18.x, r2
+mov r1.x, c3
+cmp r0, r0, c12.y, r1.x
+dp4_pp r0.y, r0, c18.y
+dp3 r0.x, v3, v3
+texld r0.w, v3, s4
+texld r0.x, r0.x, s3
+mul r0.x, r0, r0.w
+mul r1.w, r0.x, r0.y
+mul r0.xyz, r1.w, c4
+mul r2.xyz, r0, c5
+dp4 r0.x, c1, c1
+rsq r0.y, r0.x
+mul r1.xyz, r0.y, c1
+max r0.x, r4, r3.w
+rcp r0.y, r0.x
+min r0.x, r4, r3.w
+mul r2.w, r0.x, r0.y
+mul r3.x, r2.w, r2.w
+dp3_pp r0.x, v2, -r1
+mad r0.w, r3.x, c14.y, c14.z
+mad r0.w, r0, r3.x, c14
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c13.z, -r1
+dp3_pp_sat r3.z, r0, v1
+mad r3.y, r0.w, r3.x, c15.x
+pow_pp r0, r3.z, c7.x
+mad r0.y, r3, r3.x, c15
+mad r0.y, r0, r3.x, c15.z
+mul r2.w, r0.y, r2
+mul r0.xyz, r2, r0.x
+add r2.x, -r2.w, c15.w
+add r0.w, r4.x, -r3
+cmp r0.w, -r0, r2, r2.x
+dp3_pp_sat r2.w, v2, r1
+add r1.x, -r0.w, c13.w
+cmp r0.w, v5.z, r0, r1.x
+add_pp r1.y, r2.w, c12
+frc_pp r1.x, r1.y
+add_pp_sat r1.x, r1.y, -r1
+mul r3.xyz, r1.x, r0
+cmp r0.w, v5.x, r0, -r0
+mad r1.x, r0.w, c16, c16.y
+abs r0.w, v5.y
+add r1.z, -r0.w, c12.y
+mad r1.y, r0.w, c12.z, c12.w
+mad r1.y, r1, r0.w, c13.x
+add r0.y, -r3.w, c12
+mad r0.x, r3.w, c12.z, c12.w
+rsq r0.y, r0.y
+mad r0.x, r3.w, r0, c13
+rsq r1.z, r1.z
+dsx r2.xy, v5
+mad r0.w, r1.y, r0, c13.y
+rcp r1.z, r1.z
+mul r1.y, r0.w, r1.z
+cmp r0.w, v5.y, c12.x, c12.y
+mul r1.z, r0.w, r1.y
+mad r0.x, r3.w, r0, c13.y
+rcp r0.y, r0.y
+mul r0.y, r0.x, r0
+cmp r0.x, v5.z, c12, c12.y
+mul r0.z, r0.x, r0.y
+mad r0.z, -r0, c13, r0.y
+mad r0.y, -r1.z, c13.z, r1
+mad r0.z, r0.x, c13.w, r0
+mad r0.x, r0.w, c13.w, r0.y
+mul r0.y, r0.z, c14.x
+dsx r0.w, r0.y
+mul r4.zw, r4, r4
+add r0.z, r4, r4.w
+rsq r0.z, r0.z
+mul r1.y, r0.x, c14.x
+mul r2.xy, r2, r2
+add r0.x, r2, r2.y
+rsq r0.x, r0.x
+mul r2.xy, v5, c8.x
+texld r2.xyz, r2, s1
+rcp r1.z, r0.z
+rcp r0.x, r0.x
+mul r0.z, r0.x, c16.x
+mul r0.x, r1.z, c16
+dsy r0.y, r0
+texldd r0, r1, s0, r0.zwzw, r0
+mul r3.xyz, r0.w, r3
+mul_pp r0.w, r2, c4
+mul_pp r1.w, r0, r1
+mul r1.xy, v5.zyzw, c8.x
+texld r1.xyz, r1, s1
+add_pp r1.xyz, r1, -r2
+mad_pp r1.xyz, r4.x, r1, r2
+mov r0.w, c10.x
+add r4.xzw, c4.xyyz, r0.w
+mul r2.xy, v5.zxzw, c8.x
+texld r2.xyz, r2, s1
+add_pp r2.xyz, r2, -r1
+mad_pp r1.xyz, r4.y, r2, r1
+mul_pp_sat r1.w, r1, c18.z
+mad_sat r4.xzw, r4, r1.w, c0.xyyz
+mul r0.w, v0.x, c9.x
+add_pp r2.xyz, -r1, c12.y
+mul_sat r0.w, r0, c13.z
+mad_pp r1.xyz, r0.w, r2, r1
+add_pp r3.xyz, r4.xzww, r3
+mul r2.xyz, r3, c11.x
+mul_pp r0.xyz, r0, r1
+mad_pp r0.xyz, r0, c6, r2
+mul_pp oC0.xyz, r0, r3
 mov_pp oC0.w, c12.y
 "
 }
@@ -77445,7 +77790,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTexture0] 2D
 "ps_3_0
-; 106 ALU, 7 TEX
+; 107 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -77461,108 +77806,109 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord5 v4.xyz
 mul r0.xy, v4, c6.x
 mul r1.xy, v4.zyzw, c6.x
-mul r2.z, v0.x, c7.x
-dsx r4.xy, v4
-dsy r4.zw, v4.xyxy
-abs r0.w, v4.z
-abs r3.xy, v4
+dsy r5.xy, v4
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r3.x, r1, r0
-max r0.z, r3.x, r0.w
-rcp r1.w, r0.z
-min r0.z, r3.x, r0.w
-mul r1.w, r0.z, r1
-mul r2.x, r1.w, r1.w
-mad r2.y, r2.x, c12, c12.z
-mad r2.y, r2, r2.x, c12.w
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v4.xyxy
+abs r1.x, v4.z
+mad_pp r2.xyz, r1.z, r2, r0
+max r0.w, r1.z, r1.x
+min r0.x, r1.z, r1
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r1.y, r0.w, r0.w
 mul r0.xy, v4.zxzw, c6.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.z, r2, c11
-mad_pp r1.xyz, r2.z, r1, r0
-mad r2.y, r2, r2.x, c13.x
-mad r0.x, r2.y, r2, c13.y
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.w, r0, r2
+mad r2.w, r1.y, c12.y, c12.z
+mad r0.x, r2.w, r1.y, c12.w
+mad r0.x, r0, r1.y, c13
+mad r0.x, r0, r1.y, c13.y
+mad r0.x, r0, r1.y, c13.z
+mul r1.y, r0.x, r0.w
 dp4 r0.y, c1, c1
-mad r0.x, r0, r2, c13.z
-rsq r0.z, r0.y
-mul r0.y, r0.x, r1.w
-mul r2.xyz, r0.z, c1
-add r0.x, r3, -r0.w
-add r0.z, -r0.y, c13.w
-dp3_pp r2.w, v2, -r2
-cmp r1.w, -r0.x, r0.y, r0.z
-mul_pp r0.xyz, v2, r2.w
-mad_pp r0.xyz, -r0, c11.z, -r2
-dp3_pp_sat r0.y, r0, v1
-pow_pp r3, r0.y, c5.x
-add r2.w, -r1, c11
-cmp r1.w, v4.z, r1, r2
-cmp r0.x, v4, r1.w, -r1.w
-mad r3.z, r0.x, c14.x, c14.y
-add r0.y, -r0.w, c10
-mad r0.x, r0.w, c10.z, c10.w
-mad r0.x, r0.w, r0, c11
-mad r0.x, r0.w, r0, c11.y
-abs r0.w, v4.y
-add r2.w, -r0, c10.y
-mad r1.w, r0, c10.z, c10
-mad r1.w, r1, r0, c11.x
+rsq r0.y, r0.y
+mul r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c11.z, -r4
+add r0.w, r1.z, -r1.x
+add r1.w, -r1.y, c13
+cmp r0.w, -r0, r1.y, r1
+add r1.y, -r0.w, c11.w
+add_pp r3.xyz, -r2, c10.y
+dp3_pp_sat r1.z, r0, v1
+cmp r1.y, v4.z, r0.w, r1
+pow_pp r0, r1.z, c5.x
+cmp r0.y, v4.x, r1, -r1
+mad r1.z, r0.y, c14.x, c14.y
+add r0.z, -r1.x, c10.y
+mad r0.y, r1.x, c10.z, c10.w
+mad r0.y, r1.x, r0, c11.x
+mad r0.y, r1.x, r0, c11
+abs r1.x, v4.y
+add r1.w, -r1.x, c10.y
+mad r1.y, r1.x, c10.z, c10.w
+mad r1.y, r1, r1.x, c11.x
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r0.z, r0.y, r0
+cmp r0.y, v4.z, c10.x, c10
+mul r0.w, r0.y, r0.z
+mad r0.w, -r0, c11.z, r0.z
+rsq r1.w, r1.w
+mad r1.x, r1.y, r1, c11.y
+rcp r1.w, r1.w
+mul r1.y, r1.x, r1.w
+cmp r1.x, v4.y, c10, c10.y
+mul r1.w, r1.x, r1.y
+mad r0.z, -r1.w, c11, r1.y
+mad r0.w, r0.y, c11, r0
+mad r0.y, r1.x, c11.w, r0.z
+mul r0.z, r0.w, c12.x
+dsy r0.w, r0.z
+mul r1.w, r0.y, c12.x
+dsx r1.y, r0.z
+dsx r0.yz, v4.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.y, r5.z, r5.w
+add r0.z, r5.x, r5.y
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v4.z, c10, c10.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c11, r0.y
-rsq r2.w, r2.w
-mad r0.w, r1, r0, c11.y
-rcp r2.w, r2.w
-mul r1.w, r0, r2
-cmp r0.w, v4.y, c10.x, c10.y
-mul r2.w, r0, r1
-mad r0.y, -r2.w, c11.z, r1.w
-mad r0.z, r0.x, c11.w, r0
-mad r0.x, r0.w, c11.w, r0.y
-mul r0.y, r0.z, c12.x
-mul r3.w, r0.x, c12.x
-dsx r0.w, r0.y
-mul r4.xy, r4, r4
-mul r4.zw, r4, r4
-add r0.x, r4, r4.y
-add r0.z, r4, r4.w
+mul r1.x, r0.y, c14
 rsq r0.z, r0.z
-rsq r0.x, r0.x
-rcp r1.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c14.x
-mul r0.x, r1.w, c14
-dsy r0.y, r0
-texldd r0, r3.zwzw, s0, r0.zwzw, r0
-mul_pp r1.xyz, r0, r1
-dp3_pp_sat r0.y, v2, r2
-add_pp r0.z, r0.y, c10.y
+rcp r0.z, r0.z
+mul r0.z, r0, c14.x
+texldd r1, r1.zwzw, s0, r1, r0.zwzw
+mov_pp r0.z, r0.x
+dp3_pp_sat r0.y, v2, r4
+add_pp r0.w, r0.y, c10.y
 dp3 r0.x, v3, v3
 texld r0.x, r0.x, s2
-mul r2.xyz, r0.x, c2
-frc_pp r1.w, r0.z
+mul r4.xyz, r0.x, c2
+mul r4.xyz, r4, c3
 mul_pp r0.y, r0, c2.w
 mul_pp r0.y, r0, r0.x
-add_pp_sat r0.z, r0, -r1.w
-mov_pp r2.w, r3.x
-mul r2.xyz, r2, c3
-mul r2.xyz, r2, r2.w
-mul r2.xyz, r0.z, r2
-mul r2.xyz, r0.w, r2
+mul r4.xyz, r4, r0.z
+frc_pp r2.w, r0
+add_pp_sat r0.z, r0.w, -r2.w
+mul r4.xyz, r0.z, r4
 mul_pp_sat r0.w, r0.y, c14.z
 mov r0.x, c8
 add r0.xyz, c2, r0.x
 mad_sat r0.xyz, r0, r0.w, c0
-mad_pp r2.xyz, r0, c9.x, r2
-mul_pp r0.xyz, r1, c4
-mul_pp oC0.xyz, r0, r2
+mul r4.xyz, r1.w, r4
+mul r0.w, v0.x, c7.x
+mul_sat r0.w, r0, c11.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c9.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c4, r3
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c10.y
 "
 }
@@ -77602,7 +77948,7 @@ Float 9 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 104 ALU, 6 TEX
+; 105 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c10, 0.00000000, 1.00000000, -0.01872930, 0.07426100
@@ -77616,60 +77962,57 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord5 v3.xyz
 mul r0.xy, v3, c6.x
 mul r1.xy, v3.zyzw, c6.x
-mul r2.y, v0.x, c7.x
-dsx r3.zw, v3.xyxy
+dsx r4.zw, v3.xyxy
 abs r2.w, v3.z
-abs r3.xy, v3
-max r0.w, r3.x, r2
-rcp r1.w, r0.w
-min r0.w, r3.x, r2
-mul r0.w, r0, r1
-mul r1.w, r0, r0
-mad r2.x, r1.w, c12.y, c12.z
+abs r4.xy, v3
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
 add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r3.x, r1, r0
+mad_pp r1.xyz, r4.x, r1, r0
+max r0.w, r4.x, r2
+min r0.x, r4, r2.w
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r1.w, r0, r0
 mul r0.xy, v3.zxzw, c6.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.y, r2, c11.z
-mad_pp r1.xyz, r2.y, r1, r0
-mad r2.x, r2, r1.w, c12.w
-mad r0.x, r2, r1.w, c13
+mad_pp r1.xyz, r4.y, r0, r1
+mad r2.x, r1.w, c12.y, c12.z
+mad r0.x, r2, r1.w, c12.w
+mad r0.x, r0, r1.w, c13
 mad r0.x, r0, r1.w, c13.y
 mad r0.x, r0, r1.w, c13.z
 mul r1.w, r0.x, r0
 dp4_pp r0.y, c1, c1
 rsq_pp r0.y, r0.y
-mul_pp r2.xyz, r0.y, c1
-dp3_pp r0.x, v2, -r2
+mul_pp r3.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r3
 mul_pp r0.xyz, v2, r0.x
-mad_pp r0.xyz, -r0, c11.z, -r2
-add r0.w, r3.x, -r2
-add r3.y, -r1.w, c13.w
-cmp r0.w, -r0, r1, r3.y
+mad_pp r0.xyz, -r0, c11.z, -r3
+add_pp r2.xyz, -r1, c10.y
+add r3.w, -r1, c13
+add r0.w, r4.x, -r2
+cmp r0.w, -r0, r1, r3
 add r1.w, -r0, c11
-dp3_pp_sat r3.x, r0, v1
+dp3_pp_sat r3.w, r0, v1
 cmp r1.w, v3.z, r0, r1
-pow_pp r0, r3.x, c5.x
+pow_pp r0, r3.w, c5.x
 cmp r0.w, v3.x, r1, -r1
-dp3_pp_sat r1.w, v2, r2
-add_pp r2.x, r1.w, c10.y
-mov_pp r2.z, r0.x
-frc_pp r2.y, r2.x
-mad r3.x, r0.w, c14, c14.y
+dp3_pp_sat r1.w, v2, r3
+add_pp r3.y, r1.w, c10
+mov_pp r3.z, r0.x
+mad r4.x, r0.w, c14, c14.y
 abs r0.w, v3.y
-add r3.y, -r0.w, c10
+frc_pp r3.x, r3.y
+add r3.w, -r0, c10.y
 mov r0.xyz, c2
 mul r0.xyz, c3, r0
-rsq r3.y, r3.y
+rsq r3.w, r3.w
 mul_pp r1.w, r1, c2
-mul r0.xyz, r0, r2.z
-add_pp_sat r2.x, r2, -r2.y
-mul r2.xyz, r2.x, r0
+mul r0.xyz, r0, r3.z
+add_pp_sat r3.x, r3.y, -r3
+mul r3.xyz, r3.x, r0
 add r0.y, -r2.w, c10
 mad r0.x, r2.w, c10.z, c10.w
 mad r0.x, r2.w, r0, c11
@@ -77683,21 +78026,21 @@ cmp r0.x, v3.z, c10, c10.y
 mul r0.z, r0.x, r0.y
 mad r0.z, -r0, c11, r0.y
 mad r0.w, r2, r0, c11.y
-rcp r3.y, r3.y
-mul r2.w, r0, r3.y
+rcp r3.w, r3.w
+mul r2.w, r0, r3
 cmp r0.w, v3.y, c10.x, c10.y
-mul r3.y, r0.w, r2.w
-mad r0.y, -r3, c11.z, r2.w
+mul r3.w, r0, r2
+mad r0.y, -r3.w, c11.z, r2.w
 mad r0.z, r0.x, c11.w, r0
 mad r0.x, r0.w, c11.w, r0.y
 mul r0.y, r0.z, c12.x
-mul r3.y, r0.x, c12.x
+mul r4.y, r0.x, c12.x
 dsx r0.w, r0.y
+mul r4.zw, r4, r4
 dsy r0.xz, v3.xyyw
 mul r0.xz, r0, r0
 add r0.z, r0.x, r0
-mul r3.zw, r3, r3
-add r2.w, r3.z, r3
+add r2.w, r4.z, r4
 rsq r0.x, r2.w
 rsq r0.z, r0.z
 rcp r0.x, r0.x
@@ -77705,16 +78048,20 @@ rcp r2.w, r0.z
 mul r0.z, r0.x, c14.x
 dsy r0.y, r0
 mul r0.x, r2.w, c14
-texldd r0, r3, s0, r0.zwzw, r0
-mul_pp r0.xyz, r0, r1
-mul r1.xyz, r0.w, r2
+texldd r0, r4, s0, r0.zwzw, r0
+mul r4.xyz, r0.w, r3
 mov r0.w, c8.x
+add r3.xyz, c2, r0.w
 mul_pp_sat r1.w, r1, c14.z
-add r2.xyz, c2, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r1.xyz, r2, c9.x, r1
-mul_pp r0.xyz, r0, c4
-mul_pp oC0.xyz, r0, r1
+mad_sat r3.xyz, r3, r1.w, c0
+mul r0.w, v0.x, c7.x
+mul_sat r0.w, r0, c11.z
+mad_pp r1.xyz, r0.w, r2, r1
+add_pp r3.xyz, r3, r4
+mul r2.xyz, r3, c9.x
+mul_pp r0.xyz, r0, r1
+mad_pp r0.xyz, r0, c4, r2
+mul_pp oC0.xyz, r0, r3
 mov_pp oC0.w, c10.y
 "
 }
@@ -77756,7 +78103,7 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTexture0] 2D
 SetTexture 3 [_LightTextureB0] 2D
 "ps_3_0
-; 111 ALU, 8 TEX
+; 112 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -77773,114 +78120,115 @@ dcl_texcoord3 v3
 dcl_texcoord5 v4.xyz
 mul r0.xy, v4, c6.x
 mul r1.xy, v4.zyzw, c6.x
-mul r2.z, v0.x, c7.x
-dsx r4.xy, v4
-dsy r4.zw, v4.xyxy
-abs r1.w, v4.z
-abs r3.xy, v4
+dsy r5.xy, v4
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r3.x, r1, r0
-max r0.z, r3.x, r1.w
-rcp r0.w, r0.z
-min r0.z, r3.x, r1.w
-mul r0.w, r0.z, r0
-mul r2.x, r0.w, r0.w
-mad r2.y, r2.x, c12, c12.z
-mad r2.y, r2, r2.x, c12.w
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v4.xyxy
+abs r1.x, v4.z
+mad_pp r2.xyz, r1.z, r2, r0
+max r0.w, r1.z, r1.x
+min r0.x, r1.z, r1
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r1.y, r0.w, r0.w
 mul r0.xy, v4.zxzw, c6.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.z, r2, c11
-mad_pp r1.xyz, r2.z, r1, r0
-mad r2.y, r2, r2.x, c13.x
-mad r0.x, r2.y, r2, c13.y
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.w, r0, r2
+mad r2.w, r1.y, c12.y, c12.z
+mad r0.x, r2.w, r1.y, c12.w
+mad r0.x, r0, r1.y, c13
+mad r0.x, r0, r1.y, c13.y
+mad r0.x, r0, r1.y, c13.z
+mul r1.y, r0.x, r0.w
 dp4 r0.y, c1, c1
-mad r0.x, r0, r2, c13.z
-rsq r0.z, r0.y
-mul r0.y, r0.x, r0.w
-mul r2.xyz, r0.z, c1
-dp3_pp r2.w, v2, -r2
-add r0.x, r3, -r1.w
-add r0.z, -r0.y, c13.w
-cmp r0.w, -r0.x, r0.y, r0.z
-mul_pp r0.xyz, v2, r2.w
-mad_pp r0.xyz, -r0, c11.z, -r2
-add r2.w, -r0, c11
-cmp r0.w, v4.z, r0, r2
-cmp r2.w, v4.x, r0, -r0
-dp3_pp_sat r3.x, r0, v1
-pow_pp r0, r3.x, c5.x
-add r0.z, -r1.w, c10.y
-mad r0.y, r1.w, c10.z, c10.w
-mad r0.y, r1.w, r0, c11.x
-mad r0.y, r1.w, r0, c11
-abs r1.w, v4.y
-mad r3.z, r2.w, c14.x, c14.y
-add r3.x, -r1.w, c10.y
-mad r2.w, r1, c10.z, c10
-mad r2.w, r2, r1, c11.x
+rsq r0.y, r0.y
+mul r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c11.z, -r4
+add r0.w, r1.z, -r1.x
+add r1.w, -r1.y, c13
+cmp r0.w, -r0, r1.y, r1
+add r1.y, -r0.w, c11.w
+dp3_pp_sat r2.w, v2, r4
+add_pp r3.xyz, -r2, c10.y
+dp3_pp_sat r1.z, r0, v1
+cmp r1.y, v4.z, r0.w, r1
+pow_pp r0, r1.z, c5.x
+cmp r0.y, v4.x, r1, -r1
+mov_pp r3.w, r0.x
+mad r1.z, r0.y, c14.x, c14.y
+add r0.z, -r1.x, c10.y
+mad r0.y, r1.x, c10.z, c10.w
+mad r0.y, r1.x, r0, c11.x
+mad r0.y, r1.x, r0, c11
+abs r1.x, v4.y
+add r1.w, -r1.x, c10.y
+mad r1.y, r1.x, c10.z, c10.w
+mad r1.y, r1, r1.x, c11.x
+rcp r0.x, v3.w
+mad r4.xy, v3, r0.x, c14.y
 rsq r0.z, r0.z
 rcp r0.z, r0.z
 mul r0.z, r0.y, r0
 cmp r0.y, v4.z, c10.x, c10
 mul r0.w, r0.y, r0.z
 mad r0.w, -r0, c11.z, r0.z
-rsq r3.x, r3.x
-dp3_pp_sat r2.z, v2, r2
-mad r1.w, r2, r1, c11.y
-rcp r3.x, r3.x
-mul r2.w, r1, r3.x
-cmp r1.w, v4.y, c10.x, c10.y
-mul r3.x, r1.w, r2.w
-mad r0.z, -r3.x, c11, r2.w
+rsq r1.w, r1.w
+dp3 r0.x, v3, v3
+mad r1.x, r1.y, r1, c11.y
+rcp r1.w, r1.w
+mul r1.y, r1.x, r1.w
+cmp r1.x, v4.y, c10, c10.y
+mul r1.w, r1.x, r1.y
+mad r0.z, -r1.w, c11, r1.y
 mad r0.w, r0.y, c11, r0
-mad r0.y, r1.w, c11.w, r0.z
+mad r0.y, r1.x, c11.w, r0.z
 mul r0.z, r0.w, c12.x
 dsy r0.w, r0.z
-mul r3.w, r0.y, c12.x
-mul r4.xy, r4, r4
-add r0.y, r4.x, r4
+mul r1.w, r0.y, c12.x
+dsx r1.y, r0.z
+dsx r0.yz, v4.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.y, r5.z, r5.w
+add r0.z, r5.x, r5.y
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-dsx r3.y, r0.z
-mul r4.zw, r4, r4
-add r0.z, r4, r4.w
+mul r1.x, r0.y, c14
 rsq r0.z, r0.z
 rcp r0.z, r0.z
 mul r0.z, r0, c14.x
-mul r3.x, r0.y, c14
-texldd r3, r3.zwzw, s0, r3, r0.zwzw
-mov_pp r1.w, r0.x
-rcp r0.x, v3.w
-mad r2.xy, v3, r0.x, c14.y
-texld r0.w, r2, s2
-add_pp r2.x, r2.z, c10.y
-dp3 r0.x, v3, v3
+texldd r1, r1.zwzw, s0, r1, r0.zwzw
+texld r0.w, r4, s2
+add_pp r4.x, r2.w, c10.y
 cmp r0.y, -v3.z, c10.x, c10
 mul_pp r0.y, r0, r0.w
 texld r0.x, r0.x, s3
 mul_pp r0.w, r0.y, r0.x
 mul r0.xyz, r0.w, c2
 mul r0.xyz, r0, c3
-mul r0.xyz, r0, r1.w
-frc_pp r2.y, r2.x
-add_pp_sat r1.w, r2.x, -r2.y
-mul r0.xyz, r1.w, r0
-mul_pp r1.w, r2.z, c2
-mul_pp r1.w, r1, r0
-mov r0.w, c8.x
+mul r0.xyz, r0, r3.w
+frc_pp r4.y, r4.x
+add_pp_sat r3.w, r4.x, -r4.y
 mul r0.xyz, r3.w, r0
-mul_pp r1.xyz, r3, r1
-mul_pp_sat r1.w, r1, c14.z
-add r2.xyz, c2, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r2.xyz, r2, c9.x, r0
-mul_pp r0.xyz, r1, c4
-mul_pp oC0.xyz, r0, r2
+mul r4.xyz, r1.w, r0
+mul_pp r2.w, r2, c2
+mul_pp r0.y, r2.w, r0.w
+mul_pp_sat r0.w, r0.y, c14.z
+mov r0.x, c8
+add r0.xyz, c2, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+mul r0.w, v0.x, c7.x
+mul_sat r0.w, r0, c11.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c9.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c4, r3
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c10.y
 "
 }
@@ -77922,7 +78270,7 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTextureB0] 2D
 SetTexture 3 [_LightTexture0] CUBE
 "ps_3_0
-; 107 ALU, 8 TEX
+; 108 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -77939,110 +78287,111 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord5 v4.xyz
 mul r0.xy, v4, c6.x
 mul r1.xy, v4.zyzw, c6.x
-mul r2.z, v0.x, c7.x
-dsx r4.xy, v4
-dsy r4.zw, v4.xyxy
-abs r1.w, v4.z
-abs r3.xy, v4
+dsy r5.xy, v4
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r3.x, r1, r0
-max r0.z, r3.x, r1.w
-rcp r0.w, r0.z
-min r0.z, r3.x, r1.w
-mul r0.w, r0.z, r0
-mul r2.x, r0.w, r0.w
-mad r2.y, r2.x, c12, c12.z
-mad r2.y, r2, r2.x, c12.w
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v4.xyxy
+abs r1.x, v4.z
+mad_pp r2.xyz, r1.z, r2, r0
+max r0.w, r1.z, r1.x
+min r0.x, r1.z, r1
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r1.y, r0.w, r0.w
 mul r0.xy, v4.zxzw, c6.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.z, r2, c11
-mad_pp r1.xyz, r2.z, r1, r0
-mad r2.y, r2, r2.x, c13.x
-mad r0.x, r2.y, r2, c13.y
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.w, r0, r2
+mad r2.w, r1.y, c12.y, c12.z
+mad r0.x, r2.w, r1.y, c12.w
+mad r0.x, r0, r1.y, c13
+mad r0.x, r0, r1.y, c13.y
+mad r0.x, r0, r1.y, c13.z
+mul r1.y, r0.x, r0.w
 dp4 r0.y, c1, c1
-mad r0.x, r0, r2, c13.z
-rsq r0.z, r0.y
-mul r0.y, r0.x, r0.w
-mul r2.xyz, r0.z, c1
-add r0.x, r3, -r1.w
-add r0.z, -r0.y, c13.w
-dp3_pp r2.w, v2, -r2
-cmp r0.w, -r0.x, r0.y, r0.z
-mul_pp r0.xyz, v2, r2.w
-mad_pp r0.xyz, -r0, c11.z, -r2
-add r2.w, -r0, c11
-cmp r0.w, v4.z, r0, r2
-cmp r2.w, v4.x, r0, -r0
-dp3_pp_sat r3.x, r0, v1
-pow_pp r0, r3.x, c5.x
-add r0.z, -r1.w, c10.y
-mad r0.y, r1.w, c10.z, c10.w
-mad r0.y, r1.w, r0, c11.x
-mad r0.y, r1.w, r0, c11
-abs r1.w, v4.y
-mad r3.z, r2.w, c14.x, c14.y
-add r3.x, -r1.w, c10.y
-mad r2.w, r1, c10.z, c10
-mad r2.w, r2, r1, c11.x
+rsq r0.y, r0.y
+mul r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c11.z, -r4
+dp3_pp_sat r2.w, v2, r4
+add_pp r4.x, r2.w, c10.y
+add r0.w, r1.z, -r1.x
+add r1.w, -r1.y, c13
+cmp r0.w, -r0, r1.y, r1
+add r1.y, -r0.w, c11.w
+add_pp r3.xyz, -r2, c10.y
+dp3_pp_sat r1.z, r0, v1
+cmp r1.y, v4.z, r0.w, r1
+pow_pp r0, r1.z, c5.x
+cmp r0.y, v4.x, r1, -r1
+mov_pp r3.w, r0.x
+mad r1.z, r0.y, c14.x, c14.y
+add r0.z, -r1.x, c10.y
+mad r0.y, r1.x, c10.z, c10.w
+mad r0.y, r1.x, r0, c11.x
+mad r0.y, r1.x, r0, c11
+abs r1.x, v4.y
+add r1.w, -r1.x, c10.y
+mad r1.y, r1.x, c10.z, c10.w
+mad r1.y, r1, r1.x, c11.x
 rsq r0.z, r0.z
 rcp r0.z, r0.z
 mul r0.z, r0.y, r0
 cmp r0.y, v4.z, c10.x, c10
 mul r0.w, r0.y, r0.z
 mad r0.w, -r0, c11.z, r0.z
-rsq r3.x, r3.x
-mad r1.w, r2, r1, c11.y
-rcp r3.x, r3.x
-mul r2.w, r1, r3.x
-cmp r1.w, v4.y, c10.x, c10.y
-mul r3.x, r1.w, r2.w
-mad r0.z, -r3.x, c11, r2.w
+rsq r1.w, r1.w
+dp3 r0.x, v3, v3
+mad r1.x, r1.y, r1, c11.y
+rcp r1.w, r1.w
+mul r1.y, r1.x, r1.w
+cmp r1.x, v4.y, c10, c10.y
+mul r1.w, r1.x, r1.y
+mad r0.z, -r1.w, c11, r1.y
 mad r0.w, r0.y, c11, r0
-mad r0.y, r1.w, c11.w, r0.z
+mad r0.y, r1.x, c11.w, r0.z
 mul r0.z, r0.w, c12.x
 dsy r0.w, r0.z
-mul r3.w, r0.y, c12.x
-mul r4.xy, r4, r4
-add r0.y, r4.x, r4
+mul r1.w, r0.y, c12.x
+dsx r1.y, r0.z
+dsx r0.yz, v4.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.y, r5.z, r5.w
+add r0.z, r5.x, r5.y
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-dsx r3.y, r0.z
-mul r4.zw, r4, r4
-add r0.z, r4, r4.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
+mul r1.x, r0.y, c14
 mul r0.z, r0, c14.x
-mul r3.x, r0.y, c14
-texldd r3, r3.zwzw, s0, r3, r0.zwzw
-mov_pp r0.z, r0.x
-dp3 r0.x, v3, v3
-dp3_pp_sat r0.y, v2, r2
+texldd r1, r1.zwzw, s0, r1, r0.zwzw
 texld r0.x, r0.x, s2
 texld r0.w, v3, s3
 mul r0.w, r0.x, r0
-add_pp r0.x, r0.y, c10.y
-frc_pp r1.w, r0.x
-add_pp_sat r0.x, r0, -r1.w
-mul r2.xyz, r0.w, c2
-mul_pp r1.w, r0.y, c2
-mul_pp r1.w, r1, r0
-mul r2.xyz, r2, c3
-mul r2.xyz, r2, r0.z
-mul r2.xyz, r0.x, r2
-mul r0.xyz, r3.w, r2
-mov r0.w, c8.x
-mul_pp r1.xyz, r3, r1
-mul_pp_sat r1.w, r1, c14.z
-add r2.xyz, c2, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r2.xyz, r2, c9.x, r0
-mul_pp r0.xyz, r1, c4
-mul_pp oC0.xyz, r0, r2
+mul r0.xyz, r0.w, c2
+mul r0.xyz, r0, c3
+mul r0.xyz, r0, r3.w
+frc_pp r4.y, r4.x
+add_pp_sat r3.w, r4.x, -r4.y
+mul r0.xyz, r3.w, r0
+mul r4.xyz, r1.w, r0
+mul_pp r2.w, r2, c2
+mul_pp r0.y, r2.w, r0.w
+mul_pp_sat r0.w, r0.y, c14.z
+mov r0.x, c8
+add r0.xyz, c2, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+mul r0.w, v0.x, c7.x
+mul_sat r0.w, r0, c11.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c9.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c4, r3
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c10.y
 "
 }
@@ -78083,7 +78432,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTexture0] 2D
 "ps_3_0
-; 105 ALU, 7 TEX
+; 106 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -78099,53 +78448,49 @@ dcl_texcoord3 v3.xy
 dcl_texcoord5 v4.xyz
 mul r0.xy, v4, c6.x
 mul r1.xy, v4.zyzw, c6.x
-mul r2.z, v0.x, c7.x
-dsx r4.xy, v4
-dsy r4.zw, v4.xyxy
+dsy r5.xy, v4
 abs r1.w, v4.z
 abs r3.xy, v4
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
 add_pp r1.xyz, r1, -r0
 mad_pp r1.xyz, r3.x, r1, r0
-max r0.z, r3.x, r1.w
-rcp r0.w, r0.z
-min r0.z, r3.x, r1.w
-mul r0.w, r0.z, r0
-mul r2.x, r0.w, r0.w
-mad r2.y, r2.x, c12, c12.z
-mad r2.y, r2, r2.x, c12.w
+max r0.w, r3.x, r1
+min r0.x, r3, r1.w
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r2.w, r0, r0
 mul r0.xy, v4.zxzw, c6.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.z, r2, c11
-mad_pp r1.xyz, r2.z, r1, r0
-mad r2.y, r2, r2.x, c13.x
-mad r0.x, r2.y, r2, c13.y
+mad_pp r1.xyz, r3.y, r0, r1
+mad r2.x, r2.w, c12.y, c12.z
+mad r0.x, r2, r2.w, c12.w
+mad r0.x, r0, r2.w, c13
+mad r0.x, r0, r2.w, c13.y
+mad r0.x, r0, r2.w, c13.z
+mul r2.w, r0.x, r0
 dp4_pp r0.y, c1, c1
-mad r0.x, r0, r2, c13.z
-rsq_pp r0.z, r0.y
-mul_pp r2.xyz, r0.z, c1
-mul r0.y, r0.x, r0.w
-dp3_pp r2.w, v2, -r2
-add r0.x, r3, -r1.w
-add r0.z, -r0.y, c13.w
-cmp r0.w, -r0.x, r0.y, r0.z
-mul_pp r0.xyz, v2, r2.w
-mad_pp r0.xyz, -r0, c11.z, -r2
+rsq_pp r0.y, r0.y
+mul_pp r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c11.z, -r4
+add r0.w, r3.x, -r1
+add r3.y, -r2.w, c13.w
+cmp r0.w, -r0, r2, r3.y
 add r2.w, -r0, c11
-cmp r0.w, v4.z, r0, r2
-cmp r2.w, v4.x, r0, -r0
+add_pp r2.xyz, -r1, c10.y
 dp3_pp_sat r3.x, r0, v1
+cmp r2.w, v4.z, r0, r2
 pow_pp r0, r3.x, c5.x
+cmp r0.y, v4.x, r2.w, -r2.w
+mad r3.z, r0.y, c14.x, c14.y
 add r0.z, -r1.w, c10.y
 mad r0.y, r1.w, c10.z, c10.w
 mad r0.y, r1.w, r0, c11.x
 mad r0.y, r1.w, r0, c11
 abs r1.w, v4.y
-mad r3.z, r2.w, c14.x, c14.y
 add r3.x, -r1.w, c10.y
 mad r2.w, r1, c10.z, c10
 mad r2.w, r2, r1, c11.x
@@ -78165,41 +78510,46 @@ mad r0.z, -r3.x, c11, r2.w
 mad r0.w, r0.y, c11, r0
 mad r0.y, r1.w, c11.w, r0.z
 mul r0.z, r0.w, c12.x
-dp3_pp_sat r1.w, v2, r2
-add_pp r2.x, r1.w, c10.y
-frc_pp r2.y, r2.x
+dp3_pp_sat r1.w, v2, r4
+add_pp r2.w, r1, c10.y
+frc_pp r4.x, r2.w
 dsy r0.w, r0.z
 mul r3.w, r0.y, c12.x
-mul r4.xy, r4, r4
-add r0.y, r4.x, r4
+dsx r3.y, r0.z
+dsx r0.yz, v4.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.y, r5.z, r5.w
+add r0.z, r5.x, r5.y
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-dsx r3.y, r0.z
-mul r4.zw, r4, r4
-add r0.z, r4, r4.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
-mul r0.z, r0, c14.x
 mul r3.x, r0.y, c14
+mul r0.z, r0, c14.x
 texldd r3, r3.zwzw, s0, r3, r0.zwzw
 texld r0.w, v3, s2
-mov_pp r2.w, r0.x
+mov_pp r4.w, r0.x
 mul r0.xyz, r0.w, c2
 mul r0.xyz, r0, c3
+add_pp_sat r2.w, r2, -r4.x
+mul r0.xyz, r0, r4.w
+mul r0.xyz, r2.w, r0
+mul r4.xyz, r3.w, r0
 mul_pp r1.w, r1, c2
-mul_pp r1.w, r1, r0
-add_pp_sat r2.x, r2, -r2.y
-mul r0.xyz, r0, r2.w
-mul r0.xyz, r2.x, r0
-mov r0.w, c8.x
-mul r0.xyz, r3.w, r0
+mul_pp r0.y, r1.w, r0.w
+mul_pp_sat r0.w, r0.y, c14.z
+mov r0.x, c8
+add r0.xyz, c2, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+mul r0.w, v0.x, c7.x
+mul_sat r0.w, r0, c11.z
+mad_pp r1.xyz, r0.w, r2, r1
+add_pp r0.xyz, r0, r4
+mul r2.xyz, r0, c9.x
 mul_pp r1.xyz, r3, r1
-mul_pp_sat r1.w, r1, c14.z
-add r2.xyz, c2, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r2.xyz, r2, c9.x, r0
-mul_pp r0.xyz, r1, c4
-mul_pp oC0.xyz, r0, r2
+mad_pp r1.xyz, r1, c4, r2
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c10.y
 "
 }
@@ -78226,6 +78576,183 @@ Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
 
 SubProgram "d3d9 " {
 Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightShadowData]
+Vector 3 [_LightColor0]
+Vector 4 [_SpecColor]
+Vector 5 [_Color]
+Float 6 [_Shininess]
+Float 7 [_DetailScale]
+Float 8 [_DetailDist]
+Float 9 [_MinLight]
+Float 10 [_Albedo]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_LightTexture0] 2D
+SetTexture 3 [_LightTextureB0] 2D
+SetTexture 4 [_ShadowMapTexture] 2D
+"ps_3_0
+; 117 ALU, 9 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c15, 0.15915494, 0.50000000, 4.00000000, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3
+dcl_texcoord4 v4
+dcl_texcoord5 v5.xyz
+mul r0.xy, v5, c7.x
+mul r1.xy, v5.zyzw, c7.x
+dsy r5.xy, v5
+texld r0.xyz, r0, s1
+texld r1.xyz, r1, s1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v5.xyxy
+abs r1.x, v5.z
+mad_pp r2.xyz, r1.z, r2, r0
+max r0.w, r1.z, r1.x
+min r0.x, r1.z, r1
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r1.y, r0.w, r0.w
+mul r0.xy, v5.zxzw, c7.x
+texld r0.xyz, r0, s1
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.w, r0, r2
+mad r2.w, r1.y, c13.y, c13.z
+mad r0.x, r2.w, r1.y, c13.w
+mad r0.x, r0, r1.y, c14
+mad r0.x, r0, r1.y, c14.y
+mad r0.x, r0, r1.y, c14.z
+mul r1.y, r0.x, r0.w
+dp4 r0.y, c1, c1
+rsq r0.y, r0.y
+mul r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c12.z, -r4
+add r0.w, r1.z, -r1.x
+add r1.w, -r1.y, c14
+cmp r0.w, -r0, r1.y, r1
+add r1.y, -r0.w, c12.w
+dp3_pp_sat r2.w, v2, r4
+add_pp r3.xyz, -r2, c11.y
+dp3_pp_sat r1.z, r0, v1
+cmp r1.y, v5.z, r0.w, r1
+pow_pp r0, r1.z, c6.x
+cmp r0.y, v5.x, r1, -r1
+mov_pp r3.w, r0.x
+mad r1.z, r0.y, c15.x, c15.y
+add r0.z, -r1.x, c11.y
+mad r0.y, r1.x, c11.z, c11.w
+mad r0.y, r1.x, r0, c12.x
+mad r0.y, r1.x, r0, c12
+abs r1.x, v5.y
+add r1.w, -r1.x, c11.y
+mad r1.y, r1.x, c11.z, c11.w
+mad r1.y, r1, r1.x, c12.x
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r0.z, r0.y, r0
+cmp r0.y, v5.z, c11.x, c11
+mul r0.w, r0.y, r0.z
+mad r0.w, -r0, c12.z, r0.z
+rsq r1.w, r1.w
+mad r1.x, r1.y, r1, c12.y
+rcp r1.w, r1.w
+mul r1.y, r1.x, r1.w
+cmp r1.x, v5.y, c11, c11.y
+mul r1.w, r1.x, r1.y
+mad r0.z, -r1.w, c12, r1.y
+mad r0.w, r0.y, c12, r0
+mad r0.y, r1.x, c12.w, r0.z
+mul r0.z, r0.w, c13.x
+dsy r0.w, r0.z
+mul r1.w, r0.y, c13.x
+dsx r1.y, r0.z
+dsx r0.yz, v5.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.y, r5.z, r5.w
+add r0.z, r5.x, r5.y
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+mul r1.x, r0.y, c15
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r0.z, r0, c15.x
+texldd r1, r1.zwzw, s0, r1, r0.zwzw
+texldp r0.x, v4, s4
+rcp r0.y, v4.w
+mad r0.y, -v4.z, r0, r0.x
+mov r0.z, c2.x
+cmp r0.y, r0, c11, r0.z
+rcp r0.x, v3.w
+mad r4.xy, v3, r0.x, c15.y
+texld r0.w, r4, s2
+add_pp r4.x, r2.w, c11.y
+dp3 r0.x, v3, v3
+cmp r0.z, -v3, c11.x, c11.y
+mul_pp r0.z, r0, r0.w
+texld r0.x, r0.x, s3
+mul_pp r0.x, r0.z, r0
+mul_pp r0.w, r0.x, r0.y
+mul r0.xyz, r0.w, c3
+mul r0.xyz, r0, c4
+mul r0.xyz, r0, r3.w
+frc_pp r4.y, r4.x
+add_pp_sat r3.w, r4.x, -r4.y
+mul r0.xyz, r3.w, r0
+mul r4.xyz, r1.w, r0
+mul_pp r2.w, r2, c3
+mul_pp r0.y, r2.w, r0.w
+mul_pp_sat r0.w, r0.y, c15.z
+mov r0.x, c9
+add r0.xyz, c3, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+mul r0.w, v0.x, c8.x
+mul_sat r0.w, r0, c12.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c10.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c5, r3
+mul_pp oC0.xyz, r1, r0
+mov_pp oC0.w, c11.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
 Vector 0 [glstate_lightmodel_ambient]
 Vector 1 [_WorldSpaceLightPos0]
 Vector 2 [_LightShadowData]
@@ -78262,295 +78789,120 @@ dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
 mul r0.xy, v5, c7.x
 mul r1.xy, v5.zyzw, c7.x
-mul r2.z, v0.x, c8.x
-dsx r4.xy, v5
-dsy r4.zw, v5.xyxy
-abs r1.w, v5.z
-abs r3.xy, v5
+dsy r5.xy, v5
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r3.x, r1, r0
-max r0.z, r3.x, r1.w
-rcp r0.w, r0.z
-min r0.z, r3.x, r1.w
-mul r0.w, r0.z, r0
-mul r2.x, r0.w, r0.w
-mad r2.y, r2.x, c13, c13.z
-mad r2.y, r2, r2.x, c13.w
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v5.xyxy
+abs r1.x, v5.z
+mad_pp r2.xyz, r1.z, r2, r0
+max r0.w, r1.z, r1.x
+min r0.x, r1.z, r1
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r1.y, r0.w, r0.w
 mul r0.xy, v5.zxzw, c7.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c11.y
-mul_sat r2.z, r2, c12
-mad_pp r1.xyz, r2.z, r1, r0
-mad r2.y, r2, r2.x, c14.x
-mad r0.x, r2.y, r2, c14.y
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.w, r0, r2
+mad r2.w, r1.y, c13.y, c13.z
+mad r0.x, r2.w, r1.y, c13.w
+mad r0.x, r0, r1.y, c14
+mad r0.x, r0, r1.y, c14.y
+mad r0.x, r0, r1.y, c14.z
+mul r1.y, r0.x, r0.w
 dp4 r0.y, c1, c1
-mad r0.x, r0, r2, c14.z
-rsq r0.z, r0.y
-mul r2.xyz, r0.z, c1
-mul r0.y, r0.x, r0.w
-dp3_pp r2.w, v2, -r2
-add r0.x, r3, -r1.w
-add r0.z, -r0.y, c14.w
-cmp r0.w, -r0.x, r0.y, r0.z
-mul_pp r0.xyz, v2, r2.w
-mad_pp r0.xyz, -r0, c12.z, -r2
-add r2.w, -r0, c12
-cmp r0.w, v5.z, r0, r2
-cmp r2.w, v5.x, r0, -r0
-dp3_pp_sat r3.x, r0, v1
-pow_pp r0, r3.x, c6.x
-add r0.z, -r1.w, c11.y
-mad r0.y, r1.w, c11.z, c11.w
-mad r0.y, r1.w, r0, c12.x
-mad r0.y, r1.w, r0, c12
-abs r1.w, v5.y
-mad r3.z, r2.w, c15.x, c15.y
-add r3.x, -r1.w, c11.y
-mad r2.w, r1, c11.z, c11
-mad r2.w, r2, r1, c12.x
+rsq r0.y, r0.y
+mul r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c12.z, -r4
+add r0.w, r1.z, -r1.x
+add r1.w, -r1.y, c14
+cmp r0.w, -r0, r1.y, r1
+add r1.y, -r0.w, c12.w
+dp3_pp_sat r2.w, v2, r4
+add_pp r3.xyz, -r2, c11.y
+dp3_pp_sat r1.z, r0, v1
+cmp r1.y, v5.z, r0.w, r1
+pow_pp r0, r1.z, c6.x
+cmp r0.y, v5.x, r1, -r1
+mov_pp r3.w, r0.x
+mad r1.z, r0.y, c15.x, c15.y
+add r0.z, -r1.x, c11.y
+mad r0.y, r1.x, c11.z, c11.w
+mad r0.y, r1.x, r0, c12.x
+mad r0.y, r1.x, r0, c12
+abs r1.x, v5.y
+add r1.w, -r1.x, c11.y
+mad r1.y, r1.x, c11.z, c11.w
+mad r1.y, r1, r1.x, c12.x
 rsq r0.z, r0.z
 rcp r0.z, r0.z
 mul r0.z, r0.y, r0
 cmp r0.y, v5.z, c11.x, c11
 mul r0.w, r0.y, r0.z
 mad r0.w, -r0, c12.z, r0.z
-rsq r3.x, r3.x
-mad r1.w, r2, r1, c12.y
-rcp r3.x, r3.x
-mul r2.w, r1, r3.x
-cmp r1.w, v5.y, c11.x, c11.y
-mul r3.x, r1.w, r2.w
-mad r0.z, -r3.x, c12, r2.w
+rsq r1.w, r1.w
+mad r1.x, r1.y, r1, c12.y
+rcp r1.w, r1.w
+mul r1.y, r1.x, r1.w
+cmp r1.x, v5.y, c11, c11.y
+mul r1.w, r1.x, r1.y
+mad r0.z, -r1.w, c12, r1.y
 mad r0.w, r0.y, c12, r0
-mad r0.y, r1.w, c12.w, r0.z
+mad r0.y, r1.x, c12.w, r0.z
 mul r0.z, r0.w, c13.x
 dsy r0.w, r0.z
-mul r3.w, r0.y, c13.x
-mul r4.xy, r4, r4
-add r0.y, r4.x, r4
+mul r1.w, r0.y, c13.x
+dsx r1.y, r0.z
+dsx r0.yz, v5.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.y, r5.z, r5.w
+add r0.z, r5.x, r5.y
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-dsx r3.y, r0.z
-mul r4.zw, r4, r4
-add r0.z, r4, r4.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
+mul r1.x, r0.y, c15
 mul r0.z, r0, c15.x
-mul r3.x, r0.y, c15
-texldd r3, r3.zwzw, s0, r3, r0.zwzw
-mov_pp r0.y, r0.x
-dp3_pp_sat r0.z, v2, r2
-texldp r0.x, v4, s4
-rcp r0.w, v4.w
-mad r0.w, -v4.z, r0, r0.x
-mov r1.w, c2.x
-cmp r2.z, r0.w, c11.y, r1.w
-rcp r0.x, v3.w
-mad r2.xy, v3, r0.x, c15.y
-dp3 r0.x, v3, v3
-texld r0.w, r2, s2
-cmp r1.w, -v3.z, c11.x, c11.y
-mul_pp r0.w, r1, r0
-texld r0.x, r0.x, s3
-mul_pp r0.x, r0.w, r0
-mul_pp r0.w, r0.x, r2.z
-add_pp r0.x, r0.z, c11.y
-frc_pp r1.w, r0.x
-add_pp_sat r0.x, r0, -r1.w
-mul r2.xyz, r0.w, c3
-mul_pp r1.w, r0.z, c3
-mul_pp r1.w, r1, r0
-mul r2.xyz, r2, c4
-mul r2.xyz, r2, r0.y
-mul r2.xyz, r0.x, r2
-mul r0.xyz, r3.w, r2
-mov r0.w, c9.x
-mul_pp r1.xyz, r3, r1
-mul_pp_sat r1.w, r1, c15.z
-add r2.xyz, c3, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r2.xyz, r2, c10.x, r0
-mul_pp r0.xyz, r1, c5
-mul_pp oC0.xyz, r0, r2
-mov_pp oC0.w, c11.y
-"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightShadowData]
-Vector 3 [_LightColor0]
-Vector 4 [_SpecColor]
-Vector 5 [_Color]
-Float 6 [_Shininess]
-Float 7 [_DetailScale]
-Float 8 [_DetailDist]
-Float 9 [_MinLight]
-Float 10 [_Albedo]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_LightTexture0] 2D
-SetTexture 3 [_LightTextureB0] 2D
-SetTexture 4 [_ShadowMapTexture] 2D
-"ps_3_0
-; 115 ALU, 9 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c15, 0.15915494, 0.50000000, 4.00000000, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3
-dcl_texcoord4 v4
-dcl_texcoord5 v5.xyz
-mul r0.xy, v5, c7.x
-mul r1.xy, v5.zyzw, c7.x
-mul r2.z, v0.x, c8.x
-dsx r4.xy, v5
-dsy r4.zw, v5.xyxy
-abs r1.w, v5.z
-abs r3.xy, v5
-texld r0.xyz, r0, s1
-texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r3.x, r1, r0
-max r0.z, r3.x, r1.w
-rcp r0.w, r0.z
-min r0.z, r3.x, r1.w
-mul r0.w, r0.z, r0
-mul r2.x, r0.w, r0.w
-mad r2.y, r2.x, c13, c13.z
-mad r2.y, r2, r2.x, c13.w
-mul r0.xy, v5.zxzw, c7.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c11.y
-mul_sat r2.z, r2, c12
-mad_pp r1.xyz, r2.z, r1, r0
-mad r2.y, r2, r2.x, c14.x
-mad r0.x, r2.y, r2, c14.y
-dp4 r0.y, c1, c1
-mad r0.x, r0, r2, c14.z
-rsq r0.z, r0.y
-mul r2.xyz, r0.z, c1
-mul r0.y, r0.x, r0.w
-dp3_pp r2.w, v2, -r2
-add r0.x, r3, -r1.w
-add r0.z, -r0.y, c14.w
-cmp r0.w, -r0.x, r0.y, r0.z
-mul_pp r0.xyz, v2, r2.w
-mad_pp r0.xyz, -r0, c12.z, -r2
-add r2.w, -r0, c12
-cmp r0.w, v5.z, r0, r2
-cmp r2.w, v5.x, r0, -r0
-dp3_pp_sat r3.x, r0, v1
-pow_pp r0, r3.x, c6.x
-add r0.z, -r1.w, c11.y
-mad r0.y, r1.w, c11.z, c11.w
-mad r0.y, r1.w, r0, c12.x
-mad r0.y, r1.w, r0, c12
-abs r1.w, v5.y
-mad r3.z, r2.w, c15.x, c15.y
-add r3.x, -r1.w, c11.y
-mad r2.w, r1, c11.z, c11
-mad r2.w, r2, r1, c12.x
-rsq r0.z, r0.z
-rcp r0.z, r0.z
-mul r0.z, r0.y, r0
-cmp r0.y, v5.z, c11.x, c11
-mul r0.w, r0.y, r0.z
-mad r0.w, -r0, c12.z, r0.z
-rsq r3.x, r3.x
-mad r1.w, r2, r1, c12.y
-rcp r3.x, r3.x
-mul r2.w, r1, r3.x
-cmp r1.w, v5.y, c11.x, c11.y
-mul r3.x, r1.w, r2.w
-mad r0.z, -r3.x, c12, r2.w
-mad r0.w, r0.y, c12, r0
-mad r0.y, r1.w, c12.w, r0.z
-mul r0.z, r0.w, c13.x
-dsy r0.w, r0.z
-mul r3.w, r0.y, c13.x
-mul r4.xy, r4, r4
-add r0.y, r4.x, r4
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-dsx r3.y, r0.z
-mul r4.zw, r4, r4
-add r0.z, r4, r4.w
-rsq r0.z, r0.z
-rcp r0.z, r0.z
-mul r0.z, r0, c15.x
-mul r3.x, r0.y, c15
-texldd r3, r3.zwzw, s0, r3, r0.zwzw
-mov_pp r0.y, r0.x
+texldd r1, r1.zwzw, s0, r1, r0.zwzw
 mov r0.x, c2
-add r1.w, c11.y, -r0.x
-dp3_pp_sat r0.z, v2, r2
-rcp r0.w, v3.w
-mad r2.xy, v3, r0.w, c15.y
+rcp r0.z, v3.w
+mad r4.xy, v3, r0.z, c15.y
+texld r0.w, r4, s2
+add_pp r4.x, r2.w, c11.y
+add r0.y, c11, -r0.x
 texldp r0.x, v4, s4
-mad r2.z, r0.x, r1.w, c2.x
+mad r0.y, r0.x, r0, c2.x
 dp3 r0.x, v3, v3
-texld r0.w, r2, s2
-cmp r1.w, -v3.z, c11.x, c11.y
-mul_pp r0.w, r1, r0
+cmp r0.z, -v3, c11.x, c11.y
+mul_pp r0.z, r0, r0.w
 texld r0.x, r0.x, s3
-mul_pp r0.x, r0.w, r0
-mul_pp r0.w, r0.x, r2.z
-add_pp r0.x, r0.z, c11.y
-frc_pp r1.w, r0.x
-add_pp_sat r0.x, r0, -r1.w
-mul r2.xyz, r0.w, c3
-mul_pp r1.w, r0.z, c3
-mul_pp r1.w, r1, r0
-mul r2.xyz, r2, c4
-mul r2.xyz, r2, r0.y
-mul r2.xyz, r0.x, r2
-mul r0.xyz, r3.w, r2
-mov r0.w, c9.x
-mul_pp r1.xyz, r3, r1
-mul_pp_sat r1.w, r1, c15.z
-add r2.xyz, c3, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r2.xyz, r2, c10.x, r0
-mul_pp r0.xyz, r1, c5
-mul_pp oC0.xyz, r0, r2
+mul_pp r0.x, r0.z, r0
+mul_pp r0.w, r0.x, r0.y
+mul r0.xyz, r0.w, c3
+mul r0.xyz, r0, c4
+mul r0.xyz, r0, r3.w
+frc_pp r4.y, r4.x
+add_pp_sat r3.w, r4.x, -r4.y
+mul r0.xyz, r3.w, r0
+mul r4.xyz, r1.w, r0
+mul_pp r2.w, r2, c3
+mul_pp r0.y, r2.w, r0.w
+mul_pp_sat r0.w, r0.y, c15.z
+mov r0.x, c9
+add r0.xyz, c3, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+mul r0.w, v0.x, c8.x
+mul_sat r0.w, r0, c12.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c10.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c5, r3
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c11.y
 "
 }
@@ -78586,7 +78938,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_ShadowMapTexture] 2D
 "ps_3_0
-; 105 ALU, 7 TEX
+; 106 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -78602,53 +78954,49 @@ dcl_texcoord3 v3
 dcl_texcoord5 v4.xyz
 mul r0.xy, v4, c6.x
 mul r1.xy, v4.zyzw, c6.x
-mul r2.z, v0.x, c7.x
-dsx r4.xy, v4
-dsy r4.zw, v4.xyxy
+dsy r5.xy, v4
 abs r1.w, v4.z
 abs r3.xy, v4
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
 add_pp r1.xyz, r1, -r0
 mad_pp r1.xyz, r3.x, r1, r0
-max r0.z, r3.x, r1.w
-rcp r0.w, r0.z
-min r0.z, r3.x, r1.w
-mul r0.w, r0.z, r0
-mul r2.x, r0.w, r0.w
-mad r2.y, r2.x, c12, c12.z
-mad r2.y, r2, r2.x, c12.w
+max r0.w, r3.x, r1
+min r0.x, r3, r1.w
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r2.w, r0, r0
 mul r0.xy, v4.zxzw, c6.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.z, r2, c11
-mad_pp r1.xyz, r2.z, r1, r0
-mad r2.y, r2, r2.x, c13.x
-mad r0.x, r2.y, r2, c13.y
+mad_pp r1.xyz, r3.y, r0, r1
+mad r2.x, r2.w, c12.y, c12.z
+mad r0.x, r2, r2.w, c12.w
+mad r0.x, r0, r2.w, c13
+mad r0.x, r0, r2.w, c13.y
+mad r0.x, r0, r2.w, c13.z
+mul r2.w, r0.x, r0
 dp4_pp r0.y, c1, c1
-mad r0.x, r0, r2, c13.z
-rsq_pp r0.z, r0.y
-mul r0.y, r0.x, r0.w
-mul_pp r2.xyz, r0.z, c1
-add r0.x, r3, -r1.w
-add r0.z, -r0.y, c13.w
-dp3_pp r2.w, v2, -r2
-cmp r0.w, -r0.x, r0.y, r0.z
-mul_pp r0.xyz, v2, r2.w
-mad_pp r0.xyz, -r0, c11.z, -r2
+rsq_pp r0.y, r0.y
+mul_pp r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c11.z, -r4
+add r0.w, r3.x, -r1
+add r3.y, -r2.w, c13.w
+cmp r0.w, -r0, r2, r3.y
 add r2.w, -r0, c11
-cmp r0.w, v4.z, r0, r2
-cmp r2.w, v4.x, r0, -r0
+add_pp r2.xyz, -r1, c10.y
 dp3_pp_sat r3.x, r0, v1
+cmp r2.w, v4.z, r0, r2
 pow_pp r0, r3.x, c5.x
+cmp r0.y, v4.x, r2.w, -r2.w
+mad r3.z, r0.y, c14.x, c14.y
 add r0.z, -r1.w, c10.y
 mad r0.y, r1.w, c10.z, c10.w
 mad r0.y, r1.w, r0, c11.x
 mad r0.y, r1.w, r0, c11
 abs r1.w, v4.y
-mad r3.z, r2.w, c14.x, c14.y
 add r3.x, -r1.w, c10.y
 mad r2.w, r1, c10.z, c10
 mad r2.w, r2, r1, c11.x
@@ -78670,39 +79018,44 @@ mad r0.y, r1.w, c11.w, r0.z
 mul r0.z, r0.w, c12.x
 dsy r0.w, r0.z
 mul r3.w, r0.y, c12.x
-mul r4.xy, r4, r4
-add r0.y, r4.x, r4
+dsx r3.y, r0.z
+dsx r0.yz, v4.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.z, r5.x, r5.y
+add r0.y, r5.z, r5.w
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-dsx r3.y, r0.z
-mul r4.zw, r4, r4
-add r0.z, r4, r4.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
-mul r0.z, r0, c14.x
 mul r3.x, r0.y, c14
+mul r0.z, r0, c14.x
 texldd r3, r3.zwzw, s0, r3, r0.zwzw
-dp3_pp_sat r0.y, v2, r2
-add_pp r0.z, r0.y, c10.y
-frc_pp r0.w, r0.z
-mov_pp r1.w, r0.x
-texldp r0.x, v3, s2
-mul r2.xyz, r0.x, c2
-mul r2.xyz, r2, c3
-mul_pp r0.y, r0, c2.w
-mul_pp r0.y, r0, r0.x
-add_pp_sat r0.z, r0, -r0.w
-mul r2.xyz, r2, r1.w
-mul r2.xyz, r0.z, r2
+dp3_pp_sat r0.w, v2, r4
+add_pp r1.w, r0, c10.y
+frc_pp r2.w, r1
+mov_pp r4.w, r0.x
+texldp r5.x, v3, s2
+mul r0.xyz, r5.x, c2
+mul r0.xyz, r0, c3
+mul_pp r0.w, r0, c2
+mul r0.xyz, r0, r4.w
+add_pp_sat r1.w, r1, -r2
+mul r0.xyz, r1.w, r0
+mul r4.xyz, r3.w, r0
+mul_pp r0.y, r0.w, r5.x
 mul_pp_sat r0.w, r0.y, c14.z
 mov r0.x, c8
 add r0.xyz, c2, r0.x
 mad_sat r0.xyz, r0, r0.w, c0
-mul r2.xyz, r3.w, r2
-mad_pp r2.xyz, r0, c9.x, r2
+mul r0.w, v0.x, c7.x
+mul_sat r0.w, r0, c11.z
+mad_pp r1.xyz, r0.w, r2, r1
+add_pp r0.xyz, r0, r4
+mul r2.xyz, r0, c9.x
 mul_pp r1.xyz, r3, r1
-mul_pp r0.xyz, r1, c4
-mul_pp oC0.xyz, r0, r2
+mad_pp r1.xyz, r1, c4, r2
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c10.y
 "
 }
@@ -78744,7 +79097,7 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_ShadowMapTexture] 2D
 SetTexture 3 [_LightTexture0] 2D
 "ps_3_0
-; 106 ALU, 8 TEX
+; 107 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -78762,109 +79115,110 @@ dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
 mul r0.xy, v5, c6.x
 mul r1.xy, v5.zyzw, c6.x
-mul r2.z, v0.x, c7.x
-dsx r4.xy, v5
-dsy r4.zw, v5.xyxy
-abs r1.w, v5.z
-abs r3.xy, v5
+dsy r5.xy, v5
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r3.x, r1, r0
-max r0.z, r3.x, r1.w
-rcp r0.w, r0.z
-min r0.z, r3.x, r1.w
-mul r0.w, r0.z, r0
-mul r2.x, r0.w, r0.w
-mad r2.y, r2.x, c12, c12.z
-mad r2.y, r2, r2.x, c12.w
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v5.xyxy
+abs r1.x, v5.z
+mad_pp r2.xyz, r1.z, r2, r0
+max r0.w, r1.z, r1.x
+min r0.x, r1.z, r1
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r1.y, r0.w, r0.w
 mul r0.xy, v5.zxzw, c6.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r3.y, r0, r1
-add_pp r1.xyz, -r0, c10.y
-mul_sat r2.z, r2, c11
-mad_pp r1.xyz, r2.z, r1, r0
-mad r2.y, r2, r2.x, c13.x
-mad r0.x, r2.y, r2, c13.y
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.w, r0, r2
+mad r2.w, r1.y, c12.y, c12.z
+mad r0.x, r2.w, r1.y, c12.w
+mad r0.x, r0, r1.y, c13
+mad r0.x, r0, r1.y, c13.y
+mad r0.x, r0, r1.y, c13.z
+mul r1.y, r0.x, r0.w
 dp4_pp r0.y, c1, c1
-mad r0.x, r0, r2, c13.z
-rsq_pp r0.z, r0.y
-mul_pp r2.xyz, r0.z, c1
-mul r0.y, r0.x, r0.w
-dp3_pp r2.w, v2, -r2
-add r0.x, r3, -r1.w
-add r0.z, -r0.y, c13.w
-cmp r0.w, -r0.x, r0.y, r0.z
-mul_pp r0.xyz, v2, r2.w
-mad_pp r0.xyz, -r0, c11.z, -r2
-add r2.w, -r0, c11
-cmp r0.w, v5.z, r0, r2
-cmp r2.w, v5.x, r0, -r0
-dp3_pp_sat r3.x, r0, v1
-pow_pp r0, r3.x, c5.x
-add r0.z, -r1.w, c10.y
-mad r0.y, r1.w, c10.z, c10.w
-mad r0.y, r1.w, r0, c11.x
-mad r0.y, r1.w, r0, c11
-abs r1.w, v5.y
-mad r3.z, r2.w, c14.x, c14.y
-add r3.x, -r1.w, c10.y
-mad r2.w, r1, c10.z, c10
-mad r2.w, r2, r1, c11.x
+rsq_pp r0.y, r0.y
+mul_pp r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c11.z, -r4
+dp3_pp_sat r2.w, v2, r4
+add_pp r4.x, r2.w, c10.y
+add r0.w, r1.z, -r1.x
+add r1.w, -r1.y, c13
+cmp r0.w, -r0, r1.y, r1
+add r1.y, -r0.w, c11.w
+add_pp r3.xyz, -r2, c10.y
+dp3_pp_sat r1.z, r0, v1
+cmp r1.y, v5.z, r0.w, r1
+pow_pp r0, r1.z, c5.x
+cmp r0.y, v5.x, r1, -r1
+mov_pp r3.w, r0.x
+mad r1.z, r0.y, c14.x, c14.y
+add r0.z, -r1.x, c10.y
+mad r0.y, r1.x, c10.z, c10.w
+mad r0.y, r1.x, r0, c11.x
+mad r0.y, r1.x, r0, c11
+abs r1.x, v5.y
+add r1.w, -r1.x, c10.y
+mad r1.y, r1.x, c10.z, c10.w
+mad r1.y, r1, r1.x, c11.x
 rsq r0.z, r0.z
 rcp r0.z, r0.z
 mul r0.z, r0.y, r0
 cmp r0.y, v5.z, c10.x, c10
 mul r0.w, r0.y, r0.z
 mad r0.w, -r0, c11.z, r0.z
-rsq r3.x, r3.x
-mad r1.w, r2, r1, c11.y
-rcp r3.x, r3.x
-mul r2.w, r1, r3.x
-cmp r1.w, v5.y, c10.x, c10.y
-mul r3.x, r1.w, r2.w
-mad r0.z, -r3.x, c11, r2.w
+rsq r1.w, r1.w
+mad r1.x, r1.y, r1, c11.y
+rcp r1.w, r1.w
+mul r1.y, r1.x, r1.w
+cmp r1.x, v5.y, c10, c10.y
+mul r1.w, r1.x, r1.y
+mad r0.z, -r1.w, c11, r1.y
 mad r0.w, r0.y, c11, r0
-mad r0.y, r1.w, c11.w, r0.z
+mad r0.y, r1.x, c11.w, r0.z
 mul r0.z, r0.w, c12.x
-dp3_pp_sat r1.w, v2, r2
-add_pp r2.x, r1.w, c10.y
-frc_pp r2.y, r2.x
 dsy r0.w, r0.z
-mul r3.w, r0.y, c12.x
-mul r4.xy, r4, r4
-add r0.y, r4.x, r4
+mul r1.w, r0.y, c12.x
+dsx r1.y, r0.z
+dsx r0.yz, v5.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.y, r5.z, r5.w
+add r0.z, r5.x, r5.y
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-dsx r3.y, r0.z
-mul r4.zw, r4, r4
-add r0.z, r4, r4.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
+mul r1.x, r0.y, c14
 mul r0.z, r0, c14.x
-mul r3.x, r0.y, c14
-texldd r3, r3.zwzw, s0, r3, r0.zwzw
-mov_pp r2.w, r0.x
+texldd r1, r1.zwzw, s0, r1, r0.zwzw
 texldp r0.x, v4, s2
 texld r0.w, v3, s3
 mul r0.w, r0, r0.x
 mul r0.xyz, r0.w, c2
 mul r0.xyz, r0, c3
-mul_pp r1.w, r1, c2
-mul_pp r1.w, r1, r0
-add_pp_sat r2.x, r2, -r2.y
-mul r0.xyz, r0, r2.w
-mul r0.xyz, r2.x, r0
-mov r0.w, c8.x
+mul r0.xyz, r0, r3.w
+frc_pp r4.y, r4.x
+add_pp_sat r3.w, r4.x, -r4.y
 mul r0.xyz, r3.w, r0
-mul_pp r1.xyz, r3, r1
-mul_pp_sat r1.w, r1, c14.z
-add r2.xyz, c2, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r2.xyz, r2, c9.x, r0
-mul_pp r0.xyz, r1, c4
-mul_pp oC0.xyz, r0, r2
+mul r4.xyz, r1.w, r0
+mul_pp r2.w, r2, c2
+mul_pp r0.y, r2.w, r0.w
+mul_pp_sat r0.w, r0.y, c14.z
+mov r0.x, c8
+add r0.xyz, c2, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+mul r0.w, v0.x, c7.x
+mul_sat r0.w, r0, c11.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c9.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c4, r3
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c10.y
 "
 }
@@ -78908,7 +79262,7 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_ShadowMapTexture] CUBE
 SetTexture 3 [_LightTexture0] 2D
 "ps_3_0
-; 115 ALU, 8 TEX
+; 116 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
@@ -78925,119 +79279,120 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-mul r0.xy, v5, c8.x
-mul r1.xy, v5.zyzw, c8.x
-abs r0.w, v5.z
+mul r1.xy, v5, c8.x
+texld r2.xyz, r1, s1
+mul r0.xy, v5.zyzw, c8.x
 texld r0.xyz, r0, s1
-texld r1.xyz, r1, s1
-add_pp r2.xyz, r1, -r0
-abs r1.xy, v5
-mad_pp r2.xyz, r1.x, r2, r0
-max r1.z, r1.x, r0.w
-min r0.x, r1, r0.w
-rcp r0.y, r1.z
-mul r1.z, r0.x, r0.y
-mul r1.w, r1.z, r1.z
+dsx r5.xy, v5
+dsy r5.zw, v5.xyxy
+abs r1.x, v5.z
+abs r1.zw, v5.xyxy
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.z, r0, r2
+max r0.w, r1.z, r1.x
+rcp r1.y, r0.w
+min r0.w, r1.z, r1.x
+mul r0.w, r0, r1.y
+mul r1.y, r0.w, r0.w
+mad r2.w, r1.y, c14.y, c14.z
 mul r0.xy, v5.zxzw, c8.x
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r1.y, r0, r2
-mad r2.w, r1, c14.y, c14.z
-mad r1.y, r2.w, r1.w, c14.w
-mad r1.y, r1, r1.w, c15.x
-mul r2.w, v0.x, c9.x
-add_pp r2.xyz, -r0, c12.y
-mul_sat r2.w, r2, c13.z
-mad_pp r3.xyz, r2.w, r2, r0
-mad r1.y, r1, r1.w, c15
-mad r0.x, r1.y, r1.w, c15.z
-mul r0.y, r0.x, r1.z
-dp4 r0.z, c1, c1
-rsq r0.x, r0.z
-mul r2.xyz, r0.x, c1
-add r0.x, r1, -r0.w
+mad_pp r2.xyz, r1.w, r0, r2
+mad r2.w, r2, r1.y, c14
+mad r0.x, r2.w, r1.y, c15
+mad r0.x, r0, r1.y, c15.y
+dp4 r0.y, c1, c1
+rsq r0.z, r0.y
+mad r0.x, r0, r1.y, c15.z
+mul r4.xyz, r0.z, c1
+mul r0.y, r0.x, r0.w
+dp3_pp r1.y, v2, -r4
+add r0.x, r1.z, -r1
 add r0.z, -r0.y, c15.w
-cmp r1.x, -r0, r0.y, r0.z
-add r1.y, -r1.x, c13.w
-cmp r1.x, v5.z, r1, r1.y
-dp3_pp r0.x, v2, -r2
-mul_pp r0.xyz, v2, r0.x
-mad_pp r0.xyz, -r0, c13.z, -r2
-dp3_pp_sat r2.w, r0, v1
-add r0.y, -r0.w, c12
-mad r0.x, r0.w, c12.z, c12.w
-mad r0.x, r0.w, r0, c13
-mad r0.x, r0.w, r0, c13.y
-abs r0.w, v5.y
-add r1.z, -r0.w, c12.y
-mad r1.y, r0.w, c12.z, c12.w
-mad r1.y, r1, r0.w, c13.x
-cmp r1.x, v5, r1, -r1
+cmp r0.w, -r0.x, r0.y, r0.z
+mul_pp r0.xyz, v2, r1.y
+mad_pp r0.xyz, -r0, c13.z, -r4
+add r1.y, -r0.w, c13.w
+cmp r0.w, v5.z, r0, r1.y
+add_pp r3.xyz, -r2, c12.y
+dp3_pp_sat r1.z, r0, v1
+cmp r1.y, v5.x, r0.w, -r0.w
+pow_pp r0, r1.z, c7.x
+add r0.z, -r1.x, c12.y
+mad r0.y, r1.x, c12.z, c12.w
+mad r0.y, r1.x, r0, c13.x
+rsq r0.z, r0.z
+mad r0.y, r1.x, r0, c13
+mad r1.z, r1.y, c16.x, c16.y
+rcp r0.z, r0.z
+mul r1.y, r0, r0.z
+abs r0.z, v5.y
+cmp r0.y, v5.z, c12.x, c12
+mul r1.w, r0.y, r1.y
+add r1.x, -r0.z, c12.y
+mad r0.w, r0.z, c12.z, c12
+mad r0.w, r0, r0.z, c13.x
+rsq r1.x, r1.x
+mad r0.z, r0.w, r0, c13.y
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v5.y, c12.x, c12.y
+mul r1.x, r0.z, r0.w
+mad r1.y, -r1.w, c13.z, r1
+mad r0.w, -r1.x, c13.z, r0
+mad r1.x, r0.y, c13.w, r1.y
+mad r0.y, r0.z, c13.w, r0.w
+mul r0.z, r1.x, c14.x
+dsy r0.w, r0.z
+mul r1.w, r0.y, c14.x
+mul r5.xy, r5, r5
+add r0.y, r5.x, r5
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v5.z, c12, c12.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c13, r0.y
-rsq r1.z, r1.z
-mad r0.w, r1.y, r0, c13.y
-rcp r1.z, r1.z
-mul r1.y, r0.w, r1.z
-cmp r0.w, v5.y, c12.x, c12.y
-mul r1.z, r0.w, r1.y
-mad r0.y, -r1.z, c13.z, r1
-mad r0.z, r0.x, c13.w, r0
-mad r0.x, r0.w, c13.w, r0.y
-mul r0.y, r0.z, c14.x
-mul r1.y, r0.x, c14.x
-dsx r0.w, r0.y
-dsx r1.zw, v5.xyxy
-mul r1.zw, r1, r1
-dsy r0.xz, v5.xyyw
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r1.z, r1, r1.w
-rsq r0.x, r1.z
+dsx r1.y, r0.z
+mul r5.zw, r5, r5
+add r0.z, r5, r5.w
 rsq r0.z, r0.z
-rcp r1.z, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c16.x
-mad r1.x, r1, c16, c16.y
-mul r0.x, r1.z, c16
-dsy r0.y, r0
-texldd r0, r1, s0, r0.zwzw, r0
-mul_pp r3.xyz, r0, r3
-pow_pp r1, r2.w, c7.x
-mov_pp r0.y, r1.x
-texld r1, v4, s2
-dp4 r0.z, r1, c17
-dp3 r0.x, v4, v4
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r0.x, r0, c2.w
-mad r0.z, -r0.x, c16, r0
-mov r1.x, c3
+rcp r0.z, r0.z
+mul r0.z, r0, c16.x
+mul r1.x, r0.y, c16
+dp3 r0.y, v4, v4
+rsq r3.w, r0.y
+texldd r1, r1.zwzw, s0, r1, r0.zwzw
+mov_pp r2.w, r0.x
+texld r0, v4, s2
+dp4 r0.y, r0, c17
+rcp r3.w, r3.w
+mul r0.x, r3.w, c2.w
+dp3_pp_sat r3.w, v2, r4
+add_pp r4.x, r3.w, c12.y
+mad r0.y, -r0.x, c16.z, r0
+mov r0.z, c3.x
 dp3 r0.x, v3, v3
-cmp r0.z, r0, c12.y, r1.x
+cmp r0.y, r0, c12, r0.z
 texld r0.x, r0.x, s3
-mul r0.x, r0, r0.z
-dp3_pp_sat r0.z, v2, r2
-add_pp r1.w, r0.z, c12.y
-mul r1.xyz, r0.x, c4
-mul r1.xyz, r1, c5
-mul r1.xyz, r1, r0.y
-frc_pp r2.x, r1.w
-add_pp_sat r0.y, r1.w, -r2.x
-mul r1.xyz, r0.y, r1
-mul_pp r0.y, r0.z, c4.w
-mul_pp r0.y, r0, r0.x
-mul r1.xyz, r0.w, r1
+mul r0.w, r0.x, r0.y
+mul r0.xyz, r0.w, c4
+mul r0.xyz, r0, c5
+mul r0.xyz, r0, r2.w
+frc_pp r4.y, r4.x
+add_pp_sat r2.w, r4.x, -r4.y
+mul r0.xyz, r2.w, r0
+mul r4.xyz, r1.w, r0
+mul_pp r2.w, r3, c4
+mul_pp r0.y, r2.w, r0.w
 mul_pp_sat r0.w, r0.y, c16
 mov r0.x, c10
 add r0.xyz, c4, r0.x
 mad_sat r0.xyz, r0, r0.w, c0
-mad_pp r0.xyz, r0, c11.x, r1
-mul_pp r1.xyz, r3, c6
+mul r0.w, v0.x, c9.x
+mul_sat r0.w, r0, c13.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c11.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c6, r3
 mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c12.y
 "
@@ -79083,7 +79438,7 @@ SetTexture 2 [_ShadowMapTexture] CUBE
 SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_LightTexture0] CUBE
 "ps_3_0
-; 116 ALU, 9 TEX
+; 117 ALU, 9 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
@@ -79103,93 +79458,91 @@ dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 mul r0.xy, v5, c8.x
 mul r1.xy, v5.zyzw, c8.x
-mul r2.w, v0.x, c9.x
-dsx r4.xy, v5
-dsy r4.zw, v5.xyxy
-abs r2.xy, v5
-abs r0.w, v5.z
+dsy r5.xy, v5
+dp3 r3.w, v4, v4
 texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r2.x, r1, r0
-max r0.z, r2.x, r0.w
-rcp r1.w, r0.z
-min r0.z, r2.x, r0.w
-mul r1.w, r0.z, r1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v5.xyxy
+abs r1.x, v5.z
+mad_pp r2.xyz, r1.z, r2, r0
+max r0.w, r1.z, r1.x
+min r0.x, r1.z, r1
+rcp r0.y, r0.w
+mul r0.w, r0.x, r0.y
+mul r1.y, r0.w, r0.w
 mul r0.xy, v5.zxzw, c8.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-mul r2.z, r1.w, r1.w
-mad r2.y, r2.z, c14, c14.z
-mad r2.y, r2, r2.z, c14.w
-add_pp r1.xyz, -r0, c12.y
-mul_sat r2.w, r2, c13.z
-mad_pp r0.xyz, r2.w, r1, r0
-mad r2.y, r2, r2.z, c15.x
-mad r1.x, r2.y, r2.z, c15.y
-mad r1.x, r1, r2.z, c15.z
-mul r2.y, r1.x, r1.w
-dp4 r1.y, c1, c1
-rsq r1.y, r1.y
-mul r1.xyz, r1.y, c1
-dp3_pp r2.w, v2, -r1
-add r1.w, r2.x, -r0
-add r2.z, -r2.y, c15.w
-cmp r1.w, -r1, r2.y, r2.z
-mul_pp r2.xyz, v2, r2.w
-mad_pp r2.xyz, -r2, c13.z, -r1
-dp3_pp_sat r2.x, r2, v1
-pow_pp r3, r2.x, c7.x
-abs r2.y, v5
-add r2.w, -r1, c13
-cmp r1.w, v5.z, r1, r2
-cmp r1.w, v5.x, r1, -r1
-mad r3.z, r1.w, c16.x, c16.y
-add r2.x, -r0.w, c12.y
-mad r1.w, r0, c12.z, c12
-mad r1.w, r0, r1, c13.x
-add r2.w, -r2.y, c12.y
-mad r2.z, r2.y, c12, c12.w
-mad r2.z, r2, r2.y, c13.x
-rsq r2.x, r2.x
-rsq r2.w, r2.w
-mad r0.w, r0, r1, c13.y
-rcp r2.x, r2.x
-mul r1.w, r0, r2.x
-cmp r0.w, v5.z, c12.x, c12.y
-mul r2.x, r0.w, r1.w
-mad r2.x, -r2, c13.z, r1.w
-mad r2.y, r2.z, r2, c13
-rcp r2.w, r2.w
-mul r2.z, r2.y, r2.w
-cmp r2.y, v5, c12.x, c12
-mul r2.w, r2.y, r2.z
-mad r1.w, -r2, c13.z, r2.z
-mad r2.x, r0.w, c13.w, r2
-mad r0.w, r2.y, c13, r1
-mul r1.w, r2.x, c14.x
-mul r3.w, r0, c14.x
-mul r4.xy, r4, r4
-add r0.w, r4.x, r4.y
-rsq r0.w, r0.w
-rcp r0.w, r0.w
-dsx r2.w, r1
-dsy r2.y, r1.w
-mul r4.zw, r4, r4
-add r1.w, r4.z, r4
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.w, r0, r2
+mad r2.w, r1.y, c14.y, c14.z
+mad r0.x, r2.w, r1.y, c14.w
+mad r0.x, r0, r1.y, c15
+mad r0.x, r0, r1.y, c15.y
+mad r0.x, r0, r1.y, c15.z
+mul r1.y, r0.x, r0.w
+dp4 r0.y, c1, c1
+rsq r0.y, r0.y
+mul r4.xyz, r0.y, c1
+dp3_pp r0.x, v2, -r4
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c13.z, -r4
+add r0.w, r1.z, -r1.x
+add r1.w, -r1.y, c15
+cmp r0.w, -r0, r1.y, r1
+add r1.y, -r0.w, c13.w
+add_pp r3.xyz, -r2, c12.y
+dp3_pp_sat r1.z, r0, v1
+cmp r1.y, v5.z, r0.w, r1
+pow_pp r0, r1.z, c7.x
+cmp r0.y, v5.x, r1, -r1
+mad r1.z, r0.y, c16.x, c16.y
+add r0.z, -r1.x, c12.y
+mad r0.y, r1.x, c12.z, c12.w
+mad r0.y, r1.x, r0, c13.x
+mad r0.y, r1.x, r0, c13
+abs r1.x, v5.y
+add r1.w, -r1.x, c12.y
+mad r1.y, r1.x, c12.z, c12.w
+mad r1.y, r1, r1.x, c13.x
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r0.z, r0.y, r0
+cmp r0.y, v5.z, c12.x, c12
+mul r0.w, r0.y, r0.z
+mad r0.w, -r0, c13.z, r0.z
 rsq r1.w, r1.w
+mad r1.x, r1.y, r1, c13.y
 rcp r1.w, r1.w
-mul r2.z, r0.w, c16.x
-mul r2.x, r1.w, c16
-texldd r2, r3.zwzw, s0, r2.zwzw, r2
-mul_pp r2.xyz, r2, r0
+mul r1.y, r1.x, r1.w
+cmp r1.x, v5.y, c12, c12.y
+mul r1.w, r1.x, r1.y
+mad r0.z, -r1.w, c13, r1.y
+mad r0.w, r0.y, c13, r0
+mad r0.y, r1.x, c13.w, r0.z
+mul r0.z, r0.w, c14.x
+dsy r0.w, r0.z
+mov_pp r2.w, r0.x
+mul r1.w, r0.y, c14.x
+dsx r1.y, r0.z
+dsx r0.yz, v5.xxyw
+mul r5.zw, r0.xyyz, r0.xyyz
+mul r5.xy, r5, r5
+add r0.y, r5.z, r5.w
+add r0.z, r5.x, r5.y
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r1.x, r0.y, c16
+mul r0.z, r0, c16.x
+texldd r1, r1.zwzw, s0, r1, r0.zwzw
 texld r0, v4, s2
 dp4 r0.y, r0, c17
-mov_pp r1.w, r3.x
-dp3 r3.x, v4, v4
-rsq r3.x, r3.x
-rcp r0.x, r3.x
+rsq r3.w, r3.w
+rcp r0.x, r3.w
+dp3_pp_sat r3.w, v2, r4
+add_pp r4.x, r3.w, c12.y
 mul r0.x, r0, c2.w
 mad r0.x, -r0, c16.z, r0.y
 mov r0.z, c3.x
@@ -79198,25 +79551,28 @@ dp3 r0.x, v3, v3
 texld r0.w, v3, s4
 texld r0.x, r0.x, s3
 mul r0.x, r0, r0.w
-mul r0.x, r0, r0.y
-dp3_pp_sat r0.y, v2, r1
-add_pp r0.z, r0.y, c12.y
-frc_pp r0.w, r0.z
-mul r1.xyz, r0.x, c4
-mul r1.xyz, r1, c5
-mul_pp r0.y, r0, c4.w
-mul_pp r0.y, r0, r0.x
-add_pp_sat r0.z, r0, -r0.w
-mul r1.xyz, r1, r1.w
-mul r1.xyz, r0.z, r1
+mul r0.w, r0.x, r0.y
+mul r0.xyz, r0.w, c4
+mul r0.xyz, r0, c5
+mul r0.xyz, r0, r2.w
+frc_pp r4.y, r4.x
+add_pp_sat r2.w, r4.x, -r4.y
+mul r0.xyz, r2.w, r0
+mul r4.xyz, r1.w, r0
+mul_pp r2.w, r3, c4
+mul_pp r0.y, r2.w, r0.w
 mul_pp_sat r0.w, r0.y, c16
 mov r0.x, c10
 add r0.xyz, c4, r0.x
 mad_sat r0.xyz, r0, r0.w, c0
-mul r1.xyz, r2.w, r1
-mad_pp r1.xyz, r0, c11.x, r1
-mul_pp r0.xyz, r2, c6
-mul_pp oC0.xyz, r0, r1
+mul r0.w, v0.x, c9.x
+mul_sat r0.w, r0, c13.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c11.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c6, r3
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c12.y
 "
 }
@@ -79264,7 +79620,7 @@ SetTexture 2 [_LightTexture0] 2D
 SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_ShadowMapTexture] 2D
 "ps_3_0
-; 124 ALU, 12 TEX
+; 125 ALU, 12 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -79281,133 +79637,134 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3
 dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
-mul r1.xy, v5, c11.x
-dsx r4.zw, v5.xyxy
+mul r2.xy, v5, c11.x
+dsy r5.xy, v5
 abs r0.w, v5.z
-abs r2.xy, v5
-max r0.x, r2, r0.w
+abs r1.xy, v5
+max r0.x, r1, r0.w
 rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
+min r0.x, r1, r0.w
+mul r1.z, r0.x, r0.y
 mul r0.xy, v5.zyzw, c11.x
-mul r2.z, r1.w, r1.w
-texld r1.xyz, r1, s1
+mul r1.w, r1.z, r1.z
+rcp r3.w, v4.w
+texld r2.xyz, r2, s1
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2, c17.y, c17
-mad r2.w, r0.z, r2.z, c17
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.x, r0, r2
+mad r0.z, r1.w, c17.y, c17
+mad r2.w, r0.z, r1, c17
 mul r0.xy, v5.zxzw, c11.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-mad r2.w, r2, r2.z, c18.x
-mad r2.y, r2.w, r2.z, c18
-mad r2.y, r2, r2.z, c18.z
-add_pp r1.xyz, -r0, c15.y
-mul r1.w, r2.y, r1
-mul r2.z, v0.x, c12.x
-mul_sat r2.y, r2.z, c16.z
-mad_pp r0.xyz, r2.y, r1, r0
-dp4 r1.z, c1, c1
-add r1.y, -r1.w, c18.w
-add r1.x, r2, -r0.w
-cmp r1.x, -r1, r1.w, r1.y
-rsq r1.z, r1.z
-mul r2.xyz, r1.z, c1
+add_pp r0.xyz, r0, -r2
+mad_pp r2.xyz, r1.y, r0, r2
+mad r2.w, r2, r1, c18.x
+mad r0.x, r2.w, r1.w, c18.y
+mad r0.x, r0, r1.w, c18.z
+mul r0.y, r0.x, r1.z
+dp4 r0.z, c1, c1
+rsq r0.x, r0.z
+mul r4.xyz, r0.x, c1
+add r0.x, r1, -r0.w
+add r0.z, -r0.y, c18.w
+cmp r1.x, -r0, r0.y, r0.z
+dp3_pp r0.x, v2, -r4
 add r1.y, -r1.x, c16.w
-cmp r1.w, v5.z, r1.x, r1.y
-dp3_pp r1.z, v2, -r2
-mul_pp r1.xyz, v2, r1.z
-mad_pp r3.xyz, -r1, c16.z, -r2
-abs r1.z, v5.y
-cmp r1.w, v5.x, r1, -r1
-mad r4.x, r1.w, c19, c19.y
-add r1.y, -r0.w, c15
-mad r1.x, r0.w, c15.z, c15.w
-mad r1.x, r0.w, r1, c16
-add r2.w, -r1.z, c15.y
-mad r1.w, r1.z, c15.z, c15
-mad r1.w, r1, r1.z, c16.x
-rsq r1.y, r1.y
-rsq r2.w, r2.w
-mad r0.w, r0, r1.x, c16.y
-rcp r1.y, r1.y
-mul r1.x, r0.w, r1.y
-cmp r0.w, v5.z, c15.x, c15.y
-mul r1.y, r0.w, r1.x
-mad r1.y, -r1, c16.z, r1.x
-mad r1.z, r1.w, r1, c16.y
-rcp r2.w, r2.w
-mul r1.w, r1.z, r2
-cmp r1.z, v5.y, c15.x, c15.y
-mul r2.w, r1.z, r1
-mad r1.x, -r2.w, c16.z, r1.w
-dp3_pp_sat r2.w, r3, v1
-rcp r3.z, v4.w
-mad r1.y, r0.w, c16.w, r1
-mad r0.w, r1.z, c16, r1.x
-mul r1.x, r1.y, c17
-mul r4.y, r0.w, c17.x
-mul r4.zw, r4, r4
-add r0.w, r4.z, r4
-rsq r0.w, r0.w
-dsx r1.w, r1.x
-dsy r1.y, r1.x
-dsy r1.xz, v5.xyyw
-mul r1.xz, r1, r1
-add r1.x, r1, r1.z
-rcp r0.w, r0.w
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-mul r1.z, r0.w, c19.x
-mul r1.x, r1, c19
-texldd r1, r4, s0, r1.zwzw, r1
-mul_pp r1.xyz, r1, r0
+cmp r1.x, v5.z, r1, r1.y
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c16.z, -r4
+dp3_pp_sat r2.w, r0, v1
+add r0.y, -r0.w, c15
+mad r0.x, r0.w, c15.z, c15.w
+mad r0.x, r0.w, r0, c16
+mad r0.x, r0.w, r0, c16.y
+abs r0.w, v5.y
+add r1.z, -r0.w, c15.y
+mad r1.y, r0.w, c15.z, c15.w
+mad r1.y, r1, r0.w, c16.x
+cmp r1.x, v5, r1, -r1
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+mul r0.y, r0.x, r0
+cmp r0.x, v5.z, c15, c15.y
+mul r0.z, r0.x, r0.y
+mad r0.z, -r0, c16, r0.y
+rsq r1.z, r1.z
+add_pp r3.xyz, -r2, c15.y
+mad r0.w, r1.y, r0, c16.y
+rcp r1.z, r1.z
+mul r1.y, r0.w, r1.z
+cmp r0.w, v5.y, c15.x, c15.y
+mul r1.z, r0.w, r1.y
+mad r0.y, -r1.z, c16.z, r1
+mad r0.z, r0.x, c16.w, r0
+mad r0.x, r0.w, c16.w, r0.y
+mul r0.y, r0.z, c17.x
+dsx r0.w, r0.y
+mul r5.xy, r5, r5
+add r0.z, r5.x, r5.y
+dsx r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+mul r1.y, r0.x, c17.x
+add r0.x, r1.z, r1.w
+rsq r0.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
+rcp r0.x, r0.x
+mul r0.z, r0.x, c19.x
+mul r0.x, r1.z, c19
+mad r5.xy, v4, r3.w, c6
+dsy r0.y, r0
+mad r1.x, r1, c19, c19.y
+texldd r1, r1, s0, r0.zwzw, r0
 pow_pp r0, r2.w, c10.x
-mad r3.xy, v4, r3.z, c6
 mov_pp r2.w, r0.x
-texld r0.x, r3, s4
-mad r3.xy, v4, r3.z, c5
+texld r0.x, r5, s4
+mad r5.xy, v4, r3.w, c5
 mov r0.w, r0.x
-texld r0.x, r3, s4
-mad r3.xy, v4, r3.z, c4
+texld r0.x, r5, s4
+mad r5.xy, v4, r3.w, c4
 mov r0.z, r0.x
-texld r0.x, r3, s4
-mad r3.xy, v4, r3.z, c3
+texld r0.x, r5, s4
+mad r5.xy, v4, r3.w, c3
 mov r0.y, r0.x
-texld r0.x, r3, s4
-mov r3.x, c2
-mad r0, -v4.z, r3.z, r0
-cmp r0, r0, c15.y, r3.x
-dp4_pp r0.z, r0, c19.z
-rcp r3.x, v3.w
-mad r3.xy, v3, r3.x, c19.y
+texld r0.x, r5, s4
+mad r0, -v4.z, r3.w, r0
+rcp r3.w, v3.w
+mad r5.xy, v3, r3.w, c19.y
+dp3_pp_sat r3.w, v2, r4
+add_pp r4.x, r3.w, c15.y
+mov r4.w, c2.x
+cmp r0, r0, c15.y, r4.w
+dp4_pp r0.y, r0, c19.z
 dp3 r0.x, v3, v3
-texld r0.w, r3, s2
-cmp r0.y, -v3.z, c15.x, c15
-mul_pp r0.y, r0, r0.w
+texld r0.w, r5, s2
+cmp r0.z, -v3, c15.x, c15.y
+mul_pp r0.z, r0, r0.w
 texld r0.x, r0.x, s3
-mul_pp r0.x, r0.y, r0
-mul_pp r0.x, r0, r0.z
-dp3_pp_sat r0.y, v2, r2
-add_pp r0.z, r0.y, c15.y
-frc_pp r0.w, r0.z
-mul r2.xyz, r0.x, c7
-mul r2.xyz, r2, c8
-mul_pp r0.y, r0, c7.w
-mul_pp r0.y, r0, r0.x
-add_pp_sat r0.z, r0, -r0.w
-mul r2.xyz, r2, r2.w
-mul r2.xyz, r0.z, r2
+mul_pp r0.x, r0.z, r0
+mul_pp r0.w, r0.x, r0.y
+mul r0.xyz, r0.w, c7
+mul r0.xyz, r0, c8
+mul r0.xyz, r0, r2.w
+frc_pp r4.y, r4.x
+add_pp_sat r2.w, r4.x, -r4.y
+mul r0.xyz, r2.w, r0
+mul r4.xyz, r1.w, r0
+mul_pp r2.w, r3, c7
+mul_pp r0.y, r2.w, r0.w
 mul_pp_sat r0.w, r0.y, c19
 mov r0.x, c13
 add r0.xyz, c7, r0.x
 mad_sat r0.xyz, r0, r0.w, c0
-mul r2.xyz, r1.w, r2
-mad_pp r2.xyz, r0, c14.x, r2
-mul_pp r0.xyz, r1, c9
-mul_pp oC0.xyz, r0, r2
+mul r0.w, v0.x, c12.x
+mul_sat r0.w, r0, c16.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c14.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c9, r3
+mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c15.y
 "
 }
@@ -79455,7 +79812,7 @@ SetTexture 2 [_LightTexture0] 2D
 SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_ShadowMapTexture] 2D
 "ps_3_0
-; 123 ALU, 12 TEX
+; 124 ALU, 12 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -79473,130 +79830,131 @@ dcl_texcoord3 v3
 dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
 mul r1.xy, v5, c11.x
-dsy r3.xy, v5
+dsx r4.zw, v5.xyxy
+dsy r5.xy, v5
 abs r0.w, v5.z
 abs r2.xy, v5
 max r0.x, r2, r0.w
 rcp r0.y, r0.x
 min r0.x, r2, r0.w
 mul r1.w, r0.x, r0.y
-mul r2.z, r1.w, r1.w
-mad r0.x, r2.z, c17.y, c17.z
-mad r0.x, r0, r2.z, c17.w
-mad r2.w, r0.x, r2.z, c18.x
+mul r0.x, r1.w, r1.w
+mad r0.y, r0.x, c17, c17.z
+mad r0.y, r0, r0.x, c17.w
+mad r0.y, r0, r0.x, c18.x
+mad r0.y, r0, r0.x, c18
+mad r2.z, r0.y, r0.x, c18
+mul r1.w, r2.z, r1
 mul r0.xy, v5.zyzw, c11.x
-mad r2.w, r2, r2.z, c18.y
+rcp r2.w, v4.w
+add r2.z, -r1.w, c18.w
 texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
 add_pp r0.xyz, r0, -r1
 mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2.w, r2, c18
-mul r1.w, r0.z, r1
+add r0.z, r2.x, -r0.w
+cmp r1.w, -r0.z, r1, r2.z
 mul r0.xy, v5.zxzw, c11.x
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-add_pp r1.xyz, -r0, c15.y
-rcp r2.w, v4.w
-add r2.x, r2, -r0.w
-add r2.z, -r1.w, c18.w
-cmp r1.w, -r2.x, r1, r2.z
-add r2.x, -r1.w, c16.w
-cmp r1.w, v5.z, r1, r2.x
-mul r2.x, v0, c12
-mul_sat r2.x, r2, c16.z
-mad_pp r2.xyz, r2.x, r1, r0
-cmp r1.w, v5.x, r1, -r1
-add r0.y, -r0.w, c15
-mad r0.x, r0.w, c15.z, c15.w
-mad r0.x, r0.w, r0, c16
-mad r0.x, r0.w, r0, c16.y
-abs r0.w, v5.y
-add r1.z, -r0.w, c15.y
-mad r1.y, r0.w, c15.z, c15.w
-mad r1.y, r1, r0.w, c16.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v5.z, c15, c15.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c16, r0.y
-rsq r1.z, r1.z
-mad r0.w, r1.y, r0, c16.y
-rcp r1.z, r1.z
-mul r1.y, r0.w, r1.z
-cmp r0.w, v5.y, c15.x, c15.y
-mul r1.z, r0.w, r1.y
-mad r0.y, -r1.z, c16.z, r1
-mad r0.z, r0.x, c16.w, r0
-mad r0.x, r0.w, c16.w, r0.y
-mul r0.y, r0.z, c17.x
-dsx r0.w, r0.y
-mad r1.x, r1.w, c19, c19.y
-mul r3.xy, r3, r3
-add r0.z, r3.x, r3.y
-dsx r1.zw, v5.xyxy
-mul r1.zw, r1, r1
-mul r1.y, r0.x, c17.x
-add r0.x, r1.z, r1.w
-rsq r0.z, r0.z
-rsq r0.x, r0.x
-rcp r1.z, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c19.x
-mul r0.x, r1.z, c19
-dsy r0.y, r0
-texldd r1, r1, s0, r0.zwzw, r0
-mul_pp r1.xyz, r1, r2
+add_pp r3.xyz, r0, -r1
+mad_pp r2.xyz, r2.y, r3, r1
+add r0.x, -r1.w, c16.w
+cmp r0.x, v5.z, r1.w, r0
+cmp r0.x, v5, r0, -r0
+mad r4.x, r0, c19, c19.y
 mad r0.xyz, v4, r2.w, c6
+add r1.y, -r0.w, c15
+mad r1.x, r0.w, c15.z, c15.w
+mad r1.x, r0.w, r1, c16
+mad r0.w, r0, r1.x, c16.y
+abs r1.x, v5.y
+add r1.z, -r1.x, c15.y
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r1.w, r0, r1.y
+cmp r0.w, v5.z, c15.x, c15.y
+mul r3.w, r0, r1
+mad r1.w, -r3, c16.z, r1
+mad r1.y, r1.x, c15.z, c15.w
+mad r1.y, r1, r1.x, c16.x
+rsq r1.z, r1.z
+mov r3.w, c2.x
 texld r0.x, r0, s4
-mad r2.xyz, v4, r2.w, c5
+add_pp r3.xyz, -r2, c15.y
+mad r1.x, r1.y, r1, c16.y
+rcp r1.z, r1.z
+mul r1.y, r1.x, r1.z
+cmp r1.x, v5.y, c15, c15.y
+mul r1.z, r1.x, r1.y
+mad r1.y, -r1.z, c16.z, r1
+mad r1.z, r0.w, c16.w, r1.w
+mad r0.w, r1.x, c16, r1.y
+mul r1.x, r1.z, c17
+mul r4.y, r0.w, c17.x
+mul r4.zw, r4, r4
+add r0.w, r4.z, r4
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r1.z, r0.w, c19.x
+dsx r1.w, r1.x
+dsy r1.y, r1.x
+mul r5.xy, r5, r5
+add r1.x, r5, r5.y
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+mul r1.x, r1, c19
+texldd r1, r4, s0, r1.zwzw, r1
+mad r4.xyz, v4, r2.w, c5
 mov_pp r0.w, r0.x
-texld r0.x, r2, s4
-mad r2.xyz, v4, r2.w, c4
+texld r0.x, r4, s4
+mad r4.xyz, v4, r2.w, c4
 mov_pp r0.z, r0.x
-texld r0.x, r2, s4
-mad r2.xyz, v4, r2.w, c3
+texld r0.x, r4, s4
+mad r4.xyz, v4, r2.w, c3
 mov_pp r0.y, r0.x
-texld r0.x, r2, s4
-mov r2.y, c2.x
-add r2.y, c15, -r2
-mad r0, r0, r2.y, c2.x
+dp4 r2.w, c1, c1
+texld r0.x, r4, s4
+add r3.w, c15.y, -r3
+mad r0, r0, r3.w, c2.x
 dp4_pp r0.y, r0, c19.z
+rsq r2.w, r2.w
+mul r4.xyz, r2.w, c1
+dp3_pp r0.z, v2, -r4
+mul_pp r5.xyz, v2, r0.z
+mad_pp r5.xyz, -r5, c16.z, -r4
 rcp r0.x, v3.w
-mad r4.xy, v3, r0.x, c19.y
-dp4 r2.x, c1, c1
-rsq r2.x, r2.x
-mul r2.xyz, r2.x, c1
-dp3_pp r0.z, v2, -r2
-mul_pp r3.xyz, v2, r0.z
-mad_pp r3.xyz, -r3, c16.z, -r2
+mad r6.xy, v3, r0.x, c19.y
 dp3 r0.x, v3, v3
-texld r0.w, r4, s2
+dp3_pp_sat r3.w, r5, v1
+texld r0.w, r6, s2
 cmp r0.z, -v3, c15.x, c15.y
 mul_pp r0.z, r0, r0.w
 texld r0.x, r0.x, s3
 mul_pp r0.x, r0.z, r0
 mul_pp r2.w, r0.x, r0.y
 mul r0.xyz, r2.w, c7
-dp3_pp_sat r3.w, r3, v1
-mul r3.xyz, r0, c8
+mul r5.xyz, r0, c8
 pow_pp r0, r3.w, c10.x
-dp3_pp_sat r0.w, v2, r2
-add_pp r2.x, r0.w, c15.y
-frc_pp r2.y, r2.x
-add_pp_sat r2.x, r2, -r2.y
-mul r0.xyz, r3, r0.x
-mul r0.xyz, r2.x, r0
+dp3_pp_sat r0.w, v2, r4
+add_pp r3.w, r0, c15.y
+frc_pp r4.x, r3.w
+add_pp_sat r3.w, r3, -r4.x
+mul r0.xyz, r5, r0.x
+mul r0.xyz, r3.w, r0
+mul r4.xyz, r1.w, r0
 mul_pp r0.w, r0, c7
-mul r0.xyz, r1.w, r0
-mul_pp r1.w, r0, r2
-mov r0.w, c13.x
-mul_pp_sat r1.w, r1, c19
-add r2.xyz, c7, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r0.xyz, r2, c14.x, r0
-mul_pp r1.xyz, r1, c9
+mul_pp r0.y, r0.w, r2.w
+mul_pp_sat r0.w, r0.y, c19
+mov r0.x, c13
+add r0.xyz, c7, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+mul r0.w, v0.x, c12.x
+mul_sat r0.w, r0, c16.z
+mad_pp r2.xyz, r0.w, r3, r2
+add_pp r0.xyz, r0, r4
+mul r3.xyz, r0, c14.x
+mul_pp r1.xyz, r1, r2
+mad_pp r1.xyz, r1, c9, r3
 mul_pp oC0.xyz, r1, r0
 mov_pp oC0.w, c15.y
 "
@@ -79636,7 +79994,7 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_ShadowMapTexture] CUBE
 SetTexture 3 [_LightTexture0] 2D
 "ps_3_0
-; 122 ALU, 11 TEX
+; 123 ALU, 11 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
@@ -79654,130 +80012,131 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-mul r1.xy, v5, c8.x
-dsx r3.zw, v5.xyxy
-abs r0.w, v5.z
-abs r2.xy, v5
-max r0.x, r2, r0.w
-rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
-mul r2.z, r1.w, r1.w
-mad r0.x, r2.z, c14.y, c14.z
-mad r0.x, r0, r2.z, c14.w
-mad r2.w, r0.x, r2.z, c15.x
-mul r0.xy, v5.zyzw, c8.x
-mul r3.zw, r3, r3
-mad r2.w, r2, r2.z, c15.y
-texld r1.xyz, r1, s1
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2.w, r2, c15
-mul r1.w, r0.z, r1
-mul r0.xy, v5.zxzw, c8.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-abs r2.y, v5
-add r2.w, -r2.y, c12.y
-rsq r2.w, r2.w
-add r2.x, r2, -r0.w
-add r2.z, -r1.w, c15.w
-cmp r1.w, -r2.x, r1, r2.z
-add r2.x, -r1.w, c13.w
-cmp r1.w, v5.z, r1, r2.x
-cmp r1.w, v5.x, r1, -r1
-mad r3.x, r1.w, c16, c16.y
-mad r1.w, r0, c12.z, c12
-mad r2.z, r2.y, c12, c12.w
-mad r2.z, r2, r2.y, c13.x
-mul r2.x, v0, c9
-mad r1.w, r0, r1, c13.x
-mad r2.y, r2.z, r2, c13
-rcp r2.w, r2.w
-mul r2.z, r2.y, r2.w
-cmp r2.y, v5, c12.x, c12
-mul r2.w, r2.y, r2.z
-add_pp r1.xyz, -r0, c12.y
-mul_sat r2.x, r2, c13.z
-mad_pp r1.xyz, r2.x, r1, r0
-add r2.x, -r0.w, c12.y
-rsq r2.x, r2.x
-mad r0.w, r0, r1, c13.y
-rcp r2.x, r2.x
-mul r1.w, r0, r2.x
-cmp r0.w, v5.z, c12.x, c12.y
-mul r2.x, r0.w, r1.w
-mad r2.x, -r2, c13.z, r1.w
-mad r1.w, -r2, c13.z, r2.z
-mad r2.x, r0.w, c13.w, r2
-mad r0.w, r2.y, c13, r1
-mul r1.w, r2.x, c14.x
-mul r3.y, r0.w, c14.x
-add r0.w, r3.z, r3
-dsy r2.xz, v5.xyyw
-rsq r0.w, r0.w
-mul r2.xz, r2, r2
-dsx r2.w, r1
-dsy r2.y, r1.w
-add r1.w, r2.x, r2.z
-rcp r0.w, r0.w
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r2.z, r0.w, c16.x
-mul r2.x, r1.w, c16
-texldd r2, r3, s0, r2.zwzw, r2
-mul_pp r2.xyz, r2, r1
 add r0.xyz, v4, c16.zwww
 texld r0, r0, s2
-dp4 r3.w, r0, c17
+dp4 r2.w, r0, c17
 add r0.xyz, v4, c16.wzww
 texld r0, r0, s2
-dp4 r3.z, r0, c17
+dp4 r2.z, r0, c17
 add r1.xyz, v4, c16.wwzw
 texld r1, r1, s2
-dp4 r3.y, r1, c17
-dp3 r0.w, v4, v4
-rsq r1.x, r0.w
+dp4 r2.y, r1, c17
 add r0.xyz, v4, c16.z
 texld r0, r0, s2
-dp4 r3.x, r0, c17
-rcp r1.x, r1.x
-mul r0.x, r1, c2.w
-dp4 r1.x, c1, c1
-mad r0, -r0.x, c18.x, r3
-mov r1.y, c3.x
-cmp r0, r0, c12.y, r1.y
-dp4_pp r0.y, r0, c18.y
+dp3 r1.x, v4, v4
+dsy r4.zw, v5.xyxy
+abs r3.w, v5.z
+abs r4.xy, v5
+dp4 r2.x, r0, c17
 rsq r1.x, r1.x
-mul r1.xyz, r1.x, c1
-dp3_pp r0.z, v2, -r1
-mul_pp r3.xyz, v2, r0.z
-mad_pp r3.xyz, -r3, c13.z, -r1
+rcp r0.x, r1.x
+mul r0.x, r0, c2.w
+mad r0, -r0.x, c18.x, r2
+mov r1.x, c3
+cmp r1, r0, c12.y, r1.x
 dp3 r0.x, v3, v3
+dp4_pp r0.y, r1, c18.y
 texld r0.x, r0.x, s3
 mul r1.w, r0.x, r0.y
 mul r0.xyz, r1.w, c4
-dp3_pp_sat r3.w, r3, v1
-mul r3.xyz, r0, c5
-pow_pp r0, r3.w, c7.x
-dp3_pp_sat r0.w, v2, r1
-add_pp r1.x, r0.w, c12.y
-frc_pp r1.y, r1.x
-add_pp_sat r1.x, r1, -r1.y
-mul r0.xyz, r3, r0.x
-mul r0.xyz, r1.x, r0
-mul_pp r0.w, r0, c4
-mul_pp r1.x, r0.w, r1.w
-mul_pp_sat r1.w, r1.x, c18.z
+mul r2.xyz, r0, c5
+dp4 r0.x, c1, c1
+rsq r0.y, r0.x
+mul r1.xyz, r0.y, c1
+max r0.x, r4, r3.w
+rcp r0.y, r0.x
+min r0.x, r4, r3.w
+mul r2.w, r0.x, r0.y
+mul r3.x, r2.w, r2.w
+dp3_pp r0.x, v2, -r1
+mad r0.w, r3.x, c14.y, c14.z
+mad r0.w, r0, r3.x, c14
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c13.z, -r1
+dp3_pp_sat r3.z, r0, v1
+mad r3.y, r0.w, r3.x, c15.x
+pow_pp r0, r3.z, c7.x
+mad r0.y, r3, r3.x, c15
+mad r0.y, r0, r3.x, c15.z
+mul r2.w, r0.y, r2
+mul r0.xyz, r2, r0.x
+add r2.x, -r2.w, c15.w
+add r0.w, r4.x, -r3
+cmp r0.w, -r0, r2, r2.x
+dp3_pp_sat r2.w, v2, r1
+add r1.x, -r0.w, c13.w
+cmp r0.w, v5.z, r0, r1.x
+add_pp r1.y, r2.w, c12
+frc_pp r1.x, r1.y
+add_pp_sat r1.x, r1.y, -r1
+mul r3.xyz, r1.x, r0
+cmp r0.w, v5.x, r0, -r0
+mad r1.x, r0.w, c16, c16.y
+abs r0.w, v5.y
+add r1.z, -r0.w, c12.y
+mad r1.y, r0.w, c12.z, c12.w
+mad r1.y, r1, r0.w, c13.x
+add r0.y, -r3.w, c12
+mad r0.x, r3.w, c12.z, c12.w
+rsq r0.y, r0.y
+mad r0.x, r3.w, r0, c13
+rsq r1.z, r1.z
+dsx r2.xy, v5
+mad r0.w, r1.y, r0, c13.y
+rcp r1.z, r1.z
+mul r1.y, r0.w, r1.z
+cmp r0.w, v5.y, c12.x, c12.y
+mul r1.z, r0.w, r1.y
+mad r0.x, r3.w, r0, c13.y
+rcp r0.y, r0.y
+mul r0.y, r0.x, r0
+cmp r0.x, v5.z, c12, c12.y
+mul r0.z, r0.x, r0.y
+mad r0.z, -r0, c13, r0.y
+mad r0.y, -r1.z, c13.z, r1
+mad r0.z, r0.x, c13.w, r0
+mad r0.x, r0.w, c13.w, r0.y
+mul r0.y, r0.z, c14.x
+dsx r0.w, r0.y
+mul r4.zw, r4, r4
+add r0.z, r4, r4.w
+rsq r0.z, r0.z
+mul r1.y, r0.x, c14.x
+mul r2.xy, r2, r2
+add r0.x, r2, r2.y
+rsq r0.x, r0.x
+mul r2.xy, v5, c8.x
+texld r2.xyz, r2, s1
+rcp r1.z, r0.z
+rcp r0.x, r0.x
+mul r0.z, r0.x, c16.x
+mul r0.x, r1.z, c16
+dsy r0.y, r0
+texldd r0, r1, s0, r0.zwzw, r0
+mul r3.xyz, r0.w, r3
+mul_pp r0.w, r2, c4
+mul_pp r1.w, r0, r1
+mul r1.xy, v5.zyzw, c8.x
+texld r1.xyz, r1, s1
+add_pp r1.xyz, r1, -r2
+mad_pp r1.xyz, r4.x, r1, r2
 mov r0.w, c10.x
-add r1.xyz, c4, r0.w
-mad_sat r1.xyz, r1, r1.w, c0
-mul r0.xyz, r2.w, r0
-mad_pp r0.xyz, r1, c11.x, r0
-mul_pp r1.xyz, r2, c6
-mul_pp oC0.xyz, r1, r0
+add r4.xzw, c4.xyyz, r0.w
+mul r2.xy, v5.zxzw, c8.x
+texld r2.xyz, r2, s1
+add_pp r2.xyz, r2, -r1
+mad_pp r1.xyz, r4.y, r2, r1
+mul_pp_sat r1.w, r1, c18.z
+mad_sat r4.xzw, r4, r1.w, c0.xyyz
+mul r0.w, v0.x, c9.x
+add_pp r2.xyz, -r1, c12.y
+mul_sat r0.w, r0, c13.z
+mad_pp r1.xyz, r0.w, r2, r1
+add_pp r3.xyz, r4.xzww, r3
+mul r2.xyz, r3, c11.x
+mul_pp r0.xyz, r0, r1
+mad_pp r0.xyz, r0, c6, r2
+mul_pp oC0.xyz, r0, r3
 mov_pp oC0.w, c12.y
 "
 }
@@ -79822,7 +80181,7 @@ SetTexture 2 [_ShadowMapTexture] CUBE
 SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_LightTexture0] CUBE
 "ps_3_0
-; 123 ALU, 12 TEX
+; 124 ALU, 12 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
@@ -79841,132 +80200,133 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-mul r1.xy, v5, c8.x
-dsx r3.zw, v5.xyxy
-abs r0.w, v5.z
-abs r2.xy, v5
-max r0.x, r2, r0.w
-rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
-mul r2.z, r1.w, r1.w
-mad r0.x, r2.z, c14.y, c14.z
-mad r0.x, r0, r2.z, c14.w
-mad r2.w, r0.x, r2.z, c15.x
-mul r0.xy, v5.zyzw, c8.x
-mul r3.zw, r3, r3
-mad r2.w, r2, r2.z, c15.y
-texld r1.xyz, r1, s1
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r1.xyz, r2.x, r0, r1
-mad r0.z, r2.w, r2, c15
-mul r1.w, r0.z, r1
-mul r0.xy, v5.zxzw, c8.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r2.y, r0, r1
-add_pp r1.xyz, -r0, c12.y
-add r2.x, r2, -r0.w
-add r2.z, -r1.w, c15.w
-cmp r1.w, -r2.x, r1, r2.z
-add r2.x, -r1.w, c13.w
-cmp r1.w, v5.z, r1, r2.x
-cmp r1.w, v5.x, r1, -r1
-mul r2.x, v0, c9
-mul_sat r2.x, r2, c13.z
-mad_pp r2.xyz, r2.x, r1, r0
-abs r1.z, v5.y
-mad r3.x, r1.w, c16, c16.y
-add r1.y, -r0.w, c12
-mad r1.x, r0.w, c12.z, c12.w
-mad r1.x, r0.w, r1, c13
-add r2.w, -r1.z, c12.y
-mad r1.w, r1.z, c12.z, c12
-mad r1.w, r1, r1.z, c13.x
-rsq r1.y, r1.y
-rsq r2.w, r2.w
-mad r0.w, r0, r1.x, c13.y
-rcp r1.y, r1.y
-mul r1.x, r0.w, r1.y
-cmp r0.w, v5.z, c12.x, c12.y
-mul r1.y, r0.w, r1.x
-mad r1.y, -r1, c13.z, r1.x
-mad r1.z, r1.w, r1, c13.y
-rcp r2.w, r2.w
-mul r1.w, r1.z, r2
-cmp r1.z, v5.y, c12.x, c12.y
-mul r2.w, r1.z, r1
-mad r1.x, -r2.w, c13.z, r1.w
-mad r1.y, r0.w, c13.w, r1
-mad r0.w, r1.z, c13, r1.x
-mul r1.x, r1.y, c14
-mul r3.y, r0.w, c14.x
-add r0.w, r3.z, r3
-rsq r0.w, r0.w
-dsx r1.w, r1.x
-dsy r1.y, r1.x
-dsy r1.xz, v5.xyyw
-mul r1.xz, r1, r1
-add r1.x, r1, r1.z
-rcp r0.w, r0.w
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-mul r1.z, r0.w, c16.x
 add r0.xyz, v4, c16.zwww
 texld r0, r0, s2
-dp4 r3.w, r0, c17
-mul r1.x, r1, c16
-texldd r1, r3, s0, r1.zwzw, r1
-mul_pp r1.xyz, r1, r2
+dp4 r2.w, r0, c17
 add r0.xyz, v4, c16.wzww
 texld r0, r0, s2
-dp4 r3.z, r0, c17
-add r2.xyz, v4, c16.wwzw
-texld r2, r2, s2
-dp4 r3.y, r2, c17
+dp4 r2.z, r0, c17
+add r1.xyz, v4, c16.wwzw
+texld r1, r1, s2
+dp4 r2.y, r1, c17
 add r0.xyz, v4, c16.z
 texld r0, r0, s2
-dp3 r2.x, v4, v4
-dp4 r3.x, r0, c17
-rsq r2.x, r2.x
-rcp r0.x, r2.x
-dp4 r2.x, c1, c1
+dp3 r1.x, v4, v4
+dsy r4.zw, v5.xyxy
+abs r3.w, v5.z
+abs r4.xy, v5
+dp4 r2.x, r0, c17
+rsq r1.x, r1.x
+rcp r0.x, r1.x
 mul r0.x, r0, c2.w
-rsq r2.x, r2.x
-mul r2.xyz, r2.x, c1
-mad r0, -r0.x, c18.x, r3
-mov r2.w, c3.x
-cmp r0, r0, c12.y, r2.w
+mad r0, -r0.x, c18.x, r2
+mov r1.x, c3
+cmp r0, r0, c12.y, r1.x
 dp4_pp r0.y, r0, c18.y
-dp3_pp r2.w, v2, -r2
-mul_pp r3.xyz, v2, r2.w
-mad_pp r3.xyz, -r3, c13.z, -r2
 dp3 r0.x, v3, v3
 texld r0.w, v3, s4
 texld r0.x, r0.x, s3
 mul r0.x, r0, r0.w
+mul r1.w, r0.x, r0.y
+mul r0.xyz, r1.w, c4
+mul r2.xyz, r0, c5
+dp4 r0.x, c1, c1
+rsq r0.y, r0.x
+mul r1.xyz, r0.y, c1
+max r0.x, r4, r3.w
+rcp r0.y, r0.x
+min r0.x, r4, r3.w
 mul r2.w, r0.x, r0.y
-mul r0.xyz, r2.w, c4
-dp3_pp_sat r3.w, r3, v1
-mul r3.xyz, r0, c5
-pow_pp r0, r3.w, c7.x
-dp3_pp_sat r0.w, v2, r2
-add_pp r2.x, r0.w, c12.y
-frc_pp r2.y, r2.x
-add_pp_sat r2.x, r2, -r2.y
-mul r0.xyz, r3, r0.x
-mul r0.xyz, r2.x, r0
-mul_pp r0.w, r0, c4
-mul r0.xyz, r1.w, r0
-mul_pp r1.w, r0, r2
+mul r3.x, r2.w, r2.w
+dp3_pp r0.x, v2, -r1
+mad r0.w, r3.x, c14.y, c14.z
+mad r0.w, r0, r3.x, c14
+mul_pp r0.xyz, v2, r0.x
+mad_pp r0.xyz, -r0, c13.z, -r1
+dp3_pp_sat r3.z, r0, v1
+mad r3.y, r0.w, r3.x, c15.x
+pow_pp r0, r3.z, c7.x
+mad r0.y, r3, r3.x, c15
+mad r0.y, r0, r3.x, c15.z
+mul r2.w, r0.y, r2
+mul r0.xyz, r2, r0.x
+add r2.x, -r2.w, c15.w
+add r0.w, r4.x, -r3
+cmp r0.w, -r0, r2, r2.x
+dp3_pp_sat r2.w, v2, r1
+add r1.x, -r0.w, c13.w
+cmp r0.w, v5.z, r0, r1.x
+add_pp r1.y, r2.w, c12
+frc_pp r1.x, r1.y
+add_pp_sat r1.x, r1.y, -r1
+mul r3.xyz, r1.x, r0
+cmp r0.w, v5.x, r0, -r0
+mad r1.x, r0.w, c16, c16.y
+abs r0.w, v5.y
+add r1.z, -r0.w, c12.y
+mad r1.y, r0.w, c12.z, c12.w
+mad r1.y, r1, r0.w, c13.x
+add r0.y, -r3.w, c12
+mad r0.x, r3.w, c12.z, c12.w
+rsq r0.y, r0.y
+mad r0.x, r3.w, r0, c13
+rsq r1.z, r1.z
+dsx r2.xy, v5
+mad r0.w, r1.y, r0, c13.y
+rcp r1.z, r1.z
+mul r1.y, r0.w, r1.z
+cmp r0.w, v5.y, c12.x, c12.y
+mul r1.z, r0.w, r1.y
+mad r0.x, r3.w, r0, c13.y
+rcp r0.y, r0.y
+mul r0.y, r0.x, r0
+cmp r0.x, v5.z, c12, c12.y
+mul r0.z, r0.x, r0.y
+mad r0.z, -r0, c13, r0.y
+mad r0.y, -r1.z, c13.z, r1
+mad r0.z, r0.x, c13.w, r0
+mad r0.x, r0.w, c13.w, r0.y
+mul r0.y, r0.z, c14.x
+dsx r0.w, r0.y
+mul r4.zw, r4, r4
+add r0.z, r4, r4.w
+rsq r0.z, r0.z
+mul r1.y, r0.x, c14.x
+mul r2.xy, r2, r2
+add r0.x, r2, r2.y
+rsq r0.x, r0.x
+mul r2.xy, v5, c8.x
+texld r2.xyz, r2, s1
+rcp r1.z, r0.z
+rcp r0.x, r0.x
+mul r0.z, r0.x, c16.x
+mul r0.x, r1.z, c16
+dsy r0.y, r0
+texldd r0, r1, s0, r0.zwzw, r0
+mul r3.xyz, r0.w, r3
+mul_pp r0.w, r2, c4
+mul_pp r1.w, r0, r1
+mul r1.xy, v5.zyzw, c8.x
+texld r1.xyz, r1, s1
+add_pp r1.xyz, r1, -r2
+mad_pp r1.xyz, r4.x, r1, r2
 mov r0.w, c10.x
+add r4.xzw, c4.xyyz, r0.w
+mul r2.xy, v5.zxzw, c8.x
+texld r2.xyz, r2, s1
+add_pp r2.xyz, r2, -r1
+mad_pp r1.xyz, r4.y, r2, r1
 mul_pp_sat r1.w, r1, c18.z
-add r2.xyz, c4, r0.w
-mad_sat r2.xyz, r2, r1.w, c0
-mad_pp r0.xyz, r2, c11.x, r0
-mul_pp r1.xyz, r1, c6
-mul_pp oC0.xyz, r1, r0
+mad_sat r4.xzw, r4, r1.w, c0.xyyz
+mul r0.w, v0.x, c9.x
+add_pp r2.xyz, -r1, c12.y
+mul_sat r0.w, r0, c13.z
+mad_pp r1.xyz, r0.w, r2, r1
+add_pp r3.xyz, r4.xzww, r3
+mul r2.xyz, r3, c11.x
+mul_pp r0.xyz, r0, r1
+mad_pp r0.xyz, r0, c6, r2
+mul_pp oC0.xyz, r0, r3
 mov_pp oC0.w, c12.y
 "
 }
@@ -80011,7 +80371,7 @@ SetTexture 3 [_CityDarkOverlayDetailTex] 2D
 SetTexture 4 [_CityLightOverlayDetailTex] 2D
 SetTexture 5 [_LightTexture0] 2D
 "ps_3_0
-; 129 ALU, 16 TEX
+; 130 ALU, 16 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -80029,140 +80389,141 @@ dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xyz
 dcl_texcoord5 v4.xyz
-mul r0.xy, v4, c6.x
-mul r1.xy, v4.zyzw, c6.x
-abs r6.zw, v4.xyxy
-abs r0.z, v4
-texld r2.xyz, r0, s1
-max r0.x, r6.z, r0.z
-rcp r0.y, r0.x
-min r0.x, r6.z, r0.z
-mul r0.w, r0.x, r0.y
-mul r1.w, r0, r0
+mul r1.xy, v4, c6.x
+mul r0.xy, v4.zyzw, c6.x
+mul r2.w, v0.x, c7.x
+texld r0.xyz, r0, s1
 texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r2
-mad_pp r2.xyz, r6.z, r1, r2
+add_pp r2.xyz, r0, -r1
+abs r0.zw, v4.xyxy
+mad_pp r2.xyz, r0.z, r2, r1
 mul r0.xy, v4.zxzw, c6.x
 texld r1.xyz, r0, s1
-mad r2.w, r1, c13.y, c13.z
+abs r0.x, v4.z
+max r0.y, r0.z, r0.x
 add_pp r1.xyz, r1, -r2
-mad_pp r1.xyz, r6.w, r1, r2
-mad r0.x, r2.w, r1.w, c13.w
-mad r0.x, r0, r1.w, c14
-mad r0.x, r0, r1.w, c14.y
-mad r0.x, r0, r1.w, c14.z
-mul r3.x, r0, r0.w
-mul r0.y, v0.x, c7.x
+mad_pp r1.xyz, r0.w, r1, r2
+rcp r1.w, r0.y
+min r0.y, r0.z, r0.x
+mul r0.y, r0, r1.w
+mul r3.x, r0.y, r0.y
+mad r1.w, r3.x, c13.y, c13.z
+mad r3.y, r1.w, r3.x, c13.w
+mad r3.y, r3, r3.x, c14.x
 add_pp r2.xyz, -r1, c11.y
-mul_sat r0.y, r0, c12.z
-mad_pp r5.xyz, r0.y, r2, r1
-mul r7.xy, v4, c10.x
-mul r0.xy, v4.zyzw, c10.x
-add r3.y, -r3.x, c14.w
-add r0.w, r6.z, -r0.z
-cmp r0.w, -r0, r3.x, r3.y
-texld r2, r7, s4
-texld r1, r0, s4
+mul_sat r2.w, r2, c12.z
+mad_pp r6.xyz, r2.w, r2, r1
+mul r9.xy, v4, c10.x
+mul r8.xy, v4.zyzw, c10.x
+texld r2, r9, s4
+texld r1, r8, s4
 add_pp r1, r1, -r2
-mad_pp r2, r6.z, r1, r2
-add r1.x, -r0.w, c12.w
-cmp r0.w, v4.z, r0, r1.x
-mul r6.xy, v4.zxzw, c10.x
-cmp r0.w, v4.x, r0, -r0
-mad r3.z, r0.w, c15.x, c15.y
-mad r0.w, r0.z, c11.z, c11
-texld r1, r6, s4
+mad_pp r2, r0.z, r1, r2
+mad r1.x, r3.y, r3, c14.y
+mad r3.x, r1, r3, c14.z
+mul r3.x, r3, r0.y
+mul r7.xy, v4.zxzw, c10.x
+texld r1, r7, s4
 add_pp r1, r1, -r2
-mad_pp r2, r6.w, r1, r2
+mad_pp r2, r0.w, r1, r2
+dp4 r1.y, c1, c1
+rsq r1.y, r1.y
+mul r5.xyz, r1.y, c1
 abs r1.y, v4
-add r1.x, -r0.z, c11.y
-mad r0.w, r0.z, r0, c12.x
 add r1.w, -r1.y, c11.y
 mad r1.z, r1.y, c11, c11.w
 mad r1.z, r1, r1.y, c12.x
-rsq r1.x, r1.x
 rsq r1.w, r1.w
-mad r0.z, r0, r0.w, c12.y
+add r1.x, -r3, c14.w
+add r0.y, r0.z, -r0.x
+cmp r0.y, -r0, r3.x, r1.x
+add r1.x, -r0.y, c12.w
+cmp r0.y, v4.z, r0, r1.x
+dp3_pp r1.x, v2, -r5
+mul_pp r3.xyz, v2, r1.x
+mad_pp r4.xyz, -r3, c12.z, -r5
+cmp r0.y, v4.x, r0, -r0
+mad r8.z, r0.y, c15.x, c15.y
+add r1.x, -r0, c11.y
+mad r0.y, r0.x, c11.z, c11.w
+mad r0.y, r0.x, r0, c12.x
+rsq r1.x, r1.x
+dp3_pp_sat r5.w, r4, v1
+pow_pp r4, r5.w, c5.x
+mad r0.x, r0, r0.y, c12.y
 rcp r1.x, r1.x
-mul r0.w, r0.z, r1.x
-cmp r0.z, v4, c11.x, c11.y
-mul r1.x, r0.z, r0.w
-mad r1.x, -r1, c12.z, r0.w
+mul r0.y, r0.x, r1.x
+cmp r0.x, v4.z, c11, c11.y
+mul r1.x, r0, r0.y
+mad r1.x, -r1, c12.z, r0.y
 mad r1.y, r1.z, r1, c12
 rcp r1.w, r1.w
 mul r1.z, r1.y, r1.w
 cmp r1.y, v4, c11.x, c11
 mul r1.w, r1.y, r1.z
-mad r0.w, -r1, c12.z, r1.z
-mad r1.x, r0.z, c12.w, r1
-mad r0.z, r1.y, c12.w, r0.w
-mul r0.w, r1.x, c13.x
-dsx r3.y, r0.w
+mad r0.y, -r1.w, c12.z, r1.z
+mad r1.x, r0, c12.w, r1
+mad r0.x, r1.y, c12.w, r0.y
+mul r0.y, r1.x, c13.x
+dsx r7.w, r0.y
 dsx r1.xy, v4
 dsy r1.zw, v4.xyxy
 mul r1.xy, r1, r1
-mul r3.w, r0.z, c13.x
-add r0.z, r1.x, r1.y
+mul r8.w, r0.x, c13.x
+add r0.x, r1, r1.y
 mul r1.zw, r1, r1
 add r1.x, r1.z, r1.w
-rsq r0.z, r0.z
-rcp r0.z, r0.z
+rsq r0.x, r0.x
+rcp r0.x, r0.x
 rsq r1.x, r1.x
-dsy r0.w, r0
-mul r3.x, r0.z, c15
+dsy r0.y, r0
+mul r7.z, r0.x, c15.x
 rcp r1.x, r1.x
-mul r0.z, r1.x, c15.x
-texldd r1, r3.zwzw, s2, r3, r0.zwzw
-texldd r3, r3.zwzw, s0, r3, r0.zwzw
-mul_pp r2, r1, r2
-mad_pp r2.xyz, -r3, r5, r2
-mul_pp r3.xyz, r3, r5
-mad_pp r3.xyz, r2.w, r2, r3
-dp4 r4.x, c1, c1
-rsq r0.z, r4.x
-mul r4.xyz, r0.z, c1
-dp3_pp r0.z, v2, -r4
-mul_pp r2.xyz, v2, r0.z
-mad_pp r5.xyz, -r2, c12.z, -r4
-dp3_pp_sat r4.w, r5, v1
-mul_pp r3.xyz, r3, c4
-texld r2, r7, s3
-texld r0, r0, s3
-add_pp r0, r0, -r2
-mad_pp r2, r6.z, r0, r2
-pow_pp r0, r4.w, c5.x
-dp3_pp_sat r0.y, v2, r4
-add_pp r0.z, r0.y, c11.y
-frc_pp r0.w, r0.z
-add_pp_sat r0.z, r0, -r0.w
-mov_pp r4.w, r0.x
-texld r5, r6, s3
-add_pp r5, r5, -r2
-mad_pp r2, r6.w, r5, r2
+mul r0.x, r1, c15
+texldd r1, r8.zwzw, s2, r7.zwzw, r0
+mul_pp r3, r1, r2
+texldd r2, r8.zwzw, s0, r7.zwzw, r0
+dp3_pp_sat r0.y, v2, r5
+mad_pp r3.xyz, -r2, r6, r3
+add_pp r5.x, r0.y, c11.y
 dp3 r0.x, v3, v3
+mul_pp r2.xyz, r2, r6
 texld r0.x, r0.x, s5
+mov_pp r4.w, r4.x
 mul r4.xyz, r0.x, c2
-mul_pp r0.w, r0.y, c2
-mul_pp r0.w, r0.x, r0
 mul r4.xyz, r4, c3
 mul r4.xyz, r4, r4.w
-mul r4.xyz, r0.z, r4
-mul_pp r1, r1, r2
-add_pp r0.z, r0.y, c15
-mul_pp r0.y, r0.z, c2.w
-mul r2.xyz, r3.w, r4
-mov r0.z, c8.x
-mul_pp_sat r0.w, r0, c16.x
-add r4.xyz, c2, r0.z
-mad_sat r4.xyz, r4, r0.w, c0
-mul_pp r0.w, r0.y, r0.x
-mad_pp r0.xyz, r4, c9.x, r2
-mul_pp_sat r0.w, r0, c15
-mad_pp r1.xyz, -r3, r0, r1
-mul_pp r2.xyz, r3, r0
-add_pp r0.w, -r0, c11.y
-mul_pp r0.x, r1.w, r0.w
-mad_pp oC0.xyz, r0.x, r1, r2
+frc_pp r5.y, r5.x
+add_pp_sat r4.w, r5.x, -r5.y
+mul r4.xyz, r4.w, r4
+mul r5.xyz, r2.w, r4
+mul_pp r4.w, r0.y, c2
+mul_pp r4.x, r0, r4.w
+add_pp r0.y, r0, c15.z
+mov r2.w, c8.x
+mul_pp_sat r4.w, r4.x, c16.x
+add r4.xyz, c2, r2.w
+mad_sat r4.xyz, r4, r4.w, c0
+add_pp r5.xyz, r4, r5
+mad_pp r4.xyz, r3.w, r3, r2
+mul r6.xyz, r5, c9.x
+texld r3, r9, s3
+texld r2, r8, s3
+add_pp r2, r2, -r3
+mad_pp r2, r0.z, r2, r3
+texld r3, r7, s3
+add_pp r3, r3, -r2
+mad_pp r2, r0.w, r3, r2
+mul_pp r0.y, r0, c2.w
+mul_pp r3.x, r0.y, r0
+mul_pp r0, r1, r2
+mad_pp r4.xyz, r4, c4, r6
+mul_pp_sat r1.x, r3, c15.w
+add_pp r1.x, -r1, c11.y
+mad_pp r0.xyz, -r4, r5, r0
+mul_pp r2.xyz, r4, r5
+mul_pp r0.w, r0, r1.x
+mad_pp oC0.xyz, r0.w, r0, r2
 mov_pp oC0.w, c11.y
 "
 }
@@ -80206,7 +80567,7 @@ SetTexture 2 [_CityOverlayTex] 2D
 SetTexture 3 [_CityDarkOverlayDetailTex] 2D
 SetTexture 4 [_CityLightOverlayDetailTex] 2D
 "ps_3_0
-; 126 ALU, 15 TEX
+; 127 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -80222,136 +80583,137 @@ dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
 dcl_texcoord5 v3.xyz
-mul r1.xy, v3.zyzw, c6.x
-mul r5.xy, v3.zyzw, c10.x
 mul r0.xy, v3, c6.x
-abs r1.zw, v3.xyxy
+mul r1.xy, v3.zyzw, c6.x
+mul r1.w, v0.x, c7.x
+abs r6.zw, v3.xyxy
 abs r2.w, v3.z
-texld r2.xyz, r1, s1
+texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
-add_pp r2.xyz, r2, -r0
-mad_pp r2.xyz, r1.z, r2, r0
-max r0.w, r1.z, r2
-mul r0.xy, v3.zxzw, c6.x
-texld r0.xyz, r0, s1
+add_pp r2.xyz, r1, -r0
+mad_pp r2.xyz, r6.z, r2, r0
+mul r1.xy, v3.zxzw, c6.x
+texld r0.xyz, r1, s1
 add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r1.w, r0, r2
-min r1.x, r1.z, r2.w
-rcp r0.w, r0.w
-mul r0.w, r1.x, r0
-mul r3.x, r0.w, r0.w
-mad r1.x, r3, c13.y, c13.z
-mad r1.x, r1, r3, c13.w
-mad r1.x, r1, r3, c14
-mad r1.y, r1.x, r3.x, c14
-mad r1.y, r1, r3.x, c14.z
-mul r1.x, v0, c7
-mul r1.y, r1, r0.w
-add r3.z, r1, -r2.w
-add_pp r2.xyz, -r0, c11.y
-mul_sat r1.x, r1, c12.z
-mad_pp r2.xyz, r1.x, r2, r0
-mul r3.xy, v3, c10.x
-add r1.x, -r1.y, c14.w
-cmp r3.w, -r3.z, r1.y, r1.x
-add r3.z, -r3.w, c12.w
-cmp r3.z, v3, r3.w, r3
-cmp r3.z, v3.x, r3, -r3
-abs r3.w, v3.y
-texld r0, r3, s4
-texld r4, r5, s4
-add_pp r4, r4, -r0
-mad_pp r0, r1.z, r4, r0
-mul r1.xy, v3.zxzw, c10.x
-texld r4, r1, s4
-add_pp r4, r4, -r0
-mad_pp r4, r1.w, r4, r0
-add r0.x, -r2.w, c11.y
-mad r0.y, r2.w, c11.z, c11.w
-mad r0.y, r2.w, r0, c12.x
-mad r0.y, r2.w, r0, c12
-add r0.w, -r3, c11.y
-mad r2.w, r3, c11.z, c11
-mad r2.w, r2, r3, c12.x
-mad r2.w, r2, r3, c12.y
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r0.y, r0, r0.x
-cmp r0.x, v3.z, c11, c11.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c12.z, r0
-mad r0.x, r0, c12.w, r0.y
-mul r0.x, r0, c13
-rsq r0.w, r0.w
-rcp r0.w, r0.w
-mul r2.w, r2, r0
-cmp r3.w, v3.y, c11.x, c11.y
-mul r0.w, r3, r2
-mad r0.z, -r0.w, c12, r2.w
-mad r0.y, r3.w, c12.w, r0.z
-dsy r0.zw, v3.xyxy
-dp4_pp r2.w, c1, c1
-mul r3.w, r0.y, c13.x
-dsx r5.w, r0.x
-dsy r7.y, r0.x
-dsx r0.xy, v3
-mul r0.xy, r0, r0
-add r0.y, r0.x, r0
-mul r0.zw, r0, r0
-add r0.x, r0.z, r0.w
+max r0.w, r6.z, r2
+rcp r1.x, r0.w
+mad_pp r0.xyz, r6.w, r0, r2
+min r0.w, r6.z, r2
+mul r2.x, r0.w, r1
+mul r2.y, r2.x, r2.x
+mad r0.w, r2.y, c13.y, c13.z
+mad r2.z, r0.w, r2.y, c13.w
+mad r2.z, r2, r2.y, c14.x
+add_pp r1.xyz, -r0, c11.y
+mul_sat r1.w, r1, c12.z
+mad_pp r5.xyz, r1.w, r1, r0
+mul r8.xy, v3, c10.x
+mul r7.xy, v3.zyzw, c10.x
+texld r1, r8, s4
+texld r0, r7, s4
+add_pp r0, r0, -r1
+mad_pp r1, r6.z, r0, r1
+mad r0.x, r2.z, r2.y, c14.y
+mad r2.y, r0.x, r2, c14.z
+mul r6.xy, v3.zxzw, c10.x
+texld r0, r6, s4
+add_pp r0, r0, -r1
+mad_pp r1, r6.w, r0, r1
+abs r0.w, v3.y
+mul r2.x, r2.y, r2
+add r3.x, -r0.w, c11.y
+dp4_pp r0.z, c1, c1
+rsq_pp r0.z, r0.z
+rsq r3.x, r3.x
+mul_pp r4.xyz, r0.z, c1
+add r0.y, -r2.x, c14.w
+add r0.x, r6.z, -r2.w
+cmp r0.x, -r0, r2, r0.y
+add r0.y, -r0.x, c12.w
+cmp r0.x, v3.z, r0, r0.y
+dp3_pp r0.y, v2, -r4
+mul_pp r2.xyz, v2, r0.y
+mad_pp r2.xyz, -r2, c12.z, -r4
+cmp r0.x, v3, r0, -r0
+mad r9.x, r0, c15, c15.y
+add r0.y, -r2.w, c11
+mad r0.x, r2.w, c11.z, c11.w
+mad r0.x, r2.w, r0, c12
+mad r0.x, r2.w, r0, c12.y
+mad r2.w, r0, c11.z, c11
+mad r2.w, r2, r0, c12.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
+mul r0.y, r0.x, r0
+cmp r0.x, v3.z, c11, c11.y
+mul r0.z, r0.x, r0.y
+mad r0.z, -r0, c12, r0.y
+mad r0.w, r2, r0, c12.y
+rcp r3.x, r3.x
+mul r2.w, r0, r3.x
+cmp r0.w, v3.y, c11.x, c11.y
+mul r3.x, r0.w, r2.w
+mad r0.y, -r3.x, c12.z, r2.w
+mad r0.z, r0.x, c12.w, r0
+mad r0.x, r0.w, c12.w, r0.y
+mul r0.y, r0.z, c13.x
+dsy r0.zw, v3.xyxy
+mul r9.y, r0.x, c13.x
+dsx r8.w, r0.y
+dsy r7.w, r0.y
+dsx r0.xy, v3
+mul r0.xy, r0, r0
+add r0.x, r0, r0.y
+mul r0.zw, r0, r0
+add r0.y, r0.z, r0.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
-mul r5.z, r0.y, c15.x
-mad r3.z, r3, c15.x, c15.y
-mul r7.x, r0, c15
-texldd r0, r3.zwzw, s2, r5.zwzw, r7
-mul_pp r6, r0, r4
-texldd r4, r3.zwzw, s0, r5.zwzw, r7
-mad_pp r6.xyz, -r4, r2, r6
-mul_pp r2.xyz, r4, r2
-mad_pp r2.xyz, r6.w, r6, r2
-rsq_pp r2.w, r2.w
-mul_pp r4.xyz, r2.w, c1
-dp3_pp r2.w, v2, -r4
-mul_pp r6.xyz, v2, r2.w
-dp3_pp_sat r2.w, v2, r4
-mad_pp r6.xyz, -r6, c12.z, -r4
-add_pp r4.y, r2.w, c11
-mul_pp r2.xyz, r2, c4
-texld r3, r3, s3
-texld r5, r5, s3
-add_pp r5, r5, -r3
-mad_pp r3, r1.z, r5, r3
-dp3_pp_sat r1.z, r6, v1
-texld r5, r1, s3
-add_pp r6, r5, -r3
-pow_pp r5, r1.z, c5.x
-mad_pp r1, r1.w, r6, r3
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+mul r8.z, r0.x, c15.x
+mul r7.z, r0.y, c15.x
+dp3_pp_sat r4.w, r2, v1
+texldd r0, r9, s2, r8.zwzw, r7.zwzw
+mul_pp r3, r0, r1
+pow_pp r1, r4.w, c5.x
+texldd r2, r9, s0, r8.zwzw, r7.zwzw
+mad_pp r3.xyz, -r2, r5, r3
+mul_pp r2.xyz, r2, r5
+dp3_pp_sat r4.w, v2, r4
+mad_pp r3.xyz, r3.w, r3, r2
+mov_pp r4.y, r1.x
+add_pp r1.w, r4, c11.y
+frc_pp r4.x, r1.w
+mov r1.xyz, c2
+mul r1.xyz, c3, r1
+add_pp_sat r1.w, r1, -r4.x
+mul r1.xyz, r1, r4.y
+mul r1.xyz, r1.w, r1
+mul r4.xyz, r2.w, r1
+mul_pp r1.y, r4.w, c2.w
+mul_pp_sat r1.w, r1.y, c16.x
+mov r1.x, c8
+add r1.xyz, c2, r1.x
+mad_sat r1.xyz, r1, r1.w, c0
+add_pp r4.xyz, r1, r4
+mul r5.xyz, r4, c9.x
+texld r2, r8, s3
+texld r1, r7, s3
+add_pp r1, r1, -r2
+mad_pp r1, r6.z, r1, r2
+texld r2, r6, s3
+add_pp r2, r2, -r1
+mad_pp r1, r6.w, r2, r1
+add_pp r3.w, r4, c15.z
 mul_pp r0, r0, r1
-mul_pp r1.w, r2, c2
-mov r3.xyz, c2
-mov_pp r3.w, r5.x
-mul r3.xyz, c3, r3
-mul r3.xyz, r3, r3.w
-frc_pp r4.x, r4.y
-add_pp_sat r3.w, r4.y, -r4.x
-mul r3.xyz, r3.w, r3
-add_pp r3.w, r2, c15.z
-mul r1.xyz, r4.w, r3
-mov r2.w, c8.x
-mul_pp_sat r1.w, r1, c16.x
-add r3.xyz, c2, r2.w
-mad_sat r3.xyz, r3, r1.w, c0
-mad_pp r1.xyz, r3, c9.x, r1
-mad_pp r0.xyz, -r2, r1, r0
-mul_pp r1.w, r3, c2
-mul_pp_sat r1.w, r1, c15
-add_pp r1.w, -r1, c11.y
-mul_pp r1.xyz, r2, r1
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
+mad_pp r3.xyz, r3, c4, r5
+mul_pp r2.x, r3.w, c2.w
+mul_pp_sat r1.x, r2, c15.w
+add_pp r1.x, -r1, c11.y
+mad_pp r0.xyz, -r3, r4, r0
+mul_pp r2.xyz, r3, r4
+mul_pp r0.w, r0, r1.x
+mad_pp oC0.xyz, r0.w, r0, r2
 mov_pp oC0.w, c11.y
 "
 }
@@ -80397,7 +80759,7 @@ SetTexture 4 [_CityLightOverlayDetailTex] 2D
 SetTexture 5 [_LightTexture0] 2D
 SetTexture 6 [_LightTextureB0] 2D
 "ps_3_0
-; 134 ALU, 17 TEX
+; 135 ALU, 17 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -80416,144 +80778,145 @@ dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3
 dcl_texcoord5 v4.xyz
-mul r1.xy, v4, c6.x
-mul r0.xy, v4.zyzw, c6.x
-abs r6.zw, v4.xyxy
-abs r1.z, v4
-texld r2.xyz, r1, s1
-max r0.w, r6.z, r1.z
-rcp r1.x, r0.w
-min r0.w, r6.z, r1.z
-mul r0.w, r0, r1.x
-mul r1.x, r0.w, r0.w
-mad r1.y, r1.x, c13, c13.z
-mad r1.y, r1, r1.x, c13.w
-mad r1.y, r1, r1.x, c14.x
-mad r1.y, r1, r1.x, c14
-mad r1.x, r1.y, r1, c14.z
-mul r3.x, r1, r0.w
-mul r1.w, v0.x, c7.x
-mul_sat r1.y, r1.w, c12.z
+mul r0.xy, v4, c6.x
+mul r1.xy, v4.zyzw, c6.x
+abs r2.w, v4.z
+texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v4.xyxy
+max r0.w, r1.z, r2
+mad_pp r2.xyz, r1.z, r2, r0
+mul r1.xy, v4.zxzw, c6.x
+texld r0.xyz, r1, s1
 add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r6.z, r0, r2
-mul r0.xy, v4.zxzw, c6.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r6.w, r0, r2
-add_pp r2.xyz, -r0, c11.y
-mad_pp r5.xyz, r1.y, r2, r0
-mul r7.xy, v4, c10.x
-mul r1.xy, v4.zyzw, c10.x
-add r3.y, -r3.x, c14.w
-add r1.w, r6.z, -r1.z
-cmp r1.w, -r1, r3.x, r3.y
-texld r2, r7, s4
-texld r0, r1, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.z, r0, r2
-add r0.x, -r1.w, c12.w
-cmp r1.w, v4.z, r1, r0.x
-mul r6.xy, v4.zxzw, c10.x
-cmp r1.w, v4.x, r1, -r1
-texld r0, r6, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.w, r0, r2
-add r0.y, -r1.z, c11
-mad r0.x, r1.z, c11.z, c11.w
-mad r0.x, r1.z, r0, c12
-rsq r0.y, r0.y
-mad r3.z, r1.w, c15.x, c15.y
-abs r0.w, v4.y
-mad r0.x, r1.z, r0, c12.y
-add r1.w, -r0, c11.y
-mad r1.z, r0.w, c11, c11.w
-mad r1.z, r1, r0.w, c12.x
-rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v4.z, c11, c11.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c12, r0.y
-rsq r1.w, r1.w
-mad r0.w, r1.z, r0, c12.y
-rcp r1.w, r1.w
-mul r1.z, r0.w, r1.w
-cmp r0.w, v4.y, c11.x, c11.y
-mul r1.w, r0, r1.z
-mad r0.y, -r1.w, c12.z, r1.z
-mad r0.z, r0.x, c12.w, r0
-mad r0.x, r0.w, c12.w, r0.y
-mul r0.y, r0.z, c13.x
-dsy r0.zw, v4.xyxy
-mul r3.w, r0.x, c13.x
-dsx r3.y, r0
-dsy r1.w, r0.y
-dsx r0.xy, v4
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
+mad_pp r0.xyz, r1.w, r0, r2
+mul r2.xy, v4.zyzw, c10.x
+min r1.x, r1.z, r2.w
+rcp r0.w, r0.w
+mul r2.z, r1.x, r0.w
+mul r3.z, r2, r2
+mad r1.x, r3.z, c13.y, c13.z
+mad r1.x, r1, r3.z, c13.w
+mad r1.x, r1, r3.z, c14
+mad r3.w, r1.x, r3.z, c14.y
+mad r3.z, r3.w, r3, c14
+mul r2.z, r3, r2
+mul r0.w, v0.x, c7.x
+abs r3.z, v4.y
+mul r1.xy, v4.zxzw, c10.x
+add_pp r4.xyz, -r0, c11.y
+mul_sat r0.w, r0, c12.z
+mad_pp r4.xyz, r0.w, r4, r0
+mul r3.xy, v4, c10.x
+texld r0, r3, s4
+texld r5, r2, s4
+add_pp r5, r5, -r0
+mad_pp r0, r1.z, r5, r0
+texld r5, r1, s4
+add_pp r5, r5, -r0
+mad_pp r5, r1.w, r5, r0
+add r0.w, -r3.z, c11.y
+rsq r0.w, r0.w
+add r0.y, r1.z, -r2.w
+add r0.x, -r2.z, c14.w
+cmp r0.z, -r0.y, r2, r0.x
+add r0.y, -r0.z, c12.w
+cmp r0.y, v4.z, r0.z, r0
+cmp r0.y, v4.x, r0, -r0
+mad r2.z, r0.y, c15.x, c15.y
+mad r0.y, r2.w, c11.z, c11.w
+mad r0.y, r2.w, r0, c12.x
+dp4 r0.x, c1, c1
+rsq r0.x, r0.x
+mul r6.xyz, r0.x, c1
+dp3_pp r0.x, v2, -r6
+mul_pp r7.xyz, v2, r0.x
+mad_pp r7.xyz, -r7, c12.z, -r6
+add r0.x, -r2.w, c11.y
+mad r0.y, r2.w, r0, c12
+mad r2.w, r3.z, c11.z, c11
+mad r2.w, r2, r3.z, c12.x
+mad r2.w, r2, r3.z, c12.y
+rcp r0.w, r0.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
+mul r0.y, r0, r0.x
+cmp r0.x, v4.z, c11, c11.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c12.z, r0
+mad r0.x, r0, c12.w, r0.y
+mul r0.x, r0, c13
+mul r2.w, r2, r0
+cmp r3.z, v4.y, c11.x, c11.y
+mul r0.w, r3.z, r2
+mad r0.z, -r0.w, c12, r2.w
+mad r0.y, r3.z, c12.w, r0.z
+dsy r0.zw, v4.xyxy
+dp3_pp_sat r6.w, v2, r6
+mul r2.w, r0.y, c13.x
+dsx r3.w, r0.x
+dsy r8.y, r0.x
+dsx r0.xy, v4
+mul r0.xy, r0, r0
+add r0.y, r0.x, r0
+mul r0.zw, r0, r0
+add r0.x, r0.z, r0.w
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.x, r0, c15
-mul r1.z, r0.y, c15.x
-texldd r0, r3.zwzw, s2, r3, r1.zwzw
-texldd r4, r3.zwzw, s0, r3, r1.zwzw
-mul_pp r2, r0, r2
-mad_pp r2.xyz, -r4, r5, r2
-mul_pp r4.xyz, r4, r5
-mad_pp r4.xyz, r2.w, r2, r4
-dp4 r5.w, c1, c1
-rsq r1.z, r5.w
-mul r3.xyz, r1.z, c1
-dp3_pp r1.z, v2, -r3
-mul_pp r2.xyz, v2, r1.z
-mad_pp r5.xyz, -r2, c12.z, -r3
-dp3_pp_sat r3.x, v2, r3
-dp3_pp_sat r3.w, r5, v1
-add_pp r3.y, r3.x, c11
-frc_pp r3.z, r3.y
-mul_pp r4.xyz, r4, c4
-texld r2, r7, s3
-texld r1, r1, s3
-add_pp r1, r1, -r2
-mad_pp r2, r6.z, r1, r2
-pow_pp r1, r3.w, c5.x
-mov_pp r3.w, r1.x
-texld r5, r6, s3
-add_pp r5, r5, -r2
-mad_pp r2, r6.w, r5, r2
-mul_pp r0, r0, r2
-add_pp r2.x, r3, c15.z
-rcp r1.x, v3.w
-mad r5.xy, v3, r1.x, c15.y
-mul_pp r2.w, r2.x, c2
-dp3 r1.x, v3, v3
-texld r1.w, r5, s5
-cmp r1.y, -v3.z, c11.x, c11
-mul_pp r1.y, r1, r1.w
-texld r1.x, r1.x, s6
-mul_pp r1.w, r1.y, r1.x
-mul r1.xyz, r1.w, c2
-mul_pp r2.y, r3.x, c2.w
-mul_pp r2.y, r1.w, r2
-mul r1.xyz, r1, c3
-mul_pp r1.w, r2, r1
-mul_pp_sat r1.w, r1, c15
-add_pp r1.w, -r1, c11.y
-mul_pp_sat r3.x, r2.y, c16
-mov r2.x, c8
-add r2.xyz, c2, r2.x
-mul r1.xyz, r1, r3.w
-add_pp_sat r3.y, r3, -r3.z
-mul r1.xyz, r3.y, r1
-mul r1.xyz, r4.w, r1
-mad_sat r2.xyz, r2, r3.x, c0
-mad_pp r1.xyz, r2, c9.x, r1
-mad_pp r0.xyz, -r4, r1, r0
-mul_pp r1.xyz, r4, r1
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r3.z, r0.y, c15.x
+mul r8.x, r0, c15
+texldd r0, r2.zwzw, s2, r3.zwzw, r8
+dp3_pp_sat r4.w, r7, v1
+texldd r7, r2.zwzw, s0, r3.zwzw, r8
+mul_pp r5, r0, r5
+mad_pp r5.xyz, -r7, r4, r5
+mul_pp r7.xyz, r7, r4
+pow_pp r8, r4.w, c5.x
+rcp r2.w, v3.w
+mad r6.xy, v3, r2.w, c15.y
+dp3 r4.x, v3, v3
+mov_pp r2.z, r8.x
+texld r2.w, r6, s5
+cmp r3.z, -v3, c11.x, c11.y
+mul_pp r2.w, r3.z, r2
+texld r4.x, r4.x, s6
+mul_pp r4.w, r2, r4.x
+add_pp r3.z, r6.w, c11.y
+mul r4.xyz, r4.w, c2
+mul r4.xyz, r4, c3
+frc_pp r2.w, r3.z
+mul r4.xyz, r4, r2.z
+add_pp_sat r2.z, r3, -r2.w
+mul r4.xyz, r2.z, r4
+mov r2.w, c8.x
+mul_pp r2.z, r6.w, c2.w
+mul_pp r2.z, r4.w, r2
+mul_pp_sat r2.z, r2, c16.x
+add r6.xyz, c2, r2.w
+mad_sat r6.xyz, r6, r2.z, c0
+mul r4.xyz, r7.w, r4
+add_pp r4.xyz, r6, r4
+texld r2, r2, s3
+mad_pp r7.xyz, r5.w, r5, r7
+texld r3, r3, s3
+add_pp r5, r2, -r3
+mad_pp r3, r1.z, r5, r3
+texld r5, r1, s3
+add_pp r1.x, r6.w, c15.z
+mul_pp r2.w, r1.x, c2
+mul r6.xyz, r4, c9.x
+add_pp r5, r5, -r3
+mad_pp r1, r1.w, r5, r3
+mul_pp r0, r0, r1
+mad_pp r2.xyz, r7, c4, r6
+mul_pp r2.w, r2, r4
+mul_pp_sat r1.x, r2.w, c15.w
+add_pp r1.w, -r1.x, c11.y
+mad_pp r0.xyz, -r2, r4, r0
+mul_pp r1.xyz, r2, r4
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
 mov_pp oC0.w, c11.y
@@ -80601,7 +80964,7 @@ SetTexture 4 [_CityLightOverlayDetailTex] 2D
 SetTexture 5 [_LightTextureB0] 2D
 SetTexture 6 [_LightTexture0] CUBE
 "ps_3_0
-; 130 ALU, 17 TEX
+; 131 ALU, 17 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -80620,335 +80983,141 @@ dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xyz
 dcl_texcoord5 v4.xyz
-mul r1.xy, v4, c6.x
-mul r0.xy, v4.zyzw, c6.x
-abs r6.zw, v4.xyxy
-abs r1.z, v4
-texld r2.xyz, r1, s1
-max r0.w, r6.z, r1.z
-rcp r1.x, r0.w
-min r0.w, r6.z, r1.z
-mul r0.w, r0, r1.x
-mul r1.x, r0.w, r0.w
-mad r1.y, r1.x, c13, c13.z
-mad r1.y, r1, r1.x, c13.w
-mad r1.y, r1, r1.x, c14.x
-mad r1.y, r1, r1.x, c14
-mad r1.x, r1.y, r1, c14.z
-mul r3.x, r1, r0.w
-mul r1.w, v0.x, c7.x
-mul_sat r1.y, r1.w, c12.z
+mul r0.xy, v4, c6.x
+mul r1.xy, v4.zyzw, c6.x
+abs r2.w, v4.z
+texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v4.xyxy
+max r0.w, r1.z, r2
+mad_pp r2.xyz, r1.z, r2, r0
+mul r1.xy, v4.zxzw, c6.x
+texld r0.xyz, r1, s1
 add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r6.z, r0, r2
-mul r0.xy, v4.zxzw, c6.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r6.w, r0, r2
-add_pp r2.xyz, -r0, c11.y
-mad_pp r5.xyz, r1.y, r2, r0
-mul r7.xy, v4, c10.x
-mul r1.xy, v4.zyzw, c10.x
-add r3.y, -r3.x, c14.w
-add r1.w, r6.z, -r1.z
-cmp r1.w, -r1, r3.x, r3.y
-texld r2, r7, s4
-texld r0, r1, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.z, r0, r2
-add r0.x, -r1.w, c12.w
-cmp r1.w, v4.z, r1, r0.x
-mul r6.xy, v4.zxzw, c10.x
-cmp r1.w, v4.x, r1, -r1
-texld r0, r6, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.w, r0, r2
-add r0.y, -r1.z, c11
-mad r0.x, r1.z, c11.z, c11.w
-mad r0.x, r1.z, r0, c12
-rsq r0.y, r0.y
-mad r3.z, r1.w, c15.x, c15.y
-abs r0.w, v4.y
-mad r0.x, r1.z, r0, c12.y
-add r1.w, -r0, c11.y
-mad r1.z, r0.w, c11, c11.w
-mad r1.z, r1, r0.w, c12.x
-rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v4.z, c11, c11.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c12, r0.y
-rsq r1.w, r1.w
-mad r0.w, r1.z, r0, c12.y
-rcp r1.w, r1.w
-mul r1.z, r0.w, r1.w
-cmp r0.w, v4.y, c11.x, c11.y
-mul r1.w, r0, r1.z
-mad r0.y, -r1.w, c12.z, r1.z
-mad r0.z, r0.x, c12.w, r0
-mad r0.x, r0.w, c12.w, r0.y
-mul r0.y, r0.z, c13.x
-dsy r0.zw, v4.xyxy
-mul r3.w, r0.x, c13.x
-dsx r3.y, r0
-dsy r1.w, r0.y
-dsx r0.xy, v4
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
+mad_pp r0.xyz, r1.w, r0, r2
+mul r2.xy, v4.zyzw, c10.x
+min r1.x, r1.z, r2.w
+rcp r0.w, r0.w
+mul r2.z, r1.x, r0.w
+mul r3.z, r2, r2
+mad r1.x, r3.z, c13.y, c13.z
+mad r1.x, r1, r3.z, c13.w
+mad r1.x, r1, r3.z, c14
+mad r3.w, r1.x, r3.z, c14.y
+mad r3.z, r3.w, r3, c14
+mul r2.z, r3, r2
+mul r0.w, v0.x, c7.x
+abs r3.z, v4.y
+mul r1.xy, v4.zxzw, c10.x
+add_pp r4.xyz, -r0, c11.y
+mul_sat r0.w, r0, c12.z
+mad_pp r4.xyz, r0.w, r4, r0
+mul r3.xy, v4, c10.x
+texld r0, r3, s4
+texld r5, r2, s4
+add_pp r5, r5, -r0
+mad_pp r0, r1.z, r5, r0
+texld r5, r1, s4
+add_pp r5, r5, -r0
+mad_pp r5, r1.w, r5, r0
+add r0.w, -r3.z, c11.y
+rsq r0.w, r0.w
+add r0.y, r1.z, -r2.w
+add r0.x, -r2.z, c14.w
+cmp r0.z, -r0.y, r2, r0.x
+add r0.y, -r0.z, c12.w
+cmp r0.y, v4.z, r0.z, r0
+cmp r0.y, v4.x, r0, -r0
+mad r2.z, r0.y, c15.x, c15.y
+mad r0.y, r2.w, c11.z, c11.w
+mad r0.y, r2.w, r0, c12.x
+dp4 r0.x, c1, c1
+rsq r0.x, r0.x
+mul r6.xyz, r0.x, c1
+dp3_pp r0.x, v2, -r6
+mul_pp r7.xyz, v2, r0.x
+mad_pp r7.xyz, -r7, c12.z, -r6
+add r0.x, -r2.w, c11.y
+mad r0.y, r2.w, r0, c12
+mad r2.w, r3.z, c11.z, c11
+mad r2.w, r2, r3.z, c12.x
+mad r2.w, r2, r3.z, c12.y
+rcp r0.w, r0.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r3.x, r0, c15
-mul r1.z, r0.y, c15.x
-texldd r0, r3.zwzw, s2, r3, r1.zwzw
-texldd r4, r3.zwzw, s0, r3, r1.zwzw
-mul_pp r2, r0, r2
-mad_pp r2.xyz, -r4, r5, r2
-mul_pp r4.xyz, r4, r5
-mad_pp r4.xyz, r2.w, r2, r4
-dp4 r5.w, c1, c1
-rsq r1.z, r5.w
-mul r3.xyz, r1.z, c1
-dp3_pp r1.z, v2, -r3
-mul_pp r2.xyz, v2, r1.z
-mad_pp r5.xyz, -r2, c12.z, -r3
-dp3_pp_sat r3.x, v2, r3
-dp3_pp_sat r3.w, r5, v1
-add_pp r3.y, r3.x, c11
-frc_pp r3.z, r3.y
-mul_pp r4.xyz, r4, c4
-texld r2, r7, s3
-texld r1, r1, s3
-add_pp r1, r1, -r2
-mad_pp r2, r6.z, r1, r2
-pow_pp r1, r3.w, c5.x
-mov_pp r3.w, r1.x
-texld r5, r6, s3
-add_pp r5, r5, -r2
-mad_pp r2, r6.w, r5, r2
-mul_pp r0, r0, r2
-add_pp r2.x, r3, c15.z
-mul_pp r2.w, r2.x, c2
-dp3 r1.x, v3, v3
-texld r1.x, r1.x, s5
-texld r1.w, v3, s6
-mul r1.w, r1.x, r1
-mul r1.xyz, r1.w, c2
-mul_pp r2.y, r3.x, c2.w
-mul_pp r2.y, r1.w, r2
-mul r1.xyz, r1, c3
-mul_pp r1.w, r2, r1
-mul_pp_sat r1.w, r1, c15
-add_pp r1.w, -r1, c11.y
-mul_pp_sat r3.x, r2.y, c16
-mov r2.x, c8
-add r2.xyz, c2, r2.x
-mul r1.xyz, r1, r3.w
-add_pp_sat r3.y, r3, -r3.z
-mul r1.xyz, r3.y, r1
-mul r1.xyz, r4.w, r1
-mad_sat r2.xyz, r2, r3.x, c0
-mad_pp r1.xyz, r2, c9.x, r1
-mad_pp r0.xyz, -r4, r1, r0
-mul_pp r1.xyz, r4, r1
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c11.y
-"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_OFF" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_OFF" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_OFF" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightColor0]
-Vector 3 [_SpecColor]
-Vector 4 [_Color]
-Float 5 [_Shininess]
-Float 6 [_DetailScale]
-Float 7 [_DetailDist]
-Float 8 [_MinLight]
-Float 9 [_Albedo]
-Float 10 [_CityOverlayDetailScale]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_CityOverlayTex] 2D
-SetTexture 3 [_CityDarkOverlayDetailTex] 2D
-SetTexture 4 [_CityLightOverlayDetailTex] 2D
-SetTexture 5 [_LightTexture0] 2D
-"ps_3_0
-; 128 ALU, 16 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-dcl_2d s5
-def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c15, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c16, 4.00000000, 0, 0, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3.xy
-dcl_texcoord5 v4.xyz
-mul r1.xy, v4, c6.x
-mul r0.xy, v4.zyzw, c6.x
-abs r6.zw, v4.xyxy
-abs r1.z, v4
-texld r2.xyz, r1, s1
-max r0.w, r6.z, r1.z
-rcp r1.x, r0.w
-min r0.w, r6.z, r1.z
-mul r0.w, r0, r1.x
-mul r1.x, r0.w, r0.w
-mad r1.y, r1.x, c13, c13.z
-mad r1.y, r1, r1.x, c13.w
-mad r1.y, r1, r1.x, c14.x
-mad r1.y, r1, r1.x, c14
-mad r1.x, r1.y, r1, c14.z
-mul r3.x, r1, r0.w
-mul r1.w, v0.x, c7.x
-mul_sat r1.y, r1.w, c12.z
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r6.z, r0, r2
-mul r0.xy, v4.zxzw, c6.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r6.w, r0, r2
-add_pp r2.xyz, -r0, c11.y
-mad_pp r5.xyz, r1.y, r2, r0
-mul r7.xy, v4, c10.x
-mul r1.xy, v4.zyzw, c10.x
-add r3.y, -r3.x, c14.w
-add r1.w, r6.z, -r1.z
-cmp r1.w, -r1, r3.x, r3.y
-texld r2, r7, s4
-texld r0, r1, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.z, r0, r2
-add r0.x, -r1.w, c12.w
-cmp r1.w, v4.z, r1, r0.x
-mul r6.xy, v4.zxzw, c10.x
-cmp r1.w, v4.x, r1, -r1
-texld r0, r6, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.w, r0, r2
-add r0.y, -r1.z, c11
-mad r0.x, r1.z, c11.z, c11.w
-mad r0.x, r1.z, r0, c12
-rsq r0.y, r0.y
-mad r3.z, r1.w, c15.x, c15.y
-abs r0.w, v4.y
-mad r0.x, r1.z, r0, c12.y
-add r1.w, -r0, c11.y
-mad r1.z, r0.w, c11, c11.w
-mad r1.z, r1, r0.w, c12.x
-rcp r0.y, r0.y
-mul r0.y, r0.x, r0
+mul r0.y, r0, r0.x
 cmp r0.x, v4.z, c11, c11.y
 mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c12, r0.y
-rsq r1.w, r1.w
-mad r0.w, r1.z, r0, c12.y
-rcp r1.w, r1.w
-mul r1.z, r0.w, r1.w
-cmp r0.w, v4.y, c11.x, c11.y
-mul r1.w, r0, r1.z
-mad r0.y, -r1.w, c12.z, r1.z
-mad r0.z, r0.x, c12.w, r0
-mad r0.x, r0.w, c12.w, r0.y
-mul r0.y, r0.z, c13.x
+mad r0.y, -r0.z, c12.z, r0
+mad r0.x, r0, c12.w, r0.y
+mul r0.x, r0, c13
+mul r2.w, r2, r0
+cmp r3.z, v4.y, c11.x, c11.y
+mul r0.w, r3.z, r2
+mad r0.z, -r0.w, c12, r2.w
+mad r0.y, r3.z, c12.w, r0.z
 dsy r0.zw, v4.xyxy
-mul r3.w, r0.x, c13.x
-dsx r3.y, r0
-dsy r1.w, r0.y
+mul r2.w, r0.y, c13.x
+dsx r3.w, r0.x
+dsy r8.y, r0.x
 dsx r0.xy, v4
 mul r0.xy, r0, r0
-add r0.x, r0, r0.y
+add r0.y, r0.x, r0
 mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
+add r0.x, r0.z, r0.w
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.x, r0, c15
-mul r1.z, r0.y, c15.x
-texldd r0, r3.zwzw, s2, r3, r1.zwzw
-texldd r4, r3.zwzw, s0, r3, r1.zwzw
-mul_pp r2, r0, r2
-mad_pp r2.xyz, -r4, r5, r2
-mul_pp r4.xyz, r4, r5
-mad_pp r4.xyz, r2.w, r2, r4
-dp4_pp r5.w, c1, c1
-rsq_pp r1.z, r5.w
-mul_pp r3.xyz, r1.z, c1
-dp3_pp r1.z, v2, -r3
-mul_pp r2.xyz, v2, r1.z
-mad_pp r5.xyz, -r2, c12.z, -r3
-dp3_pp_sat r3.x, v2, r3
-dp3_pp_sat r3.w, r5, v1
-add_pp r3.y, r3.x, c11
-frc_pp r3.z, r3.y
-mul_pp r4.xyz, r4, c4
-texld r2, r7, s3
-texld r1, r1, s3
-add_pp r1, r1, -r2
-mad_pp r2, r6.z, r1, r2
-pow_pp r1, r3.w, c5.x
-texld r5, r6, s3
-add_pp r5, r5, -r2
-mad_pp r2, r6.w, r5, r2
-mul_pp r0, r0, r2
-texld r1.w, v3, s5
-mov_pp r3.w, r1.x
-mul r1.xyz, r1.w, c2
-mul r1.xyz, r1, c3
-mul r1.xyz, r1, r3.w
-add_pp_sat r3.y, r3, -r3.z
-mul r1.xyz, r3.y, r1
-mul r2.xyz, r4.w, r1
-add_pp r1.x, r3, c15.z
-mul_pp r1.y, r3.x, c2.w
-mul_pp r1.y, r1.w, r1
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r3.z, r0.y, c15.x
+mul r8.x, r0, c15
+texldd r0, r2.zwzw, s2, r3.zwzw, r8
+dp3_pp_sat r4.w, r7, v1
+texldd r7, r2.zwzw, s0, r3.zwzw, r8
+mul_pp r5, r0, r5
+mad_pp r5.xyz, -r7, r4, r5
+mul_pp r7.xyz, r7, r4
+dp3_pp_sat r6.w, v2, r6
+pow_pp r8, r4.w, c5.x
+dp3 r4.x, v3, v3
+add_pp r3.z, r6.w, c11.y
+mov_pp r2.z, r8.x
+texld r2.w, v3, s6
+texld r4.x, r4.x, s5
+mul r4.w, r4.x, r2
+mul r4.xyz, r4.w, c2
+mul r4.xyz, r4, c3
+frc_pp r2.w, r3.z
+mul r4.xyz, r4, r2.z
+add_pp_sat r2.z, r3, -r2.w
+mul r4.xyz, r2.z, r4
+mov r2.w, c8.x
+mul_pp r2.z, r6.w, c2.w
+mul_pp r2.z, r4.w, r2
+mul_pp_sat r2.z, r2, c16.x
+add r6.xyz, c2, r2.w
+mad_sat r6.xyz, r6, r2.z, c0
+mul r4.xyz, r7.w, r4
+add_pp r4.xyz, r6, r4
+texld r2, r2, s3
+mad_pp r7.xyz, r5.w, r5, r7
+texld r3, r3, s3
+add_pp r5, r2, -r3
+mad_pp r3, r1.z, r5, r3
+texld r5, r1, s3
+add_pp r1.x, r6.w, c15.z
 mul_pp r2.w, r1.x, c2
-mul_pp r1.w, r2, r1
-mul_pp_sat r1.w, r1, c15
-add_pp r1.w, -r1, c11.y
-mul_pp_sat r3.x, r1.y, c16
-mov r1.x, c8
-add r1.xyz, c2, r1.x
-mad_sat r1.xyz, r1, r3.x, c0
-mad_pp r1.xyz, r1, c9.x, r2
-mad_pp r0.xyz, -r4, r1, r0
-mul_pp r1.xyz, r4, r1
+mul r6.xyz, r4, c9.x
+add_pp r5, r5, -r3
+mad_pp r1, r1.w, r5, r3
+mul_pp r0, r0, r1
+mad_pp r2.xyz, r7, c4, r6
+mul_pp r2.w, r2, r4
+mul_pp_sat r1.x, r2.w, c15.w
+add_pp r1.w, -r1.x, c11.y
+mad_pp r0.xyz, -r2, r4, r0
+mul_pp r1.xyz, r2, r4
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
 mov_pp oC0.w, c11.y
@@ -80956,2173 +81125,27 @@ mov_pp oC0.w, c11.y
 }
 
 SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_OFF" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
-"!!GLES"
+"!!GLSL"
 }
 
-SubProgram "glesdesktop " {
+SubProgram "d3d9 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightShadowData]
-Vector 3 [_LightColor0]
-Vector 4 [_SpecColor]
-Vector 5 [_Color]
-Float 6 [_Shininess]
-Float 7 [_DetailScale]
-Float 8 [_DetailDist]
-Float 9 [_MinLight]
-Float 10 [_Albedo]
-Float 11 [_CityOverlayDetailScale]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_CityOverlayTex] 2D
-SetTexture 3 [_CityDarkOverlayDetailTex] 2D
-SetTexture 4 [_CityLightOverlayDetailTex] 2D
-SetTexture 5 [_LightTexture0] 2D
-SetTexture 6 [_LightTextureB0] 2D
-SetTexture 7 [_ShadowMapTexture] 2D
-"ps_3_0
-; 139 ALU, 18 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-dcl_2d s5
-dcl_2d s6
-dcl_2d s7
-def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c17, 4.00000000, 0, 0, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3
-dcl_texcoord4 v4
-dcl_texcoord5 v5.xyz
-mul r1.xy, v5.zyzw, c7.x
-mul r5.xy, v5.zyzw, c11.x
-mul r0.xy, v5, c7.x
-abs r1.zw, v5.xyxy
-abs r2.w, v5.z
-texld r2.xyz, r1, s1
-texld r0.xyz, r0, s1
-add_pp r2.xyz, r2, -r0
-mad_pp r2.xyz, r1.z, r2, r0
-max r0.w, r1.z, r2
-mul r0.xy, v5.zxzw, c7.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r1.w, r0, r2
-min r1.x, r1.z, r2.w
-rcp r0.w, r0.w
-mul r0.w, r1.x, r0
-mul r3.x, r0.w, r0.w
-mad r1.x, r3, c14.y, c14.z
-mad r1.x, r1, r3, c14.w
-mad r1.x, r1, r3, c15
-mad r1.y, r1.x, r3.x, c15
-mad r1.y, r1, r3.x, c15.z
-mul r1.x, v0, c8
-mul r1.y, r1, r0.w
-add r3.z, r1, -r2.w
-add_pp r2.xyz, -r0, c12.y
-mul_sat r1.x, r1, c13.z
-mad_pp r2.xyz, r1.x, r2, r0
-mul r3.xy, v5, c11.x
-add r1.x, -r1.y, c15.w
-cmp r3.w, -r3.z, r1.y, r1.x
-add r3.z, -r3.w, c13.w
-cmp r3.z, v5, r3.w, r3
-cmp r3.z, v5.x, r3, -r3
-abs r3.w, v5.y
-texld r0, r3, s4
-texld r4, r5, s4
-add_pp r4, r4, -r0
-mad_pp r0, r1.z, r4, r0
-mul r1.xy, v5.zxzw, c11.x
-texld r4, r1, s4
-add_pp r4, r4, -r0
-mad_pp r4, r1.w, r4, r0
-add r0.x, -r2.w, c12.y
-mad r0.y, r2.w, c12.z, c12.w
-mad r0.y, r2.w, r0, c13.x
-mad r0.y, r2.w, r0, c13
-add r0.w, -r3, c12.y
-mad r2.w, r3, c12.z, c12
-mad r2.w, r2, r3, c13.x
-mad r2.w, r2, r3, c13.y
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r0.y, r0, r0.x
-cmp r0.x, v5.z, c12, c12.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c13.z, r0
-mad r0.x, r0, c13.w, r0.y
-mul r0.x, r0, c14
-rsq r0.w, r0.w
-rcp r0.w, r0.w
-mul r2.w, r2, r0
-cmp r3.w, v5.y, c12.x, c12.y
-mul r0.w, r3, r2
-mad r0.z, -r0.w, c13, r2.w
-mad r0.y, r3.w, c13.w, r0.z
-dsy r0.zw, v5.xyxy
-dp4 r2.w, c1, c1
-mul r3.w, r0.y, c14.x
-dsx r5.w, r0.x
-dsy r7.y, r0.x
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.y, r0.x, r0
-mul r0.zw, r0, r0
-add r0.x, r0.z, r0.w
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r5.z, r0.y, c16.x
-mad r3.z, r3, c16.x, c16.y
-mul r7.x, r0, c16
-texldd r0, r3.zwzw, s2, r5.zwzw, r7
-mul_pp r6, r0, r4
-texldd r4, r3.zwzw, s0, r5.zwzw, r7
-mad_pp r6.xyz, -r4, r2, r6
-mul_pp r2.xyz, r4, r2
-mad_pp r2.xyz, r6.w, r6, r2
-rsq r2.w, r2.w
-mul r4.xyz, r2.w, c1
-dp3_pp r2.w, v2, -r4
-mul_pp r6.xyz, v2, r2.w
-dp3_pp_sat r2.w, v2, r4
-mul_pp r2.xyz, r2, c5
-texld r3, r3, s3
-texld r5, r5, s3
-add_pp r5, r5, -r3
-mad_pp r3, r1.z, r5, r3
-mad_pp r6.xyz, -r6, c13.z, -r4
-dp3_pp_sat r1.z, r6, v1
-texld r5, r1, s3
-add_pp r6, r5, -r3
-pow_pp r5, r1.z, c6.x
-mad_pp r1, r1.w, r6, r3
-mul_pp r0, r0, r1
-rcp r1.z, v3.w
-mad r3.xy, v3, r1.z, c16.y
-texld r1.w, r3, s5
-add_pp r3.y, r2.w, c12
-frc_pp r3.x, r3.y
-cmp r1.z, -v3, c12.x, c12.y
-mul_pp r1.z, r1, r1.w
-add_pp_sat r3.x, r3.y, -r3
-mov_pp r3.z, r5.x
-texldp r1.x, v4, s7
-rcp r1.y, v4.w
-mad r1.y, -v4.z, r1, r1.x
-mov r1.x, c2
-cmp r1.y, r1, c12, r1.x
-dp3 r1.x, v3, v3
-texld r1.x, r1.x, s6
-mul_pp r1.x, r1.z, r1
-mul_pp r1.w, r1.x, r1.y
-mul r1.xyz, r1.w, c3
-mul r1.xyz, r1, c4
-mul r1.xyz, r1, r3.z
-mul r1.xyz, r3.x, r1
-add_pp r3.x, r2.w, c16.z
-mul_pp r3.x, r3, c3.w
-mul_pp r3.w, r3.x, r1
-mul_pp r2.w, r2, c3
-mul_pp r1.w, r1, r2
-mov r2.w, c9.x
-mul_pp_sat r1.w, r1, c17.x
-add r3.xyz, c3, r2.w
-mad_sat r3.xyz, r3, r1.w, c0
-mul r1.xyz, r4.w, r1
-mad_pp r1.xyz, r3, c10.x, r1
-mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r3, c16
-add_pp r1.w, -r1, c12.y
-mul_pp r1.xyz, r2, r1
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c12.y
-"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightShadowData]
-Vector 3 [_LightColor0]
-Vector 4 [_SpecColor]
-Vector 5 [_Color]
-Float 6 [_Shininess]
-Float 7 [_DetailScale]
-Float 8 [_DetailDist]
-Float 9 [_MinLight]
-Float 10 [_Albedo]
-Float 11 [_CityOverlayDetailScale]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_CityOverlayTex] 2D
-SetTexture 3 [_CityDarkOverlayDetailTex] 2D
-SetTexture 4 [_CityLightOverlayDetailTex] 2D
-SetTexture 5 [_LightTexture0] 2D
-SetTexture 6 [_LightTextureB0] 2D
-SetTexture 7 [_ShadowMapTexture] 2D
-"ps_3_0
-; 138 ALU, 18 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-dcl_2d s5
-dcl_2d s6
-dcl_2d s7
-def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c17, 4.00000000, 0, 0, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3
-dcl_texcoord4 v4
-dcl_texcoord5 v5.xyz
-mul r1.xy, v5.zyzw, c7.x
-mul r5.xy, v5.zyzw, c11.x
-mul r0.xy, v5, c7.x
-abs r1.zw, v5.xyxy
-abs r2.w, v5.z
-texld r2.xyz, r1, s1
-texld r0.xyz, r0, s1
-add_pp r2.xyz, r2, -r0
-mad_pp r2.xyz, r1.z, r2, r0
-max r0.w, r1.z, r2
-mul r0.xy, v5.zxzw, c7.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r1.w, r0, r2
-min r1.x, r1.z, r2.w
-rcp r0.w, r0.w
-mul r0.w, r1.x, r0
-mul r3.x, r0.w, r0.w
-mad r1.x, r3, c14.y, c14.z
-mad r1.x, r1, r3, c14.w
-mad r1.x, r1, r3, c15
-mad r1.y, r1.x, r3.x, c15
-mad r1.y, r1, r3.x, c15.z
-mul r1.x, v0, c8
-mul r1.y, r1, r0.w
-add r3.z, r1, -r2.w
-add_pp r2.xyz, -r0, c12.y
-mul_sat r1.x, r1, c13.z
-mad_pp r2.xyz, r1.x, r2, r0
-mul r3.xy, v5, c11.x
-add r1.x, -r1.y, c15.w
-cmp r3.w, -r3.z, r1.y, r1.x
-add r3.z, -r3.w, c13.w
-cmp r3.z, v5, r3.w, r3
-cmp r3.z, v5.x, r3, -r3
-abs r3.w, v5.y
-texld r0, r3, s4
-texld r4, r5, s4
-add_pp r4, r4, -r0
-mad_pp r0, r1.z, r4, r0
-mul r1.xy, v5.zxzw, c11.x
-texld r4, r1, s4
-add_pp r4, r4, -r0
-mad_pp r4, r1.w, r4, r0
-add r0.x, -r2.w, c12.y
-mad r0.y, r2.w, c12.z, c12.w
-mad r0.y, r2.w, r0, c13.x
-mad r0.y, r2.w, r0, c13
-add r0.w, -r3, c12.y
-mad r2.w, r3, c12.z, c12
-mad r2.w, r2, r3, c13.x
-mad r2.w, r2, r3, c13.y
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r0.y, r0, r0.x
-cmp r0.x, v5.z, c12, c12.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c13.z, r0
-mad r0.x, r0, c13.w, r0.y
-mul r0.x, r0, c14
-rsq r0.w, r0.w
-rcp r0.w, r0.w
-mul r2.w, r2, r0
-cmp r3.w, v5.y, c12.x, c12.y
-mul r0.w, r3, r2
-mad r0.z, -r0.w, c13, r2.w
-mad r0.y, r3.w, c13.w, r0.z
-dsy r0.zw, v5.xyxy
-dp4 r2.w, c1, c1
-mul r3.w, r0.y, c14.x
-dsx r5.w, r0.x
-dsy r7.y, r0.x
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.y, r0.x, r0
-mul r0.zw, r0, r0
-add r0.x, r0.z, r0.w
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r5.z, r0.y, c16.x
-mad r3.z, r3, c16.x, c16.y
-mul r7.x, r0, c16
-texldd r0, r3.zwzw, s2, r5.zwzw, r7
-mul_pp r6, r0, r4
-texldd r4, r3.zwzw, s0, r5.zwzw, r7
-mad_pp r6.xyz, -r4, r2, r6
-mul_pp r2.xyz, r4, r2
-mad_pp r2.xyz, r6.w, r6, r2
-rsq r2.w, r2.w
-mul r4.xyz, r2.w, c1
-dp3_pp r2.w, v2, -r4
-mul_pp r6.xyz, v2, r2.w
-dp3_pp_sat r2.w, v2, r4
-mul_pp r2.xyz, r2, c5
-texld r3, r3, s3
-texld r5, r5, s3
-add_pp r5, r5, -r3
-mad_pp r3, r1.z, r5, r3
-mad_pp r6.xyz, -r6, c13.z, -r4
-dp3_pp_sat r1.z, r6, v1
-texld r5, r1, s3
-add_pp r6, r5, -r3
-pow_pp r5, r1.z, c6.x
-mad_pp r1, r1.w, r6, r3
-mul_pp r0, r0, r1
-mov r1.x, c2
-rcp r1.z, v3.w
-mad r3.xy, v3, r1.z, c16.y
-texld r1.w, r3, s5
-add_pp r3.y, r2.w, c12
-add r1.y, c12, -r1.x
-texldp r1.x, v4, s7
-mad r1.y, r1.x, r1, c2.x
-frc_pp r3.x, r3.y
-dp3 r1.x, v3, v3
-cmp r1.z, -v3, c12.x, c12.y
-mul_pp r1.z, r1, r1.w
-texld r1.x, r1.x, s6
-mul_pp r1.x, r1.z, r1
-mul_pp r1.w, r1.x, r1.y
-mul r1.xyz, r1.w, c3
-add_pp_sat r3.x, r3.y, -r3
-mov_pp r3.z, r5.x
-mul r1.xyz, r1, c4
-mul r1.xyz, r1, r3.z
-mul r1.xyz, r3.x, r1
-add_pp r3.x, r2.w, c16.z
-mul_pp r3.x, r3, c3.w
-mul_pp r3.w, r3.x, r1
-mul_pp r2.w, r2, c3
-mul_pp r1.w, r1, r2
-mov r2.w, c9.x
-mul_pp_sat r1.w, r1, c17.x
-add r3.xyz, c3, r2.w
-mad_sat r3.xyz, r3, r1.w, c0
-mul r1.xyz, r4.w, r1
-mad_pp r1.xyz, r3, c10.x, r1
-mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r3, c16
-add_pp r1.w, -r1, c12.y
-mul_pp r1.xyz, r2, r1
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c12.y
-"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_SCREEN" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_SCREEN" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightColor0]
-Vector 3 [_SpecColor]
-Vector 4 [_Color]
-Float 5 [_Shininess]
-Float 6 [_DetailScale]
-Float 7 [_DetailDist]
-Float 8 [_MinLight]
-Float 9 [_Albedo]
-Float 10 [_CityOverlayDetailScale]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_CityOverlayTex] 2D
-SetTexture 3 [_CityDarkOverlayDetailTex] 2D
-SetTexture 4 [_CityLightOverlayDetailTex] 2D
-SetTexture 5 [_ShadowMapTexture] 2D
-"ps_3_0
-; 128 ALU, 16 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-dcl_2d s5
-def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c15, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c16, 4.00000000, 0, 0, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3
-dcl_texcoord5 v4.xyz
-mul r1.xy, v4, c6.x
-mul r0.xy, v4.zyzw, c6.x
-abs r6.zw, v4.xyxy
-abs r1.z, v4
-texld r2.xyz, r1, s1
-max r0.w, r6.z, r1.z
-rcp r1.x, r0.w
-min r0.w, r6.z, r1.z
-mul r0.w, r0, r1.x
-mul r1.x, r0.w, r0.w
-mad r1.y, r1.x, c13, c13.z
-mad r1.y, r1, r1.x, c13.w
-mad r1.y, r1, r1.x, c14.x
-mad r1.y, r1, r1.x, c14
-mad r1.x, r1.y, r1, c14.z
-mul r3.x, r1, r0.w
-mul r1.w, v0.x, c7.x
-mul_sat r1.y, r1.w, c12.z
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r6.z, r0, r2
-mul r0.xy, v4.zxzw, c6.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r6.w, r0, r2
-add_pp r2.xyz, -r0, c11.y
-mad_pp r5.xyz, r1.y, r2, r0
-mul r7.xy, v4, c10.x
-mul r1.xy, v4.zyzw, c10.x
-add r3.y, -r3.x, c14.w
-add r1.w, r6.z, -r1.z
-cmp r1.w, -r1, r3.x, r3.y
-texld r2, r7, s4
-texld r0, r1, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.z, r0, r2
-add r0.x, -r1.w, c12.w
-cmp r1.w, v4.z, r1, r0.x
-mul r6.xy, v4.zxzw, c10.x
-cmp r1.w, v4.x, r1, -r1
-texld r0, r6, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.w, r0, r2
-add r0.y, -r1.z, c11
-mad r0.x, r1.z, c11.z, c11.w
-mad r0.x, r1.z, r0, c12
-rsq r0.y, r0.y
-mad r3.z, r1.w, c15.x, c15.y
-abs r0.w, v4.y
-mad r0.x, r1.z, r0, c12.y
-add r1.w, -r0, c11.y
-mad r1.z, r0.w, c11, c11.w
-mad r1.z, r1, r0.w, c12.x
-rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v4.z, c11, c11.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c12, r0.y
-rsq r1.w, r1.w
-mad r0.w, r1.z, r0, c12.y
-rcp r1.w, r1.w
-mul r1.z, r0.w, r1.w
-cmp r0.w, v4.y, c11.x, c11.y
-mul r1.w, r0, r1.z
-mad r0.y, -r1.w, c12.z, r1.z
-mad r0.z, r0.x, c12.w, r0
-mad r0.x, r0.w, c12.w, r0.y
-mul r0.y, r0.z, c13.x
-dsy r0.zw, v4.xyxy
-mul r3.w, r0.x, c13.x
-dsx r3.y, r0
-dsy r1.w, r0.y
-dsx r0.xy, v4
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r3.x, r0, c15
-mul r1.z, r0.y, c15.x
-texldd r0, r3.zwzw, s2, r3, r1.zwzw
-texldd r4, r3.zwzw, s0, r3, r1.zwzw
-mul_pp r2, r0, r2
-mad_pp r2.xyz, -r4, r5, r2
-mul_pp r4.xyz, r4, r5
-mad_pp r4.xyz, r2.w, r2, r4
-dp4_pp r5.w, c1, c1
-rsq_pp r1.z, r5.w
-mul_pp r3.xyz, r1.z, c1
-dp3_pp r1.z, v2, -r3
-mul_pp r2.xyz, v2, r1.z
-mad_pp r5.xyz, -r2, c12.z, -r3
-dp3_pp_sat r3.w, r5, v1
-mul_pp r4.xyz, r4, c4
-texld r2, r7, s3
-texld r1, r1, s3
-add_pp r1, r1, -r2
-mad_pp r2, r6.z, r1, r2
-pow_pp r1, r3.w, c5.x
-dp3_pp_sat r1.w, v2, r3
-add_pp r3.y, r1.w, c11
-texld r5, r6, s3
-add_pp r5, r5, -r2
-mad_pp r2, r6.w, r5, r2
-frc_pp r3.z, r3.y
-mul_pp r0, r0, r2
-texldp r3.x, v3, s5
-mov_pp r3.w, r1.x
-mul r1.xyz, r3.x, c2
-mul r1.xyz, r1, c3
-mul r1.xyz, r1, r3.w
-add_pp_sat r3.y, r3, -r3.z
-mul r1.xyz, r3.y, r1
-mul r2.xyz, r4.w, r1
-mul_pp r1.y, r1.w, c2.w
-add_pp r1.x, r1.w, c15.z
-mul_pp r1.w, r1.x, c2
-mul_pp r1.y, r3.x, r1
-mul_pp r1.w, r1, r3.x
-mul_pp_sat r1.w, r1, c15
-add_pp r1.w, -r1, c11.y
-mul_pp_sat r2.w, r1.y, c16.x
-mov r1.x, c8
-add r1.xyz, c2, r1.x
-mad_sat r1.xyz, r1, r2.w, c0
-mad_pp r1.xyz, r1, c9.x, r2
-mad_pp r0.xyz, -r4, r1, r0
-mul_pp r1.xyz, r4, r1
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c11.y
-"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_SCREEN" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_SCREEN" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_SCREEN" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightColor0]
-Vector 3 [_SpecColor]
-Vector 4 [_Color]
-Float 5 [_Shininess]
-Float 6 [_DetailScale]
-Float 7 [_DetailDist]
-Float 8 [_MinLight]
-Float 9 [_Albedo]
-Float 10 [_CityOverlayDetailScale]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_CityOverlayTex] 2D
-SetTexture 3 [_CityDarkOverlayDetailTex] 2D
-SetTexture 4 [_CityLightOverlayDetailTex] 2D
-SetTexture 5 [_ShadowMapTexture] 2D
-SetTexture 6 [_LightTexture0] 2D
-"ps_3_0
-; 129 ALU, 17 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-dcl_2d s5
-dcl_2d s6
-def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c15, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c16, 4.00000000, 0, 0, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3.xy
-dcl_texcoord4 v4
-dcl_texcoord5 v5.xyz
-mul r1.xy, v5, c6.x
-mul r0.xy, v5.zyzw, c6.x
-abs r6.zw, v5.xyxy
-abs r1.z, v5
-texld r2.xyz, r1, s1
-max r0.w, r6.z, r1.z
-rcp r1.x, r0.w
-min r0.w, r6.z, r1.z
-mul r0.w, r0, r1.x
-mul r1.x, r0.w, r0.w
-mad r1.y, r1.x, c13, c13.z
-mad r1.y, r1, r1.x, c13.w
-mad r1.y, r1, r1.x, c14.x
-mad r1.y, r1, r1.x, c14
-mad r1.x, r1.y, r1, c14.z
-mul r3.x, r1, r0.w
-mul r1.w, v0.x, c7.x
-mul_sat r1.y, r1.w, c12.z
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r6.z, r0, r2
-mul r0.xy, v5.zxzw, c6.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r6.w, r0, r2
-add_pp r2.xyz, -r0, c11.y
-mad_pp r5.xyz, r1.y, r2, r0
-mul r7.xy, v5, c10.x
-mul r1.xy, v5.zyzw, c10.x
-add r3.y, -r3.x, c14.w
-add r1.w, r6.z, -r1.z
-cmp r1.w, -r1, r3.x, r3.y
-texld r2, r7, s4
-texld r0, r1, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.z, r0, r2
-add r0.x, -r1.w, c12.w
-cmp r1.w, v5.z, r1, r0.x
-mul r6.xy, v5.zxzw, c10.x
-cmp r1.w, v5.x, r1, -r1
-texld r0, r6, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.w, r0, r2
-add r0.y, -r1.z, c11
-mad r0.x, r1.z, c11.z, c11.w
-mad r0.x, r1.z, r0, c12
-rsq r0.y, r0.y
-mad r3.z, r1.w, c15.x, c15.y
-abs r0.w, v5.y
-mad r0.x, r1.z, r0, c12.y
-add r1.w, -r0, c11.y
-mad r1.z, r0.w, c11, c11.w
-mad r1.z, r1, r0.w, c12.x
-rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v5.z, c11, c11.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c12, r0.y
-rsq r1.w, r1.w
-mad r0.w, r1.z, r0, c12.y
-rcp r1.w, r1.w
-mul r1.z, r0.w, r1.w
-cmp r0.w, v5.y, c11.x, c11.y
-mul r1.w, r0, r1.z
-mad r0.y, -r1.w, c12.z, r1.z
-mad r0.z, r0.x, c12.w, r0
-mad r0.x, r0.w, c12.w, r0.y
-mul r0.y, r0.z, c13.x
-dsy r0.zw, v5.xyxy
-mul r3.w, r0.x, c13.x
-dsx r3.y, r0
-dsy r1.w, r0.y
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r3.x, r0, c15
-mul r1.z, r0.y, c15.x
-texldd r0, r3.zwzw, s2, r3, r1.zwzw
-texldd r4, r3.zwzw, s0, r3, r1.zwzw
-mul_pp r2, r0, r2
-mad_pp r2.xyz, -r4, r5, r2
-mul_pp r4.xyz, r4, r5
-mad_pp r4.xyz, r2.w, r2, r4
-dp4_pp r5.w, c1, c1
-rsq_pp r1.z, r5.w
-mul_pp r3.xyz, r1.z, c1
-dp3_pp r1.z, v2, -r3
-mul_pp r2.xyz, v2, r1.z
-mad_pp r5.xyz, -r2, c12.z, -r3
-dp3_pp_sat r3.x, v2, r3
-dp3_pp_sat r3.w, r5, v1
-add_pp r3.y, r3.x, c11
-frc_pp r3.z, r3.y
-mul_pp r4.xyz, r4, c4
-texld r2, r7, s3
-texld r1, r1, s3
-add_pp r1, r1, -r2
-mad_pp r2, r6.z, r1, r2
-pow_pp r1, r3.w, c5.x
-mov_pp r3.w, r1.x
-texld r5, r6, s3
-add_pp r5, r5, -r2
-mad_pp r2, r6.w, r5, r2
-mul_pp r0, r0, r2
-add_pp r2.x, r3, c15.z
-mul_pp r2.w, r2.x, c2
-texldp r1.x, v4, s5
-texld r1.w, v3, s6
-mul r1.w, r1, r1.x
-mul r1.xyz, r1.w, c2
-mul_pp r2.y, r3.x, c2.w
-mul_pp r2.y, r1.w, r2
-mul r1.xyz, r1, c3
-mul_pp r1.w, r2, r1
-mul_pp_sat r1.w, r1, c15
-add_pp r1.w, -r1, c11.y
-mul_pp_sat r3.x, r2.y, c16
-mov r2.x, c8
-add r2.xyz, c2, r2.x
-mul r1.xyz, r1, r3.w
-add_pp_sat r3.y, r3, -r3.z
-mul r1.xyz, r3.y, r1
-mul r1.xyz, r4.w, r1
-mad_sat r2.xyz, r2, r3.x, c0
-mad_pp r1.xyz, r2, c9.x, r1
-mad_pp r0.xyz, -r4, r1, r0
-mul_pp r1.xyz, r4, r1
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c11.y
-"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightPositionRange]
-Vector 3 [_LightShadowData]
-Vector 4 [_LightColor0]
-Vector 5 [_SpecColor]
-Vector 6 [_Color]
-Float 7 [_Shininess]
-Float 8 [_DetailScale]
-Float 9 [_DetailDist]
-Float 10 [_MinLight]
-Float 11 [_Albedo]
-Float 12 [_CityOverlayDetailScale]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_CityOverlayTex] 2D
-SetTexture 3 [_CityDarkOverlayDetailTex] 2D
-SetTexture 4 [_CityLightOverlayDetailTex] 2D
-SetTexture 5 [_ShadowMapTexture] CUBE
-SetTexture 6 [_LightTexture0] 2D
-"ps_3_0
-; 137 ALU, 17 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-dcl_cube s5
-dcl_2d s6
-def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 0.97000003
-def c18, 1.00000000, 0.00392157, 0.00001538, 0.00000001
-def c19, 4.03944778, 4.00000000, 0, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3.xyz
-dcl_texcoord4 v4.xyz
-dcl_texcoord5 v5.xyz
-mul r5.xy, v5, c12.x
-abs r6.zw, v5.xyxy
-abs r2.w, v5.z
-max r0.x, r6.z, r2.w
-rcp r0.y, r0.x
-min r0.x, r6.z, r2.w
-mul r2.x, r0, r0.y
-mul r2.y, r2.x, r2.x
-mad r0.x, r2.y, c15.y, c15.z
-mad r2.z, r0.x, r2.y, c15.w
-mul r7.xy, v5.zyzw, c12.x
-mad r2.z, r2, r2.y, c16.x
-texld r1, r5, s4
-texld r0, r7, s4
-add_pp r0, r0, -r1
-mad_pp r1, r6.z, r0, r1
-mad r0.x, r2.z, r2.y, c16.y
-mad r2.y, r0.x, r2, c16.z
-mul r6.xy, v5.zxzw, c12.x
-texld r0, r6, s4
-add_pp r0, r0, -r1
-mad_pp r1, r6.w, r0, r1
-mul r2.x, r2.y, r2
-add r0.y, -r2.x, c16.w
-add r0.x, r6.z, -r2.w
-cmp r0.w, -r0.x, r2.x, r0.y
-mul r2.xy, v5, c8.x
-mul r0.xy, v5.zyzw, c8.x
-add r3.x, -r0.w, c14.w
-texld r2.xyz, r2, s1
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r6.z, r0, r2
-cmp r0.z, v5, r0.w, r3.x
-cmp r0.w, v5.x, r0.z, -r0.z
-mul r0.xy, v5.zxzw, c8.x
-texld r0.xyz, r0, s1
-add_pp r3.xyz, r0, -r2
-mad_pp r2.xyz, r6.w, r3, r2
-add r0.y, -r2.w, c13
-mad r0.x, r2.w, c13.z, c13.w
-mad r0.x, r2.w, r0, c14
-rsq r0.y, r0.y
-mad r5.z, r0.w, c17.x, c17.y
-mad r0.x, r2.w, r0, c14.y
-rcp r0.y, r0.y
-mul r2.w, r0.x, r0.y
-abs r0.y, v5
-cmp r0.x, v5.z, c13, c13.y
-mul r3.w, r0.x, r2
-add r0.w, -r0.y, c13.y
-mad r0.z, r0.y, c13, c13.w
-mad r0.z, r0, r0.y, c14.x
-rsq r0.w, r0.w
-mad r0.y, r0.z, r0, c14
-rcp r0.w, r0.w
-mul r0.z, r0.y, r0.w
-cmp r0.y, v5, c13.x, c13
-mul r0.w, r0.y, r0.z
-mad r2.w, -r3, c14.z, r2
-mad r0.z, -r0.w, c14, r0
-mad r0.w, r0.x, c14, r2
-mad r0.x, r0.y, c14.w, r0.z
-mul r0.y, r0.w, c15.x
-dsy r0.zw, v5.xyxy
-mul r2.w, v0.x, c9.x
-dsx r4.w, r0.y
-dsy r4.y, r0
-mul r5.w, r0.x, c15.x
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r4.z, r0.x, c17.x
-mul r4.x, r0.y, c17
-texldd r0, r5.zwzw, s2, r4.zwzw, r4
-mul_pp r1, r0, r1
-add_pp r3.xyz, -r2, c13.y
-mul_sat r2.w, r2, c14.z
-mad_pp r2.xyz, r2.w, r3, r2
-texldd r3, r5.zwzw, s0, r4.zwzw, r4
-mul_pp r4.xyz, r3, r2
-mad_pp r1.xyz, -r3, r2, r1
-mad_pp r1.xyz, r1.w, r1, r4
-mul_pp r4.xyz, r1, c6
-dp4 r1.w, c1, c1
-rsq r1.x, r1.w
-mul r3.xyz, r1.x, c1
-texld r1, r5, s3
-dp3_pp r4.w, v2, -r3
-mul_pp r5.xyz, v2, r4.w
-mad_pp r5.xyz, -r5, c14.z, -r3
-texld r2, r7, s3
-add_pp r2, r2, -r1
-mad_pp r1, r6.z, r2, r1
-texld r2, r6, s3
-add_pp r2, r2, -r1
-mad_pp r2, r6.w, r2, r1
-mul_pp r2, r0, r2
-dp3_pp_sat r4.w, r5, v1
-pow_pp r1, r4.w, c7.x
-dp3 r0.x, v4, v4
-rsq r1.y, r0.x
-texld r0, v4, s5
-dp4 r0.y, r0, c18
-rcp r1.y, r1.y
-mul r0.x, r1.y, c2.w
-dp3_pp_sat r1.y, v2, r3
-add_pp r1.z, r1.y, c13.y
-mad r0.y, -r0.x, c17.w, r0
-mov r0.z, c3.x
-dp3 r0.x, v3, v3
-frc_pp r1.w, r1.z
-cmp r0.y, r0, c13, r0.z
-texld r0.x, r0.x, s6
-mul r0.w, r0.x, r0.y
-mul r0.xyz, r0.w, c4
-mul r0.xyz, r0, c5
-mul r0.xyz, r0, r1.x
-add_pp_sat r1.x, r1.z, -r1.w
-mul r0.xyz, r1.x, r0
-add_pp r1.x, r1.y, c17.z
-mul_pp r1.x, r1, c4.w
-mul_pp r1.w, r1.x, r0
-mul_pp r1.y, r1, c4.w
-mul_pp r1.x, r0.w, r1.y
-mov r0.w, c10.x
-mul_pp_sat r3.x, r1, c19.y
-add r1.xyz, c4, r0.w
-mul_pp_sat r0.w, r1, c19.x
-mad_sat r1.xyz, r1, r3.x, c0
-mul r0.xyz, r3.w, r0
-mad_pp r0.xyz, r1, c11.x, r0
-mad_pp r1.xyz, -r4, r0, r2
-mul_pp r2.xyz, r4, r0
-add_pp r0.w, -r0, c13.y
-mul_pp r0.x, r2.w, r0.w
-mad_pp oC0.xyz, r0.x, r1, r2
-mov_pp oC0.w, c13.y
-"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightPositionRange]
-Vector 3 [_LightShadowData]
-Vector 4 [_LightColor0]
-Vector 5 [_SpecColor]
-Vector 6 [_Color]
-Float 7 [_Shininess]
-Float 8 [_DetailScale]
-Float 9 [_DetailDist]
-Float 10 [_MinLight]
-Float 11 [_Albedo]
-Float 12 [_CityOverlayDetailScale]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_CityOverlayTex] 2D
-SetTexture 3 [_CityDarkOverlayDetailTex] 2D
-SetTexture 4 [_CityLightOverlayDetailTex] 2D
-SetTexture 5 [_ShadowMapTexture] CUBE
-SetTexture 6 [_LightTextureB0] 2D
-SetTexture 7 [_LightTexture0] CUBE
-"ps_3_0
-; 139 ALU, 18 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-dcl_cube s5
-dcl_2d s6
-dcl_cube s7
-def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 0.97000003
-def c18, 1.00000000, 0.00392157, 0.00001538, 0.00000001
-def c19, 4.03944778, 4.00000000, 0, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3.xyz
-dcl_texcoord4 v4.xyz
-dcl_texcoord5 v5.xyz
-mul r1.xy, v5.zyzw, c8.x
-mul r5.xy, v5.zyzw, c12.x
-mul r0.xy, v5, c8.x
-abs r1.zw, v5.xyxy
-abs r2.w, v5.z
-texld r2.xyz, r1, s1
-texld r0.xyz, r0, s1
-add_pp r2.xyz, r2, -r0
-mad_pp r2.xyz, r1.z, r2, r0
-max r0.w, r1.z, r2
-mul r0.xy, v5.zxzw, c8.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r1.w, r0, r2
-min r1.x, r1.z, r2.w
-rcp r0.w, r0.w
-mul r0.w, r1.x, r0
-mul r3.x, r0.w, r0.w
-mad r1.x, r3, c15.y, c15.z
-mad r1.x, r1, r3, c15.w
-mad r1.x, r1, r3, c16
-mad r1.y, r1.x, r3.x, c16
-mad r1.y, r1, r3.x, c16.z
-mul r1.x, v0, c9
-mul r1.y, r1, r0.w
-add r3.z, r1, -r2.w
-add_pp r2.xyz, -r0, c13.y
-mul_sat r1.x, r1, c14.z
-mad_pp r2.xyz, r1.x, r2, r0
-mul r3.xy, v5, c12.x
-add r1.x, -r1.y, c16.w
-cmp r3.w, -r3.z, r1.y, r1.x
-add r3.z, -r3.w, c14.w
-cmp r3.z, v5, r3.w, r3
-cmp r3.z, v5.x, r3, -r3
-abs r3.w, v5.y
-texld r0, r3, s4
-texld r4, r5, s4
-add_pp r4, r4, -r0
-mad_pp r0, r1.z, r4, r0
-mul r1.xy, v5.zxzw, c12.x
-texld r4, r1, s4
-add_pp r4, r4, -r0
-mad_pp r4, r1.w, r4, r0
-add r0.x, -r2.w, c13.y
-mad r0.y, r2.w, c13.z, c13.w
-mad r0.y, r2.w, r0, c14.x
-mad r0.y, r2.w, r0, c14
-add r0.w, -r3, c13.y
-mad r2.w, r3, c13.z, c13
-mad r2.w, r2, r3, c14.x
-mad r2.w, r2, r3, c14.y
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r0.y, r0, r0.x
-cmp r0.x, v5.z, c13, c13.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c14.z, r0
-mad r0.x, r0, c14.w, r0.y
-mul r0.x, r0, c15
-rsq r0.w, r0.w
-rcp r0.w, r0.w
-mul r2.w, r2, r0
-cmp r3.w, v5.y, c13.x, c13.y
-mul r0.w, r3, r2
-mad r0.z, -r0.w, c14, r2.w
-mad r0.y, r3.w, c14.w, r0.z
-dsy r0.zw, v5.xyxy
-dp4 r2.w, c1, c1
-mul r3.w, r0.y, c15.x
-dsx r5.w, r0.x
-dsy r7.y, r0.x
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.y, r0.x, r0
-mul r0.zw, r0, r0
-add r0.x, r0.z, r0.w
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r5.z, r0.y, c17.x
-mad r3.z, r3, c17.x, c17.y
-mul r7.x, r0, c17
-texldd r0, r3.zwzw, s2, r5.zwzw, r7
-mul_pp r6, r0, r4
-texldd r4, r3.zwzw, s0, r5.zwzw, r7
-mad_pp r6.xyz, -r4, r2, r6
-mul_pp r2.xyz, r4, r2
-mad_pp r2.xyz, r6.w, r6, r2
-rsq r2.w, r2.w
-mul r4.xyz, r2.w, c1
-dp3_pp r2.w, v2, -r4
-mul_pp r6.xyz, v2, r2.w
-dp3 r2.w, v4, v4
-mul_pp r2.xyz, r2, c6
-texld r3, r3, s3
-texld r5, r5, s3
-add_pp r5, r5, -r3
-mad_pp r3, r1.z, r5, r3
-mad_pp r6.xyz, -r6, c14.z, -r4
-dp3_pp_sat r1.z, r6, v1
-texld r5, r1, s3
-add_pp r6, r5, -r3
-pow_pp r5, r1.z, c7.x
-mad_pp r1, r1.w, r6, r3
-mul_pp r0, r0, r1
-texld r1, v4, s5
-dp4 r1.y, r1, c18
-rsq r2.w, r2.w
-rcp r1.z, r2.w
-dp3_pp_sat r2.w, v2, r4
-add_pp r3.z, r2.w, c13.y
-mul r1.z, r1, c2.w
-mov_pp r3.x, r5
-mov r1.x, c3
-mad r1.y, -r1.z, c17.w, r1
-cmp r1.y, r1, c13, r1.x
-dp3 r1.x, v3, v3
-texld r1.w, v3, s7
-texld r1.x, r1.x, s6
-mul r1.x, r1, r1.w
-mul r1.w, r1.x, r1.y
-mul r1.xyz, r1.w, c4
-mul r1.xyz, r1, c5
-mul r1.xyz, r1, r3.x
-frc_pp r3.y, r3.z
-add_pp_sat r3.x, r3.z, -r3.y
-mul r1.xyz, r3.x, r1
-add_pp r3.x, r2.w, c17.z
-mul_pp r3.x, r3, c4.w
-mul_pp r3.w, r3.x, r1
-mul_pp r2.w, r2, c4
-mul_pp r1.w, r1, r2
-mov r2.w, c10.x
-mul_pp_sat r1.w, r1, c19.y
-add r3.xyz, c4, r2.w
-mad_sat r3.xyz, r3, r1.w, c0
-mul r1.xyz, r4.w, r1
-mad_pp r1.xyz, r3, c11.x, r1
-mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r3, c19.x
-add_pp r1.w, -r1, c13.y
-mul_pp r1.xyz, r2, r1
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c13.y
-"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightShadowData]
-Vector 3 [_ShadowOffsets0]
-Vector 4 [_ShadowOffsets1]
-Vector 5 [_ShadowOffsets2]
-Vector 6 [_ShadowOffsets3]
-Vector 7 [_LightColor0]
-Vector 8 [_SpecColor]
-Vector 9 [_Color]
-Float 10 [_Shininess]
-Float 11 [_DetailScale]
-Float 12 [_DetailDist]
-Float 13 [_MinLight]
-Float 14 [_Albedo]
-Float 15 [_CityOverlayDetailScale]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_CityOverlayTex] 2D
-SetTexture 3 [_CityDarkOverlayDetailTex] 2D
-SetTexture 4 [_CityLightOverlayDetailTex] 2D
-SetTexture 5 [_LightTexture0] 2D
-SetTexture 6 [_LightTextureB0] 2D
-SetTexture 7 [_ShadowMapTexture] 2D
-"ps_3_0
-; 147 ALU, 21 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-dcl_2d s5
-dcl_2d s6
-dcl_2d s7
-def c16, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c17, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c18, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c19, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c20, 0.15915494, 0.50000000, -0.01000214, 0.25000000
-def c21, 4.03944778, 4.00000000, 0, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3
-dcl_texcoord4 v4
-dcl_texcoord5 v5.xyz
-mul r6.xy, v5, c15.x
-abs r4.zw, v5.xyxy
-abs r2.w, v5.z
-max r0.x, r4.z, r2.w
-rcp r0.y, r0.x
-min r0.x, r4.z, r2.w
-mul r2.x, r0, r0.y
-mul r2.y, r2.x, r2.x
-mad r0.x, r2.y, c18.y, c18.z
-mad r2.z, r0.x, r2.y, c18.w
-mul r5.xy, v5.zyzw, c15.x
-mad r2.z, r2, r2.y, c19.x
-texld r0, r5, s4
-texld r1, r6, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.z, r0, r1
-mad r0.x, r2.z, r2.y, c19.y
-mad r2.y, r0.x, r2, c19.z
-mul r4.xy, v5.zxzw, c15.x
-texld r0, r4, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.w, r0, r1
-mul r2.x, r2.y, r2
-add r0.x, r4.z, -r2.w
-add r0.y, -r2.x, c19.w
-cmp r0.w, -r0.x, r2.x, r0.y
-mul r2.xy, v5, c11.x
-mul r0.xy, v5.zyzw, c11.x
-add r3.x, -r0.w, c17.w
-texld r2.xyz, r2, s1
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r4.z, r0, r2
-cmp r0.z, v5, r0.w, r3.x
-cmp r0.w, v5.x, r0.z, -r0.z
-mul r0.xy, v5.zxzw, c11.x
-texld r0.xyz, r0, s1
-add_pp r3.xyz, r0, -r2
-mad_pp r2.xyz, r4.w, r3, r2
-add r0.y, -r2.w, c16
-mad r0.x, r2.w, c16.z, c16.w
-mad r0.x, r2.w, r0, c17
-rsq r0.y, r0.y
-mad r7.x, r0.w, c20, c20.y
-mad r0.x, r2.w, r0, c17.y
-rcp r0.y, r0.y
-mul r2.w, r0.x, r0.y
-abs r0.y, v5
-cmp r0.x, v5.z, c16, c16.y
-mul r3.w, r0.x, r2
-add r0.w, -r0.y, c16.y
-mad r0.z, r0.y, c16, c16.w
-mad r0.z, r0, r0.y, c17.x
-rsq r0.w, r0.w
-mad r0.y, r0.z, r0, c17
-rcp r0.w, r0.w
-mul r0.z, r0.y, r0.w
-cmp r0.y, v5, c16.x, c16
-mul r0.w, r0.y, r0.z
-mad r2.w, -r3, c17.z, r2
-mad r0.z, -r0.w, c17, r0
-mad r0.w, r0.x, c17, r2
-mad r0.x, r0.y, c17.w, r0.z
-mul r0.y, r0.w, c18.x
-dsy r0.zw, v5.xyxy
-mul r2.w, v0.x, c12.x
-mul r7.y, r0.x, c18.x
-dsx r6.w, r0.y
-dsy r5.w, r0.y
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r5.z, r0.y, c20.x
-mul r6.z, r0.x, c20.x
-texldd r0, r7, s2, r6.zwzw, r5.zwzw
-mul_pp r1, r0, r1
-add_pp r3.xyz, -r2, c16.y
-mul_sat r2.w, r2, c17.z
-mad_pp r3.xyz, r2.w, r3, r2
-texldd r2, r7, s0, r6.zwzw, r5.zwzw
-mul_pp r7.xyz, r2, r3
-mad_pp r1.xyz, -r2, r3, r1
-mad_pp r1.xyz, r1.w, r1, r7
-mul_pp r2.xyz, r1, c9
-texld r1, r5, s3
-texld r3, r6, s3
-add_pp r1, r1, -r3
-mad_pp r1, r4.z, r1, r3
-texld r3, r4, s3
-add_pp r3, r3, -r1
-mad_pp r1, r4.w, r3, r1
-dp4 r5.x, c1, c1
-rsq r5.x, r5.x
-mul r5.xyz, r5.x, c1
-dp3_pp r4.z, v2, -r5
-mul_pp r4.xyz, v2, r4.z
-mad_pp r4.xyz, -r4, c17.z, -r5
-rcp r3.w, v4.w
-mul_pp r1, r0, r1
-dp3_pp_sat r3.x, r4, v1
-pow_pp r0, r3.x, c10.x
-mad r3.xy, v4, r3.w, c6
-mov_pp r3.z, r0.x
-texld r0.x, r3, s7
-mad r3.xy, v4, r3.w, c5
-mov r0.w, r0.x
-texld r0.x, r3, s7
-mad r3.xy, v4, r3.w, c4
-mov r0.z, r0.x
-texld r0.x, r3, s7
-mad r3.xy, v4, r3.w, c3
-mov r0.y, r0.x
-texld r0.x, r3, s7
-mov r3.x, c2
-mad r0, -v4.z, r3.w, r0
-cmp r0, r0, c16.y, r3.x
-dp4_pp r0.z, r0, c20.w
-rcp r3.x, v3.w
-mad r3.xy, v3, r3.x, c20.y
-texld r0.w, r3, s5
-dp3_pp_sat r3.x, v2, r5
-add_pp r3.y, r3.x, c16
-frc_pp r3.w, r3.y
-dp3 r0.x, v3, v3
-cmp r0.y, -v3.z, c16.x, c16
-mul_pp r0.y, r0, r0.w
-texld r0.x, r0.x, s6
-mul_pp r0.x, r0.y, r0
-mul_pp r0.w, r0.x, r0.z
-mul r0.xyz, r0.w, c7
-mul r0.xyz, r0, c8
-add_pp_sat r3.y, r3, -r3.w
-mul r0.xyz, r0, r3.z
-mul r0.xyz, r3.y, r0
-add_pp r3.y, r3.x, c20.z
-mul r0.xyz, r2.w, r0
-mul_pp r2.w, r3.y, c7
-mul_pp r3.x, r3, c7.w
-mul_pp r3.x, r0.w, r3
-mul_pp r2.w, r2, r0
-mov r0.w, c13.x
-mul_pp_sat r3.w, r3.x, c21.y
-add r3.xyz, c7, r0.w
-mad_sat r3.xyz, r3, r3.w, c0
-mad_pp r0.xyz, r3, c14.x, r0
-mad_pp r1.xyz, -r2, r0, r1
-mul_pp_sat r0.w, r2, c21.x
-mul_pp r2.xyz, r2, r0
-add_pp r0.w, -r0, c16.y
-mul_pp r0.x, r1.w, r0.w
-mad_pp oC0.xyz, r0.x, r1, r2
-mov_pp oC0.w, c16.y
-"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightShadowData]
-Vector 3 [_ShadowOffsets0]
-Vector 4 [_ShadowOffsets1]
-Vector 5 [_ShadowOffsets2]
-Vector 6 [_ShadowOffsets3]
-Vector 7 [_LightColor0]
-Vector 8 [_SpecColor]
-Vector 9 [_Color]
-Float 10 [_Shininess]
-Float 11 [_DetailScale]
-Float 12 [_DetailDist]
-Float 13 [_MinLight]
-Float 14 [_Albedo]
-Float 15 [_CityOverlayDetailScale]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_CityOverlayTex] 2D
-SetTexture 3 [_CityDarkOverlayDetailTex] 2D
-SetTexture 4 [_CityLightOverlayDetailTex] 2D
-SetTexture 5 [_LightTexture0] 2D
-SetTexture 6 [_LightTextureB0] 2D
-SetTexture 7 [_ShadowMapTexture] 2D
-"ps_3_0
-; 146 ALU, 21 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-dcl_2d s5
-dcl_2d s6
-dcl_2d s7
-def c16, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c17, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c18, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c19, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c20, 0.15915494, 0.50000000, -0.01000214, 0.25000000
-def c21, 4.03944778, 4.00000000, 0, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3
-dcl_texcoord4 v4
-dcl_texcoord5 v5.xyz
-mul r6.xy, v5, c15.x
-abs r4.zw, v5.xyxy
-abs r2.w, v5.z
-max r0.x, r4.z, r2.w
-rcp r0.y, r0.x
-min r0.x, r4.z, r2.w
-mul r2.x, r0, r0.y
-mul r2.y, r2.x, r2.x
-mad r0.x, r2.y, c18.y, c18.z
-mad r2.z, r0.x, r2.y, c18.w
-mul r5.xy, v5.zyzw, c15.x
-mad r2.z, r2, r2.y, c19.x
-mul r4.xy, v5.zxzw, c15.x
-texld r1, r6, s4
-texld r0, r5, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.z, r0, r1
-mad r0.x, r2.z, r2.y, c19.y
-mad r2.y, r0.x, r2, c19.z
-texld r0, r4, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.w, r0, r1
-mul r2.x, r2.y, r2
-add r0.x, r4.z, -r2.w
-add r0.y, -r2.x, c19.w
-cmp r0.w, -r0.x, r2.x, r0.y
-mul r2.xy, v5, c11.x
-mul r0.xy, v5.zyzw, c11.x
-add r3.x, -r0.w, c17.w
-texld r2.xyz, r2, s1
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r4.z, r0, r2
-cmp r0.z, v5, r0.w, r3.x
-cmp r0.w, v5.x, r0.z, -r0.z
-mul r0.xy, v5.zxzw, c11.x
-texld r0.xyz, r0, s1
-add_pp r3.xyz, r0, -r2
-mad_pp r2.xyz, r4.w, r3, r2
-add r0.y, -r2.w, c16
-mad r0.x, r2.w, c16.z, c16.w
-mad r0.x, r2.w, r0, c17
-rsq r0.y, r0.y
-mad r7.x, r0.w, c20, c20.y
-mad r0.x, r2.w, r0, c17.y
-rcp r0.y, r0.y
-mul r2.w, r0.x, r0.y
-abs r0.y, v5
-cmp r0.x, v5.z, c16, c16.y
-mul r3.w, r0.x, r2
-add r0.w, -r0.y, c16.y
-mad r0.z, r0.y, c16, c16.w
-mad r0.z, r0, r0.y, c17.x
-rsq r0.w, r0.w
-mad r0.y, r0.z, r0, c17
-rcp r0.w, r0.w
-mul r0.z, r0.y, r0.w
-cmp r0.y, v5, c16.x, c16
-mul r0.w, r0.y, r0.z
-mad r2.w, -r3, c17.z, r2
-mad r0.z, -r0.w, c17, r0
-mad r0.w, r0.x, c17, r2
-mad r0.x, r0.y, c17.w, r0.z
-mul r0.y, r0.w, c18.x
-dsy r0.zw, v5.xyxy
-mul r2.w, v0.x, c12.x
-mul r7.y, r0.x, c18.x
-dsx r6.w, r0.y
-dsy r5.w, r0.y
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r6.z, r0.x, c20.x
-mul r5.z, r0.y, c20.x
-texldd r0, r7, s2, r6.zwzw, r5.zwzw
-mul_pp r1, r0, r1
-add_pp r3.xyz, -r2, c16.y
-mul_sat r2.w, r2, c17.z
-mad_pp r3.xyz, r2.w, r3, r2
-texldd r2, r7, s0, r6.zwzw, r5.zwzw
-mad_pp r1.xyz, -r2, r3, r1
-mul_pp r7.xyz, r2, r3
-mad_pp r2.xyz, r1.w, r1, r7
-texld r1, r6, s3
-texld r3, r5, s3
-add_pp r3, r3, -r1
-mad_pp r1, r4.z, r3, r1
-texld r3, r4, s3
-add_pp r3, r3, -r1
-mad_pp r1, r4.w, r3, r1
-rcp r4.x, v4.w
-mul_pp r1, r0, r1
-mad r3.xyz, v4, r4.x, c6
-texld r0.x, r3, s7
-mad r3.xyz, v4, r4.x, c5
-mov_pp r0.w, r0.x
-texld r0.x, r3, s7
-mad r3.xyz, v4, r4.x, c4
-mov_pp r0.z, r0.x
-texld r0.x, r3, s7
-mad r3.xyz, v4, r4.x, c3
-mov_pp r0.y, r0.x
-texld r0.x, r3, s7
-mov r3.y, c2.x
-add r3.y, c16, -r3
-mad r0, r0, r3.y, c2.x
-dp4_pp r0.z, r0, c20.w
-rcp r0.x, v3.w
-mad r5.xy, v3, r0.x, c20.y
-dp4 r3.x, c1, c1
-rsq r3.x, r3.x
-mul r3.xyz, r3.x, c1
-dp3_pp r0.y, v2, -r3
-mul_pp r4.xyz, v2, r0.y
-mad_pp r4.xyz, -r4, c17.z, -r3
-dp3 r0.x, v3, v3
-mul_pp r2.xyz, r2, c9
-texld r0.w, r5, s5
-cmp r0.y, -v3.z, c16.x, c16
-mul_pp r0.y, r0, r0.w
-texld r0.x, r0.x, s6
-mul_pp r0.x, r0.y, r0
-mul_pp r3.w, r0.x, r0.z
-mul r0.xyz, r3.w, c7
-dp3_pp_sat r4.w, r4, v1
-mul r4.xyz, r0, c8
-pow_pp r0, r4.w, c10.x
-dp3_pp_sat r0.w, v2, r3
-add_pp r3.x, r0.w, c16.y
-frc_pp r3.y, r3.x
-add_pp_sat r3.x, r3, -r3.y
-mul r0.xyz, r4, r0.x
-mul r0.xyz, r3.x, r0
-add_pp r3.x, r0.w, c20.z
-mul r0.xyz, r2.w, r0
-mul_pp r2.w, r3.x, c7
-mul_pp r3.x, r0.w, c7.w
-mul_pp r0.w, r2, r3
-mul_pp r3.x, r3.w, r3
-mul_pp_sat r0.w, r0, c21.x
-mul_pp_sat r3.w, r3.x, c21.y
-mov r2.w, c13.x
-add r3.xyz, c7, r2.w
-mad_sat r3.xyz, r3, r3.w, c0
-mad_pp r0.xyz, r3, c14.x, r0
-mad_pp r1.xyz, -r2, r0, r1
-mul_pp r2.xyz, r2, r0
-add_pp r0.w, -r0, c16.y
-mul_pp r0.x, r1.w, r0.w
-mad_pp oC0.xyz, r0.x, r1, r2
-mov_pp oC0.w, c16.y
-"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightPositionRange]
-Vector 3 [_LightShadowData]
-Vector 4 [_LightColor0]
-Vector 5 [_SpecColor]
-Vector 6 [_Color]
-Float 7 [_Shininess]
-Float 8 [_DetailScale]
-Float 9 [_DetailDist]
-Float 10 [_MinLight]
-Float 11 [_Albedo]
-Float 12 [_CityOverlayDetailScale]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_CityOverlayTex] 2D
-SetTexture 3 [_CityDarkOverlayDetailTex] 2D
-SetTexture 4 [_CityLightOverlayDetailTex] 2D
-SetTexture 5 [_ShadowMapTexture] CUBE
-SetTexture 6 [_LightTexture0] 2D
-"ps_3_0
-; 145 ALU, 20 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-dcl_cube s5
-dcl_2d s6
-def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 0.00781250
-def c18, 0.00781250, -0.00781250, 0.97000003, 0.25000000
-def c19, 1.00000000, 0.00392157, 0.00001538, 0.00000001
-def c20, 4.03944778, 4.00000000, 0, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3.xyz
-dcl_texcoord4 v4.xyz
-dcl_texcoord5 v5.xyz
-mul r6.xy, v5, c12.x
-abs r4.zw, v5.xyxy
-abs r2.w, v5.z
-max r0.x, r4.z, r2.w
-rcp r0.y, r0.x
-min r0.x, r4.z, r2.w
-mul r2.x, r0, r0.y
-mul r2.y, r2.x, r2.x
-mad r0.x, r2.y, c15.y, c15.z
-mad r2.z, r0.x, r2.y, c15.w
-mul r5.xy, v5.zyzw, c12.x
-mad r2.z, r2, r2.y, c16.x
-mul r4.xy, v5.zxzw, c12.x
-texld r1, r6, s4
-texld r0, r5, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.z, r0, r1
-mad r0.x, r2.z, r2.y, c16.y
-mad r2.y, r0.x, r2, c16.z
-texld r0, r4, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.w, r0, r1
-mul r2.x, r2.y, r2
-add r0.x, r4.z, -r2.w
-add r0.y, -r2.x, c16.w
-cmp r0.w, -r0.x, r2.x, r0.y
-mul r2.xy, v5, c8.x
-mul r0.xy, v5.zyzw, c8.x
-add r3.x, -r0.w, c14.w
-texld r2.xyz, r2, s1
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r4.z, r0, r2
-cmp r0.z, v5, r0.w, r3.x
-cmp r0.w, v5.x, r0.z, -r0.z
-mul r0.xy, v5.zxzw, c8.x
-texld r0.xyz, r0, s1
-add_pp r3.xyz, r0, -r2
-mad_pp r2.xyz, r4.w, r3, r2
-add r0.y, -r2.w, c13
-mad r0.x, r2.w, c13.z, c13.w
-mad r0.x, r2.w, r0, c14
-rsq r0.y, r0.y
-mad r7.x, r0.w, c17, c17.y
-mad r0.x, r2.w, r0, c14.y
-rcp r0.y, r0.y
-mul r2.w, r0.x, r0.y
-abs r0.y, v5
-cmp r0.x, v5.z, c13, c13.y
-mul r3.w, r0.x, r2
-add r0.w, -r0.y, c13.y
-mad r0.z, r0.y, c13, c13.w
-mad r0.z, r0, r0.y, c14.x
-rsq r0.w, r0.w
-mad r0.y, r0.z, r0, c14
-rcp r0.w, r0.w
-mul r0.z, r0.y, r0.w
-cmp r0.y, v5, c13.x, c13
-mul r0.w, r0.y, r0.z
-mad r2.w, -r3, c14.z, r2
-mad r0.z, -r0.w, c14, r0
-mad r0.w, r0.x, c14, r2
-mad r0.x, r0.y, c14.w, r0.z
-mul r0.y, r0.w, c15.x
-dsy r0.zw, v5.xyxy
-mul r2.w, v0.x, c9.x
-mul r7.y, r0.x, c15.x
-dsx r6.w, r0.y
-dsy r5.w, r0.y
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r6.z, r0.x, c17.x
-mul r5.z, r0.y, c17.x
-texldd r0, r7, s2, r6.zwzw, r5.zwzw
-mul_pp r1, r0, r1
-add_pp r3.xyz, -r2, c13.y
-mul_sat r2.w, r2, c14.z
-mad_pp r3.xyz, r2.w, r3, r2
-texldd r2, r7, s0, r6.zwzw, r5.zwzw
-mad_pp r1.xyz, -r2, r3, r1
-mul_pp r7.xyz, r2, r3
-mad_pp r2.xyz, r1.w, r1, r7
-texld r1, r6, s3
-texld r3, r5, s3
-add_pp r3, r3, -r1
-mad_pp r1, r4.z, r3, r1
-texld r3, r4, s3
-add_pp r3, r3, -r1
-mad_pp r1, r4.w, r3, r1
-mul_pp r1, r0, r1
-add r4.xyz, v4, c18.xyyw
-texld r3, r4, s5
-dp4 r4.w, r3, c19
-add r0.xyz, v4, c18.yxyw
-texld r0, r0, s5
-dp4 r4.z, r0, c19
-add r3.xyz, v4, c18.yyxw
-texld r3, r3, s5
-dp4 r4.y, r3, c19
-dp3 r0.w, v4, v4
-rsq r3.x, r0.w
-add r0.xyz, v4, c17.w
-texld r0, r0, s5
-dp4 r4.x, r0, c19
-rcp r3.x, r3.x
-mul r0.x, r3, c2.w
-dp4 r3.x, c1, c1
-mad r0, -r0.x, c18.z, r4
-mov r3.y, c3.x
-cmp r0, r0, c13.y, r3.y
-dp4_pp r0.y, r0, c18.w
-rsq r3.x, r3.x
-mul r3.xyz, r3.x, c1
-dp3_pp r0.z, v2, -r3
-mul_pp r4.xyz, v2, r0.z
-mad_pp r4.xyz, -r4, c14.z, -r3
-dp3 r0.x, v3, v3
-texld r0.x, r0.x, s6
-mul r3.w, r0.x, r0.y
-mul r0.xyz, r3.w, c4
-dp3_pp_sat r4.w, r4, v1
-mul r4.xyz, r0, c5
-pow_pp r0, r4.w, c7.x
-dp3_pp_sat r0.w, v2, r3
-add_pp r3.x, r0.w, c13.y
-frc_pp r3.y, r3.x
-add_pp_sat r3.x, r3, -r3.y
-mul r0.xyz, r4, r0.x
-mul r0.xyz, r3.x, r0
-add_pp r3.x, r0.w, c17.z
-mul r0.xyz, r2.w, r0
-mul_pp r2.w, r3.x, c4
-mul_pp r3.x, r0.w, c4.w
-mul_pp r0.w, r2, r3
-mul_pp r3.x, r3.w, r3
-mul_pp_sat r0.w, r0, c20.x
-mul_pp r2.xyz, r2, c6
-mul_pp_sat r3.w, r3.x, c20.y
-mov r2.w, c10.x
-add r3.xyz, c4, r2.w
-mad_sat r3.xyz, r3, r3.w, c0
-mad_pp r0.xyz, r3, c11.x, r0
-mad_pp r1.xyz, -r2, r0, r1
-mul_pp r2.xyz, r2, r0
-add_pp r0.w, -r0, c13.y
-mul_pp r0.x, r1.w, r0.w
-mad_pp oC0.xyz, r0.x, r1, r2
-mov_pp oC0.w, c13.y
-"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightPositionRange]
-Vector 3 [_LightShadowData]
-Vector 4 [_LightColor0]
-Vector 5 [_SpecColor]
-Vector 6 [_Color]
-Float 7 [_Shininess]
-Float 8 [_DetailScale]
-Float 9 [_DetailDist]
-Float 10 [_MinLight]
-Float 11 [_Albedo]
-Float 12 [_CityOverlayDetailScale]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_CityOverlayTex] 2D
-SetTexture 3 [_CityDarkOverlayDetailTex] 2D
-SetTexture 4 [_CityLightOverlayDetailTex] 2D
-SetTexture 5 [_ShadowMapTexture] CUBE
-SetTexture 6 [_LightTextureB0] 2D
-SetTexture 7 [_LightTexture0] CUBE
-"ps_3_0
-; 146 ALU, 21 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-dcl_cube s5
-dcl_2d s6
-dcl_cube s7
-def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 0.00781250
-def c18, 0.00781250, -0.00781250, 0.97000003, 0.25000000
-def c19, 1.00000000, 0.00392157, 0.00001538, 0.00000001
-def c20, 4.03944778, 4.00000000, 0, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3.xyz
-dcl_texcoord4 v4.xyz
-dcl_texcoord5 v5.xyz
-mul r6.xy, v5, c12.x
-abs r4.zw, v5.xyxy
-abs r2.w, v5.z
-max r0.x, r4.z, r2.w
-rcp r0.y, r0.x
-min r0.x, r4.z, r2.w
-mul r2.x, r0, r0.y
-mul r2.y, r2.x, r2.x
-mad r0.x, r2.y, c15.y, c15.z
-mad r2.z, r0.x, r2.y, c15.w
-mul r5.xy, v5.zyzw, c12.x
-mad r2.z, r2, r2.y, c16.x
-mul r4.xy, v5.zxzw, c12.x
-texld r1, r6, s4
-texld r0, r5, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.z, r0, r1
-mad r0.x, r2.z, r2.y, c16.y
-mad r2.y, r0.x, r2, c16.z
-texld r0, r4, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.w, r0, r1
-mul r2.x, r2.y, r2
-add r0.x, r4.z, -r2.w
-add r0.y, -r2.x, c16.w
-cmp r0.w, -r0.x, r2.x, r0.y
-mul r2.xy, v5, c8.x
-mul r0.xy, v5.zyzw, c8.x
-add r3.x, -r0.w, c14.w
-texld r2.xyz, r2, s1
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r4.z, r0, r2
-cmp r0.z, v5, r0.w, r3.x
-cmp r0.w, v5.x, r0.z, -r0.z
-mul r0.xy, v5.zxzw, c8.x
-texld r0.xyz, r0, s1
-add_pp r3.xyz, r0, -r2
-mad_pp r2.xyz, r4.w, r3, r2
-add r0.y, -r2.w, c13
-mad r0.x, r2.w, c13.z, c13.w
-mad r0.x, r2.w, r0, c14
-rsq r0.y, r0.y
-mad r7.x, r0.w, c17, c17.y
-mad r0.x, r2.w, r0, c14.y
-rcp r0.y, r0.y
-mul r2.w, r0.x, r0.y
-abs r0.y, v5
-cmp r0.x, v5.z, c13, c13.y
-mul r3.w, r0.x, r2
-add r0.w, -r0.y, c13.y
-mad r0.z, r0.y, c13, c13.w
-mad r0.z, r0, r0.y, c14.x
-rsq r0.w, r0.w
-mad r0.y, r0.z, r0, c14
-rcp r0.w, r0.w
-mul r0.z, r0.y, r0.w
-cmp r0.y, v5, c13.x, c13
-mul r0.w, r0.y, r0.z
-mad r2.w, -r3, c14.z, r2
-mad r0.z, -r0.w, c14, r0
-mad r0.w, r0.x, c14, r2
-mad r0.x, r0.y, c14.w, r0.z
-mul r0.y, r0.w, c15.x
-dsy r0.zw, v5.xyxy
-mul r2.w, v0.x, c9.x
-mul r7.y, r0.x, c15.x
-dsx r6.w, r0.y
-dsy r5.w, r0.y
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r6.z, r0.x, c17.x
-mul r5.z, r0.y, c17.x
-texldd r0, r7, s2, r6.zwzw, r5.zwzw
-mul_pp r1, r0, r1
-add_pp r3.xyz, -r2, c13.y
-mul_sat r2.w, r2, c14.z
-mad_pp r3.xyz, r2.w, r3, r2
-texldd r2, r7, s0, r6.zwzw, r5.zwzw
-mad_pp r1.xyz, -r2, r3, r1
-mul_pp r7.xyz, r2, r3
-mad_pp r2.xyz, r1.w, r1, r7
-texld r1, r6, s3
-texld r3, r5, s3
-add_pp r3, r3, -r1
-mad_pp r1, r4.z, r3, r1
-texld r3, r4, s3
-add_pp r3, r3, -r1
-mad_pp r1, r4.w, r3, r1
-mul_pp r1, r0, r1
-add r4.xyz, v4, c18.xyyw
-texld r3, r4, s5
-dp4 r4.w, r3, c19
-add r0.xyz, v4, c18.yxyw
-texld r0, r0, s5
-dp4 r4.z, r0, c19
-add r3.xyz, v4, c18.yyxw
-texld r3, r3, s5
-dp4 r4.y, r3, c19
-add r0.xyz, v4, c17.w
-texld r0, r0, s5
-dp3 r3.x, v4, v4
-dp4 r4.x, r0, c19
-rsq r3.x, r3.x
-rcp r0.x, r3.x
-dp4 r3.x, c1, c1
-mul r0.x, r0, c2.w
-rsq r3.x, r3.x
-mul r3.xyz, r3.x, c1
-mad r0, -r0.x, c18.z, r4
-mov r3.w, c3.x
-cmp r0, r0, c13.y, r3.w
-dp4_pp r0.y, r0, c18.w
-dp3_pp r3.w, v2, -r3
-mul_pp r4.xyz, v2, r3.w
-mad_pp r4.xyz, -r4, c14.z, -r3
-dp3 r0.x, v3, v3
-mul_pp r2.xyz, r2, c6
-texld r0.w, v3, s7
-texld r0.x, r0.x, s6
-mul r0.x, r0, r0.w
-mul r3.w, r0.x, r0.y
-mul r0.xyz, r3.w, c4
-dp3_pp_sat r4.w, r4, v1
-mul r4.xyz, r0, c5
-pow_pp r0, r4.w, c7.x
-dp3_pp_sat r0.w, v2, r3
-add_pp r3.x, r0.w, c13.y
-frc_pp r3.y, r3.x
-add_pp_sat r3.x, r3, -r3.y
-mul r0.xyz, r4, r0.x
-mul r0.xyz, r3.x, r0
-add_pp r3.x, r0.w, c17.z
-mul r0.xyz, r2.w, r0
-mul_pp r2.w, r3.x, c4
-mul_pp r3.x, r0.w, c4.w
-mul_pp r0.w, r2, r3
-mul_pp r3.x, r3.w, r3
-mul_pp_sat r0.w, r0, c20.x
-mul_pp_sat r3.w, r3.x, c20.y
-mov r2.w, c10.x
-add r3.xyz, c4, r2.w
-mad_sat r3.xyz, r3, r3.w, c0
-mad_pp r0.xyz, r3, c11.x, r0
-mad_pp r1.xyz, -r2, r0, r1
-mul_pp r2.xyz, r2, r0
-add_pp r0.w, -r0, c13.y
-mul_pp r0.x, r1.w, r0.w
-mad_pp oC0.xyz, r0.x, r1, r2
-mov_pp oC0.w, c13.y
-"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "POINT" "SHADOWS_OFF" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "POINT" "SHADOWS_OFF" }
 Vector 0 [glstate_lightmodel_ambient]
 Vector 1 [_WorldSpaceLightPos0]
 Vector 2 [_LightColor0]
@@ -83157,142 +81180,2497 @@ def c16, 4.00000000, 0, 0, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3.xyz
+dcl_texcoord3 v3.xy
 dcl_texcoord5 v4.xyz
 mul r0.xy, v4, c6.x
 mul r1.xy, v4.zyzw, c6.x
-abs r6.zw, v4.xyxy
-abs r0.z, v4
-texld r2.xyz, r0, s1
-max r0.x, r6.z, r0.z
-rcp r0.y, r0.x
-min r0.x, r6.z, r0.z
-mul r0.w, r0.x, r0.y
-mul r1.w, r0, r0
+abs r2.w, v4.z
 texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r2
-mad_pp r2.xyz, r6.z, r1, r2
-mul r0.xy, v4.zxzw, c6.x
-texld r1.xyz, r0, s1
-mad r2.w, r1, c13.y, c13.z
-add_pp r1.xyz, r1, -r2
-mad_pp r1.xyz, r6.w, r1, r2
-mad r0.x, r2.w, r1.w, c13.w
-mad r0.x, r0, r1.w, c14
-mad r0.x, r0, r1.w, c14.y
-mad r0.x, r0, r1.w, c14.z
-mul r3.x, r0, r0.w
-mul r0.y, v0.x, c7.x
-add_pp r2.xyz, -r1, c11.y
-mul_sat r0.y, r0, c12.z
-mad_pp r5.xyz, r0.y, r2, r1
-mul r7.xy, v4, c10.x
-mul r0.xy, v4.zyzw, c10.x
-add r3.y, -r3.x, c14.w
-add r0.w, r6.z, -r0.z
-cmp r0.w, -r0, r3.x, r3.y
+texld r0.xyz, r0, s1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v4.xyxy
+max r0.w, r1.z, r2
+mad_pp r2.xyz, r1.z, r2, r0
+mul r1.xy, v4.zxzw, c6.x
+texld r0.xyz, r1, s1
+add_pp r0.xyz, r0, -r2
+mad_pp r0.xyz, r1.w, r0, r2
+mul r2.xy, v4.zyzw, c10.x
+min r1.x, r1.z, r2.w
+rcp r0.w, r0.w
+mul r2.z, r1.x, r0.w
+mul r3.z, r2, r2
+mad r1.x, r3.z, c13.y, c13.z
+mad r1.x, r1, r3.z, c13.w
+mad r1.x, r1, r3.z, c14
+mad r3.w, r1.x, r3.z, c14.y
+mad r3.z, r3.w, r3, c14
+mul r2.z, r3, r2
+mul r0.w, v0.x, c7.x
+abs r3.z, v4.y
+mul r1.xy, v4.zxzw, c10.x
+add_pp r4.xyz, -r0, c11.y
+mul_sat r0.w, r0, c12.z
+mad_pp r4.xyz, r0.w, r4, r0
+mul r3.xy, v4, c10.x
+texld r0, r3, s4
+texld r5, r2, s4
+add_pp r5, r5, -r0
+mad_pp r0, r1.z, r5, r0
+texld r5, r1, s4
+add_pp r5, r5, -r0
+mad_pp r5, r1.w, r5, r0
+add r0.w, -r3.z, c11.y
+rsq r0.w, r0.w
+add r0.y, r1.z, -r2.w
+add r0.x, -r2.z, c14.w
+cmp r0.z, -r0.y, r2, r0.x
+add r0.y, -r0.z, c12.w
+cmp r0.y, v4.z, r0.z, r0
+cmp r0.y, v4.x, r0, -r0
+mad r2.z, r0.y, c15.x, c15.y
+mad r0.y, r2.w, c11.z, c11.w
+mad r0.y, r2.w, r0, c12.x
+dp4_pp r0.x, c1, c1
+rsq_pp r0.x, r0.x
+mul_pp r6.xyz, r0.x, c1
+dp3_pp r0.x, v2, -r6
+mul_pp r7.xyz, v2, r0.x
+mad_pp r7.xyz, -r7, c12.z, -r6
+add r0.x, -r2.w, c11.y
+mad r0.y, r2.w, r0, c12
+mad r2.w, r3.z, c11.z, c11
+mad r2.w, r2, r3.z, c12.x
+mad r2.w, r2, r3.z, c12.y
+rcp r0.w, r0.w
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r0.y, r0, r0.x
+cmp r0.x, v4.z, c11, c11.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c12.z, r0
+mad r0.x, r0, c12.w, r0.y
+mul r0.x, r0, c13
+mul r2.w, r2, r0
+cmp r3.z, v4.y, c11.x, c11.y
+mul r0.w, r3.z, r2
+mad r0.z, -r0.w, c12, r2.w
+mad r0.y, r3.z, c12.w, r0.z
+dsy r0.zw, v4.xyxy
+mul r2.w, r0.y, c13.x
+dsx r3.w, r0.x
+dsy r8.y, r0.x
+dsx r0.xy, v4
+mul r0.xy, r0, r0
+add r0.y, r0.x, r0
+mul r0.zw, r0, r0
+add r0.x, r0.z, r0.w
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r3.z, r0.y, c15.x
+mul r8.x, r0, c15
+texldd r0, r2.zwzw, s2, r3.zwzw, r8
+dp3_pp_sat r4.w, r7, v1
+texldd r7, r2.zwzw, s0, r3.zwzw, r8
+pow_pp r8, r4.w, c5.x
+mul_pp r5, r0, r5
+mad_pp r5.xyz, -r7, r4, r5
+dp3_pp_sat r6.w, v2, r6
+mul_pp r7.xyz, r7, r4
+texld r4.w, v3, s5
+add_pp r3.z, r6.w, c11.y
+mul r4.xyz, r4.w, c2
+frc_pp r2.w, r3.z
+mov_pp r2.z, r8.x
+mul r4.xyz, r4, c3
+mul r4.xyz, r4, r2.z
+add_pp_sat r2.z, r3, -r2.w
+mul r4.xyz, r2.z, r4
+mov r2.w, c8.x
+mul_pp r2.z, r6.w, c2.w
+mul_pp r2.z, r4.w, r2
+mul_pp_sat r2.z, r2, c16.x
+add r6.xyz, c2, r2.w
+mad_sat r6.xyz, r6, r2.z, c0
+mul r4.xyz, r7.w, r4
+add_pp r4.xyz, r6, r4
+texld r2, r2, s3
+mad_pp r7.xyz, r5.w, r5, r7
+texld r3, r3, s3
+add_pp r5, r2, -r3
+mad_pp r3, r1.z, r5, r3
+texld r5, r1, s3
+add_pp r1.x, r6.w, c15.z
+mul_pp r2.w, r1.x, c2
+mul r6.xyz, r4, c9.x
+add_pp r5, r5, -r3
+mad_pp r1, r1.w, r5, r3
+mul_pp r0, r0, r1
+mad_pp r2.xyz, r7, c4, r6
+mul_pp r2.w, r2, r4
+mul_pp_sat r1.x, r2.w, c15.w
+add_pp r1.w, -r1.x, c11.y
+mad_pp r0.xyz, -r2, r4, r0
+mul_pp r1.xyz, r2, r4
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
+mov_pp oC0.w, c11.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightShadowData]
+Vector 3 [_LightColor0]
+Vector 4 [_SpecColor]
+Vector 5 [_Color]
+Float 6 [_Shininess]
+Float 7 [_DetailScale]
+Float 8 [_DetailDist]
+Float 9 [_MinLight]
+Float 10 [_Albedo]
+Float 11 [_CityOverlayDetailScale]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_CityOverlayTex] 2D
+SetTexture 3 [_CityDarkOverlayDetailTex] 2D
+SetTexture 4 [_CityLightOverlayDetailTex] 2D
+SetTexture 5 [_LightTexture0] 2D
+SetTexture 6 [_LightTextureB0] 2D
+SetTexture 7 [_ShadowMapTexture] 2D
+"ps_3_0
+; 140 ALU, 18 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+dcl_2d s5
+dcl_2d s6
+dcl_2d s7
+def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c17, 4.00000000, 0, 0, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3
+dcl_texcoord4 v4
+dcl_texcoord5 v5.xyz
+mul r0.xy, v5, c7.x
+mul r1.xy, v5.zyzw, c7.x
+abs r2.w, v5.z
+texld r1.xyz, r1, s1
+texld r0.xyz, r0, s1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v5.xyxy
+max r0.w, r1.z, r2
+mad_pp r2.xyz, r1.z, r2, r0
+mul r1.xy, v5.zxzw, c7.x
+texld r0.xyz, r1, s1
+add_pp r0.xyz, r0, -r2
+mad_pp r0.xyz, r1.w, r0, r2
+mul r2.xy, v5.zyzw, c11.x
+min r1.x, r1.z, r2.w
+rcp r0.w, r0.w
+mul r2.z, r1.x, r0.w
+mul r3.z, r2, r2
+mad r1.x, r3.z, c14.y, c14.z
+mad r1.x, r1, r3.z, c14.w
+mad r1.x, r1, r3.z, c15
+mad r3.w, r1.x, r3.z, c15.y
+mad r3.z, r3.w, r3, c15
+mul r2.z, r3, r2
+mul r0.w, v0.x, c8.x
+abs r3.z, v5.y
+mul r1.xy, v5.zxzw, c11.x
+add_pp r4.xyz, -r0, c12.y
+mul_sat r0.w, r0, c13.z
+mad_pp r4.xyz, r0.w, r4, r0
+mul r3.xy, v5, c11.x
+texld r0, r3, s4
+texld r5, r2, s4
+add_pp r5, r5, -r0
+mad_pp r0, r1.z, r5, r0
+texld r5, r1, s4
+add_pp r5, r5, -r0
+mad_pp r5, r1.w, r5, r0
+add r0.w, -r3.z, c12.y
+rsq r0.w, r0.w
+add r0.y, r1.z, -r2.w
+add r0.x, -r2.z, c15.w
+cmp r0.z, -r0.y, r2, r0.x
+add r0.y, -r0.z, c13.w
+cmp r0.y, v5.z, r0.z, r0
+cmp r0.y, v5.x, r0, -r0
+mad r2.z, r0.y, c16.x, c16.y
+mad r0.y, r2.w, c12.z, c12.w
+mad r0.y, r2.w, r0, c13.x
+dp4 r0.x, c1, c1
+rsq r0.x, r0.x
+mul r6.xyz, r0.x, c1
+dp3_pp r0.x, v2, -r6
+mul_pp r7.xyz, v2, r0.x
+mad_pp r7.xyz, -r7, c13.z, -r6
+add r0.x, -r2.w, c12.y
+mad r0.y, r2.w, r0, c13
+mad r2.w, r3.z, c12.z, c12
+mad r2.w, r2, r3.z, c13.x
+mad r2.w, r2, r3.z, c13.y
+rcp r0.w, r0.w
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r0.y, r0, r0.x
+cmp r0.x, v5.z, c12, c12.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c13.z, r0
+mad r0.x, r0, c13.w, r0.y
+mul r0.x, r0, c14
+mul r2.w, r2, r0
+cmp r3.z, v5.y, c12.x, c12.y
+mul r0.w, r3.z, r2
+mad r0.z, -r0.w, c13, r2.w
+mad r0.y, r3.z, c13.w, r0.z
+dsy r0.zw, v5.xyxy
+mul r2.w, r0.y, c14.x
+dsx r3.w, r0.x
+dsy r8.y, r0.x
+dsx r0.xy, v5
+mul r0.xy, r0, r0
+add r0.y, r0.x, r0
+mul r0.zw, r0, r0
+add r0.x, r0.z, r0.w
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r3.z, r0.y, c16.x
+mul r8.x, r0, c16
+texldd r0, r2.zwzw, s2, r3.zwzw, r8
+dp3_pp_sat r4.w, r7, v1
+texldd r7, r2.zwzw, s0, r3.zwzw, r8
+pow_pp r8, r4.w, c6.x
+mul_pp r5, r0, r5
+mad_pp r5.xyz, -r7, r4, r5
+mul_pp r7.xyz, r7, r4
+dp3_pp_sat r4.w, v2, r6
+rcp r3.w, v3.w
+mad r6.xy, v3, r3.w, c16.y
+mov_pp r2.z, r8.x
+texldp r4.x, v4, s7
+rcp r2.w, v4.w
+mad r3.z, -v4, r2.w, r4.x
+mov r2.w, c2.x
+cmp r3.z, r3, c12.y, r2.w
+dp3 r4.x, v3, v3
+texld r2.w, r6, s5
+cmp r3.w, -v3.z, c12.x, c12.y
+texld r4.x, r4.x, s6
+mul_pp r2.w, r3, r2
+mul_pp r2.w, r2, r4.x
+mul_pp r6.w, r2, r3.z
+add_pp r3.z, r4.w, c12.y
+mul r4.xyz, r6.w, c3
+mul r4.xyz, r4, c4
+frc_pp r2.w, r3.z
+mul r4.xyz, r4, r2.z
+add_pp_sat r2.z, r3, -r2.w
+mul r4.xyz, r2.z, r4
+mov r2.w, c9.x
+mul_pp r2.z, r4.w, c3.w
+mul_pp r2.z, r6.w, r2
+mul_pp_sat r2.z, r2, c17.x
+add r6.xyz, c3, r2.w
+mad_sat r6.xyz, r6, r2.z, c0
+mul r4.xyz, r7.w, r4
+add_pp r4.xyz, r6, r4
+texld r2, r2, s3
+mad_pp r7.xyz, r5.w, r5, r7
+texld r3, r3, s3
+add_pp r5, r2, -r3
+mad_pp r3, r1.z, r5, r3
+texld r5, r1, s3
+add_pp r1.x, r4.w, c16.z
+mul_pp r2.w, r1.x, c3
+mul r6.xyz, r4, c10.x
+add_pp r5, r5, -r3
+mad_pp r1, r1.w, r5, r3
+mul_pp r0, r0, r1
+mad_pp r2.xyz, r7, c5, r6
+mul_pp r2.w, r2, r6
+mul_pp_sat r1.x, r2.w, c16.w
+add_pp r1.w, -r1.x, c12.y
+mad_pp r0.xyz, -r2, r4, r0
+mul_pp r1.xyz, r2, r4
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
+mov_pp oC0.w, c12.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightShadowData]
+Vector 3 [_LightColor0]
+Vector 4 [_SpecColor]
+Vector 5 [_Color]
+Float 6 [_Shininess]
+Float 7 [_DetailScale]
+Float 8 [_DetailDist]
+Float 9 [_MinLight]
+Float 10 [_Albedo]
+Float 11 [_CityOverlayDetailScale]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_CityOverlayTex] 2D
+SetTexture 3 [_CityDarkOverlayDetailTex] 2D
+SetTexture 4 [_CityLightOverlayDetailTex] 2D
+SetTexture 5 [_LightTexture0] 2D
+SetTexture 6 [_LightTextureB0] 2D
+SetTexture 7 [_ShadowMapTexture] 2D
+"ps_3_0
+; 139 ALU, 18 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+dcl_2d s5
+dcl_2d s6
+dcl_2d s7
+def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c17, 4.00000000, 0, 0, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3
+dcl_texcoord4 v4
+dcl_texcoord5 v5.xyz
+mul r0.xy, v5, c7.x
+mul r1.xy, v5.zyzw, c7.x
+abs r2.w, v5.z
+texld r1.xyz, r1, s1
+texld r0.xyz, r0, s1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v5.xyxy
+max r0.w, r1.z, r2
+mad_pp r2.xyz, r1.z, r2, r0
+mul r1.xy, v5.zxzw, c7.x
+texld r0.xyz, r1, s1
+add_pp r0.xyz, r0, -r2
+mad_pp r0.xyz, r1.w, r0, r2
+mul r2.xy, v5.zyzw, c11.x
+min r1.x, r1.z, r2.w
+rcp r0.w, r0.w
+mul r2.z, r1.x, r0.w
+mul r3.z, r2, r2
+mad r1.x, r3.z, c14.y, c14.z
+mad r1.x, r1, r3.z, c14.w
+mad r1.x, r1, r3.z, c15
+mad r3.w, r1.x, r3.z, c15.y
+mad r3.z, r3.w, r3, c15
+mul r2.z, r3, r2
+mul r0.w, v0.x, c8.x
+abs r3.z, v5.y
+mul r1.xy, v5.zxzw, c11.x
+add_pp r4.xyz, -r0, c12.y
+mul_sat r0.w, r0, c13.z
+mad_pp r4.xyz, r0.w, r4, r0
+mul r3.xy, v5, c11.x
+texld r0, r3, s4
+texld r5, r2, s4
+add_pp r5, r5, -r0
+mad_pp r0, r1.z, r5, r0
+texld r5, r1, s4
+add_pp r5, r5, -r0
+mad_pp r5, r1.w, r5, r0
+add r0.w, -r3.z, c12.y
+rsq r0.w, r0.w
+add r0.y, r1.z, -r2.w
+add r0.x, -r2.z, c15.w
+cmp r0.z, -r0.y, r2, r0.x
+add r0.y, -r0.z, c13.w
+cmp r0.y, v5.z, r0.z, r0
+cmp r0.y, v5.x, r0, -r0
+mad r2.z, r0.y, c16.x, c16.y
+mad r0.y, r2.w, c12.z, c12.w
+mad r0.y, r2.w, r0, c13.x
+dp4 r0.x, c1, c1
+rsq r0.x, r0.x
+mul r6.xyz, r0.x, c1
+dp3_pp r0.x, v2, -r6
+mul_pp r7.xyz, v2, r0.x
+mad_pp r7.xyz, -r7, c13.z, -r6
+add r0.x, -r2.w, c12.y
+mad r0.y, r2.w, r0, c13
+mad r2.w, r3.z, c12.z, c12
+mad r2.w, r2, r3.z, c13.x
+mad r2.w, r2, r3.z, c13.y
+rcp r0.w, r0.w
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r0.y, r0, r0.x
+cmp r0.x, v5.z, c12, c12.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c13.z, r0
+mad r0.x, r0, c13.w, r0.y
+mul r0.x, r0, c14
+mul r2.w, r2, r0
+cmp r3.z, v5.y, c12.x, c12.y
+mul r0.w, r3.z, r2
+mad r0.z, -r0.w, c13, r2.w
+mad r0.y, r3.z, c13.w, r0.z
+dsy r0.zw, v5.xyxy
+mul r2.w, r0.y, c14.x
+dsx r3.w, r0.x
+dsy r8.y, r0.x
+dsx r0.xy, v5
+mul r0.xy, r0, r0
+add r0.y, r0.x, r0
+mul r0.zw, r0, r0
+add r0.x, r0.z, r0.w
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r3.z, r0.y, c16.x
+mul r8.x, r0, c16
+texldd r0, r2.zwzw, s2, r3.zwzw, r8
+dp3_pp_sat r4.w, r7, v1
+texldd r7, r2.zwzw, s0, r3.zwzw, r8
+pow_pp r8, r4.w, c6.x
+mul_pp r5, r0, r5
+mad_pp r5.xyz, -r7, r4, r5
+mul_pp r7.xyz, r7, r4
+mov r2.w, c2.x
+dp3_pp_sat r4.w, v2, r6
+rcp r3.w, v3.w
+mad r6.xy, v3, r3.w, c16.y
+mov_pp r2.z, r8.x
+add r2.w, c12.y, -r2
+texldp r4.x, v4, s7
+mad r3.z, r4.x, r2.w, c2.x
+dp3 r4.x, v3, v3
+texld r2.w, r6, s5
+cmp r3.w, -v3.z, c12.x, c12.y
+texld r4.x, r4.x, s6
+mul_pp r2.w, r3, r2
+mul_pp r2.w, r2, r4.x
+mul_pp r6.w, r2, r3.z
+add_pp r3.z, r4.w, c12.y
+mul r4.xyz, r6.w, c3
+mul r4.xyz, r4, c4
+frc_pp r2.w, r3.z
+mul r4.xyz, r4, r2.z
+add_pp_sat r2.z, r3, -r2.w
+mul r4.xyz, r2.z, r4
+mov r2.w, c9.x
+mul_pp r2.z, r4.w, c3.w
+mul_pp r2.z, r6.w, r2
+mul_pp_sat r2.z, r2, c17.x
+add r6.xyz, c3, r2.w
+mad_sat r6.xyz, r6, r2.z, c0
+mul r4.xyz, r7.w, r4
+add_pp r4.xyz, r6, r4
+texld r2, r2, s3
+mad_pp r7.xyz, r5.w, r5, r7
+texld r3, r3, s3
+add_pp r5, r2, -r3
+mad_pp r3, r1.z, r5, r3
+texld r5, r1, s3
+add_pp r1.x, r4.w, c16.z
+mul_pp r2.w, r1.x, c3
+mul r6.xyz, r4, c10.x
+add_pp r5, r5, -r3
+mad_pp r1, r1.w, r5, r3
+mul_pp r0, r0, r1
+mad_pp r2.xyz, r7, c5, r6
+mul_pp r2.w, r2, r6
+mul_pp_sat r1.x, r2.w, c16.w
+add_pp r1.w, -r1.x, c12.y
+mad_pp r0.xyz, -r2, r4, r0
+mul_pp r1.xyz, r2, r4
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
+mov_pp oC0.w, c12.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_SCREEN" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_SCREEN" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightColor0]
+Vector 3 [_SpecColor]
+Vector 4 [_Color]
+Float 5 [_Shininess]
+Float 6 [_DetailScale]
+Float 7 [_DetailDist]
+Float 8 [_MinLight]
+Float 9 [_Albedo]
+Float 10 [_CityOverlayDetailScale]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_CityOverlayTex] 2D
+SetTexture 3 [_CityDarkOverlayDetailTex] 2D
+SetTexture 4 [_CityLightOverlayDetailTex] 2D
+SetTexture 5 [_ShadowMapTexture] 2D
+"ps_3_0
+; 129 ALU, 16 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+dcl_2d s5
+def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c15, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c16, 4.00000000, 0, 0, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3
+dcl_texcoord5 v4.xyz
+mul r0.xy, v4, c6.x
+mul r1.xy, v4.zyzw, c6.x
+abs r2.w, v4.z
+texld r1.xyz, r1, s1
+texld r0.xyz, r0, s1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v4.xyxy
+max r0.w, r1.z, r2
+mad_pp r2.xyz, r1.z, r2, r0
+mul r1.xy, v4.zxzw, c6.x
+texld r0.xyz, r1, s1
+add_pp r0.xyz, r0, -r2
+mad_pp r0.xyz, r1.w, r0, r2
+mul r2.xy, v4.zyzw, c10.x
+min r1.x, r1.z, r2.w
+rcp r0.w, r0.w
+mul r2.z, r1.x, r0.w
+mul r3.z, r2, r2
+mad r1.x, r3.z, c13.y, c13.z
+mad r1.x, r1, r3.z, c13.w
+mad r1.x, r1, r3.z, c14
+mad r3.w, r1.x, r3.z, c14.y
+mad r3.z, r3.w, r3, c14
+mul r2.z, r3, r2
+mul r0.w, v0.x, c7.x
+abs r3.z, v4.y
+mul r1.xy, v4.zxzw, c10.x
+add_pp r4.xyz, -r0, c11.y
+mul_sat r0.w, r0, c12.z
+mad_pp r4.xyz, r0.w, r4, r0
+mul r3.xy, v4, c10.x
+texld r0, r3, s4
+texld r5, r2, s4
+add_pp r5, r5, -r0
+mad_pp r0, r1.z, r5, r0
+texld r5, r1, s4
+add_pp r5, r5, -r0
+mad_pp r5, r1.w, r5, r0
+add r0.w, -r3.z, c11.y
+rsq r0.w, r0.w
+add r0.y, r1.z, -r2.w
+add r0.x, -r2.z, c14.w
+cmp r0.z, -r0.y, r2, r0.x
+add r0.y, -r0.z, c12.w
+cmp r0.y, v4.z, r0.z, r0
+cmp r0.y, v4.x, r0, -r0
+mad r2.z, r0.y, c15.x, c15.y
+mad r0.y, r2.w, c11.z, c11.w
+mad r0.y, r2.w, r0, c12.x
+dp4_pp r0.x, c1, c1
+rsq_pp r0.x, r0.x
+mul_pp r6.xyz, r0.x, c1
+dp3_pp r0.x, v2, -r6
+mul_pp r7.xyz, v2, r0.x
+mad_pp r7.xyz, -r7, c12.z, -r6
+add r0.x, -r2.w, c11.y
+mad r0.y, r2.w, r0, c12
+mad r2.w, r3.z, c11.z, c11
+mad r2.w, r2, r3.z, c12.x
+mad r2.w, r2, r3.z, c12.y
+rcp r0.w, r0.w
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r0.y, r0, r0.x
+cmp r0.x, v4.z, c11, c11.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c12.z, r0
+mad r0.x, r0, c12.w, r0.y
+mul r0.x, r0, c13
+mul r2.w, r2, r0
+cmp r3.z, v4.y, c11.x, c11.y
+mul r0.w, r3.z, r2
+mad r0.z, -r0.w, c12, r2.w
+mad r0.y, r3.z, c12.w, r0.z
+dsy r0.zw, v4.xyxy
+mul r2.w, r0.y, c13.x
+dsx r3.w, r0.x
+dsy r8.y, r0.x
+dsx r0.xy, v4
+mul r0.xy, r0, r0
+add r0.y, r0.x, r0
+mul r0.zw, r0, r0
+add r0.x, r0.z, r0.w
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r3.z, r0.y, c15.x
+mul r8.x, r0, c15
+texldd r0, r2.zwzw, s2, r3.zwzw, r8
+dp3_pp_sat r4.w, r7, v1
+texldd r7, r2.zwzw, s0, r3.zwzw, r8
+pow_pp r8, r4.w, c5.x
+mul_pp r5, r0, r5
+mad_pp r5.xyz, -r7, r4, r5
+dp3_pp_sat r4.w, v2, r6
+mul_pp r7.xyz, r7, r4
+add_pp r3.z, r4.w, c11.y
+mov_pp r2.z, r8.x
+texldp r8.x, v3, s5
+mul r4.xyz, r8.x, c2
+mul r4.xyz, r4, c3
+frc_pp r2.w, r3.z
+mul r4.xyz, r4, r2.z
+add_pp_sat r2.z, r3, -r2.w
+mul r4.xyz, r2.z, r4
+mov r2.w, c8.x
+mul_pp r2.z, r4.w, c2.w
+mul_pp r2.z, r8.x, r2
+mul_pp_sat r2.z, r2, c16.x
+add r6.xyz, c2, r2.w
+mad_sat r6.xyz, r6, r2.z, c0
+mul r4.xyz, r7.w, r4
+add_pp r4.xyz, r6, r4
+texld r2, r2, s3
+mad_pp r7.xyz, r5.w, r5, r7
+texld r3, r3, s3
+add_pp r5, r2, -r3
+mad_pp r3, r1.z, r5, r3
+texld r5, r1, s3
+add_pp r1.x, r4.w, c15.z
+mul_pp r2.w, r1.x, c2
+mul r6.xyz, r4, c9.x
+add_pp r5, r5, -r3
+mad_pp r1, r1.w, r5, r3
+mul_pp r0, r0, r1
+mad_pp r2.xyz, r7, c4, r6
+mul_pp r2.w, r2, r8.x
+mul_pp_sat r1.x, r2.w, c15.w
+add_pp r1.w, -r1.x, c11.y
+mad_pp r0.xyz, -r2, r4, r0
+mul_pp r1.xyz, r2, r4
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
+mov_pp oC0.w, c11.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_SCREEN" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_SCREEN" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL" "SHADOWS_SCREEN" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightColor0]
+Vector 3 [_SpecColor]
+Vector 4 [_Color]
+Float 5 [_Shininess]
+Float 6 [_DetailScale]
+Float 7 [_DetailDist]
+Float 8 [_MinLight]
+Float 9 [_Albedo]
+Float 10 [_CityOverlayDetailScale]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_CityOverlayTex] 2D
+SetTexture 3 [_CityDarkOverlayDetailTex] 2D
+SetTexture 4 [_CityLightOverlayDetailTex] 2D
+SetTexture 5 [_ShadowMapTexture] 2D
+SetTexture 6 [_LightTexture0] 2D
+"ps_3_0
+; 130 ALU, 17 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+dcl_2d s5
+dcl_2d s6
+def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c15, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c16, 4.00000000, 0, 0, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3.xy
+dcl_texcoord4 v4
+dcl_texcoord5 v5.xyz
+mul r0.xy, v5, c6.x
+mul r1.xy, v5.zyzw, c6.x
+abs r2.w, v5.z
+texld r1.xyz, r1, s1
+texld r0.xyz, r0, s1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v5.xyxy
+max r0.w, r1.z, r2
+mad_pp r2.xyz, r1.z, r2, r0
+mul r1.xy, v5.zxzw, c6.x
+texld r0.xyz, r1, s1
+add_pp r0.xyz, r0, -r2
+mad_pp r0.xyz, r1.w, r0, r2
+mul r2.xy, v5.zyzw, c10.x
+min r1.x, r1.z, r2.w
+rcp r0.w, r0.w
+mul r2.z, r1.x, r0.w
+mul r3.z, r2, r2
+mad r1.x, r3.z, c13.y, c13.z
+mad r1.x, r1, r3.z, c13.w
+mad r1.x, r1, r3.z, c14
+mad r3.w, r1.x, r3.z, c14.y
+mad r3.z, r3.w, r3, c14
+mul r2.z, r3, r2
+mul r0.w, v0.x, c7.x
+abs r3.z, v5.y
+mul r1.xy, v5.zxzw, c10.x
+add_pp r4.xyz, -r0, c11.y
+mul_sat r0.w, r0, c12.z
+mad_pp r4.xyz, r0.w, r4, r0
+mul r3.xy, v5, c10.x
+texld r0, r3, s4
+texld r5, r2, s4
+add_pp r5, r5, -r0
+mad_pp r0, r1.z, r5, r0
+texld r5, r1, s4
+add_pp r5, r5, -r0
+mad_pp r5, r1.w, r5, r0
+add r0.w, -r3.z, c11.y
+rsq r0.w, r0.w
+add r0.y, r1.z, -r2.w
+add r0.x, -r2.z, c14.w
+cmp r0.z, -r0.y, r2, r0.x
+add r0.y, -r0.z, c12.w
+cmp r0.y, v5.z, r0.z, r0
+cmp r0.y, v5.x, r0, -r0
+mad r2.z, r0.y, c15.x, c15.y
+mad r0.y, r2.w, c11.z, c11.w
+mad r0.y, r2.w, r0, c12.x
+dp4_pp r0.x, c1, c1
+rsq_pp r0.x, r0.x
+mul_pp r6.xyz, r0.x, c1
+dp3_pp r0.x, v2, -r6
+mul_pp r7.xyz, v2, r0.x
+mad_pp r7.xyz, -r7, c12.z, -r6
+add r0.x, -r2.w, c11.y
+mad r0.y, r2.w, r0, c12
+mad r2.w, r3.z, c11.z, c11
+mad r2.w, r2, r3.z, c12.x
+mad r2.w, r2, r3.z, c12.y
+rcp r0.w, r0.w
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r0.y, r0, r0.x
+cmp r0.x, v5.z, c11, c11.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c12.z, r0
+mad r0.x, r0, c12.w, r0.y
+mul r0.x, r0, c13
+mul r2.w, r2, r0
+cmp r3.z, v5.y, c11.x, c11.y
+mul r0.w, r3.z, r2
+mad r0.z, -r0.w, c12, r2.w
+mad r0.y, r3.z, c12.w, r0.z
+dsy r0.zw, v5.xyxy
+mul r2.w, r0.y, c13.x
+dsx r3.w, r0.x
+dsy r8.y, r0.x
+dsx r0.xy, v5
+mul r0.xy, r0, r0
+add r0.y, r0.x, r0
+mul r0.zw, r0, r0
+add r0.x, r0.z, r0.w
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r3.z, r0.y, c15.x
+mul r8.x, r0, c15
+texldd r0, r2.zwzw, s2, r3.zwzw, r8
+dp3_pp_sat r4.w, r7, v1
+texldd r7, r2.zwzw, s0, r3.zwzw, r8
+mul_pp r5, r0, r5
+mad_pp r5.xyz, -r7, r4, r5
+mul_pp r7.xyz, r7, r4
+dp3_pp_sat r6.w, v2, r6
+pow_pp r8, r4.w, c5.x
+add_pp r3.z, r6.w, c11.y
+mov_pp r2.z, r8.x
+texldp r4.x, v4, s5
+texld r2.w, v3, s6
+mul r4.w, r2, r4.x
+mul r4.xyz, r4.w, c2
+mul r4.xyz, r4, c3
+frc_pp r2.w, r3.z
+mul r4.xyz, r4, r2.z
+add_pp_sat r2.z, r3, -r2.w
+mul r4.xyz, r2.z, r4
+mov r2.w, c8.x
+mul_pp r2.z, r6.w, c2.w
+mul_pp r2.z, r4.w, r2
+mul_pp_sat r2.z, r2, c16.x
+add r6.xyz, c2, r2.w
+mad_sat r6.xyz, r6, r2.z, c0
+mul r4.xyz, r7.w, r4
+add_pp r4.xyz, r6, r4
+texld r2, r2, s3
+mad_pp r7.xyz, r5.w, r5, r7
+texld r3, r3, s3
+add_pp r5, r2, -r3
+mad_pp r3, r1.z, r5, r3
+texld r5, r1, s3
+add_pp r1.x, r6.w, c15.z
+mul_pp r2.w, r1.x, c2
+mul r6.xyz, r4, c9.x
+add_pp r5, r5, -r3
+mad_pp r1, r1.w, r5, r3
+mul_pp r0, r0, r1
+mad_pp r2.xyz, r7, c4, r6
+mul_pp r2.w, r2, r4
+mul_pp_sat r1.x, r2.w, c15.w
+add_pp r1.w, -r1.x, c11.y
+mad_pp r0.xyz, -r2, r4, r0
+mul_pp r1.xyz, r2, r4
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
+mov_pp oC0.w, c11.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightPositionRange]
+Vector 3 [_LightShadowData]
+Vector 4 [_LightColor0]
+Vector 5 [_SpecColor]
+Vector 6 [_Color]
+Float 7 [_Shininess]
+Float 8 [_DetailScale]
+Float 9 [_DetailDist]
+Float 10 [_MinLight]
+Float 11 [_Albedo]
+Float 12 [_CityOverlayDetailScale]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_CityOverlayTex] 2D
+SetTexture 3 [_CityDarkOverlayDetailTex] 2D
+SetTexture 4 [_CityLightOverlayDetailTex] 2D
+SetTexture 5 [_ShadowMapTexture] CUBE
+SetTexture 6 [_LightTexture0] 2D
+"ps_3_0
+; 139 ALU, 17 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+dcl_cube s5
+dcl_2d s6
+def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c17, 0.15915494, 0.50000000, -0.01000214, 0.97000003
+def c18, 1.00000000, 0.00392157, 0.00001538, 0.00000001
+def c19, 4.03944778, 4.00000000, 0, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3.xyz
+dcl_texcoord4 v4.xyz
+dcl_texcoord5 v5.xyz
+mul r0.xy, v5, c8.x
+mul r1.xy, v5.zyzw, c8.x
+mul r1.w, v0.x, c9.x
+abs r6.zw, v5.xyxy
+abs r2.x, v5.z
+texld r0.xyz, r0, s1
+texld r1.xyz, r1, s1
+add_pp r1.xyz, r1, -r0
+mad_pp r1.xyz, r6.z, r1, r0
+mul r0.xy, v5.zxzw, c8.x
+texld r0.xyz, r0, s1
+add_pp r3.xyz, r0, -r1
+max r0.w, r6.z, r2.x
+rcp r0.y, r0.w
+min r0.x, r6.z, r2
+mul r2.y, r0.x, r0
+mul r2.z, r2.y, r2.y
+mad_pp r0.xyz, r6.w, r3, r1
+mad r0.w, r2.z, c15.y, c15.z
+mad r0.w, r0, r2.z, c15
+mad r2.w, r0, r2.z, c16.x
+mad r2.w, r2, r2.z, c16.y
+add_pp r1.xyz, -r0, c13.y
+mul_sat r1.w, r1, c14.z
+mad_pp r5.xyz, r1.w, r1, r0
+mul r8.xy, v5, c12.x
+mul r7.xy, v5.zyzw, c12.x
+texld r1, r8, s4
+texld r0, r7, s4
+add_pp r0, r0, -r1
+mad_pp r1, r6.z, r0, r1
+mad r0.x, r2.w, r2.z, c16.z
+mul r2.z, r0.x, r2.y
+mul r6.xy, v5.zxzw, c12.x
+texld r0, r6, s4
+add_pp r0, r0, -r1
+mad_pp r0, r6.w, r0, r1
+dp4 r1.y, c1, c1
+rsq r1.y, r1.y
+mul r3.xyz, r1.y, c1
+add r1.y, -r2.x, c13
+rsq r1.y, r1.y
+abs r1.w, v5.y
+add r2.w, -r2.z, c16
+add r2.y, r6.z, -r2.x
+cmp r2.y, -r2, r2.z, r2.w
+add r1.x, -r2.y, c14.w
+cmp r1.x, v5.z, r2.y, r1
+cmp r1.x, v5, r1, -r1
+mad r9.x, r1, c17, c17.y
+mad r1.x, r2, c13.z, c13.w
+mad r1.x, r2, r1, c14
+mad r1.x, r2, r1, c14.y
+add r2.z, -r1.w, c13.y
+mad r2.x, r1.w, c13.z, c13.w
+mad r2.x, r2, r1.w, c14
+rcp r1.y, r1.y
+mul r1.y, r1.x, r1
+cmp r1.x, v5.z, c13, c13.y
+mul r1.z, r1.x, r1.y
+mad r1.z, -r1, c14, r1.y
+rsq r2.z, r2.z
+mad r1.w, r2.x, r1, c14.y
+rcp r2.z, r2.z
+mul r2.x, r1.w, r2.z
+cmp r1.w, v5.y, c13.x, c13.y
+mul r2.z, r1.w, r2.x
+mad r1.y, -r2.z, c14.z, r2.x
+mad r1.z, r1.x, c14.w, r1
+mad r1.x, r1.w, c14.w, r1.y
+mul r1.y, r1.z, c15.x
+dp3_pp r2.y, v2, -r3
+dsy r1.zw, v5.xyxy
+mul_pp r2.xyz, v2, r2.y
+mad_pp r2.xyz, -r2, c14.z, -r3
+dp3_pp_sat r3.w, r2, v1
+pow_pp r2, r3.w, c7.x
+mov_pp r3.w, r2.x
+texld r2, v4, s5
+mul r9.y, r1.x, c15.x
+dsx r8.w, r1.y
+dsy r7.w, r1.y
+dsx r1.xy, v5
+mul r1.xy, r1, r1
+add r1.x, r1, r1.y
+mul r1.zw, r1, r1
+add r1.y, r1.z, r1.w
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r7.z, r1.y, c17.x
+mul r8.z, r1.x, c17.x
+texldd r1, r9, s2, r8.zwzw, r7.zwzw
+mul_pp r4, r1, r0
+texldd r0, r9, s0, r8.zwzw, r7.zwzw
+mad_pp r4.xyz, -r0, r5, r4
+mul_pp r5.xyz, r0, r5
+dp3 r0.x, v4, v4
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+dp4 r0.y, r2, c18
+dp3_pp_sat r7.z, v2, r3
+mul r0.x, r0, c2.w
+mad r0.y, -r0.x, c17.w, r0
+mov r0.z, c3.x
+add_pp r2.x, r7.z, c13.y
+frc_pp r2.y, r2.x
+dp3 r0.x, v3, v3
+mad_pp r4.xyz, r4.w, r4, r5
+cmp r0.y, r0, c13, r0.z
+texld r0.x, r0.x, s6
+mul r5.w, r0.x, r0.y
+mul r0.xyz, r5.w, c4
+mul r0.xyz, r0, c5
+mul r0.xyz, r0, r3.w
+add_pp_sat r2.x, r2, -r2.y
+mul r0.xyz, r2.x, r0
+mul r2.xyz, r0.w, r0
+mul_pp r2.w, r7.z, c4
+mul_pp r0.y, r5.w, r2.w
+mul_pp_sat r0.w, r0.y, c19.y
+mov r0.x, c10
+add r0.xyz, c4, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+add_pp r0.xyz, r0, r2
+mul r5.xyz, r0, c11.x
+add_pp r0.w, r7.z, c17.z
+mul_pp r0.w, r0, c4
+mul_pp r0.w, r0, r5
+mul_pp_sat r0.w, r0, c19.x
+texld r2, r8, s3
+texld r3, r7, s3
+add_pp r3, r3, -r2
+mad_pp r2, r6.z, r3, r2
+texld r3, r6, s3
+add_pp r3, r3, -r2
+mad_pp r2, r6.w, r3, r2
+mul_pp r1, r1, r2
+mad_pp r4.xyz, r4, c6, r5
+mad_pp r1.xyz, -r4, r0, r1
+mul_pp r2.xyz, r4, r0
+add_pp r0.w, -r0, c13.y
+mul_pp r0.x, r1.w, r0.w
+mad_pp oC0.xyz, r0.x, r1, r2
+mov_pp oC0.w, c13.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightPositionRange]
+Vector 3 [_LightShadowData]
+Vector 4 [_LightColor0]
+Vector 5 [_SpecColor]
+Vector 6 [_Color]
+Float 7 [_Shininess]
+Float 8 [_DetailScale]
+Float 9 [_DetailDist]
+Float 10 [_MinLight]
+Float 11 [_Albedo]
+Float 12 [_CityOverlayDetailScale]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_CityOverlayTex] 2D
+SetTexture 3 [_CityDarkOverlayDetailTex] 2D
+SetTexture 4 [_CityLightOverlayDetailTex] 2D
+SetTexture 5 [_ShadowMapTexture] CUBE
+SetTexture 6 [_LightTextureB0] 2D
+SetTexture 7 [_LightTexture0] CUBE
+"ps_3_0
+; 140 ALU, 18 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+dcl_cube s5
+dcl_2d s6
+dcl_cube s7
+def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c17, 0.15915494, 0.50000000, -0.01000214, 0.97000003
+def c18, 1.00000000, 0.00392157, 0.00001538, 0.00000001
+def c19, 4.03944778, 4.00000000, 0, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3.xyz
+dcl_texcoord4 v4.xyz
+dcl_texcoord5 v5.xyz
+mul r0.xy, v5, c8.x
+mul r1.xy, v5.zyzw, c8.x
+abs r2.w, v5.z
+texld r1.xyz, r1, s1
+texld r0.xyz, r0, s1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v5.xyxy
+max r0.w, r1.z, r2
+mad_pp r2.xyz, r1.z, r2, r0
+mul r1.xy, v5.zxzw, c8.x
+texld r0.xyz, r1, s1
+add_pp r0.xyz, r0, -r2
+mad_pp r0.xyz, r1.w, r0, r2
+mul r2.xy, v5.zyzw, c12.x
+min r1.x, r1.z, r2.w
+rcp r0.w, r0.w
+mul r2.z, r1.x, r0.w
+mul r3.z, r2, r2
+mad r1.x, r3.z, c15.y, c15.z
+mad r1.x, r1, r3.z, c15.w
+mad r1.x, r1, r3.z, c16
+mad r3.w, r1.x, r3.z, c16.y
+mad r3.z, r3.w, r3, c16
+mul r2.z, r3, r2
+mul r0.w, v0.x, c9.x
+abs r3.z, v5.y
+mul r1.xy, v5.zxzw, c12.x
+add_pp r4.xyz, -r0, c13.y
+mul_sat r0.w, r0, c14.z
+mad_pp r4.xyz, r0.w, r4, r0
+mul r3.xy, v5, c12.x
+texld r0, r3, s4
+texld r5, r2, s4
+add_pp r5, r5, -r0
+mad_pp r0, r1.z, r5, r0
+texld r5, r1, s4
+add_pp r5, r5, -r0
+mad_pp r6, r1.w, r5, r0
+add r0.w, -r3.z, c13.y
+rsq r0.w, r0.w
+add r0.y, r1.z, -r2.w
+add r0.x, -r2.z, c16.w
+cmp r0.z, -r0.y, r2, r0.x
+add r0.y, -r0.z, c14.w
+cmp r0.y, v5.z, r0.z, r0
+cmp r0.y, v5.x, r0, -r0
+mad r2.z, r0.y, c17.x, c17.y
+mad r0.y, r2.w, c13.z, c13.w
+mad r0.y, r2.w, r0, c14.x
+dp4 r0.x, c1, c1
+rsq r0.x, r0.x
+mul r5.xyz, r0.x, c1
+dp3_pp r0.x, v2, -r5
+mul_pp r7.xyz, v2, r0.x
+mad_pp r7.xyz, -r7, c14.z, -r5
+add r0.x, -r2.w, c13.y
+mad r0.y, r2.w, r0, c14
+mad r2.w, r3.z, c13.z, c13
+mad r2.w, r2, r3.z, c14.x
+mad r2.w, r2, r3.z, c14.y
+rcp r0.w, r0.w
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r0.y, r0, r0.x
+cmp r0.x, v5.z, c13, c13.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c14.z, r0
+mad r0.x, r0, c14.w, r0.y
+mul r0.x, r0, c15
+mul r2.w, r2, r0
+cmp r3.z, v5.y, c13.x, c13.y
+mul r0.w, r3.z, r2
+mad r0.z, -r0.w, c14, r2.w
+mad r0.y, r3.z, c14.w, r0.z
+dsy r0.zw, v5.xyxy
+mul r2.w, r0.y, c15.x
+dsx r3.w, r0.x
+dsy r8.y, r0.x
+dsx r0.xy, v5
+mul r0.xy, r0, r0
+add r0.y, r0.x, r0
+mul r0.zw, r0, r0
+add r0.x, r0.z, r0.w
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r3.z, r0.y, c17.x
+mul r8.x, r0, c17
+texldd r0, r2.zwzw, s2, r3.zwzw, r8
+dp3_pp_sat r4.w, r7, v1
+texldd r7, r2.zwzw, s0, r3.zwzw, r8
+mul_pp r6, r0, r6
+mad_pp r6.xyz, -r7, r4, r6
+mul_pp r4.xyz, r7, r4
+pow_pp r8, r4.w, c7.x
+mov_pp r2.z, r8.x
+texld r8, v4, s5
+dp4 r3.z, r8, c18
+dp3 r2.w, v4, v4
+rsq r2.w, r2.w
+rcp r3.w, r2.w
+mul r3.w, r3, c2
+dp3 r7.x, v3, v3
+dp3_pp_sat r8.x, v2, r5
+mov r2.w, c3.x
+mad r3.z, -r3.w, c17.w, r3
+cmp r3.z, r3, c13.y, r2.w
+texld r7.x, r7.x, s6
+texld r2.w, v3, s7
+mul r2.w, r7.x, r2
+mul r5.w, r2, r3.z
+add_pp r2.w, r8.x, c13.y
+mul r5.xyz, r5.w, c4
+mul r5.xyz, r5, c5
+frc_pp r3.z, r2.w
+mul r5.xyz, r5, r2.z
+add_pp_sat r2.z, r2.w, -r3
+mul r5.xyz, r2.z, r5
+mov r2.w, c10.x
+mul_pp r2.z, r8.x, c4.w
+mul_pp r2.z, r5.w, r2
+mul_pp_sat r2.z, r2, c19.y
+add r7.xyz, c4, r2.w
+mad_sat r7.xyz, r7, r2.z, c0
+mul r5.xyz, r7.w, r5
+add_pp r5.xyz, r7, r5
+mad_pp r7.xyz, r6.w, r6, r4
+texld r2, r2, s3
+texld r3, r3, s3
+add_pp r4, r2, -r3
+mad_pp r3, r1.z, r4, r3
+texld r4, r1, s3
+add_pp r1.x, r8, c17.z
+mul_pp r2.w, r1.x, c4
+mul r6.xyz, r5, c11.x
+add_pp r4, r4, -r3
+mad_pp r1, r1.w, r4, r3
+mul_pp r0, r0, r1
+mad_pp r2.xyz, r7, c6, r6
+mul_pp r2.w, r2, r5
+mul_pp_sat r1.x, r2.w, c19
+add_pp r1.w, -r1.x, c13.y
+mad_pp r0.xyz, -r2, r5, r0
+mul_pp r1.xyz, r2, r5
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
+mov_pp oC0.w, c13.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightShadowData]
+Vector 3 [_ShadowOffsets0]
+Vector 4 [_ShadowOffsets1]
+Vector 5 [_ShadowOffsets2]
+Vector 6 [_ShadowOffsets3]
+Vector 7 [_LightColor0]
+Vector 8 [_SpecColor]
+Vector 9 [_Color]
+Float 10 [_Shininess]
+Float 11 [_DetailScale]
+Float 12 [_DetailDist]
+Float 13 [_MinLight]
+Float 14 [_Albedo]
+Float 15 [_CityOverlayDetailScale]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_CityOverlayTex] 2D
+SetTexture 3 [_CityDarkOverlayDetailTex] 2D
+SetTexture 4 [_CityLightOverlayDetailTex] 2D
+SetTexture 5 [_LightTexture0] 2D
+SetTexture 6 [_LightTextureB0] 2D
+SetTexture 7 [_ShadowMapTexture] 2D
+"ps_3_0
+; 148 ALU, 21 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+dcl_2d s5
+dcl_2d s6
+dcl_2d s7
+def c16, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c17, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c18, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c19, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c20, 0.15915494, 0.50000000, -0.01000214, 0.25000000
+def c21, 4.03944778, 4.00000000, 0, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3
+dcl_texcoord4 v4
+dcl_texcoord5 v5.xyz
+mul r0.xy, v5, c11.x
+mul r1.xy, v5.zyzw, c11.x
+mul r2.y, v0.x, c12.x
+abs r5.zw, v5.xyxy
+abs r0.w, v5.z
+texld r0.xyz, r0, s1
+texld r1.xyz, r1, s1
+add_pp r1.xyz, r1, -r0
+mad_pp r1.xyz, r5.z, r1, r0
+max r1.w, r5.z, r0
+rcp r0.y, r1.w
+min r0.x, r5.z, r0.w
+mul r3.x, r0, r0.y
+mul r1.w, r3.x, r3.x
+mad r2.x, r1.w, c18.y, c18.z
+mad r2.x, r2, r1.w, c18.w
+mad r2.x, r2, r1.w, c19
+mad r2.x, r2, r1.w, c19.y
+mad r3.y, r2.x, r1.w, c19.z
+mul r0.xy, v5.zxzw, c11.x
+texld r0.xyz, r0, s1
+add_pp r0.xyz, r0, -r1
+mad_pp r0.xyz, r5.w, r0, r1
+add_pp r1.xyz, -r0, c16.y
+mul_sat r2.y, r2, c17.z
+mad_pp r0.xyz, r2.y, r1, r0
+mul r7.xy, v5, c15.x
+mul r6.xy, v5.zyzw, c15.x
+mul r3.x, r3.y, r3
 texld r2, r7, s4
-texld r1, r0, s4
-add_pp r1, r1, -r2
-mad_pp r2, r6.z, r1, r2
-add r1.x, -r0.w, c12.w
-cmp r0.w, v4.z, r0, r1.x
-mul r6.xy, v4.zxzw, c10.x
-cmp r0.w, v4.x, r0, -r0
-mad r3.z, r0.w, c15.x, c15.y
-mad r0.w, r0.z, c11.z, c11
 texld r1, r6, s4
 add_pp r1, r1, -r2
-mad_pp r2, r6.w, r1, r2
+mad_pp r2, r5.z, r1, r2
+add r1.y, -r3.x, c19.w
+add r1.x, r5.z, -r0.w
+cmp r4.x, -r1, r3, r1.y
+mul r5.xy, v5.zxzw, c15.x
+texld r1, r5, s4
+add_pp r1, r1, -r2
+mad_pp r3, r5.w, r1, r2
+add r4.y, -r4.x, c17.w
+cmp r1.x, v5.z, r4, r4.y
+cmp r1.x, v5, r1, -r1
+mad r6.z, r1.x, c20.x, c20.y
+mad r1.x, r0.w, c16.z, c16.w
+dp4 r1.y, c1, c1
+rsq r1.y, r1.y
+mul r2.xyz, r1.y, c1
+add r1.y, -r0.w, c16
+mad r1.x, r0.w, r1, c17
+mad r0.w, r0, r1.x, c17.y
+abs r1.x, v5.y
+add r1.z, -r1.x, c16.y
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r1.w, r0, r1.y
+cmp r0.w, v5.z, c16.x, c16.y
+mul r2.w, r0, r1
+mad r1.y, r1.x, c16.z, c16.w
+mad r1.y, r1, r1.x, c17.x
+rsq r1.z, r1.z
+mad r1.x, r1.y, r1, c17.y
+rcp r1.z, r1.z
+mul r1.y, r1.x, r1.z
+cmp r1.x, v5.y, c16, c16.y
+mul r1.z, r1.x, r1.y
+mad r1.w, -r2, c17.z, r1
+mad r1.y, -r1.z, c17.z, r1
+mad r1.z, r0.w, c17.w, r1.w
+mad r0.w, r1.x, c17, r1.y
+mul r1.x, r1.z, c18
+dsy r1.zw, v5.xyxy
+mul r6.w, r0, c18.x
+dsx r4.w, r1.x
+dsy r4.y, r1.x
+dsx r1.xy, v5
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
+mul r1.zw, r1, r1
+add r1.x, r1.z, r1.w
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r4.z, r0.w, c20.x
+dp3_pp r0.w, v2, -r2
+mul_pp r8.xyz, v2, r0.w
+mad_pp r8.xyz, -r8, c17.z, -r2
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+mul r4.x, r1, c20
+texldd r1, r6.zwzw, s2, r4.zwzw, r4
+texldd r4, r6.zwzw, s0, r4.zwzw, r4
+mul_pp r3, r1, r3
+mad_pp r3.xyz, -r4, r0, r3
+mul_pp r4.xyz, r4, r0
+dp3_pp_sat r2.w, r8, v1
+rcp r6.z, v4.w
+pow_pp r0, r2.w, c10.x
+mad_pp r4.xyz, r3.w, r3, r4
+mad r8.xy, v4, r6.z, c6
+mov_pp r2.w, r0.x
+texld r0.x, r8, s7
+mad r8.xy, v4, r6.z, c5
+mov r0.w, r0.x
+texld r0.x, r8, s7
+mad r8.xy, v4, r6.z, c4
+mov r0.z, r0.x
+texld r0.x, r8, s7
+mad r8.xy, v4, r6.z, c3
+mov r0.y, r0.x
+texld r0.x, r8, s7
+mad r0, -v4.z, r6.z, r0
+rcp r6.z, v3.w
+mad r8.xy, v3, r6.z, c20.y
+dp3_pp_sat r6.z, v2, r2
+add_pp r2.x, r6.z, c16.y
+frc_pp r2.y, r2.x
+mov r6.w, c2.x
+cmp r0, r0, c16.y, r6.w
+dp4_pp r0.y, r0, c20.w
+dp3 r0.x, v3, v3
+texld r0.w, r8, s5
+cmp r0.z, -v3, c16.x, c16.y
+mul_pp r0.z, r0, r0.w
+texld r0.x, r0.x, s6
+mul_pp r0.x, r0.z, r0
+mul_pp r0.w, r0.x, r0.y
+mul r0.xyz, r0.w, c7
+mul r0.xyz, r0, c8
+mul r0.xyz, r0, r2.w
+add_pp_sat r2.x, r2, -r2.y
+mul r0.xyz, r2.x, r0
+mul r2.xyz, r4.w, r0
+mul_pp r2.w, r6.z, c7
+mul_pp r0.y, r0.w, r2.w
+add_pp r4.w, r6.z, c20.z
+mul_pp r4.w, r4, c7
+mul_pp r0.w, r4, r0
+mul_pp_sat r0.w, r0, c21.x
+mul_pp_sat r2.w, r0.y, c21.y
+mov r0.x, c13
+add r0.xyz, c7, r0.x
+mad_sat r0.xyz, r0, r2.w, c0
+add_pp r0.xyz, r0, r2
+mul r8.xyz, r0, c14.x
+texld r2, r7, s3
+texld r3, r6, s3
+add_pp r3, r3, -r2
+mad_pp r2, r5.z, r3, r2
+texld r3, r5, s3
+add_pp r3, r3, -r2
+mad_pp r2, r5.w, r3, r2
+mul_pp r1, r1, r2
+mad_pp r4.xyz, r4, c9, r8
+mad_pp r1.xyz, -r4, r0, r1
+mul_pp r2.xyz, r4, r0
+add_pp r0.w, -r0, c16.y
+mul_pp r0.x, r1.w, r0.w
+mad_pp oC0.xyz, r0.x, r1, r2
+mov_pp oC0.w, c16.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightShadowData]
+Vector 3 [_ShadowOffsets0]
+Vector 4 [_ShadowOffsets1]
+Vector 5 [_ShadowOffsets2]
+Vector 6 [_ShadowOffsets3]
+Vector 7 [_LightColor0]
+Vector 8 [_SpecColor]
+Vector 9 [_Color]
+Float 10 [_Shininess]
+Float 11 [_DetailScale]
+Float 12 [_DetailDist]
+Float 13 [_MinLight]
+Float 14 [_Albedo]
+Float 15 [_CityOverlayDetailScale]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_CityOverlayTex] 2D
+SetTexture 3 [_CityDarkOverlayDetailTex] 2D
+SetTexture 4 [_CityLightOverlayDetailTex] 2D
+SetTexture 5 [_LightTexture0] 2D
+SetTexture 6 [_LightTextureB0] 2D
+SetTexture 7 [_ShadowMapTexture] 2D
+"ps_3_0
+; 148 ALU, 21 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+dcl_2d s5
+dcl_2d s6
+dcl_2d s7
+def c16, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c17, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c18, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c19, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c20, 0.15915494, 0.50000000, -0.01000214, 0.25000000
+def c21, 4.03944778, 4.00000000, 0, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3
+dcl_texcoord4 v4
+dcl_texcoord5 v5.xyz
+mul r1.xy, v5.zyzw, c11.x
+mul r0.xy, v5, c11.x
+abs r1.zw, v5.xyxy
+abs r3.z, v5
+texld r2.xyz, r1, s1
+texld r0.xyz, r0, s1
+add_pp r2.xyz, r2, -r0
+mad_pp r2.xyz, r1.z, r2, r0
+max r0.w, r1.z, r3.z
+mul r0.xy, v5.zxzw, c11.x
+texld r0.xyz, r0, s1
+add_pp r0.xyz, r0, -r2
+mad_pp r0.xyz, r1.w, r0, r2
+min r1.x, r1.z, r3.z
+rcp r0.w, r0.w
+mul r0.w, r1.x, r0
+mul r2.w, r0, r0
+mad r1.x, r2.w, c18.y, c18.z
+mad r1.x, r1, r2.w, c18.w
+mad r1.x, r1, r2.w, c19
+mad r1.y, r1.x, r2.w, c19
+mad r1.y, r1, r2.w, c19.z
+mul r4.x, r1.y, r0.w
+mul r1.x, v0, c12
+add r4.y, r1.z, -r3.z
+add r3.w, -r4.x, c19
+cmp r3.w, -r4.y, r4.x, r3
+add_pp r2.xyz, -r0, c16.y
+mul_sat r1.x, r1, c17.z
+mad_pp r5.xyz, r1.x, r2, r0
+mul r1.xy, v5.zyzw, c15.x
+mul r3.xy, v5, c15.x
+texld r0, r3, s4
+texld r2, r1, s4
+add_pp r2, r2, -r0
+mad_pp r0, r1.z, r2, r0
+mul r2.xy, v5.zxzw, c15.x
+add r2.z, -r3.w, c17.w
+cmp r2.z, v5, r3.w, r2
+texld r4, r2, s4
+add_pp r4, r4, -r0
+mad_pp r4, r1.w, r4, r0
+add r0.x, -r3.z, c16.y
+mad r0.y, r3.z, c16.z, c16.w
+mad r0.y, r3.z, r0, c17.x
+mad r0.y, r3.z, r0, c17
+abs r3.z, v5.y
+add r0.w, -r3.z, c16.y
+mad r2.w, r3.z, c16.z, c16
+mad r2.w, r2, r3.z, c17.x
+mad r2.w, r2, r3.z, c17.y
+cmp r2.z, v5.x, r2, -r2
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r0.y, r0, r0.x
+cmp r0.z, v5, c16.x, c16.y
+mul r0.x, r0.z, r0.y
+mad r0.x, -r0, c17.z, r0.y
+mad r0.x, r0.z, c17.w, r0
+mul r0.x, r0, c18
+mul r2.w, r2, r0
+cmp r3.z, v5.y, c16.x, c16.y
+mul r0.w, r3.z, r2
+mad r0.y, -r0.w, c17.z, r2.w
+mad r0.y, r3.z, c17.w, r0
+dsy r0.zw, v5.xyxy
+mul r2.w, r0.y, c18.x
+dsx r3.w, r0.x
+dsy r6.y, r0.x
+dsx r0.xy, v5
+mul r0.xy, r0, r0
+add r0.y, r0.x, r0
+mul r0.zw, r0, r0
+add r0.x, r0.z, r0.w
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r3.z, r0.y, c20.x
+mad r2.z, r2, c20.x, c20.y
+mul r6.x, r0, c20
+texldd r0, r2.zwzw, s2, r3.zwzw, r6
+texldd r6, r2.zwzw, s0, r3.zwzw, r6
+rcp r2.z, v4.w
+mul_pp r4, r0, r4
+mad_pp r4.xyz, -r6, r5, r4
+dp4 r2.w, c1, c1
+mul_pp r5.xyz, r6, r5
+mad r7.xyz, v4, r2.z, c6
+texld r6.x, r7, s7
+mad r7.xyz, v4, r2.z, c5
+mov_pp r7.w, r6.x
+texld r6.x, r7, s7
+mad r8.xyz, v4, r2.z, c4
+mov_pp r7.z, r6.x
+texld r6.x, r8, s7
+mad r8.xyz, v4, r2.z, c3
+mov r2.z, c2.x
+texld r7.x, r8, s7
+rcp r3.z, v3.w
+mad r8.xy, v3, r3.z, c20.y
+mov_pp r7.y, r6.x
+add r2.z, c16.y, -r2
+mad r7, r7, r2.z, c2.x
+dp4_pp r2.z, r7, c20.w
+rsq r2.w, r2.w
+mul r6.xyz, r2.w, c1
+dp3_pp r2.w, v2, -r6
+mul_pp r7.yzw, v2.xxyz, r2.w
+texld r2.w, r8, s5
+cmp r3.z, -v3, c16.x, c16.y
+dp3 r7.x, v3, v3
+mad_pp r8.xyz, -r7.yzww, c17.z, -r6
+texld r7.x, r7.x, s6
+mul_pp r2.w, r3.z, r2
+mul_pp r2.w, r2, r7.x
+mul_pp r2.z, r2.w, r2
+dp3_pp_sat r2.w, r8, v1
+mul r7.xyz, r2.z, c7
+mul r8.xyz, r7, c8
+pow_pp r7, r2.w, c10.x
+dp3_pp_sat r2.w, v2, r6
+add_pp r5.w, r2, c16.y
+mov_pp r3.z, r7.x
+mul r6.xyz, r8, r3.z
+frc_pp r3.w, r5
+add_pp_sat r3.z, r5.w, -r3.w
+mul r6.xyz, r3.z, r6
+mad_pp r8.xyz, r4.w, r4, r5
+mov r3.w, c13.x
+mul_pp r3.z, r2.w, c7.w
+mul_pp r3.z, r2, r3
+texld r4, r3, s3
+mul_pp_sat r3.z, r3, c21.y
+add r7.xyz, c7, r3.w
+mad_sat r7.xyz, r7, r3.z, c0
+texld r3, r1, s3
+add_pp r5, r3, -r4
+mad_pp r4, r1.z, r5, r4
+texld r5, r2, s3
+add_pp r1.x, r2.w, c20.z
+mul_pp r2.x, r1, c7.w
+mul r6.xyz, r6.w, r6
+add_pp r6.xyz, r7, r6
+mul r7.xyz, r6, c14.x
+add_pp r5, r5, -r4
+mad_pp r1, r1.w, r5, r4
+mul_pp r0, r0, r1
+mad_pp r3.xyz, r8, c9, r7
+mul_pp r2.x, r2, r2.z
+mul_pp_sat r1.x, r2, c21
+add_pp r1.w, -r1.x, c16.y
+mad_pp r0.xyz, -r3, r6, r0
+mul_pp r1.xyz, r3, r6
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
+mov_pp oC0.w, c16.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightPositionRange]
+Vector 3 [_LightShadowData]
+Vector 4 [_LightColor0]
+Vector 5 [_SpecColor]
+Vector 6 [_Color]
+Float 7 [_Shininess]
+Float 8 [_DetailScale]
+Float 9 [_DetailDist]
+Float 10 [_MinLight]
+Float 11 [_Albedo]
+Float 12 [_CityOverlayDetailScale]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_CityOverlayTex] 2D
+SetTexture 3 [_CityDarkOverlayDetailTex] 2D
+SetTexture 4 [_CityLightOverlayDetailTex] 2D
+SetTexture 5 [_ShadowMapTexture] CUBE
+SetTexture 6 [_LightTexture0] 2D
+"ps_3_0
+; 146 ALU, 20 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+dcl_cube s5
+dcl_2d s6
+def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c17, 0.15915494, 0.50000000, -0.01000214, 0.00781250
+def c18, 0.00781250, -0.00781250, 0.97000003, 0.25000000
+def c19, 1.00000000, 0.00392157, 0.00001538, 0.00000001
+def c20, 4.03944778, 4.00000000, 0, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3.xyz
+dcl_texcoord4 v4.xyz
+dcl_texcoord5 v5.xyz
+mul r0.xy, v5.zyzw, c8.x
+mul r1.xy, v5, c8.x
+abs r5.zw, v5.xyxy
+abs r2.w, v5.z
+texld r0.xyz, r0, s1
+texld r1.xyz, r1, s1
+add_pp r2.xyz, r0, -r1
+mad_pp r1.xyz, r5.z, r2, r1
+max r0.w, r5.z, r2
+rcp r0.y, r0.w
+min r0.x, r5.z, r2.w
+mul r0.w, r0.x, r0.y
+mul r1.w, r0, r0
+mad r2.x, r1.w, c15.y, c15.z
+mad r2.x, r2, r1.w, c15.w
+mad r2.x, r2, r1.w, c16
+mad r2.x, r2, r1.w, c16.y
+mad r1.w, r2.x, r1, c16.z
+mul r3.y, r1.w, r0.w
+mul r2.y, v0.x, c9.x
+mul r0.xy, v5.zxzw, c8.x
+texld r0.xyz, r0, s1
+add_pp r0.xyz, r0, -r1
+mad_pp r0.xyz, r5.w, r0, r1
+add_pp r1.xyz, -r0, c13.y
+mul_sat r2.x, r2.y, c14.z
+mad_pp r2.xyz, r2.x, r1, r0
+mul r8.xy, v5, c12.x
+mul r7.xy, v5.zyzw, c12.x
+texld r1, r8, s4
+texld r0, r7, s4
+add_pp r0, r0, -r1
+mad_pp r1, r5.z, r0, r1
+add r3.z, -r3.y, c16.w
+add r3.x, r5.z, -r2.w
+cmp r3.x, -r3, r3.y, r3.z
+add r0.x, -r3, c14.w
+cmp r3.x, v5.z, r3, r0
+mul r5.xy, v5.zxzw, c12.x
+cmp r3.x, v5, r3, -r3
+texld r0, r5, s4
+add_pp r0, r0, -r1
+mad_pp r0, r5.w, r0, r1
+add r1.y, -r2.w, c13
+mad r1.x, r2.w, c13.z, c13.w
+mad r1.x, r2.w, r1, c14
+rsq r1.y, r1.y
+mad r6.x, r3, c17, c17.y
+mad r1.x, r2.w, r1, c14.y
+rcp r1.y, r1.y
+mul r2.w, r1.x, r1.y
+abs r1.x, v5.y
+cmp r1.w, v5.z, c13.x, c13.y
+mul r3.x, r1.w, r2.w
+add r1.z, -r1.x, c13.y
+mad r1.y, r1.x, c13.z, c13.w
+mad r1.y, r1, r1.x, c14.x
+rsq r1.z, r1.z
+mad r1.x, r1.y, r1, c14.y
+rcp r1.z, r1.z
+mul r1.y, r1.x, r1.z
+cmp r1.x, v5.y, c13, c13.y
+mul r1.z, r1.x, r1.y
+mad r1.y, -r1.z, c14.z, r1
+mad r1.x, r1, c14.w, r1.y
+mad r2.w, -r3.x, c14.z, r2
+mad r1.z, r1.w, c14.w, r2.w
+mul r1.y, r1.z, c15.x
+dsy r1.zw, v5.xyxy
+mul r6.y, r1.x, c15.x
+dsx r4.w, r1.y
+dsy r4.y, r1
+dsx r1.xy, v5
+mul r1.xy, r1, r1
+add r1.x, r1, r1.y
+mul r1.zw, r1, r1
+add r1.y, r1.z, r1.w
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r4.z, r1.x, c17.x
+mul r4.x, r1.y, c17
+texldd r1, r6, s2, r4.zwzw, r4
+mul_pp r3, r1, r0
+texldd r4, r6, s0, r4.zwzw, r4
+mad_pp r3.xyz, -r4, r2, r3
+mul_pp r4.xyz, r4, r2
+mad_pp r4.xyz, r3.w, r3, r4
+add r0.xyz, v4, c18.xyyw
+texld r0, r0, s5
+dp4 r6.w, r0, c19
+add r0.xyz, v4, c18.yxyw
+texld r0, r0, s5
+dp4 r6.z, r0, c19
+add r2.xyz, v4, c18.yyxw
+texld r2, r2, s5
+dp4 r6.y, r2, c19
+dp3 r0.w, v4, v4
+rsq r2.x, r0.w
+add r0.xyz, v4, c17.w
+texld r0, r0, s5
+dp4 r6.x, r0, c19
+rcp r2.x, r2.x
+mul r0.x, r2, c2.w
+dp4 r2.x, c1, c1
+mad r0, -r0.x, c18.z, r6
+mov r2.y, c3.x
+cmp r0, r0, c13.y, r2.y
+dp4_pp r0.y, r0, c18.w
+rsq r2.x, r2.x
+mul r2.xyz, r2.x, c1
+dp3_pp r0.z, v2, -r2
+mul_pp r6.xyz, v2, r0.z
+mad_pp r6.xyz, -r6, c14.z, -r2
+dp3 r0.x, v3, v3
+texld r0.x, r0.x, s6
+mul r6.w, r0.x, r0.y
+dp3_pp_sat r2.w, r6, v1
+mul r0.xyz, r6.w, c4
+mul r6.xyz, r0, c5
+pow_pp r0, r2.w, c7.x
+dp3_pp_sat r0.w, v2, r2
+add_pp r2.x, r0.w, c13.y
+frc_pp r2.y, r2.x
+mul_pp r2.w, r0, c4
+add_pp r0.w, r0, c17.z
+mul_pp r0.w, r0, c4
+mul_pp r0.w, r0, r6
+mul_pp_sat r0.w, r0, c20.x
+mul r0.xyz, r6, r0.x
+add_pp_sat r2.x, r2, -r2.y
+mul r0.xyz, r2.x, r0
+mul r2.xyz, r4.w, r0
+mul_pp r0.y, r6.w, r2.w
+mul_pp_sat r2.w, r0.y, c20.y
+mov r0.x, c10
+add r0.xyz, c4, r0.x
+mad_sat r0.xyz, r0, r2.w, c0
+add_pp r0.xyz, r0, r2
+mul r6.xyz, r0, c11.x
+texld r2, r8, s3
+texld r3, r7, s3
+add_pp r3, r3, -r2
+mad_pp r2, r5.z, r3, r2
+texld r3, r5, s3
+add_pp r3, r3, -r2
+mad_pp r2, r5.w, r3, r2
+mul_pp r1, r1, r2
+mad_pp r4.xyz, r4, c6, r6
+mad_pp r1.xyz, -r4, r0, r1
+mul_pp r2.xyz, r4, r0
+add_pp r0.w, -r0, c13.y
+mul_pp r0.x, r1.w, r0.w
+mad_pp oC0.xyz, r0.x, r1, r2
+mov_pp oC0.w, c13.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightPositionRange]
+Vector 3 [_LightShadowData]
+Vector 4 [_LightColor0]
+Vector 5 [_SpecColor]
+Vector 6 [_Color]
+Float 7 [_Shininess]
+Float 8 [_DetailScale]
+Float 9 [_DetailDist]
+Float 10 [_MinLight]
+Float 11 [_Albedo]
+Float 12 [_CityOverlayDetailScale]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_CityOverlayTex] 2D
+SetTexture 3 [_CityDarkOverlayDetailTex] 2D
+SetTexture 4 [_CityLightOverlayDetailTex] 2D
+SetTexture 5 [_ShadowMapTexture] CUBE
+SetTexture 6 [_LightTextureB0] 2D
+SetTexture 7 [_LightTexture0] CUBE
+"ps_3_0
+; 147 ALU, 21 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+dcl_cube s5
+dcl_2d s6
+dcl_cube s7
+def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c17, 0.15915494, 0.50000000, -0.01000214, 0.00781250
+def c18, 0.00781250, -0.00781250, 0.97000003, 0.25000000
+def c19, 1.00000000, 0.00392157, 0.00001538, 0.00000001
+def c20, 4.03944778, 4.00000000, 0, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3.xyz
+dcl_texcoord4 v4.xyz
+dcl_texcoord5 v5.xyz
+mul r0.xy, v5.zyzw, c8.x
+mul r1.xy, v5, c8.x
+abs r5.zw, v5.xyxy
+abs r2.w, v5.z
+texld r0.xyz, r0, s1
+texld r1.xyz, r1, s1
+add_pp r2.xyz, r0, -r1
+mad_pp r1.xyz, r5.z, r2, r1
+max r0.w, r5.z, r2
+rcp r0.y, r0.w
+min r0.x, r5.z, r2.w
+mul r0.w, r0.x, r0.y
+mul r1.w, r0, r0
+mad r2.x, r1.w, c15.y, c15.z
+mad r2.x, r2, r1.w, c15.w
+mad r2.x, r2, r1.w, c16
+mad r2.x, r2, r1.w, c16.y
+mad r1.w, r2.x, r1, c16.z
+mul r3.y, r1.w, r0.w
+mul r2.y, v0.x, c9.x
+mul r0.xy, v5.zxzw, c8.x
+texld r0.xyz, r0, s1
+add_pp r0.xyz, r0, -r1
+mad_pp r0.xyz, r5.w, r0, r1
+add_pp r1.xyz, -r0, c13.y
+mul_sat r2.x, r2.y, c14.z
+mad_pp r2.xyz, r2.x, r1, r0
+mul r8.xy, v5, c12.x
+mul r7.xy, v5.zyzw, c12.x
+texld r1, r8, s4
+texld r0, r7, s4
+add_pp r0, r0, -r1
+mad_pp r1, r5.z, r0, r1
+add r3.z, -r3.y, c16.w
+add r3.x, r5.z, -r2.w
+cmp r3.x, -r3, r3.y, r3.z
+add r0.x, -r3, c14.w
+cmp r3.x, v5.z, r3, r0
+mul r5.xy, v5.zxzw, c12.x
+cmp r3.x, v5, r3, -r3
+texld r0, r5, s4
+add_pp r0, r0, -r1
+mad_pp r0, r5.w, r0, r1
+add r1.y, -r2.w, c13
+mad r1.x, r2.w, c13.z, c13.w
+mad r1.x, r2.w, r1, c14
+rsq r1.y, r1.y
+mad r6.x, r3, c17, c17.y
+mad r1.x, r2.w, r1, c14.y
+rcp r1.y, r1.y
+mul r2.w, r1.x, r1.y
+abs r1.x, v5.y
+cmp r1.w, v5.z, c13.x, c13.y
+mul r3.x, r1.w, r2.w
+add r1.z, -r1.x, c13.y
+mad r1.y, r1.x, c13.z, c13.w
+mad r1.y, r1, r1.x, c14.x
+rsq r1.z, r1.z
+mad r1.x, r1.y, r1, c14.y
+rcp r1.z, r1.z
+mul r1.y, r1.x, r1.z
+cmp r1.x, v5.y, c13, c13.y
+mul r1.z, r1.x, r1.y
+mad r1.y, -r1.z, c14.z, r1
+mad r1.x, r1, c14.w, r1.y
+mad r2.w, -r3.x, c14.z, r2
+mad r1.z, r1.w, c14.w, r2.w
+mul r1.y, r1.z, c15.x
+dsy r1.zw, v5.xyxy
+mul r6.y, r1.x, c15.x
+dsx r4.w, r1.y
+dsy r4.y, r1
+dsx r1.xy, v5
+mul r1.xy, r1, r1
+add r1.x, r1, r1.y
+mul r1.zw, r1, r1
+add r1.y, r1.z, r1.w
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r4.z, r1.x, c17.x
+mul r4.x, r1.y, c17
+texldd r1, r6, s2, r4.zwzw, r4
+mul_pp r3, r1, r0
+texldd r4, r6, s0, r4.zwzw, r4
+mad_pp r3.xyz, -r4, r2, r3
+mul_pp r4.xyz, r4, r2
+mad_pp r4.xyz, r3.w, r3, r4
+add r0.xyz, v4, c18.xyyw
+texld r0, r0, s5
+dp4 r6.w, r0, c19
+add r0.xyz, v4, c18.yxyw
+texld r0, r0, s5
+dp4 r6.z, r0, c19
+add r2.xyz, v4, c18.yyxw
+texld r2, r2, s5
+dp4 r6.y, r2, c19
+add r0.xyz, v4, c17.w
+texld r0, r0, s5
+dp3 r2.x, v4, v4
+dp4 r6.x, r0, c19
+rsq r2.x, r2.x
+rcp r0.x, r2.x
+dp4 r2.x, c1, c1
+mul r0.x, r0, c2.w
+rsq r2.x, r2.x
+mul r2.xyz, r2.x, c1
+mad r0, -r0.x, c18.z, r6
+mov r2.w, c3.x
+cmp r0, r0, c13.y, r2.w
+dp4_pp r0.y, r0, c18.w
+dp3_pp r2.w, v2, -r2
+mul_pp r6.xyz, v2, r2.w
+mad_pp r6.xyz, -r6, c14.z, -r2
+dp3 r0.x, v3, v3
+dp3_pp_sat r2.w, r6, v1
+texld r0.w, v3, s7
+texld r0.x, r0.x, s6
+mul r0.x, r0, r0.w
+mul r6.w, r0.x, r0.y
+mul r0.xyz, r6.w, c4
+mul r6.xyz, r0, c5
+pow_pp r0, r2.w, c7.x
+dp3_pp_sat r0.w, v2, r2
+add_pp r2.x, r0.w, c13.y
+frc_pp r2.y, r2.x
+mul_pp r2.w, r0, c4
+add_pp r0.w, r0, c17.z
+mul_pp r0.w, r0, c4
+mul_pp r0.w, r0, r6
+mul_pp_sat r0.w, r0, c20.x
+mul r0.xyz, r6, r0.x
+add_pp_sat r2.x, r2, -r2.y
+mul r0.xyz, r2.x, r0
+mul r2.xyz, r4.w, r0
+mul_pp r0.y, r6.w, r2.w
+mul_pp_sat r2.w, r0.y, c20.y
+mov r0.x, c10
+add r0.xyz, c4, r0.x
+mad_sat r0.xyz, r0, r2.w, c0
+add_pp r0.xyz, r0, r2
+mul r6.xyz, r0, c11.x
+texld r2, r8, s3
+texld r3, r7, s3
+add_pp r3, r3, -r2
+mad_pp r2, r5.z, r3, r2
+texld r3, r5, s3
+add_pp r3, r3, -r2
+mad_pp r2, r5.w, r3, r2
+mul_pp r1, r1, r2
+mad_pp r4.xyz, r4, c6, r6
+mad_pp r1.xyz, -r4, r0, r1
+mul_pp r2.xyz, r4, r0
+add_pp r0.w, -r0, c13.y
+mul_pp r0.x, r1.w, r0.w
+mad_pp oC0.xyz, r0.x, r1, r2
+mov_pp oC0.w, c13.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_OFF" "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "POINT" "SHADOWS_OFF" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "POINT" "SHADOWS_OFF" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightColor0]
+Vector 3 [_SpecColor]
+Vector 4 [_Color]
+Float 5 [_Shininess]
+Float 6 [_DetailScale]
+Float 7 [_DetailDist]
+Float 8 [_MinLight]
+Float 9 [_Albedo]
+Float 10 [_CityOverlayDetailScale]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_CityOverlayTex] 2D
+SetTexture 3 [_CityDarkOverlayDetailTex] 2D
+SetTexture 4 [_CityLightOverlayDetailTex] 2D
+SetTexture 5 [_LightTexture0] 2D
+"ps_3_0
+; 130 ALU, 16 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+dcl_2d s5
+def c11, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c12, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c13, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c14, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c15, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c16, 4.00000000, 0, 0, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3.xyz
+dcl_texcoord5 v4.xyz
+mul r1.xy, v4, c6.x
+mul r0.xy, v4.zyzw, c6.x
+mul r2.w, v0.x, c7.x
+texld r0.xyz, r0, s1
+texld r1.xyz, r1, s1
+add_pp r2.xyz, r0, -r1
+abs r0.zw, v4.xyxy
+mad_pp r2.xyz, r0.z, r2, r1
+mul r0.xy, v4.zxzw, c6.x
+texld r1.xyz, r0, s1
+abs r0.x, v4.z
+max r0.y, r0.z, r0.x
+add_pp r1.xyz, r1, -r2
+mad_pp r1.xyz, r0.w, r1, r2
+rcp r1.w, r0.y
+min r0.y, r0.z, r0.x
+mul r0.y, r0, r1.w
+mul r3.x, r0.y, r0.y
+mad r1.w, r3.x, c13.y, c13.z
+mad r3.y, r1.w, r3.x, c13.w
+mad r3.y, r3, r3.x, c14.x
+add_pp r2.xyz, -r1, c11.y
+mul_sat r2.w, r2, c12.z
+mad_pp r6.xyz, r2.w, r2, r1
+mul r9.xy, v4, c10.x
+mul r8.xy, v4.zyzw, c10.x
+texld r2, r9, s4
+texld r1, r8, s4
+add_pp r1, r1, -r2
+mad_pp r2, r0.z, r1, r2
+mad r1.x, r3.y, r3, c14.y
+mad r3.x, r1, r3, c14.z
+mul r3.x, r3, r0.y
+mul r7.xy, v4.zxzw, c10.x
+texld r1, r7, s4
+add_pp r1, r1, -r2
+mad_pp r2, r0.w, r1, r2
+dp4 r1.y, c1, c1
+rsq r1.y, r1.y
+mul r5.xyz, r1.y, c1
 abs r1.y, v4
-add r1.x, -r0.z, c11.y
-mad r0.w, r0.z, r0, c12.x
 add r1.w, -r1.y, c11.y
 mad r1.z, r1.y, c11, c11.w
 mad r1.z, r1, r1.y, c12.x
-rsq r1.x, r1.x
 rsq r1.w, r1.w
-mad r0.z, r0, r0.w, c12.y
+add r1.x, -r3, c14.w
+add r0.y, r0.z, -r0.x
+cmp r0.y, -r0, r3.x, r1.x
+add r1.x, -r0.y, c12.w
+cmp r0.y, v4.z, r0, r1.x
+dp3_pp r1.x, v2, -r5
+mul_pp r3.xyz, v2, r1.x
+mad_pp r4.xyz, -r3, c12.z, -r5
+cmp r0.y, v4.x, r0, -r0
+mad r8.z, r0.y, c15.x, c15.y
+add r1.x, -r0, c11.y
+mad r0.y, r0.x, c11.z, c11.w
+mad r0.y, r0.x, r0, c12.x
+rsq r1.x, r1.x
+dp3_pp_sat r5.w, r4, v1
+pow_pp r4, r5.w, c5.x
+mad r0.x, r0, r0.y, c12.y
 rcp r1.x, r1.x
-mul r0.w, r0.z, r1.x
-cmp r0.z, v4, c11.x, c11.y
-mul r1.x, r0.z, r0.w
-mad r1.x, -r1, c12.z, r0.w
+mul r0.y, r0.x, r1.x
+cmp r0.x, v4.z, c11, c11.y
+mul r1.x, r0, r0.y
+mad r1.x, -r1, c12.z, r0.y
 mad r1.y, r1.z, r1, c12
 rcp r1.w, r1.w
 mul r1.z, r1.y, r1.w
 cmp r1.y, v4, c11.x, c11
 mul r1.w, r1.y, r1.z
-mad r0.w, -r1, c12.z, r1.z
-mad r1.x, r0.z, c12.w, r1
-mad r0.z, r1.y, c12.w, r0.w
-mul r0.w, r1.x, c13.x
-dsx r3.y, r0.w
+mad r0.y, -r1.w, c12.z, r1.z
+mad r1.x, r0, c12.w, r1
+mad r0.x, r1.y, c12.w, r0.y
+mul r0.y, r1.x, c13.x
+dsx r7.w, r0.y
 dsx r1.xy, v4
 dsy r1.zw, v4.xyxy
 mul r1.xy, r1, r1
-mul r3.w, r0.z, c13.x
-add r0.z, r1.x, r1.y
+mul r8.w, r0.x, c13.x
+add r0.x, r1, r1.y
 mul r1.zw, r1, r1
 add r1.x, r1.z, r1.w
-rsq r0.z, r0.z
-rcp r0.z, r0.z
+rsq r0.x, r0.x
+rcp r0.x, r0.x
 rsq r1.x, r1.x
-dsy r0.w, r0
-mul r3.x, r0.z, c15
+dsy r0.y, r0
+mul r7.z, r0.x, c15.x
 rcp r1.x, r1.x
-mul r0.z, r1.x, c15.x
-texldd r1, r3.zwzw, s2, r3, r0.zwzw
-texldd r3, r3.zwzw, s0, r3, r0.zwzw
-mul_pp r2, r1, r2
-mad_pp r2.xyz, -r3, r5, r2
-mul_pp r3.xyz, r3, r5
-mad_pp r3.xyz, r2.w, r2, r3
-dp4 r4.x, c1, c1
-rsq r0.z, r4.x
-mul r4.xyz, r0.z, c1
-dp3_pp r0.z, v2, -r4
-mul_pp r2.xyz, v2, r0.z
-mad_pp r5.xyz, -r2, c12.z, -r4
-dp3_pp_sat r4.w, r5, v1
-mul_pp r3.xyz, r3, c4
-texld r2, r7, s3
-texld r0, r0, s3
-add_pp r0, r0, -r2
-mad_pp r2, r6.z, r0, r2
-pow_pp r0, r4.w, c5.x
-dp3_pp_sat r0.y, v2, r4
-add_pp r0.z, r0.y, c11.y
-frc_pp r0.w, r0.z
-add_pp_sat r0.z, r0, -r0.w
-mov_pp r4.w, r0.x
-texld r5, r6, s3
-add_pp r5, r5, -r2
-mad_pp r2, r6.w, r5, r2
+mul r0.x, r1, c15
+texldd r1, r8.zwzw, s2, r7.zwzw, r0
+mul_pp r3, r1, r2
+texldd r2, r8.zwzw, s0, r7.zwzw, r0
+dp3_pp_sat r0.y, v2, r5
+mad_pp r3.xyz, -r2, r6, r3
+add_pp r5.x, r0.y, c11.y
 dp3 r0.x, v3, v3
+mul_pp r2.xyz, r2, r6
 texld r0.x, r0.x, s5
+mov_pp r4.w, r4.x
 mul r4.xyz, r0.x, c2
-mul_pp r0.w, r0.y, c2
-mul_pp r0.w, r0.x, r0
 mul r4.xyz, r4, c3
 mul r4.xyz, r4, r4.w
-mul r4.xyz, r0.z, r4
-mul_pp r1, r1, r2
-add_pp r0.z, r0.y, c15
-mul_pp r0.y, r0.z, c2.w
-mul r2.xyz, r3.w, r4
-mov r0.z, c8.x
-mul_pp_sat r0.w, r0, c16.x
-add r4.xyz, c2, r0.z
-mad_sat r4.xyz, r4, r0.w, c0
-mul_pp r0.w, r0.y, r0.x
-mad_pp r0.xyz, r4, c9.x, r2
-mul_pp_sat r0.w, r0, c15
-mad_pp r1.xyz, -r3, r0, r1
-mul_pp r2.xyz, r3, r0
-add_pp r0.w, -r0, c11.y
-mul_pp r0.x, r1.w, r0.w
-mad_pp oC0.xyz, r0.x, r1, r2
+frc_pp r5.y, r5.x
+add_pp_sat r4.w, r5.x, -r5.y
+mul r4.xyz, r4.w, r4
+mul r5.xyz, r2.w, r4
+mul_pp r4.w, r0.y, c2
+mul_pp r4.x, r0, r4.w
+add_pp r0.y, r0, c15.z
+mov r2.w, c8.x
+mul_pp_sat r4.w, r4.x, c16.x
+add r4.xyz, c2, r2.w
+mad_sat r4.xyz, r4, r4.w, c0
+add_pp r5.xyz, r4, r5
+mad_pp r4.xyz, r3.w, r3, r2
+mul r6.xyz, r5, c9.x
+texld r3, r9, s3
+texld r2, r8, s3
+add_pp r2, r2, -r3
+mad_pp r2, r0.z, r2, r3
+texld r3, r7, s3
+add_pp r3, r3, -r2
+mad_pp r2, r0.w, r3, r2
+mul_pp r0.y, r0, c2.w
+mul_pp r3.x, r0.y, r0
+mul_pp r0, r1, r2
+mad_pp r4.xyz, r4, c4, r6
+mul_pp_sat r1.x, r3, c15.w
+add_pp r1.x, -r1, c11.y
+mad_pp r0.xyz, -r4, r5, r0
+mul_pp r2.xyz, r4, r5
+mul_pp r0.w, r0, r1.x
+mad_pp oC0.xyz, r0.w, r0, r2
 mov_pp oC0.w, c11.y
 "
 }
@@ -83336,7 +83714,7 @@ SetTexture 2 [_CityOverlayTex] 2D
 SetTexture 3 [_CityDarkOverlayDetailTex] 2D
 SetTexture 4 [_CityLightOverlayDetailTex] 2D
 "ps_3_0
-; 126 ALU, 15 TEX
+; 127 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -83352,136 +83730,137 @@ dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
 dcl_texcoord5 v3.xyz
-mul r1.xy, v3.zyzw, c6.x
-mul r5.xy, v3.zyzw, c10.x
 mul r0.xy, v3, c6.x
-abs r1.zw, v3.xyxy
+mul r1.xy, v3.zyzw, c6.x
+mul r1.w, v0.x, c7.x
+abs r6.zw, v3.xyxy
 abs r2.w, v3.z
-texld r2.xyz, r1, s1
+texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
-add_pp r2.xyz, r2, -r0
-mad_pp r2.xyz, r1.z, r2, r0
-max r0.w, r1.z, r2
-mul r0.xy, v3.zxzw, c6.x
-texld r0.xyz, r0, s1
+add_pp r2.xyz, r1, -r0
+mad_pp r2.xyz, r6.z, r2, r0
+mul r1.xy, v3.zxzw, c6.x
+texld r0.xyz, r1, s1
 add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r1.w, r0, r2
-min r1.x, r1.z, r2.w
-rcp r0.w, r0.w
-mul r0.w, r1.x, r0
-mul r3.x, r0.w, r0.w
-mad r1.x, r3, c13.y, c13.z
-mad r1.x, r1, r3, c13.w
-mad r1.x, r1, r3, c14
-mad r1.y, r1.x, r3.x, c14
-mad r1.y, r1, r3.x, c14.z
-mul r1.x, v0, c7
-mul r1.y, r1, r0.w
-add r3.z, r1, -r2.w
-add_pp r2.xyz, -r0, c11.y
-mul_sat r1.x, r1, c12.z
-mad_pp r2.xyz, r1.x, r2, r0
-mul r3.xy, v3, c10.x
-add r1.x, -r1.y, c14.w
-cmp r3.w, -r3.z, r1.y, r1.x
-add r3.z, -r3.w, c12.w
-cmp r3.z, v3, r3.w, r3
-cmp r3.z, v3.x, r3, -r3
-abs r3.w, v3.y
-texld r0, r3, s4
-texld r4, r5, s4
-add_pp r4, r4, -r0
-mad_pp r0, r1.z, r4, r0
-mul r1.xy, v3.zxzw, c10.x
-texld r4, r1, s4
-add_pp r4, r4, -r0
-mad_pp r4, r1.w, r4, r0
-add r0.x, -r2.w, c11.y
-mad r0.y, r2.w, c11.z, c11.w
-mad r0.y, r2.w, r0, c12.x
-mad r0.y, r2.w, r0, c12
-add r0.w, -r3, c11.y
-mad r2.w, r3, c11.z, c11
-mad r2.w, r2, r3, c12.x
-mad r2.w, r2, r3, c12.y
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r0.y, r0, r0.x
-cmp r0.x, v3.z, c11, c11.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c12.z, r0
-mad r0.x, r0, c12.w, r0.y
-mul r0.x, r0, c13
-rsq r0.w, r0.w
-rcp r0.w, r0.w
-mul r2.w, r2, r0
-cmp r3.w, v3.y, c11.x, c11.y
-mul r0.w, r3, r2
-mad r0.z, -r0.w, c12, r2.w
-mad r0.y, r3.w, c12.w, r0.z
-dsy r0.zw, v3.xyxy
-dp4_pp r2.w, c1, c1
-mul r3.w, r0.y, c13.x
-dsx r5.w, r0.x
-dsy r7.y, r0.x
-dsx r0.xy, v3
-mul r0.xy, r0, r0
-add r0.y, r0.x, r0
-mul r0.zw, r0, r0
-add r0.x, r0.z, r0.w
+max r0.w, r6.z, r2
+rcp r1.x, r0.w
+mad_pp r0.xyz, r6.w, r0, r2
+min r0.w, r6.z, r2
+mul r2.x, r0.w, r1
+mul r2.y, r2.x, r2.x
+mad r0.w, r2.y, c13.y, c13.z
+mad r2.z, r0.w, r2.y, c13.w
+mad r2.z, r2, r2.y, c14.x
+add_pp r1.xyz, -r0, c11.y
+mul_sat r1.w, r1, c12.z
+mad_pp r5.xyz, r1.w, r1, r0
+mul r8.xy, v3, c10.x
+mul r7.xy, v3.zyzw, c10.x
+texld r1, r8, s4
+texld r0, r7, s4
+add_pp r0, r0, -r1
+mad_pp r1, r6.z, r0, r1
+mad r0.x, r2.z, r2.y, c14.y
+mad r2.y, r0.x, r2, c14.z
+mul r6.xy, v3.zxzw, c10.x
+texld r0, r6, s4
+add_pp r0, r0, -r1
+mad_pp r1, r6.w, r0, r1
+abs r0.w, v3.y
+mul r2.x, r2.y, r2
+add r3.x, -r0.w, c11.y
+dp4_pp r0.z, c1, c1
+rsq_pp r0.z, r0.z
+rsq r3.x, r3.x
+mul_pp r4.xyz, r0.z, c1
+add r0.y, -r2.x, c14.w
+add r0.x, r6.z, -r2.w
+cmp r0.x, -r0, r2, r0.y
+add r0.y, -r0.x, c12.w
+cmp r0.x, v3.z, r0, r0.y
+dp3_pp r0.y, v2, -r4
+mul_pp r2.xyz, v2, r0.y
+mad_pp r2.xyz, -r2, c12.z, -r4
+cmp r0.x, v3, r0, -r0
+mad r9.x, r0, c15, c15.y
+add r0.y, -r2.w, c11
+mad r0.x, r2.w, c11.z, c11.w
+mad r0.x, r2.w, r0, c12
+mad r0.x, r2.w, r0, c12.y
+mad r2.w, r0, c11.z, c11
+mad r2.w, r2, r0, c12.x
 rsq r0.y, r0.y
 rcp r0.y, r0.y
+mul r0.y, r0.x, r0
+cmp r0.x, v3.z, c11, c11.y
+mul r0.z, r0.x, r0.y
+mad r0.z, -r0, c12, r0.y
+mad r0.w, r2, r0, c12.y
+rcp r3.x, r3.x
+mul r2.w, r0, r3.x
+cmp r0.w, v3.y, c11.x, c11.y
+mul r3.x, r0.w, r2.w
+mad r0.y, -r3.x, c12.z, r2.w
+mad r0.z, r0.x, c12.w, r0
+mad r0.x, r0.w, c12.w, r0.y
+mul r0.y, r0.z, c13.x
+dsy r0.zw, v3.xyxy
+mul r9.y, r0.x, c13.x
+dsx r8.w, r0.y
+dsy r7.w, r0.y
+dsx r0.xy, v3
+mul r0.xy, r0, r0
+add r0.x, r0, r0.y
+mul r0.zw, r0, r0
+add r0.y, r0.z, r0.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
-mul r5.z, r0.y, c15.x
-mad r3.z, r3, c15.x, c15.y
-mul r7.x, r0, c15
-texldd r0, r3.zwzw, s2, r5.zwzw, r7
-mul_pp r6, r0, r4
-texldd r4, r3.zwzw, s0, r5.zwzw, r7
-mad_pp r6.xyz, -r4, r2, r6
-mul_pp r2.xyz, r4, r2
-mad_pp r2.xyz, r6.w, r6, r2
-rsq_pp r2.w, r2.w
-mul_pp r4.xyz, r2.w, c1
-dp3_pp r2.w, v2, -r4
-mul_pp r6.xyz, v2, r2.w
-dp3_pp_sat r2.w, v2, r4
-mad_pp r6.xyz, -r6, c12.z, -r4
-add_pp r4.y, r2.w, c11
-mul_pp r2.xyz, r2, c4
-texld r3, r3, s3
-texld r5, r5, s3
-add_pp r5, r5, -r3
-mad_pp r3, r1.z, r5, r3
-dp3_pp_sat r1.z, r6, v1
-texld r5, r1, s3
-add_pp r6, r5, -r3
-pow_pp r5, r1.z, c5.x
-mad_pp r1, r1.w, r6, r3
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+mul r8.z, r0.x, c15.x
+mul r7.z, r0.y, c15.x
+dp3_pp_sat r4.w, r2, v1
+texldd r0, r9, s2, r8.zwzw, r7.zwzw
+mul_pp r3, r0, r1
+pow_pp r1, r4.w, c5.x
+texldd r2, r9, s0, r8.zwzw, r7.zwzw
+mad_pp r3.xyz, -r2, r5, r3
+mul_pp r2.xyz, r2, r5
+dp3_pp_sat r4.w, v2, r4
+mad_pp r3.xyz, r3.w, r3, r2
+mov_pp r4.y, r1.x
+add_pp r1.w, r4, c11.y
+frc_pp r4.x, r1.w
+mov r1.xyz, c2
+mul r1.xyz, c3, r1
+add_pp_sat r1.w, r1, -r4.x
+mul r1.xyz, r1, r4.y
+mul r1.xyz, r1.w, r1
+mul r4.xyz, r2.w, r1
+mul_pp r1.y, r4.w, c2.w
+mul_pp_sat r1.w, r1.y, c16.x
+mov r1.x, c8
+add r1.xyz, c2, r1.x
+mad_sat r1.xyz, r1, r1.w, c0
+add_pp r4.xyz, r1, r4
+mul r5.xyz, r4, c9.x
+texld r2, r8, s3
+texld r1, r7, s3
+add_pp r1, r1, -r2
+mad_pp r1, r6.z, r1, r2
+texld r2, r6, s3
+add_pp r2, r2, -r1
+mad_pp r1, r6.w, r2, r1
+add_pp r3.w, r4, c15.z
 mul_pp r0, r0, r1
-mul_pp r1.w, r2, c2
-mov r3.xyz, c2
-mov_pp r3.w, r5.x
-mul r3.xyz, c3, r3
-mul r3.xyz, r3, r3.w
-frc_pp r4.x, r4.y
-add_pp_sat r3.w, r4.y, -r4.x
-mul r3.xyz, r3.w, r3
-add_pp r3.w, r2, c15.z
-mul r1.xyz, r4.w, r3
-mov r2.w, c8.x
-mul_pp_sat r1.w, r1, c16.x
-add r3.xyz, c2, r2.w
-mad_sat r3.xyz, r3, r1.w, c0
-mad_pp r1.xyz, r3, c9.x, r1
-mad_pp r0.xyz, -r2, r1, r0
-mul_pp r1.w, r3, c2
-mul_pp_sat r1.w, r1, c15
-add_pp r1.w, -r1, c11.y
-mul_pp r1.xyz, r2, r1
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
+mad_pp r3.xyz, r3, c4, r5
+mul_pp r2.x, r3.w, c2.w
+mul_pp_sat r1.x, r2, c15.w
+add_pp r1.x, -r1, c11.y
+mad_pp r0.xyz, -r3, r4, r0
+mul_pp r2.xyz, r3, r4
+mul_pp r0.w, r0, r1.x
+mad_pp oC0.xyz, r0.w, r0, r2
 mov_pp oC0.w, c11.y
 "
 }
@@ -83527,7 +83906,7 @@ SetTexture 4 [_CityLightOverlayDetailTex] 2D
 SetTexture 5 [_LightTexture0] 2D
 SetTexture 6 [_LightTextureB0] 2D
 "ps_3_0
-; 134 ALU, 17 TEX
+; 135 ALU, 17 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -83546,144 +83925,145 @@ dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3
 dcl_texcoord5 v4.xyz
-mul r1.xy, v4, c6.x
-mul r0.xy, v4.zyzw, c6.x
-abs r6.zw, v4.xyxy
-abs r1.z, v4
-texld r2.xyz, r1, s1
-max r0.w, r6.z, r1.z
-rcp r1.x, r0.w
-min r0.w, r6.z, r1.z
-mul r0.w, r0, r1.x
-mul r1.x, r0.w, r0.w
-mad r1.y, r1.x, c13, c13.z
-mad r1.y, r1, r1.x, c13.w
-mad r1.y, r1, r1.x, c14.x
-mad r1.y, r1, r1.x, c14
-mad r1.x, r1.y, r1, c14.z
-mul r3.x, r1, r0.w
-mul r1.w, v0.x, c7.x
-mul_sat r1.y, r1.w, c12.z
+mul r0.xy, v4, c6.x
+mul r1.xy, v4.zyzw, c6.x
+abs r2.w, v4.z
+texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v4.xyxy
+max r0.w, r1.z, r2
+mad_pp r2.xyz, r1.z, r2, r0
+mul r1.xy, v4.zxzw, c6.x
+texld r0.xyz, r1, s1
 add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r6.z, r0, r2
-mul r0.xy, v4.zxzw, c6.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r6.w, r0, r2
-add_pp r2.xyz, -r0, c11.y
-mad_pp r5.xyz, r1.y, r2, r0
-mul r7.xy, v4, c10.x
-mul r1.xy, v4.zyzw, c10.x
-add r3.y, -r3.x, c14.w
-add r1.w, r6.z, -r1.z
-cmp r1.w, -r1, r3.x, r3.y
-texld r2, r7, s4
-texld r0, r1, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.z, r0, r2
-add r0.x, -r1.w, c12.w
-cmp r1.w, v4.z, r1, r0.x
-mul r6.xy, v4.zxzw, c10.x
-cmp r1.w, v4.x, r1, -r1
-texld r0, r6, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.w, r0, r2
-add r0.y, -r1.z, c11
-mad r0.x, r1.z, c11.z, c11.w
-mad r0.x, r1.z, r0, c12
-rsq r0.y, r0.y
-mad r3.z, r1.w, c15.x, c15.y
-abs r0.w, v4.y
-mad r0.x, r1.z, r0, c12.y
-add r1.w, -r0, c11.y
-mad r1.z, r0.w, c11, c11.w
-mad r1.z, r1, r0.w, c12.x
-rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v4.z, c11, c11.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c12, r0.y
-rsq r1.w, r1.w
-mad r0.w, r1.z, r0, c12.y
-rcp r1.w, r1.w
-mul r1.z, r0.w, r1.w
-cmp r0.w, v4.y, c11.x, c11.y
-mul r1.w, r0, r1.z
-mad r0.y, -r1.w, c12.z, r1.z
-mad r0.z, r0.x, c12.w, r0
-mad r0.x, r0.w, c12.w, r0.y
-mul r0.y, r0.z, c13.x
-dsy r0.zw, v4.xyxy
-mul r3.w, r0.x, c13.x
-dsx r3.y, r0
-dsy r1.w, r0.y
-dsx r0.xy, v4
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
+mad_pp r0.xyz, r1.w, r0, r2
+mul r2.xy, v4.zyzw, c10.x
+min r1.x, r1.z, r2.w
+rcp r0.w, r0.w
+mul r2.z, r1.x, r0.w
+mul r3.z, r2, r2
+mad r1.x, r3.z, c13.y, c13.z
+mad r1.x, r1, r3.z, c13.w
+mad r1.x, r1, r3.z, c14
+mad r3.w, r1.x, r3.z, c14.y
+mad r3.z, r3.w, r3, c14
+mul r2.z, r3, r2
+mul r0.w, v0.x, c7.x
+abs r3.z, v4.y
+mul r1.xy, v4.zxzw, c10.x
+add_pp r4.xyz, -r0, c11.y
+mul_sat r0.w, r0, c12.z
+mad_pp r4.xyz, r0.w, r4, r0
+mul r3.xy, v4, c10.x
+texld r0, r3, s4
+texld r5, r2, s4
+add_pp r5, r5, -r0
+mad_pp r0, r1.z, r5, r0
+texld r5, r1, s4
+add_pp r5, r5, -r0
+mad_pp r5, r1.w, r5, r0
+add r0.w, -r3.z, c11.y
+rsq r0.w, r0.w
+add r0.y, r1.z, -r2.w
+add r0.x, -r2.z, c14.w
+cmp r0.z, -r0.y, r2, r0.x
+add r0.y, -r0.z, c12.w
+cmp r0.y, v4.z, r0.z, r0
+cmp r0.y, v4.x, r0, -r0
+mad r2.z, r0.y, c15.x, c15.y
+mad r0.y, r2.w, c11.z, c11.w
+mad r0.y, r2.w, r0, c12.x
+dp4 r0.x, c1, c1
+rsq r0.x, r0.x
+mul r6.xyz, r0.x, c1
+dp3_pp r0.x, v2, -r6
+mul_pp r7.xyz, v2, r0.x
+mad_pp r7.xyz, -r7, c12.z, -r6
+add r0.x, -r2.w, c11.y
+mad r0.y, r2.w, r0, c12
+mad r2.w, r3.z, c11.z, c11
+mad r2.w, r2, r3.z, c12.x
+mad r2.w, r2, r3.z, c12.y
+rcp r0.w, r0.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
+mul r0.y, r0, r0.x
+cmp r0.x, v4.z, c11, c11.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c12.z, r0
+mad r0.x, r0, c12.w, r0.y
+mul r0.x, r0, c13
+mul r2.w, r2, r0
+cmp r3.z, v4.y, c11.x, c11.y
+mul r0.w, r3.z, r2
+mad r0.z, -r0.w, c12, r2.w
+mad r0.y, r3.z, c12.w, r0.z
+dsy r0.zw, v4.xyxy
+dp3_pp_sat r6.w, v2, r6
+mul r2.w, r0.y, c13.x
+dsx r3.w, r0.x
+dsy r8.y, r0.x
+dsx r0.xy, v4
+mul r0.xy, r0, r0
+add r0.y, r0.x, r0
+mul r0.zw, r0, r0
+add r0.x, r0.z, r0.w
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.x, r0, c15
-mul r1.z, r0.y, c15.x
-texldd r0, r3.zwzw, s2, r3, r1.zwzw
-texldd r4, r3.zwzw, s0, r3, r1.zwzw
-mul_pp r2, r0, r2
-mad_pp r2.xyz, -r4, r5, r2
-mul_pp r4.xyz, r4, r5
-mad_pp r4.xyz, r2.w, r2, r4
-dp4 r5.w, c1, c1
-rsq r1.z, r5.w
-mul r3.xyz, r1.z, c1
-dp3_pp r1.z, v2, -r3
-mul_pp r2.xyz, v2, r1.z
-mad_pp r5.xyz, -r2, c12.z, -r3
-dp3_pp_sat r3.x, v2, r3
-dp3_pp_sat r3.w, r5, v1
-add_pp r3.y, r3.x, c11
-frc_pp r3.z, r3.y
-mul_pp r4.xyz, r4, c4
-texld r2, r7, s3
-texld r1, r1, s3
-add_pp r1, r1, -r2
-mad_pp r2, r6.z, r1, r2
-pow_pp r1, r3.w, c5.x
-mov_pp r3.w, r1.x
-texld r5, r6, s3
-add_pp r5, r5, -r2
-mad_pp r2, r6.w, r5, r2
-mul_pp r0, r0, r2
-add_pp r2.x, r3, c15.z
-rcp r1.x, v3.w
-mad r5.xy, v3, r1.x, c15.y
-mul_pp r2.w, r2.x, c2
-dp3 r1.x, v3, v3
-texld r1.w, r5, s5
-cmp r1.y, -v3.z, c11.x, c11
-mul_pp r1.y, r1, r1.w
-texld r1.x, r1.x, s6
-mul_pp r1.w, r1.y, r1.x
-mul r1.xyz, r1.w, c2
-mul_pp r2.y, r3.x, c2.w
-mul_pp r2.y, r1.w, r2
-mul r1.xyz, r1, c3
-mul_pp r1.w, r2, r1
-mul_pp_sat r1.w, r1, c15
-add_pp r1.w, -r1, c11.y
-mul_pp_sat r3.x, r2.y, c16
-mov r2.x, c8
-add r2.xyz, c2, r2.x
-mul r1.xyz, r1, r3.w
-add_pp_sat r3.y, r3, -r3.z
-mul r1.xyz, r3.y, r1
-mul r1.xyz, r4.w, r1
-mad_sat r2.xyz, r2, r3.x, c0
-mad_pp r1.xyz, r2, c9.x, r1
-mad_pp r0.xyz, -r4, r1, r0
-mul_pp r1.xyz, r4, r1
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r3.z, r0.y, c15.x
+mul r8.x, r0, c15
+texldd r0, r2.zwzw, s2, r3.zwzw, r8
+dp3_pp_sat r4.w, r7, v1
+texldd r7, r2.zwzw, s0, r3.zwzw, r8
+mul_pp r5, r0, r5
+mad_pp r5.xyz, -r7, r4, r5
+mul_pp r7.xyz, r7, r4
+pow_pp r8, r4.w, c5.x
+rcp r2.w, v3.w
+mad r6.xy, v3, r2.w, c15.y
+dp3 r4.x, v3, v3
+mov_pp r2.z, r8.x
+texld r2.w, r6, s5
+cmp r3.z, -v3, c11.x, c11.y
+mul_pp r2.w, r3.z, r2
+texld r4.x, r4.x, s6
+mul_pp r4.w, r2, r4.x
+add_pp r3.z, r6.w, c11.y
+mul r4.xyz, r4.w, c2
+mul r4.xyz, r4, c3
+frc_pp r2.w, r3.z
+mul r4.xyz, r4, r2.z
+add_pp_sat r2.z, r3, -r2.w
+mul r4.xyz, r2.z, r4
+mov r2.w, c8.x
+mul_pp r2.z, r6.w, c2.w
+mul_pp r2.z, r4.w, r2
+mul_pp_sat r2.z, r2, c16.x
+add r6.xyz, c2, r2.w
+mad_sat r6.xyz, r6, r2.z, c0
+mul r4.xyz, r7.w, r4
+add_pp r4.xyz, r6, r4
+texld r2, r2, s3
+mad_pp r7.xyz, r5.w, r5, r7
+texld r3, r3, s3
+add_pp r5, r2, -r3
+mad_pp r3, r1.z, r5, r3
+texld r5, r1, s3
+add_pp r1.x, r6.w, c15.z
+mul_pp r2.w, r1.x, c2
+mul r6.xyz, r4, c9.x
+add_pp r5, r5, -r3
+mad_pp r1, r1.w, r5, r3
+mul_pp r0, r0, r1
+mad_pp r2.xyz, r7, c4, r6
+mul_pp r2.w, r2, r4
+mul_pp_sat r1.x, r2.w, c15.w
+add_pp r1.w, -r1.x, c11.y
+mad_pp r0.xyz, -r2, r4, r0
+mul_pp r1.xyz, r2, r4
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
 mov_pp oC0.w, c11.y
@@ -83731,7 +84111,7 @@ SetTexture 4 [_CityLightOverlayDetailTex] 2D
 SetTexture 5 [_LightTextureB0] 2D
 SetTexture 6 [_LightTexture0] CUBE
 "ps_3_0
-; 130 ALU, 17 TEX
+; 131 ALU, 17 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -83750,140 +84130,141 @@ dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xyz
 dcl_texcoord5 v4.xyz
-mul r1.xy, v4, c6.x
-mul r0.xy, v4.zyzw, c6.x
-abs r6.zw, v4.xyxy
-abs r1.z, v4
-texld r2.xyz, r1, s1
-max r0.w, r6.z, r1.z
-rcp r1.x, r0.w
-min r0.w, r6.z, r1.z
-mul r0.w, r0, r1.x
-mul r1.x, r0.w, r0.w
-mad r1.y, r1.x, c13, c13.z
-mad r1.y, r1, r1.x, c13.w
-mad r1.y, r1, r1.x, c14.x
-mad r1.y, r1, r1.x, c14
-mad r1.x, r1.y, r1, c14.z
-mul r3.x, r1, r0.w
-mul r1.w, v0.x, c7.x
-mul_sat r1.y, r1.w, c12.z
+mul r0.xy, v4, c6.x
+mul r1.xy, v4.zyzw, c6.x
+abs r2.w, v4.z
+texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v4.xyxy
+max r0.w, r1.z, r2
+mad_pp r2.xyz, r1.z, r2, r0
+mul r1.xy, v4.zxzw, c6.x
+texld r0.xyz, r1, s1
 add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r6.z, r0, r2
-mul r0.xy, v4.zxzw, c6.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r6.w, r0, r2
-add_pp r2.xyz, -r0, c11.y
-mad_pp r5.xyz, r1.y, r2, r0
-mul r7.xy, v4, c10.x
-mul r1.xy, v4.zyzw, c10.x
-add r3.y, -r3.x, c14.w
-add r1.w, r6.z, -r1.z
-cmp r1.w, -r1, r3.x, r3.y
-texld r2, r7, s4
-texld r0, r1, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.z, r0, r2
-add r0.x, -r1.w, c12.w
-cmp r1.w, v4.z, r1, r0.x
-mul r6.xy, v4.zxzw, c10.x
-cmp r1.w, v4.x, r1, -r1
-texld r0, r6, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.w, r0, r2
-add r0.y, -r1.z, c11
-mad r0.x, r1.z, c11.z, c11.w
-mad r0.x, r1.z, r0, c12
-rsq r0.y, r0.y
-mad r3.z, r1.w, c15.x, c15.y
-abs r0.w, v4.y
-mad r0.x, r1.z, r0, c12.y
-add r1.w, -r0, c11.y
-mad r1.z, r0.w, c11, c11.w
-mad r1.z, r1, r0.w, c12.x
-rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v4.z, c11, c11.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c12, r0.y
-rsq r1.w, r1.w
-mad r0.w, r1.z, r0, c12.y
-rcp r1.w, r1.w
-mul r1.z, r0.w, r1.w
-cmp r0.w, v4.y, c11.x, c11.y
-mul r1.w, r0, r1.z
-mad r0.y, -r1.w, c12.z, r1.z
-mad r0.z, r0.x, c12.w, r0
-mad r0.x, r0.w, c12.w, r0.y
-mul r0.y, r0.z, c13.x
-dsy r0.zw, v4.xyxy
-mul r3.w, r0.x, c13.x
-dsx r3.y, r0
-dsy r1.w, r0.y
-dsx r0.xy, v4
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
+mad_pp r0.xyz, r1.w, r0, r2
+mul r2.xy, v4.zyzw, c10.x
+min r1.x, r1.z, r2.w
+rcp r0.w, r0.w
+mul r2.z, r1.x, r0.w
+mul r3.z, r2, r2
+mad r1.x, r3.z, c13.y, c13.z
+mad r1.x, r1, r3.z, c13.w
+mad r1.x, r1, r3.z, c14
+mad r3.w, r1.x, r3.z, c14.y
+mad r3.z, r3.w, r3, c14
+mul r2.z, r3, r2
+mul r0.w, v0.x, c7.x
+abs r3.z, v4.y
+mul r1.xy, v4.zxzw, c10.x
+add_pp r4.xyz, -r0, c11.y
+mul_sat r0.w, r0, c12.z
+mad_pp r4.xyz, r0.w, r4, r0
+mul r3.xy, v4, c10.x
+texld r0, r3, s4
+texld r5, r2, s4
+add_pp r5, r5, -r0
+mad_pp r0, r1.z, r5, r0
+texld r5, r1, s4
+add_pp r5, r5, -r0
+mad_pp r5, r1.w, r5, r0
+add r0.w, -r3.z, c11.y
+rsq r0.w, r0.w
+add r0.y, r1.z, -r2.w
+add r0.x, -r2.z, c14.w
+cmp r0.z, -r0.y, r2, r0.x
+add r0.y, -r0.z, c12.w
+cmp r0.y, v4.z, r0.z, r0
+cmp r0.y, v4.x, r0, -r0
+mad r2.z, r0.y, c15.x, c15.y
+mad r0.y, r2.w, c11.z, c11.w
+mad r0.y, r2.w, r0, c12.x
+dp4 r0.x, c1, c1
+rsq r0.x, r0.x
+mul r6.xyz, r0.x, c1
+dp3_pp r0.x, v2, -r6
+mul_pp r7.xyz, v2, r0.x
+mad_pp r7.xyz, -r7, c12.z, -r6
+add r0.x, -r2.w, c11.y
+mad r0.y, r2.w, r0, c12
+mad r2.w, r3.z, c11.z, c11
+mad r2.w, r2, r3.z, c12.x
+mad r2.w, r2, r3.z, c12.y
+rcp r0.w, r0.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
+mul r0.y, r0, r0.x
+cmp r0.x, v4.z, c11, c11.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c12.z, r0
+mad r0.x, r0, c12.w, r0.y
+mul r0.x, r0, c13
+mul r2.w, r2, r0
+cmp r3.z, v4.y, c11.x, c11.y
+mul r0.w, r3.z, r2
+mad r0.z, -r0.w, c12, r2.w
+mad r0.y, r3.z, c12.w, r0.z
+dsy r0.zw, v4.xyxy
+mul r2.w, r0.y, c13.x
+dsx r3.w, r0.x
+dsy r8.y, r0.x
+dsx r0.xy, v4
+mul r0.xy, r0, r0
+add r0.y, r0.x, r0
+mul r0.zw, r0, r0
+add r0.x, r0.z, r0.w
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.x, r0, c15
-mul r1.z, r0.y, c15.x
-texldd r0, r3.zwzw, s2, r3, r1.zwzw
-texldd r4, r3.zwzw, s0, r3, r1.zwzw
-mul_pp r2, r0, r2
-mad_pp r2.xyz, -r4, r5, r2
-mul_pp r4.xyz, r4, r5
-mad_pp r4.xyz, r2.w, r2, r4
-dp4 r5.w, c1, c1
-rsq r1.z, r5.w
-mul r3.xyz, r1.z, c1
-dp3_pp r1.z, v2, -r3
-mul_pp r2.xyz, v2, r1.z
-mad_pp r5.xyz, -r2, c12.z, -r3
-dp3_pp_sat r3.x, v2, r3
-dp3_pp_sat r3.w, r5, v1
-add_pp r3.y, r3.x, c11
-frc_pp r3.z, r3.y
-mul_pp r4.xyz, r4, c4
-texld r2, r7, s3
-texld r1, r1, s3
-add_pp r1, r1, -r2
-mad_pp r2, r6.z, r1, r2
-pow_pp r1, r3.w, c5.x
-mov_pp r3.w, r1.x
-texld r5, r6, s3
-add_pp r5, r5, -r2
-mad_pp r2, r6.w, r5, r2
-mul_pp r0, r0, r2
-add_pp r2.x, r3, c15.z
-mul_pp r2.w, r2.x, c2
-dp3 r1.x, v3, v3
-texld r1.x, r1.x, s5
-texld r1.w, v3, s6
-mul r1.w, r1.x, r1
-mul r1.xyz, r1.w, c2
-mul_pp r2.y, r3.x, c2.w
-mul_pp r2.y, r1.w, r2
-mul r1.xyz, r1, c3
-mul_pp r1.w, r2, r1
-mul_pp_sat r1.w, r1, c15
-add_pp r1.w, -r1, c11.y
-mul_pp_sat r3.x, r2.y, c16
-mov r2.x, c8
-add r2.xyz, c2, r2.x
-mul r1.xyz, r1, r3.w
-add_pp_sat r3.y, r3, -r3.z
-mul r1.xyz, r3.y, r1
-mul r1.xyz, r4.w, r1
-mad_sat r2.xyz, r2, r3.x, c0
-mad_pp r1.xyz, r2, c9.x, r1
-mad_pp r0.xyz, -r4, r1, r0
-mul_pp r1.xyz, r4, r1
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r3.z, r0.y, c15.x
+mul r8.x, r0, c15
+texldd r0, r2.zwzw, s2, r3.zwzw, r8
+dp3_pp_sat r4.w, r7, v1
+texldd r7, r2.zwzw, s0, r3.zwzw, r8
+mul_pp r5, r0, r5
+mad_pp r5.xyz, -r7, r4, r5
+mul_pp r7.xyz, r7, r4
+dp3_pp_sat r6.w, v2, r6
+pow_pp r8, r4.w, c5.x
+dp3 r4.x, v3, v3
+add_pp r3.z, r6.w, c11.y
+mov_pp r2.z, r8.x
+texld r2.w, v3, s6
+texld r4.x, r4.x, s5
+mul r4.w, r4.x, r2
+mul r4.xyz, r4.w, c2
+mul r4.xyz, r4, c3
+frc_pp r2.w, r3.z
+mul r4.xyz, r4, r2.z
+add_pp_sat r2.z, r3, -r2.w
+mul r4.xyz, r2.z, r4
+mov r2.w, c8.x
+mul_pp r2.z, r6.w, c2.w
+mul_pp r2.z, r4.w, r2
+mul_pp_sat r2.z, r2, c16.x
+add r6.xyz, c2, r2.w
+mad_sat r6.xyz, r6, r2.z, c0
+mul r4.xyz, r7.w, r4
+add_pp r4.xyz, r6, r4
+texld r2, r2, s3
+mad_pp r7.xyz, r5.w, r5, r7
+texld r3, r3, s3
+add_pp r5, r2, -r3
+mad_pp r3, r1.z, r5, r3
+texld r5, r1, s3
+add_pp r1.x, r6.w, c15.z
+mul_pp r2.w, r1.x, c2
+mul r6.xyz, r4, c9.x
+add_pp r5, r5, -r3
+mad_pp r1, r1.w, r5, r3
+mul_pp r0, r0, r1
+mad_pp r2.xyz, r7, c4, r6
+mul_pp r2.w, r2, r4
+mul_pp_sat r1.x, r2.w, c15.w
+add_pp r1.w, -r1.x, c11.y
+mad_pp r0.xyz, -r2, r4, r0
+mul_pp r1.xyz, r2, r4
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
 mov_pp oC0.w, c11.y
@@ -83930,7 +84311,7 @@ SetTexture 3 [_CityDarkOverlayDetailTex] 2D
 SetTexture 4 [_CityLightOverlayDetailTex] 2D
 SetTexture 5 [_LightTexture0] 2D
 "ps_3_0
-; 128 ALU, 16 TEX
+; 129 ALU, 16 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -83948,137 +84329,138 @@ dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xy
 dcl_texcoord5 v4.xyz
-mul r1.xy, v4, c6.x
-mul r0.xy, v4.zyzw, c6.x
-abs r6.zw, v4.xyxy
-abs r1.z, v4
-texld r2.xyz, r1, s1
-max r0.w, r6.z, r1.z
-rcp r1.x, r0.w
-min r0.w, r6.z, r1.z
-mul r0.w, r0, r1.x
-mul r1.x, r0.w, r0.w
-mad r1.y, r1.x, c13, c13.z
-mad r1.y, r1, r1.x, c13.w
-mad r1.y, r1, r1.x, c14.x
-mad r1.y, r1, r1.x, c14
-mad r1.x, r1.y, r1, c14.z
-mul r3.x, r1, r0.w
-mul r1.w, v0.x, c7.x
-mul_sat r1.y, r1.w, c12.z
+mul r0.xy, v4, c6.x
+mul r1.xy, v4.zyzw, c6.x
+abs r2.w, v4.z
+texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v4.xyxy
+max r0.w, r1.z, r2
+mad_pp r2.xyz, r1.z, r2, r0
+mul r1.xy, v4.zxzw, c6.x
+texld r0.xyz, r1, s1
 add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r6.z, r0, r2
-mul r0.xy, v4.zxzw, c6.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r6.w, r0, r2
-add_pp r2.xyz, -r0, c11.y
-mad_pp r5.xyz, r1.y, r2, r0
-mul r7.xy, v4, c10.x
-mul r1.xy, v4.zyzw, c10.x
-add r3.y, -r3.x, c14.w
-add r1.w, r6.z, -r1.z
-cmp r1.w, -r1, r3.x, r3.y
-texld r2, r7, s4
-texld r0, r1, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.z, r0, r2
-add r0.x, -r1.w, c12.w
-cmp r1.w, v4.z, r1, r0.x
-mul r6.xy, v4.zxzw, c10.x
-cmp r1.w, v4.x, r1, -r1
-texld r0, r6, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.w, r0, r2
-add r0.y, -r1.z, c11
-mad r0.x, r1.z, c11.z, c11.w
-mad r0.x, r1.z, r0, c12
-rsq r0.y, r0.y
-mad r3.z, r1.w, c15.x, c15.y
-abs r0.w, v4.y
-mad r0.x, r1.z, r0, c12.y
-add r1.w, -r0, c11.y
-mad r1.z, r0.w, c11, c11.w
-mad r1.z, r1, r0.w, c12.x
-rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v4.z, c11, c11.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c12, r0.y
-rsq r1.w, r1.w
-mad r0.w, r1.z, r0, c12.y
-rcp r1.w, r1.w
-mul r1.z, r0.w, r1.w
-cmp r0.w, v4.y, c11.x, c11.y
-mul r1.w, r0, r1.z
-mad r0.y, -r1.w, c12.z, r1.z
-mad r0.z, r0.x, c12.w, r0
-mad r0.x, r0.w, c12.w, r0.y
-mul r0.y, r0.z, c13.x
-dsy r0.zw, v4.xyxy
-mul r3.w, r0.x, c13.x
-dsx r3.y, r0
-dsy r1.w, r0.y
-dsx r0.xy, v4
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
+mad_pp r0.xyz, r1.w, r0, r2
+mul r2.xy, v4.zyzw, c10.x
+min r1.x, r1.z, r2.w
+rcp r0.w, r0.w
+mul r2.z, r1.x, r0.w
+mul r3.z, r2, r2
+mad r1.x, r3.z, c13.y, c13.z
+mad r1.x, r1, r3.z, c13.w
+mad r1.x, r1, r3.z, c14
+mad r3.w, r1.x, r3.z, c14.y
+mad r3.z, r3.w, r3, c14
+mul r2.z, r3, r2
+mul r0.w, v0.x, c7.x
+abs r3.z, v4.y
+mul r1.xy, v4.zxzw, c10.x
+add_pp r4.xyz, -r0, c11.y
+mul_sat r0.w, r0, c12.z
+mad_pp r4.xyz, r0.w, r4, r0
+mul r3.xy, v4, c10.x
+texld r0, r3, s4
+texld r5, r2, s4
+add_pp r5, r5, -r0
+mad_pp r0, r1.z, r5, r0
+texld r5, r1, s4
+add_pp r5, r5, -r0
+mad_pp r5, r1.w, r5, r0
+add r0.w, -r3.z, c11.y
+rsq r0.w, r0.w
+add r0.y, r1.z, -r2.w
+add r0.x, -r2.z, c14.w
+cmp r0.z, -r0.y, r2, r0.x
+add r0.y, -r0.z, c12.w
+cmp r0.y, v4.z, r0.z, r0
+cmp r0.y, v4.x, r0, -r0
+mad r2.z, r0.y, c15.x, c15.y
+mad r0.y, r2.w, c11.z, c11.w
+mad r0.y, r2.w, r0, c12.x
+dp4_pp r0.x, c1, c1
+rsq_pp r0.x, r0.x
+mul_pp r6.xyz, r0.x, c1
+dp3_pp r0.x, v2, -r6
+mul_pp r7.xyz, v2, r0.x
+mad_pp r7.xyz, -r7, c12.z, -r6
+add r0.x, -r2.w, c11.y
+mad r0.y, r2.w, r0, c12
+mad r2.w, r3.z, c11.z, c11
+mad r2.w, r2, r3.z, c12.x
+mad r2.w, r2, r3.z, c12.y
+rcp r0.w, r0.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
+mul r0.y, r0, r0.x
+cmp r0.x, v4.z, c11, c11.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c12.z, r0
+mad r0.x, r0, c12.w, r0.y
+mul r0.x, r0, c13
+mul r2.w, r2, r0
+cmp r3.z, v4.y, c11.x, c11.y
+mul r0.w, r3.z, r2
+mad r0.z, -r0.w, c12, r2.w
+mad r0.y, r3.z, c12.w, r0.z
+dsy r0.zw, v4.xyxy
+mul r2.w, r0.y, c13.x
+dsx r3.w, r0.x
+dsy r8.y, r0.x
+dsx r0.xy, v4
+mul r0.xy, r0, r0
+add r0.y, r0.x, r0
+mul r0.zw, r0, r0
+add r0.x, r0.z, r0.w
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.x, r0, c15
-mul r1.z, r0.y, c15.x
-texldd r0, r3.zwzw, s2, r3, r1.zwzw
-texldd r4, r3.zwzw, s0, r3, r1.zwzw
-mul_pp r2, r0, r2
-mad_pp r2.xyz, -r4, r5, r2
-mul_pp r4.xyz, r4, r5
-mad_pp r4.xyz, r2.w, r2, r4
-dp4_pp r5.w, c1, c1
-rsq_pp r1.z, r5.w
-mul_pp r3.xyz, r1.z, c1
-dp3_pp r1.z, v2, -r3
-mul_pp r2.xyz, v2, r1.z
-mad_pp r5.xyz, -r2, c12.z, -r3
-dp3_pp_sat r3.x, v2, r3
-dp3_pp_sat r3.w, r5, v1
-add_pp r3.y, r3.x, c11
-frc_pp r3.z, r3.y
-mul_pp r4.xyz, r4, c4
-texld r2, r7, s3
-texld r1, r1, s3
-add_pp r1, r1, -r2
-mad_pp r2, r6.z, r1, r2
-pow_pp r1, r3.w, c5.x
-texld r5, r6, s3
-add_pp r5, r5, -r2
-mad_pp r2, r6.w, r5, r2
-mul_pp r0, r0, r2
-texld r1.w, v3, s5
-mov_pp r3.w, r1.x
-mul r1.xyz, r1.w, c2
-mul r1.xyz, r1, c3
-mul r1.xyz, r1, r3.w
-add_pp_sat r3.y, r3, -r3.z
-mul r1.xyz, r3.y, r1
-mul r2.xyz, r4.w, r1
-add_pp r1.x, r3, c15.z
-mul_pp r1.y, r3.x, c2.w
-mul_pp r1.y, r1.w, r1
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r3.z, r0.y, c15.x
+mul r8.x, r0, c15
+texldd r0, r2.zwzw, s2, r3.zwzw, r8
+dp3_pp_sat r4.w, r7, v1
+texldd r7, r2.zwzw, s0, r3.zwzw, r8
+pow_pp r8, r4.w, c5.x
+mul_pp r5, r0, r5
+mad_pp r5.xyz, -r7, r4, r5
+dp3_pp_sat r6.w, v2, r6
+mul_pp r7.xyz, r7, r4
+texld r4.w, v3, s5
+add_pp r3.z, r6.w, c11.y
+mul r4.xyz, r4.w, c2
+frc_pp r2.w, r3.z
+mov_pp r2.z, r8.x
+mul r4.xyz, r4, c3
+mul r4.xyz, r4, r2.z
+add_pp_sat r2.z, r3, -r2.w
+mul r4.xyz, r2.z, r4
+mov r2.w, c8.x
+mul_pp r2.z, r6.w, c2.w
+mul_pp r2.z, r4.w, r2
+mul_pp_sat r2.z, r2, c16.x
+add r6.xyz, c2, r2.w
+mad_sat r6.xyz, r6, r2.z, c0
+mul r4.xyz, r7.w, r4
+add_pp r4.xyz, r6, r4
+texld r2, r2, s3
+mad_pp r7.xyz, r5.w, r5, r7
+texld r3, r3, s3
+add_pp r5, r2, -r3
+mad_pp r3, r1.z, r5, r3
+texld r5, r1, s3
+add_pp r1.x, r6.w, c15.z
 mul_pp r2.w, r1.x, c2
-mul_pp r1.w, r2, r1
-mul_pp_sat r1.w, r1, c15
-add_pp r1.w, -r1, c11.y
-mul_pp_sat r3.x, r1.y, c16
-mov r1.x, c8
-add r1.xyz, c2, r1.x
-mad_sat r1.xyz, r1, r3.x, c0
-mad_pp r1.xyz, r1, c9.x, r2
-mad_pp r0.xyz, -r4, r1, r0
-mul_pp r1.xyz, r4, r1
+mul r6.xyz, r4, c9.x
+add_pp r5, r5, -r3
+mad_pp r1, r1.w, r5, r3
+mul_pp r0, r0, r1
+mad_pp r2.xyz, r7, c4, r6
+mul_pp r2.w, r2, r4
+mul_pp_sat r1.x, r2.w, c15.w
+add_pp r1.w, -r1.x, c11.y
+mad_pp r0.xyz, -r2, r4, r0
+mul_pp r1.xyz, r2, r4
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
 mov_pp oC0.w, c11.y
@@ -84107,6 +84489,221 @@ Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
 
 SubProgram "d3d9 " {
 Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
+Vector 0 [glstate_lightmodel_ambient]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightShadowData]
+Vector 3 [_LightColor0]
+Vector 4 [_SpecColor]
+Vector 5 [_Color]
+Float 6 [_Shininess]
+Float 7 [_DetailScale]
+Float 8 [_DetailDist]
+Float 9 [_MinLight]
+Float 10 [_Albedo]
+Float 11 [_CityOverlayDetailScale]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_CityOverlayTex] 2D
+SetTexture 3 [_CityDarkOverlayDetailTex] 2D
+SetTexture 4 [_CityLightOverlayDetailTex] 2D
+SetTexture 5 [_LightTexture0] 2D
+SetTexture 6 [_LightTextureB0] 2D
+SetTexture 7 [_ShadowMapTexture] 2D
+"ps_3_0
+; 140 ALU, 18 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+dcl_2d s5
+dcl_2d s6
+dcl_2d s7
+def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
+def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
+def c17, 4.00000000, 0, 0, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3
+dcl_texcoord4 v4
+dcl_texcoord5 v5.xyz
+mul r0.xy, v5, c7.x
+mul r1.xy, v5.zyzw, c7.x
+abs r2.w, v5.z
+texld r1.xyz, r1, s1
+texld r0.xyz, r0, s1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v5.xyxy
+max r0.w, r1.z, r2
+mad_pp r2.xyz, r1.z, r2, r0
+mul r1.xy, v5.zxzw, c7.x
+texld r0.xyz, r1, s1
+add_pp r0.xyz, r0, -r2
+mad_pp r0.xyz, r1.w, r0, r2
+mul r2.xy, v5.zyzw, c11.x
+min r1.x, r1.z, r2.w
+rcp r0.w, r0.w
+mul r2.z, r1.x, r0.w
+mul r3.z, r2, r2
+mad r1.x, r3.z, c14.y, c14.z
+mad r1.x, r1, r3.z, c14.w
+mad r1.x, r1, r3.z, c15
+mad r3.w, r1.x, r3.z, c15.y
+mad r3.z, r3.w, r3, c15
+mul r2.z, r3, r2
+mul r0.w, v0.x, c8.x
+abs r3.z, v5.y
+mul r1.xy, v5.zxzw, c11.x
+add_pp r4.xyz, -r0, c12.y
+mul_sat r0.w, r0, c13.z
+mad_pp r4.xyz, r0.w, r4, r0
+mul r3.xy, v5, c11.x
+texld r0, r3, s4
+texld r5, r2, s4
+add_pp r5, r5, -r0
+mad_pp r0, r1.z, r5, r0
+texld r5, r1, s4
+add_pp r5, r5, -r0
+mad_pp r5, r1.w, r5, r0
+add r0.w, -r3.z, c12.y
+rsq r0.w, r0.w
+add r0.y, r1.z, -r2.w
+add r0.x, -r2.z, c15.w
+cmp r0.z, -r0.y, r2, r0.x
+add r0.y, -r0.z, c13.w
+cmp r0.y, v5.z, r0.z, r0
+cmp r0.y, v5.x, r0, -r0
+mad r2.z, r0.y, c16.x, c16.y
+mad r0.y, r2.w, c12.z, c12.w
+mad r0.y, r2.w, r0, c13.x
+dp4 r0.x, c1, c1
+rsq r0.x, r0.x
+mul r6.xyz, r0.x, c1
+dp3_pp r0.x, v2, -r6
+mul_pp r7.xyz, v2, r0.x
+mad_pp r7.xyz, -r7, c13.z, -r6
+add r0.x, -r2.w, c12.y
+mad r0.y, r2.w, r0, c13
+mad r2.w, r3.z, c12.z, c12
+mad r2.w, r2, r3.z, c13.x
+mad r2.w, r2, r3.z, c13.y
+rcp r0.w, r0.w
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r0.y, r0, r0.x
+cmp r0.x, v5.z, c12, c12.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c13.z, r0
+mad r0.x, r0, c13.w, r0.y
+mul r0.x, r0, c14
+mul r2.w, r2, r0
+cmp r3.z, v5.y, c12.x, c12.y
+mul r0.w, r3.z, r2
+mad r0.z, -r0.w, c13, r2.w
+mad r0.y, r3.z, c13.w, r0.z
+dsy r0.zw, v5.xyxy
+mul r2.w, r0.y, c14.x
+dsx r3.w, r0.x
+dsy r8.y, r0.x
+dsx r0.xy, v5
+mul r0.xy, r0, r0
+add r0.y, r0.x, r0
+mul r0.zw, r0, r0
+add r0.x, r0.z, r0.w
+rsq r0.y, r0.y
+rcp r0.y, r0.y
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r3.z, r0.y, c16.x
+mul r8.x, r0, c16
+texldd r0, r2.zwzw, s2, r3.zwzw, r8
+dp3_pp_sat r4.w, r7, v1
+texldd r7, r2.zwzw, s0, r3.zwzw, r8
+pow_pp r8, r4.w, c6.x
+mul_pp r5, r0, r5
+mad_pp r5.xyz, -r7, r4, r5
+mul_pp r7.xyz, r7, r4
+dp3_pp_sat r4.w, v2, r6
+rcp r3.w, v3.w
+mad r6.xy, v3, r3.w, c16.y
+mov_pp r2.z, r8.x
+texldp r4.x, v4, s7
+rcp r2.w, v4.w
+mad r3.z, -v4, r2.w, r4.x
+mov r2.w, c2.x
+cmp r3.z, r3, c12.y, r2.w
+dp3 r4.x, v3, v3
+texld r2.w, r6, s5
+cmp r3.w, -v3.z, c12.x, c12.y
+texld r4.x, r4.x, s6
+mul_pp r2.w, r3, r2
+mul_pp r2.w, r2, r4.x
+mul_pp r6.w, r2, r3.z
+add_pp r3.z, r4.w, c12.y
+mul r4.xyz, r6.w, c3
+mul r4.xyz, r4, c4
+frc_pp r2.w, r3.z
+mul r4.xyz, r4, r2.z
+add_pp_sat r2.z, r3, -r2.w
+mul r4.xyz, r2.z, r4
+mov r2.w, c9.x
+mul_pp r2.z, r4.w, c3.w
+mul_pp r2.z, r6.w, r2
+mul_pp_sat r2.z, r2, c17.x
+add r6.xyz, c3, r2.w
+mad_sat r6.xyz, r6, r2.z, c0
+mul r4.xyz, r7.w, r4
+add_pp r4.xyz, r6, r4
+texld r2, r2, s3
+mad_pp r7.xyz, r5.w, r5, r7
+texld r3, r3, s3
+add_pp r5, r2, -r3
+mad_pp r3, r1.z, r5, r3
+texld r5, r1, s3
+add_pp r1.x, r4.w, c16.z
+mul_pp r2.w, r1.x, c3
+mul r6.xyz, r4, c10.x
+add_pp r5, r5, -r3
+mad_pp r1, r1.w, r5, r3
+mul_pp r0, r0, r1
+mad_pp r2.xyz, r7, c5, r6
+mul_pp r2.w, r2, r6
+mul_pp_sat r1.x, r2.w, c16.w
+add_pp r1.w, -r1.x, c12.y
+mad_pp r0.xyz, -r2, r4, r0
+mul_pp r1.xyz, r2, r4
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
+mov_pp oC0.w, c12.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
 Vector 0 [glstate_lightmodel_ambient]
 Vector 1 [_WorldSpaceLightPos0]
 Vector 2 [_LightShadowData]
@@ -84149,58 +84746,67 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3
 dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
-mul r1.xy, v5.zyzw, c7.x
-mul r5.xy, v5.zyzw, c11.x
 mul r0.xy, v5, c7.x
-abs r1.zw, v5.xyxy
+mul r1.xy, v5.zyzw, c7.x
 abs r2.w, v5.z
-texld r2.xyz, r1, s1
+texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
-add_pp r2.xyz, r2, -r0
-mad_pp r2.xyz, r1.z, r2, r0
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v5.xyxy
 max r0.w, r1.z, r2
-mul r0.xy, v5.zxzw, c7.x
-texld r0.xyz, r0, s1
+mad_pp r2.xyz, r1.z, r2, r0
+mul r1.xy, v5.zxzw, c7.x
+texld r0.xyz, r1, s1
 add_pp r0.xyz, r0, -r2
 mad_pp r0.xyz, r1.w, r0, r2
+mul r2.xy, v5.zyzw, c11.x
 min r1.x, r1.z, r2.w
 rcp r0.w, r0.w
-mul r0.w, r1.x, r0
-mul r3.x, r0.w, r0.w
-mad r1.x, r3, c14.y, c14.z
-mad r1.x, r1, r3, c14.w
-mad r1.x, r1, r3, c15
-mad r1.y, r1.x, r3.x, c15
-mad r1.y, r1, r3.x, c15.z
-mul r1.x, v0, c8
-mul r1.y, r1, r0.w
-add r3.z, r1, -r2.w
-add_pp r2.xyz, -r0, c12.y
-mul_sat r1.x, r1, c13.z
-mad_pp r2.xyz, r1.x, r2, r0
-mul r3.xy, v5, c11.x
-add r1.x, -r1.y, c15.w
-cmp r3.w, -r3.z, r1.y, r1.x
-add r3.z, -r3.w, c13.w
-cmp r3.z, v5, r3.w, r3
-cmp r3.z, v5.x, r3, -r3
-abs r3.w, v5.y
-texld r0, r3, s4
-texld r4, r5, s4
-add_pp r4, r4, -r0
-mad_pp r0, r1.z, r4, r0
+mul r2.z, r1.x, r0.w
+mul r3.z, r2, r2
+mad r1.x, r3.z, c14.y, c14.z
+mad r1.x, r1, r3.z, c14.w
+mad r1.x, r1, r3.z, c15
+mad r3.w, r1.x, r3.z, c15.y
+mad r3.z, r3.w, r3, c15
+mul r2.z, r3, r2
+mul r0.w, v0.x, c8.x
+abs r3.z, v5.y
 mul r1.xy, v5.zxzw, c11.x
-texld r4, r1, s4
-add_pp r4, r4, -r0
-mad_pp r4, r1.w, r4, r0
-add r0.x, -r2.w, c12.y
+add_pp r4.xyz, -r0, c12.y
+mul_sat r0.w, r0, c13.z
+mad_pp r4.xyz, r0.w, r4, r0
+mul r3.xy, v5, c11.x
+texld r0, r3, s4
+texld r5, r2, s4
+add_pp r5, r5, -r0
+mad_pp r0, r1.z, r5, r0
+texld r5, r1, s4
+add_pp r5, r5, -r0
+mad_pp r5, r1.w, r5, r0
+add r0.w, -r3.z, c12.y
+rsq r0.w, r0.w
+add r0.y, r1.z, -r2.w
+add r0.x, -r2.z, c15.w
+cmp r0.z, -r0.y, r2, r0.x
+add r0.y, -r0.z, c13.w
+cmp r0.y, v5.z, r0.z, r0
+cmp r0.y, v5.x, r0, -r0
+mad r2.z, r0.y, c16.x, c16.y
 mad r0.y, r2.w, c12.z, c12.w
 mad r0.y, r2.w, r0, c13.x
+dp4 r0.x, c1, c1
+rsq r0.x, r0.x
+mul r6.xyz, r0.x, c1
+dp3_pp r0.x, v2, -r6
+mul_pp r7.xyz, v2, r0.x
+mad_pp r7.xyz, -r7, c13.z, -r6
+add r0.x, -r2.w, c12.y
 mad r0.y, r2.w, r0, c13
-add r0.w, -r3, c12.y
-mad r2.w, r3, c12.z, c12
-mad r2.w, r2, r3, c13.x
-mad r2.w, r2, r3, c13.y
+mad r2.w, r3.z, c12.z, c12
+mad r2.w, r2, r3.z, c13.x
+mad r2.w, r2, r3.z, c13.y
+rcp r0.w, r0.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mul r0.y, r0, r0.x
@@ -84209,18 +84815,15 @@ mul r0.z, r0.x, r0.y
 mad r0.y, -r0.z, c13.z, r0
 mad r0.x, r0, c13.w, r0.y
 mul r0.x, r0, c14
-rsq r0.w, r0.w
-rcp r0.w, r0.w
 mul r2.w, r2, r0
-cmp r3.w, v5.y, c12.x, c12.y
-mul r0.w, r3, r2
+cmp r3.z, v5.y, c12.x, c12.y
+mul r0.w, r3.z, r2
 mad r0.z, -r0.w, c13, r2.w
-mad r0.y, r3.w, c13.w, r0.z
+mad r0.y, r3.z, c13.w, r0.z
 dsy r0.zw, v5.xyxy
-dp4 r2.w, c1, c1
-mul r3.w, r0.y, c14.x
-dsx r5.w, r0.x
-dsy r7.y, r0.x
+mul r2.w, r0.y, c14.x
+dsx r3.w, r0.x
+dsy r8.y, r0.x
 dsx r0.xy, v5
 mul r0.xy, r0, r0
 add r0.y, r0.x, r0
@@ -84230,282 +84833,63 @@ rsq r0.y, r0.y
 rcp r0.y, r0.y
 rsq r0.x, r0.x
 rcp r0.x, r0.x
-mul r5.z, r0.y, c16.x
-mad r3.z, r3, c16.x, c16.y
-mul r7.x, r0, c16
-texldd r0, r3.zwzw, s2, r5.zwzw, r7
-mul_pp r6, r0, r4
-texldd r4, r3.zwzw, s0, r5.zwzw, r7
-mad_pp r6.xyz, -r4, r2, r6
-mul_pp r2.xyz, r4, r2
-mad_pp r2.xyz, r6.w, r6, r2
-rsq r2.w, r2.w
-mul r4.xyz, r2.w, c1
-dp3_pp r2.w, v2, -r4
-mul_pp r6.xyz, v2, r2.w
-dp3_pp_sat r2.w, v2, r4
-mul_pp r2.xyz, r2, c5
-texld r3, r3, s3
-texld r5, r5, s3
-add_pp r5, r5, -r3
-mad_pp r3, r1.z, r5, r3
-mad_pp r6.xyz, -r6, c13.z, -r4
-dp3_pp_sat r1.z, r6, v1
-texld r5, r1, s3
-add_pp r6, r5, -r3
-pow_pp r5, r1.z, c6.x
-mad_pp r1, r1.w, r6, r3
-mul_pp r0, r0, r1
-rcp r1.z, v3.w
-mad r3.xy, v3, r1.z, c16.y
-texld r1.w, r3, s5
-add_pp r3.y, r2.w, c12
-frc_pp r3.x, r3.y
-cmp r1.z, -v3, c12.x, c12.y
-mul_pp r1.z, r1, r1.w
-add_pp_sat r3.x, r3.y, -r3
-mov_pp r3.z, r5.x
-texldp r1.x, v4, s7
-rcp r1.y, v4.w
-mad r1.y, -v4.z, r1, r1.x
-mov r1.x, c2
-cmp r1.y, r1, c12, r1.x
-dp3 r1.x, v3, v3
-texld r1.x, r1.x, s6
-mul_pp r1.x, r1.z, r1
-mul_pp r1.w, r1.x, r1.y
-mul r1.xyz, r1.w, c3
-mul r1.xyz, r1, c4
-mul r1.xyz, r1, r3.z
-mul r1.xyz, r3.x, r1
-add_pp r3.x, r2.w, c16.z
-mul_pp r3.x, r3, c3.w
-mul_pp r3.w, r3.x, r1
-mul_pp r2.w, r2, c3
-mul_pp r1.w, r1, r2
+mul r3.z, r0.y, c16.x
+mul r8.x, r0, c16
+texldd r0, r2.zwzw, s2, r3.zwzw, r8
+dp3_pp_sat r4.w, r7, v1
+texldd r7, r2.zwzw, s0, r3.zwzw, r8
+pow_pp r8, r4.w, c6.x
+mul_pp r5, r0, r5
+mad_pp r5.xyz, -r7, r4, r5
+mul_pp r7.xyz, r7, r4
+mov r2.w, c2.x
+dp3_pp_sat r4.w, v2, r6
+rcp r3.w, v3.w
+mad r6.xy, v3, r3.w, c16.y
+mov_pp r2.z, r8.x
+add r2.w, c12.y, -r2
+texldp r4.x, v4, s7
+mad r3.z, r4.x, r2.w, c2.x
+dp3 r4.x, v3, v3
+texld r2.w, r6, s5
+cmp r3.w, -v3.z, c12.x, c12.y
+texld r4.x, r4.x, s6
+mul_pp r2.w, r3, r2
+mul_pp r2.w, r2, r4.x
+mul_pp r6.w, r2, r3.z
+add_pp r3.z, r4.w, c12.y
+mul r4.xyz, r6.w, c3
+mul r4.xyz, r4, c4
+frc_pp r2.w, r3.z
+mul r4.xyz, r4, r2.z
+add_pp_sat r2.z, r3, -r2.w
+mul r4.xyz, r2.z, r4
 mov r2.w, c9.x
-mul_pp_sat r1.w, r1, c17.x
-add r3.xyz, c3, r2.w
-mad_sat r3.xyz, r3, r1.w, c0
-mul r1.xyz, r4.w, r1
-mad_pp r1.xyz, r3, c10.x, r1
-mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r3, c16
-add_pp r1.w, -r1, c12.y
-mul_pp r1.xyz, r2, r1
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
-mov_pp oC0.w, c12.y
-"
-}
-
-SubProgram "gles " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightShadowData]
-Vector 3 [_LightColor0]
-Vector 4 [_SpecColor]
-Vector 5 [_Color]
-Float 6 [_Shininess]
-Float 7 [_DetailScale]
-Float 8 [_DetailDist]
-Float 9 [_MinLight]
-Float 10 [_Albedo]
-Float 11 [_CityOverlayDetailScale]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_CityOverlayTex] 2D
-SetTexture 3 [_CityDarkOverlayDetailTex] 2D
-SetTexture 4 [_CityLightOverlayDetailTex] 2D
-SetTexture 5 [_LightTexture0] 2D
-SetTexture 6 [_LightTextureB0] 2D
-SetTexture 7 [_ShadowMapTexture] 2D
-"ps_3_0
-; 138 ALU, 18 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-dcl_2d s5
-dcl_2d s6
-dcl_2d s7
-def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c17, 4.00000000, 0, 0, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3
-dcl_texcoord4 v4
-dcl_texcoord5 v5.xyz
-mul r1.xy, v5.zyzw, c7.x
-mul r5.xy, v5.zyzw, c11.x
-mul r0.xy, v5, c7.x
-abs r1.zw, v5.xyxy
-abs r2.w, v5.z
-texld r2.xyz, r1, s1
-texld r0.xyz, r0, s1
-add_pp r2.xyz, r2, -r0
-mad_pp r2.xyz, r1.z, r2, r0
-max r0.w, r1.z, r2
-mul r0.xy, v5.zxzw, c7.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r1.w, r0, r2
-min r1.x, r1.z, r2.w
-rcp r0.w, r0.w
-mul r0.w, r1.x, r0
-mul r3.x, r0.w, r0.w
-mad r1.x, r3, c14.y, c14.z
-mad r1.x, r1, r3, c14.w
-mad r1.x, r1, r3, c15
-mad r1.y, r1.x, r3.x, c15
-mad r1.y, r1, r3.x, c15.z
-mul r1.x, v0, c8
-mul r1.y, r1, r0.w
-add r3.z, r1, -r2.w
-add_pp r2.xyz, -r0, c12.y
-mul_sat r1.x, r1, c13.z
-mad_pp r2.xyz, r1.x, r2, r0
-mul r3.xy, v5, c11.x
-add r1.x, -r1.y, c15.w
-cmp r3.w, -r3.z, r1.y, r1.x
-add r3.z, -r3.w, c13.w
-cmp r3.z, v5, r3.w, r3
-cmp r3.z, v5.x, r3, -r3
-abs r3.w, v5.y
-texld r0, r3, s4
-texld r4, r5, s4
-add_pp r4, r4, -r0
-mad_pp r0, r1.z, r4, r0
-mul r1.xy, v5.zxzw, c11.x
-texld r4, r1, s4
-add_pp r4, r4, -r0
-mad_pp r4, r1.w, r4, r0
-add r0.x, -r2.w, c12.y
-mad r0.y, r2.w, c12.z, c12.w
-mad r0.y, r2.w, r0, c13.x
-mad r0.y, r2.w, r0, c13
-add r0.w, -r3, c12.y
-mad r2.w, r3, c12.z, c12
-mad r2.w, r2, r3, c13.x
-mad r2.w, r2, r3, c13.y
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r0.y, r0, r0.x
-cmp r0.x, v5.z, c12, c12.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c13.z, r0
-mad r0.x, r0, c13.w, r0.y
-mul r0.x, r0, c14
-rsq r0.w, r0.w
-rcp r0.w, r0.w
-mul r2.w, r2, r0
-cmp r3.w, v5.y, c12.x, c12.y
-mul r0.w, r3, r2
-mad r0.z, -r0.w, c13, r2.w
-mad r0.y, r3.w, c13.w, r0.z
-dsy r0.zw, v5.xyxy
-dp4 r2.w, c1, c1
-mul r3.w, r0.y, c14.x
-dsx r5.w, r0.x
-dsy r7.y, r0.x
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.y, r0.x, r0
-mul r0.zw, r0, r0
-add r0.x, r0.z, r0.w
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r5.z, r0.y, c16.x
-mad r3.z, r3, c16.x, c16.y
-mul r7.x, r0, c16
-texldd r0, r3.zwzw, s2, r5.zwzw, r7
-mul_pp r6, r0, r4
-texldd r4, r3.zwzw, s0, r5.zwzw, r7
-mad_pp r6.xyz, -r4, r2, r6
-mul_pp r2.xyz, r4, r2
-mad_pp r2.xyz, r6.w, r6, r2
-rsq r2.w, r2.w
-mul r4.xyz, r2.w, c1
-dp3_pp r2.w, v2, -r4
-mul_pp r6.xyz, v2, r2.w
-dp3_pp_sat r2.w, v2, r4
-mul_pp r2.xyz, r2, c5
+mul_pp r2.z, r4.w, c3.w
+mul_pp r2.z, r6.w, r2
+mul_pp_sat r2.z, r2, c17.x
+add r6.xyz, c3, r2.w
+mad_sat r6.xyz, r6, r2.z, c0
+mul r4.xyz, r7.w, r4
+add_pp r4.xyz, r6, r4
+texld r2, r2, s3
+mad_pp r7.xyz, r5.w, r5, r7
 texld r3, r3, s3
-texld r5, r5, s3
-add_pp r5, r5, -r3
+add_pp r5, r2, -r3
 mad_pp r3, r1.z, r5, r3
-mad_pp r6.xyz, -r6, c13.z, -r4
-dp3_pp_sat r1.z, r6, v1
 texld r5, r1, s3
-add_pp r6, r5, -r3
-pow_pp r5, r1.z, c6.x
-mad_pp r1, r1.w, r6, r3
+add_pp r1.x, r4.w, c16.z
+mul_pp r2.w, r1.x, c3
+mul r6.xyz, r4, c10.x
+add_pp r5, r5, -r3
+mad_pp r1, r1.w, r5, r3
 mul_pp r0, r0, r1
-mov r1.x, c2
-rcp r1.z, v3.w
-mad r3.xy, v3, r1.z, c16.y
-texld r1.w, r3, s5
-add_pp r3.y, r2.w, c12
-add r1.y, c12, -r1.x
-texldp r1.x, v4, s7
-mad r1.y, r1.x, r1, c2.x
-frc_pp r3.x, r3.y
-dp3 r1.x, v3, v3
-cmp r1.z, -v3, c12.x, c12.y
-mul_pp r1.z, r1, r1.w
-texld r1.x, r1.x, s6
-mul_pp r1.x, r1.z, r1
-mul_pp r1.w, r1.x, r1.y
-mul r1.xyz, r1.w, c3
-add_pp_sat r3.x, r3.y, -r3
-mov_pp r3.z, r5.x
-mul r1.xyz, r1, c4
-mul r1.xyz, r1, r3.z
-mul r1.xyz, r3.x, r1
-add_pp r3.x, r2.w, c16.z
-mul_pp r3.x, r3, c3.w
-mul_pp r3.w, r3.x, r1
-mul_pp r2.w, r2, c3
-mul_pp r1.w, r1, r2
-mov r2.w, c9.x
-mul_pp_sat r1.w, r1, c17.x
-add r3.xyz, c3, r2.w
-mad_sat r3.xyz, r3, r1.w, c0
-mul r1.xyz, r4.w, r1
-mad_pp r1.xyz, r3, c10.x, r1
-mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r3, c16
-add_pp r1.w, -r1, c12.y
-mul_pp r1.xyz, r2, r1
+mad_pp r2.xyz, r7, c5, r6
+mul_pp r2.w, r2, r6
+mul_pp_sat r1.x, r2.w, c16.w
+add_pp r1.w, -r1.x, c12.y
+mad_pp r0.xyz, -r2, r4, r0
+mul_pp r1.xyz, r2, r4
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
 mov_pp oC0.w, c12.y
@@ -84547,7 +84931,7 @@ SetTexture 3 [_CityDarkOverlayDetailTex] 2D
 SetTexture 4 [_CityLightOverlayDetailTex] 2D
 SetTexture 5 [_ShadowMapTexture] 2D
 "ps_3_0
-; 128 ALU, 16 TEX
+; 129 ALU, 16 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -84565,137 +84949,138 @@ dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3
 dcl_texcoord5 v4.xyz
-mul r1.xy, v4, c6.x
-mul r0.xy, v4.zyzw, c6.x
-abs r6.zw, v4.xyxy
-abs r1.z, v4
-texld r2.xyz, r1, s1
-max r0.w, r6.z, r1.z
-rcp r1.x, r0.w
-min r0.w, r6.z, r1.z
-mul r0.w, r0, r1.x
-mul r1.x, r0.w, r0.w
-mad r1.y, r1.x, c13, c13.z
-mad r1.y, r1, r1.x, c13.w
-mad r1.y, r1, r1.x, c14.x
-mad r1.y, r1, r1.x, c14
-mad r1.x, r1.y, r1, c14.z
-mul r3.x, r1, r0.w
-mul r1.w, v0.x, c7.x
-mul_sat r1.y, r1.w, c12.z
+mul r0.xy, v4, c6.x
+mul r1.xy, v4.zyzw, c6.x
+abs r2.w, v4.z
+texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v4.xyxy
+max r0.w, r1.z, r2
+mad_pp r2.xyz, r1.z, r2, r0
+mul r1.xy, v4.zxzw, c6.x
+texld r0.xyz, r1, s1
 add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r6.z, r0, r2
-mul r0.xy, v4.zxzw, c6.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r6.w, r0, r2
-add_pp r2.xyz, -r0, c11.y
-mad_pp r5.xyz, r1.y, r2, r0
-mul r7.xy, v4, c10.x
-mul r1.xy, v4.zyzw, c10.x
-add r3.y, -r3.x, c14.w
-add r1.w, r6.z, -r1.z
-cmp r1.w, -r1, r3.x, r3.y
-texld r2, r7, s4
-texld r0, r1, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.z, r0, r2
-add r0.x, -r1.w, c12.w
-cmp r1.w, v4.z, r1, r0.x
-mul r6.xy, v4.zxzw, c10.x
-cmp r1.w, v4.x, r1, -r1
-texld r0, r6, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.w, r0, r2
-add r0.y, -r1.z, c11
-mad r0.x, r1.z, c11.z, c11.w
-mad r0.x, r1.z, r0, c12
-rsq r0.y, r0.y
-mad r3.z, r1.w, c15.x, c15.y
-abs r0.w, v4.y
-mad r0.x, r1.z, r0, c12.y
-add r1.w, -r0, c11.y
-mad r1.z, r0.w, c11, c11.w
-mad r1.z, r1, r0.w, c12.x
-rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v4.z, c11, c11.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c12, r0.y
-rsq r1.w, r1.w
-mad r0.w, r1.z, r0, c12.y
-rcp r1.w, r1.w
-mul r1.z, r0.w, r1.w
-cmp r0.w, v4.y, c11.x, c11.y
-mul r1.w, r0, r1.z
-mad r0.y, -r1.w, c12.z, r1.z
-mad r0.z, r0.x, c12.w, r0
-mad r0.x, r0.w, c12.w, r0.y
-mul r0.y, r0.z, c13.x
-dsy r0.zw, v4.xyxy
-mul r3.w, r0.x, c13.x
-dsx r3.y, r0
-dsy r1.w, r0.y
-dsx r0.xy, v4
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
+mad_pp r0.xyz, r1.w, r0, r2
+mul r2.xy, v4.zyzw, c10.x
+min r1.x, r1.z, r2.w
+rcp r0.w, r0.w
+mul r2.z, r1.x, r0.w
+mul r3.z, r2, r2
+mad r1.x, r3.z, c13.y, c13.z
+mad r1.x, r1, r3.z, c13.w
+mad r1.x, r1, r3.z, c14
+mad r3.w, r1.x, r3.z, c14.y
+mad r3.z, r3.w, r3, c14
+mul r2.z, r3, r2
+mul r0.w, v0.x, c7.x
+abs r3.z, v4.y
+mul r1.xy, v4.zxzw, c10.x
+add_pp r4.xyz, -r0, c11.y
+mul_sat r0.w, r0, c12.z
+mad_pp r4.xyz, r0.w, r4, r0
+mul r3.xy, v4, c10.x
+texld r0, r3, s4
+texld r5, r2, s4
+add_pp r5, r5, -r0
+mad_pp r0, r1.z, r5, r0
+texld r5, r1, s4
+add_pp r5, r5, -r0
+mad_pp r5, r1.w, r5, r0
+add r0.w, -r3.z, c11.y
+rsq r0.w, r0.w
+add r0.y, r1.z, -r2.w
+add r0.x, -r2.z, c14.w
+cmp r0.z, -r0.y, r2, r0.x
+add r0.y, -r0.z, c12.w
+cmp r0.y, v4.z, r0.z, r0
+cmp r0.y, v4.x, r0, -r0
+mad r2.z, r0.y, c15.x, c15.y
+mad r0.y, r2.w, c11.z, c11.w
+mad r0.y, r2.w, r0, c12.x
+dp4_pp r0.x, c1, c1
+rsq_pp r0.x, r0.x
+mul_pp r6.xyz, r0.x, c1
+dp3_pp r0.x, v2, -r6
+mul_pp r7.xyz, v2, r0.x
+mad_pp r7.xyz, -r7, c12.z, -r6
+add r0.x, -r2.w, c11.y
+mad r0.y, r2.w, r0, c12
+mad r2.w, r3.z, c11.z, c11
+mad r2.w, r2, r3.z, c12.x
+mad r2.w, r2, r3.z, c12.y
+rcp r0.w, r0.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
+mul r0.y, r0, r0.x
+cmp r0.x, v4.z, c11, c11.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c12.z, r0
+mad r0.x, r0, c12.w, r0.y
+mul r0.x, r0, c13
+mul r2.w, r2, r0
+cmp r3.z, v4.y, c11.x, c11.y
+mul r0.w, r3.z, r2
+mad r0.z, -r0.w, c12, r2.w
+mad r0.y, r3.z, c12.w, r0.z
+dsy r0.zw, v4.xyxy
+mul r2.w, r0.y, c13.x
+dsx r3.w, r0.x
+dsy r8.y, r0.x
+dsx r0.xy, v4
+mul r0.xy, r0, r0
+add r0.y, r0.x, r0
+mul r0.zw, r0, r0
+add r0.x, r0.z, r0.w
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.x, r0, c15
-mul r1.z, r0.y, c15.x
-texldd r0, r3.zwzw, s2, r3, r1.zwzw
-texldd r4, r3.zwzw, s0, r3, r1.zwzw
-mul_pp r2, r0, r2
-mad_pp r2.xyz, -r4, r5, r2
-mul_pp r4.xyz, r4, r5
-mad_pp r4.xyz, r2.w, r2, r4
-dp4_pp r5.w, c1, c1
-rsq_pp r1.z, r5.w
-mul_pp r3.xyz, r1.z, c1
-dp3_pp r1.z, v2, -r3
-mul_pp r2.xyz, v2, r1.z
-mad_pp r5.xyz, -r2, c12.z, -r3
-dp3_pp_sat r3.w, r5, v1
-mul_pp r4.xyz, r4, c4
-texld r2, r7, s3
-texld r1, r1, s3
-add_pp r1, r1, -r2
-mad_pp r2, r6.z, r1, r2
-pow_pp r1, r3.w, c5.x
-dp3_pp_sat r1.w, v2, r3
-add_pp r3.y, r1.w, c11
-texld r5, r6, s3
-add_pp r5, r5, -r2
-mad_pp r2, r6.w, r5, r2
-frc_pp r3.z, r3.y
-mul_pp r0, r0, r2
-texldp r3.x, v3, s5
-mov_pp r3.w, r1.x
-mul r1.xyz, r3.x, c2
-mul r1.xyz, r1, c3
-mul r1.xyz, r1, r3.w
-add_pp_sat r3.y, r3, -r3.z
-mul r1.xyz, r3.y, r1
-mul r2.xyz, r4.w, r1
-mul_pp r1.y, r1.w, c2.w
-add_pp r1.x, r1.w, c15.z
-mul_pp r1.w, r1.x, c2
-mul_pp r1.y, r3.x, r1
-mul_pp r1.w, r1, r3.x
-mul_pp_sat r1.w, r1, c15
-add_pp r1.w, -r1, c11.y
-mul_pp_sat r2.w, r1.y, c16.x
-mov r1.x, c8
-add r1.xyz, c2, r1.x
-mad_sat r1.xyz, r1, r2.w, c0
-mad_pp r1.xyz, r1, c9.x, r2
-mad_pp r0.xyz, -r4, r1, r0
-mul_pp r1.xyz, r4, r1
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r3.z, r0.y, c15.x
+mul r8.x, r0, c15
+texldd r0, r2.zwzw, s2, r3.zwzw, r8
+dp3_pp_sat r4.w, r7, v1
+texldd r7, r2.zwzw, s0, r3.zwzw, r8
+pow_pp r8, r4.w, c5.x
+mul_pp r5, r0, r5
+mad_pp r5.xyz, -r7, r4, r5
+dp3_pp_sat r4.w, v2, r6
+mul_pp r7.xyz, r7, r4
+add_pp r3.z, r4.w, c11.y
+mov_pp r2.z, r8.x
+texldp r8.x, v3, s5
+mul r4.xyz, r8.x, c2
+mul r4.xyz, r4, c3
+frc_pp r2.w, r3.z
+mul r4.xyz, r4, r2.z
+add_pp_sat r2.z, r3, -r2.w
+mul r4.xyz, r2.z, r4
+mov r2.w, c8.x
+mul_pp r2.z, r4.w, c2.w
+mul_pp r2.z, r8.x, r2
+mul_pp_sat r2.z, r2, c16.x
+add r6.xyz, c2, r2.w
+mad_sat r6.xyz, r6, r2.z, c0
+mul r4.xyz, r7.w, r4
+add_pp r4.xyz, r6, r4
+texld r2, r2, s3
+mad_pp r7.xyz, r5.w, r5, r7
+texld r3, r3, s3
+add_pp r5, r2, -r3
+mad_pp r3, r1.z, r5, r3
+texld r5, r1, s3
+add_pp r1.x, r4.w, c15.z
+mul_pp r2.w, r1.x, c2
+mul r6.xyz, r4, c9.x
+add_pp r5, r5, -r3
+mad_pp r1, r1.w, r5, r3
+mul_pp r0, r0, r1
+mad_pp r2.xyz, r7, c4, r6
+mul_pp r2.w, r2, r8.x
+mul_pp_sat r1.x, r2.w, c15.w
+add_pp r1.w, -r1.x, c11.y
+mad_pp r0.xyz, -r2, r4, r0
+mul_pp r1.xyz, r2, r4
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
 mov_pp oC0.w, c11.y
@@ -84743,7 +85128,7 @@ SetTexture 4 [_CityLightOverlayDetailTex] 2D
 SetTexture 5 [_ShadowMapTexture] 2D
 SetTexture 6 [_LightTexture0] 2D
 "ps_3_0
-; 129 ALU, 17 TEX
+; 130 ALU, 17 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -84763,139 +85148,140 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xy
 dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
-mul r1.xy, v5, c6.x
-mul r0.xy, v5.zyzw, c6.x
-abs r6.zw, v5.xyxy
-abs r1.z, v5
-texld r2.xyz, r1, s1
-max r0.w, r6.z, r1.z
-rcp r1.x, r0.w
-min r0.w, r6.z, r1.z
-mul r0.w, r0, r1.x
-mul r1.x, r0.w, r0.w
-mad r1.y, r1.x, c13, c13.z
-mad r1.y, r1, r1.x, c13.w
-mad r1.y, r1, r1.x, c14.x
-mad r1.y, r1, r1.x, c14
-mad r1.x, r1.y, r1, c14.z
-mul r3.x, r1, r0.w
-mul r1.w, v0.x, c7.x
-mul_sat r1.y, r1.w, c12.z
+mul r0.xy, v5, c6.x
+mul r1.xy, v5.zyzw, c6.x
+abs r2.w, v5.z
+texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v5.xyxy
+max r0.w, r1.z, r2
+mad_pp r2.xyz, r1.z, r2, r0
+mul r1.xy, v5.zxzw, c6.x
+texld r0.xyz, r1, s1
 add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r6.z, r0, r2
-mul r0.xy, v5.zxzw, c6.x
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r0.xyz, r6.w, r0, r2
-add_pp r2.xyz, -r0, c11.y
-mad_pp r5.xyz, r1.y, r2, r0
-mul r7.xy, v5, c10.x
-mul r1.xy, v5.zyzw, c10.x
-add r3.y, -r3.x, c14.w
-add r1.w, r6.z, -r1.z
-cmp r1.w, -r1, r3.x, r3.y
-texld r2, r7, s4
-texld r0, r1, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.z, r0, r2
-add r0.x, -r1.w, c12.w
-cmp r1.w, v5.z, r1, r0.x
-mul r6.xy, v5.zxzw, c10.x
-cmp r1.w, v5.x, r1, -r1
-texld r0, r6, s4
-add_pp r0, r0, -r2
-mad_pp r2, r6.w, r0, r2
-add r0.y, -r1.z, c11
-mad r0.x, r1.z, c11.z, c11.w
-mad r0.x, r1.z, r0, c12
-rsq r0.y, r0.y
-mad r3.z, r1.w, c15.x, c15.y
-abs r0.w, v5.y
-mad r0.x, r1.z, r0, c12.y
-add r1.w, -r0, c11.y
-mad r1.z, r0.w, c11, c11.w
-mad r1.z, r1, r0.w, c12.x
-rcp r0.y, r0.y
-mul r0.y, r0.x, r0
-cmp r0.x, v5.z, c11, c11.y
-mul r0.z, r0.x, r0.y
-mad r0.z, -r0, c12, r0.y
-rsq r1.w, r1.w
-mad r0.w, r1.z, r0, c12.y
-rcp r1.w, r1.w
-mul r1.z, r0.w, r1.w
-cmp r0.w, v5.y, c11.x, c11.y
-mul r1.w, r0, r1.z
-mad r0.y, -r1.w, c12.z, r1.z
-mad r0.z, r0.x, c12.w, r0
-mad r0.x, r0.w, c12.w, r0.y
-mul r0.y, r0.z, c13.x
-dsy r0.zw, v5.xyxy
-mul r3.w, r0.x, c13.x
-dsx r3.y, r0
-dsy r1.w, r0.y
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
+mad_pp r0.xyz, r1.w, r0, r2
+mul r2.xy, v5.zyzw, c10.x
+min r1.x, r1.z, r2.w
+rcp r0.w, r0.w
+mul r2.z, r1.x, r0.w
+mul r3.z, r2, r2
+mad r1.x, r3.z, c13.y, c13.z
+mad r1.x, r1, r3.z, c13.w
+mad r1.x, r1, r3.z, c14
+mad r3.w, r1.x, r3.z, c14.y
+mad r3.z, r3.w, r3, c14
+mul r2.z, r3, r2
+mul r0.w, v0.x, c7.x
+abs r3.z, v5.y
+mul r1.xy, v5.zxzw, c10.x
+add_pp r4.xyz, -r0, c11.y
+mul_sat r0.w, r0, c12.z
+mad_pp r4.xyz, r0.w, r4, r0
+mul r3.xy, v5, c10.x
+texld r0, r3, s4
+texld r5, r2, s4
+add_pp r5, r5, -r0
+mad_pp r0, r1.z, r5, r0
+texld r5, r1, s4
+add_pp r5, r5, -r0
+mad_pp r5, r1.w, r5, r0
+add r0.w, -r3.z, c11.y
+rsq r0.w, r0.w
+add r0.y, r1.z, -r2.w
+add r0.x, -r2.z, c14.w
+cmp r0.z, -r0.y, r2, r0.x
+add r0.y, -r0.z, c12.w
+cmp r0.y, v5.z, r0.z, r0
+cmp r0.y, v5.x, r0, -r0
+mad r2.z, r0.y, c15.x, c15.y
+mad r0.y, r2.w, c11.z, c11.w
+mad r0.y, r2.w, r0, c12.x
+dp4_pp r0.x, c1, c1
+rsq_pp r0.x, r0.x
+mul_pp r6.xyz, r0.x, c1
+dp3_pp r0.x, v2, -r6
+mul_pp r7.xyz, v2, r0.x
+mad_pp r7.xyz, -r7, c12.z, -r6
+add r0.x, -r2.w, c11.y
+mad r0.y, r2.w, r0, c12
+mad r2.w, r3.z, c11.z, c11
+mad r2.w, r2, r3.z, c12.x
+mad r2.w, r2, r3.z, c12.y
+rcp r0.w, r0.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
+mul r0.y, r0, r0.x
+cmp r0.x, v5.z, c11, c11.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c12.z, r0
+mad r0.x, r0, c12.w, r0.y
+mul r0.x, r0, c13
+mul r2.w, r2, r0
+cmp r3.z, v5.y, c11.x, c11.y
+mul r0.w, r3.z, r2
+mad r0.z, -r0.w, c12, r2.w
+mad r0.y, r3.z, c12.w, r0.z
+dsy r0.zw, v5.xyxy
+mul r2.w, r0.y, c13.x
+dsx r3.w, r0.x
+dsy r8.y, r0.x
+dsx r0.xy, v5
+mul r0.xy, r0, r0
+add r0.y, r0.x, r0
+mul r0.zw, r0, r0
+add r0.x, r0.z, r0.w
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r3.x, r0, c15
-mul r1.z, r0.y, c15.x
-texldd r0, r3.zwzw, s2, r3, r1.zwzw
-texldd r4, r3.zwzw, s0, r3, r1.zwzw
-mul_pp r2, r0, r2
-mad_pp r2.xyz, -r4, r5, r2
-mul_pp r4.xyz, r4, r5
-mad_pp r4.xyz, r2.w, r2, r4
-dp4_pp r5.w, c1, c1
-rsq_pp r1.z, r5.w
-mul_pp r3.xyz, r1.z, c1
-dp3_pp r1.z, v2, -r3
-mul_pp r2.xyz, v2, r1.z
-mad_pp r5.xyz, -r2, c12.z, -r3
-dp3_pp_sat r3.x, v2, r3
-dp3_pp_sat r3.w, r5, v1
-add_pp r3.y, r3.x, c11
-frc_pp r3.z, r3.y
-mul_pp r4.xyz, r4, c4
-texld r2, r7, s3
-texld r1, r1, s3
-add_pp r1, r1, -r2
-mad_pp r2, r6.z, r1, r2
-pow_pp r1, r3.w, c5.x
-mov_pp r3.w, r1.x
-texld r5, r6, s3
-add_pp r5, r5, -r2
-mad_pp r2, r6.w, r5, r2
-mul_pp r0, r0, r2
-add_pp r2.x, r3, c15.z
-mul_pp r2.w, r2.x, c2
-texldp r1.x, v4, s5
-texld r1.w, v3, s6
-mul r1.w, r1, r1.x
-mul r1.xyz, r1.w, c2
-mul_pp r2.y, r3.x, c2.w
-mul_pp r2.y, r1.w, r2
-mul r1.xyz, r1, c3
-mul_pp r1.w, r2, r1
-mul_pp_sat r1.w, r1, c15
-add_pp r1.w, -r1, c11.y
-mul_pp_sat r3.x, r2.y, c16
-mov r2.x, c8
-add r2.xyz, c2, r2.x
-mul r1.xyz, r1, r3.w
-add_pp_sat r3.y, r3, -r3.z
-mul r1.xyz, r3.y, r1
-mul r1.xyz, r4.w, r1
-mad_sat r2.xyz, r2, r3.x, c0
-mad_pp r1.xyz, r2, c9.x, r1
-mad_pp r0.xyz, -r4, r1, r0
-mul_pp r1.xyz, r4, r1
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r3.z, r0.y, c15.x
+mul r8.x, r0, c15
+texldd r0, r2.zwzw, s2, r3.zwzw, r8
+dp3_pp_sat r4.w, r7, v1
+texldd r7, r2.zwzw, s0, r3.zwzw, r8
+mul_pp r5, r0, r5
+mad_pp r5.xyz, -r7, r4, r5
+mul_pp r7.xyz, r7, r4
+dp3_pp_sat r6.w, v2, r6
+pow_pp r8, r4.w, c5.x
+add_pp r3.z, r6.w, c11.y
+mov_pp r2.z, r8.x
+texldp r4.x, v4, s5
+texld r2.w, v3, s6
+mul r4.w, r2, r4.x
+mul r4.xyz, r4.w, c2
+mul r4.xyz, r4, c3
+frc_pp r2.w, r3.z
+mul r4.xyz, r4, r2.z
+add_pp_sat r2.z, r3, -r2.w
+mul r4.xyz, r2.z, r4
+mov r2.w, c8.x
+mul_pp r2.z, r6.w, c2.w
+mul_pp r2.z, r4.w, r2
+mul_pp_sat r2.z, r2, c16.x
+add r6.xyz, c2, r2.w
+mad_sat r6.xyz, r6, r2.z, c0
+mul r4.xyz, r7.w, r4
+add_pp r4.xyz, r6, r4
+texld r2, r2, s3
+mad_pp r7.xyz, r5.w, r5, r7
+texld r3, r3, s3
+add_pp r5, r2, -r3
+mad_pp r3, r1.z, r5, r3
+texld r5, r1, s3
+add_pp r1.x, r6.w, c15.z
+mul_pp r2.w, r1.x, c2
+mul r6.xyz, r4, c9.x
+add_pp r5, r5, -r3
+mad_pp r1, r1.w, r5, r3
+mul_pp r0, r0, r1
+mad_pp r2.xyz, r7, c4, r6
+mul_pp r2.w, r2, r4
+mul_pp_sat r1.x, r2.w, c15.w
+add_pp r1.w, -r1.x, c11.y
+mad_pp r0.xyz, -r2, r4, r0
+mul_pp r1.xyz, r2, r4
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
 mov_pp oC0.w, c11.y
@@ -84945,7 +85331,7 @@ SetTexture 4 [_CityLightOverlayDetailTex] 2D
 SetTexture 5 [_ShadowMapTexture] CUBE
 SetTexture 6 [_LightTexture0] 2D
 "ps_3_0
-; 137 ALU, 17 TEX
+; 139 ALU, 17 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -84966,148 +85352,150 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-mul r5.xy, v5, c12.x
+mul r0.xy, v5, c8.x
+mul r1.xy, v5.zyzw, c8.x
+mul r1.w, v0.x, c9.x
 abs r6.zw, v5.xyxy
-abs r2.w, v5.z
-max r0.x, r6.z, r2.w
-rcp r0.y, r0.x
-min r0.x, r6.z, r2.w
-mul r2.x, r0, r0.y
-mul r2.y, r2.x, r2.x
-mad r0.x, r2.y, c15.y, c15.z
-mad r2.z, r0.x, r2.y, c15.w
+abs r2.x, v5.z
+texld r0.xyz, r0, s1
+texld r1.xyz, r1, s1
+add_pp r1.xyz, r1, -r0
+mad_pp r1.xyz, r6.z, r1, r0
+mul r0.xy, v5.zxzw, c8.x
+texld r0.xyz, r0, s1
+add_pp r3.xyz, r0, -r1
+max r0.w, r6.z, r2.x
+rcp r0.y, r0.w
+min r0.x, r6.z, r2
+mul r2.y, r0.x, r0
+mul r2.z, r2.y, r2.y
+mad_pp r0.xyz, r6.w, r3, r1
+mad r0.w, r2.z, c15.y, c15.z
+mad r0.w, r0, r2.z, c15
+mad r2.w, r0, r2.z, c16.x
+mad r2.w, r2, r2.z, c16.y
+add_pp r1.xyz, -r0, c13.y
+mul_sat r1.w, r1, c14.z
+mad_pp r5.xyz, r1.w, r1, r0
+mul r8.xy, v5, c12.x
 mul r7.xy, v5.zyzw, c12.x
-mad r2.z, r2, r2.y, c16.x
-texld r1, r5, s4
+texld r1, r8, s4
 texld r0, r7, s4
 add_pp r0, r0, -r1
 mad_pp r1, r6.z, r0, r1
-mad r0.x, r2.z, r2.y, c16.y
-mad r2.y, r0.x, r2, c16.z
+mad r0.x, r2.w, r2.z, c16.z
+mul r2.z, r0.x, r2.y
 mul r6.xy, v5.zxzw, c12.x
 texld r0, r6, s4
 add_pp r0, r0, -r1
-mad_pp r1, r6.w, r0, r1
-mul r2.x, r2.y, r2
-add r0.y, -r2.x, c16.w
-add r0.x, r6.z, -r2.w
-cmp r0.w, -r0.x, r2.x, r0.y
-mul r2.xy, v5, c8.x
-mul r0.xy, v5.zyzw, c8.x
-add r3.x, -r0.w, c14.w
-texld r2.xyz, r2, s1
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r6.z, r0, r2
-cmp r0.z, v5, r0.w, r3.x
-cmp r0.w, v5.x, r0.z, -r0.z
-mul r0.xy, v5.zxzw, c8.x
-texld r0.xyz, r0, s1
-add_pp r3.xyz, r0, -r2
-mad_pp r2.xyz, r6.w, r3, r2
-add r0.y, -r2.w, c13
-mad r0.x, r2.w, c13.z, c13.w
-mad r0.x, r2.w, r0, c14
-rsq r0.y, r0.y
-mad r5.z, r0.w, c17.x, c17.y
-mad r0.x, r2.w, r0, c14.y
-rcp r0.y, r0.y
-mul r2.w, r0.x, r0.y
-abs r0.y, v5
-cmp r0.x, v5.z, c13, c13.y
-mul r3.w, r0.x, r2
-add r0.w, -r0.y, c13.y
-mad r0.z, r0.y, c13, c13.w
-mad r0.z, r0, r0.y, c14.x
-rsq r0.w, r0.w
-mad r0.y, r0.z, r0, c14
-rcp r0.w, r0.w
-mul r0.z, r0.y, r0.w
-cmp r0.y, v5, c13.x, c13
-mul r0.w, r0.y, r0.z
-mad r2.w, -r3, c14.z, r2
-mad r0.z, -r0.w, c14, r0
-mad r0.w, r0.x, c14, r2
-mad r0.x, r0.y, c14.w, r0.z
-mul r0.y, r0.w, c15.x
-dsy r0.zw, v5.xyxy
-mul r2.w, v0.x, c9.x
-dsx r4.w, r0.y
-dsy r4.y, r0
-mul r5.w, r0.x, c15.x
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
+mad_pp r0, r6.w, r0, r1
+dp4 r1.y, c1, c1
+rsq r1.y, r1.y
+mul r3.xyz, r1.y, c1
+add r1.y, -r2.x, c13
+rsq r1.y, r1.y
+abs r1.w, v5.y
+add r2.w, -r2.z, c16
+add r2.y, r6.z, -r2.x
+cmp r2.y, -r2, r2.z, r2.w
+add r1.x, -r2.y, c14.w
+cmp r1.x, v5.z, r2.y, r1
+cmp r1.x, v5, r1, -r1
+mad r9.x, r1, c17, c17.y
+mad r1.x, r2, c13.z, c13.w
+mad r1.x, r2, r1, c14
+mad r1.x, r2, r1, c14.y
+add r2.z, -r1.w, c13.y
+mad r2.x, r1.w, c13.z, c13.w
+mad r2.x, r2, r1.w, c14
+rcp r1.y, r1.y
+mul r1.y, r1.x, r1
+cmp r1.x, v5.z, c13, c13.y
+mul r1.z, r1.x, r1.y
+mad r1.z, -r1, c14, r1.y
+rsq r2.z, r2.z
+mad r1.w, r2.x, r1, c14.y
+rcp r2.z, r2.z
+mul r2.x, r1.w, r2.z
+cmp r1.w, v5.y, c13.x, c13.y
+mul r2.z, r1.w, r2.x
+mad r1.y, -r2.z, c14.z, r2.x
+mad r1.z, r1.x, c14.w, r1
+mad r1.x, r1.w, c14.w, r1.y
+mul r1.y, r1.z, c15.x
+dp3_pp r2.y, v2, -r3
+dsy r1.zw, v5.xyxy
+mul_pp r2.xyz, v2, r2.y
+mad_pp r2.xyz, -r2, c14.z, -r3
+dp3_pp_sat r3.w, r2, v1
+pow_pp r2, r3.w, c7.x
+mov_pp r3.w, r2.x
+texld r2, v4, s5
+mul r9.y, r1.x, c15.x
+dsx r8.w, r1.y
+dsy r7.w, r1.y
+dsx r1.xy, v5
+mul r1.xy, r1, r1
+add r1.x, r1, r1.y
+mul r1.zw, r1, r1
+add r1.y, r1.z, r1.w
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r7.z, r1.y, c17.x
+mul r8.z, r1.x, c17.x
+texldd r1, r9, s2, r8.zwzw, r7.zwzw
+mul_pp r4, r1, r0
+texldd r0, r9, s0, r8.zwzw, r7.zwzw
+mad_pp r4.xyz, -r0, r5, r4
+mul_pp r5.xyz, r0, r5
+dp3 r0.x, v4, v4
 rsq r0.x, r0.x
 rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r4.z, r0.x, c17.x
-mul r4.x, r0.y, c17
-texldd r0, r5.zwzw, s2, r4.zwzw, r4
-mul_pp r1, r0, r1
-add_pp r3.xyz, -r2, c13.y
-mul_sat r2.w, r2, c14.z
-mad_pp r2.xyz, r2.w, r3, r2
-texldd r3, r5.zwzw, s0, r4.zwzw, r4
-mul_pp r4.xyz, r3, r2
-mad_pp r1.xyz, -r3, r2, r1
-mad_pp r1.xyz, r1.w, r1, r4
-mul_pp r4.xyz, r1, c6
-dp4 r1.w, c1, c1
-rsq r1.x, r1.w
-mul r3.xyz, r1.x, c1
-texld r1, r5, s3
-dp3_pp r4.w, v2, -r3
-mul_pp r5.xyz, v2, r4.w
-mad_pp r5.xyz, -r5, c14.z, -r3
-texld r2, r7, s3
-add_pp r2, r2, -r1
-mad_pp r1, r6.z, r2, r1
-texld r2, r6, s3
-add_pp r2, r2, -r1
-mad_pp r2, r6.w, r2, r1
-mul_pp r2, r0, r2
-dp3_pp_sat r4.w, r5, v1
-pow_pp r1, r4.w, c7.x
-dp3 r0.x, v4, v4
-rsq r1.y, r0.x
-texld r0, v4, s5
-dp4 r0.y, r0, c18
-rcp r1.y, r1.y
-mul r0.x, r1.y, c2.w
-dp3_pp_sat r1.y, v2, r3
-add_pp r1.z, r1.y, c13.y
+dp4 r0.y, r2, c18
+dp3_pp_sat r7.z, v2, r3
+mul r0.x, r0, c2.w
 mad r0.y, -r0.x, c17.w, r0
 mov r0.z, c3.x
+add_pp r2.x, r7.z, c13.y
+frc_pp r2.y, r2.x
 dp3 r0.x, v3, v3
-frc_pp r1.w, r1.z
+mad_pp r4.xyz, r4.w, r4, r5
 cmp r0.y, r0, c13, r0.z
 texld r0.x, r0.x, s6
-mul r0.w, r0.x, r0.y
-mul r0.xyz, r0.w, c4
+mul r5.w, r0.x, r0.y
+mul r0.xyz, r5.w, c4
 mul r0.xyz, r0, c5
-mul r0.xyz, r0, r1.x
-add_pp_sat r1.x, r1.z, -r1.w
-mul r0.xyz, r1.x, r0
-add_pp r1.x, r1.y, c17.z
-mul_pp r1.x, r1, c4.w
-mul_pp r1.w, r1.x, r0
-mul_pp r1.y, r1, c4.w
-mul_pp r1.x, r0.w, r1.y
-mov r0.w, c10.x
-mul_pp_sat r3.x, r1, c19.y
-add r1.xyz, c4, r0.w
-mul_pp_sat r0.w, r1, c19.x
-mad_sat r1.xyz, r1, r3.x, c0
-mul r0.xyz, r3.w, r0
-mad_pp r0.xyz, r1, c11.x, r0
-mad_pp r1.xyz, -r4, r0, r2
+mul r0.xyz, r0, r3.w
+add_pp_sat r2.x, r2, -r2.y
+mul r0.xyz, r2.x, r0
+mul r2.xyz, r0.w, r0
+mul_pp r2.w, r7.z, c4
+mul_pp r0.y, r5.w, r2.w
+mul_pp_sat r0.w, r0.y, c19.y
+mov r0.x, c10
+add r0.xyz, c4, r0.x
+mad_sat r0.xyz, r0, r0.w, c0
+add_pp r0.xyz, r0, r2
+mul r5.xyz, r0, c11.x
+add_pp r0.w, r7.z, c17.z
+mul_pp r0.w, r0, c4
+mul_pp r0.w, r0, r5
+mul_pp_sat r0.w, r0, c19.x
+texld r2, r8, s3
+texld r3, r7, s3
+add_pp r3, r3, -r2
+mad_pp r2, r6.z, r3, r2
+texld r3, r6, s3
+add_pp r3, r3, -r2
+mad_pp r2, r6.w, r3, r2
+mul_pp r1, r1, r2
+mad_pp r4.xyz, r4, c6, r5
+mad_pp r1.xyz, -r4, r0, r1
 mul_pp r2.xyz, r4, r0
 add_pp r0.w, -r0, c13.y
-mul_pp r0.x, r2.w, r0.w
+mul_pp r0.x, r1.w, r0.w
 mad_pp oC0.xyz, r0.x, r1, r2
 mov_pp oC0.w, c13.y
 "
@@ -85157,7 +85545,7 @@ SetTexture 5 [_ShadowMapTexture] CUBE
 SetTexture 6 [_LightTextureB0] 2D
 SetTexture 7 [_LightTexture0] CUBE
 "ps_3_0
-; 139 ALU, 18 TEX
+; 140 ALU, 18 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -85179,58 +85567,67 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-mul r1.xy, v5.zyzw, c8.x
-mul r5.xy, v5.zyzw, c12.x
 mul r0.xy, v5, c8.x
-abs r1.zw, v5.xyxy
+mul r1.xy, v5.zyzw, c8.x
 abs r2.w, v5.z
-texld r2.xyz, r1, s1
+texld r1.xyz, r1, s1
 texld r0.xyz, r0, s1
-add_pp r2.xyz, r2, -r0
-mad_pp r2.xyz, r1.z, r2, r0
+add_pp r2.xyz, r1, -r0
+abs r1.zw, v5.xyxy
 max r0.w, r1.z, r2
-mul r0.xy, v5.zxzw, c8.x
-texld r0.xyz, r0, s1
+mad_pp r2.xyz, r1.z, r2, r0
+mul r1.xy, v5.zxzw, c8.x
+texld r0.xyz, r1, s1
 add_pp r0.xyz, r0, -r2
 mad_pp r0.xyz, r1.w, r0, r2
+mul r2.xy, v5.zyzw, c12.x
 min r1.x, r1.z, r2.w
 rcp r0.w, r0.w
-mul r0.w, r1.x, r0
-mul r3.x, r0.w, r0.w
-mad r1.x, r3, c15.y, c15.z
-mad r1.x, r1, r3, c15.w
-mad r1.x, r1, r3, c16
-mad r1.y, r1.x, r3.x, c16
-mad r1.y, r1, r3.x, c16.z
-mul r1.x, v0, c9
-mul r1.y, r1, r0.w
-add r3.z, r1, -r2.w
-add_pp r2.xyz, -r0, c13.y
-mul_sat r1.x, r1, c14.z
-mad_pp r2.xyz, r1.x, r2, r0
-mul r3.xy, v5, c12.x
-add r1.x, -r1.y, c16.w
-cmp r3.w, -r3.z, r1.y, r1.x
-add r3.z, -r3.w, c14.w
-cmp r3.z, v5, r3.w, r3
-cmp r3.z, v5.x, r3, -r3
-abs r3.w, v5.y
-texld r0, r3, s4
-texld r4, r5, s4
-add_pp r4, r4, -r0
-mad_pp r0, r1.z, r4, r0
+mul r2.z, r1.x, r0.w
+mul r3.z, r2, r2
+mad r1.x, r3.z, c15.y, c15.z
+mad r1.x, r1, r3.z, c15.w
+mad r1.x, r1, r3.z, c16
+mad r3.w, r1.x, r3.z, c16.y
+mad r3.z, r3.w, r3, c16
+mul r2.z, r3, r2
+mul r0.w, v0.x, c9.x
+abs r3.z, v5.y
 mul r1.xy, v5.zxzw, c12.x
-texld r4, r1, s4
-add_pp r4, r4, -r0
-mad_pp r4, r1.w, r4, r0
-add r0.x, -r2.w, c13.y
+add_pp r4.xyz, -r0, c13.y
+mul_sat r0.w, r0, c14.z
+mad_pp r4.xyz, r0.w, r4, r0
+mul r3.xy, v5, c12.x
+texld r0, r3, s4
+texld r5, r2, s4
+add_pp r5, r5, -r0
+mad_pp r0, r1.z, r5, r0
+texld r5, r1, s4
+add_pp r5, r5, -r0
+mad_pp r6, r1.w, r5, r0
+add r0.w, -r3.z, c13.y
+rsq r0.w, r0.w
+add r0.y, r1.z, -r2.w
+add r0.x, -r2.z, c16.w
+cmp r0.z, -r0.y, r2, r0.x
+add r0.y, -r0.z, c14.w
+cmp r0.y, v5.z, r0.z, r0
+cmp r0.y, v5.x, r0, -r0
+mad r2.z, r0.y, c17.x, c17.y
 mad r0.y, r2.w, c13.z, c13.w
 mad r0.y, r2.w, r0, c14.x
+dp4 r0.x, c1, c1
+rsq r0.x, r0.x
+mul r5.xyz, r0.x, c1
+dp3_pp r0.x, v2, -r5
+mul_pp r7.xyz, v2, r0.x
+mad_pp r7.xyz, -r7, c14.z, -r5
+add r0.x, -r2.w, c13.y
 mad r0.y, r2.w, r0, c14
-add r0.w, -r3, c13.y
-mad r2.w, r3, c13.z, c13
-mad r2.w, r2, r3, c14.x
-mad r2.w, r2, r3, c14.y
+mad r2.w, r3.z, c13.z, c13
+mad r2.w, r2, r3.z, c14.x
+mad r2.w, r2, r3.z, c14.y
+rcp r0.w, r0.w
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 mul r0.y, r0, r0.x
@@ -85239,18 +85636,15 @@ mul r0.z, r0.x, r0.y
 mad r0.y, -r0.z, c14.z, r0
 mad r0.x, r0, c14.w, r0.y
 mul r0.x, r0, c15
-rsq r0.w, r0.w
-rcp r0.w, r0.w
 mul r2.w, r2, r0
-cmp r3.w, v5.y, c13.x, c13.y
-mul r0.w, r3, r2
+cmp r3.z, v5.y, c13.x, c13.y
+mul r0.w, r3.z, r2
 mad r0.z, -r0.w, c14, r2.w
-mad r0.y, r3.w, c14.w, r0.z
+mad r0.y, r3.z, c14.w, r0.z
 dsy r0.zw, v5.xyxy
-dp4 r2.w, c1, c1
-mul r3.w, r0.y, c15.x
-dsx r5.w, r0.x
-dsy r7.y, r0.x
+mul r2.w, r0.y, c15.x
+dsx r3.w, r0.x
+dsy r8.y, r0.x
 dsx r0.xy, v5
 mul r0.xy, r0, r0
 add r0.y, r0.x, r0
@@ -85260,69 +85654,64 @@ rsq r0.y, r0.y
 rcp r0.y, r0.y
 rsq r0.x, r0.x
 rcp r0.x, r0.x
-mul r5.z, r0.y, c17.x
-mad r3.z, r3, c17.x, c17.y
-mul r7.x, r0, c17
-texldd r0, r3.zwzw, s2, r5.zwzw, r7
-mul_pp r6, r0, r4
-texldd r4, r3.zwzw, s0, r5.zwzw, r7
-mad_pp r6.xyz, -r4, r2, r6
-mul_pp r2.xyz, r4, r2
-mad_pp r2.xyz, r6.w, r6, r2
-rsq r2.w, r2.w
-mul r4.xyz, r2.w, c1
-dp3_pp r2.w, v2, -r4
-mul_pp r6.xyz, v2, r2.w
+mul r3.z, r0.y, c17.x
+mul r8.x, r0, c17
+texldd r0, r2.zwzw, s2, r3.zwzw, r8
+dp3_pp_sat r4.w, r7, v1
+texldd r7, r2.zwzw, s0, r3.zwzw, r8
+mul_pp r6, r0, r6
+mad_pp r6.xyz, -r7, r4, r6
+mul_pp r4.xyz, r7, r4
+pow_pp r8, r4.w, c7.x
+mov_pp r2.z, r8.x
+texld r8, v4, s5
+dp4 r3.z, r8, c18
 dp3 r2.w, v4, v4
-mul_pp r2.xyz, r2, c6
-texld r3, r3, s3
-texld r5, r5, s3
-add_pp r5, r5, -r3
-mad_pp r3, r1.z, r5, r3
-mad_pp r6.xyz, -r6, c14.z, -r4
-dp3_pp_sat r1.z, r6, v1
-texld r5, r1, s3
-add_pp r6, r5, -r3
-pow_pp r5, r1.z, c7.x
-mad_pp r1, r1.w, r6, r3
-mul_pp r0, r0, r1
-texld r1, v4, s5
-dp4 r1.y, r1, c18
 rsq r2.w, r2.w
-rcp r1.z, r2.w
-dp3_pp_sat r2.w, v2, r4
-add_pp r3.z, r2.w, c13.y
-mul r1.z, r1, c2.w
-mov_pp r3.x, r5
-mov r1.x, c3
-mad r1.y, -r1.z, c17.w, r1
-cmp r1.y, r1, c13, r1.x
-dp3 r1.x, v3, v3
-texld r1.w, v3, s7
-texld r1.x, r1.x, s6
-mul r1.x, r1, r1.w
-mul r1.w, r1.x, r1.y
-mul r1.xyz, r1.w, c4
-mul r1.xyz, r1, c5
-mul r1.xyz, r1, r3.x
-frc_pp r3.y, r3.z
-add_pp_sat r3.x, r3.z, -r3.y
-mul r1.xyz, r3.x, r1
-add_pp r3.x, r2.w, c17.z
-mul_pp r3.x, r3, c4.w
-mul_pp r3.w, r3.x, r1
-mul_pp r2.w, r2, c4
-mul_pp r1.w, r1, r2
+rcp r3.w, r2.w
+mul r3.w, r3, c2
+dp3 r7.x, v3, v3
+dp3_pp_sat r8.x, v2, r5
+mov r2.w, c3.x
+mad r3.z, -r3.w, c17.w, r3
+cmp r3.z, r3, c13.y, r2.w
+texld r7.x, r7.x, s6
+texld r2.w, v3, s7
+mul r2.w, r7.x, r2
+mul r5.w, r2, r3.z
+add_pp r2.w, r8.x, c13.y
+mul r5.xyz, r5.w, c4
+mul r5.xyz, r5, c5
+frc_pp r3.z, r2.w
+mul r5.xyz, r5, r2.z
+add_pp_sat r2.z, r2.w, -r3
+mul r5.xyz, r2.z, r5
 mov r2.w, c10.x
-mul_pp_sat r1.w, r1, c19.y
-add r3.xyz, c4, r2.w
-mad_sat r3.xyz, r3, r1.w, c0
-mul r1.xyz, r4.w, r1
-mad_pp r1.xyz, r3, c11.x, r1
-mad_pp r0.xyz, -r2, r1, r0
-mul_pp_sat r1.w, r3, c19.x
-add_pp r1.w, -r1, c13.y
-mul_pp r1.xyz, r2, r1
+mul_pp r2.z, r8.x, c4.w
+mul_pp r2.z, r5.w, r2
+mul_pp_sat r2.z, r2, c19.y
+add r7.xyz, c4, r2.w
+mad_sat r7.xyz, r7, r2.z, c0
+mul r5.xyz, r7.w, r5
+add_pp r5.xyz, r7, r5
+mad_pp r7.xyz, r6.w, r6, r4
+texld r2, r2, s3
+texld r3, r3, s3
+add_pp r4, r2, -r3
+mad_pp r3, r1.z, r4, r3
+texld r4, r1, s3
+add_pp r1.x, r8, c17.z
+mul_pp r2.w, r1.x, c4
+mul r6.xyz, r5, c11.x
+add_pp r4, r4, -r3
+mad_pp r1, r1.w, r4, r3
+mul_pp r0, r0, r1
+mad_pp r2.xyz, r7, c6, r6
+mul_pp r2.w, r2, r5
+mul_pp_sat r1.x, r2.w, c19
+add_pp r1.w, -r1.x, c13.y
+mad_pp r0.xyz, -r2, r5, r0
+mul_pp r1.xyz, r2, r5
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
 mov_pp oC0.w, c13.y
@@ -85376,7 +85765,7 @@ SetTexture 5 [_LightTexture0] 2D
 SetTexture 6 [_LightTextureB0] 2D
 SetTexture 7 [_ShadowMapTexture] 2D
 "ps_3_0
-; 147 ALU, 21 TEX
+; 148 ALU, 21 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -85397,160 +85786,161 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3
 dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
-mul r6.xy, v5, c15.x
-abs r4.zw, v5.xyxy
-abs r2.w, v5.z
-max r0.x, r4.z, r2.w
-rcp r0.y, r0.x
-min r0.x, r4.z, r2.w
-mul r2.x, r0, r0.y
-mul r2.y, r2.x, r2.x
-mad r0.x, r2.y, c18.y, c18.z
-mad r2.z, r0.x, r2.y, c18.w
-mul r5.xy, v5.zyzw, c15.x
-mad r2.z, r2, r2.y, c19.x
-texld r0, r5, s4
-texld r1, r6, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.z, r0, r1
-mad r0.x, r2.z, r2.y, c19.y
-mad r2.y, r0.x, r2, c19.z
-mul r4.xy, v5.zxzw, c15.x
-texld r0, r4, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.w, r0, r1
-mul r2.x, r2.y, r2
-add r0.x, r4.z, -r2.w
-add r0.y, -r2.x, c19.w
-cmp r0.w, -r0.x, r2.x, r0.y
-mul r2.xy, v5, c11.x
-mul r0.xy, v5.zyzw, c11.x
-add r3.x, -r0.w, c17.w
-texld r2.xyz, r2, s1
+mul r0.xy, v5, c11.x
+mul r1.xy, v5.zyzw, c11.x
+mul r2.y, v0.x, c12.x
+abs r5.zw, v5.xyxy
+abs r0.w, v5.z
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r4.z, r0, r2
-cmp r0.z, v5, r0.w, r3.x
-cmp r0.w, v5.x, r0.z, -r0.z
+texld r1.xyz, r1, s1
+add_pp r1.xyz, r1, -r0
+mad_pp r1.xyz, r5.z, r1, r0
+max r1.w, r5.z, r0
+rcp r0.y, r1.w
+min r0.x, r5.z, r0.w
+mul r3.x, r0, r0.y
+mul r1.w, r3.x, r3.x
+mad r2.x, r1.w, c18.y, c18.z
+mad r2.x, r2, r1.w, c18.w
+mad r2.x, r2, r1.w, c19
+mad r2.x, r2, r1.w, c19.y
+mad r3.y, r2.x, r1.w, c19.z
 mul r0.xy, v5.zxzw, c11.x
 texld r0.xyz, r0, s1
-add_pp r3.xyz, r0, -r2
-mad_pp r2.xyz, r4.w, r3, r2
-add r0.y, -r2.w, c16
-mad r0.x, r2.w, c16.z, c16.w
-mad r0.x, r2.w, r0, c17
-rsq r0.y, r0.y
-mad r7.x, r0.w, c20, c20.y
-mad r0.x, r2.w, r0, c17.y
-rcp r0.y, r0.y
-mul r2.w, r0.x, r0.y
-abs r0.y, v5
-cmp r0.x, v5.z, c16, c16.y
-mul r3.w, r0.x, r2
-add r0.w, -r0.y, c16.y
-mad r0.z, r0.y, c16, c16.w
-mad r0.z, r0, r0.y, c17.x
+add_pp r0.xyz, r0, -r1
+mad_pp r0.xyz, r5.w, r0, r1
+add_pp r1.xyz, -r0, c16.y
+mul_sat r2.y, r2, c17.z
+mad_pp r0.xyz, r2.y, r1, r0
+mul r7.xy, v5, c15.x
+mul r6.xy, v5.zyzw, c15.x
+mul r3.x, r3.y, r3
+texld r2, r7, s4
+texld r1, r6, s4
+add_pp r1, r1, -r2
+mad_pp r2, r5.z, r1, r2
+add r1.y, -r3.x, c19.w
+add r1.x, r5.z, -r0.w
+cmp r4.x, -r1, r3, r1.y
+mul r5.xy, v5.zxzw, c15.x
+texld r1, r5, s4
+add_pp r1, r1, -r2
+mad_pp r3, r5.w, r1, r2
+add r4.y, -r4.x, c17.w
+cmp r1.x, v5.z, r4, r4.y
+cmp r1.x, v5, r1, -r1
+mad r6.z, r1.x, c20.x, c20.y
+mad r1.x, r0.w, c16.z, c16.w
+dp4 r1.y, c1, c1
+rsq r1.y, r1.y
+mul r2.xyz, r1.y, c1
+add r1.y, -r0.w, c16
+mad r1.x, r0.w, r1, c17
+mad r0.w, r0, r1.x, c17.y
+abs r1.x, v5.y
+add r1.z, -r1.x, c16.y
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r1.w, r0, r1.y
+cmp r0.w, v5.z, c16.x, c16.y
+mul r2.w, r0, r1
+mad r1.y, r1.x, c16.z, c16.w
+mad r1.y, r1, r1.x, c17.x
+rsq r1.z, r1.z
+mad r1.x, r1.y, r1, c17.y
+rcp r1.z, r1.z
+mul r1.y, r1.x, r1.z
+cmp r1.x, v5.y, c16, c16.y
+mul r1.z, r1.x, r1.y
+mad r1.w, -r2, c17.z, r1
+mad r1.y, -r1.z, c17.z, r1
+mad r1.z, r0.w, c17.w, r1.w
+mad r0.w, r1.x, c17, r1.y
+mul r1.x, r1.z, c18
+dsy r1.zw, v5.xyxy
+mul r6.w, r0, c18.x
+dsx r4.w, r1.x
+dsy r4.y, r1.x
+dsx r1.xy, v5
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
+mul r1.zw, r1, r1
+add r1.x, r1.z, r1.w
 rsq r0.w, r0.w
-mad r0.y, r0.z, r0, c17
 rcp r0.w, r0.w
-mul r0.z, r0.y, r0.w
-cmp r0.y, v5, c16.x, c16
-mul r0.w, r0.y, r0.z
-mad r2.w, -r3, c17.z, r2
-mad r0.z, -r0.w, c17, r0
-mad r0.w, r0.x, c17, r2
-mad r0.x, r0.y, c17.w, r0.z
-mul r0.y, r0.w, c18.x
-dsy r0.zw, v5.xyxy
-mul r2.w, v0.x, c12.x
-mul r7.y, r0.x, c18.x
-dsx r6.w, r0.y
-dsy r5.w, r0.y
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r5.z, r0.y, c20.x
-mul r6.z, r0.x, c20.x
-texldd r0, r7, s2, r6.zwzw, r5.zwzw
-mul_pp r1, r0, r1
-add_pp r3.xyz, -r2, c16.y
-mul_sat r2.w, r2, c17.z
-mad_pp r3.xyz, r2.w, r3, r2
-texldd r2, r7, s0, r6.zwzw, r5.zwzw
-mul_pp r7.xyz, r2, r3
-mad_pp r1.xyz, -r2, r3, r1
-mad_pp r1.xyz, r1.w, r1, r7
-mul_pp r2.xyz, r1, c9
-texld r1, r5, s3
-texld r3, r6, s3
-add_pp r1, r1, -r3
-mad_pp r1, r4.z, r1, r3
-texld r3, r4, s3
-add_pp r3, r3, -r1
-mad_pp r1, r4.w, r3, r1
-dp4 r5.x, c1, c1
-rsq r5.x, r5.x
-mul r5.xyz, r5.x, c1
-dp3_pp r4.z, v2, -r5
-mul_pp r4.xyz, v2, r4.z
-mad_pp r4.xyz, -r4, c17.z, -r5
-rcp r3.w, v4.w
-mul_pp r1, r0, r1
-dp3_pp_sat r3.x, r4, v1
-pow_pp r0, r3.x, c10.x
-mad r3.xy, v4, r3.w, c6
-mov_pp r3.z, r0.x
-texld r0.x, r3, s7
-mad r3.xy, v4, r3.w, c5
+mul r4.z, r0.w, c20.x
+dp3_pp r0.w, v2, -r2
+mul_pp r8.xyz, v2, r0.w
+mad_pp r8.xyz, -r8, c17.z, -r2
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+mul r4.x, r1, c20
+texldd r1, r6.zwzw, s2, r4.zwzw, r4
+texldd r4, r6.zwzw, s0, r4.zwzw, r4
+mul_pp r3, r1, r3
+mad_pp r3.xyz, -r4, r0, r3
+mul_pp r4.xyz, r4, r0
+dp3_pp_sat r2.w, r8, v1
+rcp r6.z, v4.w
+pow_pp r0, r2.w, c10.x
+mad_pp r4.xyz, r3.w, r3, r4
+mad r8.xy, v4, r6.z, c6
+mov_pp r2.w, r0.x
+texld r0.x, r8, s7
+mad r8.xy, v4, r6.z, c5
 mov r0.w, r0.x
-texld r0.x, r3, s7
-mad r3.xy, v4, r3.w, c4
+texld r0.x, r8, s7
+mad r8.xy, v4, r6.z, c4
 mov r0.z, r0.x
-texld r0.x, r3, s7
-mad r3.xy, v4, r3.w, c3
+texld r0.x, r8, s7
+mad r8.xy, v4, r6.z, c3
 mov r0.y, r0.x
-texld r0.x, r3, s7
-mov r3.x, c2
-mad r0, -v4.z, r3.w, r0
-cmp r0, r0, c16.y, r3.x
-dp4_pp r0.z, r0, c20.w
-rcp r3.x, v3.w
-mad r3.xy, v3, r3.x, c20.y
-texld r0.w, r3, s5
-dp3_pp_sat r3.x, v2, r5
-add_pp r3.y, r3.x, c16
-frc_pp r3.w, r3.y
+texld r0.x, r8, s7
+mad r0, -v4.z, r6.z, r0
+rcp r6.z, v3.w
+mad r8.xy, v3, r6.z, c20.y
+dp3_pp_sat r6.z, v2, r2
+add_pp r2.x, r6.z, c16.y
+frc_pp r2.y, r2.x
+mov r6.w, c2.x
+cmp r0, r0, c16.y, r6.w
+dp4_pp r0.y, r0, c20.w
 dp3 r0.x, v3, v3
-cmp r0.y, -v3.z, c16.x, c16
-mul_pp r0.y, r0, r0.w
+texld r0.w, r8, s5
+cmp r0.z, -v3, c16.x, c16.y
+mul_pp r0.z, r0, r0.w
 texld r0.x, r0.x, s6
-mul_pp r0.x, r0.y, r0
-mul_pp r0.w, r0.x, r0.z
+mul_pp r0.x, r0.z, r0
+mul_pp r0.w, r0.x, r0.y
 mul r0.xyz, r0.w, c7
 mul r0.xyz, r0, c8
-add_pp_sat r3.y, r3, -r3.w
-mul r0.xyz, r0, r3.z
-mul r0.xyz, r3.y, r0
-add_pp r3.y, r3.x, c20.z
-mul r0.xyz, r2.w, r0
-mul_pp r2.w, r3.y, c7
-mul_pp r3.x, r3, c7.w
-mul_pp r3.x, r0.w, r3
-mul_pp r2.w, r2, r0
-mov r0.w, c13.x
-mul_pp_sat r3.w, r3.x, c21.y
-add r3.xyz, c7, r0.w
-mad_sat r3.xyz, r3, r3.w, c0
-mad_pp r0.xyz, r3, c14.x, r0
-mad_pp r1.xyz, -r2, r0, r1
-mul_pp_sat r0.w, r2, c21.x
-mul_pp r2.xyz, r2, r0
+mul r0.xyz, r0, r2.w
+add_pp_sat r2.x, r2, -r2.y
+mul r0.xyz, r2.x, r0
+mul r2.xyz, r4.w, r0
+mul_pp r2.w, r6.z, c7
+mul_pp r0.y, r0.w, r2.w
+add_pp r4.w, r6.z, c20.z
+mul_pp r4.w, r4, c7
+mul_pp r0.w, r4, r0
+mul_pp_sat r0.w, r0, c21.x
+mul_pp_sat r2.w, r0.y, c21.y
+mov r0.x, c13
+add r0.xyz, c7, r0.x
+mad_sat r0.xyz, r0, r2.w, c0
+add_pp r0.xyz, r0, r2
+mul r8.xyz, r0, c14.x
+texld r2, r7, s3
+texld r3, r6, s3
+add_pp r3, r3, -r2
+mad_pp r2, r5.z, r3, r2
+texld r3, r5, s3
+add_pp r3, r3, -r2
+mad_pp r2, r5.w, r3, r2
+mul_pp r1, r1, r2
+mad_pp r4.xyz, r4, c9, r8
+mad_pp r1.xyz, -r4, r0, r1
+mul_pp r2.xyz, r4, r0
 add_pp r0.w, -r0, c16.y
 mul_pp r0.x, r1.w, r0.w
 mad_pp oC0.xyz, r0.x, r1, r2
@@ -85605,7 +85995,7 @@ SetTexture 5 [_LightTexture0] 2D
 SetTexture 6 [_LightTextureB0] 2D
 SetTexture 7 [_ShadowMapTexture] 2D
 "ps_3_0
-; 146 ALU, 21 TEX
+; 148 ALU, 21 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -85626,162 +86016,164 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3
 dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
-mul r6.xy, v5, c15.x
-abs r4.zw, v5.xyxy
-abs r2.w, v5.z
-max r0.x, r4.z, r2.w
-rcp r0.y, r0.x
-min r0.x, r4.z, r2.w
-mul r2.x, r0, r0.y
-mul r2.y, r2.x, r2.x
-mad r0.x, r2.y, c18.y, c18.z
-mad r2.z, r0.x, r2.y, c18.w
-mul r5.xy, v5.zyzw, c15.x
-mad r2.z, r2, r2.y, c19.x
-mul r4.xy, v5.zxzw, c15.x
-texld r1, r6, s4
-texld r0, r5, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.z, r0, r1
-mad r0.x, r2.z, r2.y, c19.y
-mad r2.y, r0.x, r2, c19.z
-texld r0, r4, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.w, r0, r1
-mul r2.x, r2.y, r2
-add r0.x, r4.z, -r2.w
-add r0.y, -r2.x, c19.w
-cmp r0.w, -r0.x, r2.x, r0.y
-mul r2.xy, v5, c11.x
-mul r0.xy, v5.zyzw, c11.x
-add r3.x, -r0.w, c17.w
-texld r2.xyz, r2, s1
+mul r1.xy, v5.zyzw, c11.x
+mul r0.xy, v5, c11.x
+abs r1.zw, v5.xyxy
+abs r3.z, v5
+texld r2.xyz, r1, s1
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r4.z, r0, r2
-cmp r0.z, v5, r0.w, r3.x
-cmp r0.w, v5.x, r0.z, -r0.z
+add_pp r2.xyz, r2, -r0
+mad_pp r2.xyz, r1.z, r2, r0
+max r0.w, r1.z, r3.z
 mul r0.xy, v5.zxzw, c11.x
 texld r0.xyz, r0, s1
-add_pp r3.xyz, r0, -r2
-mad_pp r2.xyz, r4.w, r3, r2
-add r0.y, -r2.w, c16
-mad r0.x, r2.w, c16.z, c16.w
-mad r0.x, r2.w, r0, c17
-rsq r0.y, r0.y
-mad r7.x, r0.w, c20, c20.y
-mad r0.x, r2.w, r0, c17.y
-rcp r0.y, r0.y
-mul r2.w, r0.x, r0.y
-abs r0.y, v5
-cmp r0.x, v5.z, c16, c16.y
-mul r3.w, r0.x, r2
-add r0.w, -r0.y, c16.y
-mad r0.z, r0.y, c16, c16.w
-mad r0.z, r0, r0.y, c17.x
-rsq r0.w, r0.w
-mad r0.y, r0.z, r0, c17
+add_pp r0.xyz, r0, -r2
+mad_pp r0.xyz, r1.w, r0, r2
+min r1.x, r1.z, r3.z
 rcp r0.w, r0.w
-mul r0.z, r0.y, r0.w
-cmp r0.y, v5, c16.x, c16
-mul r0.w, r0.y, r0.z
-mad r2.w, -r3, c17.z, r2
-mad r0.z, -r0.w, c17, r0
-mad r0.w, r0.x, c17, r2
-mad r0.x, r0.y, c17.w, r0.z
-mul r0.y, r0.w, c18.x
-dsy r0.zw, v5.xyxy
-mul r2.w, v0.x, c12.x
-mul r7.y, r0.x, c18.x
-dsx r6.w, r0.y
-dsy r5.w, r0.y
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
+mul r0.w, r1.x, r0
+mul r2.w, r0, r0
+mad r1.x, r2.w, c18.y, c18.z
+mad r1.x, r1, r2.w, c18.w
+mad r1.x, r1, r2.w, c19
+mad r1.y, r1.x, r2.w, c19
+mad r1.y, r1, r2.w, c19.z
+mul r4.x, r1.y, r0.w
+mul r1.x, v0, c12
+add r4.y, r1.z, -r3.z
+add r3.w, -r4.x, c19
+cmp r3.w, -r4.y, r4.x, r3
+add_pp r2.xyz, -r0, c16.y
+mul_sat r1.x, r1, c17.z
+mad_pp r5.xyz, r1.x, r2, r0
+mul r1.xy, v5.zyzw, c15.x
+mul r3.xy, v5, c15.x
+texld r0, r3, s4
+texld r2, r1, s4
+add_pp r2, r2, -r0
+mad_pp r0, r1.z, r2, r0
+mul r2.xy, v5.zxzw, c15.x
+add r2.z, -r3.w, c17.w
+cmp r2.z, v5, r3.w, r2
+texld r4, r2, s4
+add_pp r4, r4, -r0
+mad_pp r4, r1.w, r4, r0
+add r0.x, -r3.z, c16.y
+mad r0.y, r3.z, c16.z, c16.w
+mad r0.y, r3.z, r0, c17.x
+mad r0.y, r3.z, r0, c17
+abs r3.z, v5.y
+add r0.w, -r3.z, c16.y
+mad r2.w, r3.z, c16.z, c16
+mad r2.w, r2, r3.z, c17.x
+mad r2.w, r2, r3.z, c17.y
+cmp r2.z, v5.x, r2, -r2
 rsq r0.x, r0.x
 rcp r0.x, r0.x
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r0.y, r0, r0.x
+cmp r0.z, v5, c16.x, c16.y
+mul r0.x, r0.z, r0.y
+mad r0.x, -r0, c17.z, r0.y
+mad r0.x, r0.z, c17.w, r0
+mul r0.x, r0, c18
+mul r2.w, r2, r0
+cmp r3.z, v5.y, c16.x, c16.y
+mul r0.w, r3.z, r2
+mad r0.y, -r0.w, c17.z, r2.w
+mad r0.y, r3.z, c17.w, r0
+dsy r0.zw, v5.xyxy
+mul r2.w, r0.y, c18.x
+dsx r3.w, r0.x
+dsy r6.y, r0.x
+dsx r0.xy, v5
+mul r0.xy, r0, r0
+add r0.y, r0.x, r0
+mul r0.zw, r0, r0
+add r0.x, r0.z, r0.w
 rsq r0.y, r0.y
 rcp r0.y, r0.y
-mul r6.z, r0.x, c20.x
-mul r5.z, r0.y, c20.x
-texldd r0, r7, s2, r6.zwzw, r5.zwzw
-mul_pp r1, r0, r1
-add_pp r3.xyz, -r2, c16.y
-mul_sat r2.w, r2, c17.z
-mad_pp r3.xyz, r2.w, r3, r2
-texldd r2, r7, s0, r6.zwzw, r5.zwzw
-mad_pp r1.xyz, -r2, r3, r1
-mul_pp r7.xyz, r2, r3
-mad_pp r2.xyz, r1.w, r1, r7
-texld r1, r6, s3
-texld r3, r5, s3
-add_pp r3, r3, -r1
-mad_pp r1, r4.z, r3, r1
-texld r3, r4, s3
-add_pp r3, r3, -r1
-mad_pp r1, r4.w, r3, r1
-rcp r4.x, v4.w
-mul_pp r1, r0, r1
-mad r3.xyz, v4, r4.x, c6
-texld r0.x, r3, s7
-mad r3.xyz, v4, r4.x, c5
-mov_pp r0.w, r0.x
-texld r0.x, r3, s7
-mad r3.xyz, v4, r4.x, c4
-mov_pp r0.z, r0.x
-texld r0.x, r3, s7
-mad r3.xyz, v4, r4.x, c3
-mov_pp r0.y, r0.x
-texld r0.x, r3, s7
-mov r3.y, c2.x
-add r3.y, c16, -r3
-mad r0, r0, r3.y, c2.x
-dp4_pp r0.z, r0, c20.w
-rcp r0.x, v3.w
-mad r5.xy, v3, r0.x, c20.y
-dp4 r3.x, c1, c1
-rsq r3.x, r3.x
-mul r3.xyz, r3.x, c1
-dp3_pp r0.y, v2, -r3
-mul_pp r4.xyz, v2, r0.y
-mad_pp r4.xyz, -r4, c17.z, -r3
-dp3 r0.x, v3, v3
-mul_pp r2.xyz, r2, c9
-texld r0.w, r5, s5
-cmp r0.y, -v3.z, c16.x, c16
-mul_pp r0.y, r0, r0.w
-texld r0.x, r0.x, s6
-mul_pp r0.x, r0.y, r0
-mul_pp r3.w, r0.x, r0.z
-mul r0.xyz, r3.w, c7
-dp3_pp_sat r4.w, r4, v1
-mul r4.xyz, r0, c8
-pow_pp r0, r4.w, c10.x
-dp3_pp_sat r0.w, v2, r3
-add_pp r3.x, r0.w, c16.y
-frc_pp r3.y, r3.x
-add_pp_sat r3.x, r3, -r3.y
-mul r0.xyz, r4, r0.x
-mul r0.xyz, r3.x, r0
-add_pp r3.x, r0.w, c20.z
-mul r0.xyz, r2.w, r0
-mul_pp r2.w, r3.x, c7
-mul_pp r3.x, r0.w, c7.w
-mul_pp r0.w, r2, r3
-mul_pp r3.x, r3.w, r3
-mul_pp_sat r0.w, r0, c21.x
-mul_pp_sat r3.w, r3.x, c21.y
-mov r2.w, c13.x
-add r3.xyz, c7, r2.w
-mad_sat r3.xyz, r3, r3.w, c0
-mad_pp r0.xyz, r3, c14.x, r0
-mad_pp r1.xyz, -r2, r0, r1
-mul_pp r2.xyz, r2, r0
-add_pp r0.w, -r0, c16.y
-mul_pp r0.x, r1.w, r0.w
-mad_pp oC0.xyz, r0.x, r1, r2
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r3.z, r0.y, c20.x
+mad r2.z, r2, c20.x, c20.y
+mul r6.x, r0, c20
+texldd r0, r2.zwzw, s2, r3.zwzw, r6
+texldd r6, r2.zwzw, s0, r3.zwzw, r6
+rcp r2.z, v4.w
+mul_pp r4, r0, r4
+mad_pp r4.xyz, -r6, r5, r4
+dp4 r2.w, c1, c1
+mul_pp r5.xyz, r6, r5
+mad r7.xyz, v4, r2.z, c6
+texld r6.x, r7, s7
+mad r7.xyz, v4, r2.z, c5
+mov_pp r7.w, r6.x
+texld r6.x, r7, s7
+mad r8.xyz, v4, r2.z, c4
+mov_pp r7.z, r6.x
+texld r6.x, r8, s7
+mad r8.xyz, v4, r2.z, c3
+mov r2.z, c2.x
+texld r7.x, r8, s7
+rcp r3.z, v3.w
+mad r8.xy, v3, r3.z, c20.y
+mov_pp r7.y, r6.x
+add r2.z, c16.y, -r2
+mad r7, r7, r2.z, c2.x
+dp4_pp r2.z, r7, c20.w
+rsq r2.w, r2.w
+mul r6.xyz, r2.w, c1
+dp3_pp r2.w, v2, -r6
+mul_pp r7.yzw, v2.xxyz, r2.w
+texld r2.w, r8, s5
+cmp r3.z, -v3, c16.x, c16.y
+dp3 r7.x, v3, v3
+mad_pp r8.xyz, -r7.yzww, c17.z, -r6
+texld r7.x, r7.x, s6
+mul_pp r2.w, r3.z, r2
+mul_pp r2.w, r2, r7.x
+mul_pp r2.z, r2.w, r2
+dp3_pp_sat r2.w, r8, v1
+mul r7.xyz, r2.z, c7
+mul r8.xyz, r7, c8
+pow_pp r7, r2.w, c10.x
+dp3_pp_sat r2.w, v2, r6
+add_pp r5.w, r2, c16.y
+mov_pp r3.z, r7.x
+mul r6.xyz, r8, r3.z
+frc_pp r3.w, r5
+add_pp_sat r3.z, r5.w, -r3.w
+mul r6.xyz, r3.z, r6
+mad_pp r8.xyz, r4.w, r4, r5
+mov r3.w, c13.x
+mul_pp r3.z, r2.w, c7.w
+mul_pp r3.z, r2, r3
+texld r4, r3, s3
+mul_pp_sat r3.z, r3, c21.y
+add r7.xyz, c7, r3.w
+mad_sat r7.xyz, r7, r3.z, c0
+texld r3, r1, s3
+add_pp r5, r3, -r4
+mad_pp r4, r1.z, r5, r4
+texld r5, r2, s3
+add_pp r1.x, r2.w, c20.z
+mul_pp r2.x, r1, c7.w
+mul r6.xyz, r6.w, r6
+add_pp r6.xyz, r7, r6
+mul r7.xyz, r6, c14.x
+add_pp r5, r5, -r4
+mad_pp r1, r1.w, r5, r4
+mul_pp r0, r0, r1
+mad_pp r3.xyz, r8, c9, r7
+mul_pp r2.x, r2, r2.z
+mul_pp_sat r1.x, r2, c21
+add_pp r1.w, -r1.x, c16.y
+mad_pp r0.xyz, -r3, r6, r0
+mul_pp r1.xyz, r3, r6
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
 mov_pp oC0.w, c16.y
 "
 }
@@ -85824,7 +86216,7 @@ SetTexture 4 [_CityLightOverlayDetailTex] 2D
 SetTexture 5 [_ShadowMapTexture] CUBE
 SetTexture 6 [_LightTexture0] 2D
 "ps_3_0
-; 145 ALU, 20 TEX
+; 146 ALU, 20 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -85846,157 +86238,158 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-mul r6.xy, v5, c12.x
-abs r4.zw, v5.xyxy
-abs r2.w, v5.z
-max r0.x, r4.z, r2.w
-rcp r0.y, r0.x
-min r0.x, r4.z, r2.w
-mul r2.x, r0, r0.y
-mul r2.y, r2.x, r2.x
-mad r0.x, r2.y, c15.y, c15.z
-mad r2.z, r0.x, r2.y, c15.w
-mul r5.xy, v5.zyzw, c12.x
-mad r2.z, r2, r2.y, c16.x
-mul r4.xy, v5.zxzw, c12.x
-texld r1, r6, s4
-texld r0, r5, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.z, r0, r1
-mad r0.x, r2.z, r2.y, c16.y
-mad r2.y, r0.x, r2, c16.z
-texld r0, r4, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.w, r0, r1
-mul r2.x, r2.y, r2
-add r0.x, r4.z, -r2.w
-add r0.y, -r2.x, c16.w
-cmp r0.w, -r0.x, r2.x, r0.y
-mul r2.xy, v5, c8.x
 mul r0.xy, v5.zyzw, c8.x
-add r3.x, -r0.w, c14.w
-texld r2.xyz, r2, s1
+mul r1.xy, v5, c8.x
+abs r5.zw, v5.xyxy
+abs r2.w, v5.z
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r4.z, r0, r2
-cmp r0.z, v5, r0.w, r3.x
-cmp r0.w, v5.x, r0.z, -r0.z
+texld r1.xyz, r1, s1
+add_pp r2.xyz, r0, -r1
+mad_pp r1.xyz, r5.z, r2, r1
+max r0.w, r5.z, r2
+rcp r0.y, r0.w
+min r0.x, r5.z, r2.w
+mul r0.w, r0.x, r0.y
+mul r1.w, r0, r0
+mad r2.x, r1.w, c15.y, c15.z
+mad r2.x, r2, r1.w, c15.w
+mad r2.x, r2, r1.w, c16
+mad r2.x, r2, r1.w, c16.y
+mad r1.w, r2.x, r1, c16.z
+mul r3.y, r1.w, r0.w
+mul r2.y, v0.x, c9.x
 mul r0.xy, v5.zxzw, c8.x
 texld r0.xyz, r0, s1
-add_pp r3.xyz, r0, -r2
-mad_pp r2.xyz, r4.w, r3, r2
-add r0.y, -r2.w, c13
-mad r0.x, r2.w, c13.z, c13.w
-mad r0.x, r2.w, r0, c14
-rsq r0.y, r0.y
-mad r7.x, r0.w, c17, c17.y
-mad r0.x, r2.w, r0, c14.y
-rcp r0.y, r0.y
-mul r2.w, r0.x, r0.y
-abs r0.y, v5
-cmp r0.x, v5.z, c13, c13.y
-mul r3.w, r0.x, r2
-add r0.w, -r0.y, c13.y
-mad r0.z, r0.y, c13, c13.w
-mad r0.z, r0, r0.y, c14.x
-rsq r0.w, r0.w
-mad r0.y, r0.z, r0, c14
-rcp r0.w, r0.w
-mul r0.z, r0.y, r0.w
-cmp r0.y, v5, c13.x, c13
-mul r0.w, r0.y, r0.z
-mad r2.w, -r3, c14.z, r2
-mad r0.z, -r0.w, c14, r0
-mad r0.w, r0.x, c14, r2
-mad r0.x, r0.y, c14.w, r0.z
-mul r0.y, r0.w, c15.x
-dsy r0.zw, v5.xyxy
-mul r2.w, v0.x, c9.x
-mul r7.y, r0.x, c15.x
-dsx r6.w, r0.y
-dsy r5.w, r0.y
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r6.z, r0.x, c17.x
-mul r5.z, r0.y, c17.x
-texldd r0, r7, s2, r6.zwzw, r5.zwzw
-mul_pp r1, r0, r1
-add_pp r3.xyz, -r2, c13.y
-mul_sat r2.w, r2, c14.z
-mad_pp r3.xyz, r2.w, r3, r2
-texldd r2, r7, s0, r6.zwzw, r5.zwzw
-mad_pp r1.xyz, -r2, r3, r1
-mul_pp r7.xyz, r2, r3
-mad_pp r2.xyz, r1.w, r1, r7
-texld r1, r6, s3
-texld r3, r5, s3
-add_pp r3, r3, -r1
-mad_pp r1, r4.z, r3, r1
-texld r3, r4, s3
-add_pp r3, r3, -r1
-mad_pp r1, r4.w, r3, r1
-mul_pp r1, r0, r1
-add r4.xyz, v4, c18.xyyw
-texld r3, r4, s5
-dp4 r4.w, r3, c19
+add_pp r0.xyz, r0, -r1
+mad_pp r0.xyz, r5.w, r0, r1
+add_pp r1.xyz, -r0, c13.y
+mul_sat r2.x, r2.y, c14.z
+mad_pp r2.xyz, r2.x, r1, r0
+mul r8.xy, v5, c12.x
+mul r7.xy, v5.zyzw, c12.x
+texld r1, r8, s4
+texld r0, r7, s4
+add_pp r0, r0, -r1
+mad_pp r1, r5.z, r0, r1
+add r3.z, -r3.y, c16.w
+add r3.x, r5.z, -r2.w
+cmp r3.x, -r3, r3.y, r3.z
+add r0.x, -r3, c14.w
+cmp r3.x, v5.z, r3, r0
+mul r5.xy, v5.zxzw, c12.x
+cmp r3.x, v5, r3, -r3
+texld r0, r5, s4
+add_pp r0, r0, -r1
+mad_pp r0, r5.w, r0, r1
+add r1.y, -r2.w, c13
+mad r1.x, r2.w, c13.z, c13.w
+mad r1.x, r2.w, r1, c14
+rsq r1.y, r1.y
+mad r6.x, r3, c17, c17.y
+mad r1.x, r2.w, r1, c14.y
+rcp r1.y, r1.y
+mul r2.w, r1.x, r1.y
+abs r1.x, v5.y
+cmp r1.w, v5.z, c13.x, c13.y
+mul r3.x, r1.w, r2.w
+add r1.z, -r1.x, c13.y
+mad r1.y, r1.x, c13.z, c13.w
+mad r1.y, r1, r1.x, c14.x
+rsq r1.z, r1.z
+mad r1.x, r1.y, r1, c14.y
+rcp r1.z, r1.z
+mul r1.y, r1.x, r1.z
+cmp r1.x, v5.y, c13, c13.y
+mul r1.z, r1.x, r1.y
+mad r1.y, -r1.z, c14.z, r1
+mad r1.x, r1, c14.w, r1.y
+mad r2.w, -r3.x, c14.z, r2
+mad r1.z, r1.w, c14.w, r2.w
+mul r1.y, r1.z, c15.x
+dsy r1.zw, v5.xyxy
+mul r6.y, r1.x, c15.x
+dsx r4.w, r1.y
+dsy r4.y, r1
+dsx r1.xy, v5
+mul r1.xy, r1, r1
+add r1.x, r1, r1.y
+mul r1.zw, r1, r1
+add r1.y, r1.z, r1.w
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r4.z, r1.x, c17.x
+mul r4.x, r1.y, c17
+texldd r1, r6, s2, r4.zwzw, r4
+mul_pp r3, r1, r0
+texldd r4, r6, s0, r4.zwzw, r4
+mad_pp r3.xyz, -r4, r2, r3
+mul_pp r4.xyz, r4, r2
+mad_pp r4.xyz, r3.w, r3, r4
+add r0.xyz, v4, c18.xyyw
+texld r0, r0, s5
+dp4 r6.w, r0, c19
 add r0.xyz, v4, c18.yxyw
 texld r0, r0, s5
-dp4 r4.z, r0, c19
-add r3.xyz, v4, c18.yyxw
-texld r3, r3, s5
-dp4 r4.y, r3, c19
+dp4 r6.z, r0, c19
+add r2.xyz, v4, c18.yyxw
+texld r2, r2, s5
+dp4 r6.y, r2, c19
 dp3 r0.w, v4, v4
-rsq r3.x, r0.w
+rsq r2.x, r0.w
 add r0.xyz, v4, c17.w
 texld r0, r0, s5
-dp4 r4.x, r0, c19
-rcp r3.x, r3.x
-mul r0.x, r3, c2.w
-dp4 r3.x, c1, c1
-mad r0, -r0.x, c18.z, r4
-mov r3.y, c3.x
-cmp r0, r0, c13.y, r3.y
+dp4 r6.x, r0, c19
+rcp r2.x, r2.x
+mul r0.x, r2, c2.w
+dp4 r2.x, c1, c1
+mad r0, -r0.x, c18.z, r6
+mov r2.y, c3.x
+cmp r0, r0, c13.y, r2.y
 dp4_pp r0.y, r0, c18.w
-rsq r3.x, r3.x
-mul r3.xyz, r3.x, c1
-dp3_pp r0.z, v2, -r3
-mul_pp r4.xyz, v2, r0.z
-mad_pp r4.xyz, -r4, c14.z, -r3
+rsq r2.x, r2.x
+mul r2.xyz, r2.x, c1
+dp3_pp r0.z, v2, -r2
+mul_pp r6.xyz, v2, r0.z
+mad_pp r6.xyz, -r6, c14.z, -r2
 dp3 r0.x, v3, v3
 texld r0.x, r0.x, s6
-mul r3.w, r0.x, r0.y
-mul r0.xyz, r3.w, c4
-dp3_pp_sat r4.w, r4, v1
-mul r4.xyz, r0, c5
-pow_pp r0, r4.w, c7.x
-dp3_pp_sat r0.w, v2, r3
-add_pp r3.x, r0.w, c13.y
-frc_pp r3.y, r3.x
-add_pp_sat r3.x, r3, -r3.y
-mul r0.xyz, r4, r0.x
-mul r0.xyz, r3.x, r0
-add_pp r3.x, r0.w, c17.z
-mul r0.xyz, r2.w, r0
-mul_pp r2.w, r3.x, c4
-mul_pp r3.x, r0.w, c4.w
-mul_pp r0.w, r2, r3
-mul_pp r3.x, r3.w, r3
+mul r6.w, r0.x, r0.y
+dp3_pp_sat r2.w, r6, v1
+mul r0.xyz, r6.w, c4
+mul r6.xyz, r0, c5
+pow_pp r0, r2.w, c7.x
+dp3_pp_sat r0.w, v2, r2
+add_pp r2.x, r0.w, c13.y
+frc_pp r2.y, r2.x
+mul_pp r2.w, r0, c4
+add_pp r0.w, r0, c17.z
+mul_pp r0.w, r0, c4
+mul_pp r0.w, r0, r6
 mul_pp_sat r0.w, r0, c20.x
-mul_pp r2.xyz, r2, c6
-mul_pp_sat r3.w, r3.x, c20.y
-mov r2.w, c10.x
-add r3.xyz, c4, r2.w
-mad_sat r3.xyz, r3, r3.w, c0
-mad_pp r0.xyz, r3, c11.x, r0
-mad_pp r1.xyz, -r2, r0, r1
-mul_pp r2.xyz, r2, r0
+mul r0.xyz, r6, r0.x
+add_pp_sat r2.x, r2, -r2.y
+mul r0.xyz, r2.x, r0
+mul r2.xyz, r4.w, r0
+mul_pp r0.y, r6.w, r2.w
+mul_pp_sat r2.w, r0.y, c20.y
+mov r0.x, c10
+add r0.xyz, c4, r0.x
+mad_sat r0.xyz, r0, r2.w, c0
+add_pp r0.xyz, r0, r2
+mul r6.xyz, r0, c11.x
+texld r2, r8, s3
+texld r3, r7, s3
+add_pp r3, r3, -r2
+mad_pp r2, r5.z, r3, r2
+texld r3, r5, s3
+add_pp r3, r3, -r2
+mad_pp r2, r5.w, r3, r2
+mul_pp r1, r1, r2
+mad_pp r4.xyz, r4, c6, r6
+mad_pp r1.xyz, -r4, r0, r1
+mul_pp r2.xyz, r4, r0
 add_pp r0.w, -r0, c13.y
 mul_pp r0.x, r1.w, r0.w
 mad_pp oC0.xyz, r0.x, r1, r2
@@ -86048,7 +86441,7 @@ SetTexture 5 [_ShadowMapTexture] CUBE
 SetTexture 6 [_LightTextureB0] 2D
 SetTexture 7 [_LightTexture0] CUBE
 "ps_3_0
-; 146 ALU, 21 TEX
+; 147 ALU, 21 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -86071,159 +86464,160 @@ dcl_texcoord2 v2.xyz
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-mul r6.xy, v5, c12.x
-abs r4.zw, v5.xyxy
-abs r2.w, v5.z
-max r0.x, r4.z, r2.w
-rcp r0.y, r0.x
-min r0.x, r4.z, r2.w
-mul r2.x, r0, r0.y
-mul r2.y, r2.x, r2.x
-mad r0.x, r2.y, c15.y, c15.z
-mad r2.z, r0.x, r2.y, c15.w
-mul r5.xy, v5.zyzw, c12.x
-mad r2.z, r2, r2.y, c16.x
-mul r4.xy, v5.zxzw, c12.x
-texld r1, r6, s4
-texld r0, r5, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.z, r0, r1
-mad r0.x, r2.z, r2.y, c16.y
-mad r2.y, r0.x, r2, c16.z
-texld r0, r4, s4
-add_pp r0, r0, -r1
-mad_pp r1, r4.w, r0, r1
-mul r2.x, r2.y, r2
-add r0.x, r4.z, -r2.w
-add r0.y, -r2.x, c16.w
-cmp r0.w, -r0.x, r2.x, r0.y
-mul r2.xy, v5, c8.x
 mul r0.xy, v5.zyzw, c8.x
-add r3.x, -r0.w, c14.w
-texld r2.xyz, r2, s1
+mul r1.xy, v5, c8.x
+abs r5.zw, v5.xyxy
+abs r2.w, v5.z
 texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_pp r2.xyz, r4.z, r0, r2
-cmp r0.z, v5, r0.w, r3.x
-cmp r0.w, v5.x, r0.z, -r0.z
+texld r1.xyz, r1, s1
+add_pp r2.xyz, r0, -r1
+mad_pp r1.xyz, r5.z, r2, r1
+max r0.w, r5.z, r2
+rcp r0.y, r0.w
+min r0.x, r5.z, r2.w
+mul r0.w, r0.x, r0.y
+mul r1.w, r0, r0
+mad r2.x, r1.w, c15.y, c15.z
+mad r2.x, r2, r1.w, c15.w
+mad r2.x, r2, r1.w, c16
+mad r2.x, r2, r1.w, c16.y
+mad r1.w, r2.x, r1, c16.z
+mul r3.y, r1.w, r0.w
+mul r2.y, v0.x, c9.x
 mul r0.xy, v5.zxzw, c8.x
 texld r0.xyz, r0, s1
-add_pp r3.xyz, r0, -r2
-mad_pp r2.xyz, r4.w, r3, r2
-add r0.y, -r2.w, c13
-mad r0.x, r2.w, c13.z, c13.w
-mad r0.x, r2.w, r0, c14
-rsq r0.y, r0.y
-mad r7.x, r0.w, c17, c17.y
-mad r0.x, r2.w, r0, c14.y
-rcp r0.y, r0.y
-mul r2.w, r0.x, r0.y
-abs r0.y, v5
-cmp r0.x, v5.z, c13, c13.y
-mul r3.w, r0.x, r2
-add r0.w, -r0.y, c13.y
-mad r0.z, r0.y, c13, c13.w
-mad r0.z, r0, r0.y, c14.x
-rsq r0.w, r0.w
-mad r0.y, r0.z, r0, c14
-rcp r0.w, r0.w
-mul r0.z, r0.y, r0.w
-cmp r0.y, v5, c13.x, c13
-mul r0.w, r0.y, r0.z
-mad r2.w, -r3, c14.z, r2
-mad r0.z, -r0.w, c14, r0
-mad r0.w, r0.x, c14, r2
-mad r0.x, r0.y, c14.w, r0.z
-mul r0.y, r0.w, c15.x
-dsy r0.zw, v5.xyxy
-mul r2.w, v0.x, c9.x
-mul r7.y, r0.x, c15.x
-dsx r6.w, r0.y
-dsy r5.w, r0.y
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r0.zw, r0, r0
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r6.z, r0.x, c17.x
-mul r5.z, r0.y, c17.x
-texldd r0, r7, s2, r6.zwzw, r5.zwzw
-mul_pp r1, r0, r1
-add_pp r3.xyz, -r2, c13.y
-mul_sat r2.w, r2, c14.z
-mad_pp r3.xyz, r2.w, r3, r2
-texldd r2, r7, s0, r6.zwzw, r5.zwzw
-mad_pp r1.xyz, -r2, r3, r1
-mul_pp r7.xyz, r2, r3
-mad_pp r2.xyz, r1.w, r1, r7
-texld r1, r6, s3
-texld r3, r5, s3
-add_pp r3, r3, -r1
-mad_pp r1, r4.z, r3, r1
-texld r3, r4, s3
-add_pp r3, r3, -r1
-mad_pp r1, r4.w, r3, r1
-mul_pp r1, r0, r1
-add r4.xyz, v4, c18.xyyw
-texld r3, r4, s5
-dp4 r4.w, r3, c19
+add_pp r0.xyz, r0, -r1
+mad_pp r0.xyz, r5.w, r0, r1
+add_pp r1.xyz, -r0, c13.y
+mul_sat r2.x, r2.y, c14.z
+mad_pp r2.xyz, r2.x, r1, r0
+mul r8.xy, v5, c12.x
+mul r7.xy, v5.zyzw, c12.x
+texld r1, r8, s4
+texld r0, r7, s4
+add_pp r0, r0, -r1
+mad_pp r1, r5.z, r0, r1
+add r3.z, -r3.y, c16.w
+add r3.x, r5.z, -r2.w
+cmp r3.x, -r3, r3.y, r3.z
+add r0.x, -r3, c14.w
+cmp r3.x, v5.z, r3, r0
+mul r5.xy, v5.zxzw, c12.x
+cmp r3.x, v5, r3, -r3
+texld r0, r5, s4
+add_pp r0, r0, -r1
+mad_pp r0, r5.w, r0, r1
+add r1.y, -r2.w, c13
+mad r1.x, r2.w, c13.z, c13.w
+mad r1.x, r2.w, r1, c14
+rsq r1.y, r1.y
+mad r6.x, r3, c17, c17.y
+mad r1.x, r2.w, r1, c14.y
+rcp r1.y, r1.y
+mul r2.w, r1.x, r1.y
+abs r1.x, v5.y
+cmp r1.w, v5.z, c13.x, c13.y
+mul r3.x, r1.w, r2.w
+add r1.z, -r1.x, c13.y
+mad r1.y, r1.x, c13.z, c13.w
+mad r1.y, r1, r1.x, c14.x
+rsq r1.z, r1.z
+mad r1.x, r1.y, r1, c14.y
+rcp r1.z, r1.z
+mul r1.y, r1.x, r1.z
+cmp r1.x, v5.y, c13, c13.y
+mul r1.z, r1.x, r1.y
+mad r1.y, -r1.z, c14.z, r1
+mad r1.x, r1, c14.w, r1.y
+mad r2.w, -r3.x, c14.z, r2
+mad r1.z, r1.w, c14.w, r2.w
+mul r1.y, r1.z, c15.x
+dsy r1.zw, v5.xyxy
+mul r6.y, r1.x, c15.x
+dsx r4.w, r1.y
+dsy r4.y, r1
+dsx r1.xy, v5
+mul r1.xy, r1, r1
+add r1.x, r1, r1.y
+mul r1.zw, r1, r1
+add r1.y, r1.z, r1.w
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r4.z, r1.x, c17.x
+mul r4.x, r1.y, c17
+texldd r1, r6, s2, r4.zwzw, r4
+mul_pp r3, r1, r0
+texldd r4, r6, s0, r4.zwzw, r4
+mad_pp r3.xyz, -r4, r2, r3
+mul_pp r4.xyz, r4, r2
+mad_pp r4.xyz, r3.w, r3, r4
+add r0.xyz, v4, c18.xyyw
+texld r0, r0, s5
+dp4 r6.w, r0, c19
 add r0.xyz, v4, c18.yxyw
 texld r0, r0, s5
-dp4 r4.z, r0, c19
-add r3.xyz, v4, c18.yyxw
-texld r3, r3, s5
-dp4 r4.y, r3, c19
+dp4 r6.z, r0, c19
+add r2.xyz, v4, c18.yyxw
+texld r2, r2, s5
+dp4 r6.y, r2, c19
 add r0.xyz, v4, c17.w
 texld r0, r0, s5
-dp3 r3.x, v4, v4
-dp4 r4.x, r0, c19
-rsq r3.x, r3.x
-rcp r0.x, r3.x
-dp4 r3.x, c1, c1
+dp3 r2.x, v4, v4
+dp4 r6.x, r0, c19
+rsq r2.x, r2.x
+rcp r0.x, r2.x
+dp4 r2.x, c1, c1
 mul r0.x, r0, c2.w
-rsq r3.x, r3.x
-mul r3.xyz, r3.x, c1
-mad r0, -r0.x, c18.z, r4
-mov r3.w, c3.x
-cmp r0, r0, c13.y, r3.w
+rsq r2.x, r2.x
+mul r2.xyz, r2.x, c1
+mad r0, -r0.x, c18.z, r6
+mov r2.w, c3.x
+cmp r0, r0, c13.y, r2.w
 dp4_pp r0.y, r0, c18.w
-dp3_pp r3.w, v2, -r3
-mul_pp r4.xyz, v2, r3.w
-mad_pp r4.xyz, -r4, c14.z, -r3
+dp3_pp r2.w, v2, -r2
+mul_pp r6.xyz, v2, r2.w
+mad_pp r6.xyz, -r6, c14.z, -r2
 dp3 r0.x, v3, v3
-mul_pp r2.xyz, r2, c6
+dp3_pp_sat r2.w, r6, v1
 texld r0.w, v3, s7
 texld r0.x, r0.x, s6
 mul r0.x, r0, r0.w
-mul r3.w, r0.x, r0.y
-mul r0.xyz, r3.w, c4
-dp3_pp_sat r4.w, r4, v1
-mul r4.xyz, r0, c5
-pow_pp r0, r4.w, c7.x
-dp3_pp_sat r0.w, v2, r3
-add_pp r3.x, r0.w, c13.y
-frc_pp r3.y, r3.x
-add_pp_sat r3.x, r3, -r3.y
-mul r0.xyz, r4, r0.x
-mul r0.xyz, r3.x, r0
-add_pp r3.x, r0.w, c17.z
-mul r0.xyz, r2.w, r0
-mul_pp r2.w, r3.x, c4
-mul_pp r3.x, r0.w, c4.w
-mul_pp r0.w, r2, r3
-mul_pp r3.x, r3.w, r3
+mul r6.w, r0.x, r0.y
+mul r0.xyz, r6.w, c4
+mul r6.xyz, r0, c5
+pow_pp r0, r2.w, c7.x
+dp3_pp_sat r0.w, v2, r2
+add_pp r2.x, r0.w, c13.y
+frc_pp r2.y, r2.x
+mul_pp r2.w, r0, c4
+add_pp r0.w, r0, c17.z
+mul_pp r0.w, r0, c4
+mul_pp r0.w, r0, r6
 mul_pp_sat r0.w, r0, c20.x
-mul_pp_sat r3.w, r3.x, c20.y
-mov r2.w, c10.x
-add r3.xyz, c4, r2.w
-mad_sat r3.xyz, r3, r3.w, c0
-mad_pp r0.xyz, r3, c11.x, r0
-mad_pp r1.xyz, -r2, r0, r1
-mul_pp r2.xyz, r2, r0
+mul r0.xyz, r6, r0.x
+add_pp_sat r2.x, r2, -r2.y
+mul r0.xyz, r2.x, r0
+mul r2.xyz, r4.w, r0
+mul_pp r0.y, r6.w, r2.w
+mul_pp_sat r2.w, r0.y, c20.y
+mov r0.x, c10
+add r0.xyz, c4, r0.x
+mad_sat r0.xyz, r0, r2.w, c0
+add_pp r0.xyz, r0, r2
+mul r6.xyz, r0, c11.x
+texld r2, r8, s3
+texld r3, r7, s3
+add_pp r3, r3, -r2
+mad_pp r2, r5.z, r3, r2
+texld r3, r5, s3
+add_pp r3, r3, -r2
+mad_pp r2, r5.w, r3, r2
+mul_pp r1, r1, r2
+mad_pp r4.xyz, r4, c6, r6
+mad_pp r1.xyz, -r4, r0, r1
+mul_pp r2.xyz, r4, r0
 add_pp r0.w, -r0, c13.y
 mul_pp r0.x, r1.w, r0.w
 mad_pp oC0.xyz, r0.x, r1, r2
@@ -86248,7 +86642,7 @@ Keywords { "CITYOVERLAY_ON" "DETAIL_MAP_ON" "POINT_COOKIE" "SHADOWS_CUBE" "SHADO
 
 }
 
-#LINE 191
+#LINE 192
 
 	
 		}

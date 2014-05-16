@@ -51,7 +51,7 @@ namespace Terrain
         [Persistent]
         float _MinLight = .5f;
         [Persistent]
-        float _Albedo = 1.2f;
+        float _Albedo = .02f;
     }
 
     public class PlanetMaterial : MaterialManager
@@ -75,7 +75,7 @@ namespace Terrain
         [Persistent]
         float _MinLight = .5f;
         [Persistent]
-        float _Albedo = 1.2f;
+        float _Albedo = .02f;
     }
 
     public class OceanMaterial : MaterialManager

@@ -174,9 +174,10 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
                   * float3(_SpecColor) * pow(saturate( dot(
                   reflect(-lightDirection, normalDir), 
                   IN.viewDir)), _Shininess);
- 			light *= _Albedo;
+ 			
             light += main.a*specularReflection;
 			
+			color.rgb += _Albedo*light;
 			color.rgb *= light;
 			
 			#ifdef CITYOVERLAY_ON

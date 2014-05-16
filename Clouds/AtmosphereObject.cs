@@ -25,6 +25,7 @@ namespace Atmosphere
         [Persistent, Optional]
         Clouds2D layer2D = null;
 
+        bool isActive = true;
         public void LoadConfigNode(ConfigNode node, String body)
         {
             ConfigNode.LoadObjectFromConfig(this, node);
@@ -40,14 +41,17 @@ namespace Atmosphere
         public override void OnSphereActive()
         {
             AtmosphereManager.Log("Active.");
-            CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
-            if (layer2D != null)
+            if (isActive)
             {
-                layer2D.Apply((float)celestialBody.Radius + altitude, speed, celestialBody.transform);
-            }
-            if (layerVolume != null)
-            {
-                layerVolume.Apply((float)celestialBody.Radius + altitude, speed, celestialBody.transform);
+                CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
+                if (layer2D != null)
+                {
+                    layer2D.Apply((float)celestialBody.Radius + altitude, speed, celestialBody.transform);
+                }
+                if (layerVolume != null)
+                {
+                    layerVolume.Apply((float)celestialBody.Radius + altitude, speed, celestialBody.transform);
+                }
             }
         }
         public override void OnSphereInactive()
@@ -101,10 +105,7 @@ namespace Atmosphere
             {
                 layerVolume.Remove();
             }
-            this.transform.parent = null;
-            this.modEnabled = false;
-            this.enabled = false;
-            this.sphere = null;
+            //isActive = false;
         }
         /*
         private static Transform GetTargetPos()
