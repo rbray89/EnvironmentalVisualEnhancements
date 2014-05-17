@@ -158,14 +158,14 @@ namespace Utils
             return currentBody.bodyName;
         }
 
-        public static T DrawObjectSelector<T>(List<T> objectList, ref T removed, ref int selectedObjIndex, ref String objString, ref Vector2 objListPos, Rect placementBase, ref Rect placement) where T : INamed, new()
+        public static ConfigNode DrawObjectSelector(ConfigNode.ConfigNodeList nodeList, ref int selectedObjIndex, ref String objString, ref Vector2 objListPos, Rect placementBase, ref Rect placement)
         {
-            String[] objList = objectList.Select(i => i.Name).ToArray();
+            String[] objList = nodeList.DistinctNames();
             placement.height = 5;
             Rect selectBoxOutlineRect = GetSplitRect(placementBase, ref placement);
             placement.height = 4;
             Rect selectBoxRect = GetSplitRect(placementBase, ref placement);
-            placement.height = objectList.Count;
+            placement.height = nodeList.Count;
             Rect selectBoxItemsRect = GetSplitRect(placementBase, ref placement);
             
             placement.height = 1;
@@ -180,7 +180,7 @@ namespace Utils
             
             selectBoxItemsRect.x = 0;
             selectBoxItemsRect.y = 0;
-            if (objectList.Count <= 3)
+            if (nodeList.Count <= 3)
             {
                 selectBoxItemsRect.width = selectBoxRect.width;
             }
@@ -201,20 +201,35 @@ namespace Utils
 
             optButtonRect.x -= 5;
             optButtonRect.y += 10;
-            if (objectList.Count > 0)
+            if (nodeList.Count > 0)
             {
                 if (GUI.Button(optButtonRect, "^") && selectedObjIndex > 0)
                 {
-                    T item = objectList[selectedObjIndex];
-                    objectList.Remove(item);
-                    objectList.Insert(--selectedObjIndex, item);
+                    int moveIndex = selectedObjIndex;
+                    ConfigNode item = nodeList[--selectedObjIndex];
+                    nodeList.Remove(item);
+                    nodeList.Add(item);
+                    for(int i = moveIndex; i < nodeList.Count-1; i++)
+                    {
+                        item = nodeList[moveIndex];
+                        nodeList.Remove(item);
+                        nodeList.Add(item);
+                    }
                 }
                 optButtonRect.y += 60;
-                if (GUI.Button(optButtonRect, "v") && selectedObjIndex < objectList.Count - 1)
+                if (GUI.Button(optButtonRect, "v") && selectedObjIndex < nodeList.Count - 1)
                 {
-                    T item = objectList[selectedObjIndex];
-                    objectList.Remove(item);
-                    objectList.Insert(++selectedObjIndex, item);
+                    
+                    ConfigNode item = nodeList[selectedObjIndex];
+                    nodeList.Remove(item);
+                    nodeList.Add(item);
+                    int moveIndex = ++selectedObjIndex;
+                    for(int i = moveIndex; i < nodeList.Count-1; i++)
+                    {
+                        item = nodeList[moveIndex];
+                        nodeList.Remove(item);
+                        nodeList.Add(item);
+                    }
                 }
             }
             Rect listEditTextRect = GetSplitRect(placementBase, ref placement);
@@ -235,22 +250,21 @@ namespace Utils
             listAddRect.width -= 5;
             listRemoveRect.width -= 5;
 
-            if (selectedObjIndex != oldselectedObjIndex && objectList.Count > 0)
+            if (selectedObjIndex != oldselectedObjIndex && nodeList.Count > 0)
             {
-                objString = objectList[selectedObjIndex].Name;
+                objString = nodeList[selectedObjIndex].name;
             }
             objString = GUI.TextField(listEditTextRect, objString);
             String name = objString;
-            if (objString.Length > 0 && !objString.Contains(' ') && (objectList.Count == 0 || objectList.Find(o => o.Name == name) == null))
+            if (objString.Length > 0 && !objString.Contains(' ') && !nodeList.Contains(objString))
             {
-                if(objectList.Count > 0 && GUI.Button(listEditRect, "Edit"))
+                if(nodeList.Count > 0 && GUI.Button(listEditRect, "Edit"))
                 {
-                    objectList[selectedObjIndex].Name = objString;
+                    nodeList[selectedObjIndex].name = objString;
                 }
                 if(GUI.Button(listAddRect, "Add"))
                 {
-                    T newObj = new T();
-                    objectList.Insert(selectedObjIndex, newObj);
+                    nodeList.Add(new ConfigNode(objString));
                 }
             }
             else
@@ -258,23 +272,22 @@ namespace Utils
                 listEditRect.width += listAddRect.width;
                 GUI.Label(listEditRect, "Invalid Name!");
             }
-            if (objectList.Count > 0 && GUI.Button(listRemoveRect, "Remove"))
+            if (nodeList.Count > 0 && GUI.Button(listRemoveRect, "Remove"))
             {
-                T item = objectList[selectedObjIndex];
-                objectList.Remove(item);
-                if(selectedObjIndex >= objectList.Count)
+                ConfigNode item = nodeList[selectedObjIndex];
+                nodeList.Remove(item);
+                if(selectedObjIndex >= nodeList.Count)
                 {
-                    selectedObjIndex = objectList.Count -1;
+                    selectedObjIndex = nodeList.Count -1;
                 }
-                removed = item;
             }
             placement.y++;
             
-            if(objectList.Count == 0)
+            if(nodeList.Count == 0)
             {
-                return default(T);
+                return null;
             }
-            return objectList[selectedObjIndex];
+            return nodeList[selectedObjIndex];
         }
 
         public static T DrawSelector<T>(List<T> objList, ref int selectedIndex, float ratio, Rect placementBase, ref Rect placement) where T : INamed

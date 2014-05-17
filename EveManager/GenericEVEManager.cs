@@ -264,37 +264,29 @@ namespace EVEManager
             placement.y++;
         }
 
-        private T DrawNodeManagement(Rect placementBase, ref Rect placement, ConfigNode node, String body)
+        private ConfigNode DrawNodeManagement(Rect placementBase, ref Rect placement, ConfigNode node, String body)
         {
             Rect applyRect = GUIHelper.GetSplitRect(placementBase, ref placement);
 
-            T obj = default(T);
-            if (ObjectList.Count > 0)
+            ConfigNode objNode = node.GetNode(body);
+
+            if (objNode == null && GUI.Button(applyRect, "Add"))
             {
-                if(ObjectList.Any(o => o.Body == body))
-                {
-                    obj = ObjectList.First(o => o.Body == body);
-                }
+                objNode = node.AddNode(body);
             }
-            
-            if (obj == null && GUI.Button(applyRect, "Add"))
-            {
-                obj = new T();
-                obj.LoadConfigNode(node.AddNode(body), body);
-                ObjectList.Add(obj);
-            }
-            else if (obj != null && GUI.Button(applyRect, "Remove"))
+            else if (objNode != null && GUI.Button(applyRect, "Remove"))
             {
                 node.RemoveNode(body);
+                objNode = null;
             }
             placement.y++;
-            return obj;
+            return objNode;
         }
 
         public override void DrawGUI(Rect placementBase, Rect placement)
         {
             string body = null;
-            T objEdit = default(T);
+            ConfigNode objNode = null;
             
             ConfigWrapper selectedConfig = GUIHelper.DrawSelector<ConfigWrapper>(ConfigFiles, ref selectedConfigIndex, 16, placementBase, ref placement);
 
@@ -308,7 +300,6 @@ namespace EVEManager
 
             if ((objectType & ObjectType.MULTIPLE) == ObjectType.MULTIPLE)
             {
-                T removed = default(T);
                 ConfigNode bodyNode;
                 if(!selectedConfig.Node.HasNode(body))
                 {
@@ -318,28 +309,13 @@ namespace EVEManager
                 {
                     bodyNode = selectedConfig.Node.GetNode(body);
                 }
-                List<T> list = ObjectList.Where(n => bodyNode.HasNodeID(n.ConfigNode.id)).ToList();
-                objEdit = GUIHelper.DrawObjectSelector<T>(list, ref removed, ref selectedObjIndex, ref objNameEditString, ref objListPos, placementBase, ref placement);
-                foreach(T item in list)
-                {
-                    if (ObjectList.Contains(item))
-                    {
-                        ObjectList.Remove(item);
-                    }
-                    ObjectList.Add(item);
-                    if(item.ConfigNode == null)
-                    {
-                        item.LoadConfigNode(bodyNode.AddNode(objNameEditString), body);
-                    }
-                }
-                if(removed != null)
-                {
-                    bodyNode.RemoveNode(removed.Name);
-                }
+
+                objNode = GUIHelper.DrawObjectSelector(bodyNode.nodes, ref selectedObjIndex, ref objNameEditString, ref objListPos, placementBase, ref placement);
+                
             }
             else
             {
-                objEdit = DrawNodeManagement(placementBase, ref placement, selectedConfig.Node, body);
+                objNode = DrawNodeManagement(placementBase, ref placement, selectedConfig.Node, body);
             }
 
             if (this.configNode != null)
@@ -347,9 +323,9 @@ namespace EVEManager
                 HandleGUI(this, this.configNode, placementBase, ref placement);
             }
 
-            if (objEdit != null)
+            if (objNode != null)
             {
-                HandleGUI(objEdit, objEdit.ConfigNode, placementBase, ref placement);
+                HandleGUI(new T(), objNode, placementBase, ref placement);
             }
             
         }
