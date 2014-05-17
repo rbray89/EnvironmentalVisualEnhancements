@@ -66,7 +66,7 @@ namespace Atmosphere
                 } return cloudShader;
             }
         }
-        public void Apply(float radius, float speed, Transform parent)
+        public void Apply(float radius, float speed, Transform parent, Vector3 scale)
         {
             Remove();
             CloudMaterial = new Material(CloudShader);
@@ -75,7 +75,7 @@ namespace Atmosphere
             CloudMesh = hp.GameObject;
             CloudMesh.transform.parent = parent;
             CloudMesh.transform.localPosition = Vector3.zero;
-            CloudMesh.transform.localScale = Vector3.one;
+            CloudMesh.transform.localScale = scale;
             CloudMesh.layer = EVEManagerClass.MACRO_LAYER;
             float circumference = 2f * Mathf.PI * radius;
             globalPeriod = (speed+detailSpeed) / circumference;

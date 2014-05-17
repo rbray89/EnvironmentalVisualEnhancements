@@ -29,7 +29,7 @@ namespace Atmosphere
                 CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
                 if (layer2D != null)
                 {
-                    layer2D.Apply((float)celestialBody.Radius + altitude, speed, celestialBody.transform);
+                    layer2D.Apply((float)celestialBody.Radius + altitude, speed, celestialBody.transform, Vector3.one);
                 }
                 if (layerVolume != null)
                 {

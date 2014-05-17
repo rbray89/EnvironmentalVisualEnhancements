@@ -10,6 +10,18 @@ namespace EVEManager
 {
     public class Optional : System.Attribute
     {
+        public String Field;
+        public object Value;
+        public Optional()
+        {
+            Field = null;
+        }
+
+        public Optional(String field, object value)
+        {
+            Field = field;
+            Value = value;
+        }
     }
 
     [KSPAddon(KSPAddon.Startup.Instantly, true)]
@@ -186,64 +198,77 @@ namespace EVEManager
                 else
                 {
                     bool isOptional = Attribute.IsDefined(field, typeof(Optional));
-                    ConfigNode node = configNode.GetNode(field.Name);
-                    GUIStyle gsRight = new GUIStyle(GUI.skin.label);
-                    gsRight.alignment = TextAnchor.MiddleCenter;
-
-                    Rect boxRect = GUIHelper.GetSplitRect(placementBase, ref placement, node);
-                    GUI.Box(boxRect, "");
-                    placement.height = 1;
-
-                    Rect boxPlacementBase = new Rect(placementBase);
-                    boxPlacementBase.x += 10;
-                    Rect boxPlacement = new Rect(placement);
-                    boxPlacement.width -= 20;
-
-                    Rect toggleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
-                    Rect titleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
-                    GUIHelper.SplitRect(ref toggleRect, ref titleRect, (1f / 16));
-
-                    GUI.Label(titleRect, field.Name);
-                    bool removeable = node == null ? false : true;
+                    bool show = true;
                     if (isOptional)
                     {
-                        if(removeable != GUI.Toggle(toggleRect, removeable, ""))
+                        Optional op = (Optional)Attribute.GetCustomAttribute(field, typeof(Optional));
+                        if(op.Field != null)
                         {
-                            if(removeable)
-                            {
-                                configNode.RemoveNode(field.Name);
-                                node = null;
-                            }
-                            else
-                            {
-                                node = configNode.AddNode(new ConfigNode(field.Name));
-                            }
+                            show = configNode.GetValue(op.Field) == op.Value.ToString();
+                            isOptional = false;
                         }
                     }
-                    else if(node == null)
+                    if (show)
                     {
-                        
-                        node = configNode.AddNode(new ConfigNode(field.Name));
-                    }
-                    float height = boxPlacement.y + 1;
-                    if(node != null)
-                    {
-                        height = boxPlacement.y + GUIHelper.GetFieldCount(node) + .25f;
-                        boxPlacement.y++;
+                        ConfigNode node = configNode.GetNode(field.Name);
+                        GUIStyle gsRight = new GUIStyle(GUI.skin.label);
+                        gsRight.alignment = TextAnchor.MiddleCenter;
 
-                        object subObj = field.GetValue(obj);
-                        if(subObj == null)
+                        Rect boxRect = GUIHelper.GetSplitRect(placementBase, ref placement, node);
+                        GUI.Box(boxRect, "");
+                        placement.height = 1;
+
+                        Rect boxPlacementBase = new Rect(placementBase);
+                        boxPlacementBase.x += 10;
+                        Rect boxPlacement = new Rect(placement);
+                        boxPlacement.width -= 20;
+
+                        Rect toggleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
+                        Rect titleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
+                        GUIHelper.SplitRect(ref toggleRect, ref titleRect, (1f / 16));
+
+                        GUI.Label(titleRect, field.Name);
+                        bool removeable = node == null ? false : true;
+                        if (isOptional)
                         {
-                            ConstructorInfo ctor = field.FieldType.GetConstructor(System.Type.EmptyTypes);
-                            subObj = ctor.Invoke(null);
+                            if (removeable != GUI.Toggle(toggleRect, removeable, ""))
+                            {
+                                if (removeable)
+                                {
+                                    configNode.RemoveNode(field.Name);
+                                    node = null;
+                                }
+                                else
+                                {
+                                    node = configNode.AddNode(new ConfigNode(field.Name));
+                                }
+                            }
                         }
-                        
-                        HandleGUI(subObj, node, boxPlacementBase, ref boxPlacement);
-                        
-                    }
+                        else if (node == null)
+                        {
 
-                    placement.y = height;
-                    placement.x = boxPlacement.x;
+                            node = configNode.AddNode(new ConfigNode(field.Name));
+                        }
+                        float height = boxPlacement.y + 1;
+                        if (node != null)
+                        {
+                            height = boxPlacement.y + GUIHelper.GetFieldCount(node) + .25f;
+                            boxPlacement.y++;
+
+                            object subObj = field.GetValue(obj);
+                            if (subObj == null)
+                            {
+                                ConstructorInfo ctor = field.FieldType.GetConstructor(System.Type.EmptyTypes);
+                                subObj = ctor.Invoke(null);
+                            }
+
+                            HandleGUI(subObj, node, boxPlacementBase, ref boxPlacement);
+
+                        }
+
+                        placement.y = height;
+                        placement.x = boxPlacement.x;
+                    }
                 }
             }
         }

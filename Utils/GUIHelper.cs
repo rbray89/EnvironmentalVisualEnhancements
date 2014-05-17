@@ -50,7 +50,7 @@ namespace Utils
             {
                 placement.height = GetFieldCount(node);
             }
-            float width = placementBase.width / 2;
+            float width = placementBase.width / 3;
             float height = 30;
             if (((placement.y + placement.height) * height) + placementBase.y + 25 > placementBase.height)
             {
