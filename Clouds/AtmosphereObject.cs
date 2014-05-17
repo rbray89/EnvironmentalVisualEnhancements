@@ -1,5 +1,6 @@
 ﻿using EVEManager;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,7 +26,8 @@ namespace Atmosphere
         [Persistent, Optional]
         Clouds2D layer2D = null;
 
-        bool isActive = true;
+        Callback onExitMapView;
+        private bool applied = false;
         public void LoadConfigNode(ConfigNode node, String body)
         {
             ConfigNode.LoadObjectFromConfig(this, node);
@@ -41,7 +43,7 @@ namespace Atmosphere
         public override void OnSphereActive()
         {
             AtmosphereManager.Log("Active.");
-            if (isActive)
+            if (sphere != null && !applied)
             {
                 CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
                 if (layer2D != null)
@@ -52,20 +54,47 @@ namespace Atmosphere
                 {
                     layerVolume.Apply((float)celestialBody.Radius + altitude, speed, celestialBody.transform);
                 }
+                applied = true;
             }
         }
         public override void OnSphereInactive()
         {
             AtmosphereManager.Log("Inactive.");
-            if (layer2D != null)
+            if (!MapView.MapIsEnabled)
             {
-                layer2D.Remove();
-            }
-            if (layerVolume != null)
-            {
-                layerVolume.Remove();
+                if (layer2D != null)
+                {
+                    layer2D.Remove();
+                }
+                if (layerVolume != null)
+                {
+                    layerVolume.Remove();
+                }
+                applied = false;
             }
         }
+        protected void OnExitMapView()
+        {
+            StartCoroutine(CheckForDisable());
+        }
+
+        IEnumerator CheckForDisable()
+        {
+            yield return new WaitForFixedUpdate();
+            if (sphere == null || !sphere.isActive)
+            {
+                if (layer2D != null)
+                {
+                    layer2D.Remove();
+                }
+                if (layerVolume != null)
+                {
+                    layerVolume.Remove();
+                }
+                applied = false;
+            }
+        }
+
         protected void Update()
         {
             if (this.sphere != null && sphere.isActive)
@@ -92,8 +121,13 @@ namespace Atmosphere
                 {
                     this.OnSphereActive();
                 }
-            }            
+            }
+            onExitMapView = new Callback(OnExitMapView);
+            MapView.OnExitMapView += onExitMapView;
+            
         }
+
+        
 
         public void Remove()
         {
@@ -105,7 +139,9 @@ namespace Atmosphere
             {
                 layerVolume.Remove();
             }
-            //isActive = false;
+            applied = false;
+            this.sphere = null;
+            MapView.OnExitMapView -= onExitMapView;
         }
         /*
         private static Transform GetTargetPos()
