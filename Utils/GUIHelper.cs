@@ -258,11 +258,11 @@ namespace Utils
             String name = objString;
             if (objString.Length > 0 && !objString.Contains(' ') && !nodeList.Contains(objString))
             {
-                if(nodeList.Count > 0 && GUI.Button(listEditRect, "Edit"))
+                if(nodeList.Count > 0 && GUI.Button(listEditRect, "#"))
                 {
                     nodeList[selectedObjIndex].name = objString;
                 }
-                if(GUI.Button(listAddRect, "Add"))
+                if(GUI.Button(listAddRect, "+"))
                 {
                     nodeList.Add(new ConfigNode(objString));
                 }
@@ -272,7 +272,7 @@ namespace Utils
                 listEditRect.width += listAddRect.width;
                 GUI.Label(listEditRect, "Invalid Name!");
             }
-            if (nodeList.Count > 0 && GUI.Button(listRemoveRect, "Remove"))
+            if (nodeList.Count > 0 && GUI.Button(listRemoveRect, "-"))
             {
                 ConfigNode item = nodeList[selectedObjIndex];
                 nodeList.Remove(item);

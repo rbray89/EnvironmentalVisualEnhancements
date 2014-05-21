@@ -17,6 +17,7 @@ namespace Atmosphere
         {
             GameObject go = new GameObject();
             AtmosphereObject newObject = go.AddComponent<AtmosphereObject>();
+            go.transform.parent = EVEManagerClass.GetCelestialBody(body).bodyTransform;
             newObject.LoadConfigNode(node, body);
             ObjectList.Add(newObject);
             newObject.Apply();

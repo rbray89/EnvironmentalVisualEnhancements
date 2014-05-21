@@ -98,6 +98,10 @@ namespace Terrain
         float _MinLight = .5f;
         [Persistent]
         float _Clarity = .005f;
+        [Persistent]
+        float _LightPower = 1.75f;
+        [Persistent]
+        float _Reflectivity = .08f;
     }
 
     public class TerrainObject : IEVEObject
@@ -164,9 +168,8 @@ namespace Terrain
                 {
                     pqs.surfaceMaterial.EnableKeyword(keyword);
                 }
-                //pqs.surfaceMaterial.mainTexture = mainTexture;
+                pqs.surfaceMaterial.mainTexture = mainTexture;
                 terrainMaterial.ApplyMaterialProperties(pqs.surfaceMaterial);
-                
                 if (oceanMaterial != null && pqs.ChildSpheres.Length > 0)
                 {
                     PQS ocean = pqs.ChildSpheres[0];
@@ -182,7 +185,7 @@ namespace Terrain
                     {
                         ocean.surfaceMaterial.EnableKeyword(keyword);
                     }
-                    //ocean.surfaceMaterial.mainTexture = mainTexture;
+                    ocean.surfaceMaterial.mainTexture = mainTexture;
                     oceanMaterial.ApplyMaterialProperties(ocean.surfaceMaterial);
                 }
                 PQSLandControl landControl = (PQSLandControl)pqs.transform.GetComponentInChildren(typeof(PQSLandControl));
@@ -193,6 +196,18 @@ namespace Terrain
                     PQSLandControl.LandClass lcOcean = landControl.landClasses.First(lc => lc.landClassName == "Ocean Bottom");
                     lcOcean.color = lcBeach.color;
                 }
+                PQSMod_CelestialBodyTransform cbt = (PQSMod_CelestialBodyTransform)pqs.transform.GetComponentInChildren(typeof(PQSMod_CelestialBodyTransform));
+                if (cbt != null)
+                {
+                    pqs.surfaceMaterial.SetFloat("_MainTexHandoverDist", (float)(1f/cbt.deactivateAltitude));
+                    if (oceanMaterial != null && pqs.ChildSpheres.Length > 0)
+                    {
+                        PQS ocean = pqs.ChildSpheres[0];
+                        ocean.surfaceMaterial.SetFloat("_MainTexHandoverDist", (float)(1f / cbt.deactivateAltitude));
+                    }
+
+                }
+                
 
             }
         }

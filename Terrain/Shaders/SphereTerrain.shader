@@ -2,6 +2,7 @@
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_MainTex ("Main (RGB)", 2D) = "white" {}
+		_MainTexHandoverDist ("Handover Distance", Float) = 1
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
 		_DetailVertTex ("Detail for Vertical Surfaces (RGB)", 2D) = "white" {}
 		_DetailScale ("Detail Scale", Range(0,1000)) = 200
@@ -52,6 +53,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		fixed4 _Color;
 		sampler2D _MainTex;
 		sampler2D _DetailTex;
+		float _MainTexHandoverDist;
 		sampler2D _DetailVertTex;
 		float _DetailScale;
 		float _DetailVertScale;
@@ -148,7 +150,8 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half4 detail = lerp(detailZ, detailX, sphereNrm.x);
 			detail = lerp(detail, detailY, sphereNrm.y);
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
-			color = main.rgba * lerp(detail.rgba, 1, detailLevel)*IN.color;
+			color = lerp(detail.rgba, 1, detailLevel)*IN.color;
+			color = lerp(color, main, saturate(pow(_MainTexHandoverDist*IN.viewDist,3)));
 			#ifdef CITYOVERLAY_ON
 			cityoverlay.a *= saturate(floor(IN.color.a+.99));
 			detail = lerp(citydarkoverlaydetailZ, citydarkoverlaydetailX, sphereNrm.x);

@@ -29,7 +29,7 @@ namespace Atmosphere
                 CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
                 if (layer2D != null)
                 {
-                    layer2D.Apply((float)celestialBody.Radius + altitude, speed, celestialBody.transform, Vector3.one);
+                    layer2D.Apply(EVEManagerClass.MACRO_LAYER, (float)celestialBody.Radius + altitude, speed, celestialBody.transform, Vector3.one);
                 }
                 if (layerVolume != null)
                 {
@@ -73,6 +73,10 @@ namespace Atmosphere
                     layerVolume.Remove();
                 }
                 applied = false;
+            }
+            else
+            {
+                OnSphereActive();
             }
         }
 

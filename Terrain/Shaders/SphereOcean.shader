@@ -5,12 +5,14 @@
 		_SpecColor ("Specular tint", Color) = (1,1,1,1)
 		_Shininess ("Shininess", Float) = 10
 		_MainTex ("Main (RGB)", 2D) = "white" {}
+		_MainTexHandoverDist ("Handover Distance", Float) = 1
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
 		_DetailScale ("Detail Scale", Range(0,1000)) = 200
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
 		_MinLight ("Minimum Light", Range(0,1)) = .5
 		_Clarity ("Clarity", Range(0,1)) = .005
-		_ShadowIntensity ("Shadow Strength", Range(0,1)) = .6
+		_LightPower ("LightPower", Float) = 1.75
+		_Reflectivity ("Reflectivity", Float) = .08
 	}
 	
 SubShader {
@@ -55,6 +57,8 @@ Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
 		float _DetailDist;
 		float _MinLight;
 		float _Clarity;
+		float _LightPower;
+		float _Reflectivity;
 		sampler2D _CameraDepthTexture;
 		float4x4 _CameraToWorld;
 
@@ -122,8 +126,8 @@ Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
  
             light += color.a*specularReflection;
 			
-			color.rgb *= light;
 			
+			color.a = 1;
 			//depth opacity
 			float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.scrPos)));
 			float satDepth = saturate(.001*(IN.viewDist-1800));
@@ -131,8 +135,11 @@ Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
 			
 			depth -= IN.scrPos.z;
     		depth = saturate(_Clarity*depth);
-			color.a = lerp(depth, 0, satDepth);
-			
+    		depth = max(.12, depth);
+			color.a *= pow(lerp(depth, 0, satDepth),2);
+			color.rgb *= saturate((_LightPower*light)-color.a);
+			color.rgb += _Reflectivity*light;
+			color.rgb *= light;
           	return color;
 		}
 		ENDCG
@@ -165,6 +172,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
 		fixed4 _Color;
 		float _Shininess;
 		sampler2D _MainTex;
+		float _MainTexHandoverDist;
 		sampler2D _DetailTex;
 		float _DetailScale;
 		float _DetailDist;
@@ -172,7 +180,9 @@ Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
 		float _Clarity;
 		sampler2D _CameraDepthTexture;
 		float4x4 _CameraToWorld;
-
+		float _LightPower;
+		float _Reflectivity;
+		
 		struct appdata_t {
 				float4 vertex : POSITION;
 				float3 normal : NORMAL;
@@ -195,7 +205,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
 		{
 			v2f o;
 			half c = .25*_Time.z + frac( v.texcoord.xy ).x;
-		    float4 vertex = v.vertex + (2.5*(1+cos(c))*float4(v.normal,0));
+		    float4 vertex = v.vertex + (1.5*(1+cos(c))*float4(v.normal,0));
 			
 			o.pos = mul(UNITY_MATRIX_MVP, vertex);
 			
@@ -245,8 +255,8 @@ Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
 			half4 detail = lerp(detailZ, detailX, sphereNrm.x);
 			detail = lerp(detail, detailY, sphereNrm.y);
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
-			color = main.rgba * lerp(detail.rgba, 1, detailLevel);
-			
+			color = lerp(detail.rgba, 1, detailLevel);
+			color = lerp(color, main, saturate(pow(_MainTexHandoverDist*IN.viewDist,3)));
             color *= _Color;
             
           	//lighting
@@ -268,8 +278,8 @@ Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
  
             light += main.a*specularReflection;
 			
-			color.rgb *= light;
 			
+			color.a = 1;
 			//depth opacity
 			float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.scrPos)));
 			float satDepth = saturate(.002*(IN.viewDist-600));
@@ -277,8 +287,13 @@ Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
 			
 			depth -= IN.scrPos.z;
     		depth = saturate(_Clarity*depth);
-    		float refrac = .45;//.65-(.55*dot(IN.viewDir, IN.worldNormal));
-			color.a = lerp(refrac, depth, satDepth);
+    		depth = max(.12, depth);
+    		float refrac = .67;//.65-(.55*dot(IN.viewDir, IN.worldNormal));
+			color.a *= pow(lerp(refrac, depth, satDepth),2);
+			color.a = lerp(color.a, main.a, saturate(pow(_MainTexHandoverDist*IN.viewDist,3)));
+			color.rgb *= saturate((_LightPower*light)-color.a);
+			color.rgb += _Reflectivity*light;
+			color.rgb *= light;
 			
           	return color;
 		}

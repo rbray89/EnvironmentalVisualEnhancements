@@ -52,6 +52,8 @@ namespace Atmosphere
         [Persistent]
         Clouds2DMaterial cloudMaterial;
 
+        public bool Enabled { get{return CloudMesh.activeSelf;} set { CloudMesh.SetActive(value); } }
+
         float globalPeriod;
         float mainPeriodOffset;
         private static Shader cloudShader = null;
@@ -66,7 +68,7 @@ namespace Atmosphere
                 } return cloudShader;
             }
         }
-        public void Apply(float radius, float speed, Transform parent, Vector3 scale)
+        public void Apply(int layer, float radius, float speed, Transform parent, Vector3 scale)
         {
             Remove();
             CloudMaterial = new Material(CloudShader);
@@ -76,7 +78,7 @@ namespace Atmosphere
             CloudMesh.transform.parent = parent;
             CloudMesh.transform.localPosition = Vector3.zero;
             CloudMesh.transform.localScale = scale;
-            CloudMesh.layer = EVEManagerClass.MACRO_LAYER;
+            CloudMesh.layer = layer;
             float circumference = 2f * Mathf.PI * radius;
             globalPeriod = (speed+detailSpeed) / circumference;
             mainPeriodOffset = (-detailSpeed) / circumference;
