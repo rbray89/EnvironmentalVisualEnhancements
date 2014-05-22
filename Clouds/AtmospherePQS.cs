@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using Utils;
+using PQSManager;
 
 namespace Atmosphere
 {
@@ -103,10 +104,23 @@ namespace Atmosphere
             this.altitude = altitude;
             this.speed = speed;
             CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
+            PQS pqs = null;
             if (celestialBody != null && celestialBody.pqsController != null)
             {
-                this.transform.parent = celestialBody.pqsController.transform;
-                this.sphere = celestialBody.pqsController;
+                pqs = celestialBody.pqsController;
+            }
+            else
+            {
+                pqs = PQSManagerClass.GetPQS(body);
+            }
+
+            if (pqs != null)
+            {
+                this.transform.parent = pqs.transform;
+                this.transform.localPosition = Vector3.zero;
+                this.transform.localRotation = Quaternion.identity;
+                this.transform.localScale = Vector3.one;
+                this.sphere = pqs;
                 if (this.sphere.isActive)
                 {
                     this.OnSphereActive();

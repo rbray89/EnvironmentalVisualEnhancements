@@ -1,4 +1,5 @@
 ﻿using EVEManager;
+using PQSManager;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -55,10 +56,19 @@ namespace Atmosphere
             this.speed = speed;
             celestialBody = EVEManagerClass.GetCelestialBody(body);
             scaledCelestialTransform = EVEManagerClass.GetScaledTransform(body);
+            PQS pqs = null;
             if (celestialBody != null && celestialBody.pqsController != null)
             {
-                this.transform.parent = celestialBody.pqsController.transform;
-                this.sphere = celestialBody.pqsController;
+                pqs = celestialBody.pqsController;
+            }
+            else
+            {
+                pqs = PQSManagerClass.GetPQS(body);
+            }
+            this.sphere = pqs;
+            if (pqs != null)
+            {
+                this.transform.parent = pqs.transform;
                 layer2D.Apply(EVEManagerClass.MAP_LAYER, (float)(altitude + celestialBody.Radius), speed, scaledCelestialTransform, (float)(1000f / celestialBody.Radius) * Vector3.one);
                 if (!this.sphere.isActive)
                 {

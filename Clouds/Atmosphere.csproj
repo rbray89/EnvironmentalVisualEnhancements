@@ -72,6 +72,10 @@
       <Project>{499e8c5c-c83e-4aea-bb01-eed705bd747f}</Project>
       <Name>EVEManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PQSManager\PQSManager.csproj">
+      <Project>{bdc8381a-c16b-4fd1-afb4-d30ea906e367}</Project>
+      <Name>PQSManager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{8b24314b-4b75-43f3-b31c-ffa9fc83fb70}</Project>
       <Name>Utils</Name>

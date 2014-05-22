@@ -32,7 +32,8 @@ namespace EVEManager
             NONE = 0,
             PLANET = 1,
             GLOBAL = 2,
-            MULTIPLE = 4
+            MULTIPLE = 4,
+            STATIC = 8
         }
         protected virtual ObjectType objectType { get { return ObjectType.NONE; } }
         protected virtual String configName { get { return ""; } }
@@ -49,7 +50,7 @@ namespace EVEManager
         protected static String objNameEditString = "";
 
         public virtual void GenerateGUI(){}
-        
+        private static bool staticInitialized = false;
         internal void Awake()
         {
             if (HighLogic.LoadedScene >= GameScenes.MAINMENU)
@@ -60,9 +61,27 @@ namespace EVEManager
 
         public virtual void Setup()
         {
-            Managers.Add(this);
-            Managers.RemoveAll(item => item == null);
-            LoadConfig();
+            if ((ObjectType.STATIC & objectType) != ObjectType.STATIC)
+            {
+                Managers.Add(this);
+                Managers.RemoveAll(item => item == null);
+                LoadConfig();
+            }
+            else
+            {
+                StaticSetup(this);
+            }
+        }
+
+        public static void StaticSetup(GenericEVEManager<T> instance)
+        {
+            if (staticInitialized == false)
+            {
+                Managers.Add(instance);
+                Managers.RemoveAll(item => item == null);
+                instance.LoadConfig();
+                staticInitialized = true;
+            }
         }
 
         protected virtual void SingleSetup()
