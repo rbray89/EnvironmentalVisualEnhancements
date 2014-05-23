@@ -14,7 +14,7 @@ namespace EVEManager
     {
         private static bool useEditor = false;
         public static List<EVEManagerClass> Managers = new List<EVEManagerClass>();
-        public static int MAP_LAYER = 10;
+        public static int SCALED_LAYER = 10;
         public static int MACRO_LAYER = 15;
         public static int ROTATION_PROPERTY;
         public static int MAINOFFSET_PROPERTY;

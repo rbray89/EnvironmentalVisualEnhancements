@@ -50,9 +50,30 @@ namespace Atmosphere
         [Persistent]
         float detailSpeed;
         [Persistent]
-        Clouds2DMaterial cloudMaterial;
+        Clouds2DMaterial macroCloudMaterial;
+        [Persistent]
+        Clouds2DMaterial scaledCloudMaterial;
 
         public bool Enabled { get{return CloudMesh.activeSelf;} set { CloudMesh.SetActive(value); } }
+        public bool Scaled
+        {
+            get { return CloudMesh.layer == EVEManagerClass.SCALED_LAYER; }
+            set
+            {
+                if (value)
+                {
+                    scaledCloudMaterial.ApplyMaterialProperties(CloudMaterial);
+                    Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, (float)(1000f / celestialBody.Radius) * Vector3.one);
+                }
+                else
+                {
+                    macroCloudMaterial.ApplyMaterialProperties(CloudMaterial);
+                    Reassign(EVEManagerClass.MACRO_LAYER, celestialBody.transform, Vector3.one);
+                }
+            }
+        }
+        CelestialBody celestialBody = null;
+        Transform scaledCelestialTransform = null;
 
         float globalPeriod;
         float mainPeriodOffset;
@@ -68,20 +89,27 @@ namespace Atmosphere
                 } return cloudShader;
             }
         }
-        public void Apply(int layer, float radius, float speed, Transform parent, Vector3 scale)
+
+        internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, float radius, float speed)
         {
             Remove();
+            this.celestialBody = celestialBody;
+            this.scaledCelestialTransform = scaledCelestialTransform;
             CloudMaterial = new Material(CloudShader);
-            cloudMaterial.ApplyMaterialProperties(CloudMaterial);
             HalfSphere hp = new HalfSphere(radius, CloudMaterial);
             CloudMesh = hp.GameObject;
+            Scaled = true;
+            float circumference = 2f * Mathf.PI * radius;
+            globalPeriod = (speed+detailSpeed) / circumference;
+            mainPeriodOffset = (-detailSpeed) / circumference;
+        }
+
+        public void Reassign(int layer, Transform parent, Vector3 scale)
+        {
             CloudMesh.transform.parent = parent;
             CloudMesh.transform.localPosition = Vector3.zero;
             CloudMesh.transform.localScale = scale;
             CloudMesh.layer = layer;
-            float circumference = 2f * Mathf.PI * radius;
-            globalPeriod = (speed+detailSpeed) / circumference;
-            mainPeriodOffset = (-detailSpeed) / circumference;
         }
 
         public void Remove()
@@ -122,7 +150,7 @@ namespace Atmosphere
             double ut = Planetarium.GetUniversalTime();
             double x = (ut * mainPeriodOffset);
             x -= (int)x;
-            CloudMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, new Vector2((float)x+cloudMaterial.MainOffset.x, cloudMaterial.MainOffset.y));
+            CloudMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, new Vector2((float)x+macroCloudMaterial.MainOffset.x, macroCloudMaterial.MainOffset.y));
         }
     }
 }

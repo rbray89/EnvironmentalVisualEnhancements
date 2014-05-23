@@ -9,56 +9,79 @@ namespace Utils
 {
     public class MaterialManager
     {
-        public Material ApplyMaterialProperties(Material material, bool clampTextures = false)
+        bool cached = false;
+        List<KeyValuePair<String, object>> cache = new List<KeyValuePair<string, object>>();
+        public void ApplyMaterialProperties(Material material, bool clampTextures = false)
         {
-            FieldInfo[] fields = this.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
-            foreach (FieldInfo field in fields)
+            if (!cached)
             {
-                String name = field.Name;
-                //texture
-                if (field.FieldType == typeof(String))
+                FieldInfo[] fields = this.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+                foreach (FieldInfo field in fields)
                 {
-                    String textureName = (String)field.GetValue(this);
-                    bool isNormal = textureName.Contains("Bump") | textureName.Contains("Bmp") | textureName.Contains("Normal") | textureName.Contains("Nrm");
-                    Texture2D texture = GameDatabase.Instance.GetTexture(textureName, isNormal);
-                    if (clampTextures)
+                    String name = field.Name;
+                    //texture
+                    if (field.FieldType == typeof(String))
                     {
-                        texture.wrapMode = TextureWrapMode.Clamp;
-                    }
-                    try
-                    {
-                        Color32[] pixels = texture.GetPixels32();
-                        int width = texture.width;
-                        int height = texture.height;
-                        texture.Resize(width, height, TextureFormat.ARGB32, true);
-                        texture.SetPixels32(pixels);
-                        texture.Apply(true);
-                    }
-                    catch { }
+                        String textureName = (String)field.GetValue(this);
+                        bool isNormal = textureName.Contains("Bump") | textureName.Contains("Bmp") | textureName.Contains("Normal") | textureName.Contains("Nrm");
+                        Texture2D texture = GameDatabase.Instance.GetTexture(textureName, isNormal);
+                        if (clampTextures)
+                        {
+                            texture.wrapMode = TextureWrapMode.Clamp;
+                        }
+                        try
+                        {
+                            Color32[] pixels = texture.GetPixels32();
+                            int width = texture.width;
+                            int height = texture.height;
+                            texture.Resize(width, height, TextureFormat.ARGB32, true);
+                            texture.SetPixels32(pixels);
+                            texture.Apply(true);
+                        }
+                        catch { }
 
-                    material.SetTexture(name, texture);
+                        cache.Add(new KeyValuePair<string, object>(name, texture));
+                    }
+                    else
+                    {
+                        cache.Add(new KeyValuePair<string, object>(name, field.GetValue(this)));
+                    }
+                }
+                cached = true;
+            }
+            ApplyCache(material);
+        }
+
+        private void ApplyCache(Material material)
+        {
+            foreach (KeyValuePair<String,object> field in cache)
+            {
+                String name = field.Key;
+                object obj = field.Value;
+                if (obj == null || obj.GetType() == typeof(Texture2D))
+                {
+                    Texture2D value = (Texture2D)obj;
+                    material.SetTexture(name, value);
                 }
                 //float
-                if (field.FieldType == typeof(float))
+                else if (obj.GetType() == typeof(float))
                 {
-                    float value = (float)field.GetValue(this);
+                    float value = (float)obj;
                     material.SetFloat(name, value);
                 }
                 //Color
-                if (field.FieldType == typeof(Color))
+                else if (obj.GetType() == typeof(Color))
                 {
-                    Color value = (Color)field.GetValue(this);
+                    Color value = (Color)obj;
                     material.SetColor(name, value);
                 }
                 //Vector3
-                if (field.FieldType == typeof(Vector3))
+                else if (obj.GetType() == typeof(Vector3))
                 {
-                    Vector3 value = (Vector3)field.GetValue(this);
+                    Vector3 value = (Vector3)obj;
                     material.SetVector(name, value);
                 }
-
             }
-            return material;
         }
     }
 }

@@ -12,15 +12,39 @@ namespace EVEManager
     {
         public String Field;
         public object Value;
+        bool nullCheck = false;
         public Optional()
         {
             Field = null;
         }
-
+        public Optional(String field)
+        {
+            Field = field;
+            nullCheck = true;
+        }
         public Optional(String field, object value)
         {
             Field = field;
             Value = value;
+        }
+
+        public bool isActive(ConfigNode node)
+        {
+            if(nullCheck)
+            {
+                return node.HasNode(Field);
+            }
+            else
+            {
+                if (Field != null)
+                {
+                    return node.GetValue(Field) == Value.ToString();
+                }
+                else
+                {
+                    return true;
+                }
+            }
         }
     }
 
@@ -221,11 +245,7 @@ namespace EVEManager
                     if (isOptional)
                     {
                         Optional op = (Optional)Attribute.GetCustomAttribute(field, typeof(Optional));
-                        if(op.Field != null)
-                        {
-                            show = configNode.GetValue(op.Field) == op.Value.ToString();
-                            isOptional = false;
-                        }
+                        show = op.isActive(configNode);
                     }
                     if (show)
                     {

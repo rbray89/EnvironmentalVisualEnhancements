@@ -17,21 +17,22 @@ namespace Atmosphere
         private float speed;
         CloudsVolume layerVolume = null;
         Clouds2D layer2D = null;
+        CelestialBody celestialBody = null;
+        Transform scaledCelestialTransform = null;
 
-        
         Callback onExitMapView;
         private bool applied = false;
 
         public override void OnSphereActive()
         {
             AtmosphereManager.Log("Active.");
-            if (sphere != null && !applied)
+            
+            if (layer2D != null)
             {
-                CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
-                if (layer2D != null)
-                {
-                    layer2D.Apply(EVEManagerClass.MACRO_LAYER, (float)celestialBody.Radius + altitude, speed, celestialBody.transform, Vector3.one);
-                }
+                layer2D.Scaled = false;
+            }
+            if (!applied)
+            {
                 if (layerVolume != null)
                 {
                     layerVolume.Apply((float)celestialBody.Radius + altitude, speed, celestialBody.transform);
@@ -42,12 +43,13 @@ namespace Atmosphere
         public override void OnSphereInactive()
         {
             AtmosphereManager.Log("Inactive.");
+            
+            if (layer2D != null)
+            {
+                layer2D.Scaled = true;
+            }
             if (!MapView.MapIsEnabled)
             {
-                if (layer2D != null)
-                {
-                    layer2D.Remove();
-                }
                 if (layerVolume != null)
                 {
                     layerVolume.Remove();
@@ -63,12 +65,8 @@ namespace Atmosphere
         IEnumerator CheckForDisable()
         {
             yield return new WaitForFixedUpdate();
-            if (sphere == null || !sphere.isActive)
+            if (!sphere.isActive)
             {
-                if (layer2D != null)
-                {
-                    layer2D.Remove();
-                }
                 if (layerVolume != null)
                 {
                     layerVolume.Remove();
@@ -83,13 +81,18 @@ namespace Atmosphere
 
         protected void Update()
         {
-            if (this.sphere != null && sphere.isActive)
+            if (this.sphere != null)
             {
-                if (layer2D != null)
+                if (layer2D != null && sphere.isActive)
                 {
                     layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition));
                 }
-                if (layerVolume != null)
+                else
+                {
+                    Vector3 pos = scaledCelestialTransform.InverseTransformPoint(ScaledCamera.Instance.camera.transform.position);
+                    layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos));
+                }
+                if (layerVolume != null && sphere.isActive)
                 {
                     layerVolume.UpdatePos(this.sphere.target.position);
                 }
@@ -103,7 +106,8 @@ namespace Atmosphere
             this.layerVolume = layerVolume;
             this.altitude = altitude;
             this.speed = speed;
-            CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
+            celestialBody = EVEManagerClass.GetCelestialBody(body);
+            scaledCelestialTransform = EVEManagerClass.GetScaledTransform(body);
             PQS pqs = null;
             if (celestialBody != null && celestialBody.pqsController != null)
             {
@@ -120,12 +124,17 @@ namespace Atmosphere
                 this.transform.localPosition = Vector3.zero;
                 this.transform.localRotation = Quaternion.identity;
                 this.transform.localScale = Vector3.one;
-                this.sphere = pqs;
-                if (this.sphere.isActive)
+                layer2D.Apply(celestialBody, scaledCelestialTransform, (float)(altitude + celestialBody.Radius), speed);
+                if (!pqs.isActive)
+                {
+                    this.OnSphereInactive();
+                }
+                else
                 {
                     this.OnSphereActive();
                 }
             }
+            this.sphere = pqs;
             onExitMapView = new Callback(OnExitMapView);
             MapView.OnExitMapView += onExitMapView;
         }
