@@ -25,7 +25,6 @@ namespace Atmosphere
 
         public override void OnSphereActive()
         {
-            AtmosphereManager.Log("Active.");
             
             if (layer2D != null)
             {
@@ -42,7 +41,6 @@ namespace Atmosphere
         }
         public override void OnSphereInactive()
         {
-            AtmosphereManager.Log("Inactive.");
             
             if (layer2D != null)
             {
@@ -84,7 +82,7 @@ namespace Atmosphere
             bool visible = HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER;
             if (this.sphere != null && visible)
             {
-                if (layer2D != null && sphere.isActive)
+                if (layer2D != null && sphere.isActive && HighLogic.LoadedScene != GameScenes.TRACKSTATION)
                 {
                     layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition));
                 }
@@ -119,7 +117,6 @@ namespace Atmosphere
             {
                 pqs = PQSManagerClass.GetPQS(body);
             }
-
             if (pqs != null)
             {
                 this.transform.parent = pqs.transform;
@@ -127,7 +124,7 @@ namespace Atmosphere
                 this.transform.localRotation = Quaternion.identity;
                 this.transform.localScale = Vector3.one;
                 layer2D.Apply(celestialBody, scaledCelestialTransform, (float)(altitude + celestialBody.Radius), speed);
-                if (!pqs.isActive || HighLogic.LoadedScene == GameScenes.TRACKSTATION)
+                if (!pqs.isActive)
                 {
                     this.OnSphereInactive();
                 }
@@ -139,7 +136,16 @@ namespace Atmosphere
             this.sphere = pqs;
             onExitMapView = new Callback(OnExitMapView);
             MapView.OnExitMapView += onExitMapView;
-            
+            GameEvents.onGameSceneLoadRequested.Add(GameSceneLoaded);
+        }
+
+        private void GameSceneLoaded(GameScenes scene)
+        {
+            if (scene == GameScenes.TRACKSTATION)
+            {
+                this.OnSphereInactive();
+                sphere.isActive = false;
+            }
         }
 
         public void Remove()
@@ -155,6 +161,7 @@ namespace Atmosphere
             applied = false;
             this.sphere = null;
             MapView.OnExitMapView -= onExitMapView;
+            GameEvents.onGameSceneLoadRequested.Remove(GameSceneLoaded);
         }
     }
 }
