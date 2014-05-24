@@ -12,13 +12,14 @@ namespace EVEManager
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class EVEManagerClass : MonoBehaviour, INamed
     {
+        protected virtual bool sceneLoad { get { return HighLogic.LoadedScene == GameScenes.MAINMENU || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.TRACKSTATION; } }
         private static bool useEditor = false;
         public static List<EVEManagerClass> Managers = new List<EVEManagerClass>();
         public static int SCALED_LAYER = 10;
         public static int MACRO_LAYER = 15;
         public static int ROTATION_PROPERTY;
         public static int MAINOFFSET_PROPERTY;
-
+        
 
         public String Name { get { return this.GetType().Name; } set { } }
 
@@ -26,6 +27,7 @@ namespace EVEManager
         {
             ROTATION_PROPERTY = Shader.PropertyToID("_Rotation");
             MAINOFFSET_PROPERTY = Shader.PropertyToID("_MainOffset");
+            useEditor = false;
         }
 
         private void Update()
@@ -34,7 +36,7 @@ namespace EVEManager
                 HighLogic.LoadedScene == GameScenes.MAINMENU || HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
                 bool alt = (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt));
-                if (alt && Input.GetKeyDown(KeyCode.E))
+                if (alt && Input.GetKeyDown(KeyCode.E) && sceneLoad)
                 {
                     useEditor = !useEditor;
                 }

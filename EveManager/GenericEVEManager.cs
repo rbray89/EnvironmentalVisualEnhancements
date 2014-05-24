@@ -64,6 +64,7 @@ namespace EVEManager
         protected static List<T> ObjectList = new List<T>();
         protected static UrlDir.UrlConfig[] configs;
 
+        protected virtual bool sceneConfigLoad { get { return HighLogic.LoadedScene == GameScenes.MAINMENU; } }
         protected ConfigNode ConfigNode { get { return configNode; } }
         protected ConfigNode configNode;
         private static List<ConfigWrapper> ConfigFiles = new List<ConfigWrapper>();
@@ -77,7 +78,7 @@ namespace EVEManager
         private static bool staticInitialized = false;
         internal void Awake()
         {
-            if (HighLogic.LoadedScene >= GameScenes.MAINMENU)
+            if (sceneLoad)
             {
                 Setup();
             }
@@ -115,14 +116,17 @@ namespace EVEManager
 
         public virtual void LoadConfig()
         {
-            Log("Loading...");
-            configs = GameDatabase.Instance.GetConfigs(configName);
-            ConfigFiles.Clear();
-            foreach(UrlDir.UrlConfig config in configs)
+            if (sceneConfigLoad)
             {
-                ConfigFiles.Add(new ConfigWrapper(config));
+                Log("Loading...");
+                configs = GameDatabase.Instance.GetConfigs(configName);
+                ConfigFiles.Clear();
+                foreach (UrlDir.UrlConfig config in configs)
+                {
+                    ConfigFiles.Add(new ConfigWrapper(config));
+                }
+                Apply();
             }
-            Apply();
         }
 
         public virtual void Apply()
