@@ -94,7 +94,14 @@ namespace Atmosphere
                 }
                 if (layerVolume != null && sphere.isActive)
                 {
-                    layerVolume.UpdatePos(this.sphere.target.position);
+                    if(FlightCamera.fetch != null)
+                    {
+                        layerVolume.UpdatePos(FlightCamera.fetch.mainCamera.transform.position);
+                    }
+                    else
+                    {
+                        layerVolume.UpdatePos(this.sphere.target.position);
+                    }
                 }
             }
         }
