@@ -81,7 +81,8 @@ namespace Atmosphere
 
         protected void Update()
         {
-            if (this.sphere != null)
+            bool visible = HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER;
+            if (this.sphere != null && visible)
             {
                 if (layer2D != null && sphere.isActive)
                 {
@@ -89,7 +90,8 @@ namespace Atmosphere
                 }
                 else
                 {
-                    Vector3 pos = scaledCelestialTransform.InverseTransformPoint(ScaledCamera.Instance.camera.transform.position);
+                    Transform transform = ScaledCamera.Instance.camera.transform;
+                    Vector3 pos = scaledCelestialTransform.InverseTransformPoint(transform.position);
                     layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos));
                 }
                 if (layerVolume != null && sphere.isActive)
@@ -125,7 +127,7 @@ namespace Atmosphere
                 this.transform.localRotation = Quaternion.identity;
                 this.transform.localScale = Vector3.one;
                 layer2D.Apply(celestialBody, scaledCelestialTransform, (float)(altitude + celestialBody.Radius), speed);
-                if (!pqs.isActive)
+                if (!pqs.isActive || HighLogic.LoadedScene == GameScenes.TRACKSTATION)
                 {
                     this.OnSphereInactive();
                 }
@@ -137,6 +139,7 @@ namespace Atmosphere
             this.sphere = pqs;
             onExitMapView = new Callback(OnExitMapView);
             MapView.OnExitMapView += onExitMapView;
+            
         }
 
         public void Remove()

@@ -124,7 +124,7 @@ namespace Atmosphere
 
         internal void UpdateRotation(Quaternion rotation)
         {
-            if (rotation != null && (HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER))
+            if (rotation != null)
             {
                 SetMeshRotation(rotation);
             }
