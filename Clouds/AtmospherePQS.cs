@@ -91,6 +91,7 @@ namespace Atmosphere
                     Transform transform = ScaledCamera.Instance.camera.transform;
                     Vector3 pos = scaledCelestialTransform.InverseTransformPoint(transform.position);
                     layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos));
+                    //AtmosphereManager.Log("Distance: " + Vector3.Distance(transform.position, scaledCelestialTransform.position));
                 }
                 if (layerVolume != null && sphere.isActive)
                 {
@@ -131,7 +132,7 @@ namespace Atmosphere
                 this.transform.localRotation = Quaternion.identity;
                 this.transform.localScale = Vector3.one;
                 layer2D.Apply(celestialBody, scaledCelestialTransform, (float)(altitude + celestialBody.Radius), speed);
-                if (!pqs.isActive)
+                if (!pqs.isActive || HighLogic.LoadedScene == GameScenes.TRACKSTATION)
                 {
                     this.OnSphereInactive();
                 }

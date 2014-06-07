@@ -13,6 +13,7 @@ Shader "Sphere/Cloud" {
 		_FadeDist ("Fade Distance", Range(0,100)) = 10
 		_FadeScale ("Fade Scale", Range(0,1)) = .002
 		_RimDist ("Rim Distance", Range(0,1)) = 1
+		_RimDistSub ("Rim Distance Sub", Range(0,2)) = 1.01
 	}
 
 Category {
@@ -61,6 +62,7 @@ SubShader {
 		float _FadeDist;
 		float _FadeScale;
 		float _RimDist;
+		float _RimDistSub;
 		uniform float4x4 _Rotation;
 		
 		struct appdata_t {
@@ -132,7 +134,7 @@ SubShader {
 			float rim = saturate(dot(IN.viewDir, IN.worldNormal));
 			rim = saturate(pow(_FalloffScale*rim,_FalloffPow));
 			float dist = distance(IN.worldVert,_WorldSpaceCameraPos);
-			float distLerp = saturate(_RimDist*(distance(IN.worldOrigin,_WorldSpaceCameraPos)-1.01*distance(IN.worldVert,IN.worldOrigin)));
+			float distLerp = saturate(_RimDist*(distance(IN.worldOrigin,_WorldSpaceCameraPos)-_RimDistSub*distance(IN.worldVert,IN.worldOrigin)));
 			float distFade = saturate((_FadeScale*dist)-_FadeDist);
 	   	   	float distAlpha = lerp(distFade, rim, distLerp);
 

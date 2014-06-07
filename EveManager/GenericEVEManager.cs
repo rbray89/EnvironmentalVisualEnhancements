@@ -64,7 +64,15 @@ namespace EVEManager
         protected static List<T> ObjectList = new List<T>();
         protected static UrlDir.UrlConfig[] configs;
 
-        protected virtual bool sceneConfigLoad { get { return HighLogic.LoadedScene == GameScenes.MAINMENU; } }
+        protected static bool spaceCenterReload = true;
+        protected virtual bool sceneConfigLoad { get {
+            bool load = HighLogic.LoadedScene == GameScenes.MAINMENU;
+            if (spaceCenterReload && HighLogic.LoadedScene == GameScenes.SPACECENTER)
+            {
+                spaceCenterReload = false;
+                load = true;
+            }
+            return load; } }
         protected ConfigNode ConfigNode { get { return configNode; } }
         protected ConfigNode configNode;
         private static List<ConfigWrapper> ConfigFiles = new List<ConfigWrapper>();
@@ -76,6 +84,7 @@ namespace EVEManager
 
         public virtual void GenerateGUI(){}
         private static bool staticInitialized = false;
+
         internal void Awake()
         {
             if (sceneLoad)
