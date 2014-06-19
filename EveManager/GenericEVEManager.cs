@@ -183,11 +183,7 @@ namespace EVEManager
             Log("Saving...");
             foreach (UrlDir.UrlConfig config in configs)
             {
-                config.config.ClearNodes();
-                foreach (T obj in ObjectList)
-                {
-                    config.config.AddNode(obj.GetConfigNode());
-                }
+                config.parent.SaveConfigs();
             }
         }
 
