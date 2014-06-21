@@ -71,7 +71,7 @@ namespace Atmosphere
         {
             atmospherePQS.Remove();
             GameObject go = atmospherePQS.gameObject;
-            go.transform.parent = null;
+            
 
             GameObject.DestroyImmediate(atmospherePQS);
             GameObject.DestroyImmediate(go);

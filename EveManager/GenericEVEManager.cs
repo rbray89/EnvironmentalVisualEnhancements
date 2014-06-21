@@ -125,7 +125,7 @@ namespace EVEManager
 
         public virtual void LoadConfig()
         {
-            if (sceneConfigLoad)
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
                 Log("Loading...");
                 configs = GameDatabase.Instance.GetConfigs(configName);
@@ -134,6 +134,9 @@ namespace EVEManager
                 {
                     ConfigFiles.Add(new ConfigWrapper(config));
                 }
+            }
+            if (sceneConfigLoad)
+            {
                 Apply();
             }
         }

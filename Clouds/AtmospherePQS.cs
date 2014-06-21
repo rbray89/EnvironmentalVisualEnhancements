@@ -41,9 +41,9 @@ namespace Atmosphere
         }
         public override void OnSphereInactive()
         {
-            
             if (layer2D != null)
             {
+                AtmosphereManager.Log("AtmospherePQS: OnSphereInactive");
                 layer2D.Scaled = true;
             }
             if (!MapView.MapIsEnabled)
@@ -125,8 +125,10 @@ namespace Atmosphere
             {
                 pqs = PQSManagerClass.GetPQS(body);
             }
+            AtmosphereManager.Log("PQS Applied");
             if (pqs != null)
             {
+                this.sphere = pqs;
                 this.transform.parent = pqs.transform;
                 this.transform.localPosition = Vector3.zero;
                 this.transform.localRotation = Quaternion.identity;
@@ -140,8 +142,13 @@ namespace Atmosphere
                 {
                     this.OnSphereActive();
                 }
+                this.OnSetup();
+                pqs.EnableSphere();
             }
-            this.sphere = pqs;
+            else
+            {
+                AtmosphereManager.Log("PQS is null somehow!?");
+            }
             onExitMapView = new Callback(OnExitMapView);
             MapView.OnExitMapView += onExitMapView;
             GameEvents.onGameSceneLoadRequested.Add(GameSceneLoaded);
@@ -166,8 +173,12 @@ namespace Atmosphere
             {
                 layerVolume.Remove();
             }
+            layer2D = null;
+            layerVolume = null;
             applied = false;
             this.sphere = null;
+            this.enabled = false;
+            this.transform.parent = null;
             MapView.OnExitMapView -= onExitMapView;
             GameEvents.onGameSceneLoadRequested.Remove(GameSceneLoaded);
         }

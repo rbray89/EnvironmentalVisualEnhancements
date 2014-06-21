@@ -12,14 +12,10 @@ namespace Atmosphere
 {
     public class Clouds2DMaterial : MaterialManager
     {
-        public Vector2 MainOffset { get { return _MainOffset;} }
-
         [Persistent] 
         Color _Color = new Color(1,1,1,1);
         [Persistent]
         String _MainTex = "";
-        [Persistent]
-        Vector3 _MainOffset = new Vector3(0, 0, 0);
         [Persistent]
         String _DetailTex = "";
         [Persistent]
@@ -52,6 +48,8 @@ namespace Atmosphere
         [Persistent]
         float detailSpeed;
         [Persistent]
+        Vector3 offset = new Vector3(0, 0, 0);
+        [Persistent]
         Clouds2DMaterial macroCloudMaterial;
         [Persistent]
         Clouds2DMaterial scaledCloudMaterial;
@@ -76,7 +74,6 @@ namespace Atmosphere
         }
         CelestialBody celestialBody = null;
         Transform scaledCelestialTransform = null;
-
         float globalPeriod;
         float mainPeriodOffset;
         private static Shader cloudShader = null;
@@ -108,6 +105,18 @@ namespace Atmosphere
 
         public void Reassign(int layer, Transform parent, Vector3 scale)
         {
+            if(parent == null)
+            {
+                AtmosphereManager.Log("parent is Null");
+            }
+            if (CloudMesh == null)
+            {
+                AtmosphereManager.Log("CloudMesh is Null");
+            }
+            if (CloudMesh.transform == null)
+            {
+                AtmosphereManager.Log("CloudMesh.transform is Null");
+            }
             CloudMesh.transform.parent = parent;
             CloudMesh.transform.localPosition = Vector3.zero;
             CloudMesh.transform.localScale = scale;
@@ -152,7 +161,7 @@ namespace Atmosphere
             double ut = Planetarium.GetUniversalTime();
             double x = (ut * mainPeriodOffset);
             x -= (int)x;
-            CloudMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, new Vector2((float)x+macroCloudMaterial.MainOffset.x, macroCloudMaterial.MainOffset.y));
+            CloudMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, new Vector2((float)x + offset.x, offset.y));
         }
     }
 }

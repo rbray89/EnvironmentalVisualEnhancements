@@ -50,8 +50,8 @@ namespace Atmosphere
             mr.receiveShadows = false;
             mr.enabled = true;
         }
-        
-        public void Update(Texture2D tex)
+
+        public void Update(Texture2D tex, Vector3 offset)
         {
             Vector3 point = -particle.transform.parent.parent.InverseTransformPoint(particle.transform.position).normalized;
             float u = (float)(.5 + (Mathf.Atan2(point.x, point.z) / (2f * Mathf.PI)));
@@ -99,14 +99,16 @@ namespace Atmosphere
         float magnitude;
         List<CloudParticle> Particles = new List<CloudParticle>();
         Texture2D texture;
+        Vector3 texOffset;
 
         public Vector3 Center { get { return segment.transform.localPosition; } }
         public Vector3 Offset { get { return offset; } set { offset = value; } }
         public bool Enabled { get { return segment.activeSelf; } set { segment.SetActive(value); } }
 
-        public VolumeSection(Texture2D tex, Material cloudParticleMaterial, Transform parent, Vector3 pos, float magnitude, Vector3 offset, float radius, int divisions)
+        public VolumeSection(Texture2D tex, Material cloudParticleMaterial, Vector3 texOffset, Transform parent, Vector3 pos, float magnitude, Vector3 offset, float radius, int divisions)
         {
             texture = tex;
+            this.texOffset = texOffset;
             segment = new GameObject();
             HexSeg hexGeometry = new HexSeg(radius, divisions);
 
@@ -162,7 +164,7 @@ namespace Atmosphere
         {
             foreach (CloudParticle particle in Particles)
             {
-                particle.Update(texture);
+                particle.Update(texture, texOffset);
             }
         }
 

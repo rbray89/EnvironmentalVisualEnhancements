@@ -35,6 +35,8 @@ namespace Atmosphere
         [Persistent]
         String texture;
         [Persistent]
+        Vector3 offset = Vector3.zero;
+        [Persistent]
         particleVolumeMaterial particleMaterial;
 
         Material ParticleMaterial;
@@ -66,7 +68,7 @@ namespace Atmosphere
             volumeHolder.transform.localScale = Vector3.one;
             volumeHolder.transform.localRotation = Quaternion.identity;
             volumeHolder.layer = EVEManagerClass.MACRO_LAYER;
-            volumeManager = new VolumeManager(radius, GameDatabase.Instance.GetTexture(texture, false), ParticleMaterial, volumeHolder.transform);
+            volumeManager = new VolumeManager(radius, GameDatabase.Instance.GetTexture(texture, false), offset, ParticleMaterial, volumeHolder.transform);
 
             float circumference = 2f * Mathf.PI * radius;
             globalPeriod = speed / circumference;
