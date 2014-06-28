@@ -62,6 +62,8 @@
     <EmbeddedResource Include="Shaders\Compiled-SphereCloud.shader" />
     <EmbeddedResource Include="Shaders\Compiled-CloudParticle.shader" />
     <EmbeddedResource Include="Shaders\Compiled-SphereAtmosphere.shader" />
+    <None Include="Shaders\CloudShadow.shader" />
+    <EmbeddedResource Include="Shaders\Compiled-CloudShadow.shader" />
     <None Include="Shaders\SphereAtmosphere.shader" />
     <None Include="Shaders\SphereCloud.shader" />
     <None Include="Shaders\CloudParticle.shader" />

@@ -44,6 +44,7 @@ namespace Atmosphere
     {
         GameObject CloudMesh;
         Material CloudMaterial;
+        Projector proj;
 
         [Persistent]
         float detailSpeed;
@@ -69,11 +70,14 @@ namespace Atmosphere
                 {
                     macroCloudMaterial.ApplyMaterialProperties(CloudMaterial);
                     Reassign(EVEManagerClass.MACRO_LAYER, celestialBody.transform, Vector3.one);
+                    proj.material.SetTexture("_ShadowTex", CloudMaterial.mainTexture);
+                    proj.ignoreLayers = 1 << EVEManagerClass.SCALED_LAYER;
                 }
             }
         }
         CelestialBody celestialBody = null;
         Transform scaledCelestialTransform = null;
+        float radius;
         float globalPeriod;
         float mainPeriodOffset;
         private static Shader cloudShader = null;
@@ -89,11 +93,25 @@ namespace Atmosphere
             }
         }
 
+        private static Shader cloudShadowShader = null;
+        private static Shader CloudShadowShader
+        {
+            get
+            {
+                if (cloudShadowShader == null)
+                {
+                    Assembly assembly = Assembly.GetExecutingAssembly();
+                    cloudShadowShader = EVEManagerClass.GetShader(assembly, "Atmosphere.Shaders.Compiled-CloudShadow.shader");
+                } return cloudShadowShader;
+            }
+        }
+
         internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, float radius, float speed)
         {
             Remove();
             this.celestialBody = celestialBody;
             this.scaledCelestialTransform = scaledCelestialTransform;
+            this.radius = radius;
             CloudMaterial = new Material(CloudShader);
             HalfSphere hp = new HalfSphere(radius, CloudMaterial);
             CloudMesh = hp.GameObject;
@@ -101,6 +119,18 @@ namespace Atmosphere
             float circumference = 2f * Mathf.PI * radius;
             globalPeriod = (speed+detailSpeed) / circumference;
             mainPeriodOffset = (-detailSpeed) / circumference;
+            proj = new GameObject().AddComponent<Projector>();
+            proj.farClipPlane = 2*radius;
+            proj.nearClipPlane = 100;
+            proj.fieldOfView = 60;
+            proj.ignoreLayers = 0;
+            proj.aspectRatio = 1;
+            proj.orthographic = true;
+            proj.orthographicSize = 2 * radius;
+            proj.transform.parent = celestialBody.transform;
+            proj.transform.localPosition = radius * (celestialBody.transform.InverseTransformDirection(-Sun.Instance.sunDirection));
+            proj.material = new Material(CloudShadowShader);
+            
         }
 
         public void Reassign(int layer, Transform parent, Vector3 scale)
@@ -138,6 +168,8 @@ namespace Atmosphere
             if (rotation != null)
             {
                 SetMeshRotation(rotation);
+                proj.transform.localPosition = radius * (celestialBody.transform.InverseTransformDirection(-Sun.Instance.sunDirection));
+                proj.transform.forward = Sun.Instance.sunDirection;
             }
             SetTextureOffset();
         }
