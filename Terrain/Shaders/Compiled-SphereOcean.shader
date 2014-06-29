@@ -22,7 +22,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
 	Fog { Mode Global}
 	AlphaTest Greater 0
 	ColorMask RGB
-	Cull Back Lighting On ZWrite On
+	Cull Back Lighting On ZWrite Off
 	
 	
 	//Sub-surface depth

@@ -44,7 +44,7 @@ namespace Atmosphere
     {
         GameObject CloudMesh;
         Material CloudMaterial;
-        Projector proj;
+        Projector ShadowProjector;
 
         [Persistent]
         float detailSpeed;
@@ -70,8 +70,8 @@ namespace Atmosphere
                 {
                     macroCloudMaterial.ApplyMaterialProperties(CloudMaterial);
                     Reassign(EVEManagerClass.MACRO_LAYER, celestialBody.transform, Vector3.one);
-                    proj.material.SetTexture("_ShadowTex", CloudMaterial.mainTexture);
-                    proj.ignoreLayers = 1 << EVEManagerClass.SCALED_LAYER;
+                    ShadowProjector.material.SetTexture("_ShadowTex", CloudMaterial.mainTexture);
+                    ShadowProjector.ignoreLayers = ~((1<<19)|(1<<15)|2|1);
                 }
             }
         }
@@ -119,17 +119,18 @@ namespace Atmosphere
             float circumference = 2f * Mathf.PI * radius;
             globalPeriod = (speed+detailSpeed) / circumference;
             mainPeriodOffset = (-detailSpeed) / circumference;
-            proj = new GameObject().AddComponent<Projector>();
-            proj.farClipPlane = 2*radius;
-            proj.nearClipPlane = 100;
-            proj.fieldOfView = 60;
-            proj.ignoreLayers = 0;
-            proj.aspectRatio = 1;
-            proj.orthographic = true;
-            proj.orthographicSize = 2 * radius;
-            proj.transform.parent = celestialBody.transform;
-            proj.transform.localPosition = radius * (celestialBody.transform.InverseTransformDirection(-Sun.Instance.sunDirection));
-            proj.material = new Material(CloudShadowShader);
+            ShadowProjector = new GameObject().AddComponent<Projector>();
+            ShadowProjector.farClipPlane = 2*radius;
+            ShadowProjector.nearClipPlane = 100;
+            ShadowProjector.fieldOfView = 60;
+            ShadowProjector.ignoreLayers = 0;
+            ShadowProjector.aspectRatio = 1;
+            ShadowProjector.orthographic = true;
+            ShadowProjector.orthographicSize = 2 * radius;
+            ShadowProjector.transform.parent = celestialBody.transform;
+            ShadowProjector.transform.localPosition = radius * (celestialBody.transform.InverseTransformDirection(-Sun.Instance.sunDirection));
+            ShadowProjector.transform.localPosition = radius * Vector3.up;
+            ShadowProjector.material = new Material(CloudShadowShader);
             
         }
 
@@ -161,6 +162,12 @@ namespace Atmosphere
                 GameObject.DestroyImmediate(CloudMesh);
                 CloudMesh = null;
             }
+            if(ShadowProjector != null)
+            {
+                ShadowProjector.transform.parent = null;
+                GameObject.DestroyImmediate(ShadowProjector);
+                ShadowProjector = null;
+            }
         }
 
         internal void UpdateRotation(Quaternion rotation)
@@ -168,8 +175,8 @@ namespace Atmosphere
             if (rotation != null)
             {
                 SetMeshRotation(rotation);
-                proj.transform.localPosition = radius * (celestialBody.transform.InverseTransformDirection(-Sun.Instance.sunDirection));
-                proj.transform.forward = Sun.Instance.sunDirection;
+                ShadowProjector.transform.localPosition = radius * (celestialBody.transform.InverseTransformDirection(-Sun.Instance.sunDirection));
+                ShadowProjector.transform.forward = Sun.Instance.sunDirection;
             }
             SetTextureOffset();
         }
@@ -194,6 +201,9 @@ namespace Atmosphere
             double x = (ut * mainPeriodOffset);
             x -= (int)x;
             CloudMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, new Vector2((float)x + offset.x, offset.y));
+            x = (45 * ut * mainPeriodOffset);
+            x -= (int)x;
+            ShadowProjector.material.SetVector(EVEManagerClass.SHADOWOFFSET_PROPERTY, new Vector2((float)x + offset.x, offset.y));
         }
     }
 }
