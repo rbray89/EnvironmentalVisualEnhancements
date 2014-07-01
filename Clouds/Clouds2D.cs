@@ -44,12 +44,15 @@ namespace Atmosphere
     {
         GameObject CloudMesh;
         Material CloudMaterial;
+        GameObject ShadowProjectorGO;
         Projector ShadowProjector;
 
         [Persistent]
         float detailSpeed;
         [Persistent]
         Vector3 offset = new Vector3(0, 0, 0);
+        [Persistent]
+        Vector3 shadowOffset = new Vector3(0, 0, 0);
         [Persistent]
         Clouds2DMaterial macroCloudMaterial;
         [Persistent]
@@ -64,20 +67,23 @@ namespace Atmosphere
                 if (value)
                 {
                     scaledCloudMaterial.ApplyMaterialProperties(CloudMaterial);
-                    Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, (float)(1000f / celestialBody.Radius) * Vector3.one);
+                    scale = (float)(1000f / celestialBody.Radius);
+                    Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale * Vector3.one);
                 }
                 else
                 {
                     macroCloudMaterial.ApplyMaterialProperties(CloudMaterial);
+                    scale = 1;
                     Reassign(EVEManagerClass.MACRO_LAYER, celestialBody.transform, Vector3.one);
-                    ShadowProjector.material.SetTexture("_ShadowTex", CloudMaterial.mainTexture);
-                    ShadowProjector.ignoreLayers = ~((1<<19)|(1<<15)|2|1);
                 }
             }
         }
         CelestialBody celestialBody = null;
         Transform scaledCelestialTransform = null;
-        float radius;
+        Transform sunTransform;
+        float radius;        
+        float scale = 1;
+        float radiusScale;
         float globalPeriod;
         float mainPeriodOffset;
         private static Shader cloudShader = null;
@@ -111,47 +117,51 @@ namespace Atmosphere
             Remove();
             this.celestialBody = celestialBody;
             this.scaledCelestialTransform = scaledCelestialTransform;
-            this.radius = radius;
             CloudMaterial = new Material(CloudShader);
             HalfSphere hp = new HalfSphere(radius, CloudMaterial);
             CloudMesh = hp.GameObject;
             Scaled = true;
+            this.radius = radius;
             float circumference = 2f * Mathf.PI * radius;
             globalPeriod = (speed+detailSpeed) / circumference;
             mainPeriodOffset = (-detailSpeed) / circumference;
-            ShadowProjector = new GameObject().AddComponent<Projector>();
-            ShadowProjector.farClipPlane = 2*radius;
-            ShadowProjector.nearClipPlane = 100;
+            ShadowProjectorGO = new GameObject();
+            ShadowProjector = ShadowProjectorGO.AddComponent<Projector>();
+            ShadowProjector.nearClipPlane = 1;
             ShadowProjector.fieldOfView = 60;
-            ShadowProjector.ignoreLayers = 0;
             ShadowProjector.aspectRatio = 1;
             ShadowProjector.orthographic = true;
-            ShadowProjector.orthographicSize = 2 * radius;
             ShadowProjector.transform.parent = celestialBody.transform;
-            ShadowProjector.transform.localPosition = radius * (celestialBody.transform.InverseTransformDirection(-Sun.Instance.sunDirection));
-            ShadowProjector.transform.localPosition = radius * Vector3.up;
             ShadowProjector.material = new Material(CloudShadowShader);
-            
+            sunTransform = Sun.Instance.sun.transform;
         }
 
         public void Reassign(int layer, Transform parent, Vector3 scale)
         {
-            if(parent == null)
-            {
-                AtmosphereManager.Log("parent is Null");
-            }
-            if (CloudMesh == null)
-            {
-                AtmosphereManager.Log("CloudMesh is Null");
-            }
-            if (CloudMesh.transform == null)
-            {
-                AtmosphereManager.Log("CloudMesh.transform is Null");
-            }
             CloudMesh.transform.parent = parent;
             CloudMesh.transform.localPosition = Vector3.zero;
             CloudMesh.transform.localScale = scale;
             CloudMesh.layer = layer;
+
+            radiusScale = this.scale * radius;
+            if (ShadowProjector != null)
+            {
+                float dist = (float)(2 * radiusScale);
+                ShadowProjector.farClipPlane = dist;
+                ShadowProjector.orthographicSize = dist;
+                ShadowProjector.transform.parent = parent;
+                ShadowProjector.material.SetTexture("_ShadowTex", CloudMaterial.mainTexture);
+                if (layer == EVEManagerClass.MACRO_LAYER)
+                {
+                    ShadowProjector.ignoreLayers = ~((1 << 19) | (1 << 15) | 2 | 1);
+                    sunTransform = Sun.Instance.sun.transform;
+                }
+                else
+                {
+                    ShadowProjector.ignoreLayers = ~EVEManagerClass.SCALED_LAYER;
+                    sunTransform = EVEManagerClass.GetScaledTransform(Sun.Instance.sun.bodyName);
+                }
+            }
         }
 
         public void Remove()
@@ -175,8 +185,9 @@ namespace Atmosphere
             if (rotation != null)
             {
                 SetMeshRotation(rotation);
-                ShadowProjector.transform.localPosition = radius * (celestialBody.transform.InverseTransformDirection(-Sun.Instance.sunDirection));
-                ShadowProjector.transform.forward = Sun.Instance.sunDirection;
+                Vector3 sunDirection = ShadowProjector.transform.parent.position - sunTransform.position;
+                ShadowProjector.transform.localPosition = radiusScale * (ShadowProjector.transform.parent.InverseTransformDirection(-sunDirection));
+                ShadowProjector.transform.forward = sunDirection; 
             }
             SetTextureOffset();
         }
@@ -200,10 +211,13 @@ namespace Atmosphere
             double ut = Planetarium.GetUniversalTime();
             double x = (ut * mainPeriodOffset);
             x -= (int)x;
-            CloudMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, new Vector2((float)x + offset.x, offset.y));
-            x = (45 * ut * mainPeriodOffset);
+            Vector2 texOffset = new Vector2((float)x + offset.x, offset.y);
+            CloudMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, texOffset);
+            x = (ut * mainPeriodOffset);
             x -= (int)x;
-            ShadowProjector.material.SetVector(EVEManagerClass.SHADOWOFFSET_PROPERTY, new Vector2((float)x + offset.x, offset.y));
+            Vector4 texVect = ShadowProjector.transform.localPosition.normalized;
+            texVect.w = (float)x + offset.x;
+            ShadowProjector.material.SetVector(EVEManagerClass.SHADOWOFFSET_PROPERTY, texVect);
         }
     }
 }
