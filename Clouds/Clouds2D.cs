@@ -67,22 +67,20 @@ namespace Atmosphere
                 if (value)
                 {
                     scaledCloudMaterial.ApplyMaterialProperties(CloudMaterial);
-                    scale = (float)(1000f / celestialBody.Radius);
-                    Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale * Vector3.one);
+                    float scale = (float)(1000f / celestialBody.Radius);
+                    Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);
                 }
                 else
                 {
                     macroCloudMaterial.ApplyMaterialProperties(CloudMaterial);
-                    scale = 1;
-                    Reassign(EVEManagerClass.MACRO_LAYER, celestialBody.transform, Vector3.one);
+                    Reassign(EVEManagerClass.MACRO_LAYER, celestialBody.transform, 1);
                 }
             }
         }
         CelestialBody celestialBody = null;
         Transform scaledCelestialTransform = null;
         Transform sunTransform;
-        float radius;        
-        float scale = 1;
+        float radius;     
         float radiusScale;
         float globalPeriod;
         float mainPeriodOffset;
@@ -127,7 +125,7 @@ namespace Atmosphere
             mainPeriodOffset = (-detailSpeed) / circumference;
             ShadowProjectorGO = new GameObject();
             ShadowProjector = ShadowProjectorGO.AddComponent<Projector>();
-            ShadowProjector.nearClipPlane = 1;
+            ShadowProjector.nearClipPlane = 10;
             ShadowProjector.fieldOfView = 60;
             ShadowProjector.aspectRatio = 1;
             ShadowProjector.orthographic = true;
@@ -136,14 +134,14 @@ namespace Atmosphere
             sunTransform = Sun.Instance.sun.transform;
         }
 
-        public void Reassign(int layer, Transform parent, Vector3 scale)
+        public void Reassign(int layer, Transform parent, float scale)
         {
             CloudMesh.transform.parent = parent;
             CloudMesh.transform.localPosition = Vector3.zero;
-            CloudMesh.transform.localScale = scale;
+            CloudMesh.transform.localScale = scale * Vector3.one;
             CloudMesh.layer = layer;
 
-            radiusScale = this.scale * radius;
+            radiusScale = scale* radius;
             if (ShadowProjector != null)
             {
                 float dist = (float)(2 * radiusScale);
@@ -151,6 +149,7 @@ namespace Atmosphere
                 ShadowProjector.orthographicSize = dist;
                 ShadowProjector.transform.parent = parent;
                 ShadowProjector.material.SetTexture("_ShadowTex", CloudMaterial.mainTexture);
+                ShadowProjectorGO.layer = layer;
                 if (layer == EVEManagerClass.MACRO_LAYER)
                 {
                     ShadowProjector.ignoreLayers = ~((1 << 19) | (1 << 15) | 2 | 1);
@@ -158,7 +157,8 @@ namespace Atmosphere
                 }
                 else
                 {
-                    ShadowProjector.ignoreLayers = ~EVEManagerClass.SCALED_LAYER;
+                    ShadowProjectorGO.layer = 10;
+                    ShadowProjector.ignoreLayers = ~(1<<10);// ~((1 << 29) | (1 << 23) | (1 << 18) | (1 << 10) | (1 << 9));
                     sunTransform = EVEManagerClass.GetScaledTransform(Sun.Instance.sun.bodyName);
                 }
             }
@@ -186,8 +186,10 @@ namespace Atmosphere
             {
                 SetMeshRotation(rotation);
                 Vector3 sunDirection = ShadowProjector.transform.parent.position - sunTransform.position;
+                sunDirection.Normalize();
                 ShadowProjector.transform.localPosition = radiusScale * (ShadowProjector.transform.parent.InverseTransformDirection(-sunDirection));
                 ShadowProjector.transform.forward = sunDirection; 
+                
             }
             SetTextureOffset();
         }
