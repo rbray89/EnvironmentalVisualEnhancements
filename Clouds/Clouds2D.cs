@@ -146,14 +146,14 @@ namespace Atmosphere
             {
                 float dist = (float)(2 * radiusScale);
                 ShadowProjector.farClipPlane = dist;
-                ShadowProjector.orthographicSize = dist;
+                ShadowProjector.orthographicSize = radiusScale;
                 ShadowProjector.transform.parent = parent;
                 ShadowProjector.material.SetTexture("_ShadowTex", CloudMaterial.mainTexture);
                 ShadowProjectorGO.layer = layer;
                 if (layer == EVEManagerClass.MACRO_LAYER)
                 {
                     ShadowProjector.ignoreLayers = ~((1 << 19) | (1 << 15) | 2 | 1);
-                    sunTransform = Sun.Instance.sun.transform;
+                    sunTransform = EVEManagerClass.GetCelestialBody(Sun.Instance.sun.bodyName).transform;
                 }
                 else
                 {
@@ -215,10 +215,9 @@ namespace Atmosphere
             x -= (int)x;
             Vector2 texOffset = new Vector2((float)x + offset.x, offset.y);
             CloudMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, texOffset);
-            x = (ut * mainPeriodOffset);
-            x -= (int)x;
             Vector4 texVect = ShadowProjector.transform.localPosition.normalized;
-            texVect.w = (float)x + offset.x;
+            texVect.w = 0;
+            //texVect.w = (float)x + offset.x;
             ShadowProjector.material.SetVector(EVEManagerClass.SHADOWOFFSET_PROPERTY, texVect);
         }
     }

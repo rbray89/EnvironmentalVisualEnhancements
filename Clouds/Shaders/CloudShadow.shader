@@ -50,18 +50,21 @@
 			half2 uv = IN.posProj.xy / IN.posProj.w;
 			half2 dx = ddx(IN.posProj.xy);
 			half2 dy = ddy(IN.posProj.xy);
-			uv.x = -(2*uv.x) + 1;
-			uv.y = (2*uv.y) - 1;
-			float p = sqrt(pow(uv.x,2) + pow(uv.y,2));
+			half x = -(2*uv.x) + 1;
+			half y = (2*uv.y) - 1 ;
+			
+			float p = sqrt(pow(x,2) + pow(y,2));
 			half radCheck = saturate(floor(2-p));
 			half c = asin(p);
 			half sinC = sin(c);
 			half cosC = cos(c);
 			half cosLat = cos(IN.latitude);
 			half sinLat = sin(IN.latitude);
-			uv.x = INV_PI*(IN.longitude+atan2(uv.x*sinC, (p*cosLat*cosC)-(uv.y*sinLat*sinC)))+.5 + _ShadowOffset.w;
-			uv.y = INV_PI*asin((cosC*sinLat)+(uv.y*sinC*cosLat/p))+.5;
 			
+			uv.x = INV_PI*(IN.longitude+atan2(x*sinC, (p*cosLat*cosC)-(y*sinLat*sinC)))+.5 + _ShadowOffset.w;
+			uv.y = INV_PI*asin((cosC*sinLat)+(y*sinC*cosLat/p))+.5;
+			uv.x += 1;
+			uv.x *= .5;
 			fixed4 color = tex2D(_ShadowTex, uv, dx, dy);
 			color.rgb *= 1.25*(1.25-color.a);
 			color = saturate(color);

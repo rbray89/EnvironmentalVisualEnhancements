@@ -82,58 +82,63 @@ void main ()
   dirCheck_6 = (clamp (floor((xlv_TEXCOORD0.w + 1.0)), 0.0, 1.0) * xlv_TEXCOORD1);
   vec2 tmpvar_7;
   tmpvar_7 = (xlv_TEXCOORD0.xy / xlv_TEXCOORD0.w);
+  uv_5 = tmpvar_7;
   dx_4 = dFdx(xlv_TEXCOORD0.xy);
   dy_3 = dFdy(xlv_TEXCOORD0.xy);
-  uv_5.x = (-((2.0 * tmpvar_7.x)) + 1.0);
-  uv_5.y = ((2.0 * tmpvar_7.y) - 1.0);
   float tmpvar_8;
-  tmpvar_8 = sqrt((pow (uv_5.x, 2.0) + pow (uv_5.y, 2.0)));
-  radCheck_2 = clamp (floor((2.0 - tmpvar_8)), 0.0, 1.0);
+  tmpvar_8 = (-((2.0 * tmpvar_7.x)) + 1.0);
   float tmpvar_9;
-  tmpvar_9 = (sign(tmpvar_8) * (1.5708 - (sqrt((1.0 - abs(tmpvar_8))) * (1.5708 + (abs(tmpvar_8) * (-0.214602 + (abs(tmpvar_8) * (0.0865667 + (abs(tmpvar_8) * -0.0310296)))))))));
+  tmpvar_9 = ((2.0 * tmpvar_7.y) - 1.0);
   float tmpvar_10;
-  tmpvar_10 = sin(tmpvar_9);
+  tmpvar_10 = sqrt((pow (tmpvar_8, 2.0) + pow (tmpvar_9, 2.0)));
+  radCheck_2 = clamp (floor((2.0 - tmpvar_10)), 0.0, 1.0);
   float tmpvar_11;
-  tmpvar_11 = cos(tmpvar_9);
+  tmpvar_11 = (sign(tmpvar_10) * (1.5708 - (sqrt((1.0 - abs(tmpvar_10))) * (1.5708 + (abs(tmpvar_10) * (-0.214602 + (abs(tmpvar_10) * (0.0865667 + (abs(tmpvar_10) * -0.0310296)))))))));
   float tmpvar_12;
-  tmpvar_12 = cos(xlv_TEXCOORD2);
+  tmpvar_12 = sin(tmpvar_11);
   float tmpvar_13;
-  tmpvar_13 = sin(xlv_TEXCOORD2);
-  float y_14;
-  y_14 = (uv_5.x * tmpvar_10);
-  float x_15;
-  x_15 = (((tmpvar_8 * tmpvar_12) * tmpvar_11) - ((uv_5.y * tmpvar_13) * tmpvar_10));
-  float r_16;
-  if ((abs(x_15) > (1e-08 * abs(y_14)))) {
-    float y_over_x_17;
-    y_over_x_17 = (y_14 / x_15);
-    float s_18;
-    float x_19;
-    x_19 = (y_over_x_17 * inversesqrt(((y_over_x_17 * y_over_x_17) + 1.0)));
-    s_18 = (sign(x_19) * (1.5708 - (sqrt((1.0 - abs(x_19))) * (1.5708 + (abs(x_19) * (-0.214602 + (abs(x_19) * (0.0865667 + (abs(x_19) * -0.0310296)))))))));
-    r_16 = s_18;
-    if ((x_15 < 0.0)) {
-      if ((y_14 >= 0.0)) {
-        r_16 = (s_18 + 3.14159);
+  tmpvar_13 = cos(tmpvar_11);
+  float tmpvar_14;
+  tmpvar_14 = cos(xlv_TEXCOORD2);
+  float tmpvar_15;
+  tmpvar_15 = sin(xlv_TEXCOORD2);
+  float y_16;
+  y_16 = (tmpvar_8 * tmpvar_12);
+  float x_17;
+  x_17 = (((tmpvar_10 * tmpvar_14) * tmpvar_13) - ((tmpvar_9 * tmpvar_15) * tmpvar_12));
+  float r_18;
+  if ((abs(x_17) > (1e-08 * abs(y_16)))) {
+    float y_over_x_19;
+    y_over_x_19 = (y_16 / x_17);
+    float s_20;
+    float x_21;
+    x_21 = (y_over_x_19 * inversesqrt(((y_over_x_19 * y_over_x_19) + 1.0)));
+    s_20 = (sign(x_21) * (1.5708 - (sqrt((1.0 - abs(x_21))) * (1.5708 + (abs(x_21) * (-0.214602 + (abs(x_21) * (0.0865667 + (abs(x_21) * -0.0310296)))))))));
+    r_18 = s_20;
+    if ((x_17 < 0.0)) {
+      if ((y_16 >= 0.0)) {
+        r_18 = (s_20 + 3.14159);
       } else {
-        r_16 = (r_16 - 3.14159);
+        r_18 = (r_18 - 3.14159);
       };
     };
   } else {
-    r_16 = (sign(y_14) * 1.5708);
+    r_18 = (sign(y_16) * 1.5708);
   };
-  uv_5.x = (((0.31831 * (xlv_TEXCOORD3 + r_16)) + 0.5) + _ShadowOffset.w);
-  float x_20;
-  x_20 = ((tmpvar_11 * tmpvar_13) + (((uv_5.y * tmpvar_10) * tmpvar_12) / tmpvar_8));
-  uv_5.y = ((0.31831 * (sign(x_20) * (1.5708 - (sqrt((1.0 - abs(x_20))) * (1.5708 + (abs(x_20) * (-0.214602 + (abs(x_20) * (0.0865667 + (abs(x_20) * -0.0310296)))))))))) + 0.5);
-  vec4 tmpvar_21;
-  tmpvar_21 = texture2DGradARB (_ShadowTex, uv_5, dx_4, dy_3);
-  color_1.w = tmpvar_21.w;
-  color_1.xyz = (tmpvar_21.xyz * (1.25 * (1.25 - tmpvar_21.w)));
-  vec4 tmpvar_22;
-  tmpvar_22 = clamp (color_1, 0.0, 1.0);
-  color_1 = tmpvar_22;
-  gl_FragData[0] = vec4(mix (1.0, tmpvar_22.x, (dirCheck_6 * radCheck_2)));
+  uv_5.x = (((0.31831 * (xlv_TEXCOORD3 + r_18)) + 0.5) + _ShadowOffset.w);
+  float x_22;
+  x_22 = ((tmpvar_13 * tmpvar_15) + (((tmpvar_9 * tmpvar_12) * tmpvar_14) / tmpvar_10));
+  uv_5.y = ((0.31831 * (sign(x_22) * (1.5708 - (sqrt((1.0 - abs(x_22))) * (1.5708 + (abs(x_22) * (-0.214602 + (abs(x_22) * (0.0865667 + (abs(x_22) * -0.0310296)))))))))) + 0.5);
+  uv_5.x = (uv_5.x + 1.0);
+  uv_5.x = (uv_5.x * 0.5);
+  vec4 tmpvar_23;
+  tmpvar_23 = texture2DGradARB (_ShadowTex, uv_5, dx_4, dy_3);
+  color_1.w = tmpvar_23.w;
+  color_1.xyz = (tmpvar_23.xyz * (1.25 * (1.25 - tmpvar_23.w)));
+  vec4 tmpvar_24;
+  tmpvar_24 = clamp (color_1, 0.0, 1.0);
+  color_1 = tmpvar_24;
+  gl_FragData[0] = vec4(mix (1.0, tmpvar_24.x, (dirCheck_6 * radCheck_2)));
 }
 
 
@@ -404,66 +409,70 @@ void main ()
   highp vec2 tmpvar_13;
   tmpvar_13 = dFdy(xlv_TEXCOORD0.xy);
   dy_6 = tmpvar_13;
-  uv_8.x = (-((2.0 * uv_8.x)) + 1.0);
-  uv_8.y = ((2.0 * uv_8.y) - 1.0);
   mediump float tmpvar_14;
-  tmpvar_14 = sqrt((pow (uv_8.x, 2.0) + pow (uv_8.y, 2.0)));
-  p_5 = tmpvar_14;
-  highp float tmpvar_15;
-  tmpvar_15 = clamp (floor((2.0 - p_5)), 0.0, 1.0);
-  radCheck_4 = tmpvar_15;
-  highp float tmpvar_16;
-  tmpvar_16 = (sign(p_5) * (1.5708 - (sqrt((1.0 - abs(p_5))) * (1.5708 + (abs(p_5) * (-0.214602 + (abs(p_5) * (0.0865667 + (abs(p_5) * -0.0310296)))))))));
-  c_3 = tmpvar_16;
-  mediump float tmpvar_17;
-  tmpvar_17 = sin(c_3);
-  mediump float tmpvar_18;
-  tmpvar_18 = cos(c_3);
+  tmpvar_14 = (-((2.0 * uv_8.x)) + 1.0);
+  mediump float tmpvar_15;
+  tmpvar_15 = ((2.0 * uv_8.y) - 1.0);
+  mediump float tmpvar_16;
+  tmpvar_16 = sqrt((pow (tmpvar_14, 2.0) + pow (tmpvar_15, 2.0)));
+  p_5 = tmpvar_16;
+  highp float tmpvar_17;
+  tmpvar_17 = clamp (floor((2.0 - p_5)), 0.0, 1.0);
+  radCheck_4 = tmpvar_17;
+  highp float tmpvar_18;
+  tmpvar_18 = (sign(p_5) * (1.5708 - (sqrt((1.0 - abs(p_5))) * (1.5708 + (abs(p_5) * (-0.214602 + (abs(p_5) * (0.0865667 + (abs(p_5) * -0.0310296)))))))));
+  c_3 = tmpvar_18;
   mediump float tmpvar_19;
-  tmpvar_19 = cos(xlv_TEXCOORD2);
+  tmpvar_19 = sin(c_3);
   mediump float tmpvar_20;
-  tmpvar_20 = sin(xlv_TEXCOORD2);
-  highp float tmpvar_21;
-  mediump float y_22;
-  y_22 = (uv_8.x * tmpvar_17);
-  highp float x_23;
-  x_23 = (((p_5 * tmpvar_19) * tmpvar_18) - ((uv_8.y * tmpvar_20) * tmpvar_17));
-  mediump float r_24;
-  if ((abs(x_23) > (1e-08 * abs(y_22)))) {
-    highp float y_over_x_25;
-    y_over_x_25 = (y_22 / x_23);
-    highp float x_26;
-    x_26 = (y_over_x_25 * inversesqrt(((y_over_x_25 * y_over_x_25) + 1.0)));
-    r_24 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
-    if ((x_23 < 0.0)) {
-      if ((y_22 >= 0.0)) {
-        r_24 = (r_24 + 3.14159);
+  tmpvar_20 = cos(c_3);
+  mediump float tmpvar_21;
+  tmpvar_21 = cos(xlv_TEXCOORD2);
+  mediump float tmpvar_22;
+  tmpvar_22 = sin(xlv_TEXCOORD2);
+  highp float tmpvar_23;
+  mediump float y_24;
+  y_24 = (tmpvar_14 * tmpvar_19);
+  highp float x_25;
+  x_25 = (((p_5 * tmpvar_21) * tmpvar_20) - ((tmpvar_15 * tmpvar_22) * tmpvar_19));
+  mediump float r_26;
+  if ((abs(x_25) > (1e-08 * abs(y_24)))) {
+    highp float y_over_x_27;
+    y_over_x_27 = (y_24 / x_25);
+    highp float x_28;
+    x_28 = (y_over_x_27 * inversesqrt(((y_over_x_27 * y_over_x_27) + 1.0)));
+    r_26 = (sign(x_28) * (1.5708 - (sqrt((1.0 - abs(x_28))) * (1.5708 + (abs(x_28) * (-0.214602 + (abs(x_28) * (0.0865667 + (abs(x_28) * -0.0310296)))))))));
+    if ((x_25 < 0.0)) {
+      if ((y_24 >= 0.0)) {
+        r_26 = (r_26 + 3.14159);
       } else {
-        r_24 = (r_24 - 3.14159);
+        r_26 = (r_26 - 3.14159);
       };
     };
   } else {
-    r_24 = (sign(y_22) * 1.5708);
+    r_26 = (sign(y_24) * 1.5708);
   };
-  tmpvar_21 = r_24;
-  highp float tmpvar_27;
-  tmpvar_27 = (((0.31831 * (xlv_TEXCOORD3 + tmpvar_21)) + 0.5) + _ShadowOffset.w);
-  uv_8.x = tmpvar_27;
-  highp float x_28;
-  x_28 = ((tmpvar_18 * tmpvar_20) + (((uv_8.y * tmpvar_17) * tmpvar_19) / p_5));
+  tmpvar_23 = r_26;
   highp float tmpvar_29;
-  tmpvar_29 = ((0.31831 * (sign(x_28) * (1.5708 - (sqrt((1.0 - abs(x_28))) * (1.5708 + (abs(x_28) * (-0.214602 + (abs(x_28) * (0.0865667 + (abs(x_28) * -0.0310296)))))))))) + 0.5);
-  uv_8.y = tmpvar_29;
-  lowp vec4 tmpvar_30;
-  tmpvar_30 = texture2DGradEXT (_ShadowTex, uv_8, dx_7, dy_6);
-  color_2.w = tmpvar_30.w;
-  color_2.xyz = (tmpvar_30.xyz * (1.25 * (1.25 - tmpvar_30.w)));
-  lowp vec4 tmpvar_31;
-  tmpvar_31 = clamp (color_2, 0.0, 1.0);
-  color_2 = tmpvar_31;
-  mediump vec4 tmpvar_32;
-  tmpvar_32 = vec4(mix (1.0, tmpvar_31.x, (dirCheck_9 * radCheck_4)));
-  tmpvar_1 = tmpvar_32;
+  tmpvar_29 = (((0.31831 * (xlv_TEXCOORD3 + tmpvar_23)) + 0.5) + _ShadowOffset.w);
+  uv_8.x = tmpvar_29;
+  highp float x_30;
+  x_30 = ((tmpvar_20 * tmpvar_22) + (((tmpvar_15 * tmpvar_19) * tmpvar_21) / p_5));
+  highp float tmpvar_31;
+  tmpvar_31 = ((0.31831 * (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))))) + 0.5);
+  uv_8.y = tmpvar_31;
+  uv_8.x = (uv_8.x + 1.0);
+  uv_8.x = (uv_8.x * 0.5);
+  lowp vec4 tmpvar_32;
+  tmpvar_32 = texture2DGradEXT (_ShadowTex, uv_8, dx_7, dy_6);
+  color_2.w = tmpvar_32.w;
+  color_2.xyz = (tmpvar_32.xyz * (1.25 * (1.25 - tmpvar_32.w)));
+  lowp vec4 tmpvar_33;
+  tmpvar_33 = clamp (color_2, 0.0, 1.0);
+  color_2 = tmpvar_33;
+  mediump vec4 tmpvar_34;
+  tmpvar_34 = vec4(mix (1.0, tmpvar_33.x, (dirCheck_9 * radCheck_4)));
+  tmpvar_1 = tmpvar_34;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -568,66 +577,70 @@ void main ()
   highp vec2 tmpvar_13;
   tmpvar_13 = dFdy(xlv_TEXCOORD0.xy);
   dy_6 = tmpvar_13;
-  uv_8.x = (-((2.0 * uv_8.x)) + 1.0);
-  uv_8.y = ((2.0 * uv_8.y) - 1.0);
   mediump float tmpvar_14;
-  tmpvar_14 = sqrt((pow (uv_8.x, 2.0) + pow (uv_8.y, 2.0)));
-  p_5 = tmpvar_14;
-  highp float tmpvar_15;
-  tmpvar_15 = clamp (floor((2.0 - p_5)), 0.0, 1.0);
-  radCheck_4 = tmpvar_15;
-  highp float tmpvar_16;
-  tmpvar_16 = (sign(p_5) * (1.5708 - (sqrt((1.0 - abs(p_5))) * (1.5708 + (abs(p_5) * (-0.214602 + (abs(p_5) * (0.0865667 + (abs(p_5) * -0.0310296)))))))));
-  c_3 = tmpvar_16;
-  mediump float tmpvar_17;
-  tmpvar_17 = sin(c_3);
-  mediump float tmpvar_18;
-  tmpvar_18 = cos(c_3);
+  tmpvar_14 = (-((2.0 * uv_8.x)) + 1.0);
+  mediump float tmpvar_15;
+  tmpvar_15 = ((2.0 * uv_8.y) - 1.0);
+  mediump float tmpvar_16;
+  tmpvar_16 = sqrt((pow (tmpvar_14, 2.0) + pow (tmpvar_15, 2.0)));
+  p_5 = tmpvar_16;
+  highp float tmpvar_17;
+  tmpvar_17 = clamp (floor((2.0 - p_5)), 0.0, 1.0);
+  radCheck_4 = tmpvar_17;
+  highp float tmpvar_18;
+  tmpvar_18 = (sign(p_5) * (1.5708 - (sqrt((1.0 - abs(p_5))) * (1.5708 + (abs(p_5) * (-0.214602 + (abs(p_5) * (0.0865667 + (abs(p_5) * -0.0310296)))))))));
+  c_3 = tmpvar_18;
   mediump float tmpvar_19;
-  tmpvar_19 = cos(xlv_TEXCOORD2);
+  tmpvar_19 = sin(c_3);
   mediump float tmpvar_20;
-  tmpvar_20 = sin(xlv_TEXCOORD2);
-  highp float tmpvar_21;
-  mediump float y_22;
-  y_22 = (uv_8.x * tmpvar_17);
-  highp float x_23;
-  x_23 = (((p_5 * tmpvar_19) * tmpvar_18) - ((uv_8.y * tmpvar_20) * tmpvar_17));
-  mediump float r_24;
-  if ((abs(x_23) > (1e-08 * abs(y_22)))) {
-    highp float y_over_x_25;
-    y_over_x_25 = (y_22 / x_23);
-    highp float x_26;
-    x_26 = (y_over_x_25 * inversesqrt(((y_over_x_25 * y_over_x_25) + 1.0)));
-    r_24 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
-    if ((x_23 < 0.0)) {
-      if ((y_22 >= 0.0)) {
-        r_24 = (r_24 + 3.14159);
+  tmpvar_20 = cos(c_3);
+  mediump float tmpvar_21;
+  tmpvar_21 = cos(xlv_TEXCOORD2);
+  mediump float tmpvar_22;
+  tmpvar_22 = sin(xlv_TEXCOORD2);
+  highp float tmpvar_23;
+  mediump float y_24;
+  y_24 = (tmpvar_14 * tmpvar_19);
+  highp float x_25;
+  x_25 = (((p_5 * tmpvar_21) * tmpvar_20) - ((tmpvar_15 * tmpvar_22) * tmpvar_19));
+  mediump float r_26;
+  if ((abs(x_25) > (1e-08 * abs(y_24)))) {
+    highp float y_over_x_27;
+    y_over_x_27 = (y_24 / x_25);
+    highp float x_28;
+    x_28 = (y_over_x_27 * inversesqrt(((y_over_x_27 * y_over_x_27) + 1.0)));
+    r_26 = (sign(x_28) * (1.5708 - (sqrt((1.0 - abs(x_28))) * (1.5708 + (abs(x_28) * (-0.214602 + (abs(x_28) * (0.0865667 + (abs(x_28) * -0.0310296)))))))));
+    if ((x_25 < 0.0)) {
+      if ((y_24 >= 0.0)) {
+        r_26 = (r_26 + 3.14159);
       } else {
-        r_24 = (r_24 - 3.14159);
+        r_26 = (r_26 - 3.14159);
       };
     };
   } else {
-    r_24 = (sign(y_22) * 1.5708);
+    r_26 = (sign(y_24) * 1.5708);
   };
-  tmpvar_21 = r_24;
-  highp float tmpvar_27;
-  tmpvar_27 = (((0.31831 * (xlv_TEXCOORD3 + tmpvar_21)) + 0.5) + _ShadowOffset.w);
-  uv_8.x = tmpvar_27;
-  highp float x_28;
-  x_28 = ((tmpvar_18 * tmpvar_20) + (((uv_8.y * tmpvar_17) * tmpvar_19) / p_5));
+  tmpvar_23 = r_26;
   highp float tmpvar_29;
-  tmpvar_29 = ((0.31831 * (sign(x_28) * (1.5708 - (sqrt((1.0 - abs(x_28))) * (1.5708 + (abs(x_28) * (-0.214602 + (abs(x_28) * (0.0865667 + (abs(x_28) * -0.0310296)))))))))) + 0.5);
-  uv_8.y = tmpvar_29;
-  lowp vec4 tmpvar_30;
-  tmpvar_30 = texture2DGradEXT (_ShadowTex, uv_8, dx_7, dy_6);
-  color_2.w = tmpvar_30.w;
-  color_2.xyz = (tmpvar_30.xyz * (1.25 * (1.25 - tmpvar_30.w)));
-  lowp vec4 tmpvar_31;
-  tmpvar_31 = clamp (color_2, 0.0, 1.0);
-  color_2 = tmpvar_31;
-  mediump vec4 tmpvar_32;
-  tmpvar_32 = vec4(mix (1.0, tmpvar_31.x, (dirCheck_9 * radCheck_4)));
-  tmpvar_1 = tmpvar_32;
+  tmpvar_29 = (((0.31831 * (xlv_TEXCOORD3 + tmpvar_23)) + 0.5) + _ShadowOffset.w);
+  uv_8.x = tmpvar_29;
+  highp float x_30;
+  x_30 = ((tmpvar_20 * tmpvar_22) + (((tmpvar_15 * tmpvar_19) * tmpvar_21) / p_5));
+  highp float tmpvar_31;
+  tmpvar_31 = ((0.31831 * (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))))) + 0.5);
+  uv_8.y = tmpvar_31;
+  uv_8.x = (uv_8.x + 1.0);
+  uv_8.x = (uv_8.x * 0.5);
+  lowp vec4 tmpvar_32;
+  tmpvar_32 = texture2DGradEXT (_ShadowTex, uv_8, dx_7, dy_6);
+  color_2.w = tmpvar_32.w;
+  color_2.xyz = (tmpvar_32.xyz * (1.25 * (1.25 - tmpvar_32.w)));
+  lowp vec4 tmpvar_33;
+  tmpvar_33 = clamp (color_2, 0.0, 1.0);
+  color_2 = tmpvar_33;
+  mediump vec4 tmpvar_34;
+  tmpvar_34 = vec4(mix (1.0, tmpvar_33.x, (dirCheck_9 * radCheck_4)));
+  tmpvar_1 = tmpvar_34;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -944,9 +957,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec2 dx = xll_dFdx_vf2(IN.posProj.xy);
     mediump vec2 dy = xll_dFdy_vf2(IN.posProj.xy);
     #line 86
-    uv.x = ((-(2.0 * uv.x)) + 1.0);
-    uv.y = ((2.0 * uv.y) - 1.0);
-    highp float p = sqrt((pow( uv.x, 2.0) + pow( uv.y, 2.0)));
+    mediump float x = ((-(2.0 * uv.x)) + 1.0);
+    mediump float y = ((2.0 * uv.y) - 1.0);
+    highp float p = sqrt((pow( x, 2.0) + pow( y, 2.0)));
     mediump float radCheck = xll_saturate_f(floor((2.0 - p)));
     #line 90
     mediump float c = asin(p);
@@ -955,12 +968,15 @@ lowp vec4 frag( in v2f IN ) {
     mediump float cosLat = cos(IN.latitude);
     #line 94
     mediump float sinLat = sin(IN.latitude);
-    uv.x = (((0.31831 * (IN.longitude + atan( (uv.x * sinC), (((p * cosLat) * cosC) - ((uv.y * sinLat) * sinC))))) + 0.5) + _ShadowOffset.w);
-    uv.y = ((0.31831 * asin(((cosC * sinLat) + (((uv.y * sinC) * cosLat) / p)))) + 0.5);
-    lowp vec4 color = xll_tex2Dgrad( _ShadowTex, uv, dx, dy);
+    uv.x = (((0.31831 * (IN.longitude + atan( (x * sinC), (((p * cosLat) * cosC) - ((y * sinLat) * sinC))))) + 0.5) + _ShadowOffset.w);
+    uv.y = ((0.31831 * asin(((cosC * sinLat) + (((y * sinC) * cosLat) / p)))) + 0.5);
+    uv.x += 1.0;
     #line 98
+    uv.x *= 0.5;
+    lowp vec4 color = xll_tex2Dgrad( _ShadowTex, uv, dx, dy);
     color.xyz *= (1.25 * (1.25 - color.w));
     color = xll_saturate_vf4(color);
+    #line 102
     return vec4( mix( 1.0, float( color), (dirCheck * radCheck)));
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -986,8 +1002,8 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 1
-//   d3d9 - ALU: 99 to 99, TEX: 3 to 3
-//   d3d11 - ALU: 67 to 67, TEX: 0 to 0, FLOW: 1 to 1
+//   d3d9 - ALU: 101 to 101, TEX: 3 to 3
+//   d3d11 - ALU: 68 to 68, TEX: 0 to 0, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { }
 "!!GLSL"
@@ -998,14 +1014,14 @@ Keywords { }
 Vector 0 [_ShadowOffset]
 SetTexture 0 [_ShadowTex] 2D
 "ps_3_0
-; 99 ALU, 3 TEX
+; 101 ALU, 3 TEX
 dcl_2d s0
 def c1, 1.00000000, 2.00000000, -1.00000000, 0.00000000
 def c2, -0.01872930, 0.07426100, -0.21211439, 1.57072902
-def c3, 1.57079601, 0.15917969, 0.50000000, 0.31830987
+def c3, 1.57079601, 0.15917969, 0.50000000, -0.12121582
 def c4, 6.28125000, -3.14062500, -0.01348114, 0.05746460
-def c5, -0.12121582, 0.19567871, -0.33300781, 1.57031250
-def c6, 3.14062500, 0.31835938, 0.50000000, 1.25000000
+def c5, 0.19567871, -0.33300781, 1.57031250, 3.14062500
+def c6, 0.31835938, 0.50000000, 0.31830987, 1.25000000
 dcl_texcoord0 v0.xyzw
 dcl_texcoord1 v1.x
 dcl_texcoord2 v2.x
@@ -1049,37 +1065,39 @@ min_pp r2.w, r1, r1.z
 mul_pp r2.w, r2, r3.x
 mul_pp r3.x, r2.w, r2.w
 mad_pp r3.y, r3.x, c4.z, c4.w
+mad_pp r3.y, r3, r3.x, c3.w
 mad_pp r3.y, r3, r3.x, c5.x
 mad_pp r3.y, r3, r3.x, c5
-mad_pp r3.y, r3, r3.x, c5.z
 mad_pp r3.x, r3.y, r3, c1
 mul_pp r2.w, r3.x, r2
-mul_pp r0.y, r1.x, r0
 add_pp r1.z, r1.w, -r1
-add_pp r3.x, -r2.w, c5.w
+add_pp r3.x, -r2.w, c5.z
 cmp_pp r1.z, -r1, r2.w, r3.x
-add_pp r1.w, -r1.z, c6.x
+add_pp r1.w, -r1.z, c5
 cmp_pp r0.z, r0, r1, r1.w
-cmp_pp r0.w, r0, r0.z, -r0.z
-mul_pp r0.z, r2.y, r1.y
-mul_pp r0.x, r0.z, r0
-mad r0.x, r2.z, r0, r0.y
-abs r0.y, r0.x
-add_pp r0.z, v3.x, r0.w
-mad_pp r1.x, r0.z, c6.y, c6.z
-mad r0.w, r0.y, c2.x, c2.y
-add r0.z, -r0.y, c1.x
-mad r0.w, r0.y, r0, c2.z
-mad r0.w, r0.y, r0, c2
-rsq r0.z, r0.z
-rcp r0.y, r0.z
-mad r0.y, -r0, r0.w, c3.x
-cmp r0.x, r0, c1.w, c1.y
-mad r0.y, -r0.x, r0, r0
-add r0.x, r1, c0.w
-mad r0.y, r0, c3.w, c3.z
+cmp_pp r0.z, r0.w, r0, -r0
+mul_pp r0.w, r2.y, r1.y
+add_pp r0.z, v3.x, r0
+mul_pp r0.x, r0, r0.w
+mul_pp r0.y, r1.x, r0
+mad r0.y, r2.z, r0.x, r0
+mad_pp r0.z, r0, c6.x, c6.y
+add r0.x, r0.z, c0.w
+abs r0.z, r0.y
+mad r1.x, r0.z, c2, c2.y
+add r0.w, -r0.z, c1.x
+mad r1.x, r0.z, r1, c2.z
+add_pp r0.x, r0, c1
+mad r1.x, r0.z, r1, c2.w
+rsq r0.w, r0.w
+rcp r0.z, r0.w
+mad r0.z, -r0, r1.x, c3.x
+cmp r0.y, r0, c1.w, c1
+mad r0.y, -r0, r0.z, r0.z
+mad r0.y, r0, c6.z, c6
 dsy r1.xy, v0
 dsx r0.zw, v0.xyxy
+mul_pp r0.x, r0, c3.z
 texldd r0.xw, r0, s0, r0.zwzw, r1
 add_pp r0.y, -r0.w, c6.w
 mul_pp r0.x, r0.y, r0
@@ -1103,12 +1121,12 @@ ConstBuffer "$Globals" 80 // 16 used size, 2 vars
 Vector 0 [_ShadowOffset] 4
 BindCB "$Globals" 0
 SetTexture 0 [_ShadowTex] 2D 0
-// 73 instructions, 6 temp regs, 0 temp arrays:
-// ALU 63 float, 0 int, 4 uint
+// 74 instructions, 6 temp regs, 0 temp arrays:
+// ALU 64 float, 0 int, 4 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedhbgcgaadpneccknjgfmhanjenpjjdlkoabaaaaaaimakaaaaadaaaaaa
+eefiecedcabnemijnaefbnfnmifjcfagkcfojmpoabaaaaaakiakaaaaadaaaaaa
 cmaaaaaammaaaaaaaaabaaaaejfdeheojiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapalaaaaimaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -1116,7 +1134,7 @@ ababaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaacacaaaaimaaaaaa
 adaaaaaaaaaaaaaaadaaaaaaacaaaaaaaeaeaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefcieajaaaaeaaaaaaagbacaaaafjaaaaaeegiocaaaaaaaaaaaabaaaaaa
+fdeieefckaajaaaaeaaaaaaagiacaaaafjaaaaaeegiocaaaaaaaaaaaabaaaaaa
 fkaaaaadaagabaaaaaaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaagcbaaaad
 lcbabaaaabaaaaaagcbaaaadbcbabaaaacaaaaaagcbaaaadccbabaaaacaaaaaa
 gcbaaaadecbabaaaacaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacagaaaaaa
@@ -1166,33 +1184,34 @@ bkaabaiaebaaaaaaabaaaaaaabaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
 ckaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaaakaabaaaaaaaaaaadkaabaia
 ebaaaaaaaaaaaaaadkaabaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaackbabaaaacaaaaaadcaaaaakbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaidpjkcdodkiacaaaaaaaaaaaaaaaaaaaaaaaaaahbcaabaaaacaaaaaa
-akaabaaaaaaaaaaaabeaaaaaaaaaaadpdcaaaaakbcaabaaaaaaaaaaabkaabaia
-ibaaaaaaaaaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakbcaabaaa
-aaaaaaaaakaabaaaaaaaaaaabkaabaiaibaaaaaaaaaaaaaaabeaaaaaiedefjlo
-dcaaaaakbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaiaibaaaaaaaaaaaaaa
-abeaaaaakeanmjdpaaaaaaaiecaabaaaaaaaaaaabkaabaiambaaaaaaaaaaaaaa
-abeaaaaaaaaaiadpdbaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaabkaabaia
-ebaaaaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaah
-icaabaaaaaaaaaaackaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaah
-ccaabaaaaaaaaaaabkaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajbcaabaaa
-aaaaaaaaakaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaaaaaaaaaaaaaaaai
-bcaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaabeaaaaanlapmjdpdcaaaaaj
-ccaabaaaacaaaaaaakaabaaaaaaaaaaaabeaaaaaidpjkcdoabeaaaaaaaaaaadp
-alaaaaafdcaabaaaaaaaaaaaegbabaaaabaaaaaaamaaaaafmcaabaaaaaaaaaaa
-agbebaaaabaaaaaaejaaaaanpcaabaaaaaaaaaaaegaabaaaacaaaaaaeghobaaa
-aaaaaaaaaagabaaaaaaaaaaaegaabaaaaaaaaaaaogakbaaaaaaaaaaaaaaaaaai
-ccaabaaaabaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaakadpdiaaaaah
-ccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaakadpdicaaaahhcaabaaa
-aaaaaaaaegacbaaaaaaaaaaafgafbaaaabaaaaaadgcaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaaaaaaaakpcaabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaa
-aaaaialpaaaaialpaaaaialpaaaaialpaaaaaaahccaabaaaabaaaaaadkbabaaa
-abaaaaaaabeaaaaaaaaaiadpebcaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
-diaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaakbabaaaacaaaaaadiaaaaah
-bcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaadcaaaaampccabaaa
-aaaaaaaaagaabaaaabaaaaaaegaobaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaiadpaaaaiadpdoaaaaab"
+abeaaaaaidpjkcdodkiacaaaaaaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaaabeaaaaaaaaamadpdiaaaaahbcaabaaaacaaaaaaakaabaaa
+aaaaaaaaabeaaaaaaaaaaadpdcaaaaakbcaabaaaaaaaaaaabkaabaiaibaaaaaa
+aaaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaabkaabaiaibaaaaaaaaaaaaaaabeaaaaaiedefjlodcaaaaak
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaiaibaaaaaaaaaaaaaaabeaaaaa
+keanmjdpaaaaaaaiecaabaaaaaaaaaaabkaabaiambaaaaaaaaaaaaaaabeaaaaa
+aaaaiadpdbaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaabkaabaiaebaaaaaa
+aaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahicaabaaa
+aaaaaaaackaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahccaabaaa
+aaaaaaaabkaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaaaaaaaaaaaaaaaaibcaabaaa
+aaaaaaaaakaabaiaebaaaaaaaaaaaaaaabeaaaaanlapmjdpdcaaaaajccaabaaa
+acaaaaaaakaabaaaaaaaaaaaabeaaaaaidpjkcdoabeaaaaaaaaaaadpalaaaaaf
+dcaabaaaaaaaaaaaegbabaaaabaaaaaaamaaaaafmcaabaaaaaaaaaaaagbebaaa
+abaaaaaaejaaaaanpcaabaaaaaaaaaaaegaabaaaacaaaaaaeghobaaaaaaaaaaa
+aagabaaaaaaaaaaaegaabaaaaaaaaaaaogakbaaaaaaaaaaaaaaaaaaiccaabaaa
+abaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaakadpdiaaaaahccaabaaa
+abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaakadpdicaaaahhcaabaaaaaaaaaaa
+egacbaaaaaaaaaaafgafbaaaabaaaaaadgcaaaaficaabaaaaaaaaaaadkaabaaa
+aaaaaaaaaaaaaaakpcaabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaaaaaaialp
+aaaaialpaaaaialpaaaaialpaaaaaaahccaabaaaabaaaaaadkbabaaaabaaaaaa
+abeaaaaaaaaaiadpebcaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadiaaaaah
+ccaabaaaabaaaaaabkaabaaaabaaaaaaakbabaaaacaaaaaadiaaaaahbcaabaaa
+abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaadcaaaaampccabaaaaaaaaaaa
+agaabaaaabaaaaaaegaobaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
+aaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -1212,7 +1231,7 @@ Keywords { }
 
 }
 
-#LINE 71
+#LINE 74
 
       }
    }  
