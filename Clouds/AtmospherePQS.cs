@@ -17,6 +17,7 @@ namespace Atmosphere
         private float speed;
         CloudsVolume layerVolume = null;
         Clouds2D layer2D = null;
+        AtmosphereVolume atmosphere = null;
         CelestialBody celestialBody = null;
         Transform scaledCelestialTransform = null;
 
@@ -29,6 +30,10 @@ namespace Atmosphere
             if (layer2D != null)
             {
                 layer2D.Scaled = false;
+            }
+            if (atmosphere != null)
+            {
+                atmosphere.Scaled = false;
             }
             if (!applied)
             {
@@ -45,6 +50,10 @@ namespace Atmosphere
             {
                 AtmosphereManager.Log("AtmospherePQS: OnSphereInactive");
                 layer2D.Scaled = true;
+            }
+            if (atmosphere != null)
+            {
+                atmosphere.Scaled = true;
             }
             if (!MapView.MapIsEnabled)
             {
@@ -82,16 +91,29 @@ namespace Atmosphere
             bool visible = HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER;
             if (this.sphere != null && visible)
             {
-                if (layer2D != null && sphere.isActive && HighLogic.LoadedScene != GameScenes.TRACKSTATION)
+                if (sphere.isActive && HighLogic.LoadedScene != GameScenes.TRACKSTATION)
                 {
-                    layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition));
+                    if (layer2D != null)
+                    {
+                        layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition));
+                    }
+                    if (atmosphere != null)
+                    {
+                        atmosphere.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition));
+                    }
                 }
                 else
                 {
                     Transform transform = ScaledCamera.Instance.camera.transform;
                     Vector3 pos = scaledCelestialTransform.InverseTransformPoint(transform.position);
-                    layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos));
-                    //AtmosphereManager.Log("Distance: " + Vector3.Distance(transform.position, scaledCelestialTransform.position));
+                    if (layer2D != null)
+                    {
+                        layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos));
+                    }
+                    if (atmosphere != null)
+                    {
+                        atmosphere.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos));
+                    }
                 }
                 if (layerVolume != null && sphere.isActive)
                 {
@@ -107,11 +129,12 @@ namespace Atmosphere
             }
         }
 
-        internal void Apply(String body, Clouds2D layer2D, CloudsVolume layerVolume, float altitude, float speed)
+        internal void Apply(String body, Clouds2D layer2D, CloudsVolume layerVolume, AtmosphereVolume atmosphere, float altitude, float speed)
         {
             this.body = body;
             this.layer2D = layer2D;
             this.layerVolume = layerVolume;
+            this.atmosphere = atmosphere;
             this.altitude = altitude;
             this.speed = speed;
             celestialBody = EVEManagerClass.GetCelestialBody(body);
@@ -133,7 +156,8 @@ namespace Atmosphere
                 this.transform.localPosition = Vector3.zero;
                 this.transform.localRotation = Quaternion.identity;
                 this.transform.localScale = Vector3.one;
-                layer2D.Apply(celestialBody, scaledCelestialTransform, (float)(altitude + celestialBody.Radius), speed);
+                this.layer2D.Apply(celestialBody, scaledCelestialTransform, (float)(altitude + celestialBody.Radius), speed);
+                this.atmosphere.Apply(celestialBody, scaledCelestialTransform, (float)(altitude + celestialBody.Radius));
                 if (!pqs.isActive || HighLogic.LoadedScene == GameScenes.TRACKSTATION)
                 {
                     this.OnSphereInactive();
@@ -173,8 +197,13 @@ namespace Atmosphere
             {
                 layerVolume.Remove();
             }
+            if (atmosphere != null)
+            {
+                atmosphere.Remove();
+            }
             layer2D = null;
             layerVolume = null;
+            atmosphere = null;
             applied = false;
             this.sphere = null;
             this.enabled = false;

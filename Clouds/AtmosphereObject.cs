@@ -31,6 +31,8 @@ namespace Atmosphere
         //[Persistent]
         //ScaledOverlayEnum scaledOverlay = ScaledOverlayEnum.None;
         [Persistent, Optional]
+        AtmosphereVolume atmosphere = null;
+        [Persistent, Optional]
         CloudsVolume layerVolume = null;
         [Persistent, Optional]
         Clouds2D layer2D = null;
@@ -60,7 +62,7 @@ namespace Atmosphere
             
             GameObject go = new GameObject();
             atmospherePQS = go.AddComponent<AtmospherePQS>();
-            atmospherePQS.Apply(body, layer2D, layerVolume, altitude, speed);
+            atmospherePQS.Apply(body, layer2D, layerVolume, atmosphere, altitude, speed);
 
             //go = new GameObject();
             //scaledAtmospherePQS = go.AddComponent<ScaledAtmospherePQS>();

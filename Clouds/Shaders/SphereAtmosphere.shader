@@ -1,6 +1,7 @@
 ﻿Shader "Sphere/Atmosphere" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
+		_Visibility ("Visibility", Float) = .0001
 	}
 
 Category {
@@ -8,7 +9,7 @@ Category {
 	Tags { "Queue"="Overlay" "IgnoreProjector"="True" "RenderType"="Transparent" }
 	Blend SrcAlpha OneMinusSrcAlpha
 	Fog { Mode Off}
-	ZTest Always
+	ZTest Off
 	ColorMask RGB
 	Cull Off Lighting On ZWrite Off
 	
@@ -35,6 +36,8 @@ SubShader {
 		#define INV_2PI (1.0/TWOPI)
 	 
 		fixed4 _Color;
+		sampler2D _CameraDepthTexture;
+		float _Visibility;
 		
 		struct appdata_t {
 				float4 vertex : POSITION;
@@ -44,10 +47,11 @@ SubShader {
 
 		struct v2f {
 			float4 pos : SV_POSITION;
-			float3 worldVert : TEXCOORD0;
-			float3 worldOrigin : TEXCOORD1;
-			float3 viewDir : TEXCOORD2;
-			float  viewDist : TEXCOORD3;
+			float4 scrPos : TEXCOORD0;
+			float3 worldVert : TEXCOORD1;
+			float3 worldOrigin : TEXCOORD2;
+			float3 viewDir : TEXCOORD3;
+			float  viewDist : TEXCOORD4;
 		};	
 		
 
@@ -62,13 +66,18 @@ SubShader {
 	   	   o.worldOrigin = origin;
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
 	   	   o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
+	   	   o.scrPos=ComputeScreenPos(o.pos);
+		   COMPUTE_EYEDEPTH(o.scrPos.z);
 	   	   return o;
 	 	}
 	 		
 		fixed4 frag (v2f IN) : COLOR
 			{
-			half4 color;
-			color = _Color;
+			half4 color = _Color;
+			float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.scrPos)));
+			depth = LinearEyeDepth(depth);
+			
+			color.a = depth*_Visibility;
           	return color;
 		}
 		ENDCG

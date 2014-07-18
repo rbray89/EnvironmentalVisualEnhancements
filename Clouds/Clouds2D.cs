@@ -58,7 +58,6 @@ namespace Atmosphere
         [Persistent]
         Clouds2DMaterial scaledCloudMaterial;
 
-        public bool Enabled { get{return CloudMesh.activeSelf;} set { CloudMesh.SetActive(value); } }
         public bool Scaled
         {
             get { return CloudMesh.layer == EVEManagerClass.SCALED_LAYER; }

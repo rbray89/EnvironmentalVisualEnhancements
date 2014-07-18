@@ -52,6 +52,7 @@
     <Compile Include="AtmosphereManager.cs" />
     <Compile Include="AtmospherePQS.cs" />
     <Compile Include="AtmosphereObject.cs" />
+    <Compile Include="AtmosphereVolume.cs" />
     <Compile Include="Clouds2D.cs" />
     <Compile Include="CloudsVolume.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
