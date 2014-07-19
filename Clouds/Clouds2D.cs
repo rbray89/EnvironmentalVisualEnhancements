@@ -44,13 +44,14 @@ namespace Atmosphere
     {
         GameObject CloudMesh;
         Material CloudMaterial;
-        GameObject ShadowProjectorGO;
         Projector ShadowProjector;
 
         [Persistent]
         float detailSpeed;
         [Persistent]
         Vector3 offset = new Vector3(0, 0, 0);
+        [Persistent, Optional]
+        GameObject ShadowProjectorGO;
         [Persistent]
         Vector3 shadowOffset = new Vector3(0, 0, 0);
         [Persistent]
@@ -122,14 +123,16 @@ namespace Atmosphere
             float circumference = 2f * Mathf.PI * radius;
             globalPeriod = (speed+detailSpeed) / circumference;
             mainPeriodOffset = (-detailSpeed) / circumference;
-            ShadowProjectorGO = new GameObject();
-            ShadowProjector = ShadowProjectorGO.AddComponent<Projector>();
-            ShadowProjector.nearClipPlane = 10;
-            ShadowProjector.fieldOfView = 60;
-            ShadowProjector.aspectRatio = 1;
-            ShadowProjector.orthographic = true;
-            ShadowProjector.transform.parent = celestialBody.transform;
-            ShadowProjector.material = new Material(CloudShadowShader);
+            if (ShadowProjectorGO != null)
+            {
+                ShadowProjector = ShadowProjectorGO.AddComponent<Projector>();
+                ShadowProjector.nearClipPlane = 10;
+                ShadowProjector.fieldOfView = 60;
+                ShadowProjector.aspectRatio = 1;
+                ShadowProjector.orthographic = true;
+                ShadowProjector.transform.parent = celestialBody.transform;
+                ShadowProjector.material = new Material(CloudShadowShader);
+            }
             sunTransform = Sun.Instance.sun.transform;
         }
 
@@ -184,11 +187,13 @@ namespace Atmosphere
             if (rotation != null)
             {
                 SetMeshRotation(rotation);
-                Vector3 sunDirection = ShadowProjector.transform.parent.position - sunTransform.position;
-                sunDirection.Normalize();
-                ShadowProjector.transform.localPosition = radiusScale * (ShadowProjector.transform.parent.InverseTransformDirection(-sunDirection));
-                ShadowProjector.transform.forward = sunDirection; 
-                
+                if (ShadowProjectorGO != null)
+                {
+                    Vector3 sunDirection = ShadowProjector.transform.parent.position - sunTransform.position;
+                    sunDirection.Normalize();
+                    ShadowProjector.transform.localPosition = radiusScale * (ShadowProjector.transform.parent.InverseTransformDirection(-sunDirection));
+                    ShadowProjector.transform.forward = sunDirection;
+                }
             }
             SetTextureOffset();
         }
@@ -214,10 +219,12 @@ namespace Atmosphere
             x -= (int)x;
             Vector2 texOffset = new Vector2((float)x + offset.x, offset.y);
             CloudMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, texOffset);
-            Vector4 texVect = ShadowProjector.transform.localPosition.normalized;
-            texVect.w = 0;
-            //texVect.w = (float)x + offset.x;
-            ShadowProjector.material.SetVector(EVEManagerClass.SHADOWOFFSET_PROPERTY, texVect);
+            if (ShadowProjectorGO != null)
+            {
+                Vector4 texVect = ShadowProjector.transform.localPosition.normalized;
+                texVect.w = 0;
+                ShadowProjector.material.SetVector(EVEManagerClass.SHADOWOFFSET_PROPERTY, texVect);
+            }
         }
     }
 }

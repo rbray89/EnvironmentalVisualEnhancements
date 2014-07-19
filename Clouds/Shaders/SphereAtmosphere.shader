@@ -75,9 +75,9 @@ SubShader {
 			{
 			half4 color = _Color;
 			float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.scrPos)));
-			depth = LinearEyeDepth(depth);
+			depth = min( IN.viewDist, LinearEyeDepth(depth) );
 			
-			color.a = depth*_Visibility;
+			color.a *= depth*_Visibility;
           	return color;
 		}
 		ENDCG

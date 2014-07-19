@@ -6,12 +6,12 @@
 
 Category {
 	
-	Tags { "Queue"="Overlay" "IgnoreProjector"="True" "RenderType"="Transparent" }
+	Tags { "Queue"="Overlay" "IgnoreProjector"="True" "RenderType"="TransparentCutout" }
 	Blend SrcAlpha OneMinusSrcAlpha
 	Fog { Mode Off}
 	ZTest Off
 	ColorMask RGB
-	Cull Off Lighting On ZWrite Off
+	Cull Off Lighting On ZWrite On
 	
 SubShader {
 	Pass {
@@ -67,6 +67,7 @@ void main ()
 
 #endif
 #ifdef FRAGMENT
+varying float xlv_TEXCOORD4;
 varying vec4 xlv_TEXCOORD0;
 uniform float _Visibility;
 uniform sampler2D _CameraDepthTexture;
@@ -76,7 +77,7 @@ void main ()
 {
   vec4 color_1;
   color_1.xyz = _Color.xyz;
-  color_1.w = ((1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x) + _ZBufferParams.w))) * _Visibility);
+  color_1.w = (_Color.w * (min (xlv_TEXCOORD4, (1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x) + _ZBufferParams.w)))) * _Visibility));
   gl_FragData[0] = color_1;
 }
 
@@ -244,6 +245,7 @@ void main ()
 #endif
 #ifdef FRAGMENT
 
+varying highp float xlv_TEXCOORD4;
 varying highp vec4 xlv_TEXCOORD0;
 uniform highp float _Visibility;
 uniform sampler2D _CameraDepthTexture;
@@ -254,15 +256,15 @@ void main ()
   lowp vec4 tmpvar_1;
   highp float depth_2;
   mediump vec4 color_3;
-  color_3.xyz = _Color.xyz;
+  color_3 = _Color;
   lowp float tmpvar_4;
   tmpvar_4 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
   depth_2 = tmpvar_4;
   highp float tmpvar_5;
-  tmpvar_5 = (1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w)));
+  tmpvar_5 = min (xlv_TEXCOORD4, (1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))));
   depth_2 = tmpvar_5;
   highp float tmpvar_6;
-  tmpvar_6 = (tmpvar_5 * _Visibility);
+  tmpvar_6 = (color_3.w * (tmpvar_5 * _Visibility));
   color_3.w = tmpvar_6;
   tmpvar_1 = color_3;
   gl_FragData[0] = tmpvar_1;
@@ -323,6 +325,7 @@ void main ()
 #endif
 #ifdef FRAGMENT
 
+varying highp float xlv_TEXCOORD4;
 varying highp vec4 xlv_TEXCOORD0;
 uniform highp float _Visibility;
 uniform sampler2D _CameraDepthTexture;
@@ -333,15 +336,15 @@ void main ()
   lowp vec4 tmpvar_1;
   highp float depth_2;
   mediump vec4 color_3;
-  color_3.xyz = _Color.xyz;
+  color_3 = _Color;
   lowp float tmpvar_4;
   tmpvar_4 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
   depth_2 = tmpvar_4;
   highp float tmpvar_5;
-  tmpvar_5 = (1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w)));
+  tmpvar_5 = min (xlv_TEXCOORD4, (1.0/(((_ZBufferParams.z * depth_2) + _ZBufferParams.w))));
   depth_2 = tmpvar_5;
   highp float tmpvar_6;
-  tmpvar_6 = (tmpvar_5 * _Visibility);
+  tmpvar_6 = (color_3.w * (tmpvar_5 * _Visibility));
   color_3.w = tmpvar_6;
   tmpvar_1 = color_3;
   gl_FragData[0] = tmpvar_1;
@@ -712,8 +715,8 @@ lowp vec4 frag( in v2f IN ) {
     #line 427
     mediump vec4 color = _Color;
     highp float depth = textureProj( _CameraDepthTexture, IN.scrPos).x;
-    depth = LinearEyeDepth( depth);
-    color.w = (depth * _Visibility);
+    depth = min( IN.viewDist, LinearEyeDepth( depth));
+    color.w *= (depth * _Visibility);
     #line 431
     return color;
 }
@@ -742,8 +745,8 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 1
-//   d3d9 - ALU: 4 to 4, TEX: 1 to 1
-//   d3d11 - ALU: 4 to 4, TEX: 1 to 1, FLOW: 1 to 1
+//   d3d9 - ALU: 6 to 6, TEX: 1 to 1
+//   d3d11 - ALU: 6 to 6, TEX: 1 to 1, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { }
 "!!GLSL"
@@ -756,14 +759,17 @@ Vector 1 [_Color]
 Float 2 [_Visibility]
 SetTexture 0 [_CameraDepthTexture] 2D
 "ps_3_0
-; 4 ALU, 1 TEX
+; 6 ALU, 1 TEX
 dcl_2d s0
 dcl_texcoord0 v0
+dcl_texcoord4 v1.x
 texldp r0.x, v0, s0
 mad r0.x, r0, c0.z, c0.w
 rcp r0.x, r0.x
+min r0.x, v1, r0
+mul r0.x, r0, c2
 mov_pp oC0.xyz, c1
-mul oC0.w, r0.x, c2.x
+mul_pp oC0.w, r0.x, c1
 "
 }
 
@@ -777,30 +783,32 @@ Vector 112 [_ZBufferParams] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 SetTexture 0 [_CameraDepthTexture] 2D 0
-// 7 instructions, 1 temp regs, 0 temp arrays:
-// ALU 4 float, 0 int, 0 uint
+// 9 instructions, 1 temp regs, 0 temp arrays:
+// ALU 6 float, 0 int, 0 uint
 // TEX 1 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedofdipiafmhddelmepllimbmijgdhijfmabaaaaaafeacaaaaadaaaaaa
+eefiecedadlkfiiocjgnpfgfakfpnffgkfelfpfiabaaaaaajmacaaaaadaaaaaa
 cmaaaaaaoeaaaaaabiabaaaaejfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapalaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
-ahaaaaaakeaaaaaaaeaaaaaaaaaaaaaaadaaaaaaacaaaaaaaiaaaaaakeaaaaaa
+ahaaaaaakeaaaaaaaeaaaaaaaaaaaaaaadaaaaaaacaaaaaaaiaiaaaakeaaaaaa
 acaaaaaaaaaaaaaaadaaaaaaadaaaaaaahaaaaaakeaaaaaaadaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaahaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcdeabaaaa
-eaaaaaaaenaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefchmabaaaa
+eaaaaaaafpaaaaaafjaaaaaeegiocaaaaaaaaaaaafaaaaaafjaaaaaeegiocaaa
 abaaaaaaaiaaaaaafkaaaaadaagabaaaaaaaaaaafibiaaaeaahabaaaaaaaaaaa
-ffffaaaagcbaaaadlcbabaaaabaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-abaaaaaaaoaaaaahdcaabaaaaaaaaaaaegbabaaaabaaaaaapgbpbaaaabaaaaaa
-efaaaaajpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
-aaaaaaaadcaaaaalbcaabaaaaaaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaa
-aaaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaaaaaaaaadiaaaaaiiccabaaa
-aaaaaaaaakaabaaaaaaaaaaaakiacaaaaaaaaaaaaeaaaaaadgaaaaaghccabaaa
-aaaaaaaaegiccaaaaaaaaaaaadaaaaaadoaaaaab"
+ffffaaaagcbaaaadlcbabaaaabaaaaaagcbaaaadicbabaaaacaaaaaagfaaaaad
+pccabaaaaaaaaaaagiaaaaacabaaaaaaaoaaaaahdcaabaaaaaaaaaaaegbabaaa
+abaaaaaapgbpbaaaabaaaaaaefaaaaajpcaabaaaaaaaaaaaegaabaaaaaaaaaaa
+eghobaaaaaaaaaaaaagabaaaaaaaaaaadcaaaaalbcaabaaaaaaaaaaackiacaaa
+abaaaaaaahaaaaaaakaabaaaaaaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaak
+bcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaa
+aaaaaaaaddaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaadkbabaaaacaaaaaa
+diaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaaakiacaaaaaaaaaaaaeaaaaaa
+diaaaaaiiccabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaaadaaaaaa
+dgaaaaaghccabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
