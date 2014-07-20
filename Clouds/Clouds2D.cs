@@ -44,14 +44,15 @@ namespace Atmosphere
     {
         GameObject CloudMesh;
         Material CloudMaterial;
-        Projector ShadowProjector;
+        Projector ShadowProjector = null;
+        GameObject ShadowProjectorGO = null;
 
         [Persistent]
         float detailSpeed;
         [Persistent]
         Vector3 offset = new Vector3(0, 0, 0);
-        [Persistent, Optional]
-        GameObject ShadowProjectorGO;
+        [Persistent]
+        bool shadow = false;
         [Persistent]
         Vector3 shadowOffset = new Vector3(0, 0, 0);
         [Persistent]
@@ -123,8 +124,9 @@ namespace Atmosphere
             float circumference = 2f * Mathf.PI * radius;
             globalPeriod = (speed+detailSpeed) / circumference;
             mainPeriodOffset = (-detailSpeed) / circumference;
-            if (ShadowProjectorGO != null)
+            if (shadow)
             {
+                ShadowProjectorGO = new GameObject();
                 ShadowProjector = ShadowProjectorGO.AddComponent<Projector>();
                 ShadowProjector.nearClipPlane = 10;
                 ShadowProjector.fieldOfView = 60;
@@ -187,7 +189,7 @@ namespace Atmosphere
             if (rotation != null)
             {
                 SetMeshRotation(rotation);
-                if (ShadowProjectorGO != null)
+                if (ShadowProjector != null)
                 {
                     Vector3 sunDirection = ShadowProjector.transform.parent.position - sunTransform.position;
                     sunDirection.Normalize();
@@ -219,7 +221,7 @@ namespace Atmosphere
             x -= (int)x;
             Vector2 texOffset = new Vector2((float)x + offset.x, offset.y);
             CloudMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, texOffset);
-            if (ShadowProjectorGO != null)
+            if (ShadowProjector != null)
             {
                 Vector4 texVect = ShadowProjector.transform.localPosition.normalized;
                 texVect.w = 0;

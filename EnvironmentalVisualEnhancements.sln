@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PQSManager", "PQSManager\PQ
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Utils\Utils.csproj", "{8B24314B-4B75-43F3-B31C-FFA9FC83FB70}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShaderReplacer", "ShaderReplacer\ShaderReplacer.csproj", "{6ED213A8-D3DB-4DE8-BA0B-E81B50ABE658}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{8B24314B-4B75-43F3-B31C-FFA9FC83FB70}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B24314B-4B75-43F3-B31C-FFA9FC83FB70}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B24314B-4B75-43F3-B31C-FFA9FC83FB70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6ED213A8-D3DB-4DE8-BA0B-E81B50ABE658}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6ED213A8-D3DB-4DE8-BA0B-E81B50ABE658}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6ED213A8-D3DB-4DE8-BA0B-E81B50ABE658}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6ED213A8-D3DB-4DE8-BA0B-E81B50ABE658}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

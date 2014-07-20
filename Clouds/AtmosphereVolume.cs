@@ -72,62 +72,9 @@ namespace Atmosphere
             this.radius = radius;
             atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial);
 
-            GameEvents.onGameSceneLoadRequested.Add(GameSceneLoaded);
+            
         }
 
-        private void GameSceneLoaded(GameScenes scene)
-        {
-            if (scene == GameScenes.SPACECENTER || scene == GameScenes.FLIGHT)
-            {
-                foreach (GameObject go in GameObject.FindObjectsOfType<GameObject>())
-                {
-                    MeshRenderer mr = go.GetComponent<MeshRenderer>();
-                    if(mr != null)
-                    {
-                        List<Material> materials = mr.materials.ToList() ;
-                        materials.AddRange(mr.sharedMaterials);
-                        foreach (Material mat in materials)
-                        {
-                            String name = mat.shader.name;
-                            AtmosphereManager.Log("Shader " + name);
-                            
-                            switch (name)
-                            {
-                                case "KSP/Diffuse":
-                                    mat.shader = Shader.Find("Diffuse");
-                                    break;
-                                case "KSP/Unlit":
-                                    mat.shader = Shader.Find("Unlit/Texture");
-                                    break;
-                                case "KSP/Specular":
-                                    mat.shader = Shader.Find("Specular");
-                                    break;
-                                case "KSP/Bumped":
-                                    mat.shader = Shader.Find("Bumped Diffuse");
-                                    break;
-                                case "KSP/Bumped Specular":
-                                    mat.shader = Shader.Find("Bumped Specular");
-                                    break;
-                                case "KSP/Emissive/Bumped Specular":
-                                    Shader shader = Shader.Find("Self-Illumin/Bumped Specular");
-                                    mat.shader = shader;
-                                    break;
-                            }
-                            if (mat.shader == null)
-                            {
-                                AtmosphereManager.Log("Shader is null!");
-                            }
-                            String rtype = mat.GetTag("RenderType", false);
-                            if(rtype == null || rtype == "")
-                            {
-                                AtmosphereManager.Log("Shader has no Render Type!");
-                                mat.shader = Shader.Find("Diffuse");
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         public void Reassign(int layer, Transform parent, float scale)
         {

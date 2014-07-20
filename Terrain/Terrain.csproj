@@ -40,7 +40,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
@@ -53,11 +52,7 @@
     <Compile Include="TerrainObject.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Shaders\Compiled-Normals.shader" />
     <EmbeddedResource Include="Shaders\Compiled-Tangents.shader" />
-    <EmbeddedResource Include="Shaders\Compiled-uv1.shader" />
-    <EmbeddedResource Include="Shaders\Compiled-uv2.shader" />
-    <EmbeddedResource Include="Shaders\Compiled-Vertex.shader" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EveManager\EVEManager.csproj">
