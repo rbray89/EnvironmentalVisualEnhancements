@@ -156,8 +156,14 @@ namespace Atmosphere
                 this.transform.localPosition = Vector3.zero;
                 this.transform.localRotation = Quaternion.identity;
                 this.transform.localScale = Vector3.one;
-                this.layer2D.Apply(celestialBody, scaledCelestialTransform, (float)(altitude + celestialBody.Radius), speed);
-                this.atmosphere.Apply(celestialBody, scaledCelestialTransform, (float)(altitude + celestialBody.Radius));
+                if (layer2D != null)
+                {
+                    this.layer2D.Apply(celestialBody, scaledCelestialTransform, (float)(altitude + celestialBody.Radius), speed);
+                }
+                if (atmosphere != null)
+                {
+                    this.atmosphere.Apply(celestialBody, scaledCelestialTransform, (float)(altitude + celestialBody.Radius));
+                }
                 if (!pqs.isActive || HighLogic.LoadedScene == GameScenes.TRACKSTATION)
                 {
                     this.OnSphereInactive();

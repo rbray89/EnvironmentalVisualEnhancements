@@ -85,7 +85,7 @@ namespace ShaderReplacer
                                 UnityEngine.Debug.Log("Shader " + name);
                                 UnityEngine.Debug.Log("Shader is null!");
                             }
-                            else
+                            else if (mat.shader != replacementShader)
                             {
                                 mat.shader = replacementShader;
                             }

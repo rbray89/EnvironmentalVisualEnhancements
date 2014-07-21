@@ -52,7 +52,7 @@ namespace Atmosphere
         [Persistent]
         Vector3 offset = new Vector3(0, 0, 0);
         [Persistent]
-        bool shadow = false;
+        bool shadow = true;
         [Persistent]
         Vector3 shadowOffset = new Vector3(0, 0, 0);
         [Persistent]
@@ -161,7 +161,7 @@ namespace Atmosphere
                 }
                 else
                 {
-                    ShadowProjectorGO.layer = 10;
+                    ShadowProjectorGO.layer = EVEManagerClass.SCALED_LAYER2;
                     ShadowProjector.ignoreLayers = ~(1<<10);// ~((1 << 29) | (1 << 23) | (1 << 18) | (1 << 10) | (1 << 9));
                     sunTransform = EVEManagerClass.GetScaledTransform(Sun.Instance.sun.bodyName);
                 }
