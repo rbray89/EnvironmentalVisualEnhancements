@@ -100,7 +100,7 @@
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>copy /Y "$(SolutionDir)KSPResources\$(PlatformName)\*" "$(SolutionDir)KSPResources"</PreBuildEvent>
+    <PreBuildEvent>copy /Y "$(SolutionDir)KSPResources\$(PlatformName)\*.dll" "$(SolutionDir)KSPResources"</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

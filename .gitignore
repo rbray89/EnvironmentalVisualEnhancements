@@ -215,5 +215,4 @@ pip-log.txt
 .mr.developer.cfg
 
 #Releases
-*.zip
 *.dll
