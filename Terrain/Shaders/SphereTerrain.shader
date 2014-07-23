@@ -2,6 +2,7 @@
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_MainTex ("Main (RGB)", 2D) = "white" {}
+		_BumpMap ("Normalmap", 2D) = "bump" {}
 		_MainTexHandoverDist ("Handover Distance", Float) = 1
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
 		_DetailVertTex ("Detail for Vertical Surfaces (RGB)", 2D) = "white" {}
@@ -52,6 +53,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	 
 		fixed4 _Color;
 		sampler2D _MainTex;
+		sampler2D _BumpMap;
 		sampler2D _DetailTex;
 		float _MainTexHandoverDist;
 		sampler2D _DetailVertTex;
@@ -80,9 +82,10 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			float  viewDist : TEXCOORD0;
 			float4 color : TEXCOORD1;
 			float3 normal : TEXCOORD2;
-			LIGHTING_COORDS(3,4)
+    		LIGHTING_COORDS(3,4)
 			float3 worldNormal : TEXCOORD5;
 			float3 sphereNormal : TEXCOORD6;
+    		float terminator : TEXCOORD7;
 		};	
 		
 
@@ -98,7 +101,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	   	   o.sphereNormal = -normalize(v.tangent);
 	   	   o.color = v.color;	
 		   o.normal = v.normal;
-    
+    		o.terminator = saturate(floor(.99+dot (o.sphereNormal, normalize(_WorldSpaceLightPos0))));
     	   TRANSFER_VERTEX_TO_FRAGMENT(o);
 	   	   return o;
 	 	}
@@ -173,6 +176,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half lightIntensity = saturate(_LightColor0.a * NdotL * 4 * atten);
 			half3 light = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
 			
+			light *= IN.terminator;
 			color.rgb += _Albedo*light;
 			color.rgb *= light;
 			

@@ -4,6 +4,7 @@
 		_SpecColor ("Specular tint", Color) = (1,1,1,1)
 		_Shininess ("Shininess", Float) = 10
 		_MainTex ("Main (RGB)", 2D) = "white" {}
+		_BumpMap ("Normalmap", 2D) = "bump" {}
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
 		_DetailVertTex ("Detail for Vertical Surfaces (RGB)", 2D) = "white" {}
 		_DetailScale ("Detail Scale", Range(0,1000)) = 200
@@ -52,6 +53,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		fixed4 _Color;
 		float _Shininess;
 		sampler2D _MainTex;
+		sampler2D _BumpMap;
 		sampler2D _DetailTex;
 		sampler2D _DetailVertTex;
 		float _DetailScale;
@@ -70,15 +72,17 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		struct appdata_t {
 				float4 vertex : POSITION;
 				float3 normal : NORMAL;
+				float4 tangent : TANGENT;
 			};
 
 		struct v2f {
 			float4 pos : SV_POSITION;
 			float  viewDist : TEXCOORD0;
 			float3 viewDir : TEXCOORD1;
-			float3 worldNormal : TEXCOORD2;
-			LIGHTING_COORDS(3,4)
-			float3 sphereNormal : TEXCOORD5;
+			float3 sphereNormal : TEXCOORD2;
+    		float3 lightDirection : TEXCOORD5;
+    		LIGHTING_COORDS(6,7)
+    		float terminator : TEXCOORD8;
 		};	
 		
 
@@ -91,11 +95,15 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
 
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
-	   	   o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
+	   	   
 	   	   o.sphereNormal = -normalize(v.vertex);
 		   o.viewDir = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, v.vertex).xyz);
-    
-    	   TRANSFER_VERTEX_TO_FRAGMENT(o);
+		   half3 worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
+    		o.terminator = saturate(floor(.99+dot (worldNormal, normalize(_WorldSpaceLightPos0))));
+    		
+    		TANGENT_SPACE_ROTATION; 
+        	o.lightDirection = normalize(mul(rotation, ObjSpaceLightDir(v.vertex)));
+    		TRANSFER_VERTEX_TO_FRAGMENT(o);
     
 	   	   return o;
 	 	}
@@ -122,6 +130,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		 	uv.y = INV_PI*acos(sphereNrm.y);
 		 	float4 uvdd = Derivatives(sphereNrm);
 		    half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw);
+		    half3 norm = UnpackNormal(tex2D(_BumpMap, uv, uvdd.xy, uvdd.zw));
 		    half2 detailnrmzy = sphereNrm.zy*_DetailScale;
 		    half2 detailnrmzx = sphereNrm.zx*_DetailScale;
 		    half2 detailnrmxy = sphereNrm.xy*_DetailScale;
@@ -160,10 +169,9 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
             color *= _Color;
             
           	//lighting
+          	
             half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
-			half3 lightDirection = normalize(_WorldSpaceLightPos0);
-			half3 normalDir = IN.worldNormal;
-			half NdotL = saturate(dot (normalDir, lightDirection));
+			half NdotL = dot (norm, IN.lightDirection);
 	        fixed atten = LIGHT_ATTENUATION(IN); 
 			half lightIntensity = saturate(_LightColor0.a * NdotL * 4 * atten);
 			half3 light = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
@@ -172,10 +180,11 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
             
             specularReflection *= atten * float3(_LightColor0) 
                   * float3(_SpecColor) * pow(saturate( dot(
-                  reflect(-lightDirection, normalDir), 
+                  reflect(-IN.lightDirection, norm), 
                   IN.viewDir)), _Shininess);
  			
             light += main.a*specularReflection;
+			light *= IN.terminator;
 			
 			color.rgb += _Albedo*light;
 			color.rgb *= light;
@@ -183,7 +192,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			#ifdef CITYOVERLAY_ON
 			lightIntensity = saturate(_LightColor0.a * (NdotL - 0.01) / 0.99 * 4 * atten);
 			citydarkoverlay.a *= 1-saturate(lightIntensity);
-			color = lerp(color, citydarkoverlay, citydarkoverlay.a);
+			color = lerp(color, citydarkoverlay, saturate(citydarkoverlay.a));
 			#endif
 			color.a = 1;
 			
