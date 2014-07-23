@@ -101,7 +101,8 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	   	   o.sphereNormal = -normalize(v.tangent);
 	   	   o.color = v.color;	
 		   o.normal = v.normal;
-    		o.terminator = saturate(floor(.99+dot (o.sphereNormal, normalize(_WorldSpaceLightPos0))));
+		   half3 worldNormal = normalize(mul( _Object2World, float4( o.sphereNormal, 0.0 ) ).xyz);
+    		o.terminator = saturate(floor(.99+dot (worldNormal, normalize(_WorldSpaceLightPos0))));
     	   TRANSFER_VERTEX_TO_FRAGMENT(o);
 	   	   return o;
 	 	}

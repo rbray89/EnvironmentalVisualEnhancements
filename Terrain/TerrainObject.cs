@@ -10,8 +10,11 @@ using Utils;
 
 namespace Terrain
 {
-    public class PQSTangentAssigner : PQSMod
+    public class PQSUpdater : PQSMod
     {
+        public CelestialBody body;
+        public Material material;
+
         private void assignTangent(PQ quad)
         {
             Vector4[] tangents = quad.mesh.tangents;
@@ -31,6 +34,11 @@ namespace Terrain
         public override void OnQuadUpdate(PQ quad)
         {
             assignTangent(quad);
+        }
+        public void OnUpdate()
+        {
+            Vector3 sunDir = body.transform.InverseTransformDirection(Sun.Instance.sunDirection);
+            material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, sunDir);
         }
     }
 
@@ -157,8 +165,10 @@ namespace Terrain
                     }
                 }
                 
-                pqsTerrainContainer = new GameObject("PQSTangentAssigner");
-                pqsTerrainContainer.AddComponent<PQSTangentAssigner>();
+                pqsTerrainContainer = new GameObject("PQSUpdater");
+                PQSUpdater updater = pqsTerrainContainer.AddComponent<PQSUpdater>();
+                updater.material = pqs.surfaceMaterial;
+                updater.body = celestialBody;
                 pqsTerrainContainer.transform.parent = pqs.transform;
                 
                 originalTerrainShader = pqs.surfaceMaterial.shader;
@@ -175,7 +185,7 @@ namespace Terrain
                     PQS ocean = pqs.ChildSpheres[0];
                     
                     pqsOceanContainer = new GameObject("PQSTangentAssigner");
-                    PQSTangentAssigner tas = pqsOceanContainer.AddComponent<PQSTangentAssigner>();
+                    PQSUpdater tas = pqsOceanContainer.AddComponent<PQSUpdater>();
                     pqsOceanContainer.transform.parent = ocean.transform;
                     
                     keywords = ocean.surfaceMaterial.shaderKeywords;
@@ -211,6 +221,7 @@ namespace Terrain
 
             }
         }
+
 
         public void Remove()
         {

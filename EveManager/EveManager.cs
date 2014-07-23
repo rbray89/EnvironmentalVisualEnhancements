@@ -21,14 +21,16 @@ namespace EVEManager
         public static int ROTATION_PROPERTY;
         public static int MAINOFFSET_PROPERTY;
         public static int SHADOWOFFSET_PROPERTY;
-        
+        public static int SUNDIR_PROPERTY;
+
         public String Name { get { return this.GetType().Name; } set { } }
 
         private void Awake()
         {
             ROTATION_PROPERTY = Shader.PropertyToID("_Rotation");
             MAINOFFSET_PROPERTY = Shader.PropertyToID("_MainOffset");
-            SHADOWOFFSET_PROPERTY = Shader.PropertyToID("_ShadowOffset"); 
+            SHADOWOFFSET_PROPERTY = Shader.PropertyToID("_ShadowOffset");
+            SUNDIR_PROPERTY = Shader.PropertyToID("_SunDir");
             useEditor = false;
         }
 
@@ -106,5 +108,6 @@ namespace EVEManager
         {
             UnityEngine.Debug.Log("EVEManager: " + message);
         }
+
     }
 }
