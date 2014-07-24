@@ -69,7 +69,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -193,7 +193,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c14, 0.00000000, 0.99000001, 0, 0
+def c14, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -256,7 +256,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmpnagngonifcpgfnhjdkbaponbgdekhfabaaaaaaneagaaaaadaaaaaa
+eefieceddpekkchnfmbgaamoipbkcdgondafjhmpabaaaaaaneagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -303,7 +303,7 @@ bcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaa
 egbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaa
 egiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaa
-aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndp
+aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdp
 ebcaaaaficcabaaaadaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaa
 fgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaa
 egiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaak
@@ -357,7 +357,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -600,7 +600,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -1005,7 +1005,7 @@ v2f vert( in appdata_t v ) {
     #line 433
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 438
     return o;
@@ -1382,7 +1382,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -1502,7 +1502,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
-def c10, 0.00000000, 0.99000001, 0, 0
+def c10, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -1560,7 +1560,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmcbcibbdkgaljplngjhgmbahhhdpglekabaaaaaaiaafaaaaadaaaaaa
+eefiecedobncaeipoofahgkignipafncdkpnggnkabaaaaaaiaafaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -1603,7 +1603,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaagaaaaaadgaaaaaghccabaaaaeaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaadaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaadaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -1648,7 +1648,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -1882,7 +1882,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -2277,7 +2277,7 @@ v2f vert( in appdata_t v ) {
     #line 430
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     #line 434
     return o;
 }
@@ -2648,7 +2648,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -2773,7 +2773,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c14, 0.00000000, 0.99000001, 0, 0
+def c14, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -2837,7 +2837,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefieceddemjdpeflokgmhdhdagojilkiocjfhhpabaaaaaaneagaaaaadaaaaaa
+eefiecedmchnnicklaopmdgmaoinmmjkncfngpbiabaaaaaaneagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -2890,7 +2890,7 @@ aaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaa
 akaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaa
 adaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaa
 aaaaaaaaakaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaa
-aaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaf
+aaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaf
 iccabaaaaeaaaaaaakaabaaaaaaaaaaadoaaaaab"
 }
 
@@ -2938,7 +2938,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -3190,7 +3190,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -3605,7 +3605,7 @@ v2f vert( in appdata_t v ) {
     #line 442
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 447
     return o;
@@ -3996,7 +3996,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -4121,7 +4121,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c14, 0.00000000, 0.99000001, 0, 0
+def c14, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -4184,7 +4184,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmpnagngonifcpgfnhjdkbaponbgdekhfabaaaaaaneagaaaaadaaaaaa
+eefieceddpekkchnfmbgaamoipbkcdgondafjhmpabaaaaaaneagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -4231,7 +4231,7 @@ bcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaa
 egbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaa
 egiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaa
-aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndp
+aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdp
 ebcaaaaficcabaaaadaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaa
 fgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaa
 egiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaak
@@ -4285,7 +4285,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -4529,7 +4529,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -4936,7 +4936,7 @@ v2f vert( in appdata_t v ) {
     #line 434
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 439
     return o;
@@ -5317,7 +5317,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -5441,7 +5441,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c14, 0.00000000, 0.99000001, 0, 0
+def c14, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -5503,7 +5503,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedbaeeefaljojobhkbimgbkaggoeaocbniabaaaaaaneagaaaaadaaaaaa
+eefiecedbnonbcgjimiindcelbpbbfdbgpndammdabaaaaaaneagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -5550,7 +5550,7 @@ bcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaa
 egbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaa
 egiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaa
-aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndp
+aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdp
 ebcaaaafeccabaaaadaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaa
 fgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaa
 egiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaak
@@ -5604,7 +5604,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -5845,7 +5845,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -6248,7 +6248,7 @@ v2f vert( in appdata_t v ) {
     #line 433
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xy;
     #line 438
     return o;
@@ -6631,7 +6631,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -6775,7 +6775,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c18, 0.00000000, 0.99000001, 0, 0
+def c18, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -6849,7 +6849,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedbhomaibinpndcmeiemnhaigehaablhmhabaaaaaakaahaaaaadaaaaaa
+eefiecednicdockaaojjdjlomhhhmlpbgalgbeamabaaaaaakaahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -6909,7 +6909,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaagaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -6960,7 +6960,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -7230,7 +7230,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -7664,7 +7664,7 @@ v2f vert( in appdata_t v ) {
     #line 449
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 453
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -8071,7 +8071,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -8201,7 +8201,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c18, 0.00000000, 0.99000001, 0, 0
+def c18, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -8275,7 +8275,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedbhomaibinpndcmeiemnhaigehaablhmhabaaaaaakaahaaaaadaaaaaa
+eefiecednicdockaaojjdjlomhhhmlpbgalgbeamabaaaaaakaahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -8335,7 +8335,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaagaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -8387,7 +8387,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -8818,7 +8818,7 @@ v2f vert( in appdata_t v ) {
     #line 450
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 454
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -9235,7 +9235,7 @@ void main ()
   xlv_TEXCOORD3 = o_5;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_3).xyz);
   xlv_TEXCOORD6 = tmpvar_4;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_4, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_4, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -9360,7 +9360,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c12, 0.00000000, 0.99000001, 0.50000000, 0
+def c12, 0.00000000, 1.00999999, 0.50000000, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -9425,7 +9425,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedpjnchfmkbcdklbeepbclbackpklegmieabaaaaaadaagaaaaadaaaaaa
+eefiecedoekpdleapgmenmoamhbfiokcblbpmppjabaaaaaadaagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -9473,7 +9473,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 aeaaaaaaakaabaaaaaaaaaaadoaaaaab"
 }
 
@@ -9521,7 +9521,7 @@ void main ()
   xlv_TEXCOORD3 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -9783,7 +9783,7 @@ void main ()
   xlv_TEXCOORD3 = o_7;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_5).xyz);
   xlv_TEXCOORD6 = tmpvar_6;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_6, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_6, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -10186,7 +10186,7 @@ v2f vert( in appdata_t v ) {
     #line 439
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     #line 444
     return o;
@@ -10586,7 +10586,7 @@ void main ()
   xlv_TEXCOORD4 = o_5;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_3).xyz);
   xlv_TEXCOORD6 = tmpvar_4;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_4, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_4, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -10715,7 +10715,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c16, 0.00000000, 0.99000001, 0.50000000, 0
+def c16, 0.00000000, 1.00999999, 0.50000000, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -10783,7 +10783,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedihhcggckoipndclhmkgeckejoilmcmjeabaaaaaaieahaaaaadaaaaaa
+eefieceddfahlldnjfjolhkjccpchmkiidbjhmffabaaaaaaieahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -10832,7 +10832,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaabaaaaaaakaabaaa
 abaaaaaadiaaaaahhcaabaaaabaaaaaaagaabaaaabaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaabaaaaaaegacbaiaebaaaaaaabaaaaaaegiccaaaaaaaaaaa
 aoaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaabaaaaaaaaaaaaah
-bcaabaaaabaaaaaadkaabaaaabaaaaaaabeaaaaakehahndpebcaaaafeccabaaa
+bcaabaaaabaaaaaadkaabaaaabaaaaaaabeaaaaakoehibdpebcaaaafeccabaaa
 adaaaaaaakaabaaaabaaaaaadiaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaa
 akiacaaaabaaaaaaafaaaaaadiaaaaakncaabaaaabaaaaaaagahbaaaaaaaaaaa
 aceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaaaeaaaaaa
@@ -10893,7 +10893,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -11162,7 +11162,7 @@ void main ()
   xlv_TEXCOORD4 = o_7;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_5).xyz);
   xlv_TEXCOORD6 = tmpvar_6;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_6, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_6, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -11571,7 +11571,7 @@ v2f vert( in appdata_t v ) {
     #line 442
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xy;
     #line 446
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -11970,7 +11970,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -12114,7 +12114,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c15, 0.00000000, 0.99000001, 0, 0
+def c15, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -12181,7 +12181,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfjleaagldfnfdbnoggmcjjnajdegjhlaabaaaaaacmahaaaaadaaaaaa
+eefieceddabhcffbkjfagimeggpmlbfjagiiepilabaaaaaacmahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -12231,7 +12231,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 adaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaa
 egiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
 amaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaa
@@ -12288,7 +12288,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -12556,7 +12556,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -12986,7 +12986,7 @@ v2f vert( in appdata_t v ) {
     #line 447
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 451
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
@@ -13396,7 +13396,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -13543,7 +13543,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c15, 0.00000000, 0.99000001, 0, 0
+def c15, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -13610,7 +13610,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfjleaagldfnfdbnoggmcjjnajdegjhlaabaaaaaacmahaaaaadaaaaaa
+eefieceddabhcffbkjfagimeggpmlbfjagiiepilabaaaaaacmahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -13660,7 +13660,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 adaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaa
 egiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
 amaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaa
@@ -13717,7 +13717,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -13988,7 +13988,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -14422,7 +14422,7 @@ v2f vert( in appdata_t v ) {
     #line 448
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 452
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
@@ -14833,7 +14833,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -15010,7 +15010,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c18, 0.00000000, 0.99000001, 0, 0
+def c18, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -15084,7 +15084,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedhdikppcdbdfflcckoldcoomlakkmkjmnabaaaaaakaahaaaaadaaaaaa
+eefiecedmaibihfpphjjgbbjeefkifddlapppeepabaaaaaakaahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -15144,7 +15144,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaaoaaaaaadgaaaaaghccabaaaagaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -15195,7 +15195,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -15516,7 +15516,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -16002,7 +16002,7 @@ v2f vert( in appdata_t v ) {
     #line 457
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 461
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -16428,7 +16428,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -16569,7 +16569,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c18, 0.00000000, 0.99000001, 0, 0
+def c18, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -16643,7 +16643,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedhdikppcdbdfflcckoldcoomlakkmkjmnabaaaaaakaahaaaaadaaaaaa
+eefiecedmaibihfpphjjgbbjeefkifddlapppeepabaaaaaakaahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -16703,7 +16703,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaaoaaaaaadgaaaaaghccabaaaagaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -16755,7 +16755,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -17210,7 +17210,7 @@ v2f vert( in appdata_t v ) {
     #line 457
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 461
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -17628,7 +17628,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -17800,7 +17800,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c15, 0.00000000, 0.99000001, 0, 0
+def c15, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -17867,7 +17867,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfjleaagldfnfdbnoggmcjjnajdegjhlaabaaaaaacmahaaaaadaaaaaa
+eefieceddabhcffbkjfagimeggpmlbfjagiiepilabaaaaaacmahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -17917,7 +17917,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 adaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaa
 egiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
 amaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaa
@@ -17974,7 +17974,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -18298,7 +18298,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -18784,7 +18784,7 @@ v2f vert( in appdata_t v ) {
     #line 453
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 457
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
@@ -19211,7 +19211,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -19386,7 +19386,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c15, 0.00000000, 0.99000001, 0, 0
+def c15, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -19453,7 +19453,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfjleaagldfnfdbnoggmcjjnajdegjhlaabaaaaaacmahaaaaadaaaaaa
+eefieceddabhcffbkjfagimeggpmlbfjagiiepilabaaaaaacmahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -19503,7 +19503,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 adaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaa
 egiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
 amaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaa
@@ -19560,7 +19560,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -19887,7 +19887,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -20377,7 +20377,7 @@ v2f vert( in appdata_t v ) {
     #line 454
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 458
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
@@ -20802,7 +20802,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -20926,7 +20926,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c14, 0.00000000, 0.99000001, 0, 0
+def c14, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -20989,7 +20989,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmpnagngonifcpgfnhjdkbaponbgdekhfabaaaaaaneagaaaaadaaaaaa
+eefieceddpekkchnfmbgaamoipbkcdgondafjhmpabaaaaaaneagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -21036,7 +21036,7 @@ bcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaa
 egbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaa
 egiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaa
-aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndp
+aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdp
 ebcaaaaficcabaaaadaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaa
 fgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaa
 egiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaak
@@ -21090,7 +21090,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -21333,7 +21333,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -21738,7 +21738,7 @@ v2f vert( in appdata_t v ) {
     #line 433
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 438
     return o;
@@ -22115,7 +22115,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -22235,7 +22235,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
-def c10, 0.00000000, 0.99000001, 0, 0
+def c10, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -22293,7 +22293,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmcbcibbdkgaljplngjhgmbahhhdpglekabaaaaaaiaafaaaaadaaaaaa
+eefiecedobncaeipoofahgkignipafncdkpnggnkabaaaaaaiaafaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -22336,7 +22336,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaagaaaaaadgaaaaaghccabaaaaeaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaadaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaadaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -22381,7 +22381,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -22615,7 +22615,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -23010,7 +23010,7 @@ v2f vert( in appdata_t v ) {
     #line 430
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     #line 434
     return o;
 }
@@ -23381,7 +23381,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -23506,7 +23506,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c14, 0.00000000, 0.99000001, 0, 0
+def c14, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -23570,7 +23570,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefieceddemjdpeflokgmhdhdagojilkiocjfhhpabaaaaaaneagaaaaadaaaaaa
+eefiecedmchnnicklaopmdgmaoinmmjkncfngpbiabaaaaaaneagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -23623,7 +23623,7 @@ aaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaa
 akaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaa
 adaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaa
 aaaaaaaaakaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaa
-aaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaf
+aaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaf
 iccabaaaaeaaaaaaakaabaaaaaaaaaaadoaaaaab"
 }
 
@@ -23671,7 +23671,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -23923,7 +23923,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -24338,7 +24338,7 @@ v2f vert( in appdata_t v ) {
     #line 442
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 447
     return o;
@@ -24729,7 +24729,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -24854,7 +24854,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c14, 0.00000000, 0.99000001, 0, 0
+def c14, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -24917,7 +24917,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmpnagngonifcpgfnhjdkbaponbgdekhfabaaaaaaneagaaaaadaaaaaa
+eefieceddpekkchnfmbgaamoipbkcdgondafjhmpabaaaaaaneagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -24964,7 +24964,7 @@ bcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaa
 egbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaa
 egiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaa
-aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndp
+aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdp
 ebcaaaaficcabaaaadaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaa
 fgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaa
 egiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaak
@@ -25018,7 +25018,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -25262,7 +25262,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -25669,7 +25669,7 @@ v2f vert( in appdata_t v ) {
     #line 434
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 439
     return o;
@@ -26050,7 +26050,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -26174,7 +26174,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c14, 0.00000000, 0.99000001, 0, 0
+def c14, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -26236,7 +26236,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedbaeeefaljojobhkbimgbkaggoeaocbniabaaaaaaneagaaaaadaaaaaa
+eefiecedbnonbcgjimiindcelbpbbfdbgpndammdabaaaaaaneagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -26283,7 +26283,7 @@ bcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaa
 egbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaa
 egiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaa
-aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndp
+aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdp
 ebcaaaafeccabaaaadaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaa
 fgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaa
 egiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaak
@@ -26337,7 +26337,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -26578,7 +26578,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -26981,7 +26981,7 @@ v2f vert( in appdata_t v ) {
     #line 433
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xy;
     #line 438
     return o;
@@ -27364,7 +27364,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -27508,7 +27508,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c18, 0.00000000, 0.99000001, 0, 0
+def c18, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -27582,7 +27582,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedbhomaibinpndcmeiemnhaigehaablhmhabaaaaaakaahaaaaadaaaaaa
+eefiecednicdockaaojjdjlomhhhmlpbgalgbeamabaaaaaakaahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -27642,7 +27642,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaagaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -27693,7 +27693,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -27963,7 +27963,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -28397,7 +28397,7 @@ v2f vert( in appdata_t v ) {
     #line 449
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 453
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -28804,7 +28804,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -28934,7 +28934,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c18, 0.00000000, 0.99000001, 0, 0
+def c18, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -29008,7 +29008,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedbhomaibinpndcmeiemnhaigehaablhmhabaaaaaakaahaaaaadaaaaaa
+eefiecednicdockaaojjdjlomhhhmlpbgalgbeamabaaaaaakaahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -29068,7 +29068,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaagaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -29120,7 +29120,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -29551,7 +29551,7 @@ v2f vert( in appdata_t v ) {
     #line 450
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 454
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -29968,7 +29968,7 @@ void main ()
   xlv_TEXCOORD3 = o_5;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_3).xyz);
   xlv_TEXCOORD6 = tmpvar_4;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_4, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_4, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -30093,7 +30093,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c12, 0.00000000, 0.99000001, 0.50000000, 0
+def c12, 0.00000000, 1.00999999, 0.50000000, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -30158,7 +30158,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedpjnchfmkbcdklbeepbclbackpklegmieabaaaaaadaagaaaaadaaaaaa
+eefiecedoekpdleapgmenmoamhbfiokcblbpmppjabaaaaaadaagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -30206,7 +30206,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 aeaaaaaaakaabaaaaaaaaaaadoaaaaab"
 }
 
@@ -30254,7 +30254,7 @@ void main ()
   xlv_TEXCOORD3 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -30516,7 +30516,7 @@ void main ()
   xlv_TEXCOORD3 = o_7;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_5).xyz);
   xlv_TEXCOORD6 = tmpvar_6;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_6, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_6, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -30919,7 +30919,7 @@ v2f vert( in appdata_t v ) {
     #line 439
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     #line 444
     return o;
@@ -31319,7 +31319,7 @@ void main ()
   xlv_TEXCOORD4 = o_5;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_3).xyz);
   xlv_TEXCOORD6 = tmpvar_4;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_4, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_4, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -31448,7 +31448,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c16, 0.00000000, 0.99000001, 0.50000000, 0
+def c16, 0.00000000, 1.00999999, 0.50000000, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -31516,7 +31516,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedihhcggckoipndclhmkgeckejoilmcmjeabaaaaaaieahaaaaadaaaaaa
+eefieceddfahlldnjfjolhkjccpchmkiidbjhmffabaaaaaaieahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -31565,7 +31565,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaabaaaaaaakaabaaa
 abaaaaaadiaaaaahhcaabaaaabaaaaaaagaabaaaabaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaabaaaaaaegacbaiaebaaaaaaabaaaaaaegiccaaaaaaaaaaa
 aoaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaabaaaaaaaaaaaaah
-bcaabaaaabaaaaaadkaabaaaabaaaaaaabeaaaaakehahndpebcaaaafeccabaaa
+bcaabaaaabaaaaaadkaabaaaabaaaaaaabeaaaaakoehibdpebcaaaafeccabaaa
 adaaaaaaakaabaaaabaaaaaadiaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaa
 akiacaaaabaaaaaaafaaaaaadiaaaaakncaabaaaabaaaaaaagahbaaaaaaaaaaa
 aceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaaaeaaaaaa
@@ -31626,7 +31626,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -31895,7 +31895,7 @@ void main ()
   xlv_TEXCOORD4 = o_7;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_5).xyz);
   xlv_TEXCOORD6 = tmpvar_6;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_6, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_6, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -32304,7 +32304,7 @@ v2f vert( in appdata_t v ) {
     #line 442
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xy;
     #line 446
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -32703,7 +32703,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -32847,7 +32847,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c15, 0.00000000, 0.99000001, 0, 0
+def c15, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -32914,7 +32914,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfjleaagldfnfdbnoggmcjjnajdegjhlaabaaaaaacmahaaaaadaaaaaa
+eefieceddabhcffbkjfagimeggpmlbfjagiiepilabaaaaaacmahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -32964,7 +32964,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 adaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaa
 egiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
 amaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaa
@@ -33021,7 +33021,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -33289,7 +33289,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -33719,7 +33719,7 @@ v2f vert( in appdata_t v ) {
     #line 447
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 451
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
@@ -34129,7 +34129,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -34276,7 +34276,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c15, 0.00000000, 0.99000001, 0, 0
+def c15, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -34343,7 +34343,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfjleaagldfnfdbnoggmcjjnajdegjhlaabaaaaaacmahaaaaadaaaaaa
+eefieceddabhcffbkjfagimeggpmlbfjagiiepilabaaaaaacmahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -34393,7 +34393,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 adaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaa
 egiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
 amaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaa
@@ -34450,7 +34450,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -34721,7 +34721,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -35155,7 +35155,7 @@ v2f vert( in appdata_t v ) {
     #line 448
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 452
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
@@ -35566,7 +35566,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -35743,7 +35743,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c18, 0.00000000, 0.99000001, 0, 0
+def c18, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -35817,7 +35817,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedhdikppcdbdfflcckoldcoomlakkmkjmnabaaaaaakaahaaaaadaaaaaa
+eefiecedmaibihfpphjjgbbjeefkifddlapppeepabaaaaaakaahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -35877,7 +35877,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaaoaaaaaadgaaaaaghccabaaaagaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -35928,7 +35928,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -36249,7 +36249,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -36735,7 +36735,7 @@ v2f vert( in appdata_t v ) {
     #line 457
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 461
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -37161,7 +37161,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -37302,7 +37302,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c18, 0.00000000, 0.99000001, 0, 0
+def c18, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -37376,7 +37376,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedhdikppcdbdfflcckoldcoomlakkmkjmnabaaaaaakaahaaaaadaaaaaa
+eefiecedmaibihfpphjjgbbjeefkifddlapppeepabaaaaaakaahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -37436,7 +37436,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaaoaaaaaadgaaaaaghccabaaaagaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -37488,7 +37488,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -37943,7 +37943,7 @@ v2f vert( in appdata_t v ) {
     #line 457
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 461
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -38361,7 +38361,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -38533,7 +38533,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c15, 0.00000000, 0.99000001, 0, 0
+def c15, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -38600,7 +38600,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfjleaagldfnfdbnoggmcjjnajdegjhlaabaaaaaacmahaaaaadaaaaaa
+eefieceddabhcffbkjfagimeggpmlbfjagiiepilabaaaaaacmahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -38650,7 +38650,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 adaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaa
 egiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
 amaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaa
@@ -38707,7 +38707,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -39031,7 +39031,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -39517,7 +39517,7 @@ v2f vert( in appdata_t v ) {
     #line 453
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 457
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
@@ -39944,7 +39944,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -40119,7 +40119,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c15, 0.00000000, 0.99000001, 0, 0
+def c15, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -40186,7 +40186,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfjleaagldfnfdbnoggmcjjnajdegjhlaabaaaaaacmahaaaaadaaaaaa
+eefieceddabhcffbkjfagimeggpmlbfjagiiepilabaaaaaacmahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -40236,7 +40236,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 adaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaa
 egiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
 amaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaa
@@ -40293,7 +40293,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -40620,7 +40620,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -41110,7 +41110,7 @@ v2f vert( in appdata_t v ) {
     #line 454
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 458
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
@@ -41535,7 +41535,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -41680,7 +41680,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c14, 0.00000000, 0.99000001, 0, 0
+def c14, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -41743,7 +41743,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmpnagngonifcpgfnhjdkbaponbgdekhfabaaaaaaneagaaaaadaaaaaa
+eefieceddpekkchnfmbgaamoipbkcdgondafjhmpabaaaaaaneagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -41790,7 +41790,7 @@ bcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaa
 egbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaa
 egiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaa
-aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndp
+aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdp
 ebcaaaaficcabaaaadaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaa
 fgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaa
 egiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaak
@@ -41844,7 +41844,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -42154,7 +42154,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -42631,7 +42631,7 @@ v2f vert( in appdata_t v ) {
     #line 437
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 442
     return o;
@@ -43035,7 +43035,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -43174,7 +43174,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
-def c10, 0.00000000, 0.99000001, 0, 0
+def c10, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -43232,7 +43232,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmcbcibbdkgaljplngjhgmbahhhdpglekabaaaaaaiaafaaaaadaaaaaa
+eefiecedobncaeipoofahgkignipafncdkpnggnkabaaaaaaiaafaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -43275,7 +43275,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaagaaaaaadgaaaaaghccabaaaaeaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaadaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaadaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -43320,7 +43320,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -43621,7 +43621,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -44088,7 +44088,7 @@ v2f vert( in appdata_t v ) {
     #line 434
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     #line 438
     return o;
 }
@@ -44486,7 +44486,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -44632,7 +44632,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c14, 0.00000000, 0.99000001, 0, 0
+def c14, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -44696,7 +44696,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefieceddemjdpeflokgmhdhdagojilkiocjfhhpabaaaaaaneagaaaaadaaaaaa
+eefiecedmchnnicklaopmdgmaoinmmjkncfngpbiabaaaaaaneagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -44749,7 +44749,7 @@ aaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaa
 akaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaa
 adaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaa
 aaaaaaaaakaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaa
-aaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaf
+aaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaf
 iccabaaaaeaaaaaaakaabaaaaaaaaaaadoaaaaab"
 }
 
@@ -44797,7 +44797,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -45116,7 +45116,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -45603,7 +45603,7 @@ v2f vert( in appdata_t v ) {
     #line 446
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 451
     return o;
@@ -46021,7 +46021,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -46167,7 +46167,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c14, 0.00000000, 0.99000001, 0, 0
+def c14, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -46230,7 +46230,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmpnagngonifcpgfnhjdkbaponbgdekhfabaaaaaaneagaaaaadaaaaaa
+eefieceddpekkchnfmbgaamoipbkcdgondafjhmpabaaaaaaneagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -46277,7 +46277,7 @@ bcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaa
 egbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaa
 egiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaa
-aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndp
+aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdp
 ebcaaaaficcabaaaadaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaa
 fgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaa
 egiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaak
@@ -46331,7 +46331,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -46642,7 +46642,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -47121,7 +47121,7 @@ v2f vert( in appdata_t v ) {
     #line 438
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 443
     return o;
@@ -47529,7 +47529,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -47674,7 +47674,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c14, 0.00000000, 0.99000001, 0, 0
+def c14, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -47736,7 +47736,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedbaeeefaljojobhkbimgbkaggoeaocbniabaaaaaaneagaaaaadaaaaaa
+eefiecedbnonbcgjimiindcelbpbbfdbgpndammdabaaaaaaneagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -47783,7 +47783,7 @@ bcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaa
 egbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaa
 egiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaa
-aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndp
+aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdp
 ebcaaaafeccabaaaadaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaa
 fgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaa
 egiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaak
@@ -47837,7 +47837,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -48145,7 +48145,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -48620,7 +48620,7 @@ v2f vert( in appdata_t v ) {
     #line 437
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xy;
     #line 442
     return o;
@@ -49030,7 +49030,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -49193,7 +49193,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c18, 0.00000000, 0.99000001, 0, 0
+def c18, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -49267,7 +49267,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedbhomaibinpndcmeiemnhaigehaablhmhabaaaaaakaahaaaaadaaaaaa
+eefiecednicdockaaojjdjlomhhhmlpbgalgbeamabaaaaaakaahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -49327,7 +49327,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaagaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -49378,7 +49378,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -49715,7 +49715,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -50221,7 +50221,7 @@ v2f vert( in appdata_t v ) {
     #line 453
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 457
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -50656,7 +50656,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -50807,7 +50807,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c18, 0.00000000, 0.99000001, 0, 0
+def c18, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -50881,7 +50881,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedbhomaibinpndcmeiemnhaigehaablhmhabaaaaaakaahaaaaadaaaaaa
+eefiecednicdockaaojjdjlomhhhmlpbgalgbeamabaaaaaakaahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -50941,7 +50941,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaagaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -50993,7 +50993,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -51496,7 +51496,7 @@ v2f vert( in appdata_t v ) {
     #line 454
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 458
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -51941,7 +51941,7 @@ void main ()
   xlv_TEXCOORD3 = o_5;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_3).xyz);
   xlv_TEXCOORD6 = tmpvar_4;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_4, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_4, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -52087,7 +52087,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c12, 0.00000000, 0.99000001, 0.50000000, 0
+def c12, 0.00000000, 1.00999999, 0.50000000, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -52152,7 +52152,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedpjnchfmkbcdklbeepbclbackpklegmieabaaaaaadaagaaaaadaaaaaa
+eefiecedoekpdleapgmenmoamhbfiokcblbpmppjabaaaaaadaagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -52200,7 +52200,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 aeaaaaaaakaabaaaaaaaaaaadoaaaaab"
 }
 
@@ -52248,7 +52248,7 @@ void main ()
   xlv_TEXCOORD3 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -52577,7 +52577,7 @@ void main ()
   xlv_TEXCOORD3 = o_7;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_5).xyz);
   xlv_TEXCOORD6 = tmpvar_6;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_6, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_6, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -53052,7 +53052,7 @@ v2f vert( in appdata_t v ) {
     #line 443
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     #line 448
     return o;
@@ -53479,7 +53479,7 @@ void main ()
   xlv_TEXCOORD4 = o_5;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_3).xyz);
   xlv_TEXCOORD6 = tmpvar_4;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_4, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_4, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -53629,7 +53629,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c16, 0.00000000, 0.99000001, 0.50000000, 0
+def c16, 0.00000000, 1.00999999, 0.50000000, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -53697,7 +53697,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedihhcggckoipndclhmkgeckejoilmcmjeabaaaaaaieahaaaaadaaaaaa
+eefieceddfahlldnjfjolhkjccpchmkiidbjhmffabaaaaaaieahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -53746,7 +53746,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaabaaaaaaakaabaaa
 abaaaaaadiaaaaahhcaabaaaabaaaaaaagaabaaaabaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaabaaaaaaegacbaiaebaaaaaaabaaaaaaegiccaaaaaaaaaaa
 aoaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaabaaaaaaaaaaaaah
-bcaabaaaabaaaaaadkaabaaaabaaaaaaabeaaaaakehahndpebcaaaafeccabaaa
+bcaabaaaabaaaaaadkaabaaaabaaaaaaabeaaaaakoehibdpebcaaaafeccabaaa
 adaaaaaaakaabaaaabaaaaaadiaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaa
 akiacaaaabaaaaaaafaaaaaadiaaaaakncaabaaaabaaaaaaagahbaaaaaaaaaaa
 aceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaaaeaaaaaa
@@ -53807,7 +53807,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -54143,7 +54143,7 @@ void main ()
   xlv_TEXCOORD4 = o_7;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_5).xyz);
   xlv_TEXCOORD6 = tmpvar_6;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_6, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_6, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -54624,7 +54624,7 @@ v2f vert( in appdata_t v ) {
     #line 446
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xy;
     #line 450
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -55051,7 +55051,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -55214,7 +55214,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c15, 0.00000000, 0.99000001, 0, 0
+def c15, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -55281,7 +55281,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfjleaagldfnfdbnoggmcjjnajdegjhlaabaaaaaacmahaaaaadaaaaaa
+eefieceddabhcffbkjfagimeggpmlbfjagiiepilabaaaaaacmahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -55331,7 +55331,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 adaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaa
 egiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
 amaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaa
@@ -55388,7 +55388,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -55723,7 +55723,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -56225,7 +56225,7 @@ v2f vert( in appdata_t v ) {
     #line 451
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 455
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
@@ -56663,7 +56663,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -56829,7 +56829,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c15, 0.00000000, 0.99000001, 0, 0
+def c15, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -56896,7 +56896,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfjleaagldfnfdbnoggmcjjnajdegjhlaabaaaaaacmahaaaaadaaaaaa
+eefieceddabhcffbkjfagimeggpmlbfjagiiepilabaaaaaacmahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -56946,7 +56946,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 adaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaa
 egiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
 amaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaa
@@ -57003,7 +57003,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -57341,7 +57341,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -57847,7 +57847,7 @@ v2f vert( in appdata_t v ) {
     #line 452
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 456
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
@@ -58286,7 +58286,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -58482,7 +58482,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c18, 0.00000000, 0.99000001, 0, 0
+def c18, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -58556,7 +58556,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedhdikppcdbdfflcckoldcoomlakkmkjmnabaaaaaakaahaaaaadaaaaaa
+eefiecedmaibihfpphjjgbbjeefkifddlapppeepabaaaaaakaahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -58616,7 +58616,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaaoaaaaaadgaaaaaghccabaaaagaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -58667,7 +58667,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -59055,7 +59055,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -59613,7 +59613,7 @@ v2f vert( in appdata_t v ) {
     #line 461
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 465
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -60067,7 +60067,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -60229,7 +60229,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c18, 0.00000000, 0.99000001, 0, 0
+def c18, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -60303,7 +60303,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedhdikppcdbdfflcckoldcoomlakkmkjmnabaaaaaakaahaaaaadaaaaaa
+eefiecedmaibihfpphjjgbbjeefkifddlapppeepabaaaaaakaahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -60363,7 +60363,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaaoaaaaaadgaaaaaghccabaaaagaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -60415,7 +60415,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -60942,7 +60942,7 @@ v2f vert( in appdata_t v ) {
     #line 461
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 465
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -61388,7 +61388,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -61579,7 +61579,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c15, 0.00000000, 0.99000001, 0, 0
+def c15, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -61646,7 +61646,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfjleaagldfnfdbnoggmcjjnajdegjhlaabaaaaaacmahaaaaadaaaaaa
+eefieceddabhcffbkjfagimeggpmlbfjagiiepilabaaaaaacmahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -61696,7 +61696,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 adaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaa
 egiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
 amaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaa
@@ -61753,7 +61753,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -62144,7 +62144,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -62702,7 +62702,7 @@ v2f vert( in appdata_t v ) {
     #line 457
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 461
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
@@ -63157,7 +63157,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -63351,7 +63351,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c15, 0.00000000, 0.99000001, 0, 0
+def c15, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -63418,7 +63418,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfjleaagldfnfdbnoggmcjjnajdegjhlaabaaaaaacmahaaaaadaaaaaa
+eefieceddabhcffbkjfagimeggpmlbfjagiiepilabaaaaaacmahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -63468,7 +63468,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 adaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaa
 egiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
 amaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaa
@@ -63525,7 +63525,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -63919,7 +63919,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -64481,7 +64481,7 @@ v2f vert( in appdata_t v ) {
     #line 458
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 462
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
@@ -64934,7 +64934,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -65079,7 +65079,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c14, 0.00000000, 0.99000001, 0, 0
+def c14, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -65142,7 +65142,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmpnagngonifcpgfnhjdkbaponbgdekhfabaaaaaaneagaaaaadaaaaaa
+eefieceddpekkchnfmbgaamoipbkcdgondafjhmpabaaaaaaneagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -65189,7 +65189,7 @@ bcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaa
 egbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaa
 egiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaa
-aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndp
+aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdp
 ebcaaaaficcabaaaadaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaa
 fgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaa
 egiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaak
@@ -65243,7 +65243,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -65553,7 +65553,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -66030,7 +66030,7 @@ v2f vert( in appdata_t v ) {
     #line 437
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 442
     return o;
@@ -66434,7 +66434,7 @@ void main ()
   xlv_TEXCOORD2 = gl_Normal;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -66573,7 +66573,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
-def c10, 0.00000000, 0.99000001, 0, 0
+def c10, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -66631,7 +66631,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmcbcibbdkgaljplngjhgmbahhhdpglekabaaaaaaiaafaaaaadaaaaaa
+eefiecedobncaeipoofahgkignipafncdkpnggnkabaaaaaaiaafaaaaadaaaaaa
 cmaaaaaalmaaaaaaimabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -66674,7 +66674,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaagaaaaaadgaaaaaghccabaaaaeaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaadaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaadaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -66719,7 +66719,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -67020,7 +67020,7 @@ void main ()
   xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -67487,7 +67487,7 @@ v2f vert( in appdata_t v ) {
     #line 434
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     #line 438
     return o;
 }
@@ -67885,7 +67885,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -68031,7 +68031,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c14, 0.00000000, 0.99000001, 0, 0
+def c14, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -68095,7 +68095,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefieceddemjdpeflokgmhdhdagojilkiocjfhhpabaaaaaaneagaaaaadaaaaaa
+eefiecedmchnnicklaopmdgmaoinmmjkncfngpbiabaaaaaaneagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -68148,7 +68148,7 @@ aaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaa
 akaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaa
 adaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaa
 aaaaaaaaakaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaa
-aaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaf
+aaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaf
 iccabaaaaeaaaaaaakaabaaaaaaaaaaadoaaaaab"
 }
 
@@ -68196,7 +68196,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -68515,7 +68515,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -69002,7 +69002,7 @@ v2f vert( in appdata_t v ) {
     #line 446
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 451
     return o;
@@ -69420,7 +69420,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -69566,7 +69566,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c14, 0.00000000, 0.99000001, 0, 0
+def c14, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -69629,7 +69629,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedmpnagngonifcpgfnhjdkbaponbgdekhfabaaaaaaneagaaaaadaaaaaa
+eefieceddpekkchnfmbgaamoipbkcdgondafjhmpabaaaaaaneagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -69676,7 +69676,7 @@ bcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaa
 egbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaa
 egiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaa
-aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndp
+aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdp
 ebcaaaaficcabaaaadaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaa
 fgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaa
 egiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaak
@@ -69730,7 +69730,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -70041,7 +70041,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -70520,7 +70520,7 @@ v2f vert( in appdata_t v ) {
     #line 438
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 443
     return o;
@@ -70928,7 +70928,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -71073,7 +71073,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c14, 0.00000000, 0.99000001, 0, 0
+def c14, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -71135,7 +71135,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedbaeeefaljojobhkbimgbkaggoeaocbniabaaaaaaneagaaaaadaaaaaa
+eefiecedbnonbcgjimiindcelbpbbfdbgpndammdabaaaaaaneagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -71182,7 +71182,7 @@ bcaabaaaaaaaaaaaegbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaa
 aaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaa
 egbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaa
 egiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaa
-aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndp
+aaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdp
 ebcaaaafeccabaaaadaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaa
 fgbfbaaaacaaaaaaegiccaaaacaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaa
 egiccaaaacaaaaaaamaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaak
@@ -71236,7 +71236,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -71544,7 +71544,7 @@ void main ()
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -72019,7 +72019,7 @@ v2f vert( in appdata_t v ) {
     #line 437
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xy;
     #line 442
     return o;
@@ -72429,7 +72429,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -72592,7 +72592,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c18, 0.00000000, 0.99000001, 0, 0
+def c18, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -72666,7 +72666,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedbhomaibinpndcmeiemnhaigehaablhmhabaaaaaakaahaaaaadaaaaaa
+eefiecednicdockaaojjdjlomhhhmlpbgalgbeamabaaaaaakaahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -72726,7 +72726,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaagaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -72777,7 +72777,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -73114,7 +73114,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -73620,7 +73620,7 @@ v2f vert( in appdata_t v ) {
     #line 453
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 457
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -74055,7 +74055,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -74206,7 +74206,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c18, 0.00000000, 0.99000001, 0, 0
+def c18, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -74280,7 +74280,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedbhomaibinpndcmeiemnhaigehaablhmhabaaaaaakaahaaaaadaaaaaa
+eefiecednicdockaaojjdjlomhhhmlpbgalgbeamabaaaaaakaahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -74340,7 +74340,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaakaaaaaadgaaaaaghccabaaaagaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -74392,7 +74392,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -74895,7 +74895,7 @@ v2f vert( in appdata_t v ) {
     #line 454
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 458
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -75340,7 +75340,7 @@ void main ()
   xlv_TEXCOORD3 = o_5;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_3).xyz);
   xlv_TEXCOORD6 = tmpvar_4;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_4, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_4, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -75486,7 +75486,7 @@ dcl_texcoord3 o4
 dcl_texcoord5 o5
 dcl_texcoord6 o6
 dcl_texcoord7 o7
-def c12, 0.00000000, 0.99000001, 0.50000000, 0
+def c12, 0.00000000, 1.00999999, 0.50000000, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -75551,7 +75551,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedpjnchfmkbcdklbeepbclbackpklegmieabaaaaaadaagaaaaadaaaaaa
+eefiecedoekpdleapgmenmoamhbfiokcblbpmppjabaaaaaadaagaaaaadaaaaaa
 cmaaaaaalmaaaaaakeabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -75599,7 +75599,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaafaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 aeaaaaaaakaabaaaaaaaaaaadoaaaaab"
 }
 
@@ -75647,7 +75647,7 @@ void main ()
   xlv_TEXCOORD3 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -75976,7 +75976,7 @@ void main ()
   xlv_TEXCOORD3 = o_7;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_5).xyz);
   xlv_TEXCOORD6 = tmpvar_6;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_6, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_6, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -76451,7 +76451,7 @@ v2f vert( in appdata_t v ) {
     #line 443
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     #line 448
     return o;
@@ -76878,7 +76878,7 @@ void main ()
   xlv_TEXCOORD4 = o_5;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_3).xyz);
   xlv_TEXCOORD6 = tmpvar_4;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_4, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_4, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -77028,7 +77028,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c16, 0.00000000, 0.99000001, 0.50000000, 0
+def c16, 0.00000000, 1.00999999, 0.50000000, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -77096,7 +77096,7 @@ BindCB "UnityPerDraw" 2
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedihhcggckoipndclhmkgeckejoilmcmjeabaaaaaaieahaaaaadaaaaaa
+eefieceddfahlldnjfjolhkjccpchmkiidbjhmffabaaaaaaieahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -77145,7 +77145,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaabaaaaaaakaabaaa
 abaaaaaadiaaaaahhcaabaaaabaaaaaaagaabaaaabaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaabaaaaaaegacbaiaebaaaaaaabaaaaaaegiccaaaaaaaaaaa
 aoaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaabaaaaaaaaaaaaah
-bcaabaaaabaaaaaadkaabaaaabaaaaaaabeaaaaakehahndpebcaaaafeccabaaa
+bcaabaaaabaaaaaadkaabaaaabaaaaaaabeaaaaakoehibdpebcaaaafeccabaaa
 adaaaaaaakaabaaaabaaaaaadiaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaa
 akiacaaaabaaaaaaafaaaaaadiaaaaakncaabaaaabaaaaaaagahbaaaaaaaaaaa
 aceaaaaaaaaaaadpaaaaaaaaaaaaaadpaaaaaadpdgaaaaafmccabaaaaeaaaaaa
@@ -77206,7 +77206,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -77542,7 +77542,7 @@ void main ()
   xlv_TEXCOORD4 = o_7;
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_5).xyz);
   xlv_TEXCOORD6 = tmpvar_6;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_6, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_6, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -78023,7 +78023,7 @@ v2f vert( in appdata_t v ) {
     #line 446
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xy;
     #line 450
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -78450,7 +78450,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -78613,7 +78613,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c15, 0.00000000, 0.99000001, 0, 0
+def c15, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -78680,7 +78680,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfjleaagldfnfdbnoggmcjjnajdegjhlaabaaaaaacmahaaaaadaaaaaa
+eefieceddabhcffbkjfagimeggpmlbfjagiiepilabaaaaaacmahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -78730,7 +78730,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 adaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaa
 egiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
 amaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaa
@@ -78787,7 +78787,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -79122,7 +79122,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -79624,7 +79624,7 @@ v2f vert( in appdata_t v ) {
     #line 451
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 455
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
@@ -80062,7 +80062,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -80228,7 +80228,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c15, 0.00000000, 0.99000001, 0, 0
+def c15, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -80295,7 +80295,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfjleaagldfnfdbnoggmcjjnajdegjhlaabaaaaaacmahaaaaadaaaaaa
+eefieceddabhcffbkjfagimeggpmlbfjagiiepilabaaaaaacmahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -80345,7 +80345,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 adaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaa
 egiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
 amaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaa
@@ -80402,7 +80402,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -80740,7 +80740,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -81246,7 +81246,7 @@ v2f vert( in appdata_t v ) {
     #line 452
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 456
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
@@ -81685,7 +81685,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -81881,7 +81881,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c18, 0.00000000, 0.99000001, 0, 0
+def c18, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -81955,7 +81955,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedhdikppcdbdfflcckoldcoomlakkmkjmnabaaaaaakaahaaaaadaaaaaa
+eefiecedmaibihfpphjjgbbjeefkifddlapppeepabaaaaaakaahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -82015,7 +82015,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaaoaaaaaadgaaaaaghccabaaaagaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -82066,7 +82066,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -82454,7 +82454,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -83012,7 +83012,7 @@ v2f vert( in appdata_t v ) {
     #line 461
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 465
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -83466,7 +83466,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -83628,7 +83628,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c18, 0.00000000, 0.99000001, 0, 0
+def c18, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -83702,7 +83702,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedhdikppcdbdfflcckoldcoomlakkmkjmnabaaaaaakaahaaaaadaaaaaa
+eefiecedmaibihfpphjjgbbjeefkifddlapppeepabaaaaaakaahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -83762,7 +83762,7 @@ eeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaa
 agaabaaaaaaaaaaaegbcbaaaadaaaaaabaaaaaajicaabaaaaaaaaaaaegacbaia
 ebaaaaaaaaaaaaaaegiccaaaaaaaaaaaaoaaaaaadgaaaaaghccabaaaagaaaaaa
 egacbaiaebaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaakehahndpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
+abeaaaaakoehibdpebcaaaaficcabaaaafaaaaaaakaabaaaaaaaaaaadoaaaaab
 "
 }
 
@@ -83814,7 +83814,7 @@ void main ()
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -84341,7 +84341,7 @@ v2f vert( in appdata_t v ) {
     #line 461
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     #line 465
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
@@ -84787,7 +84787,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -84978,7 +84978,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c15, 0.00000000, 0.99000001, 0, 0
+def c15, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -85045,7 +85045,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfjleaagldfnfdbnoggmcjjnajdegjhlaabaaaaaacmahaaaaadaaaaaa
+eefieceddabhcffbkjfagimeggpmlbfjagiiepilabaaaaaacmahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -85095,7 +85095,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 adaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaa
 egiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
 amaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaa
@@ -85152,7 +85152,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -85543,7 +85543,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -86101,7 +86101,7 @@ v2f vert( in appdata_t v ) {
     #line 457
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 461
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
@@ -86556,7 +86556,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_2).xyz);
   xlv_TEXCOORD6 = tmpvar_3;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_3, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -86750,7 +86750,7 @@ dcl_texcoord4 o5
 dcl_texcoord5 o6
 dcl_texcoord6 o7
 dcl_texcoord7 o8
-def c15, 0.00000000, 0.99000001, 0, 0
+def c15, 0.00000000, 1.00999999, 0, 0
 dcl_position0 v0
 dcl_color0 v1
 dcl_normal0 v2
@@ -86817,7 +86817,7 @@ BindCB "UnityPerDraw" 3
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedfjleaagldfnfdbnoggmcjjnajdegjhlaabaaaaaacmahaaaaadaaaaaa
+eefieceddabhcffbkjfagimeggpmlbfjagiiepilabaaaaaacmahaaaaadaaaaaa
 cmaaaaaalmaaaaaalmabaaaaejfdeheoiiaaaaaaaeaaaaaaaiaaaaaagiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaahbaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapapaaaahhaaaaaaaaaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -86867,7 +86867,7 @@ egbcbaaaadaaaaaaegbcbaaaadaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
 aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaegbcbaaaadaaaaaa
 baaaaaajicaabaaaaaaaaaaaegacbaiaebaaaaaaaaaaaaaaegiccaaaaaaaaaaa
 akaaaaaadgaaaaaghccabaaaagaaaaaaegacbaiaebaaaaaaaaaaaaaaaaaaaaah
-bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakehahndpebcaaaaficcabaaa
+bcaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaakoehibdpebcaaaaficcabaaa
 adaaaaaaakaabaaaaaaaaaaadiaaaaaihcaabaaaaaaaaaaafgbfbaaaacaaaaaa
 egiccaaaadaaaaaaanaaaaaadcaaaaakhcaabaaaaaaaaaaaegiccaaaadaaaaaa
 amaaaaaaagbabaaaacaaaaaaegacbaaaaaaaaaaadcaaaaakhcaabaaaaaaaaaaa
@@ -86924,7 +86924,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -87318,7 +87318,7 @@ void main ()
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = normalize((_Object2World * tmpvar_4).xyz);
   xlv_TEXCOORD6 = tmpvar_5;
-  xlv_TEXCOORD7 = clamp (floor((0.99 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
+  xlv_TEXCOORD7 = clamp (floor((1.01 + dot (tmpvar_5, _SunDir))), 0.0, 1.0);
 }
 
 
@@ -87880,7 +87880,7 @@ v2f vert( in appdata_t v ) {
     #line 458
     o.color = v.color;
     o.normal = v.normal;
-    o.terminator = xll_saturate_f(floor((0.99 + dot( o.sphereNormal, _SunDir))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( o.sphereNormal, _SunDir))));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     #line 462
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);

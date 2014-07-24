@@ -99,7 +99,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	   	   o.sphereNormal = -normalize(v.vertex);
 		   o.viewDir = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, v.vertex).xyz);
 		   half3 worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
-    		o.terminator = saturate(floor(.99+dot (worldNormal, normalize(_WorldSpaceLightPos0))));
+    		o.terminator = saturate(floor(1.01+dot (worldNormal, normalize(_WorldSpaceLightPos0))));
     		
     		TANGENT_SPACE_ROTATION; 
         	o.lightDirection = normalize(mul(rotation, ObjSpaceLightDir(v.vertex)));

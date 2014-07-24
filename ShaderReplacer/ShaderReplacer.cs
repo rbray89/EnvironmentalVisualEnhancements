@@ -49,8 +49,7 @@ namespace ShaderReplacer
                         foreach (Material mat in materials)
                         {
                             String name = mat.shader.name;
-
-                            Shader replacementShader;
+                            Shader replacementShader = null;
                             switch (name)
                             {
                                 case "KSP/Diffuse":
@@ -76,28 +75,14 @@ namespace ShaderReplacer
                                     break;
                                 default:
                                     UnityEngine.Debug.Log("Shader " + name);
-                                    replacementShader = mat.shader;
                                     break;
 
                             }
-                            if (replacementShader == null)
-                            {
-                                UnityEngine.Debug.Log("Shader " + name);
-                                UnityEngine.Debug.Log("Shader is null!");
-                            }
-                            else if (mat.shader != replacementShader)
+                            if (replacementShader != null)
                             {
                                 mat.shader = replacementShader;
                             }
                             name = mat.shader.name;
-                            
-                            String rtype = mat.GetTag("RenderType", false);
-                            if (rtype == null || rtype == "")
-                            {
-                                UnityEngine.Debug.Log("Shader " + name);
-                                UnityEngine.Debug.Log("Shader has no Render Type!");
-                                //mat.shader = Shader.Find("Diffuse");
-                            }
                         }
                     }
                 }

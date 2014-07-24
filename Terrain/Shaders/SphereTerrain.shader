@@ -15,6 +15,7 @@
 		_CityOverlayDetailScale ("Overlay Detail Scale", Range(0,1000)) = 80
 		_CityDarkOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
 		_CityLightOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
+		_SunDir ("Sun Direction", Vector) = (1,1,1,1)
 	}
 
 
@@ -62,6 +63,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		float _DetailDist;
 		float _MinLight;
 		float _Albedo;
+		half3 _SunDir;
 		
 		#ifdef CITYOVERLAY_ON
 		sampler2D _CityOverlayTex;
@@ -101,8 +103,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	   	   o.sphereNormal = -normalize(v.tangent);
 	   	   o.color = v.color;	
 		   o.normal = v.normal;
-		   half3 worldNormal = normalize(mul( _Object2World, float4( o.sphereNormal, 0.0 ) ).xyz);
-    		o.terminator = saturate(floor(.99+dot (worldNormal, normalize(_WorldSpaceLightPos0))));
+    		o.terminator = saturate(floor(1.01+dot (o.sphereNormal, _SunDir)));
     	   TRANSFER_VERTEX_TO_FRAGMENT(o);
 	   	   return o;
 	 	}

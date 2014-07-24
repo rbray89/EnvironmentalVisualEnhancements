@@ -78,7 +78,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -209,7 +209,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c19, 0.00000000, 0.99023438, 0, 0
+def c19, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -328,7 +328,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -567,7 +567,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -968,7 +968,7 @@ v2f vert( in appdata_t v ) {
     #line 430
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 434
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -1358,7 +1358,7 @@ void main ()
   xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (_World2Object * _WorldSpaceLightPos0).xyz));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -1482,7 +1482,7 @@ dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord8 o5
-def c14, 0.00000000, 0.99023438, 0, 0
+def c14, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -1577,7 +1577,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -1812,7 +1812,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -2224,7 +2224,7 @@ v2f vert( in appdata_t v ) {
     #line 427
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 431
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -2608,7 +2608,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -2740,7 +2740,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c19, 0.00000000, 0.99023438, 0, 0
+def c19, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -2860,7 +2860,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -3108,7 +3108,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -3519,7 +3519,7 @@ v2f vert( in appdata_t v ) {
     #line 439
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 443
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -3924,7 +3924,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -4056,7 +4056,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c19, 0.00000000, 0.99023438, 0, 0
+def c19, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -4175,7 +4175,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -4415,7 +4415,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -4818,7 +4818,7 @@ v2f vert( in appdata_t v ) {
     #line 431
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 435
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -5212,7 +5212,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (_World2Object * _WorldSpaceLightPos0).xyz));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -5342,7 +5342,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c18, 0.00000000, 0.99023438, 0, 0
+def c18, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -5442,7 +5442,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -5684,7 +5684,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -6105,7 +6105,7 @@ v2f vert( in appdata_t v ) {
     #line 430
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 434
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -6502,7 +6502,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -6651,7 +6651,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c23, 0.00000000, 0.99023438, 0, 0
+def c23, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -6778,7 +6778,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -7044,7 +7044,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -7474,7 +7474,7 @@ v2f vert( in appdata_t v ) {
     #line 446
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 450
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -7895,7 +7895,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -8032,7 +8032,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c23, 0.00000000, 0.99023438, 0, 0
+def c23, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -8160,7 +8160,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -8586,7 +8586,7 @@ v2f vert( in appdata_t v ) {
     #line 447
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 451
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -9016,7 +9016,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_6 * (_World2Object * _WorldSpaceLightPos0).xyz));
   xlv_TEXCOORD6 = o_7;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_3).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_3).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -9147,7 +9147,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c16, 0.00000000, 0.99023438, 0.50000000, 0
+def c16, 0.00000000, 1.00976563, 0.50000000, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -9249,7 +9249,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -9504,7 +9504,7 @@ void main ()
   lowp vec4 tmpvar_9;
   tmpvar_9 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_10;
-  tmpvar_10 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_9.xyz))), 0.0, 1.0);
+  tmpvar_10 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_9.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_10;
   highp vec3 tmpvar_11;
   highp vec3 tmpvar_12;
@@ -9933,7 +9933,7 @@ v2f vert( in appdata_t v ) {
     #line 436
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 440
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -10346,7 +10346,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_6 * (_World2Object * _WorldSpaceLightPos0).xyz));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
   xlv_TEXCOORD7 = o_7;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_3).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_3).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -10481,7 +10481,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0.50000000, 0
+def c20, 0.00000000, 1.00976563, 0.50000000, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -10588,7 +10588,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -10850,7 +10850,7 @@ void main ()
   lowp vec4 tmpvar_9;
   tmpvar_9 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_10;
-  tmpvar_10 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_9.xyz))), 0.0, 1.0);
+  tmpvar_10 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_9.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_10;
   highp vec3 tmpvar_11;
   highp vec3 tmpvar_12;
@@ -11286,7 +11286,7 @@ v2f vert( in appdata_t v ) {
     #line 439
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 443
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -11699,7 +11699,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -11848,7 +11848,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0, 0
+def c20, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -11971,7 +11971,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -12235,7 +12235,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -12661,7 +12661,7 @@ v2f vert( in appdata_t v ) {
     #line 444
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 448
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -13085,7 +13085,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -13237,7 +13237,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0, 0
+def c20, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -13360,7 +13360,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -13627,7 +13627,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -14057,7 +14057,7 @@ v2f vert( in appdata_t v ) {
     #line 445
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 449
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -14482,7 +14482,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -14664,7 +14664,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c23, 0.00000000, 0.99023438, 0, 0
+def c23, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -14791,7 +14791,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -15108,7 +15108,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -15590,7 +15590,7 @@ v2f vert( in appdata_t v ) {
     #line 454
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 458
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -16030,7 +16030,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -16178,7 +16178,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c23, 0.00000000, 0.99023438, 0, 0
+def c23, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -16306,7 +16306,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -16756,7 +16756,7 @@ v2f vert( in appdata_t v ) {
     #line 454
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 458
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -17188,7 +17188,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -17365,7 +17365,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0, 0
+def c20, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -17488,7 +17488,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -17808,7 +17808,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -18290,7 +18290,7 @@ v2f vert( in appdata_t v ) {
     #line 450
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 454
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -18731,7 +18731,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -18911,7 +18911,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0, 0
+def c20, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -19034,7 +19034,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -19357,7 +19357,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -19843,7 +19843,7 @@ v2f vert( in appdata_t v ) {
     #line 451
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 455
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -20282,7 +20282,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -20413,7 +20413,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c19, 0.00000000, 0.99023438, 0, 0
+def c19, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -20532,7 +20532,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -20771,7 +20771,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -21172,7 +21172,7 @@ v2f vert( in appdata_t v ) {
     #line 430
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 434
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -21562,7 +21562,7 @@ void main ()
   xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (_World2Object * _WorldSpaceLightPos0).xyz));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -21686,7 +21686,7 @@ dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord8 o5
-def c14, 0.00000000, 0.99023438, 0, 0
+def c14, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -21781,7 +21781,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -22016,7 +22016,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -22428,7 +22428,7 @@ v2f vert( in appdata_t v ) {
     #line 427
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 431
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -22812,7 +22812,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -22944,7 +22944,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c19, 0.00000000, 0.99023438, 0, 0
+def c19, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -23064,7 +23064,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -23312,7 +23312,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -23723,7 +23723,7 @@ v2f vert( in appdata_t v ) {
     #line 439
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 443
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -24128,7 +24128,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -24260,7 +24260,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c19, 0.00000000, 0.99023438, 0, 0
+def c19, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -24379,7 +24379,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -24619,7 +24619,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -25022,7 +25022,7 @@ v2f vert( in appdata_t v ) {
     #line 431
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 435
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -25416,7 +25416,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (_World2Object * _WorldSpaceLightPos0).xyz));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -25546,7 +25546,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c18, 0.00000000, 0.99023438, 0, 0
+def c18, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -25646,7 +25646,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -25888,7 +25888,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -26309,7 +26309,7 @@ v2f vert( in appdata_t v ) {
     #line 430
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 434
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -26706,7 +26706,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -26855,7 +26855,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c23, 0.00000000, 0.99023438, 0, 0
+def c23, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -26982,7 +26982,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -27248,7 +27248,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -27678,7 +27678,7 @@ v2f vert( in appdata_t v ) {
     #line 446
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 450
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -28099,7 +28099,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -28236,7 +28236,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c23, 0.00000000, 0.99023438, 0, 0
+def c23, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -28364,7 +28364,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -28790,7 +28790,7 @@ v2f vert( in appdata_t v ) {
     #line 447
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 451
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -29220,7 +29220,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_6 * (_World2Object * _WorldSpaceLightPos0).xyz));
   xlv_TEXCOORD6 = o_7;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_3).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_3).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -29351,7 +29351,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c16, 0.00000000, 0.99023438, 0.50000000, 0
+def c16, 0.00000000, 1.00976563, 0.50000000, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -29453,7 +29453,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -29708,7 +29708,7 @@ void main ()
   lowp vec4 tmpvar_9;
   tmpvar_9 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_10;
-  tmpvar_10 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_9.xyz))), 0.0, 1.0);
+  tmpvar_10 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_9.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_10;
   highp vec3 tmpvar_11;
   highp vec3 tmpvar_12;
@@ -30137,7 +30137,7 @@ v2f vert( in appdata_t v ) {
     #line 436
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 440
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -30550,7 +30550,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_6 * (_World2Object * _WorldSpaceLightPos0).xyz));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
   xlv_TEXCOORD7 = o_7;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_3).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_3).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -30685,7 +30685,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0.50000000, 0
+def c20, 0.00000000, 1.00976563, 0.50000000, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -30792,7 +30792,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -31054,7 +31054,7 @@ void main ()
   lowp vec4 tmpvar_9;
   tmpvar_9 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_10;
-  tmpvar_10 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_9.xyz))), 0.0, 1.0);
+  tmpvar_10 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_9.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_10;
   highp vec3 tmpvar_11;
   highp vec3 tmpvar_12;
@@ -31490,7 +31490,7 @@ v2f vert( in appdata_t v ) {
     #line 439
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 443
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -31903,7 +31903,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -32052,7 +32052,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0, 0
+def c20, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -32175,7 +32175,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -32439,7 +32439,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -32865,7 +32865,7 @@ v2f vert( in appdata_t v ) {
     #line 444
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 448
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -33289,7 +33289,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -33441,7 +33441,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0, 0
+def c20, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -33564,7 +33564,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -33831,7 +33831,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -34261,7 +34261,7 @@ v2f vert( in appdata_t v ) {
     #line 445
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 449
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -34686,7 +34686,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -34868,7 +34868,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c23, 0.00000000, 0.99023438, 0, 0
+def c23, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -34995,7 +34995,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -35312,7 +35312,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -35794,7 +35794,7 @@ v2f vert( in appdata_t v ) {
     #line 454
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 458
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -36234,7 +36234,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -36382,7 +36382,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c23, 0.00000000, 0.99023438, 0, 0
+def c23, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -36510,7 +36510,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -36960,7 +36960,7 @@ v2f vert( in appdata_t v ) {
     #line 454
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 458
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -37392,7 +37392,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -37569,7 +37569,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0, 0
+def c20, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -37692,7 +37692,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -38012,7 +38012,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -38494,7 +38494,7 @@ v2f vert( in appdata_t v ) {
     #line 450
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 454
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -38935,7 +38935,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -39115,7 +39115,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0, 0
+def c20, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -39238,7 +39238,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -39561,7 +39561,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -40047,7 +40047,7 @@ v2f vert( in appdata_t v ) {
     #line 451
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 455
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -40486,7 +40486,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -40631,7 +40631,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c19, 0.00000000, 0.99023438, 0, 0
+def c19, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -40750,7 +40750,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -41055,7 +41055,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -41527,7 +41527,7 @@ v2f vert( in appdata_t v ) {
     #line 434
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 438
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -41943,7 +41943,7 @@ void main ()
   xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (_World2Object * _WorldSpaceLightPos0).xyz));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -42081,7 +42081,7 @@ dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord8 o5
-def c14, 0.00000000, 0.99023438, 0, 0
+def c14, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -42176,7 +42176,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -42477,7 +42477,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -42960,7 +42960,7 @@ v2f vert( in appdata_t v ) {
     #line 431
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 435
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -43371,7 +43371,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -43517,7 +43517,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c19, 0.00000000, 0.99023438, 0, 0
+def c19, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -43637,7 +43637,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -43951,7 +43951,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -44433,7 +44433,7 @@ v2f vert( in appdata_t v ) {
     #line 443
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 447
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -44864,7 +44864,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -45010,7 +45010,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c19, 0.00000000, 0.99023438, 0, 0
+def c19, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -45129,7 +45129,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -45435,7 +45435,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -45909,7 +45909,7 @@ v2f vert( in appdata_t v ) {
     #line 435
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 439
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -46329,7 +46329,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (_World2Object * _WorldSpaceLightPos0).xyz));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -46473,7 +46473,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c18, 0.00000000, 0.99023438, 0, 0
+def c18, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -46573,7 +46573,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -46881,7 +46881,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -47373,7 +47373,7 @@ v2f vert( in appdata_t v ) {
     #line 434
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 438
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -47796,7 +47796,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -47959,7 +47959,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c23, 0.00000000, 0.99023438, 0, 0
+def c23, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -48086,7 +48086,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -48418,7 +48418,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -48919,7 +48919,7 @@ v2f vert( in appdata_t v ) {
     #line 450
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 454
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -49366,7 +49366,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -49517,7 +49517,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c23, 0.00000000, 0.99023438, 0, 0
+def c23, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -49645,7 +49645,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -50142,7 +50142,7 @@ v2f vert( in appdata_t v ) {
     #line 451
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 455
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -50598,7 +50598,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_6 * (_World2Object * _WorldSpaceLightPos0).xyz));
   xlv_TEXCOORD6 = o_7;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_3).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_3).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -50743,7 +50743,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c16, 0.00000000, 0.99023438, 0.50000000, 0
+def c16, 0.00000000, 1.00976563, 0.50000000, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -50845,7 +50845,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -51166,7 +51166,7 @@ void main ()
   lowp vec4 tmpvar_9;
   tmpvar_9 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_10;
-  tmpvar_10 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_9.xyz))), 0.0, 1.0);
+  tmpvar_10 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_9.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_10;
   highp vec3 tmpvar_11;
   highp vec3 tmpvar_12;
@@ -51666,7 +51666,7 @@ v2f vert( in appdata_t v ) {
     #line 440
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 444
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -52105,7 +52105,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_6 * (_World2Object * _WorldSpaceLightPos0).xyz));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
   xlv_TEXCOORD7 = o_7;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_3).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_3).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -52254,7 +52254,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0.50000000, 0
+def c20, 0.00000000, 1.00976563, 0.50000000, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -52361,7 +52361,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -52689,7 +52689,7 @@ void main ()
   lowp vec4 tmpvar_9;
   tmpvar_9 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_10;
-  tmpvar_10 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_9.xyz))), 0.0, 1.0);
+  tmpvar_10 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_9.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_10;
   highp vec3 tmpvar_11;
   highp vec3 tmpvar_12;
@@ -53196,7 +53196,7 @@ v2f vert( in appdata_t v ) {
     #line 443
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 447
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -53635,7 +53635,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -53798,7 +53798,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0, 0
+def c20, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -53921,7 +53921,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -54251,7 +54251,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -54748,7 +54748,7 @@ v2f vert( in appdata_t v ) {
     #line 448
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 452
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -55198,7 +55198,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -55364,7 +55364,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0, 0
+def c20, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -55487,7 +55487,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -55820,7 +55820,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -56321,7 +56321,7 @@ v2f vert( in appdata_t v ) {
     #line 449
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 453
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -56772,7 +56772,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -56968,7 +56968,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c23, 0.00000000, 0.99023438, 0, 0
+def c23, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -57095,7 +57095,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -57478,7 +57478,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -58031,7 +58031,7 @@ v2f vert( in appdata_t v ) {
     #line 458
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 462
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -58497,7 +58497,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -58659,7 +58659,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c23, 0.00000000, 0.99023438, 0, 0
+def c23, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -58787,7 +58787,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -59308,7 +59308,7 @@ v2f vert( in appdata_t v ) {
     #line 458
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 462
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -59766,7 +59766,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -59957,7 +59957,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0, 0
+def c20, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -60080,7 +60080,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -60466,7 +60466,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -61019,7 +61019,7 @@ v2f vert( in appdata_t v ) {
     #line 454
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 458
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -61486,7 +61486,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -61680,7 +61680,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0, 0
+def c20, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -61803,7 +61803,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -62192,7 +62192,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -62749,7 +62749,7 @@ v2f vert( in appdata_t v ) {
     #line 455
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 459
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -63214,7 +63214,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -63359,7 +63359,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c19, 0.00000000, 0.99023438, 0, 0
+def c19, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -63478,7 +63478,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -63783,7 +63783,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -64255,7 +64255,7 @@ v2f vert( in appdata_t v ) {
     #line 434
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 438
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -64671,7 +64671,7 @@ void main ()
   xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (_World2Object * _WorldSpaceLightPos0).xyz));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -64809,7 +64809,7 @@ dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord8 o5
-def c14, 0.00000000, 0.99023438, 0, 0
+def c14, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -64904,7 +64904,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -65205,7 +65205,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -65688,7 +65688,7 @@ v2f vert( in appdata_t v ) {
     #line 431
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 435
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -66099,7 +66099,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -66245,7 +66245,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c19, 0.00000000, 0.99023438, 0, 0
+def c19, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -66365,7 +66365,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -66679,7 +66679,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -67161,7 +67161,7 @@ v2f vert( in appdata_t v ) {
     #line 443
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 447
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -67592,7 +67592,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -67738,7 +67738,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c19, 0.00000000, 0.99023438, 0, 0
+def c19, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -67857,7 +67857,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -68163,7 +68163,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(_glesVertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -68637,7 +68637,7 @@ v2f vert( in appdata_t v ) {
     #line 435
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 439
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -69057,7 +69057,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (_World2Object * _WorldSpaceLightPos0).xyz));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -69201,7 +69201,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c18, 0.00000000, 0.99023438, 0, 0
+def c18, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -69301,7 +69301,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -69609,7 +69609,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -70101,7 +70101,7 @@ v2f vert( in appdata_t v ) {
     #line 434
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 438
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -70524,7 +70524,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -70687,7 +70687,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c23, 0.00000000, 0.99023438, 0, 0
+def c23, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -70814,7 +70814,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -71146,7 +71146,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -71647,7 +71647,7 @@ v2f vert( in appdata_t v ) {
     #line 450
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 454
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -72094,7 +72094,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -72245,7 +72245,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c23, 0.00000000, 0.99023438, 0, 0
+def c23, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -72373,7 +72373,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -72870,7 +72870,7 @@ v2f vert( in appdata_t v ) {
     #line 451
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 455
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -73326,7 +73326,7 @@ void main ()
   xlv_TEXCOORD2 = -(normalize(gl_Vertex)).xyz;
   xlv_TEXCOORD5 = normalize((tmpvar_6 * (_World2Object * _WorldSpaceLightPos0).xyz));
   xlv_TEXCOORD6 = o_7;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_3).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_3).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -73471,7 +73471,7 @@ dcl_texcoord2 o3
 dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord8 o6
-def c16, 0.00000000, 0.99023438, 0.50000000, 0
+def c16, 0.00000000, 1.00976563, 0.50000000, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -73573,7 +73573,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -73894,7 +73894,7 @@ void main ()
   lowp vec4 tmpvar_9;
   tmpvar_9 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_10;
-  tmpvar_10 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_9.xyz))), 0.0, 1.0);
+  tmpvar_10 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_9.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_10;
   highp vec3 tmpvar_11;
   highp vec3 tmpvar_12;
@@ -74394,7 +74394,7 @@ v2f vert( in appdata_t v ) {
     #line 440
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 444
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -74833,7 +74833,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_6 * (_World2Object * _WorldSpaceLightPos0).xyz));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
   xlv_TEXCOORD7 = o_7;
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_3).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_3).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -74982,7 +74982,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0.50000000, 0
+def c20, 0.00000000, 1.00976563, 0.50000000, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -75089,7 +75089,7 @@ void main ()
   lowp vec4 tmpvar_8;
   tmpvar_8 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_9;
-  tmpvar_9 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
+  tmpvar_9 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_8.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_9;
   highp vec3 tmpvar_10;
   highp vec3 tmpvar_11;
@@ -75417,7 +75417,7 @@ void main ()
   lowp vec4 tmpvar_9;
   tmpvar_9 = normalize(_WorldSpaceLightPos0);
   mediump float tmpvar_10;
-  tmpvar_10 = clamp (floor((0.99 + dot (worldNormal_3, tmpvar_9.xyz))), 0.0, 1.0);
+  tmpvar_10 = clamp (floor((1.01 + dot (worldNormal_3, tmpvar_9.xyz))), 0.0, 1.0);
   tmpvar_4 = tmpvar_10;
   highp vec3 tmpvar_11;
   highp vec3 tmpvar_12;
@@ -75924,7 +75924,7 @@ v2f vert( in appdata_t v ) {
     #line 443
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 447
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -76363,7 +76363,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -76526,7 +76526,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0, 0
+def c20, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -76649,7 +76649,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -76979,7 +76979,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -77476,7 +77476,7 @@ v2f vert( in appdata_t v ) {
     #line 448
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 452
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -77926,7 +77926,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -78092,7 +78092,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0, 0
+def c20, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -78215,7 +78215,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -78548,7 +78548,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -79049,7 +79049,7 @@ v2f vert( in appdata_t v ) {
     #line 449
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 453
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -79500,7 +79500,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -79696,7 +79696,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c23, 0.00000000, 0.99023438, 0, 0
+def c23, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -79823,7 +79823,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -80206,7 +80206,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -80759,7 +80759,7 @@ v2f vert( in appdata_t v ) {
     #line 458
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 462
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -81225,7 +81225,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -81387,7 +81387,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c23, 0.00000000, 0.99023438, 0, 0
+def c23, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -81515,7 +81515,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD7 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -82036,7 +82036,7 @@ v2f vert( in appdata_t v ) {
     #line 458
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 462
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -82494,7 +82494,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -82685,7 +82685,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0, 0
+def c20, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -82808,7 +82808,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -83194,7 +83194,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -83747,7 +83747,7 @@ v2f vert( in appdata_t v ) {
     #line 454
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 458
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
@@ -84214,7 +84214,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_5 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - gl_Vertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (normalize((_Object2World * tmpvar_2).xyz), normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -84408,7 +84408,7 @@ dcl_texcoord5 o4
 dcl_texcoord6 o5
 dcl_texcoord7 o6
 dcl_texcoord8 o7
-def c20, 0.00000000, 0.99023438, 0, 0
+def c20, 0.00000000, 1.00976563, 0, 0
 dcl_position0 v0
 dcl_normal0 v1
 dcl_tangent0 v2
@@ -84531,7 +84531,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -84920,7 +84920,7 @@ void main ()
   xlv_TEXCOORD5 = normalize((tmpvar_9 * (((_World2Object * _WorldSpaceLightPos0).xyz * unity_Scale.w) - _glesVertex.xyz)));
   xlv_TEXCOORD6 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD7 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD8 = clamp (floor((0.99 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
+  xlv_TEXCOORD8 = clamp (floor((1.01 + dot (worldNormal_3, normalize(_WorldSpaceLightPos0).xyz))), 0.0, 1.0);
 }
 
 
@@ -85477,7 +85477,7 @@ v2f vert( in appdata_t v ) {
     #line 455
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * v.vertex).xyz));
     mediump vec3 worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    o.terminator = xll_saturate_f(floor((0.99 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
+    o.terminator = xll_saturate_f(floor((1.01 + dot( worldNormal, vec3( normalize(_WorldSpaceLightPos0))))));
     highp vec3 binormal = (cross( v.normal, v.tangent.xyz) * v.tangent.w);
     #line 459
     highp mat3 rotation = xll_transpose_mf3x3(mat3( v.tangent.xyz, binormal, v.normal));
