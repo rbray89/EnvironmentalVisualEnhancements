@@ -125,7 +125,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /Y $(TargetFileName) "$(SolutionDir)GameData\EnvironmentalVisualEnhancements\Plugins\"
-xcopy "$(SolutionDir)GameData" "C:\Users\Ryan\Documents\ksp-$(PlatformName)-0-24-0\KSP_win_dev\GameData" /e /y /i /r
+xcopy "$(SolutionDir)GameData" "C:\Users\Ryan\Documents\ksp-$(PlatformName)-0-24-2\KSP_win_dev\GameData" /e /y /i /r
 7za a -tzip "$(SolutionDir)$(PlatformName)-Release.zip" "$(SolutionDir)GameData"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
