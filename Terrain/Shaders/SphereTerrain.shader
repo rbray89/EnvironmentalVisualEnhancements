@@ -16,6 +16,7 @@
 		_CityDarkOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
 		_CityLightOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
 		_SunDir ("Sun Direction", Vector) = (1,1,1,1)
+		_PlanetOpacity ("PlanetOpacity", Float) = 1
 	}
 
 
@@ -64,6 +65,9 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		float _MinLight;
 		float _Albedo;
 		half3 _SunDir;
+		float _PlanetOpacity;
+		uniform float4x4 _Rotation;
+		uniform float4x4 _InvRotation;
 		
 		#ifdef CITYOVERLAY_ON
 		sampler2D _CityOverlayTex;
@@ -76,6 +80,8 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 				float4 vertex : POSITION;
 				fixed4 color : COLOR;
 				float3 normal : NORMAL;
+				float4 texcoord : TEXCOORD0;
+			    float4 texcoord2 : TEXCOORD1;
 				float3 tangent : TANGENT;
 			};
 
@@ -83,13 +89,11 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			float4 pos : SV_POSITION;
 			float  viewDist : TEXCOORD0;
 			float4 color : TEXCOORD1;
-			float3 normal : TEXCOORD2;
+			float3 objnormal : TEXCOORD2;
     		LIGHTING_COORDS(3,4)
 			float3 worldNormal : TEXCOORD5;
-			float3 sphereNormal : TEXCOORD6;
-    		float terminator : TEXCOORD7;
-		};	
-		
+			float3 sphereCoords : TEXCOORD6;
+		};
 
 		v2f vert (appdata_t v)
 		{
@@ -100,11 +104,12 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
 	   	   
 	   	   o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
-	   	   o.sphereNormal = -normalize(v.tangent);
+	   	   o.sphereCoords = -normalize(half4(v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz;
 	   	   o.color = v.color;	
-		   o.normal = v.normal;
-    		o.terminator = saturate(floor(1.01+dot (o.sphereNormal, _SunDir)));
+		   o.objnormal = v.normal;
+    	   
     	   TRANSFER_VERTEX_TO_FRAGMENT(o);
+    	   
 	   	   return o;
 	 	}
 	 	
@@ -124,19 +129,20 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		fixed4 frag (v2f IN) : COLOR
 			{
 			half4 color;
-			float3 sphereNrm = IN.sphereNormal;
+			float3 sphereNrm = IN.sphereCoords;
 		 	float2 uv;
 		 	uv.x = .5 + (INV_2PI*atan2(sphereNrm.x, sphereNrm.z));
 		 	uv.y = INV_PI*acos(sphereNrm.y);
 		 	float4 uvdd = Derivatives(sphereNrm);
 		    half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw);
-		    half2 detailnrmzy = sphereNrm.zy*_DetailScale;
-		    half2 detailnrmzx = sphereNrm.zx*_DetailScale;
-		    half2 detailnrmxy = sphereNrm.xy*_DetailScale;
-		    half2 detailvertnrmzy = sphereNrm.zy*_DetailVertScale;
-		    half2 detailvertnrmzx = sphereNrm.zx*_DetailVertScale;
-		    half2 detailvertnrmxy = sphereNrm.xy*_DetailVertScale;
-		    half vertLerp = saturate((32*(saturate(dot(IN.normal, -IN.sphereNormal))-.95))+.5);
+		                
+		    float2 detailnrmzy = sphereNrm.zy*_DetailScale;
+		    float2 detailnrmzx = sphereNrm.zx*_DetailScale;
+		    float2 detailnrmxy = sphereNrm.xy*_DetailScale;
+		    float2 detailvertnrmzy = sphereNrm.zy*_DetailVertScale;
+		    float2 detailvertnrmzx = sphereNrm.zx*_DetailVertScale;
+		    float2 detailvertnrmxy = sphereNrm.xy*_DetailVertScale;
+		    half vertLerp = saturate((32*(saturate(dot(IN.objnormal, -IN.sphereCoords))-.95))+.5);
 			half4 detailX = lerp(tex2D (_DetailVertTex, detailvertnrmzy), tex2D (_DetailTex, detailnrmzy), vertLerp);
 			half4 detailY = lerp(tex2D (_DetailVertTex, detailvertnrmzx), tex2D (_DetailTex, detailnrmzx), vertLerp);
 			half4 detailZ = lerp(tex2D (_DetailVertTex, detailvertnrmxy), tex2D (_DetailTex, detailnrmxy), vertLerp);
@@ -151,12 +157,29 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half4 citylightoverlaydetailZ = tex2D (_CityLightOverlayDetailTex, sphereNrm.xy*_CityOverlayDetailScale);
 			#endif
 			
+			half4 encnorm = tex2D(_BumpMap, uv, uvdd.xy, uvdd.zw);
+		    float2 localCoords = encnorm.ag; 
+            localCoords -= half2(.5);
+            localCoords.x *= .25;
+			localCoords.y *= .5;
+			
+			uv.x -= .5;
+			uv += localCoords;
+			
+			half3 norm;
+			norm.z = cos(TWOPI*uv.x);
+			norm.x = sin(TWOPI*uv.x);
+			norm.y = cos(PI*uv.y);
+
+			norm = -norm;
+			
 			sphereNrm = abs(sphereNrm);
 			half4 detail = lerp(detailZ, detailX, sphereNrm.x);
-			detail = lerp(detail, detailY, sphereNrm.y);
+			detail = .25*(lerp(detail, detailY, sphereNrm.y)-.5);
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
-			color = lerp(detail.rgba, 1, detailLevel)*IN.color;
-			color = lerp(color, main, saturate(pow(_MainTexHandoverDist*IN.viewDist,3)));
+			color = IN.color + lerp(detail.rgba, 0, detailLevel);
+			half handoff = saturate(pow(_PlanetOpacity,2));
+			color = lerp(color, main, handoff);
 			#ifdef CITYOVERLAY_ON
 			cityoverlay.a *= saturate(floor(IN.color.a+.99));
 			detail = lerp(citydarkoverlaydetailZ, citydarkoverlaydetailX, sphereNrm.x);
@@ -173,17 +196,20 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
           	//lighting
             half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
 			half3 lightDirection = normalize(_WorldSpaceLightPos0);
-			half NdotL = saturate(dot (IN.worldNormal, lightDirection));
+			half TNdotL = saturate(dot (IN.worldNormal, lightDirection));
+			half SNdotL = saturate(dot (norm, -_SunDir));
+			half NdotL = lerp(TNdotL, SNdotL, handoff);
 	        fixed atten = LIGHT_ATTENUATION(IN); 
 			half lightIntensity = saturate(_LightColor0.a * NdotL * 4 * atten);
 			half3 light = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
 			
-			light *= IN.terminator;
+			half terminator = saturate(floor(1.01+dot (IN.sphereCoords, _SunDir)));
+			light *= terminator;
 			color.rgb += _Albedo*light;
 			color.rgb *= light;
 			
 			#ifdef CITYOVERLAY_ON
-			lightIntensity = saturate(_LightColor0.a * (NdotL - 0.01) / 0.99 * 4 * atten);
+			lightIntensity = saturate(_LightColor0.a * (SNdotL - 0.01) / 0.99 * 4 * atten);
 			citydarkoverlay.a *= 1-saturate(lightIntensity);
 			color = lerp(color, citydarkoverlay, citydarkoverlay.a);
 			#endif

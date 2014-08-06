@@ -23,22 +23,20 @@ namespace Terrain
             for (int i = 0; i < tangents.Length; i++)
             {
                 Vector3 normal = this.sphere.transform.InverseTransformPoint(quad.transform.TransformPoint(verts[i])).normalized;
-                tangents[i] = normal;
+                Vector3 cross = normal == Vector3.up ? Vector3.right : Vector3.up;
+                tangents[i] = Vector3.Cross(normal, cross);
             }
             quad.mesh.tangents = tangents;
         }
         public override void OnQuadBuilt(PQ quad)
         {
             assignTangent(quad);
+            
         }
         public override void OnQuadUpdate(PQ quad)
         {
             assignTangent(quad);
-        }
-        public void OnUpdate()
-        {
-            Vector3 sunDir = body.transform.InverseTransformDirection(Sun.Instance.sunDirection);
-            material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, sunDir);
+            
         }
     }
 
@@ -60,6 +58,12 @@ namespace Terrain
         float _MinLight = .5f;
         [Persistent]
         float _Albedo = .02f;
+
+
+        public bool hasDetail { get { return _DetailTex != ""; } }
+
+        public bool hasDetailVert { get {return _DetailVertTex != "";} }
+
     }
 
     public class PlanetMaterial : MaterialManager
@@ -149,6 +153,11 @@ namespace Terrain
             CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
             Transform transform = EVEManagerClass.GetScaledTransform(body);
             Texture mainTexture = null;
+            Texture bumpTexture = null;
+            Texture steepTexture = null;
+            Texture lowTexture = null;
+            Texture highTexture = null;
+
             PQS pqs = celestialBody.pqsController;
             if (pqs != null)
             {
@@ -156,10 +165,10 @@ namespace Terrain
                 if (mr != null)
                 {
                     mainTexture = mr.material.mainTexture;
+                    bumpTexture = mr.material.GetTexture("_BumpMap");
                     originalPlanetShader = mr.material.shader;
                     if (planetMaterial != null)
                     {
-                        
                         mr.material.shader = new Material(TerrainManager.PlanetShader).shader;
                         planetMaterial.ApplyMaterialProperties(mr.material);
                     }
@@ -170,8 +179,12 @@ namespace Terrain
                 updater.material = pqs.surfaceMaterial;
                 updater.body = celestialBody;
                 pqsTerrainContainer.transform.parent = pqs.transform;
-                
+
+                steepTexture = pqs.surfaceMaterial.GetTexture("_steepTex");
+                lowTexture = pqs.surfaceMaterial.GetTexture("_lowTex");
+                highTexture = pqs.surfaceMaterial.GetTexture("_highTex ");
                 originalTerrainShader = pqs.surfaceMaterial.shader;
+                TerrainManager.Log("Terrain Shader Name: " + originalTerrainShader.name);
                 String[] keywords = pqs.surfaceMaterial.shaderKeywords;
                 pqs.surfaceMaterial.shader = TerrainManager.TerrainShader;
                 foreach(String keyword in keywords)
@@ -179,7 +192,17 @@ namespace Terrain
                     pqs.surfaceMaterial.EnableKeyword(keyword);
                 }
                 pqs.surfaceMaterial.mainTexture = mainTexture;
+                pqs.surfaceMaterial.SetTexture("_BumpMap", bumpTexture);
                 terrainMaterial.ApplyMaterialProperties(pqs.surfaceMaterial);
+
+                if( !terrainMaterial.hasDetailVert )
+                {
+                    pqs.surfaceMaterial.SetTexture("_DetailVertTex", steepTexture);
+                }
+                if ( !terrainMaterial.hasDetail)
+                {
+                    pqs.surfaceMaterial.SetTexture("_DetailTex", lowTexture);
+                }
                 if (oceanMaterial != null && pqs.ChildSpheres.Length > 0)
                 {
                     PQS ocean = pqs.ChildSpheres[0];
@@ -190,6 +213,7 @@ namespace Terrain
                     
                     keywords = ocean.surfaceMaterial.shaderKeywords;
                     originalOceanShader = ocean.surfaceMaterial.shader;
+                    TerrainManager.Log("Ocean Shader Name: " + originalOceanShader.name);
                     ocean.surfaceMaterial.shader = TerrainManager.OceanShader;
                     foreach (String keyword in keywords)
                     {

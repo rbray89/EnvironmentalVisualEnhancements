@@ -97,6 +97,10 @@
       <Project>{499e8c5c-c83e-4aea-bb01-eed705bd747f}</Project>
       <Name>EVEManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ShaderReplacer\ShaderReplacer.csproj">
+      <Project>{6ed213a8-d3db-4de8-ba0b-e81b50abe658}</Project>
+      <Name>ShaderReplacer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{8b24314b-4b75-43f3-b31c-ffa9fc83fb70}</Project>
       <Name>Utils</Name>

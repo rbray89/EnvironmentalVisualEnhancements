@@ -96,7 +96,15 @@
       <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Shaders\Compiled-PQSMainOptimised.shader" />
+    <EmbeddedResource Include="Shaders\Compiled-PQSMainShader.shader" />
+    <EmbeddedResource Include="Shaders\Compiled-PQSOceanSurfaceQuad.shader" />
+    <EmbeddedResource Include="Shaders\Compiled-PQSOceanSurfaceQuadFallback.shader" />
+    <EmbeddedResource Include="Shaders\Compiled-PQSProjectionAerialQuadRelative.shader" />
+    <EmbeddedResource Include="Shaders\Compiled-PQSProjectionFallback.shader" />
+    <EmbeddedResource Include="Shaders\Compiled-PQSProjectionSurfaceQuad.shader" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Shaders\Compiled-Bumped.shader" />
     <EmbeddedResource Include="Shaders\Compiled-BumpedSpecular.shader" />

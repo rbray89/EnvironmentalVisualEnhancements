@@ -90,6 +90,13 @@ namespace Terrain
                     }
                 }
             }
+
+            CelestialBody cb = FlightGlobals.currentMainBody;
+            if(cb != null && cb.pqsController != null)
+            {
+                Vector3 sunDir = cb.transform.InverseTransformDirection(Sun.Instance.sunDirection);
+                cb.pqsController.surfaceMaterial.SetVector(EVEManagerClass.SUNDIR_PROPERTY, sunDir);
+            }
         }
 
     }

@@ -19,6 +19,7 @@ namespace EVEManager
         public static int MACRO_LAYER = 15;
         public static int SCALED_LAYER2 = 10;
         public static int ROTATION_PROPERTY;
+        public static int INVROTATION_PROPERTY;
         public static int MAINOFFSET_PROPERTY;
         public static int SHADOWOFFSET_PROPERTY;
         public static int SUNDIR_PROPERTY;
@@ -28,6 +29,7 @@ namespace EVEManager
         private void Awake()
         {
             ROTATION_PROPERTY = Shader.PropertyToID("_Rotation");
+            INVROTATION_PROPERTY = Shader.PropertyToID("_InvRotation");
             MAINOFFSET_PROPERTY = Shader.PropertyToID("_MainOffset");
             SHADOWOFFSET_PROPERTY = Shader.PropertyToID("_ShadowOffset");
             SUNDIR_PROPERTY = Shader.PropertyToID("_SunDir");
