@@ -108,7 +108,10 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	   	   o.sphereCoords = -normalize(half4(v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz;
 	   	   o.color = v.color;	
 		   o.objnormal = v.normal;
-    	   o.terminator = saturate(floor(1.01+dot (o.sphereCoords, normalize(_SunDir))));
+		   
+		   half NdotL = dot (o.sphereCoords, normalize(_SunDir));
+		   half termlerp = saturate(10*-NdotL);
+    	   o.terminator = lerp(1,saturate(floor(1.01+NdotL)), termlerp);
 			
     	   TRANSFER_VERTEX_TO_FRAGMENT(o);
     	   

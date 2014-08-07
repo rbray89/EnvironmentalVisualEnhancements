@@ -91,7 +91,7 @@ namespace Atmosphere
             bool visible = HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER;
             if (this.sphere != null && visible)
             {
-                if (sphere.isActive && HighLogic.LoadedScene != GameScenes.TRACKSTATION && !MapView.MapIsEnabled)
+                if (sphere.isActive && HighLogic.LoadedScene != GameScenes.TRACKSTATION)
                 {
                     if (layer2D != null)
                     {

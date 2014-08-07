@@ -99,7 +99,10 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	   	   o.sphereNormal = -normalize(v.vertex);
 		   o.viewDir = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, v.vertex).xyz);
 		   half3 worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
-    		o.terminator = saturate(floor(1.01+dot (worldNormal, normalize(_WorldSpaceLightPos0))));
+
+    		half NdotL = dot (worldNormal, normalize(_WorldSpaceLightPos0));
+		   half termlerp = saturate(10*-NdotL);
+    	   o.terminator = lerp(1,saturate(floor(1.01+NdotL)), termlerp);
     		
     		TANGENT_SPACE_ROTATION; 
         	o.lightDirection = normalize(mul(rotation, ObjSpaceLightDir(v.vertex)));
@@ -183,8 +186,8 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
                   reflect(-IN.lightDirection, norm), 
                   IN.viewDir)), _Shininess);
  			
+ 			light *= IN.terminator;
             light += main.a*specularReflection;
-			light *= IN.terminator;
 			
 			color.rgb += _Albedo*light;
 			color.rgb *= light;
