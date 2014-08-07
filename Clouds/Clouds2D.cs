@@ -52,7 +52,7 @@ namespace Atmosphere
         [Persistent]
         Vector3 offset = new Vector3(0, 0, 0);
         [Persistent]
-        bool shadow = true;
+        bool shadow = false;
         [Persistent]
         Vector3 shadowOffset = new Vector3(0, 0, 0);
         [Persistent]
@@ -221,6 +221,7 @@ namespace Atmosphere
             x -= (int)x;
             Vector2 texOffset = new Vector2((float)x + offset.x, offset.y);
             CloudMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, texOffset);
+
             if (ShadowProjector != null)
             {
                 Vector4 texVect = ShadowProjector.transform.localPosition.normalized;

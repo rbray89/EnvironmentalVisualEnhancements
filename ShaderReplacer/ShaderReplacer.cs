@@ -14,7 +14,7 @@ namespace ShaderReplacer
         static Dictionary<String, Shader> shaderDictionary = new Dictionary<String, Shader>();
         private void Awake()
         {
-            if (HighLogic.LoadedScene == GameScenes.MAINMENU || HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.FLIGHT)
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
                 GameEvents.onGameSceneLoadRequested.Add(GameSceneLoaded);
             }
@@ -39,35 +39,12 @@ namespace ShaderReplacer
         {
             if (scene == GameScenes.SPACECENTER || scene == GameScenes.FLIGHT)
             {
-                foreach (GameObject go in GameObject.FindObjectsOfType<GameObject>())
+                Material[] materials = Resources.FindObjectsOfTypeAll<Material>();
+                foreach (Material mat in materials)
                 {
-                    MeshRenderer mr = go.GetComponent<MeshRenderer>();
-                    if (mr != null)
-                    {
-                        List<Material> materials = mr.materials.ToList();
-                        materials.AddRange(mr.sharedMaterials);
-                        foreach (Material mat in materials)
-                        {
-                            ReplaceShader(mat);
-                        }
-                    }
+                    ReplaceShader(mat);
                 }
-                CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
-                foreach (CelestialBody cb in celestialBodies)
-                {
-                    if (cb.pqsController != null)
-                    {
-                        ReplaceShader(cb.pqsController.surfaceMaterial);
-
-                        if (cb.pqsController.ChildSpheres != null)
-                        {
-                            foreach (PQS pqs in cb.pqsController.ChildSpheres)
-                            {
-                                ReplaceShader(pqs.surfaceMaterial);
-                            }
-                        }
-                    }
-                }
+               
             }
         }
 
@@ -100,18 +77,15 @@ namespace ShaderReplacer
                     break;
                 case "Terrain/PQS/PQS Main - Optimised":
                     replacementShader = GetShaderFromName("PQSMainOptimised");
-                    UnityEngine.Debug.Log("Shader " + replacementShader.name);
                     break;
                 case "Terrain/PQS/PQS Main Shader":
                     replacementShader = GetShaderFromName("PQSMainShader");
                     break;
                 case "Terrain/PQS/Ocean Surface Quad":
                     replacementShader = GetShaderFromName("PQSOceanSurfaceQuad");
-                    UnityEngine.Debug.Log("Shader " + replacementShader.name);
                     break;
                 case "Terrain/PQS/Ocean Surface Quad (Fallback)":
                     replacementShader = GetShaderFromName("PQSOceanSurfaceQuadFallback");
-                    UnityEngine.Debug.Log("Shader " + replacementShader.name);
                     break;
                 case "Terrain/PQS/Sphere Projection SURFACE QUAD (AP) ":
                     replacementShader = GetShaderFromName("PQSProjectionAerialQuadRelative");
@@ -123,15 +97,13 @@ namespace ShaderReplacer
                     replacementShader = GetShaderFromName("PQSProjectionSurfaceQuad");
                     break;
                 default:
-                    UnityEngine.Debug.Log("Shader " + name);
-                    break;
+                    return;
 
             }
             if (replacementShader != null)
             {
                 mat.shader = replacementShader;
             }
-            name = mat.shader.name;
         }
     }
 }

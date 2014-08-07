@@ -93,6 +93,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
     		LIGHTING_COORDS(3,4)
 			float3 worldNormal : TEXCOORD5;
 			float3 sphereCoords : TEXCOORD6;
+			float3 terminator : TEXCOORD7;
 		};
 
 		v2f vert (appdata_t v)
@@ -107,7 +108,8 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	   	   o.sphereCoords = -normalize(half4(v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz;
 	   	   o.color = v.color;	
 		   o.objnormal = v.normal;
-    	   
+    	   o.terminator = saturate(floor(1.01+dot (o.sphereCoords, normalize(_SunDir))));
+			
     	   TRANSFER_VERTEX_TO_FRAGMENT(o);
     	   
 	   	   return o;
@@ -203,8 +205,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half lightIntensity = saturate(_LightColor0.a * NdotL * 4 * atten);
 			half3 light = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
 			
-			half terminator = saturate(floor(1.01+dot (IN.sphereCoords, _SunDir)));
-			light *= terminator;
+			light *= IN.terminator;
 			color.rgb += _Albedo*light;
 			color.rgb *= light;
 			

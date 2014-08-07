@@ -9,12 +9,6 @@ using Utils;
 
 namespace Atmosphere
 {
-    enum ScaledOverlayEnum
-    {
-        None,
-        Shader,
-        Geometry
-    }
 
     public class AtmosphereObject : MonoBehaviour, IEVEObject
     {
@@ -28,19 +22,14 @@ namespace Atmosphere
         float altitude = 1000f;
         [Persistent]
         float speed = 30;
-        //[Persistent]
-        //ScaledOverlayEnum scaledOverlay = ScaledOverlayEnum.None;
         [Persistent, Optional]
         AtmosphereVolume atmosphere = null;
         [Persistent, Optional]
         CloudsVolume layerVolume = null;
         [Persistent, Optional]
         Clouds2D layer2D = null;
-        //[Persistent, Optional("scaledOverlay", ScaledOverlayEnum.Geometry)]
-        //Clouds2D scaledLayer2D = null;
 
         private AtmospherePQS atmospherePQS = null;
-        //private ScaledAtmospherePQS scaledAtmospherePQS = null;
         private CelestialBody celestialBody;
         private Transform scaledCelestialTransform;
         public void LoadConfigNode(ConfigNode node, String body)
@@ -63,10 +52,6 @@ namespace Atmosphere
             GameObject go = new GameObject();
             atmospherePQS = go.AddComponent<AtmospherePQS>();
             atmospherePQS.Apply(body, layer2D, layerVolume, atmosphere, altitude, speed);
-
-            //go = new GameObject();
-            //scaledAtmospherePQS = go.AddComponent<ScaledAtmospherePQS>();
-            //scaledAtmospherePQS.Apply(body, scaledLayer2D, altitude, speed);
         }
 
         public void Remove()
@@ -78,12 +63,7 @@ namespace Atmosphere
             GameObject.DestroyImmediate(atmospherePQS);
             GameObject.DestroyImmediate(go);
 
-            //scaledAtmospherePQS.Remove();
-            //go = scaledAtmospherePQS.gameObject;
-            //go.transform.parent = null;
-
-            //GameObject.DestroyImmediate(scaledAtmospherePQS);
-            //GameObject.DestroyImmediate(go);
         }
+
     }
 }

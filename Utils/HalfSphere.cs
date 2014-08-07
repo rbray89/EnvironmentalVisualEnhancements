@@ -17,6 +17,7 @@ namespace Utils
             MeshFilter filter = meshContainer.AddComponent<MeshFilter>();
             Mesh mesh = filter.mesh;
             mesh.Clear();
+            //mesh.subMeshCount = 1;
 
             List<Vector3> vertList = new List<Vector3>();
             Dictionary<long, int> middlePointIndexCache = new Dictionary<long, int>();
@@ -28,12 +29,7 @@ namespace Utils
 
             vertList.Add(new Vector3(-1f, t, 0f).normalized * radius);
             vertList.Add(new Vector3(1f, t, 0f).normalized * radius);
-            //2//vertList.Add(new Vector3(-1f, -t, 0f).normalized * radius);
-            //3//vertList.Add(new Vector3(1f, -t, 0f).normalized * radius);
-
-            //4//vertList.Add(new Vector3(0f, -1f, t).normalized * radius);
             vertList.Add(new Vector3(0f, 1f, t).normalized * radius);
-            //6//vertList.Add(new Vector3(0f, -1f, -t).normalized * radius);
             vertList.Add(new Vector3(0f, 1f, -t).normalized * radius);
 
             vertList.Add(new Vector3(t, 0f, -1f).normalized * radius);
@@ -42,37 +38,18 @@ namespace Utils
             vertList.Add(new Vector3(-t, 0f, 1f).normalized * radius);
 
 
-            // create 20 triangles of the icosahedron
             List<TriangleIndices> faces = new List<TriangleIndices>();
 
-            // 5 faces around point 0
             faces.Add(new TriangleIndices(0, 7, 2));
             faces.Add(new TriangleIndices(0, 2, 1));
             faces.Add(new TriangleIndices(0, 1, 3));
             faces.Add(new TriangleIndices(0, 3, 6));
             faces.Add(new TriangleIndices(0, 6, 7));
 
-            // 5 adjacent faces 
             faces.Add(new TriangleIndices(1, 2, 5));
-            //faces.Add(new TriangleIndices(5, 11, 4));
-            //faces.Add(new TriangleIndices(11, 10, 2));
-            //faces.Add(new TriangleIndices(10, 7, 6));
             faces.Add(new TriangleIndices(3, 1, 4));
 
-            // 5 faces around point 3
-            //faces.Add(new TriangleIndices(3, 9, 4));
-            //faces.Add(new TriangleIndices(3, 4, 2));
-            //faces.Add(new TriangleIndices(3, 2, 6));
-            //faces.Add(new TriangleIndices(3, 6, 8));
-            //faces.Add(new TriangleIndices(3, 8, 9));
-
-            // 5 adjacent faces 
-            //faces.Add(new TriangleIndices(4, 9, 5));
-            //faces.Add(new TriangleIndices(2, 4, 11));
-            //faces.Add(new TriangleIndices(6, 2, 10));
-            //faces.Add(new TriangleIndices(8, 6, 7));
             faces.Add(new TriangleIndices(5, 4, 1));
-
             faces.Add(new TriangleIndices(2, 7, 5));
             faces.Add(new TriangleIndices(3, 4, 6));
 
@@ -108,6 +85,7 @@ namespace Utils
                 triList.Add(faces[i].v2);
                 triList.Add(faces[i].v3);
             }
+            //mesh.SetTriangles(triList.ToArray(), 0);
             mesh.triangles = triList.ToArray();
 
             float invPi2 = 1 / (2 * Mathf.PI);
@@ -130,7 +108,10 @@ namespace Utils
             mesh.Optimize();
 
             var mr = meshContainer.AddComponent<MeshRenderer>();
+            //mr.materials = new Material[1];
+            //mr.materials[0] = material;
             mr.material = material;
+
             mr.castShadows = false;
             mr.receiveShadows = false;
             mr.enabled = true;

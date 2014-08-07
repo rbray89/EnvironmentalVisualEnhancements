@@ -10,36 +10,7 @@ using Utils;
 
 namespace Terrain
 {
-    public class PQSUpdater : PQSMod
-    {
-        public CelestialBody body;
-        public Material material;
-
-        private void assignTangent(PQ quad)
-        {
-            Vector4[] tangents = quad.mesh.tangents;
-            Vector3[] normals = quad.mesh.normals;
-            Vector3[] verts = quad.mesh.vertices;
-            for (int i = 0; i < tangents.Length; i++)
-            {
-                Vector3 normal = this.sphere.transform.InverseTransformPoint(quad.transform.TransformPoint(verts[i])).normalized;
-                Vector3 cross = normal == Vector3.up ? Vector3.right : Vector3.up;
-                tangents[i] = Vector3.Cross(normal, cross);
-            }
-            quad.mesh.tangents = tangents;
-        }
-        public override void OnQuadBuilt(PQ quad)
-        {
-            assignTangent(quad);
-            
-        }
-        public override void OnQuadUpdate(PQ quad)
-        {
-            assignTangent(quad);
-            
-        }
-    }
-
+    
     public class TerrainMaterial : MaterialManager
     {
         [Persistent] 
@@ -174,11 +145,7 @@ namespace Terrain
                     }
                 }
                 
-                pqsTerrainContainer = new GameObject("PQSUpdater");
-                PQSUpdater updater = pqsTerrainContainer.AddComponent<PQSUpdater>();
-                updater.material = pqs.surfaceMaterial;
-                updater.body = celestialBody;
-                pqsTerrainContainer.transform.parent = pqs.transform;
+                
 
                 steepTexture = pqs.surfaceMaterial.GetTexture("_steepTex");
                 lowTexture = pqs.surfaceMaterial.GetTexture("_lowTex");
@@ -208,7 +175,6 @@ namespace Terrain
                     PQS ocean = pqs.ChildSpheres[0];
                     
                     pqsOceanContainer = new GameObject("PQSTangentAssigner");
-                    PQSUpdater tas = pqsOceanContainer.AddComponent<PQSUpdater>();
                     pqsOceanContainer.transform.parent = ocean.transform;
                     
                     keywords = ocean.surfaceMaterial.shaderKeywords;

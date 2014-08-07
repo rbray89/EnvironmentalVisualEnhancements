@@ -91,15 +91,26 @@ namespace Atmosphere
             bool visible = HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER;
             if (this.sphere != null && visible)
             {
-                if (sphere.isActive && HighLogic.LoadedScene != GameScenes.TRACKSTATION)
+                if (sphere.isActive && HighLogic.LoadedScene != GameScenes.TRACKSTATION && !MapView.MapIsEnabled)
                 {
                     if (layer2D != null)
                     {
+                        AtmosphereManager.Log("Normal Update!");
                         layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition));
                     }
                     if (atmosphere != null)
                     {
-                        atmosphere.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition));
+                        FlightCamera fc = FlightCamera.fetch;
+                        if (fc != null && fc.mainCamera != null)
+                        {
+                            Transform transform = fc.mainCamera.transform;
+                            Vector3 pos = celestialBody.transform.InverseTransformPoint(transform.position);
+                            atmosphere.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos));
+                        }
+                        else
+                        {
+                            atmosphere.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition));
+                        }
                     }
                 }
                 else
@@ -108,6 +119,7 @@ namespace Atmosphere
                     Vector3 pos = scaledCelestialTransform.InverseTransformPoint(transform.position);
                     if (layer2D != null)
                     {
+                        AtmosphereManager.Log("Scaled Update!");
                         layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos));
                     }
                     if (atmosphere != null)
