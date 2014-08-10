@@ -17,17 +17,17 @@
 	
 SubShader {
 
-Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
+Tags { "Queue"="AlphaTest" "RenderType"="Opaque"}
 	Blend SrcAlpha OneMinusSrcAlpha
 	Fog { Mode Global}
 	AlphaTest Greater 0
 	ColorMask RGB
-	Cull Back Lighting On ZWrite Off
+	Cull Back Lighting On
 	
 	
 	//Sub-surface depth
 	Pass {
-
+		ZWrite Off
 		Lighting On
 		Tags { "LightMode"="ForwardBase"}
 		
@@ -37,6 +37,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
 		#include "AutoLight.cginc"
 		#include "Lighting.cginc"
 		#pragma target 3.0
+		#pragma exclude_renderers d3d11
 		#pragma glsl
 		#pragma vertex vert
 		#pragma fragment frag
@@ -149,6 +150,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
 		//surface
 		Pass {
 		Lighting On
+		ZWrite On
 		Tags { "LightMode"="ForwardBase"}
 		
 		CGPROGRAM
@@ -157,6 +159,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
 		#include "AutoLight.cginc"
 		#include "Lighting.cginc"
 		#pragma target 3.0
+		#pragma exclude_renderers d3d11
 		#pragma glsl
 		#pragma vertex vert
 		#pragma fragment frag
@@ -186,8 +189,8 @@ Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
 		struct appdata_t {
 				float4 vertex : POSITION;
 				float3 normal : NORMAL;
-				float3 tangent : TANGENT;
 				float4 texcoord : TEXCOORD0;
+			    float4 texcoord2 : TEXCOORD1;
 			};
 
 		struct v2f {
@@ -204,16 +207,17 @@ Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
 		v2f vert (appdata_t v)
 		{
 			v2f o;
-			half c = .25*_Time.z + frac( v.texcoord.xy ).x;
-		    float4 vertex = v.vertex + (1.5*(1+cos(c))*float4(v.normal,0));
+			//half c = .25*_Time.z + frac( v.texcoord.xy ).x;
+			//+ (1.5*(1+cos(c))*float4(v.normal,0));
+		    float4 vertex = v.vertex;
 			
-			o.pos = mul(UNITY_MATRIX_MVP, vertex);
+			o.pos = mul(UNITY_MATRIX_MVP, vertex).xyzw;
 			
 			float3 vertexPos = mul(_Object2World, vertex).xyz;
 			o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
 
 			o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
-			o.sphereNormal = -normalize(v.tangent);
+			o.sphereNormal = -normalize(half4(v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz;
 			o.viewDir = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, vertex).xyz);
 			o.scrPos=ComputeScreenPos(o.pos);
 			COMPUTE_EYEDEPTH(o.scrPos.z);
@@ -374,7 +378,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
                     
                     o.pos = mul( UNITY_MATRIX_MVP, v.vertex);
                    	
-					o.lightDir = ObjSpaceLightDir(v.vertex);
+					o.lightDir = ObjSpaceLightDir(v.vertex).xyz;
 					o.color = v.color;
 					o.normal =  v.normal;
                     TRANSFER_VERTEX_TO_FRAGMENT(o);
