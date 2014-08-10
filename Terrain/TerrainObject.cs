@@ -140,6 +140,7 @@ namespace Terrain
                     originalPlanetShader = mr.material.shader;
                     if (planetMaterial != null)
                     {
+                        TerrainManager.Log("planet shader: " + mr.material.shader);
                         mr.material.shader = new Material(TerrainManager.PlanetShader).shader;
                         planetMaterial.ApplyMaterialProperties(mr.material);
                     }

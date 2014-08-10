@@ -165,8 +165,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half4 encnorm = tex2D(_BumpMap, uv, uvdd.xy, uvdd.zw);
 		    float2 localCoords = encnorm.ag; 
             localCoords -= half2(.5);
-            localCoords.x *= .25;
-			localCoords.y *= .5;
+            localCoords.x *= .5;
 			
 			uv.x -= .5;
 			uv += localCoords;
@@ -205,7 +204,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half SNdotL = saturate(dot (norm, -_SunDir));
 			half NdotL = lerp(TNdotL, SNdotL, handoff);
 	        fixed atten = LIGHT_ATTENUATION(IN); 
-			half lightIntensity = saturate(_LightColor0.a * NdotL * 4 * atten);
+			half lightIntensity = saturate(_LightColor0.a * NdotL * 2 * atten);
 			half3 light = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
 			
 			light *= IN.terminator;

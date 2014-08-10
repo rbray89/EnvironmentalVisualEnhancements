@@ -176,7 +176,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
             half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
 			half NdotL = dot (norm, IN.lightDirection);
 	        fixed atten = LIGHT_ATTENUATION(IN); 
-			half lightIntensity = saturate(_LightColor0.a * NdotL * 4 * atten);
+			half lightIntensity = saturate(_LightColor0.a * NdotL * 2 * atten);
 			half3 light = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
 			
             float3 specularReflection = saturate(floor(1+NdotL));
