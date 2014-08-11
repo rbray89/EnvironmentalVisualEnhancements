@@ -95,7 +95,6 @@ namespace Atmosphere
                 {
                     if (layer2D != null)
                     {
-                        AtmosphereManager.Log("Normal Update!");
                         layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition));
                     }
                     if (atmosphere != null)
@@ -119,7 +118,6 @@ namespace Atmosphere
                     Vector3 pos = scaledCelestialTransform.InverseTransformPoint(transform.position);
                     if (layer2D != null)
                     {
-                        AtmosphereManager.Log("Scaled Update!");
                         layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos));
                     }
                     if (atmosphere != null)

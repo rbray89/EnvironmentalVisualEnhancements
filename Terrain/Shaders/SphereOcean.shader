@@ -17,7 +17,7 @@
 	
 SubShader {
 
-Tags { "Queue"="AlphaTest" "RenderType"="Opaque"}
+Tags { "Queue"="AlphaTest" "RenderType"="Transparent"}
 	Blend SrcAlpha OneMinusSrcAlpha
 	Fog { Mode Global}
 	AlphaTest Greater 0
