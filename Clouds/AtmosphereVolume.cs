@@ -71,7 +71,10 @@ namespace Atmosphere
             Scaled = true;
             this.radius = radius;
             atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial);
-
+            if (celestialBody.ocean)
+            {
+                AtmosphereMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius);
+            }
             
         }
 

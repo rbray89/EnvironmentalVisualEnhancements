@@ -8,11 +8,12 @@
 		_FadeScale ("Fade Scale", Range(0,1)) = .002
 		_RimDist ("Rim Distance", Range(0,1)) = 1
 		_RimDistSub ("Rim Distance Sub", Range(0,2)) = 1.01
+		_OceanRadius ("Ocean Radius", Float) = 63000
 	}
 
 Category {
 	
-	Tags { "Queue"="Overlay" "IgnoreProjector"="True" "RenderType"="TransparentCutout" }
+	Tags { "Queue"="Overlay" "IgnoreProjector"="True" "RenderType"="Transparent" }
 	Blend SrcAlpha OneMinusSrcAlpha
 	Fog { Mode Off}
 	ZTest Off
@@ -50,6 +51,7 @@ SubShader {
 		float _FadeScale;
 		float _RimDist;
 		float _RimDistSub;
+		float _OceanRadius;
 		
 		struct appdata_t {
 				float4 vertex : POSITION;
@@ -66,6 +68,8 @@ SubShader {
 			float  viewDist : TEXCOORD4;
 			float  altitude : TEXCOORD5;
 			float3 worldNormal : TEXCOORD6;
+			float3 L : TEXCOORD7;
+			float3 camViewDir : TEXCOORD8;
 		};	
 		
 
@@ -80,9 +84,13 @@ SubShader {
 	   	   o.worldOrigin = origin;
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
 	   	   o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
+	   	   o.camViewDir = normalize(vertexPos - _WorldSpaceCameraPos);
 	   	   o.worldNormal = normalize(vertexPos-origin);
 	   	   o.scrPos=ComputeScreenPos(o.pos);
 	   	   o.altitude = distance(origin,_WorldSpaceCameraPos) - distance(origin,vertexPos);
+	   	   
+	   	   o.L = origin - _WorldSpaceCameraPos;
+	   	   
 		   COMPUTE_EYEDEPTH(o.scrPos.z);
 	   	   return o;
 	 	}
@@ -91,7 +99,17 @@ SubShader {
 			{
 			half4 color = _Color;
 			float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.scrPos)));
-			depth = min( IN.viewDist, LinearEyeDepth(depth) );
+			depth = min(IN.viewDist,LinearEyeDepth(depth));
+			
+			float sphereDist= IN.viewDist;
+			float tc = dot(IN.L, IN.camViewDir);
+		   	   float d = sqrt(dot(IN.L,IN.L)-dot(tc,tc));
+		   	   if (d <= _OceanRadius && tc >= 0.0)
+		   	   {
+			   	   float tlc = sqrt(pow(_OceanRadius,2)-pow(d,2));
+			   	   sphereDist = tc - tlc;
+		   	   }
+			depth = min(sphereDist, depth);
 			
 			float rim = saturate(dot(IN.viewDir, IN.worldNormal));
 			rim = saturate(pow(_FalloffScale*rim,_FalloffPow));
