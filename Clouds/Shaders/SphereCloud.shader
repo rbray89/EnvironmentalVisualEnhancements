@@ -14,6 +14,7 @@ Shader "Sphere/Cloud" {
 		_FadeScale ("Fade Scale", Range(0,1)) = .002
 		_RimDist ("Rim Distance", Range(0,1)) = 1
 		_RimDistSub ("Rim Distance Sub", Range(0,2)) = 1.01
+		_InvFade ("Soft Particles Factor", Range(0.01,3.0)) = .01
 	}
 
 Category {
@@ -65,6 +66,9 @@ SubShader {
 		float _RimDistSub;
 		uniform float4x4 _Rotation;
 		
+		float _InvFade;
+		sampler2D _CameraDepthTexture;
+			
 		struct appdata_t {
 				float4 vertex : POSITION;
 				fixed4 color : COLOR;
@@ -80,6 +84,7 @@ SubShader {
 			float3 objNormal : TEXCOORD4;
 			float3 viewDir : TEXCOORD5;
 			LIGHTING_COORDS(6,7)
+			float4 projPos : TEXCOORD8;
 		};	
 		
 
@@ -98,6 +103,10 @@ SubShader {
 	   	   float4 vertex = mul(_Rotation, v.vertex);
 	   	   o.objNormal = -normalize( vertex);
 	   	   o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
+	   	   
+	   	   o.projPos = ComputeScreenPos (o.pos);
+			COMPUTE_EYEDEPTH(o.projPos.z);
+			TRANSFER_VERTEX_TO_FRAGMENT(o);
 	   	   return o;
 	 	}
 	 	
@@ -147,6 +156,12 @@ SubShader {
 	        half diff = (NdotL - 0.01) / 0.99;
 			half lightIntensity = saturate(_LightColor0.a * diff * 4);
 			color.rgb *= saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
+
+			float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.projPos)));
+			depth = LinearEyeDepth (depth);
+			float partZ = IN.projPos.z;
+			float fade = saturate (_InvFade * (depth-partZ));
+			color.a *= fade;
 
           	return color;
 		}

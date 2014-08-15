@@ -8,6 +8,7 @@ Properties {
 	_LightScatter ("Light Scatter", Range(0,1)) = 0.55 
 	_MinLight ("Minimum Light", Range(0,1)) = .5
 	_Color ("Color Tint", Color) = (1,1,1,1)
+	_InvFade ("Soft Particles Factor", Range(0.01,3.0)) = .01
 }
 
 Category {
@@ -26,6 +27,9 @@ Category {
 			Tags { "LightMode"="ForwardBase"}
 			
 			CGPROGRAM
+			#include "UnityCG.cginc"
+			#include "AutoLight.cginc"
+			#include "Lighting.cginc"
 			
 			#pragma target 3.0
 			#pragma glsl
@@ -36,9 +40,7 @@ Category {
 			#pragma multi_compile_fwdbase
 			#pragma multi_compile_fwdadd_fullshadows
 			
-			#include "UnityCG.cginc"
-			#include "AutoLight.cginc"
-			#include "Lighting.cginc"
+			
 			
 			sampler2D _TopTex;
 			sampler2D _BotTex;
@@ -51,6 +53,9 @@ Category {
 			float _DistFadeVert;
 			float _LightScatter;
 			float _MinLight;
+			
+			float _InvFade;
+			sampler2D _CameraDepthTexture;
 			
 			struct appdata_t {
 				float4 vertex : POSITION;
@@ -70,9 +75,9 @@ Category {
 				float3 camPos : TEXCOORD4;
 				half3 baseLight : TEXCOORD5;
 				LIGHTING_COORDS(6,7)
+				float4 projPos : TEXCOORD8;
 			};
-
-			float4 _TopTex_ST;
+			
 			
 			v2f vert (appdata_t v)
 			{
@@ -131,10 +136,12 @@ Category {
 				float distVert = 1-(_DistFadeVert*distance(origin,_WorldSpaceCameraPos));
 				o.color.a *= saturate(dist) * saturate(distVert);
 				
+				o.projPos = ComputeScreenPos (o.pos);
+				COMPUTE_EYEDEPTH(o.projPos.z);
+				TRANSFER_VERTEX_TO_FRAGMENT(o);
+				
 				return o;
 			}
-
-			sampler2D _CameraDepthTexture;
 			
 			fixed4 frag (v2f i) : COLOR
 			{
@@ -162,6 +169,12 @@ Category {
 		        half4 color;
 		        color.rgb = prev.rgb * i.baseLight;
 				color.a = prev.a;
+				
+				float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(i.projPos)));
+				depth = LinearEyeDepth (depth);
+				float partZ = i.projPos.z;
+				float fade = saturate (_InvFade * (depth-partZ));
+				color.a *= fade;
 				
 				return color;
 			}
