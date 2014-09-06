@@ -15,7 +15,7 @@ namespace EVEManager
         protected virtual bool sceneLoad { get { return HighLogic.LoadedScene == GameScenes.MAINMENU || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.TRACKSTATION; } }
         private static bool useEditor = false;
         public static List<EVEManagerClass> Managers = new List<EVEManagerClass>();
-        public static int SCALED_LAYER = 9;
+        public static int SCALED_LAYER = 10;
         public static int MACRO_LAYER = 15;
         public static int SCALED_LAYER2 = 10;
         public static int ROTATION_PROPERTY;

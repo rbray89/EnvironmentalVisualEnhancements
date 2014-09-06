@@ -28,6 +28,8 @@ namespace Atmosphere
 	    float _LightScatter = 0.55f;
 	    [Persistent]
 	    float _MinLight = .5f;
+        [Persistent]
+        float _InvFade = .008f;
     }
 
     class CloudsVolume

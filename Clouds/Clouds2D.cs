@@ -38,6 +38,8 @@ namespace Atmosphere
         float _RimDist = 0.0001f;
         [Persistent]
         float _RimDistSub = 1.01f;
+        [Persistent]
+        float _InvFade = .008f;
     }
 
     class Clouds2D
@@ -145,13 +147,18 @@ namespace Atmosphere
             CloudMesh.transform.localScale = scale * Vector3.one;
             CloudMesh.layer = layer;
 
-            radiusScale = scale* radius;
+            radiusScale = radius * scale;
+            float worldRadiusScale = Vector3.Distance(parent.transform.TransformPoint(Vector3.up * radiusScale), parent.transform.TransformPoint(Vector3.zero));
+            
             if (ShadowProjector != null)
             {
-                float dist = (float)(2 * radiusScale);
+
+                float dist = (float)(2 * worldRadiusScale);
                 ShadowProjector.farClipPlane = dist;
-                ShadowProjector.orthographicSize = radiusScale;
+                ShadowProjector.orthographicSize = worldRadiusScale;
+
                 ShadowProjector.transform.parent = parent;
+                //ShadowProjector.transform.localScale = scale * Vector3.one;
                 ShadowProjector.material.SetTexture("_ShadowTex", CloudMaterial.mainTexture);
                 ShadowProjectorGO.layer = layer;
                 if (layer == EVEManagerClass.MACRO_LAYER)
@@ -162,8 +169,9 @@ namespace Atmosphere
                 else
                 {
                     ShadowProjectorGO.layer = EVEManagerClass.SCALED_LAYER2;
-                    ShadowProjector.ignoreLayers = ~(1<<10);// ~((1 << 29) | (1 << 23) | (1 << 18) | (1 << 10) | (1 << 9));
+                    ShadowProjector.ignoreLayers = ~(1 << EVEManagerClass.SCALED_LAYER2);// ~((1 << 29) | (1 << 23) | (1 << 18) | (1 << 10) | (1 << 9));
                     sunTransform = EVEManagerClass.GetScaledTransform(Sun.Instance.sun.bodyName);
+                    AtmosphereManager.Log("Camera mask: "+ScaledCamera.Instance.camera.cullingMask);
                 }
             }
         }
@@ -191,10 +199,10 @@ namespace Atmosphere
                 SetMeshRotation(rotation);
                 if (ShadowProjector != null)
                 {
-                    Vector3 sunDirection = ShadowProjector.transform.parent.position - sunTransform.position;
+                    Vector3 sunDirection = Vector3.Normalize(ShadowProjector.transform.parent.InverseTransformDirection(Sun.Instance.sunDirection));//sunTransform.position));
                     sunDirection.Normalize();
-                    ShadowProjector.transform.localPosition = radiusScale * (ShadowProjector.transform.parent.InverseTransformDirection(-sunDirection));
-                    ShadowProjector.transform.forward = sunDirection;
+                    ShadowProjector.transform.localPosition = radiusScale * -sunDirection;
+                    ShadowProjector.transform.forward = Sun.Instance.sunDirection;
                 }
             }
             SetTextureOffset();
@@ -225,7 +233,7 @@ namespace Atmosphere
             if (ShadowProjector != null)
             {
                 Vector4 texVect = ShadowProjector.transform.localPosition.normalized;
-                texVect.w = 0;
+                //texVect.w =  -(float)x;
                 ShadowProjector.material.SetVector(EVEManagerClass.SHADOWOFFSET_PROPERTY, texVect);
             }
         }
