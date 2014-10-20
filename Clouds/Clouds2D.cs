@@ -39,7 +39,7 @@ namespace Atmosphere
         [Persistent]
         float _RimDistSub = 1.01f;
         [Persistent]
-        float _InvFade = 400000;//.008f;
+        float _InvFade = .008f;
     }
 
     class Clouds2D
