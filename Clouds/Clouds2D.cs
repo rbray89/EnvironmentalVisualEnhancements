@@ -39,7 +39,7 @@ namespace Atmosphere
         [Persistent]
         float _RimDistSub = 1.01f;
         [Persistent]
-        float _InvFade = .008f;
+        float _InvFade = 400000;//.008f;
     }
 
     class Clouds2D
@@ -62,21 +62,29 @@ namespace Atmosphere
         [Persistent]
         Clouds2DMaterial scaledCloudMaterial;
 
+        bool isScaled = false;
         public bool Scaled
         {
             get { return CloudMesh.layer == EVEManagerClass.SCALED_LAYER; }
             set
             {
-                if (value)
+                AtmosphereManager.Log("Clouds2D is now " + (value ? "SCALED" : "MACRO"));
+                if (isScaled != value)
                 {
-                    scaledCloudMaterial.ApplyMaterialProperties(CloudMaterial);
-                    float scale = (float)(1000f / celestialBody.Radius);
-                    Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);
-                }
-                else
-                {
-                    macroCloudMaterial.ApplyMaterialProperties(CloudMaterial);
-                    Reassign(EVEManagerClass.MACRO_LAYER, celestialBody.transform, 1);
+                    if (value)
+                    {
+                        scaledCloudMaterial.ApplyMaterialProperties(CloudMaterial);
+                        float scale = (float)(1000f / celestialBody.Radius);
+                        CloudMaterial.DisableKeyword("SOFT_DEPTH_ON");
+                        Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);
+                    }
+                    else
+                    {
+                        macroCloudMaterial.ApplyMaterialProperties(CloudMaterial);
+                        CloudMaterial.EnableKeyword("SOFT_DEPTH_ON");
+                        Reassign(EVEManagerClass.MACRO_LAYER, celestialBody.transform, 1);
+                    }
+                    isScaled = value;
                 }
             }
         }

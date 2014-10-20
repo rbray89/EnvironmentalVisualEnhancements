@@ -45,6 +45,7 @@ SubShader {
 		#pragma fragmentoption ARB_precision_hint_fastest
 		#pragma multi_compile_fwdbase
 		#pragma multi_compile_fwdadd_fullshadows
+		#pragma multi_compile SOFT_DEPTH_OFF SOFT_DEPTH_ON
 		#define PI 3.1415926535897932384626
 		#define INV_PI (1.0/PI)
 		#define TWOPI (2.0*PI) 
@@ -103,10 +104,11 @@ SubShader {
 	   	   float4 vertex = mul(_Rotation, v.vertex);
 	   	   o.objNormal = -normalize( vertex);
 	   	   o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
-	   	   
+	   	   #ifdef SOFT_DEPTH_ON
 	   	   o.projPos = ComputeScreenPos (o.pos);
 			COMPUTE_EYEDEPTH(o.projPos.z);
 			TRANSFER_VERTEX_TO_FRAGMENT(o);
+		   #endif
 	   	   return o;
 	 	}
 	 	
@@ -156,13 +158,13 @@ SubShader {
 	        half diff = (NdotL - 0.01) / 0.99;
 			half lightIntensity = saturate(_LightColor0.a * diff * 4);
 			color.rgb *= saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
-
+			#ifdef SOFT_DEPTH_ON
 			float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.projPos)));
 			depth = LinearEyeDepth (depth);
 			float partZ = IN.projPos.z;
 			float fade = saturate (_InvFade * (depth-partZ));
 			color.a *= fade;
-
+			#endif
           	return color;
 		}
 		ENDCG
