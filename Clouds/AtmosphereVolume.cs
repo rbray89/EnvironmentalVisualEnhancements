@@ -15,6 +15,18 @@ namespace Atmosphere
         Color _Color = new Color(1, 1, 1, 1);
         [Persistent]
         float _Visibility = .0001f;
+        [Persistent]
+		float _FalloffPow = 2;
+        [Persistent]
+		float _FalloffScale = 3;
+        [Persistent]
+		float _FadeDist = 10;
+        [Persistent]
+		float _FadeScale = .002f;
+        [Persistent]
+		float _RimDist = 1;
+        [Persistent]
+		float _RimDistSub = 1.01f;
     }
 
     class AtmosphereVolume
