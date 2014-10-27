@@ -6,6 +6,7 @@
    SubShader {
       Pass {      
         Blend DstColor Zero
+        ZWrite Off
         CGPROGRAM
  		#pragma target 3.0
 		#pragma glsl
@@ -61,10 +62,11 @@
 			half cosLat = cos(IN.latitude);
 			half sinLat = sin(IN.latitude);
 			
-			uv.x = INV_PI*(IN.longitude+atan2(x*sinC, (p*cosLat*cosC)-(y*sinLat*sinC)))+.5 + _ShadowOffset.w;
+			uv.x = INV_PI*(IN.longitude+atan2(x*sinC, (p*cosLat*cosC)-(y*sinLat*sinC)))+.5;
 			uv.y = INV_PI*asin((cosC*sinLat)+(y*sinC*cosLat/p))+.5;
 			uv.x += 1;
 			uv.x *= .5;
+			uv.x += _ShadowOffset.w;
 			fixed4 color = tex2D(_ShadowTex, uv, dx, dy);
 			color.rgb *= 1.25*(1.25-color.a);
 			color = saturate(color);

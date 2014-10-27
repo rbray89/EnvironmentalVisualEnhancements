@@ -54,7 +54,7 @@ namespace Atmosphere
         [Persistent]
         Vector3 offset = new Vector3(0, 0, 0);
         [Persistent]
-        bool shadow = false;
+        bool shadow = true;
         [Persistent]
         Vector3 shadowOffset = new Vector3(0, 0, 0);
         [Persistent]
@@ -95,6 +95,7 @@ namespace Atmosphere
         float radiusScale;
         float globalPeriod;
         float mainPeriodOffset;
+        float shadowPeriod;
         private static Shader cloudShader = null;
         private static Shader CloudShader
         {
@@ -134,6 +135,7 @@ namespace Atmosphere
             float circumference = 2f * Mathf.PI * radius;
             globalPeriod = (speed+detailSpeed) / circumference;
             mainPeriodOffset = (-detailSpeed) / circumference;
+            shadowPeriod = (speed) / circumference;
             if (shadow)
             {
                 ShadowProjectorGO = new GameObject();
@@ -177,7 +179,7 @@ namespace Atmosphere
                 else
                 {
                     ShadowProjectorGO.layer = EVEManagerClass.SCALED_LAYER2;
-                    ShadowProjector.ignoreLayers = ~(1 << EVEManagerClass.SCALED_LAYER2);// ~((1 << 29) | (1 << 23) | (1 << 18) | (1 << 10) | (1 << 9));
+                    ShadowProjector.ignoreLayers = ~((1 << 29) | (1 << 23) | (1 << 18) | (1 << 10));// | (1 << 9));
                     sunTransform = EVEManagerClass.GetScaledTransform(Sun.Instance.sun.bodyName);
                     AtmosphereManager.Log("Camera mask: "+ScaledCamera.Instance.camera.cullingMask);
                 }
@@ -207,10 +209,10 @@ namespace Atmosphere
                 SetMeshRotation(rotation);
                 if (ShadowProjector != null)
                 {
-                    Vector3 sunDirection = Vector3.Normalize(ShadowProjector.transform.parent.InverseTransformDirection(Sun.Instance.sunDirection));//sunTransform.position));
-                    sunDirection.Normalize();
+                    Vector3 worldSunDir = Vector3.Normalize(Sun.Instance.sunDirection);
+                    Vector3 sunDirection = Vector3.Normalize(ShadowProjector.transform.parent.InverseTransformDirection(worldSunDir));//sunTransform.position));
                     ShadowProjector.transform.localPosition = radiusScale * -sunDirection;
-                    ShadowProjector.transform.forward = Sun.Instance.sunDirection;
+                    ShadowProjector.transform.forward = worldSunDir;
                 }
             }
             SetTextureOffset();
@@ -240,10 +242,14 @@ namespace Atmosphere
 
             if (ShadowProjector != null)
             {
+                x = (ut * shadowPeriod);
+                x -= (int)x;
                 Vector4 texVect = ShadowProjector.transform.localPosition.normalized;
-                //texVect.w =  -(float)x;
+
+                texVect.w = ((float)x + offset.x + .25f);
                 ShadowProjector.material.SetVector(EVEManagerClass.SHADOWOFFSET_PROPERTY, texVect);
             }
         }
+
     }
 }

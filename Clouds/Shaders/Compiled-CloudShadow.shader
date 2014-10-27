@@ -6,6 +6,7 @@
    SubShader {
       Pass {      
         Blend DstColor Zero
+        ZWrite Off
         Program "vp" {
 // Vertex combos: 1
 //   d3d9 - ALU: 60 to 60
@@ -125,12 +126,13 @@ void main ()
   } else {
     r_18 = (sign(y_16) * 1.5708);
   };
-  uv_5.x = (((0.31831 * (xlv_TEXCOORD3 + r_18)) + 0.5) + _ShadowOffset.w);
+  uv_5.x = ((0.31831 * (xlv_TEXCOORD3 + r_18)) + 0.5);
   float x_22;
   x_22 = ((tmpvar_13 * tmpvar_15) + (((tmpvar_9 * tmpvar_12) * tmpvar_14) / tmpvar_10));
   uv_5.y = ((0.31831 * (sign(x_22) * (1.5708 - (sqrt((1.0 - abs(x_22))) * (1.5708 + (abs(x_22) * (-0.214602 + (abs(x_22) * (0.0865667 + (abs(x_22) * -0.0310296)))))))))) + 0.5);
   uv_5.x = (uv_5.x + 1.0);
   uv_5.x = (uv_5.x * 0.5);
+  uv_5.x = (uv_5.x + _ShadowOffset.w);
   vec4 tmpvar_23;
   tmpvar_23 = texture2DGradARB (_ShadowTex, uv_5, dx_4, dy_3);
   color_1.w = tmpvar_23.w;
@@ -454,7 +456,7 @@ void main ()
   };
   tmpvar_23 = r_26;
   highp float tmpvar_29;
-  tmpvar_29 = (((0.31831 * (xlv_TEXCOORD3 + tmpvar_23)) + 0.5) + _ShadowOffset.w);
+  tmpvar_29 = ((0.31831 * (xlv_TEXCOORD3 + tmpvar_23)) + 0.5);
   uv_8.x = tmpvar_29;
   highp float x_30;
   x_30 = ((tmpvar_20 * tmpvar_22) + (((tmpvar_15 * tmpvar_19) * tmpvar_21) / p_5));
@@ -463,16 +465,19 @@ void main ()
   uv_8.y = tmpvar_31;
   uv_8.x = (uv_8.x + 1.0);
   uv_8.x = (uv_8.x * 0.5);
-  lowp vec4 tmpvar_32;
-  tmpvar_32 = texture2DGradEXT (_ShadowTex, uv_8, dx_7, dy_6);
-  color_2.w = tmpvar_32.w;
-  color_2.xyz = (tmpvar_32.xyz * (1.25 * (1.25 - tmpvar_32.w)));
+  highp float tmpvar_32;
+  tmpvar_32 = (uv_8.x + _ShadowOffset.w);
+  uv_8.x = tmpvar_32;
   lowp vec4 tmpvar_33;
-  tmpvar_33 = clamp (color_2, 0.0, 1.0);
-  color_2 = tmpvar_33;
-  mediump vec4 tmpvar_34;
-  tmpvar_34 = vec4(mix (1.0, tmpvar_33.x, (dirCheck_9 * radCheck_4)));
-  tmpvar_1 = tmpvar_34;
+  tmpvar_33 = texture2DGradEXT (_ShadowTex, uv_8, dx_7, dy_6);
+  color_2.w = tmpvar_33.w;
+  color_2.xyz = (tmpvar_33.xyz * (1.25 * (1.25 - tmpvar_33.w)));
+  lowp vec4 tmpvar_34;
+  tmpvar_34 = clamp (color_2, 0.0, 1.0);
+  color_2 = tmpvar_34;
+  mediump vec4 tmpvar_35;
+  tmpvar_35 = vec4(mix (1.0, tmpvar_34.x, (dirCheck_9 * radCheck_4)));
+  tmpvar_1 = tmpvar_35;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -622,7 +627,7 @@ void main ()
   };
   tmpvar_23 = r_26;
   highp float tmpvar_29;
-  tmpvar_29 = (((0.31831 * (xlv_TEXCOORD3 + tmpvar_23)) + 0.5) + _ShadowOffset.w);
+  tmpvar_29 = ((0.31831 * (xlv_TEXCOORD3 + tmpvar_23)) + 0.5);
   uv_8.x = tmpvar_29;
   highp float x_30;
   x_30 = ((tmpvar_20 * tmpvar_22) + (((tmpvar_15 * tmpvar_19) * tmpvar_21) / p_5));
@@ -631,16 +636,19 @@ void main ()
   uv_8.y = tmpvar_31;
   uv_8.x = (uv_8.x + 1.0);
   uv_8.x = (uv_8.x * 0.5);
-  lowp vec4 tmpvar_32;
-  tmpvar_32 = texture2DGradEXT (_ShadowTex, uv_8, dx_7, dy_6);
-  color_2.w = tmpvar_32.w;
-  color_2.xyz = (tmpvar_32.xyz * (1.25 * (1.25 - tmpvar_32.w)));
+  highp float tmpvar_32;
+  tmpvar_32 = (uv_8.x + _ShadowOffset.w);
+  uv_8.x = tmpvar_32;
   lowp vec4 tmpvar_33;
-  tmpvar_33 = clamp (color_2, 0.0, 1.0);
-  color_2 = tmpvar_33;
-  mediump vec4 tmpvar_34;
-  tmpvar_34 = vec4(mix (1.0, tmpvar_33.x, (dirCheck_9 * radCheck_4)));
-  tmpvar_1 = tmpvar_34;
+  tmpvar_33 = texture2DGradEXT (_ShadowTex, uv_8, dx_7, dy_6);
+  color_2.w = tmpvar_33.w;
+  color_2.xyz = (tmpvar_33.xyz * (1.25 * (1.25 - tmpvar_33.w)));
+  lowp vec4 tmpvar_34;
+  tmpvar_34 = clamp (color_2, 0.0, 1.0);
+  color_2 = tmpvar_34;
+  mediump vec4 tmpvar_35;
+  tmpvar_35 = vec4(mix (1.0, tmpvar_34.x, (dirCheck_9 * radCheck_4)));
+  tmpvar_1 = tmpvar_35;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -968,15 +976,16 @@ lowp vec4 frag( in v2f IN ) {
     mediump float cosLat = cos(IN.latitude);
     #line 94
     mediump float sinLat = sin(IN.latitude);
-    uv.x = (((0.31831 * (IN.longitude + atan( (x * sinC), (((p * cosLat) * cosC) - ((y * sinLat) * sinC))))) + 0.5) + _ShadowOffset.w);
+    uv.x = ((0.31831 * (IN.longitude + atan( (x * sinC), (((p * cosLat) * cosC) - ((y * sinLat) * sinC))))) + 0.5);
     uv.y = ((0.31831 * asin(((cosC * sinLat) + (((y * sinC) * cosLat) / p)))) + 0.5);
     uv.x += 1.0;
     #line 98
     uv.x *= 0.5;
+    uv.x += _ShadowOffset.w;
     lowp vec4 color = xll_tex2Dgrad( _ShadowTex, uv, dx, dy);
     color.xyz *= (1.25 * (1.25 - color.w));
-    color = xll_saturate_vf4(color);
     #line 102
+    color = xll_saturate_vf4(color);
     return vec4( mix( 1.0, float( color), (dirCheck * radCheck)));
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -1002,8 +1011,8 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 1
-//   d3d9 - ALU: 101 to 101, TEX: 3 to 3
-//   d3d11 - ALU: 68 to 68, TEX: 0 to 0, FLOW: 1 to 1
+//   d3d9 - ALU: 100 to 100, TEX: 3 to 3
+//   d3d11 - ALU: 67 to 67, TEX: 0 to 0, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { }
 "!!GLSL"
@@ -1014,14 +1023,15 @@ Keywords { }
 Vector 0 [_ShadowOffset]
 SetTexture 0 [_ShadowTex] 2D
 "ps_3_0
-; 101 ALU, 3 TEX
+; 100 ALU, 3 TEX
 dcl_2d s0
 def c1, 1.00000000, 2.00000000, -1.00000000, 0.00000000
 def c2, -0.01872930, 0.07426100, -0.21211439, 1.57072902
 def c3, 1.57079601, 0.15917969, 0.50000000, -0.12121582
 def c4, 6.28125000, -3.14062500, -0.01348114, 0.05746460
 def c5, 0.19567871, -0.33300781, 1.57031250, 3.14062500
-def c6, 0.31835938, 0.50000000, 0.31830987, 1.25000000
+def c6, 0.31835938, 1.50000000, 0.31830987, 0.50000000
+def c7, 1.25000000, 0, 0, 0
 dcl_texcoord0 v0.xyzw
 dcl_texcoord1 v1.x
 dcl_texcoord2 v2.x
@@ -1077,31 +1087,30 @@ add_pp r1.w, -r1.z, c5
 cmp_pp r0.z, r0, r1, r1.w
 cmp_pp r0.z, r0.w, r0, -r0
 mul_pp r0.w, r2.y, r1.y
-add_pp r0.z, v3.x, r0
 mul_pp r0.x, r0, r0.w
 mul_pp r0.y, r1.x, r0
 mad r0.y, r2.z, r0.x, r0
-mad_pp r0.z, r0, c6.x, c6.y
-add r0.x, r0.z, c0.w
+add_pp r0.x, v3, r0.z
 abs r0.z, r0.y
 mad r1.x, r0.z, c2, c2.y
 add r0.w, -r0.z, c1.x
 mad r1.x, r0.z, r1, c2.z
-add_pp r0.x, r0, c1
 mad r1.x, r0.z, r1, c2.w
 rsq r0.w, r0.w
 rcp r0.z, r0.w
-mad r0.z, -r0, r1.x, c3.x
-cmp r0.y, r0, c1.w, c1
-mad r0.y, -r0, r0.z, r0.z
-mad r0.y, r0, c6.z, c6
+mad r0.w, -r0.z, r1.x, c3.x
+cmp r0.z, r0.y, c1.w, c1.y
+mov_pp r0.y, c0.w
+mad_pp r0.x, r0, c6, c6.y
+mad_pp r0.x, r0, c3.z, r0.y
+mad r0.z, -r0, r0.w, r0.w
+mad r0.y, r0.z, c6.z, c6.w
 dsy r1.xy, v0
 dsx r0.zw, v0.xyxy
-mul_pp r0.x, r0, c3.z
 texldd r0.xw, r0, s0, r0.zwzw, r1
-add_pp r0.y, -r0.w, c6.w
+add_pp r0.y, -r0.w, c7.x
 mul_pp r0.x, r0.y, r0
-mul_pp_sat r0.x, r0, c6.w
+mul_pp_sat r0.x, r0, c7
 add_pp r1.x, r0, c1.z
 add r0.x, v0.w, c1
 frc r0.y, r0.x
@@ -1121,12 +1130,12 @@ ConstBuffer "$Globals" 80 // 16 used size, 2 vars
 Vector 0 [_ShadowOffset] 4
 BindCB "$Globals" 0
 SetTexture 0 [_ShadowTex] 2D 0
-// 74 instructions, 6 temp regs, 0 temp arrays:
-// ALU 64 float, 0 int, 4 uint
+// 73 instructions, 6 temp regs, 0 temp arrays:
+// ALU 63 float, 0 int, 4 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedcabnemijnaefbnfnmifjcfagkcfojmpoabaaaaaakiakaaaaadaaaaaa
+eefieceddpjmagakjfmcaddgnndfkmlnfhfpnaihabaaaaaajeakaaaaadaaaaaa
 cmaaaaaammaaaaaaaaabaaaaejfdeheojiaaaaaaafaaaaaaaiaaaaaaiaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaimaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapalaaaaimaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -1134,7 +1143,7 @@ ababaaaaimaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaacacaaaaimaaaaaa
 adaaaaaaaaaaaaaaadaaaaaaacaaaaaaaeaeaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefckaajaaaaeaaaaaaagiacaaaafjaaaaaeegiocaaaaaaaaaaaabaaaaaa
+fdeieefcimajaaaaeaaaaaaagdacaaaafjaaaaaeegiocaaaaaaaaaaaabaaaaaa
 fkaaaaadaagabaaaaaaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaagcbaaaad
 lcbabaaaabaaaaaagcbaaaadbcbabaaaacaaaaaagcbaaaadccbabaaaacaaaaaa
 gcbaaaadecbabaaaacaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacagaaaaaa
@@ -1183,35 +1192,34 @@ akaabaiaebaaaaaaaaaaaaaadbaaaaaiecaabaaaaaaaaaaabkaabaaaabaaaaaa
 bkaabaiaebaaaaaaabaaaaaaabaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
 ckaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaaakaabaaaaaaaaaaadkaabaia
 ebaaaaaaaaaaaaaadkaabaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaackbabaaaacaaaaaadcaaaaakbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaidpjkcdodkiacaaaaaaaaaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaaaaamadpdiaaaaahbcaabaaaacaaaaaaakaabaaa
-aaaaaaaaabeaaaaaaaaaaadpdcaaaaakbcaabaaaaaaaaaaabkaabaiaibaaaaaa
-aaaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaiaibaaaaaaaaaaaaaaabeaaaaaiedefjlodcaaaaak
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaiaibaaaaaaaaaaaaaaabeaaaaa
-keanmjdpaaaaaaaiecaabaaaaaaaaaaabkaabaiambaaaaaaaaaaaaaaabeaaaaa
-aaaaiadpdbaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaabkaabaiaebaaaaaa
-aaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahicaabaaa
-aaaaaaaackaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahccaabaaa
-aaaaaaaabkaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaaaaaaaaaaaaaaaaibcaabaaa
-aaaaaaaaakaabaiaebaaaaaaaaaaaaaaabeaaaaanlapmjdpdcaaaaajccaabaaa
-acaaaaaaakaabaaaaaaaaaaaabeaaaaaidpjkcdoabeaaaaaaaaaaadpalaaaaaf
-dcaabaaaaaaaaaaaegbabaaaabaaaaaaamaaaaafmcaabaaaaaaaaaaaagbebaaa
-abaaaaaaejaaaaanpcaabaaaaaaaaaaaegaabaaaacaaaaaaeghobaaaaaaaaaaa
-aagabaaaaaaaaaaaegaabaaaaaaaaaaaogakbaaaaaaaaaaaaaaaaaaiccaabaaa
-abaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaakadpdiaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaakadpdicaaaahhcaabaaaaaaaaaaa
-egacbaaaaaaaaaaafgafbaaaabaaaaaadgcaaaaficaabaaaaaaaaaaadkaabaaa
-aaaaaaaaaaaaaaakpcaabaaaaaaaaaaaegaobaaaaaaaaaaaaceaaaaaaaaaialp
-aaaaialpaaaaialpaaaaialpaaaaaaahccaabaaaabaaaaaadkbabaaaabaaaaaa
-abeaaaaaaaaaiadpebcaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadiaaaaah
-ccaabaaaabaaaaaabkaabaaaabaaaaaaakbabaaaacaaaaaadiaaaaahbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaadcaaaaampccabaaaaaaaaaaa
-agaabaaaabaaaaaaegaobaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
-aaaaiadpdoaaaaab"
+aaaaaaaackbabaaaacaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+abeaaaaaidpjkcdoabeaaaaaaaaamadpdcaaaaakbcaabaaaacaaaaaaakaabaaa
+aaaaaaaaabeaaaaaaaaaaadpdkiacaaaaaaaaaaaaaaaaaaadcaaaaakbcaabaaa
+aaaaaaaabkaabaiaibaaaaaaaaaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
+dcaaaaakbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaiaibaaaaaaaaaaaaaa
+abeaaaaaiedefjlodcaaaaakbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaia
+ibaaaaaaaaaaaaaaabeaaaaakeanmjdpaaaaaaaiecaabaaaaaaaaaaabkaabaia
+mbaaaaaaaaaaaaaaabeaaaaaaaaaiadpdbaaaaaiccaabaaaaaaaaaaabkaabaaa
+aaaaaaaabkaabaiaebaaaaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
+aaaaaaaadiaaaaahicaabaaaaaaaaaaackaabaaaaaaaaaaaakaabaaaaaaaaaaa
+dcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaa
+nlapejeaabaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaadkaabaaaaaaaaaaa
+dcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaa
+aaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaabeaaaaa
+nlapmjdpdcaaaaajccaabaaaacaaaaaaakaabaaaaaaaaaaaabeaaaaaidpjkcdo
+abeaaaaaaaaaaadpalaaaaafdcaabaaaaaaaaaaaegbabaaaabaaaaaaamaaaaaf
+mcaabaaaaaaaaaaaagbebaaaabaaaaaaejaaaaanpcaabaaaaaaaaaaaegaabaaa
+acaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaaaaaaaaaaogakbaaa
+aaaaaaaaaaaaaaaiccaabaaaabaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaa
+aaaakadpdiaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaakadp
+dicaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaafgafbaaaabaaaaaadgcaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaaaaaaaakpcaabaaaaaaaaaaaegaobaaa
+aaaaaaaaaceaaaaaaaaaialpaaaaialpaaaaialpaaaaialpaaaaaaahccaabaaa
+abaaaaaadkbabaaaabaaaaaaabeaaaaaaaaaiadpebcaaaafdcaabaaaabaaaaaa
+egaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaakbabaaa
+acaaaaaadiaaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaa
+dcaaaaampccabaaaaaaaaaaaagaabaaaabaaaaaaegaobaaaaaaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaiadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -1231,7 +1239,7 @@ Keywords { }
 
 }
 
-#LINE 74
+#LINE 76
 
       }
    }  
