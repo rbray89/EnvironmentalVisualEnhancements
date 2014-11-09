@@ -50,7 +50,7 @@
             o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
             float3 normView = normalize(float3(_Projector[2][0],_Projector[2][1], _Projector[2][2]));
     		o.dotcoeff = saturate(dot(-v.normal, normView));
-    		o.latitude = -asin(_MainOffset.y);
+    		o.latitude = asin(_MainOffset.y);
 			o.longitude = atan2(_MainOffset.x, _MainOffset.z);
 			float3 vertexPos = mul(_Object2World, v.vertex).xyz;
 	   	   	o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
@@ -76,14 +76,16 @@
 			
 			uv.x = INV_PI*(IN.longitude+atan2(x*sinC, (p*cosLat*cosC)-(y*sinLat*sinC)))+.5;
 			uv.y = INV_PI*asin((cosC*sinLat)+(y*sinC*cosLat/p))+.5;
+			half2 detailuv = uv;
+			detailuv.x += _MainOffset.w;
 			uv.x += 1;
 			uv.x *= .5;
 			uv.x += _MainOffset.w;
 			fixed4 color = tex2D(_MainTex, uv, dx, dy);
 		    half3 objNrm;
-		    objNrm.x = sin(-HALF_PI*x);
+		    objNrm.x = sin(-PI*detailuv.x);
 		    objNrm.y = y;
-		    objNrm.z = sin(-HALF_PI*(x-.5));
+		    objNrm.z = sin(-PI*(detailuv.x-.5));
 			half4 detailX = tex2D (_DetailTex, (objNrm.zy+ _DetailOffset.xy) *_DetailScale);
 			half4 detailY = tex2D (_DetailTex, (objNrm.zx + _DetailOffset.xy) *_DetailScale);
 			half4 detailZ = tex2D (_DetailTex, (objNrm.xy + _DetailOffset.xy) *_DetailScale);

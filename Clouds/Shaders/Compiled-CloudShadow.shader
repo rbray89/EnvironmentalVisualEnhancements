@@ -13,8 +13,8 @@
         ZWrite Off
         Program "vp" {
 // Vertex combos: 1
-//   d3d9 - ALU: 67 to 67
-//   d3d11 - ALU: 52 to 52, TEX: 0 to 0, FLOW: 1 to 1
+//   d3d9 - ALU: 66 to 66
+//   d3d11 - ALU: 51 to 51, TEX: 0 to 0, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { }
 "!!GLSL
@@ -42,7 +42,7 @@ void main ()
   tmpvar_5.y = _Projector[1].z;
   tmpvar_5.z = _Projector[2].z;
   tmpvar_3 = clamp (dot (-(gl_Normal), normalize(tmpvar_5)), 0.0, 1.0);
-  tmpvar_4 = -((sign(_MainOffset.y) * (1.5708 - (sqrt((1.0 - abs(_MainOffset.y))) * (1.5708 + (abs(_MainOffset.y) * (-0.214602 + (abs(_MainOffset.y) * (0.0865667 + (abs(_MainOffset.y) * -0.0310296))))))))));
+  tmpvar_4 = (sign(_MainOffset.y) * (1.5708 - (sqrt((1.0 - abs(_MainOffset.y))) * (1.5708 + (abs(_MainOffset.y) * (-0.214602 + (abs(_MainOffset.y) * (0.0865667 + (abs(_MainOffset.y) * -0.0310296)))))))));
   float r_6;
   if ((abs(_MainOffset.z) > (1e-08 * abs(_MainOffset.x)))) {
     float y_over_x_7;
@@ -187,7 +187,7 @@ Matrix 4 [_Object2World]
 Vector 13 [_MainOffset]
 Matrix 8 [_Projector]
 "vs_3_0
-; 67 ALU
+; 66 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -200,65 +200,64 @@ def c16, -0.01348047, 0.05747731, -0.12123910, 0.19563590
 def c17, -0.33299461, 0.99999559, 3.14159298, 0
 dcl_position0 v0
 dcl_normal0 v1
-abs r0.z, c13
-abs r0.y, c13.x
-max r0.x, r0.z, r0.y
-rcp r0.w, r0.x
-min r0.x, r0.z, r0.y
-mul r0.x, r0, r0.w
-mul r0.w, r0.x, r0.x
+abs r0.y, c13.z
+abs r0.x, c13
+max r0.z, r0.y, r0.x
+rcp r0.w, r0.z
+min r0.z, r0.y, r0.x
+mul r0.z, r0, r0.w
+mul r0.w, r0.z, r0.z
 mad r1.x, r0.w, c16, c16.y
 mad r1.x, r1, r0.w, c16.z
-slt r0.y, r0.z, r0
 mad r1.x, r1, r0.w, c16.w
-mad r0.z, r1.x, r0.w, c17.x
-mad r0.w, r0.z, r0, c17.y
-mul r0.x, r0.w, r0
-max r0.y, -r0, r0
-slt r0.z, c14.x, r0.y
-add r0.y, -r0.z, c14
-add r0.w, -r0.x, c15.z
-mul r0.x, r0, r0.y
-mad r0.x, r0.z, r0.w, r0
-mov r0.y, c14.x
-slt r0.z, c13, r0.y
-max r0.z, -r0, r0
-slt r0.z, c14.x, r0
-add r1.x, -r0.z, c14.y
-mov r0.w, c14.x
-slt r0.w, c13.x, r0
-add r0.y, -r0.x, c17.z
-mul r1.x, r0, r1
-mad r0.z, r0, r0.y, r1.x
-max r0.w, -r0, r0
-slt r0.x, c14, r0.w
-add r0.w, -r0.x, c14.y
-mul r0.w, r0.z, r0
-mad o4.x, r0, -r0.z, r0.w
-dp3 r0.y, c10, c10
-rsq r0.y, r0.y
-mul r1.xyz, r0.y, c10
-dp3_sat o2.x, -v1, r1
-abs r0.x, c13.y
-mad r0.y, r0.x, c14.z, c14.w
-mad r0.z, r0.x, r0.y, c15.x
-add r0.y, -r0.x, c14
-mad r0.z, r0.x, r0, c15.y
-rsq r0.y, r0.y
+slt r0.x, r0.y, r0
+mad r1.x, r1, r0.w, c17
+mad r0.y, r1.x, r0.w, c17
+mul r0.z, r0.y, r0
+max r0.x, -r0, r0
+slt r0.y, c14.x, r0.x
 mov r0.x, c14
-rcp r0.y, r0.y
-mad r0.y, -r0, r0.z, c15.z
-slt r0.x, c13.y, r0
-mul r0.x, r0, r0.y
-mad r0.x, -r0, c15.w, r0.y
+add r1.x, -r0.y, c14.y
+add r0.w, -r0.z, c15.z
+mul r0.z, r0, r1.x
+mad r0.w, r0.y, r0, r0.z
+slt r0.x, c13.z, r0
+max r0.y, -r0.x, r0.x
+slt r0.z, c14.x, r0.y
+mov r0.y, c14.x
+slt r0.y, c13.x, r0
+max r0.y, -r0, r0
+add r1.x, -r0.z, c14.y
+add r0.x, -r0.w, c17.z
+mul r0.w, r0, r1.x
+mad r0.x, r0.z, r0, r0.w
+slt r0.y, c14.x, r0
+add r0.w, -r0.y, c14.y
+mul r0.w, r0.x, r0
+mad o4.x, r0.y, -r0, r0.w
+dp3 r0.z, c10, c10
+rsq r0.z, r0.z
+mul r1.xyz, r0.z, c10
+dp3_sat o2.x, -v1, r1
+abs r0.y, c13
+mad r0.z, r0.y, c14, c14.w
+mad r0.w, r0.y, r0.z, c15.x
+add r0.z, -r0.y, c14.y
+mad r0.w, r0.y, r0, c15.y
+rsq r0.z, r0.z
+mov r0.y, c14.x
+rcp r0.z, r0.z
+mad r0.z, -r0, r0.w, c15
+slt r0.y, c13, r0
+mul r0.y, r0, r0.z
 dp4 r1.z, v0, c6
 dp4 r1.x, v0, c4
 dp4 r1.y, v0, c5
 add r1.xyz, -r1, c12
-dp3 r0.z, r1, r1
-rsq r0.y, r0.z
-mov o3.x, -r0
-rcp o5.x, r0.y
+dp3 r0.x, r1, r1
+rsq r0.x, r0.x
+mad o3.x, -r0.y, c15.w, r0.z
+rcp o5.x, r0.x
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -285,12 +284,12 @@ Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 BindCB "UnityPerDraw" 2
-// 57 instructions, 2 temp regs, 0 temp arrays:
-// ALU 48 float, 0 int, 4 uint
+// 56 instructions, 2 temp regs, 0 temp arrays:
+// ALU 47 float, 0 int, 4 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedbhhjljiakpkcfkagnebnjhahlfpnbnnmabaaaaaaeiajaaaaadaaaaaa
+eefiecedhomibkjeggohkeopcmlafbefcpgpijlcabaaaaaadaajaaaaadaaaaaa
 cmaaaaaahmaaaaaadeabaaaaejfdeheoeiaaaaaaacaaaaaaaiaaaaaadiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaebaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaafaepfdejfeejepeoaaeoepfcenebemaaepfdeheo
@@ -299,8 +298,8 @@ apaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapaaaaaakeaaaaaa
 abaaaaaaaaaaaaaaadaaaaaaacaaaaaaabaoaaaakeaaaaaaacaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaacanaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaacaaaaaa
 aealaaaakeaaaaaaaeaaaaaaaaaaaaaaadaaaaaaacaaaaaaaiahaaaafdfgfpfa
-epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcamaiaaaaeaaaabaa
-adacaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaafjaaaaaeegiocaaaabaaaaaa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcpeahaaaaeaaaabaa
+pnabaaaafjaaaaaeegiocaaaaaaaaaaaahaaaaaafjaaaaaeegiocaaaabaaaaaa
 afaaaaaafjaaaaaeegiocaaaacaaaaaabaaaaaaafpaaaaadpcbabaaaaaaaaaaa
 fpaaaaadhcbabaaaabaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaad
 pccabaaaabaaaaaagfaaaaadbccabaaaacaaaaaagfaaaaadcccabaaaacaaaaaa
@@ -362,9 +361,8 @@ aaaaaaaackaabaaaaaaaaaaadiaaaaahicaabaaaaaaaaaaackaabaaaaaaaaaaa
 akaabaaaaaaaaaaadcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
 aaaaaamaabeaaaaanlapejeaabaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaa
 dkaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaackaabaaa
-aaaaaaaabkaabaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaiaebaaaaaa
-aaaaaaaaabeaaaaanlapmjdpdgaaaaagcccabaaaacaaaaaaakaabaiaebaaaaaa
-aaaaaaaadoaaaaab"
+aaaaaaaabkaabaaaaaaaaaaaaaaaaaaicccabaaaacaaaaaaakaabaiaebaaaaaa
+aaaaaaaaabeaaaaanlapmjdpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -401,7 +399,7 @@ void main ()
   tmpvar_6.z = _Projector[2].z;
   tmpvar_3 = clamp (dot (-(normalize(_glesNormal)), normalize(tmpvar_6)), 0.0, 1.0);
   highp float tmpvar_7;
-  tmpvar_7 = -((sign(_MainOffset.y) * (1.5708 - (sqrt((1.0 - abs(_MainOffset.y))) * (1.5708 + (abs(_MainOffset.y) * (-0.214602 + (abs(_MainOffset.y) * (0.0865667 + (abs(_MainOffset.y) * -0.0310296))))))))));
+  tmpvar_7 = (sign(_MainOffset.y) * (1.5708 - (sqrt((1.0 - abs(_MainOffset.y))) * (1.5708 + (abs(_MainOffset.y) * (-0.214602 + (abs(_MainOffset.y) * (0.0865667 + (abs(_MainOffset.y) * -0.0310296)))))))));
   tmpvar_4 = tmpvar_7;
   highp float r_8;
   if ((abs(_MainOffset.z) > (1e-08 * abs(_MainOffset.x)))) {
@@ -620,7 +618,7 @@ void main ()
   tmpvar_6.z = _Projector[2].z;
   tmpvar_3 = clamp (dot (-(normalize(_glesNormal)), normalize(tmpvar_6)), 0.0, 1.0);
   highp float tmpvar_7;
-  tmpvar_7 = -((sign(_MainOffset.y) * (1.5708 - (sqrt((1.0 - abs(_MainOffset.y))) * (1.5708 + (abs(_MainOffset.y) * (-0.214602 + (abs(_MainOffset.y) * (0.0865667 + (abs(_MainOffset.y) * -0.0310296))))))))));
+  tmpvar_7 = (sign(_MainOffset.y) * (1.5708 - (sqrt((1.0 - abs(_MainOffset.y))) * (1.5708 + (abs(_MainOffset.y) * (-0.214602 + (abs(_MainOffset.y) * (0.0865667 + (abs(_MainOffset.y) * -0.0310296)))))))));
   tmpvar_4 = tmpvar_7;
   highp float r_8;
   if ((abs(_MainOffset.z) > (1e-08 * abs(_MainOffset.x)))) {
@@ -935,7 +933,7 @@ v2f vert( in appdata_t v ) {
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 normView = normalize(vec3( _Projector[0][2], _Projector[1][2], _Projector[2][2]));
     o.dotcoeff = xll_saturate_f(dot( (-v.normal), normView));
-    o.latitude = (-asin(_MainOffset.y));
+    o.latitude = asin(_MainOffset.y);
     #line 82
     o.longitude = atan( _MainOffset.x, _MainOffset.z);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
