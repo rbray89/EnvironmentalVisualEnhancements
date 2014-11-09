@@ -1,7 +1,11 @@
 ﻿Shader "Projector/CloudShadow" {
    Properties {
-      _ShadowTex ("Projected Image", 2D) = "white" {}
-      _ShadowOffset ("Shadow Offset", Vector) = (0,0,0,0)
+      _MainTex ("Main (RGB)", 2D) = "white" {}
+      _MainOffset ("Main Offset", Vector) = (0,0,0,0)
+      _DetailTex ("Detail (RGB)", 2D) = "white" {}
+      _DetailScale ("Detail Scale", Range(0,1000)) = 100
+	  _DetailOffset ("Detail Offset", Vector) = (0,0,0,0)
+	  _DetailDist ("Detail Distance", Range(0,1)) = 0.00875
    }
    SubShader {
       Pass {      
@@ -14,10 +18,15 @@
         #pragma fragment frag 
  		#define PI 3.1415926535897932384626
  		#define INV_PI (1.0/PI)
+ 		#define HALF_PI (0.5*PI)
  		#define INV_2PI (0.5/PI)
  		
-        uniform sampler2D _ShadowTex; 
- 		float4 _ShadowOffset;
+        uniform sampler2D _MainTex; 
+ 		float4 _MainOffset;
+		uniform sampler2D _DetailTex;
+	    fixed4 _DetailOffset;
+   	    float _DetailScale;
+		float _DetailDist;
         uniform float4x4 _Projector; 
  
         struct appdata_t {
@@ -31,6 +40,7 @@
            	float dotcoeff : TEXCOORD1;
            	half latitude : TEXCOORD2;
 			half longitude : TEXCOORD3;
+			float viewDist : TEXCOORD4;
         };
  
         v2f vert (appdata_t v) 
@@ -40,8 +50,10 @@
             o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
             float3 normView = normalize(float3(_Projector[2][0],_Projector[2][1], _Projector[2][2]));
     		o.dotcoeff = saturate(dot(-v.normal, normView));
-    		o.latitude = -asin(_ShadowOffset.y);
-			o.longitude = atan2(_ShadowOffset.x, _ShadowOffset.z);
+    		o.latitude = -asin(_MainOffset.y);
+			o.longitude = atan2(_MainOffset.x, _MainOffset.z);
+			float3 vertexPos = mul(_Object2World, v.vertex).xyz;
+	   	   	o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
             return o;
         }
          
@@ -66,9 +78,23 @@
 			uv.y = INV_PI*asin((cosC*sinLat)+(y*sinC*cosLat/p))+.5;
 			uv.x += 1;
 			uv.x *= .5;
-			uv.x += _ShadowOffset.w;
-			fixed4 color = tex2D(_ShadowTex, uv, dx, dy);
-			color.rgb *= 1.25*(1.25-color.a);
+			uv.x += _MainOffset.w;
+			fixed4 color = tex2D(_MainTex, uv, dx, dy);
+		    half3 objNrm;
+		    objNrm.x = sin(-HALF_PI*x);
+		    objNrm.y = y;
+		    objNrm.z = sin(-HALF_PI*(x-.5));
+			half4 detailX = tex2D (_DetailTex, (objNrm.zy+ _DetailOffset.xy) *_DetailScale);
+			half4 detailY = tex2D (_DetailTex, (objNrm.zx + _DetailOffset.xy) *_DetailScale);
+			half4 detailZ = tex2D (_DetailTex, (objNrm.xy + _DetailOffset.xy) *_DetailScale);
+			objNrm = abs(objNrm);
+			half4 detail = lerp(detailZ, detailX, objNrm.x);
+			detail = lerp(detail, detailY, objNrm.y);
+			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
+			color *= lerp(detail.rgba, 1, detailLevel);
+			
+			color.rgb = 1.2*(1.2-color.a);
+			color.a = 1;
 			color = saturate(color);
 			return lerp(1, color, dirCheck*radCheck);
 		}

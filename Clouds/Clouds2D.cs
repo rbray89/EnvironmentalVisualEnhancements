@@ -146,6 +146,7 @@ namespace Atmosphere
                 ShadowProjector.orthographic = true;
                 ShadowProjector.transform.parent = celestialBody.transform;
                 ShadowProjector.material = new Material(CloudShadowShader);
+                macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material);
             }
             sunTransform = Sun.Instance.sun.transform;
         }
@@ -169,7 +170,6 @@ namespace Atmosphere
 
                 ShadowProjector.transform.parent = parent;
                 //ShadowProjector.transform.localScale = scale * Vector3.one;
-                ShadowProjector.material.SetTexture("_ShadowTex", CloudMaterial.mainTexture);
                 ShadowProjectorGO.layer = layer;
                 if (layer == EVEManagerClass.MACRO_LAYER)
                 {
@@ -178,8 +178,8 @@ namespace Atmosphere
                 }
                 else
                 {
-                    ShadowProjectorGO.layer = EVEManagerClass.SCALED_LAYER2;
-                    ShadowProjector.ignoreLayers = ~((1 << 29) | (1 << 23) | (1 << 18) | (1 << 10));// | (1 << 9));
+                    ShadowProjectorGO.layer = EVEManagerClass.SCALED_LAYER;
+                    ShadowProjector.ignoreLayers = ~((1 << 29) | (1 << 23) | (1 << 18) | (1 << 10) | (1 << 9));
                     sunTransform = EVEManagerClass.GetScaledTransform(Sun.Instance.sun.bodyName);
                     AtmosphereManager.Log("Camera mask: "+ScaledCamera.Instance.camera.cullingMask);
                 }
@@ -247,7 +247,7 @@ namespace Atmosphere
                 Vector4 texVect = ShadowProjector.transform.localPosition.normalized;
 
                 texVect.w = ((float)x + offset.x + .25f);
-                ShadowProjector.material.SetVector(EVEManagerClass.SHADOWOFFSET_PROPERTY, texVect);
+                ShadowProjector.material.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, texVect);
             }
         }
 
