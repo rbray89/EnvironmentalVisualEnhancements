@@ -17,6 +17,10 @@
 		_CityLightOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
 		_SunDir ("Sun Direction", Vector) = (1,1,1,1)
 		_PlanetOpacity ("PlanetOpacity", Float) = 1
+		_OceanRadius ("Ocean Radius", Float) = 63000
+		_OceanColor ("Ocean Color Tint", Color) = (1,1,1,1)
+		_OceanDepthFactor ("Ocean Depth Factor", Float) = .002
+		_PlanetOrigin ("Planet Center", Vector) = (0,0,0,1)
 	}
 
 
@@ -66,6 +70,10 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		float _Albedo;
 		half3 _SunDir;
 		float _PlanetOpacity;
+		float _OceanRadius;
+		float _OceanDepthFactor;
+		fixed4 _OceanColor;
+		float3 _PlanetOrigin;
 		uniform float4x4 _Rotation;
 		uniform float4x4 _InvRotation;
 		
@@ -94,6 +102,8 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			float3 worldNormal : TEXCOORD5;
 			float3 sphereCoords : TEXCOORD6;
 			float3 terminator : TEXCOORD7;
+			float3 L : TEXCOORD8;
+			float3 camViewDir : TEXCOORD9;
 		};
 
 		v2f vert (appdata_t v)
@@ -103,6 +113,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
+	   	   o.camViewDir = normalize(vertexPos - _WorldSpaceCameraPos);
 	   	   
 	   	   o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
 	   	   o.sphereCoords = -normalize(half4(v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz;
@@ -112,6 +123,8 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		   half NdotL = dot (o.sphereCoords, normalize(_SunDir));
 		   half termlerp = saturate(10*-NdotL);
     	   o.terminator = lerp(1,saturate(floor(1.01+NdotL)), termlerp);
+			
+		   o.L = _PlanetOrigin - _WorldSpaceCameraPos;
 			
     	   TRANSFER_VERTEX_TO_FRAGMENT(o);
     	   
@@ -182,8 +195,22 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			detail = .25*(lerp(detail, detailY, sphereNrm.y)-.5);
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
 			color = IN.color + lerp(detail.rgba, 0, detailLevel);
+			
+			float sphereDist= IN.viewDist;
+			float tc = dot(IN.L, IN.camViewDir);
+		   	   float d = sqrt(dot(IN.L,IN.L)-dot(tc,tc));
+		   	   if (d <= _OceanRadius && tc >= 0.0)
+		   	   {
+			   	   float tlc = sqrt(pow(_OceanRadius,2)-pow(d,2));
+			   	   sphereDist = tc - tlc;
+		   	   }
+			float oceandepth = IN.viewDist - sphereDist;
+			float depthFactor = saturate(oceandepth * _OceanDepthFactor);
+			color = lerp(color, _OceanColor, depthFactor );
+			
 			half handoff = saturate(pow(_PlanetOpacity,2));
 			color = lerp(color, main, handoff);
+			
 			#ifdef CITYOVERLAY_ON
 			cityoverlay.a *= saturate(floor(IN.color.a+.99));
 			detail = lerp(citydarkoverlaydetailZ, citydarkoverlaydetailX, sphereNrm.x);
