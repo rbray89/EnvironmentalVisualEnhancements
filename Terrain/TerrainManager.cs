@@ -96,6 +96,8 @@ namespace Terrain
             {
                 Vector3 sunDir = cb.transform.InverseTransformDirection(Sun.Instance.sunDirection);
                 cb.pqsController.surfaceMaterial.SetVector(EVEManagerClass.SUNDIR_PROPERTY, sunDir);
+                Vector3 planetOrigin = cb.transform.position;
+                cb.pqsController.surfaceMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
             }
         }
 

@@ -29,7 +29,10 @@ namespace Terrain
         float _MinLight = .5f;
         [Persistent]
         float _Albedo = .02f;
-
+        [Persistent]
+        Color _OceanColor = Color.blue;
+        [Persistent]
+        float _OceanDepthFactor = .002f;
 
         public bool hasDetail { get { return _DetailTex != ""; } }
 
@@ -171,7 +174,7 @@ namespace Terrain
                 {
                     pqs.surfaceMaterial.SetTexture("_DetailTex", lowTexture);
                 }
-                if (oceanMaterial != null && pqs.ChildSpheres.Length > 0)
+                if ( oceanMaterial != null && pqs.ChildSpheres.Length > 0)
                 {
                     PQS ocean = pqs.ChildSpheres[0];
                     
@@ -195,6 +198,7 @@ namespace Terrain
                     PQSLandControl.LandClass[] landClasses = landControl.landClasses;
                     PQSLandControl.LandClass lcBeach = landControl.landClasses.First(lc => lc.landClassName == "BaseBeach");
                     PQSLandControl.LandClass lcOcean = landControl.landClasses.First(lc => lc.landClassName == "Ocean Bottom");
+
                     lcOcean.color = lcBeach.color;
                 }
                 PQSMod_CelestialBodyTransform cbt = (PQSMod_CelestialBodyTransform)pqs.transform.GetComponentInChildren(typeof(PQSMod_CelestialBodyTransform));
@@ -206,7 +210,7 @@ namespace Terrain
                         PQS ocean = pqs.ChildSpheres[0];
                         ocean.surfaceMaterial.SetFloat("_MainTexHandoverDist", (float)(1f / cbt.deactivateAltitude));
                     }
-
+                    pqs.surfaceMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius);
                 }
                 
 
