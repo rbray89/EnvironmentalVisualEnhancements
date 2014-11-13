@@ -25,8 +25,6 @@ namespace Atmosphere
         [Persistent]
         float _DetailScale = 100f;
         [Persistent]
-        Vector3 _DetailOffset = new Vector3(0, 0, 0);
-        [Persistent]
         float _DetailDist = 0.000002f;
         [Persistent]
         float _MinLight = .5f;

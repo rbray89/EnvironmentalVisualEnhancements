@@ -3,8 +3,8 @@
       _MainTex ("Main (RGB)", 2D) = "white" {}
       _MainOffset ("Main Offset", Vector) = (0,0,0,0)
       _DetailTex ("Detail (RGB)", 2D) = "white" {}
-      _DetailScale ("Detail Scale", Range(0,1000)) = 100
-	  _DetailOffset ("Detail Offset", Vector) = (0,0,0,0)
+      _DetailScale ("Detail Scale", float) = 100
+	  _DetailOffset ("Detail Offset", Vector) = (.5,.5,0,0)
 	  _DetailDist ("Detail Distance", Range(0,1)) = 0.00875
    }
    SubShader {
@@ -40,7 +40,7 @@
            	float dotcoeff : TEXCOORD1;
            	half latitude : TEXCOORD2;
 			half longitude : TEXCOORD3;
-			float viewDist : TEXCOORD4;
+			float3 worldPos : TEXCOORD4;
         };
  
         v2f vert (appdata_t v) 
@@ -53,7 +53,7 @@
     		o.latitude = asin(_MainOffset.y);
 			o.longitude = atan2(_MainOffset.x, _MainOffset.z);
 			float3 vertexPos = mul(_Object2World, v.vertex).xyz;
-	   	   	o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
+	   	   	o.worldPos = vertexPos;
             return o;
         }
          
@@ -78,27 +78,33 @@
 			uv.y = INV_PI*asin((cosC*sinLat)+(y*sinC*cosLat/p))+.5;
 			half2 detailuv = uv;
 			detailuv.x += _MainOffset.w;
+			detailuv.y *= 2;
+			detailuv.y -= 1;
 			uv.x += 1;
 			uv.x *= .5;
 			uv.x += _MainOffset.w;
 			fixed4 color = tex2D(_MainTex, uv, dx, dy);
 		    half3 objNrm;
-		    objNrm.x = sin(-PI*detailuv.x);
-		    objNrm.y = y;
-		    objNrm.z = sin(-PI*(detailuv.x-.5));
-			half4 detailX = tex2D (_DetailTex, (objNrm.zy+ _DetailOffset.xy) *_DetailScale);
-			half4 detailY = tex2D (_DetailTex, (objNrm.zx + _DetailOffset.xy) *_DetailScale);
-			half4 detailZ = tex2D (_DetailTex, (objNrm.xy + _DetailOffset.xy) *_DetailScale);
+		    objNrm.y = sin(HALF_PI*detailuv.y);
+		    float ymag = (1-(objNrm.y*objNrm.y));
+		    objNrm.z = cos(HALF_PI*detailuv.y)*cos(PI*detailuv.x);
+		    objNrm.x = cos(HALF_PI*detailuv.y)*sin(PI*detailuv.x);
+		    
+			half4 detailX = tex2D (_DetailTex, ((.5*objNrm.zy)/(abs(objNrm.x)) + _DetailOffset.xy) *_DetailScale);
+			half4 detailY = tex2D (_DetailTex, ((.5*objNrm.zy)/(abs(objNrm.y)) + _DetailOffset.xy) *_DetailScale);
+			half4 detailZ = tex2D (_DetailTex, ((.5*objNrm.xy)/(abs(objNrm.z)) + _DetailOffset.xy) *_DetailScale);
 			objNrm = abs(objNrm);
-			half4 detail = lerp(detailZ, detailX, objNrm.x);
-			detail = lerp(detail, detailY, objNrm.y);
-			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
-			color *= lerp(detail.rgba, 1, detailLevel);
+			half zxlerp = saturate(floor(1+objNrm.x-objNrm.z));
+			half4 detail = lerp(detailZ, detailX, zxlerp);
+			half nylerp = saturate(floor(1+objNrm.y-(lerp(objNrm.z, objNrm.x, zxlerp))));		
+			detail = lerp(detail, detailY, nylerp);
 			
-			color.rgb = 1.2*(1.2-color.a);
-			color.a = 1;
+			half detailLevel = saturate(2*_DetailDist*distance(IN.worldPos,_WorldSpaceCameraPos));
+			color *= lerp(detail.rgba, 1, detailLevel);
+			color.a = 1.2*(1.2-color.a);
 			color = saturate(color);
-			return lerp(1, color, dirCheck*radCheck);
+
+			return lerp(1, color.a, dirCheck*radCheck);
 		}
  
          ENDCG

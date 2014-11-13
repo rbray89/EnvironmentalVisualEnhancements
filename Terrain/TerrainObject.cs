@@ -191,6 +191,7 @@ namespace Terrain
                     }
                     ocean.surfaceMaterial.mainTexture = mainTexture;
                     oceanMaterial.ApplyMaterialProperties(ocean.surfaceMaterial);
+                    ocean.radius = 1;
                 }
                 PQSLandControl landControl = (PQSLandControl)pqs.transform.GetComponentInChildren(typeof(PQSLandControl));
                 if (landControl != null)

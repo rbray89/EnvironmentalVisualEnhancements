@@ -7,7 +7,7 @@ Shader "Sphere/Cloud" {
 		_FalloffPow ("Falloff Power", Range(0,3)) = 2
 		_FalloffScale ("Falloff Scale", Range(0,20)) = 3
 		_DetailScale ("Detail Scale", Range(0,1000)) = 100
-		_DetailOffset ("Detail Offset", Vector) = (0,0,0,0)
+		_DetailOffset ("Detail Offset", Vector) = (.5,.5,0,0)
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
 		_MinLight ("Minimum Light", Range(0,1)) = .5
 		_FadeDist ("Fade Distance", Range(0,100)) = 10
@@ -133,12 +133,16 @@ SubShader {
 		 	uv+=_MainOffset.xy;
 		 	float4 uvdd = Derivatives(uv.x-.5, uv.y, objNrm);
 		    half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw)*_Color;
-			half4 detailX = tex2D (_DetailTex, (objNrm.zy+ _DetailOffset.xy) *_DetailScale);
-			half4 detailY = tex2D (_DetailTex, (objNrm.zx + _DetailOffset.xy) *_DetailScale);
-			half4 detailZ = tex2D (_DetailTex, (objNrm.xy + _DetailOffset.xy) *_DetailScale);
+			
+			half4 detailX = tex2D (_DetailTex, ((.5*objNrm.zy)/(abs(objNrm.x)) + _DetailOffset.xy) *_DetailScale);
+			half4 detailY = tex2D (_DetailTex, ((.5*objNrm.zy)/(abs(objNrm.y)) + _DetailOffset.xy) *_DetailScale);
+			half4 detailZ = tex2D (_DetailTex, ((.5*objNrm.xy)/(abs(objNrm.z)) + _DetailOffset.xy) *_DetailScale);
 			objNrm = abs(objNrm);
-			half4 detail = lerp(detailZ, detailX, objNrm.x);
-			detail = lerp(detail, detailY, objNrm.y);
+			half zxlerp = saturate(floor(1+objNrm.x-objNrm.z));
+			half4 detail = lerp(detailZ, detailX, zxlerp);
+			half nylerp = saturate(floor(1+objNrm.y-(lerp(objNrm.z, objNrm.x, zxlerp))));		
+			detail = lerp(detail, detailY, nylerp);
+			
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
 			color = main.rgba * lerp(detail.rgba, 1, detailLevel);
 
