@@ -89,15 +89,13 @@
 		    float ymag = (1-(objNrm.y*objNrm.y));
 		    objNrm.z = cos(HALF_PI*detailuv.y)*cos(PI*detailuv.x);
 		    objNrm.x = cos(HALF_PI*detailuv.y)*sin(PI*detailuv.x);
-		    
-			half4 detailX = tex2D (_DetailTex, ((.5*objNrm.zy)/(abs(objNrm.x)) + _DetailOffset.xy) *_DetailScale);
-			half4 detailY = tex2D (_DetailTex, ((.5*objNrm.zy)/(abs(objNrm.y)) + _DetailOffset.xy) *_DetailScale);
-			half4 detailZ = tex2D (_DetailTex, ((.5*objNrm.xy)/(abs(objNrm.z)) + _DetailOffset.xy) *_DetailScale);
-			objNrm = abs(objNrm);
+		   
+		    objNrm = abs(objNrm);
 			half zxlerp = saturate(floor(1+objNrm.x-objNrm.z));
-			half4 detail = lerp(detailZ, detailX, zxlerp);
+			half3 detailCoords = lerp(objNrm.zxy, objNrm.xyz, zxlerp);
 			half nylerp = saturate(floor(1+objNrm.y-(lerp(objNrm.z, objNrm.x, zxlerp))));		
-			detail = lerp(detail, detailY, nylerp);
+			detailCoords = lerp(detailCoords, objNrm.yxz, nylerp);
+			half4 detail = tex2D (_DetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_DetailScale);	
 			
 			half detailLevel = saturate(2*_DetailDist*distance(IN.worldPos,_WorldSpaceCameraPos));
 			color *= lerp(detail.rgba, 1, detailLevel);

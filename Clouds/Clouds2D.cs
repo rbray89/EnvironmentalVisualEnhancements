@@ -177,7 +177,7 @@ namespace Atmosphere
                 else
                 {
                     ShadowProjectorGO.layer = EVEManagerClass.SCALED_LAYER;
-                    ShadowProjector.ignoreLayers = ~((1 << 29) | (1 << 23) | (1 << 18) | (1 << 10) | (1 << 9));
+                    ShadowProjector.ignoreLayers = ~((1 << 29) | (1 << 23) | (1 << 18) | (1 << 10));// | (1 << 9));
                     sunTransform = EVEManagerClass.GetScaledTransform(Sun.Instance.sun.bodyName);
                     AtmosphereManager.Log("Camera mask: "+ScaledCamera.Instance.camera.cullingMask);
                 }

@@ -8,6 +8,7 @@
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
 		_DetailVertTex ("Detail for Vertical Surfaces (RGB)", 2D) = "white" {}
 		_DetailScale ("Detail Scale", Range(0,1000)) = 200
+		_DetailOffset ("Detail Offset", Vector) = (.5,.5,0,0)
 		_DetailVertScale ("Detail Scale", Range(0,1000)) = 200
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
 		_MinLight ("Minimum Light", Range(0,1)) = .5
@@ -57,6 +58,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		sampler2D _DetailTex;
 		sampler2D _DetailVertTex;
 		float _DetailScale;
+		fixed4 _DetailOffset;
 		float _DetailVertScale;
 		float _DetailDist;
 		float _MinLight;
@@ -134,38 +136,26 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		 	float4 uvdd = Derivatives(sphereNrm);
 		    half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw);
 		    half3 norm = UnpackNormal(tex2D(_BumpMap, uv, uvdd.xy, uvdd.zw));
-		    half2 detailnrmzy = sphereNrm.zy*_DetailScale;
-		    half2 detailnrmzx = sphereNrm.zx*_DetailScale;
-		    half2 detailnrmxy = sphereNrm.xy*_DetailScale;
-		    half2 detailvertnrmzy = sphereNrm.zy*_DetailVertScale;
-		    half2 detailvertnrmzx = sphereNrm.zx*_DetailVertScale;
-		    half2 detailvertnrmxy = sphereNrm.xy*_DetailVertScale;
-			half4 detailX = tex2D (_DetailTex, detailnrmzy);
-			half4 detailY = tex2D (_DetailTex, detailnrmzx);
-			half4 detailZ = tex2D (_DetailTex, detailnrmxy);
+		    
+		    sphereNrm = abs(sphereNrm);
+			half zxlerp = saturate(floor(1+sphereNrm.x-sphereNrm.z));
+			half3 detailCoords = lerp(sphereNrm.zxy, sphereNrm.xyz, zxlerp);
+			half nylerp = saturate(floor(1+sphereNrm.y-(lerp(sphereNrm.z, sphereNrm.x, zxlerp))));		
+			detailCoords = lerp(detailCoords, sphereNrm.yxz, nylerp);
+			half4 detail = tex2D (_DetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_DetailScale);	
 			
 			#ifdef CITYOVERLAY_ON
 			half4 cityoverlay = tex2D(_CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-			half4 citydarkoverlaydetailX = tex2D (_CityDarkOverlayDetailTex, sphereNrm.zy*_CityOverlayDetailScale);
-			half4 citydarkoverlaydetailY = tex2D (_CityDarkOverlayDetailTex, sphereNrm.zx*_CityOverlayDetailScale);
-			half4 citydarkoverlaydetailZ = tex2D (_CityDarkOverlayDetailTex, sphereNrm.xy*_CityOverlayDetailScale);
-			half4 citylightoverlaydetailX = tex2D (_CityLightOverlayDetailTex, sphereNrm.zy*_CityOverlayDetailScale);
-			half4 citylightoverlaydetailY = tex2D (_CityLightOverlayDetailTex, sphereNrm.zx*_CityOverlayDetailScale);
-			half4 citylightoverlaydetailZ = tex2D (_CityLightOverlayDetailTex, sphereNrm.xy*_CityOverlayDetailScale);
+			half4 citydarkoverlaydetail = tex2D (_CityDarkOverlayDetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_CityOverlayDetailScale);
+			half4 citylightoverlaydetail = tex2D (_CityLightOverlayDetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_CityOverlayDetailScale);
 			#endif
 			
-			sphereNrm = abs(sphereNrm);
-			half4 detail = lerp(detailZ, detailX, sphereNrm.x);
-			detail = lerp(detail, detailY, sphereNrm.y);
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
 			color = main.rgba * lerp(detail.rgba, 1, detailLevel);
 			#ifdef CITYOVERLAY_ON
-			detail = lerp(citydarkoverlaydetailZ, citydarkoverlaydetailX, sphereNrm.x);
-			detail = lerp(detail, citydarkoverlaydetailY, sphereNrm.y);
-			half4 citydarkoverlay = cityoverlay*detail;
-			detail = lerp(citylightoverlaydetailZ, citylightoverlaydetailX, sphereNrm.x);
-			detail = lerp(detail, citylightoverlaydetailY, sphereNrm.y);
-			half4 citylightoverlay = cityoverlay*detail;
+			cityoverlay.a *= saturate(1-main.a);
+			half4 citydarkoverlay = cityoverlay*citydarkoverlaydetail;
+			half4 citylightoverlay = cityoverlay*citylightoverlaydetail;
 			color = lerp(color, citylightoverlay, citylightoverlay.a);
 			#endif
 			
@@ -195,7 +185,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			#ifdef CITYOVERLAY_ON
 			lightIntensity = saturate(_LightColor0.a * (NdotL - 0.01) / 0.99 * 4 * atten);
 			citydarkoverlay.a *= 1-saturate(lightIntensity);
-			color = lerp(color, citydarkoverlay, saturate(citydarkoverlay.a));
+			color = lerp(color, citydarkoverlay, citydarkoverlay.a);
 			#endif
 			color.a = 1;
 			
