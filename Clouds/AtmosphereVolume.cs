@@ -78,7 +78,7 @@ namespace Atmosphere
             this.celestialBody = celestialBody;
             this.scaledCelestialTransform = scaledCelestialTransform;
             AtmosphereMaterial = new Material(AtmosphereShader);
-            HalfSphere hp = new HalfSphere(radius, AtmosphereMaterial);
+            SimpleCylinder hp = new SimpleCylinder(radius, (float)celestialBody.Radius-1000, AtmosphereMaterial);
             AtmosphereMesh = hp.GameObject;
             Scaled = true;
             this.radius = radius;
@@ -86,6 +86,7 @@ namespace Atmosphere
             if (celestialBody.ocean)
             {
                 AtmosphereMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius);
+                AtmosphereMaterial.SetFloat("_SphereRadius", radius);
             }
             
         }

@@ -10,20 +10,6 @@ namespace Utils
     public class IsoSphere
     {
 
-        protected struct TriangleIndices
-        {
-            public int v1;
-            public int v2;
-            public int v3;
-
-            public TriangleIndices(int v1, int v2, int v3)
-            {
-                this.v1 = v1;
-                this.v2 = v2;
-                this.v3 = v3;
-            }
-        }
-
         // return index of point in the middle of p1 and p2
         protected static int getMiddlePoint(int p1, int p2, ref List<Vector3> vertices, ref Dictionary<long, int> cache, float altitude)
         {
