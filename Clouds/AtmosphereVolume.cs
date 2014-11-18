@@ -50,11 +50,13 @@ namespace Atmosphere
                 if (value)
                 {
                     float scale = (float)(1000f / celestialBody.Radius);
-                    Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);
+                    //Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);
+                    Reassign(EVEManagerClass.SCALED_LAYER, FlightCamera.fetch.transform, scale);
                 }
                 else
                 {
-                    Reassign(EVEManagerClass.MACRO_LAYER, celestialBody.transform, 1);
+                    Reassign(EVEManagerClass.MACRO_LAYER, FlightCamera.fetch.transform, 1);
+                    //Reassign(EVEManagerClass.MACRO_LAYER, celestialBody.transform, 1);
                 }
             }
         }
@@ -78,17 +80,21 @@ namespace Atmosphere
             this.celestialBody = celestialBody;
             this.scaledCelestialTransform = scaledCelestialTransform;
             AtmosphereMaterial = new Material(AtmosphereShader);
-            SimpleCylinder hp = new SimpleCylinder(radius, (float)celestialBody.Radius-1000, AtmosphereMaterial);
+            SimpleCube hp = new SimpleCube(3000, AtmosphereMaterial);
             AtmosphereMesh = hp.GameObject;
             Scaled = true;
             this.radius = radius;
             atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial);
+            AtmosphereMaterial.SetFloat("_SphereRadius", radius);
             if (celestialBody.ocean)
             {
                 AtmosphereMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius);
-                AtmosphereMaterial.SetFloat("_SphereRadius", radius);
             }
-            
+            else
+            {
+                AtmosphereMaterial.SetFloat("_OceanRadius", (float)0);
+            }
+
         }
 
 
@@ -110,12 +116,10 @@ namespace Atmosphere
             }
         }
 
-        internal void UpdateRotation(Quaternion rotation)
+        internal void UpdatePosition()
         {
-            if (rotation != null)
-            {
-                AtmosphereMesh.transform.localRotation = rotation;
-            }
+            Vector3 planetOrigin = celestialBody.transform.position;
+            AtmosphereMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
         }
 
 

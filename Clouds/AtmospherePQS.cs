@@ -104,11 +104,11 @@ namespace Atmosphere
                         {
                             Transform transform = fc.mainCamera.transform;
                             Vector3 pos = celestialBody.transform.InverseTransformPoint(transform.position);
-                            atmosphere.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos));
+                            atmosphere.UpdatePosition();
                         }
                         else
                         {
-                            atmosphere.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition));
+                            atmosphere.UpdatePosition();
                         }
                     }
                 }
@@ -122,7 +122,7 @@ namespace Atmosphere
                     }
                     if (atmosphere != null)
                     {
-                        atmosphere.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos));
+                        atmosphere.UpdatePosition();
                     }
                 }
                 if (layerVolume != null && sphere.isActive)

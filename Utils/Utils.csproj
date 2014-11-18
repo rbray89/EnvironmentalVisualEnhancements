@@ -85,7 +85,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SimpleCylinder.cs" />
+    <Compile Include="SimpleCube.cs" />
     <Compile Include="GUIHelper.cs" />
     <Compile Include="HalfSphere.cs" />
     <Compile Include="HexSeg.cs" />
