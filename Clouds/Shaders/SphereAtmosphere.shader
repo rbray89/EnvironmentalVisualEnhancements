@@ -103,26 +103,27 @@ SubShader {
 			half3 worldDir = normalize(IN.worldVert - _WorldSpaceCameraPos);
 			float tc = dot(IN.L, worldDir);
 			float d = sqrt(dot(IN.L,IN.L)-dot(tc,tc));
+			float d2 = pow(d,2);
 		   	float Llength = length(IN.L);
 		   	   
 			float oceanSphereDist = depth;
 		   	   if (d <= _OceanRadius && tc >= 0.0)
 		   	   {
-			   	   float tlc = sqrt(pow(_OceanRadius,2)-pow(d,2));
+			   	   float tlc = sqrt(pow(_OceanRadius,2)-d2);
 			   	   oceanSphereDist = tc - tlc;
 		   	   }
 			depth = min(oceanSphereDist, depth);
 		   	   
 		   	   if (Llength <  _SphereRadius && tc < 0.0)
 		   	   {
-			   	   float tlc = sqrt(pow(_SphereRadius,2)-pow(d,2));
-			   	   float td = sqrt(pow(Llength,2)-pow(d,2));
+			   	   float tlc = sqrt(pow(_SphereRadius,2)-d2);
+			   	   float td = sqrt(pow(Llength,2)-d2);
 			   	   sphereDist = tlc - td;
 			   	   depth = min(depth, sphereDist);
 		   	   }
 		   	   else if (d <= _SphereRadius && tc >= 0.0)
 		   	   {
-			   	   float tlc = sqrt(pow(_SphereRadius,2)-pow(d,2));
+			   	   float tlc = sqrt(pow(_SphereRadius,2)-d2);
 			   	   half sphereCheck = saturate(_SphereRadius - Llength);
 			   	   sphereDist = lerp(tc - tlc, tlc + tc, sphereCheck);
 			   	   depth = lerp( min(tc+tlc, depth)-sphereDist, min(depth, sphereDist), sphereCheck);
@@ -130,7 +131,8 @@ SubShader {
 			depth = lerp(0, depth, saturate(sphereDist));
 			//depth = min(depth, sphereDist);
 			
-			depth *= _Visibility; 
+			
+			depth *= _Visibility*saturate(pow(1-((d-_OceanRadius)/(_SphereRadius-_OceanRadius)),2)); 
 			color.a *= depth;
           	return color;
 		}
