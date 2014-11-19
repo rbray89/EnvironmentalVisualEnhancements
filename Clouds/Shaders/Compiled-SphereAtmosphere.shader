@@ -88,6 +88,7 @@ void main ()
 varying vec3 xlv_TEXCOORD6;
 varying vec3 xlv_TEXCOORD1;
 varying vec4 xlv_TEXCOORD0;
+uniform vec3 _PlanetOrigin;
 uniform float _SphereRadius;
 uniform float _OceanRadius;
 uniform float _Visibility;
@@ -97,52 +98,68 @@ uniform vec4 _ZBufferParams;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
-  float oceanSphereDist_1;
-  float sphereDist_2;
-  float depth_3;
-  vec4 color_4;
-  color_4 = _Color;
-  float tmpvar_5;
-  tmpvar_5 = (1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x) + _ZBufferParams.w)));
-  depth_3 = tmpvar_5;
-  sphereDist_2 = 0.0;
+  float avgHeight_1;
+  float oceanSphereDist_2;
+  float sphereDist_3;
+  float depth_4;
+  vec4 color_5;
+  color_5 = _Color;
   float tmpvar_6;
-  tmpvar_6 = dot (xlv_TEXCOORD6, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
-  float tmpvar_7;
-  tmpvar_7 = sqrt((dot (xlv_TEXCOORD6, xlv_TEXCOORD6) - (tmpvar_6 * tmpvar_6)));
+  tmpvar_6 = (1.0/(((_ZBufferParams.z * texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x) + _ZBufferParams.w)));
+  depth_4 = tmpvar_6;
+  sphereDist_3 = 0.0;
+  vec3 tmpvar_7;
+  tmpvar_7 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
   float tmpvar_8;
-  tmpvar_8 = pow (tmpvar_7, 2.0);
+  tmpvar_8 = dot (xlv_TEXCOORD6, tmpvar_7);
   float tmpvar_9;
-  tmpvar_9 = sqrt(dot (xlv_TEXCOORD6, xlv_TEXCOORD6));
-  oceanSphereDist_1 = tmpvar_5;
-  if (((tmpvar_7 <= _OceanRadius) && (tmpvar_6 >= 0.0))) {
-    oceanSphereDist_1 = (tmpvar_6 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_8)));
-  };
+  tmpvar_9 = sqrt((dot (xlv_TEXCOORD6, xlv_TEXCOORD6) - (tmpvar_8 * tmpvar_8)));
   float tmpvar_10;
-  tmpvar_10 = min (oceanSphereDist_1, tmpvar_5);
-  depth_3 = tmpvar_10;
-  if (((tmpvar_9 < _SphereRadius) && (tmpvar_6 < 0.0))) {
-    float tmpvar_11;
-    tmpvar_11 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_8)) - sqrt((pow (tmpvar_9, 2.0) - tmpvar_8)));
-    sphereDist_2 = tmpvar_11;
-    depth_3 = min (tmpvar_10, tmpvar_11);
+  tmpvar_10 = pow (tmpvar_9, 2.0);
+  float tmpvar_11;
+  tmpvar_11 = sqrt(dot (xlv_TEXCOORD6, xlv_TEXCOORD6));
+  oceanSphereDist_2 = tmpvar_6;
+  if (((tmpvar_9 <= _OceanRadius) && (tmpvar_8 >= 0.0))) {
+    oceanSphereDist_2 = (tmpvar_8 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_10)));
+  };
+  float tmpvar_12;
+  tmpvar_12 = min (oceanSphereDist_2, tmpvar_6);
+  depth_4 = tmpvar_12;
+  avgHeight_1 = _SphereRadius;
+  if (((tmpvar_11 < _SphereRadius) && (tmpvar_8 < 0.0))) {
+    float tmpvar_13;
+    tmpvar_13 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_10)) - sqrt((pow (tmpvar_11, 2.0) - tmpvar_10)));
+    sphereDist_3 = tmpvar_13;
+    float tmpvar_14;
+    tmpvar_14 = min (tmpvar_12, tmpvar_13);
+    depth_4 = tmpvar_14;
+    vec3 p_15;
+    p_15 = ((_WorldSpaceCameraPos + (tmpvar_14 * tmpvar_7)) - _PlanetOrigin);
+    avgHeight_1 = ((sqrt(dot (p_15, p_15)) + tmpvar_11) * 0.5);
   } else {
-    if (((tmpvar_7 <= _SphereRadius) && (tmpvar_6 >= 0.0))) {
-      float tmpvar_12;
-      tmpvar_12 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_8));
-      float tmpvar_13;
-      tmpvar_13 = clamp ((_SphereRadius - tmpvar_9), 0.0, 1.0);
-      float tmpvar_14;
-      tmpvar_14 = mix ((tmpvar_6 - tmpvar_12), (tmpvar_12 + tmpvar_6), tmpvar_13);
-      sphereDist_2 = tmpvar_14;
-      depth_3 = mix ((min ((tmpvar_6 + tmpvar_12), depth_3) - tmpvar_14), min (depth_3, tmpvar_14), tmpvar_13);
+    if (((tmpvar_9 <= _SphereRadius) && (tmpvar_8 >= 0.0))) {
+      float oldDepth_16;
+      float tmpvar_17;
+      tmpvar_17 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_10));
+      float tmpvar_18;
+      tmpvar_18 = clamp ((_SphereRadius - tmpvar_11), 0.0, 1.0);
+      float tmpvar_19;
+      tmpvar_19 = mix ((tmpvar_8 - tmpvar_17), (tmpvar_17 + tmpvar_8), tmpvar_18);
+      sphereDist_3 = tmpvar_19;
+      float tmpvar_20;
+      tmpvar_20 = min ((tmpvar_8 + tmpvar_17), depth_4);
+      oldDepth_16 = depth_4;
+      depth_4 = mix ((tmpvar_20 - tmpvar_19), min (depth_4, tmpvar_19), tmpvar_18);
+      vec3 p_21;
+      p_21 = ((_WorldSpaceCameraPos + (tmpvar_20 * tmpvar_7)) - _PlanetOrigin);
+      avgHeight_1 = ((sqrt(dot (p_21, p_21)) + mix (mix (_SphereRadius, tmpvar_9, (tmpvar_20 - oldDepth_16)), tmpvar_11, tmpvar_18)) * 0.5);
     };
   };
-  float tmpvar_15;
-  tmpvar_15 = (mix (0.0, depth_3, clamp (sphereDist_2, 0.0, 1.0)) * (_Visibility * clamp (pow ((1.0 - ((tmpvar_7 - _OceanRadius) / (_SphereRadius - _OceanRadius))), 2.0), 0.0, 1.0)));
-  depth_3 = tmpvar_15;
-  color_4.w = (_Color.w * tmpvar_15);
-  gl_FragData[0] = color_4;
+  float tmpvar_22;
+  tmpvar_22 = (mix (0.0, depth_4, clamp (sphereDist_3, 0.0, 1.0)) * (_Visibility * clamp ((1.0 - ((avgHeight_1 - _OceanRadius) / (_SphereRadius - _OceanRadius))), 0.0, 1.0)));
+  depth_4 = tmpvar_22;
+  color_5.w = (_Color.w * tmpvar_22);
+  gl_FragData[0] = color_5;
 }
 
 
@@ -339,6 +356,7 @@ void main ()
 varying highp vec3 xlv_TEXCOORD6;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec4 xlv_TEXCOORD0;
+uniform highp vec3 _PlanetOrigin;
 uniform highp float _SphereRadius;
 uniform highp float _OceanRadius;
 uniform highp float _Visibility;
@@ -349,63 +367,77 @@ uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp float oceanSphereDist_2;
-  mediump vec3 worldDir_3;
-  highp float sphereDist_4;
-  highp float depth_5;
-  mediump vec4 color_6;
-  color_6 = _Color;
-  lowp float tmpvar_7;
-  tmpvar_7 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_5 = tmpvar_7;
-  highp float tmpvar_8;
-  tmpvar_8 = (1.0/(((_ZBufferParams.z * depth_5) + _ZBufferParams.w)));
-  depth_5 = tmpvar_8;
-  sphereDist_4 = 0.0;
-  highp vec3 tmpvar_9;
-  tmpvar_9 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_3 = tmpvar_9;
-  highp float tmpvar_10;
-  tmpvar_10 = dot (xlv_TEXCOORD6, worldDir_3);
+  highp float avgHeight_2;
+  highp float oceanSphereDist_3;
+  mediump vec3 worldDir_4;
+  highp float sphereDist_5;
+  highp float depth_6;
+  mediump vec4 color_7;
+  color_7 = _Color;
+  lowp float tmpvar_8;
+  tmpvar_8 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_6 = tmpvar_8;
+  highp float tmpvar_9;
+  tmpvar_9 = (1.0/(((_ZBufferParams.z * depth_6) + _ZBufferParams.w)));
+  depth_6 = tmpvar_9;
+  sphereDist_5 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_4 = tmpvar_10;
   highp float tmpvar_11;
-  tmpvar_11 = sqrt((dot (xlv_TEXCOORD6, xlv_TEXCOORD6) - (tmpvar_10 * tmpvar_10)));
+  tmpvar_11 = dot (xlv_TEXCOORD6, worldDir_4);
   highp float tmpvar_12;
-  tmpvar_12 = pow (tmpvar_11, 2.0);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD6, xlv_TEXCOORD6) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt(dot (xlv_TEXCOORD6, xlv_TEXCOORD6));
-  oceanSphereDist_2 = tmpvar_8;
-  if (((tmpvar_11 <= _OceanRadius) && (tmpvar_10 >= 0.0))) {
-    oceanSphereDist_2 = (tmpvar_10 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_12)));
-  };
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = min (oceanSphereDist_2, tmpvar_8);
-  depth_5 = tmpvar_14;
-  if (((tmpvar_13 < _SphereRadius) && (tmpvar_10 < 0.0))) {
-    highp float tmpvar_15;
-    tmpvar_15 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_12)) - sqrt((pow (tmpvar_13, 2.0) - tmpvar_12)));
-    sphereDist_4 = tmpvar_15;
-    depth_5 = min (tmpvar_14, tmpvar_15);
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD6, xlv_TEXCOORD6));
+  oceanSphereDist_3 = tmpvar_9;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_3 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
+  };
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_3, tmpvar_9);
+  depth_6 = tmpvar_15;
+  avgHeight_2 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_5 = tmpvar_16;
+    highp float tmpvar_17;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_6 = tmpvar_17;
+    highp vec3 p_18;
+    p_18 = ((_WorldSpaceCameraPos + (tmpvar_17 * worldDir_4)) - _PlanetOrigin);
+    avgHeight_2 = ((sqrt(dot (p_18, p_18)) + tmpvar_14) * 0.5);
   } else {
-    if (((tmpvar_11 <= _SphereRadius) && (tmpvar_10 >= 0.0))) {
-      mediump float sphereCheck_16;
-      highp float tmpvar_17;
-      tmpvar_17 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_12));
-      highp float tmpvar_18;
-      tmpvar_18 = clamp ((_SphereRadius - tmpvar_13), 0.0, 1.0);
-      sphereCheck_16 = tmpvar_18;
-      highp float tmpvar_19;
-      tmpvar_19 = mix ((tmpvar_10 - tmpvar_17), (tmpvar_17 + tmpvar_10), sphereCheck_16);
-      sphereDist_4 = tmpvar_19;
-      depth_5 = mix ((min ((tmpvar_10 + tmpvar_17), depth_5) - tmpvar_19), min (depth_5, tmpvar_19), sphereCheck_16);
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_19;
+      mediump float sphereCheck_20;
+      highp float tmpvar_21;
+      tmpvar_21 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
+      highp float tmpvar_22;
+      tmpvar_22 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_20 = tmpvar_22;
+      highp float tmpvar_23;
+      tmpvar_23 = mix ((tmpvar_11 - tmpvar_21), (tmpvar_21 + tmpvar_11), sphereCheck_20);
+      sphereDist_5 = tmpvar_23;
+      highp float tmpvar_24;
+      tmpvar_24 = min ((tmpvar_11 + tmpvar_21), depth_6);
+      oldDepth_19 = depth_6;
+      depth_6 = mix ((tmpvar_24 - tmpvar_23), min (depth_6, tmpvar_23), sphereCheck_20);
+      highp vec3 p_25;
+      p_25 = ((_WorldSpaceCameraPos + (tmpvar_24 * worldDir_4)) - _PlanetOrigin);
+      avgHeight_2 = ((sqrt(dot (p_25, p_25)) + mix (mix (_SphereRadius, tmpvar_12, (tmpvar_24 - oldDepth_19)), tmpvar_14, sphereCheck_20)) * 0.5);
     };
   };
-  highp float tmpvar_20;
-  tmpvar_20 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * clamp (pow ((1.0 - ((tmpvar_11 - _OceanRadius) / (_SphereRadius - _OceanRadius))), 2.0), 0.0, 1.0)));
-  depth_5 = tmpvar_20;
-  highp float tmpvar_21;
-  tmpvar_21 = (color_6.w * tmpvar_20);
-  color_6.w = tmpvar_21;
-  tmpvar_1 = color_6;
+  highp float tmpvar_26;
+  tmpvar_26 = (mix (0.0, depth_6, clamp (sphereDist_5, 0.0, 1.0)) * (_Visibility * clamp ((1.0 - ((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius))), 0.0, 1.0)));
+  depth_6 = tmpvar_26;
+  highp float tmpvar_27;
+  tmpvar_27 = (color_7.w * tmpvar_26);
+  color_7.w = tmpvar_27;
+  tmpvar_1 = color_7;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -476,6 +508,7 @@ void main ()
 varying highp vec3 xlv_TEXCOORD6;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp vec4 xlv_TEXCOORD0;
+uniform highp vec3 _PlanetOrigin;
 uniform highp float _SphereRadius;
 uniform highp float _OceanRadius;
 uniform highp float _Visibility;
@@ -486,63 +519,77 @@ uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp float oceanSphereDist_2;
-  mediump vec3 worldDir_3;
-  highp float sphereDist_4;
-  highp float depth_5;
-  mediump vec4 color_6;
-  color_6 = _Color;
-  lowp float tmpvar_7;
-  tmpvar_7 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_5 = tmpvar_7;
-  highp float tmpvar_8;
-  tmpvar_8 = (1.0/(((_ZBufferParams.z * depth_5) + _ZBufferParams.w)));
-  depth_5 = tmpvar_8;
-  sphereDist_4 = 0.0;
-  highp vec3 tmpvar_9;
-  tmpvar_9 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_3 = tmpvar_9;
-  highp float tmpvar_10;
-  tmpvar_10 = dot (xlv_TEXCOORD6, worldDir_3);
+  highp float avgHeight_2;
+  highp float oceanSphereDist_3;
+  mediump vec3 worldDir_4;
+  highp float sphereDist_5;
+  highp float depth_6;
+  mediump vec4 color_7;
+  color_7 = _Color;
+  lowp float tmpvar_8;
+  tmpvar_8 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_6 = tmpvar_8;
+  highp float tmpvar_9;
+  tmpvar_9 = (1.0/(((_ZBufferParams.z * depth_6) + _ZBufferParams.w)));
+  depth_6 = tmpvar_9;
+  sphereDist_5 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_4 = tmpvar_10;
   highp float tmpvar_11;
-  tmpvar_11 = sqrt((dot (xlv_TEXCOORD6, xlv_TEXCOORD6) - (tmpvar_10 * tmpvar_10)));
+  tmpvar_11 = dot (xlv_TEXCOORD6, worldDir_4);
   highp float tmpvar_12;
-  tmpvar_12 = pow (tmpvar_11, 2.0);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD6, xlv_TEXCOORD6) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt(dot (xlv_TEXCOORD6, xlv_TEXCOORD6));
-  oceanSphereDist_2 = tmpvar_8;
-  if (((tmpvar_11 <= _OceanRadius) && (tmpvar_10 >= 0.0))) {
-    oceanSphereDist_2 = (tmpvar_10 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_12)));
-  };
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = min (oceanSphereDist_2, tmpvar_8);
-  depth_5 = tmpvar_14;
-  if (((tmpvar_13 < _SphereRadius) && (tmpvar_10 < 0.0))) {
-    highp float tmpvar_15;
-    tmpvar_15 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_12)) - sqrt((pow (tmpvar_13, 2.0) - tmpvar_12)));
-    sphereDist_4 = tmpvar_15;
-    depth_5 = min (tmpvar_14, tmpvar_15);
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD6, xlv_TEXCOORD6));
+  oceanSphereDist_3 = tmpvar_9;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_3 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
+  };
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_3, tmpvar_9);
+  depth_6 = tmpvar_15;
+  avgHeight_2 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_5 = tmpvar_16;
+    highp float tmpvar_17;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_6 = tmpvar_17;
+    highp vec3 p_18;
+    p_18 = ((_WorldSpaceCameraPos + (tmpvar_17 * worldDir_4)) - _PlanetOrigin);
+    avgHeight_2 = ((sqrt(dot (p_18, p_18)) + tmpvar_14) * 0.5);
   } else {
-    if (((tmpvar_11 <= _SphereRadius) && (tmpvar_10 >= 0.0))) {
-      mediump float sphereCheck_16;
-      highp float tmpvar_17;
-      tmpvar_17 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_12));
-      highp float tmpvar_18;
-      tmpvar_18 = clamp ((_SphereRadius - tmpvar_13), 0.0, 1.0);
-      sphereCheck_16 = tmpvar_18;
-      highp float tmpvar_19;
-      tmpvar_19 = mix ((tmpvar_10 - tmpvar_17), (tmpvar_17 + tmpvar_10), sphereCheck_16);
-      sphereDist_4 = tmpvar_19;
-      depth_5 = mix ((min ((tmpvar_10 + tmpvar_17), depth_5) - tmpvar_19), min (depth_5, tmpvar_19), sphereCheck_16);
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_19;
+      mediump float sphereCheck_20;
+      highp float tmpvar_21;
+      tmpvar_21 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
+      highp float tmpvar_22;
+      tmpvar_22 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_20 = tmpvar_22;
+      highp float tmpvar_23;
+      tmpvar_23 = mix ((tmpvar_11 - tmpvar_21), (tmpvar_21 + tmpvar_11), sphereCheck_20);
+      sphereDist_5 = tmpvar_23;
+      highp float tmpvar_24;
+      tmpvar_24 = min ((tmpvar_11 + tmpvar_21), depth_6);
+      oldDepth_19 = depth_6;
+      depth_6 = mix ((tmpvar_24 - tmpvar_23), min (depth_6, tmpvar_23), sphereCheck_20);
+      highp vec3 p_25;
+      p_25 = ((_WorldSpaceCameraPos + (tmpvar_24 * worldDir_4)) - _PlanetOrigin);
+      avgHeight_2 = ((sqrt(dot (p_25, p_25)) + mix (mix (_SphereRadius, tmpvar_12, (tmpvar_24 - oldDepth_19)), tmpvar_14, sphereCheck_20)) * 0.5);
     };
   };
-  highp float tmpvar_20;
-  tmpvar_20 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * clamp (pow ((1.0 - ((tmpvar_11 - _OceanRadius) / (_SphereRadius - _OceanRadius))), 2.0), 0.0, 1.0)));
-  depth_5 = tmpvar_20;
-  highp float tmpvar_21;
-  tmpvar_21 = (color_6.w * tmpvar_20);
-  color_6.w = tmpvar_21;
-  tmpvar_1 = color_6;
+  highp float tmpvar_26;
+  tmpvar_26 = (mix (0.0, depth_6, clamp (sphereDist_5, 0.0, 1.0)) * (_Visibility * clamp ((1.0 - ((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius))), 0.0, 1.0)));
+  depth_6 = tmpvar_26;
+  highp float tmpvar_27;
+  tmpvar_27 = (color_7.w * tmpvar_26);
+  color_7.w = tmpvar_27;
+  tmpvar_1 = color_7;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -978,25 +1025,37 @@ lowp vec4 frag( in v2f IN ) {
     }
     depth = min( oceanSphereDist, depth);
     #line 454
+    highp float avgHeight = _SphereRadius;
     if (((Llength < _SphereRadius) && (tc < 0.0))){
         highp float tlc_1 = sqrt((pow( _SphereRadius, 2.0) - d2));
-        highp float td = sqrt((pow( Llength, 2.0) - d2));
         #line 458
+        highp float td = sqrt((pow( Llength, 2.0) - d2));
         sphereDist = (tlc_1 - td);
         depth = min( depth, sphereDist);
+        avgHeight = distance( (_WorldSpaceCameraPos + (depth * worldDir)), _PlanetOrigin);
+        #line 462
+        avgHeight += Llength;
+        avgHeight *= 0.5;
     }
     else{
         if (((d <= _SphereRadius) && (tc >= 0.0))){
-            #line 463
+            #line 467
             highp float tlc_2 = sqrt((pow( _SphereRadius, 2.0) - d2));
             mediump float sphereCheck = xll_saturate_f((_SphereRadius - Llength));
             sphereDist = mix( (tc - tlc_2), (tlc_2 + tc), sphereCheck);
-            depth = mix( (min( (tc + tlc_2), depth) - sphereDist), min( depth, sphereDist), sphereCheck);
+            highp float minFar = min( (tc + tlc_2), depth);
+            #line 471
+            highp float oldDepth = depth;
+            depth = mix( (minFar - sphereDist), min( depth, sphereDist), sphereCheck);
+            avgHeight = distance( (_WorldSpaceCameraPos + (minFar * worldDir)), _PlanetOrigin);
+            avgHeight += mix( mix( _SphereRadius, d, (minFar - oldDepth)), Llength, sphereCheck);
+            #line 475
+            avgHeight *= 0.5;
         }
     }
-    #line 468
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
-    depth *= (_Visibility * xll_saturate_f(pow( (1.0 - ((d - _OceanRadius) / (_SphereRadius - _OceanRadius))), 2.0)));
+    depth *= (_Visibility * xll_saturate_f((1.0 - ((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
+    #line 479
     color.w *= depth;
     return color;
 }
@@ -1029,8 +1088,8 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 1
-//   d3d9 - ALU: 68 to 68, TEX: 1 to 1
-//   d3d11 - ALU: 50 to 50, TEX: 1 to 1, FLOW: 1 to 1
+//   d3d9 - ALU: 87 to 87, TEX: 1 to 1, FLOW: 2 to 2
+//   d3d11 - ALU: 66 to 66, TEX: 1 to 1, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { }
 "!!GLSL"
@@ -1044,11 +1103,12 @@ Vector 2 [_Color]
 Float 3 [_Visibility]
 Float 4 [_OceanRadius]
 Float 5 [_SphereRadius]
+Vector 6 [_PlanetOrigin]
 SetTexture 0 [_CameraDepthTexture] 2D
 "ps_3_0
-; 68 ALU, 1 TEX
+; 87 ALU, 1 TEX, 2 FLOW
 dcl_2d s0
-def c6, 0.00000000, 1.00000000, 0, 0
+def c7, 1.00000000, 0.00000000, 0.50000000, 0
 dcl_texcoord0 v0
 dcl_texcoord1 v1.xyz
 dcl_texcoord6 v2.xyz
@@ -1056,69 +1116,91 @@ add r0.xyz, v1, -c0
 dp3 r0.w, r0, r0
 rsq r0.w, r0.w
 mul r0.xyz, r0.w, r0
-dp3 r1.x, v2, r0
+dp3 r1.z, v2, r0
 dp3 r0.w, v2, v2
-mad r0.x, -r1, r1, r0.w
-rsq r0.x, r0.x
-rcp r0.y, r0.x
-mul r1.w, r0.y, r0.y
-add r0.x, -r0.y, c4
-mad r1.z, c4.x, c4.x, -r1.w
-add r2.y, -r0, c5.x
-rsq r1.z, r1.z
-rcp r1.z, r1.z
-add r2.x, r1, -r1.z
-cmp r0.z, r1.x, c6.y, c6.x
-cmp r0.x, r0, c6.y, c6
-mul_pp r1.y, r0.z, r0.x
-texldp r0.x, v0, s0
-mad r0.x, r0, c1.z, c1.w
-rcp r1.z, r0.x
-cmp r1.y, -r1, r1.z, r2.x
-rsq r0.x, r0.w
-min r1.y, r1, r1.z
-rcp r1.z, r0.x
-mad r0.x, r1.z, r1.z, -r1.w
-mad r0.w, c5.x, c5.x, -r1
+mad r1.x, -r1.z, r1.z, r0.w
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+mul r1.w, r1.x, r1.x
+mad r1.y, c4.x, c4.x, -r1.w
+rsq r1.y, r1.y
+rcp r2.y, r1.y
+add r1.y, -r1.x, c4.x
 rsq r0.w, r0.w
-rcp r1.w, r0.w
+cmp r2.x, r1.z, c7, c7.y
+cmp r1.y, r1, c7.x, c7
+mul_pp r1.y, r1, r2.x
+texldp r2.x, v0, s0
+mad r2.x, r2, c1.z, c1.w
+add r2.y, r1.z, -r2
+rcp r2.x, r2.x
+cmp r1.y, -r1, r2.x, r2
+rcp r0.w, r0.w
+add r2.y, r0.w, -c5.x
+cmp r2.z, r1, c7.y, c7.x
+cmp r2.y, r2, c7, c7.x
+mul_pp r2.y, r2, r2.z
+min r1.y, r1, r2.x
+if_gt r2.y, c7.y
+mad r1.z, r0.w, r0.w, -r1.w
+mad r1.x, c5, c5, -r1.w
+rsq r1.z, r1.z
+rsq r1.x, r1.x
+rcp r1.z, r1.z
+rcp r1.x, r1.x
+add r1.x, r1, -r1.z
+min r1.y, r1.x, r1
+mad r0.xyz, r1.y, r0, c0
+add r0.xyz, -r0, c6
+dp3 r0.x, r0, r0
 rsq r0.x, r0.x
 rcp r0.x, r0.x
-add r2.x, -r0, r1.w
-add r0.x, r1.z, -c5
-cmp r0.w, r1.x, c6.x, c6.y
-cmp r0.x, r0, c6, c6.y
-mul_pp r0.x, r0, r0.w
-cmp r0.w, -r0.x, c6.x, r2.x
-min r2.x, r0.w, r1.y
-cmp r1.y, -r0.x, r1, r2.x
-add r2.x, r1, -r1.w
-add r1.w, r1.x, r1
-abs_pp r0.x, r0
-add_sat r1.x, -r1.z, c5
-add r2.z, r1.w, -r2.x
-mad r1.z, r1.x, r2, r2.x
-cmp r2.x, r2.y, c6.y, c6
-mul_pp r0.z, r2.x, r0
-cmp_pp r0.x, -r0, c6.y, c6
-mul_pp r0.x, r0, r0.z
-cmp r0.z, -r0.x, r0.w, r1
-min r0.w, r1, r1.y
-add r1.w, -r0.z, r0
-min r1.z, r0, r1.y
-mov r0.w, c5.x
-add r2.x, -c4, r0.w
-add r1.z, r1, -r1.w
-mad r0.w, r1.x, r1.z, r1
-add r0.y, r0, -c4.x
-rcp r1.x, r2.x
-mad r1.x, -r0.y, r1, c6.y
-cmp r0.y, -r0.x, r1, r0.w
-mov_sat r0.x, r0.z
-mul_sat r0.w, r1.x, r1.x
-mul r0.z, r0.w, c3.x
+add r0.x, r0.w, r0
+mul r0.x, r0, c7.z
+else
+mad r1.w, c5.x, c5.x, -r1
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+add r2.x, r1.z, r1.w
+min r2.y, r2.x, r1
+mad r0.xyz, r2.y, r0, c0
+add r0.xyz, -r0, c6
+dp3 r0.x, r0, r0
+rsq r0.x, r0.x
+rcp r0.y, r0.x
+add r0.z, r1.x, -c5.x
+add r0.x, -r1.y, r2.y
+mad r2.z, r0.x, r0, c5.x
+add r0.z, r1, -r1.w
+add_sat r0.x, -r0.w, c5
+add r1.w, r0, -r2.z
+mad r1.w, r0.x, r1, r2.z
+add r0.y, r0, r1.w
+add r0.w, r2.x, -r0.z
+mad r1.w, r0.x, r0, r0.z
+add r0.z, -r1.x, c5.x
+cmp r0.w, r1.z, c7.x, c7.y
+cmp r0.z, r0, c7.x, c7.y
+mul_pp r0.z, r0, r0.w
+cmp r1.x, -r0.z, c7.y, r1.w
+cmp r1.z, -r0, c5.x, r0.y
+add r0.w, -r1.x, r2.y
+min r0.y, r1.x, r1
+add r0.y, r0, -r0.w
+mad r0.y, r0.x, r0, r0.w
+mul r1.w, r1.z, c7.z
+cmp r0.x, -r0.z, r1.z, r1.w
+cmp r1.y, -r0.z, r1, r0
+endif
+mov r0.y, c5.x
+add r0.y, -c4.x, r0
+add r0.x, r0, -c4
+rcp r0.y, r0.y
+mad_sat r0.y, -r0.x, r0, c7.x
+mov_sat r0.x, r1
+mul r0.y, r0, c3.x
+mul r0.x, r0, r1.y
 mul r0.x, r0, r0.y
-mul r0.x, r0, r0.z
 mul_pp oC0.w, r0.x, c2
 mov_pp oC0.xyz, c2
 "
@@ -1126,23 +1208,24 @@ mov_pp oC0.xyz, c2
 
 SubProgram "d3d11 " {
 Keywords { }
-ConstBuffer "$Globals" 112 // 100 used size, 14 vars
+ConstBuffer "$Globals" 112 // 112 used size, 14 vars
 Vector 48 [_Color] 4
 Float 64 [_Visibility]
 Float 92 [_OceanRadius]
 Float 96 [_SphereRadius]
+Vector 100 [_PlanetOrigin] 3
 ConstBuffer "UnityPerCamera" 128 // 128 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
 Vector 112 [_ZBufferParams] 4
 BindCB "$Globals" 0
 BindCB "UnityPerCamera" 1
 SetTexture 0 [_CameraDepthTexture] 2D 0
-// 58 instructions, 5 temp regs, 0 temp arrays:
-// ALU 47 float, 0 int, 3 uint
+// 75 instructions, 6 temp regs, 0 temp arrays:
+// ALU 63 float, 0 int, 3 uint
 // TEX 1 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedffmeaoloakppdlclpjijcfmlgakmlaeiabaaaaaalaaiaaaaadaaaaaa
+eefiecedbpmgjemifjjnmjabfhgdnfedbakgomiaabaaaaaalmakaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapalaaaaneaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -1152,66 +1235,82 @@ adaaaaaaadaaaaaaaiaaaaaaneaaaaaaadaaaaaaaaaaaaaaadaaaaaaaeaaaaaa
 ahaaaaaaneaaaaaaagaaaaaaaaaaaaaaadaaaaaaafaaaaaaahahaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefcgaahaaaaeaaaaaaaniabaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcgmajaaaaeaaaaaaaflacaaaafjaaaaaeegiocaaa
 aaaaaaaaahaaaaaafjaaaaaeegiocaaaabaaaaaaaiaaaaaafkaaaaadaagabaaa
 aaaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaagcbaaaadlcbabaaaabaaaaaa
 gcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaaafaaaaaagfaaaaadpccabaaa
-aaaaaaaagiaaaaacafaaaaaaaoaaaaahdcaabaaaaaaaaaaaegbabaaaabaaaaaa
-pgbpbaaaabaaaaaaefaaaaajpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
-aaaaaaaaaagabaaaaaaaaaaadcaaaaalbcaabaaaaaaaaaaackiacaaaabaaaaaa
-ahaaaaaaakaabaaaaaaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaa
-aaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaaaaaaaaa
-aaaaaaajocaabaaaaaaaaaaaagbjbaaaacaaaaaaagijcaiaebaaaaaaabaaaaaa
-aeaaaaaabaaaaaahbcaabaaaabaaaaaajgahbaaaaaaaaaaajgahbaaaaaaaaaaa
-eeaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaahocaabaaaaaaaaaaa
-fgaobaaaaaaaaaaaagaabaaaabaaaaaabaaaaaahccaabaaaaaaaaaaaegbcbaaa
-afaaaaaajgahbaaaaaaaaaaabaaaaaahecaabaaaaaaaaaaaegbcbaaaafaaaaaa
-egbcbaaaafaaaaaadcaaaaakicaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaa
-bkaabaaaaaaaaaaackaabaaaaaaaaaaaelaaaaaficaabaaaaaaaaaaadkaabaaa
-aaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dcaaaaamccaabaaaabaaaaaadkiacaaaaaaaaaaaafaaaaaadkiacaaaaaaaaaaa
-afaaaaaaakaabaiaebaaaaaaabaaaaaadcaaaaambcaabaaaabaaaaaaakiacaaa
-aaaaaaaaagaaaaaaakiacaaaaaaaaaaaagaaaaaaakaabaiaebaaaaaaabaaaaaa
-elaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaaaaaaaaaiccaabaaaabaaaaaa
-bkaabaaaaaaaaaaabkaabaiaebaaaaaaabaaaaaabnaaaaahecaabaaaabaaaaaa
-bkaabaaaaaaaaaaaabeaaaaaaaaaaaaabnaaaaaiicaabaaaabaaaaaadkiacaaa
-aaaaaaaaafaaaaaadkaabaaaaaaaaaaaabaaaaahicaabaaaabaaaaaackaabaaa
-abaaaaaadkaabaaaabaaaaaadhaaaaajccaabaaaabaaaaaadkaabaaaabaaaaaa
-bkaabaaaabaaaaaaakaabaaaaaaaaaaaddaaaaahbcaabaaaacaaaaaaakaabaaa
-aaaaaaaabkaabaaaabaaaaaaaaaaaaahbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaaakaabaaaacaaaaaaakaabaaa
-aaaaaaaaaaaaaaaiicaabaaaabaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaa
-abaaaaaadbaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaaaaaaaaaa
-aaaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaadkaabaiaebaaaaaaabaaaaaa
-elaaaaafecaabaaaacaaaaaackaabaaaaaaaaaaadcaaaaakecaabaaaaaaaaaaa
-dkaabaiaebaaaaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaaelaaaaaf
-ecaabaaaaaaaaaaackaabaaaaaaaaaaaaaaaaaaiccaabaaaadaaaaaackaabaia
-ebaaaaaaaaaaaaaaakaabaaaabaaaaaaaacaaaajecaabaaaaaaaaaaackaabaia
-ebaaaaaaacaaaaaaakiacaaaaaaaaaaaagaaaaaadbaaaaaibcaabaaaabaaaaaa
-ckaabaaaacaaaaaaakiacaaaaaaaaaaaagaaaaaaabaaaaahccaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaajccaabaaaaeaaaaaackaabaaa
-aaaaaaaaakaabaaaaaaaaaaadkaabaaaabaaaaaaaaaaaaaibcaabaaaaaaaaaaa
-bkaabaaaabaaaaaabkaabaiaebaaaaaaaeaaaaaaddaaaaahbcaabaaaabaaaaaa
-akaabaaaacaaaaaabkaabaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaia
-ebaaaaaaaaaaaaaaakaabaaaabaaaaaadcaaaaajbcaabaaaaeaaaaaackaabaaa
-aaaaaaaaakaabaaaabaaaaaaakaabaaaaaaaaaaadgaaaaafccaabaaaacaaaaaa
-abeaaaaaaaaaaaaabnaaaaaibcaabaaaaaaaaaaaakiacaaaaaaaaaaaagaaaaaa
-dkaabaaaaaaaaaaaaaaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaia
-ebaaaaaaaaaaaaaaafaaaaaaabaaaaahbcaabaaaaaaaaaaackaabaaaabaaaaaa
-akaabaaaaaaaaaaadhaaaaajjcaabaaaaaaaaaaaagaabaaaaaaaaaaaagaebaaa
-aeaaaaaaagaebaaaacaaaaaaddaaaaahbcaabaaaadaaaaaaakaabaaaacaaaaaa
-bkaabaaaadaaaaaadhaaaaajdcaabaaaaaaaaaaafgafbaaaaaaaaaaabgafbaaa
-adaaaaaadgapbaaaaaaaaaaadgcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-diaaaaahbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaak
-ccaabaaaaaaaaaaadkiacaiaebaaaaaaaaaaaaaaafaaaaaaakiacaaaaaaaaaaa
-agaaaaaaaoaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaaaaaaaaa
-aaaaaaaiccaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadp
-diaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaabkaabaaaaaaaaaaaddaaaaah
-ccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaaiccaabaaa
-aaaaaaaabkaabaaaaaaaaaaaakiacaaaaaaaaaaaaeaaaaaadiaaaaahbcaabaaa
-aaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaaiiccabaaaaaaaaaaa
-akaabaaaaaaaaaaadkiacaaaaaaaaaaaadaaaaaadgaaaaaghccabaaaaaaaaaaa
-egiccaaaaaaaaaaaadaaaaaadoaaaaab"
+aaaaaaaagiaaaaacagaaaaaaaaaaaaajhcaabaaaaaaaaaaaegbcbaaaacaaaaaa
+egiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaa
+aaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
+diaaaaahhcaabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaaaaaaaaaaaoaaaaah
+dcaabaaaabaaaaaaegbabaaaabaaaaaapgbpbaaaabaaaaaaefaaaaajpcaabaaa
+abaaaaaaegaabaaaabaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaadcaaaaal
+icaabaaaaaaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaaabaaaaaadkiacaaa
+abaaaaaaahaaaaaaaoaaaaakicaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpdkaabaaaaaaaaaaabaaaaaahbcaabaaaabaaaaaaegbcbaaa
+afaaaaaaegacbaaaaaaaaaaabaaaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaa
+egbcbaaaafaaaaaadcaaaaakecaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaa
+akaabaaaabaaaaaabkaabaaaabaaaaaaelaaaaafecaabaaaabaaaaaackaabaaa
+abaaaaaadiaaaaahicaabaaaabaaaaaackaabaaaabaaaaaackaabaaaabaaaaaa
+dcaaaaambcaabaaaacaaaaaadkiacaaaaaaaaaaaafaaaaaadkiacaaaaaaaaaaa
+afaaaaaadkaabaiaebaaaaaaabaaaaaadcaaaaamicaabaaaabaaaaaaakiacaaa
+aaaaaaaaagaaaaaaakiacaaaaaaaaaaaagaaaaaadkaabaiaebaaaaaaabaaaaaa
+elaaaaaficaabaaaabaaaaaadkaabaaaabaaaaaaelaaaaafbcaabaaaacaaaaaa
+akaabaaaacaaaaaaaaaaaaaibcaabaaaacaaaaaaakaabaaaabaaaaaaakaabaia
+ebaaaaaaacaaaaaabnaaaaahccaabaaaacaaaaaaakaabaaaabaaaaaaabeaaaaa
+aaaaaaaabnaaaaaiecaabaaaacaaaaaadkiacaaaaaaaaaaaafaaaaaackaabaaa
+abaaaaaaabaaaaahecaabaaaacaaaaaabkaabaaaacaaaaaackaabaaaacaaaaaa
+dhaaaaajbcaabaaaacaaaaaackaabaaaacaaaaaaakaabaaaacaaaaaadkaabaaa
+aaaaaaaaddaaaaahbcaabaaaadaaaaaadkaabaaaaaaaaaaaakaabaaaacaaaaaa
+aaaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaadkaabaaaabaaaaaaddaaaaah
+bcaabaaaacaaaaaaakaabaaaadaaaaaadkaabaaaaaaaaaaadcaaaaakhcaabaaa
+aeaaaaaaagaabaaaacaaaaaaegacbaaaaaaaaaaaegiccaaaabaaaaaaaeaaaaaa
+aaaaaaajhcaabaaaaeaaaaaaegacbaaaaeaaaaaajgihcaiaebaaaaaaaaaaaaaa
+agaaaaaabaaaaaahecaabaaaacaaaaaaegacbaaaaeaaaaaaegacbaaaaeaaaaaa
+elaaaaafecaabaaaacaaaaaackaabaaaacaaaaaaaaaaaaaiicaabaaaacaaaaaa
+akaabaiaebaaaaaaadaaaaaaakaabaaaacaaaaaaaaaaaaajicaabaaaadaaaaaa
+ckaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaaagaaaaaadcaaaaakicaabaaa
+acaaaaaadkaabaaaacaaaaaadkaabaaaadaaaaaaakiacaaaaaaaaaaaagaaaaaa
+elaaaaaficaabaaaadaaaaaabkaabaaaabaaaaaadcaaaaakccaabaaaabaaaaaa
+ckaabaiaebaaaaaaabaaaaaackaabaaaabaaaaaabkaabaaaabaaaaaabnaaaaai
+ecaabaaaabaaaaaaakiacaaaaaaaaaaaagaaaaaackaabaaaabaaaaaaabaaaaah
+ecaabaaaabaaaaaabkaabaaaacaaaaaackaabaaaabaaaaaaelaaaaafccaabaaa
+abaaaaaabkaabaaaabaaaaaaaaaaaaaiccaabaaaaeaaaaaabkaabaiaebaaaaaa
+abaaaaaadkaabaaaabaaaaaaaaaaaaaiccaabaaaabaaaaaadkaabaiaebaaaaaa
+abaaaaaaakaabaaaabaaaaaadbaaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaaaaaaaaaaaiicaabaaaabaaaaaadkaabaiaebaaaaaaacaaaaaa
+dkaabaaaadaaaaaaaacaaaajccaabaaaacaaaaaadkaabaiaebaaaaaaadaaaaaa
+akiacaaaaaaaaaaaagaaaaaadcaaaaajicaabaaaabaaaaaabkaabaaaacaaaaaa
+dkaabaaaabaaaaaadkaabaaaacaaaaaaaaaaaaahicaabaaaabaaaaaadkaabaaa
+abaaaaaackaabaaaacaaaaaadiaaaaahecaabaaaafaaaaaadkaabaaaabaaaaaa
+abeaaaaaaaaaaadpdgaaaaafccaabaaaadaaaaaaabeaaaaaaaaaaaaadgaaaaag
+ecaabaaaadaaaaaaakiacaaaaaaaaaaaagaaaaaaaaaaaaaiicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaabkaabaiaebaaaaaaabaaaaaadcaaaaajccaabaaaafaaaaaa
+bkaabaaaacaaaaaadkaabaaaaaaaaaaabkaabaaaabaaaaaaddaaaaahicaabaaa
+aaaaaaaaakaabaaaadaaaaaabkaabaaaafaaaaaaaaaaaaaiccaabaaaabaaaaaa
+akaabaaaacaaaaaabkaabaiaebaaaaaaafaaaaaaaaaaaaaiicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaabkaabaiaebaaaaaaabaaaaaadcaaaaajbcaabaaaafaaaaaa
+bkaabaaaacaaaaaadkaabaaaaaaaaaaabkaabaaaabaaaaaadhaaaaajocaabaaa
+abaaaaaakgakbaaaabaaaaaaagajbaaaafaaaaaaagajbaaaadaaaaaaddaaaaah
+bcaabaaaaeaaaaaaakaabaaaadaaaaaabkaabaaaaeaaaaaadcaaaaakhcaabaaa
+aaaaaaaaagaabaaaaeaaaaaaegacbaaaaaaaaaaaegiccaaaabaaaaaaaeaaaaaa
+aaaaaaajhcaabaaaaaaaaaaaegacbaaaaaaaaaaajgihcaiaebaaaaaaaaaaaaaa
+agaaaaaabaaaaaahbcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaa
+elaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaahbcaabaaaaaaaaaaa
+dkaabaaaadaaaaaaakaabaaaaaaaaaaadbaaaaaiccaabaaaaaaaaaaadkaabaaa
+adaaaaaaakiacaaaaaaaaaaaagaaaaaaabaaaaahccaabaaaaaaaaaaaakaabaaa
+abaaaaaabkaabaaaaaaaaaaadiaaaaahecaabaaaaeaaaaaaakaabaaaaaaaaaaa
+abeaaaaaaaaaaadpdhaaaaajhcaabaaaaaaaaaaafgafbaaaaaaaaaaabgagbaaa
+aeaaaaaaggalbaaaabaaaaaadgcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+diaaaaahbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+ccaabaaaaaaaaaaackaabaaaaaaaaaaadkiacaiaebaaaaaaaaaaaaaaafaaaaaa
+aaaaaaakecaabaaaaaaaaaaadkiacaiaebaaaaaaaaaaaaaaafaaaaaaakiacaaa
+aaaaaaaaagaaaaaaaoaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaa
+aaaaaaaaaacaaaaiccaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaaabeaaaaa
+aaaaiadpdiaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaaakiacaaaaaaaaaaa
+aeaaaaaadiaaaaahbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaa
+diaaaaaiiccabaaaaaaaaaaaakaabaaaaaaaaaaadkiacaaaaaaaaaaaadaaaaaa
+dgaaaaaghccabaaaaaaaaaaaegiccaaaaaaaaaaaadaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -1231,7 +1330,7 @@ Keywords { }
 
 }
 
-#LINE 139
+#LINE 151
 
 	
 		}
