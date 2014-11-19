@@ -121,9 +121,9 @@ SubShader {
 			   	   float td = sqrt(pow(Llength,2)-d2);
 			   	   sphereDist = tlc - td;
 			   	   depth = min(depth, sphereDist);
-			   	   avgHeight = distance(_WorldSpaceCameraPos + (depth*worldDir), _PlanetOrigin);
-			   	   avgHeight += Llength;
-		   	   	   avgHeight *= .5;
+			   	   float height1 = distance(_WorldSpaceCameraPos + (depth*worldDir), _PlanetOrigin);
+			   	   float height2 = Llength;
+		   	   	   avgHeight = .75*min(height1,height2) + .25*max(height1, height2);
 		   	   }
 		   	   else if (d <= _SphereRadius && tc >= 0.0)
 		   	   {
@@ -134,9 +134,9 @@ SubShader {
 			   	   float oldDepth = depth;
 			   	   depth = lerp( minFar - sphereDist, min(depth, sphereDist), sphereCheck);
 			   	   
-			   	   avgHeight = distance(_WorldSpaceCameraPos + (minFar*worldDir), _PlanetOrigin);
-			   	   avgHeight += lerp(lerp(_SphereRadius, d, minFar-oldDepth), Llength, sphereCheck);
-		   	   	   avgHeight *= .5;
+			   	   float height1 = distance(_WorldSpaceCameraPos + (minFar*worldDir), _PlanetOrigin);
+			   	   float height2 = lerp(lerp(_SphereRadius, d, minFar-oldDepth), Llength, sphereCheck);
+			   	   avgHeight = .75*min(height1,height2) + .25*max(height1, height2);
 		   	   }
 			depth = lerp(0, depth, saturate(sphereDist));
 			
@@ -144,7 +144,7 @@ SubShader {
 			//depth = min(depth, sphereDist);
 			
 			
-			depth *= _Visibility*saturate(1-((avgHeight-_OceanRadius)/(_SphereRadius-_OceanRadius))); 
+			depth *= _Visibility*(1-saturate((avgHeight-_OceanRadius)/(_SphereRadius-_OceanRadius))); 
 			color.a *= depth;
           	return color;
 		}
