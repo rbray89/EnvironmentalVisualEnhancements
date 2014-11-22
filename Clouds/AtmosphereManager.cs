@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Utils;
 
 namespace Atmosphere
 {
@@ -17,7 +18,7 @@ namespace Atmosphere
         {
             GameObject go = new GameObject();
             AtmosphereObject newObject = go.AddComponent<AtmosphereObject>();
-            go.transform.parent = EVEManagerClass.GetCelestialBody(body).bodyTransform;
+            go.transform.parent = Tools.GetCelestialBody(body).bodyTransform;
             newObject.LoadConfigNode(node, body);
             ObjectList.Add(newObject);
             newObject.Apply();

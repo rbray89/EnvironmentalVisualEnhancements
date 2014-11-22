@@ -124,8 +124,8 @@ namespace Terrain
         public void Apply()
         {
 
-            CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
-            Transform transform = EVEManagerClass.GetScaledTransform(body);
+            CelestialBody celestialBody = Tools.GetCelestialBody(body);
+            Transform transform = Tools.GetScaledTransform(body);
             Texture mainTexture = null;
             Texture bumpTexture = null;
             Texture steepTexture = null;
@@ -191,17 +191,23 @@ namespace Terrain
                     }
                     ocean.surfaceMaterial.mainTexture = mainTexture;
                     oceanMaterial.ApplyMaterialProperties(ocean.surfaceMaterial);
-                    ocean.radius = 1;
-                }
-                PQSLandControl landControl = (PQSLandControl)pqs.transform.GetComponentInChildren(typeof(PQSLandControl));
-                if (landControl != null)
-                {
-                    PQSLandControl.LandClass[] landClasses = landControl.landClasses;
-                    PQSLandControl.LandClass lcBeach = landControl.landClasses.First(lc => lc.landClassName == "BaseBeach");
-                    PQSLandControl.LandClass lcOcean = landControl.landClasses.First(lc => lc.landClassName == "Ocean Bottom");
 
-                    lcOcean.color = lcBeach.color;
+                    PQSLandControl landControl = (PQSLandControl)pqs.transform.GetComponentInChildren(typeof(PQSLandControl));
+                    if (landControl != null)
+                    {
+                        PQSLandControl.LandClass[] landClasses = landControl.landClasses;
+                        if (landClasses != null)
+                        {
+                            PQSLandControl.LandClass lcBeach = landClasses.FirstOrDefault(lc => lc.landClassName == "BaseBeach");
+                            PQSLandControl.LandClass lcOcean = landClasses.FirstOrDefault(lc => lc.landClassName == "Ocean Bottom");
+                            if (lcBeach != null || lcOcean != null)
+                            {
+                                lcOcean.color = lcBeach.color;
+                            }
+                        }
+                    }
                 }
+                
                 PQSMod_CelestialBodyTransform cbt = (PQSMod_CelestialBodyTransform)pqs.transform.GetComponentInChildren(typeof(PQSMod_CelestialBodyTransform));
                 if (cbt != null)
                 {
@@ -221,7 +227,7 @@ namespace Terrain
 
         public void Remove()
         {
-            CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
+            CelestialBody celestialBody = Tools.GetCelestialBody(body);
             PQS pqs = celestialBody.pqsController;
             if (pqs != null)
             {
@@ -242,7 +248,7 @@ namespace Terrain
             }
             if(planetMaterial != null)
             {
-                Transform transform = EVEManagerClass.GetScaledTransform(body);
+                Transform transform = Tools.GetScaledTransform(body);
                 MeshRenderer mr = (MeshRenderer)transform.GetComponent(typeof(MeshRenderer));
                 if (mr != null)
                 {

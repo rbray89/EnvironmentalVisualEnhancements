@@ -46,8 +46,8 @@ namespace Atmosphere
 
         public void Apply()
         {
-            celestialBody = EVEManagerClass.GetCelestialBody(body);
-            scaledCelestialTransform = EVEManagerClass.GetScaledTransform(body);
+            celestialBody = Tools.GetCelestialBody(body);
+            scaledCelestialTransform = Tools.GetScaledTransform(body);
             
             GameObject go = new GameObject();
             atmospherePQS = go.AddComponent<AtmospherePQS>();

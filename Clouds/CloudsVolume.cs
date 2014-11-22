@@ -54,7 +54,7 @@ namespace Atmosphere
                 if (particleCloudShader == null)
                 {
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    particleCloudShader = EVEManagerClass.GetShader(assembly, "Atmosphere.Shaders.Compiled-CloudParticle.shader");
+                    particleCloudShader = Tools.GetShader(assembly, "Atmosphere.Shaders.Compiled-CloudParticle.shader");
                 } return particleCloudShader;
             }
         }
@@ -63,7 +63,7 @@ namespace Atmosphere
         {
             Remove();
             ParticleMaterial = new Material(ParticleCloudShader);
-            particleMaterial.ApplyMaterialProperties(ParticleMaterial, true);
+            particleMaterial.ApplyMaterialProperties(ParticleMaterial, 1, true);
             volumeHolder = new GameObject();
             volumeHolder.transform.parent = parent;
             volumeHolder.transform.localPosition = Vector3.zero;

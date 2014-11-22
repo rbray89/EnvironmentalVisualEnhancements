@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using UnityEngine;
 
@@ -96,5 +98,33 @@ namespace Utils
             return new Vector3d(x, v.y, z);
 
         }
+
+        public static CelestialBody GetCelestialBody(String body)
+        {
+            CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
+            return celestialBodies.Single(n => n.bodyName == body);
+        }
+
+        public static Transform GetScaledTransform(string body)
+        {
+            List<Transform> transforms = ScaledSpace.Instance.scaledSpaceTransforms;
+            return transforms.Single(n => n.name == body);
+        }
+
+        public static float GetWorldToScaledSpace(String body)
+        {
+            Transform scaledTranform = GetScaledTransform(body);
+            float scaledDistance = Vector3.Distance(scaledTranform.TransformPoint(Vector3.zero), scaledTranform.TransformPoint(1000*Vector3.up));
+            float macroDistance = (float)GetCelestialBody(body).Radius;
+            return scaledDistance / macroDistance;
+        }
+
+        public static Shader GetShader(Assembly assembly, String resource)
+        {
+            StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream(resource));
+            String shaderTxt = shaderStreamReader.ReadToEnd();
+            return new Material(shaderTxt).shader;
+        }
+
     }
 }

@@ -38,7 +38,7 @@ namespace Terrain
                 if (oceanShaderNear == null)
                 {
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    oceanShaderNear = EVEManagerClass.GetShader(assembly, "Terrain.Shaders.Compiled-SphereOceanNear.shader");
+                    oceanShaderNear = Tools.GetShader(assembly, "Terrain.Shaders.Compiled-SphereOceanNear.shader");
                 } return oceanShaderNear;
             }
         }
@@ -49,7 +49,7 @@ namespace Terrain
                 if (oceanShader == null)
                 {
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    oceanShader = EVEManagerClass.GetShader(assembly, "Terrain.Shaders.Compiled-SphereOcean.shader");
+                    oceanShader = Tools.GetShader(assembly, "Terrain.Shaders.Compiled-SphereOcean.shader");
                 } return oceanShader;
             }
         }
@@ -60,7 +60,7 @@ namespace Terrain
                 if (planetShader == null)
                 {
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    planetShader = EVEManagerClass.GetShader(assembly, "Terrain.Shaders.Compiled-SpherePlanet.shader");
+                    planetShader = Tools.GetShader(assembly, "Terrain.Shaders.Compiled-SpherePlanet.shader");
                 } return planetShader;
             }
         }
@@ -71,7 +71,7 @@ namespace Terrain
                 if (terrainShader == null)
                 {
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    terrainShader = EVEManagerClass.GetShader(assembly, "Terrain.Shaders.Compiled-SphereTerrain.shader");
+                    terrainShader = Tools.GetShader(assembly, "Terrain.Shaders.Compiled-SphereTerrain.shader");
                 } return terrainShader;
             }
         }

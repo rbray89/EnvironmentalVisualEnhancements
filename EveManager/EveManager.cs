@@ -50,24 +50,7 @@ namespace EVEManager
                 }
             }
         }
-        public static CelestialBody GetCelestialBody(String body)
-        {
-            CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
-            return celestialBodies.Single(n => n.bodyName == body);
-        }
-
-        public static Transform GetScaledTransform(string body)
-        {
-            List<Transform> transforms = ScaledSpace.Instance.scaledSpaceTransforms;
-            return transforms.Single(n => n.name == body);
-        }
-
-        public static Shader GetShader(Assembly assembly, String resource)
-        {
-            StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream(resource));
-            String shaderTxt = shaderStreamReader.ReadToEnd();
-            return new Material(shaderTxt).shader;
-        }
+        
         private GUISkin _mySkin;
         private Rect _mainWindowRect = new Rect(0, 0, 840, 800);
 

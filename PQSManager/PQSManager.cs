@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Utils;
 
 namespace PQSManager
 {
@@ -17,7 +18,7 @@ namespace PQSManager
         {
             GameObject go = new GameObject();
             PQSWrapper newObject = go.AddComponent<PQSWrapper>();
-            go.transform.parent = EVEManagerClass.GetCelestialBody(body).bodyTransform;
+            go.transform.parent = Tools.GetCelestialBody(body).bodyTransform;
             go.transform.localPosition = Vector3.zero;
             go.transform.localRotation = Quaternion.identity;
             go.transform.localScale = Vector3.one;

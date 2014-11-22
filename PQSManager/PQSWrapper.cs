@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Utils;
 
 namespace PQSManager
 {
@@ -33,7 +34,7 @@ namespace PQSManager
         }
         public void Apply() 
         { 
-            CelestialBody cb = EVEManagerClass.GetCelestialBody(body);
+            CelestialBody cb = Tools.GetCelestialBody(body);
             cameraDistance = (float)cb.Radius + deactivateDistance;
             this.isActive = false;
             this.relativeTargetPosition = Vector3.zero;

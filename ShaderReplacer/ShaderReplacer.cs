@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
+using Utils;
 
 namespace ShaderReplacer
 {
@@ -29,7 +30,7 @@ namespace ShaderReplacer
             else
             {
                 Assembly assembly = Assembly.GetExecutingAssembly();
-                Shader shader = EVEManagerClass.GetShader(assembly, "ShaderReplacer.Shaders.Compiled-" + name + ".shader");
+                Shader shader = Tools.GetShader(assembly, "ShaderReplacer.Shaders.Compiled-" + name + ".shader");
                 shaderDictionary[name] = shader;
                 return shader;
             }

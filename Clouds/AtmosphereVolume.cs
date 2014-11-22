@@ -13,20 +13,15 @@ namespace Atmosphere
     {
         [Persistent]
         Color _Color = new Color(1, 1, 1, 1);
-        [Persistent]
+        [Persistent, InverseScaled]
         float _Visibility = .0001f;
-        [Persistent]
-		float _FalloffPow = 2;
-        [Persistent]
-		float _FalloffScale = 3;
-        [Persistent]
-		float _FadeDist = 10;
-        [Persistent]
-		float _FadeScale = .002f;
-        [Persistent]
-		float _RimDist = 1;
-        [Persistent]
-		float _RimDistSub = 1.01f;
+        [Scaled]
+        float _SphereRadius;
+        [Scaled]
+        float _OceanRadius;
+
+        public float SphereRadius { set { _SphereRadius = value; } }
+        public float OceanRadius { set { _OceanRadius = value; } }
     }
 
     class AtmosphereVolume
@@ -49,13 +44,18 @@ namespace Atmosphere
             {
                 if (value)
                 {
-                    float scale = (float)(1000f / celestialBody.Radius);
-                    //Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);
-                    Reassign(EVEManagerClass.SCALED_LAYER, FlightCamera.fetch.transform, scale);
+                    float scale = (float)(radius*1.2 / celestialBody.Radius);
+                    atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial, Tools.GetWorldToScaledSpace(celestialBody.bodyName));
+                    AtmosphereMaterial.DisableKeyword("WORLD_SPACE_ON");
+                    Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);
+                    //Reassign(EVEManagerClass.SCALED_LAYER, FlightCamera.fetch.transform, scale);
                 }
                 else
                 {
+                    atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial);
+                    AtmosphereMaterial.EnableKeyword("WORLD_SPACE_ON");
                     Reassign(EVEManagerClass.MACRO_LAYER, FlightCamera.fetch.transform, 1);
+                    
                     //Reassign(EVEManagerClass.MACRO_LAYER, celestialBody.transform, 1);
                 }
             }
@@ -69,7 +69,7 @@ namespace Atmosphere
                 if (atmosphereShader == null)
                 {
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    atmosphereShader = EVEManagerClass.GetShader(assembly, "Atmosphere.Shaders.Compiled-SphereAtmosphere.shader");
+                    atmosphereShader = Tools.GetShader(assembly, "Atmosphere.Shaders.Compiled-SphereAtmosphere.shader");
                 } return atmosphereShader;
             }
         }
@@ -80,21 +80,20 @@ namespace Atmosphere
             this.celestialBody = celestialBody;
             this.scaledCelestialTransform = scaledCelestialTransform;
             AtmosphereMaterial = new Material(AtmosphereShader);
-            SimpleCube hp = new SimpleCube(3000, AtmosphereMaterial);
+            SimpleCube hp = new SimpleCube(2000, AtmosphereMaterial);
             AtmosphereMesh = hp.GameObject;
-            Scaled = true;
+            
             this.radius = radius;
-            atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial);
-            AtmosphereMaterial.SetFloat("_SphereRadius", radius);
+            atmosphereMaterial.SphereRadius = radius;
             if (celestialBody.ocean)
             {
-                AtmosphereMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius);
+                atmosphereMaterial.OceanRadius = (float)celestialBody.Radius;
             }
             else
             {
-                AtmosphereMaterial.SetFloat("_OceanRadius", (float)0);
+                atmosphereMaterial.OceanRadius = 0;
             }
-
+            Scaled = true;
         }
 
 

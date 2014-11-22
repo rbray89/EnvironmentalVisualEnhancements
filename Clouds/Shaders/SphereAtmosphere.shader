@@ -2,12 +2,6 @@
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_Visibility ("Visibility", Float) = .0001
-		_FalloffPow ("Falloff Power", Range(0,3)) = 2
-		_FalloffScale ("Falloff Scale", Range(0,20)) = 3
-		_FadeDist ("Fade Distance", Range(0,100)) = 10
-		_FadeScale ("Fade Scale", Range(0,1)) = .002
-		_RimDist ("Rim Distance", Range(0,1)) = 1
-		_RimDistSub ("Rim Distance Sub", Range(0,2)) = 1.01
 		_OceanRadius ("Ocean Radius", Float) = 63000
 		_SphereRadius ("Ocean Radius", Float) = 67000
 		_PlanetOrigin ("Sphere Center", Vector) = (0,0,0,1)
@@ -20,7 +14,7 @@ Category {
 	Fog { Mode Off}
 	ZTest Off
 	ColorMask RGB
-	Cull Off Lighting On ZWrite Off
+	Cull Front Lighting On ZWrite Off
 	
 SubShader {
 	Pass {
@@ -44,15 +38,11 @@ SubShader {
 		#define TWOPI (2.0*PI) 
 		#define INV_2PI (1.0/TWOPI)
 	    #define FLT_MAX (1e+32)
+	    #pragma multi_compile WORLD_SPACE
+
 		fixed4 _Color;
 		sampler2D _CameraDepthTexture;
 		float _Visibility;
-		float _FalloffPow;
-		float _FalloffScale;
-		float _FadeDist;
-		float _FadeScale;
-		float _RimDist;
-		float _RimDistSub;
 		float _OceanRadius;
 		float _SphereRadius;
 		float3 _PlanetOrigin;
@@ -84,20 +74,32 @@ SubShader {
 	   	   o.worldVert = vertexPos;
 	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
 	   	   o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
+	   	   
+	   	   
+	   	   #ifdef WORLD_SPACE
+	   	   o.worldOrigin = _PlanetOrigin;
+	   	   #else
+	   	   o.worldOrigin = mul(_Object2World, fixed4(0,0,0,1)).xyz;;
+	   	   #endif
+	   	   
+	   	   o.altitude = distance(o.worldOrigin,_WorldSpaceCameraPos) - _OceanRadius;
+	   	   o.L = o.worldOrigin - _WorldSpaceCameraPos;
+	   	   
+	   	   #ifdef WORLD_SPACE
 	   	   o.scrPos=ComputeScreenPos(o.pos);
-	   	   o.altitude = distance(_PlanetOrigin,_WorldSpaceCameraPos) - _OceanRadius;
-	   	   
-	   	   o.L = _PlanetOrigin - _WorldSpaceCameraPos;
-	   	   
 		   COMPUTE_EYEDEPTH(o.scrPos.z);
+		   #endif
 	   	   return o;
 	 	}
 	 		
 		fixed4 frag (v2f IN) : COLOR
 			{
 			half4 color = _Color;
-			float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.scrPos)));
+			float depth = FLT_MAX;
+			#ifdef WORLD_SPACE
+			depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.scrPos)));
 			depth = LinearEyeDepth(depth);
+			#endif
 			float sphereDist = 0;
 			
 			half3 worldDir = normalize(IN.worldVert - _WorldSpaceCameraPos);
@@ -121,7 +123,7 @@ SubShader {
 			   	   float td = sqrt(pow(Llength,2)-d2);
 			   	   sphereDist = tlc - td;
 			   	   depth = min(depth, sphereDist);
-			   	   float height1 = distance(_WorldSpaceCameraPos + (depth*worldDir), _PlanetOrigin);
+			   	   float height1 = distance(_WorldSpaceCameraPos + (depth*worldDir), IN.worldOrigin);
 			   	   float height2 = Llength;
 		   	   	   avgHeight = .75*min(height1,height2) + .25*max(height1, height2);
 		   	   }
@@ -134,7 +136,7 @@ SubShader {
 			   	   float oldDepth = depth;
 			   	   depth = lerp( minFar - sphereDist, min(depth, sphereDist), sphereCheck);
 			   	   
-			   	   float height1 = distance(_WorldSpaceCameraPos + (minFar*worldDir), _PlanetOrigin);
+			   	   float height1 = distance(_WorldSpaceCameraPos + (minFar*worldDir), IN.worldOrigin);
 			   	   float height2 = lerp(lerp(_SphereRadius, d, minFar-oldDepth), Llength, sphereCheck);
 			   	   avgHeight = .75*min(height1,height2) + .25*max(height1, height2);
 		   	   }

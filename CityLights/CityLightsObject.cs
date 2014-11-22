@@ -44,13 +44,13 @@ namespace CityLights
 
         public void Apply()
         {
-            CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
+            CelestialBody celestialBody = Tools.GetCelestialBody(body);
             if (celestialBody != null)
             {
                 celestialBody.pqsController.surfaceMaterial.EnableKeyword("CITYOVERLAY_ON");
                 cityLightsMaterial.ApplyMaterialProperties(celestialBody.pqsController.surfaceMaterial);
             }
-            Transform transform = EVEManagerClass.GetScaledTransform(body);
+            Transform transform = Tools.GetScaledTransform(body);
             if (transform != null)
             {
                 MeshRenderer mr = (MeshRenderer)transform.GetComponent(typeof(MeshRenderer));
@@ -64,12 +64,12 @@ namespace CityLights
 
         public void Remove()
         {
-            CelestialBody celestialBody = EVEManagerClass.GetCelestialBody(body);
+            CelestialBody celestialBody = Tools.GetCelestialBody(body);
             if (celestialBody != null)
             {
                 celestialBody.pqsController.surfaceMaterial.DisableKeyword("CITYOVERLAY_ON");
             }
-            Transform transform = EVEManagerClass.GetScaledTransform(body);
+            Transform transform = Tools.GetScaledTransform(body);
             if (transform != null)
             {
                 MeshRenderer mr = (MeshRenderer)transform.GetComponent(typeof(MeshRenderer));

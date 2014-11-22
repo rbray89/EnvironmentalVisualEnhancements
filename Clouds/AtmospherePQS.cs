@@ -97,20 +97,6 @@ namespace Atmosphere
                     {
                         layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition));
                     }
-                    if (atmosphere != null)
-                    {
-                        FlightCamera fc = FlightCamera.fetch;
-                        if (fc != null && fc.mainCamera != null)
-                        {
-                            Transform transform = fc.mainCamera.transform;
-                            Vector3 pos = celestialBody.transform.InverseTransformPoint(transform.position);
-                            atmosphere.UpdatePosition();
-                        }
-                        else
-                        {
-                            atmosphere.UpdatePosition();
-                        }
-                    }
                 }
                 else
                 {
@@ -119,10 +105,6 @@ namespace Atmosphere
                     if (layer2D != null)
                     {
                         layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos));
-                    }
-                    if (atmosphere != null)
-                    {
-                        atmosphere.UpdatePosition();
                     }
                 }
                 if (layerVolume != null && sphere.isActive)
@@ -136,6 +118,10 @@ namespace Atmosphere
                         layerVolume.UpdatePos(this.sphere.target.position);
                     }
                 }
+                if (atmosphere != null)
+                {
+                    atmosphere.UpdatePosition();
+                }
             }
         }
 
@@ -147,8 +133,8 @@ namespace Atmosphere
             this.atmosphere = atmosphere;
             this.altitude = altitude;
             this.speed = speed;
-            celestialBody = EVEManagerClass.GetCelestialBody(body);
-            scaledCelestialTransform = EVEManagerClass.GetScaledTransform(body);
+            celestialBody = Tools.GetCelestialBody(body);
+            scaledCelestialTransform = Tools.GetScaledTransform(body);
             PQS pqs = null;
             if (celestialBody != null && celestialBody.pqsController != null)
             {

@@ -9,9 +9,38 @@ namespace Utils
 {
     public class MaterialManager
     {
+
+        public class Scaled : System.Attribute
+        {
+        }
+
+        public class InverseScaled : System.Attribute
+        {
+        }
+
+        public class ScaledValue
+        {
+            public object obj;
+
+            public ScaledValue(object p)
+            {
+                this.obj = p;
+            }
+        }
+
+        public class InverseScaledValue
+        {
+            public object obj;
+
+            public InverseScaledValue(object p)
+            {
+                this.obj = p;
+            }
+        }
+
         bool cached = false;
         List<KeyValuePair<String, object>> cache = new List<KeyValuePair<string, object>>();
-        public void ApplyMaterialProperties(Material material, bool clampTextures = false)
+        public void ApplyMaterialProperties(Material material, float scale = 1.0f, bool clampTextures = false)
         {
             if (!cached)
             {
@@ -44,20 +73,45 @@ namespace Utils
                     }
                     else
                     {
-                        cache.Add(new KeyValuePair<string, object>(name, field.GetValue(this)));
+                        bool isScaled = Attribute.IsDefined(field, typeof(Scaled));
+                        bool isInvScaled = Attribute.IsDefined(field, typeof(InverseScaled));
+                        if (isScaled)
+                        {
+                            cache.Add(new KeyValuePair<string, object>(name, new ScaledValue(field.GetValue(this))));
+                        }
+                        else if (isInvScaled)
+                        {
+                            cache.Add(new KeyValuePair<string, object>(name, new InverseScaledValue(field.GetValue(this))));
+                        }
+                        else
+                        {
+                            cache.Add(new KeyValuePair<string, object>(name, field.GetValue(this)));
+                        }
                     }
                 }
                 cached = true;
             }
-            ApplyCache(material);
+            ApplyCache(material, scale);
         }
 
-        private void ApplyCache(Material material)
+        private void ApplyCache(Material material, float scale = 1.0f)
         {
             foreach (KeyValuePair<String,object> field in cache)
             {
                 String name = field.Key;
                 object obj = field.Value;
+                float scaleValue = 1f;
+                if (obj != null && obj.GetType() == typeof(ScaledValue))
+                {
+                    obj = ((ScaledValue)obj).obj;
+                    scaleValue = scale;
+                }
+                else if (obj != null && obj.GetType() == typeof(InverseScaledValue))
+                {
+                    obj = ((InverseScaledValue)obj).obj;
+                    scaleValue = 1/scale;
+                }
+
                 if (obj == null || obj.GetType() == typeof(Texture2D))
                 {
                     Texture2D value = (Texture2D)obj;
@@ -67,19 +121,22 @@ namespace Utils
                 else if (obj.GetType() == typeof(float))
                 {
                     float value = (float)obj;
-                    material.SetFloat(name, value);
+                    material.SetFloat(name, value * scaleValue);
+
+                    KSPLog.print(name + ": " + scaleValue);
+                    KSPLog.print(name + ": " + value );
                 }
                 //Color
                 else if (obj.GetType() == typeof(Color))
                 {
                     Color value = (Color)obj;
-                    material.SetColor(name, value);
+                    material.SetColor(name, value * scaleValue);
                 }
                 //Vector3
                 else if (obj.GetType() == typeof(Vector3))
                 {
                     Vector3 value = (Vector3)obj;
-                    material.SetVector(name, value);
+                    material.SetVector(name, value * scaleValue);
                 }
             }
         }

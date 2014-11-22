@@ -102,7 +102,7 @@ namespace Atmosphere
                 if (cloudShader == null)
                 {
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    cloudShader = EVEManagerClass.GetShader(assembly, "Atmosphere.Shaders.Compiled-SphereCloud.shader");
+                    cloudShader = Tools.GetShader(assembly, "Atmosphere.Shaders.Compiled-SphereCloud.shader");
                 } return cloudShader;
             }
         }
@@ -115,7 +115,7 @@ namespace Atmosphere
                 if (cloudShadowShader == null)
                 {
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    cloudShadowShader = EVEManagerClass.GetShader(assembly, "Atmosphere.Shaders.Compiled-CloudShadow.shader");
+                    cloudShadowShader = Tools.GetShader(assembly, "Atmosphere.Shaders.Compiled-CloudShadow.shader");
                 } return cloudShadowShader;
             }
         }
@@ -172,13 +172,13 @@ namespace Atmosphere
                 if (layer == EVEManagerClass.MACRO_LAYER)
                 {
                     ShadowProjector.ignoreLayers = ~((1 << 19) | (1 << 15) | 2 | 1);
-                    sunTransform = EVEManagerClass.GetCelestialBody(Sun.Instance.sun.bodyName).transform;
+                    sunTransform = Tools.GetCelestialBody(Sun.Instance.sun.bodyName).transform;
                 }
                 else
                 {
                     ShadowProjectorGO.layer = EVEManagerClass.SCALED_LAYER;
                     ShadowProjector.ignoreLayers = ~((1 << 29) | (1 << 23) | (1 << 18) | (1 << 10));// | (1 << 9));
-                    sunTransform = EVEManagerClass.GetScaledTransform(Sun.Instance.sun.bodyName);
+                    sunTransform = Tools.GetScaledTransform(Sun.Instance.sun.bodyName);
                     AtmosphereManager.Log("Camera mask: "+ScaledCamera.Instance.camera.cullingMask);
                 }
             }
