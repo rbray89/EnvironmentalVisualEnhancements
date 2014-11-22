@@ -9,7 +9,7 @@
 
 Category {
 	
-	Tags { "Queue"="Overlay" "IgnoreProjector"="True" "RenderType"="Transparent" }
+	Tags { "Queue"="Transparent-5" "IgnoreProjector"="True" "RenderType"="Transparent" }
 	Blend SrcAlpha OneMinusSrcAlpha
 	Fog { Mode Off}
 	ZTest Off

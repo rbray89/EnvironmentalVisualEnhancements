@@ -3,13 +3,13 @@
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_Visibility ("Visibility", Float) = .0001
 		_OceanRadius ("Ocean Radius", Float) = 63000
-		_SphereRadius ("Ocean Radius", Float) = 67000
+		_SphereRadius ("Sphere Radius", Float) = 67000
 		_PlanetOrigin ("Sphere Center", Vector) = (0,0,0,1)
 	}
 
 Category {
 	
-	Tags { "Queue"="Overlay" "IgnoreProjector"="True" "RenderType"="Transparent" }
+	Tags { "Queue"="Transparent-5" "IgnoreProjector"="True" "RenderType"="Transparent" }
 	Blend SrcAlpha OneMinusSrcAlpha
 	Fog { Mode Off}
 	ZTest Off
@@ -31,6 +31,7 @@ SubShader {
 		#pragma glsl
 		#pragma vertex vert
 		#pragma fragment frag
+	    #pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
 		#define MAG_ONE 1.4142135623730950488016887242097
 		#pragma fragmentoption ARB_precision_hint_fastest
 		#define PI 3.1415926535897932384626
@@ -38,7 +39,6 @@ SubShader {
 		#define TWOPI (2.0*PI) 
 		#define INV_2PI (1.0/TWOPI)
 	    #define FLT_MAX (1e+32)
-	    #pragma multi_compile WORLD_SPACE
 
 		fixed4 _Color;
 		sampler2D _CameraDepthTexture;
@@ -76,7 +76,7 @@ SubShader {
 	   	   o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
 	   	   
 	   	   
-	   	   #ifdef WORLD_SPACE
+	   	   #ifdef WORLD_SPACE_ON
 	   	   o.worldOrigin = _PlanetOrigin;
 	   	   #else
 	   	   o.worldOrigin = mul(_Object2World, fixed4(0,0,0,1)).xyz;;
@@ -85,7 +85,7 @@ SubShader {
 	   	   o.altitude = distance(o.worldOrigin,_WorldSpaceCameraPos) - _OceanRadius;
 	   	   o.L = o.worldOrigin - _WorldSpaceCameraPos;
 	   	   
-	   	   #ifdef WORLD_SPACE
+	   	   #ifdef WORLD_SPACE_ON
 	   	   o.scrPos=ComputeScreenPos(o.pos);
 		   COMPUTE_EYEDEPTH(o.scrPos.z);
 		   #endif
@@ -96,7 +96,7 @@ SubShader {
 			{
 			half4 color = _Color;
 			float depth = FLT_MAX;
-			#ifdef WORLD_SPACE
+			#ifdef WORLD_SPACE_ON
 			depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.scrPos)));
 			depth = LinearEyeDepth(depth);
 			#endif
