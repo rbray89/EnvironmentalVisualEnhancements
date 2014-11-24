@@ -24,19 +24,19 @@ namespace Atmosphere
         float _FalloffScale = 3f;
         [Persistent]
         float _DetailScale = 100f;
-        [Persistent]
+        [Persistent, InverseScaled]
         float _DetailDist = 0.000002f;
         [Persistent]
         float _MinLight = .5f;
-        [Persistent]
+        [Persistent, Scaled]
         float _FadeDist = 8f;
-        [Persistent]
+        [Persistent, InverseScaled]
         float _FadeScale = 0.00375f;
-        [Persistent]
+        [Persistent, InverseScaled]
         float _RimDist = 0.0001f;
-        [Persistent]
+        [Persistent, InverseScaled]
         float _RimDistSub = 1.01f;
-        [Persistent]
+        [Persistent, InverseScaled]
         float _InvFade = .008f;
     }
 
@@ -57,8 +57,6 @@ namespace Atmosphere
         Vector3 shadowOffset = new Vector3(0, 0, 0);
         [Persistent]
         Clouds2DMaterial macroCloudMaterial;
-        [Persistent]
-        Clouds2DMaterial scaledCloudMaterial;
 
         bool isScaled = false;
         public bool Scaled
@@ -71,7 +69,8 @@ namespace Atmosphere
                 {
                     if (value)
                     {
-                        scaledCloudMaterial.ApplyMaterialProperties(CloudMaterial);
+                        macroCloudMaterial.ApplyMaterialProperties(CloudMaterial, Tools.GetWorldToScaledSpace(celestialBody.bodyName));
+                        macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material, Tools.GetWorldToScaledSpace(celestialBody.bodyName));
                         float scale = (float)(1000f / celestialBody.Radius);
                         CloudMaterial.DisableKeyword("SOFT_DEPTH_ON");
                         Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);
@@ -79,6 +78,7 @@ namespace Atmosphere
                     else
                     {
                         macroCloudMaterial.ApplyMaterialProperties(CloudMaterial);
+                        macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material);
                         CloudMaterial.EnableKeyword("SOFT_DEPTH_ON");
                         Reassign(EVEManagerClass.MACRO_LAYER, celestialBody.transform, 1);
                     }
@@ -128,7 +128,6 @@ namespace Atmosphere
             CloudMaterial = new Material(CloudShader);
             HalfSphere hp = new HalfSphere(radius, CloudMaterial);
             CloudMesh = hp.GameObject;
-            Scaled = true;
             this.radius = radius;
             float circumference = 2f * Mathf.PI * radius;
             globalPeriod = (speed+detailSpeed) / circumference;
@@ -144,9 +143,10 @@ namespace Atmosphere
                 ShadowProjector.orthographic = true;
                 ShadowProjector.transform.parent = celestialBody.transform;
                 ShadowProjector.material = new Material(CloudShadowShader);
-                macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material);
             }
             sunTransform = Sun.Instance.sun.transform;
+
+            Scaled = true;
         }
 
         public void Reassign(int layer, Transform parent, float scale)

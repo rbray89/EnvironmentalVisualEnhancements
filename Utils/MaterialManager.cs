@@ -122,9 +122,6 @@ namespace Utils
                 {
                     float value = (float)obj;
                     material.SetFloat(name, value * scaleValue);
-
-                    KSPLog.print(name + ": " + scaleValue);
-                    KSPLog.print(name + ": " + value );
                 }
                 //Color
                 else if (obj.GetType() == typeof(Color))

@@ -54,27 +54,13 @@ namespace Atmosphere
             unchangedSections = new VolumeSection[3];
         }
 
-        public VolumeManager(float cloudSphereRadius, Texture2D texture, Vector3 texOffset, Material cloudParticleMaterial, Transform transform)
+        public VolumeManager(float cloudSphereRadius, Vector2 size, Texture2D texture, Vector3 texOffset, Material cloudParticleMaterial, Transform transform)
             : this(cloudSphereRadius, transform)
         {
             atmosphere = false;
-            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, texOffset, transform, Center.localPosition, Magnitude, new Vector3(-radius, 0, 0), radius, divisions));
-            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, texOffset, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, opp), radius, divisions));
-            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, texOffset, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, -opp), radius, divisions));
-            forceUpdate = true;
-        }
-
-        public VolumeManager(float cloudSphereRadius, Material cloudParticleMaterial, Transform transform)
-            : this(cloudSphereRadius, transform)
-        {
-            atmosphere = true;
-            VolumeList.Add(new VolumeSection(cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(-radius, 0, 0), radius, divisions));
-            VolumeList.Add(new VolumeSection(cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, opp), radius, divisions));
-            VolumeList.Add(new VolumeSection(cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, -opp), radius, divisions));
-            VolumeListBottom.Add(new VolumeSection(cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(-radius, 0, 0), radius, divisions));
-            VolumeListBottom.Add(new VolumeSection(cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, opp), radius, divisions));
-            VolumeListBottom.Add(new VolumeSection(cloudParticleMaterial, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, -opp), radius, divisions));
-            
+            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, texOffset, size, transform, Center.localPosition, Magnitude, new Vector3(-radius, 0, 0), radius, divisions));
+            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, texOffset, size, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, opp), radius, divisions));
+            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, texOffset, size, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, -opp), radius, divisions));
             forceUpdate = true;
         }
 

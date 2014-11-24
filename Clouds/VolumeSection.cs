@@ -13,7 +13,7 @@ namespace Atmosphere
         private static System.Random Random = new System.Random();
 
         GameObject particle;
-        public CloudParticle(Material cloudParticleMaterial, Transform parent, Vector3 pos, float magnitude)
+        public CloudParticle(Material cloudParticleMaterial, Vector2 size, Transform parent, Vector3 pos, float magnitude)
         {
             particle = new GameObject();
 
@@ -41,7 +41,7 @@ namespace Atmosphere
             particle.layer = EVEManagerClass.MACRO_LAYER;
 
             Vector3 up = particle.transform.InverseTransformDirection(worldUp);
-            Quad.Create(particle, Random.Next(2500, 4500), Color.white, up);
+            Quad.Create(particle, Random.Next((int)size.x, (int)size.y), Color.white, up);
             
             var mr = particle.AddComponent<MeshRenderer>();
             mr.sharedMaterial = cloudParticleMaterial;
@@ -107,7 +107,7 @@ namespace Atmosphere
         public Vector3 Offset { get { return offset; } set { offset = value; } }
         public bool Enabled { get { return segment.activeSelf; } set { segment.SetActive(value); } }
 
-        public VolumeSection(Texture2D tex, Material cloudParticleMaterial, Vector3 texOffset, Transform parent, Vector3 pos, float magnitude, Vector3 offset, float radius, int divisions)
+        public VolumeSection(Texture2D tex, Material cloudParticleMaterial, Vector3 texOffset, Vector2 size, Transform parent, Vector3 pos, float magnitude, Vector3 offset, float radius, int divisions)
         {
             texture = tex;
             this.texOffset = texOffset;
@@ -119,22 +119,7 @@ namespace Atmosphere
             List<Vector3> positions = hexGeometry.GetPoints();
             foreach (Vector3 position in positions)
             {
-                Particles.Add(new CloudParticle(cloudParticleMaterial, segment.transform, position, magnitude));
-            }
-        }
-
-        public VolumeSection(Material cloudParticleMaterial, Transform parent, Vector3 pos, float magnitude, Vector3 offset, float radius, int divisions)
-        {
-            texture = null;
-            segment = new GameObject();
-            HexSeg hexGeometry = new HexSeg(radius, divisions);
-
-            Reassign(pos, offset, magnitude, parent);
-
-            List<Vector3> positions = hexGeometry.GetPoints();
-            foreach (Vector3 position in positions)
-            {
-                Particles.Add(new CloudParticle(cloudParticleMaterial, segment.transform, position, magnitude));
+                Particles.Add(new CloudParticle(cloudParticleMaterial, size, segment.transform, position, magnitude));
             }
         }
 
