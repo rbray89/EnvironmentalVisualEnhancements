@@ -99,7 +99,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 	   	   
 	   	   o.sphereNormal = -normalize(v.vertex);
-		   o.viewDir = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, v.vertex).xyz);
+		   
 		   half3 worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
 
     		half NdotL = dot (worldNormal, normalize(_WorldSpaceLightPos0));
@@ -108,6 +108,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
     		
     		TANGENT_SPACE_ROTATION; 
         	o.lightDirection = normalize(mul(rotation, ObjSpaceLightDir(v.vertex)));
+        	o.viewDir = normalize(mul(rotation, ObjSpaceViewDir(v.vertex)));
     		TRANSFER_VERTEX_TO_FRAGMENT(o);
     
 	   	   return o;
@@ -142,12 +143,12 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half3 detailCoords = lerp(sphereNrm.zxy, sphereNrm.xyz, zxlerp);
 			half nylerp = saturate(floor(1+sphereNrm.y-(lerp(sphereNrm.z, sphereNrm.x, zxlerp))));		
 			detailCoords = lerp(detailCoords, sphereNrm.yxz, nylerp);
-			half4 detail = tex2D (_DetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_DetailScale);	
+			half4 detail = tex2D (_DetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_DetailScale, uvdd.xy, uvdd.zw);	
 			
 			#ifdef CITYOVERLAY_ON
 			half4 cityoverlay = tex2D(_CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-			half4 citydarkoverlaydetail = tex2D (_CityDarkOverlayDetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_CityOverlayDetailScale);
-			half4 citylightoverlaydetail = tex2D (_CityLightOverlayDetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_CityOverlayDetailScale);
+			half4 citydarkoverlaydetail = tex2D (_CityDarkOverlayDetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_CityOverlayDetailScale, uvdd.xy, uvdd.zw);
+			half4 citylightoverlaydetail = tex2D (_CityLightOverlayDetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_CityOverlayDetailScale, uvdd.xy, uvdd.zw);
 			#endif
 			
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
@@ -169,14 +170,12 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half lightIntensity = saturate(_LightColor0.a * NdotL * 2 * atten);
 			half3 light = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
 			
-            float3 specularReflection = saturate(floor(1+NdotL));
-            
-            specularReflection *= atten * float3(_LightColor0) 
-                  * float3(_SpecColor) * pow(saturate( dot(
+            float3 specularReflection = atten * _LightColor0.rgb
+                  * _SpecColor.rgb * pow(max(0.0, dot(
                   reflect(-IN.lightDirection, norm), 
                   IN.viewDir)), _Shininess);
  			
- 			light *= IN.terminator;
+ 			light *= lerp(IN.terminator, 1, main.a);
             light += main.a*specularReflection;
 			
 			color.rgb += _Albedo*light;

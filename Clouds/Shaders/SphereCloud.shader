@@ -139,7 +139,7 @@ SubShader {
 			half3 detailCoords = lerp(objNrm.zxy, objNrm.xyz, zxlerp);
 			half nylerp = saturate(floor(1+objNrm.y-(lerp(objNrm.z, objNrm.x, zxlerp))));		
 			detailCoords = lerp(detailCoords, objNrm.yxz, nylerp);
-			half4 detail = tex2D (_DetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_DetailScale);
+			half4 detail = tex2D (_DetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_DetailScale, uvdd.xy, uvdd.zw);
 			
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
 			color = main.rgba * lerp(detail.rgba, 1, detailLevel);

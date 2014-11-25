@@ -145,7 +145,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -417,11 +417,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -597,11 +597,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -1129,7 +1129,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 468
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 472
@@ -1285,7 +1285,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -1554,11 +1554,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -1731,11 +1731,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -2253,7 +2253,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 465
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 469
@@ -2410,7 +2410,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -2682,11 +2682,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -2862,11 +2862,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -3396,7 +3396,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 477
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 481
@@ -3555,7 +3555,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -3827,11 +3827,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -4007,11 +4007,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -4541,7 +4541,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 469
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 473
@@ -4700,7 +4700,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -4972,11 +4972,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -5152,11 +5152,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -5684,7 +5684,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 468
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 472
@@ -5846,7 +5846,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -6122,11 +6122,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -6305,11 +6305,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -6849,7 +6849,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 484
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 488
@@ -7013,7 +7013,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -7291,11 +7291,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -7833,7 +7833,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 485
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 489
@@ -7994,7 +7994,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -8266,11 +8266,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -8446,11 +8446,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -8978,7 +8978,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 474
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 478
@@ -9140,7 +9140,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -9416,11 +9416,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -9599,11 +9599,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -10141,7 +10141,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 477
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 481
@@ -10305,7 +10305,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -10581,11 +10581,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -10764,11 +10764,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -11304,7 +11304,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 482
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 486
@@ -11468,7 +11468,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -11744,11 +11744,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -11927,11 +11927,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -12469,7 +12469,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 483
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 487
@@ -12633,7 +12633,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -12909,11 +12909,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -13092,11 +13092,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -13638,7 +13638,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 492
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 496
@@ -13802,7 +13802,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -14080,11 +14080,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -14626,7 +14626,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 492
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 496
@@ -14790,7 +14790,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -15066,11 +15066,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -15249,11 +15249,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -15789,7 +15789,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 488
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 492
@@ -15953,7 +15953,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -16229,11 +16229,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -16412,11 +16412,11 @@ void main ()
   detailCoords_8 = tmpvar_26;
   mediump float tmpvar_27;
   tmpvar_27 = abs(detailCoords_8.x);
-  lowp vec4 tmpvar_28;
-  highp vec2 P_29;
-  P_29 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_28 = texture2D (_DetailTex, P_29);
-  detail_6 = tmpvar_28;
+  highp vec2 coord_28;
+  coord_28 = ((((0.5 * detailCoords_8.zy) / tmpvar_27) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_29;
+  tmpvar_29 = texture2DGradEXT (_DetailTex, coord_28, tmpvar_20.xy, tmpvar_20.zw);
+  detail_6 = tmpvar_29;
   highp float tmpvar_30;
   tmpvar_30 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_5 = tmpvar_30;
@@ -16954,7 +16954,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 489
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 493
@@ -17133,7 +17133,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -17468,11 +17468,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -17676,11 +17676,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -18234,7 +18234,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 472
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 476
@@ -18414,7 +18414,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -18728,11 +18728,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -18933,11 +18933,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -19480,7 +19480,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 468
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 472
@@ -19661,7 +19661,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -19997,11 +19997,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -20205,11 +20205,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -20765,7 +20765,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 481
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 485
@@ -20948,7 +20948,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -21283,11 +21283,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -21491,11 +21491,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -22051,7 +22051,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 473
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 477
@@ -22234,7 +22234,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -22568,11 +22568,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -22776,11 +22776,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -23334,7 +23334,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 472
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 476
@@ -23520,7 +23520,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -23878,11 +23878,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -24089,11 +24089,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -24662,7 +24662,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( objNrm.zxy, objNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 491
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
@@ -24851,7 +24851,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -25211,11 +25211,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -25782,7 +25782,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( objNrm.zxy, objNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 492
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
@@ -25975,7 +25975,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -26298,11 +26298,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -26513,11 +26513,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -27071,7 +27071,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     #line 478
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 482
@@ -27264,7 +27264,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -27608,11 +27608,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -27826,11 +27826,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -28397,7 +28397,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( objNrm.zxy, objNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 484
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
@@ -28586,7 +28586,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -28933,11 +28933,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -29144,11 +29144,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -29713,7 +29713,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( objNrm.zxy, objNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 489
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
@@ -29902,7 +29902,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -30249,11 +30249,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -30460,11 +30460,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -31031,7 +31031,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( objNrm.zxy, objNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 490
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
@@ -31220,7 +31220,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -31578,11 +31578,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -31789,11 +31789,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -32364,7 +32364,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( objNrm.zxy, objNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 499
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
@@ -32553,7 +32553,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -32913,11 +32913,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -33488,7 +33488,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( objNrm.zxy, objNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 499
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
@@ -33677,7 +33677,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -34024,11 +34024,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -34235,11 +34235,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -34804,7 +34804,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( objNrm.zxy, objNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 495
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
@@ -34993,7 +34993,7 @@ void main ()
   vec3 tmpvar_13;
   tmpvar_13 = mix (mix (tmpvar_11.zxy, tmpvar_11, vec3(tmpvar_12)), tmpvar_11.yxz, vec3(clamp (floor(((1.0 + tmpvar_11.y) - mix (tmpvar_11.z, tmpvar_11.x, tmpvar_12))), 0.0, 1.0)));
   vec4 tmpvar_14;
-  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2D (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
+  tmpvar_14 = ((texture2DGradARB (_MainTex, tmpvar_7, tmpvar_10.xy, tmpvar_10.zw) * _Color) * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_13.zy) / abs(tmpvar_13.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_10.xy, tmpvar_10.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0))));
   vec3 p_15;
   p_15 = (xlv_TEXCOORD0 - _WorldSpaceCameraPos);
   vec3 p_16;
@@ -35340,11 +35340,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -35551,11 +35551,11 @@ void main ()
   detailCoords_9 = tmpvar_27;
   mediump float tmpvar_28;
   tmpvar_28 = abs(detailCoords_9.x);
-  lowp vec4 tmpvar_29;
-  highp vec2 P_30;
-  P_30 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_29 = texture2D (_DetailTex, P_30);
-  detail_7 = tmpvar_29;
+  highp vec2 coord_29;
+  coord_29 = ((((0.5 * detailCoords_9.zy) / tmpvar_28) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_30;
+  tmpvar_30 = texture2DGradEXT (_DetailTex, coord_29, tmpvar_21.xy, tmpvar_21.zw);
+  detail_7 = tmpvar_30;
   highp float tmpvar_31;
   tmpvar_31 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD2), 0.0, 1.0);
   detailLevel_6 = tmpvar_31;
@@ -36122,7 +36122,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( objNrm.zxy, objNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + objNrm.y) - mix( objNrm.z, objNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, objNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 496
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
@@ -36184,8 +36184,8 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 30
-//   d3d9 - ALU: 112 to 117, TEX: 4 to 5
-//   d3d11 - ALU: 93 to 99, TEX: 1 to 2, FLOW: 1 to 1
+//   d3d9 - ALU: 112 to 117, TEX: 6 to 7
+//   d3d11 - ALU: 93 to 99, TEX: 0 to 1, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { "SOFT_DEPTH_OFF" "POINT" "SHADOWS_OFF" }
 "!!GLSL"
@@ -36212,7 +36212,7 @@ Float 15 [_RimDistSub]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 112 ALU, 4 TEX
+; 112 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c16, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -36226,84 +36226,84 @@ dcl_texcoord2 v2.x
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r1.xyz, r2.yxzw, -r0
-add r0.w, r0, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad_pp r0.xyz, r0.w, r1, r0
-abs_pp r0.w, r0.x
-abs r2.y, v4.z
-dsx r3.zw, v4.xyxz
-max r0.x, r2, r2.y
-rcp_pp r1.x, r0.w
-rcp r0.w, r0.x
-min r0.x, r2, r2.y
-mul r2.z, r0.x, r0.w
-mul_pp r0.zw, r0.xyzy, r1.x
-mul r2.w, r2.z, r2.z
-mov_pp r1.xy, c6
-mad_pp r1.xy, r0.zwzw, c20.y, r1
-mad r0.x, r2.w, c18.y, c18.z
-mad r0.z, r0.x, r2.w, c18.w
-mul r0.xy, r1, c9.x
-mad r1.x, r0.z, r2.w, c19
-mad r3.x, r1, r2.w, c19.y
-mad r2.w, r3.x, r2, c19.z
-texld r0, r0, s1
-add_pp r1, -r0, c16.y
-mul r2.z, r2.w, r2
-mul r3.x, v2, c10
-mul_sat r2.w, r3.x, c17
-mad_pp r1, r2.w, r1, r0
-mul r3.zw, r3, r3
-add r0.x, r2, -r2.y
-add r0.y, -r2.z, c19.w
-cmp r0.w, -r0.x, r2.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c16.z
-add r0.z, -r0.x, c16.y
-mad r0.y, r0.x, c17.x, c17
-mad r0.y, r0, r0.x, c16.w
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c16
+abs r0.w, v4.z
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c18, c18.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c18.w
+mad r0.x, r1.y, r2.w, c19
+dp4 r3.z, c2, c2
+mul r3.w, v2.x, c10.x
+mad r1.y, r0.x, r2.w, c19
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c19
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c6
+mad_pp r0.xy, r0, c20.y, r2
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c19.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c16
+add r1.x, -r0.z, c16.y
+mad r0.w, r0.z, c17.x, c17.y
+mad r0.w, r0, r0.z, c16
+rsq r1.x, r1.x
+cmp r1.y, v4.z, r1, r1.z
+mad r0.z, r0.w, r0, c17
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c16.x, c16.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c17, r0
+mad r0.w, r0.z, c16.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c20.x, c20.y
+mul r0.w, r0, c18.x
+add r3.xy, r0.zwzw, c5
+dsx r0.zw, v4.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+dsy r1.xy, v4.xzzw
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
 rsq r0.z, r0.z
-cmp r0.w, v4.z, r0, r2.x
-mad r0.x, r0.y, r0, c17.z
 rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c16, c16.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c17.w, r0
-mad r0.y, r0.x, c16.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c20, c20.y
-mul r0.y, r0, c18.x
-add r3.xy, r0, c5
-dp4 r0.x, c2, c2
-rsq r0.x, r0.x
-mul r2.xyz, r0.x, c2
-dp3_sat r2.x, v3, r2
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r2.w, r3.z, r3
-rsq r0.x, r2.w
-rsq r0.z, r0.z
-rcp r2.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c20.x
-dsx r0.w, r3.y
-dsy r0.y, r3
-mul r0.x, r2.w, c20
-texldd r0, r3, s0, r0.zwzw, r0
-mul r0, r0, c4
-mul_pp r1, r0, r1
-add_pp r2.x, r2, c20.z
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+dsx r2.w, r3.y
+dsy r2.y, r3
+mul r2.z, r0, c20.x
+mul r2.x, r0.w, c20
+mul r0.xy, r0, c9.x
+texldd r0, r0, s1, r2.zwzw, r2
+texldd r2, r3, s0, r2.zwzw, r2
+add_pp r1, -r0, c16.y
+mul_sat r3.w, r3, c17
+mad_pp r0, r3.w, r1, r0
+rsq r3.z, r3.z
+mul r1.xyz, r3.z, c2
+dp3_sat r3.x, v3, r1
+mul r1, r2, c4
+mul_pp r1, r1, r0
+add_pp r2.x, r3, c20.z
 mul_pp r0.y, r2.x, c3.w
 mul_pp_sat r0.w, r0.y, c20
 mov r0.x, c11
@@ -36367,10 +36367,10 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 // 97 instructions, 4 temp regs, 0 temp arrays:
 // ALU 89 float, 0 int, 4 uint
-// TEX 1 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 0 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedonjiijnbhajmgmmbmbankamnghaofgnmabaaaaaaamaoaaaaadaaaaaa
+eefiecedmkmpoknllkhjnemhljmfnodhbmfoafjjabaaaaaabmaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -36381,108 +36381,108 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaomaaaaaa
 aiaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefckeamaaaaeaaaaaaacjadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaa
+fdeieefcleamaaaaeaaaaaaacnadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
 abaaaaaaffffaaaagcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaa
 gcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaa
 aeaaaaaagcbaaaadhcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-aeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaia
-ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-abeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaah
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaaj
+aeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaa
+aaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
+ibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaa
+abaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaia
+ibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaa
+aaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaa
+aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+jgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaakgikcaaaaaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaaj
 icaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-abaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-dbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaa
-abaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaah
-bcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaa
-aaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaa
-bkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaa
-ckbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaia
-mbaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-dcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaa
-dcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaa
-aaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdo
-aaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaa
-alaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaa
-bkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
+diaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
+icaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
+bcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdido
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaa
+aebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaa
+akaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaa
+ggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaa
+dbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
+deaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaa
+aaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
+aaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+dagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaai
+icaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaa
+aaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaa
+agiecaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaa
+amaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+abaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+acaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaa
+egaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaa
+egaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
 aaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaai
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaal
-dcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaia
-mbaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-pcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaia
-ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaia
-ebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-ocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaa
-dcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
-acaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaa
-aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaa
-agaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaa
-aaaaaaaaajaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaa
-abaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaa
-abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaa
-adaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaa
-abaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaah
-pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaa
-abaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
-bcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaa
-abaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaa
-abaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaa
-egaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaa
-amaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-akaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
-aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
-adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
-afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
-alaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaabaaaaaadoaaaaab"
+pcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaa
+aaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaa
+abaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+egaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaia
+ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
+egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
+ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
+abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaa
+abaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaa
+alaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaa
+diaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaa
+cpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaa
+abaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
+acaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaa
+abaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaa
+aaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+bkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
+egiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
+diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
+bacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaa
+aaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaa
+egacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaah
+hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -36526,7 +36526,7 @@ Float 15 [_RimDistSub]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 112 ALU, 4 TEX
+; 112 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c16, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -36540,84 +36540,84 @@ dcl_texcoord2 v2.x
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r1.xyz, r2.yxzw, -r0
-add r0.w, r0, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad_pp r0.xyz, r0.w, r1, r0
-abs_pp r0.w, r0.x
-abs r2.y, v4.z
-dsx r3.zw, v4.xyxz
-max r0.x, r2, r2.y
-rcp_pp r1.x, r0.w
-rcp r0.w, r0.x
-min r0.x, r2, r2.y
-mul r2.z, r0.x, r0.w
-mul_pp r0.zw, r0.xyzy, r1.x
-mul r2.w, r2.z, r2.z
-mov_pp r1.xy, c6
-mad_pp r1.xy, r0.zwzw, c20.y, r1
-mad r0.x, r2.w, c18.y, c18.z
-mad r0.z, r0.x, r2.w, c18.w
-mul r0.xy, r1, c9.x
-mad r1.x, r0.z, r2.w, c19
-mad r3.x, r1, r2.w, c19.y
-mad r2.w, r3.x, r2, c19.z
-texld r0, r0, s1
-add_pp r1, -r0, c16.y
-mul r2.z, r2.w, r2
-mul r3.x, v2, c10
-mul_sat r2.w, r3.x, c17
-mad_pp r1, r2.w, r1, r0
-mul r3.zw, r3, r3
-add r0.x, r2, -r2.y
-add r0.y, -r2.z, c19.w
-cmp r0.w, -r0.x, r2.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c16.z
-add r0.z, -r0.x, c16.y
-mad r0.y, r0.x, c17.x, c17
-mad r0.y, r0, r0.x, c16.w
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c16
+abs r0.w, v4.z
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c18, c18.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c18.w
+mad r0.x, r1.y, r2.w, c19
+dp4_pp r3.z, c2, c2
+mul r3.w, v2.x, c10.x
+mad r1.y, r0.x, r2.w, c19
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c19
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c6
+mad_pp r0.xy, r0, c20.y, r2
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c19.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c16
+add r1.x, -r0.z, c16.y
+mad r0.w, r0.z, c17.x, c17.y
+mad r0.w, r0, r0.z, c16
+rsq r1.x, r1.x
+cmp r1.y, v4.z, r1, r1.z
+mad r0.z, r0.w, r0, c17
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c16.x, c16.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c17, r0
+mad r0.w, r0.z, c16.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c20.x, c20.y
+mul r0.w, r0, c18.x
+add r3.xy, r0.zwzw, c5
+dsx r0.zw, v4.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+dsy r1.xy, v4.xzzw
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
 rsq r0.z, r0.z
-cmp r0.w, v4.z, r0, r2.x
-mad r0.x, r0.y, r0, c17.z
 rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c16, c16.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c17.w, r0
-mad r0.y, r0.x, c16.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c20, c20.y
-mul r0.y, r0, c18.x
-add r3.xy, r0, c5
-dp4_pp r0.x, c2, c2
-rsq_pp r0.x, r0.x
-mul_pp r2.xyz, r0.x, c2
-dp3_sat r2.x, v3, r2
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r2.w, r3.z, r3
-rsq r0.x, r2.w
-rsq r0.z, r0.z
-rcp r2.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c20.x
-dsx r0.w, r3.y
-dsy r0.y, r3
-mul r0.x, r2.w, c20
-texldd r0, r3, s0, r0.zwzw, r0
-mul r0, r0, c4
-mul_pp r1, r0, r1
-add_pp r2.x, r2, c20.z
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+dsx r2.w, r3.y
+dsy r2.y, r3
+mul r2.z, r0, c20.x
+mul r2.x, r0.w, c20
+mul r0.xy, r0, c9.x
+texldd r0, r0, s1, r2.zwzw, r2
+texldd r2, r3, s0, r2.zwzw, r2
+add_pp r1, -r0, c16.y
+mul_sat r3.w, r3, c17
+mad_pp r0, r3.w, r1, r0
+rsq_pp r3.z, r3.z
+mul_pp r1.xyz, r3.z, c2
+dp3_sat r3.x, v3, r1
+mul r1, r2, c4
+mul_pp r1, r1, r0
+add_pp r2.x, r3, c20.z
 mul_pp r0.y, r2.x, c3.w
 mul_pp_sat r0.w, r0.y, c20
 mov r0.x, c11
@@ -36681,10 +36681,10 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 // 97 instructions, 4 temp regs, 0 temp arrays:
 // ALU 89 float, 0 int, 4 uint
-// TEX 1 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 0 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedhdockjpfjgikmjlcomkjolfjcbbokealabaaaaaapeanaaaaadaaaaaa
+eefiecedgfoaeapdnnmfanonbocpcdjdabglofikabaaaaaaaeaoaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -36694,108 +36694,109 @@ adaaaaaaaeaaaaaaahahaaaaneaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahahaaaaneaaaaaaaiaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefckeamaaaaeaaaaaaacjadaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcleamaaaaeaaaaaaacnadaaaafjaaaaaeegiocaaa
 aaaaaaaaajaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaa
 acaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaa
 aaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaa
 fibiaaaeaahabaaaabaaaaaaffffaaaagcbaaaadhcbabaaaabaaaaaagcbaaaad
 icbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaa
 gcbaaaadhcbabaaaaeaaaaaagcbaaaadhcbabaaaafaaaaaagfaaaaadpccabaaa
-aaaaaaaagiaaaaacaeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaa
-aeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaa
-aaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaa
-aaaaaaaaakaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaaj
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlo
-dcaaaaajccaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaa
-diphhpdpdiaaaaahecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaa
-dcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapmjdpdbaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaabaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
-aaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaa
-ckaabaaaaaaaaaaadbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaia
-ebaaaaaaaeaaaaaaabaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaa
-nlapejmaaaaaaaahbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaa
-ddaaaaahccaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaai
-ccaabaaaaaaaaaaabkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaah
-icaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaa
-aaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadp
-dcaaaaakicaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlm
-abeaaaaachbgjidndcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaa
-abaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaa
-abaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaadcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
-aaaaaamaabeaaaaanlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaa
-bkaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
-abaaaaaackaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjkcdoaaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaa
-aaaaaaaaaeaaaaaaalaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaaf
-ccaabaaaacaaaaaabkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaa
-aeaaaaaaapaaaaahecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaa
-elaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaa
-aeaaaaaaapaaaaahecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaa
-elaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaa
+aaaaaaaagiaaaaacaeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaa
+aeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaa
+aaaaaaaaakaabaaaaaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaa
+aeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaa
+aaaaaaaaegaobaaaabaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaa
+aaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaa
+abaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaajgahbaaaaaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaa
+kgajbaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaah
+dcaabaaaaaaaaaaajgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaa
+aaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaafaaaaaadiaaaaaidcaabaaa
+aaaaaaaaegaabaaaaaaaaaaakgikcaaaaaaaaaaaagaaaaaadeaaaaajecaabaaa
+aaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaak
+ecaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaa
+aaaaaaaaddaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
+ibaaaaaaaeaaaaaadiaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahicaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaa
+dgfkkolndcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaaochgdidodcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaaabeaaaaaaebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaabeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaa
+bkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaa
+aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaa
+ggbkbaaaaeaaaaaaggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaa
+akaabaaaabaaaaaaabeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaa
+akbabaaaaeaaaaaadbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaia
+ebaaaaaaaaaaaaaadeaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaa
+aeaaaaaabnaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaa
+abaaaaaaabaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+dhaaaaakecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaa
+ckaabaaaaaaaaaaadcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaa
+idpjccdoabeaaaaaaaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaa
+aeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaak
+ecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+keanmjdpaaaaaaaiicaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaa
+aaaaiadpelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaa
+abaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaa
+akaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaa
+abaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaa
+acaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaa
+agaebaaaacaaaaaaagiecaaaaaaaaaaaaeaaaaaaalaaaaafccaabaaaabaaaaaa
+dkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaaf
+mcaabaaaabaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaa
+abaaaaaaogakbaaaabaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahbcaabaaaabaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaaf
+mcaabaaaabaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaa
+abaaaaaaogakbaaaabaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahbcaabaaaacaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaan
+pcaabaaaadaaaaaaegaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaa
+egaabaaaabaaaaaaegaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaa
 aaaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaa
 acaaaaaadiaaaaaipcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaa
-adaaaaaaaaaaaaaldcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaa
-abaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaaaaaaaaajpcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
-ibaaaaaaaeaaaaaadcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaa
-acaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaa
-abaaaaaaakaabaiaebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaaaaaaaaajocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaia
-ibaaaaaaaeaaaaaadcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaa
-abaaaaaajgahbaaaacaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaa
-aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaa
-jgafbaaaabaaaaaaagaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaa
-abaaaaaaegiacaaaaaaaaaaaafaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaa
-abaaaaaakgikcaaaaaaaaaaaagaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaa
-abaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaa
-egaobaiaebaaaaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
-apcaaaaibcaabaaaadaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaagaaaaaa
-dcaaaaajpcaabaaaabaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaa
-abaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-aaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaa
-aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
-aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
-baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
-dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaia
-ebaaaaaaaaaaaaaaaiaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaai
-bcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaahaaaaaabacaaaah
-ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaa
-abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaagaaaaaacpaaaaafccaabaaa
-abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
-akiacaaaaaaaaaaaagaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
-ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
-hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
-baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
-ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
-aaaaaaaaahaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaahaaaaaa
-aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
-dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
-abaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
-aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
-abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
-aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
-aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-dkiacaaaaaaaaaaaabaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaabaaaaaa
-agiacaaaaaaaaaaaahaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
-pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
-egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
+adaaaaaaaaaaaaalpcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaa
+abaaaaaapgipcaaaaaaaaaaaagaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
+acaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaa
+egaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaa
+acaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaa
+egacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaa
+abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
+abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
+dcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaaaiaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
+dkiacaaaaaaaaaaaahaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaa
+egbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaa
+aaaaaaaaagaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaai
+ccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaagaaaaaabjaaaaaf
+ccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaa
+abaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaa
+egiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+dccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaahaaaaaackaabaaaabaaaaaa
+bkiacaiaebaaaaaaaaaaaaaaahaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaia
+ebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaa
+abaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
+acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
+acaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaa
+abaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlm
+diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaabaaaaaadicaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaa
+abaaaaaaegiccaaaaaaaaaaaabaaaaaaagiacaaaaaaaaaaaahaaaaaadccaaaak
+hcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaa
+aeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
+doaaaaab"
 }
 
 SubProgram "gles " {
@@ -36839,7 +36840,7 @@ Float 15 [_RimDistSub]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 112 ALU, 4 TEX
+; 112 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c16, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -36853,84 +36854,84 @@ dcl_texcoord2 v2.x
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r1.xyz, r2.yxzw, -r0
-add r0.w, r0, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad_pp r0.xyz, r0.w, r1, r0
-abs_pp r0.w, r0.x
-abs r2.y, v4.z
-dsx r3.zw, v4.xyxz
-max r0.x, r2, r2.y
-rcp_pp r1.x, r0.w
-rcp r0.w, r0.x
-min r0.x, r2, r2.y
-mul r2.z, r0.x, r0.w
-mul_pp r0.zw, r0.xyzy, r1.x
-mul r2.w, r2.z, r2.z
-mov_pp r1.xy, c6
-mad_pp r1.xy, r0.zwzw, c20.y, r1
-mad r0.x, r2.w, c18.y, c18.z
-mad r0.z, r0.x, r2.w, c18.w
-mul r0.xy, r1, c9.x
-mad r1.x, r0.z, r2.w, c19
-mad r3.x, r1, r2.w, c19.y
-mad r2.w, r3.x, r2, c19.z
-texld r0, r0, s1
-add_pp r1, -r0, c16.y
-mul r2.z, r2.w, r2
-mul r3.x, v2, c10
-mul_sat r2.w, r3.x, c17
-mad_pp r1, r2.w, r1, r0
-mul r3.zw, r3, r3
-add r0.x, r2, -r2.y
-add r0.y, -r2.z, c19.w
-cmp r0.w, -r0.x, r2.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c16.z
-add r0.z, -r0.x, c16.y
-mad r0.y, r0.x, c17.x, c17
-mad r0.y, r0, r0.x, c16.w
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c16
+abs r0.w, v4.z
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c18, c18.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c18.w
+mad r0.x, r1.y, r2.w, c19
+dp4 r3.z, c2, c2
+mul r3.w, v2.x, c10.x
+mad r1.y, r0.x, r2.w, c19
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c19
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c6
+mad_pp r0.xy, r0, c20.y, r2
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c19.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c16
+add r1.x, -r0.z, c16.y
+mad r0.w, r0.z, c17.x, c17.y
+mad r0.w, r0, r0.z, c16
+rsq r1.x, r1.x
+cmp r1.y, v4.z, r1, r1.z
+mad r0.z, r0.w, r0, c17
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c16.x, c16.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c17, r0
+mad r0.w, r0.z, c16.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c20.x, c20.y
+mul r0.w, r0, c18.x
+add r3.xy, r0.zwzw, c5
+dsx r0.zw, v4.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+dsy r1.xy, v4.xzzw
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
 rsq r0.z, r0.z
-cmp r0.w, v4.z, r0, r2.x
-mad r0.x, r0.y, r0, c17.z
 rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c16, c16.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c17.w, r0
-mad r0.y, r0.x, c16.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c20, c20.y
-mul r0.y, r0, c18.x
-add r3.xy, r0, c5
-dp4 r0.x, c2, c2
-rsq r0.x, r0.x
-mul r2.xyz, r0.x, c2
-dp3_sat r2.x, v3, r2
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r2.w, r3.z, r3
-rsq r0.x, r2.w
-rsq r0.z, r0.z
-rcp r2.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c20.x
-dsx r0.w, r3.y
-dsy r0.y, r3
-mul r0.x, r2.w, c20
-texldd r0, r3, s0, r0.zwzw, r0
-mul r0, r0, c4
-mul_pp r1, r0, r1
-add_pp r2.x, r2, c20.z
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+dsx r2.w, r3.y
+dsy r2.y, r3
+mul r2.z, r0, c20.x
+mul r2.x, r0.w, c20
+mul r0.xy, r0, c9.x
+texldd r0, r0, s1, r2.zwzw, r2
+texldd r2, r3, s0, r2.zwzw, r2
+add_pp r1, -r0, c16.y
+mul_sat r3.w, r3, c17
+mad_pp r0, r3.w, r1, r0
+rsq r3.z, r3.z
+mul r1.xyz, r3.z, c2
+dp3_sat r3.x, v3, r1
+mul r1, r2, c4
+mul_pp r1, r1, r0
+add_pp r2.x, r3, c20.z
 mul_pp r0.y, r2.x, c3.w
 mul_pp_sat r0.w, r0.y, c20
 mov r0.x, c11
@@ -36994,10 +36995,10 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 // 97 instructions, 4 temp regs, 0 temp arrays:
 // ALU 89 float, 0 int, 4 uint
-// TEX 1 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 0 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedfhgelbfcdjkenhhahflpclkihemglddiabaaaaaaamaoaaaaadaaaaaa
+eefiecedkmpgkhloidkffghimjbclhikocnfaohmabaaaaaabmaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -37008,108 +37009,108 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaomaaaaaa
 aiaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefckeamaaaaeaaaaaaacjadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaa
+fdeieefcleamaaaaeaaaaaaacnadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
 abaaaaaaffffaaaagcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaa
 gcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaa
 aeaaaaaagcbaaaadhcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-aeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaia
-ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-abeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaah
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaaj
+aeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaa
+aaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
+ibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaa
+abaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaia
+ibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaa
+aaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaa
+aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+jgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaakgikcaaaaaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaaj
 icaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-abaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-dbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaa
-abaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaah
-bcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaa
-aaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaa
-bkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaa
-ckbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaia
-mbaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-dcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaa
-dcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaa
-aaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdo
-aaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaa
-alaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaa
-bkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
+diaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
+icaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
+bcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdido
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaa
+aebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaa
+akaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaa
+ggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaa
+dbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
+deaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaa
+aaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
+aaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+dagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaai
+icaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaa
+aaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaa
+agiecaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaa
+amaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+abaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+acaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaa
+egaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaa
+egaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
 aaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaai
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaal
-dcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaia
-mbaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-pcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaia
-ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaia
-ebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-ocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaa
-dcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
-acaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaa
-aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaa
-agaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaa
-aaaaaaaaajaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaa
-abaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaa
-abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaa
-adaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaa
-abaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaah
-pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaa
-abaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
-bcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaa
-abaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaa
-abaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaa
-egaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaa
-amaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-akaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
-aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
-adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
-afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
-alaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaabaaaaaadoaaaaab"
+pcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaa
+aaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaa
+abaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+egaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaia
+ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
+egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
+ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
+abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaa
+abaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaa
+alaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaa
+diaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaa
+cpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaa
+abaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
+acaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaa
+abaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaa
+aaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+bkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
+egiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
+diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
+bacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaa
+aaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaa
+egacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaah
+hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -37153,7 +37154,7 @@ Float 15 [_RimDistSub]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 112 ALU, 4 TEX
+; 112 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c16, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -37167,84 +37168,84 @@ dcl_texcoord2 v2.x
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r1.xyz, r2.yxzw, -r0
-add r0.w, r0, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad_pp r0.xyz, r0.w, r1, r0
-abs_pp r0.w, r0.x
-abs r2.y, v4.z
-dsx r3.zw, v4.xyxz
-max r0.x, r2, r2.y
-rcp_pp r1.x, r0.w
-rcp r0.w, r0.x
-min r0.x, r2, r2.y
-mul r2.z, r0.x, r0.w
-mul_pp r0.zw, r0.xyzy, r1.x
-mul r2.w, r2.z, r2.z
-mov_pp r1.xy, c6
-mad_pp r1.xy, r0.zwzw, c20.y, r1
-mad r0.x, r2.w, c18.y, c18.z
-mad r0.z, r0.x, r2.w, c18.w
-mul r0.xy, r1, c9.x
-mad r1.x, r0.z, r2.w, c19
-mad r3.x, r1, r2.w, c19.y
-mad r2.w, r3.x, r2, c19.z
-texld r0, r0, s1
-add_pp r1, -r0, c16.y
-mul r2.z, r2.w, r2
-mul r3.x, v2, c10
-mul_sat r2.w, r3.x, c17
-mad_pp r1, r2.w, r1, r0
-mul r3.zw, r3, r3
-add r0.x, r2, -r2.y
-add r0.y, -r2.z, c19.w
-cmp r0.w, -r0.x, r2.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c16.z
-add r0.z, -r0.x, c16.y
-mad r0.y, r0.x, c17.x, c17
-mad r0.y, r0, r0.x, c16.w
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c16
+abs r0.w, v4.z
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c18, c18.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c18.w
+mad r0.x, r1.y, r2.w, c19
+dp4 r3.z, c2, c2
+mul r3.w, v2.x, c10.x
+mad r1.y, r0.x, r2.w, c19
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c19
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c6
+mad_pp r0.xy, r0, c20.y, r2
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c19.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c16
+add r1.x, -r0.z, c16.y
+mad r0.w, r0.z, c17.x, c17.y
+mad r0.w, r0, r0.z, c16
+rsq r1.x, r1.x
+cmp r1.y, v4.z, r1, r1.z
+mad r0.z, r0.w, r0, c17
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c16.x, c16.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c17, r0
+mad r0.w, r0.z, c16.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c20.x, c20.y
+mul r0.w, r0, c18.x
+add r3.xy, r0.zwzw, c5
+dsx r0.zw, v4.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+dsy r1.xy, v4.xzzw
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
 rsq r0.z, r0.z
-cmp r0.w, v4.z, r0, r2.x
-mad r0.x, r0.y, r0, c17.z
 rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c16, c16.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c17.w, r0
-mad r0.y, r0.x, c16.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c20, c20.y
-mul r0.y, r0, c18.x
-add r3.xy, r0, c5
-dp4 r0.x, c2, c2
-rsq r0.x, r0.x
-mul r2.xyz, r0.x, c2
-dp3_sat r2.x, v3, r2
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r2.w, r3.z, r3
-rsq r0.x, r2.w
-rsq r0.z, r0.z
-rcp r2.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c20.x
-dsx r0.w, r3.y
-dsy r0.y, r3
-mul r0.x, r2.w, c20
-texldd r0, r3, s0, r0.zwzw, r0
-mul r0, r0, c4
-mul_pp r1, r0, r1
-add_pp r2.x, r2, c20.z
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+dsx r2.w, r3.y
+dsy r2.y, r3
+mul r2.z, r0, c20.x
+mul r2.x, r0.w, c20
+mul r0.xy, r0, c9.x
+texldd r0, r0, s1, r2.zwzw, r2
+texldd r2, r3, s0, r2.zwzw, r2
+add_pp r1, -r0, c16.y
+mul_sat r3.w, r3, c17
+mad_pp r0, r3.w, r1, r0
+rsq r3.z, r3.z
+mul r1.xyz, r3.z, c2
+dp3_sat r3.x, v3, r1
+mul r1, r2, c4
+mul_pp r1, r1, r0
+add_pp r2.x, r3, c20.z
 mul_pp r0.y, r2.x, c3.w
 mul_pp_sat r0.w, r0.y, c20
 mov r0.x, c11
@@ -37308,10 +37309,10 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 // 97 instructions, 4 temp regs, 0 temp arrays:
 // ALU 89 float, 0 int, 4 uint
-// TEX 1 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 0 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedonjiijnbhajmgmmbmbankamnghaofgnmabaaaaaaamaoaaaaadaaaaaa
+eefiecedmkmpoknllkhjnemhljmfnodhbmfoafjjabaaaaaabmaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -37322,108 +37323,108 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaomaaaaaa
 aiaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefckeamaaaaeaaaaaaacjadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaa
+fdeieefcleamaaaaeaaaaaaacnadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
 abaaaaaaffffaaaagcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaa
 gcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaa
 aeaaaaaagcbaaaadhcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-aeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaia
-ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-abeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaah
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaaj
+aeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaa
+aaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
+ibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaa
+abaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaia
+ibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaa
+aaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaa
+aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+jgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaakgikcaaaaaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaaj
 icaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-abaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-dbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaa
-abaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaah
-bcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaa
-aaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaa
-bkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaa
-ckbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaia
-mbaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-dcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaa
-dcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaa
-aaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdo
-aaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaa
-alaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaa
-bkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
+diaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
+icaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
+bcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdido
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaa
+aebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaa
+akaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaa
+ggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaa
+dbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
+deaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaa
+aaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
+aaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+dagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaai
+icaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaa
+aaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaa
+agiecaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaa
+amaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+abaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+acaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaa
+egaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaa
+egaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
 aaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaai
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaal
-dcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaia
-mbaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-pcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaia
-ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaia
-ebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-ocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaa
-dcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
-acaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaa
-aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaa
-agaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaa
-aaaaaaaaajaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaa
-abaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaa
-abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaa
-adaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaa
-abaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaah
-pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaa
-abaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
-bcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaa
-abaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaa
-abaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaa
-egaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaa
-amaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-akaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
-aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
-adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
-afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
-alaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaabaaaaaadoaaaaab"
+pcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaa
+aaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaa
+abaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+egaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaia
+ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
+egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
+ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
+abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaa
+abaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaa
+alaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaa
+diaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaa
+cpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaa
+abaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
+acaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaa
+abaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaa
+aaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+bkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
+egiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
+diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
+bacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaa
+aaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaa
+egacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaah
+hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -37467,7 +37468,7 @@ Float 15 [_RimDistSub]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 112 ALU, 4 TEX
+; 112 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c16, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -37481,84 +37482,84 @@ dcl_texcoord2 v2.x
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r1.xyz, r2.yxzw, -r0
-add r0.w, r0, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad_pp r0.xyz, r0.w, r1, r0
-abs_pp r0.w, r0.x
-abs r2.y, v4.z
-dsx r3.zw, v4.xyxz
-max r0.x, r2, r2.y
-rcp_pp r1.x, r0.w
-rcp r0.w, r0.x
-min r0.x, r2, r2.y
-mul r2.z, r0.x, r0.w
-mul_pp r0.zw, r0.xyzy, r1.x
-mul r2.w, r2.z, r2.z
-mov_pp r1.xy, c6
-mad_pp r1.xy, r0.zwzw, c20.y, r1
-mad r0.x, r2.w, c18.y, c18.z
-mad r0.z, r0.x, r2.w, c18.w
-mul r0.xy, r1, c9.x
-mad r1.x, r0.z, r2.w, c19
-mad r3.x, r1, r2.w, c19.y
-mad r2.w, r3.x, r2, c19.z
-texld r0, r0, s1
-add_pp r1, -r0, c16.y
-mul r2.z, r2.w, r2
-mul r3.x, v2, c10
-mul_sat r2.w, r3.x, c17
-mad_pp r1, r2.w, r1, r0
-mul r3.zw, r3, r3
-add r0.x, r2, -r2.y
-add r0.y, -r2.z, c19.w
-cmp r0.w, -r0.x, r2.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c16.z
-add r0.z, -r0.x, c16.y
-mad r0.y, r0.x, c17.x, c17
-mad r0.y, r0, r0.x, c16.w
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c16
+abs r0.w, v4.z
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c18, c18.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c18.w
+mad r0.x, r1.y, r2.w, c19
+dp4_pp r3.z, c2, c2
+mul r3.w, v2.x, c10.x
+mad r1.y, r0.x, r2.w, c19
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c19
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c6
+mad_pp r0.xy, r0, c20.y, r2
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c19.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c16
+add r1.x, -r0.z, c16.y
+mad r0.w, r0.z, c17.x, c17.y
+mad r0.w, r0, r0.z, c16
+rsq r1.x, r1.x
+cmp r1.y, v4.z, r1, r1.z
+mad r0.z, r0.w, r0, c17
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c16.x, c16.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c17, r0
+mad r0.w, r0.z, c16.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c20.x, c20.y
+mul r0.w, r0, c18.x
+add r3.xy, r0.zwzw, c5
+dsx r0.zw, v4.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+dsy r1.xy, v4.xzzw
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
 rsq r0.z, r0.z
-cmp r0.w, v4.z, r0, r2.x
-mad r0.x, r0.y, r0, c17.z
 rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c16, c16.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c17.w, r0
-mad r0.y, r0.x, c16.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c20, c20.y
-mul r0.y, r0, c18.x
-add r3.xy, r0, c5
-dp4_pp r0.x, c2, c2
-rsq_pp r0.x, r0.x
-mul_pp r2.xyz, r0.x, c2
-dp3_sat r2.x, v3, r2
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r2.w, r3.z, r3
-rsq r0.x, r2.w
-rsq r0.z, r0.z
-rcp r2.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c20.x
-dsx r0.w, r3.y
-dsy r0.y, r3
-mul r0.x, r2.w, c20
-texldd r0, r3, s0, r0.zwzw, r0
-mul r0, r0, c4
-mul_pp r1, r0, r1
-add_pp r2.x, r2, c20.z
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+dsx r2.w, r3.y
+dsy r2.y, r3
+mul r2.z, r0, c20.x
+mul r2.x, r0.w, c20
+mul r0.xy, r0, c9.x
+texldd r0, r0, s1, r2.zwzw, r2
+texldd r2, r3, s0, r2.zwzw, r2
+add_pp r1, -r0, c16.y
+mul_sat r3.w, r3, c17
+mad_pp r0, r3.w, r1, r0
+rsq_pp r3.z, r3.z
+mul_pp r1.xyz, r3.z, c2
+dp3_sat r3.x, v3, r1
+mul r1, r2, c4
+mul_pp r1, r1, r0
+add_pp r2.x, r3, c20.z
 mul_pp r0.y, r2.x, c3.w
 mul_pp_sat r0.w, r0.y, c20
 mov r0.x, c11
@@ -37622,10 +37623,10 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 // 97 instructions, 4 temp regs, 0 temp arrays:
 // ALU 89 float, 0 int, 4 uint
-// TEX 1 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 0 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedekbheifedbejmbchacfcgmcajffpgbnjabaaaaaaamaoaaaaadaaaaaa
+eefiecedojmbfaofjhejkbibmkfpmpkgngapcbfkabaaaaaabmaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -37636,108 +37637,108 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaadaaaaaaomaaaaaa
 aiaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefckeamaaaaeaaaaaaacjadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaa
+fdeieefcleamaaaaeaaaaaaacnadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
 abaaaaaaffffaaaagcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaa
 gcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaa
 aeaaaaaagcbaaaadhcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-aeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaia
-ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-abeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaah
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaaj
+aeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaa
+aaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
+ibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaa
+abaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaia
+ibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaa
+aaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaa
+aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+jgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaakgikcaaaaaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaaj
 icaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-abaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-dbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaa
-abaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaah
-bcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaa
-aaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaa
-bkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaa
-ckbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaia
-mbaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-dcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaa
-dcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaa
-aaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdo
-aaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaa
-alaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaa
-bkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
+diaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
+icaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
+bcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdido
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaa
+aebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaa
+akaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaa
+ggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaa
+dbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
+deaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaa
+aaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
+aaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+dagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaai
+icaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaa
+aaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaa
+agiecaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaa
+amaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+abaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+acaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaa
+egaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaa
+egaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
 aaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaai
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaal
-dcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaia
-mbaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-pcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaia
-ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaia
-ebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-ocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaa
-dcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
-acaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaa
-aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaa
-agaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaa
-aaaaaaaaajaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaa
-abaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaa
-abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaa
-adaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaa
-abaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaah
-pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaa
-abaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
-bcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaa
-abaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaa
-abaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaa
-egaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaa
-amaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-akaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
-aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
-adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
-afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
-alaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaabaaaaaadoaaaaab"
+pcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaa
+aaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaa
+abaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+egaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaia
+ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
+egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
+ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
+abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaa
+abaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaa
+alaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaa
+diaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaa
+cpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaa
+abaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
+acaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaa
+abaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaa
+aaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+bkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
+egiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
+diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
+bacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaa
+aaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaa
+egacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaah
+hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -37781,7 +37782,7 @@ Float 15 [_RimDistSub]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 112 ALU, 4 TEX
+; 112 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c16, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -37795,84 +37796,84 @@ dcl_texcoord2 v2.x
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r1.xyz, r2.yxzw, -r0
-add r0.w, r0, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad_pp r0.xyz, r0.w, r1, r0
-abs_pp r0.w, r0.x
-abs r2.y, v4.z
-dsx r3.zw, v4.xyxz
-max r0.x, r2, r2.y
-rcp_pp r1.x, r0.w
-rcp r0.w, r0.x
-min r0.x, r2, r2.y
-mul r2.z, r0.x, r0.w
-mul_pp r0.zw, r0.xyzy, r1.x
-mul r2.w, r2.z, r2.z
-mov_pp r1.xy, c6
-mad_pp r1.xy, r0.zwzw, c20.y, r1
-mad r0.x, r2.w, c18.y, c18.z
-mad r0.z, r0.x, r2.w, c18.w
-mul r0.xy, r1, c9.x
-mad r1.x, r0.z, r2.w, c19
-mad r3.x, r1, r2.w, c19.y
-mad r2.w, r3.x, r2, c19.z
-texld r0, r0, s1
-add_pp r1, -r0, c16.y
-mul r2.z, r2.w, r2
-mul r3.x, v2, c10
-mul_sat r2.w, r3.x, c17
-mad_pp r1, r2.w, r1, r0
-mul r3.zw, r3, r3
-add r0.x, r2, -r2.y
-add r0.y, -r2.z, c19.w
-cmp r0.w, -r0.x, r2.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c16.z
-add r0.z, -r0.x, c16.y
-mad r0.y, r0.x, c17.x, c17
-mad r0.y, r0, r0.x, c16.w
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c16
+abs r0.w, v4.z
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c18, c18.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c18.w
+mad r0.x, r1.y, r2.w, c19
+dp4 r3.z, c2, c2
+mul r3.w, v2.x, c10.x
+mad r1.y, r0.x, r2.w, c19
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c19
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c6
+mad_pp r0.xy, r0, c20.y, r2
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c19.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c16
+add r1.x, -r0.z, c16.y
+mad r0.w, r0.z, c17.x, c17.y
+mad r0.w, r0, r0.z, c16
+rsq r1.x, r1.x
+cmp r1.y, v4.z, r1, r1.z
+mad r0.z, r0.w, r0, c17
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c16.x, c16.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c17, r0
+mad r0.w, r0.z, c16.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c20.x, c20.y
+mul r0.w, r0, c18.x
+add r3.xy, r0.zwzw, c5
+dsx r0.zw, v4.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+dsy r1.xy, v4.xzzw
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
 rsq r0.z, r0.z
-cmp r0.w, v4.z, r0, r2.x
-mad r0.x, r0.y, r0, c17.z
 rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c16, c16.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c17.w, r0
-mad r0.y, r0.x, c16.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c20, c20.y
-mul r0.y, r0, c18.x
-add r3.xy, r0, c5
-dp4 r0.x, c2, c2
-rsq r0.x, r0.x
-mul r2.xyz, r0.x, c2
-dp3_sat r2.x, v3, r2
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r2.w, r3.z, r3
-rsq r0.x, r2.w
-rsq r0.z, r0.z
-rcp r2.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c20.x
-dsx r0.w, r3.y
-dsy r0.y, r3
-mul r0.x, r2.w, c20
-texldd r0, r3, s0, r0.zwzw, r0
-mul r0, r0, c4
-mul_pp r1, r0, r1
-add_pp r2.x, r2, c20.z
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+dsx r2.w, r3.y
+dsy r2.y, r3
+mul r2.z, r0, c20.x
+mul r2.x, r0.w, c20
+mul r0.xy, r0, c9.x
+texldd r0, r0, s1, r2.zwzw, r2
+texldd r2, r3, s0, r2.zwzw, r2
+add_pp r1, -r0, c16.y
+mul_sat r3.w, r3, c17
+mad_pp r0, r3.w, r1, r0
+rsq r3.z, r3.z
+mul r1.xyz, r3.z, c2
+dp3_sat r3.x, v3, r1
+mul r1, r2, c4
+mul_pp r1, r1, r0
+add_pp r2.x, r3, c20.z
 mul_pp r0.y, r2.x, c3.w
 mul_pp_sat r0.w, r0.y, c20
 mov r0.x, c11
@@ -37936,10 +37937,10 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 // 97 instructions, 4 temp regs, 0 temp arrays:
 // ALU 89 float, 0 int, 4 uint
-// TEX 1 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 0 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefieceddnkahnaeojnikkgdaegcdfcfofjifcihabaaaaaaceaoaaaaadaaaaaa
+eefiecedollgglddohlnbjmoijdifkchacdapcgnabaaaaaadeaoaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -37950,109 +37951,109 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefckeamaaaa
-eaaaaaaacjadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcleamaaaa
+eaaaaaaacnadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaa
 gcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaa
 acaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaad
-hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaadeaaaaaj
-bcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-aoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
-akaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
-akbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-bkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaaaaaaaaaaakaabaaa
-aaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaafpkokkdm
-abeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaahecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajicaabaaaaaaaaaaa
-ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaahecaabaaa
-aaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaadbaaaaaigcaabaaa
-aaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaaabaaaaahccaabaaa
-aaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaahbcaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaaaaaaaaaackbabaaa
-aeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaa
-bkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaa
-akbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaia
-ebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaaaaaaaaaabkaabaaa
-aaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakicaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlo
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaiambaaaaaaaeaaaaaa
-abeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaah
-ccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaajccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaah
-ecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaadcaaaaajecaabaaa
-aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaaaaaaaaaadiaaaaah
-ccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaaidcaabaaa
-aaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaa
-abaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaabkaabaaaaaaaaaaa
-alaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-amaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-ejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
+hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaaaaaaaaal
+dcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaackbabaia
+mbaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+pcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaakgbebaia
+ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaia
+ebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+ocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaiaibaaaaaaaeaaaaaa
+dcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaajgahbaaa
+abaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaaaceaaaaaaaaaaaaa
+aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaajgafbaaaaaaaaaaa
+agaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaa
+aaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaakgikcaaa
+aaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaaaceaaaaaaaaaiadp
+aaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaajicaabaaaaaaaaaaa
+ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahecaabaaa
+aaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahicaabaaaaaaaaaaa
+ckaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaadkaabaaa
+aaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajbcaabaaaabaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaaj
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaadiphhpdp
+diaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdp
+dbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaa
+aeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaa
+dcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaaggbkbaiaebaaaaaa
+aeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaanlapejma
+aaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaaddaaaaah
+icaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiicaabaaa
+aaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaadeaaaaahbcaabaaa
+abaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaibcaabaaaabaaaaaa
+akaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+acaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaak
+ecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaa
+chbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaa
+aeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaiicaabaaaaaaaaaaa
+bkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaa
+idpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaaagiecaaaaaaaaaaa
+aiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaaamaaaaafccaabaaa
+acaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaaegaabaaaaaaaaaaa
+eghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaa
+ejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
 aaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaaipcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaaldcaabaaaabaaaaaa
-egbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaa
-aaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiambaaaaaaaeaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajpcaabaaaacaaaaaa
-kgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaa
-acaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaiaibaaaaaaaeaaaaaa
-aaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaiaebaaaaaaacaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajocaabaaaabaaaaaa
-fgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaa
-abaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaacaaaaaadiaaaaak
-gcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadp
-aaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaaagaabaaaabaaaaaa
-aaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaaaaaaaaaaajaaaaaa
-diaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaabaaaaaaaagabaaa
-abaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaaadaaaaaapgbpbaaa
-abaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
-adaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaa
-acaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaa
-egacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaa
-abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
-abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
-dcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaa
-abaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-dkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaa
-egbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaa
-aaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaai
-ccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaaf
-ccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaa
-abaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaa
-egiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
-dccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaa
-bkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaia
-ebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaa
-abaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaa
-dkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
-acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaa
-abaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaa
-abaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaak
-hcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaa
-aeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
-doaaaaab"
+egaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaalpcaabaaaabaaaaaa
+egaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
+apcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaa
+dcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaaabaaaaaaegaobaaa
+adaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+aaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaa
+aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
+aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
+baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
+dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaia
+ebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaah
+ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaa
+abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaa
+abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
+akiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
+ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
+hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
+baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
+aaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaa
+aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
+dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
+abaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
+aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaa
+agiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -38096,7 +38097,7 @@ Float 15 [_RimDistSub]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 112 ALU, 4 TEX
+; 112 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c16, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -38110,84 +38111,84 @@ dcl_texcoord2 v2.x
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r1.xyz, r2.yxzw, -r0
-add r0.w, r0, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad_pp r0.xyz, r0.w, r1, r0
-abs_pp r0.w, r0.x
-abs r2.y, v4.z
-dsx r3.zw, v4.xyxz
-max r0.x, r2, r2.y
-rcp_pp r1.x, r0.w
-rcp r0.w, r0.x
-min r0.x, r2, r2.y
-mul r2.z, r0.x, r0.w
-mul_pp r0.zw, r0.xyzy, r1.x
-mul r2.w, r2.z, r2.z
-mov_pp r1.xy, c6
-mad_pp r1.xy, r0.zwzw, c20.y, r1
-mad r0.x, r2.w, c18.y, c18.z
-mad r0.z, r0.x, r2.w, c18.w
-mul r0.xy, r1, c9.x
-mad r1.x, r0.z, r2.w, c19
-mad r3.x, r1, r2.w, c19.y
-mad r2.w, r3.x, r2, c19.z
-texld r0, r0, s1
-add_pp r1, -r0, c16.y
-mul r2.z, r2.w, r2
-mul r3.x, v2, c10
-mul_sat r2.w, r3.x, c17
-mad_pp r1, r2.w, r1, r0
-mul r3.zw, r3, r3
-add r0.x, r2, -r2.y
-add r0.y, -r2.z, c19.w
-cmp r0.w, -r0.x, r2.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c16.z
-add r0.z, -r0.x, c16.y
-mad r0.y, r0.x, c17.x, c17
-mad r0.y, r0, r0.x, c16.w
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c16
+abs r0.w, v4.z
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c18, c18.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c18.w
+mad r0.x, r1.y, r2.w, c19
+dp4 r3.z, c2, c2
+mul r3.w, v2.x, c10.x
+mad r1.y, r0.x, r2.w, c19
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c19
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c6
+mad_pp r0.xy, r0, c20.y, r2
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c19.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c16
+add r1.x, -r0.z, c16.y
+mad r0.w, r0.z, c17.x, c17.y
+mad r0.w, r0, r0.z, c16
+rsq r1.x, r1.x
+cmp r1.y, v4.z, r1, r1.z
+mad r0.z, r0.w, r0, c17
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c16.x, c16.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c17, r0
+mad r0.w, r0.z, c16.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c20.x, c20.y
+mul r0.w, r0, c18.x
+add r3.xy, r0.zwzw, c5
+dsx r0.zw, v4.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+dsy r1.xy, v4.xzzw
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
 rsq r0.z, r0.z
-cmp r0.w, v4.z, r0, r2.x
-mad r0.x, r0.y, r0, c17.z
 rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c16, c16.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c17.w, r0
-mad r0.y, r0.x, c16.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c20, c20.y
-mul r0.y, r0, c18.x
-add r3.xy, r0, c5
-dp4 r0.x, c2, c2
-rsq r0.x, r0.x
-mul r2.xyz, r0.x, c2
-dp3_sat r2.x, v3, r2
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r2.w, r3.z, r3
-rsq r0.x, r2.w
-rsq r0.z, r0.z
-rcp r2.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c20.x
-dsx r0.w, r3.y
-dsy r0.y, r3
-mul r0.x, r2.w, c20
-texldd r0, r3, s0, r0.zwzw, r0
-mul r0, r0, c4
-mul_pp r1, r0, r1
-add_pp r2.x, r2, c20.z
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+dsx r2.w, r3.y
+dsy r2.y, r3
+mul r2.z, r0, c20.x
+mul r2.x, r0.w, c20
+mul r0.xy, r0, c9.x
+texldd r0, r0, s1, r2.zwzw, r2
+texldd r2, r3, s0, r2.zwzw, r2
+add_pp r1, -r0, c16.y
+mul_sat r3.w, r3, c17
+mad_pp r0, r3.w, r1, r0
+rsq r3.z, r3.z
+mul r1.xyz, r3.z, c2
+dp3_sat r3.x, v3, r1
+mul r1, r2, c4
+mul_pp r1, r1, r0
+add_pp r2.x, r3, c20.z
 mul_pp r0.y, r2.x, c3.w
 mul_pp_sat r0.w, r0.y, c20
 mov r0.x, c11
@@ -38251,10 +38252,10 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 // 97 instructions, 4 temp regs, 0 temp arrays:
 // ALU 89 float, 0 int, 4 uint
-// TEX 1 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 0 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefieceddnkahnaeojnikkgdaegcdfcfofjifcihabaaaaaaceaoaaaaadaaaaaa
+eefiecedollgglddohlnbjmoijdifkchacdapcgnabaaaaaadeaoaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -38265,109 +38266,109 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefckeamaaaa
-eaaaaaaacjadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcleamaaaa
+eaaaaaaacnadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaa
 gcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaa
 acaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaad
-hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaadeaaaaaj
-bcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-aoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
-akaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
-akbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-bkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaaaaaaaaaaakaabaaa
-aaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaafpkokkdm
-abeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaahecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajicaabaaaaaaaaaaa
-ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaahecaabaaa
-aaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaadbaaaaaigcaabaaa
-aaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaaabaaaaahccaabaaa
-aaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaahbcaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaaaaaaaaaackbabaaa
-aeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaa
-bkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaa
-akbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaia
-ebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaaaaaaaaaabkaabaaa
-aaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakicaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlo
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaiambaaaaaaaeaaaaaa
-abeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaah
-ccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaajccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaah
-ecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaadcaaaaajecaabaaa
-aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaaaaaaaaaadiaaaaah
-ccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaaidcaabaaa
-aaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaa
-abaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaabkaabaaaaaaaaaaa
-alaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-amaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-ejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
+hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaaaaaaaaal
+dcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaackbabaia
+mbaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+pcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaakgbebaia
+ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaia
+ebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+ocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaiaibaaaaaaaeaaaaaa
+dcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaajgahbaaa
+abaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaaaceaaaaaaaaaaaaa
+aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaajgafbaaaaaaaaaaa
+agaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaa
+aaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaakgikcaaa
+aaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaaaceaaaaaaaaaiadp
+aaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaajicaabaaaaaaaaaaa
+ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahecaabaaa
+aaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahicaabaaaaaaaaaaa
+ckaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaadkaabaaa
+aaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajbcaabaaaabaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaaj
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaadiphhpdp
+diaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdp
+dbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaa
+aeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaa
+dcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaaggbkbaiaebaaaaaa
+aeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaanlapejma
+aaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaaddaaaaah
+icaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiicaabaaa
+aaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaadeaaaaahbcaabaaa
+abaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaibcaabaaaabaaaaaa
+akaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+acaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaak
+ecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaa
+chbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaa
+aeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaiicaabaaaaaaaaaaa
+bkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaa
+idpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaaagiecaaaaaaaaaaa
+aiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaaamaaaaafccaabaaa
+acaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaaegaabaaaaaaaaaaa
+eghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaa
+ejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
 aaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaaipcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaaldcaabaaaabaaaaaa
-egbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaa
-aaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiambaaaaaaaeaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajpcaabaaaacaaaaaa
-kgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaa
-acaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaiaibaaaaaaaeaaaaaa
-aaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaiaebaaaaaaacaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajocaabaaaabaaaaaa
-fgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaa
-abaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaacaaaaaadiaaaaak
-gcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadp
-aaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaaagaabaaaabaaaaaa
-aaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaaaaaaaaaaajaaaaaa
-diaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaabaaaaaaaagabaaa
-abaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaaadaaaaaapgbpbaaa
-abaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
-adaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaa
-acaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaa
-egacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaa
-abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
-abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
-dcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaa
-abaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-dkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaa
-egbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaa
-aaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaai
-ccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaaf
-ccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaa
-abaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaa
-egiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
-dccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaa
-bkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaia
-ebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaa
-abaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaa
-dkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
-acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaa
-abaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaa
-abaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaak
-hcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaa
-aeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
-doaaaaab"
+egaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaalpcaabaaaabaaaaaa
+egaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
+apcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaa
+dcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaaabaaaaaaegaobaaa
+adaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+aaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaa
+aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
+aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
+baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
+dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaia
+ebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaah
+ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaa
+abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaa
+abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
+akiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
+ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
+hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
+baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
+aaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaa
+aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
+dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
+abaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
+aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaa
+agiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -38406,7 +38407,7 @@ Float 15 [_RimDistSub]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 112 ALU, 4 TEX
+; 112 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c16, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -38420,84 +38421,84 @@ dcl_texcoord2 v2.x
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r1.xyz, r2.yxzw, -r0
-add r0.w, r0, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad_pp r0.xyz, r0.w, r1, r0
-abs_pp r0.w, r0.x
-abs r2.y, v4.z
-dsx r3.zw, v4.xyxz
-max r0.x, r2, r2.y
-rcp_pp r1.x, r0.w
-rcp r0.w, r0.x
-min r0.x, r2, r2.y
-mul r2.z, r0.x, r0.w
-mul_pp r0.zw, r0.xyzy, r1.x
-mul r2.w, r2.z, r2.z
-mov_pp r1.xy, c6
-mad_pp r1.xy, r0.zwzw, c20.y, r1
-mad r0.x, r2.w, c18.y, c18.z
-mad r0.z, r0.x, r2.w, c18.w
-mul r0.xy, r1, c9.x
-mad r1.x, r0.z, r2.w, c19
-mad r3.x, r1, r2.w, c19.y
-mad r2.w, r3.x, r2, c19.z
-texld r0, r0, s1
-add_pp r1, -r0, c16.y
-mul r2.z, r2.w, r2
-mul r3.x, v2, c10
-mul_sat r2.w, r3.x, c17
-mad_pp r1, r2.w, r1, r0
-mul r3.zw, r3, r3
-add r0.x, r2, -r2.y
-add r0.y, -r2.z, c19.w
-cmp r0.w, -r0.x, r2.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c16.z
-add r0.z, -r0.x, c16.y
-mad r0.y, r0.x, c17.x, c17
-mad r0.y, r0, r0.x, c16.w
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c16
+abs r0.w, v4.z
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c18, c18.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c18.w
+mad r0.x, r1.y, r2.w, c19
+dp4_pp r3.z, c2, c2
+mul r3.w, v2.x, c10.x
+mad r1.y, r0.x, r2.w, c19
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c19
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c6
+mad_pp r0.xy, r0, c20.y, r2
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c19.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c16
+add r1.x, -r0.z, c16.y
+mad r0.w, r0.z, c17.x, c17.y
+mad r0.w, r0, r0.z, c16
+rsq r1.x, r1.x
+cmp r1.y, v4.z, r1, r1.z
+mad r0.z, r0.w, r0, c17
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c16.x, c16.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c17, r0
+mad r0.w, r0.z, c16.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c20.x, c20.y
+mul r0.w, r0, c18.x
+add r3.xy, r0.zwzw, c5
+dsx r0.zw, v4.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+dsy r1.xy, v4.xzzw
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
 rsq r0.z, r0.z
-cmp r0.w, v4.z, r0, r2.x
-mad r0.x, r0.y, r0, c17.z
 rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c16, c16.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c17.w, r0
-mad r0.y, r0.x, c16.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c20, c20.y
-mul r0.y, r0, c18.x
-add r3.xy, r0, c5
-dp4_pp r0.x, c2, c2
-rsq_pp r0.x, r0.x
-mul_pp r2.xyz, r0.x, c2
-dp3_sat r2.x, v3, r2
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r2.w, r3.z, r3
-rsq r0.x, r2.w
-rsq r0.z, r0.z
-rcp r2.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c20.x
-dsx r0.w, r3.y
-dsy r0.y, r3
-mul r0.x, r2.w, c20
-texldd r0, r3, s0, r0.zwzw, r0
-mul r0, r0, c4
-mul_pp r1, r0, r1
-add_pp r2.x, r2, c20.z
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+dsx r2.w, r3.y
+dsy r2.y, r3
+mul r2.z, r0, c20.x
+mul r2.x, r0.w, c20
+mul r0.xy, r0, c9.x
+texldd r0, r0, s1, r2.zwzw, r2
+texldd r2, r3, s0, r2.zwzw, r2
+add_pp r1, -r0, c16.y
+mul_sat r3.w, r3, c17
+mad_pp r0, r3.w, r1, r0
+rsq_pp r3.z, r3.z
+mul_pp r1.xyz, r3.z, c2
+dp3_sat r3.x, v3, r1
+mul r1, r2, c4
+mul_pp r1, r1, r0
+add_pp r2.x, r3, c20.z
 mul_pp r0.y, r2.x, c3.w
 mul_pp_sat r0.w, r0.y, c20
 mov r0.x, c11
@@ -38561,10 +38562,10 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 // 97 instructions, 4 temp regs, 0 temp arrays:
 // ALU 89 float, 0 int, 4 uint
-// TEX 1 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 0 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedfhgelbfcdjkenhhahflpclkihemglddiabaaaaaaamaoaaaaadaaaaaa
+eefiecedkmpgkhloidkffghimjbclhikocnfaohmabaaaaaabmaoaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -38575,108 +38576,108 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaomaaaaaa
 aiaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefckeamaaaaeaaaaaaacjadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaa
+fdeieefcleamaaaaeaaaaaaacnadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaa
 fjaaaaaeegiocaaaabaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaa
 abaaaaaaffffaaaagcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaa
 gcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaa
 aeaaaaaagcbaaaadhcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-aeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaia
-ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-abeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaah
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaaj
+aeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaa
+aaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
+ibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaa
+abaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaia
+ibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaa
+aaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaa
+aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+jgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaakgikcaaaaaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaaj
 icaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-abaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-dbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaa
-abaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaah
-bcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaa
-aaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaa
-bkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaa
-ckbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaia
-mbaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-dcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaa
-dcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaa
-aaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdo
-aaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaa
-alaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaa
-bkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
+diaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
+icaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
+bcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdido
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaa
+aebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaa
+akaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaa
+ggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaa
+dbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
+deaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaa
+aaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
+aaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+dagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaai
+icaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaa
+aaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaa
+agiecaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaa
+amaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+abaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+acaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaa
+egaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaa
+egaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
 aaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaai
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaal
-dcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaia
-mbaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-pcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaia
-ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaia
-ebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-ocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaa
-dcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
-acaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaa
-aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaa
-agaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaa
-aaaaaaaaajaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaa
-abaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaa
-abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaa
-adaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaa
-abaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaah
-pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaa
-abaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
-bcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaa
-abaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaa
-abaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaa
-egaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaa
-amaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-akaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
-aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
-adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
-afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
-alaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaabaaaaaadoaaaaab"
+pcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaa
+aaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaa
+abaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+egaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaia
+ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
+egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
+ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
+abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaa
+abaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaa
+alaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaa
+diaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaa
+cpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaa
+abaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
+acaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaa
+abaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaa
+aaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+bkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
+egiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
+diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
+bacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaa
+aaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaa
+egacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaah
+hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -38720,7 +38721,7 @@ Float 15 [_RimDistSub]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 112 ALU, 4 TEX
+; 112 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c16, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -38734,84 +38735,84 @@ dcl_texcoord2 v2.x
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r1.xyz, r2.yxzw, -r0
-add r0.w, r0, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad_pp r0.xyz, r0.w, r1, r0
-abs_pp r0.w, r0.x
-abs r2.y, v4.z
-dsx r3.zw, v4.xyxz
-max r0.x, r2, r2.y
-rcp_pp r1.x, r0.w
-rcp r0.w, r0.x
-min r0.x, r2, r2.y
-mul r2.z, r0.x, r0.w
-mul_pp r0.zw, r0.xyzy, r1.x
-mul r2.w, r2.z, r2.z
-mov_pp r1.xy, c6
-mad_pp r1.xy, r0.zwzw, c20.y, r1
-mad r0.x, r2.w, c18.y, c18.z
-mad r0.z, r0.x, r2.w, c18.w
-mul r0.xy, r1, c9.x
-mad r1.x, r0.z, r2.w, c19
-mad r3.x, r1, r2.w, c19.y
-mad r2.w, r3.x, r2, c19.z
-texld r0, r0, s1
-add_pp r1, -r0, c16.y
-mul r2.z, r2.w, r2
-mul r3.x, v2, c10
-mul_sat r2.w, r3.x, c17
-mad_pp r1, r2.w, r1, r0
-mul r3.zw, r3, r3
-add r0.x, r2, -r2.y
-add r0.y, -r2.z, c19.w
-cmp r0.w, -r0.x, r2.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c16.z
-add r0.z, -r0.x, c16.y
-mad r0.y, r0.x, c17.x, c17
-mad r0.y, r0, r0.x, c16.w
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c16
+abs r0.w, v4.z
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c18, c18.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c18.w
+mad r0.x, r1.y, r2.w, c19
+dp4_pp r3.z, c2, c2
+mul r3.w, v2.x, c10.x
+mad r1.y, r0.x, r2.w, c19
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c19
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c6
+mad_pp r0.xy, r0, c20.y, r2
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c19.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c16
+add r1.x, -r0.z, c16.y
+mad r0.w, r0.z, c17.x, c17.y
+mad r0.w, r0, r0.z, c16
+rsq r1.x, r1.x
+cmp r1.y, v4.z, r1, r1.z
+mad r0.z, r0.w, r0, c17
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c16.x, c16.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c17, r0
+mad r0.w, r0.z, c16.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c20.x, c20.y
+mul r0.w, r0, c18.x
+add r3.xy, r0.zwzw, c5
+dsx r0.zw, v4.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+dsy r1.xy, v4.xzzw
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
 rsq r0.z, r0.z
-cmp r0.w, v4.z, r0, r2.x
-mad r0.x, r0.y, r0, c17.z
 rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c16, c16.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c17.w, r0
-mad r0.y, r0.x, c16.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c20, c20.y
-mul r0.y, r0, c18.x
-add r3.xy, r0, c5
-dp4_pp r0.x, c2, c2
-rsq_pp r0.x, r0.x
-mul_pp r2.xyz, r0.x, c2
-dp3_sat r2.x, v3, r2
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r2.w, r3.z, r3
-rsq r0.x, r2.w
-rsq r0.z, r0.z
-rcp r2.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c20.x
-dsx r0.w, r3.y
-dsy r0.y, r3
-mul r0.x, r2.w, c20
-texldd r0, r3, s0, r0.zwzw, r0
-mul r0, r0, c4
-mul_pp r1, r0, r1
-add_pp r2.x, r2, c20.z
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+dsx r2.w, r3.y
+dsy r2.y, r3
+mul r2.z, r0, c20.x
+mul r2.x, r0.w, c20
+mul r0.xy, r0, c9.x
+texldd r0, r0, s1, r2.zwzw, r2
+texldd r2, r3, s0, r2.zwzw, r2
+add_pp r1, -r0, c16.y
+mul_sat r3.w, r3, c17
+mad_pp r0, r3.w, r1, r0
+rsq_pp r3.z, r3.z
+mul_pp r1.xyz, r3.z, c2
+dp3_sat r3.x, v3, r1
+mul r1, r2, c4
+mul_pp r1, r1, r0
+add_pp r2.x, r3, c20.z
 mul_pp r0.y, r2.x, c3.w
 mul_pp_sat r0.w, r0.y, c20
 mov r0.x, c11
@@ -38875,10 +38876,10 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 // 97 instructions, 4 temp regs, 0 temp arrays:
 // ALU 89 float, 0 int, 4 uint
-// TEX 1 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 0 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedecfdffnnlgnkbmeklipmhcoklcchmajhabaaaaaaceaoaaaaadaaaaaa
+eefiecedfhklgphfgagnhfnjchmfnmjgokgnkbpiabaaaaaadeaoaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -38889,109 +38890,109 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaadaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefckeamaaaa
-eaaaaaaacjadaaaafjaaaaaeegiocaaaaaaaaaaabbaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcleamaaaa
+eaaaaaaacnadaaaafjaaaaaeegiocaaaaaaaaaaabbaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaa
 gcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaa
 acaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaad
-hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaadeaaaaaj
-bcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-aoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
-akaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
-akbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-bkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaaaaaaaaaaakaabaaa
-aaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaafpkokkdm
-abeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaahecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajicaabaaaaaaaaaaa
-ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaahecaabaaa
-aaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaadbaaaaaigcaabaaa
-aaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaaabaaaaahccaabaaa
-aaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaahbcaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaaaaaaaaaackbabaaa
-aeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaa
-bkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaa
-akbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaia
-ebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaaaaaaaaaabkaabaaa
-aaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakicaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlo
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaiambaaaaaaaeaaaaaa
-abeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaah
-ccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaajccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaah
-ecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaadcaaaaajecaabaaa
-aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaaaaaaaaaadiaaaaah
-ccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaaidcaabaaa
-aaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaamaaaaaaalaaaaafccaabaaa
-abaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaabkaabaaaaaaaaaaa
-alaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-amaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-ejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
+hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaaaaaaaaal
+dcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaackbabaia
+mbaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+pcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaakgbebaia
+ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaia
+ebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+ocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaiaibaaaaaaaeaaaaaa
+dcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaajgahbaaa
+abaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaaaceaaaaaaaaaaaaa
+aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaajgafbaaaaaaaaaaa
+agaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaa
+aaaaaaaaanaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaakgikcaaa
+aaaaaaaaaoaaaaaadeaaaaajecaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaaaceaaaaaaaaaiadp
+aaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaajicaabaaaaaaaaaaa
+ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahecaabaaa
+aaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahicaabaaaaaaaaaaa
+ckaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaadkaabaaa
+aaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajbcaabaaaabaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaaj
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaadiphhpdp
+diaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdp
+dbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaa
+aeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaa
+dcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaaggbkbaiaebaaaaaa
+aeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaanlapejma
+aaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaaddaaaaah
+icaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiicaabaaa
+aaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaadeaaaaahbcaabaaa
+abaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaibcaabaaaabaaaaaa
+akaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+acaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaak
+ecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaa
+chbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaa
+aeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaiicaabaaaaaaaaaaa
+bkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaa
+idpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaaagiecaaaaaaaaaaa
+amaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaaamaaaaafccaabaaa
+acaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaaegaabaaaaaaaaaaa
+eghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaa
+ejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
 aaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaaipcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegiocaaaaaaaaaaaalaaaaaaaaaaaaaldcaabaaaabaaaaaa
-egbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaa
-aaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiambaaaaaaaeaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajpcaabaaaacaaaaaa
-kgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaa
-acaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaiaibaaaaaaaeaaaaaa
-aaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaiaebaaaaaaacaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajocaabaaaabaaaaaa
-fgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaa
-abaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaacaaaaaadiaaaaak
-gcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadp
-aaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaaagaabaaaabaaaaaa
-aaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaaaaaaaaaaanaaaaaa
-diaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaaaaaaaaaaaoaaaaaa
-efaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaabaaaaaaaagabaaa
-abaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaaadaaaaaapgbpbaaa
-abaaaaaapgipcaaaaaaaaaaaaoaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
-adaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaa
-acaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaa
-egacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaa
-abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
-abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
-dcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaabaaaaaaabkaabaaa
-abaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-dkiacaaaaaaaaaaaapaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaa
-egbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaa
-aaaaaaaaaoaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaai
-ccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaaoaaaaaabjaaaaaf
-ccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaa
-abaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaa
-egiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
-dccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaapaaaaaackaabaaaabaaaaaa
-bkiacaiaebaaaaaaaaaaaaaaapaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaia
-ebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaa
-abaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaa
-dkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
-acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaa
-abaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaajaaaaaadicaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaa
-abaaaaaaegiccaaaaaaaaaaaajaaaaaaagiacaaaaaaaaaaaapaaaaaadccaaaak
-hcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaa
-aeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
-doaaaaab"
+egaobaaaaaaaaaaaegiocaaaaaaaaaaaalaaaaaaaaaaaaalpcaabaaaabaaaaaa
+egaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
+apcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaaoaaaaaa
+dcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaaabaaaaaaegaobaaa
+adaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+aaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaa
+aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
+aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
+baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
+dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaia
+ebaaaaaaaaaaaaaabaaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaapaaaaaabacaaaah
+ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaa
+abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaaoaaaaaacpaaaaafccaabaaa
+abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
+akiacaaaaaaaaaaaaoaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
+ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
+hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
+baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
+aaaaaaaaapaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaapaaaaaa
+aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
+dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
+abaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
+aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaajaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaajaaaaaa
+agiacaaaaaaaaaaaapaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -39035,7 +39036,7 @@ Float 15 [_RimDistSub]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 112 ALU, 4 TEX
+; 112 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c16, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -39049,84 +39050,84 @@ dcl_texcoord2 v2.x
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r1.xyz, r2.yxzw, -r0
-add r0.w, r0, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad_pp r0.xyz, r0.w, r1, r0
-abs_pp r0.w, r0.x
-abs r2.y, v4.z
-dsx r3.zw, v4.xyxz
-max r0.x, r2, r2.y
-rcp_pp r1.x, r0.w
-rcp r0.w, r0.x
-min r0.x, r2, r2.y
-mul r2.z, r0.x, r0.w
-mul_pp r0.zw, r0.xyzy, r1.x
-mul r2.w, r2.z, r2.z
-mov_pp r1.xy, c6
-mad_pp r1.xy, r0.zwzw, c20.y, r1
-mad r0.x, r2.w, c18.y, c18.z
-mad r0.z, r0.x, r2.w, c18.w
-mul r0.xy, r1, c9.x
-mad r1.x, r0.z, r2.w, c19
-mad r3.x, r1, r2.w, c19.y
-mad r2.w, r3.x, r2, c19.z
-texld r0, r0, s1
-add_pp r1, -r0, c16.y
-mul r2.z, r2.w, r2
-mul r3.x, v2, c10
-mul_sat r2.w, r3.x, c17
-mad_pp r1, r2.w, r1, r0
-mul r3.zw, r3, r3
-add r0.x, r2, -r2.y
-add r0.y, -r2.z, c19.w
-cmp r0.w, -r0.x, r2.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c16.z
-add r0.z, -r0.x, c16.y
-mad r0.y, r0.x, c17.x, c17
-mad r0.y, r0, r0.x, c16.w
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c16
+abs r0.w, v4.z
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c18, c18.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c18.w
+mad r0.x, r1.y, r2.w, c19
+dp4 r3.z, c2, c2
+mul r3.w, v2.x, c10.x
+mad r1.y, r0.x, r2.w, c19
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c19
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c6
+mad_pp r0.xy, r0, c20.y, r2
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c19.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c16
+add r1.x, -r0.z, c16.y
+mad r0.w, r0.z, c17.x, c17.y
+mad r0.w, r0, r0.z, c16
+rsq r1.x, r1.x
+cmp r1.y, v4.z, r1, r1.z
+mad r0.z, r0.w, r0, c17
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c16.x, c16.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c17, r0
+mad r0.w, r0.z, c16.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c20.x, c20.y
+mul r0.w, r0, c18.x
+add r3.xy, r0.zwzw, c5
+dsx r0.zw, v4.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+dsy r1.xy, v4.xzzw
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
 rsq r0.z, r0.z
-cmp r0.w, v4.z, r0, r2.x
-mad r0.x, r0.y, r0, c17.z
 rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c16, c16.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c17.w, r0
-mad r0.y, r0.x, c16.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c20, c20.y
-mul r0.y, r0, c18.x
-add r3.xy, r0, c5
-dp4 r0.x, c2, c2
-rsq r0.x, r0.x
-mul r2.xyz, r0.x, c2
-dp3_sat r2.x, v3, r2
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r2.w, r3.z, r3
-rsq r0.x, r2.w
-rsq r0.z, r0.z
-rcp r2.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c20.x
-dsx r0.w, r3.y
-dsy r0.y, r3
-mul r0.x, r2.w, c20
-texldd r0, r3, s0, r0.zwzw, r0
-mul r0, r0, c4
-mul_pp r1, r0, r1
-add_pp r2.x, r2, c20.z
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+dsx r2.w, r3.y
+dsy r2.y, r3
+mul r2.z, r0, c20.x
+mul r2.x, r0.w, c20
+mul r0.xy, r0, c9.x
+texldd r0, r0, s1, r2.zwzw, r2
+texldd r2, r3, s0, r2.zwzw, r2
+add_pp r1, -r0, c16.y
+mul_sat r3.w, r3, c17
+mad_pp r0, r3.w, r1, r0
+rsq r3.z, r3.z
+mul r1.xyz, r3.z, c2
+dp3_sat r3.x, v3, r1
+mul r1, r2, c4
+mul_pp r1, r1, r0
+add_pp r2.x, r3, c20.z
 mul_pp r0.y, r2.x, c3.w
 mul_pp_sat r0.w, r0.y, c20
 mov r0.x, c11
@@ -39190,10 +39191,10 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 // 97 instructions, 4 temp regs, 0 temp arrays:
 // ALU 89 float, 0 int, 4 uint
-// TEX 1 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 0 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefieceddbbnencbkamnppnfmnfgbnjjcaepifckabaaaaaaceaoaaaaadaaaaaa
+eefiecedcakdledddhonmjabcppdgbojihjmcgmoabaaaaaadeaoaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -39204,109 +39205,109 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaahaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefckeamaaaa
-eaaaaaaacjadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcleamaaaa
+eaaaaaaacnadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaa
 gcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaa
 acaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaad
-hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaadeaaaaaj
-bcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-aoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
-akaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
-akbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-bkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaaaaaaaaaaakaabaaa
-aaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaafpkokkdm
-abeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaahecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajicaabaaaaaaaaaaa
-ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaahecaabaaa
-aaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaadbaaaaaigcaabaaa
-aaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaaabaaaaahccaabaaa
-aaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaahbcaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaaaaaaaaaackbabaaa
-aeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaa
-bkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaa
-akbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaia
-ebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaaaaaaaaaabkaabaaa
-aaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakicaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlo
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaiambaaaaaaaeaaaaaa
-abeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaah
-ccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaajccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaah
-ecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaadcaaaaajecaabaaa
-aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaaaaaaaaaadiaaaaah
-ccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaaidcaabaaa
-aaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaa
-abaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaabkaabaaaaaaaaaaa
-alaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-amaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-ejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
+hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaaaaaaaaal
+dcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaackbabaia
+mbaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+pcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaakgbebaia
+ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaia
+ebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+ocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaiaibaaaaaaaeaaaaaa
+dcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaajgahbaaa
+abaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaaaceaaaaaaaaaaaaa
+aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaajgafbaaaaaaaaaaa
+agaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaa
+aaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaakgikcaaa
+aaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaaaceaaaaaaaaaiadp
+aaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaajicaabaaaaaaaaaaa
+ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahecaabaaa
+aaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahicaabaaaaaaaaaaa
+ckaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaadkaabaaa
+aaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajbcaabaaaabaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaaj
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaadiphhpdp
+diaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdp
+dbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaa
+aeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaa
+dcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaaggbkbaiaebaaaaaa
+aeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaanlapejma
+aaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaaddaaaaah
+icaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiicaabaaa
+aaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaadeaaaaahbcaabaaa
+abaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaibcaabaaaabaaaaaa
+akaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+acaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaak
+ecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaa
+chbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaa
+aeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaiicaabaaaaaaaaaaa
+bkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaa
+idpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaaagiecaaaaaaaaaaa
+aiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaaamaaaaafccaabaaa
+acaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaaegaabaaaaaaaaaaa
+eghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaa
+ejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
 aaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaaipcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaaldcaabaaaabaaaaaa
-egbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaa
-aaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiambaaaaaaaeaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajpcaabaaaacaaaaaa
-kgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaa
-acaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaiaibaaaaaaaeaaaaaa
-aaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaiaebaaaaaaacaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajocaabaaaabaaaaaa
-fgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaa
-abaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaacaaaaaadiaaaaak
-gcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadp
-aaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaaagaabaaaabaaaaaa
-aaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaaaaaaaaaaajaaaaaa
-diaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaabaaaaaaaagabaaa
-abaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaaadaaaaaapgbpbaaa
-abaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
-adaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaa
-acaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaa
-egacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaa
-abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
-abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
-dcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaa
-abaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-dkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaa
-egbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaa
-aaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaai
-ccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaaf
-ccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaa
-abaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaa
-egiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
-dccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaa
-bkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaia
-ebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaa
-abaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaa
-dkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
-acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaa
-abaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaa
-abaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaak
-hcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaa
-aeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
-doaaaaab"
+egaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaalpcaabaaaabaaaaaa
+egaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
+apcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaa
+dcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaaabaaaaaaegaobaaa
+adaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+aaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaa
+aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
+aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
+baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
+dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaia
+ebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaah
+ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaa
+abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaa
+abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
+akiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
+ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
+hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
+baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
+aaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaa
+aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
+dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
+abaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
+aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaa
+agiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -39350,7 +39351,7 @@ Float 15 [_RimDistSub]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 112 ALU, 4 TEX
+; 112 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c16, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -39364,84 +39365,84 @@ dcl_texcoord2 v2.x
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r1.xyz, r2.yxzw, -r0
-add r0.w, r0, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad_pp r0.xyz, r0.w, r1, r0
-abs_pp r0.w, r0.x
-abs r2.y, v4.z
-dsx r3.zw, v4.xyxz
-max r0.x, r2, r2.y
-rcp_pp r1.x, r0.w
-rcp r0.w, r0.x
-min r0.x, r2, r2.y
-mul r2.z, r0.x, r0.w
-mul_pp r0.zw, r0.xyzy, r1.x
-mul r2.w, r2.z, r2.z
-mov_pp r1.xy, c6
-mad_pp r1.xy, r0.zwzw, c20.y, r1
-mad r0.x, r2.w, c18.y, c18.z
-mad r0.z, r0.x, r2.w, c18.w
-mul r0.xy, r1, c9.x
-mad r1.x, r0.z, r2.w, c19
-mad r3.x, r1, r2.w, c19.y
-mad r2.w, r3.x, r2, c19.z
-texld r0, r0, s1
-add_pp r1, -r0, c16.y
-mul r2.z, r2.w, r2
-mul r3.x, v2, c10
-mul_sat r2.w, r3.x, c17
-mad_pp r1, r2.w, r1, r0
-mul r3.zw, r3, r3
-add r0.x, r2, -r2.y
-add r0.y, -r2.z, c19.w
-cmp r0.w, -r0.x, r2.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c16.z
-add r0.z, -r0.x, c16.y
-mad r0.y, r0.x, c17.x, c17
-mad r0.y, r0, r0.x, c16.w
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c16
+abs r0.w, v4.z
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c18, c18.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c18.w
+mad r0.x, r1.y, r2.w, c19
+dp4 r3.z, c2, c2
+mul r3.w, v2.x, c10.x
+mad r1.y, r0.x, r2.w, c19
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c19
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c6
+mad_pp r0.xy, r0, c20.y, r2
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c19.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c16
+add r1.x, -r0.z, c16.y
+mad r0.w, r0.z, c17.x, c17.y
+mad r0.w, r0, r0.z, c16
+rsq r1.x, r1.x
+cmp r1.y, v4.z, r1, r1.z
+mad r0.z, r0.w, r0, c17
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c16.x, c16.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c17, r0
+mad r0.w, r0.z, c16.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c20.x, c20.y
+mul r0.w, r0, c18.x
+add r3.xy, r0.zwzw, c5
+dsx r0.zw, v4.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+dsy r1.xy, v4.xzzw
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
 rsq r0.z, r0.z
-cmp r0.w, v4.z, r0, r2.x
-mad r0.x, r0.y, r0, c17.z
 rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c16, c16.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c17.w, r0
-mad r0.y, r0.x, c16.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c20, c20.y
-mul r0.y, r0, c18.x
-add r3.xy, r0, c5
-dp4 r0.x, c2, c2
-rsq r0.x, r0.x
-mul r2.xyz, r0.x, c2
-dp3_sat r2.x, v3, r2
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r2.w, r3.z, r3
-rsq r0.x, r2.w
-rsq r0.z, r0.z
-rcp r2.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c20.x
-dsx r0.w, r3.y
-dsy r0.y, r3
-mul r0.x, r2.w, c20
-texldd r0, r3, s0, r0.zwzw, r0
-mul r0, r0, c4
-mul_pp r1, r0, r1
-add_pp r2.x, r2, c20.z
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+dsx r2.w, r3.y
+dsy r2.y, r3
+mul r2.z, r0, c20.x
+mul r2.x, r0.w, c20
+mul r0.xy, r0, c9.x
+texldd r0, r0, s1, r2.zwzw, r2
+texldd r2, r3, s0, r2.zwzw, r2
+add_pp r1, -r0, c16.y
+mul_sat r3.w, r3, c17
+mad_pp r0, r3.w, r1, r0
+rsq r3.z, r3.z
+mul r1.xyz, r3.z, c2
+dp3_sat r3.x, v3, r1
+mul r1, r2, c4
+mul_pp r1, r1, r0
+add_pp r2.x, r3, c20.z
 mul_pp r0.y, r2.x, c3.w
 mul_pp_sat r0.w, r0.y, c20
 mov r0.x, c11
@@ -39505,10 +39506,10 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 // 97 instructions, 4 temp regs, 0 temp arrays:
 // ALU 89 float, 0 int, 4 uint
-// TEX 1 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 0 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefieceddbbnencbkamnppnfmnfgbnjjcaepifckabaaaaaaceaoaaaaadaaaaaa
+eefiecedcakdledddhonmjabcppdgbojihjmcgmoabaaaaaadeaoaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -39519,109 +39520,109 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaahaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefckeamaaaa
-eaaaaaaacjadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcleamaaaa
+eaaaaaaacnadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaa
 gcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaa
 acaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaad
-hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaadeaaaaaj
-bcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-aoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
-akaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
-akbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-bkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaaaaaaaaaaakaabaaa
-aaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaafpkokkdm
-abeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaahecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajicaabaaaaaaaaaaa
-ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaahecaabaaa
-aaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaadbaaaaaigcaabaaa
-aaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaaabaaaaahccaabaaa
-aaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaahbcaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaaaaaaaaaackbabaaa
-aeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaa
-bkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaa
-akbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaia
-ebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaaaaaaaaaabkaabaaa
-aaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakicaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlo
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaiambaaaaaaaeaaaaaa
-abeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaah
-ccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaajccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaah
-ecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaadcaaaaajecaabaaa
-aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaaaaaaaaaadiaaaaah
-ccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaaidcaabaaa
-aaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaa
-abaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaabkaabaaaaaaaaaaa
-alaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-amaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-ejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
+hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaaaaaaaaal
+dcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaackbabaia
+mbaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+pcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaakgbebaia
+ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaia
+ebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+ocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaiaibaaaaaaaeaaaaaa
+dcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaajgahbaaa
+abaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaaaceaaaaaaaaaaaaa
+aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaajgafbaaaaaaaaaaa
+agaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaa
+aaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaakgikcaaa
+aaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaaaceaaaaaaaaaiadp
+aaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaajicaabaaaaaaaaaaa
+ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahecaabaaa
+aaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahicaabaaaaaaaaaaa
+ckaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaadkaabaaa
+aaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajbcaabaaaabaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaaj
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaadiphhpdp
+diaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdp
+dbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaa
+aeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaa
+dcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaaggbkbaiaebaaaaaa
+aeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaanlapejma
+aaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaaddaaaaah
+icaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiicaabaaa
+aaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaadeaaaaahbcaabaaa
+abaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaibcaabaaaabaaaaaa
+akaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+acaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaak
+ecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaa
+chbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaa
+aeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaiicaabaaaaaaaaaaa
+bkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaa
+idpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaaagiecaaaaaaaaaaa
+aiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaaamaaaaafccaabaaa
+acaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaaegaabaaaaaaaaaaa
+eghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaa
+ejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
 aaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaaipcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaaldcaabaaaabaaaaaa
-egbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaa
-aaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiambaaaaaaaeaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajpcaabaaaacaaaaaa
-kgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaa
-acaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaiaibaaaaaaaeaaaaaa
-aaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaiaebaaaaaaacaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajocaabaaaabaaaaaa
-fgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaa
-abaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaacaaaaaadiaaaaak
-gcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadp
-aaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaaagaabaaaabaaaaaa
-aaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaaaaaaaaaaajaaaaaa
-diaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaabaaaaaaaagabaaa
-abaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaaadaaaaaapgbpbaaa
-abaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
-adaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaa
-acaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaa
-egacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaa
-abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
-abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
-dcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaa
-abaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-dkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaa
-egbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaa
-aaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaai
-ccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaaf
-ccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaa
-abaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaa
-egiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
-dccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaa
-bkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaia
-ebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaa
-abaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaa
-dkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
-acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaa
-abaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaa
-abaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaak
-hcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaa
-aeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
-doaaaaab"
+egaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaalpcaabaaaabaaaaaa
+egaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
+apcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaa
+dcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaaabaaaaaaegaobaaa
+adaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+aaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaa
+aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
+aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
+baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
+dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaia
+ebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaah
+ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaa
+abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaa
+abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
+akiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
+ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
+hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
+baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
+aaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaa
+aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
+dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
+abaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
+aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaa
+agiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -39665,7 +39666,7 @@ Float 15 [_RimDistSub]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 112 ALU, 4 TEX
+; 112 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c16, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -39679,84 +39680,84 @@ dcl_texcoord2 v2.x
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r1.xyz, r2.yxzw, -r0
-add r0.w, r0, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad_pp r0.xyz, r0.w, r1, r0
-abs_pp r0.w, r0.x
-abs r2.y, v4.z
-dsx r3.zw, v4.xyxz
-max r0.x, r2, r2.y
-rcp_pp r1.x, r0.w
-rcp r0.w, r0.x
-min r0.x, r2, r2.y
-mul r2.z, r0.x, r0.w
-mul_pp r0.zw, r0.xyzy, r1.x
-mul r2.w, r2.z, r2.z
-mov_pp r1.xy, c6
-mad_pp r1.xy, r0.zwzw, c20.y, r1
-mad r0.x, r2.w, c18.y, c18.z
-mad r0.z, r0.x, r2.w, c18.w
-mul r0.xy, r1, c9.x
-mad r1.x, r0.z, r2.w, c19
-mad r3.x, r1, r2.w, c19.y
-mad r2.w, r3.x, r2, c19.z
-texld r0, r0, s1
-add_pp r1, -r0, c16.y
-mul r2.z, r2.w, r2
-mul r3.x, v2, c10
-mul_sat r2.w, r3.x, c17
-mad_pp r1, r2.w, r1, r0
-mul r3.zw, r3, r3
-add r0.x, r2, -r2.y
-add r0.y, -r2.z, c19.w
-cmp r0.w, -r0.x, r2.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c16.z
-add r0.z, -r0.x, c16.y
-mad r0.y, r0.x, c17.x, c17
-mad r0.y, r0, r0.x, c16.w
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c16
+abs r0.w, v4.z
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c18, c18.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c18.w
+mad r0.x, r1.y, r2.w, c19
+dp4 r3.z, c2, c2
+mul r3.w, v2.x, c10.x
+mad r1.y, r0.x, r2.w, c19
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c19
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c6
+mad_pp r0.xy, r0, c20.y, r2
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c19.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c16
+add r1.x, -r0.z, c16.y
+mad r0.w, r0.z, c17.x, c17.y
+mad r0.w, r0, r0.z, c16
+rsq r1.x, r1.x
+cmp r1.y, v4.z, r1, r1.z
+mad r0.z, r0.w, r0, c17
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c16.x, c16.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c17, r0
+mad r0.w, r0.z, c16.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c20.x, c20.y
+mul r0.w, r0, c18.x
+add r3.xy, r0.zwzw, c5
+dsx r0.zw, v4.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+dsy r1.xy, v4.xzzw
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
 rsq r0.z, r0.z
-cmp r0.w, v4.z, r0, r2.x
-mad r0.x, r0.y, r0, c17.z
 rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c16, c16.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c17.w, r0
-mad r0.y, r0.x, c16.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c20, c20.y
-mul r0.y, r0, c18.x
-add r3.xy, r0, c5
-dp4 r0.x, c2, c2
-rsq r0.x, r0.x
-mul r2.xyz, r0.x, c2
-dp3_sat r2.x, v3, r2
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r2.w, r3.z, r3
-rsq r0.x, r2.w
-rsq r0.z, r0.z
-rcp r2.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c20.x
-dsx r0.w, r3.y
-dsy r0.y, r3
-mul r0.x, r2.w, c20
-texldd r0, r3, s0, r0.zwzw, r0
-mul r0, r0, c4
-mul_pp r1, r0, r1
-add_pp r2.x, r2, c20.z
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+dsx r2.w, r3.y
+dsy r2.y, r3
+mul r2.z, r0, c20.x
+mul r2.x, r0.w, c20
+mul r0.xy, r0, c9.x
+texldd r0, r0, s1, r2.zwzw, r2
+texldd r2, r3, s0, r2.zwzw, r2
+add_pp r1, -r0, c16.y
+mul_sat r3.w, r3, c17
+mad_pp r0, r3.w, r1, r0
+rsq r3.z, r3.z
+mul r1.xyz, r3.z, c2
+dp3_sat r3.x, v3, r1
+mul r1, r2, c4
+mul_pp r1, r1, r0
+add_pp r2.x, r3, c20.z
 mul_pp r0.y, r2.x, c3.w
 mul_pp_sat r0.w, r0.y, c20
 mov r0.x, c11
@@ -39820,10 +39821,10 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 // 97 instructions, 4 temp regs, 0 temp arrays:
 // ALU 89 float, 0 int, 4 uint
-// TEX 1 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 0 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedjhfglghjcpehjdbghilmfibcckojllgpabaaaaaaceaoaaaaadaaaaaa
+eefiecedglcdmapemdbdlolnomnknemckoeonidmabaaaaaadeaoaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -39834,109 +39835,109 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefckeamaaaa
-eaaaaaaacjadaaaafjaaaaaeegiocaaaaaaaaaaabbaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcleamaaaa
+eaaaaaaacnadaaaafjaaaaaeegiocaaaaaaaaaaabbaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaa
 gcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaa
 acaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaad
-hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaadeaaaaaj
-bcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-aoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
-akaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
-akbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-bkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaaaaaaaaaaakaabaaa
-aaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaafpkokkdm
-abeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaahecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajicaabaaaaaaaaaaa
-ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaahecaabaaa
-aaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaadbaaaaaigcaabaaa
-aaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaaabaaaaahccaabaaa
-aaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaahbcaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaaaaaaaaaackbabaaa
-aeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaa
-bkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaa
-akbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaia
-ebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaaaaaaaaaabkaabaaa
-aaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakicaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlo
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaiambaaaaaaaeaaaaaa
-abeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaah
-ccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaajccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaah
-ecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaadcaaaaajecaabaaa
-aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaaaaaaaaaadiaaaaah
-ccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaaidcaabaaa
-aaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaamaaaaaaalaaaaafccaabaaa
-abaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaabkaabaaaaaaaaaaa
-alaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-amaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-ejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
+hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaaaaaaaaal
+dcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaackbabaia
+mbaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+pcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaakgbebaia
+ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaia
+ebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+ocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaiaibaaaaaaaeaaaaaa
+dcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaajgahbaaa
+abaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaaaceaaaaaaaaaaaaa
+aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaajgafbaaaaaaaaaaa
+agaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaa
+aaaaaaaaanaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaakgikcaaa
+aaaaaaaaaoaaaaaadeaaaaajecaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaaaceaaaaaaaaaiadp
+aaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaajicaabaaaaaaaaaaa
+ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahecaabaaa
+aaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahicaabaaaaaaaaaaa
+ckaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaadkaabaaa
+aaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajbcaabaaaabaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaaj
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaadiphhpdp
+diaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdp
+dbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaa
+aeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaa
+dcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaaggbkbaiaebaaaaaa
+aeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaanlapejma
+aaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaaddaaaaah
+icaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiicaabaaa
+aaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaadeaaaaahbcaabaaa
+abaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaibcaabaaaabaaaaaa
+akaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+acaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaak
+ecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaa
+chbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaa
+aeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaiicaabaaaaaaaaaaa
+bkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaa
+idpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaaagiecaaaaaaaaaaa
+amaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaaamaaaaafccaabaaa
+acaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaaegaabaaaaaaaaaaa
+eghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaa
+ejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
 aaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaaipcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegiocaaaaaaaaaaaalaaaaaaaaaaaaaldcaabaaaabaaaaaa
-egbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaa
-aaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiambaaaaaaaeaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajpcaabaaaacaaaaaa
-kgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaa
-acaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaiaibaaaaaaaeaaaaaa
-aaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaiaebaaaaaaacaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajocaabaaaabaaaaaa
-fgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaa
-abaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaacaaaaaadiaaaaak
-gcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadp
-aaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaaagaabaaaabaaaaaa
-aaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaaaaaaaaaaanaaaaaa
-diaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaaaaaaaaaaaoaaaaaa
-efaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaabaaaaaaaagabaaa
-abaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaaadaaaaaapgbpbaaa
-abaaaaaapgipcaaaaaaaaaaaaoaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
-adaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaa
-acaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaa
-egacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaa
-abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
-abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
-dcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaabaaaaaaabkaabaaa
-abaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-dkiacaaaaaaaaaaaapaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaa
-egbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaa
-aaaaaaaaaoaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaai
-ccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaaoaaaaaabjaaaaaf
-ccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaa
-abaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaa
-egiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
-dccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaapaaaaaackaabaaaabaaaaaa
-bkiacaiaebaaaaaaaaaaaaaaapaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaia
-ebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaa
-abaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaa
-dkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
-acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaa
-abaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaajaaaaaadicaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaa
-abaaaaaaegiccaaaaaaaaaaaajaaaaaaagiacaaaaaaaaaaaapaaaaaadccaaaak
-hcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaa
-aeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
-doaaaaab"
+egaobaaaaaaaaaaaegiocaaaaaaaaaaaalaaaaaaaaaaaaalpcaabaaaabaaaaaa
+egaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
+apcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaaoaaaaaa
+dcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaaabaaaaaaegaobaaa
+adaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+aaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaa
+aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
+aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
+baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
+dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaia
+ebaaaaaaaaaaaaaabaaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaapaaaaaabacaaaah
+ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaa
+abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaaoaaaaaacpaaaaafccaabaaa
+abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
+akiacaaaaaaaaaaaaoaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
+ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
+hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
+baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
+aaaaaaaaapaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaapaaaaaa
+aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
+dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
+abaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
+aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaajaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaajaaaaaa
+agiacaaaaaaaaaaaapaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -39980,7 +39981,7 @@ Float 15 [_RimDistSub]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 112 ALU, 4 TEX
+; 112 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c16, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -39994,84 +39995,84 @@ dcl_texcoord2 v2.x
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r1.xyz, r2.yxzw, -r0
-add r0.w, r0, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad_pp r0.xyz, r0.w, r1, r0
-abs_pp r0.w, r0.x
-abs r2.y, v4.z
-dsx r3.zw, v4.xyxz
-max r0.x, r2, r2.y
-rcp_pp r1.x, r0.w
-rcp r0.w, r0.x
-min r0.x, r2, r2.y
-mul r2.z, r0.x, r0.w
-mul_pp r0.zw, r0.xyzy, r1.x
-mul r2.w, r2.z, r2.z
-mov_pp r1.xy, c6
-mad_pp r1.xy, r0.zwzw, c20.y, r1
-mad r0.x, r2.w, c18.y, c18.z
-mad r0.z, r0.x, r2.w, c18.w
-mul r0.xy, r1, c9.x
-mad r1.x, r0.z, r2.w, c19
-mad r3.x, r1, r2.w, c19.y
-mad r2.w, r3.x, r2, c19.z
-texld r0, r0, s1
-add_pp r1, -r0, c16.y
-mul r2.z, r2.w, r2
-mul r3.x, v2, c10
-mul_sat r2.w, r3.x, c17
-mad_pp r1, r2.w, r1, r0
-mul r3.zw, r3, r3
-add r0.x, r2, -r2.y
-add r0.y, -r2.z, c19.w
-cmp r0.w, -r0.x, r2.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c16.z
-add r0.z, -r0.x, c16.y
-mad r0.y, r0.x, c17.x, c17
-mad r0.y, r0, r0.x, c16.w
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c16
+abs r0.w, v4.z
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c18, c18.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c18.w
+mad r0.x, r1.y, r2.w, c19
+dp4 r3.z, c2, c2
+mul r3.w, v2.x, c10.x
+mad r1.y, r0.x, r2.w, c19
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c19
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c6
+mad_pp r0.xy, r0, c20.y, r2
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c19.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c16
+add r1.x, -r0.z, c16.y
+mad r0.w, r0.z, c17.x, c17.y
+mad r0.w, r0, r0.z, c16
+rsq r1.x, r1.x
+cmp r1.y, v4.z, r1, r1.z
+mad r0.z, r0.w, r0, c17
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c16.x, c16.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c17, r0
+mad r0.w, r0.z, c16.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c20.x, c20.y
+mul r0.w, r0, c18.x
+add r3.xy, r0.zwzw, c5
+dsx r0.zw, v4.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+dsy r1.xy, v4.xzzw
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
 rsq r0.z, r0.z
-cmp r0.w, v4.z, r0, r2.x
-mad r0.x, r0.y, r0, c17.z
 rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c16, c16.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c17.w, r0
-mad r0.y, r0.x, c16.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c20, c20.y
-mul r0.y, r0, c18.x
-add r3.xy, r0, c5
-dp4 r0.x, c2, c2
-rsq r0.x, r0.x
-mul r2.xyz, r0.x, c2
-dp3_sat r2.x, v3, r2
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r2.w, r3.z, r3
-rsq r0.x, r2.w
-rsq r0.z, r0.z
-rcp r2.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c20.x
-dsx r0.w, r3.y
-dsy r0.y, r3
-mul r0.x, r2.w, c20
-texldd r0, r3, s0, r0.zwzw, r0
-mul r0, r0, c4
-mul_pp r1, r0, r1
-add_pp r2.x, r2, c20.z
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+dsx r2.w, r3.y
+dsy r2.y, r3
+mul r2.z, r0, c20.x
+mul r2.x, r0.w, c20
+mul r0.xy, r0, c9.x
+texldd r0, r0, s1, r2.zwzw, r2
+texldd r2, r3, s0, r2.zwzw, r2
+add_pp r1, -r0, c16.y
+mul_sat r3.w, r3, c17
+mad_pp r0, r3.w, r1, r0
+rsq r3.z, r3.z
+mul r1.xyz, r3.z, c2
+dp3_sat r3.x, v3, r1
+mul r1, r2, c4
+mul_pp r1, r1, r0
+add_pp r2.x, r3, c20.z
 mul_pp r0.y, r2.x, c3.w
 mul_pp_sat r0.w, r0.y, c20
 mov r0.x, c11
@@ -40135,10 +40136,10 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 // 97 instructions, 4 temp regs, 0 temp arrays:
 // ALU 89 float, 0 int, 4 uint
-// TEX 1 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 0 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedjhfglghjcpehjdbghilmfibcckojllgpabaaaaaaceaoaaaaadaaaaaa
+eefiecedglcdmapemdbdlolnomnknemckoeonidmabaaaaaadeaoaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -40149,109 +40150,109 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefckeamaaaa
-eaaaaaaacjadaaaafjaaaaaeegiocaaaaaaaaaaabbaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcleamaaaa
+eaaaaaaacnadaaaafjaaaaaeegiocaaaaaaaaaaabbaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaa
 gcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaa
 acaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaad
-hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaadeaaaaaj
-bcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-aoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
-akaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
-akbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-bkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaaaaaaaaaaakaabaaa
-aaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaafpkokkdm
-abeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaahecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajicaabaaaaaaaaaaa
-ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaahecaabaaa
-aaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaadbaaaaaigcaabaaa
-aaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaaabaaaaahccaabaaa
-aaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaahbcaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaaaaaaaaaackbabaaa
-aeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaa
-bkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaa
-akbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaia
-ebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaaaaaaaaaabkaabaaa
-aaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakicaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlo
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaiambaaaaaaaeaaaaaa
-abeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaah
-ccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaajccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaah
-ecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaadcaaaaajecaabaaa
-aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaaaaaaaaaadiaaaaah
-ccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaaidcaabaaa
-aaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaamaaaaaaalaaaaafccaabaaa
-abaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaabkaabaaaaaaaaaaa
-alaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-amaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-ejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
+hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaaaaaaaaal
+dcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaackbabaia
+mbaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+pcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaakgbebaia
+ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaia
+ebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+ocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaiaibaaaaaaaeaaaaaa
+dcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaajgahbaaa
+abaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaaaceaaaaaaaaaaaaa
+aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaajgafbaaaaaaaaaaa
+agaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaa
+aaaaaaaaanaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaakgikcaaa
+aaaaaaaaaoaaaaaadeaaaaajecaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaaaceaaaaaaaaaiadp
+aaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaajicaabaaaaaaaaaaa
+ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahecaabaaa
+aaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahicaabaaaaaaaaaaa
+ckaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaadkaabaaa
+aaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajbcaabaaaabaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaaj
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaadiphhpdp
+diaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdp
+dbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaa
+aeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaa
+dcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaaggbkbaiaebaaaaaa
+aeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaanlapejma
+aaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaaddaaaaah
+icaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiicaabaaa
+aaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaadeaaaaahbcaabaaa
+abaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaibcaabaaaabaaaaaa
+akaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+acaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaak
+ecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaa
+chbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaa
+aeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaiicaabaaaaaaaaaaa
+bkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaa
+idpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaaagiecaaaaaaaaaaa
+amaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaaamaaaaafccaabaaa
+acaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaaegaabaaaaaaaaaaa
+eghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaa
+ejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
 aaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaaipcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegiocaaaaaaaaaaaalaaaaaaaaaaaaaldcaabaaaabaaaaaa
-egbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaa
-aaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiambaaaaaaaeaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajpcaabaaaacaaaaaa
-kgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaa
-acaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaiaibaaaaaaaeaaaaaa
-aaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaiaebaaaaaaacaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajocaabaaaabaaaaaa
-fgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaa
-abaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaacaaaaaadiaaaaak
-gcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadp
-aaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaaagaabaaaabaaaaaa
-aaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaaaaaaaaaaanaaaaaa
-diaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaaaaaaaaaaaoaaaaaa
-efaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaabaaaaaaaagabaaa
-abaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaaadaaaaaapgbpbaaa
-abaaaaaapgipcaaaaaaaaaaaaoaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
-adaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaa
-acaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaa
-egacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaa
-abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
-abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
-dcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaabaaaaaaabkaabaaa
-abaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-dkiacaaaaaaaaaaaapaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaa
-egbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaa
-aaaaaaaaaoaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaai
-ccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaaoaaaaaabjaaaaaf
-ccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaa
-abaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaa
-egiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
-dccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaapaaaaaackaabaaaabaaaaaa
-bkiacaiaebaaaaaaaaaaaaaaapaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaia
-ebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaa
-abaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaa
-dkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
-acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaa
-abaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaajaaaaaadicaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaa
-abaaaaaaegiccaaaaaaaaaaaajaaaaaaagiacaaaaaaaaaaaapaaaaaadccaaaak
-hcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaa
-aeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
-doaaaaab"
+egaobaaaaaaaaaaaegiocaaaaaaaaaaaalaaaaaaaaaaaaalpcaabaaaabaaaaaa
+egaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
+apcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaaoaaaaaa
+dcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaaabaaaaaaegaobaaa
+adaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+aaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaa
+aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
+aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
+baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
+dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaia
+ebaaaaaaaaaaaaaabaaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaapaaaaaabacaaaah
+ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaa
+abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaaoaaaaaacpaaaaafccaabaaa
+abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
+akiacaaaaaaaaaaaaoaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
+ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
+hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
+baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
+aaaaaaaaapaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaapaaaaaa
+aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
+dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
+abaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
+aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaajaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaajaaaaaa
+agiacaaaaaaaaaaaapaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -40290,7 +40291,7 @@ Float 15 [_RimDistSub]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 112 ALU, 4 TEX
+; 112 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c16, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -40304,84 +40305,84 @@ dcl_texcoord2 v2.x
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r1.xyz, r2.yxzw, -r0
-add r0.w, r0, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad_pp r0.xyz, r0.w, r1, r0
-abs_pp r0.w, r0.x
-abs r2.y, v4.z
-dsx r3.zw, v4.xyxz
-max r0.x, r2, r2.y
-rcp_pp r1.x, r0.w
-rcp r0.w, r0.x
-min r0.x, r2, r2.y
-mul r2.z, r0.x, r0.w
-mul_pp r0.zw, r0.xyzy, r1.x
-mul r2.w, r2.z, r2.z
-mov_pp r1.xy, c6
-mad_pp r1.xy, r0.zwzw, c20.y, r1
-mad r0.x, r2.w, c18.y, c18.z
-mad r0.z, r0.x, r2.w, c18.w
-mul r0.xy, r1, c9.x
-mad r1.x, r0.z, r2.w, c19
-mad r3.x, r1, r2.w, c19.y
-mad r2.w, r3.x, r2, c19.z
-texld r0, r0, s1
-add_pp r1, -r0, c16.y
-mul r2.z, r2.w, r2
-mul r3.x, v2, c10
-mul_sat r2.w, r3.x, c17
-mad_pp r1, r2.w, r1, r0
-mul r3.zw, r3, r3
-add r0.x, r2, -r2.y
-add r0.y, -r2.z, c19.w
-cmp r0.w, -r0.x, r2.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c16.z
-add r0.z, -r0.x, c16.y
-mad r0.y, r0.x, c17.x, c17
-mad r0.y, r0, r0.x, c16.w
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c16
+abs r0.w, v4.z
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c18, c18.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c18.w
+mad r0.x, r1.y, r2.w, c19
+dp4 r3.z, c2, c2
+mul r3.w, v2.x, c10.x
+mad r1.y, r0.x, r2.w, c19
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c19
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c6
+mad_pp r0.xy, r0, c20.y, r2
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c19.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c16
+add r1.x, -r0.z, c16.y
+mad r0.w, r0.z, c17.x, c17.y
+mad r0.w, r0, r0.z, c16
+rsq r1.x, r1.x
+cmp r1.y, v4.z, r1, r1.z
+mad r0.z, r0.w, r0, c17
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c16.x, c16.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c17, r0
+mad r0.w, r0.z, c16.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c20.x, c20.y
+mul r0.w, r0, c18.x
+add r3.xy, r0.zwzw, c5
+dsx r0.zw, v4.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+dsy r1.xy, v4.xzzw
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
 rsq r0.z, r0.z
-cmp r0.w, v4.z, r0, r2.x
-mad r0.x, r0.y, r0, c17.z
 rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c16, c16.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c17.w, r0
-mad r0.y, r0.x, c16.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c20, c20.y
-mul r0.y, r0, c18.x
-add r3.xy, r0, c5
-dp4 r0.x, c2, c2
-rsq r0.x, r0.x
-mul r2.xyz, r0.x, c2
-dp3_sat r2.x, v3, r2
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r2.w, r3.z, r3
-rsq r0.x, r2.w
-rsq r0.z, r0.z
-rcp r2.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c20.x
-dsx r0.w, r3.y
-dsy r0.y, r3
-mul r0.x, r2.w, c20
-texldd r0, r3, s0, r0.zwzw, r0
-mul r0, r0, c4
-mul_pp r1, r0, r1
-add_pp r2.x, r2, c20.z
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+dsx r2.w, r3.y
+dsy r2.y, r3
+mul r2.z, r0, c20.x
+mul r2.x, r0.w, c20
+mul r0.xy, r0, c9.x
+texldd r0, r0, s1, r2.zwzw, r2
+texldd r2, r3, s0, r2.zwzw, r2
+add_pp r1, -r0, c16.y
+mul_sat r3.w, r3, c17
+mad_pp r0, r3.w, r1, r0
+rsq r3.z, r3.z
+mul r1.xyz, r3.z, c2
+dp3_sat r3.x, v3, r1
+mul r1, r2, c4
+mul_pp r1, r1, r0
+add_pp r2.x, r3, c20.z
 mul_pp r0.y, r2.x, c3.w
 mul_pp_sat r0.w, r0.y, c20
 mov r0.x, c11
@@ -40445,10 +40446,10 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 // 97 instructions, 4 temp regs, 0 temp arrays:
 // ALU 89 float, 0 int, 4 uint
-// TEX 1 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 0 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefieceddbbnencbkamnppnfmnfgbnjjcaepifckabaaaaaaceaoaaaaadaaaaaa
+eefiecedcakdledddhonmjabcppdgbojihjmcgmoabaaaaaadeaoaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -40459,109 +40460,109 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaahaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefckeamaaaa
-eaaaaaaacjadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcleamaaaa
+eaaaaaaacnadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaa
 gcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaa
 acaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaad
-hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaadeaaaaaj
-bcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-aoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
-akaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
-akbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-bkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaaaaaaaaaaakaabaaa
-aaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaafpkokkdm
-abeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaahecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajicaabaaaaaaaaaaa
-ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaahecaabaaa
-aaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaadbaaaaaigcaabaaa
-aaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaaabaaaaahccaabaaa
-aaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaahbcaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaaaaaaaaaackbabaaa
-aeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaa
-bkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaa
-akbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaia
-ebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaaaaaaaaaabkaabaaa
-aaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakicaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlo
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaiambaaaaaaaeaaaaaa
-abeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaah
-ccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaajccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaah
-ecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaadcaaaaajecaabaaa
-aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaaaaaaaaaadiaaaaah
-ccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaaidcaabaaa
-aaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaa
-abaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaabkaabaaaaaaaaaaa
-alaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-amaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-ejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
+hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaaaaaaaaal
+dcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaackbabaia
+mbaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+pcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaakgbebaia
+ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaia
+ebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+ocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaiaibaaaaaaaeaaaaaa
+dcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaajgahbaaa
+abaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaaaceaaaaaaaaaaaaa
+aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaajgafbaaaaaaaaaaa
+agaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaa
+aaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaakgikcaaa
+aaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaaaceaaaaaaaaaiadp
+aaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaajicaabaaaaaaaaaaa
+ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahecaabaaa
+aaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahicaabaaaaaaaaaaa
+ckaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaadkaabaaa
+aaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajbcaabaaaabaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaaj
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaadiphhpdp
+diaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdp
+dbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaa
+aeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaa
+dcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaaggbkbaiaebaaaaaa
+aeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaanlapejma
+aaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaaddaaaaah
+icaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiicaabaaa
+aaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaadeaaaaahbcaabaaa
+abaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaibcaabaaaabaaaaaa
+akaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+acaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaak
+ecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaa
+chbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaa
+aeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaiicaabaaaaaaaaaaa
+bkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaa
+idpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaaagiecaaaaaaaaaaa
+aiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaaamaaaaafccaabaaa
+acaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaaegaabaaaaaaaaaaa
+eghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaa
+ejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
 aaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaaipcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaaldcaabaaaabaaaaaa
-egbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaa
-aaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiambaaaaaaaeaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajpcaabaaaacaaaaaa
-kgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaa
-acaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaiaibaaaaaaaeaaaaaa
-aaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaiaebaaaaaaacaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajocaabaaaabaaaaaa
-fgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaa
-abaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaacaaaaaadiaaaaak
-gcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadp
-aaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaaagaabaaaabaaaaaa
-aaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaaaaaaaaaaajaaaaaa
-diaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaabaaaaaaaagabaaa
-abaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaaadaaaaaapgbpbaaa
-abaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
-adaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaa
-acaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaa
-egacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaa
-abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
-abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
-dcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaa
-abaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-dkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaa
-egbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaa
-aaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaai
-ccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaaf
-ccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaa
-abaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaa
-egiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
-dccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaa
-bkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaia
-ebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaa
-abaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaa
-dkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
-acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaa
-abaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaa
-abaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaak
-hcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaa
-aeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
-doaaaaab"
+egaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaalpcaabaaaabaaaaaa
+egaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
+apcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaa
+dcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaaabaaaaaaegaobaaa
+adaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+aaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaa
+aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
+aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
+baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
+dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaia
+ebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaah
+ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaa
+abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaa
+abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
+akiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
+ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
+hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
+baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
+aaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaa
+aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
+dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
+abaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
+aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaa
+agiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -40605,7 +40606,7 @@ Float 15 [_RimDistSub]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 112 ALU, 4 TEX
+; 112 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
 def c16, 0.00000000, 1.00000000, 3.14159298, -0.21211439
@@ -40619,84 +40620,84 @@ dcl_texcoord2 v2.x
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r1.xyz, r2.yxzw, -r0
-add r0.w, r0, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad_pp r0.xyz, r0.w, r1, r0
-abs_pp r0.w, r0.x
-abs r2.y, v4.z
-dsx r3.zw, v4.xyxz
-max r0.x, r2, r2.y
-rcp_pp r1.x, r0.w
-rcp r0.w, r0.x
-min r0.x, r2, r2.y
-mul r2.z, r0.x, r0.w
-mul_pp r0.zw, r0.xyzy, r1.x
-mul r2.w, r2.z, r2.z
-mov_pp r1.xy, c6
-mad_pp r1.xy, r0.zwzw, c20.y, r1
-mad r0.x, r2.w, c18.y, c18.z
-mad r0.z, r0.x, r2.w, c18.w
-mul r0.xy, r1, c9.x
-mad r1.x, r0.z, r2.w, c19
-mad r3.x, r1, r2.w, c19.y
-mad r2.w, r3.x, r2, c19.z
-texld r0, r0, s1
-add_pp r1, -r0, c16.y
-mul r2.z, r2.w, r2
-mul r3.x, v2, c10
-mul_sat r2.w, r3.x, c17
-mad_pp r1, r2.w, r1, r0
-mul r3.zw, r3, r3
-add r0.x, r2, -r2.y
-add r0.y, -r2.z, c19.w
-cmp r0.w, -r0.x, r2.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c16.z
-add r0.z, -r0.x, c16.y
-mad r0.y, r0.x, c17.x, c17
-mad r0.y, r0, r0.x, c16.w
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c16
+abs r0.w, v4.z
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c18, c18.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c18.w
+mad r0.x, r1.y, r2.w, c19
+dp4 r3.z, c2, c2
+mul r3.w, v2.x, c10.x
+mad r1.y, r0.x, r2.w, c19
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c19
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c6
+mad_pp r0.xy, r0, c20.y, r2
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c19.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c16
+add r1.x, -r0.z, c16.y
+mad r0.w, r0.z, c17.x, c17.y
+mad r0.w, r0, r0.z, c16
+rsq r1.x, r1.x
+cmp r1.y, v4.z, r1, r1.z
+mad r0.z, r0.w, r0, c17
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c16.x, c16.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c17, r0
+mad r0.w, r0.z, c16.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c20.x, c20.y
+mul r0.w, r0, c18.x
+add r3.xy, r0.zwzw, c5
+dsx r0.zw, v4.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+dsy r1.xy, v4.xzzw
+mul r1.xy, r1, r1
+add r0.w, r1.x, r1.y
 rsq r0.z, r0.z
-cmp r0.w, v4.z, r0, r2.x
-mad r0.x, r0.y, r0, c17.z
 rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c16, c16.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c17.w, r0
-mad r0.y, r0.x, c16.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c20, c20.y
-mul r0.y, r0, c18.x
-add r3.xy, r0, c5
-dp4 r0.x, c2, c2
-rsq r0.x, r0.x
-mul r2.xyz, r0.x, c2
-dp3_sat r2.x, v3, r2
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r2.w, r3.z, r3
-rsq r0.x, r2.w
-rsq r0.z, r0.z
-rcp r2.w, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c20.x
-dsx r0.w, r3.y
-dsy r0.y, r3
-mul r0.x, r2.w, c20
-texldd r0, r3, s0, r0.zwzw, r0
-mul r0, r0, c4
-mul_pp r1, r0, r1
-add_pp r2.x, r2, c20.z
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+dsx r2.w, r3.y
+dsy r2.y, r3
+mul r2.z, r0, c20.x
+mul r2.x, r0.w, c20
+mul r0.xy, r0, c9.x
+texldd r0, r0, s1, r2.zwzw, r2
+texldd r2, r3, s0, r2.zwzw, r2
+add_pp r1, -r0, c16.y
+mul_sat r3.w, r3, c17
+mad_pp r0, r3.w, r1, r0
+rsq r3.z, r3.z
+mul r1.xyz, r3.z, c2
+dp3_sat r3.x, v3, r1
+mul r1, r2, c4
+mul_pp r1, r1, r0
+add_pp r2.x, r3, c20.z
 mul_pp r0.y, r2.x, c3.w
 mul_pp_sat r0.w, r0.y, c20
 mov r0.x, c11
@@ -40760,10 +40761,10 @@ SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 // 97 instructions, 4 temp regs, 0 temp arrays:
 // ALU 89 float, 0 int, 4 uint
-// TEX 1 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 0 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefieceddbbnencbkamnppnfmnfgbnjjcaepifckabaaaaaaceaoaaaaadaaaaaa
+eefiecedcakdledddhonmjabcppdgbojihjmcgmoabaaaaaadeaoaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -40774,109 +40775,109 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaahaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefckeamaaaa
-eaaaaaaacjadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcleamaaaa
+eaaaaaaacnadaaaafjaaaaaeegiocaaaaaaaaaaaanaaaaaafjaaaaaeegiocaaa
 abaaaaaaafaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaa
 gcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaa
 acaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaad
-hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaadeaaaaaj
-bcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-aoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
-akaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
-akbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-bkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaaaaaaaaaaakaabaaa
-aaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaafpkokkdm
-abeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaahecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajicaabaaaaaaaaaaa
-ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaahecaabaaa
-aaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaadbaaaaaigcaabaaa
-aaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaaabaaaaahccaabaaa
-aaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaahbcaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaaaaaaaaaackbabaaa
-aeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaa
-bkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaa
-akbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaia
-ebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaaaaaaaaaabkaabaaa
-aaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-abeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakicaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlo
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaiambaaaaaaaeaaaaaa
-abeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaah
-ccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaajccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaah
-ecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaadcaaaaajecaabaaa
-aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaaaaaaaaaadiaaaaah
-ccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaaidcaabaaa
-aaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaa
-abaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaabkaabaaaaaaaaaaa
-alaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-amaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaa
-ogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaa
-aaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdo
-ejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
+hcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaaaaaaaaal
+dcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaackbabaia
+mbaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+pcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
+dcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaakgbebaia
+ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaia
+ebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaaj
+ocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaiaibaaaaaaaeaaaaaa
+dcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaajgahbaaa
+abaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaaaceaaaaaaaaaaaaa
+aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaajgafbaaaaaaaaaaa
+agaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaa
+aaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaakgikcaaa
+aaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaaaceaaaaaaaaaiadp
+aaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaajicaabaaaaaaaaaaa
+ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahecaabaaa
+aaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahicaabaaaaaaaaaaa
+ckaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaadkaabaaa
+aaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajbcaabaaaabaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaaj
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaadiphhpdp
+diaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdp
+dbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaa
+aeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaa
+dcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaaggbkbaiaebaaaaaa
+aeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaanlapejma
+aaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaaddaaaaah
+icaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiicaabaaa
+aaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaadeaaaaahbcaabaaa
+abaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaibcaabaaaabaaaaaa
+akaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+acaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaak
+ecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaa
+chbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaa
+aeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaiicaabaaaaaaaaaaa
+bkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaficaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaa
+idpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaaagiecaaaaaaaaaaa
+aiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaaamaaaaafccaabaaa
+acaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaa
+apaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaaegaabaaaaaaaaaaa
+eghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaa
+ejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaa
 aaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaaipcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaaldcaabaaaabaaaaaa
-egbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaa
-aaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiambaaaaaaaeaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajpcaabaaaacaaaaaa
-kgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaa
-acaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaiaibaaaaaaaeaaaaaa
-aaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaiaebaaaaaaacaaaaaa
-ebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaajocaabaaaabaaaaaa
-fgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaa
-abaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaacaaaaaadiaaaaak
-gcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadp
-aaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaaagaabaaaabaaaaaa
-aaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaaaaaaaaaaajaaaaaa
-diaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaaaaaaaaaaakaaaaaa
-efaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaabaaaaaaaagabaaa
-abaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaaadaaaaaapgbpbaaa
-abaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
-adaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaa
-egaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaa
-acaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaa
-egacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaa
-abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
-abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
-dcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaa
-abaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-dkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaa
-egbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaa
-aaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaai
-ccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaaf
-ccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaa
-abaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaa
-egiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaa
-acaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
-dccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaa
-bkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaia
-ebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaa
-abaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahiccabaaaaaaaaaaa
-dkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
-acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaa
-abaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaa
-abaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaak
-hcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaa
-aeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
-doaaaaab"
+egaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaalpcaabaaaabaaaaaa
+egaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
+apcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaa
+dcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaaabaaaaaaegaobaaa
+adaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
+aaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaa
+aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
+aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
+baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
+dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaia
+ebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaah
+ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaa
+abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaa
+abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
+akiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
+ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
+hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
+baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
+ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
+aaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaa
+aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
+dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
+abaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
+aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaa
+agiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -40923,7 +40924,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 117 ALU, 5 TEX
+; 117 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -40939,78 +40940,78 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord8 v6
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add r1.x, r0.w, c18.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c18
 abs r0.w, v4.z
-frc r1.y, r1.x
-add_sat r2.w, r1.x, -r1.y
-add_pp r1.xyz, r2.yxzw, -r0
-mad_pp r0.xyz, r2.w, r1, r0
-max r1.w, r2.x, r0
-rcp r2.y, r1.w
-min r1.w, r2.x, r0
-mul r1.w, r1, r2.y
-abs_pp r1.x, r0
-mul r1.z, r1.w, r1.w
-dsx r3.zw, v4.xyxz
-mul r3.zw, r3, r3
-mad r0.x, r1.z, c20.y, c20.z
-rcp_pp r1.y, r1.x
-mad r1.x, r0, r1.z, c20.w
-mul_pp r0.xy, r0.zyzw, r1.y
-mad r0.z, r1.x, r1, c21.x
-mad r0.z, r0, r1, c21.y
-mad r0.z, r0, r1, c21
-mov_pp r1.xy, c7
-mad_pp r0.xy, r0, c22.y, r1
-mul r0.xy, r0, c10.x
-mul r0.z, r0, r1.w
-texld r1, r0, s1
-add r0.x, r2, -r0.w
-add r0.y, -r0.z, c21.w
-cmp r0.w, -r0.x, r0.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c18.z
-cmp r0.w, v4.z, r0, r2.x
-add r0.z, -r0.x, c18.y
-mad r0.y, r0.x, c19.x, c19
-mad r0.y, r0, r0.x, c18.w
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c20, c20.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c20.w
+mad r0.x, r1.y, r2.w, c21
+mad r1.y, r0.x, r2.w, c21
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c21
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c7
+mad_pp r0.xy, r0, c22.y, r2
+dsy r2.xy, v4.xzzw
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c21.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c18
+cmp r1.y, v4.z, r1, r1.z
+add r1.x, -r0.z, c18.y
+mad r0.w, r0.z, c19.x, c19.y
+mad r0.w, r0, r0.z, c18
+rsq r1.x, r1.x
+dsx r1.zw, v4.xyxz
+mul r1.zw, r1, r1
+mad r0.z, r0.w, r0, c19
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c18.x, c18.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c19, r0
+mad r0.w, r0.z, c18.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c22.x, c22.y
+mul r1.xy, r0, c10.x
+add r0.x, r1.z, r1.w
+mul r0.w, r0, c20.x
+add r3.xy, r0.zwzw, c6
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
 rsq r0.z, r0.z
-add_pp r2, -r1, c18.y
-mad r0.x, r0.y, r0, c19.z
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c18, c18.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c19.w, r0
-mad r0.y, r0.x, c18.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c22, c22.y
-mul r0.y, r0, c20.x
-add r3.xy, r0, c6
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r3.z, r3, r3.w
-rsq r0.x, r3.z
-rsq r0.z, r0.z
-rcp r3.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
 rcp r0.x, r0.x
 mul r0.z, r0.x, c22.x
-mul r0.x, r3.z, c22
+mul r0.x, r1.z, c22
 dsx r0.w, r3.y
 dsy r0.y, r3
+texldd r1, r1, s1, r0.zwzw, r0
 texldd r0, r3, s0, r0.zwzw, r0
 mul r3.z, v2.x, c11.x
+mul r0, r0, c5
+add_pp r2, -r1, c18.y
 mul_sat r3.x, r3.z, c19.w
 mad_pp r1, r3.x, r2, r1
-mul r0, r0, c5
 mul_pp r1, r0, r1
 add r2.xyz, -v1, c1
 dp3 r0.w, r2, r2
@@ -41089,10 +41090,10 @@ SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_CameraDepthTexture] 2D 2
 // 104 instructions, 4 temp regs, 0 temp arrays:
 // ALU 95 float, 0 int, 4 uint
-// TEX 2 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 1 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedmpbfmidojjfiahlhbeofjigjcijejfghabaaaaaaceapaaaaadaaaaaa
+eefiecednghclaogajihheipilnbghldcgbkpemcabaaaaaadeapaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -41103,7 +41104,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaomaaaaaa
 aiaaaaaaaaaaaaaaadaaaaaaahaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefclmanaaaaeaaaaaaagpadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaa
+fdeieefcmmanaaaaeaaaaaaahdadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaa
 fjaaaaaeegiocaaaabaaaaaaaiaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafibiaaaeaahabaaaaaaaaaaa
@@ -41111,109 +41112,109 @@ ffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaa
 ffffaaaagcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaad
 hcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaa
 gcbaaaadhcbabaaaafaaaaaagcbaaaadpcbabaaaahaaaaaagfaaaaadpccabaaa
-aaaaaaaagiaaaaacaeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaa
-aeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaa
-aaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaa
-aaaaaaaaakaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaaj
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlo
-dcaaaaajccaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaa
-diphhpdpdiaaaaahecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaa
-dcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapmjdpdbaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaabaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
-aaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaa
-ckaabaaaaaaaaaaadbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaia
-ebaaaaaaaeaaaaaaabaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaa
-nlapejmaaaaaaaahbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaa
-ddaaaaahccaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaai
-ccaabaaaaaaaaaaabkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaah
-icaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaa
-aaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadp
-dcaaaaakicaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlm
-abeaaaaachbgjidndcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaa
-abaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaa
-abaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaadcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
-aaaaaamaabeaaaaanlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaa
-bkaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
-abaaaaaackaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjkcdoaaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaa
-aaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaaf
-ccaabaaaacaaaaaabkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaa
-aeaaaaaaapaaaaahecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaa
-elaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaa
-aeaaaaaaapaaaaahecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaa
-elaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaa
+aaaaaaaagiaaaaacaeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaa
+aeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaa
+aaaaaaaaakaabaaaaaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaa
+aeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaa
+aaaaaaaaegaobaaaabaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaa
+aaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaa
+abaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaajgahbaaaaaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaa
+kgajbaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaah
+dcaabaaaaaaaaaaajgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaa
+aaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaa
+aaaaaaaaegaabaaaaaaaaaaakgikcaaaaaaaaaaaakaaaaaadeaaaaajecaabaaa
+aaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaak
+ecaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaa
+aaaaaaaaddaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
+ibaaaaaaaeaaaaaadiaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahicaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaa
+dgfkkolndcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaaochgdidodcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaaabeaaaaaaebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaabeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaa
+bkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaa
+aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaa
+ggbkbaaaaeaaaaaaggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaa
+akaabaaaabaaaaaaabeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaa
+akbabaaaaeaaaaaadbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaia
+ebaaaaaaaaaaaaaadeaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaa
+aeaaaaaabnaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaa
+abaaaaaaabaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+dhaaaaakecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaa
+ckaabaaaaaaaaaaadcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaa
+idpjccdoabeaaaaaaaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaa
+aeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaak
+ecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+keanmjdpaaaaaaaiicaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaa
+aaaaiadpelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaa
+abaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaa
+akaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaa
+abaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaa
+acaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaa
+agaebaaaacaaaaaaagiecaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaa
+dkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaaf
+mcaabaaaabaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaa
+abaaaaaaogakbaaaabaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahbcaabaaaabaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaaf
+mcaabaaaabaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaa
+abaaaaaaogakbaaaabaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahbcaabaaaacaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaan
+pcaabaaaadaaaaaaegaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaa
+egaabaaaabaaaaaaegaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaa
 aaaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaa
 acaaaaaadiaaaaaipcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaa
-ahaaaaaaaaaaaaaldcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaa
-abaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaaaaaaaaajpcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
-ibaaaaaaaeaaaaaadcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaa
-acaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaa
-abaaaaaaakaabaiaebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaaaaaaaaajocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaia
-ibaaaaaaaeaaaaaadcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaa
-abaaaaaajgahbaaaacaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaa
-aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaa
-jgafbaaaabaaaaaaagaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaa
-abaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaa
-abaaaaaakgikcaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaa
-abaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaa
-egaobaiaebaaaaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
-apcaaaaibcaabaaaadaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaa
-dcaaaaajpcaabaaaabaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaa
-abaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-aaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaa
-aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
-aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
-baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
-dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaia
-ebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaai
-bcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaah
-ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaa
-abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaa
-abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
-akiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
-ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
-hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
-baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
-ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
-aaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaa
-aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
-dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
-abaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-aoaaaaahdcaabaaaabaaaaaaegbabaaaahaaaaaapgbpbaaaahaaaaaaefaaaaaj
-pcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaa
-dcaaaaalbcaabaaaabaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaaabaaaaaa
-dkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadp
-aaaaiadpaaaaiadpaaaaiadpakaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaackbabaiaebaaaaaaahaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaaakiacaaaaaaaaaaabbaaaaaadiaaaaahiccabaaaaaaaaaaa
-dkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
-acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaa
-abaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaa
-abaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaak
-hcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaa
-aeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
-doaaaaab"
+ahaaaaaaaaaaaaalpcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaa
+abaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
+acaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaa
+egaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaa
+acaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaa
+egacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaa
+abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
+abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
+dcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
+dkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaa
+egbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaa
+aaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaai
+ccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaaf
+ccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaa
+abaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaa
+egiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+dccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaa
+bkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaia
+ebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaa
+abaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaaaoaaaaahdcaabaaaabaaaaaaegbabaaa
+ahaaaaaapgbpbaaaahaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaa
+eghobaaaacaaaaaaaagabaaaacaaaaaadcaaaaalbcaabaaaabaaaaaackiacaaa
+abaaaaaaahaaaaaaakaabaaaabaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaak
+bcaabaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaa
+abaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiaebaaaaaa
+ahaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaa
+bbaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
+aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaa
+agiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -41260,7 +41261,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 117 ALU, 5 TEX
+; 117 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -41276,78 +41277,78 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord8 v6
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add r1.x, r0.w, c18.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c18
 abs r0.w, v4.z
-frc r1.y, r1.x
-add_sat r2.w, r1.x, -r1.y
-add_pp r1.xyz, r2.yxzw, -r0
-mad_pp r0.xyz, r2.w, r1, r0
-max r1.w, r2.x, r0
-rcp r2.y, r1.w
-min r1.w, r2.x, r0
-mul r1.w, r1, r2.y
-abs_pp r1.x, r0
-mul r1.z, r1.w, r1.w
-dsx r3.zw, v4.xyxz
-mul r3.zw, r3, r3
-mad r0.x, r1.z, c20.y, c20.z
-rcp_pp r1.y, r1.x
-mad r1.x, r0, r1.z, c20.w
-mul_pp r0.xy, r0.zyzw, r1.y
-mad r0.z, r1.x, r1, c21.x
-mad r0.z, r0, r1, c21.y
-mad r0.z, r0, r1, c21
-mov_pp r1.xy, c7
-mad_pp r0.xy, r0, c22.y, r1
-mul r0.xy, r0, c10.x
-mul r0.z, r0, r1.w
-texld r1, r0, s1
-add r0.x, r2, -r0.w
-add r0.y, -r0.z, c21.w
-cmp r0.w, -r0.x, r0.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c18.z
-cmp r0.w, v4.z, r0, r2.x
-add r0.z, -r0.x, c18.y
-mad r0.y, r0.x, c19.x, c19
-mad r0.y, r0, r0.x, c18.w
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c20, c20.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c20.w
+mad r0.x, r1.y, r2.w, c21
+mad r1.y, r0.x, r2.w, c21
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c21
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c7
+mad_pp r0.xy, r0, c22.y, r2
+dsy r2.xy, v4.xzzw
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c21.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c18
+cmp r1.y, v4.z, r1, r1.z
+add r1.x, -r0.z, c18.y
+mad r0.w, r0.z, c19.x, c19.y
+mad r0.w, r0, r0.z, c18
+rsq r1.x, r1.x
+dsx r1.zw, v4.xyxz
+mul r1.zw, r1, r1
+mad r0.z, r0.w, r0, c19
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c18.x, c18.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c19, r0
+mad r0.w, r0.z, c18.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c22.x, c22.y
+mul r1.xy, r0, c10.x
+add r0.x, r1.z, r1.w
+mul r0.w, r0, c20.x
+add r3.xy, r0.zwzw, c6
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
 rsq r0.z, r0.z
-add_pp r2, -r1, c18.y
-mad r0.x, r0.y, r0, c19.z
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c18, c18.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c19.w, r0
-mad r0.y, r0.x, c18.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c22, c22.y
-mul r0.y, r0, c20.x
-add r3.xy, r0, c6
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r3.z, r3, r3.w
-rsq r0.x, r3.z
-rsq r0.z, r0.z
-rcp r3.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
 rcp r0.x, r0.x
 mul r0.z, r0.x, c22.x
-mul r0.x, r3.z, c22
+mul r0.x, r1.z, c22
 dsx r0.w, r3.y
 dsy r0.y, r3
+texldd r1, r1, s1, r0.zwzw, r0
 texldd r0, r3, s0, r0.zwzw, r0
 mul r3.z, v2.x, c11.x
+mul r0, r0, c5
+add_pp r2, -r1, c18.y
 mul_sat r3.x, r3.z, c19.w
 mad_pp r1, r3.x, r2, r1
-mul r0, r0, c5
 mul_pp r1, r0, r1
 add r2.xyz, -v1, c1
 dp3 r0.w, r2, r2
@@ -41426,10 +41427,10 @@ SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_CameraDepthTexture] 2D 2
 // 104 instructions, 4 temp regs, 0 temp arrays:
 // ALU 95 float, 0 int, 4 uint
-// TEX 2 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 1 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedindagockjdblmeknpcicloebbjjbekfiabaaaaaaamapaaaaadaaaaaa
+eefiecedopekfpgbfeneiokilpbeikiilhcnfeajabaaaaaabmapaaaaadaaaaaa
 cmaaaaaabeabaaaaeiabaaaaejfdeheooaaaaaaaaiaaaaaaaiaaaaaamiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaneaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaneaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -41439,7 +41440,7 @@ adaaaaaaaeaaaaaaahahaaaaneaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 ahahaaaaneaaaaaaaiaaaaaaaaaaaaaaadaaaaaaagaaaaaaapapaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaa
 aiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfe
-gbhcghgfheaaklklfdeieefclmanaaaaeaaaaaaagpadaaaafjaaaaaeegiocaaa
+gbhcghgfheaaklklfdeieefcmmanaaaaeaaaaaaahdadaaaafjaaaaaeegiocaaa
 aaaaaaaaaoaaaaaafjaaaaaeegiocaaaabaaaaaaaiaaaaaafjaaaaaeegiocaaa
 acaaaaaaabaaaaaafjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaa
 aaaaaaaafkaaaaadaagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafibiaaae
@@ -41447,109 +41448,109 @@ aahabaaaaaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaafibiaaae
 aahabaaaacaaaaaaffffaaaagcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaa
 abaaaaaagcbaaaadhcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaad
 hcbabaaaaeaaaaaagcbaaaadhcbabaaaafaaaaaagcbaaaadpcbabaaaagaaaaaa
-gfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaadeaaaaajbcaabaaaaaaaaaaa
-ckbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakbcaabaaa
-aaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaaaaaaaaa
-ddaaaaajccaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaa
-aeaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaa
-diaaaaahccaabaaaaaaaaaaaakaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaaj
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkoln
-dcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaa
-ochgdidodcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-abeaaaaaaebnkjlodcaaaaajccaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaadiphhpdpdiaaaaahecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaa
-aaaaaamaabeaaaaanlapmjdpdbaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaa
-aeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaahecaabaaaaaaaaaaadkaabaaa
-aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-bkaabaaaaaaaaaaackaabaaaaaaaaaaadbaaaaaigcaabaaaaaaaaaaakgbjbaaa
-aeaaaaaakgbjbaiaebaaaaaaaeaaaaaaabaaaaahccaabaaaaaaaaaaabkaabaaa
-aaaaaaaaabeaaaaanlapejmaaaaaaaahbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaaaaaaaaaaaddaaaaahccaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaa
-aeaaaaaadbaaaaaiccaabaaaaaaaaaaabkaabaaaaaaaaaaabkaabaiaebaaaaaa
-aaaaaaaadeaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaa
-bnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
-abaaaaahccaabaaaaaaaaaaadkaabaaaaaaaaaaabkaabaaaaaaaaaaadhaaaaak
-bcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaakaabaaa
-aaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaidpjccdo
-abeaaaaaaaaaaadpdcaaaaakicaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaadagojjlmabeaaaaachbgjidndcaaaaakicaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakicaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdp
-aaaaaaaibcaabaaaabaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadp
-elaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaa
-dkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaajccaabaaaabaaaaaabkaabaaa
-abaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahecaabaaaaaaaaaaa
-ckaabaaaaaaaaaaabkaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaadkaabaaa
-aaaaaaaaakaabaaaabaaaaaackaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaaidcaabaaaaaaaaaaaegaabaaa
-aaaaaaaaegiacaaaaaaaaaaaaeaaaaaaalaaaaafccaabaaaabaaaaaabkaabaaa
-aaaaaaaaamaaaaafccaabaaaacaaaaaabkaabaaaaaaaaaaaalaaaaafmcaabaaa
-aaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaaogakbaaaaaaaaaaa
-ogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaah
-bcaabaaaabaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaa
-aaaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaaaaaaaaaogakbaaaaaaaaaaa
-ogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaah
-bcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaa
-aaaaaaaaegaabaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaa
+gfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaaaaaaaaaldcaabaaaaaaaaaaa
+egbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaa
+aaaaaaaibcaabaaaaaaaaaaaakaabaaaaaaaaaaackbabaiambaaaaaaaeaaaaaa
+ebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaajpcaabaaaabaaaaaa
+kgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaa
+abaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaakgbebaiaibaaaaaaaeaaaaaa
+aaaaaaaibcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaaabaaaaaa
+ebcaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaajocaabaaaaaaaaaaa
+fgaobaiaebaaaaaaabaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaa
+aaaaaaaaagaabaaaaaaaaaaajgahbaaaaaaaaaaajgahbaaaabaaaaaadiaaaaak
+gcaabaaaaaaaaaaakgajbaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadp
+aaaaaaaaaoaaaaahdcaabaaaaaaaaaaajgafbaaaaaaaaaaaagaabaaaaaaaaaaa
+aaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaafaaaaaa
+diaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaakgikcaaaaaaaaaaaagaaaaaa
+deaaaaajecaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaa
+aeaaaaaaaoaaaaakecaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
+aaaaiadpckaabaaaaaaaaaaaddaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaa
+aeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahecaabaaaaaaaaaaackaabaaa
+aaaaaaaadkaabaaaaaaaaaaadiaaaaahicaabaaaaaaaaaaackaabaaaaaaaaaaa
+ckaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaabeaaaaa
+fpkokkdmabeaaaaadgfkkolndcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajbcaabaaaabaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaajicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaadiphhpdpdiaaaaahbcaabaaa
+abaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaa
+akaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajccaabaaa
+abaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaah
+bcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaa
+aaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadbaaaaai
+dcaabaaaabaaaaaaggbkbaaaaeaaaaaaggbkbaiaebaaaaaaaeaaaaaaabaaaaah
+icaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaanlapejmaaaaaaaahecaabaaa
+aaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaaddaaaaahicaabaaaaaaaaaaa
+ckbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiicaabaaaaaaaaaaadkaabaaa
+aaaaaaaadkaabaiaebaaaaaaaaaaaaaadeaaaaahbcaabaaaabaaaaaackbabaaa
+aeaaaaaaakbabaaaaeaaaaaabnaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
+akaabaiaebaaaaaaabaaaaaaabaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaadhaaaaakecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaia
+ebaaaaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaacaaaaaackaabaaa
+aaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakecaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaak
+ecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+iedefjlodcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaa
+aeaaaaaaabeaaaaakeanmjdpaaaaaaaiicaabaaaaaaaaaaabkbabaiambaaaaaa
+aeaaaaaaabeaaaaaaaaaiadpelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
+diaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejea
+abaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaaj
+ecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+diaaaaahccaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaai
+mcaabaaaaaaaaaaaagaebaaaacaaaaaaagiecaaaaaaaaaaaaeaaaaaaalaaaaaf
+ccaabaaaabaaaaaadkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaadkaabaaa
+aaaaaaaaalaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaa
+abaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaafecaabaaaabaaaaaa
+ckaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaabaaaaaaabeaaaaa
+idpjccdoamaaaaafmcaabaaaabaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaa
+abaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaafecaabaaaabaaaaaa
+ckaabaaaabaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaabaaaaaaabeaaaaa
+idpjccdoejaaaaanpcaabaaaadaaaaaaegaabaaaaaaaaaaaeghobaaaabaaaaaa
+aagabaaaabaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaaejaaaaanpcaabaaa
+aaaaaaaaogakbaaaaaaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaa
 abaaaaaaegaabaaaacaaaaaadiaaaaaipcaabaaaaaaaaaaaegaobaaaaaaaaaaa
-egiocaaaaaaaaaaaadaaaaaaaaaaaaaldcaabaaaabaaaaaaegbabaiaibaaaaaa
-aeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaa
-abaaaaaaakaabaaaabaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaa
-abaaaaaaakaabaaaabaaaaaaaaaaaaajpcaabaaaacaaaaaakgbebaiambaaaaaa
-aeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaaacaaaaaaagaabaaa
-abaaaaaaegaobaaaacaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaa
-abaaaaaabkaabaaaabaaaaaaakaabaiaebaaaaaaacaaaaaaebcaaaafbcaabaaa
-abaaaaaaakaabaaaabaaaaaaaaaaaaajocaabaaaabaaaaaafgaobaiaebaaaaaa
-acaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaaabaaaaaaagaabaaa
-abaaaaaajgahbaaaabaaaaaajgahbaaaacaaaaaadiaaaaakgcaabaaaabaaaaaa
-kgajbaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaah
-dcaabaaaabaaaaaajgafbaaaabaaaaaaagaabaaaabaaaaaaaaaaaaaidcaabaaa
-abaaaaaaegaabaaaabaaaaaaegiacaaaaaaaaaaaafaaaaaadiaaaaaidcaabaaa
-abaaaaaaegaabaaaabaaaaaakgikcaaaaaaaaaaaagaaaaaaefaaaaajpcaabaaa
-abaaaaaaegaabaaaabaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaaaaaaaal
-pcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaiadpaaaaiadpapcaaaaibcaabaaaadaaaaaapgbpbaaaabaaaaaapgipcaaa
-aaaaaaaaagaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaaadaaaaaaegaobaaa
-acaaaaaaegaobaaaabaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
-egaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaia
-ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
-egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
-ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
-abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaa
-abaaaaaaakiacaiaebaaaaaaaaaaaaaaaiaaaaaabkaabaaaabaaaaaaakaabaaa
-abaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaa
-ahaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaa
-diaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaagaaaaaa
-cpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaa
-bkaabaaaabaaaaaaakiacaaaaaaaaaaaagaaaaaabjaaaaafccaabaaaabaaaaaa
-bkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
-aaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaa
-abaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
-acaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaa
-abaaaaaackiacaaaaaaaaaaaahaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaa
-aaaaaaaaahaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
-bkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
-abaaaaaackaabaaaabaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaaaoaaaaahdcaabaaaabaaaaaaegbabaaaagaaaaaapgbpbaaa
-agaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaacaaaaaa
-aagabaaaacaaaaaadcaaaaalbcaabaaaabaaaaaackiacaaaabaaaaaaahaaaaaa
-akaabaaaabaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaaabaaaaaa
-aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaabaaaaaaaaaaaaai
-bcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiaebaaaaaaagaaaaaadicaaaai
-bcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaaanaaaaaadiaaaaah
-iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
-aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
-aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
-adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
-pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
-abaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
-aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaabaaaaaaagiacaaaaaaaaaaa
-ahaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
-egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
-egacbaaaabaaaaaadoaaaaab"
+egiocaaaaaaaaaaaadaaaaaaaaaaaaalpcaabaaaabaaaaaaegaobaiaebaaaaaa
+adaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaa
+acaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaagaaaaaadcaaaaajpcaabaaa
+abaaaaaaagaabaaaacaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaadiaaaaah
+pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaa
+abaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
+bcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaa
+abaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaa
+abaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaa
+egaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaa
+aiaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaa
+akaabaaaabaaaaaadkiacaaaaaaaaaaaahaaaaaabacaaaahccaabaaaabaaaaaa
+egbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
+abaaaaaabkiacaaaaaaaaaaaagaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
+abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
+agaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
+abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
+egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
+abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
+ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaahaaaaaa
+ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaahaaaaaaaaaaaaaiccaabaaa
+abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
+abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaaoaaaaahdcaabaaa
+abaaaaaaegbabaaaagaaaaaapgbpbaaaagaaaaaaefaaaaajpcaabaaaabaaaaaa
+egaabaaaabaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaadcaaaaalbcaabaaa
+abaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaaabaaaaaadkiacaaaabaaaaaa
+ahaaaaaaaoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
+aaaaiadpakaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
+ckbabaiaebaaaaaaagaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
+akiacaaaaaaaaaaaanaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
+egiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
+diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
+bacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadkiacaaaaaaaaaaaabaaaaaadicaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaa
+aaaaaaaaabaaaaaaagiacaaaaaaaaaaaahaaaaaadccaaaakhcaabaaaabaaaaaa
+egacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaah
+hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -41596,7 +41597,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 117 ALU, 5 TEX
+; 117 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -41612,78 +41613,78 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord8 v6
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add r1.x, r0.w, c18.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c18
 abs r0.w, v4.z
-frc r1.y, r1.x
-add_sat r2.w, r1.x, -r1.y
-add_pp r1.xyz, r2.yxzw, -r0
-mad_pp r0.xyz, r2.w, r1, r0
-max r1.w, r2.x, r0
-rcp r2.y, r1.w
-min r1.w, r2.x, r0
-mul r1.w, r1, r2.y
-abs_pp r1.x, r0
-mul r1.z, r1.w, r1.w
-dsx r3.zw, v4.xyxz
-mul r3.zw, r3, r3
-mad r0.x, r1.z, c20.y, c20.z
-rcp_pp r1.y, r1.x
-mad r1.x, r0, r1.z, c20.w
-mul_pp r0.xy, r0.zyzw, r1.y
-mad r0.z, r1.x, r1, c21.x
-mad r0.z, r0, r1, c21.y
-mad r0.z, r0, r1, c21
-mov_pp r1.xy, c7
-mad_pp r0.xy, r0, c22.y, r1
-mul r0.xy, r0, c10.x
-mul r0.z, r0, r1.w
-texld r1, r0, s1
-add r0.x, r2, -r0.w
-add r0.y, -r0.z, c21.w
-cmp r0.w, -r0.x, r0.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c18.z
-cmp r0.w, v4.z, r0, r2.x
-add r0.z, -r0.x, c18.y
-mad r0.y, r0.x, c19.x, c19
-mad r0.y, r0, r0.x, c18.w
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c20, c20.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c20.w
+mad r0.x, r1.y, r2.w, c21
+mad r1.y, r0.x, r2.w, c21
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c21
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c7
+mad_pp r0.xy, r0, c22.y, r2
+dsy r2.xy, v4.xzzw
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c21.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c18
+cmp r1.y, v4.z, r1, r1.z
+add r1.x, -r0.z, c18.y
+mad r0.w, r0.z, c19.x, c19.y
+mad r0.w, r0, r0.z, c18
+rsq r1.x, r1.x
+dsx r1.zw, v4.xyxz
+mul r1.zw, r1, r1
+mad r0.z, r0.w, r0, c19
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c18.x, c18.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c19, r0
+mad r0.w, r0.z, c18.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c22.x, c22.y
+mul r1.xy, r0, c10.x
+add r0.x, r1.z, r1.w
+mul r0.w, r0, c20.x
+add r3.xy, r0.zwzw, c6
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
 rsq r0.z, r0.z
-add_pp r2, -r1, c18.y
-mad r0.x, r0.y, r0, c19.z
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c18, c18.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c19.w, r0
-mad r0.y, r0.x, c18.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c22, c22.y
-mul r0.y, r0, c20.x
-add r3.xy, r0, c6
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r3.z, r3, r3.w
-rsq r0.x, r3.z
-rsq r0.z, r0.z
-rcp r3.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
 rcp r0.x, r0.x
 mul r0.z, r0.x, c22.x
-mul r0.x, r3.z, c22
+mul r0.x, r1.z, c22
 dsx r0.w, r3.y
 dsy r0.y, r3
+texldd r1, r1, s1, r0.zwzw, r0
 texldd r0, r3, s0, r0.zwzw, r0
 mul r3.z, v2.x, c11.x
+mul r0, r0, c5
+add_pp r2, -r1, c18.y
 mul_sat r3.x, r3.z, c19.w
 mad_pp r1, r3.x, r2, r1
-mul r0, r0, c5
 mul_pp r1, r0, r1
 add r2.xyz, -v1, c1
 dp3 r0.w, r2, r2
@@ -41762,10 +41763,10 @@ SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_CameraDepthTexture] 2D 2
 // 104 instructions, 4 temp regs, 0 temp arrays:
 // ALU 95 float, 0 int, 4 uint
-// TEX 2 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 1 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedddikfcegnekgjfkcndbcdppmclehkopjabaaaaaaceapaaaaadaaaaaa
+eefiecedomhdnbblimbhkedfglfephgdjgjhkdbmabaaaaaadeapaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -41776,7 +41777,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaomaaaaaa
 aiaaaaaaaaaaaaaaadaaaaaaahaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefclmanaaaaeaaaaaaagpadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaa
+fdeieefcmmanaaaaeaaaaaaahdadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaa
 fjaaaaaeegiocaaaabaaaaaaaiaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafibiaaaeaahabaaaaaaaaaaa
@@ -41784,109 +41785,109 @@ ffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaa
 ffffaaaagcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaad
 hcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaa
 gcbaaaadhcbabaaaafaaaaaagcbaaaadpcbabaaaahaaaaaagfaaaaadpccabaaa
-aaaaaaaagiaaaaacaeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaa
-aeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaa
-aaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaa
-aaaaaaaaakaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaaj
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlo
-dcaaaaajccaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaa
-diphhpdpdiaaaaahecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaa
-dcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapmjdpdbaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaabaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
-aaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaa
-ckaabaaaaaaaaaaadbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaia
-ebaaaaaaaeaaaaaaabaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaa
-nlapejmaaaaaaaahbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaa
-ddaaaaahccaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaai
-ccaabaaaaaaaaaaabkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaah
-icaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaa
-aaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadp
-dcaaaaakicaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlm
-abeaaaaachbgjidndcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaa
-abaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaa
-abaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaadcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
-aaaaaamaabeaaaaanlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaa
-bkaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
-abaaaaaackaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjkcdoaaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaa
-aaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaaf
-ccaabaaaacaaaaaabkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaa
-aeaaaaaaapaaaaahecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaa
-elaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaa
-aeaaaaaaapaaaaahecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaa
-elaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaa
+aaaaaaaagiaaaaacaeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaa
+aeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaa
+aaaaaaaaakaabaaaaaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaa
+aeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaa
+aaaaaaaaegaobaaaabaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaa
+aaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaa
+abaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaajgahbaaaaaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaa
+kgajbaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaah
+dcaabaaaaaaaaaaajgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaa
+aaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaa
+aaaaaaaaegaabaaaaaaaaaaakgikcaaaaaaaaaaaakaaaaaadeaaaaajecaabaaa
+aaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaak
+ecaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaa
+aaaaaaaaddaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
+ibaaaaaaaeaaaaaadiaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahicaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaa
+dgfkkolndcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaaochgdidodcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaaabeaaaaaaebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaabeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaa
+bkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaa
+aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaa
+ggbkbaaaaeaaaaaaggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaa
+akaabaaaabaaaaaaabeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaa
+akbabaaaaeaaaaaadbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaia
+ebaaaaaaaaaaaaaadeaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaa
+aeaaaaaabnaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaa
+abaaaaaaabaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+dhaaaaakecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaa
+ckaabaaaaaaaaaaadcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaa
+idpjccdoabeaaaaaaaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaa
+aeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaak
+ecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+keanmjdpaaaaaaaiicaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaa
+aaaaiadpelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaa
+abaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaa
+akaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaa
+abaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaa
+acaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaa
+agaebaaaacaaaaaaagiecaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaa
+dkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaaf
+mcaabaaaabaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaa
+abaaaaaaogakbaaaabaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahbcaabaaaabaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaaf
+mcaabaaaabaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaa
+abaaaaaaogakbaaaabaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahbcaabaaaacaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaan
+pcaabaaaadaaaaaaegaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaa
+egaabaaaabaaaaaaegaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaa
 aaaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaa
 acaaaaaadiaaaaaipcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaa
-ahaaaaaaaaaaaaaldcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaa
-abaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaaaaaaaaajpcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
-ibaaaaaaaeaaaaaadcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaa
-acaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaa
-abaaaaaaakaabaiaebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaaaaaaaaajocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaia
-ibaaaaaaaeaaaaaadcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaa
-abaaaaaajgahbaaaacaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaa
-aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaa
-jgafbaaaabaaaaaaagaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaa
-abaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaa
-abaaaaaakgikcaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaa
-abaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaa
-egaobaiaebaaaaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
-apcaaaaibcaabaaaadaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaa
-dcaaaaajpcaabaaaabaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaa
-abaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-aaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaa
-aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
-aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
-baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
-dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaia
-ebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaai
-bcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaah
-ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaa
-abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaa
-abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
-akiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
-ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
-hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
-baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
-ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
-aaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaa
-aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
-dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
-abaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-aoaaaaahdcaabaaaabaaaaaaegbabaaaahaaaaaapgbpbaaaahaaaaaaefaaaaaj
-pcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaa
-dcaaaaalbcaabaaaabaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaaabaaaaaa
-dkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadp
-aaaaiadpaaaaiadpaaaaiadpakaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaackbabaiaebaaaaaaahaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaaakiacaaaaaaaaaaabbaaaaaadiaaaaahiccabaaaaaaaaaaa
-dkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
-acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaa
-abaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaa
-abaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaak
-hcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaa
-aeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
-doaaaaab"
+ahaaaaaaaaaaaaalpcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaa
+abaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
+acaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaa
+egaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaa
+acaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaa
+egacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaa
+abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
+abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
+dcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
+dkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaa
+egbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaa
+aaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaai
+ccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaaf
+ccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaa
+abaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaa
+egiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+dccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaa
+bkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaia
+ebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaa
+abaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaaaoaaaaahdcaabaaaabaaaaaaegbabaaa
+ahaaaaaapgbpbaaaahaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaa
+eghobaaaacaaaaaaaagabaaaacaaaaaadcaaaaalbcaabaaaabaaaaaackiacaaa
+abaaaaaaahaaaaaaakaabaaaabaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaak
+bcaabaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaa
+abaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiaebaaaaaa
+ahaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaa
+bbaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
+aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaa
+agiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -41933,7 +41934,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 117 ALU, 5 TEX
+; 117 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -41949,78 +41950,78 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord8 v6
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add r1.x, r0.w, c18.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c18
 abs r0.w, v4.z
-frc r1.y, r1.x
-add_sat r2.w, r1.x, -r1.y
-add_pp r1.xyz, r2.yxzw, -r0
-mad_pp r0.xyz, r2.w, r1, r0
-max r1.w, r2.x, r0
-rcp r2.y, r1.w
-min r1.w, r2.x, r0
-mul r1.w, r1, r2.y
-abs_pp r1.x, r0
-mul r1.z, r1.w, r1.w
-dsx r3.zw, v4.xyxz
-mul r3.zw, r3, r3
-mad r0.x, r1.z, c20.y, c20.z
-rcp_pp r1.y, r1.x
-mad r1.x, r0, r1.z, c20.w
-mul_pp r0.xy, r0.zyzw, r1.y
-mad r0.z, r1.x, r1, c21.x
-mad r0.z, r0, r1, c21.y
-mad r0.z, r0, r1, c21
-mov_pp r1.xy, c7
-mad_pp r0.xy, r0, c22.y, r1
-mul r0.xy, r0, c10.x
-mul r0.z, r0, r1.w
-texld r1, r0, s1
-add r0.x, r2, -r0.w
-add r0.y, -r0.z, c21.w
-cmp r0.w, -r0.x, r0.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c18.z
-cmp r0.w, v4.z, r0, r2.x
-add r0.z, -r0.x, c18.y
-mad r0.y, r0.x, c19.x, c19
-mad r0.y, r0, r0.x, c18.w
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c20, c20.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c20.w
+mad r0.x, r1.y, r2.w, c21
+mad r1.y, r0.x, r2.w, c21
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c21
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c7
+mad_pp r0.xy, r0, c22.y, r2
+dsy r2.xy, v4.xzzw
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c21.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c18
+cmp r1.y, v4.z, r1, r1.z
+add r1.x, -r0.z, c18.y
+mad r0.w, r0.z, c19.x, c19.y
+mad r0.w, r0, r0.z, c18
+rsq r1.x, r1.x
+dsx r1.zw, v4.xyxz
+mul r1.zw, r1, r1
+mad r0.z, r0.w, r0, c19
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c18.x, c18.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c19, r0
+mad r0.w, r0.z, c18.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c22.x, c22.y
+mul r1.xy, r0, c10.x
+add r0.x, r1.z, r1.w
+mul r0.w, r0, c20.x
+add r3.xy, r0.zwzw, c6
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
 rsq r0.z, r0.z
-add_pp r2, -r1, c18.y
-mad r0.x, r0.y, r0, c19.z
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c18, c18.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c19.w, r0
-mad r0.y, r0.x, c18.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c22, c22.y
-mul r0.y, r0, c20.x
-add r3.xy, r0, c6
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r3.z, r3, r3.w
-rsq r0.x, r3.z
-rsq r0.z, r0.z
-rcp r3.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
 rcp r0.x, r0.x
 mul r0.z, r0.x, c22.x
-mul r0.x, r3.z, c22
+mul r0.x, r1.z, c22
 dsx r0.w, r3.y
 dsy r0.y, r3
+texldd r1, r1, s1, r0.zwzw, r0
 texldd r0, r3, s0, r0.zwzw, r0
 mul r3.z, v2.x, c11.x
+mul r0, r0, c5
+add_pp r2, -r1, c18.y
 mul_sat r3.x, r3.z, c19.w
 mad_pp r1, r3.x, r2, r1
-mul r0, r0, c5
 mul_pp r1, r0, r1
 add r2.xyz, -v1, c1
 dp3 r0.w, r2, r2
@@ -42099,10 +42100,10 @@ SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_CameraDepthTexture] 2D 2
 // 104 instructions, 4 temp regs, 0 temp arrays:
 // ALU 95 float, 0 int, 4 uint
-// TEX 2 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 1 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedmpbfmidojjfiahlhbeofjigjcijejfghabaaaaaaceapaaaaadaaaaaa
+eefiecednghclaogajihheipilnbghldcgbkpemcabaaaaaadeapaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -42113,7 +42114,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaomaaaaaa
 aiaaaaaaaaaaaaaaadaaaaaaahaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefclmanaaaaeaaaaaaagpadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaa
+fdeieefcmmanaaaaeaaaaaaahdadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaa
 fjaaaaaeegiocaaaabaaaaaaaiaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafibiaaaeaahabaaaaaaaaaaa
@@ -42121,109 +42122,109 @@ ffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaa
 ffffaaaagcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaad
 hcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaa
 gcbaaaadhcbabaaaafaaaaaagcbaaaadpcbabaaaahaaaaaagfaaaaadpccabaaa
-aaaaaaaagiaaaaacaeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaa
-aeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaa
-aaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaa
-aaaaaaaaakaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaaj
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlo
-dcaaaaajccaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaa
-diphhpdpdiaaaaahecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaa
-dcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapmjdpdbaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaabaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
-aaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaa
-ckaabaaaaaaaaaaadbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaia
-ebaaaaaaaeaaaaaaabaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaa
-nlapejmaaaaaaaahbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaa
-ddaaaaahccaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaai
-ccaabaaaaaaaaaaabkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaah
-icaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaa
-aaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadp
-dcaaaaakicaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlm
-abeaaaaachbgjidndcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaa
-abaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaa
-abaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaadcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
-aaaaaamaabeaaaaanlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaa
-bkaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
-abaaaaaackaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjkcdoaaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaa
-aaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaaf
-ccaabaaaacaaaaaabkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaa
-aeaaaaaaapaaaaahecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaa
-elaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaa
-aeaaaaaaapaaaaahecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaa
-elaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaa
+aaaaaaaagiaaaaacaeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaa
+aeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaa
+aaaaaaaaakaabaaaaaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaa
+aeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaa
+aaaaaaaaegaobaaaabaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaa
+aaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaa
+abaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaajgahbaaaaaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaa
+kgajbaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaah
+dcaabaaaaaaaaaaajgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaa
+aaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaa
+aaaaaaaaegaabaaaaaaaaaaakgikcaaaaaaaaaaaakaaaaaadeaaaaajecaabaaa
+aaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaak
+ecaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaa
+aaaaaaaaddaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
+ibaaaaaaaeaaaaaadiaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahicaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaa
+dgfkkolndcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaaochgdidodcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaaabeaaaaaaebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaabeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaa
+bkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaa
+aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaa
+ggbkbaaaaeaaaaaaggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaa
+akaabaaaabaaaaaaabeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaa
+akbabaaaaeaaaaaadbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaia
+ebaaaaaaaaaaaaaadeaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaa
+aeaaaaaabnaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaa
+abaaaaaaabaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+dhaaaaakecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaa
+ckaabaaaaaaaaaaadcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaa
+idpjccdoabeaaaaaaaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaa
+aeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaak
+ecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+keanmjdpaaaaaaaiicaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaa
+aaaaiadpelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaa
+abaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaa
+akaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaa
+abaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaa
+acaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaa
+agaebaaaacaaaaaaagiecaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaa
+dkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaaf
+mcaabaaaabaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaa
+abaaaaaaogakbaaaabaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahbcaabaaaabaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaaf
+mcaabaaaabaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaa
+abaaaaaaogakbaaaabaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahbcaabaaaacaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaan
+pcaabaaaadaaaaaaegaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaa
+egaabaaaabaaaaaaegaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaa
 aaaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaa
 acaaaaaadiaaaaaipcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaa
-ahaaaaaaaaaaaaaldcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaa
-abaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaaaaaaaaajpcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
-ibaaaaaaaeaaaaaadcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaa
-acaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaa
-abaaaaaaakaabaiaebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaaaaaaaaajocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaia
-ibaaaaaaaeaaaaaadcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaa
-abaaaaaajgahbaaaacaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaa
-aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaa
-jgafbaaaabaaaaaaagaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaa
-abaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaa
-abaaaaaakgikcaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaa
-abaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaa
-egaobaiaebaaaaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
-apcaaaaibcaabaaaadaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaa
-dcaaaaajpcaabaaaabaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaa
-abaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-aaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaa
-aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
-aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
-baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
-dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaia
-ebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaai
-bcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaah
-ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaa
-abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaa
-abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
-akiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
-ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
-hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
-baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
-ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
-aaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaa
-aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
-dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
-abaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-aoaaaaahdcaabaaaabaaaaaaegbabaaaahaaaaaapgbpbaaaahaaaaaaefaaaaaj
-pcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaa
-dcaaaaalbcaabaaaabaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaaabaaaaaa
-dkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadp
-aaaaiadpaaaaiadpaaaaiadpakaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaackbabaiaebaaaaaaahaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaaakiacaaaaaaaaaaabbaaaaaadiaaaaahiccabaaaaaaaaaaa
-dkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
-acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaa
-abaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaa
-abaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaak
-hcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaa
-aeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
-doaaaaab"
+ahaaaaaaaaaaaaalpcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaa
+abaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
+acaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaa
+egaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaa
+acaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaa
+egacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaa
+abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
+abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
+dcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
+dkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaa
+egbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaa
+aaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaai
+ccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaaf
+ccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaa
+abaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaa
+egiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+dccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaa
+bkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaia
+ebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaa
+abaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaaaoaaaaahdcaabaaaabaaaaaaegbabaaa
+ahaaaaaapgbpbaaaahaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaa
+eghobaaaacaaaaaaaagabaaaacaaaaaadcaaaaalbcaabaaaabaaaaaackiacaaa
+abaaaaaaahaaaaaaakaabaaaabaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaak
+bcaabaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaa
+abaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiaebaaaaaa
+ahaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaa
+bbaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
+aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaa
+agiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -42270,7 +42271,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 117 ALU, 5 TEX
+; 117 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -42286,78 +42287,78 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord8 v6
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add r1.x, r0.w, c18.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c18
 abs r0.w, v4.z
-frc r1.y, r1.x
-add_sat r2.w, r1.x, -r1.y
-add_pp r1.xyz, r2.yxzw, -r0
-mad_pp r0.xyz, r2.w, r1, r0
-max r1.w, r2.x, r0
-rcp r2.y, r1.w
-min r1.w, r2.x, r0
-mul r1.w, r1, r2.y
-abs_pp r1.x, r0
-mul r1.z, r1.w, r1.w
-dsx r3.zw, v4.xyxz
-mul r3.zw, r3, r3
-mad r0.x, r1.z, c20.y, c20.z
-rcp_pp r1.y, r1.x
-mad r1.x, r0, r1.z, c20.w
-mul_pp r0.xy, r0.zyzw, r1.y
-mad r0.z, r1.x, r1, c21.x
-mad r0.z, r0, r1, c21.y
-mad r0.z, r0, r1, c21
-mov_pp r1.xy, c7
-mad_pp r0.xy, r0, c22.y, r1
-mul r0.xy, r0, c10.x
-mul r0.z, r0, r1.w
-texld r1, r0, s1
-add r0.x, r2, -r0.w
-add r0.y, -r0.z, c21.w
-cmp r0.w, -r0.x, r0.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c18.z
-cmp r0.w, v4.z, r0, r2.x
-add r0.z, -r0.x, c18.y
-mad r0.y, r0.x, c19.x, c19
-mad r0.y, r0, r0.x, c18.w
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c20, c20.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c20.w
+mad r0.x, r1.y, r2.w, c21
+mad r1.y, r0.x, r2.w, c21
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c21
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c7
+mad_pp r0.xy, r0, c22.y, r2
+dsy r2.xy, v4.xzzw
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c21.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c18
+cmp r1.y, v4.z, r1, r1.z
+add r1.x, -r0.z, c18.y
+mad r0.w, r0.z, c19.x, c19.y
+mad r0.w, r0, r0.z, c18
+rsq r1.x, r1.x
+dsx r1.zw, v4.xyxz
+mul r1.zw, r1, r1
+mad r0.z, r0.w, r0, c19
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c18.x, c18.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c19, r0
+mad r0.w, r0.z, c18.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c22.x, c22.y
+mul r1.xy, r0, c10.x
+add r0.x, r1.z, r1.w
+mul r0.w, r0, c20.x
+add r3.xy, r0.zwzw, c6
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
 rsq r0.z, r0.z
-add_pp r2, -r1, c18.y
-mad r0.x, r0.y, r0, c19.z
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c18, c18.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c19.w, r0
-mad r0.y, r0.x, c18.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c22, c22.y
-mul r0.y, r0, c20.x
-add r3.xy, r0, c6
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r3.z, r3, r3.w
-rsq r0.x, r3.z
-rsq r0.z, r0.z
-rcp r3.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
 rcp r0.x, r0.x
 mul r0.z, r0.x, c22.x
-mul r0.x, r3.z, c22
+mul r0.x, r1.z, c22
 dsx r0.w, r3.y
 dsy r0.y, r3
+texldd r1, r1, s1, r0.zwzw, r0
 texldd r0, r3, s0, r0.zwzw, r0
 mul r3.z, v2.x, c11.x
+mul r0, r0, c5
+add_pp r2, -r1, c18.y
 mul_sat r3.x, r3.z, c19.w
 mad_pp r1, r3.x, r2, r1
-mul r0, r0, c5
 mul_pp r1, r0, r1
 add r2.xyz, -v1, c1
 dp3 r0.w, r2, r2
@@ -42436,10 +42437,10 @@ SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_CameraDepthTexture] 2D 2
 // 104 instructions, 4 temp regs, 0 temp arrays:
 // ALU 95 float, 0 int, 4 uint
-// TEX 2 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 1 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecednekmgmonddiondoomahopceimcbgofadabaaaaaaceapaaaaadaaaaaa
+eefiecedmhbkpiccoffemnoppljonmcladlmcohoabaaaaaadeapaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -42450,7 +42451,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaadaaaaaaomaaaaaa
 aiaaaaaaaaaaaaaaadaaaaaaahaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefclmanaaaaeaaaaaaagpadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaa
+fdeieefcmmanaaaaeaaaaaaahdadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaa
 fjaaaaaeegiocaaaabaaaaaaaiaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafibiaaaeaahabaaaaaaaaaaa
@@ -42458,109 +42459,109 @@ ffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaa
 ffffaaaagcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaad
 hcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaa
 gcbaaaadhcbabaaaafaaaaaagcbaaaadpcbabaaaahaaaaaagfaaaaadpccabaaa
-aaaaaaaagiaaaaacaeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaa
-aeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaa
-aaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaa
-aaaaaaaaakaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaaj
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlo
-dcaaaaajccaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaa
-diphhpdpdiaaaaahecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaa
-dcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapmjdpdbaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaabaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
-aaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaa
-ckaabaaaaaaaaaaadbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaia
-ebaaaaaaaeaaaaaaabaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaa
-nlapejmaaaaaaaahbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaa
-ddaaaaahccaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaai
-ccaabaaaaaaaaaaabkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaah
-icaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaa
-aaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadp
-dcaaaaakicaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlm
-abeaaaaachbgjidndcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaa
-abaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaa
-abaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaadcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
-aaaaaamaabeaaaaanlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaa
-bkaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
-abaaaaaackaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjkcdoaaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaa
-aaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaaf
-ccaabaaaacaaaaaabkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaa
-aeaaaaaaapaaaaahecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaa
-elaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaa
-aeaaaaaaapaaaaahecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaa
-elaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaa
+aaaaaaaagiaaaaacaeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaa
+aeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaa
+aaaaaaaaakaabaaaaaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaa
+aeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaa
+aaaaaaaaegaobaaaabaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaa
+aaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaa
+abaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaajgahbaaaaaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaa
+kgajbaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaah
+dcaabaaaaaaaaaaajgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaa
+aaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaa
+aaaaaaaaegaabaaaaaaaaaaakgikcaaaaaaaaaaaakaaaaaadeaaaaajecaabaaa
+aaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaak
+ecaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaa
+aaaaaaaaddaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
+ibaaaaaaaeaaaaaadiaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahicaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaa
+dgfkkolndcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaaochgdidodcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaaabeaaaaaaebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaabeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaa
+bkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaa
+aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaa
+ggbkbaaaaeaaaaaaggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaa
+akaabaaaabaaaaaaabeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaa
+akbabaaaaeaaaaaadbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaia
+ebaaaaaaaaaaaaaadeaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaa
+aeaaaaaabnaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaa
+abaaaaaaabaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+dhaaaaakecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaa
+ckaabaaaaaaaaaaadcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaa
+idpjccdoabeaaaaaaaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaa
+aeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaak
+ecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+keanmjdpaaaaaaaiicaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaa
+aaaaiadpelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaa
+abaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaa
+akaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaa
+abaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaa
+acaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaa
+agaebaaaacaaaaaaagiecaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaa
+dkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaaf
+mcaabaaaabaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaa
+abaaaaaaogakbaaaabaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahbcaabaaaabaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaaf
+mcaabaaaabaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaa
+abaaaaaaogakbaaaabaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahbcaabaaaacaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaan
+pcaabaaaadaaaaaaegaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaa
+egaabaaaabaaaaaaegaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaa
 aaaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaa
 acaaaaaadiaaaaaipcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaa
-ahaaaaaaaaaaaaaldcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaa
-abaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaaaaaaaaajpcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
-ibaaaaaaaeaaaaaadcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaa
-acaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaa
-abaaaaaaakaabaiaebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaaaaaaaaajocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaia
-ibaaaaaaaeaaaaaadcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaa
-abaaaaaajgahbaaaacaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaa
-aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaa
-jgafbaaaabaaaaaaagaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaa
-abaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaa
-abaaaaaakgikcaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaa
-abaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaa
-egaobaiaebaaaaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
-apcaaaaibcaabaaaadaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaa
-dcaaaaajpcaabaaaabaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaa
-abaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-aaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaa
-aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
-aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
-baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
-dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaia
-ebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaai
-bcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaah
-ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaa
-abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaa
-abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
-akiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
-ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
-hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
-baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
-ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
-aaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaa
-aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
-dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
-abaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-aoaaaaahdcaabaaaabaaaaaaegbabaaaahaaaaaapgbpbaaaahaaaaaaefaaaaaj
-pcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaa
-dcaaaaalbcaabaaaabaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaaabaaaaaa
-dkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadp
-aaaaiadpaaaaiadpaaaaiadpakaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaackbabaiaebaaaaaaahaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaaakiacaaaaaaaaaaabbaaaaaadiaaaaahiccabaaaaaaaaaaa
-dkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
-acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaa
-abaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaa
-abaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaak
-hcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaa
-aeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
-doaaaaab"
+ahaaaaaaaaaaaaalpcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaa
+abaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
+acaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaa
+egaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaa
+acaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaa
+egacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaa
+abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
+abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
+dcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
+dkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaa
+egbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaa
+aaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaai
+ccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaaf
+ccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaa
+abaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaa
+egiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+dccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaa
+bkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaia
+ebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaa
+abaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaaaoaaaaahdcaabaaaabaaaaaaegbabaaa
+ahaaaaaapgbpbaaaahaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaa
+eghobaaaacaaaaaaaagabaaaacaaaaaadcaaaaalbcaabaaaabaaaaaackiacaaa
+abaaaaaaahaaaaaaakaabaaaabaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaak
+bcaabaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaa
+abaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiaebaaaaaa
+ahaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaa
+bbaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
+aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaa
+agiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -42607,7 +42608,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 117 ALU, 5 TEX
+; 117 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -42623,78 +42624,78 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord8 v6
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add r1.x, r0.w, c18.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c18
 abs r0.w, v4.z
-frc r1.y, r1.x
-add_sat r2.w, r1.x, -r1.y
-add_pp r1.xyz, r2.yxzw, -r0
-mad_pp r0.xyz, r2.w, r1, r0
-max r1.w, r2.x, r0
-rcp r2.y, r1.w
-min r1.w, r2.x, r0
-mul r1.w, r1, r2.y
-abs_pp r1.x, r0
-mul r1.z, r1.w, r1.w
-dsx r3.zw, v4.xyxz
-mul r3.zw, r3, r3
-mad r0.x, r1.z, c20.y, c20.z
-rcp_pp r1.y, r1.x
-mad r1.x, r0, r1.z, c20.w
-mul_pp r0.xy, r0.zyzw, r1.y
-mad r0.z, r1.x, r1, c21.x
-mad r0.z, r0, r1, c21.y
-mad r0.z, r0, r1, c21
-mov_pp r1.xy, c7
-mad_pp r0.xy, r0, c22.y, r1
-mul r0.xy, r0, c10.x
-mul r0.z, r0, r1.w
-texld r1, r0, s1
-add r0.x, r2, -r0.w
-add r0.y, -r0.z, c21.w
-cmp r0.w, -r0.x, r0.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c18.z
-cmp r0.w, v4.z, r0, r2.x
-add r0.z, -r0.x, c18.y
-mad r0.y, r0.x, c19.x, c19
-mad r0.y, r0, r0.x, c18.w
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c20, c20.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c20.w
+mad r0.x, r1.y, r2.w, c21
+mad r1.y, r0.x, r2.w, c21
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c21
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c7
+mad_pp r0.xy, r0, c22.y, r2
+dsy r2.xy, v4.xzzw
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c21.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c18
+cmp r1.y, v4.z, r1, r1.z
+add r1.x, -r0.z, c18.y
+mad r0.w, r0.z, c19.x, c19.y
+mad r0.w, r0, r0.z, c18
+rsq r1.x, r1.x
+dsx r1.zw, v4.xyxz
+mul r1.zw, r1, r1
+mad r0.z, r0.w, r0, c19
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c18.x, c18.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c19, r0
+mad r0.w, r0.z, c18.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c22.x, c22.y
+mul r1.xy, r0, c10.x
+add r0.x, r1.z, r1.w
+mul r0.w, r0, c20.x
+add r3.xy, r0.zwzw, c6
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
 rsq r0.z, r0.z
-add_pp r2, -r1, c18.y
-mad r0.x, r0.y, r0, c19.z
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c18, c18.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c19.w, r0
-mad r0.y, r0.x, c18.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c22, c22.y
-mul r0.y, r0, c20.x
-add r3.xy, r0, c6
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r3.z, r3, r3.w
-rsq r0.x, r3.z
-rsq r0.z, r0.z
-rcp r3.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
 rcp r0.x, r0.x
 mul r0.z, r0.x, c22.x
-mul r0.x, r3.z, c22
+mul r0.x, r1.z, c22
 dsx r0.w, r3.y
 dsy r0.y, r3
+texldd r1, r1, s1, r0.zwzw, r0
 texldd r0, r3, s0, r0.zwzw, r0
 mul r3.z, v2.x, c11.x
+mul r0, r0, c5
+add_pp r2, -r1, c18.y
 mul_sat r3.x, r3.z, c19.w
 mad_pp r1, r3.x, r2, r1
-mul r0, r0, c5
 mul_pp r1, r0, r1
 add r2.xyz, -v1, c1
 dp3 r0.w, r2, r2
@@ -42773,10 +42774,10 @@ SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_CameraDepthTexture] 2D 2
 // 104 instructions, 4 temp regs, 0 temp arrays:
 // ALU 95 float, 0 int, 4 uint
-// TEX 2 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 1 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedgpafdiceiglglnhfbpolcahohaaeggfnabaaaaaadmapaaaaadaaaaaa
+eefiecedkminhhkgeennebfleoaljhaceflgfibkabaaaaaaemapaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -42787,8 +42788,8 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefclmanaaaa
-eaaaaaaagpadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcmmanaaaa
+eaaaaaaahdadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaa
 abaaaaaaaiaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -42796,108 +42797,109 @@ aahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaagcbaaaad
 hcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
 gcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaadhcbabaaa
 afaaaaaagcbaaaadpcbabaaaaiaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-aeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaia
-ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-abeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaah
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaaj
+aeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaa
+aaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
+ibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaa
+abaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaia
+ibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaa
+aaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaa
+aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+jgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaakgikcaaaaaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaaj
 icaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-abaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-dbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaa
-abaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaah
-bcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaa
-aaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaa
-bkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaa
-ckbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaia
-mbaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-dcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaa
-dcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaa
-aaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdo
-aaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaa
-alaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaa
-bkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
+diaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
+icaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
+bcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdido
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaa
+aebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaa
+akaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaa
+ggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaa
+dbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
+deaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaa
+aaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
+aaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+dagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaai
+icaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaa
+aaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaa
+agiecaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaa
+amaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+abaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+acaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaa
+egaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaa
+egaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
 aaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaai
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaal
-dcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaia
-mbaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-pcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaia
-ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaia
-ebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-ocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaa
-dcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
-acaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaa
-aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaa
-agaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaa
-aaaaaaaaajaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaa
-abaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaa
-abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaa
-adaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaa
-abaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaah
-pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaa
-abaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
-bcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaa
-abaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaa
-abaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaa
-egaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaa
-amaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-akaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaaoaaaaahdcaabaaa
-abaaaaaaegbabaaaaiaaaaaapgbpbaaaaiaaaaaaefaaaaajpcaabaaaabaaaaaa
-egaabaaaabaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaadcaaaaalbcaabaaa
-abaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaaabaaaaaadkiacaaaabaaaaaa
-ahaaaaaaaoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
-aaaaiadpakaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-ckbabaiaebaaaaaaaiaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-akiacaaaaaaaaaaabbaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
-egiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-bacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaa
-aaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaa
-egacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaah
-hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
+pcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaa
+aaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaa
+abaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+egaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaia
+ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
+egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
+ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
+abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaa
+abaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaa
+alaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaa
+diaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaa
+cpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaa
+abaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
+acaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaa
+abaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaa
+aaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+bkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaackaabaaaabaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaaoaaaaahdcaabaaaabaaaaaaegbabaaaaiaaaaaapgbpbaaa
+aiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaacaaaaaa
+aagabaaaacaaaaaadcaaaaalbcaabaaaabaaaaaackiacaaaabaaaaaaahaaaaaa
+akaabaaaabaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaaabaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaabaaaaaaaaaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiaebaaaaaaaiaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaabbaaaaaadiaaaaah
+iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
+aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
+adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
+afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
+alaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
+egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
+egacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -42944,7 +42946,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 117 ALU, 5 TEX
+; 117 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -42960,78 +42962,78 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord8 v6
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add r1.x, r0.w, c18.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c18
 abs r0.w, v4.z
-frc r1.y, r1.x
-add_sat r2.w, r1.x, -r1.y
-add_pp r1.xyz, r2.yxzw, -r0
-mad_pp r0.xyz, r2.w, r1, r0
-max r1.w, r2.x, r0
-rcp r2.y, r1.w
-min r1.w, r2.x, r0
-mul r1.w, r1, r2.y
-abs_pp r1.x, r0
-mul r1.z, r1.w, r1.w
-dsx r3.zw, v4.xyxz
-mul r3.zw, r3, r3
-mad r0.x, r1.z, c20.y, c20.z
-rcp_pp r1.y, r1.x
-mad r1.x, r0, r1.z, c20.w
-mul_pp r0.xy, r0.zyzw, r1.y
-mad r0.z, r1.x, r1, c21.x
-mad r0.z, r0, r1, c21.y
-mad r0.z, r0, r1, c21
-mov_pp r1.xy, c7
-mad_pp r0.xy, r0, c22.y, r1
-mul r0.xy, r0, c10.x
-mul r0.z, r0, r1.w
-texld r1, r0, s1
-add r0.x, r2, -r0.w
-add r0.y, -r0.z, c21.w
-cmp r0.w, -r0.x, r0.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c18.z
-cmp r0.w, v4.z, r0, r2.x
-add r0.z, -r0.x, c18.y
-mad r0.y, r0.x, c19.x, c19
-mad r0.y, r0, r0.x, c18.w
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c20, c20.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c20.w
+mad r0.x, r1.y, r2.w, c21
+mad r1.y, r0.x, r2.w, c21
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c21
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c7
+mad_pp r0.xy, r0, c22.y, r2
+dsy r2.xy, v4.xzzw
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c21.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c18
+cmp r1.y, v4.z, r1, r1.z
+add r1.x, -r0.z, c18.y
+mad r0.w, r0.z, c19.x, c19.y
+mad r0.w, r0, r0.z, c18
+rsq r1.x, r1.x
+dsx r1.zw, v4.xyxz
+mul r1.zw, r1, r1
+mad r0.z, r0.w, r0, c19
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c18.x, c18.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c19, r0
+mad r0.w, r0.z, c18.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c22.x, c22.y
+mul r1.xy, r0, c10.x
+add r0.x, r1.z, r1.w
+mul r0.w, r0, c20.x
+add r3.xy, r0.zwzw, c6
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
 rsq r0.z, r0.z
-add_pp r2, -r1, c18.y
-mad r0.x, r0.y, r0, c19.z
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c18, c18.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c19.w, r0
-mad r0.y, r0.x, c18.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c22, c22.y
-mul r0.y, r0, c20.x
-add r3.xy, r0, c6
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r3.z, r3, r3.w
-rsq r0.x, r3.z
-rsq r0.z, r0.z
-rcp r3.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
 rcp r0.x, r0.x
 mul r0.z, r0.x, c22.x
-mul r0.x, r3.z, c22
+mul r0.x, r1.z, c22
 dsx r0.w, r3.y
 dsy r0.y, r3
+texldd r1, r1, s1, r0.zwzw, r0
 texldd r0, r3, s0, r0.zwzw, r0
 mul r3.z, v2.x, c11.x
+mul r0, r0, c5
+add_pp r2, -r1, c18.y
 mul_sat r3.x, r3.z, c19.w
 mad_pp r1, r3.x, r2, r1
-mul r0, r0, c5
 mul_pp r1, r0, r1
 add r2.xyz, -v1, c1
 dp3 r0.w, r2, r2
@@ -43110,10 +43112,10 @@ SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_CameraDepthTexture] 2D 2
 // 104 instructions, 4 temp regs, 0 temp arrays:
 // ALU 95 float, 0 int, 4 uint
-// TEX 2 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 1 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedgpafdiceiglglnhfbpolcahohaaeggfnabaaaaaadmapaaaaadaaaaaa
+eefiecedkminhhkgeennebfleoaljhaceflgfibkabaaaaaaemapaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -43124,8 +43126,8 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefclmanaaaa
-eaaaaaaagpadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcmmanaaaa
+eaaaaaaahdadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaa
 abaaaaaaaiaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -43133,108 +43135,109 @@ aahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaagcbaaaad
 hcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
 gcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaadhcbabaaa
 afaaaaaagcbaaaadpcbabaaaaiaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-aeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaia
-ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-abeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaah
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaaj
+aeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaa
+aaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
+ibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaa
+abaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaia
+ibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaa
+aaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaa
+aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+jgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaakgikcaaaaaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaaj
 icaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-abaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-dbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaa
-abaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaah
-bcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaa
-aaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaa
-bkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaa
-ckbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaia
-mbaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-dcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaa
-dcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaa
-aaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdo
-aaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaa
-alaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaa
-bkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
+diaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
+icaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
+bcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdido
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaa
+aebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaa
+akaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaa
+ggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaa
+dbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
+deaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaa
+aaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
+aaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+dagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaai
+icaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaa
+aaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaa
+agiecaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaa
+amaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+abaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+acaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaa
+egaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaa
+egaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
 aaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaai
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaal
-dcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaia
-mbaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-pcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaia
-ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaia
-ebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-ocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaa
-dcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
-acaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaa
-aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaa
-agaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaa
-aaaaaaaaajaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaa
-abaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaa
-abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaa
-adaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaa
-abaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaah
-pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaa
-abaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
-bcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaa
-abaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaa
-abaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaa
-egaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaa
-amaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-akaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaaoaaaaahdcaabaaa
-abaaaaaaegbabaaaaiaaaaaapgbpbaaaaiaaaaaaefaaaaajpcaabaaaabaaaaaa
-egaabaaaabaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaadcaaaaalbcaabaaa
-abaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaaabaaaaaadkiacaaaabaaaaaa
-ahaaaaaaaoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
-aaaaiadpakaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-ckbabaiaebaaaaaaaiaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-akiacaaaaaaaaaaabbaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
-egiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-bacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaa
-aaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaa
-egacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaah
-hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
+pcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaa
+aaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaa
+abaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+egaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaia
+ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
+egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
+ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
+abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaa
+abaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaa
+alaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaa
+diaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaa
+cpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaa
+abaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
+acaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaa
+abaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaa
+aaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+bkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaackaabaaaabaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaaoaaaaahdcaabaaaabaaaaaaegbabaaaaiaaaaaapgbpbaaa
+aiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaacaaaaaa
+aagabaaaacaaaaaadcaaaaalbcaabaaaabaaaaaackiacaaaabaaaaaaahaaaaaa
+akaabaaaabaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaaabaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaabaaaaaaaaaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiaebaaaaaaaiaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaabbaaaaaadiaaaaah
+iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
+aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
+adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
+afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
+alaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
+egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
+egacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -43276,7 +43279,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 117 ALU, 5 TEX
+; 117 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -43292,78 +43295,78 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord8 v6
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add r1.x, r0.w, c18.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c18
 abs r0.w, v4.z
-frc r1.y, r1.x
-add_sat r2.w, r1.x, -r1.y
-add_pp r1.xyz, r2.yxzw, -r0
-mad_pp r0.xyz, r2.w, r1, r0
-max r1.w, r2.x, r0
-rcp r2.y, r1.w
-min r1.w, r2.x, r0
-mul r1.w, r1, r2.y
-abs_pp r1.x, r0
-mul r1.z, r1.w, r1.w
-dsx r3.zw, v4.xyxz
-mul r3.zw, r3, r3
-mad r0.x, r1.z, c20.y, c20.z
-rcp_pp r1.y, r1.x
-mad r1.x, r0, r1.z, c20.w
-mul_pp r0.xy, r0.zyzw, r1.y
-mad r0.z, r1.x, r1, c21.x
-mad r0.z, r0, r1, c21.y
-mad r0.z, r0, r1, c21
-mov_pp r1.xy, c7
-mad_pp r0.xy, r0, c22.y, r1
-mul r0.xy, r0, c10.x
-mul r0.z, r0, r1.w
-texld r1, r0, s1
-add r0.x, r2, -r0.w
-add r0.y, -r0.z, c21.w
-cmp r0.w, -r0.x, r0.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c18.z
-cmp r0.w, v4.z, r0, r2.x
-add r0.z, -r0.x, c18.y
-mad r0.y, r0.x, c19.x, c19
-mad r0.y, r0, r0.x, c18.w
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c20, c20.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c20.w
+mad r0.x, r1.y, r2.w, c21
+mad r1.y, r0.x, r2.w, c21
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c21
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c7
+mad_pp r0.xy, r0, c22.y, r2
+dsy r2.xy, v4.xzzw
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c21.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c18
+cmp r1.y, v4.z, r1, r1.z
+add r1.x, -r0.z, c18.y
+mad r0.w, r0.z, c19.x, c19.y
+mad r0.w, r0, r0.z, c18
+rsq r1.x, r1.x
+dsx r1.zw, v4.xyxz
+mul r1.zw, r1, r1
+mad r0.z, r0.w, r0, c19
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c18.x, c18.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c19, r0
+mad r0.w, r0.z, c18.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c22.x, c22.y
+mul r1.xy, r0, c10.x
+add r0.x, r1.z, r1.w
+mul r0.w, r0, c20.x
+add r3.xy, r0.zwzw, c6
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
 rsq r0.z, r0.z
-add_pp r2, -r1, c18.y
-mad r0.x, r0.y, r0, c19.z
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c18, c18.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c19.w, r0
-mad r0.y, r0.x, c18.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c22, c22.y
-mul r0.y, r0, c20.x
-add r3.xy, r0, c6
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r3.z, r3, r3.w
-rsq r0.x, r3.z
-rsq r0.z, r0.z
-rcp r3.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
 rcp r0.x, r0.x
 mul r0.z, r0.x, c22.x
-mul r0.x, r3.z, c22
+mul r0.x, r1.z, c22
 dsx r0.w, r3.y
 dsy r0.y, r3
+texldd r1, r1, s1, r0.zwzw, r0
 texldd r0, r3, s0, r0.zwzw, r0
 mul r3.z, v2.x, c11.x
+mul r0, r0, c5
+add_pp r2, -r1, c18.y
 mul_sat r3.x, r3.z, c19.w
 mad_pp r1, r3.x, r2, r1
-mul r0, r0, c5
 mul_pp r1, r0, r1
 add r2.xyz, -v1, c1
 dp3 r0.w, r2, r2
@@ -43442,10 +43445,10 @@ SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_CameraDepthTexture] 2D 2
 // 104 instructions, 4 temp regs, 0 temp arrays:
 // ALU 95 float, 0 int, 4 uint
-// TEX 2 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 1 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedddikfcegnekgjfkcndbcdppmclehkopjabaaaaaaceapaaaaadaaaaaa
+eefiecedomhdnbblimbhkedfglfephgdjgjhkdbmabaaaaaadeapaaaaadaaaaaa
 cmaaaaaacmabaaaagaabaaaaejfdeheopiaaaaaaajaaaaaaaiaaaaaaoaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaomaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaomaaaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -43456,7 +43459,7 @@ ahahaaaaomaaaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaomaaaaaa
 aiaaaaaaaaaaaaaaadaaaaaaahaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklkl
-fdeieefclmanaaaaeaaaaaaagpadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaa
+fdeieefcmmanaaaaeaaaaaaahdadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaa
 fjaaaaaeegiocaaaabaaaaaaaiaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaa
 fjaaaaaeegiocaaaadaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaad
 aagabaaaabaaaaaafkaaaaadaagabaaaacaaaaaafibiaaaeaahabaaaaaaaaaaa
@@ -43464,109 +43467,109 @@ ffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaa
 ffffaaaagcbaaaadhcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaad
 hcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaa
 gcbaaaadhcbabaaaafaaaaaagcbaaaadpcbabaaaahaaaaaagfaaaaadpccabaaa
-aaaaaaaagiaaaaacaeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaa
-aeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaa
-aaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaa
-aaaaaaaaakaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaaj
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlo
-dcaaaaajccaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaa
-diphhpdpdiaaaaahecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaa
-dcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapmjdpdbaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaabaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
-aaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaa
-ckaabaaaaaaaaaaadbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaia
-ebaaaaaaaeaaaaaaabaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaa
-nlapejmaaaaaaaahbcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaa
-ddaaaaahccaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaai
-ccaabaaaaaaaaaaabkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaah
-icaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaa
-aaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaa
-aaaaaaaadkaabaaaaaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaa
-bkaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadp
-dcaaaaakicaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlm
-abeaaaaachbgjidndcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaa
-abaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaa
-abaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaadcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
-aaaaaamaabeaaaaanlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaa
-bkaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaa
-abaaaaaackaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjkcdoaaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaa
-aaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaaf
-ccaabaaaacaaaaaabkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaa
-aeaaaaaaapaaaaahecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaa
-elaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaa
-aeaaaaaaapaaaaahecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaa
-elaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaa
+aaaaaaaagiaaaaacaeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaa
+aeaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaa
+aaaaaaaaakaabaaaaaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaa
+aeaaaaaaagbjbaiaibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaa
+aaaaaaaaegaobaaaabaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaa
+aaaaaaaabkaabaaaaaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaa
+abaaaaaafgbibaiaibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaa
+aaaaaaaajgahbaaaaaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaa
+kgajbaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaah
+dcaabaaaaaaaaaaajgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaa
+aaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaa
+aaaaaaaaegaabaaaaaaaaaaakgikcaaaaaaaaaaaakaaaaaadeaaaaajecaabaaa
+aaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaak
+ecaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaa
+aaaaaaaaddaaaaajicaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
+ibaaaaaaaeaaaaaadiaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaadiaaaaahicaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaa
+dgfkkolndcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaaochgdidodcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaa
+abaaaaaaabeaaaaaaebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaabeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaa
+bkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaa
+aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaa
+ggbkbaaaaeaaaaaaggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaa
+akaabaaaabaaaaaaabeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaa
+akbabaaaaeaaaaaadbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaia
+ebaaaaaaaaaaaaaadeaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaa
+aeaaaaaabnaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaa
+abaaaaaaabaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+dhaaaaakecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaa
+ckaabaaaaaaaaaaadcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaa
+idpjccdoabeaaaaaaaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaa
+aeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaak
+ecaabaaaaaaaaaaackaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+keanmjdpaaaaaaaiicaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaa
+aaaaiadpelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaa
+abaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaa
+akaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaa
+abaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaa
+acaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaa
+agaebaaaacaaaaaaagiecaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaa
+dkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaaf
+mcaabaaaabaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaa
+abaaaaaaogakbaaaabaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahbcaabaaaabaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaaf
+mcaabaaaabaaaaaaagbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaa
+abaaaaaaogakbaaaabaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+diaaaaahbcaabaaaacaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaan
+pcaabaaaadaaaaaaegaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaa
+egaabaaaabaaaaaaegaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaa
 aaaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaa
 acaaaaaadiaaaaaipcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaa
-ahaaaaaaaaaaaaaldcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaa
-abaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaaaaaaaaajpcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
-ibaaaaaaaeaaaaaadcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaa
-acaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaa
-abaaaaaaakaabaiaebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaaaaaaaaajocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaia
-ibaaaaaaaeaaaaaadcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaa
-abaaaaaajgahbaaaacaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaa
-aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaa
-jgafbaaaabaaaaaaagaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaa
-abaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaa
-abaaaaaakgikcaaaaaaaaaaaakaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaa
-abaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaa
-egaobaiaebaaaaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
-apcaaaaibcaabaaaadaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaa
-dcaaaaajpcaabaaaabaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaa
-abaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaa
-aaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaa
-aeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaa
-aaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaa
-baaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaaf
-dcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaia
-ebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaai
-bcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaah
-ccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaa
-abaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaa
-abaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
-akiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
-ddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaaj
-hcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaa
-baaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaaf
-ecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaa
-aaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaa
-aaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaa
-dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
-abaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-aoaaaaahdcaabaaaabaaaaaaegbabaaaahaaaaaapgbpbaaaahaaaaaaefaaaaaj
-pcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaa
-dcaaaaalbcaabaaaabaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaaabaaaaaa
-dkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadp
-aaaaiadpaaaaiadpaaaaiadpakaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaackbabaiaebaaaaaaahaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaaakiacaaaaaaaaaaabbaaaaaadiaaaaahiccabaaaaaaaaaaa
-dkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaa
-acaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaa
-acaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaa
-abaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlm
-diaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaai
-icaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaa
-abaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaak
-hcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaa
-aeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaa
-doaaaaab"
+ahaaaaaaaaaaaaalpcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaa
+abaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaa
+acaaaaaaegaobaaaabaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaa
+egaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaa
+acaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaa
+egacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaa
+abaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaa
+abaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaa
+dcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
+dkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaa
+egbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaa
+aaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaai
+ccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaaf
+ccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaa
+abaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaa
+egiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaa
+acaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaa
+dccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaa
+bkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaia
+ebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaa
+abaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaaaoaaaaahdcaabaaaabaaaaaaegbabaaa
+ahaaaaaapgbpbaaaahaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaa
+eghobaaaacaaaaaaaagabaaaacaaaaaadcaaaaalbcaabaaaabaaaaaackiacaaa
+abaaaaaaahaaaaaaakaabaaaabaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaak
+bcaabaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaa
+abaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiaebaaaaaa
+ahaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaa
+bbaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+bbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaa
+aaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaa
+abaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaa
+aaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+dkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaa
+agiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaa
+pgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaa
+egacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -43613,7 +43616,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 117 ALU, 5 TEX
+; 117 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -43629,78 +43632,78 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord8 v6
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add r1.x, r0.w, c18.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c18
 abs r0.w, v4.z
-frc r1.y, r1.x
-add_sat r2.w, r1.x, -r1.y
-add_pp r1.xyz, r2.yxzw, -r0
-mad_pp r0.xyz, r2.w, r1, r0
-max r1.w, r2.x, r0
-rcp r2.y, r1.w
-min r1.w, r2.x, r0
-mul r1.w, r1, r2.y
-abs_pp r1.x, r0
-mul r1.z, r1.w, r1.w
-dsx r3.zw, v4.xyxz
-mul r3.zw, r3, r3
-mad r0.x, r1.z, c20.y, c20.z
-rcp_pp r1.y, r1.x
-mad r1.x, r0, r1.z, c20.w
-mul_pp r0.xy, r0.zyzw, r1.y
-mad r0.z, r1.x, r1, c21.x
-mad r0.z, r0, r1, c21.y
-mad r0.z, r0, r1, c21
-mov_pp r1.xy, c7
-mad_pp r0.xy, r0, c22.y, r1
-mul r0.xy, r0, c10.x
-mul r0.z, r0, r1.w
-texld r1, r0, s1
-add r0.x, r2, -r0.w
-add r0.y, -r0.z, c21.w
-cmp r0.w, -r0.x, r0.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c18.z
-cmp r0.w, v4.z, r0, r2.x
-add r0.z, -r0.x, c18.y
-mad r0.y, r0.x, c19.x, c19
-mad r0.y, r0, r0.x, c18.w
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c20, c20.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c20.w
+mad r0.x, r1.y, r2.w, c21
+mad r1.y, r0.x, r2.w, c21
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c21
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c7
+mad_pp r0.xy, r0, c22.y, r2
+dsy r2.xy, v4.xzzw
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c21.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c18
+cmp r1.y, v4.z, r1, r1.z
+add r1.x, -r0.z, c18.y
+mad r0.w, r0.z, c19.x, c19.y
+mad r0.w, r0, r0.z, c18
+rsq r1.x, r1.x
+dsx r1.zw, v4.xyxz
+mul r1.zw, r1, r1
+mad r0.z, r0.w, r0, c19
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c18.x, c18.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c19, r0
+mad r0.w, r0.z, c18.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c22.x, c22.y
+mul r1.xy, r0, c10.x
+add r0.x, r1.z, r1.w
+mul r0.w, r0, c20.x
+add r3.xy, r0.zwzw, c6
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
 rsq r0.z, r0.z
-add_pp r2, -r1, c18.y
-mad r0.x, r0.y, r0, c19.z
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c18, c18.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c19.w, r0
-mad r0.y, r0.x, c18.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c22, c22.y
-mul r0.y, r0, c20.x
-add r3.xy, r0, c6
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r3.z, r3, r3.w
-rsq r0.x, r3.z
-rsq r0.z, r0.z
-rcp r3.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
 rcp r0.x, r0.x
 mul r0.z, r0.x, c22.x
-mul r0.x, r3.z, c22
+mul r0.x, r1.z, c22
 dsx r0.w, r3.y
 dsy r0.y, r3
+texldd r1, r1, s1, r0.zwzw, r0
 texldd r0, r3, s0, r0.zwzw, r0
 mul r3.z, v2.x, c11.x
+mul r0, r0, c5
+add_pp r2, -r1, c18.y
 mul_sat r3.x, r3.z, c19.w
 mad_pp r1, r3.x, r2, r1
-mul r0, r0, c5
 mul_pp r1, r0, r1
 add r2.xyz, -v1, c1
 dp3 r0.w, r2, r2
@@ -43779,10 +43782,10 @@ SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_CameraDepthTexture] 2D 2
 // 104 instructions, 4 temp regs, 0 temp arrays:
 // ALU 95 float, 0 int, 4 uint
-// TEX 2 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 1 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedkcodakkmdhifhommpemclieiakadbfekabaaaaaadmapaaaaadaaaaaa
+eefiecedpbkhcjiigcilaaammdgikdhgcibdokpnabaaaaaaemapaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -43793,8 +43796,8 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaadaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefclmanaaaa
-eaaaaaaagpadaaaafjaaaaaeegiocaaaaaaaaaaabgaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcmmanaaaa
+eaaaaaaahdadaaaafjaaaaaeegiocaaaaaaaaaaabgaaaaaafjaaaaaeegiocaaa
 abaaaaaaaiaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -43802,108 +43805,109 @@ aahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaagcbaaaad
 hcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
 gcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaadhcbabaaa
 afaaaaaagcbaaaadpcbabaaaaiaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-aeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaia
-ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-abeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaah
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaaj
+aeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaa
+aaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
+ibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaa
+abaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaia
+ibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaa
+aaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaa
+aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+jgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaegiacaaaaaaaaaaaanaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaakgikcaaaaaaaaaaaaoaaaaaadeaaaaajecaabaaaaaaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaaj
 icaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-abaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-dbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaa
-abaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaah
-bcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaa
-aaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaa
-bkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaa
-ckbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaia
-mbaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-dcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaa
-dcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaa
-aaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdo
-aaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaamaaaaaa
-alaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaa
-bkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
+diaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
+icaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
+bcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdido
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaa
+aebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaa
+akaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaa
+ggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaa
+dbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
+deaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaa
+aaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
+aaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+dagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaai
+icaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaa
+aaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaa
+agiecaaaaaaaaaaaamaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaa
+amaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+abaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+acaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaa
+egaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaa
+egaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
 aaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaai
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaalaaaaaaaaaaaaal
-dcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaia
-mbaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-pcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaia
-ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaia
-ebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-ocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaa
-dcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
-acaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaa
-aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaa
-agaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaa
-aaaaaaaaanaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaa
-aaaaaaaaaoaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaa
-abaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaa
-abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaa
-adaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaaoaaaaaadcaaaaajpcaabaaa
-abaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaah
-pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaa
-abaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
-bcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaa
-abaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaa
-abaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaa
-egaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaa
-baaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaadkiacaaaaaaaaaaaapaaaaaabacaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaaoaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-aoaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaapaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaapaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaaoaaaaahdcaabaaa
-abaaaaaaegbabaaaaiaaaaaapgbpbaaaaiaaaaaaefaaaaajpcaabaaaabaaaaaa
-egaabaaaabaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaadcaaaaalbcaabaaa
-abaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaaabaaaaaadkiacaaaabaaaaaa
-ahaaaaaaaoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
-aaaaiadpakaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-ckbabaiaebaaaaaaaiaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-akiacaaaaaaaaaaabfaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
-egiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-bacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkiacaaaaaaaaaaaajaaaaaadicaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaa
-aaaaaaaaajaaaaaaagiacaaaaaaaaaaaapaaaaaadccaaaakhcaabaaaabaaaaaa
-egacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaah
-hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
+pcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaa
+aaaaaaaaaoaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaa
+abaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+egaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaia
+ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
+egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
+ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
+abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaa
+abaaaaaaakiacaiaebaaaaaaaaaaaaaabaaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaa
+apaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaa
+diaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaaoaaaaaa
+cpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaaakiacaaaaaaaaaaaaoaaaaaabjaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaa
+abaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
+acaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaa
+abaaaaaackiacaaaaaaaaaaaapaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaa
+aaaaaaaaapaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+bkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaackaabaaaabaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaaoaaaaahdcaabaaaabaaaaaaegbabaaaaiaaaaaapgbpbaaa
+aiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaacaaaaaa
+aagabaaaacaaaaaadcaaaaalbcaabaaaabaaaaaackiacaaaabaaaaaaahaaaaaa
+akaabaaaabaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaaabaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaabaaaaaaaaaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiaebaaaaaaaiaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaabfaaaaaadiaaaaah
+iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
+aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
+adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
+ajaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaajaaaaaaagiacaaaaaaaaaaa
+apaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
+egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
+egacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -43950,7 +43954,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 117 ALU, 5 TEX
+; 117 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -43966,78 +43970,78 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord8 v6
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add r1.x, r0.w, c18.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c18
 abs r0.w, v4.z
-frc r1.y, r1.x
-add_sat r2.w, r1.x, -r1.y
-add_pp r1.xyz, r2.yxzw, -r0
-mad_pp r0.xyz, r2.w, r1, r0
-max r1.w, r2.x, r0
-rcp r2.y, r1.w
-min r1.w, r2.x, r0
-mul r1.w, r1, r2.y
-abs_pp r1.x, r0
-mul r1.z, r1.w, r1.w
-dsx r3.zw, v4.xyxz
-mul r3.zw, r3, r3
-mad r0.x, r1.z, c20.y, c20.z
-rcp_pp r1.y, r1.x
-mad r1.x, r0, r1.z, c20.w
-mul_pp r0.xy, r0.zyzw, r1.y
-mad r0.z, r1.x, r1, c21.x
-mad r0.z, r0, r1, c21.y
-mad r0.z, r0, r1, c21
-mov_pp r1.xy, c7
-mad_pp r0.xy, r0, c22.y, r1
-mul r0.xy, r0, c10.x
-mul r0.z, r0, r1.w
-texld r1, r0, s1
-add r0.x, r2, -r0.w
-add r0.y, -r0.z, c21.w
-cmp r0.w, -r0.x, r0.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c18.z
-cmp r0.w, v4.z, r0, r2.x
-add r0.z, -r0.x, c18.y
-mad r0.y, r0.x, c19.x, c19
-mad r0.y, r0, r0.x, c18.w
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c20, c20.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c20.w
+mad r0.x, r1.y, r2.w, c21
+mad r1.y, r0.x, r2.w, c21
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c21
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c7
+mad_pp r0.xy, r0, c22.y, r2
+dsy r2.xy, v4.xzzw
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c21.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c18
+cmp r1.y, v4.z, r1, r1.z
+add r1.x, -r0.z, c18.y
+mad r0.w, r0.z, c19.x, c19.y
+mad r0.w, r0, r0.z, c18
+rsq r1.x, r1.x
+dsx r1.zw, v4.xyxz
+mul r1.zw, r1, r1
+mad r0.z, r0.w, r0, c19
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c18.x, c18.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c19, r0
+mad r0.w, r0.z, c18.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c22.x, c22.y
+mul r1.xy, r0, c10.x
+add r0.x, r1.z, r1.w
+mul r0.w, r0, c20.x
+add r3.xy, r0.zwzw, c6
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
 rsq r0.z, r0.z
-add_pp r2, -r1, c18.y
-mad r0.x, r0.y, r0, c19.z
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c18, c18.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c19.w, r0
-mad r0.y, r0.x, c18.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c22, c22.y
-mul r0.y, r0, c20.x
-add r3.xy, r0, c6
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r3.z, r3, r3.w
-rsq r0.x, r3.z
-rsq r0.z, r0.z
-rcp r3.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
 rcp r0.x, r0.x
 mul r0.z, r0.x, c22.x
-mul r0.x, r3.z, c22
+mul r0.x, r1.z, c22
 dsx r0.w, r3.y
 dsy r0.y, r3
+texldd r1, r1, s1, r0.zwzw, r0
 texldd r0, r3, s0, r0.zwzw, r0
 mul r3.z, v2.x, c11.x
+mul r0, r0, c5
+add_pp r2, -r1, c18.y
 mul_sat r3.x, r3.z, c19.w
 mad_pp r1, r3.x, r2, r1
-mul r0, r0, c5
 mul_pp r1, r0, r1
 add r2.xyz, -v1, c1
 dp3 r0.w, r2, r2
@@ -44116,10 +44120,10 @@ SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_CameraDepthTexture] 2D 2
 // 104 instructions, 4 temp regs, 0 temp arrays:
 // ALU 95 float, 0 int, 4 uint
-// TEX 2 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 1 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedoneehnchijjoeenoiljfhaljbljcpgnfabaaaaaadmapaaaaadaaaaaa
+eefiecednjeppadicieefdaliplfdfjhpoagehdaabaaaaaaemapaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -44130,8 +44134,8 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaahaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefclmanaaaa
-eaaaaaaagpadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcmmanaaaa
+eaaaaaaahdadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaa
 abaaaaaaaiaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -44139,108 +44143,109 @@ aahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaagcbaaaad
 hcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
 gcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaadhcbabaaa
 afaaaaaagcbaaaadpcbabaaaaiaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-aeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaia
-ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-abeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaah
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaaj
+aeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaa
+aaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
+ibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaa
+abaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaia
+ibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaa
+aaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaa
+aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+jgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaakgikcaaaaaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaaj
 icaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-abaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-dbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaa
-abaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaah
-bcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaa
-aaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaa
-bkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaa
-ckbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaia
-mbaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-dcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaa
-dcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaa
-aaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdo
-aaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaa
-alaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaa
-bkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
+diaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
+icaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
+bcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdido
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaa
+aebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaa
+akaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaa
+ggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaa
+dbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
+deaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaa
+aaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
+aaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+dagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaai
+icaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaa
+aaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaa
+agiecaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaa
+amaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+abaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+acaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaa
+egaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaa
+egaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
 aaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaai
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaal
-dcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaia
-mbaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-pcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaia
-ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaia
-ebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-ocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaa
-dcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
-acaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaa
-aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaa
-agaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaa
-aaaaaaaaajaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaa
-abaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaa
-abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaa
-adaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaa
-abaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaah
-pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaa
-abaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
-bcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaa
-abaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaa
-abaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaa
-egaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaa
-amaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-akaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaaoaaaaahdcaabaaa
-abaaaaaaegbabaaaaiaaaaaapgbpbaaaaiaaaaaaefaaaaajpcaabaaaabaaaaaa
-egaabaaaabaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaadcaaaaalbcaabaaa
-abaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaaabaaaaaadkiacaaaabaaaaaa
-ahaaaaaaaoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
-aaaaiadpakaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-ckbabaiaebaaaaaaaiaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-akiacaaaaaaaaaaabbaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
-egiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-bacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaa
-aaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaa
-egacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaah
-hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
+pcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaa
+aaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaa
+abaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+egaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaia
+ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
+egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
+ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
+abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaa
+abaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaa
+alaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaa
+diaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaa
+cpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaa
+abaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
+acaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaa
+abaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaa
+aaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+bkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaackaabaaaabaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaaoaaaaahdcaabaaaabaaaaaaegbabaaaaiaaaaaapgbpbaaa
+aiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaacaaaaaa
+aagabaaaacaaaaaadcaaaaalbcaabaaaabaaaaaackiacaaaabaaaaaaahaaaaaa
+akaabaaaabaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaaabaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaabaaaaaaaaaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiaebaaaaaaaiaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaabbaaaaaadiaaaaah
+iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
+aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
+adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
+afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
+alaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
+egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
+egacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -44287,7 +44292,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 117 ALU, 5 TEX
+; 117 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -44303,78 +44308,78 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord8 v6
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add r1.x, r0.w, c18.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c18
 abs r0.w, v4.z
-frc r1.y, r1.x
-add_sat r2.w, r1.x, -r1.y
-add_pp r1.xyz, r2.yxzw, -r0
-mad_pp r0.xyz, r2.w, r1, r0
-max r1.w, r2.x, r0
-rcp r2.y, r1.w
-min r1.w, r2.x, r0
-mul r1.w, r1, r2.y
-abs_pp r1.x, r0
-mul r1.z, r1.w, r1.w
-dsx r3.zw, v4.xyxz
-mul r3.zw, r3, r3
-mad r0.x, r1.z, c20.y, c20.z
-rcp_pp r1.y, r1.x
-mad r1.x, r0, r1.z, c20.w
-mul_pp r0.xy, r0.zyzw, r1.y
-mad r0.z, r1.x, r1, c21.x
-mad r0.z, r0, r1, c21.y
-mad r0.z, r0, r1, c21
-mov_pp r1.xy, c7
-mad_pp r0.xy, r0, c22.y, r1
-mul r0.xy, r0, c10.x
-mul r0.z, r0, r1.w
-texld r1, r0, s1
-add r0.x, r2, -r0.w
-add r0.y, -r0.z, c21.w
-cmp r0.w, -r0.x, r0.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c18.z
-cmp r0.w, v4.z, r0, r2.x
-add r0.z, -r0.x, c18.y
-mad r0.y, r0.x, c19.x, c19
-mad r0.y, r0, r0.x, c18.w
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c20, c20.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c20.w
+mad r0.x, r1.y, r2.w, c21
+mad r1.y, r0.x, r2.w, c21
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c21
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c7
+mad_pp r0.xy, r0, c22.y, r2
+dsy r2.xy, v4.xzzw
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c21.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c18
+cmp r1.y, v4.z, r1, r1.z
+add r1.x, -r0.z, c18.y
+mad r0.w, r0.z, c19.x, c19.y
+mad r0.w, r0, r0.z, c18
+rsq r1.x, r1.x
+dsx r1.zw, v4.xyxz
+mul r1.zw, r1, r1
+mad r0.z, r0.w, r0, c19
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c18.x, c18.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c19, r0
+mad r0.w, r0.z, c18.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c22.x, c22.y
+mul r1.xy, r0, c10.x
+add r0.x, r1.z, r1.w
+mul r0.w, r0, c20.x
+add r3.xy, r0.zwzw, c6
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
 rsq r0.z, r0.z
-add_pp r2, -r1, c18.y
-mad r0.x, r0.y, r0, c19.z
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c18, c18.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c19.w, r0
-mad r0.y, r0.x, c18.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c22, c22.y
-mul r0.y, r0, c20.x
-add r3.xy, r0, c6
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r3.z, r3, r3.w
-rsq r0.x, r3.z
-rsq r0.z, r0.z
-rcp r3.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
 rcp r0.x, r0.x
 mul r0.z, r0.x, c22.x
-mul r0.x, r3.z, c22
+mul r0.x, r1.z, c22
 dsx r0.w, r3.y
 dsy r0.y, r3
+texldd r1, r1, s1, r0.zwzw, r0
 texldd r0, r3, s0, r0.zwzw, r0
 mul r3.z, v2.x, c11.x
+mul r0, r0, c5
+add_pp r2, -r1, c18.y
 mul_sat r3.x, r3.z, c19.w
 mad_pp r1, r3.x, r2, r1
-mul r0, r0, c5
 mul_pp r1, r0, r1
 add r2.xyz, -v1, c1
 dp3 r0.w, r2, r2
@@ -44453,10 +44458,10 @@ SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_CameraDepthTexture] 2D 2
 // 104 instructions, 4 temp regs, 0 temp arrays:
 // ALU 95 float, 0 int, 4 uint
-// TEX 2 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 1 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedoneehnchijjoeenoiljfhaljbljcpgnfabaaaaaadmapaaaaadaaaaaa
+eefiecednjeppadicieefdaliplfdfjhpoagehdaabaaaaaaemapaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -44467,8 +44472,8 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaahaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefclmanaaaa
-eaaaaaaagpadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcmmanaaaa
+eaaaaaaahdadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaa
 abaaaaaaaiaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -44476,108 +44481,109 @@ aahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaagcbaaaad
 hcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
 gcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaadhcbabaaa
 afaaaaaagcbaaaadpcbabaaaaiaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-aeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaia
-ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-abeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaah
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaaj
+aeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaa
+aaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
+ibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaa
+abaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaia
+ibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaa
+aaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaa
+aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+jgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaakgikcaaaaaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaaj
 icaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-abaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-dbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaa
-abaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaah
-bcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaa
-aaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaa
-bkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaa
-ckbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaia
-mbaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-dcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaa
-dcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaa
-aaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdo
-aaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaa
-alaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaa
-bkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
+diaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
+icaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
+bcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdido
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaa
+aebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaa
+akaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaa
+ggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaa
+dbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
+deaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaa
+aaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
+aaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+dagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaai
+icaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaa
+aaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaa
+agiecaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaa
+amaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+abaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+acaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaa
+egaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaa
+egaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
 aaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaai
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaal
-dcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaia
-mbaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-pcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaia
-ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaia
-ebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-ocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaa
-dcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
-acaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaa
-aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaa
-agaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaa
-aaaaaaaaajaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaa
-abaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaa
-abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaa
-adaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaa
-abaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaah
-pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaa
-abaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
-bcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaa
-abaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaa
-abaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaa
-egaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaa
-amaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-akaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaaoaaaaahdcaabaaa
-abaaaaaaegbabaaaaiaaaaaapgbpbaaaaiaaaaaaefaaaaajpcaabaaaabaaaaaa
-egaabaaaabaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaadcaaaaalbcaabaaa
-abaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaaabaaaaaadkiacaaaabaaaaaa
-ahaaaaaaaoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
-aaaaiadpakaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-ckbabaiaebaaaaaaaiaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-akiacaaaaaaaaaaabbaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
-egiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-bacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaa
-aaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaa
-egacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaah
-hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
+pcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaa
+aaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaa
+abaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+egaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaia
+ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
+egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
+ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
+abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaa
+abaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaa
+alaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaa
+diaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaa
+cpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaa
+abaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
+acaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaa
+abaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaa
+aaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+bkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaackaabaaaabaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaaoaaaaahdcaabaaaabaaaaaaegbabaaaaiaaaaaapgbpbaaa
+aiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaacaaaaaa
+aagabaaaacaaaaaadcaaaaalbcaabaaaabaaaaaackiacaaaabaaaaaaahaaaaaa
+akaabaaaabaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaaabaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaabaaaaaaaaaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiaebaaaaaaaiaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaabbaaaaaadiaaaaah
+iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
+aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
+adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
+afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
+alaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
+egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
+egacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -44624,7 +44630,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 117 ALU, 5 TEX
+; 117 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -44640,78 +44646,78 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord8 v6
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add r1.x, r0.w, c18.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c18
 abs r0.w, v4.z
-frc r1.y, r1.x
-add_sat r2.w, r1.x, -r1.y
-add_pp r1.xyz, r2.yxzw, -r0
-mad_pp r0.xyz, r2.w, r1, r0
-max r1.w, r2.x, r0
-rcp r2.y, r1.w
-min r1.w, r2.x, r0
-mul r1.w, r1, r2.y
-abs_pp r1.x, r0
-mul r1.z, r1.w, r1.w
-dsx r3.zw, v4.xyxz
-mul r3.zw, r3, r3
-mad r0.x, r1.z, c20.y, c20.z
-rcp_pp r1.y, r1.x
-mad r1.x, r0, r1.z, c20.w
-mul_pp r0.xy, r0.zyzw, r1.y
-mad r0.z, r1.x, r1, c21.x
-mad r0.z, r0, r1, c21.y
-mad r0.z, r0, r1, c21
-mov_pp r1.xy, c7
-mad_pp r0.xy, r0, c22.y, r1
-mul r0.xy, r0, c10.x
-mul r0.z, r0, r1.w
-texld r1, r0, s1
-add r0.x, r2, -r0.w
-add r0.y, -r0.z, c21.w
-cmp r0.w, -r0.x, r0.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c18.z
-cmp r0.w, v4.z, r0, r2.x
-add r0.z, -r0.x, c18.y
-mad r0.y, r0.x, c19.x, c19
-mad r0.y, r0, r0.x, c18.w
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c20, c20.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c20.w
+mad r0.x, r1.y, r2.w, c21
+mad r1.y, r0.x, r2.w, c21
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c21
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c7
+mad_pp r0.xy, r0, c22.y, r2
+dsy r2.xy, v4.xzzw
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c21.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c18
+cmp r1.y, v4.z, r1, r1.z
+add r1.x, -r0.z, c18.y
+mad r0.w, r0.z, c19.x, c19.y
+mad r0.w, r0, r0.z, c18
+rsq r1.x, r1.x
+dsx r1.zw, v4.xyxz
+mul r1.zw, r1, r1
+mad r0.z, r0.w, r0, c19
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c18.x, c18.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c19, r0
+mad r0.w, r0.z, c18.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c22.x, c22.y
+mul r1.xy, r0, c10.x
+add r0.x, r1.z, r1.w
+mul r0.w, r0, c20.x
+add r3.xy, r0.zwzw, c6
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
 rsq r0.z, r0.z
-add_pp r2, -r1, c18.y
-mad r0.x, r0.y, r0, c19.z
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c18, c18.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c19.w, r0
-mad r0.y, r0.x, c18.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c22, c22.y
-mul r0.y, r0, c20.x
-add r3.xy, r0, c6
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r3.z, r3, r3.w
-rsq r0.x, r3.z
-rsq r0.z, r0.z
-rcp r3.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
 rcp r0.x, r0.x
 mul r0.z, r0.x, c22.x
-mul r0.x, r3.z, c22
+mul r0.x, r1.z, c22
 dsx r0.w, r3.y
 dsy r0.y, r3
+texldd r1, r1, s1, r0.zwzw, r0
 texldd r0, r3, s0, r0.zwzw, r0
 mul r3.z, v2.x, c11.x
+mul r0, r0, c5
+add_pp r2, -r1, c18.y
 mul_sat r3.x, r3.z, c19.w
 mad_pp r1, r3.x, r2, r1
-mul r0, r0, c5
 mul_pp r1, r0, r1
 add r2.xyz, -v1, c1
 dp3 r0.w, r2, r2
@@ -44790,10 +44796,10 @@ SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_CameraDepthTexture] 2D 2
 // 104 instructions, 4 temp regs, 0 temp arrays:
 // ALU 95 float, 0 int, 4 uint
-// TEX 2 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 1 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedhedlgomojoadghglnglnnecapfhgglidabaaaaaadmapaaaaadaaaaaa
+eefiecedicjjbgcdgiggibedijhcighjhhlndjcaabaaaaaaemapaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -44804,8 +44810,8 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefclmanaaaa
-eaaaaaaagpadaaaafjaaaaaeegiocaaaaaaaaaaabgaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcmmanaaaa
+eaaaaaaahdadaaaafjaaaaaeegiocaaaaaaaaaaabgaaaaaafjaaaaaeegiocaaa
 abaaaaaaaiaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -44813,108 +44819,109 @@ aahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaagcbaaaad
 hcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
 gcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaadhcbabaaa
 afaaaaaagcbaaaadpcbabaaaaiaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-aeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaia
-ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-abeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaah
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaaj
+aeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaa
+aaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
+ibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaa
+abaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaia
+ibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaa
+aaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaa
+aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+jgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaegiacaaaaaaaaaaaanaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaakgikcaaaaaaaaaaaaoaaaaaadeaaaaajecaabaaaaaaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaaj
 icaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-abaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-dbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaa
-abaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaah
-bcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaa
-aaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaa
-bkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaa
-ckbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaia
-mbaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-dcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaa
-dcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaa
-aaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdo
-aaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaamaaaaaa
-alaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaa
-bkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
+diaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
+icaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
+bcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdido
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaa
+aebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaa
+akaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaa
+ggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaa
+dbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
+deaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaa
+aaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
+aaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+dagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaai
+icaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaa
+aaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaa
+agiecaaaaaaaaaaaamaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaa
+amaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+abaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+acaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaa
+egaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaa
+egaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
 aaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaai
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaalaaaaaaaaaaaaal
-dcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaia
-mbaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-pcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaia
-ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaia
-ebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-ocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaa
-dcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
-acaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaa
-aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaa
-agaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaa
-aaaaaaaaanaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaa
-aaaaaaaaaoaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaa
-abaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaa
-abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaa
-adaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaaoaaaaaadcaaaaajpcaabaaa
-abaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaah
-pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaa
-abaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
-bcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaa
-abaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaa
-abaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaa
-egaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaa
-baaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaadkiacaaaaaaaaaaaapaaaaaabacaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaaoaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-aoaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaapaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaapaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaaoaaaaahdcaabaaa
-abaaaaaaegbabaaaaiaaaaaapgbpbaaaaiaaaaaaefaaaaajpcaabaaaabaaaaaa
-egaabaaaabaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaadcaaaaalbcaabaaa
-abaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaaabaaaaaadkiacaaaabaaaaaa
-ahaaaaaaaoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
-aaaaiadpakaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-ckbabaiaebaaaaaaaiaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-akiacaaaaaaaaaaabfaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
-egiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-bacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkiacaaaaaaaaaaaajaaaaaadicaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaa
-aaaaaaaaajaaaaaaagiacaaaaaaaaaaaapaaaaaadccaaaakhcaabaaaabaaaaaa
-egacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaah
-hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
+pcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaa
+aaaaaaaaaoaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaa
+abaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+egaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaia
+ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
+egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
+ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
+abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaa
+abaaaaaaakiacaiaebaaaaaaaaaaaaaabaaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaa
+apaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaa
+diaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaaoaaaaaa
+cpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaaakiacaaaaaaaaaaaaoaaaaaabjaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaa
+abaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
+acaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaa
+abaaaaaackiacaaaaaaaaaaaapaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaa
+aaaaaaaaapaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+bkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaackaabaaaabaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaaoaaaaahdcaabaaaabaaaaaaegbabaaaaiaaaaaapgbpbaaa
+aiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaacaaaaaa
+aagabaaaacaaaaaadcaaaaalbcaabaaaabaaaaaackiacaaaabaaaaaaahaaaaaa
+akaabaaaabaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaaabaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaabaaaaaaaaaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiaebaaaaaaaiaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaabfaaaaaadiaaaaah
+iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
+aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
+adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
+ajaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaajaaaaaaagiacaaaaaaaaaaa
+apaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
+egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
+egacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -44961,7 +44968,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 117 ALU, 5 TEX
+; 117 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -44977,78 +44984,78 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord8 v6
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add r1.x, r0.w, c18.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c18
 abs r0.w, v4.z
-frc r1.y, r1.x
-add_sat r2.w, r1.x, -r1.y
-add_pp r1.xyz, r2.yxzw, -r0
-mad_pp r0.xyz, r2.w, r1, r0
-max r1.w, r2.x, r0
-rcp r2.y, r1.w
-min r1.w, r2.x, r0
-mul r1.w, r1, r2.y
-abs_pp r1.x, r0
-mul r1.z, r1.w, r1.w
-dsx r3.zw, v4.xyxz
-mul r3.zw, r3, r3
-mad r0.x, r1.z, c20.y, c20.z
-rcp_pp r1.y, r1.x
-mad r1.x, r0, r1.z, c20.w
-mul_pp r0.xy, r0.zyzw, r1.y
-mad r0.z, r1.x, r1, c21.x
-mad r0.z, r0, r1, c21.y
-mad r0.z, r0, r1, c21
-mov_pp r1.xy, c7
-mad_pp r0.xy, r0, c22.y, r1
-mul r0.xy, r0, c10.x
-mul r0.z, r0, r1.w
-texld r1, r0, s1
-add r0.x, r2, -r0.w
-add r0.y, -r0.z, c21.w
-cmp r0.w, -r0.x, r0.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c18.z
-cmp r0.w, v4.z, r0, r2.x
-add r0.z, -r0.x, c18.y
-mad r0.y, r0.x, c19.x, c19
-mad r0.y, r0, r0.x, c18.w
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c20, c20.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c20.w
+mad r0.x, r1.y, r2.w, c21
+mad r1.y, r0.x, r2.w, c21
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c21
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c7
+mad_pp r0.xy, r0, c22.y, r2
+dsy r2.xy, v4.xzzw
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c21.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c18
+cmp r1.y, v4.z, r1, r1.z
+add r1.x, -r0.z, c18.y
+mad r0.w, r0.z, c19.x, c19.y
+mad r0.w, r0, r0.z, c18
+rsq r1.x, r1.x
+dsx r1.zw, v4.xyxz
+mul r1.zw, r1, r1
+mad r0.z, r0.w, r0, c19
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c18.x, c18.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c19, r0
+mad r0.w, r0.z, c18.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c22.x, c22.y
+mul r1.xy, r0, c10.x
+add r0.x, r1.z, r1.w
+mul r0.w, r0, c20.x
+add r3.xy, r0.zwzw, c6
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
 rsq r0.z, r0.z
-add_pp r2, -r1, c18.y
-mad r0.x, r0.y, r0, c19.z
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c18, c18.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c19.w, r0
-mad r0.y, r0.x, c18.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c22, c22.y
-mul r0.y, r0, c20.x
-add r3.xy, r0, c6
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r3.z, r3, r3.w
-rsq r0.x, r3.z
-rsq r0.z, r0.z
-rcp r3.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
 rcp r0.x, r0.x
 mul r0.z, r0.x, c22.x
-mul r0.x, r3.z, c22
+mul r0.x, r1.z, c22
 dsx r0.w, r3.y
 dsy r0.y, r3
+texldd r1, r1, s1, r0.zwzw, r0
 texldd r0, r3, s0, r0.zwzw, r0
 mul r3.z, v2.x, c11.x
+mul r0, r0, c5
+add_pp r2, -r1, c18.y
 mul_sat r3.x, r3.z, c19.w
 mad_pp r1, r3.x, r2, r1
-mul r0, r0, c5
 mul_pp r1, r0, r1
 add r2.xyz, -v1, c1
 dp3 r0.w, r2, r2
@@ -45127,10 +45134,10 @@ SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_CameraDepthTexture] 2D 2
 // 104 instructions, 4 temp regs, 0 temp arrays:
 // ALU 95 float, 0 int, 4 uint
-// TEX 2 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 1 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedhedlgomojoadghglnglnnecapfhgglidabaaaaaadmapaaaaadaaaaaa
+eefiecedicjjbgcdgiggibedijhcighjhhlndjcaabaaaaaaemapaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -45141,8 +45148,8 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaapaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaapaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefclmanaaaa
-eaaaaaaagpadaaaafjaaaaaeegiocaaaaaaaaaaabgaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcmmanaaaa
+eaaaaaaahdadaaaafjaaaaaeegiocaaaaaaaaaaabgaaaaaafjaaaaaeegiocaaa
 abaaaaaaaiaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -45150,108 +45157,109 @@ aahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaagcbaaaad
 hcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
 gcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaadhcbabaaa
 afaaaaaagcbaaaadpcbabaaaaiaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-aeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaia
-ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-abeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaah
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaaj
+aeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaa
+aaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
+ibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaa
+abaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaia
+ibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaa
+aaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaa
+aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+jgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaegiacaaaaaaaaaaaanaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaakgikcaaaaaaaaaaaaoaaaaaadeaaaaajecaabaaaaaaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaaj
 icaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-abaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-dbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaa
-abaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaah
-bcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaa
-aaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaa
-bkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaa
-ckbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaia
-mbaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-dcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaa
-dcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaa
-aaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdo
-aaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaamaaaaaa
-alaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaa
-bkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
+diaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
+icaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
+bcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdido
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaa
+aebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaa
+akaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaa
+ggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaa
+dbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
+deaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaa
+aaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
+aaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+dagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaai
+icaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaa
+aaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaa
+agiecaaaaaaaaaaaamaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaa
+amaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+abaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+acaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaa
+egaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaa
+egaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
 aaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaai
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaalaaaaaaaaaaaaal
-dcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaia
-mbaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-pcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaia
-ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaia
-ebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-ocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaa
-dcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
-acaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaa
-aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaa
-agaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaa
-aaaaaaaaanaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaa
-aaaaaaaaaoaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaa
-abaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaa
-abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaa
-adaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaaoaaaaaadcaaaaajpcaabaaa
-abaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaah
-pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaa
-abaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
-bcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaa
-abaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaa
-abaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaa
-egaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaa
-baaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaadkiacaaaaaaaaaaaapaaaaaabacaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaaoaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-aoaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaapaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaapaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaaoaaaaahdcaabaaa
-abaaaaaaegbabaaaaiaaaaaapgbpbaaaaiaaaaaaefaaaaajpcaabaaaabaaaaaa
-egaabaaaabaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaadcaaaaalbcaabaaa
-abaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaaabaaaaaadkiacaaaabaaaaaa
-ahaaaaaaaoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
-aaaaiadpakaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-ckbabaiaebaaaaaaaiaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-akiacaaaaaaaaaaabfaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
-egiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-bacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkiacaaaaaaaaaaaajaaaaaadicaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaa
-aaaaaaaaajaaaaaaagiacaaaaaaaaaaaapaaaaaadccaaaakhcaabaaaabaaaaaa
-egacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaah
-hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
+pcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaa
+aaaaaaaaaoaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaa
+abaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+egaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaia
+ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
+egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
+ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
+abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaa
+abaaaaaaakiacaiaebaaaaaaaaaaaaaabaaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaa
+apaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaa
+diaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaaoaaaaaa
+cpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaaakiacaaaaaaaaaaaaoaaaaaabjaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaa
+abaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
+acaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaa
+abaaaaaackiacaaaaaaaaaaaapaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaa
+aaaaaaaaapaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+bkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaackaabaaaabaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaaoaaaaahdcaabaaaabaaaaaaegbabaaaaiaaaaaapgbpbaaa
+aiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaacaaaaaa
+aagabaaaacaaaaaadcaaaaalbcaabaaaabaaaaaackiacaaaabaaaaaaahaaaaaa
+akaabaaaabaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaaabaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaabaaaaaaaaaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiaebaaaaaaaiaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaabfaaaaaadiaaaaah
+iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
+aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
+adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
+ajaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaajaaaaaaagiacaaaaaaaaaaa
+apaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
+egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
+egacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -45293,7 +45301,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 117 ALU, 5 TEX
+; 117 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -45309,78 +45317,78 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord8 v6
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add r1.x, r0.w, c18.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c18
 abs r0.w, v4.z
-frc r1.y, r1.x
-add_sat r2.w, r1.x, -r1.y
-add_pp r1.xyz, r2.yxzw, -r0
-mad_pp r0.xyz, r2.w, r1, r0
-max r1.w, r2.x, r0
-rcp r2.y, r1.w
-min r1.w, r2.x, r0
-mul r1.w, r1, r2.y
-abs_pp r1.x, r0
-mul r1.z, r1.w, r1.w
-dsx r3.zw, v4.xyxz
-mul r3.zw, r3, r3
-mad r0.x, r1.z, c20.y, c20.z
-rcp_pp r1.y, r1.x
-mad r1.x, r0, r1.z, c20.w
-mul_pp r0.xy, r0.zyzw, r1.y
-mad r0.z, r1.x, r1, c21.x
-mad r0.z, r0, r1, c21.y
-mad r0.z, r0, r1, c21
-mov_pp r1.xy, c7
-mad_pp r0.xy, r0, c22.y, r1
-mul r0.xy, r0, c10.x
-mul r0.z, r0, r1.w
-texld r1, r0, s1
-add r0.x, r2, -r0.w
-add r0.y, -r0.z, c21.w
-cmp r0.w, -r0.x, r0.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c18.z
-cmp r0.w, v4.z, r0, r2.x
-add r0.z, -r0.x, c18.y
-mad r0.y, r0.x, c19.x, c19
-mad r0.y, r0, r0.x, c18.w
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c20, c20.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c20.w
+mad r0.x, r1.y, r2.w, c21
+mad r1.y, r0.x, r2.w, c21
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c21
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c7
+mad_pp r0.xy, r0, c22.y, r2
+dsy r2.xy, v4.xzzw
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c21.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c18
+cmp r1.y, v4.z, r1, r1.z
+add r1.x, -r0.z, c18.y
+mad r0.w, r0.z, c19.x, c19.y
+mad r0.w, r0, r0.z, c18
+rsq r1.x, r1.x
+dsx r1.zw, v4.xyxz
+mul r1.zw, r1, r1
+mad r0.z, r0.w, r0, c19
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c18.x, c18.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c19, r0
+mad r0.w, r0.z, c18.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c22.x, c22.y
+mul r1.xy, r0, c10.x
+add r0.x, r1.z, r1.w
+mul r0.w, r0, c20.x
+add r3.xy, r0.zwzw, c6
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
 rsq r0.z, r0.z
-add_pp r2, -r1, c18.y
-mad r0.x, r0.y, r0, c19.z
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c18, c18.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c19.w, r0
-mad r0.y, r0.x, c18.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c22, c22.y
-mul r0.y, r0, c20.x
-add r3.xy, r0, c6
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r3.z, r3, r3.w
-rsq r0.x, r3.z
-rsq r0.z, r0.z
-rcp r3.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
 rcp r0.x, r0.x
 mul r0.z, r0.x, c22.x
-mul r0.x, r3.z, c22
+mul r0.x, r1.z, c22
 dsx r0.w, r3.y
 dsy r0.y, r3
+texldd r1, r1, s1, r0.zwzw, r0
 texldd r0, r3, s0, r0.zwzw, r0
 mul r3.z, v2.x, c11.x
+mul r0, r0, c5
+add_pp r2, -r1, c18.y
 mul_sat r3.x, r3.z, c19.w
 mad_pp r1, r3.x, r2, r1
-mul r0, r0, c5
 mul_pp r1, r0, r1
 add r2.xyz, -v1, c1
 dp3 r0.w, r2, r2
@@ -45459,10 +45467,10 @@ SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_CameraDepthTexture] 2D 2
 // 104 instructions, 4 temp regs, 0 temp arrays:
 // ALU 95 float, 0 int, 4 uint
-// TEX 2 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 1 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedoneehnchijjoeenoiljfhaljbljcpgnfabaaaaaadmapaaaaadaaaaaa
+eefiecednjeppadicieefdaliplfdfjhpoagehdaabaaaaaaemapaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -45473,8 +45481,8 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaahaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefclmanaaaa
-eaaaaaaagpadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcmmanaaaa
+eaaaaaaahdadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaa
 abaaaaaaaiaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -45482,108 +45490,109 @@ aahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaagcbaaaad
 hcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
 gcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaadhcbabaaa
 afaaaaaagcbaaaadpcbabaaaaiaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-aeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaia
-ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-abeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaah
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaaj
+aeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaa
+aaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
+ibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaa
+abaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaia
+ibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaa
+aaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaa
+aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+jgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaakgikcaaaaaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaaj
 icaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-abaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-dbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaa
-abaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaah
-bcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaa
-aaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaa
-bkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaa
-ckbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaia
-mbaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-dcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaa
-dcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaa
-aaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdo
-aaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaa
-alaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaa
-bkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
+diaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
+icaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
+bcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdido
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaa
+aebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaa
+akaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaa
+ggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaa
+dbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
+deaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaa
+aaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
+aaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+dagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaai
+icaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaa
+aaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaa
+agiecaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaa
+amaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+abaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+acaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaa
+egaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaa
+egaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
 aaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaai
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaal
-dcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaia
-mbaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-pcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaia
-ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaia
-ebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-ocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaa
-dcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
-acaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaa
-aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaa
-agaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaa
-aaaaaaaaajaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaa
-abaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaa
-abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaa
-adaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaa
-abaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaah
-pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaa
-abaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
-bcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaa
-abaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaa
-abaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaa
-egaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaa
-amaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-akaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaaoaaaaahdcaabaaa
-abaaaaaaegbabaaaaiaaaaaapgbpbaaaaiaaaaaaefaaaaajpcaabaaaabaaaaaa
-egaabaaaabaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaadcaaaaalbcaabaaa
-abaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaaabaaaaaadkiacaaaabaaaaaa
-ahaaaaaaaoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
-aaaaiadpakaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-ckbabaiaebaaaaaaaiaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-akiacaaaaaaaaaaabbaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
-egiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-bacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaa
-aaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaa
-egacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaah
-hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
+pcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaa
+aaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaa
+abaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+egaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaia
+ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
+egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
+ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
+abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaa
+abaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaa
+alaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaa
+diaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaa
+cpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaa
+abaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
+acaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaa
+abaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaa
+aaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+bkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaackaabaaaabaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaaoaaaaahdcaabaaaabaaaaaaegbabaaaaiaaaaaapgbpbaaa
+aiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaacaaaaaa
+aagabaaaacaaaaaadcaaaaalbcaabaaaabaaaaaackiacaaaabaaaaaaahaaaaaa
+akaabaaaabaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaaabaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaabaaaaaaaaaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiaebaaaaaaaiaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaabbaaaaaadiaaaaah
+iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
+aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
+adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
+afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
+alaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
+egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
+egacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -45630,7 +45639,7 @@ SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_CameraDepthTexture] 2D
 "ps_3_0
-; 117 ALU, 5 TEX
+; 117 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -45646,78 +45655,78 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dcl_texcoord8 v6
-abs r2.xyz, v4
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add r1.x, r0.w, c18.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r1.w, r1.y, -r0.x
+add r2.y, r1.w, c18
 abs r0.w, v4.z
-frc r1.y, r1.x
-add_sat r2.w, r1.x, -r1.y
-add_pp r1.xyz, r2.yxzw, -r0
-mad_pp r0.xyz, r2.w, r1, r0
-max r1.w, r2.x, r0
-rcp r2.y, r1.w
-min r1.w, r2.x, r0
-mul r1.w, r1, r2.y
-abs_pp r1.x, r0
-mul r1.z, r1.w, r1.w
-dsx r3.zw, v4.xyxz
-mul r3.zw, r3, r3
-mad r0.x, r1.z, c20.y, c20.z
-rcp_pp r1.y, r1.x
-mad r1.x, r0, r1.z, c20.w
-mul_pp r0.xy, r0.zyzw, r1.y
-mad r0.z, r1.x, r1, c21.x
-mad r0.z, r0, r1, c21.y
-mad r0.z, r0, r1, c21
-mov_pp r1.xy, c7
-mad_pp r0.xy, r0, c22.y, r1
-mul r0.xy, r0, c10.x
-mul r0.z, r0, r1.w
-texld r1, r0, s1
-add r0.x, r2, -r0.w
-add r0.y, -r0.z, c21.w
-cmp r0.w, -r0.x, r0.z, r0.y
-abs r0.x, v4.y
-add r2.x, -r0.w, c18.z
-cmp r0.w, v4.z, r0, r2.x
-add r0.z, -r0.x, c18.y
-mad r0.y, r0.x, c19.x, c19
-mad r0.y, r0, r0.x, c18.w
+max r1.w, r1.x, r0
+rcp r2.x, r1.w
+min r1.w, r1.x, r0
+mul r1.w, r1, r2.x
+frc r2.z, r2.y
+add_sat r3.x, r2.y, -r2.z
+add_pp r2.xyz, r1.yxzw, -r0
+mad_pp r0.xyz, r3.x, r2, r0
+mul r2.w, r1, r1
+mad r1.y, r2.w, c20, c20.z
+abs_pp r1.z, r0.x
+mad r1.y, r1, r2.w, c20.w
+mad r0.x, r1.y, r2.w, c21
+mad r1.y, r0.x, r2.w, c21
+rcp_pp r1.z, r1.z
+mul_pp r0.xy, r0.zyzw, r1.z
+mad r0.z, r1.y, r2.w, c21
+mul r1.y, r0.z, r1.w
+mov_pp r2.xy, c7
+mad_pp r0.xy, r0, c22.y, r2
+dsy r2.xy, v4.xzzw
+add r0.z, r1.x, -r0.w
+add r1.z, -r1.y, c21.w
+cmp r1.y, -r0.z, r1, r1.z
+abs r0.z, v4.y
+add r1.z, -r1.y, c18
+cmp r1.y, v4.z, r1, r1.z
+add r1.x, -r0.z, c18.y
+mad r0.w, r0.z, c19.x, c19.y
+mad r0.w, r0, r0.z, c18
+rsq r1.x, r1.x
+dsx r1.zw, v4.xyxz
+mul r1.zw, r1, r1
+mad r0.z, r0.w, r0, c19
+rcp r1.x, r1.x
+mul r0.w, r0.z, r1.x
+cmp r0.z, v4.y, c18.x, c18.y
+mul r1.x, r0.z, r0.w
+mad r0.w, -r1.x, c19, r0
+mad r0.w, r0.z, c18.z, r0
+cmp r1.x, v4, r1.y, -r1.y
+mad r0.z, r1.x, c22.x, c22.y
+mul r1.xy, r0, c10.x
+add r0.x, r1.z, r1.w
+mul r0.w, r0, c20.x
+add r3.xy, r0.zwzw, c6
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
 rsq r0.z, r0.z
-add_pp r2, -r1, c18.y
-mad r0.x, r0.y, r0, c19.z
-rcp r0.z, r0.z
-mul r0.y, r0.x, r0.z
-cmp r0.x, v4.y, c18, c18.y
-mul r0.z, r0.x, r0.y
-mad r0.y, -r0.z, c19.w, r0
-mad r0.y, r0.x, c18.z, r0
-cmp r0.z, v4.x, r0.w, -r0.w
-mad r0.x, r0.z, c22, c22.y
-mul r0.y, r0, c20.x
-add r3.xy, r0, c6
-dsy r0.xz, v4
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-add r3.z, r3, r3.w
-rsq r0.x, r3.z
-rsq r0.z, r0.z
-rcp r3.z, r0.z
+rsq r0.x, r0.x
+rcp r1.z, r0.z
 rcp r0.x, r0.x
 mul r0.z, r0.x, c22.x
-mul r0.x, r3.z, c22
+mul r0.x, r1.z, c22
 dsx r0.w, r3.y
 dsy r0.y, r3
+texldd r1, r1, s1, r0.zwzw, r0
 texldd r0, r3, s0, r0.zwzw, r0
 mul r3.z, v2.x, c11.x
+mul r0, r0, c5
+add_pp r2, -r1, c18.y
 mul_sat r3.x, r3.z, c19.w
 mad_pp r1, r3.x, r2, r1
-mul r0, r0, c5
 mul_pp r1, r0, r1
 add r2.xyz, -v1, c1
 dp3 r0.w, r2, r2
@@ -45796,10 +45805,10 @@ SetTexture 1 [_DetailTex] 2D 1
 SetTexture 2 [_CameraDepthTexture] 2D 2
 // 104 instructions, 4 temp regs, 0 temp arrays:
 // ALU 95 float, 0 int, 4 uint
-// TEX 2 (0 load, 0 comp, 0 bias, 1 grad)
+// TEX 1 (0 load, 0 comp, 0 bias, 2 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedoneehnchijjoeenoiljfhaljbljcpgnfabaaaaaadmapaaaaadaaaaaa
+eefiecednjeppadicieefdaliplfdfjhpoagehdaabaaaaaaemapaaaaadaaaaaa
 cmaaaaaaeeabaaaahiabaaaaejfdeheobaabaaaaakaaaaaaaiaaaaaapiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaaaeabaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahahaaaaaeabaaaaacaaaaaaaaaaaaaaadaaaaaaabaaaaaa
@@ -45810,8 +45819,8 @@ ahahaaaaaeabaaaaagaaaaaaaaaaaaaaadaaaaaaagaaaaaaahaaaaaaaeabaaaa
 ahaaaaaaaaaaaaaaadaaaaaaahaaaaaaahaaaaaaaeabaaaaaiaaaaaaaaaaaaaa
 adaaaaaaaiaaaaaaapapaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefclmanaaaa
-eaaaaaaagpadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcmmanaaaa
+eaaaaaaahdadaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaa
 abaaaaaaaiaaaaaafjaaaaaeegiocaaaacaaaaaaabaaaaaafjaaaaaeegiocaaa
 adaaaaaaafaaaaaafkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaa
 fkaaaaadaagabaaaacaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaafibiaaae
@@ -45819,108 +45828,109 @@ aahabaaaabaaaaaaffffaaaafibiaaaeaahabaaaacaaaaaaffffaaaagcbaaaad
 hcbabaaaabaaaaaagcbaaaadicbabaaaabaaaaaagcbaaaadhcbabaaaacaaaaaa
 gcbaaaadhcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaadhcbabaaa
 afaaaaaagcbaaaadpcbabaaaaiaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaac
-aeaaaaaadeaaaaajbcaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaia
-ibaaaaaaaeaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaajccaabaaaaaaaaaaackbabaia
-ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaadiaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahccaabaaaaaaaaaaaakaabaaa
-aaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-abeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaaaaaaaaabkaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaaaaaaaaa
-bkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaa
-aaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaadiphhpdpdiaaaaah
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajecaabaaa
-aaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaaj
+aeaaaaaaaaaaaaaldcaabaaaaaaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaa
+aaaaiadpaaaaiadpaaaaaaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaaakaabaaa
+aaaaaaaackbabaiambaaaaaaaeaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajpcaabaaaabaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaia
+ibaaaaaaaeaaaaaadcaaaaakpcaabaaaabaaaaaaagaabaaaaaaaaaaaegaobaaa
+abaaaaaakgbebaiaibaaaaaaaeaaaaaaaaaaaaaibcaabaaaaaaaaaaabkaabaaa
+aaaaaaaaakaabaiaebaaaaaaabaaaaaaebcaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaaaaaaaaajocaabaaaaaaaaaaafgaobaiaebaaaaaaabaaaaaafgbibaia
+ibaaaaaaaeaaaaaadcaaaaajhcaabaaaaaaaaaaaagaabaaaaaaaaaaajgahbaaa
+aaaaaaaajgahbaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaaaaaaaaaa
+aceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaaaaaaaaa
+jgafbaaaaaaaaaaaagaabaaaaaaaaaaaaaaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaegiacaaaaaaaaaaaajaaaaaadiaaaaaidcaabaaaaaaaaaaaegaabaaa
+aaaaaaaakgikcaaaaaaaaaaaakaaaaaadeaaaaajecaabaaaaaaaaaaackbabaia
+ibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaaaoaaaaakecaabaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpckaabaaaaaaaaaaaddaaaaaj
 icaabaaaaaaaaaaackbabaiaibaaaaaaaeaaaaaaakbabaiaibaaaaaaaeaaaaaa
-abaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-dbaaaaaigcaabaaaaaaaaaaakgbjbaaaaeaaaaaakgbjbaiaebaaaaaaaeaaaaaa
-abaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaah
-bcaabaaaaaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaahccaabaaa
-aaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaadbaaaaaiccaabaaaaaaaaaaa
-bkaabaaaaaaaaaaabkaabaiaebaaaaaaaaaaaaaadeaaaaahicaabaaaaaaaaaaa
-ckbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaadkaabaaa
-aaaaaaaabkaabaaaaaaaaaaadhaaaaakbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaa
-aaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
-dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaa
-abeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaabkbabaia
-ibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaaibcaabaaaabaaaaaabkbabaia
-mbaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaafbcaabaaaabaaaaaaakaabaaa
-abaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-dcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaa
-nlapejeaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaabaaaaaa
-dcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaackaabaaa
-aaaaaaaadiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdo
-aaaaaaaidcaabaaaaaaaaaaaegaabaaaaaaaaaaaegiacaaaaaaaaaaaaiaaaaaa
-alaaaaafccaabaaaabaaaaaabkaabaaaaaaaaaaaamaaaaafccaabaaaacaaaaaa
-bkaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoamaaaaafmcaabaaaaaaaaaaaagbibaaaaeaaaaaaapaaaaah
-ecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaa
-aaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaa
+diaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
+icaabaaaaaaaaaaackaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaa
+abaaaaaadkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaaj
+bcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaaochgdido
+dcaaaaajbcaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaabeaaaaa
+aebnkjlodcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaadiphhpdpdiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaama
+abeaaaaanlapmjdpdbaaaaajccaabaaaabaaaaaackbabaiaibaaaaaaaeaaaaaa
+akbabaiaibaaaaaaaeaaaaaaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaa
+akaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaaggbkbaaaaeaaaaaa
+ggbkbaiaebaaaaaaaeaaaaaaabaaaaahicaabaaaaaaaaaaaakaabaaaabaaaaaa
+abeaaaaanlapejmaaaaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaa
+aaaaaaaaddaaaaahicaabaaaaaaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaa
+dbaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
+deaaaaahbcaabaaaabaaaaaackbabaaaaeaaaaaaakbabaaaaeaaaaaabnaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaabaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadhaaaaakecaabaaa
+aaaaaaaadkaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaa
+dcaaaaajbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaa
+aaaaaadpdcaaaaakecaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaa
+dagojjlmabeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkbabaiaibaaaaaaaeaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkbabaiaibaaaaaaaeaaaaaaabeaaaaakeanmjdpaaaaaaai
+icaabaaaaaaaaaaabkbabaiambaaaaaaaeaaaaaaabeaaaaaaaaaiadpelaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaa
+abaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaackaabaaa
+aaaaaaaaabeaaaaaidpjkcdoaaaaaaaimcaabaaaaaaaaaaaagaebaaaacaaaaaa
+agiecaaaaaaaaaaaaiaaaaaaalaaaaafccaabaaaabaaaaaadkaabaaaaaaaaaaa
+amaaaaafccaabaaaacaaaaaadkaabaaaaaaaaaaaalaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+abaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoamaaaaafmcaabaaaabaaaaaa
+agbibaaaaeaaaaaaapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+acaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaadaaaaaa
+egaabaaaaaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaabaaaaaa
+egaabaaaacaaaaaaejaaaaanpcaabaaaaaaaaaaaogakbaaaaaaaaaaaeghobaaa
 aaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaacaaaaaadiaaaaai
 pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaahaaaaaaaaaaaaal
-dcaabaaaabaaaaaaegbabaiaibaaaaaaaeaaaaaaaceaaaaaaaaaiadpaaaaiadp
-aaaaaaaaaaaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaackbabaia
-mbaaaaaaaeaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-pcaabaaaacaaaaaakgbebaiambaaaaaaaeaaaaaaagbjbaiaibaaaaaaaeaaaaaa
-dcaaaaakpcaabaaaacaaaaaaagaabaaaabaaaaaaegaobaaaacaaaaaakgbebaia
-ibaaaaaaaeaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaia
-ebaaaaaaacaaaaaaebcaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaj
-ocaabaaaabaaaaaafgaobaiaebaaaaaaacaaaaaafgbibaiaibaaaaaaaeaaaaaa
-dcaaaaajhcaabaaaabaaaaaaagaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
-acaaaaaadiaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaa
-aaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaa
-agaabaaaabaaaaaaaaaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaaegiacaaa
-aaaaaaaaajaaaaaadiaaaaaidcaabaaaabaaaaaaegaabaaaabaaaaaakgikcaaa
-aaaaaaaaakaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaa
-abaaaaaaaagabaaaabaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaa
-abaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpapcaaaaibcaabaaa
-adaaaaaapgbpbaaaabaaaaaapgipcaaaaaaaaaaaakaaaaaadcaaaaajpcaabaaa
-abaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaadiaaaaah
-pcaabaaaaaaaaaaaegaobaaaaaaaaaaaegaobaaaabaaaaaaaaaaaaajhcaabaaa
-abaaaaaaegbcbaaaacaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
-bcaabaaaabaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaaaaaaaaiocaabaaa
-abaaaaaaagbjbaaaabaaaaaaagbjbaiaebaaaaaaacaaaaaabaaaaaahccaabaaa
-abaaaaaajgahbaaaabaaaaaajgahbaaaabaaaaaaelaaaaafdcaabaaaabaaaaaa
-egaabaaaabaaaaaadcaaaaalbcaabaaaabaaaaaaakiacaiaebaaaaaaaaaaaaaa
-amaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadicaaaaibcaabaaaabaaaaaa
-akaabaaaabaaaaaadkiacaaaaaaaaaaaalaaaaaabacaaaahccaabaaaabaaaaaa
-egbcbaaaafaaaaaaegbcbaaaadaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaa
-abaaaaaabkiacaaaaaaaaaaaakaaaaaacpaaaaafccaabaaaabaaaaaabkaabaaa
-abaaaaaadiaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaaakiacaaaaaaaaaaa
-akaaaaaabjaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaaddaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaaacaaaaaa
-egbcbaaaabaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahecaabaaa
-abaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaaelaaaaafecaabaaaabaaaaaa
-ckaabaaaabaaaaaadccaaaamecaabaaaabaaaaaackiacaaaaaaaaaaaalaaaaaa
-ckaabaaaabaaaaaabkiacaiaebaaaaaaaaaaaaaaalaaaaaaaaaaaaaiccaabaaa
-abaaaaaackaabaiaebaaaaaaabaaaaaabkaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadiaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaaoaaaaahdcaabaaa
-abaaaaaaegbabaaaaiaaaaaapgbpbaaaaiaaaaaaefaaaaajpcaabaaaabaaaaaa
-egaabaaaabaaaaaaeghobaaaacaaaaaaaagabaaaacaaaaaadcaaaaalbcaabaaa
-abaaaaaackiacaaaabaaaaaaahaaaaaaakaabaaaabaaaaaadkiacaaaabaaaaaa
-ahaaaaaaaoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
-aaaaiadpakaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-ckbabaiaebaaaaaaaiaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaa
-akiacaaaaaaaaaaabbaaaaaadiaaaaahiccabaaaaaaaaaaadkaabaaaaaaaaaaa
-akaabaaaabaaaaaabbaaaaajicaabaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaa
-egiocaaaacaaaaaaaaaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaaihcaabaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaacaaaaaaaaaaaaaa
-bacaaaahicaabaaaaaaaaaaaegbcbaaaadaaaaaaegacbaaaabaaaaaaaaaaaaah
-icaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaknhcdlmdiaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaabeaaaaapnekibdpdiaaaaaiicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadkiacaaaaaaaaaaaafaaaaaadicaaaahicaabaaaaaaaaaaa
-dkaabaaaaaaaaaaaabeaaaaaaaaaiaeaaaaaaaajhcaabaaaabaaaaaaegiccaaa
-aaaaaaaaafaaaaaaagiacaaaaaaaaaaaalaaaaaadccaaaakhcaabaaaabaaaaaa
-egacbaaaabaaaaaapgapbaaaaaaaaaaaegiccaaaadaaaaaaaeaaaaaadiaaaaah
-hccabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaadoaaaaab"
+pcaabaaaabaaaaaaegaobaiaebaaaaaaadaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpapcaaaaibcaabaaaacaaaaaapgbpbaaaabaaaaaapgipcaaa
+aaaaaaaaakaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaaacaaaaaaegaobaaa
+abaaaaaaegaobaaaadaaaaaadiaaaaahpcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+egaobaaaabaaaaaaaaaaaaajhcaabaaaabaaaaaaegbcbaaaacaaaaaaegiccaia
+ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaabaaaaaaegacbaaaabaaaaaa
+egacbaaaabaaaaaaaaaaaaaiocaabaaaabaaaaaaagbjbaaaabaaaaaaagbjbaia
+ebaaaaaaacaaaaaabaaaaaahccaabaaaabaaaaaajgahbaaaabaaaaaajgahbaaa
+abaaaaaaelaaaaafdcaabaaaabaaaaaaegaabaaaabaaaaaadcaaaaalbcaabaaa
+abaaaaaaakiacaiaebaaaaaaaaaaaaaaamaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadicaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaadkiacaaaaaaaaaaa
+alaaaaaabacaaaahccaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaadaaaaaa
+diaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaabkiacaaaaaaaaaaaakaaaaaa
+cpaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaaiccaabaaaabaaaaaa
+bkaabaaaabaaaaaaakiacaaaaaaaaaaaakaaaaaabjaaaaafccaabaaaabaaaaaa
+bkaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aaaaiadpaaaaaaajhcaabaaaacaaaaaaegbcbaaaabaaaaaaegiccaiaebaaaaaa
+abaaaaaaaeaaaaaabaaaaaahecaabaaaabaaaaaaegacbaaaacaaaaaaegacbaaa
+acaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadccaaaamecaabaaa
+abaaaaaackiacaaaaaaaaaaaalaaaaaackaabaaaabaaaaaabkiacaiaebaaaaaa
+aaaaaaaaalaaaaaaaaaaaaaiccaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+bkaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaackaabaaaabaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaaoaaaaahdcaabaaaabaaaaaaegbabaaaaiaaaaaapgbpbaaa
+aiaaaaaaefaaaaajpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaacaaaaaa
+aagabaaaacaaaaaadcaaaaalbcaabaaaabaaaaaackiacaaaabaaaaaaahaaaaaa
+akaabaaaabaaaaaadkiacaaaabaaaaaaahaaaaaaaoaaaaakbcaabaaaabaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaabaaaaaaaaaaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaackbabaiaebaaaaaaaiaaaaaadicaaaai
+bcaabaaaabaaaaaaakaabaaaabaaaaaaakiacaaaaaaaaaaabbaaaaaadiaaaaah
+iccabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabbaaaaajicaabaaa
+aaaaaaaaegiocaaaacaaaaaaaaaaaaaaegiocaaaacaaaaaaaaaaaaaaeeaaaaaf
+icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaaihcaabaaaabaaaaaapgapbaaa
+aaaaaaaaegiccaaaacaaaaaaaaaaaaaabacaaaahicaabaaaaaaaaaaaegbcbaaa
+adaaaaaaegacbaaaabaaaaaaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+abeaaaaaaknhcdlmdiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaa
+pnekibdpdiaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkiacaaaaaaaaaaa
+afaaaaaadicaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiaea
+aaaaaaajhcaabaaaabaaaaaaegiccaaaaaaaaaaaafaaaaaaagiacaaaaaaaaaaa
+alaaaaaadccaaaakhcaabaaaabaaaaaaegacbaaaabaaaaaapgapbaaaaaaaaaaa
+egiccaaaadaaaaaaaeaaaaaadiaaaaahhccabaaaaaaaaaaaegacbaaaaaaaaaaa
+egacbaaaabaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {

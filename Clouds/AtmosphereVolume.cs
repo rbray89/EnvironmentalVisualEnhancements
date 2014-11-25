@@ -19,6 +19,8 @@ namespace Atmosphere
         float _SphereRadius;
         [Scaled]
         float _OceanRadius;
+        [Persistent]
+        Color _SunsetColor = new Color(1, 0, 0, .45f);
 
         public float SphereRadius { set { _SphereRadius = value; } }
         public float OceanRadius { set { _OceanRadius = value; } }

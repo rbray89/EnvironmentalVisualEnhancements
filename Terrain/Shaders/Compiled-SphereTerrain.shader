@@ -207,7 +207,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -516,18 +516,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -820,18 +820,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -1460,9 +1460,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 482
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -1704,7 +1704,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -2002,18 +2002,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -2297,18 +2297,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -2922,9 +2922,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 478
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -3170,7 +3170,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -3482,18 +3482,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -3795,18 +3795,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -4454,9 +4454,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 491
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -4704,7 +4704,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -5014,18 +5014,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -5319,18 +5319,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -5961,9 +5961,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 483
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -6210,7 +6210,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -6518,18 +6518,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -6820,18 +6820,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -7458,9 +7458,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 482
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -7714,7 +7714,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -8052,18 +8052,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -8385,18 +8385,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -9074,8 +9074,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 497
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 501
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -9331,7 +9331,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -9657,18 +9657,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -10343,8 +10343,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 498
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 502
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -10603,7 +10603,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -10915,18 +10915,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -11237,18 +11237,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -11882,9 +11882,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 488
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -12146,7 +12146,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -12468,18 +12468,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -12797,18 +12797,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -13454,8 +13454,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 490
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 494
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -13711,7 +13711,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -14045,18 +14045,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -14376,18 +14376,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -15064,8 +15064,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 495
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 499
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -15322,7 +15322,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -15659,18 +15659,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -15993,18 +15993,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -16685,8 +16685,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 496
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 500
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -16943,7 +16943,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -17314,18 +17314,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -17698,18 +17698,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -18457,8 +18457,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 505
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 509
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -18715,7 +18715,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -19052,18 +19052,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -19769,8 +19769,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 505
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 509
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -20026,7 +20026,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -20388,18 +20388,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -20775,18 +20775,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -21536,8 +21536,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 501
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 505
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -21794,7 +21794,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -22159,18 +22159,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -22549,18 +22549,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -23314,8 +23314,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 502
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 506
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -23564,7 +23564,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -23873,18 +23873,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -24177,18 +24177,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -24817,9 +24817,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 482
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -25061,7 +25061,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -25359,18 +25359,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -25654,18 +25654,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -26279,9 +26279,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 478
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -26527,7 +26527,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -26839,18 +26839,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -27152,18 +27152,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -27811,9 +27811,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 491
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -28061,7 +28061,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -28371,18 +28371,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -28676,18 +28676,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -29318,9 +29318,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 483
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -29567,7 +29567,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -29875,18 +29875,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -30177,18 +30177,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -30815,9 +30815,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 482
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -31071,7 +31071,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -31409,18 +31409,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -31742,18 +31742,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -32431,8 +32431,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 497
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 501
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -32688,7 +32688,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -33014,18 +33014,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -33700,8 +33700,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 498
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 502
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -33960,7 +33960,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -34272,18 +34272,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -34594,18 +34594,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -35239,9 +35239,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 488
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -35503,7 +35503,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -35825,18 +35825,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -36154,18 +36154,18 @@ void main ()
   detailCoords_15 = tmpvar_40;
   mediump float tmpvar_41;
   tmpvar_41 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_42;
-  highp vec2 P_43;
-  P_43 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_42 = texture2D (_DetailTex, P_43);
-  detail_13 = tmpvar_42;
+  highp vec2 coord_42;
+  coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_43;
+  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
-  lowp vec4 tmpvar_45;
-  highp vec2 P_46;
-  P_46 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_45 = texture2D (_DetailVertTex, P_46);
-  vert_12 = tmpvar_45;
+  highp vec2 coord_45;
+  coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
   detail_13 = tmpvar_47;
@@ -36811,8 +36811,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 490
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 494
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -37068,7 +37068,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -37402,18 +37402,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -37733,18 +37733,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -38421,8 +38421,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 495
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 499
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -38679,7 +38679,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -39016,18 +39016,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -39350,18 +39350,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -40042,8 +40042,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 496
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 500
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -40300,7 +40300,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -40671,18 +40671,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -41055,18 +41055,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -41814,8 +41814,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 505
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 509
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -42072,7 +42072,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -42409,18 +42409,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -43126,8 +43126,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 505
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 509
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -43383,7 +43383,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -43745,18 +43745,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -44132,18 +44132,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -44893,8 +44893,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 501
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 505
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -45151,7 +45151,7 @@ void main ()
   tmpvar_25 = -(norm_2);
   norm_2 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_26 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_17.xy, tmpvar_17.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_22.zy) / abs(tmpvar_22.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_17.xy, tmpvar_17.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_19), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_5 = tmpvar_26;
   sphereDist_1 = xlv_TEXCOORD1.w;
   float tmpvar_27;
@@ -45516,18 +45516,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -45906,18 +45906,18 @@ void main ()
   detailCoords_16 = tmpvar_41;
   mediump float tmpvar_42;
   tmpvar_42 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_43;
-  highp vec2 P_44;
-  P_44 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_43 = texture2D (_DetailTex, P_44);
-  detail_14 = tmpvar_43;
+  highp vec2 coord_43;
+  coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_44;
+  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_46 = texture2D (_DetailVertTex, P_47);
-  vert_13 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
   detail_14 = tmpvar_48;
@@ -46671,8 +46671,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 502
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 506
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -46916,9 +46916,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -46934,7 +46934,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -47263,18 +47263,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -47283,18 +47283,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -47604,18 +47604,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -47624,18 +47624,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -48283,14 +48283,14 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 486
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     #line 490
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
     localCoords -= vec2( 0.5);
@@ -48535,9 +48535,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -48553,7 +48553,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -48869,18 +48869,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -48889,18 +48889,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -49201,18 +49201,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -49221,18 +49221,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -49865,14 +49865,14 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 482
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     #line 486
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
     localCoords -= vec2( 0.5);
@@ -50121,9 +50121,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -50139,7 +50139,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -50471,18 +50471,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -50491,18 +50491,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -50821,18 +50821,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -50841,18 +50841,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -51519,14 +51519,14 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 495
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     #line 499
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
     localCoords -= vec2( 0.5);
@@ -51777,9 +51777,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -51795,7 +51795,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -52125,18 +52125,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -52145,18 +52145,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -52467,18 +52467,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -52487,18 +52487,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -53148,14 +53148,14 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 487
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     #line 491
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
     localCoords -= vec2( 0.5);
@@ -53405,9 +53405,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -53423,7 +53423,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -53751,18 +53751,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -53771,18 +53771,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -54090,18 +54090,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -54110,18 +54110,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -54767,14 +54767,14 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 486
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     #line 490
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
     localCoords -= vec2( 0.5);
@@ -55031,9 +55031,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -55049,7 +55049,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -55407,18 +55407,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -55427,18 +55427,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -55777,18 +55777,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -55797,18 +55797,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -56505,13 +56505,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 501
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 505
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 509
     highp vec2 localCoords = encnorm.wy;
@@ -56770,9 +56770,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -56788,7 +56788,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -57134,18 +57134,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -57154,18 +57154,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -57859,13 +57859,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 502
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 506
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 510
     highp vec2 localCoords = encnorm.wy;
@@ -58127,9 +58127,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -58145,7 +58145,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -58477,18 +58477,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -58497,18 +58497,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -58836,18 +58836,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -58856,18 +58856,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -59520,14 +59520,14 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 492
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     #line 496
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
     localCoords -= vec2( 0.5);
@@ -59792,9 +59792,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -59810,7 +59810,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -60152,18 +60152,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -60172,18 +60172,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -60518,18 +60518,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -60538,18 +60538,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -61214,13 +61214,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 494
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 498
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 502
     highp vec2 localCoords = encnorm.wy;
@@ -61479,9 +61479,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -61497,7 +61497,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -61851,18 +61851,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -61871,18 +61871,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -62219,18 +62219,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -62239,18 +62239,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -62946,13 +62946,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 499
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 503
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 507
     highp vec2 localCoords = encnorm.wy;
@@ -63212,9 +63212,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -63230,7 +63230,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -63587,18 +63587,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -63607,18 +63607,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -63958,18 +63958,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -63978,18 +63978,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -64689,13 +64689,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 500
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 504
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 508
     highp vec2 localCoords = encnorm.wy;
@@ -64955,9 +64955,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -64973,7 +64973,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -65364,18 +65364,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -65384,18 +65384,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -65785,18 +65785,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -65805,18 +65805,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -66583,13 +66583,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 509
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 513
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 517
     highp vec2 localCoords = encnorm.wy;
@@ -66849,9 +66849,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -66867,7 +66867,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -67224,18 +67224,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -67244,18 +67244,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -67980,13 +67980,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 509
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 513
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 517
     highp vec2 localCoords = encnorm.wy;
@@ -68245,9 +68245,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -68263,7 +68263,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -68645,18 +68645,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -68665,18 +68665,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -69069,18 +69069,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -69089,18 +69089,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -69869,13 +69869,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 505
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 509
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 513
     highp vec2 localCoords = encnorm.wy;
@@ -70135,9 +70135,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -70153,7 +70153,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -70538,18 +70538,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -70558,18 +70558,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -70965,18 +70965,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -70985,18 +70985,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -71769,13 +71769,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 506
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 510
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 514
     highp vec2 localCoords = encnorm.wy;
@@ -72027,9 +72027,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -72045,7 +72045,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -72374,18 +72374,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -72394,18 +72394,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -72715,18 +72715,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -72735,18 +72735,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -73394,14 +73394,14 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 486
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     #line 490
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
     localCoords -= vec2( 0.5);
@@ -73646,9 +73646,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -73664,7 +73664,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -73980,18 +73980,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -74000,18 +74000,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -74312,18 +74312,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -74332,18 +74332,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -74976,14 +74976,14 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 482
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     #line 486
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
     localCoords -= vec2( 0.5);
@@ -75232,9 +75232,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -75250,7 +75250,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -75582,18 +75582,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -75602,18 +75602,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -75932,18 +75932,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -75952,18 +75952,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -76630,14 +76630,14 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 495
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     #line 499
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
     localCoords -= vec2( 0.5);
@@ -76888,9 +76888,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -76906,7 +76906,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -77236,18 +77236,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -77256,18 +77256,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -77578,18 +77578,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -77598,18 +77598,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -78259,14 +78259,14 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 487
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     #line 491
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
     localCoords -= vec2( 0.5);
@@ -78516,9 +78516,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -78534,7 +78534,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -78862,18 +78862,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -78882,18 +78882,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -79201,18 +79201,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -79221,18 +79221,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -79878,14 +79878,14 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 486
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     #line 490
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
     localCoords -= vec2( 0.5);
@@ -80142,9 +80142,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -80160,7 +80160,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -80518,18 +80518,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -80538,18 +80538,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -80888,18 +80888,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -80908,18 +80908,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -81616,13 +81616,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 501
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 505
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 509
     highp vec2 localCoords = encnorm.wy;
@@ -81881,9 +81881,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -81899,7 +81899,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -82245,18 +82245,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -82265,18 +82265,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -82970,13 +82970,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 502
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 506
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 510
     highp vec2 localCoords = encnorm.wy;
@@ -83238,9 +83238,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -83256,7 +83256,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -83588,18 +83588,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -83608,18 +83608,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -83947,18 +83947,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -83967,18 +83967,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -84631,14 +84631,14 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 492
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     #line 496
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
     localCoords -= vec2( 0.5);
@@ -84903,9 +84903,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -84921,7 +84921,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -85263,18 +85263,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -85283,18 +85283,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -85629,18 +85629,18 @@ void main ()
   detailCoords_19 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_46;
-  highp vec2 P_47;
-  P_47 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_46 = texture2D (_DetailTex, P_47);
-  detail_17 = tmpvar_46;
+  highp vec2 coord_46;
+  coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_49 = texture2D (_DetailVertTex, P_50);
-  vert_16 = tmpvar_49;
+  highp vec2 coord_49;
+  coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_50;
+  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
   detail_17 = tmpvar_51;
@@ -85649,18 +85649,18 @@ void main ()
   cityoverlay_15 = tmpvar_52;
   mediump float tmpvar_53;
   tmpvar_53 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_54;
-  highp vec2 P_55;
-  P_55 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_54 = texture2D (_CityDarkOverlayDetailTex, P_55);
-  citydarkoverlaydetail_14 = tmpvar_54;
+  highp vec2 coord_54;
+  coord_54 = ((((0.5 * detailCoords_19.zy) / tmpvar_53) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_55;
+  tmpvar_55 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_54, tmpvar_36.xy, tmpvar_36.zw);
+  citydarkoverlaydetail_14 = tmpvar_55;
   mediump float tmpvar_56;
   tmpvar_56 = abs(detailCoords_19.x);
-  lowp vec4 tmpvar_57;
-  highp vec2 P_58;
-  P_58 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_57 = texture2D (_CityLightOverlayDetailTex, P_58);
-  citylightoverlaydetail_13 = tmpvar_57;
+  highp vec2 coord_57;
+  coord_57 = ((((0.5 * detailCoords_19.zy) / tmpvar_56) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_58;
+  tmpvar_58 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_57, tmpvar_36.xy, tmpvar_36.zw);
+  citylightoverlaydetail_13 = tmpvar_58;
   lowp vec4 tmpvar_59;
   tmpvar_59 = texture2DGradEXT (_BumpMap, uv_23, tmpvar_36.xy, tmpvar_36.zw);
   encnorm_12 = tmpvar_59;
@@ -86325,13 +86325,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 494
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 498
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 502
     highp vec2 localCoords = encnorm.wy;
@@ -86590,9 +86590,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -86608,7 +86608,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -86962,18 +86962,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -86982,18 +86982,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -87330,18 +87330,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -87350,18 +87350,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -88057,13 +88057,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 499
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 503
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 507
     highp vec2 localCoords = encnorm.wy;
@@ -88323,9 +88323,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -88341,7 +88341,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -88698,18 +88698,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -88718,18 +88718,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -89069,18 +89069,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -89089,18 +89089,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -89800,13 +89800,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 500
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 504
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 508
     highp vec2 localCoords = encnorm.wy;
@@ -90066,9 +90066,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -90084,7 +90084,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -90475,18 +90475,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -90495,18 +90495,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -90896,18 +90896,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -90916,18 +90916,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -91694,13 +91694,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 509
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 513
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 517
     highp vec2 localCoords = encnorm.wy;
@@ -91960,9 +91960,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -91978,7 +91978,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -92335,18 +92335,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -92355,18 +92355,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -93091,13 +93091,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 509
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 513
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 517
     highp vec2 localCoords = encnorm.wy;
@@ -93356,9 +93356,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -93374,7 +93374,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -93756,18 +93756,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -93776,18 +93776,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -94180,18 +94180,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -94200,18 +94200,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -94980,13 +94980,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 505
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 509
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 513
     highp vec2 localCoords = encnorm.wy;
@@ -95246,9 +95246,9 @@ void main ()
   tmpvar_25 = texture2DGradARB (_CityOverlayTex, uv_6, tmpvar_19.xy, tmpvar_19.zw);
   cityoverlay_5 = tmpvar_25;
   vec4 tmpvar_26;
-  tmpvar_26 = texture2D (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_26 = texture2DGradARB (_CityDarkOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec4 tmpvar_27;
-  tmpvar_27 = texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+  tmpvar_27 = texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_19.xy, tmpvar_19.zw);
   vec2 tmpvar_28;
   tmpvar_28 = (texture2DGradARB (_BumpMap, uv_6, tmpvar_19.xy, tmpvar_19.zw).wy - vec2(0.5, 0.5));
   localCoords_4.y = tmpvar_28.y;
@@ -95264,7 +95264,7 @@ void main ()
   tmpvar_30 = -(norm_3);
   norm_3 = tmpvar_30;
   vec4 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2D (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale)), texture2D (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale)), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
+  tmpvar_31 = (xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_19.xy, tmpvar_19.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_19.xy, tmpvar_19.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_21), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0))));
   color_7 = tmpvar_31;
   sphereDist_2 = xlv_TEXCOORD1.w;
   float tmpvar_32;
@@ -95649,18 +95649,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -95669,18 +95669,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -96076,18 +96076,18 @@ void main ()
   detailCoords_20 = tmpvar_45;
   mediump float tmpvar_46;
   tmpvar_46 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_47;
-  highp vec2 P_48;
-  P_48 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
-  tmpvar_47 = texture2D (_DetailTex, P_48);
-  detail_18 = tmpvar_47;
+  highp vec2 coord_47;
+  coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_50;
-  highp vec2 P_51;
-  P_51 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
-  tmpvar_50 = texture2D (_DetailVertTex, P_51);
-  vert_17 = tmpvar_50;
+  highp vec2 coord_50;
+  coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
   detail_18 = tmpvar_52;
@@ -96096,18 +96096,18 @@ void main ()
   cityoverlay_16 = tmpvar_53;
   mediump float tmpvar_54;
   tmpvar_54 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_55;
-  highp vec2 P_56;
-  P_56 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_55 = texture2D (_CityDarkOverlayDetailTex, P_56);
-  citydarkoverlaydetail_15 = tmpvar_55;
+  highp vec2 coord_55;
+  coord_55 = ((((0.5 * detailCoords_20.zy) / tmpvar_54) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = texture2DGradEXT (_CityDarkOverlayDetailTex, coord_55, tmpvar_37.xy, tmpvar_37.zw);
+  citydarkoverlaydetail_15 = tmpvar_56;
   mediump float tmpvar_57;
   tmpvar_57 = abs(detailCoords_20.x);
-  lowp vec4 tmpvar_58;
-  highp vec2 P_59;
-  P_59 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
-  tmpvar_58 = texture2D (_CityLightOverlayDetailTex, P_59);
-  citylightoverlaydetail_14 = tmpvar_58;
+  highp vec2 coord_58;
+  coord_58 = ((((0.5 * detailCoords_20.zy) / tmpvar_57) + _DetailOffset.xy) * _CityOverlayDetailScale);
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = texture2DGradEXT (_CityLightOverlayDetailTex, coord_58, tmpvar_37.xy, tmpvar_37.zw);
+  citylightoverlaydetail_14 = tmpvar_59;
   lowp vec4 tmpvar_60;
   tmpvar_60 = texture2DGradEXT (_BumpMap, uv_24, tmpvar_37.xy, tmpvar_37.zw);
   encnorm_13 = tmpvar_60;
@@ -96880,13 +96880,13 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 506
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = texture( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale));
-    mediump vec4 vert = texture( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale));
+    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 510
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-    mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
-    mediump vec4 citylightoverlaydetail = texture( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
+    mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 citylightoverlaydetail = xll_tex2Dgrad( _CityLightOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     #line 514
     highp vec2 localCoords = encnorm.wy;
@@ -96980,7 +96980,7 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 60
-//   d3d9 - ALU: 167 to 204, TEX: 8 to 19
+//   d3d9 - ALU: 167 to 204, TEX: 12 to 27
 SubProgram "opengl " {
 Keywords { "CITYOVERLAY_OFF" "DETAIL_MAP_OFF" "POINT" "SHADOWS_OFF" }
 "!!GLSL"
@@ -97009,7 +97009,7 @@ SetTexture 2 [_DetailVertTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 "ps_3_0
-; 169 ALU, 9 TEX
+; 169 ALU, 13 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -97040,91 +97040,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c15.y
 frc r1.w, r0
+dsy r2.xy, v4
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v4.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c5
-mad_pp r2.xy, r1, c19.y, r2
-mad r0.x, r0.z, c17.y, c17.z
-mad r1.x, r0, r0.z, c17.w
-mad r2.z, r1.x, r0, c18.x
-mul r0.xy, r2, c4.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c18.y
-mul r0.xy, r2, c6.x
-mad r2.x, r2.z, r0.z, c18.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c18.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c15.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c5.xyxy
+mad r0.z, r0.w, c15, c15.w
+mad r0.z, r0.w, r0, c16.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c19.y, r1.zwzw
+mad r0.z, r0.w, r0, c16.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v4, c15.x, c15.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c16.z, r1
+mad r0.z, r0, c16.w, r1.x
+mul r1.z, r0, c17.x
+mul r1.xy, r0, c4.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v4.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c19.x
+mul r4.x, r1.w, c19
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c17, c17.z
+mad r3.y, r3, r2.w, c17.w
+mul r0.xy, r0, c6.x
+mad r3.y, r3, r2.w, c18.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v4
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c16.w
-cmp r1.x, v4.z, r1.w, r1
-add r3.x, -r0.w, c15.y
-mad r2.w, r0, c15.z, c15
-mad r2.w, r0, r2, c16.x
-mad r0.w, r0, r2, c16.y
+mad r1.x, r3.y, r2.w, c18.y
+mad r1.x, r1, r2.w, c18.z
 add r1.y, r1, c19.w
 mad_sat r1.y, r1, c20.x, c20
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v4.x, r1.x, -r1.x
-mul r2.x, r1.w, c19
-abs r1.w, v4.y
-add r2.z, -r1.w, c15.y
-mad r2.y, r1.w, c15.z, c15.w
-mad r2.y, r2, r1.w, c16.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v4.z, c15.x, c15.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c15.y
-add r5.x, r2, c19.y
-mad r1.w, r2.y, r1, c16.y
+add r2.x, -r1.w, c18.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v4.y
+add r1.w, -r0, c16
+add r2.z, -r2.x, c15.y
+mad r2.y, r2.x, c15.z, c15.w
+mad r2.y, r2, r2.x, c16.x
+cmp r1.w, v4.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c16.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v4.y, c15.x, c15.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c16.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c16.z, r3.x
-mad r0.w, r1, c16, r0
-mad r1.w, r2, c16, r2.y
-mul r1.w, r1, c17.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v4.y, c15, c15.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c16.z, r2.y
+mad r0.w, r2.x, c16, r0
 mul r0.w, r0, c17.x
-dsx r2.zw, v4.xyxy
-dsy r3.xy, v4
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c19.x
-mul r4.x, r2.y, c19
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c20.z
+cmp r1.w, v4.x, r1, -r1
+mul r2.x, r1.w, c19
 mul r1.w, v1, c7.x
 mul_sat r1.w, r1, c16.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c19.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c20.z
 mul r0.xy, r2.zwzw, c20.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -97232,7 +97232,7 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_DetailVertTex] 2D
 SetTexture 3 [_BumpMap] 2D
 "ps_3_0
-; 167 ALU, 8 TEX
+; 167 ALU, 12 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -97261,91 +97261,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c15.y
 frc r1.w, r0
+dsy r2.xy, v3
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v3.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c5
-mad_pp r2.xy, r1, c19.y, r2
-mad r0.x, r0.z, c17.y, c17.z
-mad r1.x, r0, r0.z, c17.w
-mad r2.z, r1.x, r0, c18.x
-mul r0.xy, r2, c4.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c18.y
-mul r0.xy, r2, c6.x
-mad r2.x, r2.z, r0.z, c18.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c18.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c15.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c5.xyxy
+mad r0.z, r0.w, c15, c15.w
+mad r0.z, r0.w, r0, c16.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c19.y, r1.zwzw
+mad r0.z, r0.w, r0, c16.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v3, c15.x, c15.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c16.z, r1
+mad r0.z, r0, c16.w, r1.x
+mul r1.z, r0, c17.x
+mul r1.xy, r0, c4.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v3.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c19.x
+mul r4.x, r1.w, c19
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c17, c17.z
+mad r3.y, r3, r2.w, c17.w
+mul r0.xy, r0, c6.x
+mad r3.y, r3, r2.w, c18.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v3
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c16.w
-cmp r1.x, v3.z, r1.w, r1
-add r3.x, -r0.w, c15.y
-mad r2.w, r0, c15.z, c15
-mad r2.w, r0, r2, c16.x
-mad r0.w, r0, r2, c16.y
+mad r1.x, r3.y, r2.w, c18.y
+mad r1.x, r1, r2.w, c18.z
 add r1.y, r1, c19.w
 mad_sat r1.y, r1, c20.x, c20
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v3.x, r1.x, -r1.x
-mul r2.x, r1.w, c19
-abs r1.w, v3.y
-add r2.z, -r1.w, c15.y
-mad r2.y, r1.w, c15.z, c15.w
-mad r2.y, r2, r1.w, c16.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v3.z, c15.x, c15.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c15.y
-add r5.x, r2, c19.y
-mad r1.w, r2.y, r1, c16.y
+add r2.x, -r1.w, c18.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v3.y
+add r1.w, -r0, c16
+add r2.z, -r2.x, c15.y
+mad r2.y, r2.x, c15.z, c15.w
+mad r2.y, r2, r2.x, c16.x
+cmp r1.w, v3.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c16.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v3.y, c15.x, c15.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c16.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c16.z, r3.x
-mad r0.w, r1, c16, r0
-mad r1.w, r2, c16, r2.y
-mul r1.w, r1, c17.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v3.y, c15, c15.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c16.z, r2.y
+mad r0.w, r2.x, c16, r0
 mul r0.w, r0, c17.x
-dsx r2.zw, v3.xyxy
-dsy r3.xy, v3
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c19.x
-mul r4.x, r2.y, c19
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c20.z
+cmp r1.w, v3.x, r1, -r1
+mul r2.x, r1.w, c19
 mul r1.w, v1, c7.x
 mul_sat r1.w, r1, c16.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c19.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c20.z
 mul r0.xy, r2.zwzw, c20.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -97452,7 +97452,7 @@ SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
 "ps_3_0
-; 174 ALU, 10 TEX
+; 174 ALU, 14 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -97484,91 +97484,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c15.y
 frc r1.w, r0
+dsy r2.xy, v4
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v4.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c5
-mad_pp r2.xy, r1, c19.y, r2
-mad r0.x, r0.z, c17.y, c17.z
-mad r1.x, r0, r0.z, c17.w
-mad r2.z, r1.x, r0, c18.x
-mul r0.xy, r2, c4.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c18.y
-mul r0.xy, r2, c6.x
-mad r2.x, r2.z, r0.z, c18.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c18.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c15.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c5.xyxy
+mad r0.z, r0.w, c15, c15.w
+mad r0.z, r0.w, r0, c16.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c19.y, r1.zwzw
+mad r0.z, r0.w, r0, c16.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v4, c15.x, c15.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c16.z, r1
+mad r0.z, r0, c16.w, r1.x
+mul r1.z, r0, c17.x
+mul r1.xy, r0, c4.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v4.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c19.x
+mul r4.x, r1.w, c19
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c17, c17.z
+mad r3.y, r3, r2.w, c17.w
+mul r0.xy, r0, c6.x
+mad r3.y, r3, r2.w, c18.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v4
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c16.w
-cmp r1.x, v4.z, r1.w, r1
-add r3.x, -r0.w, c15.y
-mad r2.w, r0, c15.z, c15
-mad r2.w, r0, r2, c16.x
-mad r0.w, r0, r2, c16.y
+mad r1.x, r3.y, r2.w, c18.y
+mad r1.x, r1, r2.w, c18.z
 add r1.y, r1, c19.w
 mad_sat r1.y, r1, c20.x, c20
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v4.x, r1.x, -r1.x
-mul r2.x, r1.w, c19
-abs r1.w, v4.y
-add r2.z, -r1.w, c15.y
-mad r2.y, r1.w, c15.z, c15.w
-mad r2.y, r2, r1.w, c16.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v4.z, c15.x, c15.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c15.y
-add r5.x, r2, c19.y
-mad r1.w, r2.y, r1, c16.y
+add r2.x, -r1.w, c18.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v4.y
+add r1.w, -r0, c16
+add r2.z, -r2.x, c15.y
+mad r2.y, r2.x, c15.z, c15.w
+mad r2.y, r2, r2.x, c16.x
+cmp r1.w, v4.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c16.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v4.y, c15.x, c15.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c16.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c16.z, r3.x
-mad r0.w, r1, c16, r0
-mad r1.w, r2, c16, r2.y
-mul r1.w, r1, c17.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v4.y, c15, c15.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c16.z, r2.y
+mad r0.w, r2.x, c16, r0
 mul r0.w, r0, c17.x
-dsx r2.zw, v4.xyxy
-dsy r3.xy, v4
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c19.x
-mul r4.x, r2.y, c19
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c20.z
+cmp r1.w, v4.x, r1, -r1
+mul r2.x, r1.w, c19
 mul r1.w, v1, c7.x
 mul_sat r1.w, r1, c16.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c19.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c20.z
 mul r0.xy, r2.zwzw, c20.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -97684,7 +97684,7 @@ SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTextureB0] 2D
 SetTexture 5 [_LightTexture0] CUBE
 "ps_3_0
-; 170 ALU, 10 TEX
+; 170 ALU, 14 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -97716,91 +97716,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c15.y
 frc r1.w, r0
+dsy r2.xy, v4
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v4.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c5
-mad_pp r2.xy, r1, c19.y, r2
-mad r0.x, r0.z, c17.y, c17.z
-mad r1.x, r0, r0.z, c17.w
-mad r2.z, r1.x, r0, c18.x
-mul r0.xy, r2, c4.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c18.y
-mul r0.xy, r2, c6.x
-mad r2.x, r2.z, r0.z, c18.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c18.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c15.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c5.xyxy
+mad r0.z, r0.w, c15, c15.w
+mad r0.z, r0.w, r0, c16.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c19.y, r1.zwzw
+mad r0.z, r0.w, r0, c16.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v4, c15.x, c15.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c16.z, r1
+mad r0.z, r0, c16.w, r1.x
+mul r1.z, r0, c17.x
+mul r1.xy, r0, c4.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v4.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c19.x
+mul r4.x, r1.w, c19
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c17, c17.z
+mad r3.y, r3, r2.w, c17.w
+mul r0.xy, r0, c6.x
+mad r3.y, r3, r2.w, c18.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v4
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c16.w
-cmp r1.x, v4.z, r1.w, r1
-add r3.x, -r0.w, c15.y
-mad r2.w, r0, c15.z, c15
-mad r2.w, r0, r2, c16.x
-mad r0.w, r0, r2, c16.y
+mad r1.x, r3.y, r2.w, c18.y
+mad r1.x, r1, r2.w, c18.z
 add r1.y, r1, c19.w
 mad_sat r1.y, r1, c20.x, c20
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v4.x, r1.x, -r1.x
-mul r2.x, r1.w, c19
-abs r1.w, v4.y
-add r2.z, -r1.w, c15.y
-mad r2.y, r1.w, c15.z, c15.w
-mad r2.y, r2, r1.w, c16.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v4.z, c15.x, c15.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c15.y
-add r5.x, r2, c19.y
-mad r1.w, r2.y, r1, c16.y
+add r2.x, -r1.w, c18.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v4.y
+add r1.w, -r0, c16
+add r2.z, -r2.x, c15.y
+mad r2.y, r2.x, c15.z, c15.w
+mad r2.y, r2, r2.x, c16.x
+cmp r1.w, v4.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c16.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v4.y, c15.x, c15.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c16.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c16.z, r3.x
-mad r0.w, r1, c16, r0
-mad r1.w, r2, c16, r2.y
-mul r1.w, r1, c17.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v4.y, c15, c15.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c16.z, r2.y
+mad r0.w, r2.x, c16, r0
 mul r0.w, r0, c17.x
-dsx r2.zw, v4.xyxy
-dsy r3.xy, v4
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c19.x
-mul r4.x, r2.y, c19
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c20.z
+cmp r1.w, v4.x, r1, -r1
+mul r2.x, r1.w, c19
 mul r1.w, v1, c7.x
 mul_sat r1.w, r1, c16.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c19.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c20.z
 mul r0.xy, r2.zwzw, c20.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -97911,7 +97911,7 @@ SetTexture 2 [_DetailVertTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 "ps_3_0
-; 168 ALU, 9 TEX
+; 168 ALU, 13 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -97942,91 +97942,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c15.y
 frc r1.w, r0
+dsy r2.xy, v4
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v4.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c5
-mad_pp r2.xy, r1, c19.y, r2
-mad r0.x, r0.z, c17.y, c17.z
-mad r1.x, r0, r0.z, c17.w
-mad r2.z, r1.x, r0, c18.x
-mul r0.xy, r2, c4.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c18.y
-mul r0.xy, r2, c6.x
-mad r2.x, r2.z, r0.z, c18.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c18.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c15.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c5.xyxy
+mad r0.z, r0.w, c15, c15.w
+mad r0.z, r0.w, r0, c16.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c19.y, r1.zwzw
+mad r0.z, r0.w, r0, c16.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v4, c15.x, c15.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c16.z, r1
+mad r0.z, r0, c16.w, r1.x
+mul r1.z, r0, c17.x
+mul r1.xy, r0, c4.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v4.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c19.x
+mul r4.x, r1.w, c19
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c17, c17.z
+mad r3.y, r3, r2.w, c17.w
+mul r0.xy, r0, c6.x
+mad r3.y, r3, r2.w, c18.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v4
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c16.w
-cmp r1.x, v4.z, r1.w, r1
-add r3.x, -r0.w, c15.y
-mad r2.w, r0, c15.z, c15
-mad r2.w, r0, r2, c16.x
-mad r0.w, r0, r2, c16.y
+mad r1.x, r3.y, r2.w, c18.y
+mad r1.x, r1, r2.w, c18.z
 add r1.y, r1, c19.w
 mad_sat r1.y, r1, c20.x, c20
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v4.x, r1.x, -r1.x
-mul r2.x, r1.w, c19
-abs r1.w, v4.y
-add r2.z, -r1.w, c15.y
-mad r2.y, r1.w, c15.z, c15.w
-mad r2.y, r2, r1.w, c16.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v4.z, c15.x, c15.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c15.y
-add r5.x, r2, c19.y
-mad r1.w, r2.y, r1, c16.y
+add r2.x, -r1.w, c18.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v4.y
+add r1.w, -r0, c16
+add r2.z, -r2.x, c15.y
+mad r2.y, r2.x, c15.z, c15.w
+mad r2.y, r2, r2.x, c16.x
+cmp r1.w, v4.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c16.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v4.y, c15.x, c15.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c16.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c16.z, r3.x
-mad r0.w, r1, c16, r0
-mad r1.w, r2, c16, r2.y
-mul r1.w, r1, c17.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v4.y, c15, c15.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c16.z, r2.y
+mad r0.w, r2.x, c16, r0
 mul r0.w, r0, c17.x
-dsx r2.zw, v4.xyxy
-dsy r3.xy, v4
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c19.x
-mul r4.x, r2.y, c19
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c20.z
+cmp r1.w, v4.x, r1, -r1
+mul r2.x, r1.w, c19
 mul r1.w, v1, c7.x
 mul_sat r1.w, r1, c16.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c19.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c20.z
 mul r0.xy, r2.zwzw, c20.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -98137,7 +98137,7 @@ SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
 SetTexture 6 [_ShadowMapTexture] 2D
 "ps_3_0
-; 179 ALU, 11 TEX
+; 179 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -98171,91 +98171,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c16.y
 frc r1.w, r0
+dsy r2.xy, v5
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v5.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c6
-mad_pp r2.xy, r1, c20.y, r2
-mad r0.x, r0.z, c18.y, c18.z
-mad r1.x, r0, r0.z, c18.w
-mad r2.z, r1.x, r0, c19.x
-mul r0.xy, r2, c5.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c19.y
-mul r0.xy, r2, c7.x
-mad r2.x, r2.z, r0.z, c19.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c19.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c16.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c6.xyxy
+mad r0.z, r0.w, c16, c16.w
+mad r0.z, r0.w, r0, c17.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c20.y, r1.zwzw
+mad r0.z, r0.w, r0, c17.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v5, c16.x, c16.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c17.z, r1
+mad r0.z, r0, c17.w, r1.x
+mul r1.z, r0, c18.x
+mul r1.xy, r0, c5.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c20.x
+mul r4.x, r1.w, c20
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c18, c18.z
+mad r3.y, r3, r2.w, c18.w
+mul r0.xy, r0, c7.x
+mad r3.y, r3, r2.w, c19.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v5
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c17.w
-cmp r1.x, v5.z, r1.w, r1
-add r3.x, -r0.w, c16.y
-mad r2.w, r0, c16.z, c16
-mad r2.w, r0, r2, c17.x
-mad r0.w, r0, r2, c17.y
+mad r1.x, r3.y, r2.w, c19.y
+mad r1.x, r1, r2.w, c19.z
 add r1.y, r1, c20.w
 mad_sat r1.y, r1, c21.x, c21
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v5.x, r1.x, -r1.x
-mul r2.x, r1.w, c20
-abs r1.w, v5.y
-add r2.z, -r1.w, c16.y
-mad r2.y, r1.w, c16.z, c16.w
-mad r2.y, r2, r1.w, c17.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v5.z, c16.x, c16.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c16.y
-add r5.x, r2, c20.y
-mad r1.w, r2.y, r1, c17.y
+add r2.x, -r1.w, c19.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v5.y
+add r1.w, -r0, c17
+add r2.z, -r2.x, c16.y
+mad r2.y, r2.x, c16.z, c16.w
+mad r2.y, r2, r2.x, c17.x
+cmp r1.w, v5.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c17.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v5.y, c16.x, c16.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c17.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c17.z, r3.x
-mad r0.w, r1, c17, r0
-mad r1.w, r2, c17, r2.y
-mul r1.w, r1, c18.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v5.y, c16, c16.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c17.z, r2.y
+mad r0.w, r2.x, c17, r0
 mul r0.w, r0, c18.x
-dsx r2.zw, v5.xyxy
-dsy r3.xy, v5
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c20.x
-mul r4.x, r2.y, c20
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c21.z
+cmp r1.w, v5.x, r1, -r1
+mul r2.x, r1.w, c20
 mul r1.w, v1, c8.x
 mul_sat r1.w, r1, c17.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c20.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c21.z
 mul r0.xy, r2.zwzw, c21.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -98379,7 +98379,7 @@ SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
 SetTexture 6 [_ShadowMapTexture] 2D
 "ps_3_0
-; 178 ALU, 11 TEX
+; 178 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -98413,91 +98413,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c16.y
 frc r1.w, r0
+dsy r2.xy, v5
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v5.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c6
-mad_pp r2.xy, r1, c20.y, r2
-mad r0.x, r0.z, c18.y, c18.z
-mad r1.x, r0, r0.z, c18.w
-mad r2.z, r1.x, r0, c19.x
-mul r0.xy, r2, c5.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c19.y
-mul r0.xy, r2, c7.x
-mad r2.x, r2.z, r0.z, c19.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c19.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c16.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c6.xyxy
+mad r0.z, r0.w, c16, c16.w
+mad r0.z, r0.w, r0, c17.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c20.y, r1.zwzw
+mad r0.z, r0.w, r0, c17.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v5, c16.x, c16.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c17.z, r1
+mad r0.z, r0, c17.w, r1.x
+mul r1.z, r0, c18.x
+mul r1.xy, r0, c5.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c20.x
+mul r4.x, r1.w, c20
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c18, c18.z
+mad r3.y, r3, r2.w, c18.w
+mul r0.xy, r0, c7.x
+mad r3.y, r3, r2.w, c19.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v5
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c17.w
-cmp r1.x, v5.z, r1.w, r1
-add r3.x, -r0.w, c16.y
-mad r2.w, r0, c16.z, c16
-mad r2.w, r0, r2, c17.x
-mad r0.w, r0, r2, c17.y
+mad r1.x, r3.y, r2.w, c19.y
+mad r1.x, r1, r2.w, c19.z
 add r1.y, r1, c20.w
 mad_sat r1.y, r1, c21.x, c21
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v5.x, r1.x, -r1.x
-mul r2.x, r1.w, c20
-abs r1.w, v5.y
-add r2.z, -r1.w, c16.y
-mad r2.y, r1.w, c16.z, c16.w
-mad r2.y, r2, r1.w, c17.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v5.z, c16.x, c16.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c16.y
-add r5.x, r2, c20.y
-mad r1.w, r2.y, r1, c17.y
+add r2.x, -r1.w, c19.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v5.y
+add r1.w, -r0, c17
+add r2.z, -r2.x, c16.y
+mad r2.y, r2.x, c16.z, c16.w
+mad r2.y, r2, r2.x, c17.x
+cmp r1.w, v5.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c17.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v5.y, c16.x, c16.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c17.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c17.z, r3.x
-mad r0.w, r1, c17, r0
-mad r1.w, r2, c17, r2.y
-mul r1.w, r1, c18.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v5.y, c16, c16.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c17.z, r2.y
+mad r0.w, r2.x, c17, r0
 mul r0.w, r0, c18.x
-dsx r2.zw, v5.xyxy
-dsy r3.xy, v5
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c20.x
-mul r4.x, r2.y, c20
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c21.z
+cmp r1.w, v5.x, r1, -r1
+mul r2.x, r1.w, c20
 mul r1.w, v1, c8.x
 mul_sat r1.w, r1, c17.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c20.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c21.z
 mul r0.xy, r2.zwzw, c21.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -98612,7 +98612,7 @@ SetTexture 2 [_DetailVertTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] 2D
 "ps_3_0
-; 168 ALU, 9 TEX
+; 168 ALU, 13 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -98643,91 +98643,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c15.y
 frc r1.w, r0
+dsy r2.xy, v4
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v4.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c5
-mad_pp r2.xy, r1, c19.y, r2
-mad r0.x, r0.z, c17.y, c17.z
-mad r1.x, r0, r0.z, c17.w
-mad r2.z, r1.x, r0, c18.x
-mul r0.xy, r2, c4.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c18.y
-mul r0.xy, r2, c6.x
-mad r2.x, r2.z, r0.z, c18.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c18.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c15.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c5.xyxy
+mad r0.z, r0.w, c15, c15.w
+mad r0.z, r0.w, r0, c16.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c19.y, r1.zwzw
+mad r0.z, r0.w, r0, c16.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v4, c15.x, c15.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c16.z, r1
+mad r0.z, r0, c16.w, r1.x
+mul r1.z, r0, c17.x
+mul r1.xy, r0, c4.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v4.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c19.x
+mul r4.x, r1.w, c19
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c17, c17.z
+mad r3.y, r3, r2.w, c17.w
+mul r0.xy, r0, c6.x
+mad r3.y, r3, r2.w, c18.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v4
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c16.w
-cmp r1.x, v4.z, r1.w, r1
-add r3.x, -r0.w, c15.y
-mad r2.w, r0, c15.z, c15
-mad r2.w, r0, r2, c16.x
-mad r0.w, r0, r2, c16.y
+mad r1.x, r3.y, r2.w, c18.y
+mad r1.x, r1, r2.w, c18.z
 add r1.y, r1, c19.w
 mad_sat r1.y, r1, c20.x, c20
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v4.x, r1.x, -r1.x
-mul r2.x, r1.w, c19
-abs r1.w, v4.y
-add r2.z, -r1.w, c15.y
-mad r2.y, r1.w, c15.z, c15.w
-mad r2.y, r2, r1.w, c16.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v4.z, c15.x, c15.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c15.y
-add r5.x, r2, c19.y
-mad r1.w, r2.y, r1, c16.y
+add r2.x, -r1.w, c18.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v4.y
+add r1.w, -r0, c16
+add r2.z, -r2.x, c15.y
+mad r2.y, r2.x, c15.z, c15.w
+mad r2.y, r2, r2.x, c16.x
+cmp r1.w, v4.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c16.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v4.y, c15.x, c15.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c16.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c16.z, r3.x
-mad r0.w, r1, c16, r0
-mad r1.w, r2, c16, r2.y
-mul r1.w, r1, c17.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v4.y, c15, c15.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c16.z, r2.y
+mad r0.w, r2.x, c16, r0
 mul r0.w, r0, c17.x
-dsx r2.zw, v4.xyxy
-dsy r3.xy, v4
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c19.x
-mul r4.x, r2.y, c19
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c20.z
+cmp r1.w, v4.x, r1, -r1
+mul r2.x, r1.w, c19
 mul r1.w, v1, c7.x
 mul_sat r1.w, r1, c16.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c19.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c20.z
 mul r0.xy, r2.zwzw, c20.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -98836,7 +98836,7 @@ SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] 2D
 SetTexture 5 [_LightTexture0] 2D
 "ps_3_0
-; 169 ALU, 10 TEX
+; 169 ALU, 14 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -98869,91 +98869,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c15.y
 frc r1.w, r0
+dsy r2.xy, v5
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v5.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c5
-mad_pp r2.xy, r1, c19.y, r2
-mad r0.x, r0.z, c17.y, c17.z
-mad r1.x, r0, r0.z, c17.w
-mad r2.z, r1.x, r0, c18.x
-mul r0.xy, r2, c4.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c18.y
-mul r0.xy, r2, c6.x
-mad r2.x, r2.z, r0.z, c18.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c18.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c15.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c5.xyxy
+mad r0.z, r0.w, c15, c15.w
+mad r0.z, r0.w, r0, c16.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c19.y, r1.zwzw
+mad r0.z, r0.w, r0, c16.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v5, c15.x, c15.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c16.z, r1
+mad r0.z, r0, c16.w, r1.x
+mul r1.z, r0, c17.x
+mul r1.xy, r0, c4.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c19.x
+mul r4.x, r1.w, c19
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c17, c17.z
+mad r3.y, r3, r2.w, c17.w
+mul r0.xy, r0, c6.x
+mad r3.y, r3, r2.w, c18.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v5
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c16.w
-cmp r1.x, v5.z, r1.w, r1
-add r3.x, -r0.w, c15.y
-mad r2.w, r0, c15.z, c15
-mad r2.w, r0, r2, c16.x
-mad r0.w, r0, r2, c16.y
+mad r1.x, r3.y, r2.w, c18.y
+mad r1.x, r1, r2.w, c18.z
 add r1.y, r1, c19.w
 mad_sat r1.y, r1, c20.x, c20
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v5.x, r1.x, -r1.x
-mul r2.x, r1.w, c19
-abs r1.w, v5.y
-add r2.z, -r1.w, c15.y
-mad r2.y, r1.w, c15.z, c15.w
-mad r2.y, r2, r1.w, c16.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v5.z, c15.x, c15.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c15.y
-add r5.x, r2, c19.y
-mad r1.w, r2.y, r1, c16.y
+add r2.x, -r1.w, c18.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v5.y
+add r1.w, -r0, c16
+add r2.z, -r2.x, c15.y
+mad r2.y, r2.x, c15.z, c15.w
+mad r2.y, r2, r2.x, c16.x
+cmp r1.w, v5.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c16.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v5.y, c15.x, c15.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c16.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c16.z, r3.x
-mad r0.w, r1, c16, r0
-mad r1.w, r2, c16, r2.y
-mul r1.w, r1, c17.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v5.y, c15, c15.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c16.z, r2.y
+mad r0.w, r2.x, c16, r0
 mul r0.w, r0, c17.x
-dsx r2.zw, v5.xyxy
-dsy r3.xy, v5
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c19.x
-mul r4.x, r2.y, c19
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c20.z
+cmp r1.w, v5.x, r1, -r1
+mul r2.x, r1.w, c19
 mul r1.w, v1, c7.x
 mul_sat r1.w, r1, c16.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c19.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c20.z
 mul r0.xy, r2.zwzw, c20.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -99066,7 +99066,7 @@ SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] CUBE
 SetTexture 5 [_LightTexture0] 2D
 "ps_3_0
-; 178 ALU, 10 TEX
+; 178 ALU, 14 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -99091,98 +99091,98 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r1.xyz, v5
-add r0.xyz, r1, -r1.zxyw
+abs r2.xyz, v5
+add r0.xyz, r2, -r2.zxyw
 add r0.w, r0.x, c17.y
-frc r1.w, r0
-add_sat r0.w, r0, -r1
-mad r0.xyz, r0.w, r0, r1.zxyw
-add r1.w, r1.y, -r0.x
-add r2.y, r1.w, c17
-abs r0.w, v5.z
-max r1.w, r1.x, r0
-rcp r2.x, r1.w
-min r1.w, r1.x, r0
-mul r1.w, r1, r2.x
-frc r2.z, r2.y
-add_sat r3.x, r2.y, -r2.z
-add_pp r2.xyz, r1.yxzw, -r0
-mad_pp r0.xyz, r3.x, r2, r0
-mul r2.w, r1, r1
-mad r1.y, r2.w, c19, c19.z
-mad r1.y, r1, r2.w, c19.w
-abs_pp r1.z, r0.x
-mad r0.x, r1.y, r2.w, c20
-mad r0.x, r0, r2.w, c20.y
-mad r0.x, r0, r2.w, c20.z
-rcp_pp r1.y, r1.z
-mul_pp r2.xy, r0.zyzw, r1.y
-mul r0.y, r0.x, r1.w
-mov_pp r2.zw, c7.xyxy
-mad_pp r2.xy, r2, c21.y, r2.zwzw
-add r0.x, r1, -r0.w
-add r0.z, -r0.y, c20.w
-cmp r0.z, -r0.x, r0.y, r0
-mul r0.xy, r2, c6.x
-add r1.w, -r0.z, c18
-cmp r0.z, v5, r0, r1.w
-cmp r1.w, v5.x, r0.z, -r0.z
-mul r2.z, r1.w, c21.x
-mov r3.xyz, v5
-dp3_sat r1.w, v1, -r3
-texld r1.xyz, r0, s1
-mul r0.xy, r2, c8.x
-abs r2.x, v5.y
-texld r0.xyz, r0, s2
-add r2.w, -r2.x, c17.y
-mad r2.y, r2.x, c17.z, c17.w
-mad r2.y, r2, r2.x, c18.x
-add r3.y, -r0.w, c17
-mad r3.x, r0.w, c17.z, c17.w
-mad r3.x, r0.w, r3, c18
-mad r0.w, r0, r3.x, c18.y
-rsq r2.w, r2.w
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-add r1.w, r1, c21
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad r0.xyz, r0.w, r0, r2.zxyw
+add r0.w, r2.y, -r0.x
+add_pp r3.xyz, r2.yxzw, -r0
+abs r2.y, v5.z
+add r0.w, r0, c17.y
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad_pp r0.xyz, r0.w, r3, r0
+add r1.w, -r2.y, c17.y
+mad r1.z, r2.y, c17, c17.w
+mad r1.z, r2.y, r1, c18.x
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.zw, r0.xyzy, r0.x
+max r0.y, r2.x, r2
+rsq r1.w, r1.w
+min r0.x, r2, r2.y
+rcp r0.y, r0.y
+mul r2.z, r0.x, r0.y
+mov_pp r1.xy, c7
+mad_pp r0.xy, r0.zwzw, c21.y, r1
+mul r1.x, r2.z, r2.z
+mul r0.zw, r0.xyxy, c6.x
+mad r1.y, r1.x, c19, c19.z
+mad r1.y, r1, r1.x, c19.w
+mad r1.y, r1, r1.x, c20.x
+mad r1.z, r2.y, r1, c18.y
+rcp r1.w, r1.w
+mul r1.w, r1.z, r1
+cmp r1.z, v5, c17.x, c17.y
+mul r2.w, r1.z, r1
+mad r1.w, -r2, c18.z, r1
+mad r1.z, r1, c18.w, r1.w
+mul r1.z, r1, c19.x
+mad r1.y, r1, r1.x, c20
+mad r2.w, r1.y, r1.x, c20.z
+dsy r1.xy, v5
+mul r1.xy, r1, r1
+add r1.y, r1.x, r1
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+rsq r1.x, r1.z
+rcp r1.x, r1.x
+mul r4.z, r1.x, c21.x
+mul r4.x, r1.y, c21
+texldd r1.xyz, r0.zwzw, s1, r4.zwzw, r4
+mul r0.w, r2, r2.z
+add r0.z, r2.x, -r2.y
+add r1.w, -r0, c20
+cmp r0.w, -r0.z, r0, r1
+add r1.w, -r0, c18
+cmp r1.w, v5.z, r0, r1
+abs r0.w, v5.y
+cmp r2.y, v5.x, r1.w, -r1.w
+mul r3.x, r2.y, c21
+add r2.x, -r0.w, c17.y
+mad r1.w, r0, c17.z, c17
+mad r1.w, r1, r0, c18.x
+mul r0.xy, r0, c8.x
+texldd r0.xyz, r0, s2, r4.zwzw, r4
+rsq r2.x, r2.x
 add_pp r1.xyz, r1, -r0
+mad r0.w, r1, r0, c18.y
+rcp r2.x, r2.x
+mul r1.w, r0, r2.x
+cmp r0.w, v5.y, c17.x, c17.y
+mul r2.x, r0.w, r1.w
+mad r1.w, -r2.x, c18.z, r1
+mad r0.w, r0, c18, r1
+mul r0.w, r0, c19.x
+mov r2.xyz, v5
+dp3_sat r1.w, v1, -r2
+add r1.w, r1, c21
 mad_sat r1.w, r1, c22.x, c22.y
 mad_pp r0.xyz, r1.w, r1, r0
-mul r3.y, r0.w, r3
-cmp r3.x, v5.z, c17, c17.y
-add r5.x, r2.z, c21.y
-mad r2.x, r2.y, r2, c18.y
-rcp r2.w, r2.w
-mul r2.y, r2.x, r2.w
-cmp r2.x, v5.y, c17, c17.y
-mul r2.w, r2.x, r2.y
-mad r0.w, -r2, c18.z, r2.y
-mul r3.z, r3.x, r3.y
-mad r0.w, r2.x, c18, r0
-mad r2.y, -r3.z, c18.z, r3
-mad r2.x, r3, c18.w, r2.y
-mul r2.x, r2, c19
-mul r0.w, r0, c19.x
-dsy r3.xy, v5
-mul r3.xy, r3, r3
+add r5.x, r3, c21.y
 mov r5.y, r0.w
-dsx r4.w, r2.x
-dsy r4.y, r2.x
-dsx r2.xy, v5
-mul r2.xy, r2, r2
-add r2.x, r2, r2.y
-add r2.y, r3.x, r3
-rsq r2.x, r2.x
-rcp r2.x, r2.x
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r4.z, r2.x, c21.x
-mul r4.x, r2.y, c21
+mov r3.y, r0.w
 texldd r2.yw, r5, s3, r4.zwzw, r4
 add r2.xy, r2.wyzw, c22.z
-mov r2.w, r0
 mul r1.xy, r2, c22.ywzw
-add r2.xy, r2.zwzw, r1
+add r2.xy, r3, r1
 mad r1.w, r2.y, c23.x, c23.y
 mul r0.w, v1, c9.x
 frc r1.w, r1
@@ -99307,7 +99307,7 @@ SetTexture 4 [_ShadowMapTexture] CUBE
 SetTexture 5 [_LightTextureB0] 2D
 SetTexture 6 [_LightTexture0] CUBE
 "ps_3_0
-; 179 ALU, 11 TEX
+; 179 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -99333,98 +99333,98 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r1.xyz, v5
-add r0.xyz, r1, -r1.zxyw
+abs r2.xyz, v5
+add r0.xyz, r2, -r2.zxyw
 add r0.w, r0.x, c17.y
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad r0.xyz, r0.w, r0, r2.zxyw
+add r0.w, r2.y, -r0.x
+add_pp r1.xyz, r2.yxzw, -r0
+abs r2.y, v5.z
+add r0.w, r0, c17.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad r0.xyz, r0.w, r0, r1.zxyw
-add r0.w, r1.y, -r0.x
-add r2.x, r0.w, c17.y
-abs r0.w, v5.z
-frc r2.y, r2.x
-dsy r4.zw, v5.xyxy
-max r1.w, r1.x, r0
-add_sat r2.w, r2.x, -r2.y
-rcp r2.x, r1.w
-min r1.w, r1.x, r0
-mul r1.w, r1, r2.x
-add_pp r2.xyz, r1.yxzw, -r0
-mad_pp r0.xyz, r2.w, r2, r0
-mul r1.y, r1.w, r1.w
-mov r3.xyz, v5
+mad_pp r0.xyz, r0.w, r1, r0
+abs_pp r0.x, r0
+rcp_pp r0.w, r0.x
+add r2.z, -r2.y, c17.y
+mad r1.w, r2.y, c17.z, c17
+mad r1.w, r2.y, r1, c18.x
+rsq r2.z, r2.z
+max r0.x, r2, r2.y
+mul_pp r0.zw, r0.xyzy, r0.w
+rcp r0.y, r0.x
+min r0.x, r2, r2.y
+mul r1.x, r0, r0.y
+mul r1.y, r1.x, r1.x
 mad r1.z, r1.y, c19.y, c19
-abs_pp r2.x, r0
-mad r0.x, r1.z, r1.y, c19.w
-rcp_pp r1.z, r2.x
-mul_pp r2.xy, r0.zyzw, r1.z
-mad r0.x, r0, r1.y, c20
-mad r0.x, r0, r1.y, c20.y
-mad r0.x, r0, r1.y, c20.z
-mul r1.y, r0.x, r1.w
-mov_pp r2.zw, c7.xyxy
-mad_pp r2.xy, r2, c21.y, r2.zwzw
-mul r0.xy, r2, c6.x
-add r0.z, r1.x, -r0.w
-add r1.z, -r1.y, c20.w
-cmp r0.z, -r0, r1.y, r1
-texld r1.xyz, r0, s1
-mul r0.xy, r2, c8.x
-abs r2.y, v5
-add r1.w, -r0.z, c18
-cmp r1.w, v5.z, r0.z, r1
-texld r0.xyz, r0, s2
-cmp r1.w, v5.x, r1, -r1
-mul r2.x, r1.w, c21
-dp3_sat r1.w, v1, -r3
-add r2.w, -r2.y, c17.y
-mad r2.z, r2.y, c17, c17.w
-mad r2.z, r2, r2.y, c18.x
-add r3.y, -r0.w, c17
-mad r3.x, r0.w, c17.z, c17.w
-mad r3.x, r0.w, r3, c18
-mad r0.w, r0, r3.x, c18.y
-add r1.w, r1, c21
-rsq r2.w, r2.w
-rsq r3.y, r3.y
-rcp r3.y, r3.y
+mad r1.z, r1, r1.y, c19.w
+mad r1.z, r1, r1.y, c20.x
+mad r1.z, r1, r1.y, c20.y
+mov_pp r0.xy, c7
+mad_pp r0.xy, r0.zwzw, c21.y, r0
+mul r0.zw, r0.xyxy, c6.x
+mad r1.w, r2.y, r1, c18.y
+rcp r2.z, r2.z
+mul r2.z, r1.w, r2
+cmp r1.w, v5.z, c17.x, c17.y
+mul r2.w, r1, r2.z
+mad r2.z, -r2.w, c18, r2
+mad r1.w, r1, c18, r2.z
+mad r1.y, r1.z, r1, c20.z
+mul r1.z, r1.w, c19.x
+mul r2.z, r1.y, r1.x
+dsy r1.xy, v5
+mul r1.xy, r1, r1
+add r1.y, r1.x, r1
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+dsy r3.y, r1.z
+dsx r3.w, r1.z
+dsx r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+rsq r1.x, r1.z
+rcp r1.x, r1.x
+mul r3.z, r1.x, c21.x
+mul r3.x, r1.y, c21
+texldd r1.xyz, r0.zwzw, s1, r3.zwzw, r3
+add r0.z, r2.x, -r2.y
+add r0.w, -r2.z, c20
+cmp r0.w, -r0.z, r2.z, r0
+add r1.w, -r0, c18
+cmp r0.w, v5.z, r0, r1
+cmp r1.w, v5.x, r0, -r0
+abs r0.w, v5.y
+mul r4.z, r1.w, c21.x
+add r2.x, -r0.w, c17.y
+mad r1.w, r0, c17.z, c17
+mad r1.w, r1, r0, c18.x
+mul r0.xy, r0, c8.x
+texldd r0.xyz, r0, s2, r3.zwzw, r3
+rsq r2.x, r2.x
 add_pp r1.xyz, r1, -r0
+mad r0.w, r1, r0, c18.y
+rcp r2.x, r2.x
+mul r1.w, r0, r2.x
+cmp r0.w, v5.y, c17.x, c17.y
+mul r2.x, r0.w, r1.w
+mad r1.w, -r2.x, c18.z, r1
+mad r0.w, r0, c18, r1
+mul r0.w, r0, c19.x
+mov r2.xyz, v5
+dp3_sat r1.w, v1, -r2
+add r1.w, r1, c21
 mad_sat r1.w, r1, c22.x, c22.y
 mad_pp r0.xyz, r1.w, r1, r0
-mul r3.y, r0.w, r3
-cmp r3.x, v5.z, c17, c17.y
-mul r3.z, r3.x, r3.y
-add r4.x, r2, c21.y
-mad r2.y, r2.z, r2, c18
-rcp r2.w, r2.w
-mul r2.w, r2.y, r2
-cmp r2.y, v5, c17.x, c17
-mul r2.z, r2.y, r2.w
-mad r0.w, -r2.z, c18.z, r2
-mad r0.w, r2.y, c18, r0
-mad r2.z, -r3, c18, r3.y
-mad r2.y, r3.x, c18.w, r2.z
-mul r2.y, r2, c19.x
-mul r0.w, r0, c19.x
-dsx r2.zw, v5.xyxy
-mul r2.zw, r2, r2
-dsy r3.y, r2
-dsx r3.w, r2.y
-add r2.y, r2.z, r2.w
-mul r4.zw, r4, r4
-add r2.z, r4, r4.w
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-rsq r2.z, r2.z
-rcp r2.z, r2.z
-mul r3.z, r2.y, c21.x
-mul r3.x, r2.z, c21
+add r4.x, r4.z, c21.y
 mov r4.y, r0.w
 texldd r2.yw, r4, s3, r3.zwzw, r3
-add r2.zw, r2.xywy, c22.z
-mov r2.y, r0.w
-mul r2.zw, r2, c22.xyyw
-add r4.zw, r2.xyxy, r2
+add r2.xy, r2.wyzw, c22.z
+mov r4.w, r0
+mul r2.xy, r2, c22.ywzw
+add r4.zw, r4, r2.xyxy
 mad r1.w, r4, c23.x, c23.y
 mul r0.w, v1, c9.x
 add_pp r1.xyz, -r0, c17.y
@@ -99554,7 +99554,7 @@ SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
 SetTexture 6 [_ShadowMapTexture] 2D
 "ps_3_0
-; 187 ALU, 14 TEX
+; 187 ALU, 18 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -99579,98 +99579,98 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r1.xyz, v5
-add r0.xyz, r1, -r1.zxyw
+abs r2.xyz, v5
+add r0.xyz, r2, -r2.zxyw
 add r0.w, r0.x, c20.y
-frc r1.w, r0
-add_sat r0.w, r0, -r1
-mad r0.xyz, r0.w, r0, r1.zxyw
-add r1.w, r1.y, -r0.x
-add r2.y, r1.w, c20
-abs r0.w, v5.z
-max r1.w, r1.x, r0
-rcp r2.x, r1.w
-min r1.w, r1.x, r0
-mul r1.w, r1, r2.x
-frc r2.z, r2.y
-add_sat r3.x, r2.y, -r2.z
-add_pp r2.xyz, r1.yxzw, -r0
-mad_pp r0.xyz, r3.x, r2, r0
-mul r2.w, r1, r1
-mad r1.y, r2.w, c22, c22.z
-mad r1.y, r1, r2.w, c22.w
-abs_pp r1.z, r0.x
-mad r0.x, r1.y, r2.w, c23
-mad r0.x, r0, r2.w, c23.y
-mad r0.x, r0, r2.w, c23.z
-rcp_pp r1.y, r1.z
-mul_pp r2.xy, r0.zyzw, r1.y
-mul r0.y, r0.x, r1.w
-mov_pp r2.zw, c10.xyxy
-mad_pp r2.xy, r2, c24.y, r2.zwzw
-add r0.x, r1, -r0.w
-add r0.z, -r0.y, c23.w
-cmp r0.z, -r0.x, r0.y, r0
-mul r0.xy, r2, c9.x
-add r1.w, -r0.z, c21
-cmp r0.z, v5, r0, r1.w
-cmp r1.w, v5.x, r0.z, -r0.z
-mul r2.z, r1.w, c24.x
-mov r3.xyz, v5
-dp3_sat r1.w, v1, -r3
-texld r1.xyz, r0, s1
-mul r0.xy, r2, c11.x
-abs r2.x, v5.y
-texld r0.xyz, r0, s2
-add r2.w, -r2.x, c20.y
-mad r2.y, r2.x, c20.z, c20.w
-mad r2.y, r2, r2.x, c21.x
-add r3.y, -r0.w, c20
-mad r3.x, r0.w, c20.z, c20.w
-mad r3.x, r0.w, r3, c21
-mad r0.w, r0, r3.x, c21.y
-rsq r2.w, r2.w
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-add r1.w, r1, c24
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad r0.xyz, r0.w, r0, r2.zxyw
+add r0.w, r2.y, -r0.x
+add_pp r3.xyz, r2.yxzw, -r0
+abs r2.y, v5.z
+add r0.w, r0, c20.y
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad_pp r0.xyz, r0.w, r3, r0
+add r1.w, -r2.y, c20.y
+mad r1.z, r2.y, c20, c20.w
+mad r1.z, r2.y, r1, c21.x
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.zw, r0.xyzy, r0.x
+max r0.y, r2.x, r2
+rsq r1.w, r1.w
+min r0.x, r2, r2.y
+rcp r0.y, r0.y
+mul r2.z, r0.x, r0.y
+mov_pp r1.xy, c10
+mad_pp r0.xy, r0.zwzw, c24.y, r1
+mul r1.x, r2.z, r2.z
+mul r0.zw, r0.xyxy, c9.x
+mad r1.y, r1.x, c22, c22.z
+mad r1.y, r1, r1.x, c22.w
+mad r1.y, r1, r1.x, c23.x
+mad r1.z, r2.y, r1, c21.y
+rcp r1.w, r1.w
+mul r1.w, r1.z, r1
+cmp r1.z, v5, c20.x, c20.y
+mul r2.w, r1.z, r1
+mad r1.w, -r2, c21.z, r1
+mad r1.z, r1, c21.w, r1.w
+mul r1.z, r1, c22.x
+mad r1.y, r1, r1.x, c23
+mad r2.w, r1.y, r1.x, c23.z
+dsy r1.xy, v5
+mul r1.xy, r1, r1
+add r1.y, r1.x, r1
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+rsq r1.x, r1.z
+rcp r1.x, r1.x
+mul r4.z, r1.x, c24.x
+mul r4.x, r1.y, c24
+texldd r1.xyz, r0.zwzw, s1, r4.zwzw, r4
+mul r0.w, r2, r2.z
+add r0.z, r2.x, -r2.y
+add r1.w, -r0, c23
+cmp r0.w, -r0.z, r0, r1
+add r1.w, -r0, c21
+cmp r1.w, v5.z, r0, r1
+abs r0.w, v5.y
+cmp r2.y, v5.x, r1.w, -r1.w
+mul r3.x, r2.y, c24
+add r2.x, -r0.w, c20.y
+mad r1.w, r0, c20.z, c20
+mad r1.w, r1, r0, c21.x
+mul r0.xy, r0, c11.x
+texldd r0.xyz, r0, s2, r4.zwzw, r4
+rsq r2.x, r2.x
 add_pp r1.xyz, r1, -r0
+mad r0.w, r1, r0, c21.y
+rcp r2.x, r2.x
+mul r1.w, r0, r2.x
+cmp r0.w, v5.y, c20.x, c20.y
+mul r2.x, r0.w, r1.w
+mad r1.w, -r2.x, c21.z, r1
+mad r0.w, r0, c21, r1
+mul r0.w, r0, c22.x
+mov r2.xyz, v5
+dp3_sat r1.w, v1, -r2
+add r1.w, r1, c24
 mad_sat r1.w, r1, c25.x, c25.y
 mad_pp r0.xyz, r1.w, r1, r0
-mul r3.y, r0.w, r3
-cmp r3.x, v5.z, c20, c20.y
-add r5.x, r2.z, c24.y
-mad r2.x, r2.y, r2, c21.y
-rcp r2.w, r2.w
-mul r2.y, r2.x, r2.w
-cmp r2.x, v5.y, c20, c20.y
-mul r2.w, r2.x, r2.y
-mad r0.w, -r2, c21.z, r2.y
-mul r3.z, r3.x, r3.y
-mad r0.w, r2.x, c21, r0
-mad r2.y, -r3.z, c21.z, r3
-mad r2.x, r3, c21.w, r2.y
-mul r2.x, r2, c22
-mul r0.w, r0, c22.x
-dsy r3.xy, v5
+add r5.x, r3, c24.y
 mov r5.y, r0.w
-dsx r4.w, r2.x
-dsy r4.y, r2.x
-dsx r2.xy, v5
-mul r2.xy, r2, r2
-add r2.x, r2, r2.y
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.x, r2.x
-rcp r2.x, r2.x
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r4.z, r2.x, c24.x
-mul r4.x, r2.y, c24
 texldd r2.yw, r5, s3, r4.zwzw, r4
 add r2.xy, r2.wyzw, c25.z
-mov r2.w, r0
+mov r3.y, r0.w
 mul r1.xy, r2, c25.ywzw
-add r3.xy, r2.zwzw, r1
+add r3.xy, r3, r1
 mad r1.w, r3.y, c26.x, c26.y
 mul r0.w, v1, c12.x
 add_pp r1.xyz, -r0, c20.y
@@ -99811,7 +99811,7 @@ SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
 SetTexture 6 [_ShadowMapTexture] 2D
 "ps_3_0
-; 187 ALU, 14 TEX
+; 187 ALU, 18 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -99836,102 +99836,102 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r0.xyz, v5
-add r1.xyz, r0, -r0.zxyw
-add r0.w, r1.x, c20.y
+abs r1.xyz, v5
+add r0.xyz, r1, -r1.zxyw
+add r0.w, r0.x, c20.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad r1.xyz, r0.w, r1, r0.zxyw
-add r1.w, r0.y, -r1.x
-add r2.y, r1.w, c20
-abs r0.w, v5.z
-max r1.w, r0.x, r0
-frc r2.z, r2.y
-rcp r2.x, r1.w
-min r1.w, r0.x, r0
-add_pp r3.xyz, r0.yxzw, -r1
-mul r1.w, r1, r2.x
-mul r2.x, r1.w, r1.w
-add_sat r2.y, r2, -r2.z
-mad_pp r1.xyz, r2.y, r3, r1
-mad r0.y, r2.x, c22, c22.z
-mad r0.y, r0, r2.x, c22.w
-mad r0.y, r0, r2.x, c23.x
-mad r0.y, r0, r2.x, c23
-mad r0.y, r0, r2.x, c23.z
-abs_pp r0.z, r1.x
-rcp_pp r0.z, r0.z
-add r3.y, -r0.w, c20
-rsq r3.y, r3.y
-mul r0.y, r0, r1.w
-mul_pp r1.xy, r1.zyzw, r0.z
-mov_pp r2.xy, c10
-mad_pp r2.xy, r1, c24.y, r2
-add r0.x, r0, -r0.w
-add r0.z, -r0.y, c23.w
-cmp r0.z, -r0.x, r0.y, r0
-mul r0.xy, r2, c9.x
-add r1.w, -r0.z, c21
-cmp r0.z, v5, r0, r1.w
-texld r1.xyz, r0, s1
-cmp r1.w, v5.x, r0.z, -r0.z
-mul r3.x, r1.w, c24
-mul r0.xy, r2, c11.x
-texld r0.xyz, r0, s2
-add_pp r2.xyz, r1, -r0
-mov r1.xyz, v5
-dp3_sat r2.w, v1, -r1
-abs r1.w, v5.y
-add r1.y, -r1.w, c20
-mad r1.x, r1.w, c20.z, c20.w
-mad r1.x, r1, r1.w, c21
-mad r1.x, r1, r1.w, c21.y
-mad r1.w, r0, c20.z, c20
-mad r1.w, r0, r1, c21.x
-mad r0.w, r0, r1, c21.y
-rsq r1.y, r1.y
-rcp r1.y, r1.y
-mul r1.y, r1.x, r1
-cmp r1.x, v5.y, c20, c20.y
-rcp r3.y, r3.y
-add r2.w, r2, c24
-mad_sat r2.w, r2, c25.x, c25.y
-mad_pp r2.xyz, r2.w, r2, r0
-add r4.z, r3.x, c24.y
-mul r1.z, r1.x, r1.y
-mul r3.y, r0.w, r3
-cmp r1.w, v5.z, c20.x, c20.y
-mad r0.w, -r1.z, c21.z, r1.y
-mul r3.z, r1.w, r3.y
-mad r1.y, -r3.z, c21.z, r3
-mad r0.w, r1.x, c21, r0
-mad r1.x, r1.w, c21.w, r1.y
-mul r1.x, r1, c22
-mul r0.w, r0, c22.x
-dsx r3.zw, v5.xyxy
-mul r3.zw, r3, r3
-dsx r4.y, r1.x
-dsy r1.w, r1.x
-dsy r1.xy, v5
-mul r1.xy, r1, r1
-add r1.y, r1.x, r1
-add r1.z, r3, r3.w
-rsq r1.x, r1.z
-rcp r1.x, r1.x
-rsq r1.y, r1.y
-rcp r1.y, r1.y
-mul r4.x, r1, c24
-mul r1.z, r1.y, c24.x
-mov r4.w, r0
-texldd r3.yw, r4.zwzw, s3, r4, r1.zwzw
-add r1.xy, r3.wyzw, c25.z
-mov r3.y, r0.w
-mul r0.xy, r1, c25.ywzw
-add r1.xy, r3, r0
-mad r1.y, r1, c26.x, c26
-mul r0.w, v1, c12.x
-frc r1.y, r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r0.w, r1.y, -r0.x
+add_pp r2.xyz, r1.yxzw, -r0
+add r0.w, r0, c20.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad_pp r0.xyz, r0.w, r2, r0
+abs r1.y, v5.z
+add r2.y, -r1, c20
+mad r2.x, r1.y, c20.z, c20.w
+mad r2.x, r1.y, r2, c21
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.zw, r0.xyzy, r0.x
+max r0.y, r1.x, r1
+rsq r2.y, r2.y
+dsx r3.xy, v5
+min r0.x, r1, r1.y
+rcp r0.y, r0.y
+mul r2.w, r0.x, r0.y
+mov_pp r1.zw, c10.xyxy
+mad_pp r0.xy, r0.zwzw, c24.y, r1.zwzw
+mul r1.z, r2.w, r2.w
+mad r1.w, r1.z, c22.y, c22.z
+mad r1.w, r1, r1.z, c22
+mad r1.w, r1, r1.z, c23.x
+mad r1.w, r1, r1.z, c23.y
+mul r0.zw, r0.xyxy, c9.x
+mad r3.z, r1.w, r1, c23
+mul r3.xy, r3, r3
+add r1.z, r3.x, r3.y
+mul r3.xy, r0, c11.x
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+mul r4.x, r1.z, c24
+add r0.x, r1, -r1.y
 rcp r6.y, v3.w
+mad r2.x, r1.y, r2, c21.y
+rcp r2.y, r2.y
+mul r2.y, r2.x, r2
+cmp r2.x, v5.z, c20, c20.y
+mul r2.z, r2.x, r2.y
+mad r2.y, -r2.z, c21.z, r2
+mad r2.x, r2, c21.w, r2.y
+mul r2.x, r2, c22
+dsx r4.y, r2.x
+dsy r1.w, r2.x
+dsy r2.xy, v5
+mul r2.xy, r2, r2
+add r2.x, r2, r2.y
+rsq r2.x, r2.x
+rcp r2.x, r2.x
+mul r1.z, r2.x, c24.x
+texldd r2.xyz, r0.zwzw, s1, r4, r1.zwzw
+mul r0.z, r3, r2.w
+add r0.y, -r0.z, c23.w
+cmp r0.w, -r0.x, r0.z, r0.y
+texldd r0.xyz, r3, s2, r4, r1.zwzw
+add r1.x, -r0.w, c21.w
+cmp r1.x, v5.z, r0.w, r1
+abs r0.w, v5.y
+cmp r2.w, v5.x, r1.x, -r1.x
+mul r5.x, r2.w, c24
+add r1.y, -r0.w, c20
+mad r1.x, r0.w, c20.z, c20.w
+mad r1.x, r1, r0.w, c21
+rsq r1.y, r1.y
+add_pp r2.xyz, r2, -r0
+add r4.z, r5.x, c24.y
+mad r0.w, r1.x, r0, c21.y
+rcp r1.y, r1.y
+mul r1.x, r0.w, r1.y
+cmp r0.w, v5.y, c20.x, c20.y
+mul r1.y, r0.w, r1.x
+mad r1.x, -r1.y, c21.z, r1
+mad r0.w, r0, c21, r1.x
+mul r0.w, r0, c22.x
+mov r3.xyz, v5
+dp3_sat r1.x, v1, -r3
+mov r4.w, r0
+mov r5.y, r0.w
+add r2.w, r1.x, c24
+texldd r3.yw, r4.zwzw, s3, r4, r1.zwzw
+mad_sat r2.w, r2, c25.x, c25.y
+mul r0.w, v1, c12.x
+mad_pp r2.xyz, r2.w, r2, r0
+add r1.xy, r3.wyzw, c25.z
+mul r0.xy, r1, c25.ywzw
+add r1.xy, r5, r0
+mad r1.y, r1, c26.x, c26
+frc r1.y, r1
 add_pp r0.xyz, -r2, c20.y
 mul_sat r0.w, r0, c21.z
 mad_pp r0.xyz, r0.w, r0, r2
@@ -100059,7 +100059,7 @@ SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] CUBE
 SetTexture 5 [_LightTexture0] 2D
 "ps_3_0
-; 186 ALU, 13 TEX
+; 186 ALU, 17 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -100085,98 +100085,98 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r1.xyz, v5
-add r0.xyz, r1, -r1.zxyw
+abs r2.xyz, v5
+add r0.xyz, r2, -r2.zxyw
 add r0.w, r0.x, c17.y
-frc r1.w, r0
-add_sat r0.w, r0, -r1
-mad r0.xyz, r0.w, r0, r1.zxyw
-add r0.w, r1.y, -r0.x
-add r2.x, r0.w, c17.y
-abs r0.w, v5.z
-frc r2.y, r2.x
-max r1.w, r1.x, r0
-add_sat r2.w, r2.x, -r2.y
-rcp r2.x, r1.w
-min r1.w, r1.x, r0
-mul r1.w, r1, r2.x
-add_pp r2.xyz, r1.yxzw, -r0
-mad_pp r2.xyz, r2.w, r2, r0
-mul r1.y, r1.w, r1.w
-mad r0.x, r1.y, c19.y, c19.z
-mad r0.x, r0, r1.y, c19.w
-mad r0.x, r0, r1.y, c20
-mad r0.x, r0, r1.y, c20.y
-mad r0.x, r0, r1.y, c20.z
-mul r1.y, r0.x, r1.w
-abs_pp r0.y, r2.x
-rcp_pp r0.y, r0.y
-mul_pp r2.xy, r2.zyzw, r0.y
-mov_pp r2.zw, c7.xyxy
-mad_pp r2.xy, r2, c21.y, r2.zwzw
-mul r0.xy, r2, c6.x
-mov r3.xyz, v5
-add r0.z, r1.x, -r0.w
-add r1.z, -r1.y, c20.w
-cmp r0.z, -r0, r1.y, r1
-texld r1.xyz, r0, s1
-mul r0.xy, r2, c8.x
-abs r2.y, v5
-add r1.w, -r0.z, c18
-cmp r1.w, v5.z, r0.z, r1
-texld r0.xyz, r0, s2
-cmp r1.w, v5.x, r1, -r1
-mul r2.x, r1.w, c21
-dp3_sat r1.w, v1, -r3
-add r2.w, -r2.y, c17.y
-mad r2.z, r2.y, c17, c17.w
-mad r2.z, r2, r2.y, c18.x
-add r3.y, -r0.w, c17
-mad r3.x, r0.w, c17.z, c17.w
-mad r3.x, r0.w, r3, c18
-mad r0.w, r0, r3.x, c18.y
-add r1.w, r1, c21
-rsq r2.w, r2.w
-rsq r3.y, r3.y
-rcp r3.y, r3.y
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad r0.xyz, r0.w, r0, r2.zxyw
+add r0.w, r2.y, -r0.x
+add r0.w, r0, c17.y
+frc r1.x, r0.w
+add_pp r3.xyz, r2.yxzw, -r0
+abs r1.w, v5.z
+add_sat r0.w, r0, -r1.x
+mad_pp r0.xyz, r0.w, r3, r0
+abs_pp r0.x, r0
+rcp_pp r0.w, r0.x
+add r2.z, -r1.w, c17.y
+mad r2.y, r1.w, c17.z, c17.w
+mad r2.y, r1.w, r2, c18.x
+rsq r2.z, r2.z
+max r0.x, r2, r1.w
+mul_pp r0.zw, r0.xyzy, r0.w
+rcp r0.y, r0.x
+min r0.x, r2, r1.w
+mul r1.x, r0, r0.y
+mul r1.y, r1.x, r1.x
+mad r1.z, r1.y, c19.y, c19
+mad r1.z, r1, r1.y, c19.w
+mad r1.z, r1, r1.y, c20.x
+mad r1.z, r1, r1.y, c20.y
+mov_pp r0.xy, c7
+mad_pp r0.xy, r0.zwzw, c21.y, r0
+mul r0.zw, r0.xyxy, c6.x
+mad r2.y, r1.w, r2, c18
+rcp r2.z, r2.z
+mul r2.z, r2.y, r2
+cmp r2.y, v5.z, c17.x, c17
+mul r2.w, r2.y, r2.z
+mad r2.z, -r2.w, c18, r2
+mad r2.y, r2, c18.w, r2.z
+mad r1.y, r1.z, r1, c20.z
+mul r1.z, r2.y, c19.x
+mul r2.y, r1, r1.x
+dsx r1.xy, v5
+mul r1.xy, r1, r1
+add r1.x, r1, r1.y
+dsy r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+add r1.y, r2.z, r2.w
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+dsx r5.w, r1.z
+dsy r5.y, r1.z
+mul r5.z, r1.x, c21.x
+mul r5.x, r1.y, c21
+texldd r1.xyz, r0.zwzw, s1, r5.zwzw, r5
+add r0.z, r2.x, -r1.w
+add r0.w, -r2.y, c20
+cmp r0.w, -r0.z, r2.y, r0
+add r1.w, -r0, c18
+cmp r0.w, v5.z, r0, r1
+cmp r1.w, v5.x, r0, -r0
+abs r0.w, v5.y
+mul r3.x, r1.w, c21
+add r2.x, -r0.w, c17.y
+mad r1.w, r0, c17.z, c17
+mad r1.w, r1, r0, c18.x
+mul r0.xy, r0, c8.x
+texldd r0.xyz, r0, s2, r5.zwzw, r5
+rsq r2.x, r2.x
 add_pp r1.xyz, r1, -r0
+mad r0.w, r1, r0, c18.y
+rcp r2.x, r2.x
+mul r1.w, r0, r2.x
+cmp r0.w, v5.y, c17.x, c17.y
+mul r2.x, r0.w, r1.w
+mad r1.w, -r2.x, c18.z, r1
+mad r0.w, r0, c18, r1
+mul r0.w, r0, c19.x
+mov r2.xyz, v5
+dp3_sat r1.w, v1, -r2
+add r1.w, r1, c21
 mad_sat r1.w, r1, c22.x, c22.y
 mad_pp r0.xyz, r1.w, r1, r0
-mul r3.y, r0.w, r3
-cmp r3.x, v5.z, c17, c17.y
-add r6.x, r2, c21.y
-mad r2.y, r2.z, r2, c18
-rcp r2.w, r2.w
-mul r2.z, r2.y, r2.w
-cmp r2.y, v5, c17.x, c17
-mul r2.w, r2.y, r2.z
-mad r0.w, -r2, c18.z, r2.z
-mul r3.z, r3.x, r3.y
-mad r0.w, r2.y, c18, r0
-mad r2.z, -r3, c18, r3.y
-mad r2.y, r3.x, c18.w, r2.z
-mul r2.y, r2, c19.x
-mul r0.w, r0, c19.x
-dsx r2.zw, v5.xyxy
-dsy r3.xy, v5
-mul r2.zw, r2, r2
+add r6.x, r3, c21.y
 mov r6.y, r0.w
-dsx r5.w, r2.y
-dsy r5.y, r2
-add r2.y, r2.z, r2.w
-mul r3.xy, r3, r3
-add r2.z, r3.x, r3.y
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-rsq r2.z, r2.z
-rcp r2.z, r2.z
-mul r5.z, r2.y, c21.x
-mul r5.x, r2.z, c21
 texldd r2.yw, r6, s3, r5.zwzw, r5
-add r2.zw, r2.xywy, c22.z
-mov r2.y, r0.w
-mul r2.zw, r2, c22.xyyw
-add r3.xy, r2, r2.zwzw
+add r2.xy, r2.wyzw, c22.z
+mov r3.y, r0.w
+mul r2.xy, r2, c22.ywzw
+add r3.xy, r3, r2
 mul r0.w, v1, c9.x
 add_pp r1.xyz, -r0, c17.y
 mul_sat r0.w, r0, c18.z
@@ -100312,7 +100312,7 @@ SetTexture 4 [_ShadowMapTexture] CUBE
 SetTexture 5 [_LightTextureB0] 2D
 SetTexture 6 [_LightTexture0] CUBE
 "ps_3_0
-; 187 ALU, 14 TEX
+; 187 ALU, 18 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -100339,98 +100339,98 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r1.xyz, v5
-add r0.xyz, r1, -r1.zxyw
+abs r2.xyz, v5
+add r0.xyz, r2, -r2.zxyw
 add r0.w, r0.x, c17.y
-frc r1.w, r0
-add_sat r0.w, r0, -r1
-mad r0.xyz, r0.w, r0, r1.zxyw
-add r0.w, r1.y, -r0.x
-add r2.x, r0.w, c17.y
-abs r0.w, v5.z
-frc r2.y, r2.x
-max r1.w, r1.x, r0
-add_sat r2.w, r2.x, -r2.y
-rcp r2.x, r1.w
-min r1.w, r1.x, r0
-mul r1.w, r1, r2.x
-add_pp r2.xyz, r1.yxzw, -r0
-mad_pp r2.xyz, r2.w, r2, r0
-mul r1.y, r1.w, r1.w
-mad r0.x, r1.y, c19.y, c19.z
-mad r0.x, r0, r1.y, c19.w
-mad r0.x, r0, r1.y, c20
-mad r0.x, r0, r1.y, c20.y
-mad r0.x, r0, r1.y, c20.z
-mul r1.y, r0.x, r1.w
-abs_pp r0.y, r2.x
-rcp_pp r0.y, r0.y
-mul_pp r2.xy, r2.zyzw, r0.y
-mov_pp r2.zw, c7.xyxy
-mad_pp r2.xy, r2, c21.y, r2.zwzw
-mul r0.xy, r2, c6.x
-mov r3.xyz, v5
-add r0.z, r1.x, -r0.w
-add r1.z, -r1.y, c20.w
-cmp r0.z, -r0, r1.y, r1
-texld r1.xyz, r0, s1
-mul r0.xy, r2, c8.x
-abs r2.y, v5
-add r1.w, -r0.z, c18
-cmp r1.w, v5.z, r0.z, r1
-texld r0.xyz, r0, s2
-cmp r1.w, v5.x, r1, -r1
-mul r2.x, r1.w, c21
-dp3_sat r1.w, v1, -r3
-add r2.w, -r2.y, c17.y
-mad r2.z, r2.y, c17, c17.w
-mad r2.z, r2, r2.y, c18.x
-add r3.y, -r0.w, c17
-mad r3.x, r0.w, c17.z, c17.w
-mad r3.x, r0.w, r3, c18
-mad r0.w, r0, r3.x, c18.y
-add r1.w, r1, c21
-rsq r2.w, r2.w
-rsq r3.y, r3.y
-rcp r3.y, r3.y
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad r0.xyz, r0.w, r0, r2.zxyw
+add r0.w, r2.y, -r0.x
+add r0.w, r0, c17.y
+frc r1.x, r0.w
+add_pp r3.xyz, r2.yxzw, -r0
+abs r1.w, v5.z
+add_sat r0.w, r0, -r1.x
+mad_pp r0.xyz, r0.w, r3, r0
+abs_pp r0.x, r0
+rcp_pp r0.w, r0.x
+add r2.z, -r1.w, c17.y
+mad r2.y, r1.w, c17.z, c17.w
+mad r2.y, r1.w, r2, c18.x
+rsq r2.z, r2.z
+max r0.x, r2, r1.w
+mul_pp r0.zw, r0.xyzy, r0.w
+rcp r0.y, r0.x
+min r0.x, r2, r1.w
+mul r1.x, r0, r0.y
+mul r1.y, r1.x, r1.x
+mad r1.z, r1.y, c19.y, c19
+mad r1.z, r1, r1.y, c19.w
+mad r1.z, r1, r1.y, c20.x
+mad r1.z, r1, r1.y, c20.y
+mov_pp r0.xy, c7
+mad_pp r0.xy, r0.zwzw, c21.y, r0
+mul r0.zw, r0.xyxy, c6.x
+mad r2.y, r1.w, r2, c18
+rcp r2.z, r2.z
+mul r2.z, r2.y, r2
+cmp r2.y, v5.z, c17.x, c17
+mul r2.w, r2.y, r2.z
+mad r2.z, -r2.w, c18, r2
+mad r2.y, r2, c18.w, r2.z
+mad r1.y, r1.z, r1, c20.z
+mul r1.z, r2.y, c19.x
+mul r2.y, r1, r1.x
+dsx r1.xy, v5
+mul r1.xy, r1, r1
+add r1.x, r1, r1.y
+dsy r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+add r1.y, r2.z, r2.w
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+dsx r5.w, r1.z
+dsy r5.y, r1.z
+mul r5.z, r1.x, c21.x
+mul r5.x, r1.y, c21
+texldd r1.xyz, r0.zwzw, s1, r5.zwzw, r5
+add r0.z, r2.x, -r1.w
+add r0.w, -r2.y, c20
+cmp r0.w, -r0.z, r2.y, r0
+add r1.w, -r0, c18
+cmp r0.w, v5.z, r0, r1
+cmp r1.w, v5.x, r0, -r0
+abs r0.w, v5.y
+mul r3.x, r1.w, c21
+add r2.x, -r0.w, c17.y
+mad r1.w, r0, c17.z, c17
+mad r1.w, r1, r0, c18.x
+mul r0.xy, r0, c8.x
+texldd r0.xyz, r0, s2, r5.zwzw, r5
+rsq r2.x, r2.x
 add_pp r1.xyz, r1, -r0
+mad r0.w, r1, r0, c18.y
+rcp r2.x, r2.x
+mul r1.w, r0, r2.x
+cmp r0.w, v5.y, c17.x, c17.y
+mul r2.x, r0.w, r1.w
+mad r1.w, -r2.x, c18.z, r1
+mad r0.w, r0, c18, r1
+mul r0.w, r0, c19.x
+mov r2.xyz, v5
+dp3_sat r1.w, v1, -r2
+add r1.w, r1, c21
 mad_sat r1.w, r1, c22.x, c22.y
 mad_pp r0.xyz, r1.w, r1, r0
-mul r3.y, r0.w, r3
-cmp r3.x, v5.z, c17, c17.y
-add r6.x, r2, c21.y
-mad r2.y, r2.z, r2, c18
-rcp r2.w, r2.w
-mul r2.z, r2.y, r2.w
-cmp r2.y, v5, c17.x, c17
-mul r2.w, r2.y, r2.z
-mad r0.w, -r2, c18.z, r2.z
-mul r3.z, r3.x, r3.y
-mad r0.w, r2.y, c18, r0
-mad r2.z, -r3, c18, r3.y
-mad r2.y, r3.x, c18.w, r2.z
-mul r2.y, r2, c19.x
-mul r0.w, r0, c19.x
-dsx r2.zw, v5.xyxy
-dsy r3.xy, v5
-mul r2.zw, r2, r2
+add r6.x, r3, c21.y
 mov r6.y, r0.w
-dsx r5.w, r2.y
-dsy r5.y, r2
-add r2.y, r2.z, r2.w
-mul r3.xy, r3, r3
-add r2.z, r3.x, r3.y
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-rsq r2.z, r2.z
-rcp r2.z, r2.z
-mul r5.z, r2.y, c21.x
-mul r5.x, r2.z, c21
 texldd r2.yw, r6, s3, r5.zwzw, r5
-add r2.zw, r2.xywy, c22.z
-mov r2.y, r0.w
-mul r2.zw, r2, c22.xyyw
-add r3.xy, r2, r2.zwzw
+add r2.xy, r2.wyzw, c22.z
+mov r3.y, r0.w
+mul r2.xy, r2, c22.ywzw
+add r3.xy, r3, r2
 mul r0.w, v1, c9.x
 add_pp r1.xyz, -r0, c17.y
 mul_sat r0.w, r0, c18.z
@@ -100564,7 +100564,7 @@ SetTexture 2 [_DetailVertTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 "ps_3_0
-; 169 ALU, 9 TEX
+; 169 ALU, 13 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -100595,91 +100595,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c15.y
 frc r1.w, r0
+dsy r2.xy, v4
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v4.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c5
-mad_pp r2.xy, r1, c19.y, r2
-mad r0.x, r0.z, c17.y, c17.z
-mad r1.x, r0, r0.z, c17.w
-mad r2.z, r1.x, r0, c18.x
-mul r0.xy, r2, c4.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c18.y
-mul r0.xy, r2, c6.x
-mad r2.x, r2.z, r0.z, c18.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c18.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c15.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c5.xyxy
+mad r0.z, r0.w, c15, c15.w
+mad r0.z, r0.w, r0, c16.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c19.y, r1.zwzw
+mad r0.z, r0.w, r0, c16.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v4, c15.x, c15.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c16.z, r1
+mad r0.z, r0, c16.w, r1.x
+mul r1.z, r0, c17.x
+mul r1.xy, r0, c4.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v4.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c19.x
+mul r4.x, r1.w, c19
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c17, c17.z
+mad r3.y, r3, r2.w, c17.w
+mul r0.xy, r0, c6.x
+mad r3.y, r3, r2.w, c18.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v4
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c16.w
-cmp r1.x, v4.z, r1.w, r1
-add r3.x, -r0.w, c15.y
-mad r2.w, r0, c15.z, c15
-mad r2.w, r0, r2, c16.x
-mad r0.w, r0, r2, c16.y
+mad r1.x, r3.y, r2.w, c18.y
+mad r1.x, r1, r2.w, c18.z
 add r1.y, r1, c19.w
 mad_sat r1.y, r1, c20.x, c20
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v4.x, r1.x, -r1.x
-mul r2.x, r1.w, c19
-abs r1.w, v4.y
-add r2.z, -r1.w, c15.y
-mad r2.y, r1.w, c15.z, c15.w
-mad r2.y, r2, r1.w, c16.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v4.z, c15.x, c15.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c15.y
-add r5.x, r2, c19.y
-mad r1.w, r2.y, r1, c16.y
+add r2.x, -r1.w, c18.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v4.y
+add r1.w, -r0, c16
+add r2.z, -r2.x, c15.y
+mad r2.y, r2.x, c15.z, c15.w
+mad r2.y, r2, r2.x, c16.x
+cmp r1.w, v4.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c16.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v4.y, c15.x, c15.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c16.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c16.z, r3.x
-mad r0.w, r1, c16, r0
-mad r1.w, r2, c16, r2.y
-mul r1.w, r1, c17.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v4.y, c15, c15.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c16.z, r2.y
+mad r0.w, r2.x, c16, r0
 mul r0.w, r0, c17.x
-dsx r2.zw, v4.xyxy
-dsy r3.xy, v4
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c19.x
-mul r4.x, r2.y, c19
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c20.z
+cmp r1.w, v4.x, r1, -r1
+mul r2.x, r1.w, c19
 mul r1.w, v1, c7.x
 mul_sat r1.w, r1, c16.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c19.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c20.z
 mul r0.xy, r2.zwzw, c20.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -100787,7 +100787,7 @@ SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_DetailVertTex] 2D
 SetTexture 3 [_BumpMap] 2D
 "ps_3_0
-; 167 ALU, 8 TEX
+; 167 ALU, 12 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -100816,91 +100816,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c15.y
 frc r1.w, r0
+dsy r2.xy, v3
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v3.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c5
-mad_pp r2.xy, r1, c19.y, r2
-mad r0.x, r0.z, c17.y, c17.z
-mad r1.x, r0, r0.z, c17.w
-mad r2.z, r1.x, r0, c18.x
-mul r0.xy, r2, c4.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c18.y
-mul r0.xy, r2, c6.x
-mad r2.x, r2.z, r0.z, c18.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c18.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c15.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c5.xyxy
+mad r0.z, r0.w, c15, c15.w
+mad r0.z, r0.w, r0, c16.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c19.y, r1.zwzw
+mad r0.z, r0.w, r0, c16.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v3, c15.x, c15.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c16.z, r1
+mad r0.z, r0, c16.w, r1.x
+mul r1.z, r0, c17.x
+mul r1.xy, r0, c4.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v3.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c19.x
+mul r4.x, r1.w, c19
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c17, c17.z
+mad r3.y, r3, r2.w, c17.w
+mul r0.xy, r0, c6.x
+mad r3.y, r3, r2.w, c18.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v3
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c16.w
-cmp r1.x, v3.z, r1.w, r1
-add r3.x, -r0.w, c15.y
-mad r2.w, r0, c15.z, c15
-mad r2.w, r0, r2, c16.x
-mad r0.w, r0, r2, c16.y
+mad r1.x, r3.y, r2.w, c18.y
+mad r1.x, r1, r2.w, c18.z
 add r1.y, r1, c19.w
 mad_sat r1.y, r1, c20.x, c20
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v3.x, r1.x, -r1.x
-mul r2.x, r1.w, c19
-abs r1.w, v3.y
-add r2.z, -r1.w, c15.y
-mad r2.y, r1.w, c15.z, c15.w
-mad r2.y, r2, r1.w, c16.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v3.z, c15.x, c15.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c15.y
-add r5.x, r2, c19.y
-mad r1.w, r2.y, r1, c16.y
+add r2.x, -r1.w, c18.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v3.y
+add r1.w, -r0, c16
+add r2.z, -r2.x, c15.y
+mad r2.y, r2.x, c15.z, c15.w
+mad r2.y, r2, r2.x, c16.x
+cmp r1.w, v3.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c16.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v3.y, c15.x, c15.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c16.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c16.z, r3.x
-mad r0.w, r1, c16, r0
-mad r1.w, r2, c16, r2.y
-mul r1.w, r1, c17.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v3.y, c15, c15.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c16.z, r2.y
+mad r0.w, r2.x, c16, r0
 mul r0.w, r0, c17.x
-dsx r2.zw, v3.xyxy
-dsy r3.xy, v3
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c19.x
-mul r4.x, r2.y, c19
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c20.z
+cmp r1.w, v3.x, r1, -r1
+mul r2.x, r1.w, c19
 mul r1.w, v1, c7.x
 mul_sat r1.w, r1, c16.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c19.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c20.z
 mul r0.xy, r2.zwzw, c20.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -101007,7 +101007,7 @@ SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
 "ps_3_0
-; 174 ALU, 10 TEX
+; 174 ALU, 14 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -101039,91 +101039,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c15.y
 frc r1.w, r0
+dsy r2.xy, v4
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v4.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c5
-mad_pp r2.xy, r1, c19.y, r2
-mad r0.x, r0.z, c17.y, c17.z
-mad r1.x, r0, r0.z, c17.w
-mad r2.z, r1.x, r0, c18.x
-mul r0.xy, r2, c4.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c18.y
-mul r0.xy, r2, c6.x
-mad r2.x, r2.z, r0.z, c18.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c18.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c15.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c5.xyxy
+mad r0.z, r0.w, c15, c15.w
+mad r0.z, r0.w, r0, c16.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c19.y, r1.zwzw
+mad r0.z, r0.w, r0, c16.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v4, c15.x, c15.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c16.z, r1
+mad r0.z, r0, c16.w, r1.x
+mul r1.z, r0, c17.x
+mul r1.xy, r0, c4.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v4.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c19.x
+mul r4.x, r1.w, c19
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c17, c17.z
+mad r3.y, r3, r2.w, c17.w
+mul r0.xy, r0, c6.x
+mad r3.y, r3, r2.w, c18.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v4
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c16.w
-cmp r1.x, v4.z, r1.w, r1
-add r3.x, -r0.w, c15.y
-mad r2.w, r0, c15.z, c15
-mad r2.w, r0, r2, c16.x
-mad r0.w, r0, r2, c16.y
+mad r1.x, r3.y, r2.w, c18.y
+mad r1.x, r1, r2.w, c18.z
 add r1.y, r1, c19.w
 mad_sat r1.y, r1, c20.x, c20
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v4.x, r1.x, -r1.x
-mul r2.x, r1.w, c19
-abs r1.w, v4.y
-add r2.z, -r1.w, c15.y
-mad r2.y, r1.w, c15.z, c15.w
-mad r2.y, r2, r1.w, c16.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v4.z, c15.x, c15.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c15.y
-add r5.x, r2, c19.y
-mad r1.w, r2.y, r1, c16.y
+add r2.x, -r1.w, c18.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v4.y
+add r1.w, -r0, c16
+add r2.z, -r2.x, c15.y
+mad r2.y, r2.x, c15.z, c15.w
+mad r2.y, r2, r2.x, c16.x
+cmp r1.w, v4.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c16.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v4.y, c15.x, c15.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c16.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c16.z, r3.x
-mad r0.w, r1, c16, r0
-mad r1.w, r2, c16, r2.y
-mul r1.w, r1, c17.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v4.y, c15, c15.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c16.z, r2.y
+mad r0.w, r2.x, c16, r0
 mul r0.w, r0, c17.x
-dsx r2.zw, v4.xyxy
-dsy r3.xy, v4
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c19.x
-mul r4.x, r2.y, c19
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c20.z
+cmp r1.w, v4.x, r1, -r1
+mul r2.x, r1.w, c19
 mul r1.w, v1, c7.x
 mul_sat r1.w, r1, c16.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c19.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c20.z
 mul r0.xy, r2.zwzw, c20.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -101239,7 +101239,7 @@ SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTextureB0] 2D
 SetTexture 5 [_LightTexture0] CUBE
 "ps_3_0
-; 170 ALU, 10 TEX
+; 170 ALU, 14 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -101271,91 +101271,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c15.y
 frc r1.w, r0
+dsy r2.xy, v4
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v4.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c5
-mad_pp r2.xy, r1, c19.y, r2
-mad r0.x, r0.z, c17.y, c17.z
-mad r1.x, r0, r0.z, c17.w
-mad r2.z, r1.x, r0, c18.x
-mul r0.xy, r2, c4.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c18.y
-mul r0.xy, r2, c6.x
-mad r2.x, r2.z, r0.z, c18.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c18.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c15.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c5.xyxy
+mad r0.z, r0.w, c15, c15.w
+mad r0.z, r0.w, r0, c16.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c19.y, r1.zwzw
+mad r0.z, r0.w, r0, c16.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v4, c15.x, c15.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c16.z, r1
+mad r0.z, r0, c16.w, r1.x
+mul r1.z, r0, c17.x
+mul r1.xy, r0, c4.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v4.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c19.x
+mul r4.x, r1.w, c19
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c17, c17.z
+mad r3.y, r3, r2.w, c17.w
+mul r0.xy, r0, c6.x
+mad r3.y, r3, r2.w, c18.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v4
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c16.w
-cmp r1.x, v4.z, r1.w, r1
-add r3.x, -r0.w, c15.y
-mad r2.w, r0, c15.z, c15
-mad r2.w, r0, r2, c16.x
-mad r0.w, r0, r2, c16.y
+mad r1.x, r3.y, r2.w, c18.y
+mad r1.x, r1, r2.w, c18.z
 add r1.y, r1, c19.w
 mad_sat r1.y, r1, c20.x, c20
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v4.x, r1.x, -r1.x
-mul r2.x, r1.w, c19
-abs r1.w, v4.y
-add r2.z, -r1.w, c15.y
-mad r2.y, r1.w, c15.z, c15.w
-mad r2.y, r2, r1.w, c16.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v4.z, c15.x, c15.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c15.y
-add r5.x, r2, c19.y
-mad r1.w, r2.y, r1, c16.y
+add r2.x, -r1.w, c18.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v4.y
+add r1.w, -r0, c16
+add r2.z, -r2.x, c15.y
+mad r2.y, r2.x, c15.z, c15.w
+mad r2.y, r2, r2.x, c16.x
+cmp r1.w, v4.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c16.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v4.y, c15.x, c15.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c16.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c16.z, r3.x
-mad r0.w, r1, c16, r0
-mad r1.w, r2, c16, r2.y
-mul r1.w, r1, c17.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v4.y, c15, c15.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c16.z, r2.y
+mad r0.w, r2.x, c16, r0
 mul r0.w, r0, c17.x
-dsx r2.zw, v4.xyxy
-dsy r3.xy, v4
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c19.x
-mul r4.x, r2.y, c19
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c20.z
+cmp r1.w, v4.x, r1, -r1
+mul r2.x, r1.w, c19
 mul r1.w, v1, c7.x
 mul_sat r1.w, r1, c16.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c19.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c20.z
 mul r0.xy, r2.zwzw, c20.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -101466,7 +101466,7 @@ SetTexture 2 [_DetailVertTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 "ps_3_0
-; 168 ALU, 9 TEX
+; 168 ALU, 13 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -101497,91 +101497,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c15.y
 frc r1.w, r0
+dsy r2.xy, v4
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v4.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c5
-mad_pp r2.xy, r1, c19.y, r2
-mad r0.x, r0.z, c17.y, c17.z
-mad r1.x, r0, r0.z, c17.w
-mad r2.z, r1.x, r0, c18.x
-mul r0.xy, r2, c4.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c18.y
-mul r0.xy, r2, c6.x
-mad r2.x, r2.z, r0.z, c18.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c18.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c15.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c5.xyxy
+mad r0.z, r0.w, c15, c15.w
+mad r0.z, r0.w, r0, c16.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c19.y, r1.zwzw
+mad r0.z, r0.w, r0, c16.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v4, c15.x, c15.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c16.z, r1
+mad r0.z, r0, c16.w, r1.x
+mul r1.z, r0, c17.x
+mul r1.xy, r0, c4.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v4.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c19.x
+mul r4.x, r1.w, c19
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c17, c17.z
+mad r3.y, r3, r2.w, c17.w
+mul r0.xy, r0, c6.x
+mad r3.y, r3, r2.w, c18.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v4
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c16.w
-cmp r1.x, v4.z, r1.w, r1
-add r3.x, -r0.w, c15.y
-mad r2.w, r0, c15.z, c15
-mad r2.w, r0, r2, c16.x
-mad r0.w, r0, r2, c16.y
+mad r1.x, r3.y, r2.w, c18.y
+mad r1.x, r1, r2.w, c18.z
 add r1.y, r1, c19.w
 mad_sat r1.y, r1, c20.x, c20
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v4.x, r1.x, -r1.x
-mul r2.x, r1.w, c19
-abs r1.w, v4.y
-add r2.z, -r1.w, c15.y
-mad r2.y, r1.w, c15.z, c15.w
-mad r2.y, r2, r1.w, c16.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v4.z, c15.x, c15.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c15.y
-add r5.x, r2, c19.y
-mad r1.w, r2.y, r1, c16.y
+add r2.x, -r1.w, c18.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v4.y
+add r1.w, -r0, c16
+add r2.z, -r2.x, c15.y
+mad r2.y, r2.x, c15.z, c15.w
+mad r2.y, r2, r2.x, c16.x
+cmp r1.w, v4.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c16.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v4.y, c15.x, c15.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c16.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c16.z, r3.x
-mad r0.w, r1, c16, r0
-mad r1.w, r2, c16, r2.y
-mul r1.w, r1, c17.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v4.y, c15, c15.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c16.z, r2.y
+mad r0.w, r2.x, c16, r0
 mul r0.w, r0, c17.x
-dsx r2.zw, v4.xyxy
-dsy r3.xy, v4
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c19.x
-mul r4.x, r2.y, c19
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c20.z
+cmp r1.w, v4.x, r1, -r1
+mul r2.x, r1.w, c19
 mul r1.w, v1, c7.x
 mul_sat r1.w, r1, c16.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c19.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c20.z
 mul r0.xy, r2.zwzw, c20.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -101692,7 +101692,7 @@ SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
 SetTexture 6 [_ShadowMapTexture] 2D
 "ps_3_0
-; 179 ALU, 11 TEX
+; 179 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -101726,91 +101726,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c16.y
 frc r1.w, r0
+dsy r2.xy, v5
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v5.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c6
-mad_pp r2.xy, r1, c20.y, r2
-mad r0.x, r0.z, c18.y, c18.z
-mad r1.x, r0, r0.z, c18.w
-mad r2.z, r1.x, r0, c19.x
-mul r0.xy, r2, c5.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c19.y
-mul r0.xy, r2, c7.x
-mad r2.x, r2.z, r0.z, c19.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c19.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c16.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c6.xyxy
+mad r0.z, r0.w, c16, c16.w
+mad r0.z, r0.w, r0, c17.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c20.y, r1.zwzw
+mad r0.z, r0.w, r0, c17.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v5, c16.x, c16.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c17.z, r1
+mad r0.z, r0, c17.w, r1.x
+mul r1.z, r0, c18.x
+mul r1.xy, r0, c5.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c20.x
+mul r4.x, r1.w, c20
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c18, c18.z
+mad r3.y, r3, r2.w, c18.w
+mul r0.xy, r0, c7.x
+mad r3.y, r3, r2.w, c19.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v5
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c17.w
-cmp r1.x, v5.z, r1.w, r1
-add r3.x, -r0.w, c16.y
-mad r2.w, r0, c16.z, c16
-mad r2.w, r0, r2, c17.x
-mad r0.w, r0, r2, c17.y
+mad r1.x, r3.y, r2.w, c19.y
+mad r1.x, r1, r2.w, c19.z
 add r1.y, r1, c20.w
 mad_sat r1.y, r1, c21.x, c21
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v5.x, r1.x, -r1.x
-mul r2.x, r1.w, c20
-abs r1.w, v5.y
-add r2.z, -r1.w, c16.y
-mad r2.y, r1.w, c16.z, c16.w
-mad r2.y, r2, r1.w, c17.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v5.z, c16.x, c16.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c16.y
-add r5.x, r2, c20.y
-mad r1.w, r2.y, r1, c17.y
+add r2.x, -r1.w, c19.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v5.y
+add r1.w, -r0, c17
+add r2.z, -r2.x, c16.y
+mad r2.y, r2.x, c16.z, c16.w
+mad r2.y, r2, r2.x, c17.x
+cmp r1.w, v5.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c17.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v5.y, c16.x, c16.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c17.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c17.z, r3.x
-mad r0.w, r1, c17, r0
-mad r1.w, r2, c17, r2.y
-mul r1.w, r1, c18.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v5.y, c16, c16.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c17.z, r2.y
+mad r0.w, r2.x, c17, r0
 mul r0.w, r0, c18.x
-dsx r2.zw, v5.xyxy
-dsy r3.xy, v5
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c20.x
-mul r4.x, r2.y, c20
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c21.z
+cmp r1.w, v5.x, r1, -r1
+mul r2.x, r1.w, c20
 mul r1.w, v1, c8.x
 mul_sat r1.w, r1, c17.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c20.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c21.z
 mul r0.xy, r2.zwzw, c21.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -101934,7 +101934,7 @@ SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
 SetTexture 6 [_ShadowMapTexture] 2D
 "ps_3_0
-; 178 ALU, 11 TEX
+; 178 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -101968,91 +101968,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c16.y
 frc r1.w, r0
+dsy r2.xy, v5
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v5.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c6
-mad_pp r2.xy, r1, c20.y, r2
-mad r0.x, r0.z, c18.y, c18.z
-mad r1.x, r0, r0.z, c18.w
-mad r2.z, r1.x, r0, c19.x
-mul r0.xy, r2, c5.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c19.y
-mul r0.xy, r2, c7.x
-mad r2.x, r2.z, r0.z, c19.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c19.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c16.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c6.xyxy
+mad r0.z, r0.w, c16, c16.w
+mad r0.z, r0.w, r0, c17.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c20.y, r1.zwzw
+mad r0.z, r0.w, r0, c17.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v5, c16.x, c16.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c17.z, r1
+mad r0.z, r0, c17.w, r1.x
+mul r1.z, r0, c18.x
+mul r1.xy, r0, c5.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c20.x
+mul r4.x, r1.w, c20
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c18, c18.z
+mad r3.y, r3, r2.w, c18.w
+mul r0.xy, r0, c7.x
+mad r3.y, r3, r2.w, c19.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v5
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c17.w
-cmp r1.x, v5.z, r1.w, r1
-add r3.x, -r0.w, c16.y
-mad r2.w, r0, c16.z, c16
-mad r2.w, r0, r2, c17.x
-mad r0.w, r0, r2, c17.y
+mad r1.x, r3.y, r2.w, c19.y
+mad r1.x, r1, r2.w, c19.z
 add r1.y, r1, c20.w
 mad_sat r1.y, r1, c21.x, c21
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v5.x, r1.x, -r1.x
-mul r2.x, r1.w, c20
-abs r1.w, v5.y
-add r2.z, -r1.w, c16.y
-mad r2.y, r1.w, c16.z, c16.w
-mad r2.y, r2, r1.w, c17.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v5.z, c16.x, c16.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c16.y
-add r5.x, r2, c20.y
-mad r1.w, r2.y, r1, c17.y
+add r2.x, -r1.w, c19.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v5.y
+add r1.w, -r0, c17
+add r2.z, -r2.x, c16.y
+mad r2.y, r2.x, c16.z, c16.w
+mad r2.y, r2, r2.x, c17.x
+cmp r1.w, v5.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c17.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v5.y, c16.x, c16.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c17.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c17.z, r3.x
-mad r0.w, r1, c17, r0
-mad r1.w, r2, c17, r2.y
-mul r1.w, r1, c18.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v5.y, c16, c16.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c17.z, r2.y
+mad r0.w, r2.x, c17, r0
 mul r0.w, r0, c18.x
-dsx r2.zw, v5.xyxy
-dsy r3.xy, v5
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c20.x
-mul r4.x, r2.y, c20
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c21.z
+cmp r1.w, v5.x, r1, -r1
+mul r2.x, r1.w, c20
 mul r1.w, v1, c8.x
 mul_sat r1.w, r1, c17.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c20.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c21.z
 mul r0.xy, r2.zwzw, c21.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -102167,7 +102167,7 @@ SetTexture 2 [_DetailVertTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] 2D
 "ps_3_0
-; 168 ALU, 9 TEX
+; 168 ALU, 13 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -102198,91 +102198,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c15.y
 frc r1.w, r0
+dsy r2.xy, v4
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v4.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c5
-mad_pp r2.xy, r1, c19.y, r2
-mad r0.x, r0.z, c17.y, c17.z
-mad r1.x, r0, r0.z, c17.w
-mad r2.z, r1.x, r0, c18.x
-mul r0.xy, r2, c4.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c18.y
-mul r0.xy, r2, c6.x
-mad r2.x, r2.z, r0.z, c18.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c18.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c15.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c5.xyxy
+mad r0.z, r0.w, c15, c15.w
+mad r0.z, r0.w, r0, c16.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c19.y, r1.zwzw
+mad r0.z, r0.w, r0, c16.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v4, c15.x, c15.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c16.z, r1
+mad r0.z, r0, c16.w, r1.x
+mul r1.z, r0, c17.x
+mul r1.xy, r0, c4.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v4.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c19.x
+mul r4.x, r1.w, c19
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c17, c17.z
+mad r3.y, r3, r2.w, c17.w
+mul r0.xy, r0, c6.x
+mad r3.y, r3, r2.w, c18.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v4
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c16.w
-cmp r1.x, v4.z, r1.w, r1
-add r3.x, -r0.w, c15.y
-mad r2.w, r0, c15.z, c15
-mad r2.w, r0, r2, c16.x
-mad r0.w, r0, r2, c16.y
+mad r1.x, r3.y, r2.w, c18.y
+mad r1.x, r1, r2.w, c18.z
 add r1.y, r1, c19.w
 mad_sat r1.y, r1, c20.x, c20
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v4.x, r1.x, -r1.x
-mul r2.x, r1.w, c19
-abs r1.w, v4.y
-add r2.z, -r1.w, c15.y
-mad r2.y, r1.w, c15.z, c15.w
-mad r2.y, r2, r1.w, c16.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v4.z, c15.x, c15.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c15.y
-add r5.x, r2, c19.y
-mad r1.w, r2.y, r1, c16.y
+add r2.x, -r1.w, c18.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v4.y
+add r1.w, -r0, c16
+add r2.z, -r2.x, c15.y
+mad r2.y, r2.x, c15.z, c15.w
+mad r2.y, r2, r2.x, c16.x
+cmp r1.w, v4.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c16.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v4.y, c15.x, c15.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c16.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c16.z, r3.x
-mad r0.w, r1, c16, r0
-mad r1.w, r2, c16, r2.y
-mul r1.w, r1, c17.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v4.y, c15, c15.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c16.z, r2.y
+mad r0.w, r2.x, c16, r0
 mul r0.w, r0, c17.x
-dsx r2.zw, v4.xyxy
-dsy r3.xy, v4
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c19.x
-mul r4.x, r2.y, c19
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c20.z
+cmp r1.w, v4.x, r1, -r1
+mul r2.x, r1.w, c19
 mul r1.w, v1, c7.x
 mul_sat r1.w, r1, c16.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c19.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c20.z
 mul r0.xy, r2.zwzw, c20.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -102391,7 +102391,7 @@ SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] 2D
 SetTexture 5 [_LightTexture0] 2D
 "ps_3_0
-; 169 ALU, 10 TEX
+; 169 ALU, 14 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -102424,91 +102424,91 @@ mad r0.xyz, r0.w, r0, r3.zxyw
 add r0.w, r3.y, -r0.x
 add r0.w, r0, c15.y
 frc r1.w, r0
+dsy r2.xy, v5
 add_pp r1.xyz, r3.yxzw, -r0
 add_sat r0.w, r0, -r1
-mad_pp r1.xyz, r0.w, r1, r0
+mad_pp r0.xyz, r0.w, r1, r0
 abs r0.w, v5.z
-abs_pp r0.y, r1.x
-rcp_pp r0.z, r0.y
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mul_pp r1.xy, r1.zyzw, r0.z
-mul r0.z, r1.w, r1.w
-mov_pp r2.xy, c5
-mad_pp r2.xy, r1, c19.y, r2
-mad r0.x, r0.z, c17.y, c17.z
-mad r1.x, r0, r0.z, c17.w
-mad r2.z, r1.x, r0, c18.x
-mul r0.xy, r2, c4.x
-texld r1.xyz, r0, s1
-mad r2.z, r2, r0, c18.y
-mul r0.xy, r2, c6.x
-mad r2.x, r2.z, r0.z, c18.z
-mul r2.w, r2.x, r1
-add r1.w, r3.x, -r0
-add r3.y, -r2.w, c18.w
-cmp r1.w, -r1, r2, r3.y
-texld r0.xyz, r0, s2
+add r1.x, -r0.w, c15.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mov_pp r1.zw, c5.xyxy
+mad r0.z, r0.w, c15, c15.w
+mad r0.z, r0.w, r0, c16.x
+rsq r1.x, r1.x
+mad_pp r0.xy, r0, c19.y, r1.zwzw
+mad r0.z, r0.w, r0, c16.y
+rcp r1.x, r1.x
+mul r1.x, r0.z, r1
+cmp r0.z, v5, c15.x, c15.y
+mul r1.y, r0.z, r1.x
+mad r1.x, -r1.y, c16.z, r1
+mad r0.z, r0, c16.w, r1.x
+mul r1.z, r0, c17.x
+mul r1.xy, r0, c4.x
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+mul r2.xy, r2, r2
+add r1.w, r2.x, r2.y
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r4.z, r1, c19.x
+mul r4.x, r1.w, c19
+max r0.z, r3.x, r0.w
+rcp r1.w, r0.z
+min r0.z, r3.x, r0.w
+mul r1.w, r0.z, r1
+mul r2.w, r1, r1
+mad r3.y, r2.w, c17, c17.z
+mad r3.y, r3, r2.w, c17.w
+mul r0.xy, r0, c6.x
+mad r3.y, r3, r2.w, c18.x
+texldd r1.xyz, r1, s1, r4.zwzw, r4
+texldd r0.xyz, r0, s2, r4.zwzw, r4
 add_pp r2.xyz, r1, -r0
 mov r1.xyz, v5
 dp3_sat r1.y, v1, -r1
-add r1.x, -r1.w, c16.w
-cmp r1.x, v5.z, r1.w, r1
-add r3.x, -r0.w, c15.y
-mad r2.w, r0, c15.z, c15
-mad r2.w, r0, r2, c16.x
-mad r0.w, r0, r2, c16.y
+mad r1.x, r3.y, r2.w, c18.y
+mad r1.x, r1, r2.w, c18.z
 add r1.y, r1, c19.w
 mad_sat r1.y, r1, c20.x, c20
-rsq r3.x, r3.x
-rcp r3.x, r3.x
 mad_pp r0.xyz, r1.y, r2, r0
-cmp r1.w, v5.x, r1.x, -r1.x
-mul r2.x, r1.w, c19
-abs r1.w, v5.y
-add r2.z, -r1.w, c15.y
-mad r2.y, r1.w, c15.z, c15.w
-mad r2.y, r2, r1.w, c16.x
-rsq r2.z, r2.z
-mul r3.x, r0.w, r3
-cmp r2.w, v5.z, c15.x, c15.y
+mul r1.w, r1.x, r1
 add_pp r1.xyz, -r0, c15.y
-add r5.x, r2, c19.y
-mad r1.w, r2.y, r1, c16.y
+add r2.x, -r1.w, c18.w
+add r0.w, r3.x, -r0
+cmp r0.w, -r0, r1, r2.x
+abs r2.x, v5.y
+add r1.w, -r0, c16
+add r2.z, -r2.x, c15.y
+mad r2.y, r2.x, c15.z, c15.w
+mad r2.y, r2, r2.x, c16.x
+cmp r1.w, v5.z, r0, r1
+rsq r2.z, r2.z
+mad r2.x, r2.y, r2, c16.y
 rcp r2.z, r2.z
-mul r2.z, r1.w, r2
-cmp r1.w, v5.y, c15.x, c15.y
-mul r2.y, r1.w, r2.z
-mad r0.w, -r2.y, c16.z, r2.z
-mul r3.y, r2.w, r3.x
-mad r2.y, -r3, c16.z, r3.x
-mad r0.w, r1, c16, r0
-mad r1.w, r2, c16, r2.y
-mul r1.w, r1, c17.x
+mul r2.y, r2.x, r2.z
+cmp r2.x, v5.y, c15, c15.y
+mul r2.z, r2.x, r2.y
+mad r0.w, -r2.z, c16.z, r2.y
+mad r0.w, r2.x, c16, r0
 mul r0.w, r0, c17.x
-dsx r2.zw, v5.xyxy
-dsy r3.xy, v5
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r2.zw, r2, r2
-mov r5.y, r0.w
-dsx r4.w, r1
-dsy r4.y, r1.w
-add r1.w, r2.z, r2
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r4.z, r1.w, c19.x
-mul r4.x, r2.y, c19
-texldd r2.yw, r5, s3, r4.zwzw, r4
-add r2.zw, r2.xywy, c20.z
+cmp r1.w, v5.x, r1, -r1
+mul r2.x, r1.w, c19
 mul r1.w, v1, c7.x
 mul_sat r1.w, r1, c16.z
 mad_pp r0.xyz, r1.w, r1, r0
 mul r1.xyz, v0, r0
+add r5.x, r2, c19.y
+mov r5.y, r0.w
+texldd r2.yw, r5, s3, r4.zwzw, r4
+add r2.zw, r2.xywy, c20.z
 mul r0.xy, r2.zwzw, c20.ywzw
 mov r2.y, r0.w
 add r0.xy, r2, r0
@@ -102621,7 +102621,7 @@ SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] CUBE
 SetTexture 5 [_LightTexture0] 2D
 "ps_3_0
-; 178 ALU, 10 TEX
+; 178 ALU, 14 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -102646,98 +102646,98 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r1.xyz, v5
-add r0.xyz, r1, -r1.zxyw
+abs r2.xyz, v5
+add r0.xyz, r2, -r2.zxyw
 add r0.w, r0.x, c17.y
-frc r1.w, r0
-add_sat r0.w, r0, -r1
-mad r0.xyz, r0.w, r0, r1.zxyw
-add r1.w, r1.y, -r0.x
-add r2.y, r1.w, c17
-abs r0.w, v5.z
-max r1.w, r1.x, r0
-rcp r2.x, r1.w
-min r1.w, r1.x, r0
-mul r1.w, r1, r2.x
-frc r2.z, r2.y
-add_sat r3.x, r2.y, -r2.z
-add_pp r2.xyz, r1.yxzw, -r0
-mad_pp r0.xyz, r3.x, r2, r0
-mul r2.w, r1, r1
-mad r1.y, r2.w, c19, c19.z
-mad r1.y, r1, r2.w, c19.w
-abs_pp r1.z, r0.x
-mad r0.x, r1.y, r2.w, c20
-mad r0.x, r0, r2.w, c20.y
-mad r0.x, r0, r2.w, c20.z
-rcp_pp r1.y, r1.z
-mul_pp r2.xy, r0.zyzw, r1.y
-mul r0.y, r0.x, r1.w
-mov_pp r2.zw, c7.xyxy
-mad_pp r2.xy, r2, c21.y, r2.zwzw
-add r0.x, r1, -r0.w
-add r0.z, -r0.y, c20.w
-cmp r0.z, -r0.x, r0.y, r0
-mul r0.xy, r2, c6.x
-add r1.w, -r0.z, c18
-cmp r0.z, v5, r0, r1.w
-cmp r1.w, v5.x, r0.z, -r0.z
-mul r2.z, r1.w, c21.x
-mov r3.xyz, v5
-dp3_sat r1.w, v1, -r3
-texld r1.xyz, r0, s1
-mul r0.xy, r2, c8.x
-abs r2.x, v5.y
-texld r0.xyz, r0, s2
-add r2.w, -r2.x, c17.y
-mad r2.y, r2.x, c17.z, c17.w
-mad r2.y, r2, r2.x, c18.x
-add r3.y, -r0.w, c17
-mad r3.x, r0.w, c17.z, c17.w
-mad r3.x, r0.w, r3, c18
-mad r0.w, r0, r3.x, c18.y
-rsq r2.w, r2.w
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-add r1.w, r1, c21
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad r0.xyz, r0.w, r0, r2.zxyw
+add r0.w, r2.y, -r0.x
+add_pp r3.xyz, r2.yxzw, -r0
+abs r2.y, v5.z
+add r0.w, r0, c17.y
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad_pp r0.xyz, r0.w, r3, r0
+add r1.w, -r2.y, c17.y
+mad r1.z, r2.y, c17, c17.w
+mad r1.z, r2.y, r1, c18.x
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.zw, r0.xyzy, r0.x
+max r0.y, r2.x, r2
+rsq r1.w, r1.w
+min r0.x, r2, r2.y
+rcp r0.y, r0.y
+mul r2.z, r0.x, r0.y
+mov_pp r1.xy, c7
+mad_pp r0.xy, r0.zwzw, c21.y, r1
+mul r1.x, r2.z, r2.z
+mul r0.zw, r0.xyxy, c6.x
+mad r1.y, r1.x, c19, c19.z
+mad r1.y, r1, r1.x, c19.w
+mad r1.y, r1, r1.x, c20.x
+mad r1.z, r2.y, r1, c18.y
+rcp r1.w, r1.w
+mul r1.w, r1.z, r1
+cmp r1.z, v5, c17.x, c17.y
+mul r2.w, r1.z, r1
+mad r1.w, -r2, c18.z, r1
+mad r1.z, r1, c18.w, r1.w
+mul r1.z, r1, c19.x
+mad r1.y, r1, r1.x, c20
+mad r2.w, r1.y, r1.x, c20.z
+dsy r1.xy, v5
+mul r1.xy, r1, r1
+add r1.y, r1.x, r1
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+rsq r1.x, r1.z
+rcp r1.x, r1.x
+mul r4.z, r1.x, c21.x
+mul r4.x, r1.y, c21
+texldd r1.xyz, r0.zwzw, s1, r4.zwzw, r4
+mul r0.w, r2, r2.z
+add r0.z, r2.x, -r2.y
+add r1.w, -r0, c20
+cmp r0.w, -r0.z, r0, r1
+add r1.w, -r0, c18
+cmp r1.w, v5.z, r0, r1
+abs r0.w, v5.y
+cmp r2.y, v5.x, r1.w, -r1.w
+mul r3.x, r2.y, c21
+add r2.x, -r0.w, c17.y
+mad r1.w, r0, c17.z, c17
+mad r1.w, r1, r0, c18.x
+mul r0.xy, r0, c8.x
+texldd r0.xyz, r0, s2, r4.zwzw, r4
+rsq r2.x, r2.x
 add_pp r1.xyz, r1, -r0
+mad r0.w, r1, r0, c18.y
+rcp r2.x, r2.x
+mul r1.w, r0, r2.x
+cmp r0.w, v5.y, c17.x, c17.y
+mul r2.x, r0.w, r1.w
+mad r1.w, -r2.x, c18.z, r1
+mad r0.w, r0, c18, r1
+mul r0.w, r0, c19.x
+mov r2.xyz, v5
+dp3_sat r1.w, v1, -r2
+add r1.w, r1, c21
 mad_sat r1.w, r1, c22.x, c22.y
 mad_pp r0.xyz, r1.w, r1, r0
-mul r3.y, r0.w, r3
-cmp r3.x, v5.z, c17, c17.y
-add r5.x, r2.z, c21.y
-mad r2.x, r2.y, r2, c18.y
-rcp r2.w, r2.w
-mul r2.y, r2.x, r2.w
-cmp r2.x, v5.y, c17, c17.y
-mul r2.w, r2.x, r2.y
-mad r0.w, -r2, c18.z, r2.y
-mul r3.z, r3.x, r3.y
-mad r0.w, r2.x, c18, r0
-mad r2.y, -r3.z, c18.z, r3
-mad r2.x, r3, c18.w, r2.y
-mul r2.x, r2, c19
-mul r0.w, r0, c19.x
-dsy r3.xy, v5
-mul r3.xy, r3, r3
+add r5.x, r3, c21.y
 mov r5.y, r0.w
-dsx r4.w, r2.x
-dsy r4.y, r2.x
-dsx r2.xy, v5
-mul r2.xy, r2, r2
-add r2.x, r2, r2.y
-add r2.y, r3.x, r3
-rsq r2.x, r2.x
-rcp r2.x, r2.x
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r4.z, r2.x, c21.x
-mul r4.x, r2.y, c21
+mov r3.y, r0.w
 texldd r2.yw, r5, s3, r4.zwzw, r4
 add r2.xy, r2.wyzw, c22.z
-mov r2.w, r0
 mul r1.xy, r2, c22.ywzw
-add r2.xy, r2.zwzw, r1
+add r2.xy, r3, r1
 mad r1.w, r2.y, c23.x, c23.y
 mul r0.w, v1, c9.x
 frc r1.w, r1
@@ -102862,7 +102862,7 @@ SetTexture 4 [_ShadowMapTexture] CUBE
 SetTexture 5 [_LightTextureB0] 2D
 SetTexture 6 [_LightTexture0] CUBE
 "ps_3_0
-; 179 ALU, 11 TEX
+; 179 ALU, 15 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -102888,98 +102888,98 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r1.xyz, v5
-add r0.xyz, r1, -r1.zxyw
+abs r2.xyz, v5
+add r0.xyz, r2, -r2.zxyw
 add r0.w, r0.x, c17.y
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad r0.xyz, r0.w, r0, r2.zxyw
+add r0.w, r2.y, -r0.x
+add_pp r1.xyz, r2.yxzw, -r0
+abs r2.y, v5.z
+add r0.w, r0, c17.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad r0.xyz, r0.w, r0, r1.zxyw
-add r0.w, r1.y, -r0.x
-add r2.x, r0.w, c17.y
-abs r0.w, v5.z
-frc r2.y, r2.x
-dsy r4.zw, v5.xyxy
-max r1.w, r1.x, r0
-add_sat r2.w, r2.x, -r2.y
-rcp r2.x, r1.w
-min r1.w, r1.x, r0
-mul r1.w, r1, r2.x
-add_pp r2.xyz, r1.yxzw, -r0
-mad_pp r0.xyz, r2.w, r2, r0
-mul r1.y, r1.w, r1.w
-mov r3.xyz, v5
+mad_pp r0.xyz, r0.w, r1, r0
+abs_pp r0.x, r0
+rcp_pp r0.w, r0.x
+add r2.z, -r2.y, c17.y
+mad r1.w, r2.y, c17.z, c17
+mad r1.w, r2.y, r1, c18.x
+rsq r2.z, r2.z
+max r0.x, r2, r2.y
+mul_pp r0.zw, r0.xyzy, r0.w
+rcp r0.y, r0.x
+min r0.x, r2, r2.y
+mul r1.x, r0, r0.y
+mul r1.y, r1.x, r1.x
 mad r1.z, r1.y, c19.y, c19
-abs_pp r2.x, r0
-mad r0.x, r1.z, r1.y, c19.w
-rcp_pp r1.z, r2.x
-mul_pp r2.xy, r0.zyzw, r1.z
-mad r0.x, r0, r1.y, c20
-mad r0.x, r0, r1.y, c20.y
-mad r0.x, r0, r1.y, c20.z
-mul r1.y, r0.x, r1.w
-mov_pp r2.zw, c7.xyxy
-mad_pp r2.xy, r2, c21.y, r2.zwzw
-mul r0.xy, r2, c6.x
-add r0.z, r1.x, -r0.w
-add r1.z, -r1.y, c20.w
-cmp r0.z, -r0, r1.y, r1
-texld r1.xyz, r0, s1
-mul r0.xy, r2, c8.x
-abs r2.y, v5
-add r1.w, -r0.z, c18
-cmp r1.w, v5.z, r0.z, r1
-texld r0.xyz, r0, s2
-cmp r1.w, v5.x, r1, -r1
-mul r2.x, r1.w, c21
-dp3_sat r1.w, v1, -r3
-add r2.w, -r2.y, c17.y
-mad r2.z, r2.y, c17, c17.w
-mad r2.z, r2, r2.y, c18.x
-add r3.y, -r0.w, c17
-mad r3.x, r0.w, c17.z, c17.w
-mad r3.x, r0.w, r3, c18
-mad r0.w, r0, r3.x, c18.y
-add r1.w, r1, c21
-rsq r2.w, r2.w
-rsq r3.y, r3.y
-rcp r3.y, r3.y
+mad r1.z, r1, r1.y, c19.w
+mad r1.z, r1, r1.y, c20.x
+mad r1.z, r1, r1.y, c20.y
+mov_pp r0.xy, c7
+mad_pp r0.xy, r0.zwzw, c21.y, r0
+mul r0.zw, r0.xyxy, c6.x
+mad r1.w, r2.y, r1, c18.y
+rcp r2.z, r2.z
+mul r2.z, r1.w, r2
+cmp r1.w, v5.z, c17.x, c17.y
+mul r2.w, r1, r2.z
+mad r2.z, -r2.w, c18, r2
+mad r1.w, r1, c18, r2.z
+mad r1.y, r1.z, r1, c20.z
+mul r1.z, r1.w, c19.x
+mul r2.z, r1.y, r1.x
+dsy r1.xy, v5
+mul r1.xy, r1, r1
+add r1.y, r1.x, r1
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+dsy r3.y, r1.z
+dsx r3.w, r1.z
+dsx r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+rsq r1.x, r1.z
+rcp r1.x, r1.x
+mul r3.z, r1.x, c21.x
+mul r3.x, r1.y, c21
+texldd r1.xyz, r0.zwzw, s1, r3.zwzw, r3
+add r0.z, r2.x, -r2.y
+add r0.w, -r2.z, c20
+cmp r0.w, -r0.z, r2.z, r0
+add r1.w, -r0, c18
+cmp r0.w, v5.z, r0, r1
+cmp r1.w, v5.x, r0, -r0
+abs r0.w, v5.y
+mul r4.z, r1.w, c21.x
+add r2.x, -r0.w, c17.y
+mad r1.w, r0, c17.z, c17
+mad r1.w, r1, r0, c18.x
+mul r0.xy, r0, c8.x
+texldd r0.xyz, r0, s2, r3.zwzw, r3
+rsq r2.x, r2.x
 add_pp r1.xyz, r1, -r0
+mad r0.w, r1, r0, c18.y
+rcp r2.x, r2.x
+mul r1.w, r0, r2.x
+cmp r0.w, v5.y, c17.x, c17.y
+mul r2.x, r0.w, r1.w
+mad r1.w, -r2.x, c18.z, r1
+mad r0.w, r0, c18, r1
+mul r0.w, r0, c19.x
+mov r2.xyz, v5
+dp3_sat r1.w, v1, -r2
+add r1.w, r1, c21
 mad_sat r1.w, r1, c22.x, c22.y
 mad_pp r0.xyz, r1.w, r1, r0
-mul r3.y, r0.w, r3
-cmp r3.x, v5.z, c17, c17.y
-mul r3.z, r3.x, r3.y
-add r4.x, r2, c21.y
-mad r2.y, r2.z, r2, c18
-rcp r2.w, r2.w
-mul r2.w, r2.y, r2
-cmp r2.y, v5, c17.x, c17
-mul r2.z, r2.y, r2.w
-mad r0.w, -r2.z, c18.z, r2
-mad r0.w, r2.y, c18, r0
-mad r2.z, -r3, c18, r3.y
-mad r2.y, r3.x, c18.w, r2.z
-mul r2.y, r2, c19.x
-mul r0.w, r0, c19.x
-dsx r2.zw, v5.xyxy
-mul r2.zw, r2, r2
-dsy r3.y, r2
-dsx r3.w, r2.y
-add r2.y, r2.z, r2.w
-mul r4.zw, r4, r4
-add r2.z, r4, r4.w
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-rsq r2.z, r2.z
-rcp r2.z, r2.z
-mul r3.z, r2.y, c21.x
-mul r3.x, r2.z, c21
+add r4.x, r4.z, c21.y
 mov r4.y, r0.w
 texldd r2.yw, r4, s3, r3.zwzw, r3
-add r2.zw, r2.xywy, c22.z
-mov r2.y, r0.w
-mul r2.zw, r2, c22.xyyw
-add r4.zw, r2.xyxy, r2
+add r2.xy, r2.wyzw, c22.z
+mov r4.w, r0
+mul r2.xy, r2, c22.ywzw
+add r4.zw, r4, r2.xyxy
 mad r1.w, r4, c23.x, c23.y
 mul r0.w, v1, c9.x
 add_pp r1.xyz, -r0, c17.y
@@ -103109,7 +103109,7 @@ SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
 SetTexture 6 [_ShadowMapTexture] 2D
 "ps_3_0
-; 187 ALU, 14 TEX
+; 187 ALU, 18 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -103134,98 +103134,98 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r1.xyz, v5
-add r0.xyz, r1, -r1.zxyw
+abs r2.xyz, v5
+add r0.xyz, r2, -r2.zxyw
 add r0.w, r0.x, c20.y
-frc r1.w, r0
-add_sat r0.w, r0, -r1
-mad r0.xyz, r0.w, r0, r1.zxyw
-add r1.w, r1.y, -r0.x
-add r2.y, r1.w, c20
-abs r0.w, v5.z
-max r1.w, r1.x, r0
-rcp r2.x, r1.w
-min r1.w, r1.x, r0
-mul r1.w, r1, r2.x
-frc r2.z, r2.y
-add_sat r3.x, r2.y, -r2.z
-add_pp r2.xyz, r1.yxzw, -r0
-mad_pp r0.xyz, r3.x, r2, r0
-mul r2.w, r1, r1
-mad r1.y, r2.w, c22, c22.z
-mad r1.y, r1, r2.w, c22.w
-abs_pp r1.z, r0.x
-mad r0.x, r1.y, r2.w, c23
-mad r0.x, r0, r2.w, c23.y
-mad r0.x, r0, r2.w, c23.z
-rcp_pp r1.y, r1.z
-mul_pp r2.xy, r0.zyzw, r1.y
-mul r0.y, r0.x, r1.w
-mov_pp r2.zw, c10.xyxy
-mad_pp r2.xy, r2, c24.y, r2.zwzw
-add r0.x, r1, -r0.w
-add r0.z, -r0.y, c23.w
-cmp r0.z, -r0.x, r0.y, r0
-mul r0.xy, r2, c9.x
-add r1.w, -r0.z, c21
-cmp r0.z, v5, r0, r1.w
-cmp r1.w, v5.x, r0.z, -r0.z
-mul r2.z, r1.w, c24.x
-mov r3.xyz, v5
-dp3_sat r1.w, v1, -r3
-texld r1.xyz, r0, s1
-mul r0.xy, r2, c11.x
-abs r2.x, v5.y
-texld r0.xyz, r0, s2
-add r2.w, -r2.x, c20.y
-mad r2.y, r2.x, c20.z, c20.w
-mad r2.y, r2, r2.x, c21.x
-add r3.y, -r0.w, c20
-mad r3.x, r0.w, c20.z, c20.w
-mad r3.x, r0.w, r3, c21
-mad r0.w, r0, r3.x, c21.y
-rsq r2.w, r2.w
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-add r1.w, r1, c24
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad r0.xyz, r0.w, r0, r2.zxyw
+add r0.w, r2.y, -r0.x
+add_pp r3.xyz, r2.yxzw, -r0
+abs r2.y, v5.z
+add r0.w, r0, c20.y
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad_pp r0.xyz, r0.w, r3, r0
+add r1.w, -r2.y, c20.y
+mad r1.z, r2.y, c20, c20.w
+mad r1.z, r2.y, r1, c21.x
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.zw, r0.xyzy, r0.x
+max r0.y, r2.x, r2
+rsq r1.w, r1.w
+min r0.x, r2, r2.y
+rcp r0.y, r0.y
+mul r2.z, r0.x, r0.y
+mov_pp r1.xy, c10
+mad_pp r0.xy, r0.zwzw, c24.y, r1
+mul r1.x, r2.z, r2.z
+mul r0.zw, r0.xyxy, c9.x
+mad r1.y, r1.x, c22, c22.z
+mad r1.y, r1, r1.x, c22.w
+mad r1.y, r1, r1.x, c23.x
+mad r1.z, r2.y, r1, c21.y
+rcp r1.w, r1.w
+mul r1.w, r1.z, r1
+cmp r1.z, v5, c20.x, c20.y
+mul r2.w, r1.z, r1
+mad r1.w, -r2, c21.z, r1
+mad r1.z, r1, c21.w, r1.w
+mul r1.z, r1, c22.x
+mad r1.y, r1, r1.x, c23
+mad r2.w, r1.y, r1.x, c23.z
+dsy r1.xy, v5
+mul r1.xy, r1, r1
+add r1.y, r1.x, r1
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+dsx r4.w, r1.z
+dsy r4.y, r1.z
+dsx r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+rsq r1.x, r1.z
+rcp r1.x, r1.x
+mul r4.z, r1.x, c24.x
+mul r4.x, r1.y, c24
+texldd r1.xyz, r0.zwzw, s1, r4.zwzw, r4
+mul r0.w, r2, r2.z
+add r0.z, r2.x, -r2.y
+add r1.w, -r0, c23
+cmp r0.w, -r0.z, r0, r1
+add r1.w, -r0, c21
+cmp r1.w, v5.z, r0, r1
+abs r0.w, v5.y
+cmp r2.y, v5.x, r1.w, -r1.w
+mul r3.x, r2.y, c24
+add r2.x, -r0.w, c20.y
+mad r1.w, r0, c20.z, c20
+mad r1.w, r1, r0, c21.x
+mul r0.xy, r0, c11.x
+texldd r0.xyz, r0, s2, r4.zwzw, r4
+rsq r2.x, r2.x
 add_pp r1.xyz, r1, -r0
+mad r0.w, r1, r0, c21.y
+rcp r2.x, r2.x
+mul r1.w, r0, r2.x
+cmp r0.w, v5.y, c20.x, c20.y
+mul r2.x, r0.w, r1.w
+mad r1.w, -r2.x, c21.z, r1
+mad r0.w, r0, c21, r1
+mul r0.w, r0, c22.x
+mov r2.xyz, v5
+dp3_sat r1.w, v1, -r2
+add r1.w, r1, c24
 mad_sat r1.w, r1, c25.x, c25.y
 mad_pp r0.xyz, r1.w, r1, r0
-mul r3.y, r0.w, r3
-cmp r3.x, v5.z, c20, c20.y
-add r5.x, r2.z, c24.y
-mad r2.x, r2.y, r2, c21.y
-rcp r2.w, r2.w
-mul r2.y, r2.x, r2.w
-cmp r2.x, v5.y, c20, c20.y
-mul r2.w, r2.x, r2.y
-mad r0.w, -r2, c21.z, r2.y
-mul r3.z, r3.x, r3.y
-mad r0.w, r2.x, c21, r0
-mad r2.y, -r3.z, c21.z, r3
-mad r2.x, r3, c21.w, r2.y
-mul r2.x, r2, c22
-mul r0.w, r0, c22.x
-dsy r3.xy, v5
+add r5.x, r3, c24.y
 mov r5.y, r0.w
-dsx r4.w, r2.x
-dsy r4.y, r2.x
-dsx r2.xy, v5
-mul r2.xy, r2, r2
-add r2.x, r2, r2.y
-mul r3.xy, r3, r3
-add r2.y, r3.x, r3
-rsq r2.x, r2.x
-rcp r2.x, r2.x
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-mul r4.z, r2.x, c24.x
-mul r4.x, r2.y, c24
 texldd r2.yw, r5, s3, r4.zwzw, r4
 add r2.xy, r2.wyzw, c25.z
-mov r2.w, r0
+mov r3.y, r0.w
 mul r1.xy, r2, c25.ywzw
-add r3.xy, r2.zwzw, r1
+add r3.xy, r3, r1
 mad r1.w, r3.y, c26.x, c26.y
 mul r0.w, v1, c12.x
 add_pp r1.xyz, -r0, c20.y
@@ -103366,7 +103366,7 @@ SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
 SetTexture 6 [_ShadowMapTexture] 2D
 "ps_3_0
-; 187 ALU, 14 TEX
+; 187 ALU, 18 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -103391,102 +103391,102 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r0.xyz, v5
-add r1.xyz, r0, -r0.zxyw
-add r0.w, r1.x, c20.y
+abs r1.xyz, v5
+add r0.xyz, r1, -r1.zxyw
+add r0.w, r0.x, c20.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad r1.xyz, r0.w, r1, r0.zxyw
-add r1.w, r0.y, -r1.x
-add r2.y, r1.w, c20
-abs r0.w, v5.z
-max r1.w, r0.x, r0
-frc r2.z, r2.y
-rcp r2.x, r1.w
-min r1.w, r0.x, r0
-add_pp r3.xyz, r0.yxzw, -r1
-mul r1.w, r1, r2.x
-mul r2.x, r1.w, r1.w
-add_sat r2.y, r2, -r2.z
-mad_pp r1.xyz, r2.y, r3, r1
-mad r0.y, r2.x, c22, c22.z
-mad r0.y, r0, r2.x, c22.w
-mad r0.y, r0, r2.x, c23.x
-mad r0.y, r0, r2.x, c23
-mad r0.y, r0, r2.x, c23.z
-abs_pp r0.z, r1.x
-rcp_pp r0.z, r0.z
-add r3.y, -r0.w, c20
-rsq r3.y, r3.y
-mul r0.y, r0, r1.w
-mul_pp r1.xy, r1.zyzw, r0.z
-mov_pp r2.xy, c10
-mad_pp r2.xy, r1, c24.y, r2
-add r0.x, r0, -r0.w
-add r0.z, -r0.y, c23.w
-cmp r0.z, -r0.x, r0.y, r0
-mul r0.xy, r2, c9.x
-add r1.w, -r0.z, c21
-cmp r0.z, v5, r0, r1.w
-texld r1.xyz, r0, s1
-cmp r1.w, v5.x, r0.z, -r0.z
-mul r3.x, r1.w, c24
-mul r0.xy, r2, c11.x
-texld r0.xyz, r0, s2
-add_pp r2.xyz, r1, -r0
-mov r1.xyz, v5
-dp3_sat r2.w, v1, -r1
-abs r1.w, v5.y
-add r1.y, -r1.w, c20
-mad r1.x, r1.w, c20.z, c20.w
-mad r1.x, r1, r1.w, c21
-mad r1.x, r1, r1.w, c21.y
-mad r1.w, r0, c20.z, c20
-mad r1.w, r0, r1, c21.x
-mad r0.w, r0, r1, c21.y
-rsq r1.y, r1.y
-rcp r1.y, r1.y
-mul r1.y, r1.x, r1
-cmp r1.x, v5.y, c20, c20.y
-rcp r3.y, r3.y
-add r2.w, r2, c24
-mad_sat r2.w, r2, c25.x, c25.y
-mad_pp r2.xyz, r2.w, r2, r0
-add r4.z, r3.x, c24.y
-mul r1.z, r1.x, r1.y
-mul r3.y, r0.w, r3
-cmp r1.w, v5.z, c20.x, c20.y
-mad r0.w, -r1.z, c21.z, r1.y
-mul r3.z, r1.w, r3.y
-mad r1.y, -r3.z, c21.z, r3
-mad r0.w, r1.x, c21, r0
-mad r1.x, r1.w, c21.w, r1.y
-mul r1.x, r1, c22
-mul r0.w, r0, c22.x
-dsx r3.zw, v5.xyxy
-mul r3.zw, r3, r3
-dsx r4.y, r1.x
-dsy r1.w, r1.x
-dsy r1.xy, v5
-mul r1.xy, r1, r1
-add r1.y, r1.x, r1
-add r1.z, r3, r3.w
-rsq r1.x, r1.z
-rcp r1.x, r1.x
-rsq r1.y, r1.y
-rcp r1.y, r1.y
-mul r4.x, r1, c24
-mul r1.z, r1.y, c24.x
-mov r4.w, r0
-texldd r3.yw, r4.zwzw, s3, r4, r1.zwzw
-add r1.xy, r3.wyzw, c25.z
-mov r3.y, r0.w
-mul r0.xy, r1, c25.ywzw
-add r1.xy, r3, r0
-mad r1.y, r1, c26.x, c26
-mul r0.w, v1, c12.x
-frc r1.y, r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r0.w, r1.y, -r0.x
+add_pp r2.xyz, r1.yxzw, -r0
+add r0.w, r0, c20.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad_pp r0.xyz, r0.w, r2, r0
+abs r1.y, v5.z
+add r2.y, -r1, c20
+mad r2.x, r1.y, c20.z, c20.w
+mad r2.x, r1.y, r2, c21
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.zw, r0.xyzy, r0.x
+max r0.y, r1.x, r1
+rsq r2.y, r2.y
+dsx r3.xy, v5
+min r0.x, r1, r1.y
+rcp r0.y, r0.y
+mul r2.w, r0.x, r0.y
+mov_pp r1.zw, c10.xyxy
+mad_pp r0.xy, r0.zwzw, c24.y, r1.zwzw
+mul r1.z, r2.w, r2.w
+mad r1.w, r1.z, c22.y, c22.z
+mad r1.w, r1, r1.z, c22
+mad r1.w, r1, r1.z, c23.x
+mad r1.w, r1, r1.z, c23.y
+mul r0.zw, r0.xyxy, c9.x
+mad r3.z, r1.w, r1, c23
+mul r3.xy, r3, r3
+add r1.z, r3.x, r3.y
+mul r3.xy, r0, c11.x
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+mul r4.x, r1.z, c24
+add r0.x, r1, -r1.y
 rcp r6.y, v3.w
+mad r2.x, r1.y, r2, c21.y
+rcp r2.y, r2.y
+mul r2.y, r2.x, r2
+cmp r2.x, v5.z, c20, c20.y
+mul r2.z, r2.x, r2.y
+mad r2.y, -r2.z, c21.z, r2
+mad r2.x, r2, c21.w, r2.y
+mul r2.x, r2, c22
+dsx r4.y, r2.x
+dsy r1.w, r2.x
+dsy r2.xy, v5
+mul r2.xy, r2, r2
+add r2.x, r2, r2.y
+rsq r2.x, r2.x
+rcp r2.x, r2.x
+mul r1.z, r2.x, c24.x
+texldd r2.xyz, r0.zwzw, s1, r4, r1.zwzw
+mul r0.z, r3, r2.w
+add r0.y, -r0.z, c23.w
+cmp r0.w, -r0.x, r0.z, r0.y
+texldd r0.xyz, r3, s2, r4, r1.zwzw
+add r1.x, -r0.w, c21.w
+cmp r1.x, v5.z, r0.w, r1
+abs r0.w, v5.y
+cmp r2.w, v5.x, r1.x, -r1.x
+mul r5.x, r2.w, c24
+add r1.y, -r0.w, c20
+mad r1.x, r0.w, c20.z, c20.w
+mad r1.x, r1, r0.w, c21
+rsq r1.y, r1.y
+add_pp r2.xyz, r2, -r0
+add r4.z, r5.x, c24.y
+mad r0.w, r1.x, r0, c21.y
+rcp r1.y, r1.y
+mul r1.x, r0.w, r1.y
+cmp r0.w, v5.y, c20.x, c20.y
+mul r1.y, r0.w, r1.x
+mad r1.x, -r1.y, c21.z, r1
+mad r0.w, r0, c21, r1.x
+mul r0.w, r0, c22.x
+mov r3.xyz, v5
+dp3_sat r1.x, v1, -r3
+mov r4.w, r0
+mov r5.y, r0.w
+add r2.w, r1.x, c24
+texldd r3.yw, r4.zwzw, s3, r4, r1.zwzw
+mad_sat r2.w, r2, c25.x, c25.y
+mul r0.w, v1, c12.x
+mad_pp r2.xyz, r2.w, r2, r0
+add r1.xy, r3.wyzw, c25.z
+mul r0.xy, r1, c25.ywzw
+add r1.xy, r5, r0
+mad r1.y, r1, c26.x, c26
+frc r1.y, r1
 add_pp r0.xyz, -r2, c20.y
 mul_sat r0.w, r0, c21.z
 mad_pp r0.xyz, r0.w, r0, r2
@@ -103614,7 +103614,7 @@ SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] CUBE
 SetTexture 5 [_LightTexture0] 2D
 "ps_3_0
-; 186 ALU, 13 TEX
+; 186 ALU, 17 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -103640,98 +103640,98 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r1.xyz, v5
-add r0.xyz, r1, -r1.zxyw
+abs r2.xyz, v5
+add r0.xyz, r2, -r2.zxyw
 add r0.w, r0.x, c17.y
-frc r1.w, r0
-add_sat r0.w, r0, -r1
-mad r0.xyz, r0.w, r0, r1.zxyw
-add r0.w, r1.y, -r0.x
-add r2.x, r0.w, c17.y
-abs r0.w, v5.z
-frc r2.y, r2.x
-max r1.w, r1.x, r0
-add_sat r2.w, r2.x, -r2.y
-rcp r2.x, r1.w
-min r1.w, r1.x, r0
-mul r1.w, r1, r2.x
-add_pp r2.xyz, r1.yxzw, -r0
-mad_pp r2.xyz, r2.w, r2, r0
-mul r1.y, r1.w, r1.w
-mad r0.x, r1.y, c19.y, c19.z
-mad r0.x, r0, r1.y, c19.w
-mad r0.x, r0, r1.y, c20
-mad r0.x, r0, r1.y, c20.y
-mad r0.x, r0, r1.y, c20.z
-mul r1.y, r0.x, r1.w
-abs_pp r0.y, r2.x
-rcp_pp r0.y, r0.y
-mul_pp r2.xy, r2.zyzw, r0.y
-mov_pp r2.zw, c7.xyxy
-mad_pp r2.xy, r2, c21.y, r2.zwzw
-mul r0.xy, r2, c6.x
-mov r3.xyz, v5
-add r0.z, r1.x, -r0.w
-add r1.z, -r1.y, c20.w
-cmp r0.z, -r0, r1.y, r1
-texld r1.xyz, r0, s1
-mul r0.xy, r2, c8.x
-abs r2.y, v5
-add r1.w, -r0.z, c18
-cmp r1.w, v5.z, r0.z, r1
-texld r0.xyz, r0, s2
-cmp r1.w, v5.x, r1, -r1
-mul r2.x, r1.w, c21
-dp3_sat r1.w, v1, -r3
-add r2.w, -r2.y, c17.y
-mad r2.z, r2.y, c17, c17.w
-mad r2.z, r2, r2.y, c18.x
-add r3.y, -r0.w, c17
-mad r3.x, r0.w, c17.z, c17.w
-mad r3.x, r0.w, r3, c18
-mad r0.w, r0, r3.x, c18.y
-add r1.w, r1, c21
-rsq r2.w, r2.w
-rsq r3.y, r3.y
-rcp r3.y, r3.y
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad r0.xyz, r0.w, r0, r2.zxyw
+add r0.w, r2.y, -r0.x
+add r0.w, r0, c17.y
+frc r1.x, r0.w
+add_pp r3.xyz, r2.yxzw, -r0
+abs r1.w, v5.z
+add_sat r0.w, r0, -r1.x
+mad_pp r0.xyz, r0.w, r3, r0
+abs_pp r0.x, r0
+rcp_pp r0.w, r0.x
+add r2.z, -r1.w, c17.y
+mad r2.y, r1.w, c17.z, c17.w
+mad r2.y, r1.w, r2, c18.x
+rsq r2.z, r2.z
+max r0.x, r2, r1.w
+mul_pp r0.zw, r0.xyzy, r0.w
+rcp r0.y, r0.x
+min r0.x, r2, r1.w
+mul r1.x, r0, r0.y
+mul r1.y, r1.x, r1.x
+mad r1.z, r1.y, c19.y, c19
+mad r1.z, r1, r1.y, c19.w
+mad r1.z, r1, r1.y, c20.x
+mad r1.z, r1, r1.y, c20.y
+mov_pp r0.xy, c7
+mad_pp r0.xy, r0.zwzw, c21.y, r0
+mul r0.zw, r0.xyxy, c6.x
+mad r2.y, r1.w, r2, c18
+rcp r2.z, r2.z
+mul r2.z, r2.y, r2
+cmp r2.y, v5.z, c17.x, c17
+mul r2.w, r2.y, r2.z
+mad r2.z, -r2.w, c18, r2
+mad r2.y, r2, c18.w, r2.z
+mad r1.y, r1.z, r1, c20.z
+mul r1.z, r2.y, c19.x
+mul r2.y, r1, r1.x
+dsx r1.xy, v5
+mul r1.xy, r1, r1
+add r1.x, r1, r1.y
+dsy r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+add r1.y, r2.z, r2.w
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+dsx r5.w, r1.z
+dsy r5.y, r1.z
+mul r5.z, r1.x, c21.x
+mul r5.x, r1.y, c21
+texldd r1.xyz, r0.zwzw, s1, r5.zwzw, r5
+add r0.z, r2.x, -r1.w
+add r0.w, -r2.y, c20
+cmp r0.w, -r0.z, r2.y, r0
+add r1.w, -r0, c18
+cmp r0.w, v5.z, r0, r1
+cmp r1.w, v5.x, r0, -r0
+abs r0.w, v5.y
+mul r3.x, r1.w, c21
+add r2.x, -r0.w, c17.y
+mad r1.w, r0, c17.z, c17
+mad r1.w, r1, r0, c18.x
+mul r0.xy, r0, c8.x
+texldd r0.xyz, r0, s2, r5.zwzw, r5
+rsq r2.x, r2.x
 add_pp r1.xyz, r1, -r0
+mad r0.w, r1, r0, c18.y
+rcp r2.x, r2.x
+mul r1.w, r0, r2.x
+cmp r0.w, v5.y, c17.x, c17.y
+mul r2.x, r0.w, r1.w
+mad r1.w, -r2.x, c18.z, r1
+mad r0.w, r0, c18, r1
+mul r0.w, r0, c19.x
+mov r2.xyz, v5
+dp3_sat r1.w, v1, -r2
+add r1.w, r1, c21
 mad_sat r1.w, r1, c22.x, c22.y
 mad_pp r0.xyz, r1.w, r1, r0
-mul r3.y, r0.w, r3
-cmp r3.x, v5.z, c17, c17.y
-add r6.x, r2, c21.y
-mad r2.y, r2.z, r2, c18
-rcp r2.w, r2.w
-mul r2.z, r2.y, r2.w
-cmp r2.y, v5, c17.x, c17
-mul r2.w, r2.y, r2.z
-mad r0.w, -r2, c18.z, r2.z
-mul r3.z, r3.x, r3.y
-mad r0.w, r2.y, c18, r0
-mad r2.z, -r3, c18, r3.y
-mad r2.y, r3.x, c18.w, r2.z
-mul r2.y, r2, c19.x
-mul r0.w, r0, c19.x
-dsx r2.zw, v5.xyxy
-dsy r3.xy, v5
-mul r2.zw, r2, r2
+add r6.x, r3, c21.y
 mov r6.y, r0.w
-dsx r5.w, r2.y
-dsy r5.y, r2
-add r2.y, r2.z, r2.w
-mul r3.xy, r3, r3
-add r2.z, r3.x, r3.y
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-rsq r2.z, r2.z
-rcp r2.z, r2.z
-mul r5.z, r2.y, c21.x
-mul r5.x, r2.z, c21
 texldd r2.yw, r6, s3, r5.zwzw, r5
-add r2.zw, r2.xywy, c22.z
-mov r2.y, r0.w
-mul r2.zw, r2, c22.xyyw
-add r3.xy, r2, r2.zwzw
+add r2.xy, r2.wyzw, c22.z
+mov r3.y, r0.w
+mul r2.xy, r2, c22.ywzw
+add r3.xy, r3, r2
 mul r0.w, v1, c9.x
 add_pp r1.xyz, -r0, c17.y
 mul_sat r0.w, r0, c18.z
@@ -103867,7 +103867,7 @@ SetTexture 4 [_ShadowMapTexture] CUBE
 SetTexture 5 [_LightTextureB0] 2D
 SetTexture 6 [_LightTexture0] CUBE
 "ps_3_0
-; 187 ALU, 14 TEX
+; 187 ALU, 18 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -103894,98 +103894,98 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r1.xyz, v5
-add r0.xyz, r1, -r1.zxyw
+abs r2.xyz, v5
+add r0.xyz, r2, -r2.zxyw
 add r0.w, r0.x, c17.y
-frc r1.w, r0
-add_sat r0.w, r0, -r1
-mad r0.xyz, r0.w, r0, r1.zxyw
-add r0.w, r1.y, -r0.x
-add r2.x, r0.w, c17.y
-abs r0.w, v5.z
-frc r2.y, r2.x
-max r1.w, r1.x, r0
-add_sat r2.w, r2.x, -r2.y
-rcp r2.x, r1.w
-min r1.w, r1.x, r0
-mul r1.w, r1, r2.x
-add_pp r2.xyz, r1.yxzw, -r0
-mad_pp r2.xyz, r2.w, r2, r0
-mul r1.y, r1.w, r1.w
-mad r0.x, r1.y, c19.y, c19.z
-mad r0.x, r0, r1.y, c19.w
-mad r0.x, r0, r1.y, c20
-mad r0.x, r0, r1.y, c20.y
-mad r0.x, r0, r1.y, c20.z
-mul r1.y, r0.x, r1.w
-abs_pp r0.y, r2.x
-rcp_pp r0.y, r0.y
-mul_pp r2.xy, r2.zyzw, r0.y
-mov_pp r2.zw, c7.xyxy
-mad_pp r2.xy, r2, c21.y, r2.zwzw
-mul r0.xy, r2, c6.x
-mov r3.xyz, v5
-add r0.z, r1.x, -r0.w
-add r1.z, -r1.y, c20.w
-cmp r0.z, -r0, r1.y, r1
-texld r1.xyz, r0, s1
-mul r0.xy, r2, c8.x
-abs r2.y, v5
-add r1.w, -r0.z, c18
-cmp r1.w, v5.z, r0.z, r1
-texld r0.xyz, r0, s2
-cmp r1.w, v5.x, r1, -r1
-mul r2.x, r1.w, c21
-dp3_sat r1.w, v1, -r3
-add r2.w, -r2.y, c17.y
-mad r2.z, r2.y, c17, c17.w
-mad r2.z, r2, r2.y, c18.x
-add r3.y, -r0.w, c17
-mad r3.x, r0.w, c17.z, c17.w
-mad r3.x, r0.w, r3, c18
-mad r0.w, r0, r3.x, c18.y
-add r1.w, r1, c21
-rsq r2.w, r2.w
-rsq r3.y, r3.y
-rcp r3.y, r3.y
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad r0.xyz, r0.w, r0, r2.zxyw
+add r0.w, r2.y, -r0.x
+add r0.w, r0, c17.y
+frc r1.x, r0.w
+add_pp r3.xyz, r2.yxzw, -r0
+abs r1.w, v5.z
+add_sat r0.w, r0, -r1.x
+mad_pp r0.xyz, r0.w, r3, r0
+abs_pp r0.x, r0
+rcp_pp r0.w, r0.x
+add r2.z, -r1.w, c17.y
+mad r2.y, r1.w, c17.z, c17.w
+mad r2.y, r1.w, r2, c18.x
+rsq r2.z, r2.z
+max r0.x, r2, r1.w
+mul_pp r0.zw, r0.xyzy, r0.w
+rcp r0.y, r0.x
+min r0.x, r2, r1.w
+mul r1.x, r0, r0.y
+mul r1.y, r1.x, r1.x
+mad r1.z, r1.y, c19.y, c19
+mad r1.z, r1, r1.y, c19.w
+mad r1.z, r1, r1.y, c20.x
+mad r1.z, r1, r1.y, c20.y
+mov_pp r0.xy, c7
+mad_pp r0.xy, r0.zwzw, c21.y, r0
+mul r0.zw, r0.xyxy, c6.x
+mad r2.y, r1.w, r2, c18
+rcp r2.z, r2.z
+mul r2.z, r2.y, r2
+cmp r2.y, v5.z, c17.x, c17
+mul r2.w, r2.y, r2.z
+mad r2.z, -r2.w, c18, r2
+mad r2.y, r2, c18.w, r2.z
+mad r1.y, r1.z, r1, c20.z
+mul r1.z, r2.y, c19.x
+mul r2.y, r1, r1.x
+dsx r1.xy, v5
+mul r1.xy, r1, r1
+add r1.x, r1, r1.y
+dsy r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+add r1.y, r2.z, r2.w
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+dsx r5.w, r1.z
+dsy r5.y, r1.z
+mul r5.z, r1.x, c21.x
+mul r5.x, r1.y, c21
+texldd r1.xyz, r0.zwzw, s1, r5.zwzw, r5
+add r0.z, r2.x, -r1.w
+add r0.w, -r2.y, c20
+cmp r0.w, -r0.z, r2.y, r0
+add r1.w, -r0, c18
+cmp r0.w, v5.z, r0, r1
+cmp r1.w, v5.x, r0, -r0
+abs r0.w, v5.y
+mul r3.x, r1.w, c21
+add r2.x, -r0.w, c17.y
+mad r1.w, r0, c17.z, c17
+mad r1.w, r1, r0, c18.x
+mul r0.xy, r0, c8.x
+texldd r0.xyz, r0, s2, r5.zwzw, r5
+rsq r2.x, r2.x
 add_pp r1.xyz, r1, -r0
+mad r0.w, r1, r0, c18.y
+rcp r2.x, r2.x
+mul r1.w, r0, r2.x
+cmp r0.w, v5.y, c17.x, c17.y
+mul r2.x, r0.w, r1.w
+mad r1.w, -r2.x, c18.z, r1
+mad r0.w, r0, c18, r1
+mul r0.w, r0, c19.x
+mov r2.xyz, v5
+dp3_sat r1.w, v1, -r2
+add r1.w, r1, c21
 mad_sat r1.w, r1, c22.x, c22.y
 mad_pp r0.xyz, r1.w, r1, r0
-mul r3.y, r0.w, r3
-cmp r3.x, v5.z, c17, c17.y
-add r6.x, r2, c21.y
-mad r2.y, r2.z, r2, c18
-rcp r2.w, r2.w
-mul r2.z, r2.y, r2.w
-cmp r2.y, v5, c17.x, c17
-mul r2.w, r2.y, r2.z
-mad r0.w, -r2, c18.z, r2.z
-mul r3.z, r3.x, r3.y
-mad r0.w, r2.y, c18, r0
-mad r2.z, -r3, c18, r3.y
-mad r2.y, r3.x, c18.w, r2.z
-mul r2.y, r2, c19.x
-mul r0.w, r0, c19.x
-dsx r2.zw, v5.xyxy
-dsy r3.xy, v5
-mul r2.zw, r2, r2
+add r6.x, r3, c21.y
 mov r6.y, r0.w
-dsx r5.w, r2.y
-dsy r5.y, r2
-add r2.y, r2.z, r2.w
-mul r3.xy, r3, r3
-add r2.z, r3.x, r3.y
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-rsq r2.z, r2.z
-rcp r2.z, r2.z
-mul r5.z, r2.y, c21.x
-mul r5.x, r2.z, c21
 texldd r2.yw, r6, s3, r5.zwzw, r5
-add r2.zw, r2.xywy, c22.z
-mov r2.y, r0.w
-mul r2.zw, r2, c22.xyyw
-add r3.xy, r2, r2.zwzw
+add r2.xy, r2.wyzw, c22.z
+mov r3.y, r0.w
+mul r2.xy, r2, c22.ywzw
+add r3.xy, r3, r2
 mul r0.w, v1, c9.x
 add_pp r1.xyz, -r0, c17.y
 mul_sat r0.w, r0, c18.z
@@ -104123,7 +104123,7 @@ SetTexture 5 [_CityLightOverlayDetailTex] 2D
 SetTexture 6 [_BumpMap] 2D
 SetTexture 7 [_LightTexture0] 2D
 "ps_3_0
-; 185 ALU, 14 TEX
+; 187 ALU, 22 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -104148,180 +104148,182 @@ dcl_texcoord5 v4.xyz
 dcl_texcoord6 v5.x
 dcl_texcoord7 v6.xyz
 dcl_texcoord8 v7.xyz
-abs r4.xyz, v4
-add r1.xyz, r4, -r4.zxyw
-add r0.y, r1.x, c16
-frc r0.x, r0.y
-add_sat r0.x, r0.y, -r0
-mad r0.xyz, r0.x, r1, r4.zxyw
-add r0.w, r4.y, -r0.x
-add r1.w, r0, c16.y
-frc r0.w, r1
-add_pp r1.xyz, r4.yxzw, -r0
-add_sat r0.w, r1, -r0
-mad_pp r1.xyz, r0.w, r1, r0
-abs_pp r0.x, r1
-rcp_pp r0.z, r0.x
-mul_pp r0.zw, r1.xyzy, r0.z
-mov_pp r0.xy, c5
-mad_pp r2.xy, r0.zwzw, c20.y, r0
-mul r0.xy, r2, c4.x
-mov r3.xyz, v4
-dp3_sat r0.w, v1, -r3
-mul r1.xy, r2, c6.x
-add r0.w, r0, c23.y
-mov r3.xyz, v7
-texld r1.xyz, r1, s2
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_sat r0.w, r0, c23.z, c23
-mad_pp r0.xyz, r0.w, r0, r1
-mul r0.w, v1, c7.x
-add_pp r1.xyz, -r0, c16.y
-mul_sat r0.w, r0, c17.z
-mad_pp r0.xyz, r0.w, r1, r0
+abs r5.xyz, v4
+add r0.xyz, r5, -r5.zxyw
+add r0.w, r0.x, c16.y
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad r0.xyz, r0.w, r0, r5.zxyw
+add r0.w, r5.y, -r0.x
+add r0.w, r0, c16.y
+frc r1.x, r0.w
+add_pp r2.xyz, r5.yxzw, -r0
+add_sat r0.w, r0, -r1.x
+mad_pp r0.xyz, r0.w, r2, r0
 abs r0.w, v4.z
-mul r0.xyz, v0, r0
-max r1.w, r4.x, r0
-add_pp r1.xyz, -r0, c14
-min r2.z, r4.x, r0.w
-rcp r1.w, r1.w
-mul r1.w, r2.z, r1
-dp3 r2.z, v6, r3
-mul r3.z, r1.w, r1.w
-mad r3.x, r3.z, c18.y, c18.z
-mad r3.y, r3.x, r3.z, c18.w
-mad r3.y, r3, r3.z, c19.x
-mad r3.y, r3, r3.z, c19
-mad r3.y, r3, r3.z, c19.z
+abs_pp r0.x, r0
+rcp_pp r1.z, r0.x
+add r1.x, -r0.w, c16.y
+mad r0.x, r0.w, c16.z, c16.w
+mad r0.x, r0.w, r0, c17
+rsq r1.x, r1.x
+mul_pp r1.zw, r0.xyzy, r1.z
+mad r0.x, r0.w, r0, c17.y
+rcp r1.x, r1.x
+mul r1.x, r0, r1
+cmp r0.x, v4.z, c16, c16.y
+mul r1.y, r0.x, r1.x
+mad r0.y, -r1, c17.z, r1.x
+mov_pp r1.xy, c5
+mad_pp r3.xy, r1.zwzw, c20.y, r1
+mad r0.x, r0, c17.w, r0.y
+mul r0.z, r0.x, c18.x
+dsx r1.zw, v4.xyxy
+dsy r1.xy, v4
+mul r1.xy, r1, r1
+add r1.x, r1, r1.y
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+mul r4.x, r1, c20
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+mul r1.zw, r1, r1
+add r0.z, r1, r1.w
+mov r2.xyz, v4
+dp3_sat r1.w, v1, -r2
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r4.z, r0, c20.x
+mul r0.xy, r3, c4.x
+mul r1.xy, r3, c6.x
+texldd r1.xyz, r1, s2, r4.zwzw, r4
+texldd r0.xyz, r0, s1, r4.zwzw, r4
+add_pp r2.xyz, r0, -r1
+add r3.z, r1.w, c23.y
+mov r0.xyz, v7
+dp3 r1.w, v6, r0
+mad_sat r0.x, r3.z, c23.z, c23.w
+mad_pp r0.xyz, r0.x, r2, r1
 dp3 r2.w, v6, v6
-mad r2.w, -r2.z, r2.z, r2
-rsq r2.w, r2.w
-rcp r2.w, r2.w
-mul r3.x, r2.w, r2.w
-mad r3.x, c12, c12, -r3
-rsq r3.x, r3.x
-add r2.w, -r2, c12.x
-mul r3.y, r3, r1.w
-rcp r3.x, r3.x
-add r1.w, r2.z, -r3.x
-cmp r2.w, r2, c16.y, c16.x
-cmp r2.z, r2, c16.y, c16.x
-mul_pp r2.z, r2.w, r2
-add r2.w, r4.x, -r0
-cmp r1.w, -r2.z, v1, r1
-add r2.z, -r3.y, c19.w
-cmp r3.x, -r2.w, r3.y, r2.z
-add r2.w, v1, -r1
-add r1.w, -r3.x, c17
-cmp r3.x, v4.z, r3, r1.w
-add r2.z, r2.w, c16.y
-frc r1.w, r2.z
-add_sat r2.z, r2, -r1.w
-dsy r4.xy, v4
-cmp r3.x, v4, r3, -r3
-mul_sat r1.w, r2, c13.x
-mul r2.z, r2, c13.x
-mad r1.w, r2.z, c23.x, r1
-mad_pp r1.xyz, r1.w, r1, r0
-abs r1.w, v4.y
-mul r2.z, r3.x, c20.x
-add r0.x, -r1.w, c16.y
-mad r0.y, r1.w, c16.z, c16.w
-mad r0.y, r0, r1.w, c17.x
-rsq r0.x, r0.x
-add r0.z, r2, c20.y
-mad r0.y, r0, r1.w, c17
-rcp r0.x, r0.x
-mul r2.w, r0.y, r0.x
-cmp r3.x, v4.y, c16, c16.y
-mul r1.w, r3.x, r2
-add r0.x, -r0.w, c16.y
-mad r0.y, r0.w, c16.z, c16.w
-mad r0.y, r0.w, r0, c17.x
-mad r0.y, r0.w, r0, c17
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r0.y, r0, r0.x
-cmp r0.w, v4.z, c16.x, c16.y
-mul r0.x, r0.w, r0.y
-mad r0.x, -r0, c17.z, r0.y
-mad r1.w, -r1, c17.z, r2
-mad r0.y, r3.x, c17.w, r1.w
-mad r0.x, r0.w, c17.w, r0
-mul r2.w, r0.y, c18.x
-mul r0.x, r0, c18
-dsx r3.xy, v4
-mul r3.xy, r3, r3
-add r1.w, r3.x, r3.y
-rsq r1.w, r1.w
-dsy r3.w, r0.x
-mov r0.w, r2
-dsx r0.y, r0.x
-mul r4.xy, r4, r4
-add r0.x, r4, r4.y
-rcp r3.x, r1.w
-rsq r0.x, r0.x
-rcp r1.w, r0.x
-mul r3.z, r1.w, c20.x
-mul r0.x, r3, c20
-texldd r5.yw, r0.zwzw, s6, r0, r3.zwzw
-texldd r4.xyz, r0.zwzw, s0, r0, r3.zwzw
-add r3.xy, r5.wyzw, c20.w
-add_pp r4.xyz, r4, -r1
-mul_sat r1.w, c11.x, c11.x
-mad_pp r1.xyz, r1.w, r4, r1
-mul r3.xy, r3, c21
-add r4.xy, r2.zwzw, r3
-mul r3.xy, r2, c15.x
-mad r4.x, r4, c21.w, c21
-mad r4.y, r4, c21.z, c21.x
-frc r4.y, r4
-texldd r0, r0.zwzw, s3, r0, r3.zwzw
-texld r2, r3, s5
-mad r5.y, r4, c22.x, c22
-frc r5.x, r4
-sincos r4.xy, r5.y
-mad r4.y, r5.x, c22.x, c22
-sincos r5.xy, r4.y
-dp4 r4.w, c1, c1
-mov_pp r4.y, r4.x
-mov_pp r4.xz, r5.yyxw
-dp3_pp_sat r5.x, -r4, -c10
-rsq r4.w, r4.w
-mul r4.xyz, r4.w, c1
-dp3_sat r5.z, v3, r4
-add r4.w, v0, c20.z
-frc r4.x, r4.w
-add_pp r5.y, r5.x, -r5.z
-mad_pp r1.w, r1, r5.y, r5.z
-add_sat r4.x, r4.w, -r4
-mul_pp r0.w, r0, r4.x
-mul_pp r4, r0, r2
-dp3 r2.x, v2, v2
-mov r2.y, c8.x
-texld r3, r3, s4
-mul_pp r0, r0, r3
-texld r2.x, r2.x, s7
+mad r2.w, -r1, r1, r2
+rsq r2.x, r2.w
+rcp r2.x, r2.x
+mul r2.y, r2.x, r2.x
+mul r2.z, v1.w, c7.x
+add r2.x, -r2, c12
+add_pp r1.xyz, -r0, c16.y
+mul_sat r2.z, r2, c17
+mad_pp r0.xyz, r2.z, r1, r0
+mad r1.x, c12, c12, -r2.y
+rsq r2.y, r1.x
+mul r0.xyz, v0, r0
+rcp r2.z, r2.y
+add_pp r1.xyz, -r0, c14
+cmp r2.y, r1.w, c16, c16.x
+cmp r2.x, r2, c16.y, c16
+mul_pp r2.x, r2, r2.y
+add r2.y, r1.w, -r2.z
+cmp r2.y, -r2.x, v1.w, r2
+max r1.w, r5.x, r0
+rcp r2.x, r1.w
+min r1.w, r5.x, r0
+mul r1.w, r1, r2.x
+mul r2.x, r1.w, r1.w
+add r2.y, v1.w, -r2
+add r2.w, r2.y, c16.y
+frc r3.z, r2.w
+add_sat r2.w, r2, -r3.z
+mad r2.z, r2.x, c18.y, c18
+mad r2.z, r2, r2.x, c18.w
+mad r2.z, r2, r2.x, c19.x
+mad r2.z, r2, r2.x, c19.y
+mad r2.x, r2.z, r2, c19.z
+mul r1.w, r2.x, r1
+mul r2.w, r2, c13.x
+mul_sat r2.y, r2, c13.x
+mad r2.y, r2.w, c23.x, r2
+mad_pp r1.xyz, r2.y, r1, r0
+add r0.x, r5, -r0.w
+add r0.y, -r1.w, c19.w
+cmp r0.w, -r0.x, r1, r0.y
+abs r0.x, v4.y
+add r1.w, -r0, c17
+add r0.z, -r0.x, c16.y
+mad r0.y, r0.x, c16.z, c16.w
+mad r0.y, r0, r0.x, c17.x
+rsq r0.z, r0.z
+cmp r0.w, v4.z, r0, r1
+mad r0.x, r0.y, r0, c17.y
+rcp r0.z, r0.z
+mul r0.y, r0.x, r0.z
+cmp r0.x, v4.y, c16, c16.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c17.z, r0
+cmp r0.z, v4.x, r0.w, -r0.w
+mul r5.x, r0.z, c20
+mad r0.x, r0, c17.w, r0.y
+mul r0.w, r0.x, c18.x
+add r5.z, r5.x, c20.y
+mov r5.w, r0
+texldd r2.yw, r5.zwzw, s6, r4.zwzw, r4
+texldd r0.xyz, r5.zwzw, s0, r4.zwzw, r4
+add_pp r0.xyz, r0, -r1
+add r3.zw, r2.xywy, c20.w
+mul_sat r6.x, c11, c11
+mad_pp r2.xyz, r6.x, r0, r1
+mov r5.y, r0.w
+mul r0.xy, r3.zwzw, c21
+add r0.xy, r5, r0
+mul r5.xy, r3, c15.x
+mad r0.y, r0, c21.z, c21.x
+mad r0.z, r0.x, c21.w, c21.x
+frc r0.y, r0
+mad r0.x, r0.y, c22, c22.y
+sincos r3.xy, r0.x
+frc r0.y, r0.z
+mad r2.w, r0.y, c22.x, c22.y
+sincos r0.xy, r2.w
+mov_pp r3.y, r3.x
+mov_pp r3.xz, r0.yyxw
+dp4 r0.z, c1, c1
+rsq r0.x, r0.z
+mul r0.xyz, r0.x, c1
+dp3_pp_sat r2.w, -r3, -c10
+dp3_sat r6.y, v3, r0
+add r0.w, v0, c20.z
+frc r0.x, r0.w
+add_sat r3.x, r0.w, -r0
+texldd r0, r5.zwzw, s3, r4.zwzw, r4
+mul_pp r3.w, r0, r3.x
+mov_pp r3.xyz, r0
+add_pp r6.z, r2.w, -r6.y
+texldd r1, r5, s5, r4.zwzw, r4
+mul_pp r1, r3, r1
+add_pp r1.xyz, r1, -r2
+mad_pp r1.xyz, r1.w, r1, r2
+add_pp r1.w, r2, c22.z
+mad_pp r0.y, r6.x, r6.z, r6
+dp3 r0.x, v2, v2
+mul_pp r0.y, r0, c2.w
+texld r0.x, r0.x, s7
+mul_pp r0.z, r0.x, r0.y
 mul_pp r1.w, r1, c2
-mul_pp r1.w, r2.x, r1
-mul_pp_sat r1.w, r1, c17.z
-add r2.yzw, c2.xxyz, r2.y
-mad_sat r5.yzw, r2, r1.w, c0.xxyz
-add_pp r2.yzw, r4.xxyz, -r1.xxyz
-add_pp r1.w, r5.x, c22.z
-mul_pp r1.w, r1, c2
-mul_pp r1.w, r1, r2.x
-mul_pp_sat r1.w, r1, c22
-add_pp r1.w, -r1, c16.y
-mul_pp r4.xyz, r5.yzww, v5.x
-mad_pp r2.yzw, r4.w, r2, r1.xxyz
-mul r1.xyz, r4, c9.x
-mad_pp r1.xyz, r2.yzww, c3, r1
-mad_pp r0.xyz, -r1, r4, r0
-mul_pp r1.xyz, r1, r4
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
+mul_pp r0.x, r1.w, r0
+mul_pp_sat r0.x, r0, c22.w
+mul_pp_sat r5.z, r0, c17
+mov r0.y, c8.x
+add r0.yzw, c2.xxyz, r0.y
+mad_sat r0.yzw, r0, r5.z, c0.xxyz
+mul_pp r0.yzw, r0, v5.x
+mul r2.xyz, r0.yzww, c9.x
+mad_pp r1.xyz, r1, c3, r2
+texldd r2, r5, s4, r4.zwzw, r4
+mul_pp r2, r3, r2
+mad_pp r2.xyz, -r1, r0.yzww, r2
+add_pp r0.x, -r0, c16.y
+mul_pp r1.xyz, r1, r0.yzww
+mul_pp r0.x, r2.w, r0
+mad_pp oC0.xyz, r0.x, r2, r1
 mov_pp oC0.w, c16.y
 "
 }
@@ -104372,7 +104374,7 @@ SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
 SetTexture 6 [_BumpMap] 2D
 "ps_3_0
-; 183 ALU, 13 TEX
+; 183 ALU, 21 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -104395,175 +104397,175 @@ dcl_texcoord5 v3.xyz
 dcl_texcoord6 v4.x
 dcl_texcoord7 v5.xyz
 dcl_texcoord8 v6.xyz
-abs r3.xyz, v3
-add r0.xyz, r3, -r3.zxyw
-add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r3.zxyw
-add r0.w, r3.y, -r0.x
-add_pp r2.xyz, r3.yxzw, -r0
+abs r0.xyz, v3
+add r1.xyz, r0, -r0.zxyw
+add r0.w, r1.x, c16.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r1.xyz, r0.w, r1, r0.zxyw
+add r0.w, r0.y, -r1.x
 add r0.w, r0, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad_pp r0.xyz, r0.w, r2, r0
-abs r0.w, v3.z
-abs_pp r0.x, r0
-rcp_pp r0.x, r0.x
-dsy r4.xy, v3
-mul r4.xy, r4, r4
-mul_pp r0.xy, r0.zyzw, r0.x
+add_pp r2.xyz, r0.yxzw, -r1
+frc r1.w, r0
+add_sat r0.y, r0.w, -r1.w
+mad_pp r1.xyz, r0.y, r2, r1
+abs_pp r0.y, r1.x
+rcp_pp r0.y, r0.y
+mul_pp r0.zw, r1.xyzy, r0.y
+abs r0.y, v3.z
 mov_pp r1.xy, c5
-mad_pp r6.zw, r0.xyxy, c20.y, r1.xyxy
-mul r0.xy, r6.zwzw, c4.x
-texld r1.xyz, r0, s1
-mul r0.xy, r6.zwzw, c6.x
-texld r0.xyz, r0, s2
-add_pp r2.xyz, r1, -r0
-max r1.w, r3.x, r0
-min r1.x, r3, r0.w
-rcp r1.y, r1.w
-mul r1.w, r1.x, r1.y
-mov r1.xyz, v3
-dp3_sat r1.y, v1, -r1
-mul r2.w, r1, r1
-mad r1.x, r2.w, c18.y, c18.z
-add r1.y, r1, c23
-mad_sat r1.y, r1, c23.z, c23.w
-mad_pp r0.xyz, r1.y, r2, r0
-mad r1.x, r1, r2.w, c18.w
-mad r2.x, r1, r2.w, c19
-mad r2.x, r2, r2.w, c19.y
-mul r2.y, v1.w, c7.x
-add_pp r1.xyz, -r0, c16.y
-mul_sat r2.y, r2, c17.z
-mad_pp r0.xyz, r2.y, r1, r0
-mad r2.x, r2, r2.w, c19.z
-mul r1.y, r2.x, r1.w
-mov r2.xyz, v6
-dp3 r1.w, v5, r2
-dp3 r3.y, v5, v5
-mad r2.y, -r1.w, r1.w, r3
-rsq r2.y, r2.y
-rcp r4.z, r2.y
-mul r2.y, r4.z, r4.z
-mad r2.z, c12.x, c12.x, -r2.y
-add r3.y, -r0.w, c16
-rsq r3.y, r3.y
-add r1.x, r3, -r0.w
-add r1.z, -r1.y, c19.w
-cmp r2.w, -r1.x, r1.y, r1.z
-mul r0.xyz, v0, r0
-add r3.x, -r2.w, c17.w
-cmp r2.x, v3.z, r2.w, r3
-abs r2.y, v3
-rsq r4.w, r2.z
-add r2.w, -r2.y, c16.y
-mad r2.z, r2.y, c16, c16.w
-mad r2.z, r2, r2.y, c17.x
-mad r3.x, r0.w, c16.z, c16.w
-mad r3.x, r0.w, r3, c17
-mad r0.w, r0, r3.x, c17.y
-cmp r2.x, v3, r2, -r2
-mul r2.x, r2, c20
-rsq r2.w, r2.w
-rcp r3.y, r3.y
-add r6.x, r2, c20.y
-mul r3.y, r0.w, r3
-cmp r3.x, v3.z, c16, c16.y
-mul r3.z, r3.x, r3.y
-mad r2.y, r2.z, r2, c17
-rcp r2.w, r2.w
-mul r2.w, r2.y, r2
-cmp r2.y, v3, c16.x, c16
-mul r2.z, r2.y, r2.w
-mad r0.w, -r2.z, c17.z, r2
-mad r0.w, r2.y, c17, r0
-mad r2.z, -r3, c17, r3.y
-mad r2.y, r3.x, c17.w, r2.z
-mul r2.y, r2, c18.x
-mul r0.w, r0, c18.x
-dsx r2.zw, v3.xyxy
+mad_pp r0.zw, r0, c20.y, r1.xyxy
+add r1.w, -r0.y, c16.y
+mad r1.z, r0.y, c16, c16.w
+mad r1.z, r0.y, r1, c17.x
+rsq r1.w, r1.w
+dsy r2.zw, v3.xyxy
 mul r2.zw, r2, r2
-mov r6.y, r0.w
-dsx r3.w, r2.y
-dsy r3.y, r2
-add r2.y, r2.z, r2.w
-add r2.z, r4.x, r4.y
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-rsq r2.z, r2.z
-rcp r2.z, r2.z
-mul r3.z, r2.y, c20.x
-mul r3.x, r2.z, c20
-texldd r2.yw, r6, s6, r3.zwzw, r3
-add r2.zw, r2.xywy, c20.w
-rcp r4.x, r4.w
-add r2.y, r1.w, -r4.x
-mul r2.zw, r2, c21.xyxy
-add r4.x, -r4.z, c12
-cmp r4.y, r1.w, c16, c16.x
-cmp r1.w, r4.x, c16.y, c16.x
-mul_pp r1.w, r1, r4.y
-cmp r1.w, -r1, v1, r2.y
-mov r2.y, r0.w
-add r4.xy, r2, r2.zwzw
-add r1.w, v1, -r1
-add r2.x, r1.w, c16.y
-frc r2.y, r2.x
-add_sat r2.x, r2, -r2.y
-mul_sat r2.y, r1.w, c13.x
-mad r0.w, r4.y, c21.z, c21.x
-mul r1.w, r2.x, c13.x
-mad r1.w, r1, c23.x, r2.y
-add_pp r1.xyz, -r0, c14
-mad_pp r1.xyz, r1.w, r1, r0
-texldd r0.xyz, r6, s0, r3.zwzw, r3
-frc r0.w, r0
-add_pp r2.xyz, r0, -r1
-mad r1.w, r0, c22.x, c22.y
-sincos r0.xy, r1.w
-mad r0.y, r4.x, c21.w, c21.x
-frc r0.y, r0
-texldd r3, r6, s3, r3.zwzw, r3
-mov_pp r5.y, r0.x
-mad r1.w, r0.y, c22.x, c22.y
-sincos r0.xy, r1.w
-dp4_pp r2.w, c1, c1
-rsq_pp r0.z, r2.w
-mov_pp r5.xz, r0.yyxw
-mul_pp r4.xyz, r0.z, c1
-dp3_sat r0.y, v2, r4
-dp3_pp_sat r1.w, -r5, -c10
-add_pp r0.z, r1.w, -r0.y
-mul_sat r0.x, c11, c11
-mad_pp r1.xyz, r0.x, r2, r1
-mad_pp r0.x, r0, r0.z, r0.y
-mul_pp r2.x, r0, c2.w
-mul r4.xy, r6.zwzw, c15.x
-mul_pp_sat r4.w, r2.x, c17.z
-add r2.w, v0, c20.z
-mov r2.x, c8
-add r2.xyz, c2, r2.x
-frc r4.z, r2.w
-mad_sat r2.xyz, r2, r4.w, c0
-mul_pp r2.xyz, r2, v4.x
-add_sat r2.w, r2, -r4.z
-add_pp r1.w, r1, c22.z
+mul r1.xy, r0.zwzw, c4.x
+mad r1.z, r0.y, r1, c17.y
+rcp r1.w, r1.w
+mul r1.w, r1.z, r1
+cmp r1.z, v3, c16.x, c16.y
+mul r2.x, r1.z, r1.w
+mad r1.w, -r2.x, c17.z, r1
+mad r1.w, r1.z, c17, r1
+mul r2.x, r1.w, c18
+max r1.z, r0.x, r0.y
+rcp r1.w, r1.z
+min r1.z, r0.x, r0.y
+dsx r4.w, r2.x
+dsy r4.y, r2.x
+dsx r2.xy, v3
+mul r2.xy, r2, r2
+mul r1.w, r1.z, r1
+add r1.z, r2.x, r2.y
+add r2.x, r2.z, r2.w
+mul r2.w, r1, r1
+mad r3.x, r2.w, c18.y, c18.z
+mad r3.w, r3.x, r2, c18
+mad r3.w, r3, r2, c19.x
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r2.x, r2.x
+rcp r2.x, r2.x
+mul r4.z, r1, c20.x
+mul r4.x, r2, c20
+texldd r2.xyz, r1, s1, r4.zwzw, r4
+mul r1.xy, r0.zwzw, c6.x
+texldd r1.xyz, r1, s2, r4.zwzw, r4
+add_pp r3.xyz, r2, -r1
+mov r2.xyz, v3
+dp3_sat r2.y, v1, -r2
+mad r3.w, r3, r2, c19.y
+mad r2.x, r3.w, r2.w, c19.z
+mul r1.w, r2.x, r1
+add r2.y, r2, c23
+mad_sat r2.x, r2.y, c23.z, c23.w
+mad_pp r1.xyz, r2.x, r3, r1
+mov r3.xyz, v6
+dp3 r2.w, v5, r3
+add r2.x, -r1.w, c19.w
+add r0.x, r0, -r0.y
+cmp r0.x, -r0, r1.w, r2
+add r0.y, -r0.x, c17.w
+cmp r0.x, v3.z, r0, r0.y
+mul r1.w, v1, c7.x
+mul_sat r0.y, r1.w, c17.z
+abs r1.w, v3.y
+add_pp r2.xyz, -r1, c16.y
+mad_pp r1.xyz, r0.y, r2, r1
+mul r1.xyz, v0, r1
+cmp r0.x, v3, r0, -r0
+mul r5.x, r0, c20
+add r3.y, -r1.w, c16
+mad r3.x, r1.w, c16.z, c16.w
+mad r3.x, r3, r1.w, c17
+dp3 r0.y, v5, v5
+mad r0.y, -r2.w, r2.w, r0
+rsq r0.y, r0.y
+rsq r3.y, r3.y
+add r0.x, r5, c20.y
+mad r1.w, r3.x, r1, c17.y
+rcp r3.y, r3.y
+mul r3.x, r1.w, r3.y
+cmp r1.w, v3.y, c16.x, c16.y
+mul r3.y, r1.w, r3.x
+rcp r3.z, r0.y
+mad r0.y, -r3, c17.z, r3.x
+mul r3.x, r3.z, r3.z
+mad r0.y, r1.w, c17.w, r0
+mul r1.w, r0.y, c18.x
+mov r0.y, r1.w
+mad r3.x, c12, c12, -r3
+rsq r3.x, r3.x
+texldd r3.yw, r0, s6, r4.zwzw, r4
+rcp r5.y, r3.x
+add r3.xy, r3.wyzw, c20.w
+add r3.w, r2, -r5.y
+mul r3.xy, r3, c21
+cmp r5.y, r2.w, c16, c16.x
+add r3.z, -r3, c12.x
+cmp r2.w, r3.z, c16.y, c16.x
+mul_pp r2.w, r2, r5.y
+cmp r2.w, -r2, v1, r3
+mov r5.y, r1.w
+add r5.xy, r5, r3
+add r2.w, v1, -r2
+add r3.x, r2.w, c16.y
+frc r3.y, r3.x
+add_sat r3.x, r3, -r3.y
+mul_sat r3.y, r2.w, c13.x
+mad r1.w, r5.y, c21.z, c21.x
+mul r2.w, r3.x, c13.x
+mad r2.w, r2, c23.x, r3.y
+add_pp r2.xyz, -r1, c14
+mad_pp r2.xyz, r2.w, r2, r1
+texldd r1.xyz, r0, s0, r4.zwzw, r4
+frc r1.w, r1
+add_pp r3.xyz, r1, -r2
+mad r2.w, r1, c22.x, c22.y
+sincos r1.xy, r2.w
+mad r1.y, r5.x, c21.w, c21.x
+frc r1.y, r1
+mov_pp r6.y, r1.x
+mad r2.w, r1.y, c22.x, c22.y
+sincos r1.xy, r2.w
+dp4_pp r3.w, c1, c1
+rsq_pp r1.z, r3.w
+mov_pp r6.xz, r1.yyxw
+mul_pp r5.xyz, r1.z, c1
+dp3_sat r1.y, v2, r5
+dp3_pp_sat r2.w, -r6, -c10
+mul r5.xy, r0.zwzw, c15.x
+mul_sat r1.x, c11, c11
+mad_pp r2.xyz, r1.x, r3, r2
+add_pp r1.z, r2.w, -r1.y
+mad_pp r1.x, r1, r1.z, r1.y
+mul_pp r0.z, r1.x, c2.w
+mul_pp_sat r3.w, r0.z, c17.z
+mov r0.w, c8.x
+add r3.xyz, c2, r0.w
+add r0.z, v0.w, c20
+mad_sat r3.xyz, r3, r3.w, c0
+mul_pp r3.xyz, r3, v4.x
+frc r0.w, r0.z
+add_sat r3.w, r0.z, -r0
+texldd r0, r0, s3, r4.zwzw, r4
+mul_pp r0.w, r0, r3
+texldd r1, r5, s5, r4.zwzw, r4
+mul_pp r1, r0, r1
+add_pp r1.xyz, r1, -r2
+mad_pp r1.xyz, r1.w, r1, r2
+add_pp r1.w, r2, c22.z
+mul r6.xyz, r3, c9.x
+texldd r2, r5, s4, r4.zwzw, r4
 mul_pp r1.w, r1, c2
 mul_pp_sat r1.w, r1, c22
-mul_pp r3.w, r3, r2
-texld r0, r4, s5
-mul_pp r0, r3, r0
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r0.w, r0, r1
-mul r5.xyz, r2, c9.x
-mad_pp r1.xyz, r0, c3, r5
-texld r0, r4, s4
-mul_pp r0, r3, r0
-mad_pp r0.xyz, -r1, r2, r0
+mul_pp r0, r0, r2
+mad_pp r1.xyz, r1, c3, r6
+mad_pp r0.xyz, -r1, r3, r0
 add_pp r1.w, -r1, c16.y
-mul_pp r1.xyz, r1, r2
+mul_pp r1.xyz, r1, r3
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
 mov_pp oC0.w, c16.y
@@ -104618,7 +104620,7 @@ SetTexture 6 [_BumpMap] 2D
 SetTexture 7 [_LightTexture0] 2D
 SetTexture 8 [_LightTextureB0] 2D
 "ps_3_0
-; 190 ALU, 15 TEX
+; 191 ALU, 23 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -104644,186 +104646,187 @@ dcl_texcoord5 v4.xyz
 dcl_texcoord6 v5.x
 dcl_texcoord7 v6.xyz
 dcl_texcoord8 v7.xyz
-abs r4.xyz, v4
-add r1.xyz, r4, -r4.zxyw
-add r0.y, r1.x, c16
-frc r0.x, r0.y
-add_sat r0.x, r0.y, -r0
-mad r0.xyz, r0.x, r1, r4.zxyw
-add r0.w, r4.y, -r0.x
-add r1.w, r0, c16.y
-frc r0.w, r1
-add_pp r1.xyz, r4.yxzw, -r0
-add_sat r0.w, r1, -r0
-mad_pp r1.xyz, r0.w, r1, r0
-abs_pp r0.x, r1
-rcp_pp r0.z, r0.x
-mul_pp r0.zw, r1.xyzy, r0.z
-mov_pp r0.xy, c5
-mad_pp r2.xy, r0.zwzw, c20.y, r0
-mul r0.xy, r2, c4.x
-mov r3.xyz, v4
-dp3_sat r0.w, v1, -r3
-mul r1.xy, r2, c6.x
-add r0.w, r0, c23.y
-mov r3.xyz, v7
-texld r1.xyz, r1, s2
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_sat r0.w, r0, c23.z, c23
-mad_pp r0.xyz, r0.w, r0, r1
-mul r0.w, v1, c7.x
-add_pp r1.xyz, -r0, c16.y
-mul_sat r0.w, r0, c17.z
-mad_pp r0.xyz, r0.w, r1, r0
+abs r5.xyz, v4
+add r0.xyz, r5, -r5.zxyw
+add r0.w, r0.x, c16.y
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad r0.xyz, r0.w, r0, r5.zxyw
+add r0.w, r5.y, -r0.x
+add r0.w, r0, c16.y
+frc r1.x, r0.w
+add_pp r2.xyz, r5.yxzw, -r0
+add_sat r0.w, r0, -r1.x
+mad_pp r0.xyz, r0.w, r2, r0
 abs r0.w, v4.z
+abs_pp r0.x, r0
+rcp_pp r1.z, r0.x
+add r1.x, -r0.w, c16.y
+mad r0.x, r0.w, c16.z, c16.w
+mad r0.x, r0.w, r0, c17
+rsq r1.x, r1.x
+mul_pp r1.zw, r0.xyzy, r1.z
+mad r0.x, r0.w, r0, c17.y
+rcp r1.x, r1.x
+mul r1.x, r0, r1
+cmp r0.x, v4.z, c16, c16.y
+mul r1.y, r0.x, r1.x
+mad r0.y, -r1, c17.z, r1.x
+mov_pp r1.xy, c5
+mad_pp r2.xy, r1.zwzw, c20.y, r1
+mad r0.x, r0, c17.w, r0.y
+mul r0.z, r0.x, c18.x
+dsx r1.zw, v4.xyxy
+dsy r1.xy, v4
+mul r1.xy, r1, r1
+add r1.x, r1, r1.y
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+mul r4.x, r1, c20
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+mul r1.zw, r1, r1
+add r0.z, r1, r1.w
+mov r3.xyz, v4
+dp3_sat r1.w, v1, -r3
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r4.z, r0, c20.x
+mul r0.xy, r2, c4.x
+mul r1.xy, r2, c6.x
+texldd r1.xyz, r1, s2, r4.zwzw, r4
+texldd r0.xyz, r0, s1, r4.zwzw, r4
+add_pp r3.xyz, r0, -r1
+add r2.w, r1, c23.y
+mov r0.xyz, v7
+dp3 r1.w, v6, r0
+mad_sat r0.x, r2.w, c23.z, c23.w
+mad_pp r0.xyz, r0.x, r3, r1
+dp3 r2.z, v6, v6
+mad r2.z, -r1.w, r1.w, r2
+rsq r2.z, r2.z
+rcp r2.z, r2.z
+mul r2.w, r2.z, r2.z
+mul r3.x, v1.w, c7
+add r2.z, -r2, c12.x
+add_pp r1.xyz, -r0, c16.y
+mul_sat r3.x, r3, c17.z
+mad_pp r0.xyz, r3.x, r1, r0
+mad r1.x, c12, c12, -r2.w
+rsq r2.w, r1.x
 mul r0.xyz, v0, r0
-max r1.w, r4.x, r0
+rcp r3.x, r2.w
 add_pp r1.xyz, -r0, c14
-min r2.z, r4.x, r0.w
-rcp r1.w, r1.w
-mul r1.w, r2.z, r1
-dp3 r2.z, v6, r3
-mul r3.z, r1.w, r1.w
-mad r3.x, r3.z, c18.y, c18.z
-mad r3.y, r3.x, r3.z, c18.w
-mad r3.y, r3, r3.z, c19.x
-mad r3.y, r3, r3.z, c19
-mad r3.y, r3, r3.z, c19.z
-dp3 r2.w, v6, v6
-mad r2.w, -r2.z, r2.z, r2
-rsq r2.w, r2.w
-rcp r2.w, r2.w
-mul r3.x, r2.w, r2.w
-mad r3.x, c12, c12, -r3
-rsq r3.x, r3.x
-add r2.w, -r2, c12.x
-mul r3.y, r3, r1.w
-rcp r3.x, r3.x
-add r1.w, r2.z, -r3.x
-cmp r2.w, r2, c16.y, c16.x
+cmp r2.w, r1, c16.y, c16.x
 cmp r2.z, r2, c16.y, c16.x
-mul_pp r2.z, r2.w, r2
-add r2.w, r4.x, -r0
-cmp r1.w, -r2.z, v1, r1
-add r2.z, -r3.y, c19.w
-cmp r3.x, -r2.w, r3.y, r2.z
-add r2.w, v1, -r1
-add r1.w, -r3.x, c17
-cmp r3.x, v4.z, r3, r1.w
-add r2.z, r2.w, c16.y
-frc r1.w, r2.z
-add_sat r2.z, r2, -r1.w
-dsy r4.xy, v4
-cmp r3.x, v4, r3, -r3
-mul_sat r1.w, r2, c13.x
-mul r2.z, r2, c13.x
-mad r1.w, r2.z, c23.x, r1
-mad_pp r1.xyz, r1.w, r1, r0
-abs r1.w, v4.y
-mul r2.z, r3.x, c20.x
-add r0.x, -r1.w, c16.y
-mad r0.y, r1.w, c16.z, c16.w
-mad r0.y, r0, r1.w, c17.x
-rsq r0.x, r0.x
-add r0.z, r2, c20.y
-mad r0.y, r0, r1.w, c17
-rcp r0.x, r0.x
-mul r2.w, r0.y, r0.x
-cmp r3.x, v4.y, c16, c16.y
-mul r1.w, r3.x, r2
-add r0.x, -r0.w, c16.y
-mad r0.y, r0.w, c16.z, c16.w
-mad r0.y, r0.w, r0, c17.x
-mad r0.y, r0.w, r0, c17
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r0.y, r0, r0.x
-cmp r0.w, v4.z, c16.x, c16.y
-mul r0.x, r0.w, r0.y
-mad r0.x, -r0, c17.z, r0.y
-mad r1.w, -r1, c17.z, r2
-mad r0.y, r3.x, c17.w, r1.w
-mad r0.x, r0.w, c17.w, r0
-mul r2.w, r0.y, c18.x
-mul r0.x, r0, c18
-dsx r3.xy, v4
-mul r3.xy, r3, r3
-add r1.w, r3.x, r3.y
-rsq r1.w, r1.w
-dsy r3.w, r0.x
-mov r0.w, r2
-dsx r0.y, r0.x
-mul r4.xy, r4, r4
-add r0.x, r4, r4.y
-rcp r3.x, r1.w
-rsq r0.x, r0.x
-rcp r1.w, r0.x
-mul r3.z, r1.w, c20.x
-mul r0.x, r3, c20
-texldd r5.yw, r0.zwzw, s6, r0, r3.zwzw
-texldd r4.xyz, r0.zwzw, s0, r0, r3.zwzw
-texldd r0, r0.zwzw, s3, r0, r3.zwzw
-add r3.xy, r5.wyzw, c20.w
-add_pp r4.xyz, r4, -r1
-mul_sat r1.w, c11.x, c11.x
-mad_pp r1.xyz, r1.w, r4, r1
-mul r3.xy, r3, c21
-add r4.xy, r2.zwzw, r3
-mul r3.xy, r2, c15.x
-mad r4.x, r4, c21.w, c21
-mad r4.y, r4, c21.z, c21.x
-frc r4.y, r4
-mad r5.y, r4, c22.x, c22
-frc r5.x, r4
-sincos r4.xy, r5.y
-mad r4.y, r5.x, c22.x, c22
-sincos r5.xy, r4.y
-mov_pp r4.y, r4.x
-mov_pp r4.xz, r5.yyxw
-dp4 r4.w, c1, c1
-rsq r4.w, r4.w
-dp3_pp_sat r4.y, -r4, -c10
-mul r5.xyz, r4.w, c1
-dp3_sat r4.z, v3, r5
-add_pp r4.x, r4.y, -r4.z
-mad_pp r1.w, r1, r4.x, r4.z
-add r5.w, v0, c20.z
-rcp r3.w, v2.w
-mad r5.xy, v2, r3.w, c20.y
-mul_pp r3.z, r1.w, c2.w
-frc r4.w, r5
-add_sat r4.w, r5, -r4
-dp3 r4.x, v2, v2
-mul_pp r0.w, r0, r4
-texld r2, r3, s5
-mul_pp r2, r0, r2
-texld r1.w, r5, s7
-cmp r3.w, -v2.z, c16.x, c16.y
-mul_pp r1.w, r3, r1
-texld r4.x, r4.x, s8
-mul_pp r1.w, r1, r4.x
-mul_pp r3.z, r1.w, r3
-mov r3.w, c8.x
-add r5.xyz, c2, r3.w
-mul_pp_sat r3.z, r3, c17
-mad_sat r4.xzw, r5.xyyz, r3.z, c0.xyyz
-add_pp r5.xyz, r2, -r1
-mad_pp r5.xyz, r2.w, r5, r1
-mul_pp r2.xyz, r4.xzww, v5.x
-mul r1.xyz, r2, c9.x
-add_pp r2.w, r4.y, c22.z
+mul_pp r2.z, r2, r2.w
+add r2.w, r1, -r3.x
+cmp r2.w, -r2.z, v1, r2
+max r1.w, r5.x, r0
+rcp r2.z, r1.w
+min r1.w, r5.x, r0
+mul r1.w, r1, r2.z
+mul r2.z, r1.w, r1.w
+add r2.w, v1, -r2
+add r3.y, r2.w, c16
+frc r3.z, r3.y
+add_sat r3.y, r3, -r3.z
+mad r3.x, r2.z, c18.y, c18.z
+mad r3.x, r3, r2.z, c18.w
+mad r3.x, r3, r2.z, c19
+mad r3.x, r3, r2.z, c19.y
+mad r2.z, r3.x, r2, c19
+mul r1.w, r2.z, r1
+mul_sat r6.x, c11, c11
+mul r3.y, r3, c13.x
+mul_sat r2.w, r2, c13.x
+mad r2.w, r3.y, c23.x, r2
+mad_pp r1.xyz, r2.w, r1, r0
+add r0.x, r5, -r0.w
+add r0.y, -r1.w, c19.w
+cmp r0.w, -r0.x, r1, r0.y
+abs r0.x, v4.y
+add r1.w, -r0, c17
+add r0.z, -r0.x, c16.y
+mad r0.y, r0.x, c16.z, c16.w
+mad r0.y, r0, r0.x, c17.x
+rsq r0.z, r0.z
+cmp r0.w, v4.z, r0, r1
+mad r0.x, r0.y, r0, c17.y
+rcp r0.z, r0.z
+mul r0.y, r0.x, r0.z
+cmp r0.x, v4.y, c16, c16.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c17.z, r0
+cmp r0.z, v4.x, r0.w, -r0.w
+mul r5.x, r0.z, c20
+mad r0.x, r0, c17.w, r0.y
+mul r0.w, r0.x, c18.x
+add r5.z, r5.x, c20.y
+mov r5.w, r0
+texldd r3.yw, r5.zwzw, s6, r4.zwzw, r4
+texldd r0.xyz, r5.zwzw, s0, r4.zwzw, r4
+add_pp r0.xyz, r0, -r1
+add r2.zw, r3.xywy, c20.w
+mad_pp r3.xyz, r6.x, r0, r1
+mul r0.xy, r2.zwzw, c21
+mov r5.y, r0.w
+add r1.xy, r5, r0
+mul r5.xy, r2, c15.x
+mad r1.y, r1, c21.z, c21.x
+texldd r0, r5, s5, r4.zwzw, r4
+mad r1.z, r1.x, c21.w, c21.x
+frc r1.y, r1
+mad r1.x, r1.y, c22, c22.y
+sincos r2.xy, r1.x
+frc r1.y, r1.z
+mad r2.y, r1, c22.x, c22
+sincos r1.xy, r2.y
+mov_pp r2.y, r2.x
+mov_pp r2.xz, r1.yyxw
+dp4 r1.z, c1, c1
+rsq r1.x, r1.z
+mul r1.xyz, r1.x, c1
+dp3_pp_sat r3.w, -r2, -c10
+dp3_sat r6.y, v3, r1
+add r1.w, v0, c20.z
+frc r1.x, r1.w
+add_sat r2.x, r1.w, -r1
+texldd r1, r5.zwzw, s3, r4.zwzw, r4
+mul_pp r1.w, r1, r2.x
+mul_pp r2, r1, r0
+add_pp r6.z, r3.w, -r6.y
+add_pp r2.xyz, r2, -r3
+mad_pp r2.xyz, r2.w, r2, r3
+mad_pp r0.y, r6.x, r6.z, r6
+rcp r0.x, v2.w
+mad r6.xy, v2, r0.x, c20.y
+add_pp r2.w, r3, c22.z
+dp3 r0.x, v2, v2
+texld r0.w, r6, s7
+cmp r0.z, -v2, c16.x, c16.y
+mul_pp r0.z, r0, r0.w
+texld r0.x, r0.x, s8
+mul_pp r0.w, r0.z, r0.x
+mul_pp r0.y, r0, c2.w
+mul_pp r0.y, r0.w, r0
 mul_pp r2.w, r2, c2
-texld r3, r3, s4
-mul_pp r1.w, r2, r1
-mul_pp_sat r1.w, r1, c22
-mul_pp r0, r0, r3
-mad_pp r1.xyz, r5, c3, r1
-mad_pp r0.xyz, -r1, r2, r0
-add_pp r1.w, -r1, c16.y
-mul_pp r1.xyz, r1, r2
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
+mul_pp r0.w, r2, r0
+mul_pp_sat r0.w, r0, c22
+mul_pp_sat r5.z, r0.y, c17
+mov r0.x, c8
+add r0.xyz, c2, r0.x
+mad_sat r0.xyz, r0, r5.z, c0
+mul_pp r0.xyz, r0, v5.x
+mul r3.xyz, r0, c9.x
+mad_pp r2.xyz, r2, c3, r3
+texldd r3, r5, s4, r4.zwzw, r4
+mul_pp r1, r1, r3
+mad_pp r1.xyz, -r2, r0, r1
+mul_pp r2.xyz, r2, r0
+add_pp r0.w, -r0, c16.y
+mul_pp r0.x, r1.w, r0.w
+mad_pp oC0.xyz, r0.x, r1, r2
 mov_pp oC0.w, c16.y
 "
 }
@@ -104876,7 +104879,7 @@ SetTexture 6 [_BumpMap] 2D
 SetTexture 7 [_LightTextureB0] 2D
 SetTexture 8 [_LightTexture0] CUBE
 "ps_3_0
-; 187 ALU, 15 TEX
+; 187 ALU, 23 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -104902,178 +104905,178 @@ dcl_texcoord5 v4.xyz
 dcl_texcoord6 v5.x
 dcl_texcoord7 v6.xyz
 dcl_texcoord8 v7.xyz
-abs r0.xyz, v4
-add r1.xyz, r0, -r0.zxyw
-add r0.w, r1.x, c16.y
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
+add r0.w, r0.x, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad r1.xyz, r0.w, r1, r0.zxyw
-add r0.w, r0.y, -r1.x
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r0.w, r1.y, -r0.x
 add r0.w, r0, c16.y
-dsy r5.xy, v4
-add_pp r2.xyz, r0.yxzw, -r1
 frc r1.w, r0
-add_sat r0.y, r0.w, -r1.w
-mad_pp r1.xyz, r0.y, r2, r1
-mov r3.xyz, v4
-dp3_sat r1.w, v1, -r3
-abs_pp r0.y, r1.x
-rcp_pp r0.y, r0.y
-mul_pp r0.zw, r1.xyzy, r0.y
+dsy r3.xy, v4
+add_pp r2.xyz, r1.yxzw, -r0
+add_sat r0.w, r0, -r1
+mad_pp r0.xyz, r0.w, r2, r0
+abs r0.w, v4.z
+add r1.y, -r0.w, c16
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mad r0.z, r0.w, c16, c16.w
+mad r0.z, r0.w, r0, c17.x
+rsq r1.y, r1.y
+dsx r2.zw, v4.xyxy
+mul r2.zw, r2, r2
+mad r0.z, r0.w, r0, c17.y
+rcp r1.y, r1.y
+mul r1.y, r0.z, r1
+cmp r0.z, v4, c16.x, c16.y
+mul r1.z, r0, r1.y
+mad r1.y, -r1.z, c17.z, r1
 mov_pp r2.xy, c5
-mad_pp r0.zw, r0, c20.y, r2.xyxy
-mul r1.xy, r0.zwzw, c4.x
-mul r2.xy, r0.zwzw, c6.x
-add r2.w, r1, c23.y
-abs r0.y, v4.z
-mul r3.y, v1.w, c7.x
-mul r5.xy, r5, r5
-texld r2.xyz, r2, s2
-texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r2
-mad_sat r2.w, r2, c23.z, c23
-mad_pp r1.xyz, r2.w, r1, r2
-max r1.w, r0.x, r0.y
-rcp r2.x, r1.w
-min r1.w, r0.x, r0.y
-mul r1.w, r1, r2.x
-mul r2.w, r1, r1
-add_pp r2.xyz, -r1, c16.y
-mul_sat r3.y, r3, c17.z
-mad_pp r1.xyz, r3.y, r2, r1
-mad r3.x, r2.w, c18.y, c18.z
-mad r2.x, r3, r2.w, c18.w
-mad r3.x, r2, r2.w, c19
-mad r3.w, r3.x, r2, c19.y
-mad r2.w, r3, r2, c19.z
-mul r1.w, r2, r1
-mov r3.xyz, v7
-mul r1.xyz, v0, r1
-mad r3.w, r0.y, c16.z, c16
-dp3 r3.x, v6, r3
-dp3 r4.x, v6, v6
-mad r3.y, -r3.x, r3.x, r4.x
-add r4.x, -r0.y, c16.y
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-rsq r4.x, r4.x
-add_pp r2.xyz, -r1, c14
-add r2.w, -r1, c19
-add r0.x, r0, -r0.y
-cmp r0.x, -r0, r1.w, r2.w
-mul r3.z, r3.y, r3.y
-add r1.w, -r0.x, c17
-cmp r0.x, v4.z, r0, r1.w
-mad r3.w, r0.y, r3, c17.x
-mad r0.y, r0, r3.w, c17
-mad r2.w, c12.x, c12.x, -r3.z
-rsq r2.w, r2.w
-rcp r1.w, r2.w
-add r3.z, r3.x, -r1.w
-cmp r2.w, r3.x, c16.y, c16.x
-add r1.w, -r3.y, c12.x
-abs r3.x, v4.y
-mad r3.y, r3.x, c16.z, c16.w
-cmp r0.x, v4, r0, -r0
-mul r0.x, r0, c20
-cmp r1.w, r1, c16.y, c16.x
-mul_pp r1.w, r1, r2
-cmp r1.w, -r1, v1, r3.z
-add r1.w, v1, -r1
-add r2.w, r1, c16.y
-frc r5.z, r2.w
-add r3.z, -r3.x, c16.y
-mad r3.y, r3, r3.x, c17.x
-rsq r3.z, r3.z
-rcp r4.x, r4.x
-add r4.z, r0.x, c20.y
-mul r4.x, r0.y, r4
-cmp r3.w, v4.z, c16.x, c16.y
-mul r4.y, r3.w, r4.x
-add_sat r2.w, r2, -r5.z
-mad r3.x, r3.y, r3, c17.y
-rcp r3.z, r3.z
-mul r3.z, r3.x, r3
-cmp r3.x, v4.y, c16, c16.y
-mul r3.y, r3.x, r3.z
-mad r0.y, -r3, c17.z, r3.z
-mad r0.y, r3.x, c17.w, r0
-mad r3.y, -r4, c17.z, r4.x
-mad r3.x, r3.w, c17.w, r3.y
-mul r3.x, r3, c18
-mul r0.y, r0, c18.x
-mov r4.w, r0.y
-dsx r4.y, r3.x
-dsy r3.w, r3.x
-dsx r3.xy, v4
+mad_pp r1.zw, r0.xyxy, c20.y, r2.xyxy
+mad r0.x, r0.z, c17.w, r1.y
+mul r0.z, r0.x, c18.x
 mul r3.xy, r3, r3
-add r3.x, r3, r3.y
-add r3.y, r5.x, r5
-rsq r3.x, r3.x
-rcp r3.x, r3.x
-mul r4.x, r3, c20
-mul_sat r3.x, r1.w, c13
-mul r1.w, r2, c13.x
-mad r1.w, r1, c23.x, r3.x
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-mul r3.z, r3.y, c20.x
-texldd r5.yw, r4.zwzw, s6, r4, r3.zwzw
-add r3.xy, r5.wyzw, c20.w
-mad_pp r1.xyz, r1.w, r2, r1
-texldd r2.xyz, r4.zwzw, s0, r4, r3.zwzw
-mul r3.xy, r3, c21
-add r0.xy, r0, r3
-mad r0.y, r0, c21.z, c21.x
-frc r0.y, r0
-add_pp r2.xyz, r2, -r1
-mul_sat r5.w, c11.x, c11.x
-mad_pp r1.xyz, r5.w, r2, r1
-mul r3.xy, r0.zwzw, c15.x
-mad r1.w, r0.y, c22.x, c22.y
-mad r5.x, r0, c21.w, c21
-sincos r0.xy, r1.w
-frc r0.y, r5.x
-mad r1.w, r0.y, c22.x, c22.y
-mov_pp r5.y, r0.x
-sincos r0.xy, r1.w
-dp4 r0.z, c1, c1
-mov_pp r5.xz, r0.yyxw
+add r1.y, r3.x, r3
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r4.x, r1.y, c20
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+add r0.z, r2, r2.w
+max r1.y, r1.x, r0.w
+rcp r2.w, r1.y
+min r1.y, r1.x, r0.w
+mul r1.y, r1, r2.w
+add r0.w, r1.x, -r0
 rsq r0.z, r0.z
-mul r0.xyz, r0.z, c1
-dp3_sat r0.z, v3, r0
-dp3_pp_sat r1.w, -r5, -c10
-add_pp r0.w, r1, -r0.z
-add r0.x, v0.w, c20.z
-frc r0.y, r0.x
-mad_pp r5.x, r5.w, r0.w, r0.z
-add_sat r5.y, r0.x, -r0
-texldd r0, r4.zwzw, s3, r4, r3.zwzw
-mov_pp r4.xyz, r0
-mul_pp r4.w, r0, r5.y
-texld r2, r3, s5
-mul_pp r2, r4, r2
-add_pp r2.xyz, r2, -r1
+rcp r0.z, r0.z
+mul r4.z, r0, c20.x
+mul r2.xy, r1.zwzw, c4.x
+mul r0.xy, r1.zwzw, c6.x
+mul r2.w, r1.y, r1.y
+mul r5.xy, r1.zwzw, c15.x
+texldd r0.xyz, r0, s2, r4.zwzw, r4
+texldd r2.xyz, r2, s1, r4.zwzw, r4
+add_pp r3.xyz, r2, -r0
+mov r2.xyz, v4
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c23
+mad_sat r2.y, r2, c23.z, c23.w
+mad_pp r0.xyz, r2.y, r3, r0
+mad r2.x, r2.w, c18.y, c18.z
+mad r3.x, r2, r2.w, c18.w
+mad r3.x, r3, r2.w, c19
+mul r3.y, v1.w, c7.x
+add_pp r2.xyz, -r0, c16.y
+mul_sat r3.y, r3, c17.z
+mad_pp r0.xyz, r3.y, r2, r0
+mad r3.x, r3, r2.w, c19.y
+mad r2.x, r3, r2.w, c19.z
+mul r1.y, r2.x, r1
+add r2.w, -r1.y, c19
+mul r0.xyz, v0, r0
+cmp r0.w, -r0, r1.y, r2
+mov r3.xyz, v7
+dp3 r1.y, v6, r3
+dp3 r1.x, v6, v6
+mad r2.w, -r1.y, r1.y, r1.x
+add r1.x, -r0.w, c17.w
+cmp r0.w, v4.z, r0, r1.x
+cmp r0.w, v4.x, r0, -r0
+mul r1.x, r0.w, c20
+rsq r2.w, r2.w
+rcp r2.w, r2.w
+mul r3.x, r2.w, r2.w
+mad r0.w, c12.x, c12.x, -r3.x
+rsq r3.x, r0.w
+add r0.w, -r2, c12.x
+add r5.z, r1.x, c20.y
+add_pp r2.xyz, -r0, c14
+cmp r2.w, r1.y, c16.y, c16.x
+rcp r3.x, r3.x
+cmp r0.w, r0, c16.y, c16.x
+mul_pp r0.w, r0, r2
+abs r2.w, v4.y
+add r1.y, r1, -r3.x
+add r3.y, -r2.w, c16
+mad r3.x, r2.w, c16.z, c16.w
+mad r3.x, r3, r2.w, c17
+cmp r1.y, -r0.w, v1.w, r1
+rsq r3.y, r3.y
+mad r2.w, r3.x, r2, c17.y
+rcp r3.y, r3.y
+mul r3.x, r2.w, r3.y
+cmp r2.w, v4.y, c16.x, c16.y
+mul r3.y, r2.w, r3.x
+mad r0.w, -r3.y, c17.z, r3.x
+mad r0.w, r2, c17, r0
+add r1.y, v1.w, -r1
+add r2.w, r1.y, c16.y
+mul r0.w, r0, c18.x
+mov r5.w, r0
+frc r3.x, r2.w
+add_sat r2.w, r2, -r3.x
+mul_sat r3.x, r1.y, c13
+mul r1.y, r2.w, c13.x
+mad r1.y, r1, c23.x, r3.x
+mad_pp r0.xyz, r1.y, r2, r0
+texldd r3.yw, r5.zwzw, s6, r4.zwzw, r4
+add r3.xy, r3.wyzw, c20.w
+texldd r2.xyz, r5.zwzw, s0, r4.zwzw, r4
+add_pp r2.xyz, r2, -r0
+mul_sat r2.w, c11.x, c11.x
+mul r3.xy, r3, c21
+mov r1.y, r0.w
+add r1.xy, r1, r3
+mad_pp r3.xyz, r2.w, r2, r0
+mad r0.x, r1.y, c21.z, c21
+frc r1.y, r0.x
+texldd r0, r5, s5, r4.zwzw, r4
+mad r2.x, r1.y, c22, c22.y
+mad r2.y, r1.x, c21.w, c21.x
+sincos r1.xy, r2.x
+frc r1.y, r2
+mad r2.x, r1.y, c22, c22.y
+mov_pp r2.y, r1.x
+sincos r1.xy, r2.x
+dp4 r1.z, c1, c1
+mov_pp r2.xz, r1.yyxw
+rsq r1.z, r1.z
+mul r1.xyz, r1.z, c1
+dp3_sat r1.z, v3, r1
+dp3_pp_sat r3.w, -r2, -c10
+add r1.x, v0.w, c20.z
+add_pp r1.w, r3, -r1.z
+frc r1.y, r1.x
+mad_pp r6.x, r2.w, r1.w, r1.z
+add_sat r2.x, r1, -r1.y
+texldd r1, r5.zwzw, s3, r4.zwzw, r4
+mul_pp r1.w, r1, r2.x
+mul_pp r2, r1, r0
+add_pp r2.xyz, r2, -r3
+mad_pp r2.xyz, r2.w, r2, r3
+add_pp r2.w, r3, c22.z
 dp3 r0.x, v2, v2
-mad_pp r1.xyz, r2.w, r2, r1
-add_pp r1.w, r1, c22.z
 texld r0.x, r0.x, s7
 texld r0.w, v2, s8
 mul r0.w, r0.x, r0
-mul_pp r0.y, r5.x, c2.w
+mul_pp r0.y, r6.x, c2.w
 mul_pp r0.y, r0.w, r0
-mul_pp r2.w, r1, c2
+mul_pp r2.w, r2, c2
 mul_pp r0.w, r2, r0
 mul_pp_sat r0.w, r0, c22
-mul_pp_sat r3.z, r0.y, c17
+mul_pp_sat r5.z, r0.y, c17
 mov r0.x, c8
 add r0.xyz, c2, r0.x
-mad_sat r0.xyz, r0, r3.z, c0
+mad_sat r0.xyz, r0, r5.z, c0
 mul_pp r0.xyz, r0, v5.x
-mul r2.xyz, r0, c9.x
-mad_pp r2.xyz, r1, c3, r2
-texld r1, r3, s4
-mul_pp r1, r4, r1
+mul r3.xyz, r0, c9.x
+mad_pp r2.xyz, r2, c3, r3
+texldd r3, r5, s4, r4.zwzw, r4
+mul_pp r1, r1, r3
 mad_pp r1.xyz, -r2, r0, r1
 mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c16.y
@@ -105130,7 +105133,7 @@ SetTexture 5 [_CityLightOverlayDetailTex] 2D
 SetTexture 6 [_BumpMap] 2D
 SetTexture 7 [_LightTexture0] 2D
 "ps_3_0
-; 184 ALU, 14 TEX
+; 184 ALU, 22 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -105163,126 +105166,126 @@ add_sat r0.w, r0, -r1
 mad r1.xyz, r0.w, r1, r0.zxyw
 add r0.w, r0.y, -r1.x
 add r0.w, r0, c16.y
-dsy r5.xy, v4
 add_pp r2.xyz, r0.yxzw, -r1
 frc r1.w, r0
 add_sat r0.y, r0.w, -r1.w
 mad_pp r1.xyz, r0.y, r2, r1
-mov r3.xyz, v4
-dp3_sat r1.w, v1, -r3
 abs_pp r0.y, r1.x
-rcp_pp r0.y, r0.y
-mul_pp r0.zw, r1.xyzy, r0.y
+rcp_pp r0.z, r0.y
+abs r0.y, v4.z
+mul_pp r0.zw, r1.xyzy, r0.z
+add r1.y, -r0, c16
+mad r1.x, r0.y, c16.z, c16.w
+mad r1.x, r0.y, r1, c17
 mov_pp r2.xy, c5
 mad_pp r0.zw, r0, c20.y, r2.xyxy
-mul r1.xy, r0.zwzw, c4.x
-mul r2.xy, r0.zwzw, c6.x
-add r2.w, r1, c23.y
-abs r0.y, v4.z
-mul r3.y, v1.w, c7.x
-mul r5.xy, r5, r5
-texld r2.xyz, r2, s2
-texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r2
-mad_sat r2.w, r2, c23.z, c23
-mad_pp r1.xyz, r2.w, r1, r2
+rsq r1.y, r1.y
+dsy r2.zw, v4.xyxy
+mul r2.zw, r2, r2
+mad r1.x, r0.y, r1, c17.y
+rcp r1.y, r1.y
+mul r1.y, r1.x, r1
+cmp r1.x, v4.z, c16, c16.y
+mul r1.z, r1.x, r1.y
+mad r1.y, -r1.z, c17.z, r1
+mad r1.x, r1, c17.w, r1.y
+mul r1.z, r1.x, c18.x
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsx r1.zw, v4.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+add r1.w, r2.z, r2
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r3.x, r1.w, c20
 max r1.w, r0.x, r0.y
-rcp r2.x, r1.w
+rcp r2.w, r1.w
 min r1.w, r0.x, r0.y
-mul r1.w, r1, r2.x
-mul r2.w, r1, r1
-add_pp r2.xyz, -r1, c16.y
-mul_sat r3.y, r3, c17.z
-mad_pp r1.xyz, r3.y, r2, r1
-mad r3.x, r2.w, c18.y, c18.z
-mad r2.x, r3, r2.w, c18.w
-mad r3.x, r2, r2.w, c19
-mad r3.w, r3.x, r2, c19.y
-mad r2.w, r3, r2, c19.z
-mul r1.w, r2, r1
-mov r3.xyz, v7
-mul r1.xyz, v0, r1
-mad r3.w, r0.y, c16.z, c16
-dp3 r3.x, v6, r3
-dp3 r4.x, v6, v6
-mad r3.y, -r3.x, r3.x, r4.x
-add r4.x, -r0.y, c16.y
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-rsq r4.x, r4.x
-add_pp r2.xyz, -r1, c14
-add r2.w, -r1, c19
+mul r1.w, r1, r2
 add r0.x, r0, -r0.y
+mul r3.z, r1, c20.x
+mul r2.xy, r0.zwzw, c4.x
+mul r1.xy, r0.zwzw, c6.x
+mul r2.w, r1, r1
+texldd r1.xyz, r1, s2, r3.zwzw, r3
+texldd r2.xyz, r2, s1, r3.zwzw, r3
+add_pp r4.xyz, r2, -r1
+mov r2.xyz, v4
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c23
+mad_sat r2.y, r2, c23.z, c23.w
+mad_pp r1.xyz, r2.y, r4, r1
+mad r2.x, r2.w, c18.y, c18.z
+mad r4.x, r2, r2.w, c18.w
+mad r4.x, r4, r2.w, c19
+mul r4.y, v1.w, c7.x
+add_pp r2.xyz, -r1, c16.y
+mul_sat r4.y, r4, c17.z
+mad_pp r1.xyz, r4.y, r2, r1
+mad r4.x, r4, r2.w, c19.y
+mad r2.x, r4, r2.w, c19.z
+mul r1.w, r2.x, r1
+add r2.w, -r1, c19
+mul r1.xyz, v0, r1
 cmp r0.x, -r0, r1.w, r2.w
-mul r3.z, r3.y, r3.y
-add r1.w, -r0.x, c17
-cmp r0.x, v4.z, r0, r1.w
-mad r3.w, r0.y, r3, c17.x
-mad r0.y, r0, r3.w, c17
-mad r2.w, c12.x, c12.x, -r3.z
+mov r4.xyz, v7
+dp3 r1.w, v6, r4
+dp3 r0.y, v6, v6
+mad r2.w, -r1, r1, r0.y
+add r0.y, -r0.x, c17.w
+cmp r0.x, v4.z, r0, r0.y
 rsq r2.w, r2.w
-rcp r1.w, r2.w
-add r3.z, r3.x, -r1.w
-cmp r2.w, r3.x, c16.y, c16.x
-add r1.w, -r3.y, c12.x
-abs r3.x, v4.y
-mad r3.y, r3.x, c16.z, c16.w
+rcp r0.y, r2.w
+mul r2.w, r0.y, r0.y
+mad r2.w, c12.x, c12.x, -r2
+rsq r4.x, r2.w
 cmp r0.x, v4, r0, -r0
 mul r0.x, r0, c20
-cmp r1.w, r1, c16.y, c16.x
-mul_pp r1.w, r1, r2
-cmp r1.w, -r1, v1, r3.z
+add r0.y, -r0, c12.x
+add r4.z, r0.x, c20.y
+add_pp r2.xyz, -r1, c14
+cmp r2.w, r1, c16.y, c16.x
+rcp r4.x, r4.x
+cmp r0.y, r0, c16, c16.x
+mul_pp r0.y, r0, r2.w
+abs r2.w, v4.y
+add r1.w, r1, -r4.x
+add r4.y, -r2.w, c16
+mad r4.x, r2.w, c16.z, c16.w
+mad r4.x, r4, r2.w, c17
+cmp r1.w, -r0.y, v1, r1
+rsq r4.y, r4.y
+mad r2.w, r4.x, r2, c17.y
+rcp r4.y, r4.y
+mul r4.x, r2.w, r4.y
+cmp r2.w, v4.y, c16.x, c16.y
+mul r4.y, r2.w, r4.x
+mad r0.y, -r4, c17.z, r4.x
+mad r0.y, r2.w, c17.w, r0
 add r1.w, v1, -r1
 add r2.w, r1, c16.y
-frc r5.z, r2.w
-add r3.z, -r3.x, c16.y
-mad r3.y, r3, r3.x, c17.x
-rsq r3.z, r3.z
-rcp r4.x, r4.x
-add r4.z, r0.x, c20.y
-mul r4.x, r0.y, r4
-cmp r3.w, v4.z, c16.x, c16.y
-mul r4.y, r3.w, r4.x
-add_sat r2.w, r2, -r5.z
-mad r3.x, r3.y, r3, c17.y
-rcp r3.z, r3.z
-mul r3.z, r3.x, r3
-cmp r3.x, v4.y, c16, c16.y
-mul r3.y, r3.x, r3.z
-mad r0.y, -r3, c17.z, r3.z
-mad r0.y, r3.x, c17.w, r0
-mad r3.y, -r4, c17.z, r4.x
-mad r3.x, r3.w, c17.w, r3.y
-mul r3.x, r3, c18
+frc r4.x, r2.w
+add_sat r2.w, r2, -r4.x
+mul_sat r4.x, r1.w, c13
 mul r0.y, r0, c18.x
 mov r4.w, r0.y
-dsx r4.y, r3.x
-dsy r3.w, r3.x
-dsx r3.xy, v4
-mul r3.xy, r3, r3
-add r3.x, r3, r3.y
-add r3.y, r5.x, r5
-rsq r3.x, r3.x
-rcp r3.x, r3.x
-mul r4.x, r3, c20
-mul_sat r3.x, r1.w, c13
 mul r1.w, r2, c13.x
-mad r1.w, r1, c23.x, r3.x
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-mul r3.z, r3.y, c20.x
-texldd r5.yw, r4.zwzw, s6, r4, r3.zwzw
-add r3.xy, r5.wyzw, c20.w
+mad r1.w, r1, c23.x, r4.x
+texldd r5.yw, r4.zwzw, s6, r3.zwzw, r3
+add r4.xy, r5.wyzw, c20.w
 mad_pp r1.xyz, r1.w, r2, r1
-texldd r2.xyz, r4.zwzw, s0, r4, r3.zwzw
-mul r3.xy, r3, c21
-add r0.xy, r0, r3
+texldd r2.xyz, r4.zwzw, s0, r3.zwzw, r3
+mul r4.xy, r4, c21
+add r0.xy, r0, r4
 mad r0.y, r0, c21.z, c21.x
 frc r0.y, r0
 add_pp r2.xyz, r2, -r1
 mul_sat r5.w, c11.x, c11.x
 mad_pp r2.xyz, r5.w, r2, r1
-mul r3.xy, r0.zwzw, c15.x
+mul r4.xy, r0.zwzw, c15.x
 mad r2.w, r0.y, c22.x, c22.y
 mad r5.x, r0, c21.w, c21
 sincos r0.xy, r2.w
@@ -105301,33 +105304,33 @@ add_pp r0.w, r2, -r0.z
 frc r0.y, r0.x
 mad_pp r5.x, r5.w, r0.w, r0.z
 add_sat r5.y, r0.x, -r0
-texldd r0, r4.zwzw, s3, r4, r3.zwzw
+texldd r0, r4.zwzw, s3, r3.zwzw, r3
 mul_pp r0.w, r0, r5.y
-texld r1, r3, s5
+texldd r1, r4, s5, r3.zwzw, r3
 mul_pp r1, r0, r1
 add_pp r1.xyz, r1, -r2
 mad_pp r1.xyz, r1.w, r1, r2
 add_pp r1.w, r2, c22.z
-mul_pp r3.z, r5.x, c2.w
-texld r3.w, v2, s7
-mul_pp r4.x, r3.w, r3.z
-mul_pp r2.w, r1, c2
-mul_pp_sat r4.w, r4.x, c17.z
-mov r3.z, c8.x
-add r4.xyz, c2, r3.z
-mad_sat r4.xyz, r4, r4.w, c0
-mul_pp r4.xyz, r4, v5.x
-mul r2.xyz, r4, c9.x
-mad_pp r2.xyz, r1, c3, r2
-texld r1, r3, s4
-mul_pp r0, r0, r1
-mad_pp r0.xyz, -r2, r4, r0
-mul_pp r2.w, r2, r3
-mul_pp_sat r1.x, r2.w, c22.w
-add_pp r1.x, -r1, c16.y
-mul_pp r2.xyz, r2, r4
-mul_pp r0.w, r0, r1.x
-mad_pp oC0.xyz, r0.w, r0, r2
+mul_pp r4.z, r5.x, c2.w
+texld r4.w, v2, s7
+mul_pp r5.x, r4.w, r4.z
+mul_pp r1.w, r1, c2
+mul_pp r1.w, r1, r4
+mul_pp_sat r1.w, r1, c22
+mul_pp_sat r5.w, r5.x, c17.z
+mov r4.z, c8.x
+add r5.xyz, c2, r4.z
+mad_sat r5.xyz, r5, r5.w, c0
+mul_pp r5.xyz, r5, v5.x
+mul r2.xyz, r5, c9.x
+mad_pp r1.xyz, r1, c3, r2
+texldd r2, r4, s4, r3.zwzw, r3
+mul_pp r0, r0, r2
+mad_pp r0.xyz, -r1, r5, r0
+add_pp r1.w, -r1, c16.y
+mul_pp r1.xyz, r1, r5
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
 mov_pp oC0.w, c16.y
 "
 }
@@ -105382,7 +105385,7 @@ SetTexture 7 [_LightTexture0] 2D
 SetTexture 8 [_LightTextureB0] 2D
 SetTexture 9 [_ShadowMapTexture] 2D
 "ps_3_0
-; 196 ALU, 16 TEX
+; 196 ALU, 24 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -105410,188 +105413,188 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r0.xyz, v5
-add r1.xyz, r0, -r0.zxyw
-add r0.w, r1.x, c17.y
+abs r1.xyz, v5
+add r0.xyz, r1, -r1.zxyw
+add r0.w, r0.x, c17.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad r1.xyz, r0.w, r1, r0.zxyw
-add r0.w, r0.y, -r1.x
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r0.w, r1.y, -r0.x
 add r0.w, r0, c17.y
-dsy r5.xy, v5
-add_pp r2.xyz, r0.yxzw, -r1
 frc r1.w, r0
-add_sat r0.y, r0.w, -r1.w
-mad_pp r1.xyz, r0.y, r2, r1
-mov r3.xyz, v5
-dp3_sat r1.w, v1, -r3
-abs_pp r0.y, r1.x
-rcp_pp r0.y, r0.y
-mul_pp r0.zw, r1.xyzy, r0.y
+dsy r3.xy, v5
+add_pp r2.xyz, r1.yxzw, -r0
+add_sat r0.w, r0, -r1
+mad_pp r0.xyz, r0.w, r2, r0
+abs r0.w, v5.z
+add r1.y, -r0.w, c17
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mad r0.z, r0.w, c17, c17.w
+mad r0.z, r0.w, r0, c18.x
+rsq r1.y, r1.y
+dsx r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+mad r0.z, r0.w, r0, c18.y
+rcp r1.y, r1.y
+mul r1.y, r0.z, r1
+cmp r0.z, v5, c17.x, c17.y
+mul r1.z, r0, r1.y
+mad r1.y, -r1.z, c18.z, r1
 mov_pp r2.xy, c6
-mad_pp r0.zw, r0, c21.y, r2.xyxy
-mul r1.xy, r0.zwzw, c5.x
-mul r2.xy, r0.zwzw, c7.x
-add r2.w, r1, c24.y
-abs r0.y, v5.z
-mul r3.y, v1.w, c8.x
-mul r5.xy, r5, r5
-texld r2.xyz, r2, s2
-texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r2
-mad_sat r2.w, r2, c24.z, c24
-mad_pp r1.xyz, r2.w, r1, r2
-max r1.w, r0.x, r0.y
-rcp r2.x, r1.w
-min r1.w, r0.x, r0.y
-mul r1.w, r1, r2.x
-mul r2.w, r1, r1
-add_pp r2.xyz, -r1, c17.y
-mul_sat r3.y, r3, c18.z
-mad_pp r1.xyz, r3.y, r2, r1
-mad r3.x, r2.w, c19.y, c19.z
-mad r2.x, r3, r2.w, c19.w
-mad r3.x, r2, r2.w, c20
-mad r3.w, r3.x, r2, c20.y
-mad r2.w, r3, r2, c20.z
-mul r1.w, r2, r1
-mov r3.xyz, v8
-mul r1.xyz, v0, r1
-mad r3.w, r0.y, c17.z, c17
-dp3 r3.x, v7, r3
-dp3 r4.x, v7, v7
-mad r3.y, -r3.x, r3.x, r4.x
-add r4.x, -r0.y, c17.y
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-rsq r4.x, r4.x
-add_pp r2.xyz, -r1, c15
-add r2.w, -r1, c20
-add r0.x, r0, -r0.y
-cmp r0.x, -r0, r1.w, r2.w
-mul r3.z, r3.y, r3.y
-add r1.w, -r0.x, c18
-cmp r0.x, v5.z, r0, r1.w
-mad r3.w, r0.y, r3, c18.x
-mad r0.y, r0, r3.w, c18
-mad r2.w, c13.x, c13.x, -r3.z
-rsq r2.w, r2.w
-rcp r1.w, r2.w
-add r3.z, r3.x, -r1.w
-cmp r2.w, r3.x, c17.y, c17.x
-add r1.w, -r3.y, c13.x
-abs r3.x, v5.y
-mad r3.y, r3.x, c17.z, c17.w
-cmp r0.x, v5, r0, -r0
-mul r0.x, r0, c21
-cmp r1.w, r1, c17.y, c17.x
-mul_pp r1.w, r1, r2
-cmp r1.w, -r1, v1, r3.z
-add r1.w, v1, -r1
-add r2.w, r1, c17.y
-frc r5.z, r2.w
-add r3.z, -r3.x, c17.y
-mad r3.y, r3, r3.x, c18.x
-rsq r3.z, r3.z
-rcp r4.x, r4.x
-add r4.z, r0.x, c21.y
-mul r4.x, r0.y, r4
-cmp r3.w, v5.z, c17.x, c17.y
-mul r4.y, r3.w, r4.x
-add_sat r2.w, r2, -r5.z
-mad r3.x, r3.y, r3, c18.y
-rcp r3.z, r3.z
-mul r3.z, r3.x, r3
-cmp r3.x, v5.y, c17, c17.y
-mul r3.y, r3.x, r3.z
-mad r0.y, -r3, c18.z, r3.z
-mad r0.y, r3.x, c18.w, r0
-mad r3.y, -r4, c18.z, r4.x
-mad r3.x, r3.w, c18.w, r3.y
-mul r3.x, r3, c19
-mul r0.y, r0, c19.x
-mov r4.w, r0.y
-dsx r4.y, r3.x
-dsy r3.w, r3.x
-dsx r3.xy, v5
+mad_pp r1.zw, r0.xyxy, c21.y, r2.xyxy
+mad r0.x, r0.z, c18.w, r1.y
+mul r0.z, r0.x, c19.x
 mul r3.xy, r3, r3
-add r3.x, r3, r3.y
-add r3.y, r5.x, r5
-rsq r3.x, r3.x
-rcp r3.x, r3.x
-mul r4.x, r3, c21
-mul_sat r3.x, r1.w, c14
-mul r1.w, r2, c14.x
-mad r1.w, r1, c24.x, r3.x
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-mul r3.z, r3.y, c21.x
-texldd r5.yw, r4.zwzw, s6, r4, r3.zwzw
-add r3.xy, r5.wyzw, c21.w
-mad_pp r1.xyz, r1.w, r2, r1
-texldd r2.xyz, r4.zwzw, s0, r4, r3.zwzw
-mul r3.xy, r3, c22
-add r0.xy, r0, r3
-mad r0.y, r0, c22.z, c22.x
-frc r0.y, r0
-add_pp r2.xyz, r2, -r1
-mul_sat r5.w, c12.x, c12.x
-mad_pp r1.xyz, r5.w, r2, r1
-mul r3.xy, r0.zwzw, c16.x
-mad r1.w, r0.y, c23.x, c23.y
-mad r5.x, r0, c22.w, c22
-sincos r0.xy, r1.w
-frc r0.y, r5.x
-mad r1.w, r0.y, c23.x, c23.y
-mov_pp r5.y, r0.x
-sincos r0.xy, r1.w
-dp4 r0.z, c1, c1
-mov_pp r5.xz, r0.yyxw
+add r1.y, r3.x, r3
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r4.x, r1.y, c21
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+add r0.z, r2, r2.w
+max r1.y, r1.x, r0.w
+rcp r2.w, r1.y
+min r1.y, r1.x, r0.w
+mul r1.y, r1, r2.w
+add r0.w, r1.x, -r0
 rsq r0.z, r0.z
-mul r0.xyz, r0.z, c1
-dp3_sat r0.z, v4, r0
-dp3_pp_sat r1.w, -r5, -c11
-add_pp r0.w, r1, -r0.z
-add r0.x, v0.w, c21.z
-frc r0.y, r0.x
-mad_pp r5.x, r5.w, r0.w, r0.z
-add_sat r5.y, r0.x, -r0
-texldd r0, r4.zwzw, s3, r4, r3.zwzw
-mov_pp r4.xyz, r0
-mul_pp r4.w, r0, r5.y
-texld r2, r3, s5
-mul_pp r2, r4, r2
-add_pp r2.xyz, r2, -r1
-mad_pp r1.xyz, r2.w, r2, r1
-add_pp r1.w, r1, c23.z
-mul_pp r0.y, r5.x, c3.w
+rcp r0.z, r0.z
+mul r4.z, r0, c21.x
+mul r2.xy, r1.zwzw, c5.x
+mul r0.xy, r1.zwzw, c7.x
+mul r2.w, r1.y, r1.y
+mul r5.xy, r1.zwzw, c16.x
+texldd r0.xyz, r0, s2, r4.zwzw, r4
+texldd r2.xyz, r2, s1, r4.zwzw, r4
+add_pp r3.xyz, r2, -r0
+mov r2.xyz, v5
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c24
+mad_sat r2.y, r2, c24.z, c24.w
+mad_pp r0.xyz, r2.y, r3, r0
+mad r2.x, r2.w, c19.y, c19.z
+mad r3.x, r2, r2.w, c19.w
+mad r3.x, r3, r2.w, c20
+mul r3.y, v1.w, c8.x
+add_pp r2.xyz, -r0, c17.y
+mul_sat r3.y, r3, c18.z
+mad_pp r0.xyz, r3.y, r2, r0
+mad r3.x, r3, r2.w, c20.y
+mad r2.x, r3, r2.w, c20.z
+mul r1.y, r2.x, r1
+add r2.w, -r1.y, c20
+mul r0.xyz, v0, r0
+cmp r0.w, -r0, r1.y, r2
+mov r3.xyz, v8
+dp3 r1.y, v7, r3
+dp3 r1.x, v7, v7
+mad r2.w, -r1.y, r1.y, r1.x
+add r1.x, -r0.w, c18.w
+cmp r0.w, v5.z, r0, r1.x
+cmp r0.w, v5.x, r0, -r0
+mul r1.x, r0.w, c21
+rsq r2.w, r2.w
+rcp r2.w, r2.w
+mul r3.x, r2.w, r2.w
+mad r0.w, c13.x, c13.x, -r3.x
+rsq r3.x, r0.w
+add r0.w, -r2, c13.x
+add r5.z, r1.x, c21.y
+add_pp r2.xyz, -r0, c15
+cmp r2.w, r1.y, c17.y, c17.x
+rcp r3.x, r3.x
+cmp r0.w, r0, c17.y, c17.x
+mul_pp r0.w, r0, r2
+abs r2.w, v5.y
+add r1.y, r1, -r3.x
+add r3.y, -r2.w, c17
+mad r3.x, r2.w, c17.z, c17.w
+mad r3.x, r3, r2.w, c18
+cmp r1.y, -r0.w, v1.w, r1
+rsq r3.y, r3.y
+mad r2.w, r3.x, r2, c18.y
+rcp r3.y, r3.y
+mul r3.x, r2.w, r3.y
+cmp r2.w, v5.y, c17.x, c17.y
+mul r3.y, r2.w, r3.x
+mad r0.w, -r3.y, c18.z, r3.x
+mad r0.w, r2, c18, r0
+add r1.y, v1.w, -r1
+add r2.w, r1.y, c17.y
+mul r0.w, r0, c19.x
+mov r5.w, r0
+frc r3.x, r2.w
+add_sat r2.w, r2, -r3.x
+mul_sat r3.x, r1.y, c14
+mul r1.y, r2.w, c14.x
+mad r1.y, r1, c24.x, r3.x
+mad_pp r0.xyz, r1.y, r2, r0
+texldd r3.yw, r5.zwzw, s6, r4.zwzw, r4
+add r3.xy, r3.wyzw, c21.w
+texldd r2.xyz, r5.zwzw, s0, r4.zwzw, r4
+add_pp r2.xyz, r2, -r0
+mul_sat r2.w, c12.x, c12.x
+mul r3.xy, r3, c22
+mov r1.y, r0.w
+add r1.xy, r1, r3
+mad_pp r3.xyz, r2.w, r2, r0
+mad r0.x, r1.y, c22.z, c22
+frc r1.y, r0.x
+texldd r0, r5, s5, r4.zwzw, r4
+mad r2.x, r1.y, c23, c23.y
+mad r2.y, r1.x, c22.w, c22.x
+sincos r1.xy, r2.x
+frc r1.y, r2
+mad r2.x, r1.y, c23, c23.y
+mov_pp r2.y, r1.x
+sincos r1.xy, r2.x
+dp4 r1.z, c1, c1
+mov_pp r2.xz, r1.yyxw
+rsq r1.z, r1.z
+mul r1.xyz, r1.z, c1
+dp3_sat r1.z, v4, r1
+dp3_pp_sat r3.w, -r2, -c11
+add r1.x, v0.w, c21.z
+add_pp r1.w, r3, -r1.z
+frc r1.y, r1.x
+mad_pp r6.x, r2.w, r1.w, r1.z
+add_sat r2.x, r1, -r1.y
+texldd r1, r5.zwzw, s3, r4.zwzw, r4
+mul_pp r1.w, r1, r2.x
+mul_pp r2, r1, r0
+add_pp r2.xyz, r2, -r3
+mad_pp r2.xyz, r2.w, r2, r3
+add_pp r2.w, r3, c23.z
+mul_pp r0.y, r6.x, c3.w
 texldp r0.x, v3, s9
 rcp r0.z, v3.w
 mad r0.z, -v3, r0, r0.x
 mov r0.w, c2.x
 rcp r0.x, v2.w
-mad r5.xy, v2, r0.x, c21.y
+mad r6.xy, v2, r0.x, c21.y
 cmp r0.z, r0, c17.y, r0.w
 dp3 r0.x, v2, v2
-cmp r3.z, -v2, c17.x, c17.y
-texld r0.w, r5, s7
-mul_pp r0.w, r3.z, r0
+cmp r5.z, -v2, c17.x, c17.y
+texld r0.w, r6, s7
+mul_pp r0.w, r5.z, r0
 texld r0.x, r0.x, s8
 mul_pp r0.x, r0.w, r0
 mul_pp r0.w, r0.x, r0.z
 mul_pp r0.y, r0.w, r0
-mul_pp r2.w, r1, c3
+mul_pp r2.w, r2, c3
 mul_pp r0.w, r2, r0
 mul_pp_sat r0.w, r0, c23
-mul_pp_sat r3.z, r0.y, c18
+mul_pp_sat r5.z, r0.y, c18
 mov r0.x, c9
 add r0.xyz, c3, r0.x
-mad_sat r0.xyz, r0, r3.z, c0
+mad_sat r0.xyz, r0, r5.z, c0
 mul_pp r0.xyz, r0, v6.x
-mul r2.xyz, r0, c10.x
-mad_pp r2.xyz, r1, c4, r2
-texld r1, r3, s4
-mul_pp r1, r4, r1
+mul r3.xyz, r0, c10.x
+mad_pp r2.xyz, r2, c4, r3
+texldd r3, r5, s4, r4.zwzw, r4
+mul_pp r1, r1, r3
 mad_pp r1.xyz, -r2, r0, r1
 mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c17.y
@@ -105651,7 +105654,7 @@ SetTexture 7 [_LightTexture0] 2D
 SetTexture 8 [_LightTextureB0] 2D
 SetTexture 9 [_ShadowMapTexture] 2D
 "ps_3_0
-; 195 ALU, 16 TEX
+; 195 ALU, 24 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -105679,187 +105682,187 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r0.xyz, v5
-add r1.xyz, r0, -r0.zxyw
-add r0.w, r1.x, c17.y
+abs r1.xyz, v5
+add r0.xyz, r1, -r1.zxyw
+add r0.w, r0.x, c17.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad r1.xyz, r0.w, r1, r0.zxyw
-add r0.w, r0.y, -r1.x
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r0.w, r1.y, -r0.x
 add r0.w, r0, c17.y
-dsy r5.xy, v5
-add_pp r2.xyz, r0.yxzw, -r1
 frc r1.w, r0
-add_sat r0.y, r0.w, -r1.w
-mad_pp r1.xyz, r0.y, r2, r1
-mov r3.xyz, v5
-dp3_sat r1.w, v1, -r3
-abs_pp r0.y, r1.x
-rcp_pp r0.y, r0.y
-mul_pp r0.zw, r1.xyzy, r0.y
+dsy r3.xy, v5
+add_pp r2.xyz, r1.yxzw, -r0
+add_sat r0.w, r0, -r1
+mad_pp r0.xyz, r0.w, r2, r0
+abs r0.w, v5.z
+add r1.y, -r0.w, c17
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mad r0.z, r0.w, c17, c17.w
+mad r0.z, r0.w, r0, c18.x
+rsq r1.y, r1.y
+dsx r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+mad r0.z, r0.w, r0, c18.y
+rcp r1.y, r1.y
+mul r1.y, r0.z, r1
+cmp r0.z, v5, c17.x, c17.y
+mul r1.z, r0, r1.y
+mad r1.y, -r1.z, c18.z, r1
 mov_pp r2.xy, c6
-mad_pp r0.zw, r0, c21.y, r2.xyxy
-mul r1.xy, r0.zwzw, c5.x
-mul r2.xy, r0.zwzw, c7.x
-add r2.w, r1, c24.y
-abs r0.y, v5.z
-mul r3.y, v1.w, c8.x
-mul r5.xy, r5, r5
-texld r2.xyz, r2, s2
-texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r2
-mad_sat r2.w, r2, c24.z, c24
-mad_pp r1.xyz, r2.w, r1, r2
-max r1.w, r0.x, r0.y
-rcp r2.x, r1.w
-min r1.w, r0.x, r0.y
-mul r1.w, r1, r2.x
-mul r2.w, r1, r1
-add_pp r2.xyz, -r1, c17.y
-mul_sat r3.y, r3, c18.z
-mad_pp r1.xyz, r3.y, r2, r1
-mad r3.x, r2.w, c19.y, c19.z
-mad r2.x, r3, r2.w, c19.w
-mad r3.x, r2, r2.w, c20
-mad r3.w, r3.x, r2, c20.y
-mad r2.w, r3, r2, c20.z
-mul r1.w, r2, r1
-mov r3.xyz, v8
-mul r1.xyz, v0, r1
-mad r3.w, r0.y, c17.z, c17
-dp3 r3.x, v7, r3
-dp3 r4.x, v7, v7
-mad r3.y, -r3.x, r3.x, r4.x
-add r4.x, -r0.y, c17.y
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-rsq r4.x, r4.x
-add_pp r2.xyz, -r1, c15
-add r2.w, -r1, c20
-add r0.x, r0, -r0.y
-cmp r0.x, -r0, r1.w, r2.w
-mul r3.z, r3.y, r3.y
-add r1.w, -r0.x, c18
-cmp r0.x, v5.z, r0, r1.w
-mad r3.w, r0.y, r3, c18.x
-mad r0.y, r0, r3.w, c18
-mad r2.w, c13.x, c13.x, -r3.z
-rsq r2.w, r2.w
-rcp r1.w, r2.w
-add r3.z, r3.x, -r1.w
-cmp r2.w, r3.x, c17.y, c17.x
-add r1.w, -r3.y, c13.x
-abs r3.x, v5.y
-mad r3.y, r3.x, c17.z, c17.w
-cmp r0.x, v5, r0, -r0
-mul r0.x, r0, c21
-cmp r1.w, r1, c17.y, c17.x
-mul_pp r1.w, r1, r2
-cmp r1.w, -r1, v1, r3.z
-add r1.w, v1, -r1
-add r2.w, r1, c17.y
-frc r5.z, r2.w
-add r3.z, -r3.x, c17.y
-mad r3.y, r3, r3.x, c18.x
-rsq r3.z, r3.z
-rcp r4.x, r4.x
-add r4.z, r0.x, c21.y
-mul r4.x, r0.y, r4
-cmp r3.w, v5.z, c17.x, c17.y
-mul r4.y, r3.w, r4.x
-add_sat r2.w, r2, -r5.z
-mad r3.x, r3.y, r3, c18.y
-rcp r3.z, r3.z
-mul r3.z, r3.x, r3
-cmp r3.x, v5.y, c17, c17.y
-mul r3.y, r3.x, r3.z
-mad r0.y, -r3, c18.z, r3.z
-mad r0.y, r3.x, c18.w, r0
-mad r3.y, -r4, c18.z, r4.x
-mad r3.x, r3.w, c18.w, r3.y
-mul r3.x, r3, c19
-mul r0.y, r0, c19.x
-mov r4.w, r0.y
-dsx r4.y, r3.x
-dsy r3.w, r3.x
-dsx r3.xy, v5
+mad_pp r1.zw, r0.xyxy, c21.y, r2.xyxy
+mad r0.x, r0.z, c18.w, r1.y
+mul r0.z, r0.x, c19.x
 mul r3.xy, r3, r3
-add r3.x, r3, r3.y
-add r3.y, r5.x, r5
-rsq r3.x, r3.x
-rcp r3.x, r3.x
-mul r4.x, r3, c21
-mul_sat r3.x, r1.w, c14
-mul r1.w, r2, c14.x
-mad r1.w, r1, c24.x, r3.x
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-mul r3.z, r3.y, c21.x
-texldd r5.yw, r4.zwzw, s6, r4, r3.zwzw
-add r3.xy, r5.wyzw, c21.w
-mad_pp r1.xyz, r1.w, r2, r1
-texldd r2.xyz, r4.zwzw, s0, r4, r3.zwzw
-mul r3.xy, r3, c22
-add r0.xy, r0, r3
-mad r0.y, r0, c22.z, c22.x
-frc r0.y, r0
-add_pp r2.xyz, r2, -r1
-mul_sat r5.w, c12.x, c12.x
-mad_pp r1.xyz, r5.w, r2, r1
-mul r3.xy, r0.zwzw, c16.x
-mad r1.w, r0.y, c23.x, c23.y
-mad r5.x, r0, c22.w, c22
-sincos r0.xy, r1.w
-frc r0.y, r5.x
-mad r1.w, r0.y, c23.x, c23.y
-mov_pp r5.y, r0.x
-sincos r0.xy, r1.w
-dp4 r0.z, c1, c1
-mov_pp r5.xz, r0.yyxw
+add r1.y, r3.x, r3
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r4.x, r1.y, c21
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+add r0.z, r2, r2.w
+max r1.y, r1.x, r0.w
+rcp r2.w, r1.y
+min r1.y, r1.x, r0.w
+mul r1.y, r1, r2.w
+add r0.w, r1.x, -r0
 rsq r0.z, r0.z
-mul r0.xyz, r0.z, c1
-dp3_sat r0.z, v4, r0
-dp3_pp_sat r1.w, -r5, -c11
-add_pp r0.w, r1, -r0.z
-add r0.x, v0.w, c21.z
-frc r0.y, r0.x
-mad_pp r5.x, r5.w, r0.w, r0.z
-add_sat r5.y, r0.x, -r0
-texldd r0, r4.zwzw, s3, r4, r3.zwzw
-mov_pp r4.xyz, r0
-mul_pp r4.w, r0, r5.y
+rcp r0.z, r0.z
+mul r4.z, r0, c21.x
+mul r2.xy, r1.zwzw, c5.x
+mul r0.xy, r1.zwzw, c7.x
+mul r2.w, r1.y, r1.y
+mul r5.xy, r1.zwzw, c16.x
+texldd r0.xyz, r0, s2, r4.zwzw, r4
+texldd r2.xyz, r2, s1, r4.zwzw, r4
+add_pp r3.xyz, r2, -r0
+mov r2.xyz, v5
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c24
+mad_sat r2.y, r2, c24.z, c24.w
+mad_pp r0.xyz, r2.y, r3, r0
+mad r2.x, r2.w, c19.y, c19.z
+mad r3.x, r2, r2.w, c19.w
+mad r3.x, r3, r2.w, c20
+mul r3.y, v1.w, c8.x
+add_pp r2.xyz, -r0, c17.y
+mul_sat r3.y, r3, c18.z
+mad_pp r0.xyz, r3.y, r2, r0
+mad r3.x, r3, r2.w, c20.y
+mad r2.x, r3, r2.w, c20.z
+mul r1.y, r2.x, r1
+add r2.w, -r1.y, c20
+mul r0.xyz, v0, r0
+cmp r0.w, -r0, r1.y, r2
+mov r3.xyz, v8
+dp3 r1.y, v7, r3
+dp3 r1.x, v7, v7
+mad r2.w, -r1.y, r1.y, r1.x
+add r1.x, -r0.w, c18.w
+cmp r0.w, v5.z, r0, r1.x
+cmp r0.w, v5.x, r0, -r0
+mul r1.x, r0.w, c21
+rsq r2.w, r2.w
+rcp r2.w, r2.w
+mul r3.x, r2.w, r2.w
+mad r0.w, c13.x, c13.x, -r3.x
+rsq r3.x, r0.w
+add r0.w, -r2, c13.x
+add r5.z, r1.x, c21.y
+add_pp r2.xyz, -r0, c15
+cmp r2.w, r1.y, c17.y, c17.x
+rcp r3.x, r3.x
+cmp r0.w, r0, c17.y, c17.x
+mul_pp r0.w, r0, r2
+abs r2.w, v5.y
+add r1.y, r1, -r3.x
+add r3.y, -r2.w, c17
+mad r3.x, r2.w, c17.z, c17.w
+mad r3.x, r3, r2.w, c18
+cmp r1.y, -r0.w, v1.w, r1
+rsq r3.y, r3.y
+mad r2.w, r3.x, r2, c18.y
+rcp r3.y, r3.y
+mul r3.x, r2.w, r3.y
+cmp r2.w, v5.y, c17.x, c17.y
+mul r3.y, r2.w, r3.x
+mad r0.w, -r3.y, c18.z, r3.x
+mad r0.w, r2, c18, r0
+add r1.y, v1.w, -r1
+add r2.w, r1.y, c17.y
+mul r0.w, r0, c19.x
+mov r5.w, r0
+frc r3.x, r2.w
+add_sat r2.w, r2, -r3.x
+mul_sat r3.x, r1.y, c14
+mul r1.y, r2.w, c14.x
+mad r1.y, r1, c24.x, r3.x
+mad_pp r0.xyz, r1.y, r2, r0
+texldd r3.yw, r5.zwzw, s6, r4.zwzw, r4
+add r3.xy, r3.wyzw, c21.w
+texldd r2.xyz, r5.zwzw, s0, r4.zwzw, r4
+add_pp r2.xyz, r2, -r0
+mul_sat r2.w, c12.x, c12.x
+mul r3.xy, r3, c22
+mov r1.y, r0.w
+add r1.xy, r1, r3
+mad_pp r3.xyz, r2.w, r2, r0
+mad r0.x, r1.y, c22.z, c22
+frc r1.y, r0.x
+texldd r0, r5, s5, r4.zwzw, r4
+mad r2.x, r1.y, c23, c23.y
+mad r2.y, r1.x, c22.w, c22.x
+sincos r1.xy, r2.x
+frc r1.y, r2
+mad r2.x, r1.y, c23, c23.y
+mov_pp r2.y, r1.x
+sincos r1.xy, r2.x
+dp4 r1.z, c1, c1
+mov_pp r2.xz, r1.yyxw
+rsq r1.z, r1.z
+mul r1.xyz, r1.z, c1
+dp3_sat r1.z, v4, r1
+dp3_pp_sat r3.w, -r2, -c11
+add r1.x, v0.w, c21.z
+add_pp r1.w, r3, -r1.z
+frc r1.y, r1.x
+mad_pp r6.x, r2.w, r1.w, r1.z
+add_sat r2.x, r1, -r1.y
+texldd r1, r5.zwzw, s3, r4.zwzw, r4
+mul_pp r1.w, r1, r2.x
+mul_pp r2, r1, r0
+add_pp r2.xyz, r2, -r3
+mad_pp r2.xyz, r2.w, r2, r3
 mov r0.x, c2
 add r0.z, c17.y, -r0.x
 texldp r0.x, v3, s9
 mad r0.z, r0.x, r0, c2.x
-texld r2, r3, s5
-mul_pp r2, r4, r2
-add_pp r2.xyz, r2, -r1
+add_pp r2.w, r3, c23.z
 dp3 r0.x, v2, v2
-mad_pp r1.xyz, r2.w, r2, r1
-add_pp r1.w, r1, c23.z
-mul_pp r0.y, r5.x, c3.w
+mul_pp r0.y, r6.x, c3.w
 rcp r0.w, v2.w
-mad r5.xy, v2, r0.w, c21.y
-cmp r3.z, -v2, c17.x, c17.y
-texld r0.w, r5, s7
-mul_pp r0.w, r3.z, r0
+mad r6.xy, v2, r0.w, c21.y
+cmp r5.z, -v2, c17.x, c17.y
+texld r0.w, r6, s7
+mul_pp r0.w, r5.z, r0
 texld r0.x, r0.x, s8
 mul_pp r0.x, r0.w, r0
 mul_pp r0.w, r0.x, r0.z
 mul_pp r0.y, r0.w, r0
-mul_pp r2.w, r1, c3
+mul_pp r2.w, r2, c3
 mul_pp r0.w, r2, r0
 mul_pp_sat r0.w, r0, c23
-mul_pp_sat r3.z, r0.y, c18
+mul_pp_sat r5.z, r0.y, c18
 mov r0.x, c9
 add r0.xyz, c3, r0.x
-mad_sat r0.xyz, r0, r3.z, c0
+mad_sat r0.xyz, r0, r5.z, c0
 mul_pp r0.xyz, r0, v6.x
-mul r2.xyz, r0, c10.x
-mad_pp r2.xyz, r1, c4, r2
-texld r1, r3, s4
-mul_pp r1, r4, r1
+mul r3.xyz, r0, c10.x
+mad_pp r2.xyz, r2, c4, r3
+texldd r3, r5, s4, r4.zwzw, r4
+mul_pp r1, r1, r3
 mad_pp r1.xyz, -r2, r0, r1
 mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c17.y
@@ -105911,7 +105914,7 @@ SetTexture 5 [_CityLightOverlayDetailTex] 2D
 SetTexture 6 [_BumpMap] 2D
 SetTexture 7 [_ShadowMapTexture] 2D
 "ps_3_0
-; 184 ALU, 14 TEX
+; 184 ALU, 22 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -105944,126 +105947,126 @@ add_sat r0.w, r0, -r1
 mad r1.xyz, r0.w, r1, r0.zxyw
 add r0.w, r0.y, -r1.x
 add r0.w, r0, c16.y
-dsy r5.xy, v4
 add_pp r2.xyz, r0.yxzw, -r1
 frc r1.w, r0
 add_sat r0.y, r0.w, -r1.w
 mad_pp r1.xyz, r0.y, r2, r1
-mov r3.xyz, v4
-dp3_sat r1.w, v1, -r3
 abs_pp r0.y, r1.x
-rcp_pp r0.y, r0.y
-mul_pp r0.zw, r1.xyzy, r0.y
+rcp_pp r0.z, r0.y
+abs r0.y, v4.z
+mul_pp r0.zw, r1.xyzy, r0.z
+add r1.y, -r0, c16
+mad r1.x, r0.y, c16.z, c16.w
+mad r1.x, r0.y, r1, c17
 mov_pp r2.xy, c5
 mad_pp r0.zw, r0, c20.y, r2.xyxy
-mul r1.xy, r0.zwzw, c4.x
-mul r2.xy, r0.zwzw, c6.x
-add r2.w, r1, c23.y
-abs r0.y, v4.z
-mul r3.y, v1.w, c7.x
-mul r5.xy, r5, r5
-texld r2.xyz, r2, s2
-texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r2
-mad_sat r2.w, r2, c23.z, c23
-mad_pp r1.xyz, r2.w, r1, r2
+rsq r1.y, r1.y
+dsy r2.zw, v4.xyxy
+mul r2.zw, r2, r2
+mad r1.x, r0.y, r1, c17.y
+rcp r1.y, r1.y
+mul r1.y, r1.x, r1
+cmp r1.x, v4.z, c16, c16.y
+mul r1.z, r1.x, r1.y
+mad r1.y, -r1.z, c17.z, r1
+mad r1.x, r1, c17.w, r1.y
+mul r1.z, r1.x, c18.x
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsx r1.zw, v4.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+add r1.w, r2.z, r2
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r3.x, r1.w, c20
 max r1.w, r0.x, r0.y
-rcp r2.x, r1.w
+rcp r2.w, r1.w
 min r1.w, r0.x, r0.y
-mul r1.w, r1, r2.x
-mul r2.w, r1, r1
-add_pp r2.xyz, -r1, c16.y
-mul_sat r3.y, r3, c17.z
-mad_pp r1.xyz, r3.y, r2, r1
-mad r3.x, r2.w, c18.y, c18.z
-mad r2.x, r3, r2.w, c18.w
-mad r3.x, r2, r2.w, c19
-mad r3.w, r3.x, r2, c19.y
-mad r2.w, r3, r2, c19.z
-mul r1.w, r2, r1
-mov r3.xyz, v7
-mul r1.xyz, v0, r1
-mad r3.w, r0.y, c16.z, c16
-dp3 r3.x, v6, r3
-dp3 r4.x, v6, v6
-mad r3.y, -r3.x, r3.x, r4.x
-add r4.x, -r0.y, c16.y
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-rsq r4.x, r4.x
-add_pp r2.xyz, -r1, c14
-add r2.w, -r1, c19
+mul r1.w, r1, r2
 add r0.x, r0, -r0.y
+mul r3.z, r1, c20.x
+mul r2.xy, r0.zwzw, c4.x
+mul r1.xy, r0.zwzw, c6.x
+mul r2.w, r1, r1
+texldd r1.xyz, r1, s2, r3.zwzw, r3
+texldd r2.xyz, r2, s1, r3.zwzw, r3
+add_pp r4.xyz, r2, -r1
+mov r2.xyz, v4
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c23
+mad_sat r2.y, r2, c23.z, c23.w
+mad_pp r1.xyz, r2.y, r4, r1
+mad r2.x, r2.w, c18.y, c18.z
+mad r4.x, r2, r2.w, c18.w
+mad r4.x, r4, r2.w, c19
+mul r4.y, v1.w, c7.x
+add_pp r2.xyz, -r1, c16.y
+mul_sat r4.y, r4, c17.z
+mad_pp r1.xyz, r4.y, r2, r1
+mad r4.x, r4, r2.w, c19.y
+mad r2.x, r4, r2.w, c19.z
+mul r1.w, r2.x, r1
+add r2.w, -r1, c19
+mul r1.xyz, v0, r1
 cmp r0.x, -r0, r1.w, r2.w
-mul r3.z, r3.y, r3.y
-add r1.w, -r0.x, c17
-cmp r0.x, v4.z, r0, r1.w
-mad r3.w, r0.y, r3, c17.x
-mad r0.y, r0, r3.w, c17
-mad r2.w, c12.x, c12.x, -r3.z
+mov r4.xyz, v7
+dp3 r1.w, v6, r4
+dp3 r0.y, v6, v6
+mad r2.w, -r1, r1, r0.y
+add r0.y, -r0.x, c17.w
+cmp r0.x, v4.z, r0, r0.y
 rsq r2.w, r2.w
-rcp r1.w, r2.w
-add r3.z, r3.x, -r1.w
-cmp r2.w, r3.x, c16.y, c16.x
-add r1.w, -r3.y, c12.x
-abs r3.x, v4.y
-mad r3.y, r3.x, c16.z, c16.w
+rcp r0.y, r2.w
+mul r2.w, r0.y, r0.y
+mad r2.w, c12.x, c12.x, -r2
+rsq r4.x, r2.w
 cmp r0.x, v4, r0, -r0
 mul r0.x, r0, c20
-cmp r1.w, r1, c16.y, c16.x
-mul_pp r1.w, r1, r2
-cmp r1.w, -r1, v1, r3.z
+add r0.y, -r0, c12.x
+add r4.z, r0.x, c20.y
+add_pp r2.xyz, -r1, c14
+cmp r2.w, r1, c16.y, c16.x
+rcp r4.x, r4.x
+cmp r0.y, r0, c16, c16.x
+mul_pp r0.y, r0, r2.w
+abs r2.w, v4.y
+add r1.w, r1, -r4.x
+add r4.y, -r2.w, c16
+mad r4.x, r2.w, c16.z, c16.w
+mad r4.x, r4, r2.w, c17
+cmp r1.w, -r0.y, v1, r1
+rsq r4.y, r4.y
+mad r2.w, r4.x, r2, c17.y
+rcp r4.y, r4.y
+mul r4.x, r2.w, r4.y
+cmp r2.w, v4.y, c16.x, c16.y
+mul r4.y, r2.w, r4.x
+mad r0.y, -r4, c17.z, r4.x
+mad r0.y, r2.w, c17.w, r0
 add r1.w, v1, -r1
 add r2.w, r1, c16.y
-frc r5.z, r2.w
-add r3.z, -r3.x, c16.y
-mad r3.y, r3, r3.x, c17.x
-rsq r3.z, r3.z
-rcp r4.x, r4.x
-add r4.z, r0.x, c20.y
-mul r4.x, r0.y, r4
-cmp r3.w, v4.z, c16.x, c16.y
-mul r4.y, r3.w, r4.x
-add_sat r2.w, r2, -r5.z
-mad r3.x, r3.y, r3, c17.y
-rcp r3.z, r3.z
-mul r3.z, r3.x, r3
-cmp r3.x, v4.y, c16, c16.y
-mul r3.y, r3.x, r3.z
-mad r0.y, -r3, c17.z, r3.z
-mad r0.y, r3.x, c17.w, r0
-mad r3.y, -r4, c17.z, r4.x
-mad r3.x, r3.w, c17.w, r3.y
-mul r3.x, r3, c18
+frc r4.x, r2.w
+add_sat r2.w, r2, -r4.x
+mul_sat r4.x, r1.w, c13
 mul r0.y, r0, c18.x
-dsx r4.y, r3.x
-dsy r3.w, r3.x
-dsx r3.xy, v4
-mul r3.xy, r3, r3
-add r3.x, r3, r3.y
-add r3.y, r5.x, r5
-rsq r3.x, r3.x
-rcp r3.x, r3.x
-mul r4.x, r3, c20
-mul_sat r3.x, r1.w, c13
-mul r1.w, r2, c13.x
-mad r1.w, r1, c23.x, r3.x
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-mul r3.z, r3.y, c20.x
 mov r4.w, r0.y
-texldd r5.yw, r4.zwzw, s6, r4, r3.zwzw
-add r3.xy, r5.wyzw, c20.w
+mul r1.w, r2, c13.x
+mad r1.w, r1, c23.x, r4.x
+texldd r5.yw, r4.zwzw, s6, r3.zwzw, r3
+add r4.xy, r5.wyzw, c20.w
 mad_pp r1.xyz, r1.w, r2, r1
-texldd r2.xyz, r4.zwzw, s0, r4, r3.zwzw
-mul r3.xy, r3, c21
-add r0.xy, r0, r3
+texldd r2.xyz, r4.zwzw, s0, r3.zwzw, r3
+mul r4.xy, r4, c21
+add r0.xy, r0, r4
 mad r0.y, r0, c21.z, c21.x
 frc r0.y, r0
 add_pp r2.xyz, r2, -r1
 mul_sat r5.w, c11.x, c11.x
 mad_pp r2.xyz, r5.w, r2, r1
-mul r3.xy, r0.zwzw, c15.x
+mul r4.xy, r0.zwzw, c15.x
 mad r2.w, r0.y, c22.x, c22.y
 mad r5.x, r0, c21.w, c21
 sincos r0.xy, r2.w
@@ -106082,33 +106085,33 @@ add_pp r0.w, r2, -r0.z
 frc r0.y, r0.x
 mad_pp r5.x, r5.w, r0.w, r0.z
 add_sat r5.y, r0.x, -r0
-texldd r0, r4.zwzw, s3, r4, r3.zwzw
-mul_pp r3.z, r5.x, c2.w
-texldp r5.x, v2, s7
-mul_pp r3.w, r5.x, r3.z
-mov r3.z, c8.x
+texldd r0, r4.zwzw, s3, r3.zwzw, r3
 mul_pp r0.w, r0, r5.y
-texld r1, r3, s5
+texldd r1, r4, s5, r3.zwzw, r3
 mul_pp r1, r0, r1
 add_pp r1.xyz, r1, -r2
 mad_pp r1.xyz, r1.w, r1, r2
 add_pp r1.w, r2, c22.z
-mul_pp r2.w, r1, c2
-mul_pp_sat r3.w, r3, c17.z
-add r4.xyz, c2, r3.z
-mad_sat r4.xyz, r4, r3.w, c0
-mul_pp r4.xyz, r4, v5.x
-mul r2.xyz, r4, c9.x
-mad_pp r2.xyz, r1, c3, r2
-texld r1, r3, s4
-mul_pp r0, r0, r1
-mad_pp r0.xyz, -r2, r4, r0
-mul_pp r2.w, r2, r5.x
-mul_pp_sat r1.x, r2.w, c22.w
-add_pp r1.x, -r1, c16.y
-mul_pp r2.xyz, r2, r4
-mul_pp r0.w, r0, r1.x
-mad_pp oC0.xyz, r0.w, r0, r2
+mul_pp r4.z, r5.x, c2.w
+texldp r6.x, v2, s7
+mul_pp r4.w, r6.x, r4.z
+mov r4.z, c8.x
+mul_pp r1.w, r1, c2
+mul_pp r1.w, r1, r6.x
+mul_pp_sat r1.w, r1, c22
+mul_pp_sat r4.w, r4, c17.z
+add r5.xyz, c2, r4.z
+mad_sat r5.xyz, r5, r4.w, c0
+mul_pp r5.xyz, r5, v5.x
+mul r2.xyz, r5, c9.x
+mad_pp r1.xyz, r1, c3, r2
+texldd r2, r4, s4, r3.zwzw, r3
+mul_pp r0, r0, r2
+mad_pp r0.xyz, -r1, r5, r0
+add_pp r1.w, -r1, c16.y
+mul_pp r1.xyz, r1, r5
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
 mov_pp oC0.w, c16.y
 "
 }
@@ -106161,7 +106164,7 @@ SetTexture 6 [_BumpMap] 2D
 SetTexture 7 [_ShadowMapTexture] 2D
 SetTexture 8 [_LightTexture0] 2D
 "ps_3_0
-; 186 ALU, 15 TEX
+; 186 ALU, 23 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -106188,177 +106191,177 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r0.xyz, v5
-add r1.xyz, r0, -r0.zxyw
-add r0.w, r1.x, c16.y
+abs r1.xyz, v5
+add r0.xyz, r1, -r1.zxyw
+add r0.w, r0.x, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad r1.xyz, r0.w, r1, r0.zxyw
-add r0.w, r0.y, -r1.x
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r0.w, r1.y, -r0.x
 add r0.w, r0, c16.y
-dsy r5.xy, v5
-add_pp r2.xyz, r0.yxzw, -r1
 frc r1.w, r0
-add_sat r0.y, r0.w, -r1.w
-mad_pp r1.xyz, r0.y, r2, r1
-mov r3.xyz, v5
-dp3_sat r1.w, v1, -r3
-abs_pp r0.y, r1.x
-rcp_pp r0.y, r0.y
-mul_pp r0.zw, r1.xyzy, r0.y
+dsy r3.xy, v5
+add_pp r2.xyz, r1.yxzw, -r0
+add_sat r0.w, r0, -r1
+mad_pp r0.xyz, r0.w, r2, r0
+abs r0.w, v5.z
+add r1.y, -r0.w, c16
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mad r0.z, r0.w, c16, c16.w
+mad r0.z, r0.w, r0, c17.x
+rsq r1.y, r1.y
+dsx r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+mad r0.z, r0.w, r0, c17.y
+rcp r1.y, r1.y
+mul r1.y, r0.z, r1
+cmp r0.z, v5, c16.x, c16.y
+mul r1.z, r0, r1.y
+mad r1.y, -r1.z, c17.z, r1
 mov_pp r2.xy, c5
-mad_pp r0.zw, r0, c20.y, r2.xyxy
-mul r1.xy, r0.zwzw, c4.x
-mul r2.xy, r0.zwzw, c6.x
-add r2.w, r1, c23.y
-abs r0.y, v5.z
-mul r3.y, v1.w, c7.x
-mul r5.xy, r5, r5
-texld r2.xyz, r2, s2
-texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r2
-mad_sat r2.w, r2, c23.z, c23
-mad_pp r1.xyz, r2.w, r1, r2
-max r1.w, r0.x, r0.y
-rcp r2.x, r1.w
-min r1.w, r0.x, r0.y
-mul r1.w, r1, r2.x
-mul r2.w, r1, r1
-add_pp r2.xyz, -r1, c16.y
-mul_sat r3.y, r3, c17.z
-mad_pp r1.xyz, r3.y, r2, r1
-mad r3.x, r2.w, c18.y, c18.z
-mad r2.x, r3, r2.w, c18.w
-mad r3.x, r2, r2.w, c19
-mad r3.w, r3.x, r2, c19.y
-mad r2.w, r3, r2, c19.z
-mul r1.w, r2, r1
-mov r3.xyz, v8
-mul r1.xyz, v0, r1
-mad r3.w, r0.y, c16.z, c16
-dp3 r3.x, v7, r3
-dp3 r4.x, v7, v7
-mad r3.y, -r3.x, r3.x, r4.x
-add r4.x, -r0.y, c16.y
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-rsq r4.x, r4.x
-add_pp r2.xyz, -r1, c14
-add r2.w, -r1, c19
-add r0.x, r0, -r0.y
-cmp r0.x, -r0, r1.w, r2.w
-mul r3.z, r3.y, r3.y
-add r1.w, -r0.x, c17
-cmp r0.x, v5.z, r0, r1.w
-mad r3.w, r0.y, r3, c17.x
-mad r0.y, r0, r3.w, c17
-mad r2.w, c12.x, c12.x, -r3.z
-rsq r2.w, r2.w
-rcp r1.w, r2.w
-add r3.z, r3.x, -r1.w
-cmp r2.w, r3.x, c16.y, c16.x
-add r1.w, -r3.y, c12.x
-abs r3.x, v5.y
-mad r3.y, r3.x, c16.z, c16.w
-cmp r0.x, v5, r0, -r0
-mul r0.x, r0, c20
-cmp r1.w, r1, c16.y, c16.x
-mul_pp r1.w, r1, r2
-cmp r1.w, -r1, v1, r3.z
-add r1.w, v1, -r1
-add r2.w, r1, c16.y
-frc r5.z, r2.w
-add r3.z, -r3.x, c16.y
-mad r3.y, r3, r3.x, c17.x
-rsq r3.z, r3.z
-rcp r4.x, r4.x
-add r4.z, r0.x, c20.y
-mul r4.x, r0.y, r4
-cmp r3.w, v5.z, c16.x, c16.y
-mul r4.y, r3.w, r4.x
-add_sat r2.w, r2, -r5.z
-mad r3.x, r3.y, r3, c17.y
-rcp r3.z, r3.z
-mul r3.z, r3.x, r3
-cmp r3.x, v5.y, c16, c16.y
-mul r3.y, r3.x, r3.z
-mad r0.y, -r3, c17.z, r3.z
-mad r0.y, r3.x, c17.w, r0
-mad r3.y, -r4, c17.z, r4.x
-mad r3.x, r3.w, c17.w, r3.y
-mul r3.x, r3, c18
-mul r0.y, r0, c18.x
-mov r4.w, r0.y
-dsx r4.y, r3.x
-dsy r3.w, r3.x
-dsx r3.xy, v5
+mad_pp r1.zw, r0.xyxy, c20.y, r2.xyxy
+mad r0.x, r0.z, c17.w, r1.y
+mul r0.z, r0.x, c18.x
 mul r3.xy, r3, r3
-add r3.x, r3, r3.y
-add r3.y, r5.x, r5
-rsq r3.x, r3.x
+add r1.y, r3.x, r3
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r4.x, r1.y, c20
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+add r0.z, r2, r2.w
+max r1.y, r1.x, r0.w
+rcp r2.w, r1.y
+min r1.y, r1.x, r0.w
+mul r1.y, r1, r2.w
+add r0.w, r1.x, -r0
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r4.z, r0, c20.x
+mul r2.xy, r1.zwzw, c4.x
+mul r0.xy, r1.zwzw, c6.x
+mul r2.w, r1.y, r1.y
+mul r5.xy, r1.zwzw, c15.x
+texldd r0.xyz, r0, s2, r4.zwzw, r4
+texldd r2.xyz, r2, s1, r4.zwzw, r4
+add_pp r3.xyz, r2, -r0
+mov r2.xyz, v5
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c23
+mad_sat r2.y, r2, c23.z, c23.w
+mad_pp r0.xyz, r2.y, r3, r0
+mad r2.x, r2.w, c18.y, c18.z
+mad r3.x, r2, r2.w, c18.w
+mad r3.x, r3, r2.w, c19
+mul r3.y, v1.w, c7.x
+add_pp r2.xyz, -r0, c16.y
+mul_sat r3.y, r3, c17.z
+mad_pp r0.xyz, r3.y, r2, r0
+mad r3.x, r3, r2.w, c19.y
+mad r2.x, r3, r2.w, c19.z
+mul r1.y, r2.x, r1
+add r2.w, -r1.y, c19
+mul r0.xyz, v0, r0
+cmp r0.w, -r0, r1.y, r2
+mov r3.xyz, v8
+dp3 r1.y, v7, r3
+dp3 r1.x, v7, v7
+mad r2.w, -r1.y, r1.y, r1.x
+add r1.x, -r0.w, c17.w
+cmp r0.w, v5.z, r0, r1.x
+cmp r0.w, v5.x, r0, -r0
+mul r1.x, r0.w, c20
+rsq r2.w, r2.w
+rcp r2.w, r2.w
+mul r3.x, r2.w, r2.w
+mad r0.w, c12.x, c12.x, -r3.x
+rsq r3.x, r0.w
+add r0.w, -r2, c12.x
+add r5.z, r1.x, c20.y
+add_pp r2.xyz, -r0, c14
+cmp r2.w, r1.y, c16.y, c16.x
 rcp r3.x, r3.x
-mul r4.x, r3, c20
-mul_sat r3.x, r1.w, c13
-mul r1.w, r2, c13.x
-mad r1.w, r1, c23.x, r3.x
+cmp r0.w, r0, c16.y, c16.x
+mul_pp r0.w, r0, r2
+abs r2.w, v5.y
+add r1.y, r1, -r3.x
+add r3.y, -r2.w, c16
+mad r3.x, r2.w, c16.z, c16.w
+mad r3.x, r3, r2.w, c17
+cmp r1.y, -r0.w, v1.w, r1
 rsq r3.y, r3.y
+mad r2.w, r3.x, r2, c17.y
 rcp r3.y, r3.y
-mul r3.z, r3.y, c20.x
-texldd r5.yw, r4.zwzw, s6, r4, r3.zwzw
-add r3.xy, r5.wyzw, c20.w
-mad_pp r1.xyz, r1.w, r2, r1
-texldd r2.xyz, r4.zwzw, s0, r4, r3.zwzw
+mul r3.x, r2.w, r3.y
+cmp r2.w, v5.y, c16.x, c16.y
+mul r3.y, r2.w, r3.x
+mad r0.w, -r3.y, c17.z, r3.x
+mad r0.w, r2, c17, r0
+add r1.y, v1.w, -r1
+add r2.w, r1.y, c16.y
+mul r0.w, r0, c18.x
+mov r5.w, r0
+frc r3.x, r2.w
+add_sat r2.w, r2, -r3.x
+mul_sat r3.x, r1.y, c13
+mul r1.y, r2.w, c13.x
+mad r1.y, r1, c23.x, r3.x
+mad_pp r0.xyz, r1.y, r2, r0
+texldd r3.yw, r5.zwzw, s6, r4.zwzw, r4
+add r3.xy, r3.wyzw, c20.w
+texldd r2.xyz, r5.zwzw, s0, r4.zwzw, r4
+add_pp r2.xyz, r2, -r0
+mul_sat r2.w, c11.x, c11.x
 mul r3.xy, r3, c21
-add r0.xy, r0, r3
-mad r0.y, r0, c21.z, c21.x
-frc r0.y, r0
-add_pp r2.xyz, r2, -r1
-mul_sat r5.w, c11.x, c11.x
-mad_pp r2.xyz, r5.w, r2, r1
-mul r3.xy, r0.zwzw, c15.x
-mad r2.w, r0.y, c22.x, c22.y
-mad r5.x, r0, c21.w, c21
-sincos r0.xy, r2.w
-frc r0.y, r5.x
-mad r2.w, r0.y, c22.x, c22.y
-mov_pp r5.y, r0.x
-sincos r0.xy, r2.w
-dp4_pp r0.z, c1, c1
-mov_pp r5.xz, r0.yyxw
-rsq_pp r0.z, r0.z
-mul_pp r0.xyz, r0.z, c1
-dp3_sat r0.z, v4, r0
-dp3_pp_sat r2.w, -r5, -c10
-add r0.x, v0.w, c20.z
-add_pp r0.w, r2, -r0.z
-frc r0.y, r0.x
-mad_pp r5.x, r5.w, r0.w, r0.z
-add_sat r5.y, r0.x, -r0
-texldd r0, r4.zwzw, s3, r4, r3.zwzw
-mov_pp r4.xyz, r0
-mul_pp r4.w, r0, r5.y
-texld r1, r3, s5
-mul_pp r1, r4, r1
-add_pp r1.xyz, r1, -r2
-mad_pp r1.xyz, r1.w, r1, r2
-add_pp r1.w, r2, c22.z
+mov r1.y, r0.w
+add r1.xy, r1, r3
+mad_pp r3.xyz, r2.w, r2, r0
+mad r0.x, r1.y, c21.z, c21
+frc r1.y, r0.x
+texldd r0, r5, s5, r4.zwzw, r4
+mad r2.x, r1.y, c22, c22.y
+mad r2.y, r1.x, c21.w, c21.x
+sincos r1.xy, r2.x
+frc r1.y, r2
+mad r2.x, r1.y, c22, c22.y
+mov_pp r2.y, r1.x
+sincos r1.xy, r2.x
+dp4_pp r1.z, c1, c1
+mov_pp r2.xz, r1.yyxw
+rsq_pp r1.z, r1.z
+mul_pp r1.xyz, r1.z, c1
+dp3_sat r1.z, v4, r1
+dp3_pp_sat r3.w, -r2, -c10
+add r1.x, v0.w, c20.z
+add_pp r1.w, r3, -r1.z
+frc r1.y, r1.x
+mad_pp r6.x, r2.w, r1.w, r1.z
+add_sat r2.x, r1, -r1.y
+texldd r1, r5.zwzw, s3, r4.zwzw, r4
+mul_pp r1.w, r1, r2.x
+mul_pp r2, r1, r0
+add_pp r2.xyz, r2, -r3
+mad_pp r2.xyz, r2.w, r2, r3
+add_pp r2.w, r3, c22.z
 texldp r0.x, v3, s7
 texld r0.w, v2, s8
 mul r0.w, r0, r0.x
-mul_pp r0.y, r5.x, c2.w
+mul_pp r0.y, r6.x, c2.w
 mul_pp r0.y, r0.w, r0
-mul_pp r2.w, r1, c2
+mul_pp r2.w, r2, c2
 mul_pp r0.w, r2, r0
 mul_pp_sat r0.w, r0, c22
-mul_pp_sat r3.z, r0.y, c17
+mul_pp_sat r5.z, r0.y, c17
 mov r0.x, c8
 add r0.xyz, c2, r0.x
-mad_sat r0.xyz, r0, r3.z, c0
+mad_sat r0.xyz, r0, r5.z, c0
 mul_pp r0.xyz, r0, v6.x
-mul r2.xyz, r0, c9.x
-mad_pp r2.xyz, r1, c3, r2
-texld r1, r3, s4
-mul_pp r1, r4, r1
+mul r3.xyz, r0, c9.x
+mad_pp r2.xyz, r2, c3, r3
+texldd r3, r5, s4, r4.zwzw, r4
+mul_pp r1, r1, r3
 mad_pp r1.xyz, -r2, r0, r1
 mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c16.y
@@ -106418,7 +106421,7 @@ SetTexture 6 [_BumpMap] 2D
 SetTexture 7 [_ShadowMapTexture] CUBE
 SetTexture 8 [_LightTexture0] 2D
 "ps_3_0
-; 195 ALU, 15 TEX
+; 195 ALU, 23 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -106447,135 +106450,135 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r4.xyz, v5
-add r0.xyz, r4, -r4.zxyw
+abs r5.xyz, v5
+add r0.xyz, r5, -r5.zxyw
 add r0.w, r0.x, c18.y
 frc r1.x, r0.w
 add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r4.zxyw
-add r0.w, r4.y, -r0.x
+mad r0.xyz, r0.w, r0, r5.zxyw
+add r0.w, r5.y, -r0.x
 add r0.w, r0, c18.y
 frc r1.x, r0.w
+add_pp r2.xyz, r5.yxzw, -r0
 add_sat r0.w, r0, -r1.x
-add_pp r2.xyz, r4.yxzw, -r0
 mad_pp r0.xyz, r0.w, r2, r0
-mov r3.xyz, v5
-dp3_sat r0.w, v1, -r3
+abs r0.w, v5.z
 abs_pp r0.x, r0
-rcp_pp r0.x, r0.x
-add r0.w, r0, c26.z
-mul_pp r0.xy, r0.zyzw, r0.x
+rcp_pp r1.z, r0.x
+add r1.x, -r0.w, c18.y
+mad r0.x, r0.w, c18.z, c18.w
+mad r0.x, r0.w, r0, c19
+rsq r1.x, r1.x
+mul_pp r1.zw, r0.xyzy, r1.z
+mad r0.x, r0.w, r0, c19.y
+rcp r1.x, r1.x
+mul r1.x, r0, r1
+cmp r0.x, v5.z, c18, c18.y
+mul r1.y, r0.x, r1.x
+mad r0.y, -r1, c19.z, r1.x
 mov_pp r1.xy, c7
-mad_pp r2.xy, r0, c22.y, r1
+mad_pp r2.xy, r1.zwzw, c22.y, r1
+mad r0.x, r0, c19.w, r0.y
+mul r0.z, r0.x, c20.x
+dsx r1.zw, v5.xyxy
+dsy r1.xy, v5
+mul r1.xy, r1, r1
+add r1.x, r1, r1.y
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+mul r4.x, r1, c22
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+mul r1.zw, r1, r1
+add r0.z, r1, r1.w
+mov r3.xyz, v5
+dp3_sat r1.w, v1, -r3
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r4.z, r0, c22.x
 mul r0.xy, r2, c6.x
 mul r1.xy, r2, c8.x
-texld r1.xyz, r1, s2
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_sat r0.w, r0, c27.x, c27.y
-mad_pp r0.xyz, r0.w, r0, r1
-mul r0.w, v1, c9.x
-add_pp r1.xyz, -r0, c18.y
-mul_sat r0.w, r0, c19.z
-mad_pp r0.xyz, r0.w, r1, r0
-mul r1.xyz, v0, r0
-abs r0.w, v5.z
-max r0.x, r4, r0.w
-rcp r0.y, r0.x
-min r0.x, r4, r0.w
-mul r1.w, r0.x, r0.y
+texldd r1.xyz, r1, s2, r4.zwzw, r4
+texldd r0.xyz, r0, s1, r4.zwzw, r4
+add_pp r3.xyz, r0, -r1
+add r2.w, r1, c26.z
 mov r0.xyz, v8
-dp3 r0.x, v7, r0
+dp3 r1.w, v7, r0
+mad_sat r0.x, r2.w, c27, c27.y
+mad_pp r0.xyz, r0.x, r3, r1
 dp3 r2.z, v7, v7
-mad r0.y, -r0.x, r0.x, r2.z
-mul r0.z, r1.w, r1.w
-mad r2.z, r0, c20.y, c20
-mad r2.z, r2, r0, c20.w
-mad r2.z, r2, r0, c21.x
-mad r2.z, r2, r0, c21.y
-mad r0.z, r2, r0, c21
-mul r0.z, r0, r1.w
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r2.w, r0.y, r0.y
-mad r2.w, c14.x, c14.x, -r2
-rsq r2.w, r2.w
-rcp r2.z, r2.w
-add_pp r3.xyz, -r1, c16
-add r2.z, r0.x, -r2
-cmp r1.w, r0.x, c18.y, c18.x
-add r0.y, -r0, c14.x
-cmp r0.x, r0.y, c18.y, c18
-mul_pp r0.x, r0, r1.w
-cmp r1.w, -r0.x, v1, r2.z
-add r2.z, -r0.w, c18.y
+mad r2.z, -r1.w, r1.w, r2
 rsq r2.z, r2.z
-add r0.y, -r0.z, c21.w
-add r0.x, r4, -r0.w
-cmp r0.x, -r0, r0.z, r0.y
-add r0.z, v1.w, -r1.w
-add r1.w, r0.z, c18.y
-add r0.y, -r0.x, c19.w
-cmp r0.x, v5.z, r0, r0.y
-frc r0.y, r1.w
-add_sat r0.y, r1.w, -r0
-cmp r0.x, v5, r0, -r0
-mul r4.x, r0, c22
-mad r1.w, r0, c18.z, c18
-mad r1.w, r0, r1, c19.x
-abs r0.x, v5.y
-add r5.z, r4.x, c22.y
-mad r0.w, r0, r1, c19.y
 rcp r2.z, r2.z
-mul r1.w, r0, r2.z
-cmp r0.w, v5.z, c18.x, c18.y
-mul r2.z, r0.w, r1.w
-mul_sat r0.z, r0, c15.x
-mul r0.y, r0, c15.x
-mad r0.y, r0, c26, r0.z
-mad_pp r1.xyz, r0.y, r3, r1
+mul r2.w, r2.z, r2.z
+mul r3.x, v1.w, c9
+add r2.z, -r2, c14.x
+add_pp r1.xyz, -r0, c18.y
+mul_sat r3.x, r3, c19.z
+mad_pp r0.xyz, r3.x, r1, r0
+mad r1.x, c14, c14, -r2.w
+rsq r2.w, r1.x
+mul r0.xyz, v0, r0
+rcp r3.x, r2.w
+add_pp r1.xyz, -r0, c16
+cmp r2.w, r1, c18.y, c18.x
+cmp r2.z, r2, c18.y, c18.x
+mul_pp r2.z, r2, r2.w
+add r2.w, r1, -r3.x
+cmp r2.w, -r2.z, v1, r2
+max r1.w, r5.x, r0
+rcp r2.z, r1.w
+min r1.w, r5.x, r0
+mul r1.w, r1, r2.z
+mul r2.z, r1.w, r1.w
+add r2.w, v1, -r2
+add r3.y, r2.w, c18
+frc r3.z, r3.y
+add_sat r3.y, r3, -r3.z
+mad r3.x, r2.z, c20.y, c20.z
+mad r3.x, r3, r2.z, c20.w
+mad r3.x, r3, r2.z, c21
+mad r3.x, r3, r2.z, c21.y
+mad r2.z, r3.x, r2, c21
+mul r1.w, r2.z, r1
+mul r3.y, r3, c15.x
+mul_sat r2.w, r2, c15.x
+mad r2.w, r3.y, c26.y, r2
+mad_pp r1.xyz, r2.w, r1, r0
+add r0.x, r5, -r0.w
+add r0.y, -r1.w, c21.w
+cmp r0.w, -r0.x, r1, r0.y
+abs r0.x, v5.y
+add r1.w, -r0, c19
 add r0.z, -r0.x, c18.y
 mad r0.y, r0.x, c18.z, c18.w
 mad r0.y, r0, r0.x, c19.x
 rsq r0.z, r0.z
+cmp r0.w, v5.z, r0, r1
 mad r0.x, r0.y, r0, c19.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
 cmp r0.x, v5.y, c18, c18.y
 mul r0.z, r0.x, r0.y
 mad r0.y, -r0.z, c19.z, r0
-mad r0.z, -r2, c19, r1.w
+cmp r0.z, v5.x, r0.w, -r0.w
+mul r5.x, r0.z, c22
 mad r0.x, r0, c19.w, r0.y
-mad r0.y, r0.w, c19.w, r0.z
 mul r0.w, r0.x, c20.x
-mul r0.x, r0.y, c20
-dsy r2.zw, v5.xyxy
+add r5.z, r5.x, c22.y
 mov r5.w, r0
-dsx r5.y, r0.x
-dsy r4.w, r0.x
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r2.zw, r2, r2
-add r0.y, r2.z, r2.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r4.z, r0.y, c22.x
-mul r5.x, r0, c22
-texldd r3.yw, r5.zwzw, s6, r5, r4.zwzw
-add r2.zw, r3.xywy, c22.w
-texldd r0.xyz, r5.zwzw, s0, r5, r4.zwzw
+texldd r3.yw, r5.zwzw, s6, r4.zwzw, r4
+texldd r0.xyz, r5.zwzw, s0, r4.zwzw, r4
 add_pp r0.xyz, r0, -r1
-mul_sat r3.w, c13.x, c13.x
-mad_pp r3.xyz, r3.w, r0, r1
+add r2.zw, r3.xywy, c22.w
+mul_sat r6.x, c13, c13
+mad_pp r3.xyz, r6.x, r0, r1
 mul r0.xy, r2.zwzw, c23
-mov r4.y, r0.w
-add r1.xy, r4, r0
-mul r4.xy, r2, c17.x
+mov r5.y, r0.w
+add r1.xy, r5, r0
+mul r5.xy, r2, c17.x
 mad r1.y, r1, c23.z, c23.x
-texld r0, r4, s5
+texldd r0, r5, s5, r4.zwzw, r4
 mad r1.z, r1.x, c23.w, c23.x
 frc r1.y, r1
 mad r1.x, r1.y, c24, c24.y
@@ -106588,47 +106591,47 @@ mov_pp r2.xz, r1.yyxw
 dp4 r1.z, c1, c1
 rsq r1.x, r1.z
 mul r1.xyz, r1.x, c1
-dp3_pp_sat r6.x, -r2, -c12
+dp3_pp_sat r3.w, -r2, -c12
 dp3_sat r6.y, v4, r1
 add r1.w, v0, c22.z
 frc r1.x, r1.w
 add_sat r2.x, r1.w, -r1
-texldd r1, r5.zwzw, s3, r5, r4.zwzw
+texldd r1, r5.zwzw, s3, r4.zwzw, r4
 mul_pp r1.w, r1, r2.x
 mul_pp r2, r1, r0
 add_pp r2.xyz, r2, -r3
 mad_pp r2.xyz, r2.w, r2, r3
+add_pp r6.z, r3.w, -r6.y
+mad_pp r0.y, r6.x, r6.z, r6
 dp3 r0.x, v3, v3
-rsq r4.z, r0.x
-add_pp r6.z, r6.x, -r6.y
-mad_pp r0.y, r3.w, r6.z, r6
-mul_pp r3.w, r0.y, c4
+rsq r5.w, r0.x
+mul_pp r5.z, r0.y, c4.w
 texld r0, v3, s7
 dp4 r0.y, r0, c25
-rcp r4.z, r4.z
-mul r0.x, r4.z, c2.w
+add_pp r2.w, r3, c24.z
+rcp r5.w, r5.w
+mul r0.x, r5.w, c2.w
 mad r0.y, -r0.x, c24.w, r0
 mov r0.z, c3.x
 dp3 r0.x, v2, v2
 cmp r0.y, r0, c18, r0.z
 texld r0.x, r0.x, s8
 mul r0.w, r0.x, r0.y
-mul_pp r0.y, r0.w, r3.w
-mul_pp_sat r3.w, r0.y, c19.z
+mul_pp r0.y, r0.w, r5.z
+mul_pp r2.w, r2, c4
+mul_pp r0.w, r2, r0
+mul_pp_sat r0.w, r0, c26.x
+mul_pp_sat r5.z, r0.y, c19
 mov r0.x, c10
 add r0.xyz, c4, r0.x
-mad_sat r0.xyz, r0, r3.w, c0
+mad_sat r0.xyz, r0, r5.z, c0
 mul_pp r0.xyz, r0, v6.x
 mul r3.xyz, r0, c11.x
-add_pp r2.w, r6.x, c24.z
-mul_pp r3.w, r2, c4
-mad_pp r3.xyz, r2, c5, r3
-texld r2, r4, s4
-mul_pp r1, r1, r2
-mul_pp r0.w, r3, r0
-mul_pp_sat r0.w, r0, c26.x
-mad_pp r1.xyz, -r3, r0, r1
-mul_pp r2.xyz, r3, r0
+mad_pp r2.xyz, r2, c5, r3
+texldd r3, r5, s4, r4.zwzw, r4
+mul_pp r1, r1, r3
+mad_pp r1.xyz, -r2, r0, r1
+mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c18.y
 mul_pp r0.x, r1.w, r0.w
 mad_pp oC0.xyz, r0.x, r1, r2
@@ -106687,7 +106690,7 @@ SetTexture 7 [_ShadowMapTexture] CUBE
 SetTexture 8 [_LightTextureB0] 2D
 SetTexture 9 [_LightTexture0] CUBE
 "ps_3_0
-; 196 ALU, 16 TEX
+; 196 ALU, 24 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -106726,181 +106729,181 @@ mad r0.xyz, r0.w, r0, r1.zxyw
 add r0.w, r1.y, -r0.x
 add r0.w, r0, c18.y
 frc r1.w, r0
-dsy r5.xy, v5
+dsy r3.xy, v5
 add_pp r2.xyz, r1.yxzw, -r0
 add_sat r0.w, r0, -r1
 mad_pp r0.xyz, r0.w, r2, r0
-mov r3.xyz, v5
-dp3_sat r1.y, v1, -r3
-add r2.w, r1.y, c26.z
 abs r0.w, v5.z
+add r1.y, -r0.w, c18
 abs_pp r0.x, r0
 rcp_pp r0.x, r0.x
-mul r3.y, v1.w, c9.x
-mul r5.xy, r5, r5
 mul_pp r0.xy, r0.zyzw, r0.x
-mov_pp r1.zw, c7.xyxy
-mad_pp r1.zw, r0.xyxy, c22.y, r1
-mul r0.xy, r1.zwzw, c6.x
-mul r2.xy, r1.zwzw, c8.x
-texld r2.xyz, r2, s2
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_sat r2.w, r2, c27.x, c27.y
-mad_pp r0.xyz, r2.w, r0, r2
+mad r0.z, r0.w, c18, c18.w
+mad r0.z, r0.w, r0, c19.x
+rsq r1.y, r1.y
+dsx r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+mad r0.z, r0.w, r0, c19.y
+rcp r1.y, r1.y
+mul r1.y, r0.z, r1
+cmp r0.z, v5, c18.x, c18.y
+mul r1.z, r0, r1.y
+mad r1.y, -r1.z, c19.z, r1
+mov_pp r2.xy, c7
+mad_pp r1.zw, r0.xyxy, c22.y, r2.xyxy
+mad r0.x, r0.z, c19.w, r1.y
+mul r0.z, r0.x, c20.x
+mul r3.xy, r3, r3
+add r1.y, r3.x, r3
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r4.x, r1.y, c22
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+add r0.z, r2, r2.w
 max r1.y, r1.x, r0.w
-rcp r2.x, r1.y
+rcp r2.w, r1.y
 min r1.y, r1.x, r0.w
-mul r1.y, r1, r2.x
+mul r1.y, r1, r2.w
+add r0.w, r1.x, -r0
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r4.z, r0, c22.x
+mul r2.xy, r1.zwzw, c6.x
+mul r0.xy, r1.zwzw, c8.x
 mul r2.w, r1.y, r1.y
+mul r5.xy, r1.zwzw, c17.x
+texldd r0.xyz, r0, s2, r4.zwzw, r4
+texldd r2.xyz, r2, s1, r4.zwzw, r4
+add_pp r3.xyz, r2, -r0
+mov r2.xyz, v5
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c26.z
+mad_sat r2.y, r2, c27.x, c27
+mad_pp r0.xyz, r2.y, r3, r0
+mad r2.x, r2.w, c20.y, c20.z
+mad r3.x, r2, r2.w, c20.w
+mad r3.x, r3, r2.w, c21
+mul r3.y, v1.w, c9.x
 add_pp r2.xyz, -r0, c18.y
 mul_sat r3.y, r3, c19.z
 mad_pp r0.xyz, r3.y, r2, r0
-mad r3.x, r2.w, c20.y, c20.z
-mad r2.x, r3, r2.w, c20.w
-mad r2.x, r2, r2.w, c21
-mad r3.w, r2.x, r2, c21.y
-mov r2.xyz, v8
-dp3 r2.x, v7, r2
-mad r2.y, r3.w, r2.w, c21.z
-mul r1.y, r2, r1
+mad r3.x, r3, r2.w, c21.y
+mad r2.x, r3, r2.w, c21.z
+mul r1.y, r2.x, r1
+add r2.w, -r1.y, c21
 mul r0.xyz, v0, r0
-dp3 r4.x, v7, v7
-mad r2.z, -r2.x, r2.x, r4.x
-add r4.x, -r0.w, c18.y
-rsq r2.z, r2.z
-rcp r2.z, r2.z
-rsq r4.x, r4.x
-add_pp r3.xyz, -r0, c16
-add r2.y, -r1, c21.w
-add r1.x, r1, -r0.w
-cmp r1.x, -r1, r1.y, r2.y
-mul r2.w, r2.z, r2.z
-mad r2.y, c14.x, c14.x, -r2.w
-add r1.y, -r1.x, c19.w
-cmp r1.x, v5.z, r1, r1.y
-rsq r2.y, r2.y
-rcp r1.y, r2.y
-add r2.y, r2.x, -r1
-add r1.y, -r2.z, c14.x
-mad r2.w, r0, c18.z, c18
-mad r2.w, r0, r2, c19.x
-mad r0.w, r0, r2, c19.y
-cmp r1.x, v5, r1, -r1
-mul r1.x, r1, c22
-rcp r4.x, r4.x
-add r4.z, r1.x, c22.y
-mul r4.x, r0.w, r4
-cmp r2.w, v5.z, c18.x, c18.y
-mul r4.y, r2.w, r4.x
-cmp r2.x, r2, c18.y, c18
-cmp r1.y, r1, c18, c18.x
-mul_pp r1.y, r1, r2.x
-abs r2.x, v5.y
-cmp r1.y, -r1, v1.w, r2
+cmp r0.w, -r0, r1.y, r2
+mov r3.xyz, v8
+dp3 r1.y, v7, r3
+dp3 r1.x, v7, v7
+mad r2.w, -r1.y, r1.y, r1.x
+add r1.x, -r0.w, c19.w
+cmp r0.w, v5.z, r0, r1.x
+cmp r0.w, v5.x, r0, -r0
+mul r1.x, r0.w, c22
+rsq r2.w, r2.w
+rcp r2.w, r2.w
+mul r3.x, r2.w, r2.w
+mad r0.w, c14.x, c14.x, -r3.x
+rsq r3.x, r0.w
+add r0.w, -r2, c14.x
+add r5.z, r1.x, c22.y
+add_pp r2.xyz, -r0, c16
+cmp r2.w, r1.y, c18.y, c18.x
+rcp r3.x, r3.x
+cmp r0.w, r0, c18.y, c18.x
+mul_pp r0.w, r0, r2
+abs r2.w, v5.y
+add r1.y, r1, -r3.x
+add r3.y, -r2.w, c18
+mad r3.x, r2.w, c18.z, c18.w
+mad r3.x, r3, r2.w, c19
+cmp r1.y, -r0.w, v1.w, r1
+rsq r3.y, r3.y
+mad r2.w, r3.x, r2, c19.y
+rcp r3.y, r3.y
+mul r3.x, r2.w, r3.y
+cmp r2.w, v5.y, c18.x, c18.y
+mul r3.y, r2.w, r3.x
+mad r0.w, -r3.y, c19.z, r3.x
+mad r0.w, r2, c19, r0
 add r1.y, v1.w, -r1
-add r3.w, r1.y, c18.y
-frc r5.z, r3.w
-add r2.z, -r2.x, c18.y
-mad r2.y, r2.x, c18.z, c18.w
-mad r2.y, r2, r2.x, c19.x
-rsq r2.z, r2.z
-add_sat r3.w, r3, -r5.z
-mad r2.x, r2.y, r2, c19.y
-rcp r2.z, r2.z
-mul r2.z, r2.x, r2
-cmp r2.x, v5.y, c18, c18.y
-mul r2.y, r2.x, r2.z
-mad r0.w, -r2.y, c19.z, r2.z
-mad r2.y, -r4, c19.z, r4.x
-mad r0.w, r2.x, c19, r0
-mad r2.x, r2.w, c19.w, r2.y
-mul r2.x, r2, c20
+add r2.w, r1.y, c18.y
 mul r0.w, r0, c20.x
-add r2.z, r5.x, r5.y
-dsx r4.xy, v5
-mul r4.xy, r4, r4
-mov r4.w, r0
-dsx r2.w, r2.x
-dsy r2.y, r2.x
-add r2.x, r4, r4.y
-rsq r2.z, r2.z
-rsq r2.x, r2.x
-rcp r4.x, r2.z
-rcp r2.x, r2.x
-mul r2.z, r2.x, c22.x
-mul r2.x, r4, c22
-mul_sat r4.x, r1.y, c15
-mul r1.y, r3.w, c15.x
-mad r1.y, r1, c26, r4.x
-mad_pp r0.xyz, r1.y, r3, r0
-texldd r5.yw, r4.zwzw, s6, r2.zwzw, r2
-add r4.xy, r5.wyzw, c22.w
-texldd r3.xyz, r4.zwzw, s0, r2.zwzw, r2
-add_pp r3.xyz, r3, -r0
-mul_sat r5.w, c13.x, c13.x
-mad_pp r3.xyz, r5.w, r3, r0
-mul r4.xy, r4, c23
+mov r5.w, r0
+frc r3.x, r2.w
+add_sat r2.w, r2, -r3.x
+mul_sat r3.x, r1.y, c15
+mul r1.y, r2.w, c15.x
+mad r1.y, r1, c26, r3.x
+mad_pp r0.xyz, r1.y, r2, r0
+texldd r3.yw, r5.zwzw, s6, r4.zwzw, r4
+add r3.xy, r3.wyzw, c22.w
+texldd r2.xyz, r5.zwzw, s0, r4.zwzw, r4
+add_pp r2.xyz, r2, -r0
+mul_sat r2.w, c13.x, c13.x
+mul r3.xy, r3, c23
 mov r1.y, r0.w
-add r1.xy, r1, r4
+add r1.xy, r1, r3
+mad_pp r3.xyz, r2.w, r2, r0
 mad r0.x, r1.y, c23.z, c23
 frc r1.y, r0.x
-mul r4.xy, r1.zwzw, c17.x
-mad r3.w, r1.y, c24.x, c24.y
-mad r5.x, r1, c23.w, c23
-sincos r1.xy, r3.w
-frc r1.y, r5.x
-mad r3.w, r1.y, c24.x, c24.y
-mov_pp r5.y, r1.x
-sincos r1.xy, r3.w
+mad r2.x, r1.y, c24, c24.y
+mad r2.y, r1.x, c23.w, c23.x
+sincos r1.xy, r2.x
+frc r1.y, r2
+mad r2.x, r1.y, c24, c24.y
+mov_pp r2.y, r1.x
+sincos r1.xy, r2.x
 dp4 r1.z, c1, c1
-mov_pp r5.xz, r1.yyxw
+mov_pp r2.xz, r1.yyxw
 rsq r1.z, r1.z
 mul r1.xyz, r1.z, c1
 dp3_sat r1.z, v4, r1
-dp3_pp_sat r3.w, -r5, -c12
+dp3_pp_sat r3.w, -r2, -c12
 add r1.x, v0.w, c22.z
 add_pp r1.w, r3, -r1.z
 frc r1.y, r1.x
-texld r0, r4, s5
-mad_pp r5.x, r5.w, r1.w, r1.z
-add_sat r5.y, r1.x, -r1
-texldd r1, r4.zwzw, s3, r2.zwzw, r2
-mul_pp r1.w, r1, r5.y
+mad_pp r6.x, r2.w, r1.w, r1.z
+add_sat r2.x, r1, -r1.y
+texldd r1, r5.zwzw, s3, r4.zwzw, r4
+dp3 r5.w, v3, v3
+mul_pp r1.w, r1, r2.x
+texldd r0, r5, s5, r4.zwzw, r4
 mul_pp r2, r1, r0
 texld r0, v3, s7
 dp4 r0.y, r0, c25
 add_pp r2.xyz, r2, -r3
 mad_pp r2.xyz, r2.w, r2, r3
 add_pp r2.w, r3, c24.z
-dp3 r4.w, v3, v3
-rsq r4.w, r4.w
-rcp r0.x, r4.w
+rsq r5.w, r5.w
+rcp r0.x, r5.w
 mul r0.x, r0, c2.w
 mad r0.x, -r0, c24.w, r0.y
 mov r0.z, c3.x
 cmp r0.y, r0.x, c18, r0.z
 dp3 r0.x, v2, v2
-mul_pp r4.z, r5.x, c4.w
+mul_pp r5.z, r6.x, c4.w
 texld r0.w, v2, s9
 texld r0.x, r0.x, s8
 mul r0.x, r0, r0.w
 mul r0.w, r0.x, r0.y
-mul_pp r0.y, r0.w, r4.z
-mul_pp r3.w, r2, c4
-mul_pp r0.w, r3, r0
+mul_pp r0.y, r0.w, r5.z
+mul_pp r2.w, r2, c4
+mul_pp r0.w, r2, r0
 mul_pp_sat r0.w, r0, c26.x
-mul_pp_sat r4.z, r0.y, c19
+mul_pp_sat r5.z, r0.y, c19
 mov r0.x, c10
 add r0.xyz, c4, r0.x
-mad_sat r0.xyz, r0, r4.z, c0
+mad_sat r0.xyz, r0, r5.z, c0
 mul_pp r0.xyz, r0, v6.x
 mul r3.xyz, r0, c11.x
-mad_pp r3.xyz, r2, c5, r3
-texld r2, r4, s4
-mul_pp r1, r1, r2
-mad_pp r1.xyz, -r3, r0, r1
-mul_pp r2.xyz, r3, r0
+mad_pp r2.xyz, r2, c5, r3
+texldd r3, r5, s4, r4.zwzw, r4
+mul_pp r1, r1, r3
+mad_pp r1.xyz, -r2, r0, r1
+mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c18.y
 mul_pp r0.x, r1.w, r0.w
 mad_pp oC0.xyz, r0.x, r1, r2
@@ -106962,7 +106965,7 @@ SetTexture 7 [_LightTexture0] 2D
 SetTexture 8 [_LightTextureB0] 2D
 SetTexture 9 [_ShadowMapTexture] 2D
 "ps_3_0
-; 204 ALU, 19 TEX
+; 204 ALU, 27 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -106991,201 +106994,201 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r2.xyz, v5
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v5
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c21.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r3.xyz, r2.yxzw, -r0
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r0.w, r1.y, -r0.x
 add r0.w, r0, c21.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad_pp r0.xyz, r0.w, r3, r0
-mov r3.xyz, v5
-dp3_sat r0.w, v1, -r3
-abs_pp r0.x, r0
-rcp_pp r0.x, r0.x
-add r0.w, r0, c28.z
-mul_pp r0.xy, r0.zyzw, r0.x
-mov_pp r1.xy, c10
-mad_pp r2.zw, r0.xyxy, c25.y, r1.xyxy
-mul r0.xy, r2.zwzw, c9.x
-mul r1.xy, r2.zwzw, c11.x
-texld r1.xyz, r1, s2
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_sat r0.w, r0, c29.x, c29.y
-mad_pp r0.xyz, r0.w, r0, r1
-mul r0.w, v1, c12.x
-add_pp r1.xyz, -r0, c21.y
-mul_sat r0.w, r0, c22.z
-mad_pp r0.xyz, r0.w, r1, r0
-mul r1.xyz, v0, r0
+frc r1.w, r0
+add_pp r2.xyz, r1.yxzw, -r0
+add_sat r0.w, r0, -r1
+mad_pp r2.xyz, r0.w, r2, r0
 abs r0.w, v5.z
-max r0.x, r2, r0.w
-rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
-mov r0.xyz, v8
-dp3 r0.x, v7, r0
-dp3 r2.y, v7, v7
-mad r0.y, -r0.x, r0.x, r2
-mul r0.z, r1.w, r1.w
-mad r2.y, r0.z, c23, c23.z
-mad r2.y, r2, r0.z, c23.w
-mad r2.y, r2, r0.z, c24.x
-mad r2.y, r2, r0.z, c24
-mad r0.z, r2.y, r0, c24
-mul r0.z, r0, r1.w
+abs_pp r0.x, r2
+rcp_pp r1.y, r0.x
+mul_pp r1.zw, r2.xyzy, r1.y
+add r0.y, -r0.w, c21
+mad r0.x, r0.w, c21.z, c21.w
+mad r0.x, r0.w, r0, c22
+mov_pp r2.xy, c10
+mad_pp r1.zw, r1, c25.y, r2.xyxy
 rsq r0.y, r0.y
+dsx r2.xy, v5
+dsy r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+add r1.y, r2.z, r2.w
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r4.x, r1.y, c25
+mov r3.xyz, v5
+dp3_sat r1.y, v1, -r3
+mad r0.x, r0.w, r0, c22.y
 rcp r0.y, r0.y
-mul r3.w, r0.y, r0.y
-mad r3.w, c17.x, c17.x, -r3
-rsq r3.w, r3.w
-rcp r2.y, r3.w
-add_pp r3.xyz, -r1, c19
-add r2.y, r0.x, -r2
-cmp r1.w, r0.x, c21.y, c21.x
-add r0.y, -r0, c17.x
-cmp r0.x, r0.y, c21.y, c21
-mul_pp r0.x, r0, r1.w
-cmp r1.w, -r0.x, v1, r2.y
-add r2.y, -r0.w, c21
-rsq r2.y, r2.y
-add r0.y, -r0.z, c24.w
-add r0.x, r2, -r0.w
-cmp r0.x, -r0, r0.z, r0.y
-add r0.z, v1.w, -r1.w
-add r0.y, -r0.x, c22.w
-cmp r0.x, v5.z, r0, r0.y
-add r2.x, r0.z, c21.y
-cmp r1.w, v5.x, r0.x, -r0.x
-frc r0.y, r2.x
-add_sat r0.x, r2, -r0.y
-mul r5.x, r1.w, c25
-mad r1.w, r0, c21.z, c21
-mad r1.w, r0, r1, c22.x
-mad r0.w, r0, r1, c22.y
-rcp r2.y, r2.y
-add r2.x, r5, c25.y
-mul r2.y, r0.w, r2
-cmp r1.w, v5.z, c21.x, c21.y
-mul_sat r4.z, c16.x, c16.x
-mul_sat r0.y, r0.z, c18.x
-mul r0.x, r0, c18
-mad r0.x, r0, c28.y, r0.y
-mad_pp r0.xyz, r0.x, r3, r1
-abs r1.x, v5.y
-add r1.z, -r1.x, c21.y
-mad r1.y, r1.x, c21.z, c21.w
-mad r1.y, r1, r1.x, c22.x
-rsq r1.z, r1.z
-dsy r3.zw, v5.xyxy
-mul r3.zw, r3, r3
-mul r3.x, r1.w, r2.y
-mad r1.x, r1.y, r1, c22.y
-rcp r1.z, r1.z
-mul r1.y, r1.x, r1.z
-cmp r1.x, v5.y, c21, c21.y
-mul r1.z, r1.x, r1.y
-mad r0.w, -r1.z, c22.z, r1.y
-mad r1.y, -r3.x, c22.z, r2
-mad r0.w, r1.x, c22, r0
+mul r0.y, r0.x, r0
+cmp r0.x, v5.z, c21, c21.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c22.z, r0
+mad r0.x, r0, c22.w, r0.y
+mul r0.z, r0.x, c23.x
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r4.z, r0, c25.x
+mul r0.xy, r1.zwzw, c9.x
+mul r2.xy, r1.zwzw, c11.x
+texldd r2.xyz, r2, s2, r4.zwzw, r4
+texldd r0.xyz, r0, s1, r4.zwzw, r4
+add_pp r3.xyz, r0, -r2
+add r3.w, r1.y, c28.z
+mov r0.xyz, v8
+dp3 r1.y, v7, r0
+mad_sat r0.x, r3.w, c29, c29.y
+mad_pp r0.xyz, r0.x, r3, r2
+dp3 r2.w, v7, v7
+mad r2.w, -r1.y, r1.y, r2
+rsq r2.w, r2.w
+rcp r2.w, r2.w
+mul r3.x, r2.w, r2.w
+mul r3.y, v1.w, c12.x
+add r2.w, -r2, c17.x
+add_pp r2.xyz, -r0, c21.y
+mul_sat r3.y, r3, c22.z
+mad_pp r0.xyz, r3.y, r2, r0
+mad r2.x, c17, c17, -r3
+rsq r3.x, r2.x
+rcp r3.y, r3.x
+mul r0.xyz, v0, r0
+add_pp r2.xyz, -r0, c19
+cmp r3.x, r1.y, c21.y, c21
+cmp r2.w, r2, c21.y, c21.x
+mul_pp r2.w, r2, r3.x
+add r3.x, r1.y, -r3.y
+cmp r3.x, -r2.w, v1.w, r3
+max r1.y, r1.x, r0.w
+rcp r2.w, r1.y
+min r1.y, r1.x, r0.w
+mul r1.y, r1, r2.w
+add r3.y, v1.w, -r3.x
+add r3.z, r3.y, c21.y
+mul r2.w, r1.y, r1.y
+frc r3.w, r3.z
+add_sat r3.z, r3, -r3.w
+mad r3.x, r2.w, c23.y, c23.z
+mad r3.x, r3, r2.w, c23.w
+mad r3.x, r3, r2.w, c24
+mad r3.x, r3, r2.w, c24.y
+mad r2.w, r3.x, r2, c24.z
+mul r1.y, r2.w, r1
+add r0.w, r1.x, -r0
+mul r3.z, r3, c18.x
+mul_sat r3.y, r3, c18.x
+mad r3.x, r3.z, c28.y, r3.y
+mad_pp r0.xyz, r3.x, r2, r0
+add r2.x, -r1.y, c24.w
+cmp r2.x, -r0.w, r1.y, r2
+abs r0.w, v5.y
+add r2.y, -r2.x, c22.w
+add r1.y, -r0.w, c21
+mad r1.x, r0.w, c21.z, c21.w
+mad r1.x, r1, r0.w, c22
+rsq r1.y, r1.y
+mad r0.w, r1.x, r0, c22.y
+rcp r1.y, r1.y
+mul r1.x, r0.w, r1.y
+cmp r0.w, v5.y, c21.x, c21.y
+mul r1.y, r0.w, r1.x
+mad r1.x, -r1.y, c22.z, r1
+mad r0.w, r0, c22, r1.x
+cmp r2.x, v5.z, r2, r2.y
+cmp r1.y, v5.x, r2.x, -r2.x
+mul r5.z, r1.y, c25.x
 mul r0.w, r0, c23.x
-mad r1.x, r1.w, c22.w, r1.y
-mul r1.x, r1, c23
-add r1.z, r3, r3.w
-dsx r3.xy, v5
-mul r3.xy, r3, r3
-mov r2.y, r0.w
-dsx r1.w, r1.x
-dsy r1.y, r1.x
-add r1.x, r3, r3.y
-rsq r1.z, r1.z
-rsq r1.x, r1.x
-rcp r3.x, r1.z
-rcp r1.x, r1.x
-mul r1.z, r1.x, c25.x
-mul r1.x, r3, c25
-texldd r3.xyz, r2, s0, r1.zwzw, r1
-texldd r4.yw, r2, s6, r1.zwzw, r1
-add_pp r3.xyz, r3, -r0
-mad_pp r3.xyz, r4.z, r3, r0
-add r0.xy, r4.wyzw, c25.w
-mul r4.xy, r2.zwzw, c20.x
-texldd r1, r2, s3, r1.zwzw, r1
+add r1.x, r5.z, c25.y
+mov r1.y, r0.w
+texldd r2.xyz, r1, s0, r4.zwzw, r4
+add_pp r2.xyz, r2, -r0
+mul_sat r6.w, c16.x, c16.x
+mad_pp r3.xyz, r6.w, r2, r0
+texldd r5.yw, r1, s6, r4.zwzw, r4
+add r0.xy, r5.wyzw, c25.w
+mul r5.xy, r1.zwzw, c20.x
+add r1.z, v0.w, c25
 mul r0.xy, r0, c26
-mov r5.y, r0.w
-add r5.xy, r5, r0
-mad r2.w, r5.y, c26.z, c26.x
-frc r3.w, r2
-add r2.z, v0.w, c25
-frc r2.w, r2.z
-add_sat r2.z, r2, -r2.w
-mul_pp r1.w, r1, r2.z
-texld r0, r4, s5
+mov r5.w, r0
+add r5.zw, r5, r0.xyxy
+mad r1.w, r5, c26.z, c26.x
+frc r2.x, r1.w
+rcp r5.w, v3.w
+mad r3.w, r2.x, c27.x, c27.y
+frc r1.w, r1.z
+add_sat r2.x, r1.z, -r1.w
+texldd r1, r1, s3, r4.zwzw, r4
+mul_pp r1.w, r1, r2.x
+texldd r0, r5, s5, r4.zwzw, r4
 mul_pp r2, r1, r0
-add_pp r2.xyz, r2, -r3
-mad r3.w, r3, c27.x, c27.y
 sincos r0.xy, r3.w
-mad r0.y, r5.x, c26.w, c26.x
+mad r0.y, r5.z, c26.w, c26.x
+add_pp r2.xyz, r2, -r3
 frc r0.y, r0
 mad_pp r2.xyz, r2.w, r2, r3
 mad r3.w, r0.y, c27.x, c27.y
-mov_pp r6.y, r0.x
+mov_pp r7.y, r0.x
 sincos r0.xy, r3.w
-dp4 r4.w, c1, c1
-rsq r0.z, r4.w
-mov_pp r6.xz, r0.yyxw
-mul r5.xyz, r0.z, c1
-dp3_pp_sat r3.w, -r6, -c15
-dp3_sat r0.x, v4, r5
-rcp r4.w, v3.w
+dp4 r5.z, c1, c1
+rsq r0.z, r5.z
+mov_pp r7.xz, r0.yyxw
+mul r6.xyz, r0.z, c1
+dp3_sat r0.x, v4, r6
+dp3_pp_sat r3.w, -r7, -c15
 add_pp r0.y, r3.w, -r0.x
-mad_pp r0.z, r4, r0.y, r0.x
-mad r0.xy, v3, r4.w, c6
+mad_pp r0.z, r6.w, r0.y, r0.x
+mad r0.xy, v3, r5.w, c6
 texld r0.x, r0, s9
 add_pp r2.w, r3, c27.z
-mul_pp r4.z, r0, c7.w
-mad r5.xy, v3, r4.w, c5
+mul_pp r5.z, r0, c7.w
+mad r6.xy, v3, r5.w, c5
 mov r0.w, r0.x
-texld r0.x, r5, s9
-mad r5.xy, v3, r4.w, c4
+texld r0.x, r6, s9
+mad r6.xy, v3, r5.w, c4
 mov r0.z, r0.x
-texld r0.x, r5, s9
-mad r5.xy, v3, r4.w, c3
+texld r0.x, r6, s9
+mad r6.xy, v3, r5.w, c3
 mov r0.y, r0.x
-texld r0.x, r5, s9
-mad r0, -v3.z, r4.w, r0
-mov r5.x, c2
-cmp r0, r0, c21.y, r5.x
+texld r0.x, r6, s9
+mad r0, -v3.z, r5.w, r0
+mov r6.x, c2
+cmp r0, r0, c21.y, r6.x
 dp4_pp r0.y, r0, c27.w
-rcp r4.w, v2.w
-mad r5.xy, v2, r4.w, c25.y
+rcp r5.w, v2.w
+mad r6.xy, v2, r5.w, c25.y
 dp3 r0.x, v2, v2
-texld r0.w, r5, s7
+texld r0.w, r6, s7
 cmp r0.z, -v2, c21.x, c21.y
 mul_pp r0.z, r0, r0.w
 texld r0.x, r0.x, s8
 mul_pp r0.x, r0.z, r0
 mul_pp r0.w, r0.x, r0.y
-mul_pp r0.y, r0.w, r4.z
-mul_pp r3.w, r2, c7
-mul_pp r0.w, r3, r0
+mul_pp r0.y, r0.w, r5.z
+mul_pp r2.w, r2, c7
+mul_pp r0.w, r2, r0
 mul_pp_sat r0.w, r0, c28.x
-mul_pp_sat r4.z, r0.y, c22
+mul_pp_sat r5.z, r0.y, c22
 mov r0.x, c13
 add r0.xyz, c7, r0.x
-mad_sat r0.xyz, r0, r4.z, c0
+mad_sat r0.xyz, r0, r5.z, c0
 mul_pp r0.xyz, r0, v6.x
 mul r3.xyz, r0, c14.x
-mad_pp r3.xyz, r2, c8, r3
-texld r2, r4, s4
-mul_pp r1, r1, r2
-mad_pp r1.xyz, -r3, r0, r1
-mul_pp r2.xyz, r3, r0
+mad_pp r2.xyz, r2, c8, r3
+texldd r3, r5, s4, r4.zwzw, r4
+mul_pp r1, r1, r3
+mad_pp r1.xyz, -r2, r0, r1
+mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c21.y
 mul_pp r0.x, r1.w, r0.w
 mad_pp oC0.xyz, r0.x, r1, r2
@@ -107247,7 +107250,7 @@ SetTexture 7 [_LightTexture0] 2D
 SetTexture 8 [_LightTextureB0] 2D
 SetTexture 9 [_ShadowMapTexture] 2D
 "ps_3_0
-; 204 ALU, 19 TEX
+; 204 ALU, 27 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -107276,178 +107279,180 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r3.xyz, v5
-add r0.xyz, r3, -r3.zxyw
+abs r1.xyz, v5
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c21.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r3.zxyw
-add r0.w, r3.y, -r0.x
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r0.w, r1.y, -r0.x
 add r0.w, r0, c21.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-add_pp r2.xyz, r3.yxzw, -r0
-mad_pp r0.xyz, r0.w, r2, r0
-mov r2.xyz, v5
-dp3_sat r0.w, v1, -r2
-abs_pp r0.x, r0
-rcp_pp r0.x, r0.x
-add r0.w, r0, c28.z
-mul_pp r0.xy, r0.zyzw, r0.x
-mov_pp r1.xy, c10
-mad_pp r5.xy, r0, c25.y, r1
-mul r0.xy, r5, c9.x
-mul r1.xy, r5, c11.x
-texld r1.xyz, r1, s2
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_sat r0.w, r0, c29.x, c29.y
-mad_pp r0.xyz, r0.w, r0, r1
-mul r0.w, v1, c12.x
-add_pp r1.xyz, -r0, c21.y
-mul_sat r0.w, r0, c22.z
-mad_pp r0.xyz, r0.w, r1, r0
-mul r1.xyz, v0, r0
+frc r1.w, r0
+add_pp r2.xyz, r1.yxzw, -r0
+add_sat r0.w, r0, -r1
+mad_pp r2.xyz, r0.w, r2, r0
 abs r0.w, v5.z
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mov r0.xyz, v8
-dp3 r0.x, v7, r0
-dp3 r2.w, v7, v7
-mad r0.y, -r0.x, r0.x, r2.w
-mul r0.z, r1.w, r1.w
-mad r2.w, r0.z, c23.y, c23.z
-mad r2.w, r2, r0.z, c23
-mad r2.w, r2, r0.z, c24.x
-mad r2.w, r2, r0.z, c24.y
-mad r0.z, r2.w, r0, c24
-mul r0.z, r0, r1.w
+abs_pp r0.x, r2
+rcp_pp r1.y, r0.x
+mul_pp r1.zw, r2.xyzy, r1.y
+add r0.y, -r0.w, c21
+mad r0.x, r0.w, c21.z, c21.w
+mad r0.x, r0.w, r0, c22
+mov_pp r2.xy, c10
+mad_pp r5.zw, r1, c25.y, r2.xyxy
 rsq r0.y, r0.y
+dsx r2.xy, v5
+dsy r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+add r1.y, r2.z, r2.w
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r1.z, r1.y, c25.x
+mov r3.xyz, v5
+dp3_sat r1.y, v1, -r3
+rcp r6.w, v3.w
+mad r0.x, r0.w, r0, c22.y
 rcp r0.y, r0.y
-mul r3.y, r0, r0
-mad r3.y, c17.x, c17.x, -r3
-rsq r3.y, r3.y
-rcp r2.w, r3.y
-add_pp r2.xyz, -r1, c19
-add r2.w, r0.x, -r2
-cmp r1.w, r0.x, c21.y, c21.x
-add r0.y, -r0, c17.x
-cmp r0.x, r0.y, c21.y, c21
-mul_pp r0.x, r0, r1.w
-cmp r1.w, -r0.x, v1, r2
-add r0.y, -r0.z, c24.w
-add r0.x, r3, -r0.w
-cmp r0.x, -r0, r0.z, r0.y
-add r0.z, v1.w, -r1.w
-add r1.w, r0.z, c21.y
-add r0.y, -r0.x, c22.w
-cmp r0.x, v5.z, r0, r0.y
-frc r0.y, r1.w
-add_sat r0.y, r1.w, -r0
-mul_sat r4.w, c16.x, c16.x
-cmp r0.x, v5, r0, -r0
-mul_sat r0.z, r0, c18.x
-mul r0.y, r0, c18.x
-mad r0.y, r0, c28, r0.z
-mad_pp r3.xyz, r0.y, r2, r1
-mul r2.z, r0.x, c25.x
+mul r0.y, r0.x, r0
+cmp r0.x, v5.z, c21, c21.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c22.z, r0
+mad r0.x, r0, c22.w, r0.y
+mul r0.z, r0.x, c23.x
+dsx r5.y, r0.z
+dsy r1.w, r0.z
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r5.x, r0.z, c25
+mul r0.xy, r5.zwzw, c9.x
+mul r2.xy, r5.zwzw, c11.x
+texldd r2.xyz, r2, s2, r5, r1.zwzw
+texldd r0.xyz, r0, s1, r5, r1.zwzw
+add_pp r3.xyz, r0, -r2
+add r3.w, r1.y, c28.z
+mov r0.xyz, v8
+dp3 r1.y, v7, r0
+mad_sat r0.x, r3.w, c29, c29.y
+mad_pp r0.xyz, r0.x, r3, r2
+dp3 r2.w, v7, v7
+mad r2.w, -r1.y, r1.y, r2
+rsq r2.w, r2.w
+rcp r2.w, r2.w
+mul r3.x, r2.w, r2.w
+mul r3.y, v1.w, c12.x
+add r2.w, -r2, c17.x
+add_pp r2.xyz, -r0, c21.y
+mul_sat r3.y, r3, c22.z
+mad_pp r0.xyz, r3.y, r2, r0
+mad r2.x, c17, c17, -r3
+rsq r3.x, r2.x
+mul r0.xyz, v0, r0
+rcp r3.y, r3.x
+add_pp r2.xyz, -r0, c19
+cmp r3.x, r1.y, c21.y, c21
+cmp r2.w, r2, c21.y, c21.x
+mul_pp r2.w, r2, r3.x
+add r3.x, r1.y, -r3.y
+cmp r3.x, -r2.w, v1.w, r3
+max r1.y, r1.x, r0.w
+rcp r2.w, r1.y
+min r1.y, r1.x, r0.w
+mul r1.y, r1, r2.w
+add r3.y, v1.w, -r3.x
+add r3.z, r3.y, c21.y
+mul r2.w, r1.y, r1.y
+frc r3.w, r3.z
+add_sat r3.z, r3, -r3.w
+mad r3.x, r2.w, c23.y, c23.z
+mad r3.x, r3, r2.w, c23.w
+mad r3.x, r3, r2.w, c24
+mad r3.x, r3, r2.w, c24.y
+mad r2.w, r3.x, r2, c24.z
+mul r1.y, r2.w, r1
+mul r3.z, r3, c18.x
+mul_sat r3.y, r3, c18.x
+mad r3.x, r3.z, c28.y, r3.y
+mad_pp r3.xyz, r3.x, r2, r0
+add r0.x, r1, -r0.w
+add r0.y, -r1, c24.w
+cmp r0.w, -r0.x, r1.y, r0.y
 abs r0.x, v5.y
+add r1.x, -r0.w, c22.w
+cmp r0.w, v5.z, r0, r1.x
 add r0.z, -r0.x, c21.y
 mad r0.y, r0.x, c21.z, c21.w
 mad r0.y, r0, r0.x, c22.x
-add r1.y, -r0.w, c21
-mad r1.x, r0.w, c21.z, c21.w
-mad r1.x, r0.w, r1, c22
 rsq r0.z, r0.z
-rsq r1.y, r1.y
-add r2.x, r2.z, c25.y
-mad r0.w, r0, r1.x, c22.y
-rcp r1.y, r1.y
-mul r1.x, r0.w, r1.y
-cmp r0.w, v5.z, c21.x, c21.y
-mul r1.y, r0.w, r1.x
 mad r0.x, r0.y, r0, c22.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
 cmp r0.x, v5.y, c21, c21.y
 mul r0.z, r0.x, r0.y
 mad r0.y, -r0.z, c22.z, r0
+cmp r0.z, v5.x, r0.w, -r0.w
+mul r2.z, r0, c25.x
 mad r0.x, r0, c22.w, r0.y
-mad r0.z, -r1.y, c22, r1.x
-mul r2.w, r0.x, c23.x
-mad r0.y, r0.w, c22.w, r0.z
-mul r0.x, r0.y, c23
-dsy r0.zw, v5.xyxy
-mul r0.zw, r0, r0
-mov r2.y, r2.w
-dsx r1.w, r0.x
-dsy r1.y, r0.x
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r1.z, r0.x, c25.x
-mul r1.x, r0.y, c25
-texldd r0.xyz, r2, s0, r1.zwzw, r1
+mul r1.y, r0.x, c23.x
+add r2.x, r2.z, c25.y
+mov r2.y, r1
+texldd r0.xyz, r2, s0, r5, r1.zwzw
 add_pp r0.xyz, r0, -r3
-mad_pp r4.xyz, r4.w, r0, r3
-texldd r0.yw, r2, s6, r1.zwzw, r1
+mul_sat r1.x, c16, c16
+mad_pp r4.xyz, r1.x, r0, r3
+texldd r0.yw, r2, s6, r5, r1.zwzw
 add r3.xy, r0.wyzw, c25.w
+mul r5.zw, r5, c20.x
 mul r3.xy, r3, c26
-add r5.zw, r2, r3.xyxy
-mad r3.x, r5.w, c26.z, c26
-mul r5.xy, r5, c20.x
+mov r2.w, r1.y
+add r6.xy, r2.zwzw, r3
 add r2.z, v0.w, c25
+mad r1.y, r6, c26.z, c26.x
 frc r2.w, r2.z
-texldd r1, r2, s3, r1.zwzw, r1
-add_sat r2.z, r2, -r2.w
-mul_pp r2.w, r1, r2.z
-mov_pp r2.xyz, r1
-mad r1.y, r5.z, c26.w, c26.x
-frc r5.w, r3.x
-texld r0, r5, s5
+add_sat r3.x, r2.z, -r2.w
+texldd r2, r2, s3, r5, r1.zwzw
+frc r1.y, r1
+texldd r0, r5.zwzw, s5, r5, r1.zwzw
+mul_pp r2.w, r2, r3.x
 mul_pp r3, r2, r0
-mad r1.x, r5.w, c27, c27.y
-sincos r0.xy, r1.x
-frc r0.y, r1
-rcp r5.z, v3.w
-mad r1.x, r0.y, c27, c27.y
-mov_pp r1.y, r0.x
-sincos r0.xy, r1.x
+add_pp r3.xyz, r3, -r4
+mad r1.y, r1, c27.x, c27
+sincos r0.xy, r1.y
+mad r4.w, r6.x, c26, c26.x
+frc r0.y, r4.w
+mad_pp r3.xyz, r3.w, r3, r4
+mad r1.y, r0, c27.x, c27
+mov_pp r6.y, r0.x
+sincos r0.xy, r1.y
 dp4 r0.z, c1, c1
-mov_pp r1.xz, r0.yyxw
+mov_pp r6.xz, r0.yyxw
+dp3_pp_sat r1.y, -r6, -c15
 rsq r0.z, r0.z
 mul r0.xyz, r0.z, c1
 dp3_sat r0.w, v4, r0
-dp3_pp_sat r1.w, -r1, -c15
-add_pp r1.x, r1.w, -r0.w
-mad_pp r0.w, r4, r1.x, r0
-mad r0.xyz, v3, r5.z, c6
-mad r1.xyz, v3, r5.z, c4
+add_pp r4.w, r1.y, -r0
+mad_pp r0.w, r1.x, r4, r0
+mad r0.xyz, v3, r6.w, c6
+mad r6.xyz, v3, r6.w, c4
+texld r1.x, r6, s9
 texld r0.x, r0, s9
 mul_pp r4.w, r0, c7
 mov_pp r0.w, r0.x
-mad r0.xyz, v3, r5.z, c5
+mad r0.xyz, v3, r6.w, c5
 texld r0.x, r0, s9
-texld r1.x, r1, s9
 mov_pp r0.z, r0.x
 mov_pp r0.y, r1.x
-mad r1.xyz, v3, r5.z, c3
 mov r0.x, c2
-add r5.z, c21.y, -r0.x
-texld r0.x, r1, s9
-mad r0, r0, r5.z, c2.x
+add r1.x, c21.y, -r0
+mad r6.xyz, v3, r6.w, c3
+texld r0.x, r6, s9
+mad r0, r0, r1.x, c2.x
 dp4_pp r0.y, r0, c27.w
 rcp r1.x, v2.w
-mad r1.xy, v2, r1.x, c25.y
+mad r6.xy, v2, r1.x, c25.y
 dp3 r0.x, v2, v2
-texld r0.w, r1, s7
+texld r0.w, r6, s7
 cmp r0.z, -v2, c21.x, c21.y
 mul_pp r0.z, r0, r0.w
 texld r0.x, r0.x, s8
@@ -107458,17 +107463,15 @@ mul_pp_sat r1.x, r0.y, c22.z
 mov r0.x, c13
 add r0.xyz, c7, r0.x
 mad_sat r0.xyz, r0, r1.x, c0
-add_pp r1.xyz, r3, -r4
 mul_pp r0.xyz, r0, v6.x
-mad_pp r1.xyz, r3.w, r1, r4
-mul r3.xyz, r0, c14.x
-add_pp r1.w, r1, c27.z
-mul_pp r3.w, r1, c7
-mad_pp r3.xyz, r1, c8, r3
-texld r1, r5, s4
-mul_pp r1, r2, r1
+mul r4.xyz, r0, c14.x
+add_pp r1.x, r1.y, c27.z
+mul_pp r3.w, r1.x, c7
+texldd r1, r5.zwzw, s4, r5, r1.zwzw
 mul_pp r0.w, r3, r0
 mul_pp_sat r0.w, r0, c28.x
+mul_pp r1, r2, r1
+mad_pp r3.xyz, r3, c8, r4
 mad_pp r1.xyz, -r3, r0, r1
 mul_pp r2.xyz, r3, r0
 add_pp r0.w, -r0, c21.y
@@ -107523,7 +107526,7 @@ SetTexture 6 [_BumpMap] 2D
 SetTexture 7 [_ShadowMapTexture] CUBE
 SetTexture 8 [_LightTexture0] 2D
 "ps_3_0
-; 203 ALU, 18 TEX
+; 203 ALU, 26 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -107553,199 +107556,199 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r3.xyz, v5
-add r0.xyz, r3, -r3.zxyw
+abs r1.xyz, v5
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r3.zxyw
-add r0.w, r3.y, -r0.x
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r0.w, r1.y, -r0.x
 add r0.w, r0, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-add_pp r2.xyz, r3.yxzw, -r0
-mad_pp r0.xyz, r0.w, r2, r0
-mov r2.xyz, v5
-dp3_sat r0.w, v1, -r2
-abs_pp r0.x, r0
-rcp_pp r0.x, r0.x
-add r0.w, r0, c27.z
-mul_pp r0.xy, r0.zyzw, r0.x
-mov_pp r1.xy, c7
-mad_pp r3.zw, r0.xyxy, c22.y, r1.xyxy
-mul r0.xy, r3.zwzw, c6.x
-mul r1.xy, r3.zwzw, c8.x
-mul r6.xy, r3.zwzw, c17.x
-texld r1.xyz, r1, s2
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_sat r0.w, r0, c28.x, c28.y
-mad_pp r0.xyz, r0.w, r0, r1
-mul r0.w, v1, c9.x
-add_pp r1.xyz, -r0, c18.y
-mul_sat r0.w, r0, c19.z
-mad_pp r0.xyz, r0.w, r1, r0
-mul r1.xyz, v0, r0
+frc r1.w, r0
+add_pp r2.xyz, r1.yxzw, -r0
+add_sat r0.w, r0, -r1
+mad_pp r2.xyz, r0.w, r2, r0
 abs r0.w, v5.z
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mov r0.xyz, v8
-dp3 r0.x, v7, r0
-dp3 r2.w, v7, v7
-mad r0.y, -r0.x, r0.x, r2.w
-mul r0.z, r1.w, r1.w
-mad r2.w, r0.z, c20.y, c20.z
-mad r2.w, r2, r0.z, c20
-mad r2.w, r2, r0.z, c21.x
-mad r2.w, r2, r0.z, c21.y
-mad r0.z, r2.w, r0, c21
-mul r0.z, r0, r1.w
+abs_pp r0.x, r2
+rcp_pp r1.y, r0.x
+mul_pp r1.zw, r2.xyzy, r1.y
+add r0.y, -r0.w, c18
+mad r0.x, r0.w, c18.z, c18.w
+mad r0.x, r0.w, r0, c19
+mov_pp r2.xy, c7
+mad_pp r1.zw, r1, c22.y, r2.xyxy
 rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r3.y, r0, r0
-mad r3.y, c14.x, c14.x, -r3
-rsq r3.y, r3.y
-rcp r2.w, r3.y
-add_pp r2.xyz, -r1, c16
-add r2.w, r0.x, -r2
-cmp r1.w, r0.x, c18.y, c18.x
-add r0.y, -r0, c14.x
-cmp r0.x, r0.y, c18.y, c18
-mul_pp r0.x, r0, r1.w
-cmp r1.w, -r0.x, v1, r2
-add r0.y, -r0.z, c21.w
-add r0.x, r3, -r0.w
-cmp r0.x, -r0, r0.z, r0.y
-add r0.z, v1.w, -r1.w
-add r0.y, -r0.x, c19.w
-cmp r0.x, v5.z, r0, r0.y
-add r2.w, r0.z, c18.y
-cmp r1.w, v5.x, r0.x, -r0.x
-mul r5.x, r1.w, c22
-frc r0.y, r2.w
-add_sat r0.x, r2.w, -r0.y
-mad r1.w, r0, c18.z, c18
-add r3.x, r5, c22.y
-mad r1.w, r0, r1, c19.x
-mul_sat r0.y, r0.z, c15.x
-mul r0.x, r0, c15
-mad r0.x, r0, c27.y, r0.y
-mad_pp r0.xyz, r0.x, r2, r1
-abs r1.x, v5.y
-add r2.x, -r0.w, c18.y
-mad r0.w, r0, r1, c19.y
-add r1.z, -r1.x, c18.y
-mad r1.y, r1.x, c18.z, c18.w
-mad r1.y, r1, r1.x, c19.x
-rsq r1.z, r1.z
-rsq r2.x, r2.x
-rcp r2.x, r2.x
+dsx r2.xy, v5
 dsy r2.zw, v5.xyxy
 mul r2.zw, r2, r2
-mul r2.x, r0.w, r2
-cmp r1.w, v5.z, c18.x, c18.y
-mad r1.x, r1.y, r1, c19.y
-rcp r1.z, r1.z
-mul r1.y, r1.x, r1.z
-cmp r1.x, v5.y, c18, c18.y
-mul r1.z, r1.x, r1.y
-mad r0.w, -r1.z, c19.z, r1.y
-add r1.z, r2, r2.w
-mul r2.y, r1.w, r2.x
-mad r1.y, -r2, c19.z, r2.x
-mad r0.w, r1.x, c19, r0
-mad r1.x, r1.w, c19.w, r1.y
-mul r1.x, r1, c20
-mul r0.w, r0, c20.x
-dsx r2.xy, v5
+add r1.y, r2.z, r2.w
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r6.x, r1.y, c22
+mov r3.xyz, v5
+dp3_sat r1.y, v1, -r3
+mul r7.xy, r1.zwzw, c17.x
+mad r0.x, r0.w, r0, c19.y
+rcp r0.y, r0.y
+mul r0.y, r0.x, r0
+cmp r0.x, v5.z, c18, c18.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c19.z, r0
+mad r0.x, r0, c19.w, r0.y
+mul r0.z, r0.x, c20.x
+dsx r6.w, r0.z
+dsy r6.y, r0.z
 mul r2.xy, r2, r2
-mov r3.y, r0.w
-dsx r1.w, r1.x
-dsy r1.y, r1.x
-add r1.x, r2, r2.y
-rsq r1.z, r1.z
-rsq r1.x, r1.x
-rcp r2.x, r1.z
-rcp r1.x, r1.x
-mul r1.z, r1.x, c22.x
-mul r1.x, r2, c22
-texldd r2.xyz, r3, s0, r1.zwzw, r1
-texldd r5.yw, r3, s6, r1.zwzw, r1
+add r0.z, r2.x, r2.y
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r6.z, r0, c22.x
+mul r0.xy, r1.zwzw, c6.x
+mul r2.xy, r1.zwzw, c8.x
+texldd r2.xyz, r2, s2, r6.zwzw, r6
+texldd r0.xyz, r0, s1, r6.zwzw, r6
+add_pp r3.xyz, r0, -r2
+add r3.w, r1.y, c27.z
+mov r0.xyz, v8
+dp3 r1.y, v7, r0
+mad_sat r0.x, r3.w, c28, c28.y
+mad_pp r0.xyz, r0.x, r3, r2
+dp3 r2.w, v7, v7
+mad r2.w, -r1.y, r1.y, r2
+rsq r2.w, r2.w
+rcp r2.w, r2.w
+mul r3.x, r2.w, r2.w
+mul r3.y, v1.w, c9.x
+add r2.w, -r2, c14.x
+add_pp r2.xyz, -r0, c18.y
+mul_sat r3.y, r3, c19.z
+mad_pp r0.xyz, r3.y, r2, r0
+mad r2.x, c14, c14, -r3
+rsq r3.x, r2.x
+rcp r3.y, r3.x
+mul r0.xyz, v0, r0
+add_pp r2.xyz, -r0, c16
+cmp r3.x, r1.y, c18.y, c18
+cmp r2.w, r2, c18.y, c18.x
+mul_pp r2.w, r2, r3.x
+add r3.x, r1.y, -r3.y
+cmp r3.x, -r2.w, v1.w, r3
+max r1.y, r1.x, r0.w
+rcp r2.w, r1.y
+min r1.y, r1.x, r0.w
+mul r1.y, r1, r2.w
+add r3.y, v1.w, -r3.x
+add r3.z, r3.y, c18.y
+mul r2.w, r1.y, r1.y
+frc r3.w, r3.z
+add_sat r3.z, r3, -r3.w
+mad r3.x, r2.w, c20.y, c20.z
+mad r3.x, r3, r2.w, c20.w
+mad r3.x, r3, r2.w, c21
+mad r3.x, r3, r2.w, c21.y
+mad r2.w, r3.x, r2, c21.z
+mul r1.y, r2.w, r1
+add r0.w, r1.x, -r0
+mul_sat r3.w, c13.x, c13.x
+add r1.z, v0.w, c22
+mul r3.z, r3, c15.x
+mul_sat r3.y, r3, c15.x
+mad r3.x, r3.z, c27.y, r3.y
+mad_pp r0.xyz, r3.x, r2, r0
+add r2.x, -r1.y, c21.w
+cmp r2.x, -r0.w, r1.y, r2
+abs r0.w, v5.y
+add r2.y, -r2.x, c19.w
+add r1.y, -r0.w, c18
+mad r1.x, r0.w, c18.z, c18.w
+mad r1.x, r1, r0.w, c19
+rsq r1.y, r1.y
+mad r0.w, r1.x, r0, c19.y
+rcp r1.y, r1.y
+mul r1.x, r0.w, r1.y
+cmp r0.w, v5.y, c18.x, c18.y
+mul r1.y, r0.w, r1.x
+mad r1.x, -r1.y, c19.z, r1
+mad r0.w, r0, c19, r1.x
+mul r0.w, r0, c20.x
+cmp r2.x, v5.z, r2, r2.y
+cmp r1.y, v5.x, r2.x, -r2.x
+mul r3.x, r1.y, c22
+add r1.x, r3, c22.y
+mov r1.y, r0.w
+texldd r2.xyz, r1, s0, r6.zwzw, r6
 add_pp r2.xyz, r2, -r0
-mul_sat r2.w, c13.x, c13.x
-mad_pp r4.xyz, r2.w, r2, r0
+mad_pp r4.xyz, r3.w, r2, r0
+texldd r5.yw, r1, s6, r6.zwzw, r6
 add r0.xy, r5.wyzw, c22.w
-add r2.z, v0.w, c22
-frc r3.z, r2
-texldd r1, r3, s3, r1.zwzw, r1
-add_sat r2.z, r2, -r3
-mul_pp r1.w, r1, r2.z
-mov r5.y, r0.w
 mul r0.xy, r0, c23
-add r2.xy, r5, r0
-texld r0, r6, s5
-mad r2.y, r2, c23.z, c23.x
-frc r2.y, r2
-mul_pp r3, r1, r0
-mad r2.y, r2, c24.x, c24
-sincos r0.xy, r2.y
-mad r0.y, r2.x, c23.w, c23.x
+mov r3.y, r0.w
+add r3.xy, r3, r0
+mad r1.w, r3.y, c23.z, c23.x
+frc r2.x, r1.w
+mad r3.y, r2.x, c24.x, c24
+frc r1.w, r1.z
+add_sat r2.x, r1.z, -r1.w
+texldd r1, r1, s3, r6.zwzw, r6
+mul_pp r1.w, r1, r2.x
+texldd r0, r7, s5, r6.zwzw, r6
+mul_pp r2, r1, r0
+sincos r0.xy, r3.y
+mad r0.y, r3.x, c23.w, c23.x
 frc r0.y, r0
+add_pp r2.xyz, r2, -r4
 mov_pp r5.y, r0.x
-mad r2.x, r0.y, c24, c24.y
-sincos r0.xy, r2.x
-dp4 r2.y, c1, c1
-rsq r0.z, r2.y
-mul r2.xyz, r0.z, c1
+mad r3.x, r0.y, c24, c24.y
+sincos r0.xy, r3.x
+dp4 r3.y, c1, c1
+rsq r0.z, r3.y
+mul r3.xyz, r0.z, c1
 mov_pp r5.xz, r0.yyxw
-dp3_sat r0.w, v4, r2
+dp3_sat r0.w, v4, r3
 dp3_pp_sat r4.w, -r5, -c12
-add_pp r2.x, r4.w, -r0.w
-mad_pp r2.x, r2.w, r2, r0.w
-mul_pp r6.z, r2.x, c4.w
+add_pp r3.x, r4.w, -r0.w
+mad_pp r3.x, r3.w, r3, r0.w
+mul_pp r7.z, r3.x, c4.w
+mad_pp r2.xyz, r2.w, r2, r4
 add r0.xyz, v3, c25.xyyw
 texld r0, r0, s7
 dp4 r5.w, r0, c26
 add r0.xyz, v3, c25.yxyw
 texld r0, r0, s7
 dp4 r5.z, r0, c26
-add r2.xyz, v3, c25.yyxw
-texld r2, r2, s7
-dp4 r5.y, r2, c26
+add r3.xyz, v3, c25.yyxw
+texld r3, r3, s7
+dp4 r5.y, r3, c26
 add r0.xyz, v3, c24.w
 texld r0, r0, s7
-dp3 r2.x, v3, v3
-rsq r2.x, r2.x
+dp3 r3.x, v3, v3
+add_pp r2.w, r4, c24.z
+rsq r3.x, r3.x
 dp4 r5.x, r0, c26
-rcp r0.x, r2.x
+rcp r0.x, r3.x
 mul r0.x, r0, c2.w
 mad r0, -r0.x, c25.z, r5
-mov r2.x, c3
-cmp r2, r0, c18.y, r2.x
-dp4_pp r0.y, r2, c25.w
+mov r3.x, c3
+cmp r3, r0, c18.y, r3.x
 dp3 r0.x, v2, v2
+dp4_pp r0.y, r3, c25.w
 texld r0.x, r0.x, s8
 mul r0.w, r0.x, r0.y
-mul_pp r0.y, r0.w, r6.z
-mul_pp_sat r2.x, r0.y, c19.z
+mul_pp r0.y, r0.w, r7.z
+mul_pp r2.w, r2, c4
+mul_pp r0.w, r2, r0
+mul_pp_sat r0.w, r0, c27.x
+mul_pp_sat r3.x, r0.y, c19.z
 mov r0.x, c10
 add r0.xyz, c4, r0.x
-mad_sat r0.xyz, r0, r2.x, c0
-add_pp r2.xyz, r3, -r4
+mad_sat r0.xyz, r0, r3.x, c0
 mul_pp r0.xyz, r0, v6.x
-mad_pp r2.xyz, r3.w, r2, r4
 mul r3.xyz, r0, c11.x
-add_pp r2.w, r4, c24.z
-mul_pp r3.w, r2, c4
-mad_pp r3.xyz, r2, c5, r3
-texld r2, r6, s4
-mul_pp r1, r1, r2
-mul_pp r0.w, r3, r0
-mul_pp_sat r0.w, r0, c27.x
-mad_pp r1.xyz, -r3, r0, r1
-mul_pp r2.xyz, r3, r0
+mad_pp r2.xyz, r2, c5, r3
+texldd r3, r7, s4, r6.zwzw, r6
+mul_pp r1, r1, r3
+mad_pp r1.xyz, -r2, r0, r1
+mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c18.y
 mul_pp r0.x, r1.w, r0.w
 mad_pp oC0.xyz, r0.x, r1, r2
@@ -107804,7 +107807,7 @@ SetTexture 7 [_ShadowMapTexture] CUBE
 SetTexture 8 [_LightTextureB0] 2D
 SetTexture 9 [_LightTexture0] CUBE
 "ps_3_0
-; 203 ALU, 19 TEX
+; 203 ALU, 27 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -107835,140 +107838,140 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r3.xyz, v5
-add r0.xyz, r3, -r3.zxyw
+abs r4.xyz, v5
+add r0.xyz, r4, -r4.zxyw
 add r0.w, r0.x, c18.y
 frc r1.x, r0.w
 add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r3.zxyw
-add r0.w, r3.y, -r0.x
+mad r0.xyz, r0.w, r0, r4.zxyw
+add r0.w, r4.y, -r0.x
 add r0.w, r0, c18.y
 frc r1.x, r0.w
+add_pp r2.xyz, r4.yxzw, -r0
 add_sat r0.w, r0, -r1.x
-add_pp r2.xyz, r3.yxzw, -r0
-mad_pp r0.xyz, r0.w, r2, r0
-mov r2.xyz, v5
-dp3_sat r0.w, v1, -r2
-abs_pp r0.x, r0
-rcp_pp r0.x, r0.x
-add r0.w, r0, c27.z
-mul_pp r0.xy, r0.zyzw, r0.x
-mov_pp r1.xy, c7
-mad_pp r5.xy, r0, c22.y, r1
-mul r0.xy, r5, c6.x
-mul r1.xy, r5, c8.x
-mul r6.xy, r5, c17.x
-texld r1.xyz, r1, s2
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_sat r0.w, r0, c28.x, c28.y
-mad_pp r0.xyz, r0.w, r0, r1
-mul r0.w, v1, c9.x
-add_pp r1.xyz, -r0, c18.y
-mul_sat r0.w, r0, c19.z
-mad_pp r0.xyz, r0.w, r1, r0
-mul r1.xyz, v0, r0
+mad_pp r1.xyz, r0.w, r2, r0
 abs r0.w, v5.z
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mov r0.xyz, v8
-dp3 r0.x, v7, r0
-dp3 r2.w, v7, v7
-mad r0.y, -r0.x, r0.x, r2.w
-mul r0.z, r1.w, r1.w
-mad r2.w, r0.z, c20.y, c20.z
-mad r2.w, r2, r0.z, c20
-mad r2.w, r2, r0.z, c21.x
-mad r2.w, r2, r0.z, c21.y
-mad r0.z, r2.w, r0, c21
-mul r0.z, r0, r1.w
+abs_pp r0.x, r1
+rcp_pp r1.x, r0.x
+mul_pp r1.xy, r1.zyzw, r1.x
+add r0.y, -r0.w, c18
+mad r0.x, r0.w, c18.z, c18.w
+mad r0.x, r0.w, r0, c19
+mov_pp r1.zw, c7.xyxy
+mad_pp r3.xy, r1, c22.y, r1.zwzw
 rsq r0.y, r0.y
+dsx r1.xy, v5
+dsy r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+mul r1.xy, r1, r1
+mad r0.x, r0.w, r0, c19.y
 rcp r0.y, r0.y
-mul r3.y, r0, r0
-mad r3.y, c14.x, c14.x, -r3
-rsq r3.y, r3.y
-rcp r2.w, r3.y
-add_pp r2.xyz, -r1, c16
-add r2.w, r0.x, -r2
-cmp r1.w, r0.x, c18.y, c18.x
-add r0.y, -r0, c14.x
-cmp r0.x, r0.y, c18.y, c18
-mul_pp r0.x, r0, r1.w
-cmp r1.w, -r0.x, v1, r2
-add r0.y, -r0.z, c21.w
-add r0.x, r3, -r0.w
-cmp r0.x, -r0, r0.z, r0.y
-add r0.z, v1.w, -r1.w
-add r1.w, r0.z, c18.y
-add r0.y, -r0.x, c19.w
-cmp r0.x, v5.z, r0, r0.y
-frc r0.y, r1.w
-add_sat r0.y, r1.w, -r0
+mul r0.y, r0.x, r0
+cmp r0.x, v5.z, c18, c18.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c19.z, r0
+mad r0.x, r0, c19.w, r0.y
+mul r0.z, r0.x, c20.x
+dsx r6.w, r0.z
+dsy r6.y, r0.z
+add r0.z, r1.x, r1.y
+add r1.x, r1.z, r1.w
+mov r2.xyz, v5
+dp3_sat r1.w, v1, -r2
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+mul r6.x, r1, c22
+mul r6.z, r0, c22.x
+mul r0.xy, r3, c6.x
+mul r1.xy, r3, c8.x
+texldd r1.xyz, r1, s2, r6.zwzw, r6
+texldd r0.xyz, r0, s1, r6.zwzw, r6
+add_pp r2.xyz, r0, -r1
+add r3.z, r1.w, c27
+mov r0.xyz, v8
+dp3 r1.w, v7, r0
+mad_sat r0.x, r3.z, c28, c28.y
+mad_pp r0.xyz, r0.x, r2, r1
+dp3 r2.w, v7, v7
+mad r2.w, -r1, r1, r2
+rsq r2.x, r2.w
+rcp r2.x, r2.x
+mul r2.y, r2.x, r2.x
+mul r2.z, v1.w, c9.x
+add r2.x, -r2, c14
+add_pp r1.xyz, -r0, c18.y
+mul_sat r2.z, r2, c19
+mad_pp r0.xyz, r2.z, r1, r0
+mad r1.x, c14, c14, -r2.y
+rsq r2.y, r1.x
+mul r0.xyz, v0, r0
+rcp r2.z, r2.y
+add_pp r1.xyz, -r0, c16
+cmp r2.y, r1.w, c18, c18.x
+cmp r2.x, r2, c18.y, c18
+mul_pp r2.x, r2, r2.y
+add r2.y, r1.w, -r2.z
+cmp r2.y, -r2.x, v1.w, r2
+max r1.w, r4.x, r0
+rcp r2.x, r1.w
+min r1.w, r4.x, r0
+mul r1.w, r1, r2.x
+add r2.z, v1.w, -r2.y
+add r2.w, r2.z, c18.y
+mul r2.x, r1.w, r1.w
+frc r3.z, r2.w
+add_sat r2.w, r2, -r3.z
+mad r2.y, r2.x, c20, c20.z
+mad r2.y, r2, r2.x, c20.w
+mad r2.y, r2, r2.x, c21.x
+mad r2.y, r2, r2.x, c21
+mad r2.x, r2.y, r2, c21.z
+mul r1.w, r2.x, r1
 mul_sat r3.w, c13.x, c13.x
-cmp r0.x, v5, r0, -r0
-mul_sat r0.z, r0, c15.x
-mul r0.y, r0, c15.x
-mad r0.y, r0, c27, r0.z
-mad_pp r3.xyz, r0.y, r2, r1
-mul r2.z, r0.x, c22.x
+mul r7.xy, r3, c17.x
+mul r2.w, r2, c15.x
+mul_sat r2.z, r2, c15.x
+mad r2.y, r2.w, c27, r2.z
+mad_pp r2.xyz, r2.y, r1, r0
+add r0.x, r4, -r0.w
+add r0.y, -r1.w, c21.w
+cmp r0.w, -r0.x, r1, r0.y
 abs r0.x, v5.y
+add r1.x, -r0.w, c19.w
 add r0.z, -r0.x, c18.y
 mad r0.y, r0.x, c18.z, c18.w
 mad r0.y, r0, r0.x, c19.x
-add r1.y, -r0.w, c18
-mad r1.x, r0.w, c18.z, c18.w
-mad r1.x, r0.w, r1, c19
 rsq r0.z, r0.z
-rsq r1.y, r1.y
-add r2.x, r2.z, c22.y
-mad r0.w, r0, r1.x, c19.y
-rcp r1.y, r1.y
-mul r1.x, r0.w, r1.y
-cmp r0.w, v5.z, c18.x, c18.y
-mul r1.y, r0.w, r1.x
+cmp r0.w, v5.z, r0, r1.x
 mad r0.x, r0.y, r0, c19.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
 cmp r0.x, v5.y, c18, c18.y
 mul r0.z, r0.x, r0.y
 mad r0.y, -r0.z, c19.z, r0
+cmp r0.z, v5.x, r0.w, -r0.w
+mul r1.z, r0, c22.x
 mad r0.x, r0, c19.w, r0.y
-mad r0.z, -r1.y, c19, r1.x
-mul r2.w, r0.x, c20.x
-mad r0.y, r0.w, c19.w, r0.z
-mul r0.x, r0.y, c20
-dsy r0.zw, v5.xyxy
-mul r0.zw, r0, r0
-mov r2.y, r2.w
-dsx r1.w, r0.x
-dsy r1.y, r0.x
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r1.z, r0.x, c22.x
-mul r1.x, r0.y, c22
-texldd r0.xyz, r2, s0, r1.zwzw, r1
-add_pp r0.xyz, r0, -r3
-mad_pp r4.xyz, r3.w, r0, r3
-texldd r0.yw, r2, s6, r1.zwzw, r1
-add r3.xy, r0.wyzw, c22.w
-mul r3.xy, r3, c23
-add r3.xy, r2.zwzw, r3
-add r2.z, v0.w, c22
-frc r2.w, r2.z
-mad r3.y, r3, c23.z, c23.x
-frc r3.y, r3
-texldd r1, r2, s3, r1.zwzw, r1
-add_sat r2.z, r2, -r2.w
-mul_pp r1.w, r1, r2.z
-texld r0, r6, s5
+mul r1.w, r0.x, c20.x
+add r1.x, r1.z, c22.y
+mov r1.y, r1.w
+texldd r0.xyz, r1, s0, r6.zwzw, r6
+add_pp r0.xyz, r0, -r2
+mad_pp r4.xyz, r3.w, r0, r2
+texldd r0.yw, r1, s6, r6.zwzw, r6
+add r2.xy, r0.wyzw, c22.w
+mul r2.xy, r2, c23
+add r3.xy, r1.zwzw, r2
+add r1.z, v0.w, c22
+mad r2.x, r3.y, c23.z, c23
+frc r3.y, r2.x
+frc r1.w, r1.z
+add_sat r2.x, r1.z, -r1.w
+texldd r1, r1, s3, r6.zwzw, r6
+mul_pp r1.w, r1, r2.x
+texldd r0, r7, s5, r6.zwzw, r6
 mul_pp r2, r1, r0
 mad r3.y, r3, c24.x, c24
 add_pp r2.xyz, r2, -r4
@@ -107982,11 +107985,11 @@ dp4 r0.z, c1, c1
 mov_pp r3.xz, r0.yyxw
 rsq r0.z, r0.z
 dp3_pp_sat r4.w, -r3, -c12
-mad_pp r2.xyz, r2.w, r2, r4
 mul r0.xyz, r0.z, c1
 dp3_sat r3.x, v4, r0
 add_pp r3.y, r4.w, -r3.x
-mad_pp r6.z, r3.w, r3.y, r3.x
+mad_pp r7.z, r3.w, r3.y, r3.x
+mad_pp r2.xyz, r2.w, r2, r4
 add r0.xyz, v3, c25.xyyw
 texld r0, r0, s7
 dp4 r5.w, r0, c26
@@ -107996,10 +107999,10 @@ dp4 r5.z, r0, c26
 add r3.xyz, v3, c25.yyxw
 texld r3, r3, s7
 dp4 r5.y, r3, c26
-add_pp r2.w, r4, c24.z
 add r0.xyz, v3, c24.w
 texld r0, r0, s7
 dp3 r3.x, v3, v3
+add_pp r2.w, r4, c24.z
 rsq r3.x, r3.x
 dp4 r5.x, r0, c26
 rcp r0.x, r3.x
@@ -108009,14 +108012,14 @@ mad r0, -r0.x, c25.z, r5
 cmp r0, r0, c18.y, r3.x
 dp4_pp r0.y, r0, c25.w
 dp3 r0.x, v2, v2
-mul_pp r3.x, r6.z, c4.w
+mul_pp r3.x, r7.z, c4.w
 texld r0.w, v2, s9
 texld r0.x, r0.x, s8
 mul r0.x, r0, r0.w
 mul r0.w, r0.x, r0.y
 mul_pp r0.y, r0.w, r3.x
-mul_pp r3.w, r2, c4
-mul_pp r0.w, r3, r0
+mul_pp r2.w, r2, c4
+mul_pp r0.w, r2, r0
 mul_pp_sat r0.w, r0, c27.x
 mul_pp_sat r3.x, r0.y, c19.z
 mov r0.x, c10
@@ -108024,11 +108027,11 @@ add r0.xyz, c4, r0.x
 mad_sat r0.xyz, r0, r3.x, c0
 mul_pp r0.xyz, r0, v6.x
 mul r3.xyz, r0, c11.x
-mad_pp r3.xyz, r2, c5, r3
-texld r2, r6, s4
-mul_pp r1, r1, r2
-mad_pp r1.xyz, -r3, r0, r1
-mul_pp r2.xyz, r3, r0
+mad_pp r2.xyz, r2, c5, r3
+texldd r3, r7, s4, r6.zwzw, r6
+mul_pp r1, r1, r3
+mad_pp r1.xyz, -r2, r0, r1
+mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c18.y
 mul_pp r0.x, r1.w, r0.w
 mad_pp oC0.xyz, r0.x, r1, r2
@@ -108083,7 +108086,7 @@ SetTexture 5 [_CityLightOverlayDetailTex] 2D
 SetTexture 6 [_BumpMap] 2D
 SetTexture 7 [_LightTexture0] 2D
 "ps_3_0
-; 185 ALU, 14 TEX
+; 187 ALU, 22 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -108108,180 +108111,182 @@ dcl_texcoord5 v4.xyz
 dcl_texcoord6 v5.x
 dcl_texcoord7 v6.xyz
 dcl_texcoord8 v7.xyz
-abs r4.xyz, v4
-add r1.xyz, r4, -r4.zxyw
-add r0.y, r1.x, c16
-frc r0.x, r0.y
-add_sat r0.x, r0.y, -r0
-mad r0.xyz, r0.x, r1, r4.zxyw
-add r0.w, r4.y, -r0.x
-add r1.w, r0, c16.y
-frc r0.w, r1
-add_pp r1.xyz, r4.yxzw, -r0
-add_sat r0.w, r1, -r0
-mad_pp r1.xyz, r0.w, r1, r0
-abs_pp r0.x, r1
-rcp_pp r0.z, r0.x
-mul_pp r0.zw, r1.xyzy, r0.z
-mov_pp r0.xy, c5
-mad_pp r2.xy, r0.zwzw, c20.y, r0
-mul r0.xy, r2, c4.x
-mov r3.xyz, v4
-dp3_sat r0.w, v1, -r3
-mul r1.xy, r2, c6.x
-add r0.w, r0, c23.y
-mov r3.xyz, v7
-texld r1.xyz, r1, s2
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_sat r0.w, r0, c23.z, c23
-mad_pp r0.xyz, r0.w, r0, r1
-mul r0.w, v1, c7.x
-add_pp r1.xyz, -r0, c16.y
-mul_sat r0.w, r0, c17.z
-mad_pp r0.xyz, r0.w, r1, r0
+abs r5.xyz, v4
+add r0.xyz, r5, -r5.zxyw
+add r0.w, r0.x, c16.y
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad r0.xyz, r0.w, r0, r5.zxyw
+add r0.w, r5.y, -r0.x
+add r0.w, r0, c16.y
+frc r1.x, r0.w
+add_pp r2.xyz, r5.yxzw, -r0
+add_sat r0.w, r0, -r1.x
+mad_pp r0.xyz, r0.w, r2, r0
 abs r0.w, v4.z
-mul r0.xyz, v0, r0
-max r1.w, r4.x, r0
-add_pp r1.xyz, -r0, c14
-min r2.z, r4.x, r0.w
-rcp r1.w, r1.w
-mul r1.w, r2.z, r1
-dp3 r2.z, v6, r3
-mul r3.z, r1.w, r1.w
-mad r3.x, r3.z, c18.y, c18.z
-mad r3.y, r3.x, r3.z, c18.w
-mad r3.y, r3, r3.z, c19.x
-mad r3.y, r3, r3.z, c19
-mad r3.y, r3, r3.z, c19.z
+abs_pp r0.x, r0
+rcp_pp r1.z, r0.x
+add r1.x, -r0.w, c16.y
+mad r0.x, r0.w, c16.z, c16.w
+mad r0.x, r0.w, r0, c17
+rsq r1.x, r1.x
+mul_pp r1.zw, r0.xyzy, r1.z
+mad r0.x, r0.w, r0, c17.y
+rcp r1.x, r1.x
+mul r1.x, r0, r1
+cmp r0.x, v4.z, c16, c16.y
+mul r1.y, r0.x, r1.x
+mad r0.y, -r1, c17.z, r1.x
+mov_pp r1.xy, c5
+mad_pp r3.xy, r1.zwzw, c20.y, r1
+mad r0.x, r0, c17.w, r0.y
+mul r0.z, r0.x, c18.x
+dsx r1.zw, v4.xyxy
+dsy r1.xy, v4
+mul r1.xy, r1, r1
+add r1.x, r1, r1.y
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+mul r4.x, r1, c20
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+mul r1.zw, r1, r1
+add r0.z, r1, r1.w
+mov r2.xyz, v4
+dp3_sat r1.w, v1, -r2
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r4.z, r0, c20.x
+mul r0.xy, r3, c4.x
+mul r1.xy, r3, c6.x
+texldd r1.xyz, r1, s2, r4.zwzw, r4
+texldd r0.xyz, r0, s1, r4.zwzw, r4
+add_pp r2.xyz, r0, -r1
+add r3.z, r1.w, c23.y
+mov r0.xyz, v7
+dp3 r1.w, v6, r0
+mad_sat r0.x, r3.z, c23.z, c23.w
+mad_pp r0.xyz, r0.x, r2, r1
 dp3 r2.w, v6, v6
-mad r2.w, -r2.z, r2.z, r2
-rsq r2.w, r2.w
-rcp r2.w, r2.w
-mul r3.x, r2.w, r2.w
-mad r3.x, c12, c12, -r3
-rsq r3.x, r3.x
-add r2.w, -r2, c12.x
-mul r3.y, r3, r1.w
-rcp r3.x, r3.x
-add r1.w, r2.z, -r3.x
-cmp r2.w, r2, c16.y, c16.x
-cmp r2.z, r2, c16.y, c16.x
-mul_pp r2.z, r2.w, r2
-add r2.w, r4.x, -r0
-cmp r1.w, -r2.z, v1, r1
-add r2.z, -r3.y, c19.w
-cmp r3.x, -r2.w, r3.y, r2.z
-add r2.w, v1, -r1
-add r1.w, -r3.x, c17
-cmp r3.x, v4.z, r3, r1.w
-add r2.z, r2.w, c16.y
-frc r1.w, r2.z
-add_sat r2.z, r2, -r1.w
-dsy r4.xy, v4
-cmp r3.x, v4, r3, -r3
-mul_sat r1.w, r2, c13.x
-mul r2.z, r2, c13.x
-mad r1.w, r2.z, c23.x, r1
-mad_pp r1.xyz, r1.w, r1, r0
-abs r1.w, v4.y
-mul r2.z, r3.x, c20.x
-add r0.x, -r1.w, c16.y
-mad r0.y, r1.w, c16.z, c16.w
-mad r0.y, r0, r1.w, c17.x
-rsq r0.x, r0.x
-add r0.z, r2, c20.y
-mad r0.y, r0, r1.w, c17
-rcp r0.x, r0.x
-mul r2.w, r0.y, r0.x
-cmp r3.x, v4.y, c16, c16.y
-mul r1.w, r3.x, r2
-add r0.x, -r0.w, c16.y
-mad r0.y, r0.w, c16.z, c16.w
-mad r0.y, r0.w, r0, c17.x
-mad r0.y, r0.w, r0, c17
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r0.y, r0, r0.x
-cmp r0.w, v4.z, c16.x, c16.y
-mul r0.x, r0.w, r0.y
-mad r0.x, -r0, c17.z, r0.y
-mad r1.w, -r1, c17.z, r2
-mad r0.y, r3.x, c17.w, r1.w
-mad r0.x, r0.w, c17.w, r0
-mul r2.w, r0.y, c18.x
-mul r0.x, r0, c18
-dsx r3.xy, v4
-mul r3.xy, r3, r3
-add r1.w, r3.x, r3.y
-rsq r1.w, r1.w
-dsy r3.w, r0.x
-mov r0.w, r2
-dsx r0.y, r0.x
-mul r4.xy, r4, r4
-add r0.x, r4, r4.y
-rcp r3.x, r1.w
-rsq r0.x, r0.x
-rcp r1.w, r0.x
-mul r3.z, r1.w, c20.x
-mul r0.x, r3, c20
-texldd r5.yw, r0.zwzw, s6, r0, r3.zwzw
-texldd r4.xyz, r0.zwzw, s0, r0, r3.zwzw
-add r3.xy, r5.wyzw, c20.w
-add_pp r4.xyz, r4, -r1
-mul_sat r1.w, c11.x, c11.x
-mad_pp r1.xyz, r1.w, r4, r1
-mul r3.xy, r3, c21
-add r4.xy, r2.zwzw, r3
-mul r3.xy, r2, c15.x
-mad r4.x, r4, c21.w, c21
-mad r4.y, r4, c21.z, c21.x
-frc r4.y, r4
-texldd r0, r0.zwzw, s3, r0, r3.zwzw
-texld r2, r3, s5
-mad r5.y, r4, c22.x, c22
-frc r5.x, r4
-sincos r4.xy, r5.y
-mad r4.y, r5.x, c22.x, c22
-sincos r5.xy, r4.y
-dp4 r4.w, c1, c1
-mov_pp r4.y, r4.x
-mov_pp r4.xz, r5.yyxw
-dp3_pp_sat r5.x, -r4, -c10
-rsq r4.w, r4.w
-mul r4.xyz, r4.w, c1
-dp3_sat r5.z, v3, r4
-add r4.w, v0, c20.z
-frc r4.x, r4.w
-add_pp r5.y, r5.x, -r5.z
-mad_pp r1.w, r1, r5.y, r5.z
-add_sat r4.x, r4.w, -r4
-mul_pp r0.w, r0, r4.x
-mul_pp r4, r0, r2
-dp3 r2.x, v2, v2
-mov r2.y, c8.x
-texld r3, r3, s4
-mul_pp r0, r0, r3
-texld r2.x, r2.x, s7
+mad r2.w, -r1, r1, r2
+rsq r2.x, r2.w
+rcp r2.x, r2.x
+mul r2.y, r2.x, r2.x
+mul r2.z, v1.w, c7.x
+add r2.x, -r2, c12
+add_pp r1.xyz, -r0, c16.y
+mul_sat r2.z, r2, c17
+mad_pp r0.xyz, r2.z, r1, r0
+mad r1.x, c12, c12, -r2.y
+rsq r2.y, r1.x
+mul r0.xyz, v0, r0
+rcp r2.z, r2.y
+add_pp r1.xyz, -r0, c14
+cmp r2.y, r1.w, c16, c16.x
+cmp r2.x, r2, c16.y, c16
+mul_pp r2.x, r2, r2.y
+add r2.y, r1.w, -r2.z
+cmp r2.y, -r2.x, v1.w, r2
+max r1.w, r5.x, r0
+rcp r2.x, r1.w
+min r1.w, r5.x, r0
+mul r1.w, r1, r2.x
+mul r2.x, r1.w, r1.w
+add r2.y, v1.w, -r2
+add r2.w, r2.y, c16.y
+frc r3.z, r2.w
+add_sat r2.w, r2, -r3.z
+mad r2.z, r2.x, c18.y, c18
+mad r2.z, r2, r2.x, c18.w
+mad r2.z, r2, r2.x, c19.x
+mad r2.z, r2, r2.x, c19.y
+mad r2.x, r2.z, r2, c19.z
+mul r1.w, r2.x, r1
+mul r2.w, r2, c13.x
+mul_sat r2.y, r2, c13.x
+mad r2.y, r2.w, c23.x, r2
+mad_pp r1.xyz, r2.y, r1, r0
+add r0.x, r5, -r0.w
+add r0.y, -r1.w, c19.w
+cmp r0.w, -r0.x, r1, r0.y
+abs r0.x, v4.y
+add r1.w, -r0, c17
+add r0.z, -r0.x, c16.y
+mad r0.y, r0.x, c16.z, c16.w
+mad r0.y, r0, r0.x, c17.x
+rsq r0.z, r0.z
+cmp r0.w, v4.z, r0, r1
+mad r0.x, r0.y, r0, c17.y
+rcp r0.z, r0.z
+mul r0.y, r0.x, r0.z
+cmp r0.x, v4.y, c16, c16.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c17.z, r0
+cmp r0.z, v4.x, r0.w, -r0.w
+mul r5.x, r0.z, c20
+mad r0.x, r0, c17.w, r0.y
+mul r0.w, r0.x, c18.x
+add r5.z, r5.x, c20.y
+mov r5.w, r0
+texldd r2.yw, r5.zwzw, s6, r4.zwzw, r4
+texldd r0.xyz, r5.zwzw, s0, r4.zwzw, r4
+add_pp r0.xyz, r0, -r1
+add r3.zw, r2.xywy, c20.w
+mul_sat r6.x, c11, c11
+mad_pp r2.xyz, r6.x, r0, r1
+mov r5.y, r0.w
+mul r0.xy, r3.zwzw, c21
+add r0.xy, r5, r0
+mul r5.xy, r3, c15.x
+mad r0.y, r0, c21.z, c21.x
+mad r0.z, r0.x, c21.w, c21.x
+frc r0.y, r0
+mad r0.x, r0.y, c22, c22.y
+sincos r3.xy, r0.x
+frc r0.y, r0.z
+mad r2.w, r0.y, c22.x, c22.y
+sincos r0.xy, r2.w
+mov_pp r3.y, r3.x
+mov_pp r3.xz, r0.yyxw
+dp4 r0.z, c1, c1
+rsq r0.x, r0.z
+mul r0.xyz, r0.x, c1
+dp3_pp_sat r2.w, -r3, -c10
+dp3_sat r6.y, v3, r0
+add r0.w, v0, c20.z
+frc r0.x, r0.w
+add_sat r3.x, r0.w, -r0
+texldd r0, r5.zwzw, s3, r4.zwzw, r4
+mul_pp r3.w, r0, r3.x
+mov_pp r3.xyz, r0
+add_pp r6.z, r2.w, -r6.y
+texldd r1, r5, s5, r4.zwzw, r4
+mul_pp r1, r3, r1
+add_pp r1.xyz, r1, -r2
+mad_pp r1.xyz, r1.w, r1, r2
+add_pp r1.w, r2, c22.z
+mad_pp r0.y, r6.x, r6.z, r6
+dp3 r0.x, v2, v2
+mul_pp r0.y, r0, c2.w
+texld r0.x, r0.x, s7
+mul_pp r0.z, r0.x, r0.y
 mul_pp r1.w, r1, c2
-mul_pp r1.w, r2.x, r1
-mul_pp_sat r1.w, r1, c17.z
-add r2.yzw, c2.xxyz, r2.y
-mad_sat r5.yzw, r2, r1.w, c0.xxyz
-add_pp r2.yzw, r4.xxyz, -r1.xxyz
-add_pp r1.w, r5.x, c22.z
-mul_pp r1.w, r1, c2
-mul_pp r1.w, r1, r2.x
-mul_pp_sat r1.w, r1, c22
-add_pp r1.w, -r1, c16.y
-mul_pp r4.xyz, r5.yzww, v5.x
-mad_pp r2.yzw, r4.w, r2, r1.xxyz
-mul r1.xyz, r4, c9.x
-mad_pp r1.xyz, r2.yzww, c3, r1
-mad_pp r0.xyz, -r1, r4, r0
-mul_pp r1.xyz, r1, r4
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
+mul_pp r0.x, r1.w, r0
+mul_pp_sat r0.x, r0, c22.w
+mul_pp_sat r5.z, r0, c17
+mov r0.y, c8.x
+add r0.yzw, c2.xxyz, r0.y
+mad_sat r0.yzw, r0, r5.z, c0.xxyz
+mul_pp r0.yzw, r0, v5.x
+mul r2.xyz, r0.yzww, c9.x
+mad_pp r1.xyz, r1, c3, r2
+texldd r2, r5, s4, r4.zwzw, r4
+mul_pp r2, r3, r2
+mad_pp r2.xyz, -r1, r0.yzww, r2
+add_pp r0.x, -r0, c16.y
+mul_pp r1.xyz, r1, r0.yzww
+mul_pp r0.x, r2.w, r0
+mad_pp oC0.xyz, r0.x, r2, r1
 mov_pp oC0.w, c16.y
 "
 }
@@ -108332,7 +108337,7 @@ SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
 SetTexture 6 [_BumpMap] 2D
 "ps_3_0
-; 183 ALU, 13 TEX
+; 183 ALU, 21 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -108355,175 +108360,175 @@ dcl_texcoord5 v3.xyz
 dcl_texcoord6 v4.x
 dcl_texcoord7 v5.xyz
 dcl_texcoord8 v6.xyz
-abs r3.xyz, v3
-add r0.xyz, r3, -r3.zxyw
-add r0.w, r0.x, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r3.zxyw
-add r0.w, r3.y, -r0.x
-add_pp r2.xyz, r3.yxzw, -r0
+abs r0.xyz, v3
+add r1.xyz, r0, -r0.zxyw
+add r0.w, r1.x, c16.y
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r1.xyz, r0.w, r1, r0.zxyw
+add r0.w, r0.y, -r1.x
 add r0.w, r0, c16.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad_pp r0.xyz, r0.w, r2, r0
-abs r0.w, v3.z
-abs_pp r0.x, r0
-rcp_pp r0.x, r0.x
-dsy r4.xy, v3
-mul r4.xy, r4, r4
-mul_pp r0.xy, r0.zyzw, r0.x
+add_pp r2.xyz, r0.yxzw, -r1
+frc r1.w, r0
+add_sat r0.y, r0.w, -r1.w
+mad_pp r1.xyz, r0.y, r2, r1
+abs_pp r0.y, r1.x
+rcp_pp r0.y, r0.y
+mul_pp r0.zw, r1.xyzy, r0.y
+abs r0.y, v3.z
 mov_pp r1.xy, c5
-mad_pp r6.zw, r0.xyxy, c20.y, r1.xyxy
-mul r0.xy, r6.zwzw, c4.x
-texld r1.xyz, r0, s1
-mul r0.xy, r6.zwzw, c6.x
-texld r0.xyz, r0, s2
-add_pp r2.xyz, r1, -r0
-max r1.w, r3.x, r0
-min r1.x, r3, r0.w
-rcp r1.y, r1.w
-mul r1.w, r1.x, r1.y
-mov r1.xyz, v3
-dp3_sat r1.y, v1, -r1
-mul r2.w, r1, r1
-mad r1.x, r2.w, c18.y, c18.z
-add r1.y, r1, c23
-mad_sat r1.y, r1, c23.z, c23.w
-mad_pp r0.xyz, r1.y, r2, r0
-mad r1.x, r1, r2.w, c18.w
-mad r2.x, r1, r2.w, c19
-mad r2.x, r2, r2.w, c19.y
-mul r2.y, v1.w, c7.x
-add_pp r1.xyz, -r0, c16.y
-mul_sat r2.y, r2, c17.z
-mad_pp r0.xyz, r2.y, r1, r0
-mad r2.x, r2, r2.w, c19.z
-mul r1.y, r2.x, r1.w
-mov r2.xyz, v6
-dp3 r1.w, v5, r2
-dp3 r3.y, v5, v5
-mad r2.y, -r1.w, r1.w, r3
-rsq r2.y, r2.y
-rcp r4.z, r2.y
-mul r2.y, r4.z, r4.z
-mad r2.z, c12.x, c12.x, -r2.y
-add r3.y, -r0.w, c16
-rsq r3.y, r3.y
-add r1.x, r3, -r0.w
-add r1.z, -r1.y, c19.w
-cmp r2.w, -r1.x, r1.y, r1.z
-mul r0.xyz, v0, r0
-add r3.x, -r2.w, c17.w
-cmp r2.x, v3.z, r2.w, r3
-abs r2.y, v3
-rsq r4.w, r2.z
-add r2.w, -r2.y, c16.y
-mad r2.z, r2.y, c16, c16.w
-mad r2.z, r2, r2.y, c17.x
-mad r3.x, r0.w, c16.z, c16.w
-mad r3.x, r0.w, r3, c17
-mad r0.w, r0, r3.x, c17.y
-cmp r2.x, v3, r2, -r2
-mul r2.x, r2, c20
-rsq r2.w, r2.w
-rcp r3.y, r3.y
-add r6.x, r2, c20.y
-mul r3.y, r0.w, r3
-cmp r3.x, v3.z, c16, c16.y
-mul r3.z, r3.x, r3.y
-mad r2.y, r2.z, r2, c17
-rcp r2.w, r2.w
-mul r2.w, r2.y, r2
-cmp r2.y, v3, c16.x, c16
-mul r2.z, r2.y, r2.w
-mad r0.w, -r2.z, c17.z, r2
-mad r0.w, r2.y, c17, r0
-mad r2.z, -r3, c17, r3.y
-mad r2.y, r3.x, c17.w, r2.z
-mul r2.y, r2, c18.x
-mul r0.w, r0, c18.x
-dsx r2.zw, v3.xyxy
+mad_pp r0.zw, r0, c20.y, r1.xyxy
+add r1.w, -r0.y, c16.y
+mad r1.z, r0.y, c16, c16.w
+mad r1.z, r0.y, r1, c17.x
+rsq r1.w, r1.w
+dsy r2.zw, v3.xyxy
 mul r2.zw, r2, r2
-mov r6.y, r0.w
-dsx r3.w, r2.y
-dsy r3.y, r2
-add r2.y, r2.z, r2.w
-add r2.z, r4.x, r4.y
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-rsq r2.z, r2.z
-rcp r2.z, r2.z
-mul r3.z, r2.y, c20.x
-mul r3.x, r2.z, c20
-texldd r2.yw, r6, s6, r3.zwzw, r3
-add r2.zw, r2.xywy, c20.w
-rcp r4.x, r4.w
-add r2.y, r1.w, -r4.x
-mul r2.zw, r2, c21.xyxy
-add r4.x, -r4.z, c12
-cmp r4.y, r1.w, c16, c16.x
-cmp r1.w, r4.x, c16.y, c16.x
-mul_pp r1.w, r1, r4.y
-cmp r1.w, -r1, v1, r2.y
-mov r2.y, r0.w
-add r4.xy, r2, r2.zwzw
-add r1.w, v1, -r1
-add r2.x, r1.w, c16.y
-frc r2.y, r2.x
-add_sat r2.x, r2, -r2.y
-mul_sat r2.y, r1.w, c13.x
-mad r0.w, r4.y, c21.z, c21.x
-mul r1.w, r2.x, c13.x
-mad r1.w, r1, c23.x, r2.y
-add_pp r1.xyz, -r0, c14
-mad_pp r1.xyz, r1.w, r1, r0
-texldd r0.xyz, r6, s0, r3.zwzw, r3
-frc r0.w, r0
-add_pp r2.xyz, r0, -r1
-mad r1.w, r0, c22.x, c22.y
-sincos r0.xy, r1.w
-mad r0.y, r4.x, c21.w, c21.x
-frc r0.y, r0
-texldd r3, r6, s3, r3.zwzw, r3
-mov_pp r5.y, r0.x
-mad r1.w, r0.y, c22.x, c22.y
-sincos r0.xy, r1.w
-dp4_pp r2.w, c1, c1
-rsq_pp r0.z, r2.w
-mov_pp r5.xz, r0.yyxw
-mul_pp r4.xyz, r0.z, c1
-dp3_sat r0.y, v2, r4
-dp3_pp_sat r1.w, -r5, -c10
-add_pp r0.z, r1.w, -r0.y
-mul_sat r0.x, c11, c11
-mad_pp r1.xyz, r0.x, r2, r1
-mad_pp r0.x, r0, r0.z, r0.y
-mul_pp r2.x, r0, c2.w
-mul r4.xy, r6.zwzw, c15.x
-mul_pp_sat r4.w, r2.x, c17.z
-add r2.w, v0, c20.z
-mov r2.x, c8
-add r2.xyz, c2, r2.x
-frc r4.z, r2.w
-mad_sat r2.xyz, r2, r4.w, c0
-mul_pp r2.xyz, r2, v4.x
-add_sat r2.w, r2, -r4.z
-add_pp r1.w, r1, c22.z
+mul r1.xy, r0.zwzw, c4.x
+mad r1.z, r0.y, r1, c17.y
+rcp r1.w, r1.w
+mul r1.w, r1.z, r1
+cmp r1.z, v3, c16.x, c16.y
+mul r2.x, r1.z, r1.w
+mad r1.w, -r2.x, c17.z, r1
+mad r1.w, r1.z, c17, r1
+mul r2.x, r1.w, c18
+max r1.z, r0.x, r0.y
+rcp r1.w, r1.z
+min r1.z, r0.x, r0.y
+dsx r4.w, r2.x
+dsy r4.y, r2.x
+dsx r2.xy, v3
+mul r2.xy, r2, r2
+mul r1.w, r1.z, r1
+add r1.z, r2.x, r2.y
+add r2.x, r2.z, r2.w
+mul r2.w, r1, r1
+mad r3.x, r2.w, c18.y, c18.z
+mad r3.w, r3.x, r2, c18
+mad r3.w, r3, r2, c19.x
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r2.x, r2.x
+rcp r2.x, r2.x
+mul r4.z, r1, c20.x
+mul r4.x, r2, c20
+texldd r2.xyz, r1, s1, r4.zwzw, r4
+mul r1.xy, r0.zwzw, c6.x
+texldd r1.xyz, r1, s2, r4.zwzw, r4
+add_pp r3.xyz, r2, -r1
+mov r2.xyz, v3
+dp3_sat r2.y, v1, -r2
+mad r3.w, r3, r2, c19.y
+mad r2.x, r3.w, r2.w, c19.z
+mul r1.w, r2.x, r1
+add r2.y, r2, c23
+mad_sat r2.x, r2.y, c23.z, c23.w
+mad_pp r1.xyz, r2.x, r3, r1
+mov r3.xyz, v6
+dp3 r2.w, v5, r3
+add r2.x, -r1.w, c19.w
+add r0.x, r0, -r0.y
+cmp r0.x, -r0, r1.w, r2
+add r0.y, -r0.x, c17.w
+cmp r0.x, v3.z, r0, r0.y
+mul r1.w, v1, c7.x
+mul_sat r0.y, r1.w, c17.z
+abs r1.w, v3.y
+add_pp r2.xyz, -r1, c16.y
+mad_pp r1.xyz, r0.y, r2, r1
+mul r1.xyz, v0, r1
+cmp r0.x, v3, r0, -r0
+mul r5.x, r0, c20
+add r3.y, -r1.w, c16
+mad r3.x, r1.w, c16.z, c16.w
+mad r3.x, r3, r1.w, c17
+dp3 r0.y, v5, v5
+mad r0.y, -r2.w, r2.w, r0
+rsq r0.y, r0.y
+rsq r3.y, r3.y
+add r0.x, r5, c20.y
+mad r1.w, r3.x, r1, c17.y
+rcp r3.y, r3.y
+mul r3.x, r1.w, r3.y
+cmp r1.w, v3.y, c16.x, c16.y
+mul r3.y, r1.w, r3.x
+rcp r3.z, r0.y
+mad r0.y, -r3, c17.z, r3.x
+mul r3.x, r3.z, r3.z
+mad r0.y, r1.w, c17.w, r0
+mul r1.w, r0.y, c18.x
+mov r0.y, r1.w
+mad r3.x, c12, c12, -r3
+rsq r3.x, r3.x
+texldd r3.yw, r0, s6, r4.zwzw, r4
+rcp r5.y, r3.x
+add r3.xy, r3.wyzw, c20.w
+add r3.w, r2, -r5.y
+mul r3.xy, r3, c21
+cmp r5.y, r2.w, c16, c16.x
+add r3.z, -r3, c12.x
+cmp r2.w, r3.z, c16.y, c16.x
+mul_pp r2.w, r2, r5.y
+cmp r2.w, -r2, v1, r3
+mov r5.y, r1.w
+add r5.xy, r5, r3
+add r2.w, v1, -r2
+add r3.x, r2.w, c16.y
+frc r3.y, r3.x
+add_sat r3.x, r3, -r3.y
+mul_sat r3.y, r2.w, c13.x
+mad r1.w, r5.y, c21.z, c21.x
+mul r2.w, r3.x, c13.x
+mad r2.w, r2, c23.x, r3.y
+add_pp r2.xyz, -r1, c14
+mad_pp r2.xyz, r2.w, r2, r1
+texldd r1.xyz, r0, s0, r4.zwzw, r4
+frc r1.w, r1
+add_pp r3.xyz, r1, -r2
+mad r2.w, r1, c22.x, c22.y
+sincos r1.xy, r2.w
+mad r1.y, r5.x, c21.w, c21.x
+frc r1.y, r1
+mov_pp r6.y, r1.x
+mad r2.w, r1.y, c22.x, c22.y
+sincos r1.xy, r2.w
+dp4_pp r3.w, c1, c1
+rsq_pp r1.z, r3.w
+mov_pp r6.xz, r1.yyxw
+mul_pp r5.xyz, r1.z, c1
+dp3_sat r1.y, v2, r5
+dp3_pp_sat r2.w, -r6, -c10
+mul r5.xy, r0.zwzw, c15.x
+mul_sat r1.x, c11, c11
+mad_pp r2.xyz, r1.x, r3, r2
+add_pp r1.z, r2.w, -r1.y
+mad_pp r1.x, r1, r1.z, r1.y
+mul_pp r0.z, r1.x, c2.w
+mul_pp_sat r3.w, r0.z, c17.z
+mov r0.w, c8.x
+add r3.xyz, c2, r0.w
+add r0.z, v0.w, c20
+mad_sat r3.xyz, r3, r3.w, c0
+mul_pp r3.xyz, r3, v4.x
+frc r0.w, r0.z
+add_sat r3.w, r0.z, -r0
+texldd r0, r0, s3, r4.zwzw, r4
+mul_pp r0.w, r0, r3
+texldd r1, r5, s5, r4.zwzw, r4
+mul_pp r1, r0, r1
+add_pp r1.xyz, r1, -r2
+mad_pp r1.xyz, r1.w, r1, r2
+add_pp r1.w, r2, c22.z
+mul r6.xyz, r3, c9.x
+texldd r2, r5, s4, r4.zwzw, r4
 mul_pp r1.w, r1, c2
 mul_pp_sat r1.w, r1, c22
-mul_pp r3.w, r3, r2
-texld r0, r4, s5
-mul_pp r0, r3, r0
-add_pp r0.xyz, r0, -r1
-mad_pp r0.xyz, r0.w, r0, r1
-mul r5.xyz, r2, c9.x
-mad_pp r1.xyz, r0, c3, r5
-texld r0, r4, s4
-mul_pp r0, r3, r0
-mad_pp r0.xyz, -r1, r2, r0
+mul_pp r0, r0, r2
+mad_pp r1.xyz, r1, c3, r6
+mad_pp r0.xyz, -r1, r3, r0
 add_pp r1.w, -r1, c16.y
-mul_pp r1.xyz, r1, r2
+mul_pp r1.xyz, r1, r3
 mul_pp r0.w, r0, r1
 mad_pp oC0.xyz, r0.w, r0, r1
 mov_pp oC0.w, c16.y
@@ -108578,7 +108583,7 @@ SetTexture 6 [_BumpMap] 2D
 SetTexture 7 [_LightTexture0] 2D
 SetTexture 8 [_LightTextureB0] 2D
 "ps_3_0
-; 190 ALU, 15 TEX
+; 191 ALU, 23 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -108604,186 +108609,187 @@ dcl_texcoord5 v4.xyz
 dcl_texcoord6 v5.x
 dcl_texcoord7 v6.xyz
 dcl_texcoord8 v7.xyz
-abs r4.xyz, v4
-add r1.xyz, r4, -r4.zxyw
-add r0.y, r1.x, c16
-frc r0.x, r0.y
-add_sat r0.x, r0.y, -r0
-mad r0.xyz, r0.x, r1, r4.zxyw
-add r0.w, r4.y, -r0.x
-add r1.w, r0, c16.y
-frc r0.w, r1
-add_pp r1.xyz, r4.yxzw, -r0
-add_sat r0.w, r1, -r0
-mad_pp r1.xyz, r0.w, r1, r0
-abs_pp r0.x, r1
-rcp_pp r0.z, r0.x
-mul_pp r0.zw, r1.xyzy, r0.z
-mov_pp r0.xy, c5
-mad_pp r2.xy, r0.zwzw, c20.y, r0
-mul r0.xy, r2, c4.x
-mov r3.xyz, v4
-dp3_sat r0.w, v1, -r3
-mul r1.xy, r2, c6.x
-add r0.w, r0, c23.y
-mov r3.xyz, v7
-texld r1.xyz, r1, s2
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_sat r0.w, r0, c23.z, c23
-mad_pp r0.xyz, r0.w, r0, r1
-mul r0.w, v1, c7.x
-add_pp r1.xyz, -r0, c16.y
-mul_sat r0.w, r0, c17.z
-mad_pp r0.xyz, r0.w, r1, r0
+abs r5.xyz, v4
+add r0.xyz, r5, -r5.zxyw
+add r0.w, r0.x, c16.y
+frc r1.x, r0.w
+add_sat r0.w, r0, -r1.x
+mad r0.xyz, r0.w, r0, r5.zxyw
+add r0.w, r5.y, -r0.x
+add r0.w, r0, c16.y
+frc r1.x, r0.w
+add_pp r2.xyz, r5.yxzw, -r0
+add_sat r0.w, r0, -r1.x
+mad_pp r0.xyz, r0.w, r2, r0
 abs r0.w, v4.z
+abs_pp r0.x, r0
+rcp_pp r1.z, r0.x
+add r1.x, -r0.w, c16.y
+mad r0.x, r0.w, c16.z, c16.w
+mad r0.x, r0.w, r0, c17
+rsq r1.x, r1.x
+mul_pp r1.zw, r0.xyzy, r1.z
+mad r0.x, r0.w, r0, c17.y
+rcp r1.x, r1.x
+mul r1.x, r0, r1
+cmp r0.x, v4.z, c16, c16.y
+mul r1.y, r0.x, r1.x
+mad r0.y, -r1, c17.z, r1.x
+mov_pp r1.xy, c5
+mad_pp r2.xy, r1.zwzw, c20.y, r1
+mad r0.x, r0, c17.w, r0.y
+mul r0.z, r0.x, c18.x
+dsx r1.zw, v4.xyxy
+dsy r1.xy, v4
+mul r1.xy, r1, r1
+add r1.x, r1, r1.y
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+mul r4.x, r1, c20
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+mul r1.zw, r1, r1
+add r0.z, r1, r1.w
+mov r3.xyz, v4
+dp3_sat r1.w, v1, -r3
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r4.z, r0, c20.x
+mul r0.xy, r2, c4.x
+mul r1.xy, r2, c6.x
+texldd r1.xyz, r1, s2, r4.zwzw, r4
+texldd r0.xyz, r0, s1, r4.zwzw, r4
+add_pp r3.xyz, r0, -r1
+add r2.w, r1, c23.y
+mov r0.xyz, v7
+dp3 r1.w, v6, r0
+mad_sat r0.x, r2.w, c23.z, c23.w
+mad_pp r0.xyz, r0.x, r3, r1
+dp3 r2.z, v6, v6
+mad r2.z, -r1.w, r1.w, r2
+rsq r2.z, r2.z
+rcp r2.z, r2.z
+mul r2.w, r2.z, r2.z
+mul r3.x, v1.w, c7
+add r2.z, -r2, c12.x
+add_pp r1.xyz, -r0, c16.y
+mul_sat r3.x, r3, c17.z
+mad_pp r0.xyz, r3.x, r1, r0
+mad r1.x, c12, c12, -r2.w
+rsq r2.w, r1.x
 mul r0.xyz, v0, r0
-max r1.w, r4.x, r0
+rcp r3.x, r2.w
 add_pp r1.xyz, -r0, c14
-min r2.z, r4.x, r0.w
-rcp r1.w, r1.w
-mul r1.w, r2.z, r1
-dp3 r2.z, v6, r3
-mul r3.z, r1.w, r1.w
-mad r3.x, r3.z, c18.y, c18.z
-mad r3.y, r3.x, r3.z, c18.w
-mad r3.y, r3, r3.z, c19.x
-mad r3.y, r3, r3.z, c19
-mad r3.y, r3, r3.z, c19.z
-dp3 r2.w, v6, v6
-mad r2.w, -r2.z, r2.z, r2
-rsq r2.w, r2.w
-rcp r2.w, r2.w
-mul r3.x, r2.w, r2.w
-mad r3.x, c12, c12, -r3
-rsq r3.x, r3.x
-add r2.w, -r2, c12.x
-mul r3.y, r3, r1.w
-rcp r3.x, r3.x
-add r1.w, r2.z, -r3.x
-cmp r2.w, r2, c16.y, c16.x
+cmp r2.w, r1, c16.y, c16.x
 cmp r2.z, r2, c16.y, c16.x
-mul_pp r2.z, r2.w, r2
-add r2.w, r4.x, -r0
-cmp r1.w, -r2.z, v1, r1
-add r2.z, -r3.y, c19.w
-cmp r3.x, -r2.w, r3.y, r2.z
-add r2.w, v1, -r1
-add r1.w, -r3.x, c17
-cmp r3.x, v4.z, r3, r1.w
-add r2.z, r2.w, c16.y
-frc r1.w, r2.z
-add_sat r2.z, r2, -r1.w
-dsy r4.xy, v4
-cmp r3.x, v4, r3, -r3
-mul_sat r1.w, r2, c13.x
-mul r2.z, r2, c13.x
-mad r1.w, r2.z, c23.x, r1
-mad_pp r1.xyz, r1.w, r1, r0
-abs r1.w, v4.y
-mul r2.z, r3.x, c20.x
-add r0.x, -r1.w, c16.y
-mad r0.y, r1.w, c16.z, c16.w
-mad r0.y, r0, r1.w, c17.x
-rsq r0.x, r0.x
-add r0.z, r2, c20.y
-mad r0.y, r0, r1.w, c17
-rcp r0.x, r0.x
-mul r2.w, r0.y, r0.x
-cmp r3.x, v4.y, c16, c16.y
-mul r1.w, r3.x, r2
-add r0.x, -r0.w, c16.y
-mad r0.y, r0.w, c16.z, c16.w
-mad r0.y, r0.w, r0, c17.x
-mad r0.y, r0.w, r0, c17
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r0.y, r0, r0.x
-cmp r0.w, v4.z, c16.x, c16.y
-mul r0.x, r0.w, r0.y
-mad r0.x, -r0, c17.z, r0.y
-mad r1.w, -r1, c17.z, r2
-mad r0.y, r3.x, c17.w, r1.w
-mad r0.x, r0.w, c17.w, r0
-mul r2.w, r0.y, c18.x
-mul r0.x, r0, c18
-dsx r3.xy, v4
-mul r3.xy, r3, r3
-add r1.w, r3.x, r3.y
-rsq r1.w, r1.w
-dsy r3.w, r0.x
-mov r0.w, r2
-dsx r0.y, r0.x
-mul r4.xy, r4, r4
-add r0.x, r4, r4.y
-rcp r3.x, r1.w
-rsq r0.x, r0.x
-rcp r1.w, r0.x
-mul r3.z, r1.w, c20.x
-mul r0.x, r3, c20
-texldd r5.yw, r0.zwzw, s6, r0, r3.zwzw
-texldd r4.xyz, r0.zwzw, s0, r0, r3.zwzw
-texldd r0, r0.zwzw, s3, r0, r3.zwzw
-add r3.xy, r5.wyzw, c20.w
-add_pp r4.xyz, r4, -r1
-mul_sat r1.w, c11.x, c11.x
-mad_pp r1.xyz, r1.w, r4, r1
-mul r3.xy, r3, c21
-add r4.xy, r2.zwzw, r3
-mul r3.xy, r2, c15.x
-mad r4.x, r4, c21.w, c21
-mad r4.y, r4, c21.z, c21.x
-frc r4.y, r4
-mad r5.y, r4, c22.x, c22
-frc r5.x, r4
-sincos r4.xy, r5.y
-mad r4.y, r5.x, c22.x, c22
-sincos r5.xy, r4.y
-mov_pp r4.y, r4.x
-mov_pp r4.xz, r5.yyxw
-dp4 r4.w, c1, c1
-rsq r4.w, r4.w
-dp3_pp_sat r4.y, -r4, -c10
-mul r5.xyz, r4.w, c1
-dp3_sat r4.z, v3, r5
-add_pp r4.x, r4.y, -r4.z
-mad_pp r1.w, r1, r4.x, r4.z
-add r5.w, v0, c20.z
-rcp r3.w, v2.w
-mad r5.xy, v2, r3.w, c20.y
-mul_pp r3.z, r1.w, c2.w
-frc r4.w, r5
-add_sat r4.w, r5, -r4
-dp3 r4.x, v2, v2
-mul_pp r0.w, r0, r4
-texld r2, r3, s5
-mul_pp r2, r0, r2
-texld r1.w, r5, s7
-cmp r3.w, -v2.z, c16.x, c16.y
-mul_pp r1.w, r3, r1
-texld r4.x, r4.x, s8
-mul_pp r1.w, r1, r4.x
-mul_pp r3.z, r1.w, r3
-mov r3.w, c8.x
-add r5.xyz, c2, r3.w
-mul_pp_sat r3.z, r3, c17
-mad_sat r4.xzw, r5.xyyz, r3.z, c0.xyyz
-add_pp r5.xyz, r2, -r1
-mad_pp r5.xyz, r2.w, r5, r1
-mul_pp r2.xyz, r4.xzww, v5.x
-mul r1.xyz, r2, c9.x
-add_pp r2.w, r4.y, c22.z
+mul_pp r2.z, r2, r2.w
+add r2.w, r1, -r3.x
+cmp r2.w, -r2.z, v1, r2
+max r1.w, r5.x, r0
+rcp r2.z, r1.w
+min r1.w, r5.x, r0
+mul r1.w, r1, r2.z
+mul r2.z, r1.w, r1.w
+add r2.w, v1, -r2
+add r3.y, r2.w, c16
+frc r3.z, r3.y
+add_sat r3.y, r3, -r3.z
+mad r3.x, r2.z, c18.y, c18.z
+mad r3.x, r3, r2.z, c18.w
+mad r3.x, r3, r2.z, c19
+mad r3.x, r3, r2.z, c19.y
+mad r2.z, r3.x, r2, c19
+mul r1.w, r2.z, r1
+mul_sat r6.x, c11, c11
+mul r3.y, r3, c13.x
+mul_sat r2.w, r2, c13.x
+mad r2.w, r3.y, c23.x, r2
+mad_pp r1.xyz, r2.w, r1, r0
+add r0.x, r5, -r0.w
+add r0.y, -r1.w, c19.w
+cmp r0.w, -r0.x, r1, r0.y
+abs r0.x, v4.y
+add r1.w, -r0, c17
+add r0.z, -r0.x, c16.y
+mad r0.y, r0.x, c16.z, c16.w
+mad r0.y, r0, r0.x, c17.x
+rsq r0.z, r0.z
+cmp r0.w, v4.z, r0, r1
+mad r0.x, r0.y, r0, c17.y
+rcp r0.z, r0.z
+mul r0.y, r0.x, r0.z
+cmp r0.x, v4.y, c16, c16.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c17.z, r0
+cmp r0.z, v4.x, r0.w, -r0.w
+mul r5.x, r0.z, c20
+mad r0.x, r0, c17.w, r0.y
+mul r0.w, r0.x, c18.x
+add r5.z, r5.x, c20.y
+mov r5.w, r0
+texldd r3.yw, r5.zwzw, s6, r4.zwzw, r4
+texldd r0.xyz, r5.zwzw, s0, r4.zwzw, r4
+add_pp r0.xyz, r0, -r1
+add r2.zw, r3.xywy, c20.w
+mad_pp r3.xyz, r6.x, r0, r1
+mul r0.xy, r2.zwzw, c21
+mov r5.y, r0.w
+add r1.xy, r5, r0
+mul r5.xy, r2, c15.x
+mad r1.y, r1, c21.z, c21.x
+texldd r0, r5, s5, r4.zwzw, r4
+mad r1.z, r1.x, c21.w, c21.x
+frc r1.y, r1
+mad r1.x, r1.y, c22, c22.y
+sincos r2.xy, r1.x
+frc r1.y, r1.z
+mad r2.y, r1, c22.x, c22
+sincos r1.xy, r2.y
+mov_pp r2.y, r2.x
+mov_pp r2.xz, r1.yyxw
+dp4 r1.z, c1, c1
+rsq r1.x, r1.z
+mul r1.xyz, r1.x, c1
+dp3_pp_sat r3.w, -r2, -c10
+dp3_sat r6.y, v3, r1
+add r1.w, v0, c20.z
+frc r1.x, r1.w
+add_sat r2.x, r1.w, -r1
+texldd r1, r5.zwzw, s3, r4.zwzw, r4
+mul_pp r1.w, r1, r2.x
+mul_pp r2, r1, r0
+add_pp r6.z, r3.w, -r6.y
+add_pp r2.xyz, r2, -r3
+mad_pp r2.xyz, r2.w, r2, r3
+mad_pp r0.y, r6.x, r6.z, r6
+rcp r0.x, v2.w
+mad r6.xy, v2, r0.x, c20.y
+add_pp r2.w, r3, c22.z
+dp3 r0.x, v2, v2
+texld r0.w, r6, s7
+cmp r0.z, -v2, c16.x, c16.y
+mul_pp r0.z, r0, r0.w
+texld r0.x, r0.x, s8
+mul_pp r0.w, r0.z, r0.x
+mul_pp r0.y, r0, c2.w
+mul_pp r0.y, r0.w, r0
 mul_pp r2.w, r2, c2
-texld r3, r3, s4
-mul_pp r1.w, r2, r1
-mul_pp_sat r1.w, r1, c22
-mul_pp r0, r0, r3
-mad_pp r1.xyz, r5, c3, r1
-mad_pp r0.xyz, -r1, r2, r0
-add_pp r1.w, -r1, c16.y
-mul_pp r1.xyz, r1, r2
-mul_pp r0.w, r0, r1
-mad_pp oC0.xyz, r0.w, r0, r1
+mul_pp r0.w, r2, r0
+mul_pp_sat r0.w, r0, c22
+mul_pp_sat r5.z, r0.y, c17
+mov r0.x, c8
+add r0.xyz, c2, r0.x
+mad_sat r0.xyz, r0, r5.z, c0
+mul_pp r0.xyz, r0, v5.x
+mul r3.xyz, r0, c9.x
+mad_pp r2.xyz, r2, c3, r3
+texldd r3, r5, s4, r4.zwzw, r4
+mul_pp r1, r1, r3
+mad_pp r1.xyz, -r2, r0, r1
+mul_pp r2.xyz, r2, r0
+add_pp r0.w, -r0, c16.y
+mul_pp r0.x, r1.w, r0.w
+mad_pp oC0.xyz, r0.x, r1, r2
 mov_pp oC0.w, c16.y
 "
 }
@@ -108836,7 +108842,7 @@ SetTexture 6 [_BumpMap] 2D
 SetTexture 7 [_LightTextureB0] 2D
 SetTexture 8 [_LightTexture0] CUBE
 "ps_3_0
-; 187 ALU, 15 TEX
+; 187 ALU, 23 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -108862,178 +108868,178 @@ dcl_texcoord5 v4.xyz
 dcl_texcoord6 v5.x
 dcl_texcoord7 v6.xyz
 dcl_texcoord8 v7.xyz
-abs r0.xyz, v4
-add r1.xyz, r0, -r0.zxyw
-add r0.w, r1.x, c16.y
+abs r1.xyz, v4
+add r0.xyz, r1, -r1.zxyw
+add r0.w, r0.x, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad r1.xyz, r0.w, r1, r0.zxyw
-add r0.w, r0.y, -r1.x
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r0.w, r1.y, -r0.x
 add r0.w, r0, c16.y
-dsy r5.xy, v4
-add_pp r2.xyz, r0.yxzw, -r1
 frc r1.w, r0
-add_sat r0.y, r0.w, -r1.w
-mad_pp r1.xyz, r0.y, r2, r1
-mov r3.xyz, v4
-dp3_sat r1.w, v1, -r3
-abs_pp r0.y, r1.x
-rcp_pp r0.y, r0.y
-mul_pp r0.zw, r1.xyzy, r0.y
+dsy r3.xy, v4
+add_pp r2.xyz, r1.yxzw, -r0
+add_sat r0.w, r0, -r1
+mad_pp r0.xyz, r0.w, r2, r0
+abs r0.w, v4.z
+add r1.y, -r0.w, c16
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mad r0.z, r0.w, c16, c16.w
+mad r0.z, r0.w, r0, c17.x
+rsq r1.y, r1.y
+dsx r2.zw, v4.xyxy
+mul r2.zw, r2, r2
+mad r0.z, r0.w, r0, c17.y
+rcp r1.y, r1.y
+mul r1.y, r0.z, r1
+cmp r0.z, v4, c16.x, c16.y
+mul r1.z, r0, r1.y
+mad r1.y, -r1.z, c17.z, r1
 mov_pp r2.xy, c5
-mad_pp r0.zw, r0, c20.y, r2.xyxy
-mul r1.xy, r0.zwzw, c4.x
-mul r2.xy, r0.zwzw, c6.x
-add r2.w, r1, c23.y
-abs r0.y, v4.z
-mul r3.y, v1.w, c7.x
-mul r5.xy, r5, r5
-texld r2.xyz, r2, s2
-texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r2
-mad_sat r2.w, r2, c23.z, c23
-mad_pp r1.xyz, r2.w, r1, r2
-max r1.w, r0.x, r0.y
-rcp r2.x, r1.w
-min r1.w, r0.x, r0.y
-mul r1.w, r1, r2.x
-mul r2.w, r1, r1
-add_pp r2.xyz, -r1, c16.y
-mul_sat r3.y, r3, c17.z
-mad_pp r1.xyz, r3.y, r2, r1
-mad r3.x, r2.w, c18.y, c18.z
-mad r2.x, r3, r2.w, c18.w
-mad r3.x, r2, r2.w, c19
-mad r3.w, r3.x, r2, c19.y
-mad r2.w, r3, r2, c19.z
-mul r1.w, r2, r1
-mov r3.xyz, v7
-mul r1.xyz, v0, r1
-mad r3.w, r0.y, c16.z, c16
-dp3 r3.x, v6, r3
-dp3 r4.x, v6, v6
-mad r3.y, -r3.x, r3.x, r4.x
-add r4.x, -r0.y, c16.y
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-rsq r4.x, r4.x
-add_pp r2.xyz, -r1, c14
-add r2.w, -r1, c19
-add r0.x, r0, -r0.y
-cmp r0.x, -r0, r1.w, r2.w
-mul r3.z, r3.y, r3.y
-add r1.w, -r0.x, c17
-cmp r0.x, v4.z, r0, r1.w
-mad r3.w, r0.y, r3, c17.x
-mad r0.y, r0, r3.w, c17
-mad r2.w, c12.x, c12.x, -r3.z
-rsq r2.w, r2.w
-rcp r1.w, r2.w
-add r3.z, r3.x, -r1.w
-cmp r2.w, r3.x, c16.y, c16.x
-add r1.w, -r3.y, c12.x
-abs r3.x, v4.y
-mad r3.y, r3.x, c16.z, c16.w
-cmp r0.x, v4, r0, -r0
-mul r0.x, r0, c20
-cmp r1.w, r1, c16.y, c16.x
-mul_pp r1.w, r1, r2
-cmp r1.w, -r1, v1, r3.z
-add r1.w, v1, -r1
-add r2.w, r1, c16.y
-frc r5.z, r2.w
-add r3.z, -r3.x, c16.y
-mad r3.y, r3, r3.x, c17.x
-rsq r3.z, r3.z
-rcp r4.x, r4.x
-add r4.z, r0.x, c20.y
-mul r4.x, r0.y, r4
-cmp r3.w, v4.z, c16.x, c16.y
-mul r4.y, r3.w, r4.x
-add_sat r2.w, r2, -r5.z
-mad r3.x, r3.y, r3, c17.y
-rcp r3.z, r3.z
-mul r3.z, r3.x, r3
-cmp r3.x, v4.y, c16, c16.y
-mul r3.y, r3.x, r3.z
-mad r0.y, -r3, c17.z, r3.z
-mad r0.y, r3.x, c17.w, r0
-mad r3.y, -r4, c17.z, r4.x
-mad r3.x, r3.w, c17.w, r3.y
-mul r3.x, r3, c18
-mul r0.y, r0, c18.x
-mov r4.w, r0.y
-dsx r4.y, r3.x
-dsy r3.w, r3.x
-dsx r3.xy, v4
+mad_pp r1.zw, r0.xyxy, c20.y, r2.xyxy
+mad r0.x, r0.z, c17.w, r1.y
+mul r0.z, r0.x, c18.x
 mul r3.xy, r3, r3
-add r3.x, r3, r3.y
-add r3.y, r5.x, r5
-rsq r3.x, r3.x
-rcp r3.x, r3.x
-mul r4.x, r3, c20
-mul_sat r3.x, r1.w, c13
-mul r1.w, r2, c13.x
-mad r1.w, r1, c23.x, r3.x
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-mul r3.z, r3.y, c20.x
-texldd r5.yw, r4.zwzw, s6, r4, r3.zwzw
-add r3.xy, r5.wyzw, c20.w
-mad_pp r1.xyz, r1.w, r2, r1
-texldd r2.xyz, r4.zwzw, s0, r4, r3.zwzw
-mul r3.xy, r3, c21
-add r0.xy, r0, r3
-mad r0.y, r0, c21.z, c21.x
-frc r0.y, r0
-add_pp r2.xyz, r2, -r1
-mul_sat r5.w, c11.x, c11.x
-mad_pp r1.xyz, r5.w, r2, r1
-mul r3.xy, r0.zwzw, c15.x
-mad r1.w, r0.y, c22.x, c22.y
-mad r5.x, r0, c21.w, c21
-sincos r0.xy, r1.w
-frc r0.y, r5.x
-mad r1.w, r0.y, c22.x, c22.y
-mov_pp r5.y, r0.x
-sincos r0.xy, r1.w
-dp4 r0.z, c1, c1
-mov_pp r5.xz, r0.yyxw
+add r1.y, r3.x, r3
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r4.x, r1.y, c20
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+add r0.z, r2, r2.w
+max r1.y, r1.x, r0.w
+rcp r2.w, r1.y
+min r1.y, r1.x, r0.w
+mul r1.y, r1, r2.w
+add r0.w, r1.x, -r0
 rsq r0.z, r0.z
-mul r0.xyz, r0.z, c1
-dp3_sat r0.z, v3, r0
-dp3_pp_sat r1.w, -r5, -c10
-add_pp r0.w, r1, -r0.z
-add r0.x, v0.w, c20.z
-frc r0.y, r0.x
-mad_pp r5.x, r5.w, r0.w, r0.z
-add_sat r5.y, r0.x, -r0
-texldd r0, r4.zwzw, s3, r4, r3.zwzw
-mov_pp r4.xyz, r0
-mul_pp r4.w, r0, r5.y
-texld r2, r3, s5
-mul_pp r2, r4, r2
-add_pp r2.xyz, r2, -r1
+rcp r0.z, r0.z
+mul r4.z, r0, c20.x
+mul r2.xy, r1.zwzw, c4.x
+mul r0.xy, r1.zwzw, c6.x
+mul r2.w, r1.y, r1.y
+mul r5.xy, r1.zwzw, c15.x
+texldd r0.xyz, r0, s2, r4.zwzw, r4
+texldd r2.xyz, r2, s1, r4.zwzw, r4
+add_pp r3.xyz, r2, -r0
+mov r2.xyz, v4
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c23
+mad_sat r2.y, r2, c23.z, c23.w
+mad_pp r0.xyz, r2.y, r3, r0
+mad r2.x, r2.w, c18.y, c18.z
+mad r3.x, r2, r2.w, c18.w
+mad r3.x, r3, r2.w, c19
+mul r3.y, v1.w, c7.x
+add_pp r2.xyz, -r0, c16.y
+mul_sat r3.y, r3, c17.z
+mad_pp r0.xyz, r3.y, r2, r0
+mad r3.x, r3, r2.w, c19.y
+mad r2.x, r3, r2.w, c19.z
+mul r1.y, r2.x, r1
+add r2.w, -r1.y, c19
+mul r0.xyz, v0, r0
+cmp r0.w, -r0, r1.y, r2
+mov r3.xyz, v7
+dp3 r1.y, v6, r3
+dp3 r1.x, v6, v6
+mad r2.w, -r1.y, r1.y, r1.x
+add r1.x, -r0.w, c17.w
+cmp r0.w, v4.z, r0, r1.x
+cmp r0.w, v4.x, r0, -r0
+mul r1.x, r0.w, c20
+rsq r2.w, r2.w
+rcp r2.w, r2.w
+mul r3.x, r2.w, r2.w
+mad r0.w, c12.x, c12.x, -r3.x
+rsq r3.x, r0.w
+add r0.w, -r2, c12.x
+add r5.z, r1.x, c20.y
+add_pp r2.xyz, -r0, c14
+cmp r2.w, r1.y, c16.y, c16.x
+rcp r3.x, r3.x
+cmp r0.w, r0, c16.y, c16.x
+mul_pp r0.w, r0, r2
+abs r2.w, v4.y
+add r1.y, r1, -r3.x
+add r3.y, -r2.w, c16
+mad r3.x, r2.w, c16.z, c16.w
+mad r3.x, r3, r2.w, c17
+cmp r1.y, -r0.w, v1.w, r1
+rsq r3.y, r3.y
+mad r2.w, r3.x, r2, c17.y
+rcp r3.y, r3.y
+mul r3.x, r2.w, r3.y
+cmp r2.w, v4.y, c16.x, c16.y
+mul r3.y, r2.w, r3.x
+mad r0.w, -r3.y, c17.z, r3.x
+mad r0.w, r2, c17, r0
+add r1.y, v1.w, -r1
+add r2.w, r1.y, c16.y
+mul r0.w, r0, c18.x
+mov r5.w, r0
+frc r3.x, r2.w
+add_sat r2.w, r2, -r3.x
+mul_sat r3.x, r1.y, c13
+mul r1.y, r2.w, c13.x
+mad r1.y, r1, c23.x, r3.x
+mad_pp r0.xyz, r1.y, r2, r0
+texldd r3.yw, r5.zwzw, s6, r4.zwzw, r4
+add r3.xy, r3.wyzw, c20.w
+texldd r2.xyz, r5.zwzw, s0, r4.zwzw, r4
+add_pp r2.xyz, r2, -r0
+mul_sat r2.w, c11.x, c11.x
+mul r3.xy, r3, c21
+mov r1.y, r0.w
+add r1.xy, r1, r3
+mad_pp r3.xyz, r2.w, r2, r0
+mad r0.x, r1.y, c21.z, c21
+frc r1.y, r0.x
+texldd r0, r5, s5, r4.zwzw, r4
+mad r2.x, r1.y, c22, c22.y
+mad r2.y, r1.x, c21.w, c21.x
+sincos r1.xy, r2.x
+frc r1.y, r2
+mad r2.x, r1.y, c22, c22.y
+mov_pp r2.y, r1.x
+sincos r1.xy, r2.x
+dp4 r1.z, c1, c1
+mov_pp r2.xz, r1.yyxw
+rsq r1.z, r1.z
+mul r1.xyz, r1.z, c1
+dp3_sat r1.z, v3, r1
+dp3_pp_sat r3.w, -r2, -c10
+add r1.x, v0.w, c20.z
+add_pp r1.w, r3, -r1.z
+frc r1.y, r1.x
+mad_pp r6.x, r2.w, r1.w, r1.z
+add_sat r2.x, r1, -r1.y
+texldd r1, r5.zwzw, s3, r4.zwzw, r4
+mul_pp r1.w, r1, r2.x
+mul_pp r2, r1, r0
+add_pp r2.xyz, r2, -r3
+mad_pp r2.xyz, r2.w, r2, r3
+add_pp r2.w, r3, c22.z
 dp3 r0.x, v2, v2
-mad_pp r1.xyz, r2.w, r2, r1
-add_pp r1.w, r1, c22.z
 texld r0.x, r0.x, s7
 texld r0.w, v2, s8
 mul r0.w, r0.x, r0
-mul_pp r0.y, r5.x, c2.w
+mul_pp r0.y, r6.x, c2.w
 mul_pp r0.y, r0.w, r0
-mul_pp r2.w, r1, c2
+mul_pp r2.w, r2, c2
 mul_pp r0.w, r2, r0
 mul_pp_sat r0.w, r0, c22
-mul_pp_sat r3.z, r0.y, c17
+mul_pp_sat r5.z, r0.y, c17
 mov r0.x, c8
 add r0.xyz, c2, r0.x
-mad_sat r0.xyz, r0, r3.z, c0
+mad_sat r0.xyz, r0, r5.z, c0
 mul_pp r0.xyz, r0, v5.x
-mul r2.xyz, r0, c9.x
-mad_pp r2.xyz, r1, c3, r2
-texld r1, r3, s4
-mul_pp r1, r4, r1
+mul r3.xyz, r0, c9.x
+mad_pp r2.xyz, r2, c3, r3
+texldd r3, r5, s4, r4.zwzw, r4
+mul_pp r1, r1, r3
 mad_pp r1.xyz, -r2, r0, r1
 mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c16.y
@@ -109090,7 +109096,7 @@ SetTexture 5 [_CityLightOverlayDetailTex] 2D
 SetTexture 6 [_BumpMap] 2D
 SetTexture 7 [_LightTexture0] 2D
 "ps_3_0
-; 184 ALU, 14 TEX
+; 184 ALU, 22 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -109123,126 +109129,126 @@ add_sat r0.w, r0, -r1
 mad r1.xyz, r0.w, r1, r0.zxyw
 add r0.w, r0.y, -r1.x
 add r0.w, r0, c16.y
-dsy r5.xy, v4
 add_pp r2.xyz, r0.yxzw, -r1
 frc r1.w, r0
 add_sat r0.y, r0.w, -r1.w
 mad_pp r1.xyz, r0.y, r2, r1
-mov r3.xyz, v4
-dp3_sat r1.w, v1, -r3
 abs_pp r0.y, r1.x
-rcp_pp r0.y, r0.y
-mul_pp r0.zw, r1.xyzy, r0.y
+rcp_pp r0.z, r0.y
+abs r0.y, v4.z
+mul_pp r0.zw, r1.xyzy, r0.z
+add r1.y, -r0, c16
+mad r1.x, r0.y, c16.z, c16.w
+mad r1.x, r0.y, r1, c17
 mov_pp r2.xy, c5
 mad_pp r0.zw, r0, c20.y, r2.xyxy
-mul r1.xy, r0.zwzw, c4.x
-mul r2.xy, r0.zwzw, c6.x
-add r2.w, r1, c23.y
-abs r0.y, v4.z
-mul r3.y, v1.w, c7.x
-mul r5.xy, r5, r5
-texld r2.xyz, r2, s2
-texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r2
-mad_sat r2.w, r2, c23.z, c23
-mad_pp r1.xyz, r2.w, r1, r2
+rsq r1.y, r1.y
+dsy r2.zw, v4.xyxy
+mul r2.zw, r2, r2
+mad r1.x, r0.y, r1, c17.y
+rcp r1.y, r1.y
+mul r1.y, r1.x, r1
+cmp r1.x, v4.z, c16, c16.y
+mul r1.z, r1.x, r1.y
+mad r1.y, -r1.z, c17.z, r1
+mad r1.x, r1, c17.w, r1.y
+mul r1.z, r1.x, c18.x
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsx r1.zw, v4.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+add r1.w, r2.z, r2
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r3.x, r1.w, c20
 max r1.w, r0.x, r0.y
-rcp r2.x, r1.w
+rcp r2.w, r1.w
 min r1.w, r0.x, r0.y
-mul r1.w, r1, r2.x
-mul r2.w, r1, r1
-add_pp r2.xyz, -r1, c16.y
-mul_sat r3.y, r3, c17.z
-mad_pp r1.xyz, r3.y, r2, r1
-mad r3.x, r2.w, c18.y, c18.z
-mad r2.x, r3, r2.w, c18.w
-mad r3.x, r2, r2.w, c19
-mad r3.w, r3.x, r2, c19.y
-mad r2.w, r3, r2, c19.z
-mul r1.w, r2, r1
-mov r3.xyz, v7
-mul r1.xyz, v0, r1
-mad r3.w, r0.y, c16.z, c16
-dp3 r3.x, v6, r3
-dp3 r4.x, v6, v6
-mad r3.y, -r3.x, r3.x, r4.x
-add r4.x, -r0.y, c16.y
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-rsq r4.x, r4.x
-add_pp r2.xyz, -r1, c14
-add r2.w, -r1, c19
+mul r1.w, r1, r2
 add r0.x, r0, -r0.y
+mul r3.z, r1, c20.x
+mul r2.xy, r0.zwzw, c4.x
+mul r1.xy, r0.zwzw, c6.x
+mul r2.w, r1, r1
+texldd r1.xyz, r1, s2, r3.zwzw, r3
+texldd r2.xyz, r2, s1, r3.zwzw, r3
+add_pp r4.xyz, r2, -r1
+mov r2.xyz, v4
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c23
+mad_sat r2.y, r2, c23.z, c23.w
+mad_pp r1.xyz, r2.y, r4, r1
+mad r2.x, r2.w, c18.y, c18.z
+mad r4.x, r2, r2.w, c18.w
+mad r4.x, r4, r2.w, c19
+mul r4.y, v1.w, c7.x
+add_pp r2.xyz, -r1, c16.y
+mul_sat r4.y, r4, c17.z
+mad_pp r1.xyz, r4.y, r2, r1
+mad r4.x, r4, r2.w, c19.y
+mad r2.x, r4, r2.w, c19.z
+mul r1.w, r2.x, r1
+add r2.w, -r1, c19
+mul r1.xyz, v0, r1
 cmp r0.x, -r0, r1.w, r2.w
-mul r3.z, r3.y, r3.y
-add r1.w, -r0.x, c17
-cmp r0.x, v4.z, r0, r1.w
-mad r3.w, r0.y, r3, c17.x
-mad r0.y, r0, r3.w, c17
-mad r2.w, c12.x, c12.x, -r3.z
+mov r4.xyz, v7
+dp3 r1.w, v6, r4
+dp3 r0.y, v6, v6
+mad r2.w, -r1, r1, r0.y
+add r0.y, -r0.x, c17.w
+cmp r0.x, v4.z, r0, r0.y
 rsq r2.w, r2.w
-rcp r1.w, r2.w
-add r3.z, r3.x, -r1.w
-cmp r2.w, r3.x, c16.y, c16.x
-add r1.w, -r3.y, c12.x
-abs r3.x, v4.y
-mad r3.y, r3.x, c16.z, c16.w
+rcp r0.y, r2.w
+mul r2.w, r0.y, r0.y
+mad r2.w, c12.x, c12.x, -r2
+rsq r4.x, r2.w
 cmp r0.x, v4, r0, -r0
 mul r0.x, r0, c20
-cmp r1.w, r1, c16.y, c16.x
-mul_pp r1.w, r1, r2
-cmp r1.w, -r1, v1, r3.z
+add r0.y, -r0, c12.x
+add r4.z, r0.x, c20.y
+add_pp r2.xyz, -r1, c14
+cmp r2.w, r1, c16.y, c16.x
+rcp r4.x, r4.x
+cmp r0.y, r0, c16, c16.x
+mul_pp r0.y, r0, r2.w
+abs r2.w, v4.y
+add r1.w, r1, -r4.x
+add r4.y, -r2.w, c16
+mad r4.x, r2.w, c16.z, c16.w
+mad r4.x, r4, r2.w, c17
+cmp r1.w, -r0.y, v1, r1
+rsq r4.y, r4.y
+mad r2.w, r4.x, r2, c17.y
+rcp r4.y, r4.y
+mul r4.x, r2.w, r4.y
+cmp r2.w, v4.y, c16.x, c16.y
+mul r4.y, r2.w, r4.x
+mad r0.y, -r4, c17.z, r4.x
+mad r0.y, r2.w, c17.w, r0
 add r1.w, v1, -r1
 add r2.w, r1, c16.y
-frc r5.z, r2.w
-add r3.z, -r3.x, c16.y
-mad r3.y, r3, r3.x, c17.x
-rsq r3.z, r3.z
-rcp r4.x, r4.x
-add r4.z, r0.x, c20.y
-mul r4.x, r0.y, r4
-cmp r3.w, v4.z, c16.x, c16.y
-mul r4.y, r3.w, r4.x
-add_sat r2.w, r2, -r5.z
-mad r3.x, r3.y, r3, c17.y
-rcp r3.z, r3.z
-mul r3.z, r3.x, r3
-cmp r3.x, v4.y, c16, c16.y
-mul r3.y, r3.x, r3.z
-mad r0.y, -r3, c17.z, r3.z
-mad r0.y, r3.x, c17.w, r0
-mad r3.y, -r4, c17.z, r4.x
-mad r3.x, r3.w, c17.w, r3.y
-mul r3.x, r3, c18
+frc r4.x, r2.w
+add_sat r2.w, r2, -r4.x
+mul_sat r4.x, r1.w, c13
 mul r0.y, r0, c18.x
 mov r4.w, r0.y
-dsx r4.y, r3.x
-dsy r3.w, r3.x
-dsx r3.xy, v4
-mul r3.xy, r3, r3
-add r3.x, r3, r3.y
-add r3.y, r5.x, r5
-rsq r3.x, r3.x
-rcp r3.x, r3.x
-mul r4.x, r3, c20
-mul_sat r3.x, r1.w, c13
 mul r1.w, r2, c13.x
-mad r1.w, r1, c23.x, r3.x
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-mul r3.z, r3.y, c20.x
-texldd r5.yw, r4.zwzw, s6, r4, r3.zwzw
-add r3.xy, r5.wyzw, c20.w
+mad r1.w, r1, c23.x, r4.x
+texldd r5.yw, r4.zwzw, s6, r3.zwzw, r3
+add r4.xy, r5.wyzw, c20.w
 mad_pp r1.xyz, r1.w, r2, r1
-texldd r2.xyz, r4.zwzw, s0, r4, r3.zwzw
-mul r3.xy, r3, c21
-add r0.xy, r0, r3
+texldd r2.xyz, r4.zwzw, s0, r3.zwzw, r3
+mul r4.xy, r4, c21
+add r0.xy, r0, r4
 mad r0.y, r0, c21.z, c21.x
 frc r0.y, r0
 add_pp r2.xyz, r2, -r1
 mul_sat r5.w, c11.x, c11.x
 mad_pp r2.xyz, r5.w, r2, r1
-mul r3.xy, r0.zwzw, c15.x
+mul r4.xy, r0.zwzw, c15.x
 mad r2.w, r0.y, c22.x, c22.y
 mad r5.x, r0, c21.w, c21
 sincos r0.xy, r2.w
@@ -109261,33 +109267,33 @@ add_pp r0.w, r2, -r0.z
 frc r0.y, r0.x
 mad_pp r5.x, r5.w, r0.w, r0.z
 add_sat r5.y, r0.x, -r0
-texldd r0, r4.zwzw, s3, r4, r3.zwzw
+texldd r0, r4.zwzw, s3, r3.zwzw, r3
 mul_pp r0.w, r0, r5.y
-texld r1, r3, s5
+texldd r1, r4, s5, r3.zwzw, r3
 mul_pp r1, r0, r1
 add_pp r1.xyz, r1, -r2
 mad_pp r1.xyz, r1.w, r1, r2
 add_pp r1.w, r2, c22.z
-mul_pp r3.z, r5.x, c2.w
-texld r3.w, v2, s7
-mul_pp r4.x, r3.w, r3.z
-mul_pp r2.w, r1, c2
-mul_pp_sat r4.w, r4.x, c17.z
-mov r3.z, c8.x
-add r4.xyz, c2, r3.z
-mad_sat r4.xyz, r4, r4.w, c0
-mul_pp r4.xyz, r4, v5.x
-mul r2.xyz, r4, c9.x
-mad_pp r2.xyz, r1, c3, r2
-texld r1, r3, s4
-mul_pp r0, r0, r1
-mad_pp r0.xyz, -r2, r4, r0
-mul_pp r2.w, r2, r3
-mul_pp_sat r1.x, r2.w, c22.w
-add_pp r1.x, -r1, c16.y
-mul_pp r2.xyz, r2, r4
-mul_pp r0.w, r0, r1.x
-mad_pp oC0.xyz, r0.w, r0, r2
+mul_pp r4.z, r5.x, c2.w
+texld r4.w, v2, s7
+mul_pp r5.x, r4.w, r4.z
+mul_pp r1.w, r1, c2
+mul_pp r1.w, r1, r4
+mul_pp_sat r1.w, r1, c22
+mul_pp_sat r5.w, r5.x, c17.z
+mov r4.z, c8.x
+add r5.xyz, c2, r4.z
+mad_sat r5.xyz, r5, r5.w, c0
+mul_pp r5.xyz, r5, v5.x
+mul r2.xyz, r5, c9.x
+mad_pp r1.xyz, r1, c3, r2
+texldd r2, r4, s4, r3.zwzw, r3
+mul_pp r0, r0, r2
+mad_pp r0.xyz, -r1, r5, r0
+add_pp r1.w, -r1, c16.y
+mul_pp r1.xyz, r1, r5
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
 mov_pp oC0.w, c16.y
 "
 }
@@ -109342,7 +109348,7 @@ SetTexture 7 [_LightTexture0] 2D
 SetTexture 8 [_LightTextureB0] 2D
 SetTexture 9 [_ShadowMapTexture] 2D
 "ps_3_0
-; 196 ALU, 16 TEX
+; 196 ALU, 24 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -109370,188 +109376,188 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r0.xyz, v5
-add r1.xyz, r0, -r0.zxyw
-add r0.w, r1.x, c17.y
+abs r1.xyz, v5
+add r0.xyz, r1, -r1.zxyw
+add r0.w, r0.x, c17.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad r1.xyz, r0.w, r1, r0.zxyw
-add r0.w, r0.y, -r1.x
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r0.w, r1.y, -r0.x
 add r0.w, r0, c17.y
-dsy r5.xy, v5
-add_pp r2.xyz, r0.yxzw, -r1
 frc r1.w, r0
-add_sat r0.y, r0.w, -r1.w
-mad_pp r1.xyz, r0.y, r2, r1
-mov r3.xyz, v5
-dp3_sat r1.w, v1, -r3
-abs_pp r0.y, r1.x
-rcp_pp r0.y, r0.y
-mul_pp r0.zw, r1.xyzy, r0.y
+dsy r3.xy, v5
+add_pp r2.xyz, r1.yxzw, -r0
+add_sat r0.w, r0, -r1
+mad_pp r0.xyz, r0.w, r2, r0
+abs r0.w, v5.z
+add r1.y, -r0.w, c17
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mad r0.z, r0.w, c17, c17.w
+mad r0.z, r0.w, r0, c18.x
+rsq r1.y, r1.y
+dsx r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+mad r0.z, r0.w, r0, c18.y
+rcp r1.y, r1.y
+mul r1.y, r0.z, r1
+cmp r0.z, v5, c17.x, c17.y
+mul r1.z, r0, r1.y
+mad r1.y, -r1.z, c18.z, r1
 mov_pp r2.xy, c6
-mad_pp r0.zw, r0, c21.y, r2.xyxy
-mul r1.xy, r0.zwzw, c5.x
-mul r2.xy, r0.zwzw, c7.x
-add r2.w, r1, c24.y
-abs r0.y, v5.z
-mul r3.y, v1.w, c8.x
-mul r5.xy, r5, r5
-texld r2.xyz, r2, s2
-texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r2
-mad_sat r2.w, r2, c24.z, c24
-mad_pp r1.xyz, r2.w, r1, r2
-max r1.w, r0.x, r0.y
-rcp r2.x, r1.w
-min r1.w, r0.x, r0.y
-mul r1.w, r1, r2.x
-mul r2.w, r1, r1
-add_pp r2.xyz, -r1, c17.y
-mul_sat r3.y, r3, c18.z
-mad_pp r1.xyz, r3.y, r2, r1
-mad r3.x, r2.w, c19.y, c19.z
-mad r2.x, r3, r2.w, c19.w
-mad r3.x, r2, r2.w, c20
-mad r3.w, r3.x, r2, c20.y
-mad r2.w, r3, r2, c20.z
-mul r1.w, r2, r1
-mov r3.xyz, v8
-mul r1.xyz, v0, r1
-mad r3.w, r0.y, c17.z, c17
-dp3 r3.x, v7, r3
-dp3 r4.x, v7, v7
-mad r3.y, -r3.x, r3.x, r4.x
-add r4.x, -r0.y, c17.y
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-rsq r4.x, r4.x
-add_pp r2.xyz, -r1, c15
-add r2.w, -r1, c20
-add r0.x, r0, -r0.y
-cmp r0.x, -r0, r1.w, r2.w
-mul r3.z, r3.y, r3.y
-add r1.w, -r0.x, c18
-cmp r0.x, v5.z, r0, r1.w
-mad r3.w, r0.y, r3, c18.x
-mad r0.y, r0, r3.w, c18
-mad r2.w, c13.x, c13.x, -r3.z
-rsq r2.w, r2.w
-rcp r1.w, r2.w
-add r3.z, r3.x, -r1.w
-cmp r2.w, r3.x, c17.y, c17.x
-add r1.w, -r3.y, c13.x
-abs r3.x, v5.y
-mad r3.y, r3.x, c17.z, c17.w
-cmp r0.x, v5, r0, -r0
-mul r0.x, r0, c21
-cmp r1.w, r1, c17.y, c17.x
-mul_pp r1.w, r1, r2
-cmp r1.w, -r1, v1, r3.z
-add r1.w, v1, -r1
-add r2.w, r1, c17.y
-frc r5.z, r2.w
-add r3.z, -r3.x, c17.y
-mad r3.y, r3, r3.x, c18.x
-rsq r3.z, r3.z
-rcp r4.x, r4.x
-add r4.z, r0.x, c21.y
-mul r4.x, r0.y, r4
-cmp r3.w, v5.z, c17.x, c17.y
-mul r4.y, r3.w, r4.x
-add_sat r2.w, r2, -r5.z
-mad r3.x, r3.y, r3, c18.y
-rcp r3.z, r3.z
-mul r3.z, r3.x, r3
-cmp r3.x, v5.y, c17, c17.y
-mul r3.y, r3.x, r3.z
-mad r0.y, -r3, c18.z, r3.z
-mad r0.y, r3.x, c18.w, r0
-mad r3.y, -r4, c18.z, r4.x
-mad r3.x, r3.w, c18.w, r3.y
-mul r3.x, r3, c19
-mul r0.y, r0, c19.x
-mov r4.w, r0.y
-dsx r4.y, r3.x
-dsy r3.w, r3.x
-dsx r3.xy, v5
+mad_pp r1.zw, r0.xyxy, c21.y, r2.xyxy
+mad r0.x, r0.z, c18.w, r1.y
+mul r0.z, r0.x, c19.x
 mul r3.xy, r3, r3
-add r3.x, r3, r3.y
-add r3.y, r5.x, r5
-rsq r3.x, r3.x
-rcp r3.x, r3.x
-mul r4.x, r3, c21
-mul_sat r3.x, r1.w, c14
-mul r1.w, r2, c14.x
-mad r1.w, r1, c24.x, r3.x
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-mul r3.z, r3.y, c21.x
-texldd r5.yw, r4.zwzw, s6, r4, r3.zwzw
-add r3.xy, r5.wyzw, c21.w
-mad_pp r1.xyz, r1.w, r2, r1
-texldd r2.xyz, r4.zwzw, s0, r4, r3.zwzw
-mul r3.xy, r3, c22
-add r0.xy, r0, r3
-mad r0.y, r0, c22.z, c22.x
-frc r0.y, r0
-add_pp r2.xyz, r2, -r1
-mul_sat r5.w, c12.x, c12.x
-mad_pp r1.xyz, r5.w, r2, r1
-mul r3.xy, r0.zwzw, c16.x
-mad r1.w, r0.y, c23.x, c23.y
-mad r5.x, r0, c22.w, c22
-sincos r0.xy, r1.w
-frc r0.y, r5.x
-mad r1.w, r0.y, c23.x, c23.y
-mov_pp r5.y, r0.x
-sincos r0.xy, r1.w
-dp4 r0.z, c1, c1
-mov_pp r5.xz, r0.yyxw
+add r1.y, r3.x, r3
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r4.x, r1.y, c21
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+add r0.z, r2, r2.w
+max r1.y, r1.x, r0.w
+rcp r2.w, r1.y
+min r1.y, r1.x, r0.w
+mul r1.y, r1, r2.w
+add r0.w, r1.x, -r0
 rsq r0.z, r0.z
-mul r0.xyz, r0.z, c1
-dp3_sat r0.z, v4, r0
-dp3_pp_sat r1.w, -r5, -c11
-add_pp r0.w, r1, -r0.z
-add r0.x, v0.w, c21.z
-frc r0.y, r0.x
-mad_pp r5.x, r5.w, r0.w, r0.z
-add_sat r5.y, r0.x, -r0
-texldd r0, r4.zwzw, s3, r4, r3.zwzw
-mov_pp r4.xyz, r0
-mul_pp r4.w, r0, r5.y
-texld r2, r3, s5
-mul_pp r2, r4, r2
-add_pp r2.xyz, r2, -r1
-mad_pp r1.xyz, r2.w, r2, r1
-add_pp r1.w, r1, c23.z
-mul_pp r0.y, r5.x, c3.w
+rcp r0.z, r0.z
+mul r4.z, r0, c21.x
+mul r2.xy, r1.zwzw, c5.x
+mul r0.xy, r1.zwzw, c7.x
+mul r2.w, r1.y, r1.y
+mul r5.xy, r1.zwzw, c16.x
+texldd r0.xyz, r0, s2, r4.zwzw, r4
+texldd r2.xyz, r2, s1, r4.zwzw, r4
+add_pp r3.xyz, r2, -r0
+mov r2.xyz, v5
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c24
+mad_sat r2.y, r2, c24.z, c24.w
+mad_pp r0.xyz, r2.y, r3, r0
+mad r2.x, r2.w, c19.y, c19.z
+mad r3.x, r2, r2.w, c19.w
+mad r3.x, r3, r2.w, c20
+mul r3.y, v1.w, c8.x
+add_pp r2.xyz, -r0, c17.y
+mul_sat r3.y, r3, c18.z
+mad_pp r0.xyz, r3.y, r2, r0
+mad r3.x, r3, r2.w, c20.y
+mad r2.x, r3, r2.w, c20.z
+mul r1.y, r2.x, r1
+add r2.w, -r1.y, c20
+mul r0.xyz, v0, r0
+cmp r0.w, -r0, r1.y, r2
+mov r3.xyz, v8
+dp3 r1.y, v7, r3
+dp3 r1.x, v7, v7
+mad r2.w, -r1.y, r1.y, r1.x
+add r1.x, -r0.w, c18.w
+cmp r0.w, v5.z, r0, r1.x
+cmp r0.w, v5.x, r0, -r0
+mul r1.x, r0.w, c21
+rsq r2.w, r2.w
+rcp r2.w, r2.w
+mul r3.x, r2.w, r2.w
+mad r0.w, c13.x, c13.x, -r3.x
+rsq r3.x, r0.w
+add r0.w, -r2, c13.x
+add r5.z, r1.x, c21.y
+add_pp r2.xyz, -r0, c15
+cmp r2.w, r1.y, c17.y, c17.x
+rcp r3.x, r3.x
+cmp r0.w, r0, c17.y, c17.x
+mul_pp r0.w, r0, r2
+abs r2.w, v5.y
+add r1.y, r1, -r3.x
+add r3.y, -r2.w, c17
+mad r3.x, r2.w, c17.z, c17.w
+mad r3.x, r3, r2.w, c18
+cmp r1.y, -r0.w, v1.w, r1
+rsq r3.y, r3.y
+mad r2.w, r3.x, r2, c18.y
+rcp r3.y, r3.y
+mul r3.x, r2.w, r3.y
+cmp r2.w, v5.y, c17.x, c17.y
+mul r3.y, r2.w, r3.x
+mad r0.w, -r3.y, c18.z, r3.x
+mad r0.w, r2, c18, r0
+add r1.y, v1.w, -r1
+add r2.w, r1.y, c17.y
+mul r0.w, r0, c19.x
+mov r5.w, r0
+frc r3.x, r2.w
+add_sat r2.w, r2, -r3.x
+mul_sat r3.x, r1.y, c14
+mul r1.y, r2.w, c14.x
+mad r1.y, r1, c24.x, r3.x
+mad_pp r0.xyz, r1.y, r2, r0
+texldd r3.yw, r5.zwzw, s6, r4.zwzw, r4
+add r3.xy, r3.wyzw, c21.w
+texldd r2.xyz, r5.zwzw, s0, r4.zwzw, r4
+add_pp r2.xyz, r2, -r0
+mul_sat r2.w, c12.x, c12.x
+mul r3.xy, r3, c22
+mov r1.y, r0.w
+add r1.xy, r1, r3
+mad_pp r3.xyz, r2.w, r2, r0
+mad r0.x, r1.y, c22.z, c22
+frc r1.y, r0.x
+texldd r0, r5, s5, r4.zwzw, r4
+mad r2.x, r1.y, c23, c23.y
+mad r2.y, r1.x, c22.w, c22.x
+sincos r1.xy, r2.x
+frc r1.y, r2
+mad r2.x, r1.y, c23, c23.y
+mov_pp r2.y, r1.x
+sincos r1.xy, r2.x
+dp4 r1.z, c1, c1
+mov_pp r2.xz, r1.yyxw
+rsq r1.z, r1.z
+mul r1.xyz, r1.z, c1
+dp3_sat r1.z, v4, r1
+dp3_pp_sat r3.w, -r2, -c11
+add r1.x, v0.w, c21.z
+add_pp r1.w, r3, -r1.z
+frc r1.y, r1.x
+mad_pp r6.x, r2.w, r1.w, r1.z
+add_sat r2.x, r1, -r1.y
+texldd r1, r5.zwzw, s3, r4.zwzw, r4
+mul_pp r1.w, r1, r2.x
+mul_pp r2, r1, r0
+add_pp r2.xyz, r2, -r3
+mad_pp r2.xyz, r2.w, r2, r3
+add_pp r2.w, r3, c23.z
+mul_pp r0.y, r6.x, c3.w
 texldp r0.x, v3, s9
 rcp r0.z, v3.w
 mad r0.z, -v3, r0, r0.x
 mov r0.w, c2.x
 rcp r0.x, v2.w
-mad r5.xy, v2, r0.x, c21.y
+mad r6.xy, v2, r0.x, c21.y
 cmp r0.z, r0, c17.y, r0.w
 dp3 r0.x, v2, v2
-cmp r3.z, -v2, c17.x, c17.y
-texld r0.w, r5, s7
-mul_pp r0.w, r3.z, r0
+cmp r5.z, -v2, c17.x, c17.y
+texld r0.w, r6, s7
+mul_pp r0.w, r5.z, r0
 texld r0.x, r0.x, s8
 mul_pp r0.x, r0.w, r0
 mul_pp r0.w, r0.x, r0.z
 mul_pp r0.y, r0.w, r0
-mul_pp r2.w, r1, c3
+mul_pp r2.w, r2, c3
 mul_pp r0.w, r2, r0
 mul_pp_sat r0.w, r0, c23
-mul_pp_sat r3.z, r0.y, c18
+mul_pp_sat r5.z, r0.y, c18
 mov r0.x, c9
 add r0.xyz, c3, r0.x
-mad_sat r0.xyz, r0, r3.z, c0
+mad_sat r0.xyz, r0, r5.z, c0
 mul_pp r0.xyz, r0, v6.x
-mul r2.xyz, r0, c10.x
-mad_pp r2.xyz, r1, c4, r2
-texld r1, r3, s4
-mul_pp r1, r4, r1
+mul r3.xyz, r0, c10.x
+mad_pp r2.xyz, r2, c4, r3
+texldd r3, r5, s4, r4.zwzw, r4
+mul_pp r1, r1, r3
 mad_pp r1.xyz, -r2, r0, r1
 mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c17.y
@@ -109611,7 +109617,7 @@ SetTexture 7 [_LightTexture0] 2D
 SetTexture 8 [_LightTextureB0] 2D
 SetTexture 9 [_ShadowMapTexture] 2D
 "ps_3_0
-; 195 ALU, 16 TEX
+; 195 ALU, 24 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -109639,187 +109645,187 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r0.xyz, v5
-add r1.xyz, r0, -r0.zxyw
-add r0.w, r1.x, c17.y
+abs r1.xyz, v5
+add r0.xyz, r1, -r1.zxyw
+add r0.w, r0.x, c17.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad r1.xyz, r0.w, r1, r0.zxyw
-add r0.w, r0.y, -r1.x
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r0.w, r1.y, -r0.x
 add r0.w, r0, c17.y
-dsy r5.xy, v5
-add_pp r2.xyz, r0.yxzw, -r1
 frc r1.w, r0
-add_sat r0.y, r0.w, -r1.w
-mad_pp r1.xyz, r0.y, r2, r1
-mov r3.xyz, v5
-dp3_sat r1.w, v1, -r3
-abs_pp r0.y, r1.x
-rcp_pp r0.y, r0.y
-mul_pp r0.zw, r1.xyzy, r0.y
+dsy r3.xy, v5
+add_pp r2.xyz, r1.yxzw, -r0
+add_sat r0.w, r0, -r1
+mad_pp r0.xyz, r0.w, r2, r0
+abs r0.w, v5.z
+add r1.y, -r0.w, c17
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mad r0.z, r0.w, c17, c17.w
+mad r0.z, r0.w, r0, c18.x
+rsq r1.y, r1.y
+dsx r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+mad r0.z, r0.w, r0, c18.y
+rcp r1.y, r1.y
+mul r1.y, r0.z, r1
+cmp r0.z, v5, c17.x, c17.y
+mul r1.z, r0, r1.y
+mad r1.y, -r1.z, c18.z, r1
 mov_pp r2.xy, c6
-mad_pp r0.zw, r0, c21.y, r2.xyxy
-mul r1.xy, r0.zwzw, c5.x
-mul r2.xy, r0.zwzw, c7.x
-add r2.w, r1, c24.y
-abs r0.y, v5.z
-mul r3.y, v1.w, c8.x
-mul r5.xy, r5, r5
-texld r2.xyz, r2, s2
-texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r2
-mad_sat r2.w, r2, c24.z, c24
-mad_pp r1.xyz, r2.w, r1, r2
-max r1.w, r0.x, r0.y
-rcp r2.x, r1.w
-min r1.w, r0.x, r0.y
-mul r1.w, r1, r2.x
-mul r2.w, r1, r1
-add_pp r2.xyz, -r1, c17.y
-mul_sat r3.y, r3, c18.z
-mad_pp r1.xyz, r3.y, r2, r1
-mad r3.x, r2.w, c19.y, c19.z
-mad r2.x, r3, r2.w, c19.w
-mad r3.x, r2, r2.w, c20
-mad r3.w, r3.x, r2, c20.y
-mad r2.w, r3, r2, c20.z
-mul r1.w, r2, r1
-mov r3.xyz, v8
-mul r1.xyz, v0, r1
-mad r3.w, r0.y, c17.z, c17
-dp3 r3.x, v7, r3
-dp3 r4.x, v7, v7
-mad r3.y, -r3.x, r3.x, r4.x
-add r4.x, -r0.y, c17.y
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-rsq r4.x, r4.x
-add_pp r2.xyz, -r1, c15
-add r2.w, -r1, c20
-add r0.x, r0, -r0.y
-cmp r0.x, -r0, r1.w, r2.w
-mul r3.z, r3.y, r3.y
-add r1.w, -r0.x, c18
-cmp r0.x, v5.z, r0, r1.w
-mad r3.w, r0.y, r3, c18.x
-mad r0.y, r0, r3.w, c18
-mad r2.w, c13.x, c13.x, -r3.z
-rsq r2.w, r2.w
-rcp r1.w, r2.w
-add r3.z, r3.x, -r1.w
-cmp r2.w, r3.x, c17.y, c17.x
-add r1.w, -r3.y, c13.x
-abs r3.x, v5.y
-mad r3.y, r3.x, c17.z, c17.w
-cmp r0.x, v5, r0, -r0
-mul r0.x, r0, c21
-cmp r1.w, r1, c17.y, c17.x
-mul_pp r1.w, r1, r2
-cmp r1.w, -r1, v1, r3.z
-add r1.w, v1, -r1
-add r2.w, r1, c17.y
-frc r5.z, r2.w
-add r3.z, -r3.x, c17.y
-mad r3.y, r3, r3.x, c18.x
-rsq r3.z, r3.z
-rcp r4.x, r4.x
-add r4.z, r0.x, c21.y
-mul r4.x, r0.y, r4
-cmp r3.w, v5.z, c17.x, c17.y
-mul r4.y, r3.w, r4.x
-add_sat r2.w, r2, -r5.z
-mad r3.x, r3.y, r3, c18.y
-rcp r3.z, r3.z
-mul r3.z, r3.x, r3
-cmp r3.x, v5.y, c17, c17.y
-mul r3.y, r3.x, r3.z
-mad r0.y, -r3, c18.z, r3.z
-mad r0.y, r3.x, c18.w, r0
-mad r3.y, -r4, c18.z, r4.x
-mad r3.x, r3.w, c18.w, r3.y
-mul r3.x, r3, c19
-mul r0.y, r0, c19.x
-mov r4.w, r0.y
-dsx r4.y, r3.x
-dsy r3.w, r3.x
-dsx r3.xy, v5
+mad_pp r1.zw, r0.xyxy, c21.y, r2.xyxy
+mad r0.x, r0.z, c18.w, r1.y
+mul r0.z, r0.x, c19.x
 mul r3.xy, r3, r3
-add r3.x, r3, r3.y
-add r3.y, r5.x, r5
-rsq r3.x, r3.x
-rcp r3.x, r3.x
-mul r4.x, r3, c21
-mul_sat r3.x, r1.w, c14
-mul r1.w, r2, c14.x
-mad r1.w, r1, c24.x, r3.x
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-mul r3.z, r3.y, c21.x
-texldd r5.yw, r4.zwzw, s6, r4, r3.zwzw
-add r3.xy, r5.wyzw, c21.w
-mad_pp r1.xyz, r1.w, r2, r1
-texldd r2.xyz, r4.zwzw, s0, r4, r3.zwzw
-mul r3.xy, r3, c22
-add r0.xy, r0, r3
-mad r0.y, r0, c22.z, c22.x
-frc r0.y, r0
-add_pp r2.xyz, r2, -r1
-mul_sat r5.w, c12.x, c12.x
-mad_pp r1.xyz, r5.w, r2, r1
-mul r3.xy, r0.zwzw, c16.x
-mad r1.w, r0.y, c23.x, c23.y
-mad r5.x, r0, c22.w, c22
-sincos r0.xy, r1.w
-frc r0.y, r5.x
-mad r1.w, r0.y, c23.x, c23.y
-mov_pp r5.y, r0.x
-sincos r0.xy, r1.w
-dp4 r0.z, c1, c1
-mov_pp r5.xz, r0.yyxw
+add r1.y, r3.x, r3
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r4.x, r1.y, c21
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+add r0.z, r2, r2.w
+max r1.y, r1.x, r0.w
+rcp r2.w, r1.y
+min r1.y, r1.x, r0.w
+mul r1.y, r1, r2.w
+add r0.w, r1.x, -r0
 rsq r0.z, r0.z
-mul r0.xyz, r0.z, c1
-dp3_sat r0.z, v4, r0
-dp3_pp_sat r1.w, -r5, -c11
-add_pp r0.w, r1, -r0.z
-add r0.x, v0.w, c21.z
-frc r0.y, r0.x
-mad_pp r5.x, r5.w, r0.w, r0.z
-add_sat r5.y, r0.x, -r0
-texldd r0, r4.zwzw, s3, r4, r3.zwzw
-mov_pp r4.xyz, r0
-mul_pp r4.w, r0, r5.y
+rcp r0.z, r0.z
+mul r4.z, r0, c21.x
+mul r2.xy, r1.zwzw, c5.x
+mul r0.xy, r1.zwzw, c7.x
+mul r2.w, r1.y, r1.y
+mul r5.xy, r1.zwzw, c16.x
+texldd r0.xyz, r0, s2, r4.zwzw, r4
+texldd r2.xyz, r2, s1, r4.zwzw, r4
+add_pp r3.xyz, r2, -r0
+mov r2.xyz, v5
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c24
+mad_sat r2.y, r2, c24.z, c24.w
+mad_pp r0.xyz, r2.y, r3, r0
+mad r2.x, r2.w, c19.y, c19.z
+mad r3.x, r2, r2.w, c19.w
+mad r3.x, r3, r2.w, c20
+mul r3.y, v1.w, c8.x
+add_pp r2.xyz, -r0, c17.y
+mul_sat r3.y, r3, c18.z
+mad_pp r0.xyz, r3.y, r2, r0
+mad r3.x, r3, r2.w, c20.y
+mad r2.x, r3, r2.w, c20.z
+mul r1.y, r2.x, r1
+add r2.w, -r1.y, c20
+mul r0.xyz, v0, r0
+cmp r0.w, -r0, r1.y, r2
+mov r3.xyz, v8
+dp3 r1.y, v7, r3
+dp3 r1.x, v7, v7
+mad r2.w, -r1.y, r1.y, r1.x
+add r1.x, -r0.w, c18.w
+cmp r0.w, v5.z, r0, r1.x
+cmp r0.w, v5.x, r0, -r0
+mul r1.x, r0.w, c21
+rsq r2.w, r2.w
+rcp r2.w, r2.w
+mul r3.x, r2.w, r2.w
+mad r0.w, c13.x, c13.x, -r3.x
+rsq r3.x, r0.w
+add r0.w, -r2, c13.x
+add r5.z, r1.x, c21.y
+add_pp r2.xyz, -r0, c15
+cmp r2.w, r1.y, c17.y, c17.x
+rcp r3.x, r3.x
+cmp r0.w, r0, c17.y, c17.x
+mul_pp r0.w, r0, r2
+abs r2.w, v5.y
+add r1.y, r1, -r3.x
+add r3.y, -r2.w, c17
+mad r3.x, r2.w, c17.z, c17.w
+mad r3.x, r3, r2.w, c18
+cmp r1.y, -r0.w, v1.w, r1
+rsq r3.y, r3.y
+mad r2.w, r3.x, r2, c18.y
+rcp r3.y, r3.y
+mul r3.x, r2.w, r3.y
+cmp r2.w, v5.y, c17.x, c17.y
+mul r3.y, r2.w, r3.x
+mad r0.w, -r3.y, c18.z, r3.x
+mad r0.w, r2, c18, r0
+add r1.y, v1.w, -r1
+add r2.w, r1.y, c17.y
+mul r0.w, r0, c19.x
+mov r5.w, r0
+frc r3.x, r2.w
+add_sat r2.w, r2, -r3.x
+mul_sat r3.x, r1.y, c14
+mul r1.y, r2.w, c14.x
+mad r1.y, r1, c24.x, r3.x
+mad_pp r0.xyz, r1.y, r2, r0
+texldd r3.yw, r5.zwzw, s6, r4.zwzw, r4
+add r3.xy, r3.wyzw, c21.w
+texldd r2.xyz, r5.zwzw, s0, r4.zwzw, r4
+add_pp r2.xyz, r2, -r0
+mul_sat r2.w, c12.x, c12.x
+mul r3.xy, r3, c22
+mov r1.y, r0.w
+add r1.xy, r1, r3
+mad_pp r3.xyz, r2.w, r2, r0
+mad r0.x, r1.y, c22.z, c22
+frc r1.y, r0.x
+texldd r0, r5, s5, r4.zwzw, r4
+mad r2.x, r1.y, c23, c23.y
+mad r2.y, r1.x, c22.w, c22.x
+sincos r1.xy, r2.x
+frc r1.y, r2
+mad r2.x, r1.y, c23, c23.y
+mov_pp r2.y, r1.x
+sincos r1.xy, r2.x
+dp4 r1.z, c1, c1
+mov_pp r2.xz, r1.yyxw
+rsq r1.z, r1.z
+mul r1.xyz, r1.z, c1
+dp3_sat r1.z, v4, r1
+dp3_pp_sat r3.w, -r2, -c11
+add r1.x, v0.w, c21.z
+add_pp r1.w, r3, -r1.z
+frc r1.y, r1.x
+mad_pp r6.x, r2.w, r1.w, r1.z
+add_sat r2.x, r1, -r1.y
+texldd r1, r5.zwzw, s3, r4.zwzw, r4
+mul_pp r1.w, r1, r2.x
+mul_pp r2, r1, r0
+add_pp r2.xyz, r2, -r3
+mad_pp r2.xyz, r2.w, r2, r3
 mov r0.x, c2
 add r0.z, c17.y, -r0.x
 texldp r0.x, v3, s9
 mad r0.z, r0.x, r0, c2.x
-texld r2, r3, s5
-mul_pp r2, r4, r2
-add_pp r2.xyz, r2, -r1
+add_pp r2.w, r3, c23.z
 dp3 r0.x, v2, v2
-mad_pp r1.xyz, r2.w, r2, r1
-add_pp r1.w, r1, c23.z
-mul_pp r0.y, r5.x, c3.w
+mul_pp r0.y, r6.x, c3.w
 rcp r0.w, v2.w
-mad r5.xy, v2, r0.w, c21.y
-cmp r3.z, -v2, c17.x, c17.y
-texld r0.w, r5, s7
-mul_pp r0.w, r3.z, r0
+mad r6.xy, v2, r0.w, c21.y
+cmp r5.z, -v2, c17.x, c17.y
+texld r0.w, r6, s7
+mul_pp r0.w, r5.z, r0
 texld r0.x, r0.x, s8
 mul_pp r0.x, r0.w, r0
 mul_pp r0.w, r0.x, r0.z
 mul_pp r0.y, r0.w, r0
-mul_pp r2.w, r1, c3
+mul_pp r2.w, r2, c3
 mul_pp r0.w, r2, r0
 mul_pp_sat r0.w, r0, c23
-mul_pp_sat r3.z, r0.y, c18
+mul_pp_sat r5.z, r0.y, c18
 mov r0.x, c9
 add r0.xyz, c3, r0.x
-mad_sat r0.xyz, r0, r3.z, c0
+mad_sat r0.xyz, r0, r5.z, c0
 mul_pp r0.xyz, r0, v6.x
-mul r2.xyz, r0, c10.x
-mad_pp r2.xyz, r1, c4, r2
-texld r1, r3, s4
-mul_pp r1, r4, r1
+mul r3.xyz, r0, c10.x
+mad_pp r2.xyz, r2, c4, r3
+texldd r3, r5, s4, r4.zwzw, r4
+mul_pp r1, r1, r3
 mad_pp r1.xyz, -r2, r0, r1
 mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c17.y
@@ -109871,7 +109877,7 @@ SetTexture 5 [_CityLightOverlayDetailTex] 2D
 SetTexture 6 [_BumpMap] 2D
 SetTexture 7 [_ShadowMapTexture] 2D
 "ps_3_0
-; 184 ALU, 14 TEX
+; 184 ALU, 22 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -109904,126 +109910,126 @@ add_sat r0.w, r0, -r1
 mad r1.xyz, r0.w, r1, r0.zxyw
 add r0.w, r0.y, -r1.x
 add r0.w, r0, c16.y
-dsy r5.xy, v4
 add_pp r2.xyz, r0.yxzw, -r1
 frc r1.w, r0
 add_sat r0.y, r0.w, -r1.w
 mad_pp r1.xyz, r0.y, r2, r1
-mov r3.xyz, v4
-dp3_sat r1.w, v1, -r3
 abs_pp r0.y, r1.x
-rcp_pp r0.y, r0.y
-mul_pp r0.zw, r1.xyzy, r0.y
+rcp_pp r0.z, r0.y
+abs r0.y, v4.z
+mul_pp r0.zw, r1.xyzy, r0.z
+add r1.y, -r0, c16
+mad r1.x, r0.y, c16.z, c16.w
+mad r1.x, r0.y, r1, c17
 mov_pp r2.xy, c5
 mad_pp r0.zw, r0, c20.y, r2.xyxy
-mul r1.xy, r0.zwzw, c4.x
-mul r2.xy, r0.zwzw, c6.x
-add r2.w, r1, c23.y
-abs r0.y, v4.z
-mul r3.y, v1.w, c7.x
-mul r5.xy, r5, r5
-texld r2.xyz, r2, s2
-texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r2
-mad_sat r2.w, r2, c23.z, c23
-mad_pp r1.xyz, r2.w, r1, r2
+rsq r1.y, r1.y
+dsy r2.zw, v4.xyxy
+mul r2.zw, r2, r2
+mad r1.x, r0.y, r1, c17.y
+rcp r1.y, r1.y
+mul r1.y, r1.x, r1
+cmp r1.x, v4.z, c16, c16.y
+mul r1.z, r1.x, r1.y
+mad r1.y, -r1.z, c17.z, r1
+mad r1.x, r1, c17.w, r1.y
+mul r1.z, r1.x, c18.x
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsx r1.zw, v4.xyxy
+mul r1.zw, r1, r1
+add r1.z, r1, r1.w
+add r1.w, r2.z, r2
+rsq r1.z, r1.z
+rcp r1.z, r1.z
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r3.x, r1.w, c20
 max r1.w, r0.x, r0.y
-rcp r2.x, r1.w
+rcp r2.w, r1.w
 min r1.w, r0.x, r0.y
-mul r1.w, r1, r2.x
-mul r2.w, r1, r1
-add_pp r2.xyz, -r1, c16.y
-mul_sat r3.y, r3, c17.z
-mad_pp r1.xyz, r3.y, r2, r1
-mad r3.x, r2.w, c18.y, c18.z
-mad r2.x, r3, r2.w, c18.w
-mad r3.x, r2, r2.w, c19
-mad r3.w, r3.x, r2, c19.y
-mad r2.w, r3, r2, c19.z
-mul r1.w, r2, r1
-mov r3.xyz, v7
-mul r1.xyz, v0, r1
-mad r3.w, r0.y, c16.z, c16
-dp3 r3.x, v6, r3
-dp3 r4.x, v6, v6
-mad r3.y, -r3.x, r3.x, r4.x
-add r4.x, -r0.y, c16.y
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-rsq r4.x, r4.x
-add_pp r2.xyz, -r1, c14
-add r2.w, -r1, c19
+mul r1.w, r1, r2
 add r0.x, r0, -r0.y
+mul r3.z, r1, c20.x
+mul r2.xy, r0.zwzw, c4.x
+mul r1.xy, r0.zwzw, c6.x
+mul r2.w, r1, r1
+texldd r1.xyz, r1, s2, r3.zwzw, r3
+texldd r2.xyz, r2, s1, r3.zwzw, r3
+add_pp r4.xyz, r2, -r1
+mov r2.xyz, v4
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c23
+mad_sat r2.y, r2, c23.z, c23.w
+mad_pp r1.xyz, r2.y, r4, r1
+mad r2.x, r2.w, c18.y, c18.z
+mad r4.x, r2, r2.w, c18.w
+mad r4.x, r4, r2.w, c19
+mul r4.y, v1.w, c7.x
+add_pp r2.xyz, -r1, c16.y
+mul_sat r4.y, r4, c17.z
+mad_pp r1.xyz, r4.y, r2, r1
+mad r4.x, r4, r2.w, c19.y
+mad r2.x, r4, r2.w, c19.z
+mul r1.w, r2.x, r1
+add r2.w, -r1, c19
+mul r1.xyz, v0, r1
 cmp r0.x, -r0, r1.w, r2.w
-mul r3.z, r3.y, r3.y
-add r1.w, -r0.x, c17
-cmp r0.x, v4.z, r0, r1.w
-mad r3.w, r0.y, r3, c17.x
-mad r0.y, r0, r3.w, c17
-mad r2.w, c12.x, c12.x, -r3.z
+mov r4.xyz, v7
+dp3 r1.w, v6, r4
+dp3 r0.y, v6, v6
+mad r2.w, -r1, r1, r0.y
+add r0.y, -r0.x, c17.w
+cmp r0.x, v4.z, r0, r0.y
 rsq r2.w, r2.w
-rcp r1.w, r2.w
-add r3.z, r3.x, -r1.w
-cmp r2.w, r3.x, c16.y, c16.x
-add r1.w, -r3.y, c12.x
-abs r3.x, v4.y
-mad r3.y, r3.x, c16.z, c16.w
+rcp r0.y, r2.w
+mul r2.w, r0.y, r0.y
+mad r2.w, c12.x, c12.x, -r2
+rsq r4.x, r2.w
 cmp r0.x, v4, r0, -r0
 mul r0.x, r0, c20
-cmp r1.w, r1, c16.y, c16.x
-mul_pp r1.w, r1, r2
-cmp r1.w, -r1, v1, r3.z
+add r0.y, -r0, c12.x
+add r4.z, r0.x, c20.y
+add_pp r2.xyz, -r1, c14
+cmp r2.w, r1, c16.y, c16.x
+rcp r4.x, r4.x
+cmp r0.y, r0, c16, c16.x
+mul_pp r0.y, r0, r2.w
+abs r2.w, v4.y
+add r1.w, r1, -r4.x
+add r4.y, -r2.w, c16
+mad r4.x, r2.w, c16.z, c16.w
+mad r4.x, r4, r2.w, c17
+cmp r1.w, -r0.y, v1, r1
+rsq r4.y, r4.y
+mad r2.w, r4.x, r2, c17.y
+rcp r4.y, r4.y
+mul r4.x, r2.w, r4.y
+cmp r2.w, v4.y, c16.x, c16.y
+mul r4.y, r2.w, r4.x
+mad r0.y, -r4, c17.z, r4.x
+mad r0.y, r2.w, c17.w, r0
 add r1.w, v1, -r1
 add r2.w, r1, c16.y
-frc r5.z, r2.w
-add r3.z, -r3.x, c16.y
-mad r3.y, r3, r3.x, c17.x
-rsq r3.z, r3.z
-rcp r4.x, r4.x
-add r4.z, r0.x, c20.y
-mul r4.x, r0.y, r4
-cmp r3.w, v4.z, c16.x, c16.y
-mul r4.y, r3.w, r4.x
-add_sat r2.w, r2, -r5.z
-mad r3.x, r3.y, r3, c17.y
-rcp r3.z, r3.z
-mul r3.z, r3.x, r3
-cmp r3.x, v4.y, c16, c16.y
-mul r3.y, r3.x, r3.z
-mad r0.y, -r3, c17.z, r3.z
-mad r0.y, r3.x, c17.w, r0
-mad r3.y, -r4, c17.z, r4.x
-mad r3.x, r3.w, c17.w, r3.y
-mul r3.x, r3, c18
+frc r4.x, r2.w
+add_sat r2.w, r2, -r4.x
+mul_sat r4.x, r1.w, c13
 mul r0.y, r0, c18.x
-dsx r4.y, r3.x
-dsy r3.w, r3.x
-dsx r3.xy, v4
-mul r3.xy, r3, r3
-add r3.x, r3, r3.y
-add r3.y, r5.x, r5
-rsq r3.x, r3.x
-rcp r3.x, r3.x
-mul r4.x, r3, c20
-mul_sat r3.x, r1.w, c13
-mul r1.w, r2, c13.x
-mad r1.w, r1, c23.x, r3.x
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-mul r3.z, r3.y, c20.x
 mov r4.w, r0.y
-texldd r5.yw, r4.zwzw, s6, r4, r3.zwzw
-add r3.xy, r5.wyzw, c20.w
+mul r1.w, r2, c13.x
+mad r1.w, r1, c23.x, r4.x
+texldd r5.yw, r4.zwzw, s6, r3.zwzw, r3
+add r4.xy, r5.wyzw, c20.w
 mad_pp r1.xyz, r1.w, r2, r1
-texldd r2.xyz, r4.zwzw, s0, r4, r3.zwzw
-mul r3.xy, r3, c21
-add r0.xy, r0, r3
+texldd r2.xyz, r4.zwzw, s0, r3.zwzw, r3
+mul r4.xy, r4, c21
+add r0.xy, r0, r4
 mad r0.y, r0, c21.z, c21.x
 frc r0.y, r0
 add_pp r2.xyz, r2, -r1
 mul_sat r5.w, c11.x, c11.x
 mad_pp r2.xyz, r5.w, r2, r1
-mul r3.xy, r0.zwzw, c15.x
+mul r4.xy, r0.zwzw, c15.x
 mad r2.w, r0.y, c22.x, c22.y
 mad r5.x, r0, c21.w, c21
 sincos r0.xy, r2.w
@@ -110042,33 +110048,33 @@ add_pp r0.w, r2, -r0.z
 frc r0.y, r0.x
 mad_pp r5.x, r5.w, r0.w, r0.z
 add_sat r5.y, r0.x, -r0
-texldd r0, r4.zwzw, s3, r4, r3.zwzw
-mul_pp r3.z, r5.x, c2.w
-texldp r5.x, v2, s7
-mul_pp r3.w, r5.x, r3.z
-mov r3.z, c8.x
+texldd r0, r4.zwzw, s3, r3.zwzw, r3
 mul_pp r0.w, r0, r5.y
-texld r1, r3, s5
+texldd r1, r4, s5, r3.zwzw, r3
 mul_pp r1, r0, r1
 add_pp r1.xyz, r1, -r2
 mad_pp r1.xyz, r1.w, r1, r2
 add_pp r1.w, r2, c22.z
-mul_pp r2.w, r1, c2
-mul_pp_sat r3.w, r3, c17.z
-add r4.xyz, c2, r3.z
-mad_sat r4.xyz, r4, r3.w, c0
-mul_pp r4.xyz, r4, v5.x
-mul r2.xyz, r4, c9.x
-mad_pp r2.xyz, r1, c3, r2
-texld r1, r3, s4
-mul_pp r0, r0, r1
-mad_pp r0.xyz, -r2, r4, r0
-mul_pp r2.w, r2, r5.x
-mul_pp_sat r1.x, r2.w, c22.w
-add_pp r1.x, -r1, c16.y
-mul_pp r2.xyz, r2, r4
-mul_pp r0.w, r0, r1.x
-mad_pp oC0.xyz, r0.w, r0, r2
+mul_pp r4.z, r5.x, c2.w
+texldp r6.x, v2, s7
+mul_pp r4.w, r6.x, r4.z
+mov r4.z, c8.x
+mul_pp r1.w, r1, c2
+mul_pp r1.w, r1, r6.x
+mul_pp_sat r1.w, r1, c22
+mul_pp_sat r4.w, r4, c17.z
+add r5.xyz, c2, r4.z
+mad_sat r5.xyz, r5, r4.w, c0
+mul_pp r5.xyz, r5, v5.x
+mul r2.xyz, r5, c9.x
+mad_pp r1.xyz, r1, c3, r2
+texldd r2, r4, s4, r3.zwzw, r3
+mul_pp r0, r0, r2
+mad_pp r0.xyz, -r1, r5, r0
+add_pp r1.w, -r1, c16.y
+mul_pp r1.xyz, r1, r5
+mul_pp r0.w, r0, r1
+mad_pp oC0.xyz, r0.w, r0, r1
 mov_pp oC0.w, c16.y
 "
 }
@@ -110121,7 +110127,7 @@ SetTexture 6 [_BumpMap] 2D
 SetTexture 7 [_ShadowMapTexture] 2D
 SetTexture 8 [_LightTexture0] 2D
 "ps_3_0
-; 186 ALU, 15 TEX
+; 186 ALU, 23 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -110148,177 +110154,177 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r0.xyz, v5
-add r1.xyz, r0, -r0.zxyw
-add r0.w, r1.x, c16.y
+abs r1.xyz, v5
+add r0.xyz, r1, -r1.zxyw
+add r0.w, r0.x, c16.y
 frc r1.w, r0
 add_sat r0.w, r0, -r1
-mad r1.xyz, r0.w, r1, r0.zxyw
-add r0.w, r0.y, -r1.x
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r0.w, r1.y, -r0.x
 add r0.w, r0, c16.y
-dsy r5.xy, v5
-add_pp r2.xyz, r0.yxzw, -r1
 frc r1.w, r0
-add_sat r0.y, r0.w, -r1.w
-mad_pp r1.xyz, r0.y, r2, r1
-mov r3.xyz, v5
-dp3_sat r1.w, v1, -r3
-abs_pp r0.y, r1.x
-rcp_pp r0.y, r0.y
-mul_pp r0.zw, r1.xyzy, r0.y
+dsy r3.xy, v5
+add_pp r2.xyz, r1.yxzw, -r0
+add_sat r0.w, r0, -r1
+mad_pp r0.xyz, r0.w, r2, r0
+abs r0.w, v5.z
+add r1.y, -r0.w, c16
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+mad r0.z, r0.w, c16, c16.w
+mad r0.z, r0.w, r0, c17.x
+rsq r1.y, r1.y
+dsx r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+mad r0.z, r0.w, r0, c17.y
+rcp r1.y, r1.y
+mul r1.y, r0.z, r1
+cmp r0.z, v5, c16.x, c16.y
+mul r1.z, r0, r1.y
+mad r1.y, -r1.z, c17.z, r1
 mov_pp r2.xy, c5
-mad_pp r0.zw, r0, c20.y, r2.xyxy
-mul r1.xy, r0.zwzw, c4.x
-mul r2.xy, r0.zwzw, c6.x
-add r2.w, r1, c23.y
-abs r0.y, v5.z
-mul r3.y, v1.w, c7.x
-mul r5.xy, r5, r5
-texld r2.xyz, r2, s2
-texld r1.xyz, r1, s1
-add_pp r1.xyz, r1, -r2
-mad_sat r2.w, r2, c23.z, c23
-mad_pp r1.xyz, r2.w, r1, r2
-max r1.w, r0.x, r0.y
-rcp r2.x, r1.w
-min r1.w, r0.x, r0.y
-mul r1.w, r1, r2.x
-mul r2.w, r1, r1
-add_pp r2.xyz, -r1, c16.y
-mul_sat r3.y, r3, c17.z
-mad_pp r1.xyz, r3.y, r2, r1
-mad r3.x, r2.w, c18.y, c18.z
-mad r2.x, r3, r2.w, c18.w
-mad r3.x, r2, r2.w, c19
-mad r3.w, r3.x, r2, c19.y
-mad r2.w, r3, r2, c19.z
-mul r1.w, r2, r1
-mov r3.xyz, v8
-mul r1.xyz, v0, r1
-mad r3.w, r0.y, c16.z, c16
-dp3 r3.x, v7, r3
-dp3 r4.x, v7, v7
-mad r3.y, -r3.x, r3.x, r4.x
-add r4.x, -r0.y, c16.y
-rsq r3.y, r3.y
-rcp r3.y, r3.y
-rsq r4.x, r4.x
-add_pp r2.xyz, -r1, c14
-add r2.w, -r1, c19
-add r0.x, r0, -r0.y
-cmp r0.x, -r0, r1.w, r2.w
-mul r3.z, r3.y, r3.y
-add r1.w, -r0.x, c17
-cmp r0.x, v5.z, r0, r1.w
-mad r3.w, r0.y, r3, c17.x
-mad r0.y, r0, r3.w, c17
-mad r2.w, c12.x, c12.x, -r3.z
-rsq r2.w, r2.w
-rcp r1.w, r2.w
-add r3.z, r3.x, -r1.w
-cmp r2.w, r3.x, c16.y, c16.x
-add r1.w, -r3.y, c12.x
-abs r3.x, v5.y
-mad r3.y, r3.x, c16.z, c16.w
-cmp r0.x, v5, r0, -r0
-mul r0.x, r0, c20
-cmp r1.w, r1, c16.y, c16.x
-mul_pp r1.w, r1, r2
-cmp r1.w, -r1, v1, r3.z
-add r1.w, v1, -r1
-add r2.w, r1, c16.y
-frc r5.z, r2.w
-add r3.z, -r3.x, c16.y
-mad r3.y, r3, r3.x, c17.x
-rsq r3.z, r3.z
-rcp r4.x, r4.x
-add r4.z, r0.x, c20.y
-mul r4.x, r0.y, r4
-cmp r3.w, v5.z, c16.x, c16.y
-mul r4.y, r3.w, r4.x
-add_sat r2.w, r2, -r5.z
-mad r3.x, r3.y, r3, c17.y
-rcp r3.z, r3.z
-mul r3.z, r3.x, r3
-cmp r3.x, v5.y, c16, c16.y
-mul r3.y, r3.x, r3.z
-mad r0.y, -r3, c17.z, r3.z
-mad r0.y, r3.x, c17.w, r0
-mad r3.y, -r4, c17.z, r4.x
-mad r3.x, r3.w, c17.w, r3.y
-mul r3.x, r3, c18
-mul r0.y, r0, c18.x
-mov r4.w, r0.y
-dsx r4.y, r3.x
-dsy r3.w, r3.x
-dsx r3.xy, v5
+mad_pp r1.zw, r0.xyxy, c20.y, r2.xyxy
+mad r0.x, r0.z, c17.w, r1.y
+mul r0.z, r0.x, c18.x
 mul r3.xy, r3, r3
-add r3.x, r3, r3.y
-add r3.y, r5.x, r5
-rsq r3.x, r3.x
+add r1.y, r3.x, r3
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r4.x, r1.y, c20
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+add r0.z, r2, r2.w
+max r1.y, r1.x, r0.w
+rcp r2.w, r1.y
+min r1.y, r1.x, r0.w
+mul r1.y, r1, r2.w
+add r0.w, r1.x, -r0
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r4.z, r0, c20.x
+mul r2.xy, r1.zwzw, c4.x
+mul r0.xy, r1.zwzw, c6.x
+mul r2.w, r1.y, r1.y
+mul r5.xy, r1.zwzw, c15.x
+texldd r0.xyz, r0, s2, r4.zwzw, r4
+texldd r2.xyz, r2, s1, r4.zwzw, r4
+add_pp r3.xyz, r2, -r0
+mov r2.xyz, v5
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c23
+mad_sat r2.y, r2, c23.z, c23.w
+mad_pp r0.xyz, r2.y, r3, r0
+mad r2.x, r2.w, c18.y, c18.z
+mad r3.x, r2, r2.w, c18.w
+mad r3.x, r3, r2.w, c19
+mul r3.y, v1.w, c7.x
+add_pp r2.xyz, -r0, c16.y
+mul_sat r3.y, r3, c17.z
+mad_pp r0.xyz, r3.y, r2, r0
+mad r3.x, r3, r2.w, c19.y
+mad r2.x, r3, r2.w, c19.z
+mul r1.y, r2.x, r1
+add r2.w, -r1.y, c19
+mul r0.xyz, v0, r0
+cmp r0.w, -r0, r1.y, r2
+mov r3.xyz, v8
+dp3 r1.y, v7, r3
+dp3 r1.x, v7, v7
+mad r2.w, -r1.y, r1.y, r1.x
+add r1.x, -r0.w, c17.w
+cmp r0.w, v5.z, r0, r1.x
+cmp r0.w, v5.x, r0, -r0
+mul r1.x, r0.w, c20
+rsq r2.w, r2.w
+rcp r2.w, r2.w
+mul r3.x, r2.w, r2.w
+mad r0.w, c12.x, c12.x, -r3.x
+rsq r3.x, r0.w
+add r0.w, -r2, c12.x
+add r5.z, r1.x, c20.y
+add_pp r2.xyz, -r0, c14
+cmp r2.w, r1.y, c16.y, c16.x
 rcp r3.x, r3.x
-mul r4.x, r3, c20
-mul_sat r3.x, r1.w, c13
-mul r1.w, r2, c13.x
-mad r1.w, r1, c23.x, r3.x
+cmp r0.w, r0, c16.y, c16.x
+mul_pp r0.w, r0, r2
+abs r2.w, v5.y
+add r1.y, r1, -r3.x
+add r3.y, -r2.w, c16
+mad r3.x, r2.w, c16.z, c16.w
+mad r3.x, r3, r2.w, c17
+cmp r1.y, -r0.w, v1.w, r1
 rsq r3.y, r3.y
+mad r2.w, r3.x, r2, c17.y
 rcp r3.y, r3.y
-mul r3.z, r3.y, c20.x
-texldd r5.yw, r4.zwzw, s6, r4, r3.zwzw
-add r3.xy, r5.wyzw, c20.w
-mad_pp r1.xyz, r1.w, r2, r1
-texldd r2.xyz, r4.zwzw, s0, r4, r3.zwzw
+mul r3.x, r2.w, r3.y
+cmp r2.w, v5.y, c16.x, c16.y
+mul r3.y, r2.w, r3.x
+mad r0.w, -r3.y, c17.z, r3.x
+mad r0.w, r2, c17, r0
+add r1.y, v1.w, -r1
+add r2.w, r1.y, c16.y
+mul r0.w, r0, c18.x
+mov r5.w, r0
+frc r3.x, r2.w
+add_sat r2.w, r2, -r3.x
+mul_sat r3.x, r1.y, c13
+mul r1.y, r2.w, c13.x
+mad r1.y, r1, c23.x, r3.x
+mad_pp r0.xyz, r1.y, r2, r0
+texldd r3.yw, r5.zwzw, s6, r4.zwzw, r4
+add r3.xy, r3.wyzw, c20.w
+texldd r2.xyz, r5.zwzw, s0, r4.zwzw, r4
+add_pp r2.xyz, r2, -r0
+mul_sat r2.w, c11.x, c11.x
 mul r3.xy, r3, c21
-add r0.xy, r0, r3
-mad r0.y, r0, c21.z, c21.x
-frc r0.y, r0
-add_pp r2.xyz, r2, -r1
-mul_sat r5.w, c11.x, c11.x
-mad_pp r2.xyz, r5.w, r2, r1
-mul r3.xy, r0.zwzw, c15.x
-mad r2.w, r0.y, c22.x, c22.y
-mad r5.x, r0, c21.w, c21
-sincos r0.xy, r2.w
-frc r0.y, r5.x
-mad r2.w, r0.y, c22.x, c22.y
-mov_pp r5.y, r0.x
-sincos r0.xy, r2.w
-dp4_pp r0.z, c1, c1
-mov_pp r5.xz, r0.yyxw
-rsq_pp r0.z, r0.z
-mul_pp r0.xyz, r0.z, c1
-dp3_sat r0.z, v4, r0
-dp3_pp_sat r2.w, -r5, -c10
-add r0.x, v0.w, c20.z
-add_pp r0.w, r2, -r0.z
-frc r0.y, r0.x
-mad_pp r5.x, r5.w, r0.w, r0.z
-add_sat r5.y, r0.x, -r0
-texldd r0, r4.zwzw, s3, r4, r3.zwzw
-mov_pp r4.xyz, r0
-mul_pp r4.w, r0, r5.y
-texld r1, r3, s5
-mul_pp r1, r4, r1
-add_pp r1.xyz, r1, -r2
-mad_pp r1.xyz, r1.w, r1, r2
-add_pp r1.w, r2, c22.z
+mov r1.y, r0.w
+add r1.xy, r1, r3
+mad_pp r3.xyz, r2.w, r2, r0
+mad r0.x, r1.y, c21.z, c21
+frc r1.y, r0.x
+texldd r0, r5, s5, r4.zwzw, r4
+mad r2.x, r1.y, c22, c22.y
+mad r2.y, r1.x, c21.w, c21.x
+sincos r1.xy, r2.x
+frc r1.y, r2
+mad r2.x, r1.y, c22, c22.y
+mov_pp r2.y, r1.x
+sincos r1.xy, r2.x
+dp4_pp r1.z, c1, c1
+mov_pp r2.xz, r1.yyxw
+rsq_pp r1.z, r1.z
+mul_pp r1.xyz, r1.z, c1
+dp3_sat r1.z, v4, r1
+dp3_pp_sat r3.w, -r2, -c10
+add r1.x, v0.w, c20.z
+add_pp r1.w, r3, -r1.z
+frc r1.y, r1.x
+mad_pp r6.x, r2.w, r1.w, r1.z
+add_sat r2.x, r1, -r1.y
+texldd r1, r5.zwzw, s3, r4.zwzw, r4
+mul_pp r1.w, r1, r2.x
+mul_pp r2, r1, r0
+add_pp r2.xyz, r2, -r3
+mad_pp r2.xyz, r2.w, r2, r3
+add_pp r2.w, r3, c22.z
 texldp r0.x, v3, s7
 texld r0.w, v2, s8
 mul r0.w, r0, r0.x
-mul_pp r0.y, r5.x, c2.w
+mul_pp r0.y, r6.x, c2.w
 mul_pp r0.y, r0.w, r0
-mul_pp r2.w, r1, c2
+mul_pp r2.w, r2, c2
 mul_pp r0.w, r2, r0
 mul_pp_sat r0.w, r0, c22
-mul_pp_sat r3.z, r0.y, c17
+mul_pp_sat r5.z, r0.y, c17
 mov r0.x, c8
 add r0.xyz, c2, r0.x
-mad_sat r0.xyz, r0, r3.z, c0
+mad_sat r0.xyz, r0, r5.z, c0
 mul_pp r0.xyz, r0, v6.x
-mul r2.xyz, r0, c9.x
-mad_pp r2.xyz, r1, c3, r2
-texld r1, r3, s4
-mul_pp r1, r4, r1
+mul r3.xyz, r0, c9.x
+mad_pp r2.xyz, r2, c3, r3
+texldd r3, r5, s4, r4.zwzw, r4
+mul_pp r1, r1, r3
 mad_pp r1.xyz, -r2, r0, r1
 mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c16.y
@@ -110378,7 +110384,7 @@ SetTexture 6 [_BumpMap] 2D
 SetTexture 7 [_ShadowMapTexture] CUBE
 SetTexture 8 [_LightTexture0] 2D
 "ps_3_0
-; 195 ALU, 15 TEX
+; 195 ALU, 23 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -110407,135 +110413,135 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r4.xyz, v5
-add r0.xyz, r4, -r4.zxyw
+abs r5.xyz, v5
+add r0.xyz, r5, -r5.zxyw
 add r0.w, r0.x, c18.y
 frc r1.x, r0.w
 add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r4.zxyw
-add r0.w, r4.y, -r0.x
+mad r0.xyz, r0.w, r0, r5.zxyw
+add r0.w, r5.y, -r0.x
 add r0.w, r0, c18.y
 frc r1.x, r0.w
+add_pp r2.xyz, r5.yxzw, -r0
 add_sat r0.w, r0, -r1.x
-add_pp r2.xyz, r4.yxzw, -r0
 mad_pp r0.xyz, r0.w, r2, r0
-mov r3.xyz, v5
-dp3_sat r0.w, v1, -r3
+abs r0.w, v5.z
 abs_pp r0.x, r0
-rcp_pp r0.x, r0.x
-add r0.w, r0, c26.z
-mul_pp r0.xy, r0.zyzw, r0.x
+rcp_pp r1.z, r0.x
+add r1.x, -r0.w, c18.y
+mad r0.x, r0.w, c18.z, c18.w
+mad r0.x, r0.w, r0, c19
+rsq r1.x, r1.x
+mul_pp r1.zw, r0.xyzy, r1.z
+mad r0.x, r0.w, r0, c19.y
+rcp r1.x, r1.x
+mul r1.x, r0, r1
+cmp r0.x, v5.z, c18, c18.y
+mul r1.y, r0.x, r1.x
+mad r0.y, -r1, c19.z, r1.x
 mov_pp r1.xy, c7
-mad_pp r2.xy, r0, c22.y, r1
+mad_pp r2.xy, r1.zwzw, c22.y, r1
+mad r0.x, r0, c19.w, r0.y
+mul r0.z, r0.x, c20.x
+dsx r1.zw, v5.xyxy
+dsy r1.xy, v5
+mul r1.xy, r1, r1
+add r1.x, r1, r1.y
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+mul r4.x, r1, c22
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+mul r1.zw, r1, r1
+add r0.z, r1, r1.w
+mov r3.xyz, v5
+dp3_sat r1.w, v1, -r3
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r4.z, r0, c22.x
 mul r0.xy, r2, c6.x
 mul r1.xy, r2, c8.x
-texld r1.xyz, r1, s2
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_sat r0.w, r0, c27.x, c27.y
-mad_pp r0.xyz, r0.w, r0, r1
-mul r0.w, v1, c9.x
-add_pp r1.xyz, -r0, c18.y
-mul_sat r0.w, r0, c19.z
-mad_pp r0.xyz, r0.w, r1, r0
-mul r1.xyz, v0, r0
-abs r0.w, v5.z
-max r0.x, r4, r0.w
-rcp r0.y, r0.x
-min r0.x, r4, r0.w
-mul r1.w, r0.x, r0.y
+texldd r1.xyz, r1, s2, r4.zwzw, r4
+texldd r0.xyz, r0, s1, r4.zwzw, r4
+add_pp r3.xyz, r0, -r1
+add r2.w, r1, c26.z
 mov r0.xyz, v8
-dp3 r0.x, v7, r0
+dp3 r1.w, v7, r0
+mad_sat r0.x, r2.w, c27, c27.y
+mad_pp r0.xyz, r0.x, r3, r1
 dp3 r2.z, v7, v7
-mad r0.y, -r0.x, r0.x, r2.z
-mul r0.z, r1.w, r1.w
-mad r2.z, r0, c20.y, c20
-mad r2.z, r2, r0, c20.w
-mad r2.z, r2, r0, c21.x
-mad r2.z, r2, r0, c21.y
-mad r0.z, r2, r0, c21
-mul r0.z, r0, r1.w
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r2.w, r0.y, r0.y
-mad r2.w, c14.x, c14.x, -r2
-rsq r2.w, r2.w
-rcp r2.z, r2.w
-add_pp r3.xyz, -r1, c16
-add r2.z, r0.x, -r2
-cmp r1.w, r0.x, c18.y, c18.x
-add r0.y, -r0, c14.x
-cmp r0.x, r0.y, c18.y, c18
-mul_pp r0.x, r0, r1.w
-cmp r1.w, -r0.x, v1, r2.z
-add r2.z, -r0.w, c18.y
+mad r2.z, -r1.w, r1.w, r2
 rsq r2.z, r2.z
-add r0.y, -r0.z, c21.w
-add r0.x, r4, -r0.w
-cmp r0.x, -r0, r0.z, r0.y
-add r0.z, v1.w, -r1.w
-add r1.w, r0.z, c18.y
-add r0.y, -r0.x, c19.w
-cmp r0.x, v5.z, r0, r0.y
-frc r0.y, r1.w
-add_sat r0.y, r1.w, -r0
-cmp r0.x, v5, r0, -r0
-mul r4.x, r0, c22
-mad r1.w, r0, c18.z, c18
-mad r1.w, r0, r1, c19.x
-abs r0.x, v5.y
-add r5.z, r4.x, c22.y
-mad r0.w, r0, r1, c19.y
 rcp r2.z, r2.z
-mul r1.w, r0, r2.z
-cmp r0.w, v5.z, c18.x, c18.y
-mul r2.z, r0.w, r1.w
-mul_sat r0.z, r0, c15.x
-mul r0.y, r0, c15.x
-mad r0.y, r0, c26, r0.z
-mad_pp r1.xyz, r0.y, r3, r1
+mul r2.w, r2.z, r2.z
+mul r3.x, v1.w, c9
+add r2.z, -r2, c14.x
+add_pp r1.xyz, -r0, c18.y
+mul_sat r3.x, r3, c19.z
+mad_pp r0.xyz, r3.x, r1, r0
+mad r1.x, c14, c14, -r2.w
+rsq r2.w, r1.x
+mul r0.xyz, v0, r0
+rcp r3.x, r2.w
+add_pp r1.xyz, -r0, c16
+cmp r2.w, r1, c18.y, c18.x
+cmp r2.z, r2, c18.y, c18.x
+mul_pp r2.z, r2, r2.w
+add r2.w, r1, -r3.x
+cmp r2.w, -r2.z, v1, r2
+max r1.w, r5.x, r0
+rcp r2.z, r1.w
+min r1.w, r5.x, r0
+mul r1.w, r1, r2.z
+mul r2.z, r1.w, r1.w
+add r2.w, v1, -r2
+add r3.y, r2.w, c18
+frc r3.z, r3.y
+add_sat r3.y, r3, -r3.z
+mad r3.x, r2.z, c20.y, c20.z
+mad r3.x, r3, r2.z, c20.w
+mad r3.x, r3, r2.z, c21
+mad r3.x, r3, r2.z, c21.y
+mad r2.z, r3.x, r2, c21
+mul r1.w, r2.z, r1
+mul r3.y, r3, c15.x
+mul_sat r2.w, r2, c15.x
+mad r2.w, r3.y, c26.y, r2
+mad_pp r1.xyz, r2.w, r1, r0
+add r0.x, r5, -r0.w
+add r0.y, -r1.w, c21.w
+cmp r0.w, -r0.x, r1, r0.y
+abs r0.x, v5.y
+add r1.w, -r0, c19
 add r0.z, -r0.x, c18.y
 mad r0.y, r0.x, c18.z, c18.w
 mad r0.y, r0, r0.x, c19.x
 rsq r0.z, r0.z
+cmp r0.w, v5.z, r0, r1
 mad r0.x, r0.y, r0, c19.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
 cmp r0.x, v5.y, c18, c18.y
 mul r0.z, r0.x, r0.y
 mad r0.y, -r0.z, c19.z, r0
-mad r0.z, -r2, c19, r1.w
+cmp r0.z, v5.x, r0.w, -r0.w
+mul r5.x, r0.z, c22
 mad r0.x, r0, c19.w, r0.y
-mad r0.y, r0.w, c19.w, r0.z
 mul r0.w, r0.x, c20.x
-mul r0.x, r0.y, c20
-dsy r2.zw, v5.xyxy
+add r5.z, r5.x, c22.y
 mov r5.w, r0
-dsx r5.y, r0.x
-dsy r4.w, r0.x
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-mul r2.zw, r2, r2
-add r0.y, r2.z, r2.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r4.z, r0.y, c22.x
-mul r5.x, r0, c22
-texldd r3.yw, r5.zwzw, s6, r5, r4.zwzw
-add r2.zw, r3.xywy, c22.w
-texldd r0.xyz, r5.zwzw, s0, r5, r4.zwzw
+texldd r3.yw, r5.zwzw, s6, r4.zwzw, r4
+texldd r0.xyz, r5.zwzw, s0, r4.zwzw, r4
 add_pp r0.xyz, r0, -r1
-mul_sat r3.w, c13.x, c13.x
-mad_pp r3.xyz, r3.w, r0, r1
+add r2.zw, r3.xywy, c22.w
+mul_sat r6.x, c13, c13
+mad_pp r3.xyz, r6.x, r0, r1
 mul r0.xy, r2.zwzw, c23
-mov r4.y, r0.w
-add r1.xy, r4, r0
-mul r4.xy, r2, c17.x
+mov r5.y, r0.w
+add r1.xy, r5, r0
+mul r5.xy, r2, c17.x
 mad r1.y, r1, c23.z, c23.x
-texld r0, r4, s5
+texldd r0, r5, s5, r4.zwzw, r4
 mad r1.z, r1.x, c23.w, c23.x
 frc r1.y, r1
 mad r1.x, r1.y, c24, c24.y
@@ -110548,47 +110554,47 @@ mov_pp r2.xz, r1.yyxw
 dp4 r1.z, c1, c1
 rsq r1.x, r1.z
 mul r1.xyz, r1.x, c1
-dp3_pp_sat r6.x, -r2, -c12
+dp3_pp_sat r3.w, -r2, -c12
 dp3_sat r6.y, v4, r1
 add r1.w, v0, c22.z
 frc r1.x, r1.w
 add_sat r2.x, r1.w, -r1
-texldd r1, r5.zwzw, s3, r5, r4.zwzw
+texldd r1, r5.zwzw, s3, r4.zwzw, r4
 mul_pp r1.w, r1, r2.x
 mul_pp r2, r1, r0
 add_pp r2.xyz, r2, -r3
 mad_pp r2.xyz, r2.w, r2, r3
+add_pp r6.z, r3.w, -r6.y
+mad_pp r0.y, r6.x, r6.z, r6
 dp3 r0.x, v3, v3
-rsq r4.z, r0.x
-add_pp r6.z, r6.x, -r6.y
-mad_pp r0.y, r3.w, r6.z, r6
-mul_pp r3.w, r0.y, c4
+rsq r5.w, r0.x
+mul_pp r5.z, r0.y, c4.w
 texld r0, v3, s7
 dp4 r0.y, r0, c25
-rcp r4.z, r4.z
-mul r0.x, r4.z, c2.w
+add_pp r2.w, r3, c24.z
+rcp r5.w, r5.w
+mul r0.x, r5.w, c2.w
 mad r0.y, -r0.x, c24.w, r0
 mov r0.z, c3.x
 dp3 r0.x, v2, v2
 cmp r0.y, r0, c18, r0.z
 texld r0.x, r0.x, s8
 mul r0.w, r0.x, r0.y
-mul_pp r0.y, r0.w, r3.w
-mul_pp_sat r3.w, r0.y, c19.z
+mul_pp r0.y, r0.w, r5.z
+mul_pp r2.w, r2, c4
+mul_pp r0.w, r2, r0
+mul_pp_sat r0.w, r0, c26.x
+mul_pp_sat r5.z, r0.y, c19
 mov r0.x, c10
 add r0.xyz, c4, r0.x
-mad_sat r0.xyz, r0, r3.w, c0
+mad_sat r0.xyz, r0, r5.z, c0
 mul_pp r0.xyz, r0, v6.x
 mul r3.xyz, r0, c11.x
-add_pp r2.w, r6.x, c24.z
-mul_pp r3.w, r2, c4
-mad_pp r3.xyz, r2, c5, r3
-texld r2, r4, s4
-mul_pp r1, r1, r2
-mul_pp r0.w, r3, r0
-mul_pp_sat r0.w, r0, c26.x
-mad_pp r1.xyz, -r3, r0, r1
-mul_pp r2.xyz, r3, r0
+mad_pp r2.xyz, r2, c5, r3
+texldd r3, r5, s4, r4.zwzw, r4
+mul_pp r1, r1, r3
+mad_pp r1.xyz, -r2, r0, r1
+mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c18.y
 mul_pp r0.x, r1.w, r0.w
 mad_pp oC0.xyz, r0.x, r1, r2
@@ -110647,7 +110653,7 @@ SetTexture 7 [_ShadowMapTexture] CUBE
 SetTexture 8 [_LightTextureB0] 2D
 SetTexture 9 [_LightTexture0] CUBE
 "ps_3_0
-; 196 ALU, 16 TEX
+; 196 ALU, 24 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -110686,181 +110692,181 @@ mad r0.xyz, r0.w, r0, r1.zxyw
 add r0.w, r1.y, -r0.x
 add r0.w, r0, c18.y
 frc r1.w, r0
-dsy r5.xy, v5
+dsy r3.xy, v5
 add_pp r2.xyz, r1.yxzw, -r0
 add_sat r0.w, r0, -r1
 mad_pp r0.xyz, r0.w, r2, r0
-mov r3.xyz, v5
-dp3_sat r1.y, v1, -r3
-add r2.w, r1.y, c26.z
 abs r0.w, v5.z
+add r1.y, -r0.w, c18
 abs_pp r0.x, r0
 rcp_pp r0.x, r0.x
-mul r3.y, v1.w, c9.x
-mul r5.xy, r5, r5
 mul_pp r0.xy, r0.zyzw, r0.x
-mov_pp r1.zw, c7.xyxy
-mad_pp r1.zw, r0.xyxy, c22.y, r1
-mul r0.xy, r1.zwzw, c6.x
-mul r2.xy, r1.zwzw, c8.x
-texld r2.xyz, r2, s2
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r2
-mad_sat r2.w, r2, c27.x, c27.y
-mad_pp r0.xyz, r2.w, r0, r2
+mad r0.z, r0.w, c18, c18.w
+mad r0.z, r0.w, r0, c19.x
+rsq r1.y, r1.y
+dsx r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+mad r0.z, r0.w, r0, c19.y
+rcp r1.y, r1.y
+mul r1.y, r0.z, r1
+cmp r0.z, v5, c18.x, c18.y
+mul r1.z, r0, r1.y
+mad r1.y, -r1.z, c19.z, r1
+mov_pp r2.xy, c7
+mad_pp r1.zw, r0.xyxy, c22.y, r2.xyxy
+mad r0.x, r0.z, c19.w, r1.y
+mul r0.z, r0.x, c20.x
+mul r3.xy, r3, r3
+add r1.y, r3.x, r3
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r4.x, r1.y, c22
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+add r0.z, r2, r2.w
 max r1.y, r1.x, r0.w
-rcp r2.x, r1.y
+rcp r2.w, r1.y
 min r1.y, r1.x, r0.w
-mul r1.y, r1, r2.x
+mul r1.y, r1, r2.w
+add r0.w, r1.x, -r0
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r4.z, r0, c22.x
+mul r2.xy, r1.zwzw, c6.x
+mul r0.xy, r1.zwzw, c8.x
 mul r2.w, r1.y, r1.y
+mul r5.xy, r1.zwzw, c17.x
+texldd r0.xyz, r0, s2, r4.zwzw, r4
+texldd r2.xyz, r2, s1, r4.zwzw, r4
+add_pp r3.xyz, r2, -r0
+mov r2.xyz, v5
+dp3_sat r2.x, v1, -r2
+add r2.y, r2.x, c26.z
+mad_sat r2.y, r2, c27.x, c27
+mad_pp r0.xyz, r2.y, r3, r0
+mad r2.x, r2.w, c20.y, c20.z
+mad r3.x, r2, r2.w, c20.w
+mad r3.x, r3, r2.w, c21
+mul r3.y, v1.w, c9.x
 add_pp r2.xyz, -r0, c18.y
 mul_sat r3.y, r3, c19.z
 mad_pp r0.xyz, r3.y, r2, r0
-mad r3.x, r2.w, c20.y, c20.z
-mad r2.x, r3, r2.w, c20.w
-mad r2.x, r2, r2.w, c21
-mad r3.w, r2.x, r2, c21.y
-mov r2.xyz, v8
-dp3 r2.x, v7, r2
-mad r2.y, r3.w, r2.w, c21.z
-mul r1.y, r2, r1
+mad r3.x, r3, r2.w, c21.y
+mad r2.x, r3, r2.w, c21.z
+mul r1.y, r2.x, r1
+add r2.w, -r1.y, c21
 mul r0.xyz, v0, r0
-dp3 r4.x, v7, v7
-mad r2.z, -r2.x, r2.x, r4.x
-add r4.x, -r0.w, c18.y
-rsq r2.z, r2.z
-rcp r2.z, r2.z
-rsq r4.x, r4.x
-add_pp r3.xyz, -r0, c16
-add r2.y, -r1, c21.w
-add r1.x, r1, -r0.w
-cmp r1.x, -r1, r1.y, r2.y
-mul r2.w, r2.z, r2.z
-mad r2.y, c14.x, c14.x, -r2.w
-add r1.y, -r1.x, c19.w
-cmp r1.x, v5.z, r1, r1.y
-rsq r2.y, r2.y
-rcp r1.y, r2.y
-add r2.y, r2.x, -r1
-add r1.y, -r2.z, c14.x
-mad r2.w, r0, c18.z, c18
-mad r2.w, r0, r2, c19.x
-mad r0.w, r0, r2, c19.y
-cmp r1.x, v5, r1, -r1
-mul r1.x, r1, c22
-rcp r4.x, r4.x
-add r4.z, r1.x, c22.y
-mul r4.x, r0.w, r4
-cmp r2.w, v5.z, c18.x, c18.y
-mul r4.y, r2.w, r4.x
-cmp r2.x, r2, c18.y, c18
-cmp r1.y, r1, c18, c18.x
-mul_pp r1.y, r1, r2.x
-abs r2.x, v5.y
-cmp r1.y, -r1, v1.w, r2
+cmp r0.w, -r0, r1.y, r2
+mov r3.xyz, v8
+dp3 r1.y, v7, r3
+dp3 r1.x, v7, v7
+mad r2.w, -r1.y, r1.y, r1.x
+add r1.x, -r0.w, c19.w
+cmp r0.w, v5.z, r0, r1.x
+cmp r0.w, v5.x, r0, -r0
+mul r1.x, r0.w, c22
+rsq r2.w, r2.w
+rcp r2.w, r2.w
+mul r3.x, r2.w, r2.w
+mad r0.w, c14.x, c14.x, -r3.x
+rsq r3.x, r0.w
+add r0.w, -r2, c14.x
+add r5.z, r1.x, c22.y
+add_pp r2.xyz, -r0, c16
+cmp r2.w, r1.y, c18.y, c18.x
+rcp r3.x, r3.x
+cmp r0.w, r0, c18.y, c18.x
+mul_pp r0.w, r0, r2
+abs r2.w, v5.y
+add r1.y, r1, -r3.x
+add r3.y, -r2.w, c18
+mad r3.x, r2.w, c18.z, c18.w
+mad r3.x, r3, r2.w, c19
+cmp r1.y, -r0.w, v1.w, r1
+rsq r3.y, r3.y
+mad r2.w, r3.x, r2, c19.y
+rcp r3.y, r3.y
+mul r3.x, r2.w, r3.y
+cmp r2.w, v5.y, c18.x, c18.y
+mul r3.y, r2.w, r3.x
+mad r0.w, -r3.y, c19.z, r3.x
+mad r0.w, r2, c19, r0
 add r1.y, v1.w, -r1
-add r3.w, r1.y, c18.y
-frc r5.z, r3.w
-add r2.z, -r2.x, c18.y
-mad r2.y, r2.x, c18.z, c18.w
-mad r2.y, r2, r2.x, c19.x
-rsq r2.z, r2.z
-add_sat r3.w, r3, -r5.z
-mad r2.x, r2.y, r2, c19.y
-rcp r2.z, r2.z
-mul r2.z, r2.x, r2
-cmp r2.x, v5.y, c18, c18.y
-mul r2.y, r2.x, r2.z
-mad r0.w, -r2.y, c19.z, r2.z
-mad r2.y, -r4, c19.z, r4.x
-mad r0.w, r2.x, c19, r0
-mad r2.x, r2.w, c19.w, r2.y
-mul r2.x, r2, c20
+add r2.w, r1.y, c18.y
 mul r0.w, r0, c20.x
-add r2.z, r5.x, r5.y
-dsx r4.xy, v5
-mul r4.xy, r4, r4
-mov r4.w, r0
-dsx r2.w, r2.x
-dsy r2.y, r2.x
-add r2.x, r4, r4.y
-rsq r2.z, r2.z
-rsq r2.x, r2.x
-rcp r4.x, r2.z
-rcp r2.x, r2.x
-mul r2.z, r2.x, c22.x
-mul r2.x, r4, c22
-mul_sat r4.x, r1.y, c15
-mul r1.y, r3.w, c15.x
-mad r1.y, r1, c26, r4.x
-mad_pp r0.xyz, r1.y, r3, r0
-texldd r5.yw, r4.zwzw, s6, r2.zwzw, r2
-add r4.xy, r5.wyzw, c22.w
-texldd r3.xyz, r4.zwzw, s0, r2.zwzw, r2
-add_pp r3.xyz, r3, -r0
-mul_sat r5.w, c13.x, c13.x
-mad_pp r3.xyz, r5.w, r3, r0
-mul r4.xy, r4, c23
+mov r5.w, r0
+frc r3.x, r2.w
+add_sat r2.w, r2, -r3.x
+mul_sat r3.x, r1.y, c15
+mul r1.y, r2.w, c15.x
+mad r1.y, r1, c26, r3.x
+mad_pp r0.xyz, r1.y, r2, r0
+texldd r3.yw, r5.zwzw, s6, r4.zwzw, r4
+add r3.xy, r3.wyzw, c22.w
+texldd r2.xyz, r5.zwzw, s0, r4.zwzw, r4
+add_pp r2.xyz, r2, -r0
+mul_sat r2.w, c13.x, c13.x
+mul r3.xy, r3, c23
 mov r1.y, r0.w
-add r1.xy, r1, r4
+add r1.xy, r1, r3
+mad_pp r3.xyz, r2.w, r2, r0
 mad r0.x, r1.y, c23.z, c23
 frc r1.y, r0.x
-mul r4.xy, r1.zwzw, c17.x
-mad r3.w, r1.y, c24.x, c24.y
-mad r5.x, r1, c23.w, c23
-sincos r1.xy, r3.w
-frc r1.y, r5.x
-mad r3.w, r1.y, c24.x, c24.y
-mov_pp r5.y, r1.x
-sincos r1.xy, r3.w
+mad r2.x, r1.y, c24, c24.y
+mad r2.y, r1.x, c23.w, c23.x
+sincos r1.xy, r2.x
+frc r1.y, r2
+mad r2.x, r1.y, c24, c24.y
+mov_pp r2.y, r1.x
+sincos r1.xy, r2.x
 dp4 r1.z, c1, c1
-mov_pp r5.xz, r1.yyxw
+mov_pp r2.xz, r1.yyxw
 rsq r1.z, r1.z
 mul r1.xyz, r1.z, c1
 dp3_sat r1.z, v4, r1
-dp3_pp_sat r3.w, -r5, -c12
+dp3_pp_sat r3.w, -r2, -c12
 add r1.x, v0.w, c22.z
 add_pp r1.w, r3, -r1.z
 frc r1.y, r1.x
-texld r0, r4, s5
-mad_pp r5.x, r5.w, r1.w, r1.z
-add_sat r5.y, r1.x, -r1
-texldd r1, r4.zwzw, s3, r2.zwzw, r2
-mul_pp r1.w, r1, r5.y
+mad_pp r6.x, r2.w, r1.w, r1.z
+add_sat r2.x, r1, -r1.y
+texldd r1, r5.zwzw, s3, r4.zwzw, r4
+dp3 r5.w, v3, v3
+mul_pp r1.w, r1, r2.x
+texldd r0, r5, s5, r4.zwzw, r4
 mul_pp r2, r1, r0
 texld r0, v3, s7
 dp4 r0.y, r0, c25
 add_pp r2.xyz, r2, -r3
 mad_pp r2.xyz, r2.w, r2, r3
 add_pp r2.w, r3, c24.z
-dp3 r4.w, v3, v3
-rsq r4.w, r4.w
-rcp r0.x, r4.w
+rsq r5.w, r5.w
+rcp r0.x, r5.w
 mul r0.x, r0, c2.w
 mad r0.x, -r0, c24.w, r0.y
 mov r0.z, c3.x
 cmp r0.y, r0.x, c18, r0.z
 dp3 r0.x, v2, v2
-mul_pp r4.z, r5.x, c4.w
+mul_pp r5.z, r6.x, c4.w
 texld r0.w, v2, s9
 texld r0.x, r0.x, s8
 mul r0.x, r0, r0.w
 mul r0.w, r0.x, r0.y
-mul_pp r0.y, r0.w, r4.z
-mul_pp r3.w, r2, c4
-mul_pp r0.w, r3, r0
+mul_pp r0.y, r0.w, r5.z
+mul_pp r2.w, r2, c4
+mul_pp r0.w, r2, r0
 mul_pp_sat r0.w, r0, c26.x
-mul_pp_sat r4.z, r0.y, c19
+mul_pp_sat r5.z, r0.y, c19
 mov r0.x, c10
 add r0.xyz, c4, r0.x
-mad_sat r0.xyz, r0, r4.z, c0
+mad_sat r0.xyz, r0, r5.z, c0
 mul_pp r0.xyz, r0, v6.x
 mul r3.xyz, r0, c11.x
-mad_pp r3.xyz, r2, c5, r3
-texld r2, r4, s4
-mul_pp r1, r1, r2
-mad_pp r1.xyz, -r3, r0, r1
-mul_pp r2.xyz, r3, r0
+mad_pp r2.xyz, r2, c5, r3
+texldd r3, r5, s4, r4.zwzw, r4
+mul_pp r1, r1, r3
+mad_pp r1.xyz, -r2, r0, r1
+mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c18.y
 mul_pp r0.x, r1.w, r0.w
 mad_pp oC0.xyz, r0.x, r1, r2
@@ -110922,7 +110928,7 @@ SetTexture 7 [_LightTexture0] 2D
 SetTexture 8 [_LightTextureB0] 2D
 SetTexture 9 [_ShadowMapTexture] 2D
 "ps_3_0
-; 204 ALU, 19 TEX
+; 204 ALU, 27 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -110951,201 +110957,201 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r2.xyz, v5
-add r0.xyz, r2, -r2.zxyw
+abs r1.xyz, v5
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c21.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r2.zxyw
-add r0.w, r2.y, -r0.x
-add_pp r3.xyz, r2.yxzw, -r0
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r0.w, r1.y, -r0.x
 add r0.w, r0, c21.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad_pp r0.xyz, r0.w, r3, r0
-mov r3.xyz, v5
-dp3_sat r0.w, v1, -r3
-abs_pp r0.x, r0
-rcp_pp r0.x, r0.x
-add r0.w, r0, c28.z
-mul_pp r0.xy, r0.zyzw, r0.x
-mov_pp r1.xy, c10
-mad_pp r2.zw, r0.xyxy, c25.y, r1.xyxy
-mul r0.xy, r2.zwzw, c9.x
-mul r1.xy, r2.zwzw, c11.x
-texld r1.xyz, r1, s2
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_sat r0.w, r0, c29.x, c29.y
-mad_pp r0.xyz, r0.w, r0, r1
-mul r0.w, v1, c12.x
-add_pp r1.xyz, -r0, c21.y
-mul_sat r0.w, r0, c22.z
-mad_pp r0.xyz, r0.w, r1, r0
-mul r1.xyz, v0, r0
+frc r1.w, r0
+add_pp r2.xyz, r1.yxzw, -r0
+add_sat r0.w, r0, -r1
+mad_pp r2.xyz, r0.w, r2, r0
 abs r0.w, v5.z
-max r0.x, r2, r0.w
-rcp r0.y, r0.x
-min r0.x, r2, r0.w
-mul r1.w, r0.x, r0.y
-mov r0.xyz, v8
-dp3 r0.x, v7, r0
-dp3 r2.y, v7, v7
-mad r0.y, -r0.x, r0.x, r2
-mul r0.z, r1.w, r1.w
-mad r2.y, r0.z, c23, c23.z
-mad r2.y, r2, r0.z, c23.w
-mad r2.y, r2, r0.z, c24.x
-mad r2.y, r2, r0.z, c24
-mad r0.z, r2.y, r0, c24
-mul r0.z, r0, r1.w
+abs_pp r0.x, r2
+rcp_pp r1.y, r0.x
+mul_pp r1.zw, r2.xyzy, r1.y
+add r0.y, -r0.w, c21
+mad r0.x, r0.w, c21.z, c21.w
+mad r0.x, r0.w, r0, c22
+mov_pp r2.xy, c10
+mad_pp r1.zw, r1, c25.y, r2.xyxy
 rsq r0.y, r0.y
+dsx r2.xy, v5
+dsy r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+add r1.y, r2.z, r2.w
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r4.x, r1.y, c25
+mov r3.xyz, v5
+dp3_sat r1.y, v1, -r3
+mad r0.x, r0.w, r0, c22.y
 rcp r0.y, r0.y
-mul r3.w, r0.y, r0.y
-mad r3.w, c17.x, c17.x, -r3
-rsq r3.w, r3.w
-rcp r2.y, r3.w
-add_pp r3.xyz, -r1, c19
-add r2.y, r0.x, -r2
-cmp r1.w, r0.x, c21.y, c21.x
-add r0.y, -r0, c17.x
-cmp r0.x, r0.y, c21.y, c21
-mul_pp r0.x, r0, r1.w
-cmp r1.w, -r0.x, v1, r2.y
-add r2.y, -r0.w, c21
-rsq r2.y, r2.y
-add r0.y, -r0.z, c24.w
-add r0.x, r2, -r0.w
-cmp r0.x, -r0, r0.z, r0.y
-add r0.z, v1.w, -r1.w
-add r0.y, -r0.x, c22.w
-cmp r0.x, v5.z, r0, r0.y
-add r2.x, r0.z, c21.y
-cmp r1.w, v5.x, r0.x, -r0.x
-frc r0.y, r2.x
-add_sat r0.x, r2, -r0.y
-mul r5.x, r1.w, c25
-mad r1.w, r0, c21.z, c21
-mad r1.w, r0, r1, c22.x
-mad r0.w, r0, r1, c22.y
-rcp r2.y, r2.y
-add r2.x, r5, c25.y
-mul r2.y, r0.w, r2
-cmp r1.w, v5.z, c21.x, c21.y
-mul_sat r4.z, c16.x, c16.x
-mul_sat r0.y, r0.z, c18.x
-mul r0.x, r0, c18
-mad r0.x, r0, c28.y, r0.y
-mad_pp r0.xyz, r0.x, r3, r1
-abs r1.x, v5.y
-add r1.z, -r1.x, c21.y
-mad r1.y, r1.x, c21.z, c21.w
-mad r1.y, r1, r1.x, c22.x
-rsq r1.z, r1.z
-dsy r3.zw, v5.xyxy
-mul r3.zw, r3, r3
-mul r3.x, r1.w, r2.y
-mad r1.x, r1.y, r1, c22.y
-rcp r1.z, r1.z
-mul r1.y, r1.x, r1.z
-cmp r1.x, v5.y, c21, c21.y
-mul r1.z, r1.x, r1.y
-mad r0.w, -r1.z, c22.z, r1.y
-mad r1.y, -r3.x, c22.z, r2
-mad r0.w, r1.x, c22, r0
+mul r0.y, r0.x, r0
+cmp r0.x, v5.z, c21, c21.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c22.z, r0
+mad r0.x, r0, c22.w, r0.y
+mul r0.z, r0.x, c23.x
+dsx r4.w, r0.z
+dsy r4.y, r0.z
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r4.z, r0, c25.x
+mul r0.xy, r1.zwzw, c9.x
+mul r2.xy, r1.zwzw, c11.x
+texldd r2.xyz, r2, s2, r4.zwzw, r4
+texldd r0.xyz, r0, s1, r4.zwzw, r4
+add_pp r3.xyz, r0, -r2
+add r3.w, r1.y, c28.z
+mov r0.xyz, v8
+dp3 r1.y, v7, r0
+mad_sat r0.x, r3.w, c29, c29.y
+mad_pp r0.xyz, r0.x, r3, r2
+dp3 r2.w, v7, v7
+mad r2.w, -r1.y, r1.y, r2
+rsq r2.w, r2.w
+rcp r2.w, r2.w
+mul r3.x, r2.w, r2.w
+mul r3.y, v1.w, c12.x
+add r2.w, -r2, c17.x
+add_pp r2.xyz, -r0, c21.y
+mul_sat r3.y, r3, c22.z
+mad_pp r0.xyz, r3.y, r2, r0
+mad r2.x, c17, c17, -r3
+rsq r3.x, r2.x
+rcp r3.y, r3.x
+mul r0.xyz, v0, r0
+add_pp r2.xyz, -r0, c19
+cmp r3.x, r1.y, c21.y, c21
+cmp r2.w, r2, c21.y, c21.x
+mul_pp r2.w, r2, r3.x
+add r3.x, r1.y, -r3.y
+cmp r3.x, -r2.w, v1.w, r3
+max r1.y, r1.x, r0.w
+rcp r2.w, r1.y
+min r1.y, r1.x, r0.w
+mul r1.y, r1, r2.w
+add r3.y, v1.w, -r3.x
+add r3.z, r3.y, c21.y
+mul r2.w, r1.y, r1.y
+frc r3.w, r3.z
+add_sat r3.z, r3, -r3.w
+mad r3.x, r2.w, c23.y, c23.z
+mad r3.x, r3, r2.w, c23.w
+mad r3.x, r3, r2.w, c24
+mad r3.x, r3, r2.w, c24.y
+mad r2.w, r3.x, r2, c24.z
+mul r1.y, r2.w, r1
+add r0.w, r1.x, -r0
+mul r3.z, r3, c18.x
+mul_sat r3.y, r3, c18.x
+mad r3.x, r3.z, c28.y, r3.y
+mad_pp r0.xyz, r3.x, r2, r0
+add r2.x, -r1.y, c24.w
+cmp r2.x, -r0.w, r1.y, r2
+abs r0.w, v5.y
+add r2.y, -r2.x, c22.w
+add r1.y, -r0.w, c21
+mad r1.x, r0.w, c21.z, c21.w
+mad r1.x, r1, r0.w, c22
+rsq r1.y, r1.y
+mad r0.w, r1.x, r0, c22.y
+rcp r1.y, r1.y
+mul r1.x, r0.w, r1.y
+cmp r0.w, v5.y, c21.x, c21.y
+mul r1.y, r0.w, r1.x
+mad r1.x, -r1.y, c22.z, r1
+mad r0.w, r0, c22, r1.x
+cmp r2.x, v5.z, r2, r2.y
+cmp r1.y, v5.x, r2.x, -r2.x
+mul r5.z, r1.y, c25.x
 mul r0.w, r0, c23.x
-mad r1.x, r1.w, c22.w, r1.y
-mul r1.x, r1, c23
-add r1.z, r3, r3.w
-dsx r3.xy, v5
-mul r3.xy, r3, r3
-mov r2.y, r0.w
-dsx r1.w, r1.x
-dsy r1.y, r1.x
-add r1.x, r3, r3.y
-rsq r1.z, r1.z
-rsq r1.x, r1.x
-rcp r3.x, r1.z
-rcp r1.x, r1.x
-mul r1.z, r1.x, c25.x
-mul r1.x, r3, c25
-texldd r3.xyz, r2, s0, r1.zwzw, r1
-texldd r4.yw, r2, s6, r1.zwzw, r1
-add_pp r3.xyz, r3, -r0
-mad_pp r3.xyz, r4.z, r3, r0
-add r0.xy, r4.wyzw, c25.w
-mul r4.xy, r2.zwzw, c20.x
-texldd r1, r2, s3, r1.zwzw, r1
+add r1.x, r5.z, c25.y
+mov r1.y, r0.w
+texldd r2.xyz, r1, s0, r4.zwzw, r4
+add_pp r2.xyz, r2, -r0
+mul_sat r6.w, c16.x, c16.x
+mad_pp r3.xyz, r6.w, r2, r0
+texldd r5.yw, r1, s6, r4.zwzw, r4
+add r0.xy, r5.wyzw, c25.w
+mul r5.xy, r1.zwzw, c20.x
+add r1.z, v0.w, c25
 mul r0.xy, r0, c26
-mov r5.y, r0.w
-add r5.xy, r5, r0
-mad r2.w, r5.y, c26.z, c26.x
-frc r3.w, r2
-add r2.z, v0.w, c25
-frc r2.w, r2.z
-add_sat r2.z, r2, -r2.w
-mul_pp r1.w, r1, r2.z
-texld r0, r4, s5
+mov r5.w, r0
+add r5.zw, r5, r0.xyxy
+mad r1.w, r5, c26.z, c26.x
+frc r2.x, r1.w
+rcp r5.w, v3.w
+mad r3.w, r2.x, c27.x, c27.y
+frc r1.w, r1.z
+add_sat r2.x, r1.z, -r1.w
+texldd r1, r1, s3, r4.zwzw, r4
+mul_pp r1.w, r1, r2.x
+texldd r0, r5, s5, r4.zwzw, r4
 mul_pp r2, r1, r0
-add_pp r2.xyz, r2, -r3
-mad r3.w, r3, c27.x, c27.y
 sincos r0.xy, r3.w
-mad r0.y, r5.x, c26.w, c26.x
+mad r0.y, r5.z, c26.w, c26.x
+add_pp r2.xyz, r2, -r3
 frc r0.y, r0
 mad_pp r2.xyz, r2.w, r2, r3
 mad r3.w, r0.y, c27.x, c27.y
-mov_pp r6.y, r0.x
+mov_pp r7.y, r0.x
 sincos r0.xy, r3.w
-dp4 r4.w, c1, c1
-rsq r0.z, r4.w
-mov_pp r6.xz, r0.yyxw
-mul r5.xyz, r0.z, c1
-dp3_pp_sat r3.w, -r6, -c15
-dp3_sat r0.x, v4, r5
-rcp r4.w, v3.w
+dp4 r5.z, c1, c1
+rsq r0.z, r5.z
+mov_pp r7.xz, r0.yyxw
+mul r6.xyz, r0.z, c1
+dp3_sat r0.x, v4, r6
+dp3_pp_sat r3.w, -r7, -c15
 add_pp r0.y, r3.w, -r0.x
-mad_pp r0.z, r4, r0.y, r0.x
-mad r0.xy, v3, r4.w, c6
+mad_pp r0.z, r6.w, r0.y, r0.x
+mad r0.xy, v3, r5.w, c6
 texld r0.x, r0, s9
 add_pp r2.w, r3, c27.z
-mul_pp r4.z, r0, c7.w
-mad r5.xy, v3, r4.w, c5
+mul_pp r5.z, r0, c7.w
+mad r6.xy, v3, r5.w, c5
 mov r0.w, r0.x
-texld r0.x, r5, s9
-mad r5.xy, v3, r4.w, c4
+texld r0.x, r6, s9
+mad r6.xy, v3, r5.w, c4
 mov r0.z, r0.x
-texld r0.x, r5, s9
-mad r5.xy, v3, r4.w, c3
+texld r0.x, r6, s9
+mad r6.xy, v3, r5.w, c3
 mov r0.y, r0.x
-texld r0.x, r5, s9
-mad r0, -v3.z, r4.w, r0
-mov r5.x, c2
-cmp r0, r0, c21.y, r5.x
+texld r0.x, r6, s9
+mad r0, -v3.z, r5.w, r0
+mov r6.x, c2
+cmp r0, r0, c21.y, r6.x
 dp4_pp r0.y, r0, c27.w
-rcp r4.w, v2.w
-mad r5.xy, v2, r4.w, c25.y
+rcp r5.w, v2.w
+mad r6.xy, v2, r5.w, c25.y
 dp3 r0.x, v2, v2
-texld r0.w, r5, s7
+texld r0.w, r6, s7
 cmp r0.z, -v2, c21.x, c21.y
 mul_pp r0.z, r0, r0.w
 texld r0.x, r0.x, s8
 mul_pp r0.x, r0.z, r0
 mul_pp r0.w, r0.x, r0.y
-mul_pp r0.y, r0.w, r4.z
-mul_pp r3.w, r2, c7
-mul_pp r0.w, r3, r0
+mul_pp r0.y, r0.w, r5.z
+mul_pp r2.w, r2, c7
+mul_pp r0.w, r2, r0
 mul_pp_sat r0.w, r0, c28.x
-mul_pp_sat r4.z, r0.y, c22
+mul_pp_sat r5.z, r0.y, c22
 mov r0.x, c13
 add r0.xyz, c7, r0.x
-mad_sat r0.xyz, r0, r4.z, c0
+mad_sat r0.xyz, r0, r5.z, c0
 mul_pp r0.xyz, r0, v6.x
 mul r3.xyz, r0, c14.x
-mad_pp r3.xyz, r2, c8, r3
-texld r2, r4, s4
-mul_pp r1, r1, r2
-mad_pp r1.xyz, -r3, r0, r1
-mul_pp r2.xyz, r3, r0
+mad_pp r2.xyz, r2, c8, r3
+texldd r3, r5, s4, r4.zwzw, r4
+mul_pp r1, r1, r3
+mad_pp r1.xyz, -r2, r0, r1
+mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c21.y
 mul_pp r0.x, r1.w, r0.w
 mad_pp oC0.xyz, r0.x, r1, r2
@@ -111207,7 +111213,7 @@ SetTexture 7 [_LightTexture0] 2D
 SetTexture 8 [_LightTextureB0] 2D
 SetTexture 9 [_ShadowMapTexture] 2D
 "ps_3_0
-; 204 ALU, 19 TEX
+; 204 ALU, 27 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -111236,178 +111242,180 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r3.xyz, v5
-add r0.xyz, r3, -r3.zxyw
+abs r1.xyz, v5
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c21.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r3.zxyw
-add r0.w, r3.y, -r0.x
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r0.w, r1.y, -r0.x
 add r0.w, r0, c21.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-add_pp r2.xyz, r3.yxzw, -r0
-mad_pp r0.xyz, r0.w, r2, r0
-mov r2.xyz, v5
-dp3_sat r0.w, v1, -r2
-abs_pp r0.x, r0
-rcp_pp r0.x, r0.x
-add r0.w, r0, c28.z
-mul_pp r0.xy, r0.zyzw, r0.x
-mov_pp r1.xy, c10
-mad_pp r5.xy, r0, c25.y, r1
-mul r0.xy, r5, c9.x
-mul r1.xy, r5, c11.x
-texld r1.xyz, r1, s2
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_sat r0.w, r0, c29.x, c29.y
-mad_pp r0.xyz, r0.w, r0, r1
-mul r0.w, v1, c12.x
-add_pp r1.xyz, -r0, c21.y
-mul_sat r0.w, r0, c22.z
-mad_pp r0.xyz, r0.w, r1, r0
-mul r1.xyz, v0, r0
+frc r1.w, r0
+add_pp r2.xyz, r1.yxzw, -r0
+add_sat r0.w, r0, -r1
+mad_pp r2.xyz, r0.w, r2, r0
 abs r0.w, v5.z
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mov r0.xyz, v8
-dp3 r0.x, v7, r0
-dp3 r2.w, v7, v7
-mad r0.y, -r0.x, r0.x, r2.w
-mul r0.z, r1.w, r1.w
-mad r2.w, r0.z, c23.y, c23.z
-mad r2.w, r2, r0.z, c23
-mad r2.w, r2, r0.z, c24.x
-mad r2.w, r2, r0.z, c24.y
-mad r0.z, r2.w, r0, c24
-mul r0.z, r0, r1.w
+abs_pp r0.x, r2
+rcp_pp r1.y, r0.x
+mul_pp r1.zw, r2.xyzy, r1.y
+add r0.y, -r0.w, c21
+mad r0.x, r0.w, c21.z, c21.w
+mad r0.x, r0.w, r0, c22
+mov_pp r2.xy, c10
+mad_pp r5.zw, r1, c25.y, r2.xyxy
 rsq r0.y, r0.y
+dsx r2.xy, v5
+dsy r2.zw, v5.xyxy
+mul r2.zw, r2, r2
+add r1.y, r2.z, r2.w
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r1.z, r1.y, c25.x
+mov r3.xyz, v5
+dp3_sat r1.y, v1, -r3
+rcp r6.w, v3.w
+mad r0.x, r0.w, r0, c22.y
 rcp r0.y, r0.y
-mul r3.y, r0, r0
-mad r3.y, c17.x, c17.x, -r3
-rsq r3.y, r3.y
-rcp r2.w, r3.y
-add_pp r2.xyz, -r1, c19
-add r2.w, r0.x, -r2
-cmp r1.w, r0.x, c21.y, c21.x
-add r0.y, -r0, c17.x
-cmp r0.x, r0.y, c21.y, c21
-mul_pp r0.x, r0, r1.w
-cmp r1.w, -r0.x, v1, r2
-add r0.y, -r0.z, c24.w
-add r0.x, r3, -r0.w
-cmp r0.x, -r0, r0.z, r0.y
-add r0.z, v1.w, -r1.w
-add r1.w, r0.z, c21.y
-add r0.y, -r0.x, c22.w
-cmp r0.x, v5.z, r0, r0.y
-frc r0.y, r1.w
-add_sat r0.y, r1.w, -r0
-mul_sat r4.w, c16.x, c16.x
-cmp r0.x, v5, r0, -r0
-mul_sat r0.z, r0, c18.x
-mul r0.y, r0, c18.x
-mad r0.y, r0, c28, r0.z
-mad_pp r3.xyz, r0.y, r2, r1
-mul r2.z, r0.x, c25.x
+mul r0.y, r0.x, r0
+cmp r0.x, v5.z, c21, c21.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c22.z, r0
+mad r0.x, r0, c22.w, r0.y
+mul r0.z, r0.x, c23.x
+dsx r5.y, r0.z
+dsy r1.w, r0.z
+mul r2.xy, r2, r2
+add r0.z, r2.x, r2.y
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r5.x, r0.z, c25
+mul r0.xy, r5.zwzw, c9.x
+mul r2.xy, r5.zwzw, c11.x
+texldd r2.xyz, r2, s2, r5, r1.zwzw
+texldd r0.xyz, r0, s1, r5, r1.zwzw
+add_pp r3.xyz, r0, -r2
+add r3.w, r1.y, c28.z
+mov r0.xyz, v8
+dp3 r1.y, v7, r0
+mad_sat r0.x, r3.w, c29, c29.y
+mad_pp r0.xyz, r0.x, r3, r2
+dp3 r2.w, v7, v7
+mad r2.w, -r1.y, r1.y, r2
+rsq r2.w, r2.w
+rcp r2.w, r2.w
+mul r3.x, r2.w, r2.w
+mul r3.y, v1.w, c12.x
+add r2.w, -r2, c17.x
+add_pp r2.xyz, -r0, c21.y
+mul_sat r3.y, r3, c22.z
+mad_pp r0.xyz, r3.y, r2, r0
+mad r2.x, c17, c17, -r3
+rsq r3.x, r2.x
+mul r0.xyz, v0, r0
+rcp r3.y, r3.x
+add_pp r2.xyz, -r0, c19
+cmp r3.x, r1.y, c21.y, c21
+cmp r2.w, r2, c21.y, c21.x
+mul_pp r2.w, r2, r3.x
+add r3.x, r1.y, -r3.y
+cmp r3.x, -r2.w, v1.w, r3
+max r1.y, r1.x, r0.w
+rcp r2.w, r1.y
+min r1.y, r1.x, r0.w
+mul r1.y, r1, r2.w
+add r3.y, v1.w, -r3.x
+add r3.z, r3.y, c21.y
+mul r2.w, r1.y, r1.y
+frc r3.w, r3.z
+add_sat r3.z, r3, -r3.w
+mad r3.x, r2.w, c23.y, c23.z
+mad r3.x, r3, r2.w, c23.w
+mad r3.x, r3, r2.w, c24
+mad r3.x, r3, r2.w, c24.y
+mad r2.w, r3.x, r2, c24.z
+mul r1.y, r2.w, r1
+mul r3.z, r3, c18.x
+mul_sat r3.y, r3, c18.x
+mad r3.x, r3.z, c28.y, r3.y
+mad_pp r3.xyz, r3.x, r2, r0
+add r0.x, r1, -r0.w
+add r0.y, -r1, c24.w
+cmp r0.w, -r0.x, r1.y, r0.y
 abs r0.x, v5.y
+add r1.x, -r0.w, c22.w
+cmp r0.w, v5.z, r0, r1.x
 add r0.z, -r0.x, c21.y
 mad r0.y, r0.x, c21.z, c21.w
 mad r0.y, r0, r0.x, c22.x
-add r1.y, -r0.w, c21
-mad r1.x, r0.w, c21.z, c21.w
-mad r1.x, r0.w, r1, c22
 rsq r0.z, r0.z
-rsq r1.y, r1.y
-add r2.x, r2.z, c25.y
-mad r0.w, r0, r1.x, c22.y
-rcp r1.y, r1.y
-mul r1.x, r0.w, r1.y
-cmp r0.w, v5.z, c21.x, c21.y
-mul r1.y, r0.w, r1.x
 mad r0.x, r0.y, r0, c22.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
 cmp r0.x, v5.y, c21, c21.y
 mul r0.z, r0.x, r0.y
 mad r0.y, -r0.z, c22.z, r0
+cmp r0.z, v5.x, r0.w, -r0.w
+mul r2.z, r0, c25.x
 mad r0.x, r0, c22.w, r0.y
-mad r0.z, -r1.y, c22, r1.x
-mul r2.w, r0.x, c23.x
-mad r0.y, r0.w, c22.w, r0.z
-mul r0.x, r0.y, c23
-dsy r0.zw, v5.xyxy
-mul r0.zw, r0, r0
-mov r2.y, r2.w
-dsx r1.w, r0.x
-dsy r1.y, r0.x
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r1.z, r0.x, c25.x
-mul r1.x, r0.y, c25
-texldd r0.xyz, r2, s0, r1.zwzw, r1
+mul r1.y, r0.x, c23.x
+add r2.x, r2.z, c25.y
+mov r2.y, r1
+texldd r0.xyz, r2, s0, r5, r1.zwzw
 add_pp r0.xyz, r0, -r3
-mad_pp r4.xyz, r4.w, r0, r3
-texldd r0.yw, r2, s6, r1.zwzw, r1
+mul_sat r1.x, c16, c16
+mad_pp r4.xyz, r1.x, r0, r3
+texldd r0.yw, r2, s6, r5, r1.zwzw
 add r3.xy, r0.wyzw, c25.w
+mul r5.zw, r5, c20.x
 mul r3.xy, r3, c26
-add r5.zw, r2, r3.xyxy
-mad r3.x, r5.w, c26.z, c26
-mul r5.xy, r5, c20.x
+mov r2.w, r1.y
+add r6.xy, r2.zwzw, r3
 add r2.z, v0.w, c25
+mad r1.y, r6, c26.z, c26.x
 frc r2.w, r2.z
-texldd r1, r2, s3, r1.zwzw, r1
-add_sat r2.z, r2, -r2.w
-mul_pp r2.w, r1, r2.z
-mov_pp r2.xyz, r1
-mad r1.y, r5.z, c26.w, c26.x
-frc r5.w, r3.x
-texld r0, r5, s5
+add_sat r3.x, r2.z, -r2.w
+texldd r2, r2, s3, r5, r1.zwzw
+frc r1.y, r1
+texldd r0, r5.zwzw, s5, r5, r1.zwzw
+mul_pp r2.w, r2, r3.x
 mul_pp r3, r2, r0
-mad r1.x, r5.w, c27, c27.y
-sincos r0.xy, r1.x
-frc r0.y, r1
-rcp r5.z, v3.w
-mad r1.x, r0.y, c27, c27.y
-mov_pp r1.y, r0.x
-sincos r0.xy, r1.x
+add_pp r3.xyz, r3, -r4
+mad r1.y, r1, c27.x, c27
+sincos r0.xy, r1.y
+mad r4.w, r6.x, c26, c26.x
+frc r0.y, r4.w
+mad_pp r3.xyz, r3.w, r3, r4
+mad r1.y, r0, c27.x, c27
+mov_pp r6.y, r0.x
+sincos r0.xy, r1.y
 dp4 r0.z, c1, c1
-mov_pp r1.xz, r0.yyxw
+mov_pp r6.xz, r0.yyxw
+dp3_pp_sat r1.y, -r6, -c15
 rsq r0.z, r0.z
 mul r0.xyz, r0.z, c1
 dp3_sat r0.w, v4, r0
-dp3_pp_sat r1.w, -r1, -c15
-add_pp r1.x, r1.w, -r0.w
-mad_pp r0.w, r4, r1.x, r0
-mad r0.xyz, v3, r5.z, c6
-mad r1.xyz, v3, r5.z, c4
+add_pp r4.w, r1.y, -r0
+mad_pp r0.w, r1.x, r4, r0
+mad r0.xyz, v3, r6.w, c6
+mad r6.xyz, v3, r6.w, c4
+texld r1.x, r6, s9
 texld r0.x, r0, s9
 mul_pp r4.w, r0, c7
 mov_pp r0.w, r0.x
-mad r0.xyz, v3, r5.z, c5
+mad r0.xyz, v3, r6.w, c5
 texld r0.x, r0, s9
-texld r1.x, r1, s9
 mov_pp r0.z, r0.x
 mov_pp r0.y, r1.x
-mad r1.xyz, v3, r5.z, c3
 mov r0.x, c2
-add r5.z, c21.y, -r0.x
-texld r0.x, r1, s9
-mad r0, r0, r5.z, c2.x
+add r1.x, c21.y, -r0
+mad r6.xyz, v3, r6.w, c3
+texld r0.x, r6, s9
+mad r0, r0, r1.x, c2.x
 dp4_pp r0.y, r0, c27.w
 rcp r1.x, v2.w
-mad r1.xy, v2, r1.x, c25.y
+mad r6.xy, v2, r1.x, c25.y
 dp3 r0.x, v2, v2
-texld r0.w, r1, s7
+texld r0.w, r6, s7
 cmp r0.z, -v2, c21.x, c21.y
 mul_pp r0.z, r0, r0.w
 texld r0.x, r0.x, s8
@@ -111418,17 +111426,15 @@ mul_pp_sat r1.x, r0.y, c22.z
 mov r0.x, c13
 add r0.xyz, c7, r0.x
 mad_sat r0.xyz, r0, r1.x, c0
-add_pp r1.xyz, r3, -r4
 mul_pp r0.xyz, r0, v6.x
-mad_pp r1.xyz, r3.w, r1, r4
-mul r3.xyz, r0, c14.x
-add_pp r1.w, r1, c27.z
-mul_pp r3.w, r1, c7
-mad_pp r3.xyz, r1, c8, r3
-texld r1, r5, s4
-mul_pp r1, r2, r1
+mul r4.xyz, r0, c14.x
+add_pp r1.x, r1.y, c27.z
+mul_pp r3.w, r1.x, c7
+texldd r1, r5.zwzw, s4, r5, r1.zwzw
 mul_pp r0.w, r3, r0
 mul_pp_sat r0.w, r0, c28.x
+mul_pp r1, r2, r1
+mad_pp r3.xyz, r3, c8, r4
 mad_pp r1.xyz, -r3, r0, r1
 mul_pp r2.xyz, r3, r0
 add_pp r0.w, -r0, c21.y
@@ -111483,7 +111489,7 @@ SetTexture 6 [_BumpMap] 2D
 SetTexture 7 [_ShadowMapTexture] CUBE
 SetTexture 8 [_LightTexture0] 2D
 "ps_3_0
-; 203 ALU, 18 TEX
+; 203 ALU, 26 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -111513,199 +111519,199 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r3.xyz, v5
-add r0.xyz, r3, -r3.zxyw
+abs r1.xyz, v5
+add r0.xyz, r1, -r1.zxyw
 add r0.w, r0.x, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r3.zxyw
-add r0.w, r3.y, -r0.x
+frc r1.w, r0
+add_sat r0.w, r0, -r1
+mad r0.xyz, r0.w, r0, r1.zxyw
+add r0.w, r1.y, -r0.x
 add r0.w, r0, c18.y
-frc r1.x, r0.w
-add_sat r0.w, r0, -r1.x
-add_pp r2.xyz, r3.yxzw, -r0
-mad_pp r0.xyz, r0.w, r2, r0
-mov r2.xyz, v5
-dp3_sat r0.w, v1, -r2
-abs_pp r0.x, r0
-rcp_pp r0.x, r0.x
-add r0.w, r0, c27.z
-mul_pp r0.xy, r0.zyzw, r0.x
-mov_pp r1.xy, c7
-mad_pp r3.zw, r0.xyxy, c22.y, r1.xyxy
-mul r0.xy, r3.zwzw, c6.x
-mul r1.xy, r3.zwzw, c8.x
-mul r6.xy, r3.zwzw, c17.x
-texld r1.xyz, r1, s2
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_sat r0.w, r0, c28.x, c28.y
-mad_pp r0.xyz, r0.w, r0, r1
-mul r0.w, v1, c9.x
-add_pp r1.xyz, -r0, c18.y
-mul_sat r0.w, r0, c19.z
-mad_pp r0.xyz, r0.w, r1, r0
-mul r1.xyz, v0, r0
+frc r1.w, r0
+add_pp r2.xyz, r1.yxzw, -r0
+add_sat r0.w, r0, -r1
+mad_pp r2.xyz, r0.w, r2, r0
 abs r0.w, v5.z
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mov r0.xyz, v8
-dp3 r0.x, v7, r0
-dp3 r2.w, v7, v7
-mad r0.y, -r0.x, r0.x, r2.w
-mul r0.z, r1.w, r1.w
-mad r2.w, r0.z, c20.y, c20.z
-mad r2.w, r2, r0.z, c20
-mad r2.w, r2, r0.z, c21.x
-mad r2.w, r2, r0.z, c21.y
-mad r0.z, r2.w, r0, c21
-mul r0.z, r0, r1.w
+abs_pp r0.x, r2
+rcp_pp r1.y, r0.x
+mul_pp r1.zw, r2.xyzy, r1.y
+add r0.y, -r0.w, c18
+mad r0.x, r0.w, c18.z, c18.w
+mad r0.x, r0.w, r0, c19
+mov_pp r2.xy, c7
+mad_pp r1.zw, r1, c22.y, r2.xyxy
 rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r3.y, r0, r0
-mad r3.y, c14.x, c14.x, -r3
-rsq r3.y, r3.y
-rcp r2.w, r3.y
-add_pp r2.xyz, -r1, c16
-add r2.w, r0.x, -r2
-cmp r1.w, r0.x, c18.y, c18.x
-add r0.y, -r0, c14.x
-cmp r0.x, r0.y, c18.y, c18
-mul_pp r0.x, r0, r1.w
-cmp r1.w, -r0.x, v1, r2
-add r0.y, -r0.z, c21.w
-add r0.x, r3, -r0.w
-cmp r0.x, -r0, r0.z, r0.y
-add r0.z, v1.w, -r1.w
-add r0.y, -r0.x, c19.w
-cmp r0.x, v5.z, r0, r0.y
-add r2.w, r0.z, c18.y
-cmp r1.w, v5.x, r0.x, -r0.x
-mul r5.x, r1.w, c22
-frc r0.y, r2.w
-add_sat r0.x, r2.w, -r0.y
-mad r1.w, r0, c18.z, c18
-add r3.x, r5, c22.y
-mad r1.w, r0, r1, c19.x
-mul_sat r0.y, r0.z, c15.x
-mul r0.x, r0, c15
-mad r0.x, r0, c27.y, r0.y
-mad_pp r0.xyz, r0.x, r2, r1
-abs r1.x, v5.y
-add r2.x, -r0.w, c18.y
-mad r0.w, r0, r1, c19.y
-add r1.z, -r1.x, c18.y
-mad r1.y, r1.x, c18.z, c18.w
-mad r1.y, r1, r1.x, c19.x
-rsq r1.z, r1.z
-rsq r2.x, r2.x
-rcp r2.x, r2.x
+dsx r2.xy, v5
 dsy r2.zw, v5.xyxy
 mul r2.zw, r2, r2
-mul r2.x, r0.w, r2
-cmp r1.w, v5.z, c18.x, c18.y
-mad r1.x, r1.y, r1, c19.y
-rcp r1.z, r1.z
-mul r1.y, r1.x, r1.z
-cmp r1.x, v5.y, c18, c18.y
-mul r1.z, r1.x, r1.y
-mad r0.w, -r1.z, c19.z, r1.y
-add r1.z, r2, r2.w
-mul r2.y, r1.w, r2.x
-mad r1.y, -r2, c19.z, r2.x
-mad r0.w, r1.x, c19, r0
-mad r1.x, r1.w, c19.w, r1.y
-mul r1.x, r1, c20
-mul r0.w, r0, c20.x
-dsx r2.xy, v5
+add r1.y, r2.z, r2.w
+rsq r1.y, r1.y
+rcp r1.y, r1.y
+mul r6.x, r1.y, c22
+mov r3.xyz, v5
+dp3_sat r1.y, v1, -r3
+mul r7.xy, r1.zwzw, c17.x
+mad r0.x, r0.w, r0, c19.y
+rcp r0.y, r0.y
+mul r0.y, r0.x, r0
+cmp r0.x, v5.z, c18, c18.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c19.z, r0
+mad r0.x, r0, c19.w, r0.y
+mul r0.z, r0.x, c20.x
+dsx r6.w, r0.z
+dsy r6.y, r0.z
 mul r2.xy, r2, r2
-mov r3.y, r0.w
-dsx r1.w, r1.x
-dsy r1.y, r1.x
-add r1.x, r2, r2.y
-rsq r1.z, r1.z
-rsq r1.x, r1.x
-rcp r2.x, r1.z
-rcp r1.x, r1.x
-mul r1.z, r1.x, c22.x
-mul r1.x, r2, c22
-texldd r2.xyz, r3, s0, r1.zwzw, r1
-texldd r5.yw, r3, s6, r1.zwzw, r1
+add r0.z, r2.x, r2.y
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r6.z, r0, c22.x
+mul r0.xy, r1.zwzw, c6.x
+mul r2.xy, r1.zwzw, c8.x
+texldd r2.xyz, r2, s2, r6.zwzw, r6
+texldd r0.xyz, r0, s1, r6.zwzw, r6
+add_pp r3.xyz, r0, -r2
+add r3.w, r1.y, c27.z
+mov r0.xyz, v8
+dp3 r1.y, v7, r0
+mad_sat r0.x, r3.w, c28, c28.y
+mad_pp r0.xyz, r0.x, r3, r2
+dp3 r2.w, v7, v7
+mad r2.w, -r1.y, r1.y, r2
+rsq r2.w, r2.w
+rcp r2.w, r2.w
+mul r3.x, r2.w, r2.w
+mul r3.y, v1.w, c9.x
+add r2.w, -r2, c14.x
+add_pp r2.xyz, -r0, c18.y
+mul_sat r3.y, r3, c19.z
+mad_pp r0.xyz, r3.y, r2, r0
+mad r2.x, c14, c14, -r3
+rsq r3.x, r2.x
+rcp r3.y, r3.x
+mul r0.xyz, v0, r0
+add_pp r2.xyz, -r0, c16
+cmp r3.x, r1.y, c18.y, c18
+cmp r2.w, r2, c18.y, c18.x
+mul_pp r2.w, r2, r3.x
+add r3.x, r1.y, -r3.y
+cmp r3.x, -r2.w, v1.w, r3
+max r1.y, r1.x, r0.w
+rcp r2.w, r1.y
+min r1.y, r1.x, r0.w
+mul r1.y, r1, r2.w
+add r3.y, v1.w, -r3.x
+add r3.z, r3.y, c18.y
+mul r2.w, r1.y, r1.y
+frc r3.w, r3.z
+add_sat r3.z, r3, -r3.w
+mad r3.x, r2.w, c20.y, c20.z
+mad r3.x, r3, r2.w, c20.w
+mad r3.x, r3, r2.w, c21
+mad r3.x, r3, r2.w, c21.y
+mad r2.w, r3.x, r2, c21.z
+mul r1.y, r2.w, r1
+add r0.w, r1.x, -r0
+mul_sat r3.w, c13.x, c13.x
+add r1.z, v0.w, c22
+mul r3.z, r3, c15.x
+mul_sat r3.y, r3, c15.x
+mad r3.x, r3.z, c27.y, r3.y
+mad_pp r0.xyz, r3.x, r2, r0
+add r2.x, -r1.y, c21.w
+cmp r2.x, -r0.w, r1.y, r2
+abs r0.w, v5.y
+add r2.y, -r2.x, c19.w
+add r1.y, -r0.w, c18
+mad r1.x, r0.w, c18.z, c18.w
+mad r1.x, r1, r0.w, c19
+rsq r1.y, r1.y
+mad r0.w, r1.x, r0, c19.y
+rcp r1.y, r1.y
+mul r1.x, r0.w, r1.y
+cmp r0.w, v5.y, c18.x, c18.y
+mul r1.y, r0.w, r1.x
+mad r1.x, -r1.y, c19.z, r1
+mad r0.w, r0, c19, r1.x
+mul r0.w, r0, c20.x
+cmp r2.x, v5.z, r2, r2.y
+cmp r1.y, v5.x, r2.x, -r2.x
+mul r3.x, r1.y, c22
+add r1.x, r3, c22.y
+mov r1.y, r0.w
+texldd r2.xyz, r1, s0, r6.zwzw, r6
 add_pp r2.xyz, r2, -r0
-mul_sat r2.w, c13.x, c13.x
-mad_pp r4.xyz, r2.w, r2, r0
+mad_pp r4.xyz, r3.w, r2, r0
+texldd r5.yw, r1, s6, r6.zwzw, r6
 add r0.xy, r5.wyzw, c22.w
-add r2.z, v0.w, c22
-frc r3.z, r2
-texldd r1, r3, s3, r1.zwzw, r1
-add_sat r2.z, r2, -r3
-mul_pp r1.w, r1, r2.z
-mov r5.y, r0.w
 mul r0.xy, r0, c23
-add r2.xy, r5, r0
-texld r0, r6, s5
-mad r2.y, r2, c23.z, c23.x
-frc r2.y, r2
-mul_pp r3, r1, r0
-mad r2.y, r2, c24.x, c24
-sincos r0.xy, r2.y
-mad r0.y, r2.x, c23.w, c23.x
+mov r3.y, r0.w
+add r3.xy, r3, r0
+mad r1.w, r3.y, c23.z, c23.x
+frc r2.x, r1.w
+mad r3.y, r2.x, c24.x, c24
+frc r1.w, r1.z
+add_sat r2.x, r1.z, -r1.w
+texldd r1, r1, s3, r6.zwzw, r6
+mul_pp r1.w, r1, r2.x
+texldd r0, r7, s5, r6.zwzw, r6
+mul_pp r2, r1, r0
+sincos r0.xy, r3.y
+mad r0.y, r3.x, c23.w, c23.x
 frc r0.y, r0
+add_pp r2.xyz, r2, -r4
 mov_pp r5.y, r0.x
-mad r2.x, r0.y, c24, c24.y
-sincos r0.xy, r2.x
-dp4 r2.y, c1, c1
-rsq r0.z, r2.y
-mul r2.xyz, r0.z, c1
+mad r3.x, r0.y, c24, c24.y
+sincos r0.xy, r3.x
+dp4 r3.y, c1, c1
+rsq r0.z, r3.y
+mul r3.xyz, r0.z, c1
 mov_pp r5.xz, r0.yyxw
-dp3_sat r0.w, v4, r2
+dp3_sat r0.w, v4, r3
 dp3_pp_sat r4.w, -r5, -c12
-add_pp r2.x, r4.w, -r0.w
-mad_pp r2.x, r2.w, r2, r0.w
-mul_pp r6.z, r2.x, c4.w
+add_pp r3.x, r4.w, -r0.w
+mad_pp r3.x, r3.w, r3, r0.w
+mul_pp r7.z, r3.x, c4.w
+mad_pp r2.xyz, r2.w, r2, r4
 add r0.xyz, v3, c25.xyyw
 texld r0, r0, s7
 dp4 r5.w, r0, c26
 add r0.xyz, v3, c25.yxyw
 texld r0, r0, s7
 dp4 r5.z, r0, c26
-add r2.xyz, v3, c25.yyxw
-texld r2, r2, s7
-dp4 r5.y, r2, c26
+add r3.xyz, v3, c25.yyxw
+texld r3, r3, s7
+dp4 r5.y, r3, c26
 add r0.xyz, v3, c24.w
 texld r0, r0, s7
-dp3 r2.x, v3, v3
-rsq r2.x, r2.x
+dp3 r3.x, v3, v3
+add_pp r2.w, r4, c24.z
+rsq r3.x, r3.x
 dp4 r5.x, r0, c26
-rcp r0.x, r2.x
+rcp r0.x, r3.x
 mul r0.x, r0, c2.w
 mad r0, -r0.x, c25.z, r5
-mov r2.x, c3
-cmp r2, r0, c18.y, r2.x
-dp4_pp r0.y, r2, c25.w
+mov r3.x, c3
+cmp r3, r0, c18.y, r3.x
 dp3 r0.x, v2, v2
+dp4_pp r0.y, r3, c25.w
 texld r0.x, r0.x, s8
 mul r0.w, r0.x, r0.y
-mul_pp r0.y, r0.w, r6.z
-mul_pp_sat r2.x, r0.y, c19.z
+mul_pp r0.y, r0.w, r7.z
+mul_pp r2.w, r2, c4
+mul_pp r0.w, r2, r0
+mul_pp_sat r0.w, r0, c27.x
+mul_pp_sat r3.x, r0.y, c19.z
 mov r0.x, c10
 add r0.xyz, c4, r0.x
-mad_sat r0.xyz, r0, r2.x, c0
-add_pp r2.xyz, r3, -r4
+mad_sat r0.xyz, r0, r3.x, c0
 mul_pp r0.xyz, r0, v6.x
-mad_pp r2.xyz, r3.w, r2, r4
 mul r3.xyz, r0, c11.x
-add_pp r2.w, r4, c24.z
-mul_pp r3.w, r2, c4
-mad_pp r3.xyz, r2, c5, r3
-texld r2, r6, s4
-mul_pp r1, r1, r2
-mul_pp r0.w, r3, r0
-mul_pp_sat r0.w, r0, c27.x
-mad_pp r1.xyz, -r3, r0, r1
-mul_pp r2.xyz, r3, r0
+mad_pp r2.xyz, r2, c5, r3
+texldd r3, r7, s4, r6.zwzw, r6
+mul_pp r1, r1, r3
+mad_pp r1.xyz, -r2, r0, r1
+mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c18.y
 mul_pp r0.x, r1.w, r0.w
 mad_pp oC0.xyz, r0.x, r1, r2
@@ -111764,7 +111770,7 @@ SetTexture 7 [_ShadowMapTexture] CUBE
 SetTexture 8 [_LightTextureB0] 2D
 SetTexture 9 [_LightTexture0] CUBE
 "ps_3_0
-; 203 ALU, 19 TEX
+; 203 ALU, 27 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
@@ -111795,140 +111801,140 @@ dcl_texcoord5 v5.xyz
 dcl_texcoord6 v6.x
 dcl_texcoord7 v7.xyz
 dcl_texcoord8 v8.xyz
-abs r3.xyz, v5
-add r0.xyz, r3, -r3.zxyw
+abs r4.xyz, v5
+add r0.xyz, r4, -r4.zxyw
 add r0.w, r0.x, c18.y
 frc r1.x, r0.w
 add_sat r0.w, r0, -r1.x
-mad r0.xyz, r0.w, r0, r3.zxyw
-add r0.w, r3.y, -r0.x
+mad r0.xyz, r0.w, r0, r4.zxyw
+add r0.w, r4.y, -r0.x
 add r0.w, r0, c18.y
 frc r1.x, r0.w
+add_pp r2.xyz, r4.yxzw, -r0
 add_sat r0.w, r0, -r1.x
-add_pp r2.xyz, r3.yxzw, -r0
-mad_pp r0.xyz, r0.w, r2, r0
-mov r2.xyz, v5
-dp3_sat r0.w, v1, -r2
-abs_pp r0.x, r0
-rcp_pp r0.x, r0.x
-add r0.w, r0, c27.z
-mul_pp r0.xy, r0.zyzw, r0.x
-mov_pp r1.xy, c7
-mad_pp r5.xy, r0, c22.y, r1
-mul r0.xy, r5, c6.x
-mul r1.xy, r5, c8.x
-mul r6.xy, r5, c17.x
-texld r1.xyz, r1, s2
-texld r0.xyz, r0, s1
-add_pp r0.xyz, r0, -r1
-mad_sat r0.w, r0, c28.x, c28.y
-mad_pp r0.xyz, r0.w, r0, r1
-mul r0.w, v1, c9.x
-add_pp r1.xyz, -r0, c18.y
-mul_sat r0.w, r0, c19.z
-mad_pp r0.xyz, r0.w, r1, r0
-mul r1.xyz, v0, r0
+mad_pp r1.xyz, r0.w, r2, r0
 abs r0.w, v5.z
-max r0.x, r3, r0.w
-rcp r0.y, r0.x
-min r0.x, r3, r0.w
-mul r1.w, r0.x, r0.y
-mov r0.xyz, v8
-dp3 r0.x, v7, r0
-dp3 r2.w, v7, v7
-mad r0.y, -r0.x, r0.x, r2.w
-mul r0.z, r1.w, r1.w
-mad r2.w, r0.z, c20.y, c20.z
-mad r2.w, r2, r0.z, c20
-mad r2.w, r2, r0.z, c21.x
-mad r2.w, r2, r0.z, c21.y
-mad r0.z, r2.w, r0, c21
-mul r0.z, r0, r1.w
+abs_pp r0.x, r1
+rcp_pp r1.x, r0.x
+mul_pp r1.xy, r1.zyzw, r1.x
+add r0.y, -r0.w, c18
+mad r0.x, r0.w, c18.z, c18.w
+mad r0.x, r0.w, r0, c19
+mov_pp r1.zw, c7.xyxy
+mad_pp r3.xy, r1, c22.y, r1.zwzw
 rsq r0.y, r0.y
+dsx r1.xy, v5
+dsy r1.zw, v5.xyxy
+mul r1.zw, r1, r1
+mul r1.xy, r1, r1
+mad r0.x, r0.w, r0, c19.y
 rcp r0.y, r0.y
-mul r3.y, r0, r0
-mad r3.y, c14.x, c14.x, -r3
-rsq r3.y, r3.y
-rcp r2.w, r3.y
-add_pp r2.xyz, -r1, c16
-add r2.w, r0.x, -r2
-cmp r1.w, r0.x, c18.y, c18.x
-add r0.y, -r0, c14.x
-cmp r0.x, r0.y, c18.y, c18
-mul_pp r0.x, r0, r1.w
-cmp r1.w, -r0.x, v1, r2
-add r0.y, -r0.z, c21.w
-add r0.x, r3, -r0.w
-cmp r0.x, -r0, r0.z, r0.y
-add r0.z, v1.w, -r1.w
-add r1.w, r0.z, c18.y
-add r0.y, -r0.x, c19.w
-cmp r0.x, v5.z, r0, r0.y
-frc r0.y, r1.w
-add_sat r0.y, r1.w, -r0
+mul r0.y, r0.x, r0
+cmp r0.x, v5.z, c18, c18.y
+mul r0.z, r0.x, r0.y
+mad r0.y, -r0.z, c19.z, r0
+mad r0.x, r0, c19.w, r0.y
+mul r0.z, r0.x, c20.x
+dsx r6.w, r0.z
+dsy r6.y, r0.z
+add r0.z, r1.x, r1.y
+add r1.x, r1.z, r1.w
+mov r2.xyz, v5
+dp3_sat r1.w, v1, -r2
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+mul r6.x, r1, c22
+mul r6.z, r0, c22.x
+mul r0.xy, r3, c6.x
+mul r1.xy, r3, c8.x
+texldd r1.xyz, r1, s2, r6.zwzw, r6
+texldd r0.xyz, r0, s1, r6.zwzw, r6
+add_pp r2.xyz, r0, -r1
+add r3.z, r1.w, c27
+mov r0.xyz, v8
+dp3 r1.w, v7, r0
+mad_sat r0.x, r3.z, c28, c28.y
+mad_pp r0.xyz, r0.x, r2, r1
+dp3 r2.w, v7, v7
+mad r2.w, -r1, r1, r2
+rsq r2.x, r2.w
+rcp r2.x, r2.x
+mul r2.y, r2.x, r2.x
+mul r2.z, v1.w, c9.x
+add r2.x, -r2, c14
+add_pp r1.xyz, -r0, c18.y
+mul_sat r2.z, r2, c19
+mad_pp r0.xyz, r2.z, r1, r0
+mad r1.x, c14, c14, -r2.y
+rsq r2.y, r1.x
+mul r0.xyz, v0, r0
+rcp r2.z, r2.y
+add_pp r1.xyz, -r0, c16
+cmp r2.y, r1.w, c18, c18.x
+cmp r2.x, r2, c18.y, c18
+mul_pp r2.x, r2, r2.y
+add r2.y, r1.w, -r2.z
+cmp r2.y, -r2.x, v1.w, r2
+max r1.w, r4.x, r0
+rcp r2.x, r1.w
+min r1.w, r4.x, r0
+mul r1.w, r1, r2.x
+add r2.z, v1.w, -r2.y
+add r2.w, r2.z, c18.y
+mul r2.x, r1.w, r1.w
+frc r3.z, r2.w
+add_sat r2.w, r2, -r3.z
+mad r2.y, r2.x, c20, c20.z
+mad r2.y, r2, r2.x, c20.w
+mad r2.y, r2, r2.x, c21.x
+mad r2.y, r2, r2.x, c21
+mad r2.x, r2.y, r2, c21.z
+mul r1.w, r2.x, r1
 mul_sat r3.w, c13.x, c13.x
-cmp r0.x, v5, r0, -r0
-mul_sat r0.z, r0, c15.x
-mul r0.y, r0, c15.x
-mad r0.y, r0, c27, r0.z
-mad_pp r3.xyz, r0.y, r2, r1
-mul r2.z, r0.x, c22.x
+mul r7.xy, r3, c17.x
+mul r2.w, r2, c15.x
+mul_sat r2.z, r2, c15.x
+mad r2.y, r2.w, c27, r2.z
+mad_pp r2.xyz, r2.y, r1, r0
+add r0.x, r4, -r0.w
+add r0.y, -r1.w, c21.w
+cmp r0.w, -r0.x, r1, r0.y
 abs r0.x, v5.y
+add r1.x, -r0.w, c19.w
 add r0.z, -r0.x, c18.y
 mad r0.y, r0.x, c18.z, c18.w
 mad r0.y, r0, r0.x, c19.x
-add r1.y, -r0.w, c18
-mad r1.x, r0.w, c18.z, c18.w
-mad r1.x, r0.w, r1, c19
 rsq r0.z, r0.z
-rsq r1.y, r1.y
-add r2.x, r2.z, c22.y
-mad r0.w, r0, r1.x, c19.y
-rcp r1.y, r1.y
-mul r1.x, r0.w, r1.y
-cmp r0.w, v5.z, c18.x, c18.y
-mul r1.y, r0.w, r1.x
+cmp r0.w, v5.z, r0, r1.x
 mad r0.x, r0.y, r0, c19.y
 rcp r0.z, r0.z
 mul r0.y, r0.x, r0.z
 cmp r0.x, v5.y, c18, c18.y
 mul r0.z, r0.x, r0.y
 mad r0.y, -r0.z, c19.z, r0
+cmp r0.z, v5.x, r0.w, -r0.w
+mul r1.z, r0, c22.x
 mad r0.x, r0, c19.w, r0.y
-mad r0.z, -r1.y, c19, r1.x
-mul r2.w, r0.x, c20.x
-mad r0.y, r0.w, c19.w, r0.z
-mul r0.x, r0.y, c20
-dsy r0.zw, v5.xyxy
-mul r0.zw, r0, r0
-mov r2.y, r2.w
-dsx r1.w, r0.x
-dsy r1.y, r0.x
-dsx r0.xy, v5
-mul r0.xy, r0, r0
-add r0.x, r0, r0.y
-add r0.y, r0.z, r0.w
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-rsq r0.y, r0.y
-rcp r0.y, r0.y
-mul r1.z, r0.x, c22.x
-mul r1.x, r0.y, c22
-texldd r0.xyz, r2, s0, r1.zwzw, r1
-add_pp r0.xyz, r0, -r3
-mad_pp r4.xyz, r3.w, r0, r3
-texldd r0.yw, r2, s6, r1.zwzw, r1
-add r3.xy, r0.wyzw, c22.w
-mul r3.xy, r3, c23
-add r3.xy, r2.zwzw, r3
-add r2.z, v0.w, c22
-frc r2.w, r2.z
-mad r3.y, r3, c23.z, c23.x
-frc r3.y, r3
-texldd r1, r2, s3, r1.zwzw, r1
-add_sat r2.z, r2, -r2.w
-mul_pp r1.w, r1, r2.z
-texld r0, r6, s5
+mul r1.w, r0.x, c20.x
+add r1.x, r1.z, c22.y
+mov r1.y, r1.w
+texldd r0.xyz, r1, s0, r6.zwzw, r6
+add_pp r0.xyz, r0, -r2
+mad_pp r4.xyz, r3.w, r0, r2
+texldd r0.yw, r1, s6, r6.zwzw, r6
+add r2.xy, r0.wyzw, c22.w
+mul r2.xy, r2, c23
+add r3.xy, r1.zwzw, r2
+add r1.z, v0.w, c22
+mad r2.x, r3.y, c23.z, c23
+frc r3.y, r2.x
+frc r1.w, r1.z
+add_sat r2.x, r1.z, -r1.w
+texldd r1, r1, s3, r6.zwzw, r6
+mul_pp r1.w, r1, r2.x
+texldd r0, r7, s5, r6.zwzw, r6
 mul_pp r2, r1, r0
 mad r3.y, r3, c24.x, c24
 add_pp r2.xyz, r2, -r4
@@ -111942,11 +111948,11 @@ dp4 r0.z, c1, c1
 mov_pp r3.xz, r0.yyxw
 rsq r0.z, r0.z
 dp3_pp_sat r4.w, -r3, -c12
-mad_pp r2.xyz, r2.w, r2, r4
 mul r0.xyz, r0.z, c1
 dp3_sat r3.x, v4, r0
 add_pp r3.y, r4.w, -r3.x
-mad_pp r6.z, r3.w, r3.y, r3.x
+mad_pp r7.z, r3.w, r3.y, r3.x
+mad_pp r2.xyz, r2.w, r2, r4
 add r0.xyz, v3, c25.xyyw
 texld r0, r0, s7
 dp4 r5.w, r0, c26
@@ -111956,10 +111962,10 @@ dp4 r5.z, r0, c26
 add r3.xyz, v3, c25.yyxw
 texld r3, r3, s7
 dp4 r5.y, r3, c26
-add_pp r2.w, r4, c24.z
 add r0.xyz, v3, c24.w
 texld r0, r0, s7
 dp3 r3.x, v3, v3
+add_pp r2.w, r4, c24.z
 rsq r3.x, r3.x
 dp4 r5.x, r0, c26
 rcp r0.x, r3.x
@@ -111969,14 +111975,14 @@ mad r0, -r0.x, c25.z, r5
 cmp r0, r0, c18.y, r3.x
 dp4_pp r0.y, r0, c25.w
 dp3 r0.x, v2, v2
-mul_pp r3.x, r6.z, c4.w
+mul_pp r3.x, r7.z, c4.w
 texld r0.w, v2, s9
 texld r0.x, r0.x, s8
 mul r0.x, r0, r0.w
 mul r0.w, r0.x, r0.y
 mul_pp r0.y, r0.w, r3.x
-mul_pp r3.w, r2, c4
-mul_pp r0.w, r3, r0
+mul_pp r2.w, r2, c4
+mul_pp r0.w, r2, r0
 mul_pp_sat r0.w, r0, c27.x
 mul_pp_sat r3.x, r0.y, c19.z
 mov r0.x, c10
@@ -111984,11 +111990,11 @@ add r0.xyz, c4, r0.x
 mad_sat r0.xyz, r0, r3.x, c0
 mul_pp r0.xyz, r0, v6.x
 mul r3.xyz, r0, c11.x
-mad_pp r3.xyz, r2, c5, r3
-texld r2, r6, s4
-mul_pp r1, r1, r2
-mad_pp r1.xyz, -r3, r0, r1
-mul_pp r2.xyz, r3, r0
+mad_pp r2.xyz, r2, c5, r3
+texldd r3, r7, s4, r6.zwzw, r6
+mul_pp r1, r1, r3
+mad_pp r1.xyz, -r2, r0, r1
+mul_pp r2.xyz, r2, r0
 add_pp r0.w, -r0, c18.y
 mul_pp r0.x, r1.w, r0.w
 mad_pp oC0.xyz, r0.x, r1, r2

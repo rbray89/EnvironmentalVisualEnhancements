@@ -5,6 +5,7 @@
 		_OceanRadius ("Ocean Radius", Float) = 63000
 		_SphereRadius ("Sphere Radius", Float) = 67000
 		_PlanetOrigin ("Sphere Center", Vector) = (0,0,0,1)
+		_SunsetColor ("Color Sunset", Color) = (1,0,0,.45)
 	}
 
 Category {
@@ -31,6 +32,7 @@ SubShader {
 		#pragma glsl
 		#pragma vertex vert
 		#pragma fragment frag
+		#pragma multi_compile_fwdbase
 	    #pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
 		#define MAG_ONE 1.4142135623730950488016887242097
 		#pragma fragmentoption ARB_precision_hint_fastest
@@ -41,6 +43,7 @@ SubShader {
 	    #define FLT_MAX (1e+32)
 
 		fixed4 _Color;
+		fixed4 _SunsetColor;
 		sampler2D _CameraDepthTexture;
 		float _Visibility;
 		float _OceanRadius;
@@ -57,11 +60,12 @@ SubShader {
 			float4 pos : SV_POSITION;
 			float4 scrPos : TEXCOORD0;
 			float3 worldVert : TEXCOORD1;
-			float3 worldOrigin : TEXCOORD2;
-			float3 viewDir : TEXCOORD3;
-			float  viewDist : TEXCOORD4;
-			float  altitude : TEXCOORD5;
-			float3 L : TEXCOORD6;
+			LIGHTING_COORDS(2,3)
+			float3 worldOrigin : TEXCOORD4;
+			float3 viewDir : TEXCOORD5;
+			float  viewDist : TEXCOORD6;
+			float  altitude : TEXCOORD7;
+			float3 L : TEXCOORD8;
 		};	
 		
 
@@ -89,6 +93,8 @@ SubShader {
 	   	   o.scrPos=ComputeScreenPos(o.pos);
 		   COMPUTE_EYEDEPTH(o.scrPos.z);
 		   #endif
+		   
+		   TRANSFER_VERTEX_TO_FRAGMENT(o);
 	   	   return o;
 	 	}
 	 		
@@ -117,13 +123,17 @@ SubShader {
 			depth = min(oceanSphereDist, depth);
 		   	   float avgHeight = _SphereRadius; 
 		   	   
+		   	   half3 norm;
+		   	   
 		   	   if (Llength <  _SphereRadius && tc < 0.0)
 		   	   {
 			   	   float tlc = sqrt(pow(_SphereRadius,2)-d2);
 			   	   float td = sqrt(pow(Llength,2)-d2);
 			   	   sphereDist = tlc - td;
 			   	   depth = min(depth, sphereDist);
-			   	   float height1 = distance(_WorldSpaceCameraPos + (depth*worldDir), IN.worldOrigin);
+			   	   float3 point = _WorldSpaceCameraPos + (depth*worldDir);
+			   	   norm = normalize(point- IN.worldOrigin);
+			   	   float height1 = distance(point, IN.worldOrigin);
 			   	   float height2 = Llength;
 		   	   	   avgHeight = .75*min(height1,height2) + .25*max(height1, height2);
 		   	   }
@@ -134,7 +144,10 @@ SubShader {
 			   	   sphereDist = lerp(tc - tlc, tlc + tc, sphereCheck);
 			   	   float minFar = min(tc+tlc, depth);
 			   	   float oldDepth = depth;
-			   	   depth = lerp( minFar - sphereDist, min(depth, sphereDist), sphereCheck);
+			   	   float depthMin = min(depth, sphereDist);
+			   	   float3 point = _WorldSpaceCameraPos + (depthMin*worldDir);
+			   	   norm = normalize(point- IN.worldOrigin);
+			   	   depth = lerp( minFar - sphereDist, min(depthMin, sphereDist), sphereCheck);
 			   	   
 			   	   float height1 = distance(_WorldSpaceCameraPos + (minFar*worldDir), IN.worldOrigin);
 			   	   float height2 = lerp(lerp(_SphereRadius, d, minFar-oldDepth), Llength, sphereCheck);
@@ -144,10 +157,18 @@ SubShader {
 			
 			
 			//depth = min(depth, sphereDist);
-			
+			half3 lightDirection = normalize(_WorldSpaceLightPos0);
+			half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
+			half NdotL = dot (norm, lightDirection);
+	        fixed atten = LIGHT_ATTENUATION(IN); 
+			half lightIntensity = saturate(_LightColor0.a * NdotL * 4 * atten);
+			half3 light = saturate(ambientLighting + ((_LightColor0.rgb) * lightIntensity));
+			NdotL = abs(NdotL);		
+			half VdotL = dot (-worldDir, lightDirection);
 			
 			depth *= _Visibility*(1-saturate((avgHeight-_OceanRadius)/(_SphereRadius-_OceanRadius))); 
-			color.a *= depth;
+			color.a *= depth * light;
+			//color.rgb = lerp(color.rgb, _SunsetColor, saturate((1-NdotL)*VdotL));
           	return color;
 		}
 		ENDCG

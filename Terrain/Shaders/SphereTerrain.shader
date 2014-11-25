@@ -161,14 +161,14 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half3 detailCoords = lerp(sphereNrm.zxy, sphereNrm.xyz, zxlerp);
 			half nylerp = saturate(floor(1+sphereNrm.y-(lerp(sphereNrm.z, sphereNrm.x, zxlerp))));		
 			detailCoords = lerp(detailCoords, sphereNrm.yxz, nylerp);
-			half4 detail = tex2D (_DetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_DetailScale);	
-			half4 vert = tex2D (_DetailVertTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_DetailVertScale);	
+			half4 detail = tex2D (_DetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_DetailScale, uvdd.xy, uvdd.zw);	
+			half4 vert = tex2D (_DetailVertTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_DetailVertScale, uvdd.xy, uvdd.zw);	
 			detail = lerp(vert, detail, vertLerp);
 			
 			#ifdef CITYOVERLAY_ON
 			half4 cityoverlay = tex2D(_CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-			half4 citydarkoverlaydetail = tex2D (_CityDarkOverlayDetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_CityOverlayDetailScale);
-			half4 citylightoverlaydetail = tex2D (_CityLightOverlayDetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_CityOverlayDetailScale);
+			half4 citydarkoverlaydetail = tex2D (_CityDarkOverlayDetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_CityOverlayDetailScale, uvdd.xy, uvdd.zw);
+			half4 citylightoverlaydetail = tex2D (_CityLightOverlayDetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_CityOverlayDetailScale, uvdd.xy, uvdd.zw);
 			#endif
 			
 			half4 encnorm = tex2D(_BumpMap, uv, uvdd.xy, uvdd.zw);

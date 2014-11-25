@@ -57,6 +57,17 @@
             return o;
         }
          
+        float4 Derivatives( float lat, float lon, float3 pos)  
+		{  
+		    float2 latLong = float2( lat, lon );  
+		    float latDdx = INV_2PI*length( ddx( pos.xz ) );  
+		    float latDdy = INV_2PI*length( ddy( pos.xz ) );  
+		    float longDdx = ddx( lon );  
+		    float longDdy = ddy( lon );  
+		 	
+		    return float4( latDdx , longDdx , latDdy, longDdy );  
+		} 
+		
 		fixed4 frag (v2f IN) : COLOR
 		{
 			half dirCheck = saturate(floor(IN.posProj.w + 1))*IN.dotcoeff;
@@ -89,13 +100,15 @@
 		    float ymag = (1-(objNrm.y*objNrm.y));
 		    objNrm.z = cos(HALF_PI*detailuv.y)*cos(PI*detailuv.x);
 		    objNrm.x = cos(HALF_PI*detailuv.y)*sin(PI*detailuv.x);
-		   
+		    
+			float4 uvdd = Derivatives(uv.x-.5, uv.y, objNrm);
+			
 		    objNrm = abs(objNrm);
 			half zxlerp = saturate(floor(1+objNrm.x-objNrm.z));
 			half3 detailCoords = lerp(objNrm.zxy, objNrm.xyz, zxlerp);
 			half nylerp = saturate(floor(1+objNrm.y-(lerp(objNrm.z, objNrm.x, zxlerp))));		
 			detailCoords = lerp(detailCoords, objNrm.yxz, nylerp);
-			half4 detail = tex2D (_DetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_DetailScale);	
+			half4 detail = tex2D (_DetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy, uvdd.xy, uvdd.zw) *_DetailScale);	
 			
 			half detailLevel = saturate(2*_DetailDist*distance(IN.worldPos,_WorldSpaceCameraPos));
 			color *= lerp(detail.rgba, 1, detailLevel);
