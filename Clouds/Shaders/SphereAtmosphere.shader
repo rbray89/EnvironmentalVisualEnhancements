@@ -158,16 +158,15 @@ SubShader {
 			
 			//depth = min(depth, sphereDist);
 			half3 lightDirection = normalize(_WorldSpaceLightPos0);
-			half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
 			half NdotL = dot (norm, lightDirection);
 	        fixed atten = LIGHT_ATTENUATION(IN); 
 			half lightIntensity = saturate(_LightColor0.a * NdotL * 4 * atten);
-			half3 light = saturate(ambientLighting + ((_LightColor0.rgb) * lightIntensity));
+			half3 light = max(0.0,((_LightColor0.rgb) * lightIntensity));
 			NdotL = abs(NdotL);		
 			half VdotL = dot (-worldDir, lightDirection);
 			
 			depth *= _Visibility*(1-saturate((avgHeight-_OceanRadius)/(_SphereRadius-_OceanRadius))); 
-			color.a *= depth * light;
+			color.a *= depth * max(0.0, light);
 			//color.rgb = lerp(color.rgb, _SunsetColor, saturate((1-NdotL)*VdotL));
           	return color;
 		}

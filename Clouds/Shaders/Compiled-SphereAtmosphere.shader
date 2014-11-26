@@ -73,7 +73,6 @@ uniform float _OceanRadius;
 uniform float _Visibility;
 uniform vec4 _Color;
 uniform vec4 _LightColor0;
-
 uniform vec4 _WorldSpaceLightPos0;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
@@ -149,7 +148,7 @@ void main ()
   float tmpvar_27;
   tmpvar_27 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
   depth_5 = tmpvar_27;
-  color_6.w = (_Color.w * (tmpvar_27 * clamp ((gl_LightModel.ambient.xyz + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0), 0.0, 1.0))), 0.0, 1.0)).x);
+  color_6.w = (_Color.w * (tmpvar_27 * max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0), 0.0, 1.0)).x))));
   gl_FragData[0] = color_6;
 }
 
@@ -254,105 +253,100 @@ uniform highp float _OceanRadius;
 uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  mediump vec3 tmpvar_36;
-  tmpvar_36 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_37;
-  tmpvar_37 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_37;
-  highp float tmpvar_38;
-  tmpvar_38 = (color_10.w * (tmpvar_37 * tmpvar_36).x);
-  color_10.w = tmpvar_38;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  highp float tmpvar_34;
+  tmpvar_34 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_34;
+  mediump float tmpvar_35;
+  tmpvar_35 = max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0), 0.0, 1.0)).x));
+  highp float tmpvar_36;
+  tmpvar_36 = (color_9.w * (tmpvar_34 * tmpvar_35));
+  color_9.w = tmpvar_36;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -414,105 +408,100 @@ uniform highp float _OceanRadius;
 uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  mediump vec3 tmpvar_36;
-  tmpvar_36 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_37;
-  tmpvar_37 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_37;
-  highp float tmpvar_38;
-  tmpvar_38 = (color_10.w * (tmpvar_37 * tmpvar_36).x);
-  color_10.w = tmpvar_38;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  highp float tmpvar_34;
+  tmpvar_34 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_34;
+  mediump float tmpvar_35;
+  tmpvar_35 = max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0), 0.0, 1.0)).x));
+  highp float tmpvar_36;
+  tmpvar_36 = (color_9.w * (tmpvar_34 * tmpvar_35));
+  color_9.w = tmpvar_36;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -958,17 +947,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 478
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 482
     lowp float atten = 1.0;
+    #line 482
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 486
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 486
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -1044,7 +1032,6 @@ uniform float _OceanRadius;
 uniform float _Visibility;
 uniform vec4 _Color;
 uniform vec4 _LightColor0;
-
 uniform vec4 _WorldSpaceLightPos0;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
@@ -1120,7 +1107,7 @@ void main ()
   float tmpvar_27;
   tmpvar_27 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
   depth_5 = tmpvar_27;
-  color_6.w = (_Color.w * (tmpvar_27 * clamp ((gl_LightModel.ambient.xyz + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0), 0.0, 1.0))), 0.0, 1.0)).x);
+  color_6.w = (_Color.w * (tmpvar_27 * max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0), 0.0, 1.0)).x))));
   gl_FragData[0] = color_6;
 }
 
@@ -1225,105 +1212,100 @@ uniform highp float _OceanRadius;
 uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  mediump vec3 tmpvar_36;
-  tmpvar_36 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_37;
-  tmpvar_37 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_37;
-  highp float tmpvar_38;
-  tmpvar_38 = (color_10.w * (tmpvar_37 * tmpvar_36).x);
-  color_10.w = tmpvar_38;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  highp float tmpvar_34;
+  tmpvar_34 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_34;
+  mediump float tmpvar_35;
+  tmpvar_35 = max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0), 0.0, 1.0)).x));
+  highp float tmpvar_36;
+  tmpvar_36 = (color_9.w * (tmpvar_34 * tmpvar_35));
+  color_9.w = tmpvar_36;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -1385,105 +1367,100 @@ uniform highp float _OceanRadius;
 uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  mediump vec3 tmpvar_36;
-  tmpvar_36 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_37;
-  tmpvar_37 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_37;
-  highp float tmpvar_38;
-  tmpvar_38 = (color_10.w * (tmpvar_37 * tmpvar_36).x);
-  color_10.w = tmpvar_38;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  highp float tmpvar_34;
+  tmpvar_34 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_34;
+  mediump float tmpvar_35;
+  tmpvar_35 = max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0), 0.0, 1.0)).x));
+  highp float tmpvar_36;
+  tmpvar_36 = (color_9.w * (tmpvar_34 * tmpvar_35));
+  color_9.w = tmpvar_36;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -1929,17 +1906,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 478
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 482
     lowp float atten = 1.0;
+    #line 482
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 486
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 486
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -2015,7 +1991,6 @@ uniform float _OceanRadius;
 uniform float _Visibility;
 uniform vec4 _Color;
 uniform vec4 _LightColor0;
-
 uniform vec4 _WorldSpaceLightPos0;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
@@ -2091,7 +2066,7 @@ void main ()
   float tmpvar_27;
   tmpvar_27 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
   depth_5 = tmpvar_27;
-  color_6.w = (_Color.w * (tmpvar_27 * clamp ((gl_LightModel.ambient.xyz + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0), 0.0, 1.0))), 0.0, 1.0)).x);
+  color_6.w = (_Color.w * (tmpvar_27 * max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0), 0.0, 1.0)).x))));
   gl_FragData[0] = color_6;
 }
 
@@ -2196,105 +2171,100 @@ uniform highp float _OceanRadius;
 uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  mediump vec3 tmpvar_36;
-  tmpvar_36 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_37;
-  tmpvar_37 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_37;
-  highp float tmpvar_38;
-  tmpvar_38 = (color_10.w * (tmpvar_37 * tmpvar_36).x);
-  color_10.w = tmpvar_38;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  highp float tmpvar_34;
+  tmpvar_34 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_34;
+  mediump float tmpvar_35;
+  tmpvar_35 = max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0), 0.0, 1.0)).x));
+  highp float tmpvar_36;
+  tmpvar_36 = (color_9.w * (tmpvar_34 * tmpvar_35));
+  color_9.w = tmpvar_36;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -2356,105 +2326,100 @@ uniform highp float _OceanRadius;
 uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  mediump vec3 tmpvar_36;
-  tmpvar_36 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_37;
-  tmpvar_37 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_37;
-  highp float tmpvar_38;
-  tmpvar_38 = (color_10.w * (tmpvar_37 * tmpvar_36).x);
-  color_10.w = tmpvar_38;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  highp float tmpvar_34;
+  tmpvar_34 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_34;
+  mediump float tmpvar_35;
+  tmpvar_35 = max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0), 0.0, 1.0)).x));
+  highp float tmpvar_36;
+  tmpvar_36 = (color_9.w * (tmpvar_34 * tmpvar_35));
+  color_9.w = tmpvar_36;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -2900,17 +2865,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 478
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 482
     lowp float atten = 1.0;
+    #line 482
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 486
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 486
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -3001,7 +2965,6 @@ uniform float _Visibility;
 uniform vec4 _Color;
 uniform vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-
 uniform vec4 _WorldSpaceLightPos0;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
@@ -3077,7 +3040,7 @@ void main ()
   float tmpvar_27;
   tmpvar_27 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
   depth_5 = tmpvar_27;
-  color_6.w = (_Color.w * (tmpvar_27 * clamp ((gl_LightModel.ambient.xyz + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0))), 0.0, 1.0)).x);
+  color_6.w = (_Color.w * (tmpvar_27 * max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0)).x))));
   gl_FragData[0] = color_6;
 }
 
@@ -3196,118 +3159,113 @@ uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  lowp float tmpvar_36;
-  mediump float lightShadowDataX_37;
-  highp float dist_38;
-  lowp float tmpvar_39;
-  tmpvar_39 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x;
-  dist_38 = tmpvar_39;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  lowp float tmpvar_34;
+  mediump float lightShadowDataX_35;
+  highp float dist_36;
+  lowp float tmpvar_37;
+  tmpvar_37 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x;
+  dist_36 = tmpvar_37;
+  highp float tmpvar_38;
+  tmpvar_38 = _LightShadowData.x;
+  lightShadowDataX_35 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = max (float((dist_36 > (xlv_TEXCOORD2.z / xlv_TEXCOORD2.w))), lightShadowDataX_35);
+  tmpvar_34 = tmpvar_39;
   highp float tmpvar_40;
-  tmpvar_40 = _LightShadowData.x;
-  lightShadowDataX_37 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = max (float((dist_38 > (xlv_TEXCOORD2.z / xlv_TEXCOORD2.w))), lightShadowDataX_37);
-  tmpvar_36 = tmpvar_41;
-  mediump vec3 tmpvar_42;
-  tmpvar_42 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * tmpvar_36), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_43;
-  tmpvar_43 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_43;
-  highp float tmpvar_44;
-  tmpvar_44 = (color_10.w * (tmpvar_43 * tmpvar_42).x);
-  color_10.w = tmpvar_44;
-  tmpvar_1 = color_10;
+  tmpvar_40 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_40;
+  mediump float tmpvar_41;
+  tmpvar_41 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * tmpvar_34), 0.0, 1.0)).x));
+  highp float tmpvar_42;
+  tmpvar_42 = (color_9.w * (tmpvar_40 * tmpvar_41));
+  color_9.w = tmpvar_42;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -3384,107 +3342,102 @@ uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  lowp vec4 tmpvar_36;
-  tmpvar_36 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2);
-  mediump vec3 tmpvar_37;
-  tmpvar_37 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * tmpvar_36.x), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_38;
-  tmpvar_38 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_38;
-  highp float tmpvar_39;
-  tmpvar_39 = (color_10.w * (tmpvar_38 * tmpvar_37).x);
-  color_10.w = tmpvar_39;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  lowp vec4 tmpvar_34;
+  tmpvar_34 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2);
+  highp float tmpvar_35;
+  tmpvar_35 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * tmpvar_34.x), 0.0, 1.0)).x));
+  highp float tmpvar_37;
+  tmpvar_37 = (color_9.w * (tmpvar_35 * tmpvar_36));
+  color_9.w = tmpvar_37;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -3950,17 +3903,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 488
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 492
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    #line 492
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 496
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 496
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -4053,7 +4005,6 @@ uniform float _Visibility;
 uniform vec4 _Color;
 uniform vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-
 uniform vec4 _WorldSpaceLightPos0;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
@@ -4129,7 +4080,7 @@ void main ()
   float tmpvar_27;
   tmpvar_27 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
   depth_5 = tmpvar_27;
-  color_6.w = (_Color.w * (tmpvar_27 * clamp ((gl_LightModel.ambient.xyz + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0))), 0.0, 1.0)).x);
+  color_6.w = (_Color.w * (tmpvar_27 * max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0)).x))));
   gl_FragData[0] = color_6;
 }
 
@@ -4248,118 +4199,113 @@ uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  lowp float tmpvar_36;
-  mediump float lightShadowDataX_37;
-  highp float dist_38;
-  lowp float tmpvar_39;
-  tmpvar_39 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x;
-  dist_38 = tmpvar_39;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  lowp float tmpvar_34;
+  mediump float lightShadowDataX_35;
+  highp float dist_36;
+  lowp float tmpvar_37;
+  tmpvar_37 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x;
+  dist_36 = tmpvar_37;
+  highp float tmpvar_38;
+  tmpvar_38 = _LightShadowData.x;
+  lightShadowDataX_35 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = max (float((dist_36 > (xlv_TEXCOORD2.z / xlv_TEXCOORD2.w))), lightShadowDataX_35);
+  tmpvar_34 = tmpvar_39;
   highp float tmpvar_40;
-  tmpvar_40 = _LightShadowData.x;
-  lightShadowDataX_37 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = max (float((dist_38 > (xlv_TEXCOORD2.z / xlv_TEXCOORD2.w))), lightShadowDataX_37);
-  tmpvar_36 = tmpvar_41;
-  mediump vec3 tmpvar_42;
-  tmpvar_42 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * tmpvar_36), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_43;
-  tmpvar_43 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_43;
-  highp float tmpvar_44;
-  tmpvar_44 = (color_10.w * (tmpvar_43 * tmpvar_42).x);
-  color_10.w = tmpvar_44;
-  tmpvar_1 = color_10;
+  tmpvar_40 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_40;
+  mediump float tmpvar_41;
+  tmpvar_41 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * tmpvar_34), 0.0, 1.0)).x));
+  highp float tmpvar_42;
+  tmpvar_42 = (color_9.w * (tmpvar_40 * tmpvar_41));
+  color_9.w = tmpvar_42;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -4436,107 +4382,102 @@ uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  lowp vec4 tmpvar_36;
-  tmpvar_36 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2);
-  mediump vec3 tmpvar_37;
-  tmpvar_37 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * tmpvar_36.x), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_38;
-  tmpvar_38 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_38;
-  highp float tmpvar_39;
-  tmpvar_39 = (color_10.w * (tmpvar_38 * tmpvar_37).x);
-  color_10.w = tmpvar_39;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  lowp vec4 tmpvar_34;
+  tmpvar_34 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2);
+  highp float tmpvar_35;
+  tmpvar_35 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * tmpvar_34.x), 0.0, 1.0)).x));
+  highp float tmpvar_37;
+  tmpvar_37 = (color_9.w * (tmpvar_35 * tmpvar_36));
+  color_9.w = tmpvar_37;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -5002,17 +4943,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 488
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 492
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    #line 492
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 496
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 496
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -5105,7 +5045,6 @@ uniform float _Visibility;
 uniform vec4 _Color;
 uniform vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-
 uniform vec4 _WorldSpaceLightPos0;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
@@ -5181,7 +5120,7 @@ void main ()
   float tmpvar_27;
   tmpvar_27 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
   depth_5 = tmpvar_27;
-  color_6.w = (_Color.w * (tmpvar_27 * clamp ((gl_LightModel.ambient.xyz + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0))), 0.0, 1.0)).x);
+  color_6.w = (_Color.w * (tmpvar_27 * max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0)).x))));
   gl_FragData[0] = color_6;
 }
 
@@ -5300,118 +5239,113 @@ uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  lowp float tmpvar_36;
-  mediump float lightShadowDataX_37;
-  highp float dist_38;
-  lowp float tmpvar_39;
-  tmpvar_39 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x;
-  dist_38 = tmpvar_39;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  lowp float tmpvar_34;
+  mediump float lightShadowDataX_35;
+  highp float dist_36;
+  lowp float tmpvar_37;
+  tmpvar_37 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x;
+  dist_36 = tmpvar_37;
+  highp float tmpvar_38;
+  tmpvar_38 = _LightShadowData.x;
+  lightShadowDataX_35 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = max (float((dist_36 > (xlv_TEXCOORD2.z / xlv_TEXCOORD2.w))), lightShadowDataX_35);
+  tmpvar_34 = tmpvar_39;
   highp float tmpvar_40;
-  tmpvar_40 = _LightShadowData.x;
-  lightShadowDataX_37 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = max (float((dist_38 > (xlv_TEXCOORD2.z / xlv_TEXCOORD2.w))), lightShadowDataX_37);
-  tmpvar_36 = tmpvar_41;
-  mediump vec3 tmpvar_42;
-  tmpvar_42 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * tmpvar_36), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_43;
-  tmpvar_43 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_43;
-  highp float tmpvar_44;
-  tmpvar_44 = (color_10.w * (tmpvar_43 * tmpvar_42).x);
-  color_10.w = tmpvar_44;
-  tmpvar_1 = color_10;
+  tmpvar_40 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_40;
+  mediump float tmpvar_41;
+  tmpvar_41 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * tmpvar_34), 0.0, 1.0)).x));
+  highp float tmpvar_42;
+  tmpvar_42 = (color_9.w * (tmpvar_40 * tmpvar_41));
+  color_9.w = tmpvar_42;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -5488,107 +5422,102 @@ uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  lowp vec4 tmpvar_36;
-  tmpvar_36 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2);
-  mediump vec3 tmpvar_37;
-  tmpvar_37 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * tmpvar_36.x), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_38;
-  tmpvar_38 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_38;
-  highp float tmpvar_39;
-  tmpvar_39 = (color_10.w * (tmpvar_38 * tmpvar_37).x);
-  color_10.w = tmpvar_39;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  lowp vec4 tmpvar_34;
+  tmpvar_34 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2);
+  highp float tmpvar_35;
+  tmpvar_35 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * tmpvar_34.x), 0.0, 1.0)).x));
+  highp float tmpvar_37;
+  tmpvar_37 = (color_9.w * (tmpvar_35 * tmpvar_36));
+  color_9.w = tmpvar_37;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -6054,17 +5983,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 488
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 492
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    #line 492
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 496
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 496
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -6142,7 +6070,6 @@ uniform float _OceanRadius;
 uniform float _Visibility;
 uniform vec4 _Color;
 uniform vec4 _LightColor0;
-
 uniform vec4 _WorldSpaceLightPos0;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
@@ -6218,7 +6145,7 @@ void main ()
   float tmpvar_27;
   tmpvar_27 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
   depth_5 = tmpvar_27;
-  color_6.w = (_Color.w * (tmpvar_27 * clamp ((gl_LightModel.ambient.xyz + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0), 0.0, 1.0))), 0.0, 1.0)).x);
+  color_6.w = (_Color.w * (tmpvar_27 * max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0), 0.0, 1.0)).x))));
   gl_FragData[0] = color_6;
 }
 
@@ -6323,105 +6250,100 @@ uniform highp float _OceanRadius;
 uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  mediump vec3 tmpvar_36;
-  tmpvar_36 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_37;
-  tmpvar_37 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_37;
-  highp float tmpvar_38;
-  tmpvar_38 = (color_10.w * (tmpvar_37 * tmpvar_36).x);
-  color_10.w = tmpvar_38;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  highp float tmpvar_34;
+  tmpvar_34 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_34;
+  mediump float tmpvar_35;
+  tmpvar_35 = max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0), 0.0, 1.0)).x));
+  highp float tmpvar_36;
+  tmpvar_36 = (color_9.w * (tmpvar_34 * tmpvar_35));
+  color_9.w = tmpvar_36;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -6483,105 +6405,100 @@ uniform highp float _OceanRadius;
 uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  mediump vec3 tmpvar_36;
-  tmpvar_36 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_37;
-  tmpvar_37 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_37;
-  highp float tmpvar_38;
-  tmpvar_38 = (color_10.w * (tmpvar_37 * tmpvar_36).x);
-  color_10.w = tmpvar_38;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  highp float tmpvar_34;
+  tmpvar_34 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_34;
+  mediump float tmpvar_35;
+  tmpvar_35 = max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0), 0.0, 1.0)).x));
+  highp float tmpvar_36;
+  tmpvar_36 = (color_9.w * (tmpvar_34 * tmpvar_35));
+  color_9.w = tmpvar_36;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -7027,17 +6944,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 478
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 482
     lowp float atten = 1.0;
+    #line 482
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 486
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 486
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -7128,7 +7044,6 @@ uniform float _Visibility;
 uniform vec4 _Color;
 uniform vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-
 uniform vec4 _WorldSpaceLightPos0;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
@@ -7204,7 +7119,7 @@ void main ()
   float tmpvar_27;
   tmpvar_27 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
   depth_5 = tmpvar_27;
-  color_6.w = (_Color.w * (tmpvar_27 * clamp ((gl_LightModel.ambient.xyz + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0))), 0.0, 1.0)).x);
+  color_6.w = (_Color.w * (tmpvar_27 * max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0)).x))));
   gl_FragData[0] = color_6;
 }
 
@@ -7323,118 +7238,113 @@ uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  lowp float tmpvar_36;
-  mediump float lightShadowDataX_37;
-  highp float dist_38;
-  lowp float tmpvar_39;
-  tmpvar_39 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x;
-  dist_38 = tmpvar_39;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  lowp float tmpvar_34;
+  mediump float lightShadowDataX_35;
+  highp float dist_36;
+  lowp float tmpvar_37;
+  tmpvar_37 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x;
+  dist_36 = tmpvar_37;
+  highp float tmpvar_38;
+  tmpvar_38 = _LightShadowData.x;
+  lightShadowDataX_35 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = max (float((dist_36 > (xlv_TEXCOORD2.z / xlv_TEXCOORD2.w))), lightShadowDataX_35);
+  tmpvar_34 = tmpvar_39;
   highp float tmpvar_40;
-  tmpvar_40 = _LightShadowData.x;
-  lightShadowDataX_37 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = max (float((dist_38 > (xlv_TEXCOORD2.z / xlv_TEXCOORD2.w))), lightShadowDataX_37);
-  tmpvar_36 = tmpvar_41;
-  mediump vec3 tmpvar_42;
-  tmpvar_42 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * tmpvar_36), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_43;
-  tmpvar_43 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_43;
-  highp float tmpvar_44;
-  tmpvar_44 = (color_10.w * (tmpvar_43 * tmpvar_42).x);
-  color_10.w = tmpvar_44;
-  tmpvar_1 = color_10;
+  tmpvar_40 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_40;
+  mediump float tmpvar_41;
+  tmpvar_41 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * tmpvar_34), 0.0, 1.0)).x));
+  highp float tmpvar_42;
+  tmpvar_42 = (color_9.w * (tmpvar_40 * tmpvar_41));
+  color_9.w = tmpvar_42;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -7511,107 +7421,102 @@ uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  lowp vec4 tmpvar_36;
-  tmpvar_36 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2);
-  mediump vec3 tmpvar_37;
-  tmpvar_37 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * tmpvar_36.x), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_38;
-  tmpvar_38 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_38;
-  highp float tmpvar_39;
-  tmpvar_39 = (color_10.w * (tmpvar_38 * tmpvar_37).x);
-  color_10.w = tmpvar_39;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  lowp vec4 tmpvar_34;
+  tmpvar_34 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2);
+  highp float tmpvar_35;
+  tmpvar_35 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * tmpvar_34.x), 0.0, 1.0)).x));
+  highp float tmpvar_37;
+  tmpvar_37 = (color_9.w * (tmpvar_35 * tmpvar_36));
+  color_9.w = tmpvar_37;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -8077,17 +7982,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 488
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 492
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    #line 492
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 496
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 496
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -8178,112 +8082,107 @@ uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform lowp sampler2DShadow _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  lowp float shadow_36;
-  lowp float tmpvar_37;
-  tmpvar_37 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD2.xyz);
-  highp float tmpvar_38;
-  tmpvar_38 = (_LightShadowData.x + (tmpvar_37 * (1.0 - _LightShadowData.x)));
-  shadow_36 = tmpvar_38;
-  mediump vec3 tmpvar_39;
-  tmpvar_39 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * shadow_36), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_40;
-  tmpvar_40 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = (color_10.w * (tmpvar_40 * tmpvar_39).x);
-  color_10.w = tmpvar_41;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  lowp float shadow_34;
+  lowp float tmpvar_35;
+  tmpvar_35 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD2.xyz);
+  highp float tmpvar_36;
+  tmpvar_36 = (_LightShadowData.x + (tmpvar_35 * (1.0 - _LightShadowData.x)));
+  shadow_34 = tmpvar_36;
+  highp float tmpvar_37;
+  tmpvar_37 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_37;
+  mediump float tmpvar_38;
+  tmpvar_38 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * shadow_34), 0.0, 1.0)).x));
+  highp float tmpvar_39;
+  tmpvar_39 = (color_9.w * (tmpvar_37 * tmpvar_38));
+  color_9.w = tmpvar_39;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -8750,17 +8649,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 488
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 492
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    #line 492
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 496
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 496
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -8851,112 +8749,107 @@ uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform lowp sampler2DShadow _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  lowp float shadow_36;
-  lowp float tmpvar_37;
-  tmpvar_37 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD2.xyz);
-  highp float tmpvar_38;
-  tmpvar_38 = (_LightShadowData.x + (tmpvar_37 * (1.0 - _LightShadowData.x)));
-  shadow_36 = tmpvar_38;
-  mediump vec3 tmpvar_39;
-  tmpvar_39 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * shadow_36), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_40;
-  tmpvar_40 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = (color_10.w * (tmpvar_40 * tmpvar_39).x);
-  color_10.w = tmpvar_41;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  lowp float shadow_34;
+  lowp float tmpvar_35;
+  tmpvar_35 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD2.xyz);
+  highp float tmpvar_36;
+  tmpvar_36 = (_LightShadowData.x + (tmpvar_35 * (1.0 - _LightShadowData.x)));
+  shadow_34 = tmpvar_36;
+  highp float tmpvar_37;
+  tmpvar_37 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_37;
+  mediump float tmpvar_38;
+  tmpvar_38 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * shadow_34), 0.0, 1.0)).x));
+  highp float tmpvar_39;
+  tmpvar_39 = (color_9.w * (tmpvar_37 * tmpvar_38));
+  color_9.w = tmpvar_39;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -9423,17 +9316,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 488
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 492
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    #line 492
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 496
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 496
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -9524,112 +9416,107 @@ uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform lowp sampler2DShadow _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  lowp float shadow_36;
-  lowp float tmpvar_37;
-  tmpvar_37 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD2.xyz);
-  highp float tmpvar_38;
-  tmpvar_38 = (_LightShadowData.x + (tmpvar_37 * (1.0 - _LightShadowData.x)));
-  shadow_36 = tmpvar_38;
-  mediump vec3 tmpvar_39;
-  tmpvar_39 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * shadow_36), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_40;
-  tmpvar_40 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = (color_10.w * (tmpvar_40 * tmpvar_39).x);
-  color_10.w = tmpvar_41;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  lowp float shadow_34;
+  lowp float tmpvar_35;
+  tmpvar_35 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD2.xyz);
+  highp float tmpvar_36;
+  tmpvar_36 = (_LightShadowData.x + (tmpvar_35 * (1.0 - _LightShadowData.x)));
+  shadow_34 = tmpvar_36;
+  highp float tmpvar_37;
+  tmpvar_37 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_37;
+  mediump float tmpvar_38;
+  tmpvar_38 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * shadow_34), 0.0, 1.0)).x));
+  highp float tmpvar_39;
+  tmpvar_39 = (color_9.w * (tmpvar_37 * tmpvar_38));
+  color_9.w = tmpvar_39;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -10096,17 +9983,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 488
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 492
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    #line 492
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 496
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 496
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -10197,112 +10083,107 @@ uniform highp float _Visibility;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform lowp sampler2DShadow _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  depth_9 = 1e+32;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_11;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  depth_8 = 1e+32;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_10;
+  tmpvar_10 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_12;
-  tmpvar_12 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_12 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_11 * tmpvar_11)));
   highp float tmpvar_13;
-  tmpvar_13 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_12 * tmpvar_12)));
+  tmpvar_13 = pow (tmpvar_12, 2.0);
   highp float tmpvar_14;
-  tmpvar_14 = pow (tmpvar_13, 2.0);
-  highp float tmpvar_15;
-  tmpvar_15 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = 1e+32;
-  if (((tmpvar_13 <= _OceanRadius) && (tmpvar_12 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_12 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_14)));
+  tmpvar_14 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = 1e+32;
+  if (((tmpvar_12 <= _OceanRadius) && (tmpvar_11 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_11 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_13)));
   };
-  highp float tmpvar_16;
-  tmpvar_16 = min (oceanSphereDist_6, 1e+32);
-  depth_9 = tmpvar_16;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_15 < _SphereRadius) && (tmpvar_12 < 0.0))) {
+  highp float tmpvar_15;
+  tmpvar_15 = min (oceanSphereDist_5, 1e+32);
+  depth_8 = tmpvar_15;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_14 < _SphereRadius) && (tmpvar_11 < 0.0))) {
+    highp float tmpvar_16;
+    tmpvar_16 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_13)) - sqrt((pow (tmpvar_14, 2.0) - tmpvar_13)));
+    sphereDist_7 = tmpvar_16;
     highp float tmpvar_17;
-    tmpvar_17 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_14)) - sqrt((pow (tmpvar_15, 2.0) - tmpvar_14)));
-    sphereDist_8 = tmpvar_17;
-    highp float tmpvar_18;
-    tmpvar_18 = min (tmpvar_16, tmpvar_17);
-    depth_9 = tmpvar_18;
+    tmpvar_17 = min (tmpvar_15, tmpvar_16);
+    depth_8 = tmpvar_17;
+    highp vec3 tmpvar_18;
+    tmpvar_18 = (_WorldSpaceCameraPos + (tmpvar_17 * worldDir_6));
     highp vec3 tmpvar_19;
-    tmpvar_19 = (_WorldSpaceCameraPos + (tmpvar_18 * worldDir_7));
-    highp vec3 tmpvar_20;
-    tmpvar_20 = normalize((tmpvar_19 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_20;
-    highp float tmpvar_21;
-    highp vec3 p_22;
-    p_22 = (tmpvar_19 - xlv_TEXCOORD4);
-    tmpvar_21 = sqrt(dot (p_22, p_22));
-    avgHeight_5 = ((0.75 * min (tmpvar_21, tmpvar_15)) + (0.25 * max (tmpvar_21, tmpvar_15)));
+    tmpvar_19 = normalize((tmpvar_18 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_19;
+    highp float tmpvar_20;
+    highp vec3 p_21;
+    p_21 = (tmpvar_18 - xlv_TEXCOORD4);
+    tmpvar_20 = sqrt(dot (p_21, p_21));
+    avgHeight_4 = ((0.75 * min (tmpvar_20, tmpvar_14)) + (0.25 * max (tmpvar_20, tmpvar_14)));
   } else {
-    if (((tmpvar_13 <= _SphereRadius) && (tmpvar_12 >= 0.0))) {
-      highp float oldDepth_23;
-      mediump float sphereCheck_24;
+    if (((tmpvar_12 <= _SphereRadius) && (tmpvar_11 >= 0.0))) {
+      highp float oldDepth_22;
+      mediump float sphereCheck_23;
+      highp float tmpvar_24;
+      tmpvar_24 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_13));
       highp float tmpvar_25;
-      tmpvar_25 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_14));
+      tmpvar_25 = clamp ((_SphereRadius - tmpvar_14), 0.0, 1.0);
+      sphereCheck_23 = tmpvar_25;
       highp float tmpvar_26;
-      tmpvar_26 = clamp ((_SphereRadius - tmpvar_15), 0.0, 1.0);
-      sphereCheck_24 = tmpvar_26;
+      tmpvar_26 = mix ((tmpvar_11 - tmpvar_24), (tmpvar_24 + tmpvar_11), sphereCheck_23);
+      sphereDist_7 = tmpvar_26;
       highp float tmpvar_27;
-      tmpvar_27 = mix ((tmpvar_12 - tmpvar_25), (tmpvar_25 + tmpvar_12), sphereCheck_24);
-      sphereDist_8 = tmpvar_27;
+      tmpvar_27 = min ((tmpvar_11 + tmpvar_24), depth_8);
+      oldDepth_22 = depth_8;
       highp float tmpvar_28;
-      tmpvar_28 = min ((tmpvar_12 + tmpvar_25), depth_9);
-      oldDepth_23 = depth_9;
-      highp float tmpvar_29;
-      tmpvar_29 = min (depth_9, tmpvar_27);
-      highp vec3 tmpvar_30;
-      tmpvar_30 = normalize(((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_30;
-      depth_9 = mix ((tmpvar_28 - tmpvar_27), min (tmpvar_29, tmpvar_27), sphereCheck_24);
-      highp float tmpvar_31;
-      highp vec3 p_32;
-      p_32 = ((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_31 = sqrt(dot (p_32, p_32));
-      highp float tmpvar_33;
-      tmpvar_33 = mix (mix (_SphereRadius, tmpvar_13, (tmpvar_28 - oldDepth_23)), tmpvar_15, sphereCheck_24);
-      avgHeight_5 = ((0.75 * min (tmpvar_31, tmpvar_33)) + (0.25 * max (tmpvar_31, tmpvar_33)));
+      tmpvar_28 = min (depth_8, tmpvar_26);
+      highp vec3 tmpvar_29;
+      tmpvar_29 = normalize(((_WorldSpaceCameraPos + (tmpvar_28 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_29;
+      depth_8 = mix ((tmpvar_27 - tmpvar_26), min (tmpvar_28, tmpvar_26), sphereCheck_23);
+      highp float tmpvar_30;
+      highp vec3 p_31;
+      p_31 = ((_WorldSpaceCameraPos + (tmpvar_27 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_30 = sqrt(dot (p_31, p_31));
+      highp float tmpvar_32;
+      tmpvar_32 = mix (mix (_SphereRadius, tmpvar_12, (tmpvar_27 - oldDepth_22)), tmpvar_14, sphereCheck_23);
+      avgHeight_4 = ((0.75 * min (tmpvar_30, tmpvar_32)) + (0.25 * max (tmpvar_30, tmpvar_32)));
     };
   };
-  lowp vec3 tmpvar_34;
-  tmpvar_34 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_34;
-  highp vec3 tmpvar_35;
-  tmpvar_35 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_35;
-  lowp float shadow_36;
-  lowp float tmpvar_37;
-  tmpvar_37 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD2.xyz);
-  highp float tmpvar_38;
-  tmpvar_38 = (_LightShadowData.x + (tmpvar_37 * (1.0 - _LightShadowData.x)));
-  shadow_36 = tmpvar_38;
-  mediump vec3 tmpvar_39;
-  tmpvar_39 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * shadow_36), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_40;
-  tmpvar_40 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = (color_10.w * (tmpvar_40 * tmpvar_39).x);
-  color_10.w = tmpvar_41;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_33;
+  tmpvar_33 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_33;
+  lowp float shadow_34;
+  lowp float tmpvar_35;
+  tmpvar_35 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD2.xyz);
+  highp float tmpvar_36;
+  tmpvar_36 = (_LightShadowData.x + (tmpvar_35 * (1.0 - _LightShadowData.x)));
+  shadow_34 = tmpvar_36;
+  highp float tmpvar_37;
+  tmpvar_37 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_37;
+  mediump float tmpvar_38;
+  tmpvar_38 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * shadow_34), 0.0, 1.0)).x));
+  highp float tmpvar_39;
+  tmpvar_39 = (color_9.w * (tmpvar_37 * tmpvar_38));
+  color_9.w = tmpvar_39;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -10769,17 +10650,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 488
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
+    lowp float atten = unitySampleShadow( IN._ShadowCoord);
     #line 492
-    lowp float atten = unitySampleShadow( IN._ShadowCoord);
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
+    mediump float VdotL = dot( (-worldDir), lightDirection);
     #line 496
-    mediump float VdotL = dot( (-worldDir), lightDirection);
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -10872,7 +10752,6 @@ uniform float _Visibility;
 uniform sampler2D _CameraDepthTexture;
 uniform vec4 _Color;
 uniform vec4 _LightColor0;
-
 uniform vec4 _WorldSpaceLightPos0;
 uniform vec4 _ZBufferParams;
 uniform vec3 _WorldSpaceCameraPos;
@@ -10951,7 +10830,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
   depth_5 = tmpvar_28;
-  color_6.w = (_Color.w * (tmpvar_28 * clamp ((gl_LightModel.ambient.xyz + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0), 0.0, 1.0))), 0.0, 1.0)).x);
+  color_6.w = (_Color.w * (tmpvar_28 * max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0), 0.0, 1.0)).x))));
   gl_FragData[0] = color_6;
 }
 
@@ -11084,111 +10963,106 @@ uniform highp float _Visibility;
 uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  mediump vec3 tmpvar_38;
-  tmpvar_38 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_39;
-  tmpvar_39 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_39;
-  highp float tmpvar_40;
-  tmpvar_40 = (color_10.w * (tmpvar_39 * tmpvar_38).x);
-  color_10.w = tmpvar_40;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  highp float tmpvar_36;
+  tmpvar_36 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_36;
+  mediump float tmpvar_37;
+  tmpvar_37 = max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0), 0.0, 1.0)).x));
+  highp float tmpvar_38;
+  tmpvar_38 = (color_9.w * (tmpvar_36 * tmpvar_37));
+  color_9.w = tmpvar_38;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -11265,111 +11139,106 @@ uniform highp float _Visibility;
 uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  mediump vec3 tmpvar_38;
-  tmpvar_38 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_39;
-  tmpvar_39 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_39;
-  highp float tmpvar_40;
-  tmpvar_40 = (color_10.w * (tmpvar_39 * tmpvar_38).x);
-  color_10.w = tmpvar_40;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  highp float tmpvar_36;
+  tmpvar_36 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_36;
+  mediump float tmpvar_37;
+  tmpvar_37 = max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0), 0.0, 1.0)).x));
+  highp float tmpvar_38;
+  tmpvar_38 = (color_9.w * (tmpvar_36 * tmpvar_37));
+  color_9.w = tmpvar_38;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -11834,17 +11703,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 481
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 485
     lowp float atten = 1.0;
+    #line 485
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 489
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 489
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -11935,7 +11803,6 @@ uniform float _Visibility;
 uniform sampler2D _CameraDepthTexture;
 uniform vec4 _Color;
 uniform vec4 _LightColor0;
-
 uniform vec4 _WorldSpaceLightPos0;
 uniform vec4 _ZBufferParams;
 uniform vec3 _WorldSpaceCameraPos;
@@ -12014,7 +11881,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
   depth_5 = tmpvar_28;
-  color_6.w = (_Color.w * (tmpvar_28 * clamp ((gl_LightModel.ambient.xyz + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0), 0.0, 1.0))), 0.0, 1.0)).x);
+  color_6.w = (_Color.w * (tmpvar_28 * max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0), 0.0, 1.0)).x))));
   gl_FragData[0] = color_6;
 }
 
@@ -12147,111 +12014,106 @@ uniform highp float _Visibility;
 uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  mediump vec3 tmpvar_38;
-  tmpvar_38 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_39;
-  tmpvar_39 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_39;
-  highp float tmpvar_40;
-  tmpvar_40 = (color_10.w * (tmpvar_39 * tmpvar_38).x);
-  color_10.w = tmpvar_40;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  highp float tmpvar_36;
+  tmpvar_36 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_36;
+  mediump float tmpvar_37;
+  tmpvar_37 = max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0), 0.0, 1.0)).x));
+  highp float tmpvar_38;
+  tmpvar_38 = (color_9.w * (tmpvar_36 * tmpvar_37));
+  color_9.w = tmpvar_38;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -12328,111 +12190,106 @@ uniform highp float _Visibility;
 uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  mediump vec3 tmpvar_38;
-  tmpvar_38 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_39;
-  tmpvar_39 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_39;
-  highp float tmpvar_40;
-  tmpvar_40 = (color_10.w * (tmpvar_39 * tmpvar_38).x);
-  color_10.w = tmpvar_40;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  highp float tmpvar_36;
+  tmpvar_36 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_36;
+  mediump float tmpvar_37;
+  tmpvar_37 = max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0), 0.0, 1.0)).x));
+  highp float tmpvar_38;
+  tmpvar_38 = (color_9.w * (tmpvar_36 * tmpvar_37));
+  color_9.w = tmpvar_38;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -12897,17 +12754,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 481
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 485
     lowp float atten = 1.0;
+    #line 485
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 489
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 489
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -12998,7 +12854,6 @@ uniform float _Visibility;
 uniform sampler2D _CameraDepthTexture;
 uniform vec4 _Color;
 uniform vec4 _LightColor0;
-
 uniform vec4 _WorldSpaceLightPos0;
 uniform vec4 _ZBufferParams;
 uniform vec3 _WorldSpaceCameraPos;
@@ -13077,7 +12932,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
   depth_5 = tmpvar_28;
-  color_6.w = (_Color.w * (tmpvar_28 * clamp ((gl_LightModel.ambient.xyz + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0), 0.0, 1.0))), 0.0, 1.0)).x);
+  color_6.w = (_Color.w * (tmpvar_28 * max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0), 0.0, 1.0)).x))));
   gl_FragData[0] = color_6;
 }
 
@@ -13210,111 +13065,106 @@ uniform highp float _Visibility;
 uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  mediump vec3 tmpvar_38;
-  tmpvar_38 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_39;
-  tmpvar_39 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_39;
-  highp float tmpvar_40;
-  tmpvar_40 = (color_10.w * (tmpvar_39 * tmpvar_38).x);
-  color_10.w = tmpvar_40;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  highp float tmpvar_36;
+  tmpvar_36 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_36;
+  mediump float tmpvar_37;
+  tmpvar_37 = max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0), 0.0, 1.0)).x));
+  highp float tmpvar_38;
+  tmpvar_38 = (color_9.w * (tmpvar_36 * tmpvar_37));
+  color_9.w = tmpvar_38;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -13391,111 +13241,106 @@ uniform highp float _Visibility;
 uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  mediump vec3 tmpvar_38;
-  tmpvar_38 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_39;
-  tmpvar_39 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_39;
-  highp float tmpvar_40;
-  tmpvar_40 = (color_10.w * (tmpvar_39 * tmpvar_38).x);
-  color_10.w = tmpvar_40;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  highp float tmpvar_36;
+  tmpvar_36 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_36;
+  mediump float tmpvar_37;
+  tmpvar_37 = max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0), 0.0, 1.0)).x));
+  highp float tmpvar_38;
+  tmpvar_38 = (color_9.w * (tmpvar_36 * tmpvar_37));
+  color_9.w = tmpvar_38;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -13960,17 +13805,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 481
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 485
     lowp float atten = 1.0;
+    #line 485
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 489
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 489
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -14073,7 +13917,6 @@ uniform sampler2D _CameraDepthTexture;
 uniform vec4 _Color;
 uniform vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-
 uniform vec4 _WorldSpaceLightPos0;
 uniform vec4 _ZBufferParams;
 uniform vec3 _WorldSpaceCameraPos;
@@ -14152,7 +13995,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
   depth_5 = tmpvar_28;
-  color_6.w = (_Color.w * (tmpvar_28 * clamp ((gl_LightModel.ambient.xyz + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0))), 0.0, 1.0)).x);
+  color_6.w = (_Color.w * (tmpvar_28 * max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0)).x))));
   gl_FragData[0] = color_6;
 }
 
@@ -14294,7 +14137,6 @@ uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
@@ -14302,116 +14144,112 @@ uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  lowp float tmpvar_38;
-  mediump float lightShadowDataX_39;
-  highp float dist_40;
-  lowp float tmpvar_41;
-  tmpvar_41 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x;
-  dist_40 = tmpvar_41;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  lowp float tmpvar_36;
+  mediump float lightShadowDataX_37;
+  highp float dist_38;
+  lowp float tmpvar_39;
+  tmpvar_39 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x;
+  dist_38 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = _LightShadowData.x;
+  lightShadowDataX_37 = tmpvar_40;
+  highp float tmpvar_41;
+  tmpvar_41 = max (float((dist_38 > (xlv_TEXCOORD2.z / xlv_TEXCOORD2.w))), lightShadowDataX_37);
+  tmpvar_36 = tmpvar_41;
   highp float tmpvar_42;
-  tmpvar_42 = _LightShadowData.x;
-  lightShadowDataX_39 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = max (float((dist_40 > (xlv_TEXCOORD2.z / xlv_TEXCOORD2.w))), lightShadowDataX_39);
-  tmpvar_38 = tmpvar_43;
-  mediump vec3 tmpvar_44;
-  tmpvar_44 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * tmpvar_38), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_45;
-  tmpvar_45 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_45;
-  highp float tmpvar_46;
-  tmpvar_46 = (color_10.w * (tmpvar_45 * tmpvar_44).x);
-  color_10.w = tmpvar_46;
-  tmpvar_1 = color_10;
+  tmpvar_42 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_42;
+  mediump float tmpvar_43;
+  tmpvar_43 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * tmpvar_36), 0.0, 1.0)).x));
+  highp float tmpvar_44;
+  tmpvar_44 = (color_9.w * (tmpvar_42 * tmpvar_43));
+  color_9.w = tmpvar_44;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -14500,113 +14338,108 @@ uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2);
-  mediump vec3 tmpvar_39;
-  tmpvar_39 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * tmpvar_38.x), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_40;
-  tmpvar_40 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = (color_10.w * (tmpvar_40 * tmpvar_39).x);
-  color_10.w = tmpvar_41;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  lowp vec4 tmpvar_36;
+  tmpvar_36 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2);
+  highp float tmpvar_37;
+  tmpvar_37 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_37;
+  mediump float tmpvar_38;
+  tmpvar_38 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * tmpvar_36.x), 0.0, 1.0)).x));
+  highp float tmpvar_39;
+  tmpvar_39 = (color_9.w * (tmpvar_37 * tmpvar_38));
+  color_9.w = tmpvar_39;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -15089,17 +14922,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 491
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 495
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    #line 495
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 499
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 499
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -15204,7 +15036,6 @@ uniform sampler2D _CameraDepthTexture;
 uniform vec4 _Color;
 uniform vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-
 uniform vec4 _WorldSpaceLightPos0;
 uniform vec4 _ZBufferParams;
 uniform vec3 _WorldSpaceCameraPos;
@@ -15283,7 +15114,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
   depth_5 = tmpvar_28;
-  color_6.w = (_Color.w * (tmpvar_28 * clamp ((gl_LightModel.ambient.xyz + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0))), 0.0, 1.0)).x);
+  color_6.w = (_Color.w * (tmpvar_28 * max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0)).x))));
   gl_FragData[0] = color_6;
 }
 
@@ -15425,7 +15256,6 @@ uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
@@ -15433,116 +15263,112 @@ uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  lowp float tmpvar_38;
-  mediump float lightShadowDataX_39;
-  highp float dist_40;
-  lowp float tmpvar_41;
-  tmpvar_41 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x;
-  dist_40 = tmpvar_41;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  lowp float tmpvar_36;
+  mediump float lightShadowDataX_37;
+  highp float dist_38;
+  lowp float tmpvar_39;
+  tmpvar_39 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x;
+  dist_38 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = _LightShadowData.x;
+  lightShadowDataX_37 = tmpvar_40;
+  highp float tmpvar_41;
+  tmpvar_41 = max (float((dist_38 > (xlv_TEXCOORD2.z / xlv_TEXCOORD2.w))), lightShadowDataX_37);
+  tmpvar_36 = tmpvar_41;
   highp float tmpvar_42;
-  tmpvar_42 = _LightShadowData.x;
-  lightShadowDataX_39 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = max (float((dist_40 > (xlv_TEXCOORD2.z / xlv_TEXCOORD2.w))), lightShadowDataX_39);
-  tmpvar_38 = tmpvar_43;
-  mediump vec3 tmpvar_44;
-  tmpvar_44 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * tmpvar_38), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_45;
-  tmpvar_45 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_45;
-  highp float tmpvar_46;
-  tmpvar_46 = (color_10.w * (tmpvar_45 * tmpvar_44).x);
-  color_10.w = tmpvar_46;
-  tmpvar_1 = color_10;
+  tmpvar_42 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_42;
+  mediump float tmpvar_43;
+  tmpvar_43 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * tmpvar_36), 0.0, 1.0)).x));
+  highp float tmpvar_44;
+  tmpvar_44 = (color_9.w * (tmpvar_42 * tmpvar_43));
+  color_9.w = tmpvar_44;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -15631,113 +15457,108 @@ uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2);
-  mediump vec3 tmpvar_39;
-  tmpvar_39 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * tmpvar_38.x), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_40;
-  tmpvar_40 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = (color_10.w * (tmpvar_40 * tmpvar_39).x);
-  color_10.w = tmpvar_41;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  lowp vec4 tmpvar_36;
+  tmpvar_36 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2);
+  highp float tmpvar_37;
+  tmpvar_37 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_37;
+  mediump float tmpvar_38;
+  tmpvar_38 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * tmpvar_36.x), 0.0, 1.0)).x));
+  highp float tmpvar_39;
+  tmpvar_39 = (color_9.w * (tmpvar_37 * tmpvar_38));
+  color_9.w = tmpvar_39;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -16220,17 +16041,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 491
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 495
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    #line 495
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 499
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 499
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -16335,7 +16155,6 @@ uniform sampler2D _CameraDepthTexture;
 uniform vec4 _Color;
 uniform vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-
 uniform vec4 _WorldSpaceLightPos0;
 uniform vec4 _ZBufferParams;
 uniform vec3 _WorldSpaceCameraPos;
@@ -16414,7 +16233,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
   depth_5 = tmpvar_28;
-  color_6.w = (_Color.w * (tmpvar_28 * clamp ((gl_LightModel.ambient.xyz + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0))), 0.0, 1.0)).x);
+  color_6.w = (_Color.w * (tmpvar_28 * max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0)).x))));
   gl_FragData[0] = color_6;
 }
 
@@ -16556,7 +16375,6 @@ uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
@@ -16564,116 +16382,112 @@ uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  lowp float tmpvar_38;
-  mediump float lightShadowDataX_39;
-  highp float dist_40;
-  lowp float tmpvar_41;
-  tmpvar_41 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x;
-  dist_40 = tmpvar_41;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  lowp float tmpvar_36;
+  mediump float lightShadowDataX_37;
+  highp float dist_38;
+  lowp float tmpvar_39;
+  tmpvar_39 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x;
+  dist_38 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = _LightShadowData.x;
+  lightShadowDataX_37 = tmpvar_40;
+  highp float tmpvar_41;
+  tmpvar_41 = max (float((dist_38 > (xlv_TEXCOORD2.z / xlv_TEXCOORD2.w))), lightShadowDataX_37);
+  tmpvar_36 = tmpvar_41;
   highp float tmpvar_42;
-  tmpvar_42 = _LightShadowData.x;
-  lightShadowDataX_39 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = max (float((dist_40 > (xlv_TEXCOORD2.z / xlv_TEXCOORD2.w))), lightShadowDataX_39);
-  tmpvar_38 = tmpvar_43;
-  mediump vec3 tmpvar_44;
-  tmpvar_44 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * tmpvar_38), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_45;
-  tmpvar_45 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_45;
-  highp float tmpvar_46;
-  tmpvar_46 = (color_10.w * (tmpvar_45 * tmpvar_44).x);
-  color_10.w = tmpvar_46;
-  tmpvar_1 = color_10;
+  tmpvar_42 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_42;
+  mediump float tmpvar_43;
+  tmpvar_43 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * tmpvar_36), 0.0, 1.0)).x));
+  highp float tmpvar_44;
+  tmpvar_44 = (color_9.w * (tmpvar_42 * tmpvar_43));
+  color_9.w = tmpvar_44;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -16762,113 +16576,108 @@ uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2);
-  mediump vec3 tmpvar_39;
-  tmpvar_39 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * tmpvar_38.x), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_40;
-  tmpvar_40 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = (color_10.w * (tmpvar_40 * tmpvar_39).x);
-  color_10.w = tmpvar_41;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  lowp vec4 tmpvar_36;
+  tmpvar_36 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2);
+  highp float tmpvar_37;
+  tmpvar_37 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_37;
+  mediump float tmpvar_38;
+  tmpvar_38 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * tmpvar_36.x), 0.0, 1.0)).x));
+  highp float tmpvar_39;
+  tmpvar_39 = (color_9.w * (tmpvar_37 * tmpvar_38));
+  color_9.w = tmpvar_39;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -17351,17 +17160,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 491
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 495
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    #line 495
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 499
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 499
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -17454,7 +17262,6 @@ uniform float _Visibility;
 uniform sampler2D _CameraDepthTexture;
 uniform vec4 _Color;
 uniform vec4 _LightColor0;
-
 uniform vec4 _WorldSpaceLightPos0;
 uniform vec4 _ZBufferParams;
 uniform vec3 _WorldSpaceCameraPos;
@@ -17533,7 +17340,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
   depth_5 = tmpvar_28;
-  color_6.w = (_Color.w * (tmpvar_28 * clamp ((gl_LightModel.ambient.xyz + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0), 0.0, 1.0))), 0.0, 1.0)).x);
+  color_6.w = (_Color.w * (tmpvar_28 * max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0), 0.0, 1.0)).x))));
   gl_FragData[0] = color_6;
 }
 
@@ -17666,111 +17473,106 @@ uniform highp float _Visibility;
 uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  mediump vec3 tmpvar_38;
-  tmpvar_38 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_39;
-  tmpvar_39 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_39;
-  highp float tmpvar_40;
-  tmpvar_40 = (color_10.w * (tmpvar_39 * tmpvar_38).x);
-  color_10.w = tmpvar_40;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  highp float tmpvar_36;
+  tmpvar_36 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_36;
+  mediump float tmpvar_37;
+  tmpvar_37 = max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0), 0.0, 1.0)).x));
+  highp float tmpvar_38;
+  tmpvar_38 = (color_9.w * (tmpvar_36 * tmpvar_37));
+  color_9.w = tmpvar_38;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -17847,111 +17649,106 @@ uniform highp float _Visibility;
 uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  mediump vec3 tmpvar_38;
-  tmpvar_38 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_39;
-  tmpvar_39 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_39;
-  highp float tmpvar_40;
-  tmpvar_40 = (color_10.w * (tmpvar_39 * tmpvar_38).x);
-  color_10.w = tmpvar_40;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  highp float tmpvar_36;
+  tmpvar_36 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_36;
+  mediump float tmpvar_37;
+  tmpvar_37 = max (0.0, max (0.0, (_LightColor0.xyz * clamp (((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0), 0.0, 1.0)).x));
+  highp float tmpvar_38;
+  tmpvar_38 = (color_9.w * (tmpvar_36 * tmpvar_37));
+  color_9.w = tmpvar_38;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -18416,17 +18213,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 481
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 485
     lowp float atten = 1.0;
+    #line 485
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 489
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 489
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -18529,7 +18325,6 @@ uniform sampler2D _CameraDepthTexture;
 uniform vec4 _Color;
 uniform vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-
 uniform vec4 _WorldSpaceLightPos0;
 uniform vec4 _ZBufferParams;
 uniform vec3 _WorldSpaceCameraPos;
@@ -18608,7 +18403,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = (mix (0.0, depth_5, clamp (sphereDist_4, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_2 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
   depth_5 = tmpvar_28;
-  color_6.w = (_Color.w * (tmpvar_28 * clamp ((gl_LightModel.ambient.xyz + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0))), 0.0, 1.0)).x);
+  color_6.w = (_Color.w * (tmpvar_28 * max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_1, normalize(_WorldSpaceLightPos0).xyz)) * 4.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0)).x))));
   gl_FragData[0] = color_6;
 }
 
@@ -18750,7 +18545,6 @@ uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
@@ -18758,116 +18552,112 @@ uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  lowp float tmpvar_38;
-  mediump float lightShadowDataX_39;
-  highp float dist_40;
-  lowp float tmpvar_41;
-  tmpvar_41 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x;
-  dist_40 = tmpvar_41;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  lowp float tmpvar_36;
+  mediump float lightShadowDataX_37;
+  highp float dist_38;
+  lowp float tmpvar_39;
+  tmpvar_39 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x;
+  dist_38 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = _LightShadowData.x;
+  lightShadowDataX_37 = tmpvar_40;
+  highp float tmpvar_41;
+  tmpvar_41 = max (float((dist_38 > (xlv_TEXCOORD2.z / xlv_TEXCOORD2.w))), lightShadowDataX_37);
+  tmpvar_36 = tmpvar_41;
   highp float tmpvar_42;
-  tmpvar_42 = _LightShadowData.x;
-  lightShadowDataX_39 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = max (float((dist_40 > (xlv_TEXCOORD2.z / xlv_TEXCOORD2.w))), lightShadowDataX_39);
-  tmpvar_38 = tmpvar_43;
-  mediump vec3 tmpvar_44;
-  tmpvar_44 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * tmpvar_38), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_45;
-  tmpvar_45 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_45;
-  highp float tmpvar_46;
-  tmpvar_46 = (color_10.w * (tmpvar_45 * tmpvar_44).x);
-  color_10.w = tmpvar_46;
-  tmpvar_1 = color_10;
+  tmpvar_42 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_42;
+  mediump float tmpvar_43;
+  tmpvar_43 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * tmpvar_36), 0.0, 1.0)).x));
+  highp float tmpvar_44;
+  tmpvar_44 = (color_9.w * (tmpvar_42 * tmpvar_43));
+  color_9.w = tmpvar_44;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -18956,113 +18746,108 @@ uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
 uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2);
-  mediump vec3 tmpvar_39;
-  tmpvar_39 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * tmpvar_38.x), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_40;
-  tmpvar_40 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = (color_10.w * (tmpvar_40 * tmpvar_39).x);
-  color_10.w = tmpvar_41;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  lowp vec4 tmpvar_36;
+  tmpvar_36 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2);
+  highp float tmpvar_37;
+  tmpvar_37 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_37;
+  mediump float tmpvar_38;
+  tmpvar_38 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * tmpvar_36.x), 0.0, 1.0)).x));
+  highp float tmpvar_39;
+  tmpvar_39 = (color_9.w * (tmpvar_37 * tmpvar_38));
+  color_9.w = tmpvar_39;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -19545,17 +19330,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 491
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 495
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    #line 495
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 499
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 499
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -19661,7 +19445,6 @@ uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform lowp sampler2DShadow _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
@@ -19669,110 +19452,106 @@ uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  lowp float shadow_38;
-  lowp float tmpvar_39;
-  tmpvar_39 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD2.xyz);
-  highp float tmpvar_40;
-  tmpvar_40 = (_LightShadowData.x + (tmpvar_39 * (1.0 - _LightShadowData.x)));
-  shadow_38 = tmpvar_40;
-  mediump vec3 tmpvar_41;
-  tmpvar_41 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * shadow_38), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_42;
-  tmpvar_42 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = (color_10.w * (tmpvar_42 * tmpvar_41).x);
-  color_10.w = tmpvar_43;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  lowp float shadow_36;
+  lowp float tmpvar_37;
+  tmpvar_37 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD2.xyz);
+  highp float tmpvar_38;
+  tmpvar_38 = (_LightShadowData.x + (tmpvar_37 * (1.0 - _LightShadowData.x)));
+  shadow_36 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_39;
+  mediump float tmpvar_40;
+  tmpvar_40 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * shadow_36), 0.0, 1.0)).x));
+  highp float tmpvar_41;
+  tmpvar_41 = (color_9.w * (tmpvar_39 * tmpvar_40));
+  color_9.w = tmpvar_41;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -20256,17 +20035,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 491
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 495
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    #line 495
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 499
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 499
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -20372,7 +20150,6 @@ uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform lowp sampler2DShadow _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
@@ -20380,110 +20157,106 @@ uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  lowp float shadow_38;
-  lowp float tmpvar_39;
-  tmpvar_39 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD2.xyz);
-  highp float tmpvar_40;
-  tmpvar_40 = (_LightShadowData.x + (tmpvar_39 * (1.0 - _LightShadowData.x)));
-  shadow_38 = tmpvar_40;
-  mediump vec3 tmpvar_41;
-  tmpvar_41 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * shadow_38), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_42;
-  tmpvar_42 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = (color_10.w * (tmpvar_42 * tmpvar_41).x);
-  color_10.w = tmpvar_43;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  lowp float shadow_36;
+  lowp float tmpvar_37;
+  tmpvar_37 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD2.xyz);
+  highp float tmpvar_38;
+  tmpvar_38 = (_LightShadowData.x + (tmpvar_37 * (1.0 - _LightShadowData.x)));
+  shadow_36 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_39;
+  mediump float tmpvar_40;
+  tmpvar_40 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * shadow_36), 0.0, 1.0)).x));
+  highp float tmpvar_41;
+  tmpvar_41 = (color_9.w * (tmpvar_39 * tmpvar_40));
+  color_9.w = tmpvar_41;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -20967,17 +20740,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 491
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 495
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    #line 495
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 499
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 499
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -21083,7 +20855,6 @@ uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform lowp sampler2DShadow _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
@@ -21091,110 +20862,106 @@ uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  lowp float shadow_38;
-  lowp float tmpvar_39;
-  tmpvar_39 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD2.xyz);
-  highp float tmpvar_40;
-  tmpvar_40 = (_LightShadowData.x + (tmpvar_39 * (1.0 - _LightShadowData.x)));
-  shadow_38 = tmpvar_40;
-  mediump vec3 tmpvar_41;
-  tmpvar_41 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * shadow_38), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_42;
-  tmpvar_42 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = (color_10.w * (tmpvar_42 * tmpvar_41).x);
-  color_10.w = tmpvar_43;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  lowp float shadow_36;
+  lowp float tmpvar_37;
+  tmpvar_37 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD2.xyz);
+  highp float tmpvar_38;
+  tmpvar_38 = (_LightShadowData.x + (tmpvar_37 * (1.0 - _LightShadowData.x)));
+  shadow_36 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_39;
+  mediump float tmpvar_40;
+  tmpvar_40 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * shadow_36), 0.0, 1.0)).x));
+  highp float tmpvar_41;
+  tmpvar_41 = (color_9.w * (tmpvar_39 * tmpvar_40));
+  color_9.w = tmpvar_41;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -21678,17 +21445,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 491
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 495
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    #line 495
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 499
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 499
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -21794,7 +21560,6 @@ uniform sampler2D _CameraDepthTexture;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _LightColor0;
 uniform lowp sampler2DShadow _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 uniform highp vec4 _ZBufferParams;
@@ -21802,110 +21567,106 @@ uniform highp vec3 _WorldSpaceCameraPos;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  mediump vec3 ambientLighting_2;
-  mediump vec3 lightDirection_3;
-  mediump vec3 norm_4;
-  highp float avgHeight_5;
-  highp float oceanSphereDist_6;
-  mediump vec3 worldDir_7;
-  highp float sphereDist_8;
-  highp float depth_9;
-  mediump vec4 color_10;
-  color_10 = _Color;
-  lowp float tmpvar_11;
-  tmpvar_11 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
-  depth_9 = tmpvar_11;
-  highp float tmpvar_12;
-  tmpvar_12 = (1.0/(((_ZBufferParams.z * depth_9) + _ZBufferParams.w)));
-  depth_9 = tmpvar_12;
-  sphereDist_8 = 0.0;
-  highp vec3 tmpvar_13;
-  tmpvar_13 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
-  worldDir_7 = tmpvar_13;
+  mediump vec3 lightDirection_2;
+  mediump vec3 norm_3;
+  highp float avgHeight_4;
+  highp float oceanSphereDist_5;
+  mediump vec3 worldDir_6;
+  highp float sphereDist_7;
+  highp float depth_8;
+  mediump vec4 color_9;
+  color_9 = _Color;
+  lowp float tmpvar_10;
+  tmpvar_10 = texture2DProj (_CameraDepthTexture, xlv_TEXCOORD0).x;
+  depth_8 = tmpvar_10;
+  highp float tmpvar_11;
+  tmpvar_11 = (1.0/(((_ZBufferParams.z * depth_8) + _ZBufferParams.w)));
+  depth_8 = tmpvar_11;
+  sphereDist_7 = 0.0;
+  highp vec3 tmpvar_12;
+  tmpvar_12 = normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos));
+  worldDir_6 = tmpvar_12;
+  highp float tmpvar_13;
+  tmpvar_13 = dot (xlv_TEXCOORD8, worldDir_6);
   highp float tmpvar_14;
-  tmpvar_14 = dot (xlv_TEXCOORD8, worldDir_7);
+  tmpvar_14 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_13 * tmpvar_13)));
   highp float tmpvar_15;
-  tmpvar_15 = sqrt((dot (xlv_TEXCOORD8, xlv_TEXCOORD8) - (tmpvar_14 * tmpvar_14)));
+  tmpvar_15 = pow (tmpvar_14, 2.0);
   highp float tmpvar_16;
-  tmpvar_16 = pow (tmpvar_15, 2.0);
-  highp float tmpvar_17;
-  tmpvar_17 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
-  oceanSphereDist_6 = tmpvar_12;
-  if (((tmpvar_15 <= _OceanRadius) && (tmpvar_14 >= 0.0))) {
-    oceanSphereDist_6 = (tmpvar_14 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_16)));
+  tmpvar_16 = sqrt(dot (xlv_TEXCOORD8, xlv_TEXCOORD8));
+  oceanSphereDist_5 = tmpvar_11;
+  if (((tmpvar_14 <= _OceanRadius) && (tmpvar_13 >= 0.0))) {
+    oceanSphereDist_5 = (tmpvar_13 - sqrt((pow (_OceanRadius, 2.0) - tmpvar_15)));
   };
-  highp float tmpvar_18;
-  tmpvar_18 = min (oceanSphereDist_6, tmpvar_12);
-  depth_9 = tmpvar_18;
-  avgHeight_5 = _SphereRadius;
-  if (((tmpvar_17 < _SphereRadius) && (tmpvar_14 < 0.0))) {
+  highp float tmpvar_17;
+  tmpvar_17 = min (oceanSphereDist_5, tmpvar_11);
+  depth_8 = tmpvar_17;
+  avgHeight_4 = _SphereRadius;
+  if (((tmpvar_16 < _SphereRadius) && (tmpvar_13 < 0.0))) {
+    highp float tmpvar_18;
+    tmpvar_18 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_15)) - sqrt((pow (tmpvar_16, 2.0) - tmpvar_15)));
+    sphereDist_7 = tmpvar_18;
     highp float tmpvar_19;
-    tmpvar_19 = (sqrt((pow (_SphereRadius, 2.0) - tmpvar_16)) - sqrt((pow (tmpvar_17, 2.0) - tmpvar_16)));
-    sphereDist_8 = tmpvar_19;
-    highp float tmpvar_20;
-    tmpvar_20 = min (tmpvar_18, tmpvar_19);
-    depth_9 = tmpvar_20;
+    tmpvar_19 = min (tmpvar_17, tmpvar_18);
+    depth_8 = tmpvar_19;
+    highp vec3 tmpvar_20;
+    tmpvar_20 = (_WorldSpaceCameraPos + (tmpvar_19 * worldDir_6));
     highp vec3 tmpvar_21;
-    tmpvar_21 = (_WorldSpaceCameraPos + (tmpvar_20 * worldDir_7));
-    highp vec3 tmpvar_22;
-    tmpvar_22 = normalize((tmpvar_21 - xlv_TEXCOORD4));
-    norm_4 = tmpvar_22;
-    highp float tmpvar_23;
-    highp vec3 p_24;
-    p_24 = (tmpvar_21 - xlv_TEXCOORD4);
-    tmpvar_23 = sqrt(dot (p_24, p_24));
-    avgHeight_5 = ((0.75 * min (tmpvar_23, tmpvar_17)) + (0.25 * max (tmpvar_23, tmpvar_17)));
+    tmpvar_21 = normalize((tmpvar_20 - xlv_TEXCOORD4));
+    norm_3 = tmpvar_21;
+    highp float tmpvar_22;
+    highp vec3 p_23;
+    p_23 = (tmpvar_20 - xlv_TEXCOORD4);
+    tmpvar_22 = sqrt(dot (p_23, p_23));
+    avgHeight_4 = ((0.75 * min (tmpvar_22, tmpvar_16)) + (0.25 * max (tmpvar_22, tmpvar_16)));
   } else {
-    if (((tmpvar_15 <= _SphereRadius) && (tmpvar_14 >= 0.0))) {
-      highp float oldDepth_25;
-      mediump float sphereCheck_26;
+    if (((tmpvar_14 <= _SphereRadius) && (tmpvar_13 >= 0.0))) {
+      highp float oldDepth_24;
+      mediump float sphereCheck_25;
+      highp float tmpvar_26;
+      tmpvar_26 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_15));
       highp float tmpvar_27;
-      tmpvar_27 = sqrt((pow (_SphereRadius, 2.0) - tmpvar_16));
+      tmpvar_27 = clamp ((_SphereRadius - tmpvar_16), 0.0, 1.0);
+      sphereCheck_25 = tmpvar_27;
       highp float tmpvar_28;
-      tmpvar_28 = clamp ((_SphereRadius - tmpvar_17), 0.0, 1.0);
-      sphereCheck_26 = tmpvar_28;
+      tmpvar_28 = mix ((tmpvar_13 - tmpvar_26), (tmpvar_26 + tmpvar_13), sphereCheck_25);
+      sphereDist_7 = tmpvar_28;
       highp float tmpvar_29;
-      tmpvar_29 = mix ((tmpvar_14 - tmpvar_27), (tmpvar_27 + tmpvar_14), sphereCheck_26);
-      sphereDist_8 = tmpvar_29;
+      tmpvar_29 = min ((tmpvar_13 + tmpvar_26), depth_8);
+      oldDepth_24 = depth_8;
       highp float tmpvar_30;
-      tmpvar_30 = min ((tmpvar_14 + tmpvar_27), depth_9);
-      oldDepth_25 = depth_9;
-      highp float tmpvar_31;
-      tmpvar_31 = min (depth_9, tmpvar_29);
-      highp vec3 tmpvar_32;
-      tmpvar_32 = normalize(((_WorldSpaceCameraPos + (tmpvar_31 * worldDir_7)) - xlv_TEXCOORD4));
-      norm_4 = tmpvar_32;
-      depth_9 = mix ((tmpvar_30 - tmpvar_29), min (tmpvar_31, tmpvar_29), sphereCheck_26);
-      highp float tmpvar_33;
-      highp vec3 p_34;
-      p_34 = ((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_7)) - xlv_TEXCOORD4);
-      tmpvar_33 = sqrt(dot (p_34, p_34));
-      highp float tmpvar_35;
-      tmpvar_35 = mix (mix (_SphereRadius, tmpvar_15, (tmpvar_30 - oldDepth_25)), tmpvar_17, sphereCheck_26);
-      avgHeight_5 = ((0.75 * min (tmpvar_33, tmpvar_35)) + (0.25 * max (tmpvar_33, tmpvar_35)));
+      tmpvar_30 = min (depth_8, tmpvar_28);
+      highp vec3 tmpvar_31;
+      tmpvar_31 = normalize(((_WorldSpaceCameraPos + (tmpvar_30 * worldDir_6)) - xlv_TEXCOORD4));
+      norm_3 = tmpvar_31;
+      depth_8 = mix ((tmpvar_29 - tmpvar_28), min (tmpvar_30, tmpvar_28), sphereCheck_25);
+      highp float tmpvar_32;
+      highp vec3 p_33;
+      p_33 = ((_WorldSpaceCameraPos + (tmpvar_29 * worldDir_6)) - xlv_TEXCOORD4);
+      tmpvar_32 = sqrt(dot (p_33, p_33));
+      highp float tmpvar_34;
+      tmpvar_34 = mix (mix (_SphereRadius, tmpvar_14, (tmpvar_29 - oldDepth_24)), tmpvar_16, sphereCheck_25);
+      avgHeight_4 = ((0.75 * min (tmpvar_32, tmpvar_34)) + (0.25 * max (tmpvar_32, tmpvar_34)));
     };
   };
-  lowp vec3 tmpvar_36;
-  tmpvar_36 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_3 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_2 = tmpvar_37;
-  lowp float shadow_38;
-  lowp float tmpvar_39;
-  tmpvar_39 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD2.xyz);
-  highp float tmpvar_40;
-  tmpvar_40 = (_LightShadowData.x + (tmpvar_39 * (1.0 - _LightShadowData.x)));
-  shadow_38 = tmpvar_40;
-  mediump vec3 tmpvar_41;
-  tmpvar_41 = clamp ((ambientLighting_2 + (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_4, lightDirection_3)) * 4.0) * shadow_38), 0.0, 1.0))), 0.0, 1.0);
-  highp float tmpvar_42;
-  tmpvar_42 = (mix (0.0, depth_9, clamp (sphereDist_8, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_5 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
-  depth_9 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = (color_10.w * (tmpvar_42 * tmpvar_41).x);
-  color_10.w = tmpvar_43;
-  tmpvar_1 = color_10;
+  lowp vec3 tmpvar_35;
+  tmpvar_35 = normalize(_WorldSpaceLightPos0).xyz;
+  lightDirection_2 = tmpvar_35;
+  lowp float shadow_36;
+  lowp float tmpvar_37;
+  tmpvar_37 = shadow2DEXT (_ShadowMapTexture, xlv_TEXCOORD2.xyz);
+  highp float tmpvar_38;
+  tmpvar_38 = (_LightShadowData.x + (tmpvar_37 * (1.0 - _LightShadowData.x)));
+  shadow_36 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = (mix (0.0, depth_8, clamp (sphereDist_7, 0.0, 1.0)) * (_Visibility * (1.0 - clamp (((avgHeight_4 - _OceanRadius) / (_SphereRadius - _OceanRadius)), 0.0, 1.0))));
+  depth_8 = tmpvar_39;
+  mediump float tmpvar_40;
+  tmpvar_40 = max (0.0, max (0.0, (_LightColor0.xyz * clamp ((((_LightColor0.w * dot (norm_3, lightDirection_2)) * 4.0) * shadow_36), 0.0, 1.0)).x));
+  highp float tmpvar_41;
+  tmpvar_41 = (color_9.w * (tmpvar_39 * tmpvar_40));
+  color_9.w = tmpvar_41;
+  tmpvar_1 = color_9;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -22389,17 +22150,16 @@ lowp vec4 frag( in v2f IN ) {
     #line 491
     depth = mix( 0.0, depth, xll_saturate_f(sphereDist));
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump float NdotL = dot( norm, lightDirection);
-    #line 495
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
+    #line 495
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * NdotL) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + (_LightColor0.xyz * lightIntensity)));
+    mediump vec3 light = vec3( max( 0.0, float( (_LightColor0.xyz * lightIntensity))));
     NdotL = abs(NdotL);
-    #line 499
     mediump float VdotL = dot( (-worldDir), lightDirection);
+    #line 499
     depth *= (_Visibility * (1.0 - xll_saturate_f(((avgHeight - _OceanRadius) / (_SphereRadius - _OceanRadius)))));
-    color.w *= float( (depth * light));
+    color.w *= (depth * max( 0.0, float( light)));
     return color;
 }
 in highp vec4 xlv_TEXCOORD0;
@@ -22433,7 +22193,7 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 12
-//   d3d9 - ALU: 106 to 109, TEX: 1 to 2, FLOW: 2 to 2
+//   d3d9 - ALU: 107 to 110, TEX: 1 to 2, FLOW: 2 to 2
 SubProgram "opengl " {
 Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 "!!GLSL"
@@ -22441,22 +22201,21 @@ Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHA
 
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceCameraPos]
-Vector 2 [_WorldSpaceLightPos0]
-Vector 3 [_LightColor0]
-Vector 4 [_Color]
-Float 5 [_Visibility]
-Float 6 [_OceanRadius]
-Float 7 [_SphereRadius]
+Vector 0 [_WorldSpaceCameraPos]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightColor0]
+Vector 3 [_Color]
+Float 4 [_Visibility]
+Float 5 [_OceanRadius]
+Float 6 [_SphereRadius]
 "ps_3_0
-; 106 ALU, 2 FLOW
-def c8, 1.00000000, 0.00000000, 100000003318135350000000000000000.00000000, 0.25000000
-def c9, 0.75000000, 4.00000000, 0, 0
+; 107 ALU, 2 FLOW
+def c7, 1.00000000, 0.00000000, 100000003318135350000000000000000.00000000, 0.25000000
+def c8, 0.75000000, 4.00000000, 0, 0
 dcl_texcoord1 v0.xyz
 dcl_texcoord4 v1.xyz
 dcl_texcoord8 v2.xyz
-add r0.xyz, v0, -c1
+add r0.xyz, v0, -c0
 dp3 r0.w, r0, r0
 rsq r0.w, r0.w
 mul r0.xyz, r0.w, r0
@@ -22466,71 +22225,71 @@ mad r1.w, -r2.x, r2.x, r0
 rsq r1.w, r1.w
 rcp r1.w, r1.w
 mul r2.y, r1.w, r1.w
-mad r2.z, c6.x, c6.x, -r2.y
+mad r2.z, c5.x, c5.x, -r2.y
 rsq r3.x, r2.z
-add r2.z, -r1.w, c6.x
+add r2.z, -r1.w, c5.x
 rsq r0.w, r0.w
-cmp r2.w, r2.x, c8.x, c8.y
-cmp r2.z, r2, c8.x, c8.y
+cmp r2.w, r2.x, c7.x, c7.y
+cmp r2.z, r2, c7.x, c7.y
 mul_pp r2.z, r2, r2.w
 rcp r2.w, r3.x
 add r2.w, r2.x, -r2
-cmp r2.z, -r2, c8, r2.w
+cmp r2.z, -r2, c7, r2.w
 rcp r0.w, r0.w
-add r2.w, r0, -c7.x
-cmp r2.w, r2, c8.y, c8.x
-cmp r3.x, r2, c8.y, c8
+add r2.w, r0, -c6.x
+cmp r2.w, r2, c7.y, c7.x
+cmp r3.x, r2, c7.y, c7
 mul_pp r3.x, r2.w, r3
-min r2.w, r2.z, c8.z
-if_gt r3.x, c8.y
+min r2.w, r2.z, c7.z
+if_gt r3.x, c7.y
 mad r1.y, r0.w, r0.w, -r2
-mad r1.x, c7, c7, -r2.y
+mad r1.x, c6, c6, -r2.y
 rsq r1.y, r1.y
 rsq r1.x, r1.x
 rcp r1.y, r1.y
 rcp r1.x, r1.x
 add r3.x, r1, -r1.y
 min r2.w, r3.x, r2
-mad r0.xyz, r2.w, r0, c1
+mad r0.xyz, r2.w, r0, c0
 add r0.xyz, r0, -v1
 dp3 r1.x, r0, r0
 rsq r1.x, r1.x
 rcp r1.w, r1.x
 mul r1.xyz, r1.x, r0
 max r2.x, r0.w, r1.w
-mul r0.y, r2.x, c8.w
+mul r0.y, r2.x, c7.w
 min r0.x, r0.w, r1.w
-mad r0.x, r0, c9, r0.y
+mad r0.x, r0, c8, r0.y
 else
-mad r2.y, c7.x, c7.x, -r2
+mad r2.y, c6.x, c6.x, -r2
 rsq r2.y, r2.y
 rcp r2.y, r2.y
 add r2.z, r2.x, -r2.y
 add r4.x, r2, r2.y
 add r2.y, r4.x, -r2.z
-add_sat r3.z, -r0.w, c7.x
+add_sat r3.z, -r0.w, c6.x
 mad r3.x, r3.z, r2.y, r2.z
 min r4.x, r4, r2.w
-add r2.y, -r1.w, c7.x
-cmp r2.z, r2.x, c8.x, c8.y
-cmp r2.x, r2.y, c8, c8.y
+add r2.y, -r1.w, c6.x
+cmp r2.z, r2.x, c7.x, c7.y
+cmp r2.x, r2.y, c7, c7.y
 mul_pp r3.y, r2.x, r2.z
-cmp r3.x, -r3.y, c8.y, r3
+cmp r3.x, -r3.y, c7.y, r3
 min r3.w, r3.x, r2
-mad r2.xyz, r3.w, r0, c1
+mad r2.xyz, r3.w, r0, c0
 add r2.xyz, r2, -v1
 dp3 r4.y, r2, r2
 rsq r4.y, r4.y
 mul r2.xyz, r4.y, r2
-mad r0.xyz, r0, r4.x, c1
+mad r0.xyz, r0, r4.x, c0
 add r0.xyz, v1, -r0
 dp3 r0.x, r0, r0
 rsq r0.x, r0.x
 rcp r0.z, r0.x
 cmp_pp r1.xyz, -r3.y, r1, r2
-add r2.x, r1.w, -c7
+add r2.x, r1.w, -c6
 add r1.w, -r2, r4.x
-mad r1.w, r1, r2.x, c7.x
+mad r1.w, r1, r2.x, c6.x
 add r0.y, r0.w, -r1.w
 mad r0.w, r3.z, r0.y, r1
 max r1.w, r0.z, r0
@@ -22538,33 +22297,34 @@ add r0.y, -r3.x, r4.x
 min r0.x, r3, r3.w
 add r0.x, r0, -r0.y
 mad r0.y, r3.z, r0.x, r0
-mul r1.w, r1, c8
+mul r1.w, r1, c7
 min r0.z, r0, r0.w
-mad r0.z, r0, c9.x, r1.w
-cmp r0.x, -r3.y, c7, r0.z
+mad r0.z, r0, c8.x, r1.w
+cmp r0.x, -r3.y, c6, r0.z
 cmp r2.w, -r3.y, r2, r0.y
 endif
-dp4_pp r0.y, c2, c2
+dp4_pp r0.y, c1, c1
 rsq_pp r0.y, r0.y
-mul_pp r2.xyz, r0.y, c2
+mul_pp r2.xyz, r0.y, c1
 dp3_pp r0.y, r1, r2
-mul_pp r0.z, r0.y, c3.w
-mul_pp_sat r0.w, r0.z, c9.y
-mov r0.y, c7.x
-add r0.y, -c6.x, r0
-mov_pp r0.z, c0.x
+mul_pp r0.y, r0, c2.w
+mul_pp_sat r0.z, r0.y, c8.y
+mov r0.y, c6.x
+mul_pp r0.z, r0, c2.x
+add r0.y, -c5.x, r0
+max r0.z, r0, c7.y
 rcp r0.y, r0.y
-add r0.x, r0, -c6
+add r0.x, r0, -c5
 mul_sat r0.x, r0, r0.y
-add r0.y, -r0.x, c8.x
+add r0.y, -r0.x, c7.x
 mov_sat r0.x, r3
-mad_pp_sat r0.z, r0.w, c3.x, r0
-mul r0.y, r0, c5.x
+max r0.z, r0, c7.y
+mul r0.y, r0, c4.x
 mul r0.x, r0, r2.w
 mul r0.x, r0, r0.y
 mul r0.x, r0, r0.z
-mul_pp oC0.w, r0.x, c4
-mov_pp oC0.xyz, c4
+mul_pp oC0.w, r0.x, c3
+mov_pp oC0.xyz, c3
 "
 }
 
@@ -22590,22 +22350,21 @@ Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHAD
 
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceCameraPos]
-Vector 2 [_WorldSpaceLightPos0]
-Vector 3 [_LightColor0]
-Vector 4 [_Color]
-Float 5 [_Visibility]
-Float 6 [_OceanRadius]
-Float 7 [_SphereRadius]
+Vector 0 [_WorldSpaceCameraPos]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightColor0]
+Vector 3 [_Color]
+Float 4 [_Visibility]
+Float 5 [_OceanRadius]
+Float 6 [_SphereRadius]
 "ps_3_0
-; 106 ALU, 2 FLOW
-def c8, 1.00000000, 0.00000000, 100000003318135350000000000000000.00000000, 0.25000000
-def c9, 0.75000000, 4.00000000, 0, 0
+; 107 ALU, 2 FLOW
+def c7, 1.00000000, 0.00000000, 100000003318135350000000000000000.00000000, 0.25000000
+def c8, 0.75000000, 4.00000000, 0, 0
 dcl_texcoord1 v0.xyz
 dcl_texcoord4 v1.xyz
 dcl_texcoord8 v2.xyz
-add r0.xyz, v0, -c1
+add r0.xyz, v0, -c0
 dp3 r0.w, r0, r0
 rsq r0.w, r0.w
 mul r0.xyz, r0.w, r0
@@ -22615,71 +22374,71 @@ mad r1.w, -r2.x, r2.x, r0
 rsq r1.w, r1.w
 rcp r1.w, r1.w
 mul r2.y, r1.w, r1.w
-mad r2.z, c6.x, c6.x, -r2.y
+mad r2.z, c5.x, c5.x, -r2.y
 rsq r3.x, r2.z
-add r2.z, -r1.w, c6.x
+add r2.z, -r1.w, c5.x
 rsq r0.w, r0.w
-cmp r2.w, r2.x, c8.x, c8.y
-cmp r2.z, r2, c8.x, c8.y
+cmp r2.w, r2.x, c7.x, c7.y
+cmp r2.z, r2, c7.x, c7.y
 mul_pp r2.z, r2, r2.w
 rcp r2.w, r3.x
 add r2.w, r2.x, -r2
-cmp r2.z, -r2, c8, r2.w
+cmp r2.z, -r2, c7, r2.w
 rcp r0.w, r0.w
-add r2.w, r0, -c7.x
-cmp r2.w, r2, c8.y, c8.x
-cmp r3.x, r2, c8.y, c8
+add r2.w, r0, -c6.x
+cmp r2.w, r2, c7.y, c7.x
+cmp r3.x, r2, c7.y, c7
 mul_pp r3.x, r2.w, r3
-min r2.w, r2.z, c8.z
-if_gt r3.x, c8.y
+min r2.w, r2.z, c7.z
+if_gt r3.x, c7.y
 mad r1.y, r0.w, r0.w, -r2
-mad r1.x, c7, c7, -r2.y
+mad r1.x, c6, c6, -r2.y
 rsq r1.y, r1.y
 rsq r1.x, r1.x
 rcp r1.y, r1.y
 rcp r1.x, r1.x
 add r3.x, r1, -r1.y
 min r2.w, r3.x, r2
-mad r0.xyz, r2.w, r0, c1
+mad r0.xyz, r2.w, r0, c0
 add r0.xyz, r0, -v1
 dp3 r1.x, r0, r0
 rsq r1.x, r1.x
 rcp r1.w, r1.x
 mul r1.xyz, r1.x, r0
 max r2.x, r0.w, r1.w
-mul r0.y, r2.x, c8.w
+mul r0.y, r2.x, c7.w
 min r0.x, r0.w, r1.w
-mad r0.x, r0, c9, r0.y
+mad r0.x, r0, c8, r0.y
 else
-mad r2.y, c7.x, c7.x, -r2
+mad r2.y, c6.x, c6.x, -r2
 rsq r2.y, r2.y
 rcp r2.y, r2.y
 add r2.z, r2.x, -r2.y
 add r4.x, r2, r2.y
 add r2.y, r4.x, -r2.z
-add_sat r3.z, -r0.w, c7.x
+add_sat r3.z, -r0.w, c6.x
 mad r3.x, r3.z, r2.y, r2.z
 min r4.x, r4, r2.w
-add r2.y, -r1.w, c7.x
-cmp r2.z, r2.x, c8.x, c8.y
-cmp r2.x, r2.y, c8, c8.y
+add r2.y, -r1.w, c6.x
+cmp r2.z, r2.x, c7.x, c7.y
+cmp r2.x, r2.y, c7, c7.y
 mul_pp r3.y, r2.x, r2.z
-cmp r3.x, -r3.y, c8.y, r3
+cmp r3.x, -r3.y, c7.y, r3
 min r3.w, r3.x, r2
-mad r2.xyz, r3.w, r0, c1
+mad r2.xyz, r3.w, r0, c0
 add r2.xyz, r2, -v1
 dp3 r4.y, r2, r2
 rsq r4.y, r4.y
 mul r2.xyz, r4.y, r2
-mad r0.xyz, r0, r4.x, c1
+mad r0.xyz, r0, r4.x, c0
 add r0.xyz, v1, -r0
 dp3 r0.x, r0, r0
 rsq r0.x, r0.x
 rcp r0.z, r0.x
 cmp_pp r1.xyz, -r3.y, r1, r2
-add r2.x, r1.w, -c7
+add r2.x, r1.w, -c6
 add r1.w, -r2, r4.x
-mad r1.w, r1, r2.x, c7.x
+mad r1.w, r1, r2.x, c6.x
 add r0.y, r0.w, -r1.w
 mad r0.w, r3.z, r0.y, r1
 max r1.w, r0.z, r0
@@ -22687,33 +22446,34 @@ add r0.y, -r3.x, r4.x
 min r0.x, r3, r3.w
 add r0.x, r0, -r0.y
 mad r0.y, r3.z, r0.x, r0
-mul r1.w, r1, c8
+mul r1.w, r1, c7
 min r0.z, r0, r0.w
-mad r0.z, r0, c9.x, r1.w
-cmp r0.x, -r3.y, c7, r0.z
+mad r0.z, r0, c8.x, r1.w
+cmp r0.x, -r3.y, c6, r0.z
 cmp r2.w, -r3.y, r2, r0.y
 endif
-dp4_pp r0.y, c2, c2
+dp4_pp r0.y, c1, c1
 rsq_pp r0.y, r0.y
-mul_pp r2.xyz, r0.y, c2
+mul_pp r2.xyz, r0.y, c1
 dp3_pp r0.y, r1, r2
-mul_pp r0.z, r0.y, c3.w
-mul_pp_sat r0.w, r0.z, c9.y
-mov r0.y, c7.x
-add r0.y, -c6.x, r0
-mov_pp r0.z, c0.x
+mul_pp r0.y, r0, c2.w
+mul_pp_sat r0.z, r0.y, c8.y
+mov r0.y, c6.x
+mul_pp r0.z, r0, c2.x
+add r0.y, -c5.x, r0
+max r0.z, r0, c7.y
 rcp r0.y, r0.y
-add r0.x, r0, -c6
+add r0.x, r0, -c5
 mul_sat r0.x, r0, r0.y
-add r0.y, -r0.x, c8.x
+add r0.y, -r0.x, c7.x
 mov_sat r0.x, r3
-mad_pp_sat r0.z, r0.w, c3.x, r0
-mul r0.y, r0, c5.x
+max r0.z, r0, c7.y
+mul r0.y, r0, c4.x
 mul r0.x, r0, r2.w
 mul r0.x, r0, r0.y
 mul r0.x, r0, r0.z
-mul_pp oC0.w, r0.x, c4
-mov_pp oC0.xyz, c4
+mul_pp oC0.w, r0.x, c3
+mov_pp oC0.xyz, c3
 "
 }
 
@@ -22739,22 +22499,21 @@ Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADO
 
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_OFF" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceCameraPos]
-Vector 2 [_WorldSpaceLightPos0]
-Vector 3 [_LightColor0]
-Vector 4 [_Color]
-Float 5 [_Visibility]
-Float 6 [_OceanRadius]
-Float 7 [_SphereRadius]
+Vector 0 [_WorldSpaceCameraPos]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightColor0]
+Vector 3 [_Color]
+Float 4 [_Visibility]
+Float 5 [_OceanRadius]
+Float 6 [_SphereRadius]
 "ps_3_0
-; 106 ALU, 2 FLOW
-def c8, 1.00000000, 0.00000000, 100000003318135350000000000000000.00000000, 0.25000000
-def c9, 0.75000000, 4.00000000, 0, 0
+; 107 ALU, 2 FLOW
+def c7, 1.00000000, 0.00000000, 100000003318135350000000000000000.00000000, 0.25000000
+def c8, 0.75000000, 4.00000000, 0, 0
 dcl_texcoord1 v0.xyz
 dcl_texcoord4 v1.xyz
 dcl_texcoord8 v2.xyz
-add r0.xyz, v0, -c1
+add r0.xyz, v0, -c0
 dp3 r0.w, r0, r0
 rsq r0.w, r0.w
 mul r0.xyz, r0.w, r0
@@ -22764,71 +22523,71 @@ mad r1.w, -r2.x, r2.x, r0
 rsq r1.w, r1.w
 rcp r1.w, r1.w
 mul r2.y, r1.w, r1.w
-mad r2.z, c6.x, c6.x, -r2.y
+mad r2.z, c5.x, c5.x, -r2.y
 rsq r3.x, r2.z
-add r2.z, -r1.w, c6.x
+add r2.z, -r1.w, c5.x
 rsq r0.w, r0.w
-cmp r2.w, r2.x, c8.x, c8.y
-cmp r2.z, r2, c8.x, c8.y
+cmp r2.w, r2.x, c7.x, c7.y
+cmp r2.z, r2, c7.x, c7.y
 mul_pp r2.z, r2, r2.w
 rcp r2.w, r3.x
 add r2.w, r2.x, -r2
-cmp r2.z, -r2, c8, r2.w
+cmp r2.z, -r2, c7, r2.w
 rcp r0.w, r0.w
-add r2.w, r0, -c7.x
-cmp r2.w, r2, c8.y, c8.x
-cmp r3.x, r2, c8.y, c8
+add r2.w, r0, -c6.x
+cmp r2.w, r2, c7.y, c7.x
+cmp r3.x, r2, c7.y, c7
 mul_pp r3.x, r2.w, r3
-min r2.w, r2.z, c8.z
-if_gt r3.x, c8.y
+min r2.w, r2.z, c7.z
+if_gt r3.x, c7.y
 mad r1.y, r0.w, r0.w, -r2
-mad r1.x, c7, c7, -r2.y
+mad r1.x, c6, c6, -r2.y
 rsq r1.y, r1.y
 rsq r1.x, r1.x
 rcp r1.y, r1.y
 rcp r1.x, r1.x
 add r3.x, r1, -r1.y
 min r2.w, r3.x, r2
-mad r0.xyz, r2.w, r0, c1
+mad r0.xyz, r2.w, r0, c0
 add r0.xyz, r0, -v1
 dp3 r1.x, r0, r0
 rsq r1.x, r1.x
 rcp r1.w, r1.x
 mul r1.xyz, r1.x, r0
 max r2.x, r0.w, r1.w
-mul r0.y, r2.x, c8.w
+mul r0.y, r2.x, c7.w
 min r0.x, r0.w, r1.w
-mad r0.x, r0, c9, r0.y
+mad r0.x, r0, c8, r0.y
 else
-mad r2.y, c7.x, c7.x, -r2
+mad r2.y, c6.x, c6.x, -r2
 rsq r2.y, r2.y
 rcp r2.y, r2.y
 add r2.z, r2.x, -r2.y
 add r4.x, r2, r2.y
 add r2.y, r4.x, -r2.z
-add_sat r3.z, -r0.w, c7.x
+add_sat r3.z, -r0.w, c6.x
 mad r3.x, r3.z, r2.y, r2.z
 min r4.x, r4, r2.w
-add r2.y, -r1.w, c7.x
-cmp r2.z, r2.x, c8.x, c8.y
-cmp r2.x, r2.y, c8, c8.y
+add r2.y, -r1.w, c6.x
+cmp r2.z, r2.x, c7.x, c7.y
+cmp r2.x, r2.y, c7, c7.y
 mul_pp r3.y, r2.x, r2.z
-cmp r3.x, -r3.y, c8.y, r3
+cmp r3.x, -r3.y, c7.y, r3
 min r3.w, r3.x, r2
-mad r2.xyz, r3.w, r0, c1
+mad r2.xyz, r3.w, r0, c0
 add r2.xyz, r2, -v1
 dp3 r4.y, r2, r2
 rsq r4.y, r4.y
 mul r2.xyz, r4.y, r2
-mad r0.xyz, r0, r4.x, c1
+mad r0.xyz, r0, r4.x, c0
 add r0.xyz, v1, -r0
 dp3 r0.x, r0, r0
 rsq r0.x, r0.x
 rcp r0.z, r0.x
 cmp_pp r1.xyz, -r3.y, r1, r2
-add r2.x, r1.w, -c7
+add r2.x, r1.w, -c6
 add r1.w, -r2, r4.x
-mad r1.w, r1, r2.x, c7.x
+mad r1.w, r1, r2.x, c6.x
 add r0.y, r0.w, -r1.w
 mad r0.w, r3.z, r0.y, r1
 max r1.w, r0.z, r0
@@ -22836,29 +22595,648 @@ add r0.y, -r3.x, r4.x
 min r0.x, r3, r3.w
 add r0.x, r0, -r0.y
 mad r0.y, r3.z, r0.x, r0
-mul r1.w, r1, c8
+mul r1.w, r1, c7
 min r0.z, r0, r0.w
-mad r0.z, r0, c9.x, r1.w
-cmp r0.x, -r3.y, c7, r0.z
+mad r0.z, r0, c8.x, r1.w
+cmp r0.x, -r3.y, c6, r0.z
 cmp r2.w, -r3.y, r2, r0.y
+endif
+dp4_pp r0.y, c1, c1
+rsq_pp r0.y, r0.y
+mul_pp r2.xyz, r0.y, c1
+dp3_pp r0.y, r1, r2
+mul_pp r0.y, r0, c2.w
+mul_pp_sat r0.z, r0.y, c8.y
+mov r0.y, c6.x
+mul_pp r0.z, r0, c2.x
+add r0.y, -c5.x, r0
+max r0.z, r0, c7.y
+rcp r0.y, r0.y
+add r0.x, r0, -c5
+mul_sat r0.x, r0, r0.y
+add r0.y, -r0.x, c7.x
+mov_sat r0.x, r3
+max r0.z, r0, c7.y
+mul r0.y, r0, c4.x
+mul r0.x, r0, r2.w
+mul r0.x, r0, r0.y
+mul r0.x, r0, r0.z
+mul_pp oC0.w, r0.x, c3
+mov_pp oC0.xyz, c3
+"
+}
+
+SubProgram "gles " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_OFF" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+Vector 0 [_WorldSpaceCameraPos]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightColor0]
+Vector 3 [_Color]
+Float 4 [_Visibility]
+Float 5 [_OceanRadius]
+Float 6 [_SphereRadius]
+SetTexture 0 [_ShadowMapTexture] 2D
+"ps_3_0
+; 108 ALU, 1 TEX, 2 FLOW
+dcl_2d s0
+def c7, 1.00000000, 0.00000000, 100000003318135350000000000000000.00000000, 0.25000000
+def c8, 0.75000000, 4.00000000, 0, 0
+dcl_texcoord1 v0.xyz
+dcl_texcoord2 v1
+dcl_texcoord4 v2.xyz
+dcl_texcoord8 v3.xyz
+add r0.xyz, v0, -c0
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul r0.xyz, r0.w, r0
+dp3 r2.x, r0, v3
+dp3 r0.w, v3, v3
+mad r1.w, -r2.x, r2.x, r0
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r2.y, r1.w, r1.w
+mad r2.z, c5.x, c5.x, -r2.y
+rsq r3.x, r2.z
+add r2.z, -r1.w, c5.x
+rsq r0.w, r0.w
+cmp r2.w, r2.x, c7.x, c7.y
+cmp r2.z, r2, c7.x, c7.y
+mul_pp r2.z, r2, r2.w
+rcp r2.w, r3.x
+add r2.w, r2.x, -r2
+cmp r2.z, -r2, c7, r2.w
+rcp r0.w, r0.w
+add r2.w, r0, -c6.x
+cmp r2.w, r2, c7.y, c7.x
+cmp r3.x, r2, c7.y, c7
+mul_pp r3.x, r2.w, r3
+min r2.w, r2.z, c7.z
+if_gt r3.x, c7.y
+mad r1.y, r0.w, r0.w, -r2
+mad r1.x, c6, c6, -r2.y
+rsq r1.y, r1.y
+rsq r1.x, r1.x
+rcp r1.y, r1.y
+rcp r1.x, r1.x
+add r3.x, r1, -r1.y
+min r2.w, r3.x, r2
+mad r0.xyz, r2.w, r0, c0
+add r0.xyz, r0, -v2
+dp3 r1.x, r0, r0
+rsq r1.x, r1.x
+rcp r1.w, r1.x
+mul r1.xyz, r1.x, r0
+max r2.x, r0.w, r1.w
+mul r0.y, r2.x, c7.w
+min r0.x, r0.w, r1.w
+mad r0.y, r0.x, c8.x, r0
+else
+mad r2.y, c6.x, c6.x, -r2
+rsq r2.y, r2.y
+rcp r2.y, r2.y
+add r2.z, r2.x, -r2.y
+add r4.x, r2, r2.y
+add r2.y, r4.x, -r2.z
+add_sat r3.z, -r0.w, c6.x
+mad r3.x, r3.z, r2.y, r2.z
+min r4.x, r4, r2.w
+add r2.y, -r1.w, c6.x
+cmp r2.z, r2.x, c7.x, c7.y
+cmp r2.x, r2.y, c7, c7.y
+mul_pp r3.y, r2.x, r2.z
+cmp r3.x, -r3.y, c7.y, r3
+min r3.w, r3.x, r2
+mad r2.xyz, r3.w, r0, c0
+add r2.xyz, r2, -v2
+dp3 r4.y, r2, r2
+rsq r4.y, r4.y
+mul r2.xyz, r4.y, r2
+mad r0.xyz, r0, r4.x, c0
+add r0.xyz, v2, -r0
+dp3 r0.x, r0, r0
+rsq r0.x, r0.x
+rcp r0.z, r0.x
+cmp_pp r1.xyz, -r3.y, r1, r2
+add r2.x, r1.w, -c6
+add r1.w, -r2, r4.x
+mad r1.w, r1, r2.x, c6.x
+add r0.y, r0.w, -r1.w
+mad r0.w, r3.z, r0.y, r1
+max r1.w, r0.z, r0
+add r0.y, -r3.x, r4.x
+min r0.x, r3, r3.w
+add r0.x, r0, -r0.y
+mad r0.x, r3.z, r0, r0.y
+mul r1.w, r1, c7
+min r0.z, r0, r0.w
+mad r0.z, r0, c8.x, r1.w
+cmp r0.y, -r3, c6.x, r0.z
+cmp r2.w, -r3.y, r2, r0.x
+endif
+dp4_pp r0.x, c1, c1
+rsq_pp r0.x, r0.x
+mul_pp r2.xyz, r0.x, c1
+dp3_pp r0.z, r1, r2
+mul_pp r0.z, r0, c2.w
+texldp r0.x, v1, s0
+mul_pp r0.x, r0.z, r0
+mul_pp_sat r0.z, r0.x, c8.y
+mul_pp r0.z, r0, c2.x
+mov r0.x, c6
+add r0.x, -c5, r0
+max r0.w, r0.z, c7.y
+rcp r0.z, r0.x
+add r0.x, r0.y, -c5
+mul_sat r0.x, r0, r0.z
+add r0.y, -r0.x, c7.x
+mov_sat r0.x, r3
+max r0.z, r0.w, c7.y
+mul r0.y, r0, c4.x
+mul r0.x, r0, r2.w
+mul r0.x, r0, r0.y
+mul r0.x, r0, r0.z
+mul_pp oC0.w, r0.x, c3
+mov_pp oC0.xyz, c3
+"
+}
+
+SubProgram "gles " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+Vector 0 [_WorldSpaceCameraPos]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightColor0]
+Vector 3 [_Color]
+Float 4 [_Visibility]
+Float 5 [_OceanRadius]
+Float 6 [_SphereRadius]
+SetTexture 0 [_ShadowMapTexture] 2D
+"ps_3_0
+; 108 ALU, 1 TEX, 2 FLOW
+dcl_2d s0
+def c7, 1.00000000, 0.00000000, 100000003318135350000000000000000.00000000, 0.25000000
+def c8, 0.75000000, 4.00000000, 0, 0
+dcl_texcoord1 v0.xyz
+dcl_texcoord2 v1
+dcl_texcoord4 v2.xyz
+dcl_texcoord8 v3.xyz
+add r0.xyz, v0, -c0
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul r0.xyz, r0.w, r0
+dp3 r2.x, r0, v3
+dp3 r0.w, v3, v3
+mad r1.w, -r2.x, r2.x, r0
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r2.y, r1.w, r1.w
+mad r2.z, c5.x, c5.x, -r2.y
+rsq r3.x, r2.z
+add r2.z, -r1.w, c5.x
+rsq r0.w, r0.w
+cmp r2.w, r2.x, c7.x, c7.y
+cmp r2.z, r2, c7.x, c7.y
+mul_pp r2.z, r2, r2.w
+rcp r2.w, r3.x
+add r2.w, r2.x, -r2
+cmp r2.z, -r2, c7, r2.w
+rcp r0.w, r0.w
+add r2.w, r0, -c6.x
+cmp r2.w, r2, c7.y, c7.x
+cmp r3.x, r2, c7.y, c7
+mul_pp r3.x, r2.w, r3
+min r2.w, r2.z, c7.z
+if_gt r3.x, c7.y
+mad r1.y, r0.w, r0.w, -r2
+mad r1.x, c6, c6, -r2.y
+rsq r1.y, r1.y
+rsq r1.x, r1.x
+rcp r1.y, r1.y
+rcp r1.x, r1.x
+add r3.x, r1, -r1.y
+min r2.w, r3.x, r2
+mad r0.xyz, r2.w, r0, c0
+add r0.xyz, r0, -v2
+dp3 r1.x, r0, r0
+rsq r1.x, r1.x
+rcp r1.w, r1.x
+mul r1.xyz, r1.x, r0
+max r2.x, r0.w, r1.w
+mul r0.y, r2.x, c7.w
+min r0.x, r0.w, r1.w
+mad r0.y, r0.x, c8.x, r0
+else
+mad r2.y, c6.x, c6.x, -r2
+rsq r2.y, r2.y
+rcp r2.y, r2.y
+add r2.z, r2.x, -r2.y
+add r4.x, r2, r2.y
+add r2.y, r4.x, -r2.z
+add_sat r3.z, -r0.w, c6.x
+mad r3.x, r3.z, r2.y, r2.z
+min r4.x, r4, r2.w
+add r2.y, -r1.w, c6.x
+cmp r2.z, r2.x, c7.x, c7.y
+cmp r2.x, r2.y, c7, c7.y
+mul_pp r3.y, r2.x, r2.z
+cmp r3.x, -r3.y, c7.y, r3
+min r3.w, r3.x, r2
+mad r2.xyz, r3.w, r0, c0
+add r2.xyz, r2, -v2
+dp3 r4.y, r2, r2
+rsq r4.y, r4.y
+mul r2.xyz, r4.y, r2
+mad r0.xyz, r0, r4.x, c0
+add r0.xyz, v2, -r0
+dp3 r0.x, r0, r0
+rsq r0.x, r0.x
+rcp r0.z, r0.x
+cmp_pp r1.xyz, -r3.y, r1, r2
+add r2.x, r1.w, -c6
+add r1.w, -r2, r4.x
+mad r1.w, r1, r2.x, c6.x
+add r0.y, r0.w, -r1.w
+mad r0.w, r3.z, r0.y, r1
+max r1.w, r0.z, r0
+add r0.y, -r3.x, r4.x
+min r0.x, r3, r3.w
+add r0.x, r0, -r0.y
+mad r0.x, r3.z, r0, r0.y
+mul r1.w, r1, c7
+min r0.z, r0, r0.w
+mad r0.z, r0, c8.x, r1.w
+cmp r0.y, -r3, c6.x, r0.z
+cmp r2.w, -r3.y, r2, r0.x
+endif
+dp4_pp r0.x, c1, c1
+rsq_pp r0.x, r0.x
+mul_pp r2.xyz, r0.x, c1
+dp3_pp r0.z, r1, r2
+mul_pp r0.z, r0, c2.w
+texldp r0.x, v1, s0
+mul_pp r0.x, r0.z, r0
+mul_pp_sat r0.z, r0.x, c8.y
+mul_pp r0.z, r0, c2.x
+mov r0.x, c6
+add r0.x, -c5, r0
+max r0.w, r0.z, c7.y
+rcp r0.z, r0.x
+add r0.x, r0.y, -c5
+mul_sat r0.x, r0, r0.z
+add r0.y, -r0.x, c7.x
+mov_sat r0.x, r3
+max r0.z, r0.w, c7.y
+mul r0.y, r0, c4.x
+mul r0.x, r0, r2.w
+mul r0.x, r0, r0.y
+mul r0.x, r0, r0.z
+mul_pp oC0.w, r0.x, c3
+mov_pp oC0.xyz, c3
+"
+}
+
+SubProgram "gles " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_SCREEN" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_SCREEN" }
+Vector 0 [_WorldSpaceCameraPos]
+Vector 1 [_WorldSpaceLightPos0]
+Vector 2 [_LightColor0]
+Vector 3 [_Color]
+Float 4 [_Visibility]
+Float 5 [_OceanRadius]
+Float 6 [_SphereRadius]
+SetTexture 0 [_ShadowMapTexture] 2D
+"ps_3_0
+; 108 ALU, 1 TEX, 2 FLOW
+dcl_2d s0
+def c7, 1.00000000, 0.00000000, 100000003318135350000000000000000.00000000, 0.25000000
+def c8, 0.75000000, 4.00000000, 0, 0
+dcl_texcoord1 v0.xyz
+dcl_texcoord2 v1
+dcl_texcoord4 v2.xyz
+dcl_texcoord8 v3.xyz
+add r0.xyz, v0, -c0
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul r0.xyz, r0.w, r0
+dp3 r2.x, r0, v3
+dp3 r0.w, v3, v3
+mad r1.w, -r2.x, r2.x, r0
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r2.y, r1.w, r1.w
+mad r2.z, c5.x, c5.x, -r2.y
+rsq r3.x, r2.z
+add r2.z, -r1.w, c5.x
+rsq r0.w, r0.w
+cmp r2.w, r2.x, c7.x, c7.y
+cmp r2.z, r2, c7.x, c7.y
+mul_pp r2.z, r2, r2.w
+rcp r2.w, r3.x
+add r2.w, r2.x, -r2
+cmp r2.z, -r2, c7, r2.w
+rcp r0.w, r0.w
+add r2.w, r0, -c6.x
+cmp r2.w, r2, c7.y, c7.x
+cmp r3.x, r2, c7.y, c7
+mul_pp r3.x, r2.w, r3
+min r2.w, r2.z, c7.z
+if_gt r3.x, c7.y
+mad r1.y, r0.w, r0.w, -r2
+mad r1.x, c6, c6, -r2.y
+rsq r1.y, r1.y
+rsq r1.x, r1.x
+rcp r1.y, r1.y
+rcp r1.x, r1.x
+add r3.x, r1, -r1.y
+min r2.w, r3.x, r2
+mad r0.xyz, r2.w, r0, c0
+add r0.xyz, r0, -v2
+dp3 r1.x, r0, r0
+rsq r1.x, r1.x
+rcp r1.w, r1.x
+mul r1.xyz, r1.x, r0
+max r2.x, r0.w, r1.w
+mul r0.y, r2.x, c7.w
+min r0.x, r0.w, r1.w
+mad r0.y, r0.x, c8.x, r0
+else
+mad r2.y, c6.x, c6.x, -r2
+rsq r2.y, r2.y
+rcp r2.y, r2.y
+add r2.z, r2.x, -r2.y
+add r4.x, r2, r2.y
+add r2.y, r4.x, -r2.z
+add_sat r3.z, -r0.w, c6.x
+mad r3.x, r3.z, r2.y, r2.z
+min r4.x, r4, r2.w
+add r2.y, -r1.w, c6.x
+cmp r2.z, r2.x, c7.x, c7.y
+cmp r2.x, r2.y, c7, c7.y
+mul_pp r3.y, r2.x, r2.z
+cmp r3.x, -r3.y, c7.y, r3
+min r3.w, r3.x, r2
+mad r2.xyz, r3.w, r0, c0
+add r2.xyz, r2, -v2
+dp3 r4.y, r2, r2
+rsq r4.y, r4.y
+mul r2.xyz, r4.y, r2
+mad r0.xyz, r0, r4.x, c0
+add r0.xyz, v2, -r0
+dp3 r0.x, r0, r0
+rsq r0.x, r0.x
+rcp r0.z, r0.x
+cmp_pp r1.xyz, -r3.y, r1, r2
+add r2.x, r1.w, -c6
+add r1.w, -r2, r4.x
+mad r1.w, r1, r2.x, c6.x
+add r0.y, r0.w, -r1.w
+mad r0.w, r3.z, r0.y, r1
+max r1.w, r0.z, r0
+add r0.y, -r3.x, r4.x
+min r0.x, r3, r3.w
+add r0.x, r0, -r0.y
+mad r0.x, r3.z, r0, r0.y
+mul r1.w, r1, c7
+min r0.z, r0, r0.w
+mad r0.z, r0, c8.x, r1.w
+cmp r0.y, -r3, c6.x, r0.z
+cmp r2.w, -r3.y, r2, r0.x
+endif
+dp4_pp r0.x, c1, c1
+rsq_pp r0.x, r0.x
+mul_pp r2.xyz, r0.x, c1
+dp3_pp r0.z, r1, r2
+mul_pp r0.z, r0, c2.w
+texldp r0.x, v1, s0
+mul_pp r0.x, r0.z, r0
+mul_pp_sat r0.z, r0.x, c8.y
+mul_pp r0.z, r0, c2.x
+mov r0.x, c6
+add r0.x, -c5, r0
+max r0.w, r0.z, c7.y
+rcp r0.z, r0.x
+add r0.x, r0.y, -c5
+mul_sat r0.x, r0, r0.z
+add r0.y, -r0.x, c7.x
+mov_sat r0.x, r3
+max r0.z, r0.w, c7.y
+mul r0.y, r0, c4.x
+mul r0.x, r0, r2.w
+mul r0.x, r0, r0.y
+mul r0.x, r0, r0.z
+mul_pp oC0.w, r0.x, c3
+mov_pp oC0.xyz, c3
+"
+}
+
+SubProgram "gles " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_SCREEN" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_SCREEN" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_SCREEN" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+Vector 0 [_WorldSpaceCameraPos]
+Vector 1 [_ZBufferParams]
+Vector 2 [_WorldSpaceLightPos0]
+Vector 3 [_LightColor0]
+Vector 4 [_Color]
+Float 5 [_Visibility]
+Float 6 [_OceanRadius]
+Float 7 [_SphereRadius]
+SetTexture 0 [_CameraDepthTexture] 2D
+"ps_3_0
+; 109 ALU, 1 TEX, 2 FLOW
+dcl_2d s0
+def c8, 1.00000000, 0.00000000, 0.25000000, 0.75000000
+def c9, 4.00000000, 0, 0, 0
+dcl_texcoord0 v0
+dcl_texcoord1 v1.xyz
+dcl_texcoord4 v2.xyz
+dcl_texcoord8 v3.xyz
+add r0.xyz, v1, -c0
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul r0.xyz, r0.w, r0
+dp3 r2.y, v3, r0
+dp3 r0.w, v3, v3
+mad r1.w, -r2.y, r2.y, r0
+rsq r1.w, r1.w
+rcp r1.w, r1.w
+mul r2.z, r1.w, r1.w
+mad r2.x, c6, c6, -r2.z
+rsq r2.x, r2.x
+rcp r3.y, r2.x
+add r2.x, -r1.w, c6
+cmp r2.w, r2.y, c8.x, c8.y
+cmp r2.x, r2, c8, c8.y
+mul_pp r3.x, r2, r2.w
+rsq r2.w, r0.w
+texldp r2.x, v0, s0
+mad r0.w, r2.x, c1.z, c1
+add r3.y, r2, -r3
+rcp r0.w, r0.w
+cmp r2.x, -r3, r0.w, r3.y
+rcp r2.w, r2.w
+add r3.x, r2.w, -c7
+cmp r3.y, r2, c8, c8.x
+cmp r3.x, r3, c8.y, c8
+mul_pp r3.x, r3, r3.y
+min r0.w, r2.x, r0
+if_gt r3.x, c8.y
+mad r1.y, r2.w, r2.w, -r2.z
+mad r1.x, c7, c7, -r2.z
+rsq r1.y, r1.y
+rsq r1.x, r1.x
+rcp r1.y, r1.y
+rcp r1.x, r1.x
+add r3.x, r1, -r1.y
+min r0.w, r3.x, r0
+mad r0.xyz, r0.w, r0, c0
+add r0.xyz, r0, -v2
+dp3 r1.x, r0, r0
+rsq r1.x, r1.x
+rcp r1.w, r1.x
+mul r1.xyz, r1.x, r0
+max r2.x, r2.w, r1.w
+mul r0.y, r2.x, c8.z
+min r0.x, r2.w, r1.w
+mad r0.x, r0, c8.w, r0.y
+else
+mad r2.x, c7, c7, -r2.z
+rsq r2.x, r2.x
+rcp r2.x, r2.x
+add r2.z, r2.y, -r2.x
+add r4.x, r2.y, r2
+add r2.x, r4, -r2.z
+add_sat r3.z, -r2.w, c7.x
+mad r2.z, r3, r2.x, r2
+add r2.x, -r1.w, c7
+min r4.x, r4, r0.w
+cmp r2.y, r2, c8.x, c8
+cmp r2.x, r2, c8, c8.y
+mul_pp r3.y, r2.x, r2
+cmp r3.x, -r3.y, c8.y, r2.z
+min r3.w, r3.x, r0
+mad r2.xyz, r3.w, r0, c0
+add r2.xyz, r2, -v2
+dp3 r4.y, r2, r2
+rsq r4.y, r4.y
+mul r2.xyz, r4.y, r2
+mad r0.xyz, r0, r4.x, c0
+add r0.xyz, v2, -r0
+dp3 r0.x, r0, r0
+rsq r0.x, r0.x
+rcp r0.z, r0.x
+cmp_pp r1.xyz, -r3.y, r1, r2
+add r2.x, r1.w, -c7
+add r1.w, -r0, r4.x
+mad r1.w, r1, r2.x, c7.x
+add r0.y, r2.w, -r1.w
+mad r1.w, r3.z, r0.y, r1
+max r2.x, r0.z, r1.w
+add r0.y, -r3.x, r4.x
+min r0.x, r3, r3.w
+add r0.x, r0, -r0.y
+mad r0.y, r3.z, r0.x, r0
+mul r2.x, r2, c8.z
+min r0.z, r0, r1.w
+mad r0.z, r0, c8.w, r2.x
+cmp r0.x, -r3.y, c7, r0.z
+cmp r0.w, -r3.y, r0, r0.y
 endif
 dp4_pp r0.y, c2, c2
 rsq_pp r0.y, r0.y
 mul_pp r2.xyz, r0.y, c2
 dp3_pp r0.y, r1, r2
-mul_pp r0.z, r0.y, c3.w
-mul_pp_sat r0.w, r0.z, c9.y
+mul_pp r0.y, r0, c3.w
+mul_pp_sat r0.z, r0.y, c9.x
 mov r0.y, c7.x
+mul_pp r0.z, r0, c3.x
 add r0.y, -c6.x, r0
-mov_pp r0.z, c0.x
+max r0.z, r0, c8.y
 rcp r0.y, r0.y
 add r0.x, r0, -c6
 mul_sat r0.x, r0, r0.y
 add r0.y, -r0.x, c8.x
 mov_sat r0.x, r3
-mad_pp_sat r0.z, r0.w, c3.x, r0
+max r0.z, r0, c8.y
 mul r0.y, r0, c5.x
-mul r0.x, r0, r2.w
+mul r0.x, r0, r0.w
 mul r0.x, r0, r0.y
 mul r0.x, r0, r0.z
 mul_pp oC0.w, r0.x, c4
@@ -22867,509 +23245,46 @@ mov_pp oC0.xyz, c4
 }
 
 SubProgram "gles " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_OFF" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_OFF" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_OFF" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceCameraPos]
-Vector 2 [_WorldSpaceLightPos0]
-Vector 3 [_LightColor0]
-Vector 4 [_Color]
-Float 5 [_Visibility]
-Float 6 [_OceanRadius]
-Float 7 [_SphereRadius]
-SetTexture 0 [_ShadowMapTexture] 2D
-"ps_3_0
-; 107 ALU, 1 TEX, 2 FLOW
-dcl_2d s0
-def c8, 1.00000000, 0.00000000, 100000003318135350000000000000000.00000000, 0.25000000
-def c9, 0.75000000, 4.00000000, 0, 0
-dcl_texcoord1 v0.xyz
-dcl_texcoord2 v1
-dcl_texcoord4 v2.xyz
-dcl_texcoord8 v3.xyz
-add r0.xyz, v0, -c1
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul r0.xyz, r0.w, r0
-dp3 r2.x, r0, v3
-dp3 r0.w, v3, v3
-mad r1.w, -r2.x, r2.x, r0
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r2.y, r1.w, r1.w
-mad r2.z, c6.x, c6.x, -r2.y
-rsq r3.x, r2.z
-add r2.z, -r1.w, c6.x
-rsq r0.w, r0.w
-cmp r2.w, r2.x, c8.x, c8.y
-cmp r2.z, r2, c8.x, c8.y
-mul_pp r2.z, r2, r2.w
-rcp r2.w, r3.x
-add r2.w, r2.x, -r2
-cmp r2.z, -r2, c8, r2.w
-rcp r0.w, r0.w
-add r2.w, r0, -c7.x
-cmp r2.w, r2, c8.y, c8.x
-cmp r3.x, r2, c8.y, c8
-mul_pp r3.x, r2.w, r3
-min r2.w, r2.z, c8.z
-if_gt r3.x, c8.y
-mad r1.y, r0.w, r0.w, -r2
-mad r1.x, c7, c7, -r2.y
-rsq r1.y, r1.y
-rsq r1.x, r1.x
-rcp r1.y, r1.y
-rcp r1.x, r1.x
-add r3.x, r1, -r1.y
-min r2.w, r3.x, r2
-mad r0.xyz, r2.w, r0, c1
-add r0.xyz, r0, -v2
-dp3 r1.x, r0, r0
-rsq r1.x, r1.x
-rcp r1.w, r1.x
-mul r1.xyz, r1.x, r0
-max r2.x, r0.w, r1.w
-mul r0.y, r2.x, c8.w
-min r0.x, r0.w, r1.w
-mad r0.y, r0.x, c9.x, r0
-else
-mad r2.y, c7.x, c7.x, -r2
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-add r2.z, r2.x, -r2.y
-add r4.x, r2, r2.y
-add r2.y, r4.x, -r2.z
-add_sat r3.z, -r0.w, c7.x
-mad r3.x, r3.z, r2.y, r2.z
-min r4.x, r4, r2.w
-add r2.y, -r1.w, c7.x
-cmp r2.z, r2.x, c8.x, c8.y
-cmp r2.x, r2.y, c8, c8.y
-mul_pp r3.y, r2.x, r2.z
-cmp r3.x, -r3.y, c8.y, r3
-min r3.w, r3.x, r2
-mad r2.xyz, r3.w, r0, c1
-add r2.xyz, r2, -v2
-dp3 r4.y, r2, r2
-rsq r4.y, r4.y
-mul r2.xyz, r4.y, r2
-mad r0.xyz, r0, r4.x, c1
-add r0.xyz, v2, -r0
-dp3 r0.x, r0, r0
-rsq r0.x, r0.x
-rcp r0.z, r0.x
-cmp_pp r1.xyz, -r3.y, r1, r2
-add r2.x, r1.w, -c7
-add r1.w, -r2, r4.x
-mad r1.w, r1, r2.x, c7.x
-add r0.y, r0.w, -r1.w
-mad r0.w, r3.z, r0.y, r1
-max r1.w, r0.z, r0
-add r0.y, -r3.x, r4.x
-min r0.x, r3, r3.w
-add r0.x, r0, -r0.y
-mad r0.x, r3.z, r0, r0.y
-mul r1.w, r1, c8
-min r0.z, r0, r0.w
-mad r0.z, r0, c9.x, r1.w
-cmp r0.y, -r3, c7.x, r0.z
-cmp r2.w, -r3.y, r2, r0.x
-endif
-dp4_pp r0.x, c2, c2
-rsq_pp r0.x, r0.x
-mul_pp r2.xyz, r0.x, c2
-dp3_pp r0.z, r1, r2
-texldp r0.x, v1, s0
-mul_pp r0.z, r0, c3.w
-mul_pp r0.z, r0, r0.x
-mul_pp_sat r0.w, r0.z, c9.y
-mov r0.x, c7
-add r0.x, -c6, r0
-mov_pp r0.z, c0.x
-add r0.y, r0, -c6.x
-rcp r0.x, r0.x
-mul_sat r0.x, r0.y, r0
-add r0.y, -r0.x, c8.x
-mov_sat r0.x, r3
-mad_pp_sat r0.z, r0.w, c3.x, r0
-mul r0.y, r0, c5.x
-mul r0.x, r0, r2.w
-mul r0.x, r0, r0.y
-mul r0.x, r0, r0.z
-mul_pp oC0.w, r0.x, c4
-mov_pp oC0.xyz, c4
-"
-}
-
-SubProgram "gles " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceCameraPos]
-Vector 2 [_WorldSpaceLightPos0]
-Vector 3 [_LightColor0]
-Vector 4 [_Color]
-Float 5 [_Visibility]
-Float 6 [_OceanRadius]
-Float 7 [_SphereRadius]
-SetTexture 0 [_ShadowMapTexture] 2D
-"ps_3_0
-; 107 ALU, 1 TEX, 2 FLOW
-dcl_2d s0
-def c8, 1.00000000, 0.00000000, 100000003318135350000000000000000.00000000, 0.25000000
-def c9, 0.75000000, 4.00000000, 0, 0
-dcl_texcoord1 v0.xyz
-dcl_texcoord2 v1
-dcl_texcoord4 v2.xyz
-dcl_texcoord8 v3.xyz
-add r0.xyz, v0, -c1
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul r0.xyz, r0.w, r0
-dp3 r2.x, r0, v3
-dp3 r0.w, v3, v3
-mad r1.w, -r2.x, r2.x, r0
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r2.y, r1.w, r1.w
-mad r2.z, c6.x, c6.x, -r2.y
-rsq r3.x, r2.z
-add r2.z, -r1.w, c6.x
-rsq r0.w, r0.w
-cmp r2.w, r2.x, c8.x, c8.y
-cmp r2.z, r2, c8.x, c8.y
-mul_pp r2.z, r2, r2.w
-rcp r2.w, r3.x
-add r2.w, r2.x, -r2
-cmp r2.z, -r2, c8, r2.w
-rcp r0.w, r0.w
-add r2.w, r0, -c7.x
-cmp r2.w, r2, c8.y, c8.x
-cmp r3.x, r2, c8.y, c8
-mul_pp r3.x, r2.w, r3
-min r2.w, r2.z, c8.z
-if_gt r3.x, c8.y
-mad r1.y, r0.w, r0.w, -r2
-mad r1.x, c7, c7, -r2.y
-rsq r1.y, r1.y
-rsq r1.x, r1.x
-rcp r1.y, r1.y
-rcp r1.x, r1.x
-add r3.x, r1, -r1.y
-min r2.w, r3.x, r2
-mad r0.xyz, r2.w, r0, c1
-add r0.xyz, r0, -v2
-dp3 r1.x, r0, r0
-rsq r1.x, r1.x
-rcp r1.w, r1.x
-mul r1.xyz, r1.x, r0
-max r2.x, r0.w, r1.w
-mul r0.y, r2.x, c8.w
-min r0.x, r0.w, r1.w
-mad r0.y, r0.x, c9.x, r0
-else
-mad r2.y, c7.x, c7.x, -r2
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-add r2.z, r2.x, -r2.y
-add r4.x, r2, r2.y
-add r2.y, r4.x, -r2.z
-add_sat r3.z, -r0.w, c7.x
-mad r3.x, r3.z, r2.y, r2.z
-min r4.x, r4, r2.w
-add r2.y, -r1.w, c7.x
-cmp r2.z, r2.x, c8.x, c8.y
-cmp r2.x, r2.y, c8, c8.y
-mul_pp r3.y, r2.x, r2.z
-cmp r3.x, -r3.y, c8.y, r3
-min r3.w, r3.x, r2
-mad r2.xyz, r3.w, r0, c1
-add r2.xyz, r2, -v2
-dp3 r4.y, r2, r2
-rsq r4.y, r4.y
-mul r2.xyz, r4.y, r2
-mad r0.xyz, r0, r4.x, c1
-add r0.xyz, v2, -r0
-dp3 r0.x, r0, r0
-rsq r0.x, r0.x
-rcp r0.z, r0.x
-cmp_pp r1.xyz, -r3.y, r1, r2
-add r2.x, r1.w, -c7
-add r1.w, -r2, r4.x
-mad r1.w, r1, r2.x, c7.x
-add r0.y, r0.w, -r1.w
-mad r0.w, r3.z, r0.y, r1
-max r1.w, r0.z, r0
-add r0.y, -r3.x, r4.x
-min r0.x, r3, r3.w
-add r0.x, r0, -r0.y
-mad r0.x, r3.z, r0, r0.y
-mul r1.w, r1, c8
-min r0.z, r0, r0.w
-mad r0.z, r0, c9.x, r1.w
-cmp r0.y, -r3, c7.x, r0.z
-cmp r2.w, -r3.y, r2, r0.x
-endif
-dp4_pp r0.x, c2, c2
-rsq_pp r0.x, r0.x
-mul_pp r2.xyz, r0.x, c2
-dp3_pp r0.z, r1, r2
-texldp r0.x, v1, s0
-mul_pp r0.z, r0, c3.w
-mul_pp r0.z, r0, r0.x
-mul_pp_sat r0.w, r0.z, c9.y
-mov r0.x, c7
-add r0.x, -c6, r0
-mov_pp r0.z, c0.x
-add r0.y, r0, -c6.x
-rcp r0.x, r0.x
-mul_sat r0.x, r0.y, r0
-add r0.y, -r0.x, c8.x
-mov_sat r0.x, r3
-mad_pp_sat r0.z, r0.w, c3.x, r0
-mul r0.y, r0, c5.x
-mul r0.x, r0, r2.w
-mul r0.x, r0, r0.y
-mul r0.x, r0, r0.z
-mul_pp oC0.w, r0.x, c4
-mov_pp oC0.xyz, c4
-"
-}
-
-SubProgram "gles " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_SCREEN" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_SCREEN" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceCameraPos]
-Vector 2 [_WorldSpaceLightPos0]
-Vector 3 [_LightColor0]
-Vector 4 [_Color]
-Float 5 [_Visibility]
-Float 6 [_OceanRadius]
-Float 7 [_SphereRadius]
-SetTexture 0 [_ShadowMapTexture] 2D
-"ps_3_0
-; 107 ALU, 1 TEX, 2 FLOW
-dcl_2d s0
-def c8, 1.00000000, 0.00000000, 100000003318135350000000000000000.00000000, 0.25000000
-def c9, 0.75000000, 4.00000000, 0, 0
-dcl_texcoord1 v0.xyz
-dcl_texcoord2 v1
-dcl_texcoord4 v2.xyz
-dcl_texcoord8 v3.xyz
-add r0.xyz, v0, -c1
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul r0.xyz, r0.w, r0
-dp3 r2.x, r0, v3
-dp3 r0.w, v3, v3
-mad r1.w, -r2.x, r2.x, r0
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r2.y, r1.w, r1.w
-mad r2.z, c6.x, c6.x, -r2.y
-rsq r3.x, r2.z
-add r2.z, -r1.w, c6.x
-rsq r0.w, r0.w
-cmp r2.w, r2.x, c8.x, c8.y
-cmp r2.z, r2, c8.x, c8.y
-mul_pp r2.z, r2, r2.w
-rcp r2.w, r3.x
-add r2.w, r2.x, -r2
-cmp r2.z, -r2, c8, r2.w
-rcp r0.w, r0.w
-add r2.w, r0, -c7.x
-cmp r2.w, r2, c8.y, c8.x
-cmp r3.x, r2, c8.y, c8
-mul_pp r3.x, r2.w, r3
-min r2.w, r2.z, c8.z
-if_gt r3.x, c8.y
-mad r1.y, r0.w, r0.w, -r2
-mad r1.x, c7, c7, -r2.y
-rsq r1.y, r1.y
-rsq r1.x, r1.x
-rcp r1.y, r1.y
-rcp r1.x, r1.x
-add r3.x, r1, -r1.y
-min r2.w, r3.x, r2
-mad r0.xyz, r2.w, r0, c1
-add r0.xyz, r0, -v2
-dp3 r1.x, r0, r0
-rsq r1.x, r1.x
-rcp r1.w, r1.x
-mul r1.xyz, r1.x, r0
-max r2.x, r0.w, r1.w
-mul r0.y, r2.x, c8.w
-min r0.x, r0.w, r1.w
-mad r0.y, r0.x, c9.x, r0
-else
-mad r2.y, c7.x, c7.x, -r2
-rsq r2.y, r2.y
-rcp r2.y, r2.y
-add r2.z, r2.x, -r2.y
-add r4.x, r2, r2.y
-add r2.y, r4.x, -r2.z
-add_sat r3.z, -r0.w, c7.x
-mad r3.x, r3.z, r2.y, r2.z
-min r4.x, r4, r2.w
-add r2.y, -r1.w, c7.x
-cmp r2.z, r2.x, c8.x, c8.y
-cmp r2.x, r2.y, c8, c8.y
-mul_pp r3.y, r2.x, r2.z
-cmp r3.x, -r3.y, c8.y, r3
-min r3.w, r3.x, r2
-mad r2.xyz, r3.w, r0, c1
-add r2.xyz, r2, -v2
-dp3 r4.y, r2, r2
-rsq r4.y, r4.y
-mul r2.xyz, r4.y, r2
-mad r0.xyz, r0, r4.x, c1
-add r0.xyz, v2, -r0
-dp3 r0.x, r0, r0
-rsq r0.x, r0.x
-rcp r0.z, r0.x
-cmp_pp r1.xyz, -r3.y, r1, r2
-add r2.x, r1.w, -c7
-add r1.w, -r2, r4.x
-mad r1.w, r1, r2.x, c7.x
-add r0.y, r0.w, -r1.w
-mad r0.w, r3.z, r0.y, r1
-max r1.w, r0.z, r0
-add r0.y, -r3.x, r4.x
-min r0.x, r3, r3.w
-add r0.x, r0, -r0.y
-mad r0.x, r3.z, r0, r0.y
-mul r1.w, r1, c8
-min r0.z, r0, r0.w
-mad r0.z, r0, c9.x, r1.w
-cmp r0.y, -r3, c7.x, r0.z
-cmp r2.w, -r3.y, r2, r0.x
-endif
-dp4_pp r0.x, c2, c2
-rsq_pp r0.x, r0.x
-mul_pp r2.xyz, r0.x, c2
-dp3_pp r0.z, r1, r2
-texldp r0.x, v1, s0
-mul_pp r0.z, r0, c3.w
-mul_pp r0.z, r0, r0.x
-mul_pp_sat r0.w, r0.z, c9.y
-mov r0.x, c7
-add r0.x, -c6, r0
-mov_pp r0.z, c0.x
-add r0.y, r0, -c6.x
-rcp r0.x, r0.x
-mul_sat r0.x, r0.y, r0
-add r0.y, -r0.x, c8.x
-mov_sat r0.x, r3
-mad_pp_sat r0.z, r0.w, c3.x, r0
-mul r0.y, r0, c5.x
-mul r0.x, r0, r2.w
-mul r0.x, r0, r0.y
-mul r0.x, r0, r0.z
-mul_pp oC0.w, r0.x, c4
-mov_pp oC0.xyz, c4
-"
-}
-
-SubProgram "gles " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_SCREEN" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_SCREEN" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_SCREEN" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
 Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 "!!GLSL"
 }
 
 SubProgram "d3d9 " {
-Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceCameraPos]
-Vector 2 [_ZBufferParams]
-Vector 3 [_WorldSpaceLightPos0]
-Vector 4 [_LightColor0]
-Vector 5 [_Color]
-Float 6 [_Visibility]
-Float 7 [_OceanRadius]
-Float 8 [_SphereRadius]
+Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+Vector 0 [_WorldSpaceCameraPos]
+Vector 1 [_ZBufferParams]
+Vector 2 [_WorldSpaceLightPos0]
+Vector 3 [_LightColor0]
+Vector 4 [_Color]
+Float 5 [_Visibility]
+Float 6 [_OceanRadius]
+Float 7 [_SphereRadius]
 SetTexture 0 [_CameraDepthTexture] 2D
 "ps_3_0
-; 108 ALU, 1 TEX, 2 FLOW
+; 109 ALU, 1 TEX, 2 FLOW
 dcl_2d s0
-def c9, 1.00000000, 0.00000000, 0.25000000, 0.75000000
-def c10, 4.00000000, 0, 0, 0
+def c8, 1.00000000, 0.00000000, 0.25000000, 0.75000000
+def c9, 4.00000000, 0, 0, 0
 dcl_texcoord0 v0
 dcl_texcoord1 v1.xyz
 dcl_texcoord4 v2.xyz
 dcl_texcoord8 v3.xyz
-add r0.xyz, v1, -c1
+add r0.xyz, v1, -c0
 dp3 r0.w, r0, r0
 rsq r0.w, r0.w
 mul r0.xyz, r0.w, r0
@@ -23379,74 +23294,74 @@ mad r1.w, -r2.y, r2.y, r0
 rsq r1.w, r1.w
 rcp r1.w, r1.w
 mul r2.z, r1.w, r1.w
-mad r2.x, c7, c7, -r2.z
+mad r2.x, c6, c6, -r2.z
 rsq r2.x, r2.x
 rcp r3.y, r2.x
-add r2.x, -r1.w, c7
-cmp r2.w, r2.y, c9.x, c9.y
-cmp r2.x, r2, c9, c9.y
+add r2.x, -r1.w, c6
+cmp r2.w, r2.y, c8.x, c8.y
+cmp r2.x, r2, c8, c8.y
 mul_pp r3.x, r2, r2.w
 rsq r2.w, r0.w
 texldp r2.x, v0, s0
-mad r0.w, r2.x, c2.z, c2
+mad r0.w, r2.x, c1.z, c1
 add r3.y, r2, -r3
 rcp r0.w, r0.w
 cmp r2.x, -r3, r0.w, r3.y
 rcp r2.w, r2.w
-add r3.x, r2.w, -c8
-cmp r3.y, r2, c9, c9.x
-cmp r3.x, r3, c9.y, c9
+add r3.x, r2.w, -c7
+cmp r3.y, r2, c8, c8.x
+cmp r3.x, r3, c8.y, c8
 mul_pp r3.x, r3, r3.y
 min r0.w, r2.x, r0
-if_gt r3.x, c9.y
+if_gt r3.x, c8.y
 mad r1.y, r2.w, r2.w, -r2.z
-mad r1.x, c8, c8, -r2.z
+mad r1.x, c7, c7, -r2.z
 rsq r1.y, r1.y
 rsq r1.x, r1.x
 rcp r1.y, r1.y
 rcp r1.x, r1.x
 add r3.x, r1, -r1.y
 min r0.w, r3.x, r0
-mad r0.xyz, r0.w, r0, c1
+mad r0.xyz, r0.w, r0, c0
 add r0.xyz, r0, -v2
 dp3 r1.x, r0, r0
 rsq r1.x, r1.x
 rcp r1.w, r1.x
 mul r1.xyz, r1.x, r0
 max r2.x, r2.w, r1.w
-mul r0.y, r2.x, c9.z
+mul r0.y, r2.x, c8.z
 min r0.x, r2.w, r1.w
-mad r0.x, r0, c9.w, r0.y
+mad r0.x, r0, c8.w, r0.y
 else
-mad r2.x, c8, c8, -r2.z
+mad r2.x, c7, c7, -r2.z
 rsq r2.x, r2.x
 rcp r2.x, r2.x
 add r2.z, r2.y, -r2.x
 add r4.x, r2.y, r2
 add r2.x, r4, -r2.z
-add_sat r3.z, -r2.w, c8.x
+add_sat r3.z, -r2.w, c7.x
 mad r2.z, r3, r2.x, r2
-add r2.x, -r1.w, c8
+add r2.x, -r1.w, c7
 min r4.x, r4, r0.w
-cmp r2.y, r2, c9.x, c9
-cmp r2.x, r2, c9, c9.y
+cmp r2.y, r2, c8.x, c8
+cmp r2.x, r2, c8, c8.y
 mul_pp r3.y, r2.x, r2
-cmp r3.x, -r3.y, c9.y, r2.z
+cmp r3.x, -r3.y, c8.y, r2.z
 min r3.w, r3.x, r0
-mad r2.xyz, r3.w, r0, c1
+mad r2.xyz, r3.w, r0, c0
 add r2.xyz, r2, -v2
 dp3 r4.y, r2, r2
 rsq r4.y, r4.y
 mul r2.xyz, r4.y, r2
-mad r0.xyz, r0, r4.x, c1
+mad r0.xyz, r0, r4.x, c0
 add r0.xyz, v2, -r0
 dp3 r0.x, r0, r0
 rsq r0.x, r0.x
 rcp r0.z, r0.x
 cmp_pp r1.xyz, -r3.y, r1, r2
-add r2.x, r1.w, -c8
+add r2.x, r1.w, -c7
 add r1.w, -r0, r4.x
-mad r1.w, r1, r2.x, c8.x
+mad r1.w, r1, r2.x, c7.x
 add r0.y, r2.w, -r1.w
 mad r1.w, r3.z, r0.y, r1
 max r2.x, r0.z, r1.w
@@ -23454,78 +23369,78 @@ add r0.y, -r3.x, r4.x
 min r0.x, r3, r3.w
 add r0.x, r0, -r0.y
 mad r0.y, r3.z, r0.x, r0
-mul r2.x, r2, c9.z
+mul r2.x, r2, c8.z
 min r0.z, r0, r1.w
-mad r0.z, r0, c9.w, r2.x
-cmp r0.x, -r3.y, c8, r0.z
+mad r0.z, r0, c8.w, r2.x
+cmp r0.x, -r3.y, c7, r0.z
 cmp r0.w, -r3.y, r0, r0.y
 endif
-dp4_pp r0.y, c3, c3
+dp4_pp r0.y, c2, c2
 rsq_pp r0.y, r0.y
-mul_pp r2.xyz, r0.y, c3
+mul_pp r2.xyz, r0.y, c2
 dp3_pp r0.y, r1, r2
-mul_pp r0.z, r0.y, c4.w
-mul_pp_sat r1.x, r0.z, c10
-mov r0.y, c8.x
-add r0.y, -c7.x, r0
-mov_pp r0.z, c0.x
+mul_pp r0.y, r0, c3.w
+mul_pp_sat r0.z, r0.y, c9.x
+mov r0.y, c7.x
+mul_pp r0.z, r0, c3.x
+add r0.y, -c6.x, r0
+max r0.z, r0, c8.y
 rcp r0.y, r0.y
-add r0.x, r0, -c7
+add r0.x, r0, -c6
 mul_sat r0.x, r0, r0.y
-add r0.y, -r0.x, c9.x
+add r0.y, -r0.x, c8.x
 mov_sat r0.x, r3
-mad_pp_sat r0.z, r1.x, c4.x, r0
-mul r0.y, r0, c6.x
+max r0.z, r0, c8.y
+mul r0.y, r0, c5.x
 mul r0.x, r0, r0.w
 mul r0.x, r0, r0.y
 mul r0.x, r0, r0.z
-mul_pp oC0.w, r0.x, c5
-mov_pp oC0.xyz, c5
+mul_pp oC0.w, r0.x, c4
+mov_pp oC0.xyz, c4
 "
 }
 
 SubProgram "gles " {
-Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 "!!GLES"
 }
 
 SubProgram "glesdesktop " {
-Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 "!!GLES"
 }
 
 SubProgram "gles3 " {
-Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 "!!GLES3"
 }
 
 SubProgram "opengl " {
-Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
+Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_OFF" }
 "!!GLSL"
 }
 
 SubProgram "d3d9 " {
-Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceCameraPos]
-Vector 2 [_ZBufferParams]
-Vector 3 [_WorldSpaceLightPos0]
-Vector 4 [_LightColor0]
-Vector 5 [_Color]
-Float 6 [_Visibility]
-Float 7 [_OceanRadius]
-Float 8 [_SphereRadius]
+Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_OFF" }
+Vector 0 [_WorldSpaceCameraPos]
+Vector 1 [_ZBufferParams]
+Vector 2 [_WorldSpaceLightPos0]
+Vector 3 [_LightColor0]
+Vector 4 [_Color]
+Float 5 [_Visibility]
+Float 6 [_OceanRadius]
+Float 7 [_SphereRadius]
 SetTexture 0 [_CameraDepthTexture] 2D
 "ps_3_0
-; 108 ALU, 1 TEX, 2 FLOW
+; 109 ALU, 1 TEX, 2 FLOW
 dcl_2d s0
-def c9, 1.00000000, 0.00000000, 0.25000000, 0.75000000
-def c10, 4.00000000, 0, 0, 0
+def c8, 1.00000000, 0.00000000, 0.25000000, 0.75000000
+def c9, 4.00000000, 0, 0, 0
 dcl_texcoord0 v0
 dcl_texcoord1 v1.xyz
 dcl_texcoord4 v2.xyz
 dcl_texcoord8 v3.xyz
-add r0.xyz, v1, -c1
+add r0.xyz, v1, -c0
 dp3 r0.w, r0, r0
 rsq r0.w, r0.w
 mul r0.xyz, r0.w, r0
@@ -23535,74 +23450,74 @@ mad r1.w, -r2.y, r2.y, r0
 rsq r1.w, r1.w
 rcp r1.w, r1.w
 mul r2.z, r1.w, r1.w
-mad r2.x, c7, c7, -r2.z
+mad r2.x, c6, c6, -r2.z
 rsq r2.x, r2.x
 rcp r3.y, r2.x
-add r2.x, -r1.w, c7
-cmp r2.w, r2.y, c9.x, c9.y
-cmp r2.x, r2, c9, c9.y
+add r2.x, -r1.w, c6
+cmp r2.w, r2.y, c8.x, c8.y
+cmp r2.x, r2, c8, c8.y
 mul_pp r3.x, r2, r2.w
 rsq r2.w, r0.w
 texldp r2.x, v0, s0
-mad r0.w, r2.x, c2.z, c2
+mad r0.w, r2.x, c1.z, c1
 add r3.y, r2, -r3
 rcp r0.w, r0.w
 cmp r2.x, -r3, r0.w, r3.y
 rcp r2.w, r2.w
-add r3.x, r2.w, -c8
-cmp r3.y, r2, c9, c9.x
-cmp r3.x, r3, c9.y, c9
+add r3.x, r2.w, -c7
+cmp r3.y, r2, c8, c8.x
+cmp r3.x, r3, c8.y, c8
 mul_pp r3.x, r3, r3.y
 min r0.w, r2.x, r0
-if_gt r3.x, c9.y
+if_gt r3.x, c8.y
 mad r1.y, r2.w, r2.w, -r2.z
-mad r1.x, c8, c8, -r2.z
+mad r1.x, c7, c7, -r2.z
 rsq r1.y, r1.y
 rsq r1.x, r1.x
 rcp r1.y, r1.y
 rcp r1.x, r1.x
 add r3.x, r1, -r1.y
 min r0.w, r3.x, r0
-mad r0.xyz, r0.w, r0, c1
+mad r0.xyz, r0.w, r0, c0
 add r0.xyz, r0, -v2
 dp3 r1.x, r0, r0
 rsq r1.x, r1.x
 rcp r1.w, r1.x
 mul r1.xyz, r1.x, r0
 max r2.x, r2.w, r1.w
-mul r0.y, r2.x, c9.z
+mul r0.y, r2.x, c8.z
 min r0.x, r2.w, r1.w
-mad r0.x, r0, c9.w, r0.y
+mad r0.x, r0, c8.w, r0.y
 else
-mad r2.x, c8, c8, -r2.z
+mad r2.x, c7, c7, -r2.z
 rsq r2.x, r2.x
 rcp r2.x, r2.x
 add r2.z, r2.y, -r2.x
 add r4.x, r2.y, r2
 add r2.x, r4, -r2.z
-add_sat r3.z, -r2.w, c8.x
+add_sat r3.z, -r2.w, c7.x
 mad r2.z, r3, r2.x, r2
-add r2.x, -r1.w, c8
+add r2.x, -r1.w, c7
 min r4.x, r4, r0.w
-cmp r2.y, r2, c9.x, c9
-cmp r2.x, r2, c9, c9.y
+cmp r2.y, r2, c8.x, c8
+cmp r2.x, r2, c8, c8.y
 mul_pp r3.y, r2.x, r2
-cmp r3.x, -r3.y, c9.y, r2.z
+cmp r3.x, -r3.y, c8.y, r2.z
 min r3.w, r3.x, r0
-mad r2.xyz, r3.w, r0, c1
+mad r2.xyz, r3.w, r0, c0
 add r2.xyz, r2, -v2
 dp3 r4.y, r2, r2
 rsq r4.y, r4.y
 mul r2.xyz, r4.y, r2
-mad r0.xyz, r0, r4.x, c1
+mad r0.xyz, r0, r4.x, c0
 add r0.xyz, v2, -r0
 dp3 r0.x, r0, r0
 rsq r0.x, r0.x
 rcp r0.z, r0.x
 cmp_pp r1.xyz, -r3.y, r1, r2
-add r2.x, r1.w, -c8
+add r2.x, r1.w, -c7
 add r1.w, -r0, r4.x
-mad r1.w, r1, r2.x, c8.x
+mad r1.w, r1, r2.x, c7.x
 add r0.y, r2.w, -r1.w
 mad r1.w, r3.z, r0.y, r1
 max r2.x, r0.z, r1.w
@@ -23610,189 +23525,34 @@ add r0.y, -r3.x, r4.x
 min r0.x, r3, r3.w
 add r0.x, r0, -r0.y
 mad r0.y, r3.z, r0.x, r0
-mul r2.x, r2, c9.z
+mul r2.x, r2, c8.z
 min r0.z, r0, r1.w
-mad r0.z, r0, c9.w, r2.x
-cmp r0.x, -r3.y, c8, r0.z
+mad r0.z, r0, c8.w, r2.x
+cmp r0.x, -r3.y, c7, r0.z
 cmp r0.w, -r3.y, r0, r0.y
 endif
-dp4_pp r0.y, c3, c3
+dp4_pp r0.y, c2, c2
 rsq_pp r0.y, r0.y
-mul_pp r2.xyz, r0.y, c3
+mul_pp r2.xyz, r0.y, c2
 dp3_pp r0.y, r1, r2
-mul_pp r0.z, r0.y, c4.w
-mul_pp_sat r1.x, r0.z, c10
-mov r0.y, c8.x
-add r0.y, -c7.x, r0
-mov_pp r0.z, c0.x
+mul_pp r0.y, r0, c3.w
+mul_pp_sat r0.z, r0.y, c9.x
+mov r0.y, c7.x
+mul_pp r0.z, r0, c3.x
+add r0.y, -c6.x, r0
+max r0.z, r0, c8.y
 rcp r0.y, r0.y
-add r0.x, r0, -c7
+add r0.x, r0, -c6
 mul_sat r0.x, r0, r0.y
-add r0.y, -r0.x, c9.x
+add r0.y, -r0.x, c8.x
 mov_sat r0.x, r3
-mad_pp_sat r0.z, r1.x, c4.x, r0
-mul r0.y, r0, c6.x
+max r0.z, r0, c8.y
+mul r0.y, r0, c5.x
 mul r0.x, r0, r0.w
 mul r0.x, r0, r0.y
 mul r0.x, r0, r0.z
-mul_pp oC0.w, r0.x, c5
-mov_pp oC0.xyz, c5
-"
-}
-
-SubProgram "gles " {
-Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_OFF" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_OFF" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceCameraPos]
-Vector 2 [_ZBufferParams]
-Vector 3 [_WorldSpaceLightPos0]
-Vector 4 [_LightColor0]
-Vector 5 [_Color]
-Float 6 [_Visibility]
-Float 7 [_OceanRadius]
-Float 8 [_SphereRadius]
-SetTexture 0 [_CameraDepthTexture] 2D
-"ps_3_0
-; 108 ALU, 1 TEX, 2 FLOW
-dcl_2d s0
-def c9, 1.00000000, 0.00000000, 0.25000000, 0.75000000
-def c10, 4.00000000, 0, 0, 0
-dcl_texcoord0 v0
-dcl_texcoord1 v1.xyz
-dcl_texcoord4 v2.xyz
-dcl_texcoord8 v3.xyz
-add r0.xyz, v1, -c1
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul r0.xyz, r0.w, r0
-dp3 r2.y, v3, r0
-dp3 r0.w, v3, v3
-mad r1.w, -r2.y, r2.y, r0
-rsq r1.w, r1.w
-rcp r1.w, r1.w
-mul r2.z, r1.w, r1.w
-mad r2.x, c7, c7, -r2.z
-rsq r2.x, r2.x
-rcp r3.y, r2.x
-add r2.x, -r1.w, c7
-cmp r2.w, r2.y, c9.x, c9.y
-cmp r2.x, r2, c9, c9.y
-mul_pp r3.x, r2, r2.w
-rsq r2.w, r0.w
-texldp r2.x, v0, s0
-mad r0.w, r2.x, c2.z, c2
-add r3.y, r2, -r3
-rcp r0.w, r0.w
-cmp r2.x, -r3, r0.w, r3.y
-rcp r2.w, r2.w
-add r3.x, r2.w, -c8
-cmp r3.y, r2, c9, c9.x
-cmp r3.x, r3, c9.y, c9
-mul_pp r3.x, r3, r3.y
-min r0.w, r2.x, r0
-if_gt r3.x, c9.y
-mad r1.y, r2.w, r2.w, -r2.z
-mad r1.x, c8, c8, -r2.z
-rsq r1.y, r1.y
-rsq r1.x, r1.x
-rcp r1.y, r1.y
-rcp r1.x, r1.x
-add r3.x, r1, -r1.y
-min r0.w, r3.x, r0
-mad r0.xyz, r0.w, r0, c1
-add r0.xyz, r0, -v2
-dp3 r1.x, r0, r0
-rsq r1.x, r1.x
-rcp r1.w, r1.x
-mul r1.xyz, r1.x, r0
-max r2.x, r2.w, r1.w
-mul r0.y, r2.x, c9.z
-min r0.x, r2.w, r1.w
-mad r0.x, r0, c9.w, r0.y
-else
-mad r2.x, c8, c8, -r2.z
-rsq r2.x, r2.x
-rcp r2.x, r2.x
-add r2.z, r2.y, -r2.x
-add r4.x, r2.y, r2
-add r2.x, r4, -r2.z
-add_sat r3.z, -r2.w, c8.x
-mad r2.z, r3, r2.x, r2
-add r2.x, -r1.w, c8
-min r4.x, r4, r0.w
-cmp r2.y, r2, c9.x, c9
-cmp r2.x, r2, c9, c9.y
-mul_pp r3.y, r2.x, r2
-cmp r3.x, -r3.y, c9.y, r2.z
-min r3.w, r3.x, r0
-mad r2.xyz, r3.w, r0, c1
-add r2.xyz, r2, -v2
-dp3 r4.y, r2, r2
-rsq r4.y, r4.y
-mul r2.xyz, r4.y, r2
-mad r0.xyz, r0, r4.x, c1
-add r0.xyz, v2, -r0
-dp3 r0.x, r0, r0
-rsq r0.x, r0.x
-rcp r0.z, r0.x
-cmp_pp r1.xyz, -r3.y, r1, r2
-add r2.x, r1.w, -c8
-add r1.w, -r0, r4.x
-mad r1.w, r1, r2.x, c8.x
-add r0.y, r2.w, -r1.w
-mad r1.w, r3.z, r0.y, r1
-max r2.x, r0.z, r1.w
-add r0.y, -r3.x, r4.x
-min r0.x, r3, r3.w
-add r0.x, r0, -r0.y
-mad r0.y, r3.z, r0.x, r0
-mul r2.x, r2, c9.z
-min r0.z, r0, r1.w
-mad r0.z, r0, c9.w, r2.x
-cmp r0.x, -r3.y, c8, r0.z
-cmp r0.w, -r3.y, r0, r0.y
-endif
-dp4_pp r0.y, c3, c3
-rsq_pp r0.y, r0.y
-mul_pp r2.xyz, r0.y, c3
-dp3_pp r0.y, r1, r2
-mul_pp r0.z, r0.y, c4.w
-mul_pp_sat r1.x, r0.z, c10
-mov r0.y, c8.x
-add r0.y, -c7.x, r0
-mov_pp r0.z, c0.x
-rcp r0.y, r0.y
-add r0.x, r0, -c7
-mul_sat r0.x, r0, r0.y
-add r0.y, -r0.x, c9.x
-mov_sat r0.x, r3
-mad_pp_sat r0.z, r1.x, c4.x, r0
-mul r0.y, r0, c6.x
-mul r0.x, r0, r0.w
-mul r0.x, r0, r0.y
-mul r0.x, r0, r0.z
-mul_pp oC0.w, r0.x, c5
-mov_pp oC0.xyz, c5
+mul_pp oC0.w, r0.x, c4
+mov_pp oC0.xyz, c4
 "
 }
 
@@ -23818,29 +23578,28 @@ Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHAD
 
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceCameraPos]
-Vector 2 [_ZBufferParams]
-Vector 3 [_WorldSpaceLightPos0]
-Vector 4 [_LightColor0]
-Vector 5 [_Color]
-Float 6 [_Visibility]
-Float 7 [_OceanRadius]
-Float 8 [_SphereRadius]
+Vector 0 [_WorldSpaceCameraPos]
+Vector 1 [_ZBufferParams]
+Vector 2 [_WorldSpaceLightPos0]
+Vector 3 [_LightColor0]
+Vector 4 [_Color]
+Float 5 [_Visibility]
+Float 6 [_OceanRadius]
+Float 7 [_SphereRadius]
 SetTexture 0 [_CameraDepthTexture] 2D
 SetTexture 1 [_ShadowMapTexture] 2D
 "ps_3_0
-; 109 ALU, 2 TEX, 2 FLOW
+; 110 ALU, 2 TEX, 2 FLOW
 dcl_2d s0
 dcl_2d s1
-def c9, 1.00000000, 0.00000000, 0.25000000, 0.75000000
-def c10, 4.00000000, 0, 0, 0
+def c8, 1.00000000, 0.00000000, 0.25000000, 0.75000000
+def c9, 4.00000000, 0, 0, 0
 dcl_texcoord0 v0
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2
 dcl_texcoord4 v3.xyz
 dcl_texcoord8 v4.xyz
-add r0.xyz, v1, -c1
+add r0.xyz, v1, -c0
 dp3 r0.w, r0, r0
 rsq r0.w, r0.w
 mul r2.xyz, r0.w, r0
@@ -23850,72 +23609,72 @@ mad r0.x, -r0.y, r0.y, r1.w
 rsq r0.x, r0.x
 rcp r0.w, r0.x
 mul r0.z, r0.w, r0.w
-mad r0.x, c7, c7, -r0.z
+mad r0.x, c6, c6, -r0.z
 rsq r0.x, r0.x
 rcp r3.y, r0.x
-add r0.x, -r0.w, c7
-cmp r2.w, r0.y, c9.x, c9.y
-cmp r0.x, r0, c9, c9.y
+add r0.x, -r0.w, c6
+cmp r2.w, r0.y, c8.x, c8.y
+cmp r0.x, r0, c8, c8.y
 mul_pp r3.x, r0, r2.w
 rsq r1.w, r1.w
 texldp r0.x, v0, s0
-mad r0.x, r0, c2.z, c2.w
+mad r0.x, r0, c1.z, c1.w
 rcp r0.x, r0.x
 add r3.y, r0, -r3
 rcp r2.w, r1.w
 cmp r1.w, -r3.x, r0.x, r3.y
-add r3.x, r2.w, -c8
-cmp r3.y, r0, c9, c9.x
-cmp r3.x, r3, c9.y, c9
+add r3.x, r2.w, -c7
+cmp r3.y, r0, c8, c8.x
+cmp r3.x, r3, c8.y, c8
 mul_pp r3.x, r3, r3.y
 min r1.w, r1, r0.x
-if_gt r3.x, c9.y
+if_gt r3.x, c8.y
 mad r0.y, r2.w, r2.w, -r0.z
-mad r0.x, c8, c8, -r0.z
+mad r0.x, c7, c7, -r0.z
 rsq r0.y, r0.y
 rsq r0.x, r0.x
 rcp r0.y, r0.y
 rcp r0.x, r0.x
 add r3.x, r0, -r0.y
 min r1.w, r3.x, r1
-mad r0.xyz, r1.w, r2, c1
+mad r0.xyz, r1.w, r2, c0
 add r0.xyz, r0, -v3
 dp3 r0.w, r0, r0
 rsq r0.w, r0.w
 rcp r2.x, r0.w
 mul r1.xyz, r0.w, r0
 max r2.y, r2.w, r2.x
-mul r0.y, r2, c9.z
+mul r0.y, r2, c8.z
 min r0.x, r2.w, r2
-mad r0.y, r0.x, c9.w, r0
+mad r0.y, r0.x, c8.w, r0
 else
-mad r0.x, c8, c8, -r0.z
+mad r0.x, c7, c7, -r0.z
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 add r0.z, r0.y, -r0.x
 add r4.x, r0.y, r0
 add r0.x, r4, -r0.z
-add_sat r3.z, -r2.w, c8.x
+add_sat r3.z, -r2.w, c7.x
 mad r0.z, r3, r0.x, r0
-add r0.x, -r0.w, c8
+add r0.x, -r0.w, c7
 min r4.x, r4, r1.w
-cmp r0.y, r0, c9.x, c9
-cmp r0.x, r0, c9, c9.y
+cmp r0.y, r0, c8.x, c8
+cmp r0.x, r0, c8, c8.y
 mul_pp r3.y, r0.x, r0
-cmp r3.x, -r3.y, c9.y, r0.z
+cmp r3.x, -r3.y, c8.y, r0.z
 min r3.w, r3.x, r1
-mad r0.xyz, r3.w, r2, c1
+mad r0.xyz, r3.w, r2, c0
 add r0.xyz, r0, -v3
 dp3 r4.y, r0, r0
 rsq r4.y, r4.y
 mul r0.xyz, r4.y, r0
-mad r2.xyz, r2, r4.x, c1
+mad r2.xyz, r2, r4.x, c0
 cmp_pp r1.xyz, -r3.y, r1, r0
 add r0.xyz, v3, -r2
 dp3 r0.x, r0, r0
-add r2.x, r0.w, -c8
+add r2.x, r0.w, -c7
 add r0.w, -r1, r4.x
-mad r0.w, r0, r2.x, c8.x
+mad r0.w, r0, r2.x, c7.x
 add r0.y, r2.w, -r0.w
 mad r0.w, r3.z, r0.y, r0
 rsq r0.x, r0.x
@@ -23925,35 +23684,36 @@ add r0.y, -r3.x, r4.x
 min r0.x, r3, r3.w
 add r0.x, r0, -r0.y
 mad r0.x, r3.z, r0, r0.y
-mul r2.x, r2, c9.z
+mul r2.x, r2, c8.z
 min r0.z, r0, r0.w
-mad r0.z, r0, c9.w, r2.x
-cmp r0.y, -r3, c8.x, r0.z
+mad r0.z, r0, c8.w, r2.x
+cmp r0.y, -r3, c7.x, r0.z
 cmp r1.w, -r3.y, r1, r0.x
 endif
-dp4_pp r0.x, c3, c3
+dp4_pp r0.x, c2, c2
 rsq_pp r0.x, r0.x
-mul_pp r2.xyz, r0.x, c3
+mul_pp r2.xyz, r0.x, c2
 dp3_pp r0.z, r1, r2
+mul_pp r0.z, r0, c3.w
 texldp r0.x, v2, s1
-mul_pp r0.z, r0, c4.w
-mul_pp r0.z, r0, r0.x
-mul_pp_sat r0.w, r0.z, c10.x
-mov r0.x, c8
-add r0.x, -c7, r0
-mov_pp r0.z, c0.x
-add r0.y, r0, -c7.x
-rcp r0.x, r0.x
-mul_sat r0.x, r0.y, r0
-add r0.y, -r0.x, c9.x
+mul_pp r0.x, r0.z, r0
+mul_pp_sat r0.z, r0.x, c9.x
+mul_pp r0.z, r0, c3.x
+mov r0.x, c7
+add r0.x, -c6, r0
+max r0.w, r0.z, c8.y
+rcp r0.z, r0.x
+add r0.x, r0.y, -c6
+mul_sat r0.x, r0, r0.z
+add r0.y, -r0.x, c8.x
 mov_sat r0.x, r3
-mad_pp_sat r0.z, r0.w, c4.x, r0
-mul r0.y, r0, c6.x
+max r0.z, r0.w, c8.y
+mul r0.y, r0, c5.x
 mul r0.x, r0, r1.w
 mul r0.x, r0, r0.y
 mul r0.x, r0, r0.z
-mul_pp oC0.w, r0.x, c5
-mov_pp oC0.xyz, c5
+mul_pp oC0.w, r0.x, c4
+mov_pp oC0.xyz, c4
 "
 }
 
@@ -23979,29 +23739,28 @@ Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADO
 
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceCameraPos]
-Vector 2 [_ZBufferParams]
-Vector 3 [_WorldSpaceLightPos0]
-Vector 4 [_LightColor0]
-Vector 5 [_Color]
-Float 6 [_Visibility]
-Float 7 [_OceanRadius]
-Float 8 [_SphereRadius]
+Vector 0 [_WorldSpaceCameraPos]
+Vector 1 [_ZBufferParams]
+Vector 2 [_WorldSpaceLightPos0]
+Vector 3 [_LightColor0]
+Vector 4 [_Color]
+Float 5 [_Visibility]
+Float 6 [_OceanRadius]
+Float 7 [_SphereRadius]
 SetTexture 0 [_CameraDepthTexture] 2D
 SetTexture 1 [_ShadowMapTexture] 2D
 "ps_3_0
-; 109 ALU, 2 TEX, 2 FLOW
+; 110 ALU, 2 TEX, 2 FLOW
 dcl_2d s0
 dcl_2d s1
-def c9, 1.00000000, 0.00000000, 0.25000000, 0.75000000
-def c10, 4.00000000, 0, 0, 0
+def c8, 1.00000000, 0.00000000, 0.25000000, 0.75000000
+def c9, 4.00000000, 0, 0, 0
 dcl_texcoord0 v0
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2
 dcl_texcoord4 v3.xyz
 dcl_texcoord8 v4.xyz
-add r0.xyz, v1, -c1
+add r0.xyz, v1, -c0
 dp3 r0.w, r0, r0
 rsq r0.w, r0.w
 mul r2.xyz, r0.w, r0
@@ -24011,72 +23770,72 @@ mad r0.x, -r0.y, r0.y, r1.w
 rsq r0.x, r0.x
 rcp r0.w, r0.x
 mul r0.z, r0.w, r0.w
-mad r0.x, c7, c7, -r0.z
+mad r0.x, c6, c6, -r0.z
 rsq r0.x, r0.x
 rcp r3.y, r0.x
-add r0.x, -r0.w, c7
-cmp r2.w, r0.y, c9.x, c9.y
-cmp r0.x, r0, c9, c9.y
+add r0.x, -r0.w, c6
+cmp r2.w, r0.y, c8.x, c8.y
+cmp r0.x, r0, c8, c8.y
 mul_pp r3.x, r0, r2.w
 rsq r1.w, r1.w
 texldp r0.x, v0, s0
-mad r0.x, r0, c2.z, c2.w
+mad r0.x, r0, c1.z, c1.w
 rcp r0.x, r0.x
 add r3.y, r0, -r3
 rcp r2.w, r1.w
 cmp r1.w, -r3.x, r0.x, r3.y
-add r3.x, r2.w, -c8
-cmp r3.y, r0, c9, c9.x
-cmp r3.x, r3, c9.y, c9
+add r3.x, r2.w, -c7
+cmp r3.y, r0, c8, c8.x
+cmp r3.x, r3, c8.y, c8
 mul_pp r3.x, r3, r3.y
 min r1.w, r1, r0.x
-if_gt r3.x, c9.y
+if_gt r3.x, c8.y
 mad r0.y, r2.w, r2.w, -r0.z
-mad r0.x, c8, c8, -r0.z
+mad r0.x, c7, c7, -r0.z
 rsq r0.y, r0.y
 rsq r0.x, r0.x
 rcp r0.y, r0.y
 rcp r0.x, r0.x
 add r3.x, r0, -r0.y
 min r1.w, r3.x, r1
-mad r0.xyz, r1.w, r2, c1
+mad r0.xyz, r1.w, r2, c0
 add r0.xyz, r0, -v3
 dp3 r0.w, r0, r0
 rsq r0.w, r0.w
 rcp r2.x, r0.w
 mul r1.xyz, r0.w, r0
 max r2.y, r2.w, r2.x
-mul r0.y, r2, c9.z
+mul r0.y, r2, c8.z
 min r0.x, r2.w, r2
-mad r0.y, r0.x, c9.w, r0
+mad r0.y, r0.x, c8.w, r0
 else
-mad r0.x, c8, c8, -r0.z
+mad r0.x, c7, c7, -r0.z
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 add r0.z, r0.y, -r0.x
 add r4.x, r0.y, r0
 add r0.x, r4, -r0.z
-add_sat r3.z, -r2.w, c8.x
+add_sat r3.z, -r2.w, c7.x
 mad r0.z, r3, r0.x, r0
-add r0.x, -r0.w, c8
+add r0.x, -r0.w, c7
 min r4.x, r4, r1.w
-cmp r0.y, r0, c9.x, c9
-cmp r0.x, r0, c9, c9.y
+cmp r0.y, r0, c8.x, c8
+cmp r0.x, r0, c8, c8.y
 mul_pp r3.y, r0.x, r0
-cmp r3.x, -r3.y, c9.y, r0.z
+cmp r3.x, -r3.y, c8.y, r0.z
 min r3.w, r3.x, r1
-mad r0.xyz, r3.w, r2, c1
+mad r0.xyz, r3.w, r2, c0
 add r0.xyz, r0, -v3
 dp3 r4.y, r0, r0
 rsq r4.y, r4.y
 mul r0.xyz, r4.y, r0
-mad r2.xyz, r2, r4.x, c1
+mad r2.xyz, r2, r4.x, c0
 cmp_pp r1.xyz, -r3.y, r1, r0
 add r0.xyz, v3, -r2
 dp3 r0.x, r0, r0
-add r2.x, r0.w, -c8
+add r2.x, r0.w, -c7
 add r0.w, -r1, r4.x
-mad r0.w, r0, r2.x, c8.x
+mad r0.w, r0, r2.x, c7.x
 add r0.y, r2.w, -r0.w
 mad r0.w, r3.z, r0.y, r0
 rsq r0.x, r0.x
@@ -24086,35 +23845,36 @@ add r0.y, -r3.x, r4.x
 min r0.x, r3, r3.w
 add r0.x, r0, -r0.y
 mad r0.x, r3.z, r0, r0.y
-mul r2.x, r2, c9.z
+mul r2.x, r2, c8.z
 min r0.z, r0, r0.w
-mad r0.z, r0, c9.w, r2.x
-cmp r0.y, -r3, c8.x, r0.z
+mad r0.z, r0, c8.w, r2.x
+cmp r0.y, -r3, c7.x, r0.z
 cmp r1.w, -r3.y, r1, r0.x
 endif
-dp4_pp r0.x, c3, c3
+dp4_pp r0.x, c2, c2
 rsq_pp r0.x, r0.x
-mul_pp r2.xyz, r0.x, c3
+mul_pp r2.xyz, r0.x, c2
 dp3_pp r0.z, r1, r2
+mul_pp r0.z, r0, c3.w
 texldp r0.x, v2, s1
-mul_pp r0.z, r0, c4.w
-mul_pp r0.z, r0, r0.x
-mul_pp_sat r0.w, r0.z, c10.x
-mov r0.x, c8
-add r0.x, -c7, r0
-mov_pp r0.z, c0.x
-add r0.y, r0, -c7.x
-rcp r0.x, r0.x
-mul_sat r0.x, r0.y, r0
-add r0.y, -r0.x, c9.x
+mul_pp r0.x, r0.z, r0
+mul_pp_sat r0.z, r0.x, c9.x
+mul_pp r0.z, r0, c3.x
+mov r0.x, c7
+add r0.x, -c6, r0
+max r0.w, r0.z, c8.y
+rcp r0.z, r0.x
+add r0.x, r0.y, -c6
+mul_sat r0.x, r0, r0.z
+add r0.y, -r0.x, c8.x
 mov_sat r0.x, r3
-mad_pp_sat r0.z, r0.w, c4.x, r0
-mul r0.y, r0, c6.x
+max r0.z, r0.w, c8.y
+mul r0.y, r0, c5.x
 mul r0.x, r0, r1.w
 mul r0.x, r0, r0.y
 mul r0.x, r0, r0.z
-mul_pp oC0.w, r0.x, c5
-mov_pp oC0.xyz, c5
+mul_pp oC0.w, r0.x, c4
+mov_pp oC0.xyz, c4
 "
 }
 
@@ -24140,29 +23900,28 @@ Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOW
 
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_SCREEN" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceCameraPos]
-Vector 2 [_ZBufferParams]
-Vector 3 [_WorldSpaceLightPos0]
-Vector 4 [_LightColor0]
-Vector 5 [_Color]
-Float 6 [_Visibility]
-Float 7 [_OceanRadius]
-Float 8 [_SphereRadius]
+Vector 0 [_WorldSpaceCameraPos]
+Vector 1 [_ZBufferParams]
+Vector 2 [_WorldSpaceLightPos0]
+Vector 3 [_LightColor0]
+Vector 4 [_Color]
+Float 5 [_Visibility]
+Float 6 [_OceanRadius]
+Float 7 [_SphereRadius]
 SetTexture 0 [_CameraDepthTexture] 2D
 SetTexture 1 [_ShadowMapTexture] 2D
 "ps_3_0
-; 109 ALU, 2 TEX, 2 FLOW
+; 110 ALU, 2 TEX, 2 FLOW
 dcl_2d s0
 dcl_2d s1
-def c9, 1.00000000, 0.00000000, 0.25000000, 0.75000000
-def c10, 4.00000000, 0, 0, 0
+def c8, 1.00000000, 0.00000000, 0.25000000, 0.75000000
+def c9, 4.00000000, 0, 0, 0
 dcl_texcoord0 v0
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2
 dcl_texcoord4 v3.xyz
 dcl_texcoord8 v4.xyz
-add r0.xyz, v1, -c1
+add r0.xyz, v1, -c0
 dp3 r0.w, r0, r0
 rsq r0.w, r0.w
 mul r2.xyz, r0.w, r0
@@ -24172,72 +23931,72 @@ mad r0.x, -r0.y, r0.y, r1.w
 rsq r0.x, r0.x
 rcp r0.w, r0.x
 mul r0.z, r0.w, r0.w
-mad r0.x, c7, c7, -r0.z
+mad r0.x, c6, c6, -r0.z
 rsq r0.x, r0.x
 rcp r3.y, r0.x
-add r0.x, -r0.w, c7
-cmp r2.w, r0.y, c9.x, c9.y
-cmp r0.x, r0, c9, c9.y
+add r0.x, -r0.w, c6
+cmp r2.w, r0.y, c8.x, c8.y
+cmp r0.x, r0, c8, c8.y
 mul_pp r3.x, r0, r2.w
 rsq r1.w, r1.w
 texldp r0.x, v0, s0
-mad r0.x, r0, c2.z, c2.w
+mad r0.x, r0, c1.z, c1.w
 rcp r0.x, r0.x
 add r3.y, r0, -r3
 rcp r2.w, r1.w
 cmp r1.w, -r3.x, r0.x, r3.y
-add r3.x, r2.w, -c8
-cmp r3.y, r0, c9, c9.x
-cmp r3.x, r3, c9.y, c9
+add r3.x, r2.w, -c7
+cmp r3.y, r0, c8, c8.x
+cmp r3.x, r3, c8.y, c8
 mul_pp r3.x, r3, r3.y
 min r1.w, r1, r0.x
-if_gt r3.x, c9.y
+if_gt r3.x, c8.y
 mad r0.y, r2.w, r2.w, -r0.z
-mad r0.x, c8, c8, -r0.z
+mad r0.x, c7, c7, -r0.z
 rsq r0.y, r0.y
 rsq r0.x, r0.x
 rcp r0.y, r0.y
 rcp r0.x, r0.x
 add r3.x, r0, -r0.y
 min r1.w, r3.x, r1
-mad r0.xyz, r1.w, r2, c1
+mad r0.xyz, r1.w, r2, c0
 add r0.xyz, r0, -v3
 dp3 r0.w, r0, r0
 rsq r0.w, r0.w
 rcp r2.x, r0.w
 mul r1.xyz, r0.w, r0
 max r2.y, r2.w, r2.x
-mul r0.y, r2, c9.z
+mul r0.y, r2, c8.z
 min r0.x, r2.w, r2
-mad r0.y, r0.x, c9.w, r0
+mad r0.y, r0.x, c8.w, r0
 else
-mad r0.x, c8, c8, -r0.z
+mad r0.x, c7, c7, -r0.z
 rsq r0.x, r0.x
 rcp r0.x, r0.x
 add r0.z, r0.y, -r0.x
 add r4.x, r0.y, r0
 add r0.x, r4, -r0.z
-add_sat r3.z, -r2.w, c8.x
+add_sat r3.z, -r2.w, c7.x
 mad r0.z, r3, r0.x, r0
-add r0.x, -r0.w, c8
+add r0.x, -r0.w, c7
 min r4.x, r4, r1.w
-cmp r0.y, r0, c9.x, c9
-cmp r0.x, r0, c9, c9.y
+cmp r0.y, r0, c8.x, c8
+cmp r0.x, r0, c8, c8.y
 mul_pp r3.y, r0.x, r0
-cmp r3.x, -r3.y, c9.y, r0.z
+cmp r3.x, -r3.y, c8.y, r0.z
 min r3.w, r3.x, r1
-mad r0.xyz, r3.w, r2, c1
+mad r0.xyz, r3.w, r2, c0
 add r0.xyz, r0, -v3
 dp3 r4.y, r0, r0
 rsq r4.y, r4.y
 mul r0.xyz, r4.y, r0
-mad r2.xyz, r2, r4.x, c1
+mad r2.xyz, r2, r4.x, c0
 cmp_pp r1.xyz, -r3.y, r1, r0
 add r0.xyz, v3, -r2
 dp3 r0.x, r0, r0
-add r2.x, r0.w, -c8
+add r2.x, r0.w, -c7
 add r0.w, -r1, r4.x
-mad r0.w, r0, r2.x, c8.x
+mad r0.w, r0, r2.x, c7.x
 add r0.y, r2.w, -r0.w
 mad r0.w, r3.z, r0.y, r0
 rsq r0.x, r0.x
@@ -24247,35 +24006,36 @@ add r0.y, -r3.x, r4.x
 min r0.x, r3, r3.w
 add r0.x, r0, -r0.y
 mad r0.x, r3.z, r0, r0.y
-mul r2.x, r2, c9.z
+mul r2.x, r2, c8.z
 min r0.z, r0, r0.w
-mad r0.z, r0, c9.w, r2.x
-cmp r0.y, -r3, c8.x, r0.z
+mad r0.z, r0, c8.w, r2.x
+cmp r0.y, -r3, c7.x, r0.z
 cmp r1.w, -r3.y, r1, r0.x
 endif
-dp4_pp r0.x, c3, c3
+dp4_pp r0.x, c2, c2
 rsq_pp r0.x, r0.x
-mul_pp r2.xyz, r0.x, c3
+mul_pp r2.xyz, r0.x, c2
 dp3_pp r0.z, r1, r2
+mul_pp r0.z, r0, c3.w
 texldp r0.x, v2, s1
-mul_pp r0.z, r0, c4.w
-mul_pp r0.z, r0, r0.x
-mul_pp_sat r0.w, r0.z, c10.x
-mov r0.x, c8
-add r0.x, -c7, r0
-mov_pp r0.z, c0.x
-add r0.y, r0, -c7.x
-rcp r0.x, r0.x
-mul_sat r0.x, r0.y, r0
-add r0.y, -r0.x, c9.x
+mul_pp r0.x, r0.z, r0
+mul_pp_sat r0.z, r0.x, c9.x
+mul_pp r0.z, r0, c3.x
+mov r0.x, c7
+add r0.x, -c6, r0
+max r0.w, r0.z, c8.y
+rcp r0.z, r0.x
+add r0.x, r0.y, -c6
+mul_sat r0.x, r0, r0.z
+add r0.y, -r0.x, c8.x
 mov_sat r0.x, r3
-mad_pp_sat r0.z, r0.w, c4.x, r0
-mul r0.y, r0, c6.x
+max r0.z, r0.w, c8.y
+mul r0.y, r0, c5.x
 mul r0.x, r0, r1.w
 mul r0.x, r0, r0.y
 mul r0.x, r0, r0.z
-mul_pp oC0.w, r0.x, c5
-mov_pp oC0.xyz, c5
+mul_pp oC0.w, r0.x, c4
+mov_pp oC0.xyz, c4
 "
 }
 
@@ -24296,7 +24056,7 @@ Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOW
 
 }
 
-#LINE 174
+#LINE 173
 
 	
 		}

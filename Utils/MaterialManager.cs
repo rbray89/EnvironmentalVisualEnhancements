@@ -58,16 +58,6 @@ namespace Utils
                         {
                             texture.wrapMode = TextureWrapMode.Clamp;
                         }
-                        try
-                        {
-                            Color32[] pixels = texture.GetPixels32();
-                            int width = texture.width;
-                            int height = texture.height;
-                            texture.Resize(width, height, TextureFormat.ARGB32, true);
-                            texture.SetPixels32(pixels);
-                            texture.Apply(true);
-                        }
-                        catch { }
 
                         cache.Add(new KeyValuePair<string, object>(name, texture));
                     }
