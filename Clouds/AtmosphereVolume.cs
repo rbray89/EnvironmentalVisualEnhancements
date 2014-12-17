@@ -16,7 +16,9 @@ namespace Atmosphere
         [Persistent, InverseScaled]
         float _Visibility = .0001f;
         [Persistent]
-        float _DensityRatio = .5f;
+        float _DensityRatioY = .5f;
+        [Persistent]
+        float _DensityRatioX = .5f;
         [Scaled]
         float _SphereRadius;
         [Scaled]

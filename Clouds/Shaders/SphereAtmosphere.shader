@@ -6,7 +6,8 @@
 		_SphereRadius ("Sphere Radius", Float) = 67000
 		_PlanetOrigin ("Sphere Center", Vector) = (0,0,0,1)
 		_SunsetColor ("Color Sunset", Color) = (1,0,0,.45)
-		_DensityRatio ("Density Ratio", Float) = .5
+		_DensityRatioY ("Density Ratio", Float) = 1
+		_DensityRatioX ("Density Ratio", Float) = 1
 	}
 
 Category {
@@ -51,7 +52,9 @@ SubShader {
 		float _OceanRadius;
 		float _SphereRadius;
 		float3 _PlanetOrigin;
-		float _DensityRatio;
+		float _DensityRatioY;
+		float _DensityRatioX;
+		
 		
 		struct appdata_t {
 				float4 vertex : POSITION;
@@ -129,8 +132,9 @@ SubShader {
 			   	   //float3 point = _WorldSpaceCameraPos + (depth*worldDir);
 			   	   //norm = normalize(point- IN.worldOrigin);
 			   	   float l = depth + td;
-				   
-			   	   depth = (td*(d2+((td*td)*ONE_THIRD)-r2))-(l*(d2+((l*l)*ONE_THIRD)-r2));
+				   d2 *= _DensityRatioY;
+				   float c= _DensityRatioX;
+			   	   depth = (td*(d2+((c*td*td)*ONE_THIRD)-(r2)))-(l*(d2+((c*l*l)*ONE_THIRD)-(r2)));
 			   	   depth /= r2;
 			   	   depth *= _Visibility;
 		   	   }
@@ -141,10 +145,11 @@ SubShader {
 			   	   float subDepthL = max(0, tc-depth);
 			   	   float depthL = min(tlc, max(0, depth-tc));
 			   	   float camL = lerp(tlc, tc, sphereCheck);
-			   	   
-			   	   depth = (subDepthL*(d2+((subDepthL*subDepthL)*ONE_THIRD)-r2));
-			   	   depth += -(depthL*(d2+((depthL*depthL)*ONE_THIRD)-r2));
-			   	   depth += -(camL*(d2+((camL*camL)*ONE_THIRD)-r2));
+			   	   d2 *= _DensityRatioY;
+			   	   float c= _DensityRatioX;
+			   	   depth = (subDepthL*(d2+((c*subDepthL*subDepthL)*ONE_THIRD)-(r2)));
+			   	   depth += -(depthL*(d2+((c*depthL*depthL)*ONE_THIRD)-(r2)));
+			   	   depth += -(camL*(d2+((c*camL*camL)*ONE_THIRD)-(r2)));
 			   	   depth /= r2;
 			   	   depth *= _Visibility;
 		   	   }
