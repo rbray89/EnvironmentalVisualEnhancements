@@ -6,6 +6,7 @@
 		_SphereRadius ("Sphere Radius", Float) = 67000
 		_PlanetOrigin ("Sphere Center", Vector) = (0,0,0,1)
 		_SunsetColor ("Color Sunset", Color) = (1,0,0,.45)
+		_DensityRatio ("Density Ratio", Float) = .5
 	}
 
 Category {
@@ -41,6 +42,7 @@ SubShader {
 		#define TWOPI (2.0*PI) 
 		#define INV_2PI (1.0/TWOPI)
 	    #define FLT_MAX (1e+32)
+	    #define ONE_THIRD (.3333333333333)
 
 		fixed4 _Color;
 		fixed4 _SunsetColor;
@@ -49,6 +51,7 @@ SubShader {
 		float _OceanRadius;
 		float _SphereRadius;
 		float3 _PlanetOrigin;
+		float _DensityRatio;
 		
 		struct appdata_t {
 				float4 vertex : POSITION;
@@ -62,10 +65,7 @@ SubShader {
 			float3 worldVert : TEXCOORD1;
 			LIGHTING_COORDS(2,3)
 			float3 worldOrigin : TEXCOORD4;
-			float3 viewDir : TEXCOORD5;
-			float  viewDist : TEXCOORD6;
-			float  altitude : TEXCOORD7;
-			float3 L : TEXCOORD8;
+			float3 L : TEXCOORD5;
 		};	
 		
 
@@ -76,8 +76,6 @@ SubShader {
 			
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
 	   	   o.worldVert = vertexPos;
-	   	   o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
-	   	   o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
 	   	   
 	   	   
 	   	   #ifdef WORLD_SPACE_ON
@@ -86,8 +84,7 @@ SubShader {
 	   	   o.worldOrigin = mul(_Object2World, fixed4(0,0,0,1)).xyz;;
 	   	   #endif
 	   	   
-	   	   o.altitude = distance(o.worldOrigin,_WorldSpaceCameraPos) - _OceanRadius;
-	   	   o.L = o.worldOrigin - _WorldSpaceCameraPos;
+	   	   o.L = o.worldOrigin - _WorldSpaceCameraPos.xyz;
 	   	   
 	   	   #ifdef WORLD_SPACE_ON
 	   	   o.scrPos=ComputeScreenPos(o.pos);
@@ -106,9 +103,8 @@ SubShader {
 			depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.scrPos)));
 			depth = LinearEyeDepth(depth);
 			#endif
-			float sphereDist = 0;
 			
-			half3 worldDir = normalize(IN.worldVert - _WorldSpaceCameraPos);
+			half3 worldDir = normalize(IN.worldVert - _WorldSpaceCameraPos.xyz);
 			float tc = dot(IN.L, worldDir);
 			float d = sqrt(dot(IN.L,IN.L)-dot(tc,tc));
 			float d2 = pow(d,2);
@@ -117,56 +113,57 @@ SubShader {
 			float oceanSphereDist = depth;
 		   	   if (d <= _OceanRadius && tc >= 0.0)
 		   	   {
-			   	   float tlc = sqrt(pow(_OceanRadius,2)-d2);
+			   	   float tlc = sqrt((_OceanRadius*_OceanRadius)-d2);
 			   	   oceanSphereDist = tc - tlc;
 		   	   }
 			depth = min(oceanSphereDist, depth);
-		   	   float avgHeight = _SphereRadius; 
 		   	   
-		   	   half3 norm;
+		   	   half3 norm = normalize( _WorldSpaceCameraPos - IN.worldOrigin);
+		   	   float r2 = _SphereRadius*_SphereRadius;
 		   	   
 		   	   if (Llength <  _SphereRadius && tc < 0.0)
 		   	   {
-			   	   float tlc = sqrt(pow(_SphereRadius,2)-d2);
-			   	   float td = sqrt(pow(Llength,2)-d2);
-			   	   sphereDist = tlc - td;
-			   	   depth = min(depth, sphereDist);
-			   	   float3 point = _WorldSpaceCameraPos + (depth*worldDir);
-			   	   norm = normalize(point- IN.worldOrigin);
-			   	   float height1 = distance(point, IN.worldOrigin);
-			   	   float height2 = Llength;
-		   	   	   avgHeight = .75*min(height1,height2) + .25*max(height1, height2);
+			   	   float tlc = sqrt(r2-d2);
+			   	   float td = sqrt((Llength*Llength)-d2);
+			   	   depth = min(depth, tlc - td);
+			   	   //float3 point = _WorldSpaceCameraPos + (depth*worldDir);
+			   	   //norm = normalize(point- IN.worldOrigin);
+			   	   float l = depth + td;
+				   
+			   	   depth = (td*(d2+((td*td)*ONE_THIRD)-r2))-(l*(d2+((l*l)*ONE_THIRD)-r2));
+			   	   depth /= r2;
+			   	   depth *= _Visibility;
 		   	   }
 		   	   else if (d <= _SphereRadius && tc >= 0.0)
 		   	   {
-			   	   float tlc = sqrt(pow(_SphereRadius,2)-d2);
-			   	   half sphereCheck = saturate(_SphereRadius - Llength);
-			   	   sphereDist = lerp(tc - tlc, tlc + tc, sphereCheck);
-			   	   float minFar = min(tc+tlc, depth);
-			   	   float oldDepth = depth;
-			   	   float depthMin = min(depth, sphereDist);
-			   	   float3 point = _WorldSpaceCameraPos + (depthMin*worldDir);
-			   	   norm = normalize(point- IN.worldOrigin);
-			   	   depth = lerp( minFar - sphereDist, min(depthMin, sphereDist), sphereCheck);
+			   	   float tlc = sqrt(r2-d2);
+			   	   half sphereCheck = saturate(floor(1+_SphereRadius - Llength));
+			   	   float subDepthL = max(0, tc-depth);
+			   	   float depthL = min(tlc, max(0, depth-tc));
+			   	   float camL = lerp(tlc, tc, sphereCheck);
 			   	   
-			   	   float height1 = distance(_WorldSpaceCameraPos + (minFar*worldDir), IN.worldOrigin);
-			   	   float height2 = lerp(lerp(_SphereRadius, d, minFar-oldDepth), Llength, sphereCheck);
-			   	   avgHeight = .75*min(height1,height2) + .25*max(height1, height2);
+			   	   depth = (subDepthL*(d2+((subDepthL*subDepthL)*ONE_THIRD)-r2));
+			   	   depth += -(depthL*(d2+((depthL*depthL)*ONE_THIRD)-r2));
+			   	   depth += -(camL*(d2+((camL*camL)*ONE_THIRD)-r2));
+			   	   depth /= r2;
+			   	   depth *= _Visibility;
 		   	   }
-			depth = lerp(0, depth, saturate(sphereDist));
+		   	   else
+		   	   {
+		   	       depth = 0;
+		   	   }
 			
 			
 			//depth = min(depth, sphereDist);
 			half3 lightDirection = normalize(_WorldSpaceLightPos0);
 			half NdotL = dot (norm, lightDirection);
 	        fixed atten = LIGHT_ATTENUATION(IN); 
-			half lightIntensity = saturate(_LightColor0.a * NdotL * 4 * atten);
+			half lightIntensity = max(0.0,_LightColor0.a * NdotL * 2 * atten);
 			half3 light = max(0.0,((_LightColor0.rgb) * lightIntensity));
 			NdotL = abs(NdotL);		
 			half VdotL = dot (-worldDir, lightDirection);
 			
-			depth *= _Visibility*(1-saturate((avgHeight-_OceanRadius)/(_SphereRadius-_OceanRadius))); 
-			color.a *= depth * max(0.0, light);
+			color.a *= saturate(depth * max(0.0, light));
 			//color.rgb = lerp(color.rgb, _SunsetColor, saturate((1-NdotL)*VdotL));
           	return color;
 		}

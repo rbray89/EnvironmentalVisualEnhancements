@@ -15,6 +15,8 @@ namespace Atmosphere
         Color _Color = new Color(1, 1, 1, 1);
         [Persistent, InverseScaled]
         float _Visibility = .0001f;
+        [Persistent]
+        float _DensityRatio = .5f;
         [Scaled]
         float _SphereRadius;
         [Scaled]
@@ -46,7 +48,7 @@ namespace Atmosphere
             {
                 if (value)
                 {
-                    float scale = (float)(radius*1.2 / celestialBody.Radius);
+                    float scale = (float)(radius*2 / celestialBody.Radius);
                     atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial, Tools.GetWorldToScaledSpace(celestialBody.bodyName));
                     AtmosphereMaterial.DisableKeyword("WORLD_SPACE_ON");
                     Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);
