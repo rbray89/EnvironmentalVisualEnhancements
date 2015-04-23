@@ -6,8 +6,10 @@
 		_SphereRadius ("Sphere Radius", Float) = 67000
 		_PlanetOrigin ("Sphere Center", Vector) = (0,0,0,1)
 		_SunsetColor ("Color Sunset", Color) = (1,0,0,.45)
-		_DensityRatioY ("Density Ratio", Float) = 1
-		_DensityRatioX ("Density Ratio", Float) = 1
+		_DensityRatioX ("Density RatioX", Float) = .22
+		_DensityRatioY ("Density RatioY", Float) = 800
+		_DensityRatioZ ("Density RatioZ", Float) = 1
+		_DensityRatioPow ("Density RatioPow", Float) = 1
 	}
 
 Category {
@@ -32,18 +34,20 @@ SubShader {
 		#include "Lighting.cginc"
 		#pragma target 3.0
 		#pragma glsl
+		#pragma exclude_renderers gles
 		#pragma vertex vert
 		#pragma fragment frag
 		#pragma multi_compile_fwdbase
-	    #pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
+	    #pragma multi_compile WORLD_SPACE_ON WORLD_SPACE_OFF 
 		#define MAG_ONE 1.4142135623730950488016887242097
 		#pragma fragmentoption ARB_precision_hint_fastest
 		#define PI 3.1415926535897932384626
-		#define INV_PI (1.0/PI)
+		#define TWO_INV_PI (2.0/PI)
+		#define HALF_INV_PI (0.5/PI)
 		#define TWOPI (2.0*PI) 
 		#define INV_2PI (1.0/TWOPI)
 	    #define FLT_MAX (1e+32)
-	    #define ONE_THIRD (.3333333333333)
+        #define EULER_N (2.718281828459045235360)
 
 		fixed4 _Color;
 		fixed4 _SunsetColor;
@@ -52,9 +56,10 @@ SubShader {
 		float _OceanRadius;
 		float _SphereRadius;
 		float3 _PlanetOrigin;
-		float _DensityRatioY;
 		float _DensityRatioX;
-		
+		float _DensityRatioY;
+		float _DensityRatioZ;
+		float _DensityRatioPow;
 		
 		struct appdata_t {
 				float4 vertex : POSITION;
@@ -70,11 +75,20 @@ SubShader {
 			float3 worldOrigin : TEXCOORD4;
 			float3 L : TEXCOORD5;
 		};	
-		
+
+		float atmofunc( float l2, float d2, float a, float b, float c)
+		{
+		  float e = EULER_N;
+		  float c2 = c*c;
+          float n = sqrt(c2*(l2+d2));
+          
+		  return -(2*a*b*(n+b)*a*pow(e,-n/b));
+	    }		
 
 		v2f vert (appdata_t v)
 		{
 			v2f o;
+			UNITY_INITIALIZE_OUTPUT(v2f,o);
 			o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 			
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
@@ -109,56 +123,36 @@ SubShader {
 			
 			half3 worldDir = normalize(IN.worldVert - _WorldSpaceCameraPos.xyz);
 			float tc = dot(IN.L, worldDir);
-			float d = sqrt(dot(IN.L,IN.L)-dot(tc,tc));
+			float d = sqrt(dot(IN.L,IN.L)-(tc*tc));
 			float d2 = pow(d,2);
-		   	float Llength = length(IN.L);
-		   	   
+					   	
 			float oceanSphereDist = depth;
-		   	   if (d <= _OceanRadius && tc >= 0.0)
-		   	   {
-			   	   float tlc = sqrt((_OceanRadius*_OceanRadius)-d2);
-			   	   oceanSphereDist = tc - tlc;
-		   	   }
+			if (d <= _OceanRadius && tc >= 0.0)
+			{
+			   float tlc = sqrt((_OceanRadius*_OceanRadius)-d2);
+			   oceanSphereDist = tc - tlc;
+			}
 			depth = min(oceanSphereDist, depth);
 		   	   
-		   	   half3 norm = normalize( _WorldSpaceCameraPos - IN.worldOrigin);
-		   	   float r2 = _SphereRadius*_SphereRadius;
-		   	   
-		   	   if (Llength <  _SphereRadius && tc < 0.0)
-		   	   {
-			   	   float tlc = sqrt(r2-d2);
-			   	   float td = sqrt((Llength*Llength)-d2);
-			   	   depth = min(depth, tlc - td);
-			   	   //float3 point = _WorldSpaceCameraPos + (depth*worldDir);
-			   	   //norm = normalize(point- IN.worldOrigin);
-			   	   float l = depth + td;
-				   d2 *= _DensityRatioY;
-				   float c= _DensityRatioX;
-			   	   depth = (td*(d2+((c*td*td)*ONE_THIRD)-(r2)))-(l*(d2+((c*l*l)*ONE_THIRD)-(r2)));
-			   	   depth /= r2;
-			   	   depth *= _Visibility;
-		   	   }
-		   	   else if (d <= _SphereRadius && tc >= 0.0)
-		   	   {
-			   	   float tlc = sqrt(r2-d2);
-			   	   half sphereCheck = saturate(floor(1+_SphereRadius - Llength));
-			   	   float subDepthL = max(0, tc-depth);
-			   	   float depthL = min(tlc, max(0, depth-tc));
-			   	   float camL = lerp(tlc, tc, sphereCheck);
-			   	   d2 *= _DensityRatioY;
-			   	   float c= _DensityRatioX;
-			   	   depth = (subDepthL*(d2+((c*subDepthL*subDepthL)*ONE_THIRD)-(r2)));
-			   	   depth += -(depthL*(d2+((c*depthL*depthL)*ONE_THIRD)-(r2)));
-			   	   depth += -(camL*(d2+((c*camL*camL)*ONE_THIRD)-(r2)));
-			   	   depth /= r2;
-			   	   depth *= _Visibility;
-		   	   }
-		   	   else
-		   	   {
-		   	       depth = 0;
-		   	   }
+		   	float alt = length(IN.L);
+			float td = sqrt(dot(IN.L,IN.L)-d2);
+			float dist = sqrt((depth*depth)-dot(td,td));
+
+		    
+			half sphereCheck = saturate(floor(1+tc));
+			float depthL = lerp(depth+td, max(0, depth-tc), sphereCheck);
+			float camL = sphereCheck*tc;
+			float subDepthL = lerp(td, max(0, tc-depth), sphereCheck);
 			
+			d2 /= _Visibility;
+			depth = atmofunc(_Visibility*depthL*depthL, d2, _DensityRatioX, _DensityRatioY, _DensityRatioZ);
+			depth -= atmofunc(0, d2, _DensityRatioX, _DensityRatioY, _DensityRatioZ);
+	   	    depth += atmofunc(_Visibility*camL*camL, d2, _DensityRatioX, _DensityRatioY, _DensityRatioZ);
+	   	    depth -= atmofunc(_Visibility*subDepthL*subDepthL, d2, _DensityRatioX, _DensityRatioY, _DensityRatioZ);
 			
+			//depth *= _Visibility;
+			
+			/*
 			//depth = min(depth, sphereDist);
 			half3 lightDirection = normalize(_WorldSpaceLightPos0);
 			half NdotL = dot (norm, lightDirection);
@@ -167,9 +161,9 @@ SubShader {
 			half3 light = max(0.0,((_LightColor0.rgb) * lightIntensity));
 			NdotL = abs(NdotL);		
 			half VdotL = dot (-worldDir, lightDirection);
+			*/
 			
-			color.a *= saturate(depth * max(0.0, light));
-			//color.rgb = lerp(color.rgb, _SunsetColor, saturate((1-NdotL)*VdotL));
+			color.a *= saturate(depth);
           	return color;
 		}
 		ENDCG
@@ -178,5 +172,8 @@ SubShader {
 		
 	} 
 	
+
+
+			
 }
 }

@@ -13,12 +13,16 @@ namespace Atmosphere
     {
         [Persistent]
         Color _Color = new Color(1, 1, 1, 1);
+        [Persistent]
+        float _Visibility = 1f;
         [Persistent, InverseScaled]
-        float _Visibility = .0001f;
+        float _DensityRatioX = .3f;
+        [Persistent, InverseScaled]
+        float _DensityRatioY = 40000f;
+        [Persistent, InverseScaled]
+        float _DensityRatioZ = 0f;
         [Persistent]
-        float _DensityRatioY = .5f;
-        [Persistent]
-        float _DensityRatioX = .5f;
+        float _DensityRatioPow = 5f;
         [Scaled]
         float _SphereRadius;
         [Scaled]
