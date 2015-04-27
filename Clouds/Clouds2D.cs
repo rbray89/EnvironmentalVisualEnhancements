@@ -69,8 +69,8 @@ namespace Atmosphere
                 {
                     if (value)
                     {
-                        macroCloudMaterial.ApplyMaterialProperties(CloudMaterial, Tools.GetWorldToScaledSpace(celestialBody.bodyName));
-                        macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material, Tools.GetWorldToScaledSpace(celestialBody.bodyName));
+                        macroCloudMaterial.ApplyMaterialProperties(CloudMaterial, ScaledSpace.ScaleFactor);
+                        macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material, ScaledSpace.ScaleFactor);
                         float scale = (float)(1000f / celestialBody.Radius);
                         CloudMaterial.DisableKeyword("SOFT_DEPTH_ON");
                         Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);

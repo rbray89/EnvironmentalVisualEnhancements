@@ -8,7 +8,7 @@
 		_SunsetColor ("Color Sunset", Color) = (1,0,0,.45)
 		_DensityRatioX ("Density RatioX", Float) = .22
 		_DensityRatioY ("Density RatioY", Float) = 800
-		_DensityRatioZ ("Density RatioZ", Float) = 1
+		_Scale ("Scale", Float) = 1
 		_DensityRatioPow ("Density RatioPow", Float) = 1
 	}
 
@@ -38,7 +38,7 @@ SubShader {
 		#pragma vertex vert
 		#pragma fragment frag
 		#pragma multi_compile_fwdbase
-	    #pragma multi_compile WORLD_SPACE_ON WORLD_SPACE_OFF 
+	    #pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
 		#define MAG_ONE 1.4142135623730950488016887242097
 		#pragma fragmentoption ARB_precision_hint_fastest
 		#define PI 3.1415926535897932384626
@@ -58,7 +58,7 @@ SubShader {
 		float3 _PlanetOrigin;
 		float _DensityRatioX;
 		float _DensityRatioY;
-		float _DensityRatioZ;
+		float _Scale;
 		float _DensityRatioPow;
 		
 		struct appdata_t {
@@ -76,13 +76,19 @@ SubShader {
 			float3 L : TEXCOORD5;
 		};	
 
-		float atmofunc( float l2, float d2, float a, float b, float c)
+		float atmofunc( float l, float d)
 		{
 		  float e = EULER_N;
-		  float c2 = c*c;
-          float n = sqrt(c2*(l2+d2));
+		  float a = _DensityRatioX;
+		  float b = _DensityRatioY;
+		  
+		  float l2 = l*_Visibility;
+		  l2 *= l2;
+		  float d2 = d/_Visibility;
+		  d2 *= d2;
+          float n = sqrt(l2+d2);
           
-		  return -(2*a*b*(n+b)*a*pow(e,-n/b));
+		  return -(2*a*b*(n+b)*a*pow(_DensityRatioPow*e,-n/b));
 	    }		
 
 		v2f vert (appdata_t v)
@@ -98,15 +104,16 @@ SubShader {
 	   	   #ifdef WORLD_SPACE_ON
 	   	   o.worldOrigin = _PlanetOrigin;
 	   	   #else
-	   	   o.worldOrigin = mul(_Object2World, fixed4(0,0,0,1)).xyz;;
+	   	   o.worldOrigin = mul(_Object2World, fixed4(0,0,0,1)).xyz;
 	   	   #endif
 	   	   
 	   	   o.L = o.worldOrigin - _WorldSpaceCameraPos.xyz;
+	   	   o.L *= _Scale;
 	   	   
-	   	   #ifdef WORLD_SPACE_ON
+	//   	   #ifdef WORLD_SPACE_ON
 	   	   o.scrPos=ComputeScreenPos(o.pos);
 		   COMPUTE_EYEDEPTH(o.scrPos.z);
-		   #endif
+	//	   #endif
 		   
 		   TRANSFER_VERTEX_TO_FRAGMENT(o);
 	   	   return o;
@@ -116,24 +123,30 @@ SubShader {
 			{
 			half4 color = _Color;
 			float depth = FLT_MAX;
-			#ifdef WORLD_SPACE_ON
+	//		#ifdef WORLD_SPACE_ON
 			depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.scrPos)));
 			depth = LinearEyeDepth(depth);
-			#endif
+	//		#else
+	//		depth = LinearEyeDepth(1);
+	//		#endif
+			depth *= _Scale;
 			
 			half3 worldDir = normalize(IN.worldVert - _WorldSpaceCameraPos.xyz);
 			float tc = dot(IN.L, worldDir);
 			float d = sqrt(dot(IN.L,IN.L)-(tc*tc));
 			float d2 = pow(d,2);
+					 
 					   	
+	        float oceanRadius = _Scale*_OceanRadius;  	
 			float oceanSphereDist = depth;
-			if (d <= _OceanRadius && tc >= 0.0)
+			if (d <= oceanRadius && tc >= 0.0)
 			{
-			   float tlc = sqrt((_OceanRadius*_OceanRadius)-d2);
+			   float tlc = sqrt((oceanRadius*oceanRadius)-d2);
 			   oceanSphereDist = tc - tlc;
 			}
 			depth = min(oceanSphereDist, depth);
-		   	   
+		   	
+		   	
 		   	float alt = length(IN.L);
 			float td = sqrt(dot(IN.L,IN.L)-d2);
 			float dist = sqrt((depth*depth)-dot(td,td));
@@ -144,11 +157,11 @@ SubShader {
 			float camL = sphereCheck*tc;
 			float subDepthL = lerp(td, max(0, tc-depth), sphereCheck);
 			
-			d2 /= _Visibility;
-			depth = atmofunc(_Visibility*depthL*depthL, d2, _DensityRatioX, _DensityRatioY, _DensityRatioZ);
-			depth -= atmofunc(0, d2, _DensityRatioX, _DensityRatioY, _DensityRatioZ);
-	   	    depth += atmofunc(_Visibility*camL*camL, d2, _DensityRatioX, _DensityRatioY, _DensityRatioZ);
-	   	    depth -= atmofunc(_Visibility*subDepthL*subDepthL, d2, _DensityRatioX, _DensityRatioY, _DensityRatioZ);
+			
+			depth = atmofunc(depthL, d);
+			depth -= atmofunc(0, d);
+	   	    depth += atmofunc(camL, d);
+	   	    depth -= atmofunc(subDepthL, d);
 			
 			//depth *= _Visibility;
 			

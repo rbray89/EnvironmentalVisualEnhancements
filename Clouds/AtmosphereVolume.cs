@@ -15,22 +15,19 @@ namespace Atmosphere
         Color _Color = new Color(1, 1, 1, 1);
         [Persistent]
         float _Visibility = 1f;
-        [Persistent, InverseScaled]
+        [Persistent]
         float _DensityRatioX = .3f;
-        [Persistent, InverseScaled]
+        [Persistent]
         float _DensityRatioY = 40000f;
         [Persistent, InverseScaled]
-        float _DensityRatioZ = 0f;
+        float _Scale = 1f;
         [Persistent]
         float _DensityRatioPow = 5f;
-        [Scaled]
-        float _SphereRadius;
-        [Scaled]
-        float _OceanRadius;
         [Persistent]
         Color _SunsetColor = new Color(1, 0, 0, .45f);
-
-        public float SphereRadius { set { _SphereRadius = value; } }
+        [Scaled]
+        float _OceanRadius;
+ 
         public float OceanRadius { set { _OceanRadius = value; } }
     }
 
@@ -55,18 +52,15 @@ namespace Atmosphere
                 if (value)
                 {
                     float scale = (float)(radius*2 / celestialBody.Radius);
-                    atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial, Tools.GetWorldToScaledSpace(celestialBody.bodyName));
+                    atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial, ScaledSpace.ScaleFactor);
                     AtmosphereMaterial.DisableKeyword("WORLD_SPACE_ON");
                     Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);
-                    //Reassign(EVEManagerClass.SCALED_LAYER, FlightCamera.fetch.transform, scale);
                 }
                 else
                 {
                     atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial);
                     AtmosphereMaterial.EnableKeyword("WORLD_SPACE_ON");
                     Reassign(EVEManagerClass.MACRO_LAYER, FlightCamera.fetch.transform, 1);
-                    
-                    //Reassign(EVEManagerClass.MACRO_LAYER, celestialBody.transform, 1);
                 }
             }
         }
@@ -94,7 +88,6 @@ namespace Atmosphere
             AtmosphereMesh = hp.GameObject;
             
             this.radius = radius;
-            atmosphereMaterial.SphereRadius = radius;
             if (celestialBody.ocean)
             {
                 atmosphereMaterial.OceanRadius = (float)celestialBody.Radius;

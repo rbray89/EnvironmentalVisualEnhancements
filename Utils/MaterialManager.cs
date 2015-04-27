@@ -94,12 +94,12 @@ namespace Utils
                 if (obj != null && obj.GetType() == typeof(ScaledValue))
                 {
                     obj = ((ScaledValue)obj).obj;
-                    scaleValue = scale;
+                    scaleValue = 1 / scale;
                 }
                 else if (obj != null && obj.GetType() == typeof(InverseScaledValue))
                 {
                     obj = ((InverseScaledValue)obj).obj;
-                    scaleValue = 1/scale;
+                    scaleValue = scale;
                 }
 
                 if (obj == null || obj.GetType() == typeof(Texture2D))
@@ -125,6 +125,7 @@ namespace Utils
                     Vector3 value = (Vector3)obj;
                     material.SetVector(name, value * scaleValue);
                 }
+
             }
         }
     }

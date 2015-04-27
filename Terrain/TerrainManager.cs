@@ -89,6 +89,7 @@ namespace Terrain
                         camerasInitialized = true;
                     }
                 }
+                ScaledCamera.Instance.camera.depthTextureMode = DepthTextureMode.Depth;
             }
 
             CelestialBody cb = FlightGlobals.currentMainBody;
