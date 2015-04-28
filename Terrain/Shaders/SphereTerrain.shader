@@ -134,8 +134,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		float4 Derivatives( float3 pos )  
 		{  
 		    float lat = INV_2PI*atan2( pos.y, pos.x );  
-		    float lon = INV_PI*acos( pos.z );  
-		    float2 latLong = float2( lat, lon );  
+		    float lon = INV_PI*acos( pos.z );
 		    float latDdx = INV_2PI*length( ddx( pos.xy ) );  
 		    float latDdy = INV_2PI*length( ddy( pos.xy ) );  
 		    float longDdx = ddx( lon );  
@@ -189,14 +188,14 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half detailLevel = saturate(2*_DetailDist*IN.objnormal.w);
 			color = IN.color * lerp(detail.rgba, 1, detailLevel);
 			
-			float sphereDist= IN.objnormal.w;
+			
 			float tc = dot(IN.L, IN.camViewDir);
-		   	   float d = sqrt(dot(IN.L,IN.L)-dot(tc,tc));
-		   	   if (d <= _OceanRadius && tc >= 0.0)
-		   	   {
-			   	   float tlc = sqrt(pow(_OceanRadius,2)-pow(d,2));
-			   	   sphereDist = tc - tlc;
-		   	   }
+			float d = sqrt(dot(IN.L,IN.L)-dot(tc,tc));
+			half sphereCheck = step(d, _OceanRadius)*step(0.0, tc);
+
+			float tlc = sqrt((_OceanRadius*_OceanRadius)-pow(d,2));
+			float sphereDist = lerp(IN.objnormal.w, tc - tlc, sphereCheck);
+			
 			float oceandepth = IN.objnormal.w - sphereDist;
 			float depthFactor = saturate(oceandepth * _OceanDepthFactor);
 			float vertexDepth = _OceanDepthFactor*15*saturate(floor(1+ oceandepth ));
