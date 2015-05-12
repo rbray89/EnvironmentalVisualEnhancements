@@ -14,21 +14,41 @@ namespace Atmosphere
         [Persistent]
         Color _Color = new Color(1, 1, 1, 1);
         [Persistent]
-        float _Visibility = 1f;
+        float _DensityFactorA = 2f;
         [Persistent]
-        float _DensityRatioX = .3f;
+        float _DensityFactorB = 1f;
         [Persistent]
-        float _DensityRatioY = 40000f;
-        [Persistent, InverseScaled]
+        float _DensityFactorC = 1f;
+        [Persistent]
+        float _DensityFactorD = 42f;
+        [Persistent]
+        float _DensityFactorE = 0f;
+        [InverseScaled]
         float _Scale = 1f;
         [Persistent]
-        float _DensityRatioPow = 5f;
+        float _Visibility = .5f;
+        [Persistent]
+        float _DensityVisibilityBase = 2.71f;
+		[Persistent]
+        float _DensityVisibilityPow = .001f;
+		[Persistent]
+        float _DensityVisibilityOffset = 1;
+		[Persistent]
+        float _DensityCutoffBase = 2.71f;
+		[Persistent]
+        float _DensityCutoffPow = .001f;
+		[Persistent]
+        float _DensityCutoffOffset = 1;
+		[Persistent]
+        float _DensityCutoffScale = 1;
+
         [Persistent]
         Color _SunsetColor = new Color(1, 0, 0, .45f);
         [Scaled]
         float _OceanRadius;
  
         public float OceanRadius { set { _OceanRadius = value; } }
+        public float Scale { set { _Scale = value; } }
     }
 
     class AtmosphereVolume
@@ -53,12 +73,14 @@ namespace Atmosphere
                 {
                     float scale = (float)(radius*2 / celestialBody.Radius);
                     atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial, ScaledSpace.ScaleFactor);
+                    AtmosphereMaterial.EnableKeyword("WORLD_SPACE_OFF");
                     AtmosphereMaterial.DisableKeyword("WORLD_SPACE_ON");
                     Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);
                 }
                 else
                 {
                     atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial);
+                    AtmosphereMaterial.DisableKeyword("WORLD_SPACE_OFF");
                     AtmosphereMaterial.EnableKeyword("WORLD_SPACE_ON");
                     Reassign(EVEManagerClass.MACRO_LAYER, FlightCamera.fetch.transform, 1);
                 }
@@ -86,7 +108,9 @@ namespace Atmosphere
             AtmosphereMaterial = new Material(AtmosphereShader);
             SimpleCube hp = new SimpleCube(2000, AtmosphereMaterial);
             AtmosphereMesh = hp.GameObject;
-            
+
+            atmosphereMaterial.Scale = 500f / (float)celestialBody.Radius;
+
             this.radius = radius;
             if (celestialBody.ocean)
             {

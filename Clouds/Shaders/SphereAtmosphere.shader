@@ -1,15 +1,24 @@
 ﻿Shader "Sphere/Atmosphere" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
-		_Visibility ("Visibility", Float) = .0001
 		_OceanRadius ("Ocean Radius", Float) = 63000
 		_SphereRadius ("Sphere Radius", Float) = 67000
 		_PlanetOrigin ("Sphere Center", Vector) = (0,0,0,1)
 		_SunsetColor ("Color Sunset", Color) = (1,0,0,.45)
-		_DensityRatioX ("Density RatioX", Float) = .22
-		_DensityRatioY ("Density RatioY", Float) = 800
+		_DensityFactorA ("Density RatioA", Float) = .22
+		_DensityFactorB ("Density RatioB", Float) = 800
+		_DensityFactorC ("Density RatioC", Float) = 1
+		_DensityFactorD ("Density RatioD", Float) = 1
+		_DensityFactorE ("Density RatioE", Float) = 1
 		_Scale ("Scale", Float) = 1
-		_DensityRatioPow ("Density RatioPow", Float) = 1
+		_Visibility ("Visibility", Float) = .0001
+		_DensityVisibilityBase ("_DensityVisibilityBase", Float) = 1
+		_DensityVisibilityPow ("_DensityVisibilityPow", Float) = 1
+		_DensityVisibilityOffset ("_DensityVisibilityOffset", Float) = 1
+		_DensityCutoffBase ("_DensityCutoffBase", Float) = 1
+		_DensityCutoffPow ("_DensityCutoffPow", Float) = 1
+		_DensityCutoffOffset ("_DensityCutoffyOffset", Float) = 1
+		_DensityCutoffScale ("_DensityCutoffScale", Float) = 1
 	}
 
 Category {
@@ -52,14 +61,23 @@ SubShader {
 		fixed4 _Color;
 		fixed4 _SunsetColor;
 		sampler2D _CameraDepthTexture;
-		float _Visibility;
 		float _OceanRadius;
 		float _SphereRadius;
 		float3 _PlanetOrigin;
-		float _DensityRatioX;
-		float _DensityRatioY;
+		float _DensityFactorA;
+		float _DensityFactorB;
+		float _DensityFactorC;
+		float _DensityFactorD;
+		float _DensityFactorE;
 		float _Scale;
-		float _DensityRatioPow;
+		float _Visibility;
+		float _DensityVisibilityBase;
+		float _DensityVisibilityPow;
+		float _DensityVisibilityOffset;
+		float _DensityCutoffBase;
+		float _DensityCutoffPow;
+		float _DensityCutoffOffset;
+		float _DensityCutoffScale;
 		
 		struct appdata_t {
 				float4 vertex : POSITION;
@@ -79,16 +97,20 @@ SubShader {
 		float atmofunc( float l, float d)
 		{
 		  float e = EULER_N;
-		  float a = _DensityRatioX;
-		  float b = _DensityRatioY;
+		  float a = _DensityFactorA;
+		  float b = _DensityFactorB;
+		  float c = _DensityFactorC;
+		  float D = _DensityFactorD;
+		  float f = _DensityFactorE;
 		  
-		  float l2 = l*_Visibility;
+		  float l2 = l;
 		  l2 *= l2;
-		  float d2 = d/_Visibility;
+		  float d2 = d;
 		  d2 *= d2;
-          float n = sqrt(l2+d2);
+		  
+          float n = sqrt((c*l2)+(b*d2));
           
-		  return -(2*a*b*(n+b)*a*pow(_DensityRatioPow*e,-n/b));
+		  return -2*a*D*(n+D)*pow(e,-(n+f)/D)/c;
 	    }		
 
 		v2f vert (appdata_t v)
@@ -135,35 +157,37 @@ SubShader {
 			float tc = dot(IN.L, worldDir);
 			float d = sqrt(dot(IN.L,IN.L)-(tc*tc));
 			float d2 = pow(d,2);
-					 
+			float td = sqrt(dot(IN.L,IN.L)-d2);		 
 					   	
-	        float oceanRadius = _Scale*_OceanRadius;  	
-			float oceanSphereDist = depth;
-			if (d <= oceanRadius && tc >= 0.0)
-			{
-			   float tlc = sqrt((oceanRadius*oceanRadius)-d2);
-			   oceanSphereDist = tc - tlc;
-			}
+	        float oceanRadius = _Scale*_OceanRadius;
+			half sphereCheck = step(d, oceanRadius)*step(0.0, tc);
+
+			float tlc = sqrt((oceanRadius*oceanRadius)-d2);
+			float oceanSphereDist = lerp(depth, tc - tlc, sphereCheck);
+
 			depth = min(oceanSphereDist, depth);
 		   	
 		   	
+		   	float dist = depth;
 		   	float alt = length(IN.L);
-			float td = sqrt(dot(IN.L,IN.L)-d2);
-			float dist = sqrt((depth*depth)-dot(td,td));
-
-		    
-			half sphereCheck = saturate(floor(1+tc));
+			float3 scaleOrigin = (_Scale*(IN.worldOrigin - _WorldSpaceCameraPos.xyz))+_WorldSpaceCameraPos.xyz;
+			float altD = length((_WorldSpaceCameraPos.xyz+(dist*worldDir))-scaleOrigin);
+			float altA = .5*(alt+altD);
+			
+		    //depth = LinearEyeDepth(1);
+			sphereCheck = step(0.0, tc);
 			float depthL = lerp(depth+td, max(0, depth-tc), sphereCheck);
 			float camL = sphereCheck*tc;
 			float subDepthL = lerp(td, max(0, tc-depth), sphereCheck);
 			
+			depth = ( atmofunc(depthL, d) - atmofunc(0, d) );
+	   	    depth += ( atmofunc(camL, d) - atmofunc(subDepthL, d) );
 			
-			depth = atmofunc(depthL, d);
-			depth -= atmofunc(0, d);
-	   	    depth += atmofunc(camL, d);
-	   	    depth -= atmofunc(subDepthL, d);
+			//depth = saturate(depth);
+			depth += saturate(_DensityCutoffScale*pow(_DensityCutoffBase,-_DensityCutoffPow*(alt+_DensityCutoffOffset)))*
+			         (_Visibility*dist*pow(_DensityVisibilityBase,-_DensityVisibilityPow*(altA+_DensityVisibilityOffset)));
 			
-			//depth *= _Visibility;
+			//depth *= _DensityVisibilityBase - pow(_DensityVisibilityBase, -(_Visibility*dist));
 			
 			/*
 			//depth = min(depth, sphereDist);
