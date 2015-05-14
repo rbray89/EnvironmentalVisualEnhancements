@@ -17,7 +17,6 @@ namespace EVEManager
         public static List<EVEManagerClass> Managers = new List<EVEManagerClass>();
         public static int SCALED_LAYER = 10;
         public static int MACRO_LAYER = 15;
-        public static int SCALED_LAYER2 = 9;
         public static int ROTATION_PROPERTY;
         public static int INVROTATION_PROPERTY;
         public static int MAINOFFSET_PROPERTY;
