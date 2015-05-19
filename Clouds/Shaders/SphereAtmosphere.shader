@@ -196,9 +196,11 @@ SubShader {
 			
 			//depth = min(depth, sphereDist);
 			half3 lightDirection = normalize(_WorldSpaceLightPos0);
-			half NdotL = saturate(dot (norm, lightDirection))+saturate(dot(worldDir, lightDirection));
+			half NdotW = dot(worldDir, lightDirection);
+			half NdotL = dot (norm, lightDirection);
+			half NdotA = saturate(NdotL)+saturate(NdotW);
 	        fixed atten = LIGHT_ATTENUATION(IN); 
-			half lightIntensity = _LightColor0.a * NdotL * 2 * atten;
+			half lightIntensity = _LightColor0.a * NdotA * 2 * atten;
 			lightIntensity = max(0.0, lightIntensity);
 			half3 light = max(0.0,((_LightColor0.rgb) * lightIntensity));
 			//NdotL = abs(NdotL);		
@@ -206,7 +208,11 @@ SubShader {
 			
 			color.a *= saturate(depth);
           	//color.a *= lerp(saturate(lightIntensityAbs), saturate(lightIntensity), bodyCheck);
-          	color.a *= lerp((1-bodyCheck)*saturate(lightIntensity), saturate(lightIntensity), dot (norm, lightDirection));
+          	color.a *= lerp((1-bodyCheck)*saturate(lightIntensity), saturate(lightIntensity), NdotL);
+          	
+          	half sunsetLerp = saturate(pow(NdotW,5))*(1-saturate(abs(sphereRadius-d)/30));
+          	color.rgb = lerp(_Color, _SunsetColor, sunsetLerp);
+          	
           	return color;
 		}
 		ENDCG
