@@ -26,7 +26,8 @@ namespace Atmosphere
 
         public override void OnSphereActive()
         {
-            
+
+            AtmosphereManager.Log("AtmospherePQS: OnSphereActive");
             if (layer2D != null)
             {
                 layer2D.Scaled = false;
@@ -46,9 +47,9 @@ namespace Atmosphere
         }
         public override void OnSphereInactive()
         {
+            AtmosphereManager.Log("AtmospherePQS: OnSphereInactive");
             if (layer2D != null)
             {
-                AtmosphereManager.Log("AtmospherePQS: OnSphereInactive");
                 layer2D.Scaled = true;
             }
             if (atmosphere != null)
@@ -142,6 +143,7 @@ namespace Atmosphere
             }
             else
             {
+                AtmosphereManager.Log("No PQS! Instanciating one.");
                 pqs = PQSManagerClass.GetPQS(body);
             }
             AtmosphereManager.Log("PQS Applied");
@@ -187,6 +189,11 @@ namespace Atmosphere
                 this.OnSphereInactive();
                 sphere.isActive = false;
             }
+          //  else if (scene == GameScenes.FLIGHT)
+           // {
+             //   this.OnSphereActive();
+               // sphere.isActive = true;
+            //}
         }
 
         public void Remove()

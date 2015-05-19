@@ -46,8 +46,11 @@ namespace Atmosphere
         Color _SunsetColor = new Color(1, 0, 0, .45f);
         [Scaled]
         float _OceanRadius;
+        [Scaled]
+        float _SphereRadius;
  
         public float OceanRadius { set { _OceanRadius = value; } }
+        public float SphereRadius { set { _SphereRadius = value; } }
         public float Scale { set { _Scale = value; } }
     }
 
@@ -120,6 +123,9 @@ namespace Atmosphere
             {
                 atmosphereMaterial.OceanRadius = 0;
             }
+
+            atmosphereMaterial.SphereRadius = (float)celestialBody.Radius;
+
             Scaled = true;
         }
 

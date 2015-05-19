@@ -156,12 +156,16 @@ SubShader {
 			half3 worldDir = normalize(IN.worldVert - _WorldSpaceCameraPos.xyz);
 			float tc = dot(IN.L, worldDir);
 			float d = sqrt(dot(IN.L,IN.L)-(tc*tc));
+			float3 norm = normalize(-IN.L);
 			float d2 = pow(d,2);
 			float td = sqrt(dot(IN.L,IN.L)-d2);		 
 					   	
 	        float oceanRadius = _Scale*_OceanRadius;
 			half sphereCheck = step(d, oceanRadius)*step(0.0, tc);
 
+            float sphereRadius = _Scale*_SphereRadius;
+            half bodyCheck = step(d, sphereRadius)*step(0.0, tc);
+            
 			float tlc = sqrt((oceanRadius*oceanRadius)-d2);
 			float oceanSphereDist = lerp(depth, tc - tlc, sphereCheck);
 
@@ -189,18 +193,20 @@ SubShader {
 			
 			//depth *= _DensityVisibilityBase - pow(_DensityVisibilityBase, -(_Visibility*dist));
 			
-			/*
+			
 			//depth = min(depth, sphereDist);
 			half3 lightDirection = normalize(_WorldSpaceLightPos0);
-			half NdotL = dot (norm, lightDirection);
+			half NdotL = saturate(dot (norm, lightDirection))+saturate(dot(worldDir, lightDirection));
 	        fixed atten = LIGHT_ATTENUATION(IN); 
-			half lightIntensity = max(0.0,_LightColor0.a * NdotL * 2 * atten);
+			half lightIntensity = _LightColor0.a * NdotL * 2 * atten;
+			lightIntensity = max(0.0, lightIntensity);
 			half3 light = max(0.0,((_LightColor0.rgb) * lightIntensity));
-			NdotL = abs(NdotL);		
-			half VdotL = dot (-worldDir, lightDirection);
-			*/
+			//NdotL = abs(NdotL);		
+			//half VdotL = dot (-worldDir, lightDirection);
 			
 			color.a *= saturate(depth);
+          	//color.a *= lerp(saturate(lightIntensityAbs), saturate(lightIntensity), bodyCheck);
+          	color.a *= lerp((1-bodyCheck)*saturate(lightIntensity), saturate(lightIntensity), dot (norm, lightDirection));
           	return color;
 		}
 		ENDCG
