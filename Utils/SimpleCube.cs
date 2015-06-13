@@ -11,7 +11,7 @@ namespace Utils
 
         GameObject meshContainer;
         public GameObject GameObject { get { return meshContainer; } }
-        public SimpleCube(float size, Material material)
+        public SimpleCube(float size, ref Material material, Shader shader)
         {
             
             GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -30,7 +30,8 @@ namespace Utils
             mf.mesh.RecalculateNormals();
 
             var mr = cube.GetComponent<MeshRenderer>();
-            mr.material = material;
+            material = mr.material;
+            material.shader = shader;
 
             mr.castShadows = false;
             mr.receiveShadows = false;

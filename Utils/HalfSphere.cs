@@ -10,7 +10,7 @@ namespace Utils
     {
         GameObject meshContainer;
         public GameObject GameObject { get { return meshContainer; } }
-        public HalfSphere(float radius, Material material)
+        public HalfSphere(float radius, ref Material material, Shader shader)
         {
             meshContainer = new GameObject();
 
@@ -108,9 +108,8 @@ namespace Utils
             mesh.Optimize();
 
             var mr = meshContainer.AddComponent<MeshRenderer>();
-            //mr.materials = new Material[1];
-            //mr.materials[0] = material;
-            mr.material = material;
+            material = mr.material;
+            material.shader = shader;
 
             mr.castShadows = false;
             mr.receiveShadows = false;

@@ -87,8 +87,6 @@ namespace Atmosphere
                     AtmosphereMaterial.EnableKeyword("WORLD_SPACE_ON");
                     Reassign(EVEManagerClass.MACRO_LAYER, FlightCamera.fetch.transform, 1);
                 }
-                var mr = AtmosphereMesh.GetComponent<MeshRenderer>();
-                mr.material = AtmosphereMaterial;
                 
             }
         }
@@ -111,8 +109,7 @@ namespace Atmosphere
             Remove();
             this.celestialBody = celestialBody;
             this.scaledCelestialTransform = scaledCelestialTransform;
-            AtmosphereMaterial = new Material(AtmosphereShader);
-            SimpleCube hp = new SimpleCube(2000, AtmosphereMaterial);
+            SimpleCube hp = new SimpleCube(2000, ref AtmosphereMaterial, AtmosphereShader);
             AtmosphereMesh = hp.GameObject;
 
             atmosphereMaterial.Scale = 500f / (float)celestialBody.Radius;
@@ -150,13 +147,6 @@ namespace Atmosphere
                 GameObject.DestroyImmediate(AtmosphereMesh);
                 AtmosphereMesh = null;
             }
-            if ( AtmosphereMaterial != null )
-            {
-                GameObject.DestroyImmediate(AtmosphereMaterial);
-                atmosphereMaterial = null;
-                AtmosphereMaterial = null;
-            }
-
         }
 
         internal void UpdatePosition()

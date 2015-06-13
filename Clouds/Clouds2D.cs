@@ -125,8 +125,7 @@ namespace Atmosphere
             Remove();
             this.celestialBody = celestialBody;
             this.scaledCelestialTransform = scaledCelestialTransform;
-            CloudMaterial = new Material(CloudShader);
-            HalfSphere hp = new HalfSphere(radius, CloudMaterial);
+            HalfSphere hp = new HalfSphere(radius, ref CloudMaterial, CloudShader);
             CloudMesh = hp.GameObject;
             this.radius = radius;
             float circumference = 2f * Mathf.PI * radius;
