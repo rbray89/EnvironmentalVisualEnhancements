@@ -21,6 +21,19 @@ namespace ShaderReplacer
             }
         }
 
+        private void GameSceneLoaded(GameScenes scene)
+        {
+            if (scene == GameScenes.SPACECENTER || scene == GameScenes.FLIGHT)
+            {
+                Material[] materials = Resources.FindObjectsOfTypeAll<Material>();
+                foreach (Material mat in materials)
+                {
+                    ReplaceShader(mat);
+                }
+
+            }
+        }
+
         public static Shader GetShaderFromName(String name)
         {
             if (shaderDictionary.ContainsKey(name))
@@ -36,25 +49,12 @@ namespace ShaderReplacer
             }
         }
 
-        private void GameSceneLoaded(GameScenes scene)
-        {
-            if (scene == GameScenes.SPACECENTER || scene == GameScenes.FLIGHT)
-            {
-                Material[] materials = Resources.FindObjectsOfTypeAll<Material>();
-                foreach (Material mat in materials)
-                {
-                    ReplaceShader(mat);
-                }
-               
-            }
-        }
-
         public static void ReplaceShader(Material mat)
         {
             String name = mat.shader.name;
             Shader replacementShader = null;
             switch (name)
-            {
+            {/*
                 case "KSP/Diffuse":
                     replacementShader = GetShaderFromName("Diffuse");
                     break;
@@ -75,7 +75,7 @@ namespace ShaderReplacer
                     break;
                 case "KSP/Emissive/Bumped Specular":
                     replacementShader = GetShaderFromName("EmissiveBumpedSpecular");
-                    break;
+                    break;*/
                 case "Terrain/PQS/PQS Main - Optimised":
                     replacementShader = GetShaderFromName("PQSMainOptimised");
                     break;

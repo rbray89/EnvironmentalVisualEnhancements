@@ -38,10 +38,57 @@ namespace Utils
             }
         }
 
+        public void Log()
+        {
+            foreach (KeyValuePair<String, object> field in cache)
+            {
+                String name = field.Key;
+                object obj = field.Value;
+                float scaleValue = 1f;
+                if (obj != null && obj.GetType() == typeof(ScaledValue))
+                {
+                    obj = ((ScaledValue)obj).obj;
+                    scaleValue = 1 / Scale;
+                }
+                else if (obj != null && obj.GetType() == typeof(InverseScaledValue))
+                {
+                    obj = ((InverseScaledValue)obj).obj;
+                    scaleValue = Scale;
+                }
+
+                if (obj == null || obj.GetType() == typeof(Texture2D))
+                {
+                    Texture2D value = (Texture2D)obj;
+                    KSPLog.print(name+": "+ value);
+                }
+                //float
+                else if (obj.GetType() == typeof(float))
+                {
+                    float value = (float)obj;
+                    KSPLog.print(name + ": " + value * scaleValue);
+                }
+                //Color
+                else if (obj.GetType() == typeof(Color))
+                {
+                    Color value = (Color)obj;
+                    KSPLog.print(name + ": " + value * scaleValue);
+                }
+                //Vector3
+                else if (obj.GetType() == typeof(Vector3))
+                {
+                    Vector3 value = (Vector3)obj;
+                    KSPLog.print(name + ": " + value * scaleValue);
+                }
+
+            }
+        }
+
         bool cached = false;
+        float Scale;
         List<KeyValuePair<String, object>> cache = new List<KeyValuePair<string, object>>();
         public void ApplyMaterialProperties(Material material, float scale = 1.0f, bool clampTextures = false)
         {
+            Scale = scale;
             if (!cached)
             {
                 FieldInfo[] fields = this.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic);

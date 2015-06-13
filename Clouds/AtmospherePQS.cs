@@ -189,11 +189,6 @@ namespace Atmosphere
                 this.OnSphereInactive();
                 sphere.isActive = false;
             }
-          //  else if (scene == GameScenes.FLIGHT)
-           // {
-             //   this.OnSphereActive();
-               // sphere.isActive = true;
-            //}
         }
 
         public void Remove()

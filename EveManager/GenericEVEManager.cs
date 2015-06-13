@@ -61,13 +61,15 @@ namespace EVEManager
         }
         protected virtual ObjectType objectType { get { return ObjectType.NONE; } }
         protected virtual String configName { get { return ""; } }
+        protected virtual GameScenes SceneLoad { get { return GameScenes.MAINMENU; } }
+
         protected static List<T> ObjectList = new List<T>();
         protected static UrlDir.UrlConfig[] configs;
 
         protected static bool spaceCenterReload = true;
         protected virtual bool sceneConfigLoad { get {
             bool load = HighLogic.LoadedScene == GameScenes.MAINMENU;
-            if (spaceCenterReload && HighLogic.LoadedScene == GameScenes.SPACECENTER)
+            if (spaceCenterReload && HighLogic.LoadedScene == SceneLoad)
             {
                 spaceCenterReload = false;
                 load = true;
@@ -87,6 +89,7 @@ namespace EVEManager
 
         internal void Awake()
         {
+            KSPLog.print(configName + " " + SceneLoad);
             if (sceneLoad)
             {
                 Setup();

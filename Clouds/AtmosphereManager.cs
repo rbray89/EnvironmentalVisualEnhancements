@@ -26,6 +26,7 @@ namespace Atmosphere
 
         protected override void Clean()
         {
+            AtmosphereManager.Log("Cleaning Atmosphere!");
             foreach (AtmosphereObject obj in ObjectList)
             {
                 obj.Remove();
