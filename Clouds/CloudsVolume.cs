@@ -73,7 +73,7 @@ namespace Atmosphere
             volumeHolder.transform.localRotation = Quaternion.identity;
             volumeHolder.layer = EVEManagerClass.MACRO_LAYER;
             volumeManager = new VolumeManager(radius, size, GameDatabase.Instance.GetTexture(texture, false), offset, ParticleMaterial, volumeHolder.transform);
-
+            
             float circumference = 2f * Mathf.PI * radius;
             globalPeriod = speed / circumference;
         }

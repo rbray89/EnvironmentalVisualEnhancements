@@ -24,25 +24,26 @@ namespace Atmosphere
             Vector3 bodyPoint = parent.parent.InverseTransformPoint(particle.transform.position).normalized*magnitude;
             particle.transform.position = parent.parent.TransformPoint(bodyPoint);
 
-            float x = 500 * ((float)Random.NextDouble() - .5f);
-            float y = 500 * ((float)Random.NextDouble() - .5f);
-            float z = 500 * ((float)Random.NextDouble() - .5f);
+            float x = 0;//500 *((float)Random.NextDouble() - .5f);
+            float y = 0;//500 *((float)Random.NextDouble() - .5f);
+            float z = 0;// 500 * ((float)Random.NextDouble() - .5f);
             particle.transform.localPosition += new Vector3(x, y, z);
 
             Vector3 worldUp = particle.transform.position - parent.parent.position;
             particle.transform.up = worldUp.normalized;
-            
-            x = 360f * (float)Random.NextDouble();
-            y = 360f * (float)Random.NextDouble();
-            z = 360f * (float)Random.NextDouble();
+
+            x = 0;//360f *(float)Random.NextDouble();
+            y = 0;//360f * (float)Random.NextDouble();
+            z = 0;//360f *(float)Random.NextDouble();
             particle.transform.localRotation = Quaternion.Euler(x, y, z);
 
             particle.transform.localScale = Vector3.one;
             particle.layer = EVEManagerClass.MACRO_LAYER;
 
             Vector3 up = particle.transform.InverseTransformDirection(worldUp);
-            Quad.Create(particle, Random.Next((int)size.x, (int)size.y), Color.white, up);
-            
+            //Quad.Create(particle, Random.Next((int)size.x, (int)size.y), Color.white, up);
+            Quad.Create(particle, ((int)size.x+ (int)size.y)/2, Color.white, up);
+
             var mr = particle.AddComponent<MeshRenderer>();
             mr.sharedMaterial = cloudParticleMaterial;
 
@@ -99,9 +100,11 @@ namespace Atmosphere
         GameObject segment;
         Vector3 offset;
         float magnitude;
+        float xComp, zComp;
         List<CloudParticle> Particles = new List<CloudParticle>();
         Texture2D texture;
         Vector3 texOffset;
+        float radius, divisions;
 
         public Vector3 Center { get { return segment.transform.localPosition; } }
         public Vector3 Offset { get { return offset; } set { offset = value; } }
@@ -112,8 +115,14 @@ namespace Atmosphere
             texture = tex;
             this.texOffset = texOffset;
             segment = new GameObject();
+            this.radius = radius;
+            this.divisions = divisions;
             HexSeg hexGeometry = new HexSeg(radius, divisions);
 
+            xComp = 360f * (radius / (Mathf.Pow(2f, divisions))) / (2f * Mathf.PI * magnitude);
+            zComp = 360f * (2*Mathf.Sqrt(.75f) * radius / (Mathf.Pow(2f, divisions))) / (2f * Mathf.PI * magnitude);
+
+            segment.transform.localPosition = pos;
             Reassign(pos, offset, magnitude, parent);
 
             List<Vector3> positions = hexGeometry.GetPoints();
@@ -135,16 +144,48 @@ namespace Atmosphere
                 this.magnitude = magnitude;
             }
 
-            segment.transform.localPosition = pos;
+            bool update = false;
+
             Vector3 worldUp = segment.transform.position - segment.transform.parent.position;
             segment.transform.up = worldUp.normalized;
-            segment.transform.localScale = Vector3.one;
-            segment.transform.Translate(offset);
+            Vector3 posWorldDir = Vector3.Normalize(segment.transform.parent.TransformDirection(pos));
+            Vector3 xDir = Vector3.Normalize(segment.transform.TransformDirection(Vector3.forward));
+            float xDot = Vector3.Dot(posWorldDir, xDir);
+            Vector3 xWorldDir = posWorldDir - ( xDot * xDir );
+            Vector3 zDir = Vector3.Normalize(segment.transform.TransformDirection(Vector3.right));
+            float zDot = Vector3.Dot(posWorldDir, zDir);
+            Vector3 zWorldDir = posWorldDir - (zDot * zDir);
+
+            float xAngle = Vector3.Angle(worldUp, xWorldDir);
+            float zAngle = Vector3.Angle(worldUp, zWorldDir);
+
+            
+
+            if (xAngle > xComp)
+            {
+                segment.transform.RotateAround(segment.transform.parent.position, xDir, -Mathf.Sign(zDot) * Mathf.Floor(xAngle / xComp) * xComp);
+                update = true;
+            }
+            if (zAngle > zComp)
+            {
+                segment.transform.RotateAround(segment.transform.parent.position, zDir, Mathf.Sign(xDot) * Mathf.Floor(zAngle / zComp) * zComp);
+                update = true;
+            }
+            //Rotate Around is in world cords and degrees.
+            //if (segment.transform.RotateAround()
+            //segment.transform.localPosition = pos;
+            //
+            //segment.transform.localScale = Vector3.one;
+            //segment.transform.Translate(offset);
 
             worldUp = segment.transform.position - segment.transform.parent.position;
             segment.transform.up = worldUp.normalized;
             segment.transform.localPosition = this.magnitude * segment.transform.localPosition.normalized;
 
+            if(update)
+            {
+                Update();
+            }
         }
 
         public void Update()

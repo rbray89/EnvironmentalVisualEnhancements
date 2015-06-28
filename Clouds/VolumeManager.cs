@@ -59,101 +59,18 @@ namespace Atmosphere
         {
             atmosphere = false;
             VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, texOffset, size, transform, Center.localPosition, Magnitude, new Vector3(-radius, 0, 0), radius, divisions));
-            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, texOffset, size, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, opp), radius, divisions));
-            VolumeList.Add(new VolumeSection(texture, cloudParticleMaterial, texOffset, size, transform, Center.localPosition, Magnitude, new Vector3(halfRad, 0, -opp), radius, divisions));
             forceUpdate = true;
         }
 
         public void Update(Vector3 pos)
         {
             Vector3 place = pos;
-            if (atmosphere)
-            {
-                if(forceUpdate)
-                {
-                    Recenter(pos, true);
-                    Magnitude = pos.magnitude;
-                    VolumeList[0].Reassign(Center.localPosition, new Vector3(-radius, 0, 0), Magnitude);
-                    VolumeList[1].Reassign(Center.localPosition, new Vector3(halfRad, 0, opp), Magnitude);
-                    VolumeList[2].Reassign(Center.localPosition, new Vector3(halfRad, 0, -opp), Magnitude);
-                }
 
-                int mag = (int)pos.magnitude;
-                int i = mag / 3000;
-                mag = 3000 * i;
-                Magnitude = mag;
-                
-                pos.Normalize();
-            }
-            else
-            {
                 place *= Magnitude;
-            }
-            
-            int moveCount = 0;
-            int unchangedCount = 0;
 
-            for (int i = 0; i < VolumeList.Count; i++)
-            {
-                VolumeSection volumeSection = VolumeList[i];
-                float distance = Vector3.Distance(volumeSection.Center, place);
+            Recenter(place, true);
+            VolumeList[0].Reassign(Center.localPosition, new Vector3(-0, 0, 0), Magnitude);
 
-                if (distance > outCheck || forceUpdate)
-                {
-                    moveSections[moveCount++] = volumeSection;
-                }
-                else
-                {
-                    unchangedSections[unchangedCount++] = volumeSection;
-                }
-            }
-            forceUpdate = false;
-            if (moveCount > 0)
-            {
-                Vector3 tmp;
-                switch (moveCount)
-                {
-                    case 1:
-                        Recenter(-moveSections[0].Offset);
-
-                        tmp = unchangedSections[0].Offset;
-                        unchangedSections[0].Offset = -unchangedSections[1].Offset;
-                        unchangedSections[1].Offset = -tmp;
-                        moveSections[0].Reassign(Center.localPosition, -moveSections[0].Offset, Magnitude);
-                        if (!atmosphere)
-                        {
-                            moveSections[0].Update();
-                        }
-                        break;
-                    case 2:
-                        Recenter(2f * unchangedSections[0].Offset);
-
-                        unchangedSections[0].Offset *= -1f;
-                        tmp = moveSections[0].Offset;
-                        moveSections[0].Reassign(Center.localPosition, -moveSections[1].Offset, Magnitude);
-                        moveSections[1].Reassign(Center.localPosition, -tmp, Magnitude);
-                        if (!atmosphere)
-                        {
-                            moveSections[0].Update();
-                            moveSections[1].Update();
-                        }
-                        break;
-                    case 3:
-                        Recenter(place, true);
-                        moveSections[0].Reassign(Center.localPosition, new Vector3(-radius, 0, 0), Magnitude);
-                        moveSections[1].Reassign(Center.localPosition, new Vector3(halfRad, 0, opp), Magnitude);
-                        moveSections[2].Reassign(Center.localPosition, new Vector3(halfRad, 0, -opp), Magnitude);
-                        if (!atmosphere)
-                        {
-                            moveSections[0].Update();
-                            moveSections[1].Update();
-                            moveSections[2].Update();
-                        }
-                        break;
-                }
-
-            }
-            
         }
 
         private void Recenter(Vector3 vector, bool abs = false)
