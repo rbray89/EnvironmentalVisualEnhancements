@@ -52,24 +52,6 @@ namespace Atmosphere
             mr.enabled = true;
         }
 
-        public void Update(Texture2D tex, Vector3 offset)
-        {
-            Vector3 point = -particle.transform.parent.parent.InverseTransformPoint(particle.transform.position).normalized;
-            float u = (float)(.5 + (Mathf.Atan2(point.x, point.z) / (2f * Mathf.PI)));
-            float v = Mathf.Acos(point.y) / Mathf.PI;
-            u += offset.x;
-            v += offset.y;
-            Color color = tex.GetPixelBilinear(u, v);
-            MeshFilter filter = particle.GetComponent<MeshFilter>();
-            Mesh mesh = filter.mesh;
-            mesh.colors = new Color[4]
-            {
-                new Color(color.r, color.g, color.b, color.a),
-                new Color(color.r, color.g, color.b, color.a),
-                new Color(color.r, color.g, color.b, color.a),
-                new Color(color.r, color.g, color.b, color.a)
-            };
-        }
 
         internal void Update(Color color)
         {
@@ -98,22 +80,16 @@ namespace Atmosphere
         private static System.Random Random = new System.Random();
 
         GameObject segment;
-        Vector3 offset;
         float magnitude;
         float xComp, zComp;
         List<CloudParticle> Particles = new List<CloudParticle>();
-        Texture2D texture;
-        Vector3 texOffset;
         float radius, divisions;
 
         public Vector3 Center { get { return segment.transform.localPosition; } }
-        public Vector3 Offset { get { return offset; } set { offset = value; } }
         public bool Enabled { get { return segment.activeSelf; } set { segment.SetActive(value); } }
 
-        public VolumeSection(Texture2D tex, Material cloudParticleMaterial, Vector3 texOffset, Vector2 size, Transform parent, Vector3 pos, float magnitude, Vector3 offset, float radius, int divisions)
+        public VolumeSection(Material cloudParticleMaterial, Vector2 size, Transform parent, Vector3 pos, float magnitude, float radius, int divisions)
         {
-            texture = tex;
-            this.texOffset = texOffset;
             segment = new GameObject();
             this.radius = radius;
             this.divisions = divisions;
@@ -123,7 +99,7 @@ namespace Atmosphere
             zComp = 360f * (2*Mathf.Sqrt(.75f) * radius / (Mathf.Pow(2f, divisions))) / (2f * Mathf.PI * magnitude);
 
             segment.transform.localPosition = pos;
-            Reassign(pos, offset, magnitude, parent);
+            Reassign(pos, magnitude, parent);
 
             List<Vector3> positions = hexGeometry.GetPoints();
             foreach (Vector3 position in positions)
@@ -132,19 +108,17 @@ namespace Atmosphere
             }
         }
 
-        public void Reassign(Vector3 pos, Vector3 offset, float magnitude = -1, Transform parent = null)
+        public void Reassign(Vector3 pos, float magnitude = -1, Transform parent = null)
         {
             if(parent != null)
             {
                 segment.transform.parent = parent;
             }
-            this.offset = offset;
             if (magnitude > 0)
             {
                 this.magnitude = magnitude;
             }
 
-            bool update = false;
 
             Vector3 worldUp = segment.transform.position - segment.transform.parent.position;
             segment.transform.up = worldUp.normalized;
@@ -164,12 +138,10 @@ namespace Atmosphere
             if (xAngle > xComp)
             {
                 segment.transform.RotateAround(segment.transform.parent.position, xDir, -Mathf.Sign(zDot) * Mathf.Floor(xAngle / xComp) * xComp);
-                update = true;
             }
             if (zAngle > zComp)
             {
                 segment.transform.RotateAround(segment.transform.parent.position, zDir, Mathf.Sign(xDot) * Mathf.Floor(zAngle / zComp) * zComp);
-                update = true;
             }
             //Rotate Around is in world cords and degrees.
             //if (segment.transform.RotateAround()
@@ -182,26 +154,6 @@ namespace Atmosphere
             segment.transform.up = worldUp.normalized;
             segment.transform.localPosition = this.magnitude * segment.transform.localPosition.normalized;
 
-            if(update)
-            {
-                Update();
-            }
-        }
-
-        public void Update()
-        {
-            foreach (CloudParticle particle in Particles)
-            {
-                particle.Update(texture, texOffset);
-            }
-        }
-
-        public void UpdateColor(Color color)
-        {
-            foreach (CloudParticle particle in Particles)
-            {
-                particle.Update(color);
-            }
         }
 
         internal void Destroy()

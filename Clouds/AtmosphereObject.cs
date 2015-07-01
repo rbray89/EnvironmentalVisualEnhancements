@@ -22,6 +22,10 @@ namespace Atmosphere
         float altitude = 1000f;
         [Persistent]
         float speed = 30;
+        [Persistent]
+        float detailSpeed;
+        [Persistent]
+        Vector3 offset = new Vector3(0, 0, 0);
         [Persistent, Optional]
         AtmosphereVolume atmosphere = null;
         [Persistent, Optional]
@@ -51,7 +55,7 @@ namespace Atmosphere
             
             GameObject go = new GameObject();
             atmospherePQS = go.AddComponent<AtmospherePQS>();
-            atmospherePQS.Apply(body, layer2D, layerVolume, atmosphere, altitude, speed);
+            atmospherePQS.Apply(body, layer2D, layerVolume, atmosphere, altitude, speed, detailSpeed, offset);
         }
 
         public void Remove()

@@ -18,6 +18,10 @@ namespace Utils
         {
         }
 
+        public class Clamped : System.Attribute
+        {
+        }
+
         public class ScaledValue
         {
             public object obj;
@@ -86,7 +90,7 @@ namespace Utils
         bool cached = false;
         float Scale;
         List<KeyValuePair<String, object>> cache = new List<KeyValuePair<string, object>>();
-        public void ApplyMaterialProperties(Material material, float scale = 1.0f, bool clampTextures = false)
+        public void ApplyMaterialProperties(Material material, float scale = 1.0f)
         {
             Scale = scale;
             if (!cached)
@@ -100,8 +104,9 @@ namespace Utils
                     {
                         String textureName = (String)field.GetValue(this);
                         bool isNormal = textureName.Contains("Bump") | textureName.Contains("Bmp") | textureName.Contains("Normal") | textureName.Contains("Nrm");
+                        bool isClamped = Attribute.IsDefined(field, typeof(Clamped));
                         Texture2D texture = GameDatabase.Instance.GetTexture(textureName, isNormal);
-                        if (clampTextures)
+                        if (isClamped)
                         {
                             texture.wrapMode = TextureWrapMode.Clamp;
                         }

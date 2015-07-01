@@ -23,6 +23,7 @@ namespace EVEManager
         public static int SHADOWOFFSET_PROPERTY;
         public static int SUNDIR_PROPERTY;
         public static int PLANET_ORIGIN_PROPERTY;
+        public static int WORLD_2_PLANET_PROPERTY;
 
         public String Name { get { return this.GetType().Name; } set { } }
 
@@ -34,6 +35,7 @@ namespace EVEManager
             SHADOWOFFSET_PROPERTY = Shader.PropertyToID("_ShadowOffset");
             SUNDIR_PROPERTY = Shader.PropertyToID("_SunDir");
             PLANET_ORIGIN_PROPERTY = Shader.PropertyToID("_PlanetOrigin");
+            WORLD_2_PLANET_PROPERTY = Shader.PropertyToID("_World2Planet");
             useEditor = false;
         }
 

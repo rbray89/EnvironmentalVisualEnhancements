@@ -23,6 +23,13 @@ namespace Atmosphere
 
         Callback onExitMapView;
         private bool applied = false;
+        private float radius;
+
+        float geoPeriod;
+        float texPeriod;
+        float mainPeriod;
+        float shadowPeriod;
+        Vector2 offset;
 
         public override void OnSphereActive()
         {
@@ -90,13 +97,29 @@ namespace Atmosphere
         protected void Update()
         {
             bool visible = HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER;
+
+            double ut = Planetarium.GetUniversalTime();
+            double geoRotation = (ut * geoPeriod);
+            geoRotation -= (int)geoRotation;
+            double texRotation = (ut * texPeriod);
+            texRotation -= (int)texRotation;
+            double shadowRotation = (ut * shadowPeriod);
+            shadowRotation -= (int)shadowRotation;
+            double mainRotation = (ut * mainPeriod);
+            mainRotation -= (int)mainRotation;
+
             if (this.sphere != null && visible)
             {
                 if (sphere.isActive && HighLogic.LoadedScene != GameScenes.TRACKSTATION && !MapView.MapIsEnabled)
                 {
                     if (layer2D != null)
                     {
-                        layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition));
+                        layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition), 
+                                               this.sphere.transform.worldToLocalMatrix,
+                                               geoRotation,
+                                               texRotation,
+                                               shadowRotation,
+                                               offset);
                     }
                 }
                 else
@@ -105,18 +128,29 @@ namespace Atmosphere
                     Vector3 pos = scaledCelestialTransform.InverseTransformPoint(transform.position);
                     if (layer2D != null)
                     {
-                        layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos));
+                        layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos),
+                                               scaledCelestialTransform.transform.worldToLocalMatrix,
+                                               geoRotation,
+                                               texRotation,
+                                               shadowRotation,
+                                               offset);
                     }
                 }
                 if (layerVolume != null && sphere.isActive)
                 {
                     if(FlightCamera.fetch != null)
                     {
-                        layerVolume.UpdatePos(FlightCamera.fetch.mainCamera.transform.position);
+                        layerVolume.UpdatePos(FlightCamera.fetch.mainCamera.transform.position,
+                                               mainRotation,
+                                               texRotation,
+                                               offset);
                     }
                     else
                     {
-                        layerVolume.UpdatePos(this.sphere.target.position);
+                        layerVolume.UpdatePos(this.sphere.target.position,
+                                               mainRotation,
+                                               texRotation,
+                                               offset);
                     }
                 }
                 if (atmosphere != null)
@@ -126,7 +160,7 @@ namespace Atmosphere
             }
         }
 
-        internal void Apply(String body, Clouds2D layer2D, CloudsVolume layerVolume, AtmosphereVolume atmosphere, float altitude, float speed)
+        internal void Apply(String body, Clouds2D layer2D, CloudsVolume layerVolume, AtmosphereVolume atmosphere, float altitude, float speed, float detailSpeed, Vector2 offset)
         {
             this.body = body;
             this.layer2D = layer2D;
@@ -134,6 +168,8 @@ namespace Atmosphere
             this.atmosphere = atmosphere;
             this.altitude = altitude;
             this.speed = speed;
+            this.offset = offset;
+
             celestialBody = Tools.GetCelestialBody(body);
             scaledCelestialTransform = Tools.GetScaledTransform(body);
             PQS pqs = null;
@@ -154,14 +190,24 @@ namespace Atmosphere
                 this.transform.localPosition = Vector3.zero;
                 this.transform.localRotation = Quaternion.identity;
                 this.transform.localScale = Vector3.one;
+                this.radius = (float)(altitude + celestialBody.Radius);
+                
+                
+                float circumference = 2f * Mathf.PI * radius;
+                geoPeriod = (speed + detailSpeed) / circumference;
+                texPeriod = (-detailSpeed) / circumference;
+                mainPeriod = (speed) / circumference;
+                shadowPeriod = (speed) / circumference;
+                
                 if (layer2D != null)
                 {
-                    this.layer2D.Apply(celestialBody, scaledCelestialTransform, (float)(altitude + celestialBody.Radius), speed);
+                    this.layer2D.Apply(celestialBody, scaledCelestialTransform, radius, speed);
                 }
                 if (atmosphere != null)
                 {
-                    this.atmosphere.Apply(celestialBody, scaledCelestialTransform, (float)(altitude + celestialBody.Radius));
+                    this.atmosphere.Apply(celestialBody, scaledCelestialTransform, radius);
                 }
+
                 if (!pqs.isActive || HighLogic.LoadedScene == GameScenes.TRACKSTATION)
                 {
                     this.OnSphereInactive();

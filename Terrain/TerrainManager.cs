@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using EVEManager;
+using ShaderLoader;
 
 namespace Terrain
 {
@@ -20,28 +21,16 @@ namespace Terrain
 
         private bool camerasInitialized = false;
         private static Shader oceanShader = null;
-        private static Shader oceanShaderNear = null;
         private static Shader planetShader = null;
         private static Shader terrainShader = null;
-        public static Shader OceanShaderNear
-        {
-            get
-            {
-                if (oceanShaderNear == null)
-                {
-                    Assembly assembly = Assembly.GetExecutingAssembly();
-                    oceanShaderNear = Tools.GetShader(assembly, "Terrain.Shaders.Compiled-SphereOceanNear.shader");
-                } return oceanShaderNear;
-            }
-        }
+
         public static Shader OceanShader
         {
             get
             {
                 if (oceanShader == null)
                 {
-                    Assembly assembly = Assembly.GetExecutingAssembly();
-                    oceanShader = Tools.GetShader(assembly, "Terrain.Shaders.Compiled-SphereOcean.shader");
+                    oceanShader = ShaderLoaderClass.FindShader("EVE/Ocean");
                 } return oceanShader;
             }
         }
@@ -51,8 +40,7 @@ namespace Terrain
             {
                 if (planetShader == null)
                 {
-                    Assembly assembly = Assembly.GetExecutingAssembly();
-                    planetShader = Tools.GetShader(assembly, "Terrain.Shaders.Compiled-SpherePlanet.shader");
+                    planetShader = ShaderLoaderClass.FindShader("EVE/Planet");
                 } return planetShader;
             }
         }
@@ -62,8 +50,7 @@ namespace Terrain
             {
                 if (terrainShader == null)
                 {
-                    Assembly assembly = Assembly.GetExecutingAssembly();
-                    terrainShader = Tools.GetShader(assembly, "Terrain.Shaders.Compiled-SphereTerrain.shader");
+                    terrainShader = ShaderLoaderClass.FindShader("EVE/Terrain");
                 } return terrainShader;
             }
         }

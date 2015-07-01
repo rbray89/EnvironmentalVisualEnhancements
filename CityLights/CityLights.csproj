@@ -94,6 +94,10 @@
       <Project>{499e8c5c-c83e-4aea-bb01-eed705bd747f}</Project>
       <Name>EVEManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ShaderLoader\ShaderLoader.csproj">
+      <Project>{f210fbc0-0cbb-4cd2-a3f0-e32096cf256d}</Project>
+      <Name>ShaderLoader</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Terrain\Terrain.csproj">
       <Project>{00bdfd23-ec77-4876-ac73-11aa9124ea35}</Project>
       <Name>Terrain</Name>

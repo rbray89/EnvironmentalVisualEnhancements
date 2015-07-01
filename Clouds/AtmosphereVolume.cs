@@ -1,4 +1,5 @@
 ﻿using EVEManager;
+using ShaderLoader;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,8 +99,7 @@ namespace Atmosphere
             {
                 if (atmosphereShader == null)
                 {
-                    Assembly assembly = Assembly.GetExecutingAssembly();
-                    atmosphereShader = Tools.GetShader(assembly, "Atmosphere.Shaders.Compiled-SphereAtmosphere.shader");
+                    atmosphereShader = ShaderLoaderClass.FindShader("EVE/Atmosphere");
                 } return atmosphereShader;
             }
         }

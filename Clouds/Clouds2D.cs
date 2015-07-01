@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using ShaderLoader;
 using UnityEngine;
 using Utils;
 
@@ -48,10 +49,6 @@ namespace Atmosphere
         GameObject ShadowProjectorGO = null;
 
         [Persistent]
-        float detailSpeed;
-        [Persistent]
-        Vector3 offset = new Vector3(0, 0, 0);
-        [Persistent]
         bool shadow = true;
         [Persistent]
         Vector3 shadowOffset = new Vector3(0, 0, 0);
@@ -91,9 +88,7 @@ namespace Atmosphere
         Transform sunTransform;
         float radius;     
         float radiusScale;
-        float globalPeriod;
-        float mainPeriodOffset;
-        float shadowPeriod;
+        
         private static Shader cloudShader = null;
         private static Shader CloudShader
         {
@@ -101,8 +96,7 @@ namespace Atmosphere
             {
                 if (cloudShader == null)
                 {
-                    Assembly assembly = Assembly.GetExecutingAssembly();
-                    cloudShader = Tools.GetShader(assembly, "Atmosphere.Shaders.Compiled-SphereCloud.shader");
+                    cloudShader = ShaderLoaderClass.FindShader("EVE/Cloud");
                 } return cloudShader;
             }
         }
@@ -114,8 +108,7 @@ namespace Atmosphere
             {
                 if (cloudShadowShader == null)
                 {
-                    Assembly assembly = Assembly.GetExecutingAssembly();
-                    cloudShadowShader = Tools.GetShader(assembly, "Atmosphere.Shaders.Compiled-CloudShadow.shader");
+                    cloudShadowShader = ShaderLoaderClass.FindShader("EVE/CloudShadow");
                 } return cloudShadowShader;
             }
         }
@@ -128,10 +121,7 @@ namespace Atmosphere
             HalfSphere hp = new HalfSphere(radius, ref CloudMaterial, CloudShader);
             CloudMesh = hp.GameObject;
             this.radius = radius;
-            float circumference = 2f * Mathf.PI * radius;
-            globalPeriod = (speed+detailSpeed) / circumference;
-            mainPeriodOffset = (-detailSpeed) / circumference;
-            shadowPeriod = (speed) / circumference;
+
             if (shadow)
             {
                 ShadowProjectorGO = new GameObject();
@@ -199,11 +189,11 @@ namespace Atmosphere
             }
         }
 
-        internal void UpdateRotation(Quaternion rotation)
+        internal void UpdateRotation(Quaternion rotation, Matrix4x4 World2Planet, double geoRotation, double texRoation, double shadowRotation, Vector2 offset)
         {
             if (rotation != null)
             {
-                SetMeshRotation(rotation);
+                SetMeshRotation(rotation, World2Planet);
                 if (ShadowProjector != null)
                 {
                     Vector3 worldSunDir = Vector3.Normalize(Sun.Instance.sunDirection);
@@ -212,38 +202,28 @@ namespace Atmosphere
                     ShadowProjector.transform.forward = worldSunDir;
                 }
             }
-            SetTextureOffset();
+            
+            SetTextureOffset(texRoation, shadowRotation, offset);
         }
 
-        private void SetMeshRotation(Quaternion rotation)
+        private void SetMeshRotation(Quaternion rotation, Matrix4x4 World2Planet)
         {
             CloudMesh.transform.localRotation = rotation;
-            double ut = Planetarium.GetUniversalTime();
-            double x = (ut * globalPeriod);
-            x -= (int)x;
-
-            CloudMesh.transform.Rotate(CloudMesh.transform.parent.TransformDirection(Vector3.up), (float)(360f * x), Space.World);
-            Quaternion rotationForMatrix = CloudMesh.transform.localRotation;
-            CloudMesh.transform.localRotation = rotation;
-            Matrix4x4 mtrx = Matrix4x4.TRS(Vector3.zero, rotationForMatrix, new Vector3(1, 1, 1));
-            CloudMaterial.SetMatrix(EVEManagerClass.ROTATION_PROPERTY, mtrx);
+            CloudMaterial.SetMatrix(EVEManagerClass.WORLD_2_PLANET_PROPERTY, (World2Planet*CloudMesh.transform.localToWorldMatrix));
         }
 
-        private void SetTextureOffset()
+        private void SetTextureOffset(double texRotation, double shadowRotation, Vector2 offset)
         {
-            double ut = Planetarium.GetUniversalTime();
-            double x = (ut * mainPeriodOffset);
-            x -= (int)x;
-            Vector2 texOffset = new Vector2((float)x + offset.x, offset.y);
+            
+            Vector2 texOffset = new Vector2((float)texRotation + offset.x, offset.y);
             CloudMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, texOffset);
 
             if (ShadowProjector != null)
             {
-                x = (ut * shadowPeriod);
-                x -= (int)x;
+                
                 Vector4 texVect = ShadowProjector.transform.localPosition.normalized;
 
-                texVect.w = ((float)x + offset.x + .25f);
+                texVect.w = ((float)shadowRotation + offset.x + .25f);
                 ShadowProjector.material.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, texVect);
             }
         }
