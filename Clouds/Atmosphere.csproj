@@ -96,16 +96,6 @@
     <Compile Include="VolumeSection.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Shaders\Compiled-SphereCloud.shader" />
-    <EmbeddedResource Include="Shaders\Compiled-CloudParticle.shader" />
-    <EmbeddedResource Include="Shaders\Compiled-SphereAtmosphere.shader" />
-    <None Include="Shaders\CloudShadow.shader" />
-    <EmbeddedResource Include="Shaders\Compiled-CloudShadow.shader" />
-    <None Include="Shaders\SphereAtmosphere.shader" />
-    <None Include="Shaders\SphereCloud.shader" />
-    <None Include="Shaders\CloudParticle.shader" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\EveManager\EVEManager.csproj">
       <Project>{499e8c5c-c83e-4aea-bb01-eed705bd747f}</Project>
       <Name>EVEManager</Name>

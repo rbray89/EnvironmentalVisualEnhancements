@@ -90,9 +90,6 @@
     <Compile Include="TerrainObject.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Shaders\Compiled-Tangents.shader" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\EveManager\EVEManager.csproj">
       <Project>{499e8c5c-c83e-4aea-bb01-eed705bd747f}</Project>
       <Name>EVEManager</Name>
@@ -109,14 +106,6 @@
       <Project>{8b24314b-4b75-43f3-b31c-ffa9fc83fb70}</Project>
       <Name>Utils</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Shaders\Compiled-SphereTerrain.shader" />
-    <EmbeddedResource Include="Shaders\Compiled-SpherePlanet.shader" />
-    <EmbeddedResource Include="Shaders\Compiled-SphereOcean.shader" />
-    <None Include="Shaders\SphereOcean.shader" />
-    <None Include="Shaders\SpherePlanet.shader" />
-    <None Include="Shaders\SphereTerrain.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
