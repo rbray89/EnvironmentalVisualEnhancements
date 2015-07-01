@@ -87,7 +87,7 @@ namespace Atmosphere
             }
         }
 
-        internal void UpdatePos(Vector3 WorldPos, double geoRotation, double texRotation, Vector2 offset)
+        internal void UpdatePos(Vector3 WorldPos, double texRotation, double detailRotation, Vector2 offset)
         {
             if (HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
@@ -95,7 +95,7 @@ namespace Atmosphere
                 ParticleMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, texOffset);
 
                 Quaternion rotation = new Quaternion();
-                rotation.eulerAngles = new Vector3(0, (float)(-360f * geoRotation), 0);
+                rotation.eulerAngles = new Vector3(0, (float)(-360f * texRotation), 0);
                 volumeHolder.transform.localRotation = rotation;
 
                 Vector3 intendedPoint = volumeHolder.transform.InverseTransformPoint(WorldPos);

@@ -25,10 +25,8 @@ namespace Atmosphere
         private bool applied = false;
         private float radius;
 
-        float geoPeriod;
-        float texPeriod;
+        float detailPeriod;
         float mainPeriod;
-        float shadowPeriod;
         Vector2 offset;
 
         public override void OnSphereActive()
@@ -99,12 +97,8 @@ namespace Atmosphere
             bool visible = HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER;
 
             double ut = Planetarium.GetUniversalTime();
-            double geoRotation = (ut * geoPeriod);
-            geoRotation -= (int)geoRotation;
-            double texRotation = (ut * texPeriod);
+            double texRotation = (ut * detailPeriod);
             texRotation -= (int)texRotation;
-            double shadowRotation = (ut * shadowPeriod);
-            shadowRotation -= (int)shadowRotation;
             double mainRotation = (ut * mainPeriod);
             mainRotation -= (int)mainRotation;
 
@@ -116,9 +110,8 @@ namespace Atmosphere
                     {
                         layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition), 
                                                this.sphere.transform.worldToLocalMatrix,
-                                               geoRotation,
+                                               mainRotation,
                                                texRotation,
-                                               shadowRotation,
                                                offset);
                     }
                 }
@@ -130,9 +123,8 @@ namespace Atmosphere
                     {
                         layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos),
                                                scaledCelestialTransform.transform.worldToLocalMatrix,
-                                               geoRotation,
+                                               mainRotation,
                                                texRotation,
-                                               shadowRotation,
                                                offset);
                     }
                 }
@@ -194,10 +186,8 @@ namespace Atmosphere
                 
                 
                 float circumference = 2f * Mathf.PI * radius;
-                geoPeriod = (speed + detailSpeed) / circumference;
-                texPeriod = (-detailSpeed) / circumference;
                 mainPeriod = (speed) / circumference;
-                shadowPeriod = (speed) / circumference;
+                detailPeriod = (mainPeriod + detailSpeed) / circumference;
                 
                 if (layer2D != null)
                 {

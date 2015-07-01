@@ -189,7 +189,7 @@ namespace Atmosphere
             }
         }
 
-        internal void UpdateRotation(Quaternion rotation, Matrix4x4 World2Planet, double geoRotation, double texRoation, double shadowRotation, Vector2 offset)
+        internal void UpdateRotation(Quaternion rotation, Matrix4x4 World2Planet, double mainRoation, double detailRotation, Vector2 offset)
         {
             if (rotation != null)
             {
@@ -203,7 +203,7 @@ namespace Atmosphere
                 }
             }
             
-            SetTextureOffset(texRoation, shadowRotation, offset);
+            SetTextureOffset(mainRoation, offset);
         }
 
         private void SetMeshRotation(Quaternion rotation, Matrix4x4 World2Planet)
@@ -212,7 +212,7 @@ namespace Atmosphere
             CloudMaterial.SetMatrix(EVEManagerClass.WORLD_2_PLANET_PROPERTY, (World2Planet*CloudMesh.transform.localToWorldMatrix));
         }
 
-        private void SetTextureOffset(double texRotation, double shadowRotation, Vector2 offset)
+        private void SetTextureOffset(double texRotation, Vector2 offset)
         {
             
             Vector2 texOffset = new Vector2((float)texRotation + offset.x, offset.y);
@@ -223,7 +223,7 @@ namespace Atmosphere
                 
                 Vector4 texVect = ShadowProjector.transform.localPosition.normalized;
 
-                texVect.w = ((float)shadowRotation + offset.x + .25f);
+                texVect.w = ((float)texRotation + offset.x + .25f);
                 ShadowProjector.material.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, texVect);
             }
         }
