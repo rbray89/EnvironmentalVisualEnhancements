@@ -5,7 +5,7 @@ Shader "EVE/Cloud" {
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
 		_FalloffPow ("Falloff Power", Range(0,3)) = 2
 		_FalloffScale ("Falloff Scale", Range(0,20)) = 3
-		_DetailScale ("Detail Scale", Range(0,1000)) = 100
+		_DetailScale ("Detail Scale", Range(0,100)) = 100
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
 		_MinLight ("Minimum Light", Range(0,1)) = .5
 		_FadeDist ("Fade Distance", Range(0,100)) = 10
@@ -73,8 +73,8 @@ SubShader {
 			float3 worldVert : TEXCOORD0;
 			float3 worldOrigin : TEXCOORD1;
 			float4 objDetail : TEXCOORD2;
-			float3 worldNormal : TEXCOORD3;
-			float4 objNormal : TEXCOORD4;
+			float4 objMain : TEXCOORD3;
+			float3 worldNormal : TEXCOORD4;
 			float3 viewDir : TEXCOORD5;
 			LIGHTING_COORDS(6,7)
 			float4 projPos : TEXCOORD8;
@@ -92,8 +92,8 @@ SubShader {
 	   	   o.worldVert = vertexPos;
 	   	   o.worldOrigin = origin;
 	   	   o.worldNormal = normalize(vertexPos-origin);
-	   	   o.objNormal = -mul(_MainRotation, v.vertex);
-	   	   o.objDetail = mul(_DetailRotation, o.objNormal);
+	   	   o.objMain = -mul(_MainRotation, v.vertex);
+	   	   o.objDetail = mul(_DetailRotation, o.objMain);
 	   	   o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
 	   	   #ifdef SOFT_DEPTH_ON
 	   	   o.projPos = ComputeScreenPos (o.pos);
@@ -106,19 +106,8 @@ SubShader {
 		fixed4 frag (v2f IN) : COLOR
 			{
 			half4 color;
-			float3 objNrm = normalize(IN.objDetail);
-		 	float2 uv;
-		 	uv.x = .5 + (INV_2PI*atan2(objNrm.x, objNrm.z));
-		 	uv.y = INV_PI*acos(objNrm.y);
-		 	float4 uvdd = Derivatives(uv.x-.5, uv.y, objNrm);
-		    half4 main = GetSphereMap(_MainTex, IN.objNormal);
-			
-			objNrm = abs(objNrm);
-			half zxlerp = saturate(floor(1+objNrm.x-objNrm.z));
-			half3 detailCoords = lerp(objNrm.zxy, objNrm.xyz, zxlerp);
-			half nylerp = saturate(floor(1+objNrm.y-(lerp(objNrm.z, objNrm.x, zxlerp))));		
-			detailCoords = lerp(detailCoords, objNrm.yxz, nylerp);
-			half4 detail = tex2D (_DetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x))) *_DetailScale, uvdd.xy, uvdd.zw);
+		    half4 main = GetSphereMap(_MainTex, IN.objMain);
+			half4 detail = GetShereDetailMap(_DetailTex, IN.objDetail, _DetailScale);
 			
 			float viewDist = distance(IN.worldVert,_WorldSpaceCameraPos);
 			half detailLevel = saturate(2*_DetailDist*viewDist);

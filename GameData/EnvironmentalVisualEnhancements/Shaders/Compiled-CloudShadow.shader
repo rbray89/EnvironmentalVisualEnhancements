@@ -14,15 +14,14 @@
         ZWrite Off
         Program "vp" {
 // Vertex combos: 1
-//   d3d9 - ALU: 85 to 85
-//   d3d11 - ALU: 68 to 68, TEX: 0 to 0, FLOW: 1 to 1
+//   d3d9 - ALU: 41 to 41
+//   d3d11 - ALU: 39 to 39, TEX: 0 to 0, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { }
 "!!GLSL
 #ifdef VERTEX
-varying vec4 xlv_TEXCOORD5;
 varying vec4 xlv_TEXCOORD4;
-varying float xlv_TEXCOORD3;
+varying vec4 xlv_TEXCOORD3;
 varying float xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
 varying vec4 xlv_TEXCOORD0;
@@ -30,77 +29,50 @@ uniform mat4 _Projector;
 uniform vec3 _PlanetOrigin;
 uniform float _Radius;
 uniform vec4 _SunDir;
-uniform vec4 _MainOffset;
 uniform mat4 _MainRotation;
 uniform mat4 _Object2World;
 
 void main ()
 {
-  vec4 tmpvar_1;
+  vec3 tmpvar_1;
+  tmpvar_1.x = _Projector[0].z;
+  tmpvar_1.y = _Projector[1].z;
+  tmpvar_1.z = _Projector[2].z;
   vec4 tmpvar_2;
-  float tmpvar_3;
+  tmpvar_2 = (_Object2World * gl_Vertex);
+  vec3 tmpvar_3;
+  tmpvar_3 = (_PlanetOrigin - tmpvar_2.xyz);
   float tmpvar_4;
-  tmpvar_2 = (_Projector * gl_Vertex);
-  tmpvar_1 = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  vec3 tmpvar_5;
-  tmpvar_5.x = _Projector[0].z;
-  tmpvar_5.y = _Projector[1].z;
-  tmpvar_5.z = _Projector[2].z;
-  tmpvar_3 = clamp (dot (-(gl_Normal), normalize(tmpvar_5)), 0.0, 1.0);
-  tmpvar_4 = (sign(_MainOffset.y) * (1.5708 - (sqrt((1.0 - abs(_MainOffset.y))) * (1.5708 + (abs(_MainOffset.y) * (-0.214602 + (abs(_MainOffset.y) * (0.0865667 + (abs(_MainOffset.y) * -0.0310296)))))))));
-  float r_6;
-  if ((abs(_MainOffset.z) > (1e-08 * abs(_MainOffset.x)))) {
-    float y_over_x_7;
-    y_over_x_7 = (_MainOffset.x / _MainOffset.z);
-    float s_8;
-    float x_9;
-    x_9 = (y_over_x_7 * inversesqrt(((y_over_x_7 * y_over_x_7) + 1.0)));
-    s_8 = (sign(x_9) * (1.5708 - (sqrt((1.0 - abs(x_9))) * (1.5708 + (abs(x_9) * (-0.214602 + (abs(x_9) * (0.0865667 + (abs(x_9) * -0.0310296)))))))));
-    r_6 = s_8;
-    if ((_MainOffset.z < 0.0)) {
-      if ((_MainOffset.x >= 0.0)) {
-        r_6 = (s_8 + 3.14159);
-      } else {
-        r_6 = (r_6 - 3.14159);
-      };
-    };
-  } else {
-    r_6 = (sign(_MainOffset.x) * 1.5708);
-  };
-  vec4 tmpvar_10;
-  tmpvar_10 = (_Object2World * gl_Vertex);
-  vec3 tmpvar_11;
-  tmpvar_11 = (_PlanetOrigin - tmpvar_10.xyz);
-  float tmpvar_12;
-  tmpvar_12 = dot (tmpvar_11, _SunDir.xyz);
-  float tmpvar_13;
-  tmpvar_13 = sqrt((dot (tmpvar_11, tmpvar_11) - (tmpvar_12 * tmpvar_12)));
-  vec4 tmpvar_14;
-  tmpvar_14 = (tmpvar_10 + (_SunDir * mix (0.0, (tmpvar_12 - sqrt(((_Radius * _Radius) - pow (tmpvar_13, 2.0)))), (float((_Radius >= tmpvar_13)) * float((tmpvar_12 >= 0.0))))));
-  gl_Position = tmpvar_1;
-  xlv_TEXCOORD0 = tmpvar_2;
-  xlv_TEXCOORD1 = tmpvar_3;
-  xlv_TEXCOORD2 = tmpvar_4;
-  xlv_TEXCOORD3 = r_6;
-  xlv_TEXCOORD4 = tmpvar_14;
-  xlv_TEXCOORD5 = -((_MainRotation * tmpvar_14));
+  tmpvar_4 = dot (tmpvar_3, _SunDir.xyz);
+  float tmpvar_5;
+  tmpvar_5 = sqrt((dot (tmpvar_3, tmpvar_3) - (tmpvar_4 * tmpvar_4)));
+  vec4 tmpvar_6;
+  tmpvar_6 = (tmpvar_2 + (_SunDir * mix (0.0, (tmpvar_4 - sqrt(((_Radius * _Radius) - pow (tmpvar_5, 2.0)))), (float((_Radius >= tmpvar_5)) * float((tmpvar_4 >= 0.0))))));
+  gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
+  xlv_TEXCOORD0 = (_Projector * gl_Vertex);
+  xlv_TEXCOORD1 = dot (-(normalize(tmpvar_3)), normalize(tmpvar_1));
+  xlv_TEXCOORD2 = sqrt(dot (tmpvar_3, tmpvar_3));
+  xlv_TEXCOORD3 = tmpvar_6;
+  xlv_TEXCOORD4 = -((_MainRotation * tmpvar_6));
 }
 
 
 #endif
 #ifdef FRAGMENT
 #extension GL_ARB_shader_texture_lod : enable
-varying vec4 xlv_TEXCOORD5;
+varying vec4 xlv_TEXCOORD4;
+varying float xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
 varying vec4 xlv_TEXCOORD0;
+uniform float _Radius;
 uniform sampler2D _MainTex;
 void main ()
 {
   vec4 color_1;
   float dirCheck_2;
-  dirCheck_2 = (clamp (floor((xlv_TEXCOORD0.w + 1.0)), 0.0, 1.0) * xlv_TEXCOORD1);
+  dirCheck_2 = ((float((xlv_TEXCOORD0.w >= 0.0)) * float((xlv_TEXCOORD1 >= 0.0))) * float((_Radius >= xlv_TEXCOORD2)));
   vec3 tmpvar_3;
-  tmpvar_3 = normalize(xlv_TEXCOORD5.xyz);
+  tmpvar_3 = normalize(xlv_TEXCOORD4.xyz);
   vec2 uv_4;
   float r_5;
   if ((abs(tmpvar_3.z) > (1e-08 * abs(tmpvar_3.x)))) {
@@ -150,107 +122,56 @@ void main ()
 SubProgram "d3d9 " {
 Keywords { }
 Bind "vertex" Vertex
-Bind "normal" Normal
 Matrix 0 [glstate_matrix_mvp]
 Matrix 4 [_Object2World]
 Matrix 8 [_MainRotation]
-Vector 16 [_MainOffset]
-Vector 17 [_SunDir]
-Float 18 [_Radius]
-Vector 19 [_PlanetOrigin]
+Vector 16 [_SunDir]
+Float 17 [_Radius]
+Vector 18 [_PlanetOrigin]
 Matrix 12 [_Projector]
 "vs_3_0
-; 85 ALU
+; 41 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
-dcl_texcoord5 o6
-def c20, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c21, -0.21211439, 1.57072902, 1.57079601, 2.00000000
-def c22, -0.01348047, 0.05747731, -0.12123910, 0.19563590
-def c23, -0.33299461, 0.99999559, 3.14159298, 0
+def c19, 0.00000000, 0, 0, 0
 dcl_position0 v0
-dcl_normal0 v1
-mov r2.y, c20.x
-abs r0.z, c16.x
-abs r0.y, c16.z
-max r0.x, r0.y, r0.z
-rcp r0.w, r0.x
-min r0.x, r0.y, r0.z
-mul r0.x, r0, r0.w
-mul r0.w, r0.x, r0.x
-slt r0.y, r0, r0.z
-mad r1.x, r0.w, c22, c22.y
-mad r1.x, r1, r0.w, c22.z
-mad r0.z, r1.x, r0.w, c22.w
-mad r0.z, r0, r0.w, c23.x
-mad r0.z, r0, r0.w, c23.y
-max r0.y, -r0, r0
-slt r0.y, c20.x, r0
-add r0.w, -r0.y, c20.y
-mul r0.x, r0.z, r0
-mul r0.z, r0.x, r0.w
-add r0.x, -r0, c21.z
-mad r1.w, r0.y, r0.x, r0.z
-add r2.x, -r1.w, c23.z
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
-add r1.xyz, -r0, c19
-dp3 r0.w, r1, c17
-dp3 r1.y, r1, r1
-slt r2.y, c16.z, r2
-mad r1.z, -r0.w, r0.w, r1.y
-max r1.x, -r2.y, r2.y
-slt r1.y, c20.x, r1.x
-rsq r1.x, r1.z
-add r1.z, -r1.y, c20.y
-mul r1.z, r1.w, r1
-mad r2.y, r1, r2.x, r1.z
+add r2.xyz, -r0, c18
+dp3 r0.w, r2, c16
+dp3 r2.w, r2, r2
+mad r1.x, -r0.w, r0.w, r2.w
+rsq r1.x, r1.x
 rcp r1.x, r1.x
-mul r1.w, r1.x, r1.x
-mad r1.z, c18.x, c18.x, -r1.w
-rsq r1.z, r1.z
-rcp r1.z, r1.z
-sge r1.y, r0.w, c20.x
-sge r1.x, c18, r1
+mul r1.y, r1.x, r1.x
+mad r1.y, c17.x, c17.x, -r1
+rsq r1.y, r1.y
+rcp r1.z, r1.y
+sge r1.y, r0.w, c19.x
+sge r1.x, c17, r1
 mul r1.x, r1, r1.y
-add r1.z, r0.w, -r1
-mov r1.y, c20.x
-slt r1.y, c16.x, r1
-max r0.w, -r1.y, r1.y
-slt r2.x, c20, r0.w
-add r2.z, -r2.x, c20.y
-mul r2.z, r2.y, r2
+add r1.y, r0.w, -r1.z
 dp4 r0.w, v0, c7
-mul r1.x, r1, r1.z
-mad r1, r1.x, c17, r0
+mul r1.x, r1, r1.y
+mad r1, r1.x, c16, r0
 dp4 r0.w, r1, c11
 dp4 r0.z, r1, c10
-dp4 r0.x, r1, c8
 dp4 r0.y, r1, c9
-mov o6, -r0
-dp3 r0.x, c14, c14
-rsq r0.x, r0.x
+dp4 r0.x, r1, c8
+mov o5, -r0
+rsq r0.w, r2.w
+dp3 r3.x, c14, c14
+rsq r0.x, r3.x
 mul r0.xyz, r0.x, c14
-abs r0.w, c16.y
-mov o5, r1
-mad r1.x, r0.w, c20.z, c20.w
-mad r1.y, r0.w, r1.x, c21.x
-add r1.x, -r0.w, c20.y
-mad r1.y, r0.w, r1, c21
-rsq r1.x, r1.x
-mov r0.w, c20.x
-rcp r1.x, r1.x
-mad r1.x, -r1, r1.y, c21.z
-slt r0.w, c16.y, r0
-mul r0.w, r0, r1.x
-mad o4.x, r2, -r2.y, r2.z
-dp3_sat o2.x, -v1, r0
-mad o3.x, -r0.w, c21.w, r1
+mul r2.xyz, r0.w, r2
+dp3 o2.x, -r2, r0
+mov o4, r1
+rcp o3.x, r0.w
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -265,10 +186,8 @@ dp4 o1.x, v0, c12
 SubProgram "d3d11 " {
 Keywords { }
 Bind "vertex" Vertex
-Bind "normal" Normal
 ConstBuffer "$Globals" 288 // 288 used size, 11 vars
 Matrix 16 [_MainRotation] 4
-Vector 144 [_MainOffset] 4
 Vector 192 [_SunDir] 4
 Float 208 [_Radius]
 Vector 212 [_PlanetOrigin] 3
@@ -278,104 +197,69 @@ Matrix 0 [glstate_matrix_mvp] 4
 Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerDraw" 1
-// 74 instructions, 2 temp regs, 0 temp arrays:
-// ALU 63 float, 0 int, 5 uint
+// 44 instructions, 4 temp regs, 0 temp arrays:
+// ALU 38 float, 0 int, 1 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedeacgahnnjoocecplmmlkgobccmgoddlbabaaaaaajealaaaaadaaaaaa
-cmaaaaaahmaaaaaaemabaaaaejfdeheoeiaaaaaaacaaaaaaaiaaaaaadiaaaaaa
+eefiecedgfmmdeeedgjffeaaaolbabgnjoemoplmabaaaaaacmahaaaaadaaaaaa
+cmaaaaaahmaaaaaadeabaaaaejfdeheoeiaaaaaaacaaaaaaaiaaaaaadiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaebaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaabaaaaaaahahaaaafaepfdejfeejepeoaaeoepfcenebemaaepfdeheo
-miaaaaaaahaaaaaaaiaaaaaalaaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaa
-apaaaaaalmaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapaaaaaalmaaaaaa
-abaaaaaaaaaaaaaaadaaaaaaacaaaaaaabaoaaaalmaaaaaaacaaaaaaaaaaaaaa
-adaaaaaaacaaaaaaacanaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaacaaaaaa
-aealaaaalmaaaaaaaeaaaaaaaaaaaaaaadaaaaaaadaaaaaaapaaaaaalmaaaaaa
-afaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
-feeffiedepepfceeaaklklklfdeieefceaakaaaaeaaaabaajaacaaaafjaaaaae
-egiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaaabaaaaaabaaaaaaafpaaaaad
-pcbabaaaaaaaaaaafpaaaaadhcbabaaaabaaaaaaghaaaaaepccabaaaaaaaaaaa
-abaaaaaagfaaaaadpccabaaaabaaaaaagfaaaaadbccabaaaacaaaaaagfaaaaad
-cccabaaaacaaaaaagfaaaaadeccabaaaacaaaaaagfaaaaadpccabaaaadaaaaaa
-gfaaaaadpccabaaaaeaaaaaagiaaaaacacaaaaaadiaaaaaipcaabaaaaaaaaaaa
-fgbfbaaaaaaaaaaaegiocaaaabaaaaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaa
-egiocaaaabaaaaaaaaaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaak
-pcaabaaaaaaaaaaaegiocaaaabaaaaaaacaaaaaakgbkbaaaaaaaaaaaegaobaaa
-aaaaaaaadcaaaaakpccabaaaaaaaaaaaegiocaaaabaaaaaaadaaaaaapgbpbaaa
-aaaaaaaaegaobaaaaaaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaa
-egiocaaaaaaaaaaaapaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaa
-aoaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaa
-egiocaaaaaaaaaaabaaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaak
-pccabaaaabaaaaaaegiocaaaaaaaaaaabbaaaaaapgbpbaaaaaaaaaaaegaobaaa
-aaaaaaaadeaaaaalbcaabaaaaaaaaaaackiacaiaibaaaaaaaaaaaaaaajaaaaaa
-akiacaiaibaaaaaaaaaaaaaaajaaaaaaaoaaaaakbcaabaaaaaaaaaaaaceaaaaa
-aaaaiadpaaaaiadpaaaaiadpaaaaiadpakaabaaaaaaaaaaaddaaaaalccaabaaa
-aaaaaaaackiacaiaibaaaaaaaaaaaaaaajaaaaaaakiacaiaibaaaaaaaaaaaaaa
-ajaaaaaadiaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaa
-diaaaaahccaabaaaaaaaaaaaakaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaaj
-ecaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkoln
-dcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaa
-ochgdidodcaaaaajecaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-abeaaaaaaebnkjlodcaaaaajccaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaadiphhpdpdiaaaaahecaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaaaaaaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaa
-aaaaaamaabeaaaaanlapmjdpdbaaaaalicaabaaaaaaaaaaackiacaiaibaaaaaa
-aaaaaaaaajaaaaaaakiacaiaibaaaaaaaaaaaaaaajaaaaaaabaaaaahecaabaaa
-aaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaadbaaaaakgcaabaaa
-aaaaaaaafgigcaaaaaaaaaaaajaaaaaafgigcaiaebaaaaaaaaaaaaaaajaaaaaa
-abaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaanlapejmaaaaaaaah
-bcaabaaaaaaaaaaackaabaaaaaaaaaaaakaabaaaaaaaaaaaddaaaaajecaabaaa
-aaaaaaaackiacaaaaaaaaaaaajaaaaaaakiacaaaaaaaaaaaajaaaaaadbaaaaai
-ecaabaaaaaaaaaaackaabaaaaaaaaaaackaabaiaebaaaaaaaaaaaaaadeaaaaaj
-icaabaaaaaaaaaaackiacaaaaaaaaaaaajaaaaaaakiacaaaaaaaaaaaajaaaaaa
-bnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaa
-abaaaaahecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadhaaaaak
-eccabaaaacaaaaaackaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaakaabaaa
-aaaaaaaadgaaaaagbcaabaaaabaaaaaackiacaaaaaaaaaaaaoaaaaaadgaaaaag
-ccaabaaaabaaaaaackiacaaaaaaaaaaaapaaaaaadgaaaaagecaabaaaabaaaaaa
-ckiacaaaaaaaaaaabaaaaaaabaaaaaahbcaabaaaaaaaaaaaegacbaaaabaaaaaa
-egacbaaaabaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
-ncaabaaaaaaaaaaaagaabaaaaaaaaaaaagajbaaaabaaaaaabacaaaaibccabaaa
-acaaaaaaegbcbaiaebaaaaaaabaaaaaaigadbaaaaaaaaaaadcaaaaalbcaabaaa
-aaaaaaaabkiacaiaibaaaaaaaaaaaaaaajaaaaaaabeaaaaadagojjlmabeaaaaa
-chbgjidndcaaaaalbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkiacaiaibaaaaaa
-aaaaaaaaajaaaaaaabeaaaaaiedefjlodcaaaaalbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaabkiacaiaibaaaaaaaaaaaaaaajaaaaaaabeaaaaakeanmjdpaaaaaaaj
-ecaabaaaaaaaaaaabkiacaiambaaaaaaaaaaaaaaajaaaaaaabeaaaaaaaaaiadp
-elaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahicaabaaaaaaaaaaa
-ckaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajicaabaaaaaaaaaaadkaabaaa
-aaaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahccaabaaaaaaaaaaa
-bkaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaackaabaaaaaaaaaaabkaabaaaaaaaaaaaaaaaaaaicccabaaaacaaaaaa
-akaabaiaebaaaaaaaaaaaaaaabeaaaaanlapmjdpdiaaaaaipcaabaaaaaaaaaaa
-fgbfbaaaaaaaaaaaegiocaaaabaaaaaaanaaaaaadcaaaaakpcaabaaaaaaaaaaa
-egiocaaaabaaaaaaamaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaak
-pcaabaaaaaaaaaaaegiocaaaabaaaaaaaoaaaaaakgbkbaaaaaaaaaaaegaobaaa
-aaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaapaaaaaapgbpbaaa
-aaaaaaaaegaobaaaaaaaaaaaaaaaaaajhcaabaaaabaaaaaaegacbaiaebaaaaaa
-aaaaaaaajgihcaaaaaaaaaaaanaaaaaabaaaaaahicaabaaaabaaaaaaegacbaaa
-abaaaaaaegacbaaaabaaaaaabaaaaaaibcaabaaaabaaaaaaegacbaaaabaaaaaa
-egiccaaaaaaaaaaaamaaaaaadcaaaaakccaabaaaabaaaaaaakaabaiaebaaaaaa
-abaaaaaaakaabaaaabaaaaaadkaabaaaabaaaaaaelaaaaafccaabaaaabaaaaaa
-bkaabaaaabaaaaaabnaaaaaiecaabaaaabaaaaaaakiacaaaaaaaaaaaanaaaaaa
-bkaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaabkaabaaa
-abaaaaaadcaaaaamccaabaaaabaaaaaaakiacaaaaaaaaaaaanaaaaaaakiacaaa
-aaaaaaaaanaaaaaabkaabaiaebaaaaaaabaaaaaaelaaaaafccaabaaaabaaaaaa
-bkaabaaaabaaaaaaaaaaaaaiccaabaaaabaaaaaabkaabaiaebaaaaaaabaaaaaa
-akaabaaaabaaaaaabnaaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaa
-aaaaaaaaabaaaaakfcaabaaaabaaaaaaagacbaaaabaaaaaaaceaaaaaaaaaiadp
-aaaaaaaaaaaaiadpaaaaaaaadiaaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaa
-ckaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaa
-abaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaaamaaaaaaagaabaaa
-abaaaaaaegaobaaaaaaaaaaadgaaaaafpccabaaaadaaaaaaegaobaaaaaaaaaaa
-diaaaaaipcaabaaaabaaaaaafgafbaaaaaaaaaaaegiocaaaaaaaaaaaacaaaaaa
-dcaaaaakpcaabaaaabaaaaaaegiocaaaaaaaaaaaabaaaaaaagaabaaaaaaaaaaa
-egaobaaaabaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaaaaaaaaaadaaaaaa
-kgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
-aaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegaobaaaabaaaaaadgaaaaagpccabaaa
-aeaaaaaaegaobaiaebaaaaaaaaaaaaaadoaaaaab"
+adaaaaaaabaaaaaaahaaaaaafaepfdejfeejepeoaaeoepfcenebemaaepfdeheo
+laaaaaaaagaaaaaaaiaaaaaajiaaaaaaaaaaaaaaabaaaaaaadaaaaaaaaaaaaaa
+apaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapaaaaaakeaaaaaa
+abaaaaaaaaaaaaaaadaaaaaaacaaaaaaabaoaaaakeaaaaaaacaaaaaaaaaaaaaa
+adaaaaaaacaaaaaaacanaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
+apaaaaaakeaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaafdfgfpfa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcpaafaaaaeaaaabaa
+hmabaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaaabaaaaaa
+baaaaaaafpaaaaadpcbabaaaaaaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaa
+gfaaaaadpccabaaaabaaaaaagfaaaaadbccabaaaacaaaaaagfaaaaadcccabaaa
+acaaaaaagfaaaaadpccabaaaadaaaaaagfaaaaadpccabaaaaeaaaaaagiaaaaac
+aeaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaabaaaaaa
+abaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaaagbabaaa
+aaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaa
+acaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaaaaaaaaa
+egiocaaaabaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaai
+pcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaaaaaaaaaapaaaaaadcaaaaak
+pcaabaaaaaaaaaaaegiocaaaaaaaaaaaaoaaaaaaagbabaaaaaaaaaaaegaobaaa
+aaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaabaaaaaaakgbkbaaa
+aaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaabaaaaaaegiocaaaaaaaaaaa
+bbaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadgaaaaagbcaabaaaaaaaaaaa
+ckiacaaaaaaaaaaaaoaaaaaadgaaaaagccaabaaaaaaaaaaackiacaaaaaaaaaaa
+apaaaaaadgaaaaagecaabaaaaaaaaaaackiacaaaaaaaaaaabaaaaaaabaaaaaah
+icaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaa
+aaaaaaaadkaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaapgapbaaaaaaaaaaa
+egacbaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaafgbfbaaaaaaaaaaaegiocaaa
+abaaaaaaanaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaabaaaaaaamaaaaaa
+agbabaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaa
+abaaaaaaaoaaaaaakgbkbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpcaabaaa
+abaaaaaaegiocaaaabaaaaaaapaaaaaapgbpbaaaaaaaaaaaegaobaaaabaaaaaa
+aaaaaaajhcaabaaaacaaaaaaegacbaiaebaaaaaaabaaaaaajgihcaaaaaaaaaaa
+anaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaa
+eeaaaaaficaabaaaacaaaaaadkaabaaaaaaaaaaadiaaaaahhcaabaaaadaaaaaa
+pgapbaaaacaaaaaaegacbaaaacaaaaaabaaaaaaibcaabaaaacaaaaaaegacbaaa
+acaaaaaaegiccaaaaaaaaaaaamaaaaaabaaaaaaibccabaaaacaaaaaaegacbaia
+ebaaaaaaadaaaaaaegacbaaaaaaaaaaaelaaaaafcccabaaaacaaaaaadkaabaaa
+aaaaaaaadcaaaaakbcaabaaaaaaaaaaaakaabaiaebaaaaaaacaaaaaaakaabaaa
+acaaaaaadkaabaaaaaaaaaaaelaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+bnaaaaahccaabaaaaaaaaaaaakaabaaaacaaaaaaabeaaaaaaaaaaaaabnaaaaai
+ecaabaaaaaaaaaaaakiacaaaaaaaaaaaanaaaaaaakaabaaaaaaaaaaadiaaaaah
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaambcaabaaa
+aaaaaaaaakiacaaaaaaaaaaaanaaaaaaakiacaaaaaaaaaaaanaaaaaaakaabaia
+ebaaaaaaaaaaaaaaelaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaai
+bcaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaakaabaaaacaaaaaaabaaaaak
+gcaabaaaaaaaaaaafgagbaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaiadpaaaaiadp
+aaaaaaaadiaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
+diaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaadcaaaaak
+pcaabaaaaaaaaaaaegiocaaaaaaaaaaaamaaaaaaagaabaaaaaaaaaaaegaobaaa
+abaaaaaadgaaaaafpccabaaaadaaaaaaegaobaaaaaaaaaaadiaaaaaipcaabaaa
+abaaaaaafgafbaaaaaaaaaaaegiocaaaaaaaaaaaacaaaaaadcaaaaakpcaabaaa
+abaaaaaaegiocaaaaaaaaaaaabaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaa
+dcaaaaakpcaabaaaabaaaaaaegiocaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
+egaobaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaaaeaaaaaa
+pgapbaaaaaaaaaaaegaobaaaabaaaaaadgaaaaagpccabaaaaeaaaaaaegaobaia
+ebaaaaaaaaaaaaaadoaaaaab"
 }
 
 SubProgram "gles " {
@@ -385,80 +269,45 @@ Keywords { }
 
 #ifdef VERTEX
 
-varying highp vec4 xlv_TEXCOORD5;
 varying highp vec4 xlv_TEXCOORD4;
-varying mediump float xlv_TEXCOORD3;
-varying mediump float xlv_TEXCOORD2;
+varying highp vec4 xlv_TEXCOORD3;
+varying highp float xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
 varying highp vec4 xlv_TEXCOORD0;
 uniform highp mat4 _Projector;
 uniform highp vec3 _PlanetOrigin;
 uniform highp float _Radius;
 uniform highp vec4 _SunDir;
-uniform highp vec4 _MainOffset;
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _Object2World;
 uniform highp mat4 glstate_matrix_mvp;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
   mediump float sphereCheck_1;
-  highp vec4 tmpvar_2;
+  highp vec3 tmpvar_2;
+  tmpvar_2.x = _Projector[0].z;
+  tmpvar_2.y = _Projector[1].z;
+  tmpvar_2.z = _Projector[2].z;
   highp vec4 tmpvar_3;
-  highp float tmpvar_4;
-  mediump float tmpvar_5;
-  mediump float tmpvar_6;
-  tmpvar_3 = (_Projector * _glesVertex);
-  tmpvar_2 = (glstate_matrix_mvp * _glesVertex);
-  highp vec3 tmpvar_7;
-  tmpvar_7.x = _Projector[0].z;
-  tmpvar_7.y = _Projector[1].z;
-  tmpvar_7.z = _Projector[2].z;
-  tmpvar_4 = clamp (dot (-(normalize(_glesNormal)), normalize(tmpvar_7)), 0.0, 1.0);
-  highp float tmpvar_8;
-  tmpvar_8 = (sign(_MainOffset.y) * (1.5708 - (sqrt((1.0 - abs(_MainOffset.y))) * (1.5708 + (abs(_MainOffset.y) * (-0.214602 + (abs(_MainOffset.y) * (0.0865667 + (abs(_MainOffset.y) * -0.0310296)))))))));
-  tmpvar_5 = tmpvar_8;
-  highp float r_9;
-  if ((abs(_MainOffset.z) > (1e-08 * abs(_MainOffset.x)))) {
-    highp float y_over_x_10;
-    y_over_x_10 = (_MainOffset.x / _MainOffset.z);
-    highp float s_11;
-    highp float x_12;
-    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
-    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
-    r_9 = s_11;
-    if ((_MainOffset.z < 0.0)) {
-      if ((_MainOffset.x >= 0.0)) {
-        r_9 = (s_11 + 3.14159);
-      } else {
-        r_9 = (r_9 - 3.14159);
-      };
-    };
-  } else {
-    r_9 = (sign(_MainOffset.x) * 1.5708);
-  };
-  tmpvar_6 = r_9;
-  highp vec4 tmpvar_13;
-  tmpvar_13 = (_Object2World * _glesVertex);
-  highp vec3 tmpvar_14;
-  tmpvar_14 = (_PlanetOrigin - tmpvar_13.xyz);
-  highp float tmpvar_15;
-  tmpvar_15 = dot (tmpvar_14, _SunDir.xyz);
-  highp float tmpvar_16;
-  tmpvar_16 = sqrt((dot (tmpvar_14, tmpvar_14) - (tmpvar_15 * tmpvar_15)));
-  highp float tmpvar_17;
-  tmpvar_17 = (float((_Radius >= tmpvar_16)) * float((tmpvar_15 >= 0.0)));
-  sphereCheck_1 = tmpvar_17;
-  highp vec4 tmpvar_18;
-  tmpvar_18 = (tmpvar_13 + (_SunDir * mix (0.0, (tmpvar_15 - sqrt(((_Radius * _Radius) - pow (tmpvar_16, 2.0)))), sphereCheck_1)));
-  gl_Position = tmpvar_2;
-  xlv_TEXCOORD0 = tmpvar_3;
-  xlv_TEXCOORD1 = tmpvar_4;
-  xlv_TEXCOORD2 = tmpvar_5;
-  xlv_TEXCOORD3 = tmpvar_6;
-  xlv_TEXCOORD4 = tmpvar_18;
-  xlv_TEXCOORD5 = -((_MainRotation * tmpvar_18));
+  tmpvar_3 = (_Object2World * _glesVertex);
+  highp vec3 tmpvar_4;
+  tmpvar_4 = (_PlanetOrigin - tmpvar_3.xyz);
+  highp float tmpvar_5;
+  tmpvar_5 = dot (tmpvar_4, _SunDir.xyz);
+  highp float tmpvar_6;
+  tmpvar_6 = sqrt((dot (tmpvar_4, tmpvar_4) - (tmpvar_5 * tmpvar_5)));
+  highp float tmpvar_7;
+  tmpvar_7 = (float((_Radius >= tmpvar_6)) * float((tmpvar_5 >= 0.0)));
+  sphereCheck_1 = tmpvar_7;
+  highp vec4 tmpvar_8;
+  tmpvar_8 = (tmpvar_3 + (_SunDir * mix (0.0, (tmpvar_5 - sqrt(((_Radius * _Radius) - pow (tmpvar_6, 2.0)))), sphereCheck_1)));
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = (_Projector * _glesVertex);
+  xlv_TEXCOORD1 = dot (-(normalize(tmpvar_4)), normalize(tmpvar_2));
+  xlv_TEXCOORD2 = sqrt(dot (tmpvar_4, tmpvar_4));
+  xlv_TEXCOORD3 = tmpvar_8;
+  xlv_TEXCOORD4 = -((_MainRotation * tmpvar_8));
 }
 
 
@@ -468,9 +317,11 @@ void main ()
 
 #extension GL_EXT_shader_texture_lod : enable
 #extension GL_OES_standard_derivatives : enable
-varying highp vec4 xlv_TEXCOORD5;
+varying highp vec4 xlv_TEXCOORD4;
+varying highp float xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
 varying highp vec4 xlv_TEXCOORD0;
+uniform highp float _Radius;
 uniform sampler2D _MainTex;
 void main ()
 {
@@ -478,11 +329,11 @@ void main ()
   lowp vec4 color_2;
   mediump float dirCheck_3;
   highp float tmpvar_4;
-  tmpvar_4 = (clamp (floor((xlv_TEXCOORD0.w + 1.0)), 0.0, 1.0) * xlv_TEXCOORD1);
+  tmpvar_4 = ((float((xlv_TEXCOORD0.w >= 0.0)) * float((xlv_TEXCOORD1 >= 0.0))) * float((_Radius >= xlv_TEXCOORD2)));
   dirCheck_3 = tmpvar_4;
   mediump vec4 tex_5;
   highp vec3 tmpvar_6;
-  tmpvar_6 = normalize(xlv_TEXCOORD5.xyz);
+  tmpvar_6 = normalize(xlv_TEXCOORD4.xyz);
   highp vec2 uv_7;
   highp float r_8;
   if ((abs(tmpvar_6.z) > (1e-08 * abs(tmpvar_6.x)))) {
@@ -540,80 +391,45 @@ Keywords { }
 
 #ifdef VERTEX
 
-varying highp vec4 xlv_TEXCOORD5;
 varying highp vec4 xlv_TEXCOORD4;
-varying mediump float xlv_TEXCOORD3;
-varying mediump float xlv_TEXCOORD2;
+varying highp vec4 xlv_TEXCOORD3;
+varying highp float xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
 varying highp vec4 xlv_TEXCOORD0;
 uniform highp mat4 _Projector;
 uniform highp vec3 _PlanetOrigin;
 uniform highp float _Radius;
 uniform highp vec4 _SunDir;
-uniform highp vec4 _MainOffset;
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _Object2World;
 uniform highp mat4 glstate_matrix_mvp;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
   mediump float sphereCheck_1;
-  highp vec4 tmpvar_2;
+  highp vec3 tmpvar_2;
+  tmpvar_2.x = _Projector[0].z;
+  tmpvar_2.y = _Projector[1].z;
+  tmpvar_2.z = _Projector[2].z;
   highp vec4 tmpvar_3;
-  highp float tmpvar_4;
-  mediump float tmpvar_5;
-  mediump float tmpvar_6;
-  tmpvar_3 = (_Projector * _glesVertex);
-  tmpvar_2 = (glstate_matrix_mvp * _glesVertex);
-  highp vec3 tmpvar_7;
-  tmpvar_7.x = _Projector[0].z;
-  tmpvar_7.y = _Projector[1].z;
-  tmpvar_7.z = _Projector[2].z;
-  tmpvar_4 = clamp (dot (-(normalize(_glesNormal)), normalize(tmpvar_7)), 0.0, 1.0);
-  highp float tmpvar_8;
-  tmpvar_8 = (sign(_MainOffset.y) * (1.5708 - (sqrt((1.0 - abs(_MainOffset.y))) * (1.5708 + (abs(_MainOffset.y) * (-0.214602 + (abs(_MainOffset.y) * (0.0865667 + (abs(_MainOffset.y) * -0.0310296)))))))));
-  tmpvar_5 = tmpvar_8;
-  highp float r_9;
-  if ((abs(_MainOffset.z) > (1e-08 * abs(_MainOffset.x)))) {
-    highp float y_over_x_10;
-    y_over_x_10 = (_MainOffset.x / _MainOffset.z);
-    highp float s_11;
-    highp float x_12;
-    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
-    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
-    r_9 = s_11;
-    if ((_MainOffset.z < 0.0)) {
-      if ((_MainOffset.x >= 0.0)) {
-        r_9 = (s_11 + 3.14159);
-      } else {
-        r_9 = (r_9 - 3.14159);
-      };
-    };
-  } else {
-    r_9 = (sign(_MainOffset.x) * 1.5708);
-  };
-  tmpvar_6 = r_9;
-  highp vec4 tmpvar_13;
-  tmpvar_13 = (_Object2World * _glesVertex);
-  highp vec3 tmpvar_14;
-  tmpvar_14 = (_PlanetOrigin - tmpvar_13.xyz);
-  highp float tmpvar_15;
-  tmpvar_15 = dot (tmpvar_14, _SunDir.xyz);
-  highp float tmpvar_16;
-  tmpvar_16 = sqrt((dot (tmpvar_14, tmpvar_14) - (tmpvar_15 * tmpvar_15)));
-  highp float tmpvar_17;
-  tmpvar_17 = (float((_Radius >= tmpvar_16)) * float((tmpvar_15 >= 0.0)));
-  sphereCheck_1 = tmpvar_17;
-  highp vec4 tmpvar_18;
-  tmpvar_18 = (tmpvar_13 + (_SunDir * mix (0.0, (tmpvar_15 - sqrt(((_Radius * _Radius) - pow (tmpvar_16, 2.0)))), sphereCheck_1)));
-  gl_Position = tmpvar_2;
-  xlv_TEXCOORD0 = tmpvar_3;
-  xlv_TEXCOORD1 = tmpvar_4;
-  xlv_TEXCOORD2 = tmpvar_5;
-  xlv_TEXCOORD3 = tmpvar_6;
-  xlv_TEXCOORD4 = tmpvar_18;
-  xlv_TEXCOORD5 = -((_MainRotation * tmpvar_18));
+  tmpvar_3 = (_Object2World * _glesVertex);
+  highp vec3 tmpvar_4;
+  tmpvar_4 = (_PlanetOrigin - tmpvar_3.xyz);
+  highp float tmpvar_5;
+  tmpvar_5 = dot (tmpvar_4, _SunDir.xyz);
+  highp float tmpvar_6;
+  tmpvar_6 = sqrt((dot (tmpvar_4, tmpvar_4) - (tmpvar_5 * tmpvar_5)));
+  highp float tmpvar_7;
+  tmpvar_7 = (float((_Radius >= tmpvar_6)) * float((tmpvar_5 >= 0.0)));
+  sphereCheck_1 = tmpvar_7;
+  highp vec4 tmpvar_8;
+  tmpvar_8 = (tmpvar_3 + (_SunDir * mix (0.0, (tmpvar_5 - sqrt(((_Radius * _Radius) - pow (tmpvar_6, 2.0)))), sphereCheck_1)));
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = (_Projector * _glesVertex);
+  xlv_TEXCOORD1 = dot (-(normalize(tmpvar_4)), normalize(tmpvar_2));
+  xlv_TEXCOORD2 = sqrt(dot (tmpvar_4, tmpvar_4));
+  xlv_TEXCOORD3 = tmpvar_8;
+  xlv_TEXCOORD4 = -((_MainRotation * tmpvar_8));
 }
 
 
@@ -623,9 +439,11 @@ void main ()
 
 #extension GL_EXT_shader_texture_lod : enable
 #extension GL_OES_standard_derivatives : enable
-varying highp vec4 xlv_TEXCOORD5;
+varying highp vec4 xlv_TEXCOORD4;
+varying highp float xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
 varying highp vec4 xlv_TEXCOORD0;
+uniform highp float _Radius;
 uniform sampler2D _MainTex;
 void main ()
 {
@@ -633,11 +451,11 @@ void main ()
   lowp vec4 color_2;
   mediump float dirCheck_3;
   highp float tmpvar_4;
-  tmpvar_4 = (clamp (floor((xlv_TEXCOORD0.w + 1.0)), 0.0, 1.0) * xlv_TEXCOORD1);
+  tmpvar_4 = ((float((xlv_TEXCOORD0.w >= 0.0)) * float((xlv_TEXCOORD1 >= 0.0))) * float((_Radius >= xlv_TEXCOORD2)));
   dirCheck_3 = tmpvar_4;
   mediump vec4 tex_5;
   highp vec3 tmpvar_6;
-  tmpvar_6 = normalize(xlv_TEXCOORD5.xyz);
+  tmpvar_6 = normalize(xlv_TEXCOORD4.xyz);
   highp vec2 uv_7;
   highp float r_8;
   if ((abs(tmpvar_6.z) > (1e-08 * abs(tmpvar_6.x)))) {
@@ -699,27 +517,7 @@ Keywords { }
 in vec4 _glesVertex;
 #define gl_Normal (normalize(_glesNormal))
 in vec3 _glesNormal;
-float xll_saturate_f( float x) {
-  return clamp( x, 0.0, 1.0);
-}
-vec2 xll_saturate_vf2( vec2 x) {
-  return clamp( x, 0.0, 1.0);
-}
-vec3 xll_saturate_vf3( vec3 x) {
-  return clamp( x, 0.0, 1.0);
-}
-vec4 xll_saturate_vf4( vec4 x) {
-  return clamp( x, 0.0, 1.0);
-}
-mat2 xll_saturate_mf2x2(mat2 m) {
-  return mat2( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0));
-}
-mat3 xll_saturate_mf3x3(mat3 m) {
-  return mat3( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0));
-}
-mat4 xll_saturate_mf4x4(mat4 m) {
-  return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
-}
+
 #line 151
 struct v2f_vertex_lit {
     highp vec2 uv;
@@ -736,17 +534,16 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 367
+#line 379
 struct v2f {
     highp vec4 pos;
     highp vec4 posProj;
     highp float dotcoeff;
-    mediump float latitude;
-    mediump float longitude;
+    highp float originDist;
     highp vec4 worldPos;
     highp vec4 mainPos;
 };
-#line 361
+#line 373
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -845,54 +642,52 @@ uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
 uniform sampler2D _MainTex;
 uniform highp vec4 _MainOffset;
-#line 353
+#line 365
 uniform sampler2D _DetailTex;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
 uniform highp float _DetailDist;
-#line 357
+#line 369
 uniform highp vec4 _SunDir;
 uniform highp float _Radius;
 uniform highp vec3 _PlanetOrigin;
 uniform highp mat4 _Projector;
-#line 378
-#line 403
-#line 378
+#line 389
+#line 413
+#line 389
 v2f vert( in appdata_t v ) {
     v2f o;
     o.posProj = (_Projector * v.vertex);
-    #line 382
+    #line 393
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 normView = normalize(vec3( _Projector[0][2], _Projector[1][2], _Projector[2][2]));
-    o.dotcoeff = xll_saturate_f(dot( (-v.normal), normView));
-    o.latitude = asin(_MainOffset.y);
-    #line 386
-    o.longitude = atan( _MainOffset.x, _MainOffset.z);
     highp vec4 vertexPos = (_Object2World * v.vertex);
     o.worldPos = vertexPos;
+    #line 397
     highp vec3 worldOrigin = _PlanetOrigin;
-    #line 390
     highp vec3 L = (worldOrigin - vec3( vertexPos));
+    o.dotcoeff = dot( (-normalize(L)), normView);
+    o.originDist = length(L);
+    #line 401
     highp float tc = dot( L, vec3( _SunDir));
     highp float d = sqrt((dot( L, L) - (tc * tc)));
     highp float d2 = pow( d, 2.0);
-    #line 394
     highp float td = sqrt((dot( L, L) - d2));
+    #line 405
     highp float sphereRadius = _Radius;
     mediump float sphereCheck = (step( d, sphereRadius) * step( 0.0, tc));
     highp float tlc = sqrt(((sphereRadius * sphereRadius) - d2));
-    #line 398
     highp float sphereDist = mix( 0.0, (tc - tlc), sphereCheck);
+    #line 409
     o.worldPos = (vertexPos + (_SunDir * sphereDist));
     o.mainPos = (-(_MainRotation * o.worldPos));
     return o;
 }
 out highp vec4 xlv_TEXCOORD0;
 out highp float xlv_TEXCOORD1;
-out mediump float xlv_TEXCOORD2;
-out mediump float xlv_TEXCOORD3;
+out highp float xlv_TEXCOORD2;
+out highp vec4 xlv_TEXCOORD3;
 out highp vec4 xlv_TEXCOORD4;
-out highp vec4 xlv_TEXCOORD5;
 void main() {
     v2f xl_retval;
     appdata_t xlt_v;
@@ -902,10 +697,9 @@ void main() {
     gl_Position = vec4(xl_retval.pos);
     xlv_TEXCOORD0 = vec4(xl_retval.posProj);
     xlv_TEXCOORD1 = float(xl_retval.dotcoeff);
-    xlv_TEXCOORD2 = float(xl_retval.latitude);
-    xlv_TEXCOORD3 = float(xl_retval.longitude);
-    xlv_TEXCOORD4 = vec4(xl_retval.worldPos);
-    xlv_TEXCOORD5 = vec4(xl_retval.mainPos);
+    xlv_TEXCOORD2 = float(xl_retval.originDist);
+    xlv_TEXCOORD3 = vec4(xl_retval.worldPos);
+    xlv_TEXCOORD4 = vec4(xl_retval.mainPos);
 }
 
 
@@ -996,17 +790,16 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 367
+#line 379
 struct v2f {
     highp vec4 pos;
     highp vec4 posProj;
     highp float dotcoeff;
-    mediump float latitude;
-    mediump float longitude;
+    highp float originDist;
     highp vec4 worldPos;
     highp vec4 mainPos;
 };
-#line 361
+#line 373
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -1105,18 +898,18 @@ uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
 uniform sampler2D _MainTex;
 uniform highp vec4 _MainOffset;
-#line 353
+#line 365
 uniform sampler2D _DetailTex;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
 uniform highp float _DetailDist;
-#line 357
+#line 369
 uniform highp vec4 _SunDir;
 uniform highp float _Radius;
 uniform highp vec3 _PlanetOrigin;
 uniform highp mat4 _Projector;
-#line 378
-#line 403
+#line 389
+#line 413
 #line 317
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
     #line 319
@@ -1148,11 +941,11 @@ mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
     #line 349
     return tex;
 }
-#line 403
+#line 413
 lowp vec4 frag( in v2f IN ) {
-    mediump float dirCheck = (xll_saturate_f(floor((IN.posProj.w + 1.0))) * IN.dotcoeff);
+    mediump float dirCheck = ((step( 0.0, IN.posProj.w) * step( 0.0, IN.dotcoeff)) * step( IN.originDist, _Radius));
     mediump vec4 main = GetSphereMap( _MainTex, vec3( IN.mainPos));
-    #line 407
+    #line 417
     lowp vec4 color = main;
     color.w = (1.2 * (1.2 - color.w));
     color = xll_saturate_vf4(color);
@@ -1160,20 +953,18 @@ lowp vec4 frag( in v2f IN ) {
 }
 in highp vec4 xlv_TEXCOORD0;
 in highp float xlv_TEXCOORD1;
-in mediump float xlv_TEXCOORD2;
-in mediump float xlv_TEXCOORD3;
+in highp float xlv_TEXCOORD2;
+in highp vec4 xlv_TEXCOORD3;
 in highp vec4 xlv_TEXCOORD4;
-in highp vec4 xlv_TEXCOORD5;
 void main() {
     lowp vec4 xl_retval;
     v2f xlt_IN;
     xlt_IN.pos = vec4(0.0);
     xlt_IN.posProj = vec4(xlv_TEXCOORD0);
     xlt_IN.dotcoeff = float(xlv_TEXCOORD1);
-    xlt_IN.latitude = float(xlv_TEXCOORD2);
-    xlt_IN.longitude = float(xlv_TEXCOORD3);
-    xlt_IN.worldPos = vec4(xlv_TEXCOORD4);
-    xlt_IN.mainPos = vec4(xlv_TEXCOORD5);
+    xlt_IN.originDist = float(xlv_TEXCOORD2);
+    xlt_IN.worldPos = vec4(xlv_TEXCOORD3);
+    xlt_IN.mainPos = vec4(xlv_TEXCOORD4);
     xl_retval = frag( xlt_IN);
     gl_FragData[0] = vec4(xl_retval);
 }
@@ -1185,8 +976,8 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 1
-//   d3d9 - ALU: 63 to 63, TEX: 3 to 3
-//   d3d11 - ALU: 53 to 53, TEX: 0 to 0, FLOW: 1 to 1
+//   d3d9 - ALU: 65 to 65, TEX: 3 to 3
+//   d3d11 - ALU: 57 to 57, TEX: 0 to 0, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { }
 "!!GLSL"
@@ -1194,22 +985,23 @@ Keywords { }
 
 SubProgram "d3d9 " {
 Keywords { }
+Float 0 [_Radius]
 SetTexture 0 [_MainTex] 2D
 "ps_3_0
-; 63 ALU, 3 TEX
+; 65 ALU, 3 TEX
 dcl_2d s0
-def c0, 1.00000000, -0.01348047, 0.05747731, -0.12123910
-def c1, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c2, 3.14159298, 0.00000000, 1.00000000, -0.21211439
-def c3, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c4, 0.31830987, 0.15915494, 0.50000000, 1.20019531
-def c5, -1.00000000, 0, 0, 0
+def c1, 1.00000000, 0.00000000, -0.01348047, 0.05747731
+def c2, -0.12123910, 0.19563590, -0.33299461, 0.99999559
+def c3, 1.57079601, 3.14159298, -0.01872930, 0.07426100
+def c4, -0.21211439, 1.57072902, 2.00000000, 0.31830987
+def c5, 0.15915494, 0.50000000, 1.20019531, -1.00000000
 dcl_texcoord0 v0.xyzw
 dcl_texcoord1 v1.x
-dcl_texcoord5 v2.xyz
-dp3 r0.x, v2, v2
+dcl_texcoord2 v2.x
+dcl_texcoord4 v3.xyz
+dp3 r0.x, v3, v3
 rsq r0.x, r0.x
-mul r0.xyz, r0.x, v2
+mul r0.xyz, r0.x, v3
 abs r0.w, r0.z
 abs r1.x, r0
 max r1.y, r1.x, r0.w
@@ -1219,31 +1011,31 @@ mul r1.y, r1, r1.z
 mul r1.z, r1.y, r1.y
 add r1.x, r1, -r0.w
 abs r0.w, r0.y
-mad r1.w, r1.z, c0.y, c0.z
-mad r1.w, r1, r1.z, c0
-mad r1.w, r1, r1.z, c1.x
-mad r1.w, r1, r1.z, c1.y
-mad r1.z, r1.w, r1, c1
+mad r1.w, r1.z, c1.z, c1
+mad r1.w, r1, r1.z, c2.x
+mad r1.w, r1, r1.z, c2.y
+mad r1.w, r1, r1.z, c2.z
+mad r1.z, r1.w, r1, c2.w
 mul r1.y, r1.z, r1
-add r1.z, -r1.y, c1.w
+add r1.z, -r1.y, c3.x
 cmp r1.x, -r1, r1.y, r1.z
-add r1.z, -r0.w, c0.x
-mad r1.y, r0.w, c3.x, c3
-mad r1.y, r1, r0.w, c2.w
+add r1.z, -r0.w, c1.x
+mad r1.y, r0.w, c3.z, c3.w
+mad r1.y, r1, r0.w, c4.x
 rsq r1.z, r1.z
 rcp r1.z, r1.z
-mad r0.w, r1.y, r0, c3.z
+mad r0.w, r1.y, r0, c4.y
 mul r0.w, r0, r1.z
-add r1.z, -r1.x, c2.x
+add r1.z, -r1.x, c3.y
 cmp r1.x, r0.z, r1, r1.z
-cmp r0.y, r0, c2, c2.z
+cmp r0.y, r0, c1, c1.x
 mul r1.y, r0, r0.w
-mad r0.w, -r1.y, c3, r0
-mad r0.y, r0, c2.x, r0.w
+mad r0.w, -r1.y, c4.z, r0
+mad r0.y, r0, c3, r0.w
 cmp r0.w, r0.x, r1.x, -r1.x
 dsx r1.zw, r0.xyxz
-mul r0.y, r0, c4.x
-mad r1.x, r0.w, c4.y, c4.z
+mul r0.y, r0, c4.w
+mad r1.x, r0.w, c5, c5.y
 dsy r0.xz, r0
 mul r0.xz, r0, r0
 add r0.z, r0.x, r0
@@ -1256,94 +1048,103 @@ dsx r0.w, r0.y
 dsy r0.y, r0
 rcp r0.x, r0.x
 rcp r1.z, r0.z
-mul r0.z, r0.x, c4.y
-mul r0.x, r1.z, c4.y
+mul r0.z, r0.x, c5.x
+mul r0.x, r1.z, c5
 texldd r0.w, r1, s0, r0.zwzw, r0
-add r0.x, v0.w, c0
-frc r0.y, r0.x
-add_sat r0.x, r0, -r0.y
-add_pp r0.z, -r0.w, c4.w
-mul_pp_sat r0.z, r0, c4.w
-add_pp r0.y, r0.z, c5.x
-mul r0.x, r0, v1
-mad_pp oC0, r0.x, r0.y, c0.x
+add_pp r0.x, -r0.w, c5.z
+mul_pp_sat r0.y, r0.x, c5.z
+add r0.x, -v2, c0
+add_pp r0.w, r0.y, c5
+cmp r0.z, r0.x, c1.x, c1.y
+cmp r0.y, v1.x, c1.x, c1
+cmp r0.x, v0.w, c1, c1.y
+mul r0.x, r0, r0.y
+mul r0.x, r0, r0.z
+mad_pp oC0, r0.x, r0.w, c1.x
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { }
+ConstBuffer "$Globals" 288 // 212 used size, 11 vars
+Float 208 [_Radius]
+BindCB "$Globals" 0
 SetTexture 0 [_MainTex] 2D 0
-// 56 instructions, 4 temp regs, 0 temp arrays:
-// ALU 49 float, 0 int, 4 uint
+// 60 instructions, 4 temp regs, 0 temp arrays:
+// ALU 51 float, 0 int, 6 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedjonphijmlffgldpnhnnlfobdkcochmjaabaaaaaadaaiaaaaadaaaaaa
-cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
-aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaabaaaaaaapaiaaaalmaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
-ababaaaalmaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaacaaaaaalmaaaaaa
-adaaaaaaaaaaaaaaadaaaaaaacaaaaaaaeaaaaaalmaaaaaaaeaaaaaaaaaaaaaa
-adaaaaaaadaaaaaaapaaaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaaeaaaaaa
-apahaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
-cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcpiagaaaaeaaaaaaaloabaaaa
-fkaaaaadaagabaaaaaaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaagcbaaaad
-icbabaaaabaaaaaagcbaaaadbcbabaaaacaaaaaagcbaaaadhcbabaaaaeaaaaaa
-gfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaabaaaaaahbcaabaaaaaaaaaaa
-egbcbaaaaeaaaaaaegbcbaaaaeaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
-aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaigbbbaaaaeaaaaaa
-deaaaaajicaabaaaaaaaaaaabkaabaiaibaaaaaaaaaaaaaaakaabaiaibaaaaaa
-aaaaaaaaaoaaaaakicaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
-aaaaiadpdkaabaaaaaaaaaaaddaaaaajbcaabaaaabaaaaaabkaabaiaibaaaaaa
-aaaaaaaaakaabaiaibaaaaaaaaaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaa
-aaaaaaaaakaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadcaaaaajccaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaa
-fpkokkdmabeaaaaadgfkkolndcaaaaajccaabaaaabaaaaaaakaabaaaabaaaaaa
-bkaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajccaabaaaabaaaaaaakaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaajbcaabaaaabaaaaaa
-akaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaadiphhpdpdiaaaaahccaabaaa
-abaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaajccaabaaaabaaaaaa
-bkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajecaabaaa
-abaaaaaabkaabaiaibaaaaaaaaaaaaaaakaabaiaibaaaaaaaaaaaaaaabaaaaah
-ccaabaaaabaaaaaackaabaaaabaaaaaabkaabaaaabaaaaaadcaaaaajicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaadbaaaaai
-dcaabaaaabaaaaaajgafbaaaaaaaaaaajgafbaiaebaaaaaaaaaaaaaaabaaaaah
-bcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaanlapejmaaaaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaddaaaaahbcaabaaaabaaaaaa
-bkaabaaaaaaaaaaaakaabaaaaaaaaaaadbaaaaaibcaabaaaabaaaaaaakaabaaa
-abaaaaaaakaabaiaebaaaaaaabaaaaaadeaaaaahecaabaaaabaaaaaabkaabaaa
-aaaaaaaaakaabaaaaaaaaaaabnaaaaaiecaabaaaabaaaaaackaabaaaabaaaaaa
-ckaabaiaebaaaaaaabaaaaaaabaaaaahbcaabaaaabaaaaaackaabaaaabaaaaaa
-akaabaaaabaaaaaadhaaaaakicaabaaaaaaaaaaaakaabaaaabaaaaaadkaabaia
-ebaaaaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajbcaabaaaacaaaaaadkaabaaa
-aaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaaaaaaaaaa
-ckaabaiaibaaaaaaaaaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaak
-icaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaiaibaaaaaaaaaaaaaaabeaaaaa
-iedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaiaibaaaaaa
-aaaaaaaaabeaaaaakeanmjdpaaaaaaaiecaabaaaaaaaaaaackaabaiambaaaaaa
-aaaaaaaaabeaaaaaaaaaiadpelaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaa
-diaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaaj
-bcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejea
-abaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaaj
-ecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaaakaabaaaabaaaaaa
-diaaaaahccaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoalaaaaaf
-ccaabaaaabaaaaaabkaabaaaacaaaaaaamaaaaafccaabaaaadaaaaaabkaabaaa
-acaaaaaaalaaaaafmcaabaaaaaaaaaaaagaebaaaaaaaaaaaamaaaaafdcaabaaa
-aaaaaaaaegaabaaaaaaaaaaaapaaaaahbcaabaaaaaaaaaaaegaabaaaaaaaaaaa
-egaabaaaaaaaaaaaelaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
-bcaabaaaadaaaaaaakaabaaaaaaaaaaaabeaaaaaidpjccdoapaaaaahbcaabaaa
-aaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaaakaabaaaaaaaaaaaabeaaaaa
-idpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaacaaaaaaeghobaaaaaaaaaaa
-aagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaadaaaaaaaaaaaaaibcaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaajkjjjjdpdicaaaahbcaabaaa
-aaaaaaaaakaabaaaaaaaaaaaabeaaaaajkjjjjdpaaaaaaahbcaabaaaaaaaaaaa
-akaabaaaaaaaaaaaabeaaaaaaaaaialpaaaaaaahccaabaaaaaaaaaaadkbabaaa
-abaaaaaaabeaaaaaaaaaiadpebcaaaafccaabaaaaaaaaaaabkaabaaaaaaaaaaa
-diaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaaakbabaaaacaaaaaadcaaaaam
-pccabaaaaaaaaaaafgafbaaaaaaaaaaaagaabaaaaaaaaaaaaceaaaaaaaaaiadp
-aaaaiadpaaaaiadpaaaaiadpdoaaaaab"
+eefiecedcbaaiimjlicilbblkbbagliimncmacdmabaaaaaalmaiaaaaadaaaaaa
+cmaaaaaaoeaaaaaabiabaaaaejfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
+aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaabaaaaaaapaiaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
+ababaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaacacaaaakeaaaaaa
+adaaaaaaaaaaaaaaadaaaaaaadaaaaaaapaaaaaakeaaaaaaaeaaaaaaaaaaaaaa
+adaaaaaaaeaaaaaaapahaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
+aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcjmahaaaa
+eaaaaaaaohabaaaafjaaaaaeegiocaaaaaaaaaaaaoaaaaaafkaaaaadaagabaaa
+aaaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaagcbaaaadicbabaaaabaaaaaa
+gcbaaaadbcbabaaaacaaaaaagcbaaaadccbabaaaacaaaaaagcbaaaadhcbabaaa
+aeaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaabaaaaaahbcaabaaa
+aaaaaaaaegbcbaaaaeaaaaaaegbcbaaaaeaaaaaaeeaaaaafbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaigbbbaaa
+aeaaaaaadeaaaaajicaabaaaaaaaaaaabkaabaiaibaaaaaaaaaaaaaaakaabaia
+ibaaaaaaaaaaaaaaaoaaaaakicaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpdkaabaaaaaaaaaaaddaaaaajbcaabaaaabaaaaaabkaabaia
+ibaaaaaaaaaaaaaaakaabaiaibaaaaaaaaaaaaaadiaaaaahicaabaaaaaaaaaaa
+dkaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
+aaaaaaaadkaabaaaaaaaaaaadcaaaaajccaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajccaabaaaabaaaaaaakaabaaa
+abaaaaaabkaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajccaabaaaabaaaaaa
+akaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaajbcaabaaa
+abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaadiphhpdpdiaaaaah
+ccaabaaaabaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaajccaabaaa
+abaaaaaabkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaaj
+ecaabaaaabaaaaaabkaabaiaibaaaaaaaaaaaaaaakaabaiaibaaaaaaaaaaaaaa
+abaaaaahccaabaaaabaaaaaackaabaaaabaaaaaabkaabaaaabaaaaaadcaaaaaj
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaa
+dbaaaaaidcaabaaaabaaaaaajgafbaaaaaaaaaaajgafbaiaebaaaaaaaaaaaaaa
+abaaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaanlapejmaaaaaaaah
+icaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaddaaaaahbcaabaaa
+abaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadbaaaaaibcaabaaaabaaaaaa
+akaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaadeaaaaahecaabaaaabaaaaaa
+bkaabaaaaaaaaaaaakaabaaaaaaaaaaabnaaaaaiecaabaaaabaaaaaackaabaaa
+abaaaaaackaabaiaebaaaaaaabaaaaaaabaaaaahbcaabaaaabaaaaaackaabaaa
+abaaaaaaakaabaaaabaaaaaadhaaaaakicaabaaaaaaaaaaaakaabaaaabaaaaaa
+dkaabaiaebaaaaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajbcaabaaaacaaaaaa
+dkaabaaaaaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaa
+aaaaaaaackaabaiaibaaaaaaaaaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
+dcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaiaibaaaaaaaaaaaaaa
+abeaaaaaiedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaia
+ibaaaaaaaaaaaaaaabeaaaaakeanmjdpaaaaaaaiecaabaaaaaaaaaaackaabaia
+mbaaaaaaaaaaaaaaabeaaaaaaaaaiadpelaaaaafecaabaaaaaaaaaaackaabaaa
+aaaaaaaadiaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaa
+dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaa
+nlapejeaabaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaa
+dcaaaaajecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaaakaabaaa
+abaaaaaadiaaaaahccaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdo
+alaaaaafccaabaaaabaaaaaabkaabaaaacaaaaaaamaaaaafccaabaaaadaaaaaa
+bkaabaaaacaaaaaaalaaaaafmcaabaaaaaaaaaaaagaebaaaaaaaaaaaamaaaaaf
+dcaabaaaaaaaaaaaegaabaaaaaaaaaaaapaaaaahbcaabaaaaaaaaaaaegaabaaa
+aaaaaaaaegaabaaaaaaaaaaaelaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
+diaaaaahbcaabaaaadaaaaaaakaabaaaaaaaaaaaabeaaaaaidpjccdoapaaaaah
+bcaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaaakaabaaaaaaaaaaa
+abeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaacaaaaaaeghobaaa
+aaaaaaaaaagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaadaaaaaaaaaaaaai
+bcaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaajkjjjjdpdicaaaah
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaajkjjjjdpaaaaaaahbcaabaaa
+aaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaialpbnaaaaahccaabaaaaaaaaaaa
+dkbabaaaabaaaaaaabeaaaaaaaaaaaaabnaaaaahecaabaaaaaaaaaaaakbabaaa
+acaaaaaaabeaaaaaaaaaaaaaabaaaaakgcaabaaaaaaaaaaafgagbaaaaaaaaaaa
+aceaaaaaaaaaaaaaaaaaiadpaaaaiadpaaaaaaaadiaaaaahccaabaaaaaaaaaaa
+ckaabaaaaaaaaaaabkaabaaaaaaaaaaabnaaaaaiecaabaaaaaaaaaaaakiacaaa
+aaaaaaaaanaaaaaabkbabaaaacaaaaaaabaaaaahecaabaaaaaaaaaaackaabaaa
+aaaaaaaaabeaaaaaaaaaiadpdiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaa
+bkaabaaaaaaaaaaadcaaaaampccabaaaaaaaaaaafgafbaaaaaaaaaaaagaabaaa
+aaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -1363,7 +1164,7 @@ Keywords { }
 
 }
 
-#LINE 108
+#LINE 87
 
       }
    }  

@@ -51,5 +51,20 @@
 	    half4 tex = tex2D(texSampler, uv, uvdd.xy, uvdd.zw);
 	    return tex;
 	} 
+	
+	inline half4 GetShereDetailMap( sampler2D texSampler, float3 sphereVect, float detailScale)
+	{
+		float3 sphereVectNorm = normalize(sphereVect);
+	    float2 uv = GetSphereUV( sphereVectNorm, float2(0,0) );
+	 	float4 uvdd = Derivatives(uv.x-.5, uv.y, sphereVectNorm);
+	 	
+		sphereVectNorm = abs(sphereVectNorm);
+		half zxlerp = step(sphereVectNorm.x,sphereVectNorm.z);
+		half nylerp = step(sphereVectNorm.y,lerp(sphereVectNorm.x, sphereVectNorm.z, zxlerp));	
+		half3 detailCoords = lerp(sphereVectNorm.xyz, sphereVectNorm.zxy, zxlerp);
+		detailCoords = lerp(sphereVectNorm.yxz, detailCoords, nylerp);
+		return tex2D(texSampler, (.5*detailCoords.zy)/(abs(detailCoords.x)) *detailScale, uvdd.xy, uvdd.zw);	
+	
+	}
 			
 #endif

@@ -106,7 +106,7 @@ namespace Atmosphere
             Quaternion rotation = Quaternion.Euler(0, (float)(360f * mainRotation), 0);
             Matrix4x4 mainRotationMatrix = Matrix4x4.TRS(Vector3.zero, rotation, Vector3.one);
 
-            rotation = Quaternion.Euler(0, (float)(360f * mainRotation), 0);
+            rotation = Quaternion.Euler(0, (float)(360f * detailRotation), 0);
             Matrix4x4 detailRotationMatrix = Matrix4x4.TRS(Vector3.zero, rotation, Vector3.one);
 
             if (this.sphere != null && visible)
@@ -192,7 +192,7 @@ namespace Atmosphere
                 
                 float circumference = 2f * Mathf.PI * radius;
                 mainPeriod = (speed) / circumference;
-                detailPeriod = (speed + detailSpeed) / circumference;
+                detailPeriod = (detailSpeed) / circumference;
                 
                 if (layer2D != null)
                 {

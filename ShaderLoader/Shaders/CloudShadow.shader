@@ -40,10 +40,9 @@
            	float4 pos : SV_POSITION;
            	float4 posProj : TEXCOORD0;
            	float dotcoeff : TEXCOORD1;
-           	half latitude : TEXCOORD2;
-			half longitude : TEXCOORD3;
-			float4 worldPos : TEXCOORD4;
-			float4 mainPos : TEXCOORD5;
+           	float originDist : TEXCOORD2;
+			float4 worldPos : TEXCOORD3;
+			float4 mainPos : TEXCOORD4; 
         };
  
         v2f vert (appdata_t v) 
@@ -52,14 +51,14 @@
             o.posProj = mul(_Projector, v.vertex);
             o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
             float3 normView = normalize(float3(_Projector[2][0],_Projector[2][1], _Projector[2][2]));
-    		o.dotcoeff = saturate(dot(-v.normal, normView));
-    		o.latitude = asin(_MainOffset.y);
-			o.longitude = atan2(_MainOffset.x, _MainOffset.z);
+    		
 			float4 vertexPos = mul(_Object2World, v.vertex);
 	   	   	o.worldPos = vertexPos;
 
 	   	   	float3 worldOrigin = _PlanetOrigin;
 	   	   	float3 L = worldOrigin - vertexPos;
+	   	   	o.dotcoeff = dot(-normalize(L), normView);
+	   	   	o.originDist = length(L);
 	   	    float tc = dot(L, _SunDir);
 			float d = sqrt(dot(L,L)-(tc*tc));
 			float d2 = pow(d,2);
@@ -75,7 +74,7 @@
 		
 		fixed4 frag (v2f IN) : COLOR
 		{
-			half dirCheck = saturate(floor(IN.posProj.w + 1))*IN.dotcoeff;
+			half dirCheck = step(0, IN.posProj.w)*step(0,IN.dotcoeff)*step(IN.originDist,_Radius);
 			half4 main = GetSphereMap(_MainTex, IN.mainPos);
 			fixed4 color = main;
 			
