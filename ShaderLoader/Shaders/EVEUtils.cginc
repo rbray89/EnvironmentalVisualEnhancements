@@ -8,6 +8,10 @@
 	#define TWOPI (2.0*PI) 
 	#define INV_2PI (1.0/TWOPI)
 		
+	
+	uniform float4x4 _MainRotation;
+	uniform float4x4 _DetailRotation;
+		
 	inline float4 Derivatives( float lat, float lon, float3 pos)  
 	{  
 	    float2 latLong = float2( lat, lon );  
@@ -28,20 +32,20 @@
 	  return uv;
     }
 
-	inline half4 GetSphereMapNoLOD( sampler2D texSampler, float3 sphereVect, float2 uvOffset )  
+	inline half4 GetSphereMapNoLOD( sampler2D texSampler, float3 sphereVect)  
 	{  
 	    float4 uv;
 	    float3 sphereVectNorm = normalize(sphereVect);
-	    uv.xy = GetSphereUV( sphereVectNorm, uvOffset );
+	    uv.xy = GetSphereUV( sphereVectNorm, float2(0,0) );
 	    uv.zw = float2(0,0);
 	    half4 tex = tex2Dlod(texSampler, uv);
 	    return tex;
 	} 
 	
-	inline half4 GetSphereMap( sampler2D texSampler, float3 sphereVect, float2 uvOffset )  
+	inline half4 GetSphereMap( sampler2D texSampler, float3 sphereVect)  
 	{  
 	    float3 sphereVectNorm = normalize(sphereVect);
-	    float2 uv = GetSphereUV( sphereVectNorm, uvOffset );
+	    float2 uv = GetSphereUV( sphereVectNorm, float2(0,0) );
 	 	
 	 	float4 uvdd = Derivatives(uv.x-.5, uv.y, sphereVectNorm);
 	    half4 tex = tex2D(texSampler, uv, uvdd.xy, uvdd.zw);

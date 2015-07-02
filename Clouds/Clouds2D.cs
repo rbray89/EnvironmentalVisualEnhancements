@@ -39,6 +39,10 @@ namespace Atmosphere
         float _RimDistSub = 1.01f;
         [Persistent, InverseScaled]
         float _InvFade = .008f;
+        [Scaled]
+        float _Radius = 1000f;
+
+        public float Radius { set { _Radius = value; } }
     }
 
     class Clouds2D
@@ -121,6 +125,7 @@ namespace Atmosphere
             HalfSphere hp = new HalfSphere(radius, ref CloudMaterial, CloudShader);
             CloudMesh = hp.GameObject;
             this.radius = radius;
+            macroCloudMaterial.Radius = radius;
 
             if (shadow)
             {
@@ -189,42 +194,37 @@ namespace Atmosphere
             }
         }
 
-        internal void UpdateRotation(Quaternion rotation, Matrix4x4 World2Planet, double mainRoation, double detailRotation, Vector2 offset)
+        internal void UpdateRotation(Quaternion rotation, Matrix4x4 World2Planet, Matrix4x4 mainRotationMatrix, Matrix4x4 detailRotationMatrix)
         {
             if (rotation != null)
             {
-                SetMeshRotation(rotation, World2Planet);
+                CloudMesh.transform.localRotation = rotation;
                 if (ShadowProjector != null)
                 {
                     Vector3 worldSunDir = Vector3.Normalize(Sun.Instance.sunDirection);
                     Vector3 sunDirection = Vector3.Normalize(ShadowProjector.transform.parent.InverseTransformDirection(worldSunDir));//sunTransform.position));
                     ShadowProjector.transform.localPosition = radiusScale * -sunDirection;
                     ShadowProjector.transform.forward = worldSunDir;
+
+                    ShadowProjector.material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, -worldSunDir);
                 }
             }
-            
-            SetTextureOffset(mainRoation, offset);
+
+            SetRotations(World2Planet, mainRotationMatrix, detailRotationMatrix);
         }
 
-        private void SetMeshRotation(Quaternion rotation, Matrix4x4 World2Planet)
+        private void SetRotations(Matrix4x4 World2Planet, Matrix4x4 mainRotation, Matrix4x4 detailRotation)
         {
-            CloudMesh.transform.localRotation = rotation;
-            CloudMaterial.SetMatrix(EVEManagerClass.WORLD_2_PLANET_PROPERTY, (World2Planet*CloudMesh.transform.localToWorldMatrix));
-        }
-
-        private void SetTextureOffset(double texRotation, Vector2 offset)
-        {
-            
-            Vector2 texOffset = new Vector2((float)texRotation + offset.x, offset.y);
-            CloudMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, texOffset);
+            Matrix4x4 rotation = mainRotation*(World2Planet * CloudMesh.transform.localToWorldMatrix);
+            CloudMaterial.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, rotation);
+            CloudMaterial.SetMatrix(EVEManagerClass.DETAIL_ROTATION_PROPERTY, detailRotation);
 
             if (ShadowProjector != null)
             {
                 
-                Vector4 texVect = ShadowProjector.transform.localPosition.normalized;
-
-                texVect.w = ((float)texRotation + offset.x + .25f);
-                ShadowProjector.material.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, texVect);
+               // Vector4 texVect = ShadowProjector.transform.localPosition.normalized;
+                ShadowProjector.material.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, mainRotation * ShadowProjector.transform.parent.worldToLocalMatrix);
+                ShadowProjector.material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, CloudMesh.transform.position);
             }
         }
 

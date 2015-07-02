@@ -19,11 +19,12 @@ namespace EVEManager
         public static int MACRO_LAYER = 15;
         public static int ROTATION_PROPERTY;
         public static int INVROTATION_PROPERTY;
-        public static int MAINOFFSET_PROPERTY;
+        public static int MAIN_ROTATION_PROPERTY;
         public static int SHADOWOFFSET_PROPERTY;
         public static int SUNDIR_PROPERTY;
         public static int PLANET_ORIGIN_PROPERTY;
         public static int WORLD_2_PLANET_PROPERTY;
+        public static int DETAIL_ROTATION_PROPERTY;
 
         public String Name { get { return this.GetType().Name; } set { } }
 
@@ -31,7 +32,8 @@ namespace EVEManager
         {
             ROTATION_PROPERTY = Shader.PropertyToID("_Rotation");
             INVROTATION_PROPERTY = Shader.PropertyToID("_InvRotation");
-            MAINOFFSET_PROPERTY = Shader.PropertyToID("_MainOffset");
+            MAIN_ROTATION_PROPERTY = Shader.PropertyToID("_MainRotation");
+            DETAIL_ROTATION_PROPERTY = Shader.PropertyToID("_DetailRotation");
             SHADOWOFFSET_PROPERTY = Shader.PropertyToID("_ShadowOffset");
             SUNDIR_PROPERTY = Shader.PropertyToID("_SunDir");
             PLANET_ORIGIN_PROPERTY = Shader.PropertyToID("_PlanetOrigin");

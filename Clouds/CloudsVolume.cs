@@ -87,21 +87,19 @@ namespace Atmosphere
             }
         }
 
-        internal void UpdatePos(Vector3 WorldPos, double texRotation, double detailRotation, Vector2 offset)
+        internal void UpdatePos(Vector3 WorldPos, Quaternion rotation,  Matrix4x4 mainRotationMatrix, Matrix4x4 detailRotationMatrix)
         {
             if (HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
-                Vector2 texOffset = new Vector2((float)texRotation + offset.x, offset.y);
-                ParticleMaterial.SetVector(EVEManagerClass.MAINOFFSET_PROPERTY, texOffset);
-
-                Quaternion rotation = new Quaternion();
-                rotation.eulerAngles = new Vector3(0, (float)(-360f * texRotation), 0);
-                volumeHolder.transform.localRotation = rotation;
-
                 Vector3 intendedPoint = volumeHolder.transform.InverseTransformPoint(WorldPos);
                 intendedPoint.Normalize();
                 volumeManager.Update(intendedPoint);
-                ParticleMaterial.SetMatrix(EVEManagerClass.WORLD_2_PLANET_PROPERTY, volumeHolder.transform.parent.worldToLocalMatrix);
+
+                volumeHolder.transform.localRotation = rotation;
+
+                Matrix4x4 rotationMatrix = mainRotationMatrix* volumeHolder.transform.parent.worldToLocalMatrix;
+                ParticleMaterial.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, rotationMatrix);
+                ParticleMaterial.SetMatrix(EVEManagerClass.DETAIL_ROTATION_PROPERTY, detailRotationMatrix);
             }
         }
 

@@ -97,10 +97,17 @@ namespace Atmosphere
             bool visible = HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER;
 
             double ut = Planetarium.GetUniversalTime();
-            double texRotation = (ut * detailPeriod);
-            texRotation -= (int)texRotation;
+            double detailRotation = (ut * detailPeriod);
+            detailRotation -= (int)detailRotation;
             double mainRotation = (ut * mainPeriod);
             mainRotation -= (int)mainRotation;
+
+
+            Quaternion rotation = Quaternion.Euler(0, (float)(360f * mainRotation), 0);
+            Matrix4x4 mainRotationMatrix = Matrix4x4.TRS(Vector3.zero, rotation, Vector3.one);
+
+            rotation = Quaternion.Euler(0, (float)(360f * mainRotation), 0);
+            Matrix4x4 detailRotationMatrix = Matrix4x4.TRS(Vector3.zero, rotation, Vector3.one);
 
             if (this.sphere != null && visible)
             {
@@ -110,9 +117,8 @@ namespace Atmosphere
                     {
                         layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition), 
                                                this.sphere.transform.worldToLocalMatrix,
-                                               mainRotation,
-                                               texRotation,
-                                               offset);
+                                               mainRotationMatrix,
+                                               detailRotationMatrix);
                     }
                 }
                 else
@@ -123,9 +129,8 @@ namespace Atmosphere
                     {
                         layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos),
                                                scaledCelestialTransform.transform.worldToLocalMatrix,
-                                               mainRotation,
-                                               texRotation,
-                                               offset);
+                                               mainRotationMatrix,
+                                               detailRotationMatrix);
                     }
                 }
                 if (layerVolume != null && sphere.isActive)
@@ -133,16 +138,16 @@ namespace Atmosphere
                     if(FlightCamera.fetch != null)
                     {
                         layerVolume.UpdatePos(FlightCamera.fetch.mainCamera.transform.position,
-                                               mainRotation,
-                                               texRotation,
-                                               offset);
+                                               Quaternion.Euler(0, (float)(-360f * mainRotation), 0),
+                                               mainRotationMatrix,
+                                               detailRotationMatrix);
                     }
                     else
                     {
                         layerVolume.UpdatePos(this.sphere.target.position,
-                                               mainRotation,
-                                               texRotation,
-                                               offset);
+                                               Quaternion.Euler(0, (float)(-360f * mainRotation), 0),
+                                               mainRotationMatrix,
+                                               detailRotationMatrix);
                     }
                 }
                 if (atmosphere != null)
@@ -187,7 +192,7 @@ namespace Atmosphere
                 
                 float circumference = 2f * Mathf.PI * radius;
                 mainPeriod = (speed) / circumference;
-                detailPeriod = (mainPeriod + detailSpeed) / circumference;
+                detailPeriod = (speed + detailSpeed) / circumference;
                 
                 if (layer2D != null)
                 {

@@ -4,10 +4,8 @@ Properties {
 	_LeftTex ("Particle Texture", 2D) = "white" {}
 	_FrontTex ("Particle Texture", 2D) = "white" {}
 	_MainTex ("Main (RGB)", 2D) = "white" {}
-	_MainOffset ("Main Offset", Vector) = (0,0,0,0)
 	_DetailTex ("Detail (RGB)", 2D) = "white" {}
 	_DetailScale ("Detail Scale", Range(0,1000)) = 100
-	_DetailOffset ("Detail Offset", Vector) = (.5,.5,0,0)
 	_DistFade ("Distance Fade Near", Range(0,1)) = 1.0
 	_DistFadeVert ("Distance Fade Vertical", Range(0,1)) = 0.00004
 	_LightScatter ("Light Scatter", Range(0,1)) = 0.55 
@@ -53,8 +51,6 @@ Category {
 			sampler2D _FrontTex;
 			sampler2D _MainTex;
 			sampler2D _DetailTex;
-			fixed4 _MainOffset;
-			fixed4 _DetailOffset;
 			float _DetailScale;
 			fixed4 _Color;
 			float _DistFade;
@@ -63,7 +59,6 @@ Category {
 			float _MinLight;
 			float _InvFade;
 			
-			uniform float4x4  _World2Planet;
 			sampler2D _CameraDepthTexture;
 			
 			
@@ -142,9 +137,9 @@ Category {
 				half lightIntensity = saturate(_LightColor0.a * diff * 4);
 				o.baseLight = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
 				
-				float3 planet_pos = mul(_World2Planet, origin).xyz;
+				float3 planet_pos = mul(_MainRotation, origin).xyz;
 				//o.color = v.color;
-				o.color = GetSphereMapNoLOD( _MainTex, -planet_pos, _MainOffset); 
+				o.color = GetSphereMapNoLOD( _MainTex, -planet_pos); 
 				
 				float dist = _DistFade*distance(origin,_WorldSpaceCameraPos);
 				float distVert = 1-(_DistFadeVert*distance(origin,_WorldSpaceCameraPos));
