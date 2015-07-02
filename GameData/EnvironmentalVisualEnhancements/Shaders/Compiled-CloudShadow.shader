@@ -14,8 +14,8 @@
         ZWrite Off
         Program "vp" {
 // Vertex combos: 1
-//   d3d9 - ALU: 41 to 41
-//   d3d11 - ALU: 39 to 39, TEX: 0 to 0, FLOW: 1 to 1
+//   d3d9 - ALU: 37 to 37
+//   d3d11 - ALU: 33 to 33, TEX: 0 to 0, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { }
 "!!GLSL
@@ -34,26 +34,22 @@ uniform mat4 _Object2World;
 
 void main ()
 {
-  vec3 tmpvar_1;
-  tmpvar_1.x = _Projector[0].z;
-  tmpvar_1.y = _Projector[1].z;
-  tmpvar_1.z = _Projector[2].z;
-  vec4 tmpvar_2;
-  tmpvar_2 = (_Object2World * gl_Vertex);
-  vec3 tmpvar_3;
-  tmpvar_3 = (_PlanetOrigin - tmpvar_2.xyz);
+  vec4 tmpvar_1;
+  tmpvar_1 = (_Object2World * gl_Vertex);
+  vec3 tmpvar_2;
+  tmpvar_2 = (_PlanetOrigin - tmpvar_1.xyz);
+  float tmpvar_3;
+  tmpvar_3 = dot (tmpvar_2, -(_SunDir).xyz);
   float tmpvar_4;
-  tmpvar_4 = dot (tmpvar_3, _SunDir.xyz);
-  float tmpvar_5;
-  tmpvar_5 = sqrt((dot (tmpvar_3, tmpvar_3) - (tmpvar_4 * tmpvar_4)));
-  vec4 tmpvar_6;
-  tmpvar_6 = (tmpvar_2 + (_SunDir * mix (0.0, (tmpvar_4 - sqrt(((_Radius * _Radius) - pow (tmpvar_5, 2.0)))), (float((_Radius >= tmpvar_5)) * float((tmpvar_4 >= 0.0))))));
+  tmpvar_4 = sqrt((dot (tmpvar_2, tmpvar_2) - (tmpvar_3 * tmpvar_3)));
+  vec4 tmpvar_5;
+  tmpvar_5 = (tmpvar_1 + (_SunDir * mix (0.0, (tmpvar_3 - sqrt(((_Radius * _Radius) - pow (tmpvar_4, 2.0)))), (float((_Radius >= tmpvar_4)) * float((tmpvar_3 >= 0.0))))));
   gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
   xlv_TEXCOORD0 = (_Projector * gl_Vertex);
-  xlv_TEXCOORD1 = dot (-(normalize(tmpvar_3)), normalize(tmpvar_1));
-  xlv_TEXCOORD2 = sqrt(dot (tmpvar_3, tmpvar_3));
-  xlv_TEXCOORD3 = tmpvar_6;
-  xlv_TEXCOORD4 = -((_MainRotation * tmpvar_6));
+  xlv_TEXCOORD1 = tmpvar_3;
+  xlv_TEXCOORD2 = sqrt(dot (tmpvar_2, tmpvar_2));
+  xlv_TEXCOORD3 = tmpvar_5;
+  xlv_TEXCOORD4 = -((_MainRotation * tmpvar_5));
 }
 
 
@@ -130,7 +126,7 @@ Float 17 [_Radius]
 Vector 18 [_PlanetOrigin]
 Matrix 12 [_Projector]
 "vs_3_0
-; 41 ALU
+; 37 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -142,36 +138,32 @@ dcl_position0 v0
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
-add r2.xyz, -r0, c18
-dp3 r0.w, r2, c16
-dp3 r2.w, r2, r2
-mad r1.x, -r0.w, r0.w, r2.w
+add r1.xyz, -r0, c18
+dp3 r2.x, r1, -c16
+dp3 r2.y, r1, r1
+mad r0.w, -r2.x, r2.x, r2.y
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r1.x, r0.w, r0.w
+mad r1.x, c17, c17, -r1
 rsq r1.x, r1.x
-rcp r1.x, r1.x
-mul r1.y, r1.x, r1.x
-mad r1.y, c17.x, c17.x, -r1
-rsq r1.y, r1.y
-rcp r1.z, r1.y
-sge r1.y, r0.w, c19.x
-sge r1.x, c17, r1
-mul r1.x, r1, r1.y
-add r1.y, r0.w, -r1.z
+rcp r1.y, r1.x
+sge r0.w, c17.x, r0
+sge r1.x, r2, c19
+mul r1.x, r0.w, r1
+add r1.y, r2.x, -r1
 dp4 r0.w, v0, c7
 mul r1.x, r1, r1.y
 mad r1, r1.x, c16, r0
+dp4 r0.x, r1, c8
 dp4 r0.w, r1, c11
 dp4 r0.z, r1, c10
 dp4 r0.y, r1, c9
-dp4 r0.x, r1, c8
 mov o5, -r0
-rsq r0.w, r2.w
-dp3 r3.x, c14, c14
-rsq r0.x, r3.x
-mul r0.xyz, r0.x, c14
-mul r2.xyz, r0.w, r2
-dp3 o2.x, -r2, r0
+rsq r0.x, r2.y
 mov o4, r1
-rcp o3.x, r0.w
+mov o2.x, r2
+rcp o3.x, r0.x
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -197,12 +189,12 @@ Matrix 0 [glstate_matrix_mvp] 4
 Matrix 192 [_Object2World] 4
 BindCB "$Globals" 0
 BindCB "UnityPerDraw" 1
-// 44 instructions, 4 temp regs, 0 temp arrays:
-// ALU 38 float, 0 int, 1 uint
+// 36 instructions, 2 temp regs, 0 temp arrays:
+// ALU 32 float, 0 int, 1 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedgfmmdeeedgjffeaaaolbabgnjoemoplmabaaaaaacmahaaaaadaaaaaa
+eefiecedeebcjonjjdmmpfckhnehigllhpapmbcgabaaaaaagaagaaaaadaaaaaa
 cmaaaaaahmaaaaaadeabaaaaejfdeheoeiaaaaaaacaaaaaaaiaaaaaadiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaebaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahaaaaaafaepfdejfeejepeoaaeoepfcenebemaaepfdeheo
@@ -211,12 +203,12 @@ apaaaaaakeaaaaaaaaaaaaaaaaaaaaaaadaaaaaaabaaaaaaapaaaaaakeaaaaaa
 abaaaaaaaaaaaaaaadaaaaaaacaaaaaaabaoaaaakeaaaaaaacaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaacanaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaakeaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaafdfgfpfa
-epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcpaafaaaaeaaaabaa
-hmabaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaaabaaaaaa
+epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcceafaaaaeaaaabaa
+ejabaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaaabaaaaaa
 baaaaaaafpaaaaadpcbabaaaaaaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaa
 gfaaaaadpccabaaaabaaaaaagfaaaaadbccabaaaacaaaaaagfaaaaadcccabaaa
 acaaaaaagfaaaaadpccabaaaadaaaaaagfaaaaadpccabaaaaeaaaaaagiaaaaac
-aeaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaabaaaaaa
+acaaaaaadiaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaabaaaaaa
 abaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaaagbabaaa
 aaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaa
 acaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaaaaaaaaa
@@ -225,41 +217,35 @@ pcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaaaaaaaaaapaaaaaadcaaaaak
 pcaabaaaaaaaaaaaegiocaaaaaaaaaaaaoaaaaaaagbabaaaaaaaaaaaegaobaaa
 aaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaabaaaaaaakgbkbaaa
 aaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaabaaaaaaegiocaaaaaaaaaaa
-bbaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadgaaaaagbcaabaaaaaaaaaaa
-ckiacaaaaaaaaaaaaoaaaaaadgaaaaagccaabaaaaaaaaaaackiacaaaaaaaaaaa
-apaaaaaadgaaaaagecaabaaaaaaaaaaackiacaaaaaaaaaaabaaaaaaabaaaaaah
-icaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaaaaaaaaaeeaaaaaficaabaaa
-aaaaaaaadkaabaaaaaaaaaaadiaaaaahhcaabaaaaaaaaaaapgapbaaaaaaaaaaa
-egacbaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaafgbfbaaaaaaaaaaaegiocaaa
-abaaaaaaanaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaabaaaaaaamaaaaaa
-agbabaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaa
-abaaaaaaaoaaaaaakgbkbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpcaabaaa
-abaaaaaaegiocaaaabaaaaaaapaaaaaapgbpbaaaaaaaaaaaegaobaaaabaaaaaa
-aaaaaaajhcaabaaaacaaaaaaegacbaiaebaaaaaaabaaaaaajgihcaaaaaaaaaaa
-anaaaaaabaaaaaahicaabaaaaaaaaaaaegacbaaaacaaaaaaegacbaaaacaaaaaa
-eeaaaaaficaabaaaacaaaaaadkaabaaaaaaaaaaadiaaaaahhcaabaaaadaaaaaa
-pgapbaaaacaaaaaaegacbaaaacaaaaaabaaaaaaibcaabaaaacaaaaaaegacbaaa
-acaaaaaaegiccaaaaaaaaaaaamaaaaaabaaaaaaibccabaaaacaaaaaaegacbaia
-ebaaaaaaadaaaaaaegacbaaaaaaaaaaaelaaaaafcccabaaaacaaaaaadkaabaaa
-aaaaaaaadcaaaaakbcaabaaaaaaaaaaaakaabaiaebaaaaaaacaaaaaaakaabaaa
-acaaaaaadkaabaaaaaaaaaaaelaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaa
-bnaaaaahccaabaaaaaaaaaaaakaabaaaacaaaaaaabeaaaaaaaaaaaaabnaaaaai
-ecaabaaaaaaaaaaaakiacaaaaaaaaaaaanaaaaaaakaabaaaaaaaaaaadiaaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaambcaabaaa
-aaaaaaaaakiacaaaaaaaaaaaanaaaaaaakiacaaaaaaaaaaaanaaaaaaakaabaia
-ebaaaaaaaaaaaaaaelaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaaaaaaaaai
-bcaabaaaaaaaaaaaakaabaiaebaaaaaaaaaaaaaaakaabaaaacaaaaaaabaaaaak
-gcaabaaaaaaaaaaafgagbaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaiadpaaaaiadp
-aaaaaaaadiaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaackaabaaaaaaaaaaa
-diaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaabkaabaaaaaaaaaaadcaaaaak
-pcaabaaaaaaaaaaaegiocaaaaaaaaaaaamaaaaaaagaabaaaaaaaaaaaegaobaaa
-abaaaaaadgaaaaafpccabaaaadaaaaaaegaobaaaaaaaaaaadiaaaaaipcaabaaa
-abaaaaaafgafbaaaaaaaaaaaegiocaaaaaaaaaaaacaaaaaadcaaaaakpcaabaaa
-abaaaaaaegiocaaaaaaaaaaaabaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaa
-dcaaaaakpcaabaaaabaaaaaaegiocaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaa
-egaobaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaaaeaaaaaa
-pgapbaaaaaaaaaaaegaobaaaabaaaaaadgaaaaagpccabaaaaeaaaaaaegaobaia
-ebaaaaaaaaaaaaaadoaaaaab"
+bbaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaaipcaabaaaaaaaaaaa
+fgbfbaaaaaaaaaaaegiocaaaabaaaaaaanaaaaaadcaaaaakpcaabaaaaaaaaaaa
+egiocaaaabaaaaaaamaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaak
+pcaabaaaaaaaaaaaegiocaaaabaaaaaaaoaaaaaakgbkbaaaaaaaaaaaegaobaaa
+aaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaapaaaaaapgbpbaaa
+aaaaaaaaegaobaaaaaaaaaaaaaaaaaajhcaabaaaabaaaaaaegacbaiaebaaaaaa
+aaaaaaaajgihcaaaaaaaaaaaanaaaaaabaaaaaahicaabaaaabaaaaaaegacbaaa
+abaaaaaaegacbaaaabaaaaaabaaaaaajbcaabaaaabaaaaaaegacbaaaabaaaaaa
+egiccaiaebaaaaaaaaaaaaaaamaaaaaaelaaaaafcccabaaaacaaaaaadkaabaaa
+abaaaaaadcaaaaakccaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaakaabaaa
+abaaaaaadkaabaaaabaaaaaaelaaaaafccaabaaaabaaaaaabkaabaaaabaaaaaa
+dgaaaaafbccabaaaacaaaaaaakaabaaaabaaaaaabnaaaaahecaabaaaabaaaaaa
+akaabaaaabaaaaaaabeaaaaaaaaaaaaabnaaaaaiicaabaaaabaaaaaaakiacaaa
+aaaaaaaaanaaaaaabkaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaabkaabaaa
+abaaaaaabkaabaaaabaaaaaadcaaaaamccaabaaaabaaaaaaakiacaaaaaaaaaaa
+anaaaaaaakiacaaaaaaaaaaaanaaaaaabkaabaiaebaaaaaaabaaaaaaelaaaaaf
+ccaabaaaabaaaaaabkaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaabkaabaia
+ebaaaaaaabaaaaaaakaabaaaabaaaaaaabaaaaakgcaabaaaabaaaaaapgaobaaa
+abaaaaaaaceaaaaaaaaaaaaaaaaaiadpaaaaiadpaaaaaaaadiaaaaahccaabaaa
+abaaaaaackaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaa
+akaabaaaabaaaaaabkaabaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
+aaaaaaaaamaaaaaaagaabaaaabaaaaaaegaobaaaaaaaaaaadgaaaaafpccabaaa
+adaaaaaaegaobaaaaaaaaaaadiaaaaaipcaabaaaabaaaaaafgafbaaaaaaaaaaa
+egiocaaaaaaaaaaaacaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaaaaaaaaa
+abaaaaaaagaabaaaaaaaaaaaegaobaaaabaaaaaadcaaaaakpcaabaaaabaaaaaa
+egiocaaaaaaaaaaaadaaaaaakgakbaaaaaaaaaaaegaobaaaabaaaaaadcaaaaak
+pcaabaaaaaaaaaaaegiocaaaaaaaaaaaaeaaaaaapgapbaaaaaaaaaaaegaobaaa
+abaaaaaadgaaaaagpccabaaaaeaaaaaaegaobaiaebaaaaaaaaaaaaaadoaaaaab
+"
 }
 
 SubProgram "gles " {
@@ -285,29 +271,25 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float sphereCheck_1;
-  highp vec3 tmpvar_2;
-  tmpvar_2.x = _Projector[0].z;
-  tmpvar_2.y = _Projector[1].z;
-  tmpvar_2.z = _Projector[2].z;
-  highp vec4 tmpvar_3;
-  tmpvar_3 = (_Object2World * _glesVertex);
-  highp vec3 tmpvar_4;
-  tmpvar_4 = (_PlanetOrigin - tmpvar_3.xyz);
+  highp vec4 tmpvar_2;
+  tmpvar_2 = (_Object2World * _glesVertex);
+  highp vec3 tmpvar_3;
+  tmpvar_3 = (_PlanetOrigin - tmpvar_2.xyz);
+  highp float tmpvar_4;
+  tmpvar_4 = dot (tmpvar_3, -(_SunDir).xyz);
   highp float tmpvar_5;
-  tmpvar_5 = dot (tmpvar_4, _SunDir.xyz);
+  tmpvar_5 = sqrt((dot (tmpvar_3, tmpvar_3) - (tmpvar_4 * tmpvar_4)));
   highp float tmpvar_6;
-  tmpvar_6 = sqrt((dot (tmpvar_4, tmpvar_4) - (tmpvar_5 * tmpvar_5)));
-  highp float tmpvar_7;
-  tmpvar_7 = (float((_Radius >= tmpvar_6)) * float((tmpvar_5 >= 0.0)));
-  sphereCheck_1 = tmpvar_7;
-  highp vec4 tmpvar_8;
-  tmpvar_8 = (tmpvar_3 + (_SunDir * mix (0.0, (tmpvar_5 - sqrt(((_Radius * _Radius) - pow (tmpvar_6, 2.0)))), sphereCheck_1)));
+  tmpvar_6 = (float((_Radius >= tmpvar_5)) * float((tmpvar_4 >= 0.0)));
+  sphereCheck_1 = tmpvar_6;
+  highp vec4 tmpvar_7;
+  tmpvar_7 = (tmpvar_2 + (_SunDir * mix (0.0, (tmpvar_4 - sqrt(((_Radius * _Radius) - pow (tmpvar_5, 2.0)))), sphereCheck_1)));
   gl_Position = (glstate_matrix_mvp * _glesVertex);
   xlv_TEXCOORD0 = (_Projector * _glesVertex);
-  xlv_TEXCOORD1 = dot (-(normalize(tmpvar_4)), normalize(tmpvar_2));
-  xlv_TEXCOORD2 = sqrt(dot (tmpvar_4, tmpvar_4));
-  xlv_TEXCOORD3 = tmpvar_8;
-  xlv_TEXCOORD4 = -((_MainRotation * tmpvar_8));
+  xlv_TEXCOORD1 = tmpvar_4;
+  xlv_TEXCOORD2 = sqrt(dot (tmpvar_3, tmpvar_3));
+  xlv_TEXCOORD3 = tmpvar_7;
+  xlv_TEXCOORD4 = -((_MainRotation * tmpvar_7));
 }
 
 
@@ -407,29 +389,25 @@ attribute vec4 _glesVertex;
 void main ()
 {
   mediump float sphereCheck_1;
-  highp vec3 tmpvar_2;
-  tmpvar_2.x = _Projector[0].z;
-  tmpvar_2.y = _Projector[1].z;
-  tmpvar_2.z = _Projector[2].z;
-  highp vec4 tmpvar_3;
-  tmpvar_3 = (_Object2World * _glesVertex);
-  highp vec3 tmpvar_4;
-  tmpvar_4 = (_PlanetOrigin - tmpvar_3.xyz);
+  highp vec4 tmpvar_2;
+  tmpvar_2 = (_Object2World * _glesVertex);
+  highp vec3 tmpvar_3;
+  tmpvar_3 = (_PlanetOrigin - tmpvar_2.xyz);
+  highp float tmpvar_4;
+  tmpvar_4 = dot (tmpvar_3, -(_SunDir).xyz);
   highp float tmpvar_5;
-  tmpvar_5 = dot (tmpvar_4, _SunDir.xyz);
+  tmpvar_5 = sqrt((dot (tmpvar_3, tmpvar_3) - (tmpvar_4 * tmpvar_4)));
   highp float tmpvar_6;
-  tmpvar_6 = sqrt((dot (tmpvar_4, tmpvar_4) - (tmpvar_5 * tmpvar_5)));
-  highp float tmpvar_7;
-  tmpvar_7 = (float((_Radius >= tmpvar_6)) * float((tmpvar_5 >= 0.0)));
-  sphereCheck_1 = tmpvar_7;
-  highp vec4 tmpvar_8;
-  tmpvar_8 = (tmpvar_3 + (_SunDir * mix (0.0, (tmpvar_5 - sqrt(((_Radius * _Radius) - pow (tmpvar_6, 2.0)))), sphereCheck_1)));
+  tmpvar_6 = (float((_Radius >= tmpvar_5)) * float((tmpvar_4 >= 0.0)));
+  sphereCheck_1 = tmpvar_6;
+  highp vec4 tmpvar_7;
+  tmpvar_7 = (tmpvar_2 + (_SunDir * mix (0.0, (tmpvar_4 - sqrt(((_Radius * _Radius) - pow (tmpvar_5, 2.0)))), sphereCheck_1)));
   gl_Position = (glstate_matrix_mvp * _glesVertex);
   xlv_TEXCOORD0 = (_Projector * _glesVertex);
-  xlv_TEXCOORD1 = dot (-(normalize(tmpvar_4)), normalize(tmpvar_2));
-  xlv_TEXCOORD2 = sqrt(dot (tmpvar_4, tmpvar_4));
-  xlv_TEXCOORD3 = tmpvar_8;
-  xlv_TEXCOORD4 = -((_MainRotation * tmpvar_8));
+  xlv_TEXCOORD1 = tmpvar_4;
+  xlv_TEXCOORD2 = sqrt(dot (tmpvar_3, tmpvar_3));
+  xlv_TEXCOORD3 = tmpvar_7;
+  xlv_TEXCOORD4 = -((_MainRotation * tmpvar_7));
 }
 
 
@@ -666,10 +644,10 @@ v2f vert( in appdata_t v ) {
     #line 397
     highp vec3 worldOrigin = _PlanetOrigin;
     highp vec3 L = (worldOrigin - vec3( vertexPos));
-    o.dotcoeff = dot( (-normalize(L)), normView);
     o.originDist = length(L);
+    highp float tc = dot( L, vec3( (-_SunDir)));
     #line 401
-    highp float tc = dot( L, vec3( _SunDir));
+    o.dotcoeff = tc;
     highp float d = sqrt((dot( L, L) - (tc * tc)));
     highp float d2 = pow( d, 2.0);
     highp float td = sqrt((dot( L, L) - d2));

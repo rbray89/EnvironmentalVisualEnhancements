@@ -57,9 +57,9 @@
 
 	   	   	float3 worldOrigin = _PlanetOrigin;
 	   	   	float3 L = worldOrigin - vertexPos;
-	   	   	o.dotcoeff = dot(-normalize(L), normView);
 	   	   	o.originDist = length(L);
-	   	    float tc = dot(L, _SunDir);
+	   	    float tc = dot(L,- _SunDir);
+	   	    o.dotcoeff = tc;
 			float d = sqrt(dot(L,L)-(tc*tc));
 			float d2 = pow(d,2);
 			float td = sqrt(dot(L,L)-d2);		
