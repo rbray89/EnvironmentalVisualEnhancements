@@ -13,18 +13,10 @@ namespace Atmosphere
 {
     public class Clouds2DMaterial : MaterialManager
     {
-        [Persistent] 
-        Color _Color = new Color(1,1,1,1);
-        [Persistent]
-        String _MainTex = "";
-        [Persistent]
-        String _DetailTex = "";
         [Persistent]
         float _FalloffPow = 2f;
         [Persistent]
         float _FalloffScale = 3f;
-        [Persistent]
-        float _DetailScale = 100f;
         [Persistent, InverseScaled]
         float _DetailDist = 0.000002f;
         [Persistent]
@@ -117,7 +109,7 @@ namespace Atmosphere
             }
         }
 
-        internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, float radius, float speed)
+        internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, AtmosphereMaterial material, float radius, float speed)
         {
             Remove();
             this.celestialBody = celestialBody;
@@ -140,6 +132,8 @@ namespace Atmosphere
             }
             sunTransform = Sun.Instance.sun.transform;
 
+            material.ApplyMaterialProperties(CloudMaterial);
+            material.ApplyMaterialProperties(ShadowProjector.material);
             Scaled = true;
         }
 

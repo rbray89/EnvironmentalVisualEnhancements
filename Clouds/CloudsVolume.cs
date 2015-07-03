@@ -15,8 +15,6 @@ namespace Atmosphere
     {
         [Persistent]
         Color _Color = new Color(1, 1, 1, 1);
-        [Persistent]
-        String _MainTex;
         [Persistent, Clamped]
         String _TopTex = "";
         [Persistent, Clamped]
@@ -60,11 +58,12 @@ namespace Atmosphere
             }
         }
 
-        public void Apply(float radius, float speed, Transform parent)
+        public void Apply(AtmosphereMaterial material, float radius, float speed, Transform parent)
         {
             Remove();
             ParticleMaterial = new Material(ParticleCloudShader);
             particleMaterial.ApplyMaterialProperties(ParticleMaterial);
+            material.ApplyMaterialProperties(ParticleMaterial);
             volumeHolder = new GameObject();
             volumeHolder.transform.parent = parent;
             volumeHolder.transform.localPosition = Vector3.zero;

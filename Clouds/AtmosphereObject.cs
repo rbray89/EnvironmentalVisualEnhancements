@@ -9,6 +9,17 @@ using Utils;
 
 namespace Atmosphere
 {
+    public class AtmosphereMaterial : MaterialManager
+    {
+        [Persistent]
+        Color _Color = new Color(1, 1, 1, 1);
+        [Persistent]
+        String _MainTex = "";
+        [Persistent]
+        String _DetailTex = "";
+        [Persistent]
+        float _DetailScale = 100f;
+    }
 
     public class AtmosphereObject : MonoBehaviour, IEVEObject
     {
@@ -18,6 +29,8 @@ namespace Atmosphere
         private new String name;
         private ConfigNode node;
         private String body;
+
+        
         [Persistent]
         float altitude = 1000f;
         [Persistent]
@@ -26,6 +39,9 @@ namespace Atmosphere
         float detailSpeed;
         [Persistent]
         Vector3 offset = new Vector3(0, 0, 0);
+        [Persistent]
+        AtmosphereMaterial settings;
+
         [Persistent, Optional]
         AtmosphereVolume atmosphere = null;
         [Persistent, Optional]
@@ -55,7 +71,7 @@ namespace Atmosphere
             
             GameObject go = new GameObject();
             atmospherePQS = go.AddComponent<AtmospherePQS>();
-            atmospherePQS.Apply(body, layer2D, layerVolume, atmosphere, altitude, speed, detailSpeed, offset);
+            atmospherePQS.Apply(body, settings, layer2D, layerVolume, atmosphere, altitude, speed, detailSpeed, offset);
         }
 
         public void Remove()

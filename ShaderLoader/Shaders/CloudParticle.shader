@@ -137,9 +137,11 @@ Category {
 				half lightIntensity = saturate(_LightColor0.a * diff * 4);
 				o.baseLight = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
 				
-				float3 planet_pos = mul(_MainRotation, origin).xyz;
+				float4 planet_pos = -mul(_MainRotation, origin);
+				float3 detail_pos = mul(_DetailRotation, planet_pos).xyz;
 				//o.color = v.color;
-				o.color = GetSphereMapNoLOD( _MainTex, -planet_pos); 
+				o.color = GetSphereMapNoLOD( _MainTex, planet_pos.xyz); 
+				o.color *= GetShereDetailMapNoLOD(_DetailTex, detail_pos, _DetailScale);
 				
 				float dist = _DistFade*distance(origin,_WorldSpaceCameraPos);
 				float distVert = 1-(_DistFadeVert*distance(origin,_WorldSpaceCameraPos));

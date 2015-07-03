@@ -17,6 +17,7 @@ namespace Atmosphere
         private float speed;
         CloudsVolume layerVolume = null;
         Clouds2D layer2D = null;
+        AtmosphereMaterial material = null;
         AtmosphereVolume atmosphere = null;
         CelestialBody celestialBody = null;
         Transform scaledCelestialTransform = null;
@@ -45,7 +46,7 @@ namespace Atmosphere
             {
                 if (layerVolume != null)
                 {
-                    layerVolume.Apply((float)celestialBody.Radius + altitude, speed, celestialBody.transform);
+                    layerVolume.Apply(material, (float)celestialBody.Radius + altitude, speed, celestialBody.transform);
                 }
                 applied = true;
             }
@@ -157,9 +158,10 @@ namespace Atmosphere
             }
         }
 
-        internal void Apply(String body, Clouds2D layer2D, CloudsVolume layerVolume, AtmosphereVolume atmosphere, float altitude, float speed, float detailSpeed, Vector2 offset)
+        internal void Apply(String body, AtmosphereMaterial material, Clouds2D layer2D, CloudsVolume layerVolume, AtmosphereVolume atmosphere, float altitude, float speed, float detailSpeed, Vector2 offset)
         {
             this.body = body;
+            this.material = material;
             this.layer2D = layer2D;
             this.layerVolume = layerVolume;
             this.atmosphere = atmosphere;
@@ -196,7 +198,7 @@ namespace Atmosphere
                 
                 if (layer2D != null)
                 {
-                    this.layer2D.Apply(celestialBody, scaledCelestialTransform, radius, speed);
+                    this.layer2D.Apply(celestialBody, scaledCelestialTransform, material, radius, speed);
                 }
                 if (atmosphere != null)
                 {

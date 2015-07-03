@@ -52,6 +52,20 @@
 	    return tex;
 	} 
 	
+	inline half4 GetShereDetailMapNoLOD( sampler2D texSampler, float3 sphereVect, float detailScale)
+	{
+		float3 sphereVectNorm = normalize(sphereVect);
+		sphereVectNorm = abs(sphereVectNorm);
+		half zxlerp = step(sphereVectNorm.x,sphereVectNorm.z);
+		half nylerp = step(sphereVectNorm.y,lerp(sphereVectNorm.x, sphereVectNorm.z, zxlerp));	
+		half3 detailCoords = lerp(sphereVectNorm.xyz, sphereVectNorm.zxy, zxlerp);
+		detailCoords = lerp(sphereVectNorm.yxz, detailCoords, nylerp);
+		float4 uv;
+		uv.xy = (.5*detailCoords.zy)/(abs(detailCoords.x)) *detailScale;
+		uv.zw = float2(0,0);
+		return tex2Dlod(texSampler, uv);	
+	}
+	
 	inline half4 GetShereDetailMap( sampler2D texSampler, float3 sphereVect, float detailScale)
 	{
 		float3 sphereVectNorm = normalize(sphereVect);
