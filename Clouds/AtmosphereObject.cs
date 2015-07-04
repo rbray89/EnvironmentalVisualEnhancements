@@ -19,6 +19,10 @@ namespace Atmosphere
         String _DetailTex = "";
         [Persistent]
         float _DetailScale = 100f;
+        [Persistent, InverseScaled]
+        float _DistFade = 1.0f;
+        [Persistent, InverseScaled]
+        float _DistFadeVert = 0.00004f;
     }
 
     public class AtmosphereObject : MonoBehaviour, IEVEObject

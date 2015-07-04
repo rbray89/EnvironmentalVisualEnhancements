@@ -80,5 +80,12 @@
 		return tex2D(texSampler, (.5*detailCoords.zy)/(abs(detailCoords.x)) *detailScale, uvdd.xy, uvdd.zw);	
 	
 	}
+	
+	inline float GetDistanceFade( float dist, float fade, float fadeVert )
+	{
+		float fadeDist = fade*dist;
+		float distVert = 1-(fadeVert*dist);
+		return saturate(fadeDist) * saturate(distVert);
+	}
 			
 #endif

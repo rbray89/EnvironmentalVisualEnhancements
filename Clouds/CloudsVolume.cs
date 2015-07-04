@@ -22,10 +22,6 @@ namespace Atmosphere
 	    [Persistent, Clamped]
 	    String _FrontTex = "";
 	    [Persistent]
-	    float _DistFade = 1.0f;
-        [Persistent]
-        float _DistFadeVert = 0.00004f;
-	    [Persistent]
 	    float _LightScatter = 0.55f;
 	    [Persistent]
 	    float _MinLight = .5f;

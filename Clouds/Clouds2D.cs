@@ -21,10 +21,6 @@ namespace Atmosphere
         float _DetailDist = 0.000002f;
         [Persistent]
         float _MinLight = .5f;
-        [Persistent, Scaled]
-        float _FadeDist = 8f;
-        [Persistent, InverseScaled]
-        float _FadeScale = 0.00375f;
         [Persistent, InverseScaled]
         float _RimDist = 0.0001f;
         [Persistent, InverseScaled]
@@ -43,6 +39,7 @@ namespace Atmosphere
         Material CloudMaterial;
         Projector ShadowProjector = null;
         GameObject ShadowProjectorGO = null;
+        AtmosphereMaterial atmosphereMat = null;
 
         [Persistent]
         bool shadow = true;
@@ -64,6 +61,8 @@ namespace Atmosphere
                     {
                         macroCloudMaterial.ApplyMaterialProperties(CloudMaterial, ScaledSpace.ScaleFactor);
                         macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material, ScaledSpace.ScaleFactor);
+                        atmosphereMat.ApplyMaterialProperties(CloudMaterial, ScaledSpace.ScaleFactor);
+                        atmosphereMat.ApplyMaterialProperties(ShadowProjector.material, ScaledSpace.ScaleFactor);
                         float scale = (float)(1000f / celestialBody.Radius);
                         CloudMaterial.DisableKeyword("SOFT_DEPTH_ON");
                         Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);
@@ -72,6 +71,8 @@ namespace Atmosphere
                     {
                         macroCloudMaterial.ApplyMaterialProperties(CloudMaterial);
                         macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material);
+                        atmosphereMat.ApplyMaterialProperties(CloudMaterial);
+                        atmosphereMat.ApplyMaterialProperties(ShadowProjector.material);
                         CloudMaterial.EnableKeyword("SOFT_DEPTH_ON");
                         Reassign(EVEManagerClass.MACRO_LAYER, celestialBody.transform, 1);
                     }
@@ -109,7 +110,7 @@ namespace Atmosphere
             }
         }
 
-        internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, AtmosphereMaterial material, float radius, float speed)
+        internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, AtmosphereMaterial atmosphereMaterial, float radius, float speed)
         {
             Remove();
             this.celestialBody = celestialBody;
@@ -118,6 +119,7 @@ namespace Atmosphere
             CloudMesh = hp.GameObject;
             this.radius = radius;
             macroCloudMaterial.Radius = radius;
+            this.atmosphereMat = atmosphereMaterial;
 
             if (shadow)
             {
@@ -132,8 +134,7 @@ namespace Atmosphere
             }
             sunTransform = Sun.Instance.sun.transform;
 
-            material.ApplyMaterialProperties(CloudMaterial);
-            material.ApplyMaterialProperties(ShadowProjector.material);
+            
             Scaled = true;
         }
 

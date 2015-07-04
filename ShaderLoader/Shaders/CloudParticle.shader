@@ -143,9 +143,7 @@ Category {
 				o.color = GetSphereMapNoLOD( _MainTex, planet_pos.xyz); 
 				o.color *= GetShereDetailMapNoLOD(_DetailTex, detail_pos, _DetailScale);
 				
-				float dist = _DistFade*distance(origin,_WorldSpaceCameraPos);
-				float distVert = 1-(_DistFadeVert*distance(origin,_WorldSpaceCameraPos));
-				o.color.a *= saturate(dist) * saturate(distVert);
+				o.color.a *= GetDistanceFade(distance(origin,_WorldSpaceCameraPos), _DistFade, _DistFadeVert);
 				
 				o.projPos = ComputeScreenPos (o.pos);
 				COMPUTE_EYEDEPTH(o.projPos.z);

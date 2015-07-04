@@ -8,8 +8,8 @@ Shader "EVE/Cloud" {
 		_DetailScale ("Detail Scale", Range(0,100)) = 100
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
 		_MinLight ("Minimum Light", Range(0,1)) = .5
-		_FadeDist ("Fade Distance", Range(0,100)) = 10
-		_FadeScale ("Fade Scale", Range(0,1)) = .002
+		_DistFade ("Fade Distance", Range(0,100)) = 10
+		_DistFadeVert ("Fade Scale", Range(0,1)) = .002
 		_RimDist ("Rim Distance", Range(0,1)) = 1
 		_RimDistSub ("Rim Distance Sub", Range(0,2)) = 1.01
 		_InvFade ("Soft Particles Factor", Range(0.01,3.0)) = .01
@@ -54,8 +54,8 @@ SubShader {
 		float _DetailScale;
 		float _DetailDist;
 		float _MinLight;
-		float _FadeDist;
-		float _FadeScale;
+		float _DistFade;
+		float _DistFadeVert;
 		float _RimDist;
 		float _RimDistSub;
 		
@@ -117,7 +117,7 @@ SubShader {
 			rim = saturate(pow(_FalloffScale*rim,_FalloffPow));
 			float dist = distance(IN.worldVert,_WorldSpaceCameraPos);
 			float distLerp = saturate(_RimDist*(distance(IN.worldOrigin,_WorldSpaceCameraPos)-_RimDistSub*distance(IN.worldVert,IN.worldOrigin)));
-			float distFade = saturate((_FadeScale*dist)-_FadeDist);
+			float distFade = 1-GetDistanceFade(dist, _DistFade, _DistFadeVert);
 	   	   	float distAlpha = lerp(distFade, rim, distLerp);
 
 			color.a = lerp(0, color.a,  distAlpha);
