@@ -17,7 +17,6 @@ namespace Terrain
     {
         protected override ObjectType objectType { get { return ObjectType.PLANET; } }
         protected override String configName { get { return "EVE_TERRAIN"; } }
-        protected override GameScenes SceneLoad { get { return GameScenes.SPACECENTER; } }
 
         private bool camerasInitialized = false;
         private static Shader oceanShader = null;

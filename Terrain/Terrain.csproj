@@ -87,12 +87,17 @@
   <ItemGroup>
     <Compile Include="TerrainManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TerrainPQS.cs" />
     <Compile Include="TerrainObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EveManager\EVEManager.csproj">
       <Project>{499e8c5c-c83e-4aea-bb01-eed705bd747f}</Project>
       <Name>EVEManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PQSManager\PQSManager.csproj">
+      <Project>{bdc8381a-c16b-4fd1-afb4-d30ea906e367}</Project>
+      <Name>PQSManager</Name>
     </ProjectReference>
     <ProjectReference Include="..\ShaderLoader\ShaderLoader.csproj">
       <Project>{f210fbc0-0cbb-4cd2-a3f0-e32096cf256d}</Project>

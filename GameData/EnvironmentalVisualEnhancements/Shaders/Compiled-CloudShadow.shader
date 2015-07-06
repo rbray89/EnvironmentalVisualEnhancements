@@ -512,7 +512,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 379
+#line 398
 struct v2f {
     highp vec4 pos;
     highp vec4 posProj;
@@ -521,7 +521,7 @@ struct v2f {
     highp vec4 worldPos;
     highp vec4 mainPos;
 };
-#line 373
+#line 392
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -618,45 +618,46 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
+#line 382
 uniform sampler2D _MainTex;
 uniform highp vec4 _MainOffset;
-#line 365
 uniform sampler2D _DetailTex;
 uniform lowp vec4 _DetailOffset;
+#line 386
 uniform highp float _DetailScale;
 uniform highp float _DetailDist;
-#line 369
 uniform highp vec4 _SunDir;
 uniform highp float _Radius;
+#line 390
 uniform highp vec3 _PlanetOrigin;
 uniform highp mat4 _Projector;
-#line 389
-#line 413
-#line 389
+#line 408
+#line 432
+#line 408
 v2f vert( in appdata_t v ) {
     v2f o;
     o.posProj = (_Projector * v.vertex);
-    #line 393
+    #line 412
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 normView = normalize(vec3( _Projector[0][2], _Projector[1][2], _Projector[2][2]));
     highp vec4 vertexPos = (_Object2World * v.vertex);
     o.worldPos = vertexPos;
-    #line 397
+    #line 416
     highp vec3 worldOrigin = _PlanetOrigin;
     highp vec3 L = (worldOrigin - vec3( vertexPos));
     o.originDist = length(L);
     highp float tc = dot( L, vec3( (-_SunDir)));
-    #line 401
+    #line 420
     o.dotcoeff = tc;
     highp float d = sqrt((dot( L, L) - (tc * tc)));
     highp float d2 = pow( d, 2.0);
     highp float td = sqrt((dot( L, L) - d2));
-    #line 405
+    #line 424
     highp float sphereRadius = _Radius;
     mediump float sphereCheck = (step( d, sphereRadius) * step( 0.0, tc));
     highp float tlc = sqrt(((sphereRadius * sphereRadius) - d2));
     highp float sphereDist = mix( 0.0, (tc - tlc), sphereCheck);
-    #line 409
+    #line 428
     o.worldPos = (vertexPos + (_SunDir * sphereDist));
     o.mainPos = (-(_MainRotation * o.worldPos));
     return o;
@@ -768,7 +769,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 379
+#line 398
 struct v2f {
     highp vec4 pos;
     highp vec4 posProj;
@@ -777,7 +778,7 @@ struct v2f {
     highp vec4 worldPos;
     highp vec4 mainPos;
 };
-#line 373
+#line 392
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -874,20 +875,21 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
+#line 382
 uniform sampler2D _MainTex;
 uniform highp vec4 _MainOffset;
-#line 365
 uniform sampler2D _DetailTex;
 uniform lowp vec4 _DetailOffset;
+#line 386
 uniform highp float _DetailScale;
 uniform highp float _DetailDist;
-#line 369
 uniform highp vec4 _SunDir;
 uniform highp float _Radius;
+#line 390
 uniform highp vec3 _PlanetOrigin;
 uniform highp mat4 _Projector;
-#line 389
-#line 413
+#line 408
+#line 432
 #line 317
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
     #line 319
@@ -919,11 +921,11 @@ mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
     #line 349
     return tex;
 }
-#line 413
+#line 432
 lowp vec4 frag( in v2f IN ) {
     mediump float dirCheck = ((step( 0.0, IN.posProj.w) * step( 0.0, IN.dotcoeff)) * step( IN.originDist, _Radius));
     mediump vec4 main = GetSphereMap( _MainTex, vec3( IN.mainPos));
-    #line 417
+    #line 436
     lowp vec4 color = main;
     color.w = (1.2 * (1.2 - color.w));
     color = xll_saturate_vf4(color);
