@@ -4,8 +4,8 @@
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_BumpMap ("Normalmap", 2D) = "bump" {}
 		_MainTexHandoverDist ("Handover Distance", Float) = 1
-		_DetailTex ("Detail (RGB)", 2D) = "white" {}
-		_DetailVertTex ("Detail for Vertical Surfaces (RGB)", 2D) = "white" {}
+		_midTex ("Detail (RGB)", 2D) = "white" {}
+		_steepTex ("Detail for Vertical Surfaces (RGB)", 2D) = "white" {}
 		_DetailScale ("Detail Scale", Range(0,1000)) = 200
 		_DetailVertScale ("Detail Scale", Range(0,1000)) = 200
 		_DetailOffset ("Detail Offset", Vector) = (.5,.5,0,0)
@@ -114,8 +114,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -214,7 +214,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec3 tmpvar_30;
   tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28)) * 2.0) * texture2D (_LightTexture0, vec2(dot (xlv_TEXCOORD2, xlv_TEXCOORD2))).w), 0.0, 1.0))), 0.0, 1.0) * xlv_TEXCOORD6);
@@ -401,8 +401,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -511,14 +511,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -704,8 +704,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -814,14 +814,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -1101,9 +1101,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 395
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -1396,9 +1396,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 395
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -1449,9 +1449,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 481
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -1598,8 +1598,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -1697,7 +1697,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec3 tmpvar_30;
   tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28)) * 2.0), 0.0, 1.0))), 0.0, 1.0) * xlv_TEXCOORD6);
@@ -1874,8 +1874,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -1983,14 +1983,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -2168,8 +2168,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -2277,14 +2277,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -2556,9 +2556,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 393
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 397
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -2844,9 +2844,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 393
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 397
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -2897,9 +2897,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 477
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -3048,8 +3048,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -3149,7 +3149,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec3 tmpvar_30;
   tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28)) * 2.0) * ((float((xlv_TEXCOORD2.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD2.xy / xlv_TEXCOORD2.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD2.xyz, xlv_TEXCOORD2.xyz))).w)), 0.0, 1.0))), 0.0, 1.0) * xlv_TEXCOORD6);
@@ -3337,8 +3337,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -3449,14 +3449,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -3649,8 +3649,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -3761,14 +3761,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -4056,9 +4056,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 404
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 408
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -4352,9 +4352,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 404
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 408
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -4415,9 +4415,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 490
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -4568,8 +4568,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -4669,7 +4669,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec3 tmpvar_30;
   tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28)) * 2.0) * (texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD2, xlv_TEXCOORD2))).w * textureCube (_LightTexture0, xlv_TEXCOORD2).w)), 0.0, 1.0))), 0.0, 1.0) * xlv_TEXCOORD6);
@@ -4856,8 +4856,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -4967,14 +4967,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -5160,8 +5160,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -5271,14 +5271,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -5559,9 +5559,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 396
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 400
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -5855,9 +5855,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 396
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 400
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -5908,9 +5908,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 482
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -6061,8 +6061,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -6161,7 +6161,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec3 tmpvar_30;
   tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28)) * 2.0) * texture2D (_LightTexture0, xlv_TEXCOORD2).w), 0.0, 1.0))), 0.0, 1.0) * xlv_TEXCOORD6);
@@ -6347,8 +6347,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -6457,14 +6457,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -6648,8 +6648,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -6758,14 +6758,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -7043,9 +7043,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 395
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -7338,9 +7338,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 395
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -7391,9 +7391,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 481
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -7548,8 +7548,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -7651,7 +7651,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4 = tmpvar_29;
   float tmpvar_30;
   tmpvar_30 = mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28);
@@ -7863,8 +7863,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -7977,14 +7977,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -8195,8 +8195,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -8309,14 +8309,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -8622,9 +8622,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 410
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 414
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -8925,9 +8925,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 410
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 414
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -8993,8 +8993,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 496
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 500
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -9152,8 +9152,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -9255,7 +9255,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec3 tmpvar_30;
   tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28)) * 2.0) * (((float((xlv_TEXCOORD2.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD2.xy / xlv_TEXCOORD2.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD2.xyz, xlv_TEXCOORD2.xyz))).w) * (_LightShadowData.x + (shadow2DProj (_ShadowMapTexture, xlv_TEXCOORD3).x * (1.0 - _LightShadowData.x))))), 0.0, 1.0))), 0.0, 1.0) * xlv_TEXCOORD6);
@@ -9455,8 +9455,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -9569,14 +9569,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -9876,9 +9876,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 411
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 415
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -10179,9 +10179,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 411
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 415
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -10250,8 +10250,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 497
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 501
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -10415,8 +10415,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -10515,7 +10515,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec3 tmpvar_30;
   tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28)) * 2.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0))), 0.0, 1.0) * xlv_TEXCOORD6);
@@ -10704,8 +10704,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -10815,14 +10815,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -11026,8 +11026,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -11136,14 +11136,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -11421,9 +11421,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 401
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 405
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -11716,9 +11716,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 401
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 405
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -11776,9 +11776,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 487
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -11943,8 +11943,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -12044,7 +12044,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec3 tmpvar_30;
   tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28)) * 2.0) * (texture2D (_LightTexture0, xlv_TEXCOORD2).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3).x)), 0.0, 1.0))), 0.0, 1.0) * xlv_TEXCOORD6);
@@ -12242,8 +12242,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -12354,14 +12354,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -12571,8 +12571,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -12682,14 +12682,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -12971,9 +12971,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 403
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 407
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -13273,9 +13273,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 403
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 407
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -13334,8 +13334,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 489
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 493
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -13493,8 +13493,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -13596,7 +13596,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4 = tmpvar_29;
   float tmpvar_30;
   tmpvar_30 = mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28);
@@ -13804,8 +13804,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -13918,14 +13918,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -14134,8 +14134,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -14248,14 +14248,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -14557,9 +14557,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 408
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 412
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -14858,9 +14858,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 408
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 412
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -14931,8 +14931,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 494
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 498
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -15090,8 +15090,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -15194,7 +15194,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4 = tmpvar_29;
   float tmpvar_30;
   tmpvar_30 = mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28);
@@ -15404,8 +15404,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -15519,14 +15519,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -15737,8 +15737,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -15852,14 +15852,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -16164,9 +16164,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 409
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 413
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -16466,9 +16466,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 409
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 413
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -16539,8 +16539,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 495
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 499
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -16698,8 +16698,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -16802,7 +16802,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4 = tmpvar_29;
   float tmpvar_30;
   tmpvar_30 = mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28);
@@ -17046,8 +17046,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -17161,14 +17161,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -17429,8 +17429,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -17544,14 +17544,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -17908,9 +17908,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 418
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -18221,9 +18221,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 418
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -18298,8 +18298,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 504
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 508
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -18457,8 +18457,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -18561,7 +18561,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec4 shadows_30;
   vec3 tmpvar_31;
@@ -18771,8 +18771,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -18886,14 +18886,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -19216,9 +19216,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 418
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -19521,9 +19521,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 418
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -19598,8 +19598,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 504
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 508
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -19757,8 +19757,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -19860,7 +19860,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4 = tmpvar_29;
   float tmpvar_30;
   tmpvar_30 = mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28);
@@ -20096,8 +20096,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -20210,14 +20210,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -20482,8 +20482,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -20596,14 +20596,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -20961,9 +20961,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 414
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 418
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -21271,9 +21271,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 414
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 418
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -21352,8 +21352,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 500
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 504
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -21511,8 +21511,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -21615,7 +21615,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4 = tmpvar_29;
   float tmpvar_30;
   tmpvar_30 = mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28);
@@ -21853,8 +21853,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -21968,14 +21968,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -22242,8 +22242,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -22357,14 +22357,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -22725,9 +22725,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 415
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 419
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -23036,9 +23036,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 415
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 419
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -23117,8 +23117,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 501
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 505
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -23272,8 +23272,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -23372,7 +23372,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec3 tmpvar_30;
   tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28)) * 2.0) * texture2D (_LightTexture0, vec2(dot (xlv_TEXCOORD2, xlv_TEXCOORD2))).w), 0.0, 1.0))), 0.0, 1.0) * xlv_TEXCOORD6);
@@ -23559,8 +23559,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -23669,14 +23669,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -23862,8 +23862,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -23972,14 +23972,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -24259,9 +24259,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 395
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -24554,9 +24554,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 395
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -24607,9 +24607,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 481
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -24756,8 +24756,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -24855,7 +24855,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec3 tmpvar_30;
   tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28)) * 2.0), 0.0, 1.0))), 0.0, 1.0) * xlv_TEXCOORD6);
@@ -25032,8 +25032,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -25141,14 +25141,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -25326,8 +25326,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -25435,14 +25435,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -25714,9 +25714,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 393
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 397
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -26002,9 +26002,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 393
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 397
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -26055,9 +26055,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 477
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -26206,8 +26206,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -26307,7 +26307,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec3 tmpvar_30;
   tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28)) * 2.0) * ((float((xlv_TEXCOORD2.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD2.xy / xlv_TEXCOORD2.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD2.xyz, xlv_TEXCOORD2.xyz))).w)), 0.0, 1.0))), 0.0, 1.0) * xlv_TEXCOORD6);
@@ -26495,8 +26495,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -26607,14 +26607,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -26807,8 +26807,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -26919,14 +26919,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -27214,9 +27214,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 404
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 408
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -27510,9 +27510,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 404
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 408
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -27573,9 +27573,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 490
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -27726,8 +27726,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -27827,7 +27827,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec3 tmpvar_30;
   tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28)) * 2.0) * (texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD2, xlv_TEXCOORD2))).w * textureCube (_LightTexture0, xlv_TEXCOORD2).w)), 0.0, 1.0))), 0.0, 1.0) * xlv_TEXCOORD6);
@@ -28014,8 +28014,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -28125,14 +28125,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -28318,8 +28318,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -28429,14 +28429,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -28717,9 +28717,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 396
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 400
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -29013,9 +29013,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 396
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 400
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -29066,9 +29066,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 482
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -29219,8 +29219,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -29319,7 +29319,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec3 tmpvar_30;
   tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28)) * 2.0) * texture2D (_LightTexture0, xlv_TEXCOORD2).w), 0.0, 1.0))), 0.0, 1.0) * xlv_TEXCOORD6);
@@ -29505,8 +29505,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -29615,14 +29615,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -29806,8 +29806,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -29916,14 +29916,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -30201,9 +30201,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 395
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -30496,9 +30496,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 395
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -30549,9 +30549,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 481
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -30706,8 +30706,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -30809,7 +30809,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4 = tmpvar_29;
   float tmpvar_30;
   tmpvar_30 = mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28);
@@ -31021,8 +31021,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -31135,14 +31135,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -31353,8 +31353,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -31467,14 +31467,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -31780,9 +31780,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 410
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 414
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -32083,9 +32083,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 410
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 414
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -32151,8 +32151,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 496
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 500
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -32310,8 +32310,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -32413,7 +32413,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec3 tmpvar_30;
   tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28)) * 2.0) * (((float((xlv_TEXCOORD2.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD2.xy / xlv_TEXCOORD2.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD2.xyz, xlv_TEXCOORD2.xyz))).w) * (_LightShadowData.x + (shadow2DProj (_ShadowMapTexture, xlv_TEXCOORD3).x * (1.0 - _LightShadowData.x))))), 0.0, 1.0))), 0.0, 1.0) * xlv_TEXCOORD6);
@@ -32613,8 +32613,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -32727,14 +32727,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -33034,9 +33034,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 411
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 415
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -33337,9 +33337,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 411
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 415
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -33408,8 +33408,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 497
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 501
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -33573,8 +33573,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -33673,7 +33673,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec3 tmpvar_30;
   tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28)) * 2.0) * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD2).x), 0.0, 1.0))), 0.0, 1.0) * xlv_TEXCOORD6);
@@ -33862,8 +33862,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -33973,14 +33973,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -34184,8 +34184,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -34294,14 +34294,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -34579,9 +34579,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 401
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 405
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -34874,9 +34874,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 401
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 405
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -34934,9 +34934,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 487
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
     highp vec2 localCoords = encnorm.wy;
@@ -35101,8 +35101,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -35202,7 +35202,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec3 tmpvar_30;
   tmpvar_30 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28)) * 2.0) * (texture2D (_LightTexture0, xlv_TEXCOORD2).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3).x)), 0.0, 1.0))), 0.0, 1.0) * xlv_TEXCOORD6);
@@ -35400,8 +35400,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -35512,14 +35512,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -35729,8 +35729,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -35840,14 +35840,14 @@ void main ()
   highp vec2 coord_42;
   coord_42 = ((((0.5 * detailCoords_15.zy) / tmpvar_41) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_43;
-  tmpvar_43 = texture2DGradEXT (_DetailTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_43 = texture2DGradEXT (_midTex, coord_42, tmpvar_32.xy, tmpvar_32.zw);
   detail_13 = tmpvar_43;
   mediump float tmpvar_44;
   tmpvar_44 = abs(detailCoords_15.x);
   highp vec2 coord_45;
   coord_45 = ((((0.5 * detailCoords_15.zy) / tmpvar_44) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_46;
-  tmpvar_46 = texture2DGradEXT (_DetailVertTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
+  tmpvar_46 = texture2DGradEXT (_steepTex, coord_45, tmpvar_32.xy, tmpvar_32.zw);
   vert_12 = tmpvar_46;
   mediump vec4 tmpvar_47;
   tmpvar_47 = mix (vert_12, detail_13, vec4(vertLerp_17));
@@ -36129,9 +36129,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 403
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 407
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -36431,9 +36431,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 403
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 407
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -36492,8 +36492,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 489
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 493
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -36651,8 +36651,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -36754,7 +36754,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4 = tmpvar_29;
   float tmpvar_30;
   tmpvar_30 = mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28);
@@ -36962,8 +36962,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -37076,14 +37076,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -37292,8 +37292,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -37406,14 +37406,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -37715,9 +37715,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 408
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 412
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -38016,9 +38016,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 408
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 412
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -38089,8 +38089,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 494
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 498
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -38248,8 +38248,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -38352,7 +38352,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4 = tmpvar_29;
   float tmpvar_30;
   tmpvar_30 = mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28);
@@ -38562,8 +38562,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -38677,14 +38677,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -38895,8 +38895,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -39010,14 +39010,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -39322,9 +39322,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 409
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 413
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -39624,9 +39624,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 409
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 413
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -39697,8 +39697,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 495
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 499
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -39856,8 +39856,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -39960,7 +39960,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4 = tmpvar_29;
   float tmpvar_30;
   tmpvar_30 = mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28);
@@ -40204,8 +40204,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -40319,14 +40319,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -40587,8 +40587,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -40702,14 +40702,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -41066,9 +41066,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 418
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -41379,9 +41379,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 418
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -41456,8 +41456,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 504
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 508
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -41615,8 +41615,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -41719,7 +41719,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4.w = tmpvar_29.w;
   vec4 shadows_30;
   vec3 tmpvar_31;
@@ -41929,8 +41929,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -42044,14 +42044,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -42374,9 +42374,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 418
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -42679,9 +42679,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 418
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -42756,8 +42756,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 504
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 508
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -42915,8 +42915,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -43018,7 +43018,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4 = tmpvar_29;
   float tmpvar_30;
   tmpvar_30 = mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28);
@@ -43254,8 +43254,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -43368,14 +43368,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -43640,8 +43640,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -43754,14 +43754,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -44119,9 +44119,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 414
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 418
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -44429,9 +44429,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 414
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 418
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -44510,8 +44510,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 500
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 504
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -44669,8 +44669,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -44773,7 +44773,7 @@ void main ()
   float tmpvar_28;
   tmpvar_28 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
   vec4 tmpvar_29;
-  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
+  tmpvar_29 = (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_16.xy, tmpvar_16.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_16.xy, tmpvar_16.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_18), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_27 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_27)), 0.0, 1.0))))), tmpvar_17, vec4(tmpvar_28)) * _Color);
   color_4 = tmpvar_29;
   float tmpvar_30;
   tmpvar_30 = mix (clamp (dot (xlv_TEXCOORD4, normalize(_WorldSpaceLightPos0).xyz), 0.0, 1.0), clamp (dot (tmpvar_24, -(_SunDir)), 0.0, 1.0), tmpvar_28);
@@ -45011,8 +45011,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -45126,14 +45126,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -45400,8 +45400,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -45515,14 +45515,14 @@ void main ()
   highp vec2 coord_43;
   coord_43 = ((((0.5 * detailCoords_16.zy) / tmpvar_42) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_44;
-  tmpvar_44 = texture2DGradEXT (_DetailTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_44 = texture2DGradEXT (_midTex, coord_43, tmpvar_33.xy, tmpvar_33.zw);
   detail_14 = tmpvar_44;
   mediump float tmpvar_45;
   tmpvar_45 = abs(detailCoords_16.x);
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_16.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailVertTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
+  tmpvar_47 = texture2DGradEXT (_steepTex, coord_46, tmpvar_33.xy, tmpvar_33.zw);
   vert_13 = tmpvar_47;
   mediump vec4 tmpvar_48;
   tmpvar_48 = mix (vert_13, detail_14, vec4(vertLerp_18));
@@ -45883,9 +45883,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 415
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 419
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -46194,9 +46194,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 415
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 419
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -46275,8 +46275,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 501
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 505
     mediump vec4 encnorm = xll_tex2Dgrad( _BumpMap, uv, uvdd.xy, uvdd.zw);
@@ -46434,8 +46434,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -46545,7 +46545,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -46742,8 +46742,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -46856,14 +46856,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -47082,8 +47082,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -47196,14 +47196,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -47512,9 +47512,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 395
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -47812,9 +47812,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 395
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -47870,9 +47870,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 485
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
@@ -48036,8 +48036,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -48146,7 +48146,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -48331,8 +48331,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -48444,14 +48444,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -48662,8 +48662,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -48775,14 +48775,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -49083,9 +49083,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 393
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 397
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -49376,9 +49376,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 393
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 397
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -49434,9 +49434,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 481
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
@@ -49602,8 +49602,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -49714,7 +49714,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -49912,8 +49912,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -50028,14 +50028,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -50261,8 +50261,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -50377,14 +50377,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -50701,9 +50701,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 404
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 408
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -51002,9 +51002,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 404
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 408
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -51070,9 +51070,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 494
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
@@ -51240,8 +51240,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -51352,7 +51352,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -51549,8 +51549,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -51664,14 +51664,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -51890,8 +51890,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -52005,14 +52005,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -52322,9 +52322,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 396
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 400
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -52623,9 +52623,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 396
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 400
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -52681,9 +52681,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 486
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
@@ -52851,8 +52851,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -52962,7 +52962,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -53158,8 +53158,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -53272,14 +53272,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -53496,8 +53496,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -53610,14 +53610,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -53924,9 +53924,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 395
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -54224,9 +54224,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 395
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -54282,9 +54282,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 485
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
@@ -54456,8 +54456,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -54570,7 +54570,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6 = tmpvar_34;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -54792,8 +54792,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -54910,14 +54910,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -55161,8 +55161,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -55279,14 +55279,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -55621,9 +55621,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 410
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 414
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -55929,9 +55929,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 410
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 414
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -56002,8 +56002,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 500
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 504
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -56177,8 +56177,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -56291,7 +56291,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -56501,8 +56501,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -56619,14 +56619,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -56955,9 +56955,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 411
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 415
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -57263,9 +57263,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 411
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 415
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -57339,8 +57339,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 501
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 505
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -57520,8 +57520,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -57631,7 +57631,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -57830,8 +57830,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -57945,14 +57945,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -58189,8 +58189,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -58303,14 +58303,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -58617,9 +58617,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 401
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 405
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -58917,9 +58917,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 401
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 405
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -58982,9 +58982,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 491
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
@@ -59166,8 +59166,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -59278,7 +59278,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -59486,8 +59486,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -59602,14 +59602,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -59852,8 +59852,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -59967,14 +59967,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -60285,9 +60285,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 403
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 407
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -60592,9 +60592,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 403
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 407
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -60658,8 +60658,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 493
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 497
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -60833,8 +60833,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -60947,7 +60947,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6 = tmpvar_34;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -61165,8 +61165,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -61283,14 +61283,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -61532,8 +61532,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -61650,14 +61650,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -61988,9 +61988,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 408
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 412
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -62294,9 +62294,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 408
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 412
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -62372,8 +62372,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 498
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 502
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -62547,8 +62547,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -62662,7 +62662,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6 = tmpvar_34;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -62882,8 +62882,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -63001,14 +63001,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -63252,8 +63252,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -63371,14 +63371,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -63712,9 +63712,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 409
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 413
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -64019,9 +64019,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 409
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 413
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -64097,8 +64097,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 499
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 503
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -64272,8 +64272,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -64387,7 +64387,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6 = tmpvar_34;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -64641,8 +64641,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -64760,14 +64760,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -65061,8 +65061,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -65180,14 +65180,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -65573,9 +65573,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 418
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -65891,9 +65891,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 418
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -65973,8 +65973,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 508
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 512
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -66148,8 +66148,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -66263,7 +66263,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -66483,8 +66483,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -66602,14 +66602,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -66961,9 +66961,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 418
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -67271,9 +67271,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 418
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -67353,8 +67353,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 508
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 512
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -67528,8 +67528,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -67642,7 +67642,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6 = tmpvar_34;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -67888,8 +67888,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -68006,14 +68006,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -68311,8 +68311,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -68429,14 +68429,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -68823,9 +68823,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 414
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 418
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -69138,9 +69138,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 414
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 418
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -69224,8 +69224,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 504
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 508
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -69399,8 +69399,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -69514,7 +69514,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6 = tmpvar_34;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -69762,8 +69762,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -69881,14 +69881,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -70188,8 +70188,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -70307,14 +70307,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -70704,9 +70704,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 415
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 419
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -71020,9 +71020,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 415
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 419
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -71106,8 +71106,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 505
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 509
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -71277,8 +71277,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -71388,7 +71388,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -71585,8 +71585,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -71699,14 +71699,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -71925,8 +71925,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -72039,14 +72039,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -72355,9 +72355,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 395
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -72655,9 +72655,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 395
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -72713,9 +72713,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 485
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
@@ -72879,8 +72879,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -72989,7 +72989,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -73174,8 +73174,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -73287,14 +73287,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -73505,8 +73505,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -73618,14 +73618,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -73926,9 +73926,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 393
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 397
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -74219,9 +74219,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 393
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 397
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -74277,9 +74277,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 481
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
@@ -74445,8 +74445,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -74557,7 +74557,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -74755,8 +74755,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -74871,14 +74871,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -75104,8 +75104,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -75220,14 +75220,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -75544,9 +75544,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 404
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 408
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -75845,9 +75845,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 404
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 408
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -75913,9 +75913,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 494
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
@@ -76083,8 +76083,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -76195,7 +76195,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -76392,8 +76392,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -76507,14 +76507,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -76733,8 +76733,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -76848,14 +76848,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -77165,9 +77165,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 396
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 400
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -77466,9 +77466,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 396
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 400
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -77524,9 +77524,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 486
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
@@ -77694,8 +77694,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -77805,7 +77805,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -78001,8 +78001,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -78115,14 +78115,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -78339,8 +78339,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -78453,14 +78453,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -78767,9 +78767,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 395
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -79067,9 +79067,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 395
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -79125,9 +79125,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 485
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
@@ -79299,8 +79299,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -79413,7 +79413,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6 = tmpvar_34;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -79635,8 +79635,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -79753,14 +79753,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -80004,8 +80004,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -80122,14 +80122,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -80464,9 +80464,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 410
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 414
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -80772,9 +80772,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 410
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 414
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -80845,8 +80845,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 500
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 504
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -81020,8 +81020,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -81134,7 +81134,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -81344,8 +81344,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -81462,14 +81462,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -81798,9 +81798,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 411
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 415
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -82106,9 +82106,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 411
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 415
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -82182,8 +82182,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 501
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 505
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -82363,8 +82363,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -82474,7 +82474,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -82673,8 +82673,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -82788,14 +82788,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -83032,8 +83032,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -83146,14 +83146,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -83460,9 +83460,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 401
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 405
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -83760,9 +83760,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 401
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 405
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -83825,9 +83825,9 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
     #line 491
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = xll_tex2Dgrad( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), uvdd.xy, uvdd.zw);
@@ -84009,8 +84009,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -84121,7 +84121,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -84329,8 +84329,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -84445,14 +84445,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -84695,8 +84695,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -84810,14 +84810,14 @@ void main ()
   highp vec2 coord_46;
   coord_46 = ((((0.5 * detailCoords_19.zy) / tmpvar_45) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DGradEXT (_DetailTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_47 = texture2DGradEXT (_midTex, coord_46, tmpvar_36.xy, tmpvar_36.zw);
   detail_17 = tmpvar_47;
   mediump float tmpvar_48;
   tmpvar_48 = abs(detailCoords_19.x);
   highp vec2 coord_49;
   coord_49 = ((((0.5 * detailCoords_19.zy) / tmpvar_48) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2DGradEXT (_DetailVertTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
+  tmpvar_50 = texture2DGradEXT (_steepTex, coord_49, tmpvar_36.xy, tmpvar_36.zw);
   vert_16 = tmpvar_50;
   mediump vec4 tmpvar_51;
   tmpvar_51 = mix (vert_16, detail_17, vec4(vertLerp_21));
@@ -85128,9 +85128,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 403
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 407
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -85435,9 +85435,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 403
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 407
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -85501,8 +85501,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 493
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 497
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -85676,8 +85676,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -85790,7 +85790,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6 = tmpvar_34;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -86008,8 +86008,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -86126,14 +86126,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -86375,8 +86375,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -86493,14 +86493,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -86831,9 +86831,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 408
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 412
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -87137,9 +87137,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 408
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 412
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -87215,8 +87215,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 498
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 502
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -87390,8 +87390,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -87505,7 +87505,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6 = tmpvar_34;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -87725,8 +87725,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -87844,14 +87844,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -88095,8 +88095,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -88214,14 +88214,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -88555,9 +88555,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 409
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 413
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -88862,9 +88862,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 409
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 413
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -88940,8 +88940,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 499
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 503
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -89115,8 +89115,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -89230,7 +89230,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6 = tmpvar_34;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -89484,8 +89484,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -89603,14 +89603,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -89904,8 +89904,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -90023,14 +90023,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -90416,9 +90416,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 418
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -90734,9 +90734,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 418
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -90816,8 +90816,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 508
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 512
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -90991,8 +90991,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -91106,7 +91106,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6.w = tmpvar_34.w;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -91326,8 +91326,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -91445,14 +91445,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -91804,9 +91804,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 418
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -92114,9 +92114,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 418
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -92196,8 +92196,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 508
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 512
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -92371,8 +92371,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -92485,7 +92485,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6 = tmpvar_34;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -92731,8 +92731,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -92849,14 +92849,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -93154,8 +93154,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -93272,14 +93272,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -93666,9 +93666,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 414
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 418
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -93981,9 +93981,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 414
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 418
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -94067,8 +94067,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 504
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 508
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -94242,8 +94242,8 @@ uniform float _DetailDist;
 uniform float _DetailVertScale;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform vec4 _Color;
@@ -94357,7 +94357,7 @@ void main ()
   vec4 tmpvar_33;
   tmpvar_33 = (cityoverlay_4 * texture2DGradARB (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _CityOverlayDetailScale), tmpvar_18.xy, tmpvar_18.zw));
   vec4 tmpvar_34;
-  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_DetailVertTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
+  tmpvar_34 = (mix (mix (mix ((xlv_TEXCOORD0 * mix (mix (texture2DGradARB (_steepTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailVertScale), tmpvar_18.xy, tmpvar_18.zw), texture2DGradARB (_midTex, ((((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) + _DetailOffset.xy) * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(clamp (((32.0 * (clamp (dot (xlv_TEXCOORD1, tmpvar_20), 0.0, 1.0) - 0.95)) + 0.5), 0.0, 1.0))), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD1.w), 0.0, 1.0)))), _OceanColor, vec4((clamp ((tmpvar_30 * _OceanDepthFactor), 0.0, 1.0) + ((_OceanDepthFactor * 15.0) * clamp (floor((1.0 + tmpvar_30)), 0.0, 1.0))))), tmpvar_19, vec4(tmpvar_31)), tmpvar_33, tmpvar_33.wwww) * _Color);
   color_6 = tmpvar_34;
   float tmpvar_35;
   tmpvar_35 = clamp (dot (tmpvar_27, -(_SunDir)), 0.0, 1.0);
@@ -94605,8 +94605,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -94724,14 +94724,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -95031,8 +95031,8 @@ uniform highp float _DetailDist;
 uniform highp float _DetailVertScale;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailVertTex;
-uniform sampler2D _DetailTex;
+uniform sampler2D _steepTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform lowp vec4 _Color;
@@ -95150,14 +95150,14 @@ void main ()
   highp vec2 coord_47;
   coord_47 = ((((0.5 * detailCoords_20.zy) / tmpvar_46) + _DetailOffset.xy) * _DetailScale);
   lowp vec4 tmpvar_48;
-  tmpvar_48 = texture2DGradEXT (_DetailTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_48 = texture2DGradEXT (_midTex, coord_47, tmpvar_37.xy, tmpvar_37.zw);
   detail_18 = tmpvar_48;
   mediump float tmpvar_49;
   tmpvar_49 = abs(detailCoords_20.x);
   highp vec2 coord_50;
   coord_50 = ((((0.5 * detailCoords_20.zy) / tmpvar_49) + _DetailOffset.xy) * _DetailVertScale);
   lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2DGradEXT (_DetailVertTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
+  tmpvar_51 = texture2DGradEXT (_steepTex, coord_50, tmpvar_37.xy, tmpvar_37.zw);
   vert_17 = tmpvar_51;
   mediump vec4 tmpvar_52;
   tmpvar_52 = mix (vert_17, detail_18, vec4(vertLerp_22));
@@ -95547,9 +95547,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 415
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 419
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -95863,9 +95863,9 @@ uniform lowp vec4 _Color;
 uniform sampler2D _MainTex;
 #line 415
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _steepTex;
 #line 419
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -95949,8 +95949,8 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 505
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
-    mediump vec4 vert = xll_tex2Dgrad( _DetailVertTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), uvdd.xy, uvdd.zw);
+    mediump vec4 vert = xll_tex2Dgrad( _steepTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailVertScale), uvdd.xy, uvdd.zw);
     detail = mix( vert, detail, vec4( vertLerp));
     #line 509
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
@@ -96070,8 +96070,8 @@ Float 12 [_OceanRadius]
 Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 "ps_3_0
@@ -96294,8 +96294,8 @@ Float 12 [_OceanRadius]
 Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 "ps_3_0
 ; 167 ALU, 12 TEX
@@ -96512,8 +96512,8 @@ Float 12 [_OceanRadius]
 Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
@@ -96744,8 +96744,8 @@ Float 12 [_OceanRadius]
 Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTextureB0] 2D
 SetTexture 5 [_LightTexture0] CUBE
@@ -96972,8 +96972,8 @@ Float 12 [_OceanRadius]
 Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 "ps_3_0
@@ -97196,8 +97196,8 @@ Float 13 [_OceanRadius]
 Float 14 [_OceanDepthFactor]
 Vector 15 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
@@ -97438,8 +97438,8 @@ Float 13 [_OceanRadius]
 Float 14 [_OceanDepthFactor]
 Vector 15 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
@@ -97673,8 +97673,8 @@ Float 12 [_OceanRadius]
 Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] 2D
 "ps_3_0
@@ -97896,8 +97896,8 @@ Float 12 [_OceanRadius]
 Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] 2D
 SetTexture 5 [_LightTexture0] 2D
@@ -98126,8 +98126,8 @@ Float 14 [_OceanRadius]
 Float 15 [_OceanDepthFactor]
 Vector 16 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] CUBE
 SetTexture 5 [_LightTexture0] 2D
@@ -98366,8 +98366,8 @@ Float 14 [_OceanRadius]
 Float 15 [_OceanDepthFactor]
 Vector 16 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] CUBE
 SetTexture 5 [_LightTextureB0] 2D
@@ -98613,8 +98613,8 @@ Float 17 [_OceanRadius]
 Float 18 [_OceanDepthFactor]
 Vector 19 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
@@ -98870,8 +98870,8 @@ Float 17 [_OceanRadius]
 Float 18 [_OceanDepthFactor]
 Vector 19 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
@@ -99119,8 +99119,8 @@ Float 14 [_OceanRadius]
 Float 15 [_OceanDepthFactor]
 Vector 16 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] CUBE
 SetTexture 5 [_LightTexture0] 2D
@@ -99371,8 +99371,8 @@ Float 14 [_OceanRadius]
 Float 15 [_OceanDepthFactor]
 Vector 16 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] CUBE
 SetTexture 5 [_LightTextureB0] 2D
@@ -99625,8 +99625,8 @@ Float 12 [_OceanRadius]
 Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 "ps_3_0
@@ -99849,8 +99849,8 @@ Float 12 [_OceanRadius]
 Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 "ps_3_0
 ; 167 ALU, 12 TEX
@@ -100067,8 +100067,8 @@ Float 12 [_OceanRadius]
 Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
@@ -100299,8 +100299,8 @@ Float 12 [_OceanRadius]
 Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTextureB0] 2D
 SetTexture 5 [_LightTexture0] CUBE
@@ -100527,8 +100527,8 @@ Float 12 [_OceanRadius]
 Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 "ps_3_0
@@ -100751,8 +100751,8 @@ Float 13 [_OceanRadius]
 Float 14 [_OceanDepthFactor]
 Vector 15 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
@@ -100993,8 +100993,8 @@ Float 13 [_OceanRadius]
 Float 14 [_OceanDepthFactor]
 Vector 15 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
@@ -101228,8 +101228,8 @@ Float 12 [_OceanRadius]
 Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] 2D
 "ps_3_0
@@ -101451,8 +101451,8 @@ Float 12 [_OceanRadius]
 Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] 2D
 SetTexture 5 [_LightTexture0] 2D
@@ -101681,8 +101681,8 @@ Float 14 [_OceanRadius]
 Float 15 [_OceanDepthFactor]
 Vector 16 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] CUBE
 SetTexture 5 [_LightTexture0] 2D
@@ -101921,8 +101921,8 @@ Float 14 [_OceanRadius]
 Float 15 [_OceanDepthFactor]
 Vector 16 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] CUBE
 SetTexture 5 [_LightTextureB0] 2D
@@ -102168,8 +102168,8 @@ Float 17 [_OceanRadius]
 Float 18 [_OceanDepthFactor]
 Vector 19 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
@@ -102425,8 +102425,8 @@ Float 17 [_OceanRadius]
 Float 18 [_OceanDepthFactor]
 Vector 19 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_LightTexture0] 2D
 SetTexture 5 [_LightTextureB0] 2D
@@ -102674,8 +102674,8 @@ Float 14 [_OceanRadius]
 Float 15 [_OceanDepthFactor]
 Vector 16 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] CUBE
 SetTexture 5 [_LightTexture0] 2D
@@ -102926,8 +102926,8 @@ Float 14 [_OceanRadius]
 Float 15 [_OceanDepthFactor]
 Vector 16 [_OceanColor]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_BumpMap] 2D
 SetTexture 4 [_ShadowMapTexture] CUBE
 SetTexture 5 [_LightTextureB0] 2D
@@ -103181,8 +103181,8 @@ Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -103433,8 +103433,8 @@ Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -103677,8 +103677,8 @@ Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -103936,8 +103936,8 @@ Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -104191,8 +104191,8 @@ Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -104441,8 +104441,8 @@ Float 14 [_OceanDepthFactor]
 Vector 15 [_OceanColor]
 Float 16 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -104710,8 +104710,8 @@ Float 14 [_OceanDepthFactor]
 Vector 15 [_OceanColor]
 Float 16 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -104972,8 +104972,8 @@ Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -105221,8 +105221,8 @@ Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -105478,8 +105478,8 @@ Float 15 [_OceanDepthFactor]
 Vector 16 [_OceanColor]
 Float 17 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -105746,8 +105746,8 @@ Float 15 [_OceanDepthFactor]
 Vector 16 [_OceanColor]
 Float 17 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -106021,8 +106021,8 @@ Float 18 [_OceanDepthFactor]
 Vector 19 [_OceanColor]
 Float 20 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -106306,8 +106306,8 @@ Float 18 [_OceanDepthFactor]
 Vector 19 [_OceanColor]
 Float 20 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -106583,8 +106583,8 @@ Float 15 [_OceanDepthFactor]
 Vector 16 [_OceanColor]
 Float 17 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -106863,8 +106863,8 @@ Float 15 [_OceanDepthFactor]
 Vector 16 [_OceanColor]
 Float 17 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -107144,8 +107144,8 @@ Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -107396,8 +107396,8 @@ Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -107640,8 +107640,8 @@ Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -107899,8 +107899,8 @@ Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -108154,8 +108154,8 @@ Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -108404,8 +108404,8 @@ Float 14 [_OceanDepthFactor]
 Vector 15 [_OceanColor]
 Float 16 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -108673,8 +108673,8 @@ Float 14 [_OceanDepthFactor]
 Vector 15 [_OceanColor]
 Float 16 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -108935,8 +108935,8 @@ Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -109184,8 +109184,8 @@ Float 13 [_OceanDepthFactor]
 Vector 14 [_OceanColor]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -109441,8 +109441,8 @@ Float 15 [_OceanDepthFactor]
 Vector 16 [_OceanColor]
 Float 17 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -109709,8 +109709,8 @@ Float 15 [_OceanDepthFactor]
 Vector 16 [_OceanColor]
 Float 17 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -109984,8 +109984,8 @@ Float 18 [_OceanDepthFactor]
 Vector 19 [_OceanColor]
 Float 20 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -110269,8 +110269,8 @@ Float 18 [_OceanDepthFactor]
 Vector 19 [_OceanColor]
 Float 20 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -110546,8 +110546,8 @@ Float 15 [_OceanDepthFactor]
 Vector 16 [_OceanColor]
 Float 17 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -110826,8 +110826,8 @@ Float 15 [_OceanDepthFactor]
 Vector 16 [_OceanColor]
 Float 17 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_DetailVertTex] 2D
+SetTexture 1 [_midTex] 2D
+SetTexture 2 [_steepTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D

@@ -5,8 +5,8 @@
 		_Shininess ("Shininess", Float) = 10
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_BumpMap ("Normalmap", 2D) = "bump" {}
-		_DetailTex ("Detail (RGB)", 2D) = "white" {}
-		_DetailVertTex ("Detail for Vertical Surfaces (RGB)", 2D) = "white" {}
+		_midTex ("Detail (RGB)", 2D) = "white" {}
+		_steepTex ("Detail for Vertical Surfaces (RGB)", 2D) = "white" {}
 		_DetailScale ("Detail Scale", Range(0,1000)) = 200
 		_DetailOffset ("Detail Offset", Vector) = (.5,.5,0,0)
 		_DetailVertScale ("Detail Scale", Range(0,1000)) = 200
@@ -103,7 +103,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -179,7 +179,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   float tmpvar_21;
   tmpvar_21 = texture2D (_LightTexture0, vec2(dot (xlv_TEXCOORD6, xlv_TEXCOORD6))).w;
@@ -495,7 +495,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -599,7 +599,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -735,7 +735,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -840,7 +840,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -1077,8 +1077,8 @@ uniform highp float _Shininess;
 #line 395
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -1361,8 +1361,8 @@ uniform highp float _Shininess;
 #line 395
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -1409,7 +1409,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 467
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 471
@@ -1518,7 +1518,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -1593,7 +1593,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   vec3 i_21;
   i_21 = -(xlv_TEXCOORD5);
@@ -1881,7 +1881,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -1984,7 +1984,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -2112,7 +2112,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -2216,7 +2216,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -2445,8 +2445,8 @@ uniform highp float _Shininess;
 #line 393
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 397
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -2722,8 +2722,8 @@ uniform highp float _Shininess;
 #line 393
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 397
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -2769,7 +2769,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     #line 465
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
@@ -2880,7 +2880,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -2957,7 +2957,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   float tmpvar_21;
   tmpvar_21 = ((float((xlv_TEXCOORD6.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD6.xy / xlv_TEXCOORD6.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD6.xyz, xlv_TEXCOORD6.xyz))).w);
@@ -3274,7 +3274,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -3380,7 +3380,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -3523,7 +3523,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -3630,7 +3630,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -3875,8 +3875,8 @@ uniform highp float _Shininess;
 #line 404
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 408
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -4160,8 +4160,8 @@ uniform highp float _Shininess;
 #line 404
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 408
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -4218,7 +4218,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 476
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 480
@@ -4331,7 +4331,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -4408,7 +4408,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   float tmpvar_21;
   tmpvar_21 = (texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD6, xlv_TEXCOORD6))).w * textureCube (_LightTexture0, xlv_TEXCOORD6).w);
@@ -4724,7 +4724,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -4829,7 +4829,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -4965,7 +4965,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -5071,7 +5071,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -5309,8 +5309,8 @@ uniform highp float _Shininess;
 #line 396
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 400
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -5594,8 +5594,8 @@ uniform highp float _Shininess;
 #line 396
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 400
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -5642,7 +5642,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 468
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 472
@@ -5755,7 +5755,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -5831,7 +5831,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   float tmpvar_21;
   tmpvar_21 = texture2D (_LightTexture0, xlv_TEXCOORD6).w;
@@ -6144,7 +6144,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -6248,7 +6248,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -6382,7 +6382,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -6487,7 +6487,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -6722,8 +6722,8 @@ uniform highp float _Shininess;
 #line 395
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -7006,8 +7006,8 @@ uniform highp float _Shininess;
 #line 395
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -7054,7 +7054,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 467
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 471
@@ -7171,7 +7171,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -7250,7 +7250,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2 = tmpvar_20;
   float tmpvar_21;
   tmpvar_21 = dot (normal_16, xlv_TEXCOORD5);
@@ -7604,7 +7604,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -7712,7 +7712,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -7871,7 +7871,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -7980,7 +7980,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -8241,8 +8241,8 @@ uniform highp float _Shininess;
 #line 410
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 414
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -8533,8 +8533,8 @@ uniform highp float _Shininess;
 #line 410
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 414
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -8595,7 +8595,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 484
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 488
@@ -8714,7 +8714,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -8793,7 +8793,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   float tmpvar_21;
   tmpvar_21 = (((float((xlv_TEXCOORD6.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD6.xy / xlv_TEXCOORD6.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD6.xyz, xlv_TEXCOORD6.xyz))).w) * (_LightShadowData.x + (shadow2DProj (_ShadowMapTexture, xlv_TEXCOORD7).x * (1.0 - _LightShadowData.x))));
@@ -9135,7 +9135,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -9243,7 +9243,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -9500,8 +9500,8 @@ uniform highp float _Shininess;
 #line 411
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 415
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -9792,8 +9792,8 @@ uniform highp float _Shininess;
 #line 411
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 415
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -9857,7 +9857,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 485
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 489
@@ -9982,7 +9982,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -10058,7 +10058,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   vec4 tmpvar_21;
   tmpvar_21 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD6);
@@ -10366,7 +10366,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -10471,7 +10471,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -10625,7 +10625,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -10730,7 +10730,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -10965,8 +10965,8 @@ uniform highp float _Shininess;
 #line 401
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 405
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -11249,8 +11249,8 @@ uniform highp float _Shininess;
 #line 401
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 405
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -11304,7 +11304,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 473
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 477
@@ -11431,7 +11431,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -11508,7 +11508,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   float tmpvar_21;
   tmpvar_21 = (texture2D (_LightTexture0, xlv_TEXCOORD6).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD7).x);
@@ -11839,7 +11839,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -11945,7 +11945,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -12105,7 +12105,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -12211,7 +12211,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -12450,8 +12450,8 @@ uniform highp float _Shininess;
 #line 403
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 407
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -12741,8 +12741,8 @@ uniform highp float _Shininess;
 #line 403
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 407
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -12796,7 +12796,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 477
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 481
@@ -12915,7 +12915,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -12994,7 +12994,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2 = tmpvar_20;
   float tmpvar_21;
   tmpvar_21 = dot (normal_16, xlv_TEXCOORD5);
@@ -13334,7 +13334,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -13442,7 +13442,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -13599,7 +13599,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -13708,7 +13708,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -13965,8 +13965,8 @@ uniform highp float _Shininess;
 #line 408
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 412
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -14255,8 +14255,8 @@ uniform highp float _Shininess;
 #line 408
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 412
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -14322,7 +14322,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 482
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 486
@@ -14441,7 +14441,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -14521,7 +14521,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2 = tmpvar_20;
   float tmpvar_21;
   tmpvar_21 = dot (normal_16, xlv_TEXCOORD5);
@@ -14863,7 +14863,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -14972,7 +14972,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -15131,7 +15131,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -15241,7 +15241,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -15501,8 +15501,8 @@ uniform highp float _Shininess;
 #line 409
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 413
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -15792,8 +15792,8 @@ uniform highp float _Shininess;
 #line 409
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 413
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -15859,7 +15859,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 483
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 487
@@ -15978,7 +15978,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -16058,7 +16058,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2 = tmpvar_20;
   float tmpvar_21;
   tmpvar_21 = dot (normal_16, xlv_TEXCOORD5);
@@ -16444,7 +16444,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -16553,7 +16553,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -16762,7 +16762,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -16872,7 +16872,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -17184,8 +17184,8 @@ uniform highp float _Shininess;
 #line 418
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -17486,8 +17486,8 @@ uniform highp float _Shininess;
 #line 418
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -17557,7 +17557,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 492
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 496
@@ -17676,7 +17676,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -17756,7 +17756,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   vec4 shadows_21;
   vec3 tmpvar_22;
@@ -18108,7 +18108,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -18217,7 +18217,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -18497,8 +18497,8 @@ uniform highp float _Shininess;
 #line 418
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -18791,8 +18791,8 @@ uniform highp float _Shininess;
 #line 418
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -18862,7 +18862,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 492
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 496
@@ -18981,7 +18981,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -19060,7 +19060,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2 = tmpvar_20;
   float tmpvar_21;
   tmpvar_21 = dot (normal_16, xlv_TEXCOORD5);
@@ -19428,7 +19428,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -19536,7 +19536,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -19749,7 +19749,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -19858,7 +19858,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -20171,8 +20171,8 @@ uniform highp float _Shininess;
 #line 414
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 418
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -20470,8 +20470,8 @@ uniform highp float _Shininess;
 #line 414
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 418
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -20545,7 +20545,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 488
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 492
@@ -20664,7 +20664,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -20744,7 +20744,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2 = tmpvar_20;
   float tmpvar_21;
   tmpvar_21 = dot (normal_16, xlv_TEXCOORD5);
@@ -21114,7 +21114,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -21223,7 +21223,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -21438,7 +21438,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -21548,7 +21548,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -21864,8 +21864,8 @@ uniform highp float _Shininess;
 #line 415
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 419
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -22164,8 +22164,8 @@ uniform highp float _Shininess;
 #line 415
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 419
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -22239,7 +22239,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 489
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 493
@@ -22354,7 +22354,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -22430,7 +22430,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   float tmpvar_21;
   tmpvar_21 = texture2D (_LightTexture0, vec2(dot (xlv_TEXCOORD6, xlv_TEXCOORD6))).w;
@@ -22746,7 +22746,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -22850,7 +22850,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -22986,7 +22986,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -23091,7 +23091,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -23328,8 +23328,8 @@ uniform highp float _Shininess;
 #line 395
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -23612,8 +23612,8 @@ uniform highp float _Shininess;
 #line 395
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -23660,7 +23660,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 467
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 471
@@ -23769,7 +23769,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -23844,7 +23844,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   vec3 i_21;
   i_21 = -(xlv_TEXCOORD5);
@@ -24132,7 +24132,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -24235,7 +24235,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -24363,7 +24363,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -24467,7 +24467,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -24696,8 +24696,8 @@ uniform highp float _Shininess;
 #line 393
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 397
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -24973,8 +24973,8 @@ uniform highp float _Shininess;
 #line 393
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 397
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -25020,7 +25020,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     #line 465
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
@@ -25131,7 +25131,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -25208,7 +25208,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   float tmpvar_21;
   tmpvar_21 = ((float((xlv_TEXCOORD6.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD6.xy / xlv_TEXCOORD6.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD6.xyz, xlv_TEXCOORD6.xyz))).w);
@@ -25525,7 +25525,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -25631,7 +25631,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -25774,7 +25774,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -25881,7 +25881,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -26126,8 +26126,8 @@ uniform highp float _Shininess;
 #line 404
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 408
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -26411,8 +26411,8 @@ uniform highp float _Shininess;
 #line 404
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 408
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -26469,7 +26469,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 476
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 480
@@ -26582,7 +26582,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -26659,7 +26659,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   float tmpvar_21;
   tmpvar_21 = (texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD6, xlv_TEXCOORD6))).w * textureCube (_LightTexture0, xlv_TEXCOORD6).w);
@@ -26975,7 +26975,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -27080,7 +27080,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -27216,7 +27216,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -27322,7 +27322,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -27560,8 +27560,8 @@ uniform highp float _Shininess;
 #line 396
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 400
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -27845,8 +27845,8 @@ uniform highp float _Shininess;
 #line 396
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 400
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -27893,7 +27893,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 468
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 472
@@ -28006,7 +28006,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -28082,7 +28082,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   float tmpvar_21;
   tmpvar_21 = texture2D (_LightTexture0, xlv_TEXCOORD6).w;
@@ -28395,7 +28395,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -28499,7 +28499,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -28633,7 +28633,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -28738,7 +28738,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -28973,8 +28973,8 @@ uniform highp float _Shininess;
 #line 395
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -29257,8 +29257,8 @@ uniform highp float _Shininess;
 #line 395
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -29305,7 +29305,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 467
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 471
@@ -29422,7 +29422,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -29501,7 +29501,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2 = tmpvar_20;
   float tmpvar_21;
   tmpvar_21 = dot (normal_16, xlv_TEXCOORD5);
@@ -29855,7 +29855,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -29963,7 +29963,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -30122,7 +30122,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -30231,7 +30231,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -30492,8 +30492,8 @@ uniform highp float _Shininess;
 #line 410
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 414
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -30784,8 +30784,8 @@ uniform highp float _Shininess;
 #line 410
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 414
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -30846,7 +30846,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 484
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 488
@@ -30965,7 +30965,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -31044,7 +31044,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   float tmpvar_21;
   tmpvar_21 = (((float((xlv_TEXCOORD6.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD6.xy / xlv_TEXCOORD6.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD6.xyz, xlv_TEXCOORD6.xyz))).w) * (_LightShadowData.x + (shadow2DProj (_ShadowMapTexture, xlv_TEXCOORD7).x * (1.0 - _LightShadowData.x))));
@@ -31386,7 +31386,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -31494,7 +31494,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -31751,8 +31751,8 @@ uniform highp float _Shininess;
 #line 411
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 415
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -32043,8 +32043,8 @@ uniform highp float _Shininess;
 #line 411
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 415
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -32108,7 +32108,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 485
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 489
@@ -32233,7 +32233,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -32309,7 +32309,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   vec4 tmpvar_21;
   tmpvar_21 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD6);
@@ -32617,7 +32617,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -32722,7 +32722,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -32876,7 +32876,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -32981,7 +32981,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -33216,8 +33216,8 @@ uniform highp float _Shininess;
 #line 401
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 405
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -33500,8 +33500,8 @@ uniform highp float _Shininess;
 #line 401
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 405
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -33555,7 +33555,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 473
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 477
@@ -33682,7 +33682,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -33759,7 +33759,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   float tmpvar_21;
   tmpvar_21 = (texture2D (_LightTexture0, xlv_TEXCOORD6).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD7).x);
@@ -34090,7 +34090,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -34196,7 +34196,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -34356,7 +34356,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -34462,7 +34462,7 @@ void main ()
   highp vec2 ddy_36;
   ddy_36 = (tmpvar_25.zw * _DetailScale);
   lowp vec4 tmpvar_37;
-  tmpvar_37 = texture2DGradEXT (_DetailTex, coord_34, ddx_35, ddy_36);
+  tmpvar_37 = texture2DGradEXT (_midTex, coord_34, ddx_35, ddy_36);
   detail_6 = tmpvar_37;
   highp float tmpvar_38;
   tmpvar_38 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -34701,8 +34701,8 @@ uniform highp float _Shininess;
 #line 403
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 407
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -34992,8 +34992,8 @@ uniform highp float _Shininess;
 #line 403
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 407
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -35047,7 +35047,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 477
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 481
@@ -35166,7 +35166,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -35245,7 +35245,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2 = tmpvar_20;
   float tmpvar_21;
   tmpvar_21 = dot (normal_16, xlv_TEXCOORD5);
@@ -35585,7 +35585,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -35693,7 +35693,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -35850,7 +35850,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -35959,7 +35959,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -36216,8 +36216,8 @@ uniform highp float _Shininess;
 #line 408
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 412
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -36506,8 +36506,8 @@ uniform highp float _Shininess;
 #line 408
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 412
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -36573,7 +36573,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 482
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 486
@@ -36692,7 +36692,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -36772,7 +36772,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2 = tmpvar_20;
   float tmpvar_21;
   tmpvar_21 = dot (normal_16, xlv_TEXCOORD5);
@@ -37114,7 +37114,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -37223,7 +37223,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -37382,7 +37382,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -37492,7 +37492,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -37752,8 +37752,8 @@ uniform highp float _Shininess;
 #line 409
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 413
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -38043,8 +38043,8 @@ uniform highp float _Shininess;
 #line 409
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 413
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -38110,7 +38110,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 483
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 487
@@ -38229,7 +38229,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -38309,7 +38309,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2 = tmpvar_20;
   float tmpvar_21;
   tmpvar_21 = dot (normal_16, xlv_TEXCOORD5);
@@ -38695,7 +38695,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -38804,7 +38804,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -39013,7 +39013,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -39123,7 +39123,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -39435,8 +39435,8 @@ uniform highp float _Shininess;
 #line 418
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -39737,8 +39737,8 @@ uniform highp float _Shininess;
 #line 418
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -39808,7 +39808,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 492
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 496
@@ -39927,7 +39927,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -40007,7 +40007,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2.w = tmpvar_20.w;
   vec4 shadows_21;
   vec3 tmpvar_22;
@@ -40359,7 +40359,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -40468,7 +40468,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -40748,8 +40748,8 @@ uniform highp float _Shininess;
 #line 418
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -41042,8 +41042,8 @@ uniform highp float _Shininess;
 #line 418
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -41113,7 +41113,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 492
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 496
@@ -41232,7 +41232,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -41311,7 +41311,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2 = tmpvar_20;
   float tmpvar_21;
   tmpvar_21 = dot (normal_16, xlv_TEXCOORD5);
@@ -41679,7 +41679,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -41787,7 +41787,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -42000,7 +42000,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -42109,7 +42109,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -42422,8 +42422,8 @@ uniform highp float _Shininess;
 #line 414
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 418
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -42721,8 +42721,8 @@ uniform highp float _Shininess;
 #line 414
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 418
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -42796,7 +42796,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 488
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 492
@@ -42915,7 +42915,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -42995,7 +42995,7 @@ void main ()
   vec3 tmpvar_19;
   tmpvar_19 = mix (mix (tmpvar_17.zxy, tmpvar_17, vec3(tmpvar_18)), tmpvar_17.yxz, vec3(clamp (floor(((1.0 + tmpvar_17.y) - mix (tmpvar_17.z, tmpvar_17.x, tmpvar_18))), 0.0, 1.0)));
   vec4 tmpvar_20;
-  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
+  tmpvar_20 = ((tmpvar_15 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_19.zy) / abs(tmpvar_19.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_14.xy * _DetailScale), (tmpvar_14.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))) * _Color);
   color_2 = tmpvar_20;
   float tmpvar_21;
   tmpvar_21 = dot (normal_16, xlv_TEXCOORD5);
@@ -43365,7 +43365,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -43474,7 +43474,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -43689,7 +43689,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -43799,7 +43799,7 @@ void main ()
   highp vec2 ddy_37;
   ddy_37 = (tmpvar_26.zw * _DetailScale);
   lowp vec4 tmpvar_38;
-  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_35, ddx_36, ddy_37);
+  tmpvar_38 = texture2DGradEXT (_midTex, coord_35, ddx_36, ddy_37);
   detail_7 = tmpvar_38;
   highp float tmpvar_39;
   tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
@@ -44115,8 +44115,8 @@ uniform highp float _Shininess;
 #line 415
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 419
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -44415,8 +44415,8 @@ uniform highp float _Shininess;
 #line 415
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 419
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -44490,7 +44490,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 489
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = (main.xyzw * mix( detail.xyzw, vec4( 1.0), vec4( detailLevel)));
     #line 493
@@ -44609,7 +44609,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -44696,7 +44696,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -45020,7 +45020,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -45128,7 +45128,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -45293,7 +45293,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -45402,7 +45402,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -45664,8 +45664,8 @@ uniform highp float _Shininess;
 #line 395
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -45953,8 +45953,8 @@ uniform highp float _Shininess;
 #line 395
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -46006,7 +46006,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 471
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 475
@@ -46131,7 +46131,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -46217,7 +46217,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -46513,7 +46513,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -46620,7 +46620,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -46777,7 +46777,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -46885,7 +46885,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -47139,8 +47139,8 @@ uniform highp float _Shininess;
 #line 393
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 397
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -47421,8 +47421,8 @@ uniform highp float _Shininess;
 #line 393
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 397
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -47473,7 +47473,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     #line 469
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
@@ -47601,7 +47601,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -47689,7 +47689,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -48014,7 +48014,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -48124,7 +48124,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -48296,7 +48296,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -48407,7 +48407,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -48677,8 +48677,8 @@ uniform highp float _Shininess;
 #line 404
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 408
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -48967,8 +48967,8 @@ uniform highp float _Shininess;
 #line 404
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 408
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -49030,7 +49030,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 480
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 484
@@ -49159,7 +49159,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -49247,7 +49247,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -49571,7 +49571,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -49680,7 +49680,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -49845,7 +49845,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -49955,7 +49955,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -50218,8 +50218,8 @@ uniform highp float _Shininess;
 #line 396
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 400
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -50508,8 +50508,8 @@ uniform highp float _Shininess;
 #line 396
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 400
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -50561,7 +50561,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 472
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 476
@@ -50690,7 +50690,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -50777,7 +50777,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -51098,7 +51098,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -51206,7 +51206,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -51369,7 +51369,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -51478,7 +51478,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -51738,8 +51738,8 @@ uniform highp float _Shininess;
 #line 395
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -52027,8 +52027,8 @@ uniform highp float _Shininess;
 #line 395
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -52080,7 +52080,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 471
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 475
@@ -52213,7 +52213,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -52303,7 +52303,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4 = tmpvar_25;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -52663,7 +52663,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -52775,7 +52775,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -52963,7 +52963,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -53076,7 +53076,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -53362,8 +53362,8 @@ uniform highp float _Shininess;
 #line 410
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 414
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -53659,8 +53659,8 @@ uniform highp float _Shininess;
 #line 410
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 414
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -53726,7 +53726,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 488
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 492
@@ -53861,7 +53861,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -53951,7 +53951,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -54301,7 +54301,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -54413,7 +54413,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -54695,8 +54695,8 @@ uniform highp float _Shininess;
 #line 411
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 415
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -54992,8 +54992,8 @@ uniform highp float _Shininess;
 #line 411
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 415
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -55062,7 +55062,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 489
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 493
@@ -55203,7 +55203,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -55290,7 +55290,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -55606,7 +55606,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -55715,7 +55715,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -55898,7 +55898,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -56007,7 +56007,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -56267,8 +56267,8 @@ uniform highp float _Shininess;
 #line 401
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 405
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -56556,8 +56556,8 @@ uniform highp float _Shininess;
 #line 401
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 405
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -56616,7 +56616,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 477
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 481
@@ -56759,7 +56759,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -56847,7 +56847,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -57186,7 +57186,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -57296,7 +57296,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -57485,7 +57485,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -57595,7 +57595,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -57859,8 +57859,8 @@ uniform highp float _Shininess;
 #line 403
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 407
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -58155,8 +58155,8 @@ uniform highp float _Shininess;
 #line 403
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 407
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -58215,7 +58215,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 481
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 485
@@ -58350,7 +58350,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -58440,7 +58440,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4 = tmpvar_25;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -58786,7 +58786,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -58898,7 +58898,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -59084,7 +59084,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -59197,7 +59197,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -59479,8 +59479,8 @@ uniform highp float _Shininess;
 #line 408
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 412
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -59774,8 +59774,8 @@ uniform highp float _Shininess;
 #line 408
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 412
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -59846,7 +59846,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 486
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 490
@@ -59981,7 +59981,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -60072,7 +60072,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4 = tmpvar_25;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -60420,7 +60420,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -60533,7 +60533,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -60721,7 +60721,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -60835,7 +60835,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -61120,8 +61120,8 @@ uniform highp float _Shininess;
 #line 409
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 413
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -61416,8 +61416,8 @@ uniform highp float _Shininess;
 #line 409
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 413
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -61488,7 +61488,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 487
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 491
@@ -61623,7 +61623,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -61714,7 +61714,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4 = tmpvar_25;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -62106,7 +62106,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -62219,7 +62219,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -62457,7 +62457,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -62571,7 +62571,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -62908,8 +62908,8 @@ uniform highp float _Shininess;
 #line 418
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -63215,8 +63215,8 @@ uniform highp float _Shininess;
 #line 418
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -63291,7 +63291,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 496
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 500
@@ -63426,7 +63426,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -63517,7 +63517,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -63877,7 +63877,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -63990,7 +63990,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -64295,8 +64295,8 @@ uniform highp float _Shininess;
 #line 418
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -64594,8 +64594,8 @@ uniform highp float _Shininess;
 #line 418
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -64670,7 +64670,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 496
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 500
@@ -64805,7 +64805,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -64895,7 +64895,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4 = tmpvar_25;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -65269,7 +65269,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -65381,7 +65381,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -65623,7 +65623,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -65736,7 +65736,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -66074,8 +66074,8 @@ uniform highp float _Shininess;
 #line 414
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 418
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -66378,8 +66378,8 @@ uniform highp float _Shininess;
 #line 414
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 418
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -66458,7 +66458,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 492
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 496
@@ -66593,7 +66593,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -66684,7 +66684,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4 = tmpvar_25;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -67060,7 +67060,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -67173,7 +67173,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -67417,7 +67417,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -67531,7 +67531,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -67872,8 +67872,8 @@ uniform highp float _Shininess;
 #line 415
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 419
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -68177,8 +68177,8 @@ uniform highp float _Shininess;
 #line 415
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 419
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -68257,7 +68257,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 493
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 497
@@ -68388,7 +68388,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -68475,7 +68475,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -68799,7 +68799,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -68907,7 +68907,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -69072,7 +69072,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -69181,7 +69181,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -69443,8 +69443,8 @@ uniform highp float _Shininess;
 #line 395
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -69732,8 +69732,8 @@ uniform highp float _Shininess;
 #line 395
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -69785,7 +69785,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 471
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 475
@@ -69910,7 +69910,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -69996,7 +69996,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -70292,7 +70292,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -70399,7 +70399,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -70556,7 +70556,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -70664,7 +70664,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -70918,8 +70918,8 @@ uniform highp float _Shininess;
 #line 393
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 397
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -71200,8 +71200,8 @@ uniform highp float _Shininess;
 #line 393
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 397
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -71252,7 +71252,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump vec3 detailCoords = mix( sphereNrm.zxy, sphereNrm.xyz, vec3( zxlerp));
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     #line 469
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
@@ -71380,7 +71380,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -71468,7 +71468,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -71793,7 +71793,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -71903,7 +71903,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -72075,7 +72075,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -72186,7 +72186,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -72456,8 +72456,8 @@ uniform highp float _Shininess;
 #line 404
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 408
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -72746,8 +72746,8 @@ uniform highp float _Shininess;
 #line 404
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 408
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -72809,7 +72809,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 480
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 484
@@ -72938,7 +72938,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -73026,7 +73026,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -73350,7 +73350,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -73459,7 +73459,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -73624,7 +73624,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -73734,7 +73734,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -73997,8 +73997,8 @@ uniform highp float _Shininess;
 #line 396
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 400
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -74287,8 +74287,8 @@ uniform highp float _Shininess;
 #line 396
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 400
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -74340,7 +74340,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 472
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 476
@@ -74469,7 +74469,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -74556,7 +74556,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -74877,7 +74877,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -74985,7 +74985,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -75148,7 +75148,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -75257,7 +75257,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -75517,8 +75517,8 @@ uniform highp float _Shininess;
 #line 395
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -75806,8 +75806,8 @@ uniform highp float _Shininess;
 #line 395
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 399
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -75859,7 +75859,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 471
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 475
@@ -75992,7 +75992,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -76082,7 +76082,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4 = tmpvar_25;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -76442,7 +76442,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -76554,7 +76554,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -76742,7 +76742,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -76855,7 +76855,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -77141,8 +77141,8 @@ uniform highp float _Shininess;
 #line 410
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 414
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -77438,8 +77438,8 @@ uniform highp float _Shininess;
 #line 410
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 414
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -77505,7 +77505,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 488
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 492
@@ -77640,7 +77640,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -77730,7 +77730,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -78080,7 +78080,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -78192,7 +78192,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -78474,8 +78474,8 @@ uniform highp float _Shininess;
 #line 411
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 415
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -78771,8 +78771,8 @@ uniform highp float _Shininess;
 #line 411
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 415
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -78841,7 +78841,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 489
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 493
@@ -78982,7 +78982,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -79069,7 +79069,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -79385,7 +79385,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -79494,7 +79494,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -79677,7 +79677,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -79786,7 +79786,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -80046,8 +80046,8 @@ uniform highp float _Shininess;
 #line 401
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 405
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -80335,8 +80335,8 @@ uniform highp float _Shininess;
 #line 401
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 405
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -80395,7 +80395,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 477
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 481
@@ -80538,7 +80538,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -80626,7 +80626,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -80965,7 +80965,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -81075,7 +81075,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -81264,7 +81264,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -81374,7 +81374,7 @@ void main ()
   highp vec2 ddy_40;
   ddy_40 = (tmpvar_29.zw * _DetailScale);
   lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_38, ddx_39, ddy_40);
+  tmpvar_41 = texture2DGradEXT (_midTex, coord_38, ddx_39, ddy_40);
   detail_10 = tmpvar_41;
   lowp vec4 tmpvar_42;
   tmpvar_42 = texture2DGradEXT (_CityOverlayTex, uv_16, tmpvar_29.xy, tmpvar_29.zw);
@@ -81638,8 +81638,8 @@ uniform highp float _Shininess;
 #line 403
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 407
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -81934,8 +81934,8 @@ uniform highp float _Shininess;
 #line 403
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 407
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -81994,7 +81994,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 481
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 485
@@ -82129,7 +82129,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -82219,7 +82219,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4 = tmpvar_25;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -82565,7 +82565,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -82677,7 +82677,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -82863,7 +82863,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -82976,7 +82976,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -83258,8 +83258,8 @@ uniform highp float _Shininess;
 #line 408
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 412
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -83553,8 +83553,8 @@ uniform highp float _Shininess;
 #line 408
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 412
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -83625,7 +83625,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 486
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 490
@@ -83760,7 +83760,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -83851,7 +83851,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4 = tmpvar_25;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -84199,7 +84199,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -84312,7 +84312,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -84500,7 +84500,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -84614,7 +84614,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -84899,8 +84899,8 @@ uniform highp float _Shininess;
 #line 409
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 413
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -85195,8 +85195,8 @@ uniform highp float _Shininess;
 #line 409
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 413
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -85267,7 +85267,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 487
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 491
@@ -85402,7 +85402,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -85493,7 +85493,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4 = tmpvar_25;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -85885,7 +85885,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -85998,7 +85998,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -86236,7 +86236,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -86350,7 +86350,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -86687,8 +86687,8 @@ uniform highp float _Shininess;
 #line 418
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -86994,8 +86994,8 @@ uniform highp float _Shininess;
 #line 418
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -87070,7 +87070,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 496
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 500
@@ -87205,7 +87205,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -87296,7 +87296,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4.w = tmpvar_25.w;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -87656,7 +87656,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -87769,7 +87769,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -88074,8 +88074,8 @@ uniform highp float _Shininess;
 #line 418
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -88373,8 +88373,8 @@ uniform highp float _Shininess;
 #line 418
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 422
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -88449,7 +88449,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 496
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 500
@@ -88584,7 +88584,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -88674,7 +88674,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4 = tmpvar_25;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -89048,7 +89048,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -89160,7 +89160,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -89402,7 +89402,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -89515,7 +89515,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -89853,8 +89853,8 @@ uniform highp float _Shininess;
 #line 414
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 418
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -90157,8 +90157,8 @@ uniform highp float _Shininess;
 #line 414
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 418
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -90237,7 +90237,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 492
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 496
@@ -90372,7 +90372,7 @@ uniform float _MinLight;
 uniform float _DetailDist;
 uniform vec4 _DetailOffset;
 uniform float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform float _Shininess;
@@ -90463,7 +90463,7 @@ void main ()
   vec4 tmpvar_24;
   tmpvar_24 = (cityoverlay_2 * texture2D (_CityLightOverlayDetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _CityOverlayDetailScale)));
   vec4 tmpvar_25;
-  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_DetailTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
+  tmpvar_25 = (mix ((tmpvar_17 * mix (texture2DGradARB (_midTex, ((((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x)) + _DetailOffset.xy) * _DetailScale), (tmpvar_16.xy * _DetailScale), (tmpvar_16.zw * _DetailScale)), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0)))), tmpvar_24, tmpvar_24.wwww) * _Color);
   color_4 = tmpvar_25;
   float tmpvar_26;
   tmpvar_26 = dot (normal_18, xlv_TEXCOORD5);
@@ -90839,7 +90839,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -90952,7 +90952,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -91196,7 +91196,7 @@ uniform highp float _MinLight;
 uniform highp float _DetailDist;
 uniform lowp vec4 _DetailOffset;
 uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
+uniform sampler2D _midTex;
 uniform sampler2D _BumpMap;
 uniform sampler2D _MainTex;
 uniform highp float _Shininess;
@@ -91310,7 +91310,7 @@ void main ()
   highp vec2 ddy_41;
   ddy_41 = (tmpvar_30.zw * _DetailScale);
   lowp vec4 tmpvar_42;
-  tmpvar_42 = texture2DGradEXT (_DetailTex, coord_39, ddx_40, ddy_41);
+  tmpvar_42 = texture2DGradEXT (_midTex, coord_39, ddx_40, ddy_41);
   detail_11 = tmpvar_42;
   lowp vec4 tmpvar_43;
   tmpvar_43 = texture2DGradEXT (_CityOverlayTex, uv_17, tmpvar_30.xy, tmpvar_30.zw);
@@ -91651,8 +91651,8 @@ uniform highp float _Shininess;
 #line 415
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 419
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -91956,8 +91956,8 @@ uniform highp float _Shininess;
 #line 415
 uniform sampler2D _MainTex;
 uniform sampler2D _BumpMap;
-uniform sampler2D _DetailTex;
-uniform sampler2D _DetailVertTex;
+uniform sampler2D _midTex;
+uniform sampler2D _steepTex;
 #line 419
 uniform highp float _DetailScale;
 uniform lowp vec4 _DetailOffset;
@@ -92036,7 +92036,7 @@ lowp vec4 frag( in v2f IN ) {
     mediump float nylerp = xll_saturate_f(floor(((1.0 + sphereNrm.y) - mix( sphereNrm.z, sphereNrm.x, zxlerp))));
     #line 493
     detailCoords = mix( detailCoords, sphereNrm.yxz, vec3( nylerp));
-    mediump vec4 detail = xll_tex2Dgrad( _DetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
+    mediump vec4 detail = xll_tex2Dgrad( _midTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _DetailScale), (uvdd.xy * _DetailScale), (uvdd.zw * _DetailScale));
     mediump vec4 cityoverlay = xll_tex2Dgrad( _CityOverlayTex, uv, uvdd.xy, uvdd.zw);
     mediump vec4 citydarkoverlaydetail = texture( _CityDarkOverlayDetailTex, ((((0.5 * detailCoords.zy) / abs(detailCoords.x)) + _DetailOffset.xy) * _CityOverlayDetailScale));
     #line 497
@@ -92119,7 +92119,7 @@ Float 8 [_MinLight]
 Float 9 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_LightTexture0] 2D
 "ps_3_0
 ; 110 ALU, 10 TEX
@@ -92267,7 +92267,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 1
 SetTexture 1 [_BumpMap] 2D 2
-SetTexture 2 [_DetailTex] 2D 3
+SetTexture 2 [_midTex] 2D 3
 SetTexture 3 [_LightTexture0] 2D 0
 // 99 instructions, 6 temp regs, 0 temp arrays:
 // ALU 88 float, 0 int, 4 uint
@@ -92426,7 +92426,7 @@ Float 8 [_MinLight]
 Float 9 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 "ps_3_0
 ; 108 ALU, 9 TEX
 dcl_2d s0
@@ -92568,7 +92568,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_BumpMap] 2D 1
-SetTexture 2 [_DetailTex] 2D 2
+SetTexture 2 [_midTex] 2D 2
 // 95 instructions, 6 temp regs, 0 temp arrays:
 // ALU 85 float, 0 int, 4 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 3 grad)
@@ -92720,7 +92720,7 @@ Float 8 [_MinLight]
 Float 9 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_LightTexture0] 2D
 SetTexture 4 [_LightTextureB0] 2D
 "ps_3_0
@@ -92875,7 +92875,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_LightTexture0] 2D 0
 SetTexture 4 [_LightTextureB0] 2D 1
 // 106 instructions, 6 temp regs, 0 temp arrays:
@@ -93043,7 +93043,7 @@ Float 8 [_MinLight]
 Float 9 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_LightTexture0] CUBE
 "ps_3_0
@@ -93194,7 +93194,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_LightTextureB0] 2D 1
 SetTexture 4 [_LightTexture0] CUBE 0
 // 101 instructions, 6 temp regs, 0 temp arrays:
@@ -93357,7 +93357,7 @@ Float 8 [_MinLight]
 Float 9 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_LightTexture0] 2D
 "ps_3_0
 ; 109 ALU, 10 TEX
@@ -93504,7 +93504,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 1
 SetTexture 1 [_BumpMap] 2D 2
-SetTexture 2 [_DetailTex] 2D 3
+SetTexture 2 [_midTex] 2D 3
 SetTexture 3 [_LightTexture0] 2D 0
 // 98 instructions, 6 temp regs, 0 temp arrays:
 // ALU 87 float, 0 int, 4 uint
@@ -93663,7 +93663,7 @@ Float 9 [_MinLight]
 Float 10 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_LightTexture0] 2D
 SetTexture 4 [_LightTextureB0] 2D
 SetTexture 5 [_ShadowMapTexture] 2D
@@ -93830,7 +93830,7 @@ BindCB "UnityShadows" 1
 BindCB "UnityPerFrame" 2
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_LightTexture0] 2D 1
 SetTexture 4 [_LightTextureB0] 2D 2
 SetTexture 5 [_ShadowMapTexture] 2D 0
@@ -94007,7 +94007,7 @@ Float 9 [_MinLight]
 Float 10 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_LightTexture0] 2D
 SetTexture 4 [_LightTextureB0] 2D
 SetTexture 5 [_ShadowMapTexture] 2D
@@ -94173,7 +94173,7 @@ BindCB "UnityShadows" 1
 BindCB "UnityPerFrame" 2
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_LightTexture0] 2D 1
 SetTexture 4 [_LightTextureB0] 2D 2
 SetTexture 5 [_ShadowMapTexture] 2D 0
@@ -94345,7 +94345,7 @@ Float 8 [_MinLight]
 Float 9 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_ShadowMapTexture] 2D
 "ps_3_0
 ; 109 ALU, 10 TEX
@@ -94492,7 +94492,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 1
 SetTexture 1 [_BumpMap] 2D 2
-SetTexture 2 [_DetailTex] 2D 3
+SetTexture 2 [_midTex] 2D 3
 SetTexture 3 [_ShadowMapTexture] 2D 0
 // 99 instructions, 6 temp regs, 0 temp arrays:
 // ALU 88 float, 0 int, 4 uint
@@ -94651,7 +94651,7 @@ Float 8 [_MinLight]
 Float 9 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_ShadowMapTexture] 2D
 SetTexture 4 [_LightTexture0] 2D
 "ps_3_0
@@ -94802,7 +94802,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_LightTexture0] 2D 1
 SetTexture 4 [_ShadowMapTexture] 2D 0
 // 101 instructions, 6 temp regs, 0 temp arrays:
@@ -94968,7 +94968,7 @@ Float 10 [_MinLight]
 Float 11 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_ShadowMapTexture] CUBE
 SetTexture 4 [_LightTexture0] 2D
 "ps_3_0
@@ -95136,7 +95136,7 @@ BindCB "UnityShadows" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_LightTexture0] 2D 1
 SetTexture 4 [_ShadowMapTexture] CUBE 0
 // 108 instructions, 6 temp regs, 0 temp arrays:
@@ -95310,7 +95310,7 @@ Float 10 [_MinLight]
 Float 11 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_ShadowMapTexture] CUBE
 SetTexture 4 [_LightTextureB0] 2D
 SetTexture 5 [_LightTexture0] CUBE
@@ -95482,7 +95482,7 @@ BindCB "UnityShadows" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_LightTextureB0] 2D 2
 SetTexture 4 [_LightTexture0] CUBE 1
 SetTexture 5 [_ShadowMapTexture] CUBE 0
@@ -95663,7 +95663,7 @@ Float 13 [_MinLight]
 Float 14 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_LightTexture0] 2D
 SetTexture 4 [_LightTextureB0] 2D
 SetTexture 5 [_ShadowMapTexture] 2D
@@ -95846,7 +95846,7 @@ BindCB "UnityShadows" 1
 BindCB "UnityPerFrame" 2
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_LightTexture0] 2D 1
 SetTexture 4 [_LightTextureB0] 2D 2
 SetTexture 5 [_ShadowMapTexture] 2D 0
@@ -96038,7 +96038,7 @@ Float 13 [_MinLight]
 Float 14 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_LightTexture0] 2D
 SetTexture 4 [_LightTextureB0] 2D
 SetTexture 5 [_ShadowMapTexture] 2D
@@ -96222,7 +96222,7 @@ BindCB "UnityShadows" 1
 BindCB "UnityPerFrame" 2
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_LightTexture0] 2D 1
 SetTexture 4 [_LightTextureB0] 2D 2
 SetTexture 5 [_ShadowMapTexture] 2D 0
@@ -96405,7 +96405,7 @@ Float 10 [_MinLight]
 Float 11 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_ShadowMapTexture] CUBE
 SetTexture 4 [_LightTexture0] 2D
 "ps_3_0
@@ -96585,7 +96585,7 @@ BindCB "UnityShadows" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_LightTexture0] 2D 1
 SetTexture 4 [_ShadowMapTexture] CUBE 0
 // 119 instructions, 6 temp regs, 0 temp arrays:
@@ -96773,7 +96773,7 @@ Float 10 [_MinLight]
 Float 11 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_ShadowMapTexture] CUBE
 SetTexture 4 [_LightTextureB0] 2D
 SetTexture 5 [_LightTexture0] CUBE
@@ -96957,7 +96957,7 @@ BindCB "UnityShadows" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_LightTextureB0] 2D 2
 SetTexture 4 [_LightTexture0] CUBE 1
 SetTexture 5 [_ShadowMapTexture] CUBE 0
@@ -97147,7 +97147,7 @@ Float 8 [_MinLight]
 Float 9 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_LightTexture0] 2D
 "ps_3_0
 ; 110 ALU, 10 TEX
@@ -97295,7 +97295,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 1
 SetTexture 1 [_BumpMap] 2D 2
-SetTexture 2 [_DetailTex] 2D 3
+SetTexture 2 [_midTex] 2D 3
 SetTexture 3 [_LightTexture0] 2D 0
 // 99 instructions, 6 temp regs, 0 temp arrays:
 // ALU 88 float, 0 int, 4 uint
@@ -97454,7 +97454,7 @@ Float 8 [_MinLight]
 Float 9 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 "ps_3_0
 ; 108 ALU, 9 TEX
 dcl_2d s0
@@ -97596,7 +97596,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_BumpMap] 2D 1
-SetTexture 2 [_DetailTex] 2D 2
+SetTexture 2 [_midTex] 2D 2
 // 95 instructions, 6 temp regs, 0 temp arrays:
 // ALU 85 float, 0 int, 4 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 3 grad)
@@ -97748,7 +97748,7 @@ Float 8 [_MinLight]
 Float 9 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_LightTexture0] 2D
 SetTexture 4 [_LightTextureB0] 2D
 "ps_3_0
@@ -97903,7 +97903,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_LightTexture0] 2D 0
 SetTexture 4 [_LightTextureB0] 2D 1
 // 106 instructions, 6 temp regs, 0 temp arrays:
@@ -98071,7 +98071,7 @@ Float 8 [_MinLight]
 Float 9 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_LightTexture0] CUBE
 "ps_3_0
@@ -98222,7 +98222,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_LightTextureB0] 2D 1
 SetTexture 4 [_LightTexture0] CUBE 0
 // 101 instructions, 6 temp regs, 0 temp arrays:
@@ -98385,7 +98385,7 @@ Float 8 [_MinLight]
 Float 9 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_LightTexture0] 2D
 "ps_3_0
 ; 109 ALU, 10 TEX
@@ -98532,7 +98532,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 1
 SetTexture 1 [_BumpMap] 2D 2
-SetTexture 2 [_DetailTex] 2D 3
+SetTexture 2 [_midTex] 2D 3
 SetTexture 3 [_LightTexture0] 2D 0
 // 98 instructions, 6 temp regs, 0 temp arrays:
 // ALU 87 float, 0 int, 4 uint
@@ -98691,7 +98691,7 @@ Float 9 [_MinLight]
 Float 10 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_LightTexture0] 2D
 SetTexture 4 [_LightTextureB0] 2D
 SetTexture 5 [_ShadowMapTexture] 2D
@@ -98858,7 +98858,7 @@ BindCB "UnityShadows" 1
 BindCB "UnityPerFrame" 2
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_LightTexture0] 2D 1
 SetTexture 4 [_LightTextureB0] 2D 2
 SetTexture 5 [_ShadowMapTexture] 2D 0
@@ -99035,7 +99035,7 @@ Float 9 [_MinLight]
 Float 10 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_LightTexture0] 2D
 SetTexture 4 [_LightTextureB0] 2D
 SetTexture 5 [_ShadowMapTexture] 2D
@@ -99201,7 +99201,7 @@ BindCB "UnityShadows" 1
 BindCB "UnityPerFrame" 2
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_LightTexture0] 2D 1
 SetTexture 4 [_LightTextureB0] 2D 2
 SetTexture 5 [_ShadowMapTexture] 2D 0
@@ -99373,7 +99373,7 @@ Float 8 [_MinLight]
 Float 9 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_ShadowMapTexture] 2D
 "ps_3_0
 ; 109 ALU, 10 TEX
@@ -99520,7 +99520,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 1
 SetTexture 1 [_BumpMap] 2D 2
-SetTexture 2 [_DetailTex] 2D 3
+SetTexture 2 [_midTex] 2D 3
 SetTexture 3 [_ShadowMapTexture] 2D 0
 // 99 instructions, 6 temp regs, 0 temp arrays:
 // ALU 88 float, 0 int, 4 uint
@@ -99679,7 +99679,7 @@ Float 8 [_MinLight]
 Float 9 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_ShadowMapTexture] 2D
 SetTexture 4 [_LightTexture0] 2D
 "ps_3_0
@@ -99830,7 +99830,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_LightTexture0] 2D 1
 SetTexture 4 [_ShadowMapTexture] 2D 0
 // 101 instructions, 6 temp regs, 0 temp arrays:
@@ -99996,7 +99996,7 @@ Float 10 [_MinLight]
 Float 11 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_ShadowMapTexture] CUBE
 SetTexture 4 [_LightTexture0] 2D
 "ps_3_0
@@ -100164,7 +100164,7 @@ BindCB "UnityShadows" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_LightTexture0] 2D 1
 SetTexture 4 [_ShadowMapTexture] CUBE 0
 // 108 instructions, 6 temp regs, 0 temp arrays:
@@ -100338,7 +100338,7 @@ Float 10 [_MinLight]
 Float 11 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_ShadowMapTexture] CUBE
 SetTexture 4 [_LightTextureB0] 2D
 SetTexture 5 [_LightTexture0] CUBE
@@ -100510,7 +100510,7 @@ BindCB "UnityShadows" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_LightTextureB0] 2D 2
 SetTexture 4 [_LightTexture0] CUBE 1
 SetTexture 5 [_ShadowMapTexture] CUBE 0
@@ -100691,7 +100691,7 @@ Float 13 [_MinLight]
 Float 14 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_LightTexture0] 2D
 SetTexture 4 [_LightTextureB0] 2D
 SetTexture 5 [_ShadowMapTexture] 2D
@@ -100874,7 +100874,7 @@ BindCB "UnityShadows" 1
 BindCB "UnityPerFrame" 2
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_LightTexture0] 2D 1
 SetTexture 4 [_LightTextureB0] 2D 2
 SetTexture 5 [_ShadowMapTexture] 2D 0
@@ -101066,7 +101066,7 @@ Float 13 [_MinLight]
 Float 14 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_LightTexture0] 2D
 SetTexture 4 [_LightTextureB0] 2D
 SetTexture 5 [_ShadowMapTexture] 2D
@@ -101250,7 +101250,7 @@ BindCB "UnityShadows" 1
 BindCB "UnityPerFrame" 2
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_LightTexture0] 2D 1
 SetTexture 4 [_LightTextureB0] 2D 2
 SetTexture 5 [_ShadowMapTexture] 2D 0
@@ -101433,7 +101433,7 @@ Float 10 [_MinLight]
 Float 11 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_ShadowMapTexture] CUBE
 SetTexture 4 [_LightTexture0] 2D
 "ps_3_0
@@ -101613,7 +101613,7 @@ BindCB "UnityShadows" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_LightTexture0] 2D 1
 SetTexture 4 [_ShadowMapTexture] CUBE 0
 // 119 instructions, 6 temp regs, 0 temp arrays:
@@ -101801,7 +101801,7 @@ Float 10 [_MinLight]
 Float 11 [_Albedo]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_ShadowMapTexture] CUBE
 SetTexture 4 [_LightTextureB0] 2D
 SetTexture 5 [_LightTexture0] CUBE
@@ -101985,7 +101985,7 @@ BindCB "UnityShadows" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_LightTextureB0] 2D 2
 SetTexture 4 [_LightTexture0] CUBE 1
 SetTexture 5 [_ShadowMapTexture] CUBE 0
@@ -102176,7 +102176,7 @@ Float 9 [_Albedo]
 Float 10 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -102350,7 +102350,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 1
 SetTexture 1 [_BumpMap] 2D 2
-SetTexture 2 [_DetailTex] 2D 3
+SetTexture 2 [_midTex] 2D 3
 SetTexture 3 [_CityOverlayTex] 2D 4
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 5
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 6
@@ -102535,7 +102535,7 @@ Float 9 [_Albedo]
 Float 10 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -102701,7 +102701,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_BumpMap] 2D 1
-SetTexture 2 [_DetailTex] 2D 2
+SetTexture 2 [_midTex] 2D 2
 SetTexture 3 [_CityOverlayTex] 2D 3
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 4
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 5
@@ -102877,7 +102877,7 @@ Float 9 [_Albedo]
 Float 10 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -103058,7 +103058,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_CityOverlayTex] 2D 5
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 6
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 7
@@ -103251,7 +103251,7 @@ Float 9 [_Albedo]
 Float 10 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -103428,7 +103428,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_CityOverlayTex] 2D 5
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 6
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 7
@@ -103616,7 +103616,7 @@ Float 9 [_Albedo]
 Float 10 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -103789,7 +103789,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 1
 SetTexture 1 [_BumpMap] 2D 2
-SetTexture 2 [_DetailTex] 2D 3
+SetTexture 2 [_midTex] 2D 3
 SetTexture 3 [_CityOverlayTex] 2D 4
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 5
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 6
@@ -103974,7 +103974,7 @@ Float 10 [_Albedo]
 Float 11 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -104167,7 +104167,7 @@ BindCB "UnityShadows" 1
 BindCB "UnityPerFrame" 2
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_CityOverlayTex] 2D 6
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 7
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 8
@@ -104370,7 +104370,7 @@ Float 10 [_Albedo]
 Float 11 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -104562,7 +104562,7 @@ BindCB "UnityShadows" 1
 BindCB "UnityPerFrame" 2
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_CityOverlayTex] 2D 6
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 7
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 8
@@ -104759,7 +104759,7 @@ Float 9 [_Albedo]
 Float 10 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -104932,7 +104932,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 1
 SetTexture 1 [_BumpMap] 2D 2
-SetTexture 2 [_DetailTex] 2D 3
+SetTexture 2 [_midTex] 2D 3
 SetTexture 3 [_CityOverlayTex] 2D 4
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 5
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 6
@@ -105117,7 +105117,7 @@ Float 9 [_Albedo]
 Float 10 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -105295,7 +105295,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_CityOverlayTex] 2D 5
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 6
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 7
@@ -105487,7 +105487,7 @@ Float 11 [_Albedo]
 Float 12 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -105681,7 +105681,7 @@ BindCB "UnityShadows" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_CityOverlayTex] 2D 5
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 6
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 7
@@ -105880,7 +105880,7 @@ Float 11 [_Albedo]
 Float 12 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -106077,7 +106077,7 @@ BindCB "UnityShadows" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_CityOverlayTex] 2D 6
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 7
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 8
@@ -106283,7 +106283,7 @@ Float 14 [_Albedo]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -106491,7 +106491,7 @@ BindCB "UnityShadows" 1
 BindCB "UnityPerFrame" 2
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_CityOverlayTex] 2D 6
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 7
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 8
@@ -106709,7 +106709,7 @@ Float 14 [_Albedo]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -106918,7 +106918,7 @@ BindCB "UnityShadows" 1
 BindCB "UnityPerFrame" 2
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_CityOverlayTex] 2D 6
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 7
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 8
@@ -107127,7 +107127,7 @@ Float 11 [_Albedo]
 Float 12 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -107333,7 +107333,7 @@ BindCB "UnityShadows" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_CityOverlayTex] 2D 5
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 6
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 7
@@ -107546,7 +107546,7 @@ Float 11 [_Albedo]
 Float 12 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -107756,7 +107756,7 @@ BindCB "UnityShadows" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_CityOverlayTex] 2D 6
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 7
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 8
@@ -107971,7 +107971,7 @@ Float 9 [_Albedo]
 Float 10 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -108145,7 +108145,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 1
 SetTexture 1 [_BumpMap] 2D 2
-SetTexture 2 [_DetailTex] 2D 3
+SetTexture 2 [_midTex] 2D 3
 SetTexture 3 [_CityOverlayTex] 2D 4
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 5
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 6
@@ -108330,7 +108330,7 @@ Float 9 [_Albedo]
 Float 10 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -108496,7 +108496,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_BumpMap] 2D 1
-SetTexture 2 [_DetailTex] 2D 2
+SetTexture 2 [_midTex] 2D 2
 SetTexture 3 [_CityOverlayTex] 2D 3
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 4
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 5
@@ -108672,7 +108672,7 @@ Float 9 [_Albedo]
 Float 10 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -108853,7 +108853,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_CityOverlayTex] 2D 5
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 6
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 7
@@ -109046,7 +109046,7 @@ Float 9 [_Albedo]
 Float 10 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -109223,7 +109223,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_CityOverlayTex] 2D 5
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 6
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 7
@@ -109411,7 +109411,7 @@ Float 9 [_Albedo]
 Float 10 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -109584,7 +109584,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 1
 SetTexture 1 [_BumpMap] 2D 2
-SetTexture 2 [_DetailTex] 2D 3
+SetTexture 2 [_midTex] 2D 3
 SetTexture 3 [_CityOverlayTex] 2D 4
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 5
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 6
@@ -109769,7 +109769,7 @@ Float 10 [_Albedo]
 Float 11 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -109962,7 +109962,7 @@ BindCB "UnityShadows" 1
 BindCB "UnityPerFrame" 2
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_CityOverlayTex] 2D 6
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 7
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 8
@@ -110165,7 +110165,7 @@ Float 10 [_Albedo]
 Float 11 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -110357,7 +110357,7 @@ BindCB "UnityShadows" 1
 BindCB "UnityPerFrame" 2
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_CityOverlayTex] 2D 6
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 7
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 8
@@ -110554,7 +110554,7 @@ Float 9 [_Albedo]
 Float 10 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -110727,7 +110727,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 1
 SetTexture 1 [_BumpMap] 2D 2
-SetTexture 2 [_DetailTex] 2D 3
+SetTexture 2 [_midTex] 2D 3
 SetTexture 3 [_CityOverlayTex] 2D 4
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 5
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 6
@@ -110912,7 +110912,7 @@ Float 9 [_Albedo]
 Float 10 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -111090,7 +111090,7 @@ BindCB "$Globals" 0
 BindCB "UnityPerFrame" 1
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_CityOverlayTex] 2D 5
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 6
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 7
@@ -111282,7 +111282,7 @@ Float 11 [_Albedo]
 Float 12 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -111476,7 +111476,7 @@ BindCB "UnityShadows" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_CityOverlayTex] 2D 5
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 6
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 7
@@ -111675,7 +111675,7 @@ Float 11 [_Albedo]
 Float 12 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -111872,7 +111872,7 @@ BindCB "UnityShadows" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_CityOverlayTex] 2D 6
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 7
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 8
@@ -112078,7 +112078,7 @@ Float 14 [_Albedo]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -112286,7 +112286,7 @@ BindCB "UnityShadows" 1
 BindCB "UnityPerFrame" 2
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_CityOverlayTex] 2D 6
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 7
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 8
@@ -112504,7 +112504,7 @@ Float 14 [_Albedo]
 Float 15 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -112713,7 +112713,7 @@ BindCB "UnityShadows" 1
 BindCB "UnityPerFrame" 2
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_CityOverlayTex] 2D 6
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 7
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 8
@@ -112922,7 +112922,7 @@ Float 11 [_Albedo]
 Float 12 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -113128,7 +113128,7 @@ BindCB "UnityShadows" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 2
 SetTexture 1 [_BumpMap] 2D 3
-SetTexture 2 [_DetailTex] 2D 4
+SetTexture 2 [_midTex] 2D 4
 SetTexture 3 [_CityOverlayTex] 2D 5
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 6
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 7
@@ -113341,7 +113341,7 @@ Float 11 [_Albedo]
 Float 12 [_CityOverlayDetailScale]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_BumpMap] 2D
-SetTexture 2 [_DetailTex] 2D
+SetTexture 2 [_midTex] 2D
 SetTexture 3 [_CityOverlayTex] 2D
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D
 SetTexture 5 [_CityLightOverlayDetailTex] 2D
@@ -113551,7 +113551,7 @@ BindCB "UnityShadows" 2
 BindCB "UnityPerFrame" 3
 SetTexture 0 [_MainTex] 2D 3
 SetTexture 1 [_BumpMap] 2D 4
-SetTexture 2 [_DetailTex] 2D 5
+SetTexture 2 [_midTex] 2D 5
 SetTexture 3 [_CityOverlayTex] 2D 6
 SetTexture 4 [_CityDarkOverlayDetailTex] 2D 7
 SetTexture 5 [_CityLightOverlayDetailTex] 2D 8

@@ -67,11 +67,13 @@ namespace Terrain
 
             if (pqs != null)
             {
+                //Scaled space
                 MeshRenderer mr = (MeshRenderer)transform.GetComponent(typeof(MeshRenderer));
                 if (mr != null)
                 {
                     mainTexture = mr.material.mainTexture;
                     bumpTexture = mr.material.GetTexture("_BumpMap");
+                    terrainMaterial.SaveTextures(mr.material);
                     originalPlanetShader = mr.material.shader;
 
                     TerrainManager.Log("planet shader: " + mr.material.shader);
@@ -80,9 +82,7 @@ namespace Terrain
 
                 }
 
-                steepTexture = pqs.surfaceMaterial.GetTexture("_steepTex");
-                lowTexture = pqs.surfaceMaterial.GetTexture("_lowTex");
-                highTexture = pqs.surfaceMaterial.GetTexture("_highTex ");
+                terrainMaterial.SaveTextures(pqs.surfaceMaterial);
                 originalTerrainShader = pqs.surfaceMaterial.shader;
                 TerrainManager.Log("Terrain Shader Name: " + originalTerrainShader.name);
                 String[] keywords = pqs.surfaceMaterial.shaderKeywords;
@@ -96,14 +96,6 @@ namespace Terrain
 
                 terrainMaterial.ApplyMaterialProperties(pqs.surfaceMaterial);
 
-                if (!terrainMaterial.hasDetailVert)
-                {
-                    pqs.surfaceMaterial.SetTexture("_DetailVertTex", steepTexture);
-                }
-                if (!terrainMaterial.hasDetail)
-                {
-                    pqs.surfaceMaterial.SetTexture("_DetailTex", lowTexture);
-                }
                 if (oceanMaterial != null && pqs.ChildSpheres.Length > 0)
                 {
                     PQS ocean = pqs.ChildSpheres[0];

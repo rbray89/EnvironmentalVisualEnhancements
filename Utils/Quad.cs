@@ -8,7 +8,7 @@ namespace Utils
 {
     public static class Quad
     {
-        public static void Create(GameObject gameObject, float size, Color color, Vector3 up)
+        public static void Create(GameObject gameObject, float size, Color color, Vector3 up, float maxSize = 0)
         {
             MeshFilter filter = gameObject.AddComponent<MeshFilter>();
             Mesh mesh = filter.mesh;
@@ -50,7 +50,14 @@ namespace Utils
 
             Tools.CalculateMeshTangents(mesh);
 
-            mesh.RecalculateBounds();
+            if (maxSize > 0)
+            {
+                mesh.bounds = new Bounds(Vector3.zero, maxSize * Vector3.one);
+            }
+            else
+            {
+                mesh.RecalculateBounds();
+            }
             mesh.Optimize();
         }
 

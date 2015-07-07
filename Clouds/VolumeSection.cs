@@ -42,7 +42,7 @@ namespace Atmosphere
 
             Vector3 up = particle.transform.InverseTransformDirection(worldUp);
             //Quad.Create(particle, Random.Next((int)size.x, (int)size.y), Color.white, up);
-            Quad.Create(particle, ((int)size.x+ (int)size.y)/2, Color.white, up);
+            Quad.Create(particle, ((int)size.x + (int)size.y) / 2, Color.white, up, size.y);
 
             var mr = particle.AddComponent<MeshRenderer>();
             mr.sharedMaterial = cloudParticleMaterial;

@@ -15,10 +15,10 @@ namespace Terrain
     {
         [Persistent] 
         Color _Color = Color.white;
+		[Persistent]
+        String _midTex = "";
 		[Persistent] 
-        String _DetailTex = "";
-		[Persistent] 
-        String _DetailVertTex = "";
+        String _steepTex = "";
         [Persistent]
         float _DetailScale = 4000f;
         [Persistent]
@@ -33,11 +33,6 @@ namespace Terrain
         Color _OceanColor = Color.blue;
         [Persistent]
         float _OceanDepthFactor = .002f;
-
-        public bool hasDetail { get { return _DetailTex != ""; } }
-
-        public bool hasDetailVert { get {return _DetailVertTex != "";} }
-
     }
 
     public class OceanMaterial : MaterialManager

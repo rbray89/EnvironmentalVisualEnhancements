@@ -89,10 +89,16 @@ namespace Utils
 
         bool cached = false;
         float Scale;
-        List<KeyValuePair<String, object>> cache = new List<KeyValuePair<string, object>>();
+        Dictionary<String, object> cache = new Dictionary<string, object>();
         public void ApplyMaterialProperties(Material material, float scale = 1.0f)
         {
             Scale = scale;
+            Cache();
+            ApplyCache(material, scale);
+        }
+
+        private void Cache()
+        {
             if (!cached)
             {
                 FieldInfo[] fields = this.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
@@ -111,7 +117,7 @@ namespace Utils
                             texture.wrapMode = TextureWrapMode.Clamp;
                         }
 
-                        cache.Add(new KeyValuePair<string, object>(name, texture));
+                        cache.Add(name, texture);
                     }
                     else
                     {
@@ -119,21 +125,20 @@ namespace Utils
                         bool isInvScaled = Attribute.IsDefined(field, typeof(InverseScaled));
                         if (isScaled)
                         {
-                            cache.Add(new KeyValuePair<string, object>(name, new ScaledValue(field.GetValue(this))));
+                            cache.Add(name, new ScaledValue(field.GetValue(this)));
                         }
                         else if (isInvScaled)
                         {
-                            cache.Add(new KeyValuePair<string, object>(name, new InverseScaledValue(field.GetValue(this))));
+                            cache.Add(name, new InverseScaledValue(field.GetValue(this)));
                         }
                         else
                         {
-                            cache.Add(new KeyValuePair<string, object>(name, field.GetValue(this)));
+                            cache.Add(name, field.GetValue(this));
                         }
                     }
                 }
                 cached = true;
             }
-            ApplyCache(material, scale);
         }
 
         private void ApplyCache(Material material, float scale = 1.0f)
@@ -179,6 +184,29 @@ namespace Utils
                 }
 
             }
+        }
+
+        public void SaveTextures(Material material)
+        {
+            Cache();
+            List<String> keys = cache.Keys.ToList();
+            foreach (String key in keys)
+            {
+                String name = key;
+                object obj = cache[key];
+               
+                if ( obj == null )
+                {
+                    Texture2D value = (Texture2D)material.GetTexture(name);
+                    if( value != null )
+                    {
+                        cache[key] = value;
+                    }
+                    
+                }
+
+            }
+
         }
     }
 }
