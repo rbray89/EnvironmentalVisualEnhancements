@@ -13,6 +13,9 @@ Shader "EVE/Cloud" {
 		_RimDist ("Rim Distance", Range(0,1)) = 1
 		_RimDistSub ("Rim Distance Sub", Range(0,2)) = 1.01
 		_InvFade ("Soft Particles Factor", Range(0.01,3.0)) = .01
+		_OceanRadius ("Ocean Radius", Float) = 63000
+	  	_PlanetOrigin ("Sphere Center", Vector) = (0,0,0,1)
+		
 	}
 
 Category {
@@ -45,6 +48,7 @@ SubShader {
 		#pragma multi_compile_fwdbase
 		#pragma multi_compile_fwdadd_fullshadows
 		#pragma multi_compile SOFT_DEPTH_OFF SOFT_DEPTH_ON
+		#pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
 	 
 		sampler2D _MainTex;
 		sampler2D _DetailTex;
@@ -58,8 +62,9 @@ SubShader {
 		float _DistFadeVert;
 		float _RimDist;
 		float _RimDistSub;
-		
+		float _OceanRadius;
 		float _InvFade;
+		float3 _PlanetOrigin;
 		sampler2D _CameraDepthTexture;
 			
 		struct appdata_t {
@@ -71,7 +76,7 @@ SubShader {
 		struct v2f {
 			float4 pos : SV_POSITION;
 			float3 worldVert : TEXCOORD0;
-			float3 worldOrigin : TEXCOORD1;
+			float3 L : TEXCOORD1;
 			float4 objDetail : TEXCOORD2;
 			float4 objMain : TEXCOORD3;
 			float3 worldNormal : TEXCOORD4;
@@ -90,7 +95,6 @@ SubShader {
 		   float4 vertexPos = mul(_Object2World, v.vertex);
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 	   	   o.worldVert = vertexPos;
-	   	   o.worldOrigin = origin;
 	   	   o.worldNormal = normalize(vertexPos-origin);
 	   	   o.objMain = -mul(_MainRotation, v.vertex);
 	   	   o.objDetail = mul(_DetailRotation, o.objMain);
@@ -100,6 +104,9 @@ SubShader {
 			COMPUTE_EYEDEPTH(o.projPos.z);
 			TRANSFER_VERTEX_TO_FRAGMENT(o);
 		   #endif
+		   
+		   o.L = _PlanetOrigin - _WorldSpaceCameraPos.xyz;
+		   
 	   	   return o;
 	 	}
 	 		
@@ -116,12 +123,29 @@ SubShader {
 			float rim = saturate(dot(IN.viewDir, IN.worldNormal));
 			rim = saturate(pow(_FalloffScale*rim,_FalloffPow));
 			float dist = distance(IN.worldVert,_WorldSpaceCameraPos);
-			float distLerp = saturate(_RimDist*(distance(IN.worldOrigin,_WorldSpaceCameraPos)-_RimDistSub*distance(IN.worldVert,IN.worldOrigin)));
+			float distLerp = saturate(_RimDist*(distance(_PlanetOrigin,_WorldSpaceCameraPos)-_RimDistSub*distance(IN.worldVert,_PlanetOrigin)));
 			float distFade = 1-GetDistanceFade(dist, _DistFade, _DistFadeVert);
 	   	   	float distAlpha = lerp(distFade, rim, distLerp);
 
 			color.a = lerp(0, color.a,  distAlpha);
 
+			
+			#ifdef WORLD_SPACE_ON
+			half3 worldDir = normalize(IN.worldVert - _WorldSpaceCameraPos.xyz);
+			float tc = dot(IN.L, worldDir);
+			float d = sqrt(dot(IN.L,IN.L)-(tc*tc));
+			float3 norm = normalize(-IN.L);
+			float d2 = pow(d,2);
+			float td = sqrt(dot(IN.L,IN.L)-d2);		 
+			float tlc = sqrt((_OceanRadius*_OceanRadius)-d2);
+			
+			half sphereCheck = step(d, _OceanRadius)*step(0.0, tc);
+			float sphereDist = lerp(tlc+td, tc-tlc, step(0.0, tc));
+			sphereCheck *= step(sphereDist, dist);
+			
+			color.a *= 1-sphereCheck;
+			#endif
+			
           	//lighting
 			half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
 			half3 lightDirection = normalize(_WorldSpaceLightPos0);

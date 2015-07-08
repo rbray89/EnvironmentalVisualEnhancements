@@ -147,7 +147,18 @@ namespace Atmosphere
 
             radiusScale = radius * scale;
             float worldRadiusScale = Vector3.Distance(parent.transform.TransformPoint(Vector3.up * radiusScale), parent.transform.TransformPoint(Vector3.zero));
-            
+
+            if (layer == EVEManagerClass.MACRO_LAYER)
+            {
+                CloudMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius * scale);
+                CloudMaterial.EnableKeyword("WORLD_SPACE_ON");
+                CloudMaterial.DisableKeyword("WORLD_SPACE_OFF");
+            }
+            else
+            {
+                CloudMaterial.EnableKeyword("WORLD_SPACE_OFF");
+                CloudMaterial.DisableKeyword("WORLD_SPACE_ON");
+            }
             if (ShadowProjector != null)
             {
 
@@ -155,6 +166,7 @@ namespace Atmosphere
                 ShadowProjector.farClipPlane = dist;
                 ShadowProjector.orthographicSize = worldRadiusScale;
 
+                ShadowProjector.material.SetFloat("_PlanetRadius", (float)celestialBody.Radius*scale);
                 ShadowProjector.transform.parent = parent;
                 //ShadowProjector.transform.localScale = scale * Vector3.one;
                 ShadowProjectorGO.layer = layer;
@@ -204,7 +216,7 @@ namespace Atmosphere
                     ShadowProjector.material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, -worldSunDir);
                 }
             }
-
+            CloudMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, CloudMesh.transform.position);
             SetRotations(World2Planet, mainRotationMatrix, detailRotationMatrix);
         }
 

@@ -7,6 +7,7 @@
 	  _PlanetOrigin ("Sphere Center", Vector) = (0,0,0,1)
 	  _SunDir ("Sunlight direction", Vector) = (0,0,0,1)
 	  _Radius ("Radius", Float) = 1
+	  _PlanetRadius ("Planet Radius", Float) = 1
    }
    SubShader {
       Pass {      
@@ -27,6 +28,7 @@
 		float _DetailDist;
 		float4 _SunDir;
 		float _Radius;
+		float _PlanetRadius;
 		
 		float3 _PlanetOrigin;
         uniform float4x4 _Projector; 
@@ -74,14 +76,16 @@
 		
 		fixed4 frag (v2f IN) : COLOR
 		{
-			half dirCheck = step(0, IN.posProj.w)*step(0,IN.dotcoeff)*step(IN.originDist,_Radius);
+			half shadowCheck = step(0, IN.posProj.w)*step(0,IN.dotcoeff)*step(IN.originDist,_Radius);
+			shadowCheck *= step(_PlanetRadius, IN.originDist+5);
 			half4 main = GetSphereMap(_MainTex, IN.mainPos);
 			fixed4 color = main;
 			
 			color.a = 1.2*(1.2-color.a);
 			color = saturate(color);
-
-			return lerp(1, color.a, dirCheck);
+			
+		
+			return lerp(1, color.a, shadowCheck);
 		}
  
          ENDCG

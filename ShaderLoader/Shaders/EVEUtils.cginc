@@ -11,7 +11,12 @@
 	
 	uniform float4x4 _MainRotation;
 	uniform float4x4 _DetailRotation;
-		
+	
+	inline float3 hash( float3 val )
+	{
+		return frac(sin(val)*123.5453);
+	}
+	
 	inline float4 Derivatives( float lat, float lon, float3 pos)  
 	{  
 	    float2 latLong = float2( lat, lon );  

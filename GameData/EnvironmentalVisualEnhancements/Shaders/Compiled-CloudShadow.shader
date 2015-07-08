@@ -7,6 +7,7 @@
 	  _PlanetOrigin ("Sphere Center", Vector) = (0,0,0,1)
 	  _SunDir ("Sunlight direction", Vector) = (0,0,0,1)
 	  _Radius ("Radius", Float) = 1
+	  _PlanetRadius ("Planet Radius", Float) = 1
    }
    SubShader {
       Pass {      
@@ -60,13 +61,14 @@ varying vec4 xlv_TEXCOORD4;
 varying float xlv_TEXCOORD2;
 varying float xlv_TEXCOORD1;
 varying vec4 xlv_TEXCOORD0;
+uniform float _PlanetRadius;
 uniform float _Radius;
 uniform sampler2D _MainTex;
 void main ()
 {
   vec4 color_1;
-  float dirCheck_2;
-  dirCheck_2 = ((float((xlv_TEXCOORD0.w >= 0.0)) * float((xlv_TEXCOORD1 >= 0.0))) * float((_Radius >= xlv_TEXCOORD2)));
+  float shadowCheck_2;
+  shadowCheck_2 = (((float((xlv_TEXCOORD0.w >= 0.0)) * float((xlv_TEXCOORD1 >= 0.0))) * float((_Radius >= xlv_TEXCOORD2))) * float(((xlv_TEXCOORD2 + 5.0) >= _PlanetRadius)));
   vec3 tmpvar_3;
   tmpvar_3 = normalize(xlv_TEXCOORD4.xyz);
   vec2 uv_4;
@@ -107,7 +109,7 @@ void main ()
   vec4 tmpvar_13;
   tmpvar_13 = clamp (color_1, 0.0, 1.0);
   color_1 = tmpvar_13;
-  gl_FragData[0] = vec4(mix (1.0, tmpvar_13.w, dirCheck_2));
+  gl_FragData[0] = vec4(mix (1.0, tmpvar_13.w, shadowCheck_2));
 }
 
 
@@ -178,12 +180,12 @@ dp4 o1.x, v0, c12
 SubProgram "d3d11 " {
 Keywords { }
 Bind "vertex" Vertex
-ConstBuffer "$Globals" 288 // 288 used size, 11 vars
+ConstBuffer "$Globals" 304 // 304 used size, 12 vars
 Matrix 16 [_MainRotation] 4
 Vector 192 [_SunDir] 4
 Float 208 [_Radius]
-Vector 212 [_PlanetOrigin] 3
-Matrix 224 [_Projector] 4
+Vector 224 [_PlanetOrigin] 3
+Matrix 240 [_Projector] 4
 ConstBuffer "UnityPerDraw" 336 // 256 used size, 6 vars
 Matrix 0 [glstate_matrix_mvp] 4
 Matrix 192 [_Object2World] 4
@@ -194,7 +196,7 @@ BindCB "UnityPerDraw" 1
 // TEX 0 (0 load, 0 comp, 0 bias, 0 grad)
 // FLOW 1 static, 0 dynamic
 "vs_4_0
-eefiecedeebcjonjjdmmpfckhnehigllhpapmbcgabaaaaaagaagaaaaadaaaaaa
+eefiecedpfcajjllbndeaemldglchemadcbhijdnabaaaaaagaagaaaaadaaaaaa
 cmaaaaaahmaaaaaadeabaaaaejfdeheoeiaaaaaaacaaaaaaaiaaaaaadiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaebaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahaaaaaafaepfdejfeejepeoaaeoepfcenebemaaepfdeheo
@@ -204,7 +206,7 @@ abaaaaaaaaaaaaaaadaaaaaaacaaaaaaabaoaaaakeaaaaaaacaaaaaaaaaaaaaa
 adaaaaaaacaaaaaaacanaaaakeaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaakeaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaafdfgfpfa
 epfdejfeejepeoaafeeffiedepepfceeaaklklklfdeieefcceafaaaaeaaaabaa
-ejabaaaafjaaaaaeegiocaaaaaaaaaaabcaaaaaafjaaaaaeegiocaaaabaaaaaa
+ejabaaaafjaaaaaeegiocaaaaaaaaaaabdaaaaaafjaaaaaeegiocaaaabaaaaaa
 baaaaaaafpaaaaadpcbabaaaaaaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaa
 gfaaaaadpccabaaaabaaaaaagfaaaaadbccabaaaacaaaaaagfaaaaadcccabaaa
 acaaaaaagfaaaaadpccabaaaadaaaaaagfaaaaadpccabaaaaeaaaaaagiaaaaac
@@ -213,17 +215,17 @@ abaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaaagbabaaa
 aaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaa
 acaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaaaaaaaaa
 egiocaaaabaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaai
-pcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaaaaaaaaaapaaaaaadcaaaaak
-pcaabaaaaaaaaaaaegiocaaaaaaaaaaaaoaaaaaaagbabaaaaaaaaaaaegaobaaa
-aaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaabaaaaaaakgbkbaaa
+pcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaaaaaaaaabaaaaaaadcaaaaak
+pcaabaaaaaaaaaaaegiocaaaaaaaaaaaapaaaaaaagbabaaaaaaaaaaaegaobaaa
+aaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaabbaaaaaakgbkbaaa
 aaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaabaaaaaaegiocaaaaaaaaaaa
-bbaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaaipcaabaaaaaaaaaaa
+bcaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaaipcaabaaaaaaaaaaa
 fgbfbaaaaaaaaaaaegiocaaaabaaaaaaanaaaaaadcaaaaakpcaabaaaaaaaaaaa
 egiocaaaabaaaaaaamaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaak
 pcaabaaaaaaaaaaaegiocaaaabaaaaaaaoaaaaaakgbkbaaaaaaaaaaaegaobaaa
 aaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaapaaaaaapgbpbaaa
 aaaaaaaaegaobaaaaaaaaaaaaaaaaaajhcaabaaaabaaaaaaegacbaiaebaaaaaa
-aaaaaaaajgihcaaaaaaaaaaaanaaaaaabaaaaaahicaabaaaabaaaaaaegacbaaa
+aaaaaaaaegiccaaaaaaaaaaaaoaaaaaabaaaaaahicaabaaaabaaaaaaegacbaaa
 abaaaaaaegacbaaaabaaaaaabaaaaaajbcaabaaaabaaaaaaegacbaaaabaaaaaa
 egiccaiaebaaaaaaaaaaaaaaamaaaaaaelaaaaafcccabaaaacaaaaaadkaabaaa
 abaaaaaadcaaaaakccaabaaaabaaaaaaakaabaiaebaaaaaaabaaaaaaakaabaaa
@@ -303,61 +305,65 @@ varying highp vec4 xlv_TEXCOORD4;
 varying highp float xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
 varying highp vec4 xlv_TEXCOORD0;
+uniform highp float _PlanetRadius;
 uniform highp float _Radius;
 uniform sampler2D _MainTex;
 void main ()
 {
   lowp vec4 tmpvar_1;
   lowp vec4 color_2;
-  mediump float dirCheck_3;
+  mediump float shadowCheck_3;
   highp float tmpvar_4;
   tmpvar_4 = ((float((xlv_TEXCOORD0.w >= 0.0)) * float((xlv_TEXCOORD1 >= 0.0))) * float((_Radius >= xlv_TEXCOORD2)));
-  dirCheck_3 = tmpvar_4;
-  mediump vec4 tex_5;
-  highp vec3 tmpvar_6;
-  tmpvar_6 = normalize(xlv_TEXCOORD4.xyz);
-  highp vec2 uv_7;
-  highp float r_8;
-  if ((abs(tmpvar_6.z) > (1e-08 * abs(tmpvar_6.x)))) {
-    highp float y_over_x_9;
-    y_over_x_9 = (tmpvar_6.x / tmpvar_6.z);
-    highp float s_10;
-    highp float x_11;
-    x_11 = (y_over_x_9 * inversesqrt(((y_over_x_9 * y_over_x_9) + 1.0)));
-    s_10 = (sign(x_11) * (1.5708 - (sqrt((1.0 - abs(x_11))) * (1.5708 + (abs(x_11) * (-0.214602 + (abs(x_11) * (0.0865667 + (abs(x_11) * -0.0310296)))))))));
-    r_8 = s_10;
-    if ((tmpvar_6.z < 0.0)) {
-      if ((tmpvar_6.x >= 0.0)) {
-        r_8 = (s_10 + 3.14159);
+  shadowCheck_3 = tmpvar_4;
+  highp float tmpvar_5;
+  tmpvar_5 = (shadowCheck_3 * float(((xlv_TEXCOORD2 + 5.0) >= _PlanetRadius)));
+  shadowCheck_3 = tmpvar_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD4.xyz);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_8 = (r_8 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_8 = (sign(tmpvar_6.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_7.x = (0.5 + (0.159155 * r_8));
-  uv_7.y = (0.31831 * (1.5708 - (sign(tmpvar_6.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_6.y))) * (1.5708 + (abs(tmpvar_6.y) * (-0.214602 + (abs(tmpvar_6.y) * (0.0865667 + (abs(tmpvar_6.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_12;
-  tmpvar_12 = dFdx(tmpvar_6.xz);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
   highp vec2 tmpvar_13;
-  tmpvar_13 = dFdy(tmpvar_6.xz);
-  highp vec4 tmpvar_14;
-  tmpvar_14.x = (0.159155 * sqrt(dot (tmpvar_12, tmpvar_12)));
-  tmpvar_14.y = dFdx(uv_7.y);
-  tmpvar_14.z = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
-  tmpvar_14.w = dFdy(uv_7.y);
-  lowp vec4 tmpvar_15;
-  tmpvar_15 = texture2DGradEXT (_MainTex, uv_7, tmpvar_14.xy, tmpvar_14.zw);
-  tex_5 = tmpvar_15;
-  color_2 = tex_5;
-  color_2.w = (1.2 * (1.2 - color_2.w));
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
   lowp vec4 tmpvar_16;
-  tmpvar_16 = clamp (color_2, 0.0, 1.0);
-  color_2 = tmpvar_16;
-  mediump vec4 tmpvar_17;
-  tmpvar_17 = vec4(mix (1.0, tmpvar_16.w, dirCheck_3));
-  tmpvar_1 = tmpvar_17;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  color_2 = tex_6;
+  color_2.w = (1.2 * (1.2 - color_2.w));
+  lowp vec4 tmpvar_17;
+  tmpvar_17 = clamp (color_2, 0.0, 1.0);
+  color_2 = tmpvar_17;
+  mediump vec4 tmpvar_18;
+  tmpvar_18 = vec4(mix (1.0, tmpvar_17.w, shadowCheck_3));
+  tmpvar_1 = tmpvar_18;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -421,61 +427,65 @@ varying highp vec4 xlv_TEXCOORD4;
 varying highp float xlv_TEXCOORD2;
 varying highp float xlv_TEXCOORD1;
 varying highp vec4 xlv_TEXCOORD0;
+uniform highp float _PlanetRadius;
 uniform highp float _Radius;
 uniform sampler2D _MainTex;
 void main ()
 {
   lowp vec4 tmpvar_1;
   lowp vec4 color_2;
-  mediump float dirCheck_3;
+  mediump float shadowCheck_3;
   highp float tmpvar_4;
   tmpvar_4 = ((float((xlv_TEXCOORD0.w >= 0.0)) * float((xlv_TEXCOORD1 >= 0.0))) * float((_Radius >= xlv_TEXCOORD2)));
-  dirCheck_3 = tmpvar_4;
-  mediump vec4 tex_5;
-  highp vec3 tmpvar_6;
-  tmpvar_6 = normalize(xlv_TEXCOORD4.xyz);
-  highp vec2 uv_7;
-  highp float r_8;
-  if ((abs(tmpvar_6.z) > (1e-08 * abs(tmpvar_6.x)))) {
-    highp float y_over_x_9;
-    y_over_x_9 = (tmpvar_6.x / tmpvar_6.z);
-    highp float s_10;
-    highp float x_11;
-    x_11 = (y_over_x_9 * inversesqrt(((y_over_x_9 * y_over_x_9) + 1.0)));
-    s_10 = (sign(x_11) * (1.5708 - (sqrt((1.0 - abs(x_11))) * (1.5708 + (abs(x_11) * (-0.214602 + (abs(x_11) * (0.0865667 + (abs(x_11) * -0.0310296)))))))));
-    r_8 = s_10;
-    if ((tmpvar_6.z < 0.0)) {
-      if ((tmpvar_6.x >= 0.0)) {
-        r_8 = (s_10 + 3.14159);
+  shadowCheck_3 = tmpvar_4;
+  highp float tmpvar_5;
+  tmpvar_5 = (shadowCheck_3 * float(((xlv_TEXCOORD2 + 5.0) >= _PlanetRadius)));
+  shadowCheck_3 = tmpvar_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD4.xyz);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_8 = (r_8 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_8 = (sign(tmpvar_6.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_7.x = (0.5 + (0.159155 * r_8));
-  uv_7.y = (0.31831 * (1.5708 - (sign(tmpvar_6.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_6.y))) * (1.5708 + (abs(tmpvar_6.y) * (-0.214602 + (abs(tmpvar_6.y) * (0.0865667 + (abs(tmpvar_6.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_12;
-  tmpvar_12 = dFdx(tmpvar_6.xz);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
   highp vec2 tmpvar_13;
-  tmpvar_13 = dFdy(tmpvar_6.xz);
-  highp vec4 tmpvar_14;
-  tmpvar_14.x = (0.159155 * sqrt(dot (tmpvar_12, tmpvar_12)));
-  tmpvar_14.y = dFdx(uv_7.y);
-  tmpvar_14.z = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
-  tmpvar_14.w = dFdy(uv_7.y);
-  lowp vec4 tmpvar_15;
-  tmpvar_15 = texture2DGradEXT (_MainTex, uv_7, tmpvar_14.xy, tmpvar_14.zw);
-  tex_5 = tmpvar_15;
-  color_2 = tex_5;
-  color_2.w = (1.2 * (1.2 - color_2.w));
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
   lowp vec4 tmpvar_16;
-  tmpvar_16 = clamp (color_2, 0.0, 1.0);
-  color_2 = tmpvar_16;
-  mediump vec4 tmpvar_17;
-  tmpvar_17 = vec4(mix (1.0, tmpvar_16.w, dirCheck_3));
-  tmpvar_1 = tmpvar_17;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  color_2 = tex_6;
+  color_2.w = (1.2 * (1.2 - color_2.w));
+  lowp vec4 tmpvar_17;
+  tmpvar_17 = clamp (color_2, 0.0, 1.0);
+  color_2 = tmpvar_17;
+  mediump vec4 tmpvar_18;
+  tmpvar_18 = vec4(mix (1.0, tmpvar_17.w, shadowCheck_3));
+  tmpvar_1 = tmpvar_18;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -512,7 +522,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 398
+#line 403
 struct v2f {
     highp vec4 pos;
     highp vec4 posProj;
@@ -521,7 +531,7 @@ struct v2f {
     highp vec4 worldPos;
     highp vec4 mainPos;
 };
-#line 392
+#line 397
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -618,46 +628,47 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform sampler2D _MainTex;
 uniform highp vec4 _MainOffset;
 uniform sampler2D _DetailTex;
 uniform lowp vec4 _DetailOffset;
-#line 386
+#line 390
 uniform highp float _DetailScale;
 uniform highp float _DetailDist;
 uniform highp vec4 _SunDir;
 uniform highp float _Radius;
-#line 390
+#line 394
+uniform highp float _PlanetRadius;
 uniform highp vec3 _PlanetOrigin;
 uniform highp mat4 _Projector;
-#line 408
-#line 432
-#line 408
+#line 413
+#line 437
+#line 413
 v2f vert( in appdata_t v ) {
     v2f o;
     o.posProj = (_Projector * v.vertex);
-    #line 412
+    #line 417
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 normView = normalize(vec3( _Projector[0][2], _Projector[1][2], _Projector[2][2]));
     highp vec4 vertexPos = (_Object2World * v.vertex);
     o.worldPos = vertexPos;
-    #line 416
+    #line 421
     highp vec3 worldOrigin = _PlanetOrigin;
     highp vec3 L = (worldOrigin - vec3( vertexPos));
     o.originDist = length(L);
     highp float tc = dot( L, vec3( (-_SunDir)));
-    #line 420
+    #line 425
     o.dotcoeff = tc;
     highp float d = sqrt((dot( L, L) - (tc * tc)));
     highp float d2 = pow( d, 2.0);
     highp float td = sqrt((dot( L, L) - d2));
-    #line 424
+    #line 429
     highp float sphereRadius = _Radius;
     mediump float sphereCheck = (step( d, sphereRadius) * step( 0.0, tc));
     highp float tlc = sqrt(((sphereRadius * sphereRadius) - d2));
     highp float sphereDist = mix( 0.0, (tc - tlc), sphereCheck);
-    #line 428
+    #line 433
     o.worldPos = (vertexPos + (_SunDir * sphereDist));
     o.mainPos = (-(_MainRotation * o.worldPos));
     return o;
@@ -769,7 +780,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 398
+#line 403
 struct v2f {
     highp vec4 pos;
     highp vec4 posProj;
@@ -778,7 +789,7 @@ struct v2f {
     highp vec4 worldPos;
     highp vec4 mainPos;
 };
-#line 392
+#line 397
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -875,61 +886,64 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform sampler2D _MainTex;
 uniform highp vec4 _MainOffset;
 uniform sampler2D _DetailTex;
 uniform lowp vec4 _DetailOffset;
-#line 386
+#line 390
 uniform highp float _DetailScale;
 uniform highp float _DetailDist;
 uniform highp vec4 _SunDir;
 uniform highp float _Radius;
-#line 390
+#line 394
+uniform highp float _PlanetRadius;
 uniform highp vec3 _PlanetOrigin;
 uniform highp mat4 _Projector;
-#line 408
-#line 432
-#line 317
+#line 413
+#line 437
+#line 321
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 319
+    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 323
+    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 326
+#line 330
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 328
+    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 332
+    #line 336
     return uv;
 }
-#line 343
+#line 347
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 345
+    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 349
+    #line 353
     return tex;
 }
-#line 432
+#line 437
 lowp vec4 frag( in v2f IN ) {
-    mediump float dirCheck = ((step( 0.0, IN.posProj.w) * step( 0.0, IN.dotcoeff)) * step( IN.originDist, _Radius));
+    mediump float shadowCheck = ((step( 0.0, IN.posProj.w) * step( 0.0, IN.dotcoeff)) * step( IN.originDist, _Radius));
+    shadowCheck *= step( _PlanetRadius, (IN.originDist + 5.0));
+    #line 441
     mediump vec4 main = GetSphereMap( _MainTex, vec3( IN.mainPos));
-    #line 436
     lowp vec4 color = main;
     color.w = (1.2 * (1.2 - color.w));
     color = xll_saturate_vf4(color);
-    return vec4( mix( 1.0, color.w, dirCheck));
+    #line 445
+    return vec4( mix( 1.0, color.w, shadowCheck));
 }
 in highp vec4 xlv_TEXCOORD0;
 in highp float xlv_TEXCOORD1;
@@ -956,8 +970,8 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 1
-//   d3d9 - ALU: 65 to 65, TEX: 3 to 3
-//   d3d11 - ALU: 57 to 57, TEX: 0 to 0, FLOW: 1 to 1
+//   d3d9 - ALU: 69 to 69, TEX: 3 to 3
+//   d3d11 - ALU: 61 to 61, TEX: 0 to 0, FLOW: 1 to 1
 SubProgram "opengl " {
 Keywords { }
 "!!GLSL"
@@ -966,15 +980,17 @@ Keywords { }
 SubProgram "d3d9 " {
 Keywords { }
 Float 0 [_Radius]
+Float 1 [_PlanetRadius]
 SetTexture 0 [_MainTex] 2D
 "ps_3_0
-; 65 ALU, 3 TEX
+; 69 ALU, 3 TEX
 dcl_2d s0
-def c1, 1.00000000, 0.00000000, -0.01348047, 0.05747731
-def c2, -0.12123910, 0.19563590, -0.33299461, 0.99999559
-def c3, 1.57079601, 3.14159298, -0.01872930, 0.07426100
-def c4, -0.21211439, 1.57072902, 2.00000000, 0.31830987
-def c5, 0.15915494, 0.50000000, 1.20019531, -1.00000000
+def c2, 1.00000000, 0.00000000, 5.00000000, -0.12123910
+def c3, -0.01348047, 0.05747731, 0.19563590, -0.33299461
+def c4, 0.99999559, 1.57079601, 3.14159298, -0.21211439
+def c5, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c6, 0.31830987, 0.15915494, 0.50000000, 1.20019531
+def c7, -1.00000000, 0, 0, 0
 dcl_texcoord0 v0.xyzw
 dcl_texcoord1 v1.x
 dcl_texcoord2 v2.x
@@ -991,31 +1007,31 @@ mul r1.y, r1, r1.z
 mul r1.z, r1.y, r1.y
 add r1.x, r1, -r0.w
 abs r0.w, r0.y
-mad r1.w, r1.z, c1.z, c1
-mad r1.w, r1, r1.z, c2.x
-mad r1.w, r1, r1.z, c2.y
-mad r1.w, r1, r1.z, c2.z
-mad r1.z, r1.w, r1, c2.w
+mad r1.w, r1.z, c3.x, c3.y
+mad r1.w, r1, r1.z, c2
+mad r1.w, r1, r1.z, c3.z
+mad r1.w, r1, r1.z, c3
+mad r1.z, r1.w, r1, c4.x
 mul r1.y, r1.z, r1
-add r1.z, -r1.y, c3.x
+add r1.z, -r1.y, c4.y
 cmp r1.x, -r1, r1.y, r1.z
-add r1.z, -r0.w, c1.x
-mad r1.y, r0.w, c3.z, c3.w
-mad r1.y, r1, r0.w, c4.x
+add r1.z, -r0.w, c2.x
+mad r1.y, r0.w, c5.x, c5
+mad r1.y, r1, r0.w, c4.w
 rsq r1.z, r1.z
 rcp r1.z, r1.z
-mad r0.w, r1.y, r0, c4.y
+mad r0.w, r1.y, r0, c5.z
 mul r0.w, r0, r1.z
-add r1.z, -r1.x, c3.y
+add r1.z, -r1.x, c4
 cmp r1.x, r0.z, r1, r1.z
-cmp r0.y, r0, c1, c1.x
+cmp r0.y, r0, c2, c2.x
 mul r1.y, r0, r0.w
-mad r0.w, -r1.y, c4.z, r0
-mad r0.y, r0, c3, r0.w
+mad r0.w, -r1.y, c5, r0
+mad r0.y, r0, c4.z, r0.w
 cmp r0.w, r0.x, r1.x, -r1.x
 dsx r1.zw, r0.xyxz
-mul r0.y, r0, c4.w
-mad r1.x, r0.w, c5, c5.y
+mul r0.y, r0, c6.x
+mad r1.x, r0.w, c6.y, c6.z
 dsy r0.xz, r0
 mul r0.xz, r0, r0
 add r0.z, r0.x, r0
@@ -1028,34 +1044,39 @@ dsx r0.w, r0.y
 dsy r0.y, r0
 rcp r0.x, r0.x
 rcp r1.z, r0.z
-mul r0.z, r0.x, c5.x
-mul r0.x, r1.z, c5
+mul r0.z, r0.x, c6.y
+mul r0.x, r1.z, c6.y
 texldd r0.w, r1, s0, r0.zwzw, r0
-add_pp r0.x, -r0.w, c5.z
-mul_pp_sat r0.y, r0.x, c5.z
-add r0.x, -v2, c0
-add_pp r0.w, r0.y, c5
-cmp r0.z, r0.x, c1.x, c1.y
-cmp r0.y, v1.x, c1.x, c1
-cmp r0.x, v0.w, c1, c1.y
-mul r0.x, r0, r0.y
-mul r0.x, r0, r0.z
-mad_pp oC0, r0.x, r0.w, c1.x
+add_pp r0.x, -r0.w, c6.w
+mul_pp_sat r0.x, r0, c6.w
+add r0.w, v2.x, -c1.x
+add r0.w, r0, c2.z
+cmp r0.z, v1.x, c2.x, c2.y
+cmp r0.y, v0.w, c2.x, c2
+mul r0.y, r0, r0.z
+add r0.z, -v2.x, c0.x
+cmp r0.z, r0, c2.x, c2.y
+add_pp r0.x, r0, c7
+cmp r0.w, r0, c2.x, c2.y
+mul r0.y, r0, r0.z
+mul_pp r0.y, r0, r0.w
+mad_pp oC0, r0.y, r0.x, c2.x
 "
 }
 
 SubProgram "d3d11 " {
 Keywords { }
-ConstBuffer "$Globals" 288 // 212 used size, 11 vars
+ConstBuffer "$Globals" 304 // 216 used size, 12 vars
 Float 208 [_Radius]
+Float 212 [_PlanetRadius]
 BindCB "$Globals" 0
 SetTexture 0 [_MainTex] 2D 0
-// 60 instructions, 4 temp regs, 0 temp arrays:
-// ALU 51 float, 0 int, 6 uint
+// 64 instructions, 4 temp regs, 0 temp arrays:
+// ALU 54 float, 0 int, 7 uint
 // TEX 0 (0 load, 0 comp, 0 bias, 1 grad)
 // FLOW 1 static, 0 dynamic
 "ps_4_0
-eefiecedcbaaiimjlicilbblkbbagliimncmacdmabaaaaaalmaiaaaaadaaaaaa
+eefiecedjhohdcahkpmpaaahgplkpibppclneogmabaaaaaadaajaaaaadaaaaaa
 cmaaaaaaoeaaaaaabiabaaaaejfdeheolaaaaaaaagaaaaaaaiaaaaaajiaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaakeaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapaiaaaakeaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -1063,8 +1084,8 @@ ababaaaakeaaaaaaacaaaaaaaaaaaaaaadaaaaaaacaaaaaaacacaaaakeaaaaaa
 adaaaaaaaaaaaaaaadaaaaaaadaaaaaaapaaaaaakeaaaaaaaeaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaapahaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfcee
 aaklklklepfdeheocmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaa
-adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcjmahaaaa
-eaaaaaaaohabaaaafjaaaaaeegiocaaaaaaaaaaaaoaaaaaafkaaaaadaagabaaa
+adaaaaaaaaaaaaaaapaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcbaaiaaaa
+eaaaaaaaaeacaaaafjaaaaaeegiocaaaaaaaaaaaaoaaaaaafkaaaaadaagabaaa
 aaaaaaaafibiaaaeaahabaaaaaaaaaaaffffaaaagcbaaaadicbabaaaabaaaaaa
 gcbaaaadbcbabaaaacaaaaaagcbaaaadccbabaaaacaaaaaagcbaaaadhcbabaaa
 aeaaaaaagfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaabaaaaaahbcaabaaa
@@ -1123,8 +1144,12 @@ aceaaaaaaaaaaaaaaaaaiadpaaaaiadpaaaaaaaadiaaaaahccaabaaaaaaaaaaa
 ckaabaaaaaaaaaaabkaabaaaaaaaaaaabnaaaaaiecaabaaaaaaaaaaaakiacaaa
 aaaaaaaaanaaaaaabkbabaaaacaaaaaaabaaaaahecaabaaaaaaaaaaackaabaaa
 aaaaaaaaabeaaaaaaaaaiadpdiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaa
-bkaabaaaaaaaaaaadcaaaaampccabaaaaaaaaaaafgafbaaaaaaaaaaaagaabaaa
-aaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpdoaaaaab"
+bkaabaaaaaaaaaaaaaaaaaahecaabaaaaaaaaaaabkbabaaaacaaaaaaabeaaaaa
+aaaakaeabnaaaaaiecaabaaaaaaaaaaackaabaaaaaaaaaaabkiacaaaaaaaaaaa
+anaaaaaaabaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaiadp
+diaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaabkaabaaaaaaaaaaadcaaaaam
+pccabaaaaaaaaaaafgafbaaaaaaaaaaaagaabaaaaaaaaaaaaceaaaaaaaaaiadp
+aaaaiadpaaaaiadpaaaaiadpdoaaaaab"
 }
 
 SubProgram "gles " {
@@ -1144,7 +1169,7 @@ Keywords { }
 
 }
 
-#LINE 87
+#LINE 91
 
       }
    }  
