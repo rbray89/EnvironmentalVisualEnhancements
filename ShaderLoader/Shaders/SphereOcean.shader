@@ -31,7 +31,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 		Tags { "LightMode"="ForwardBase"}
 		
 		CGPROGRAM
-		
+		#include "EVEUtils.cginc"
 		#include "UnityCG.cginc"
 		#include "AutoLight.cginc"
 		#include "Lighting.cginc"
@@ -44,11 +44,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 		#pragma fragmentoption ARB_precision_hint_fastest
 		#pragma multi_compile_fwdbase
 		#pragma multi_compile_fwdadd_fullshadows
-		#define PI 3.1415926535897932384626
-		#define INV_PI (1.0/PI)
-		#define TWOPI (2.0*PI) 
-		#define INV_2PI (1.0/TWOPI)
-	 
+		
 		fixed4 _Color;
 		float _Shininess;
 		sampler2D _MainTex;
@@ -77,7 +73,6 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 			float3 worldNormal : TEXCOORD2;
 			LIGHTING_COORDS(3,4)
 			float3 sphereNormal : TEXCOORD5;
-			float4 scrPos : TEXCOORD6;
 		};	
 		
 
@@ -101,39 +96,15 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 
 			return o;
 	 	}
-	 	
-		float4 Derivatives( float3 pos )  
-		{  
-		    float lat = INV_2PI*atan2( pos.y, pos.x );  
-		    float lon = INV_PI*acos( pos.z );  
-		    float2 latLong = float2( lat, lon );  
-		    float latDdx = INV_2PI*length( ddx( pos.xy ) );  
-		    float latDdy = INV_2PI*length( ddy( pos.xy ) );  
-		    float longDdx = ddx( lon );  
-		    float longDdy = ddy( lon );  
-		 	
-		    return float4( latDdx , longDdx , latDdy, longDdy );  
-		} 
-	 		
+	 		 		
 		fixed4 frag (v2f IN) : COLOR
 		{
 			half4 color;
 			float3 sphereNrm = IN.sphereNormal;
-		 	float2 uv;
-		 	uv.x = .5 + (INV_2PI*atan2(sphereNrm.x, sphereNrm.z));
-		 	uv.y = INV_PI*acos(sphereNrm.y);
-		 	float4 uvdd = Derivatives(sphereNrm);
-		    half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw);
-		    half2 detailnrmzy = sphereNrm.zy*_DetailScale;
-		    half2 detailnrmzx = sphereNrm.zx*_DetailScale;
-		    half2 detailnrmxy = sphereNrm.xy*_DetailScale;
-			half4 detailX = tex2D (_DetailTex, detailnrmzy);
-			half4 detailY = tex2D (_DetailTex, detailnrmzx);
-			half4 detailZ = tex2D (_DetailTex, detailnrmxy);
+		 	
+		    half4 main = GetSphereMap(_MainTex, sphereNrm);
+			half4 detail = GetShereDetailMap(_DetailTex, sphereNrm, _DetailScale);
 			
-			sphereNrm = abs(sphereNrm);
-			half4 detail = lerp(detailZ, detailX, sphereNrm.x);
-			detail = lerp(detail, detailY, sphereNrm.y);
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
 			color = lerp(detail.rgba, 1, detailLevel);
 			color = lerp(color, main, saturate(pow(_MainTexHandoverDist*IN.viewDist,3)));

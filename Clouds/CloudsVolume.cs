@@ -27,14 +27,24 @@ namespace Atmosphere
 	    float _MinLight = .5f;
         [Persistent]
         float _InvFade = .008f;
+
+        float _MaxScale;
+        public float MaxScale { set { _MaxScale = value; } }
+        Vector3 _MaxTrans;
+        public Vector3 MaxTrans { set { _MaxTrans = value; } }
+
     }
 
     class CloudsVolume
     {
         [Persistent]
-        Vector3 size = new Vector3(2500, 4500, 0);
+        Vector3 size = new Vector3(4000, 1, 0);
+        [Persistent]
+        Vector3 maxTranslation = new Vector3(0, 0, 0);
         [Persistent]
         Vector3 area = new Vector3(24000,4, 0);
+        [Persistent]
+        float rotationSpeed = .01f;
         [Persistent]
         particleVolumeMaterial particleMaterial;
 
@@ -57,6 +67,9 @@ namespace Atmosphere
         public void Apply(AtmosphereMaterial material, float radius, float speed, Transform parent)
         {
             Remove();
+            particleMaterial.MaxScale = size.y;
+            particleMaterial.MaxTrans = maxTranslation;
+
             ParticleMaterial = new Material(ParticleCloudShader);
             particleMaterial.ApplyMaterialProperties(ParticleMaterial);
             material.ApplyMaterialProperties(ParticleMaterial);
@@ -95,6 +108,11 @@ namespace Atmosphere
                 Matrix4x4 rotationMatrix = mainRotationMatrix* volumeHolder.transform.parent.worldToLocalMatrix;
                 ParticleMaterial.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, rotationMatrix);
                 ParticleMaterial.SetMatrix(EVEManagerClass.DETAIL_ROTATION_PROPERTY, detailRotationMatrix);
+
+                double ut = Planetarium.GetUniversalTime();
+                double particleRotation = (ut * rotationSpeed);
+                particleRotation -= (int)particleRotation;
+                ParticleMaterial.SetFloat(EVEManagerClass.ROTATION_PROPERTY, (float)particleRotation);
             }
         }
 

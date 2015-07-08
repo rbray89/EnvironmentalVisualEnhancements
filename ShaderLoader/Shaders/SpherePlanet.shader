@@ -5,8 +5,8 @@
 		_Shininess ("Shininess", Float) = 10
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_BumpMap ("Normalmap", 2D) = "bump" {}
-		_DetailTex ("Detail (RGB)", 2D) = "white" {}
-		_DetailVertTex ("Detail for Vertical Surfaces (RGB)", 2D) = "white" {}
+		_midTex ("Detail (RGB)", 2D) = "white" {}
+		_steepTex ("Detail for Vertical Surfaces (RGB)", 2D) = "white" {}
 		_DetailScale ("Detail Scale", Range(0,1000)) = 200
 		_DetailOffset ("Detail Offset", Vector) = (.5,.5,0,0)
 		_DetailVertScale ("Detail Scale", Range(0,1000)) = 200
@@ -55,8 +55,8 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		float _Shininess;
 		sampler2D _MainTex;
 		sampler2D _BumpMap;
-		sampler2D _DetailTex;
-		sampler2D _DetailVertTex;
+		sampler2D _midTex;
+		sampler2D _steepTex;
 		float _DetailScale;
 		fixed4 _DetailOffset;
 		float _DetailVertScale;
@@ -142,7 +142,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half3 detailCoords = lerp(sphereNrm.zxy, sphereNrm.xyz, zxlerp);
 			half nylerp = saturate(floor(1+sphereNrm.y-(lerp(sphereNrm.z, sphereNrm.x, zxlerp))));		
 			detailCoords = lerp(detailCoords, sphereNrm.yxz, nylerp);
-			half4 detail = tex2D (_DetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_DetailScale, uvdd.xy*_DetailScale, uvdd.zw*_DetailScale);	
+			half4 detail = tex2D (_midTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_DetailScale, uvdd.xy*_DetailScale, uvdd.zw*_DetailScale);	
 			
 			#ifdef CITYOVERLAY_ON
 			half4 cityoverlay = tex2D(_CityOverlayTex, uv, uvdd.xy, uvdd.zw);

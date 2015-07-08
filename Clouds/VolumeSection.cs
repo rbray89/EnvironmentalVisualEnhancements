@@ -24,25 +24,18 @@ namespace Atmosphere
             Vector3 bodyPoint = parent.parent.InverseTransformPoint(particle.transform.position).normalized*magnitude;
             particle.transform.position = parent.parent.TransformPoint(bodyPoint);
 
-            float x = 0;//500 *((float)Random.NextDouble() - .5f);
-            float y = 0;//500 *((float)Random.NextDouble() - .5f);
-            float z = 0;// 500 * ((float)Random.NextDouble() - .5f);
-            particle.transform.localPosition += new Vector3(x, y, z);
+            particle.transform.localPosition += Vector3.zero;
 
             Vector3 worldUp = particle.transform.position - parent.parent.position;
             particle.transform.up = worldUp.normalized;
 
-            x = 0;//360f *(float)Random.NextDouble();
-            y = 0;//360f * (float)Random.NextDouble();
-            z = 0;//360f *(float)Random.NextDouble();
-            particle.transform.localRotation = Quaternion.Euler(x, y, z);
+            particle.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
             particle.transform.localScale = Vector3.one;
             particle.layer = EVEManagerClass.MACRO_LAYER;
 
             Vector3 up = particle.transform.InverseTransformDirection(worldUp);
-            //Quad.Create(particle, Random.Next((int)size.x, (int)size.y), Color.white, up);
-            Quad.Create(particle, ((int)size.x + (int)size.y) / 2, Color.white, up, size.y);
+            Quad.Create(particle, (int)size.x, Color.white, up, size.y);
 
             var mr = particle.AddComponent<MeshRenderer>();
             mr.sharedMaterial = cloudParticleMaterial;

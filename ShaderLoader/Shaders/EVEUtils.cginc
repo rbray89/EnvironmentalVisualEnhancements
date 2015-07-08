@@ -7,7 +7,7 @@
 	#define INV_PI (1.0/PI)
 	#define TWOPI (2.0*PI) 
 	#define INV_2PI (1.0/TWOPI)
-		
+	#define SQRT_2 (1.41421356237)
 	
 	uniform float4x4 _MainRotation;
 	uniform float4x4 _DetailRotation;
