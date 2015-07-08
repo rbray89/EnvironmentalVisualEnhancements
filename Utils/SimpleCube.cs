@@ -23,7 +23,7 @@ namespace Utils
             Vector3[] verts = mf.mesh.vertices;
             for (int i = 0; i < verts.Length; i++)
             {
-                verts[i] *= size;
+                verts[i] *= 2*size;
             }
             mf.mesh.vertices = verts;
             mf.mesh.RecalculateBounds();

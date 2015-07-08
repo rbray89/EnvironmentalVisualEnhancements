@@ -19,22 +19,37 @@ namespace Terrain
         Shader originalPlanetShader;
         Shader originalOceanShader;
 
-        private GameObject pqsTerrainContainer;
-        private GameObject pqsOceanContainer;
+        GameObject OceanBacking = null;
+        Material OceanBackingMaterial;
 
         public override void OnSphereActive()
         {
-
+            if (OceanBacking != null)
+            {
+                OceanBacking.SetActive(true);
+            }
         }
         public override void OnSphereInactive()
         {
-            
+            if (OceanBacking != null)
+            {
+                OceanBacking.SetActive(false);
+            }
         }
         
         protected void Update()
         {
-            
+            if (this.sphere.isActiveAndEnabled)
+            {
+                Vector3 sunDir = this.celestialBody.transform.InverseTransformDirection(Sun.Instance.sunDirection);
+                this.celestialBody.pqsController.surfaceMaterial.SetVector(EVEManagerClass.SUNDIR_PROPERTY, sunDir);
+                Vector3 planetOrigin = this.celestialBody.transform.position;
+                this.celestialBody.pqsController.surfaceMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
+                OceanBackingMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
+            }
         }
+
+        
 
         internal void Apply(string body, TerrainMaterial terrainMaterial, OceanMaterial oceanMaterial)
         {
@@ -49,6 +64,8 @@ namespace Terrain
                 pqs = PQSManagerClass.GetPQS(body);
             }
 
+            Transform transform = Tools.GetScaledTransform(body);
+
             if (pqs != null)
             {
                 this.sphere = pqs;
@@ -56,23 +73,11 @@ namespace Terrain
                 this.transform.localPosition = Vector3.zero;
                 this.transform.localRotation = Quaternion.identity;
                 this.transform.localScale = Vector3.one;
-            }
 
-            Transform transform = Tools.GetScaledTransform(body);
-            Texture mainTexture = null;
-            Texture bumpTexture = null;
-            Texture steepTexture = null;
-            Texture lowTexture = null;
-            Texture highTexture = null;
-
-            if (pqs != null)
-            {
                 //Scaled space
                 MeshRenderer mr = (MeshRenderer)transform.GetComponent(typeof(MeshRenderer));
                 if (mr != null)
                 {
-                    mainTexture = mr.material.mainTexture;
-                    bumpTexture = mr.material.GetTexture("_BumpMap");
                     terrainMaterial.SaveTextures(mr.material);
                     originalPlanetShader = mr.material.shader;
 
@@ -91,17 +96,12 @@ namespace Terrain
                 {
                     pqs.surfaceMaterial.EnableKeyword(keyword);
                 }
-                pqs.surfaceMaterial.mainTexture = mainTexture;
-                pqs.surfaceMaterial.SetTexture("_BumpMap", bumpTexture);
 
                 terrainMaterial.ApplyMaterialProperties(pqs.surfaceMaterial);
 
                 if (oceanMaterial != null && pqs.ChildSpheres.Length > 0)
                 {
                     PQS ocean = pqs.ChildSpheres[0];
-
-                    pqsOceanContainer = new GameObject("PQSTangentAssigner");
-                    pqsOceanContainer.transform.parent = ocean.transform;
 
                     keywords = ocean.surfaceMaterial.shaderKeywords;
                     originalOceanShader = ocean.surfaceMaterial.shader;
@@ -111,7 +111,8 @@ namespace Terrain
                     {
                         ocean.surfaceMaterial.EnableKeyword(keyword);
                     }
-                    ocean.surfaceMaterial.mainTexture = mainTexture;
+
+                    terrainMaterial.ApplyMaterialProperties(ocean.surfaceMaterial);
                     oceanMaterial.ApplyMaterialProperties(ocean.surfaceMaterial);
 
                     PQSLandControl landControl = (PQSLandControl)pqs.transform.GetComponentInChildren(typeof(PQSLandControl));
@@ -128,6 +129,16 @@ namespace Terrain
                             }
                         }
                     }
+
+                    SimpleCube hp = new SimpleCube(2000, ref OceanBackingMaterial, TerrainManager.OceanBackingShader);
+                    OceanBacking = hp.GameObject;
+
+                    OceanBacking.transform.parent = FlightCamera.fetch.transform;
+                    OceanBacking.transform.localPosition = Vector3.zero;
+                    OceanBacking.transform.localScale = Vector3.one;
+                    OceanBacking.layer = EVEManagerClass.MACRO_LAYER;
+                    OceanBackingMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius);
+                    OceanBackingMaterial.color = terrainMaterial.OceanColor;
                 }
 
                 PQSMod_CelestialBodyTransform cbt = (PQSMod_CelestialBodyTransform)pqs.transform.GetComponentInChildren(typeof(PQSMod_CelestialBodyTransform));
@@ -142,7 +153,6 @@ namespace Terrain
                     pqs.surfaceMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius);
                 }
 
-
             }
 
 
@@ -155,6 +165,11 @@ namespace Terrain
             this.sphere = null;
             this.enabled = false;
             this.transform.parent = null;
+            if (OceanBacking != null)
+            {
+                GameObject.DestroyImmediate(OceanBacking);
+                OceanBacking = null;
+            }
         }
     }
 }

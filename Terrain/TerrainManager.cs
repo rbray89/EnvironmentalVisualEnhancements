@@ -22,6 +22,7 @@ namespace Terrain
         private static Shader oceanShader = null;
         private static Shader planetShader = null;
         private static Shader terrainShader = null;
+        private static Shader oceanBackingShader = null;
 
         public static Shader OceanShader
         {
@@ -53,6 +54,17 @@ namespace Terrain
                 } return terrainShader;
             }
         }
+        
+        public static Shader OceanBackingShader
+        {
+            get
+            {
+                if (oceanBackingShader == null)
+                {
+                    oceanBackingShader = ShaderLoaderClass.FindShader("EVE/OceanBack");
+                } return oceanBackingShader;
+            }
+        }
 
         protected new void Update()
         {
@@ -73,14 +85,7 @@ namespace Terrain
                 }
             }
 
-            CelestialBody cb = FlightGlobals.currentMainBody;
-            if(cb != null && cb.pqsController != null)
-            {
-                Vector3 sunDir = cb.transform.InverseTransformDirection(Sun.Instance.sunDirection);
-                cb.pqsController.surfaceMaterial.SetVector(EVEManagerClass.SUNDIR_PROPERTY, sunDir);
-                Vector3 planetOrigin = cb.transform.position;
-                cb.pqsController.surfaceMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
-            }
+            
         }
 
     }

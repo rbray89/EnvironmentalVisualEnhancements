@@ -740,7 +740,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 384
+#line 388
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -749,7 +749,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 481
+#line 485
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -758,7 +758,7 @@ struct v2f {
     highp vec3 _LightCoord;
     highp vec3 sphereNormal;
 };
-#line 473
+#line 477
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -857,46 +857,46 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 394
+#line 398
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 407
-#line 415
-#line 429
+#line 411
+#line 419
+#line 433
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 462
+#line 466
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 466
+#line 470
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 470
+#line 474
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 491
-#line 491
+#line 495
+#line 495
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 495
+    #line 499
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
     o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 499
+    #line 503
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
-    #line 503
+    #line 507
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -1008,7 +1008,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 384
+#line 388
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -1017,7 +1017,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 481
+#line 485
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -1026,7 +1026,7 @@ struct v2f {
     highp vec3 _LightCoord;
     highp vec3 sphereNormal;
 };
-#line 473
+#line 477
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -1125,111 +1125,111 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 394
+#line 398
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 407
-#line 415
-#line 429
+#line 411
+#line 419
+#line 433
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 462
+#line 466
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 466
+#line 470
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 470
+#line 474
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 491
-#line 317
+#line 495
+#line 321
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 319
+    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 323
+    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 326
+#line 330
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 328
+    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 332
+    #line 336
     return uv;
 }
-#line 364
+#line 368
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 366
+    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 370
+    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 374
+    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 343
+#line 347
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 345
+    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 349
+    #line 353
     return tex;
 }
-#line 505
+#line 509
 lowp vec4 frag( in v2f IN ) {
-    #line 507
+    #line 511
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 511
+    #line 515
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 515
+    #line 519
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
     mediump vec3 normalDir = IN.worldNormal;
     mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 519
+    #line 523
     mediump float diff = ((NdotL - 0.01) / 0.99);
     lowp float atten = (texture( _LightTexture0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * 1.0);
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 523
+    #line 527
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
     color.w = 1.0;
-    #line 527
+    #line 531
     highp float refrac = 0.67;
     color.w *= pow( refrac, 2.0);
     color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
     color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 531
+    #line 535
     color.xyz += (_Reflectivity * light);
     color.xyz *= light;
     return color;
@@ -1932,7 +1932,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 382
+#line 386
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -1941,7 +1941,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 479
+#line 483
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -1949,7 +1949,7 @@ struct v2f {
     highp vec3 worldNormal;
     highp vec3 sphereNormal;
 };
-#line 471
+#line 475
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -2048,40 +2048,40 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 392
+#line 396
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 405
-#line 413
-#line 427
+#line 409
+#line 417
+#line 431
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 460
+#line 464
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 464
+#line 468
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 468
+#line 472
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 488
-#line 501
-#line 488
+#line 492
+#line 505
+#line 492
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 492
+    #line 496
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
     o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 496
+    #line 500
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
     return o;
@@ -2193,7 +2193,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 382
+#line 386
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -2202,7 +2202,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 479
+#line 483
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -2210,7 +2210,7 @@ struct v2f {
     highp vec3 worldNormal;
     highp vec3 sphereNormal;
 };
-#line 471
+#line 475
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -2309,111 +2309,111 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 392
+#line 396
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 405
-#line 413
-#line 427
+#line 409
+#line 417
+#line 431
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 460
+#line 464
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 464
+#line 468
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 468
+#line 472
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 488
-#line 501
-#line 317
+#line 492
+#line 505
+#line 321
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 319
+    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 323
+    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 326
+#line 330
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 328
+    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 332
+    #line 336
     return uv;
 }
-#line 364
+#line 368
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 366
+    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 370
+    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 374
+    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 343
+#line 347
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 345
+    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 349
+    #line 353
     return tex;
 }
-#line 501
+#line 505
 lowp vec4 frag( in v2f IN ) {
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
-    #line 505
+    #line 509
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
-    #line 509
+    #line 513
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    #line 513
+    #line 517
     mediump vec3 normalDir = IN.worldNormal;
     mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
     mediump float diff = ((NdotL - 0.01) / 0.99);
     lowp float atten = 1.0;
-    #line 517
+    #line 521
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    #line 521
+    #line 525
     light += (main.w * specularReflection);
     color.w = 1.0;
     highp float refrac = 0.67;
     color.w *= pow( refrac, 2.0);
-    #line 525
+    #line 529
     color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
     color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
     color.xyz += (_Reflectivity * light);
     color.xyz *= light;
-    #line 529
+    #line 533
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -3163,7 +3163,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 393
+#line 397
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -3172,7 +3172,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 490
+#line 494
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -3181,7 +3181,7 @@ struct v2f {
     highp vec4 _LightCoord;
     highp vec3 sphereNormal;
 };
-#line 482
+#line 486
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -3280,47 +3280,47 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 403
+#line 407
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 416
-#line 424
-#line 438
+#line 420
+#line 428
+#line 442
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 471
+#line 475
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 475
+#line 479
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 479
+#line 483
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 500
-#line 500
+#line 504
+#line 504
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 504
+    #line 508
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
     o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 508
+    #line 512
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
-    #line 512
+    #line 516
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -3432,7 +3432,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 393
+#line 397
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -3441,7 +3441,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 490
+#line 494
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -3450,7 +3450,7 @@ struct v2f {
     highp vec4 _LightCoord;
     highp vec3 sphereNormal;
 };
-#line 482
+#line 486
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -3549,122 +3549,122 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 403
+#line 407
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 416
-#line 424
-#line 438
+#line 420
+#line 428
+#line 442
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 471
+#line 475
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 475
+#line 479
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 479
+#line 483
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 500
-#line 317
+#line 504
+#line 321
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 319
+    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 323
+    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 326
+#line 330
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 328
+    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 332
+    #line 336
     return uv;
 }
-#line 364
+#line 368
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 366
+    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 370
+    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 374
+    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 343
+#line 347
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 345
+    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 349
+    #line 353
     return tex;
 }
-#line 389
+#line 393
 lowp float UnitySpotAttenuate( in highp vec3 LightCoord ) {
-    #line 391
+    #line 395
     return texture( _LightTextureB0, vec2( dot( LightCoord, LightCoord))).w;
 }
-#line 385
+#line 389
 lowp float UnitySpotCookie( in highp vec4 LightCoord ) {
-    #line 387
+    #line 391
     return texture( _LightTexture0, ((LightCoord.xy / LightCoord.w) + 0.5)).w;
 }
-#line 514
+#line 518
 lowp vec4 frag( in v2f IN ) {
-    #line 516
+    #line 520
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 520
+    #line 524
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 524
+    #line 528
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
     mediump vec3 normalDir = IN.worldNormal;
     mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 528
+    #line 532
     mediump float diff = ((NdotL - 0.01) / 0.99);
     lowp float atten = (((float((IN._LightCoord.z > 0.0)) * UnitySpotCookie( IN._LightCoord)) * UnitySpotAttenuate( IN._LightCoord.xyz)) * 1.0);
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 532
+    #line 536
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
     color.w = 1.0;
-    #line 536
+    #line 540
     highp float refrac = 0.67;
     color.w *= pow( refrac, 2.0);
     color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
     color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 540
+    #line 544
     color.xyz += (_Reflectivity * light);
     color.xyz *= light;
     return color;
@@ -4401,7 +4401,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 385
+#line 389
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -4410,7 +4410,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 482
+#line 486
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -4419,7 +4419,7 @@ struct v2f {
     highp vec3 _LightCoord;
     highp vec3 sphereNormal;
 };
-#line 474
+#line 478
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -4518,47 +4518,47 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform samplerCube _LightTexture0;
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 395
+#line 399
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 408
-#line 416
-#line 430
+#line 412
+#line 420
+#line 434
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 463
+#line 467
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 467
+#line 471
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 471
+#line 475
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 492
-#line 492
+#line 496
+#line 496
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 496
+    #line 500
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
     o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 500
+    #line 504
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
-    #line 504
+    #line 508
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -4670,7 +4670,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 385
+#line 389
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -4679,7 +4679,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 482
+#line 486
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -4688,7 +4688,7 @@ struct v2f {
     highp vec3 _LightCoord;
     highp vec3 sphereNormal;
 };
-#line 474
+#line 478
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -4787,112 +4787,112 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform samplerCube _LightTexture0;
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 395
+#line 399
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 408
-#line 416
-#line 430
+#line 412
+#line 420
+#line 434
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 463
+#line 467
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 467
+#line 471
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 471
+#line 475
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 492
-#line 317
+#line 496
+#line 321
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 319
+    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 323
+    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 326
+#line 330
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 328
+    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 332
+    #line 336
     return uv;
 }
-#line 364
+#line 368
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 366
+    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 370
+    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 374
+    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 343
+#line 347
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 345
+    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 349
+    #line 353
     return tex;
 }
-#line 506
+#line 510
 lowp vec4 frag( in v2f IN ) {
-    #line 508
+    #line 512
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 512
+    #line 516
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 516
+    #line 520
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
     mediump vec3 normalDir = IN.worldNormal;
     mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 520
+    #line 524
     mediump float diff = ((NdotL - 0.01) / 0.99);
     lowp float atten = ((texture( _LightTextureB0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * texture( _LightTexture0, IN._LightCoord).w) * 1.0);
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 524
+    #line 528
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
     color.w = 1.0;
-    #line 528
+    #line 532
     highp float refrac = 0.67;
     color.w *= pow( refrac, 2.0);
     color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
     color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 532
+    #line 536
     color.xyz += (_Reflectivity * light);
     color.xyz *= light;
     return color;
@@ -5621,7 +5621,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 384
+#line 388
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -5630,7 +5630,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 481
+#line 485
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -5639,7 +5639,7 @@ struct v2f {
     highp vec2 _LightCoord;
     highp vec3 sphereNormal;
 };
-#line 473
+#line 477
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -5738,46 +5738,46 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 394
+#line 398
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 407
-#line 415
-#line 429
+#line 411
+#line 419
+#line 433
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 462
+#line 466
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 466
+#line 470
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 470
+#line 474
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 491
-#line 491
+#line 495
+#line 495
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 495
+    #line 499
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
     o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 499
+    #line 503
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xy;
-    #line 503
+    #line 507
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -5889,7 +5889,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 384
+#line 388
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -5898,7 +5898,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 481
+#line 485
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -5907,7 +5907,7 @@ struct v2f {
     highp vec2 _LightCoord;
     highp vec3 sphereNormal;
 };
-#line 473
+#line 477
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -6006,111 +6006,111 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 394
+#line 398
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 407
-#line 415
-#line 429
+#line 411
+#line 419
+#line 433
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 462
+#line 466
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 466
+#line 470
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 470
+#line 474
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 491
-#line 317
+#line 495
+#line 321
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 319
+    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 323
+    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 326
+#line 330
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 328
+    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 332
+    #line 336
     return uv;
 }
-#line 364
+#line 368
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 366
+    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 370
+    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 374
+    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 343
+#line 347
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 345
+    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 349
+    #line 353
     return tex;
 }
-#line 505
+#line 509
 lowp vec4 frag( in v2f IN ) {
-    #line 507
+    #line 511
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 511
+    #line 515
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 515
+    #line 519
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
     mediump vec3 normalDir = IN.worldNormal;
     mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 519
+    #line 523
     mediump float diff = ((NdotL - 0.01) / 0.99);
     lowp float atten = (texture( _LightTexture0, IN._LightCoord).w * 1.0);
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 523
+    #line 527
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
     color.w = 1.0;
-    #line 527
+    #line 531
     highp float refrac = 0.67;
     color.w *= pow( refrac, 2.0);
     color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
     color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 531
+    #line 535
     color.xyz += (_Reflectivity * light);
     color.xyz *= light;
     return color;
@@ -6930,7 +6930,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 399
+#line 403
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -6939,7 +6939,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 496
+#line 500
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -6949,7 +6949,7 @@ struct v2f {
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 488
+#line 492
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -7048,51 +7048,51 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform sampler2D _ShadowMapTexture;
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 390
+#line 394
 uniform sampler2D _LightTextureB0;
-#line 395
-#line 409
+#line 399
+#line 413
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 422
-#line 430
-#line 444
+#line 426
+#line 434
+#line 448
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 477
+#line 481
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 481
+#line 485
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 485
+#line 489
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 507
-#line 507
+#line 511
+#line 511
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 511
+    #line 515
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
     o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 515
+    #line 519
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
-    #line 520
+    #line 524
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -7206,7 +7206,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 399
+#line 403
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -7215,7 +7215,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 496
+#line 500
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -7225,7 +7225,7 @@ struct v2f {
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 488
+#line 492
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -7324,129 +7324,129 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform sampler2D _ShadowMapTexture;
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 390
+#line 394
 uniform sampler2D _LightTextureB0;
-#line 395
-#line 409
+#line 399
+#line 413
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 422
-#line 430
-#line 444
+#line 426
+#line 434
+#line 448
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 477
+#line 481
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 481
+#line 485
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 485
+#line 489
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 507
-#line 317
+#line 511
+#line 321
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 319
+    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 323
+    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 326
+#line 330
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 328
+    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 332
+    #line 336
     return uv;
 }
-#line 364
+#line 368
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 366
+    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 370
+    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 374
+    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 343
+#line 347
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 345
+    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 349
+    #line 353
     return tex;
 }
-#line 395
+#line 399
 lowp float UnitySpotAttenuate( in highp vec3 LightCoord ) {
     return texture( _LightTextureB0, vec2( dot( LightCoord, LightCoord))).w;
 }
-#line 391
+#line 395
 lowp float UnitySpotCookie( in highp vec4 LightCoord ) {
     return texture( _LightTexture0, ((LightCoord.xy / LightCoord.w) + 0.5)).w;
 }
-#line 383
+#line 387
 lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
     mediump float shadow = (( (textureProj( _ShadowMapTexture, shadowCoord).x < (shadowCoord.z / shadowCoord.w)) ) ? ( _LightShadowData.x ) : ( 1.0 ));
-    #line 386
+    #line 390
     return shadow;
 }
-#line 522
+#line 526
 lowp vec4 frag( in v2f IN ) {
-    #line 524
+    #line 528
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 528
+    #line 532
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 532
+    #line 536
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
     mediump vec3 normalDir = IN.worldNormal;
     mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 536
+    #line 540
     mediump float diff = ((NdotL - 0.01) / 0.99);
     lowp float atten = (((float((IN._LightCoord.z > 0.0)) * UnitySpotCookie( IN._LightCoord)) * UnitySpotAttenuate( IN._LightCoord.xyz)) * unitySampleShadow( IN._ShadowCoord));
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 540
+    #line 544
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
     color.w = 1.0;
-    #line 544
+    #line 548
     highp float refrac = 0.67;
     color.w *= pow( refrac, 2.0);
     color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
     color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 548
+    #line 552
     color.xyz += (_Reflectivity * light);
     color.xyz *= light;
     return color;
@@ -7992,7 +7992,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 400
+#line 404
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -8001,7 +8001,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 497
+#line 501
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -8011,7 +8011,7 @@ struct v2f {
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 489
+#line 493
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -8110,50 +8110,50 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform lowp sampler2DShadow _ShadowMapTexture;
 uniform sampler2D _LightTexture0;
-#line 390
+#line 394
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 410
+#line 414
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 423
-#line 431
-#line 445
+#line 427
+#line 435
+#line 449
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 478
+#line 482
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 482
+#line 486
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 486
+#line 490
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 508
-#line 508
+#line 512
+#line 512
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 512
+    #line 516
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
     o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 516
+    #line 520
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
-    #line 521
+    #line 525
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -8268,7 +8268,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 400
+#line 404
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -8277,7 +8277,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 497
+#line 501
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -8287,7 +8287,7 @@ struct v2f {
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 489
+#line 493
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -8386,131 +8386,131 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform lowp sampler2DShadow _ShadowMapTexture;
 uniform sampler2D _LightTexture0;
-#line 390
+#line 394
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 410
+#line 414
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 423
-#line 431
-#line 445
+#line 427
+#line 435
+#line 449
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 478
+#line 482
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 482
+#line 486
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 486
+#line 490
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 508
-#line 317
+#line 512
+#line 321
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 319
+    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 323
+    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 326
+#line 330
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 328
+    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 332
+    #line 336
     return uv;
 }
-#line 364
+#line 368
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 366
+    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 370
+    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 374
+    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 343
+#line 347
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 345
+    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 349
+    #line 353
     return tex;
 }
-#line 396
+#line 400
 lowp float UnitySpotAttenuate( in highp vec3 LightCoord ) {
-    #line 398
+    #line 402
     return texture( _LightTextureB0, vec2( dot( LightCoord, LightCoord))).w;
 }
-#line 392
+#line 396
 lowp float UnitySpotCookie( in highp vec4 LightCoord ) {
-    #line 394
+    #line 398
     return texture( _LightTexture0, ((LightCoord.xy / LightCoord.w) + 0.5)).w;
 }
-#line 383
+#line 387
 lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
     mediump float shadow = xll_shadow2Dproj( _ShadowMapTexture, shadowCoord);
-    #line 386
+    #line 390
     shadow = (_LightShadowData.x + (shadow * (1.0 - _LightShadowData.x)));
     return shadow;
 }
-#line 523
+#line 527
 lowp vec4 frag( in v2f IN ) {
-    #line 525
+    #line 529
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 529
+    #line 533
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 533
+    #line 537
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
     mediump vec3 normalDir = IN.worldNormal;
     mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 537
+    #line 541
     mediump float diff = ((NdotL - 0.01) / 0.99);
     lowp float atten = (((float((IN._LightCoord.z > 0.0)) * UnitySpotCookie( IN._LightCoord)) * UnitySpotAttenuate( IN._LightCoord.xyz)) * unitySampleShadow( IN._ShadowCoord));
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 541
+    #line 545
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
     color.w = 1.0;
-    #line 545
+    #line 549
     highp float refrac = 0.67;
     color.w *= pow( refrac, 2.0);
     color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
     color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 549
+    #line 553
     color.xyz += (_Reflectivity * light);
     color.xyz *= light;
     return color;
@@ -9275,7 +9275,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 390
+#line 394
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -9284,7 +9284,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 487
+#line 491
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -9293,7 +9293,7 @@ struct v2f {
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 479
+#line 483
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -9392,46 +9392,46 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 400
+#line 404
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 413
-#line 421
-#line 435
+#line 417
+#line 425
+#line 439
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 468
+#line 472
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 472
+#line 476
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 476
+#line 480
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 497
-#line 497
+#line 501
+#line 501
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 501
+    #line 505
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
     o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 505
+    #line 509
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
-    #line 509
+    #line 513
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -9543,7 +9543,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 390
+#line 394
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -9552,7 +9552,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 487
+#line 491
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -9561,7 +9561,7 @@ struct v2f {
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 479
+#line 483
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -9660,118 +9660,118 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 400
+#line 404
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 413
-#line 421
-#line 435
+#line 417
+#line 425
+#line 439
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 468
+#line 472
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 472
+#line 476
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 476
+#line 480
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 497
-#line 317
+#line 501
+#line 321
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 319
+    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 323
+    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 326
+#line 330
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 328
+    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 332
+    #line 336
     return uv;
 }
-#line 364
+#line 368
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 366
+    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 370
+    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 374
+    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 343
+#line 347
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 345
+    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 349
+    #line 353
     return tex;
 }
-#line 384
+#line 388
 lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
-    #line 386
+    #line 390
     highp float dist = textureProj( _ShadowMapTexture, shadowCoord).x;
     mediump float lightShadowDataX = _LightShadowData.x;
     return max( float((dist > (shadowCoord.z / shadowCoord.w))), lightShadowDataX);
 }
-#line 511
+#line 515
 lowp vec4 frag( in v2f IN ) {
-    #line 513
+    #line 517
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 517
+    #line 521
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 521
+    #line 525
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
     mediump vec3 normalDir = IN.worldNormal;
     mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 525
+    #line 529
     mediump float diff = ((NdotL - 0.01) / 0.99);
     lowp float atten = unitySampleShadow( IN._ShadowCoord);
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 529
+    #line 533
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
     color.w = 1.0;
-    #line 533
+    #line 537
     highp float refrac = 0.67;
     color.w *= pow( refrac, 2.0);
     color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
     color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 537
+    #line 541
     color.xyz += (_Reflectivity * light);
     color.xyz *= light;
     return color;
@@ -10556,7 +10556,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 392
+#line 396
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -10565,7 +10565,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 489
+#line 493
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -10575,7 +10575,7 @@ struct v2f {
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 481
+#line 485
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -10674,50 +10674,50 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 390
+#line 394
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 402
+#line 406
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 415
-#line 423
-#line 437
+#line 419
+#line 427
+#line 441
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 470
+#line 474
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 474
+#line 478
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 478
+#line 482
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 500
-#line 500
+#line 504
+#line 504
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 504
+    #line 508
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
     o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 508
+    #line 512
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xy;
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
-    #line 513
+    #line 517
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -10831,7 +10831,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 392
+#line 396
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -10840,7 +10840,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 489
+#line 493
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -10850,7 +10850,7 @@ struct v2f {
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 481
+#line 485
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -10949,121 +10949,121 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 390
+#line 394
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 402
+#line 406
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 415
-#line 423
-#line 437
+#line 419
+#line 427
+#line 441
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 470
+#line 474
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 474
+#line 478
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 478
+#line 482
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 500
-#line 317
+#line 504
+#line 321
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 319
+    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 323
+    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 326
+#line 330
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 328
+    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 332
+    #line 336
     return uv;
 }
-#line 364
+#line 368
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 366
+    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 370
+    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 374
+    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 343
+#line 347
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 345
+    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 349
+    #line 353
     return tex;
 }
-#line 384
+#line 388
 lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
-    #line 386
+    #line 390
     highp float dist = textureProj( _ShadowMapTexture, shadowCoord).x;
     mediump float lightShadowDataX = _LightShadowData.x;
     return max( float((dist > (shadowCoord.z / shadowCoord.w))), lightShadowDataX);
 }
-#line 515
+#line 519
 lowp vec4 frag( in v2f IN ) {
-    #line 517
+    #line 521
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 521
+    #line 525
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 525
+    #line 529
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
     mediump vec3 normalDir = IN.worldNormal;
     mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 529
+    #line 533
     mediump float diff = ((NdotL - 0.01) / 0.99);
     lowp float atten = (texture( _LightTexture0, IN._LightCoord).w * unitySampleShadow( IN._ShadowCoord));
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 533
+    #line 537
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
     color.w = 1.0;
-    #line 537
+    #line 541
     highp float refrac = 0.67;
     color.w *= pow( refrac, 2.0);
     color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
     color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 541
+    #line 545
     color.xyz += (_Reflectivity * light);
     color.xyz *= light;
     return color;
@@ -11877,7 +11877,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 397
+#line 401
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -11886,7 +11886,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 494
+#line 498
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -11896,7 +11896,7 @@ struct v2f {
     highp vec3 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 486
+#line 490
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -11995,49 +11995,49 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform samplerCube _ShadowMapTexture;
-#line 395
+#line 399
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 407
+#line 411
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 420
-#line 428
-#line 442
+#line 424
+#line 432
+#line 446
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 475
+#line 479
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 479
+#line 483
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 483
+#line 487
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 505
-#line 505
+#line 509
+#line 509
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 509
+    #line 513
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
     o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 513
+    #line 517
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
-    #line 518
+    #line 522
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -12151,7 +12151,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 397
+#line 401
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -12160,7 +12160,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 494
+#line 498
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -12170,7 +12170,7 @@ struct v2f {
     highp vec3 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 486
+#line 490
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -12269,78 +12269,78 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform samplerCube _ShadowMapTexture;
-#line 395
+#line 399
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 407
+#line 411
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 420
-#line 428
-#line 442
+#line 424
+#line 432
+#line 446
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 475
+#line 479
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 479
+#line 483
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 483
+#line 487
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 505
-#line 317
+#line 509
+#line 321
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 319
+    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 323
+    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 326
+#line 330
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 328
+    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 332
+    #line 336
     return uv;
 }
-#line 364
+#line 368
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 366
+    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 370
+    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 374
+    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 343
+#line 347
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 345
+    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 349
+    #line 353
     return tex;
 }
 #line 215
@@ -12348,53 +12348,53 @@ highp float DecodeFloatRGBA( in highp vec4 enc ) {
     highp vec4 kDecodeDot = vec4( 1.0, 0.00392157, 1.53787e-05, 6.22737e-09);
     return dot( enc, kDecodeDot);
 }
-#line 383
+#line 387
 highp float SampleCubeDistance( in highp vec3 vec ) {
     highp vec4 packDist = texture( _ShadowMapTexture, vec);
-    #line 386
+    #line 390
     return DecodeFloatRGBA( packDist);
 }
-#line 388
+#line 392
 highp float unityCubeShadow( in highp vec3 vec ) {
-    #line 390
+    #line 394
     highp float mydist = (length(vec) * _LightPositionRange.w);
     mydist *= 0.97;
     highp float dist = SampleCubeDistance( vec);
     return (( (dist < mydist) ) ? ( _LightShadowData.x ) : ( 1.0 ));
 }
-#line 520
+#line 524
 lowp vec4 frag( in v2f IN ) {
-    #line 522
+    #line 526
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 526
+    #line 530
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 530
+    #line 534
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
     mediump vec3 normalDir = IN.worldNormal;
     mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 534
+    #line 538
     mediump float diff = ((NdotL - 0.01) / 0.99);
     lowp float atten = (texture( _LightTexture0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * unityCubeShadow( IN._ShadowCoord));
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 538
+    #line 542
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
     color.w = 1.0;
-    #line 542
+    #line 546
     highp float refrac = 0.67;
     color.w *= pow( refrac, 2.0);
     color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
     color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 546
+    #line 550
     color.xyz += (_Reflectivity * light);
     color.xyz *= light;
     return color;
@@ -13217,7 +13217,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 398
+#line 402
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -13226,7 +13226,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 495
+#line 499
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -13236,7 +13236,7 @@ struct v2f {
     highp vec3 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 487
+#line 491
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -13335,50 +13335,50 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform samplerCube _ShadowMapTexture;
-#line 395
+#line 399
 uniform samplerCube _LightTexture0;
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 408
+#line 412
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 421
-#line 429
-#line 443
+#line 425
+#line 433
+#line 447
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 476
+#line 480
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 480
+#line 484
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 484
+#line 488
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 506
-#line 506
+#line 510
+#line 510
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 510
+    #line 514
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
     o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 514
+    #line 518
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
-    #line 519
+    #line 523
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -13492,7 +13492,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 398
+#line 402
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -13501,7 +13501,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 495
+#line 499
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -13511,7 +13511,7 @@ struct v2f {
     highp vec3 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 487
+#line 491
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -13610,79 +13610,79 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform samplerCube _ShadowMapTexture;
-#line 395
+#line 399
 uniform samplerCube _LightTexture0;
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 408
+#line 412
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 421
-#line 429
-#line 443
+#line 425
+#line 433
+#line 447
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 476
+#line 480
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 480
+#line 484
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 484
+#line 488
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 506
-#line 317
+#line 510
+#line 321
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 319
+    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 323
+    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 326
+#line 330
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 328
+    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 332
+    #line 336
     return uv;
 }
-#line 364
+#line 368
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 366
+    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 370
+    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 374
+    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 343
+#line 347
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 345
+    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 349
+    #line 353
     return tex;
 }
 #line 215
@@ -13690,53 +13690,53 @@ highp float DecodeFloatRGBA( in highp vec4 enc ) {
     highp vec4 kDecodeDot = vec4( 1.0, 0.00392157, 1.53787e-05, 6.22737e-09);
     return dot( enc, kDecodeDot);
 }
-#line 383
+#line 387
 highp float SampleCubeDistance( in highp vec3 vec ) {
     highp vec4 packDist = texture( _ShadowMapTexture, vec);
-    #line 386
+    #line 390
     return DecodeFloatRGBA( packDist);
 }
-#line 388
+#line 392
 highp float unityCubeShadow( in highp vec3 vec ) {
-    #line 390
+    #line 394
     highp float mydist = (length(vec) * _LightPositionRange.w);
     mydist *= 0.97;
     highp float dist = SampleCubeDistance( vec);
     return (( (dist < mydist) ) ? ( _LightShadowData.x ) : ( 1.0 ));
 }
-#line 521
+#line 525
 lowp vec4 frag( in v2f IN ) {
-    #line 523
+    #line 527
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 527
+    #line 531
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 531
+    #line 535
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
     mediump vec3 normalDir = IN.worldNormal;
     mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 535
+    #line 539
     mediump float diff = ((NdotL - 0.01) / 0.99);
     lowp float atten = ((texture( _LightTextureB0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * texture( _LightTexture0, IN._LightCoord).w) * unityCubeShadow( IN._ShadowCoord));
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 539
+    #line 543
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
     color.w = 1.0;
-    #line 543
+    #line 547
     highp float refrac = 0.67;
     color.w *= pow( refrac, 2.0);
     color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
     color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 547
+    #line 551
     color.xyz += (_Reflectivity * light);
     color.xyz *= light;
     return color;
@@ -14693,7 +14693,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 407
+#line 411
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -14702,7 +14702,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 504
+#line 508
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -14712,7 +14712,7 @@ struct v2f {
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 496
+#line 500
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -14811,52 +14811,52 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform sampler2D _ShadowMapTexture;
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 398
+#line 402
 uniform sampler2D _LightTextureB0;
-#line 403
-#line 417
+#line 407
+#line 421
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 430
-#line 438
-#line 452
+#line 434
+#line 442
+#line 456
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 485
+#line 489
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 489
+#line 493
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 493
+#line 497
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 515
-#line 515
+#line 519
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 519
+    #line 523
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
     o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 523
+    #line 527
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
-    #line 528
+    #line 532
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -14979,7 +14979,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 407
+#line 411
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -14988,7 +14988,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 504
+#line 508
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -14998,7 +14998,7 @@ struct v2f {
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 496
+#line 500
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -15097,139 +15097,139 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform sampler2D _ShadowMapTexture;
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 398
+#line 402
 uniform sampler2D _LightTextureB0;
-#line 403
-#line 417
+#line 407
+#line 421
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 430
-#line 438
-#line 452
+#line 434
+#line 442
+#line 456
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 485
+#line 489
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 489
+#line 493
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 493
+#line 497
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 515
-#line 317
+#line 519
+#line 321
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 319
+    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 323
+    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 326
+#line 330
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 328
+    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 332
+    #line 336
     return uv;
 }
-#line 364
+#line 368
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 366
+    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 370
+    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 374
+    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 343
+#line 347
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 345
+    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 349
+    #line 353
     return tex;
 }
-#line 403
+#line 407
 lowp float UnitySpotAttenuate( in highp vec3 LightCoord ) {
     return texture( _LightTextureB0, vec2( dot( LightCoord, LightCoord))).w;
 }
-#line 399
+#line 403
 lowp float UnitySpotCookie( in highp vec4 LightCoord ) {
     return texture( _LightTexture0, ((LightCoord.xy / LightCoord.w) + 0.5)).w;
 }
-#line 384
+#line 388
 lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
-    #line 386
+    #line 390
     highp vec3 coord = (shadowCoord.xyz / shadowCoord.w);
     highp vec4 shadowVals;
     shadowVals.x = texture( _ShadowMapTexture, (vec2( coord) + _ShadowOffsets[0].xy)).x;
     shadowVals.y = texture( _ShadowMapTexture, (vec2( coord) + _ShadowOffsets[1].xy)).x;
-    #line 390
+    #line 394
     shadowVals.z = texture( _ShadowMapTexture, (vec2( coord) + _ShadowOffsets[2].xy)).x;
     shadowVals.w = texture( _ShadowMapTexture, (vec2( coord) + _ShadowOffsets[3].xy)).x;
     mediump vec4 shadows = xll_vecTSel_vb4_vf4_vf4 (lessThan( shadowVals, coord.zzzz), vec4( _LightShadowData.xxxx), vec4( 1.0));
     mediump float shadow = dot( shadows, vec4( 0.25));
-    #line 394
+    #line 398
     return shadow;
 }
-#line 530
+#line 534
 lowp vec4 frag( in v2f IN ) {
-    #line 532
+    #line 536
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 536
+    #line 540
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 540
+    #line 544
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
     mediump vec3 normalDir = IN.worldNormal;
     mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 544
+    #line 548
     mediump float diff = ((NdotL - 0.01) / 0.99);
     lowp float atten = (((float((IN._LightCoord.z > 0.0)) * UnitySpotCookie( IN._LightCoord)) * UnitySpotAttenuate( IN._LightCoord.xyz)) * unitySampleShadow( IN._ShadowCoord));
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 548
+    #line 552
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
     color.w = 1.0;
-    #line 552
+    #line 556
     highp float refrac = 0.67;
     color.w *= pow( refrac, 2.0);
     color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
     color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 556
+    #line 560
     color.xyz += (_Reflectivity * light);
     color.xyz *= light;
     return color;
@@ -15808,7 +15808,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 407
+#line 411
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -15817,7 +15817,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 504
+#line 508
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -15827,7 +15827,7 @@ struct v2f {
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 496
+#line 500
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -15926,52 +15926,52 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform lowp sampler2DShadow _ShadowMapTexture;
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 398
+#line 402
 uniform sampler2D _LightTextureB0;
-#line 403
-#line 417
+#line 407
+#line 421
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 430
-#line 438
-#line 452
+#line 434
+#line 442
+#line 456
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 485
+#line 489
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 489
+#line 493
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 493
+#line 497
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 515
-#line 515
+#line 519
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 519
+    #line 523
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
     o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 523
+    #line 527
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
-    #line 528
+    #line 532
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -16086,7 +16086,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 407
+#line 411
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -16095,7 +16095,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 504
+#line 508
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -16105,7 +16105,7 @@ struct v2f {
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 496
+#line 500
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -16204,139 +16204,139 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform lowp sampler2DShadow _ShadowMapTexture;
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 398
+#line 402
 uniform sampler2D _LightTextureB0;
-#line 403
-#line 417
+#line 407
+#line 421
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 430
-#line 438
-#line 452
+#line 434
+#line 442
+#line 456
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 485
+#line 489
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 489
+#line 493
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 493
+#line 497
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 515
-#line 317
+#line 519
+#line 321
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 319
+    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 323
+    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 326
+#line 330
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 328
+    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 332
+    #line 336
     return uv;
 }
-#line 364
+#line 368
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 366
+    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 370
+    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 374
+    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 343
+#line 347
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 345
+    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 349
+    #line 353
     return tex;
 }
-#line 403
+#line 407
 lowp float UnitySpotAttenuate( in highp vec3 LightCoord ) {
     return texture( _LightTextureB0, vec2( dot( LightCoord, LightCoord))).w;
 }
-#line 399
+#line 403
 lowp float UnitySpotCookie( in highp vec4 LightCoord ) {
     return texture( _LightTexture0, ((LightCoord.xy / LightCoord.w) + 0.5)).w;
 }
-#line 384
+#line 388
 lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
-    #line 386
+    #line 390
     highp vec3 coord = (shadowCoord.xyz / shadowCoord.w);
     mediump vec4 shadows;
     shadows.x = xll_shadow2D( _ShadowMapTexture, (coord + vec3( _ShadowOffsets[0])).xyz);
     shadows.y = xll_shadow2D( _ShadowMapTexture, (coord + vec3( _ShadowOffsets[1])).xyz);
-    #line 390
+    #line 394
     shadows.z = xll_shadow2D( _ShadowMapTexture, (coord + vec3( _ShadowOffsets[2])).xyz);
     shadows.w = xll_shadow2D( _ShadowMapTexture, (coord + vec3( _ShadowOffsets[3])).xyz);
     shadows = (_LightShadowData.xxxx + (shadows * (1.0 - _LightShadowData.xxxx)));
     mediump float shadow = dot( shadows, vec4( 0.25));
-    #line 394
+    #line 398
     return shadow;
 }
-#line 530
+#line 534
 lowp vec4 frag( in v2f IN ) {
-    #line 532
+    #line 536
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 536
+    #line 540
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 540
+    #line 544
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
     mediump vec3 normalDir = IN.worldNormal;
     mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 544
+    #line 548
     mediump float diff = ((NdotL - 0.01) / 0.99);
     lowp float atten = (((float((IN._LightCoord.z > 0.0)) * UnitySpotCookie( IN._LightCoord)) * UnitySpotAttenuate( IN._LightCoord.xyz)) * unitySampleShadow( IN._ShadowCoord));
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 548
+    #line 552
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
     color.w = 1.0;
-    #line 552
+    #line 556
     highp float refrac = 0.67;
     color.w *= pow( refrac, 2.0);
     color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
     color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 556
+    #line 560
     color.xyz += (_Reflectivity * light);
     color.xyz *= light;
     return color;
@@ -17290,7 +17290,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 403
+#line 407
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -17299,7 +17299,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 500
+#line 504
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -17309,7 +17309,7 @@ struct v2f {
     highp vec3 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 492
+#line 496
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -17408,49 +17408,49 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform samplerCube _ShadowMapTexture;
 uniform sampler2D _LightTexture0;
-#line 402
+#line 406
 uniform highp mat4 _LightMatrix0;
-#line 413
+#line 417
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 426
-#line 434
-#line 448
+#line 430
+#line 438
+#line 452
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 481
+#line 485
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 485
+#line 489
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 489
+#line 493
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 511
-#line 511
+#line 515
+#line 515
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 515
+    #line 519
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
     o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 519
+    #line 523
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
-    #line 524
+    #line 528
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -17573,7 +17573,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 403
+#line 407
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -17582,7 +17582,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 500
+#line 504
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -17592,7 +17592,7 @@ struct v2f {
     highp vec3 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 492
+#line 496
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -17691,78 +17691,78 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform samplerCube _ShadowMapTexture;
 uniform sampler2D _LightTexture0;
-#line 402
+#line 406
 uniform highp mat4 _LightMatrix0;
-#line 413
+#line 417
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 426
-#line 434
-#line 448
+#line 430
+#line 438
+#line 452
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 481
+#line 485
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 485
+#line 489
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 489
+#line 493
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 511
-#line 317
+#line 515
+#line 321
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 319
+    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 323
+    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 326
+#line 330
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 328
+    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 332
+    #line 336
     return uv;
 }
-#line 364
+#line 368
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 366
+    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 370
+    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 374
+    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 343
+#line 347
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 345
+    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 349
+    #line 353
     return tex;
 }
 #line 215
@@ -17770,61 +17770,61 @@ highp float DecodeFloatRGBA( in highp vec4 enc ) {
     highp vec4 kDecodeDot = vec4( 1.0, 0.00392157, 1.53787e-05, 6.22737e-09);
     return dot( enc, kDecodeDot);
 }
-#line 383
+#line 387
 highp float SampleCubeDistance( in highp vec3 vec ) {
     highp vec4 packDist = texture( _ShadowMapTexture, vec);
-    #line 386
+    #line 390
     return DecodeFloatRGBA( packDist);
 }
-#line 388
+#line 392
 highp float unityCubeShadow( in highp vec3 vec ) {
-    #line 390
+    #line 394
     highp float mydist = (length(vec) * _LightPositionRange.w);
     mydist *= 0.97;
     highp float z = 0.0078125;
     highp vec4 shadowVals;
-    #line 394
+    #line 398
     shadowVals.x = SampleCubeDistance( (vec + vec3( z, z, z)));
     shadowVals.y = SampleCubeDistance( (vec + vec3( (-z), (-z), z)));
     shadowVals.z = SampleCubeDistance( (vec + vec3( (-z), z, (-z))));
     shadowVals.w = SampleCubeDistance( (vec + vec3( z, (-z), (-z))));
-    #line 398
+    #line 402
     mediump vec4 shadows = xll_vecTSel_vb4_vf4_vf4 (lessThan( shadowVals, vec4( mydist)), vec4( _LightShadowData.xxxx), vec4( 1.0));
     return dot( shadows, vec4( 0.25));
 }
-#line 526
+#line 530
 lowp vec4 frag( in v2f IN ) {
-    #line 528
+    #line 532
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 532
+    #line 536
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 536
+    #line 540
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
     mediump vec3 normalDir = IN.worldNormal;
     mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 540
+    #line 544
     mediump float diff = ((NdotL - 0.01) / 0.99);
     lowp float atten = (texture( _LightTexture0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * unityCubeShadow( IN._ShadowCoord));
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 544
+    #line 548
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
     color.w = 1.0;
-    #line 548
+    #line 552
     highp float refrac = 0.67;
     color.w *= pow( refrac, 2.0);
     color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
     color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 552
+    #line 556
     color.xyz += (_Reflectivity * light);
     color.xyz *= light;
     return color;
@@ -18787,7 +18787,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 404
+#line 408
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -18796,7 +18796,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 501
+#line 505
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -18806,7 +18806,7 @@ struct v2f {
     highp vec3 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 493
+#line 497
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -18905,50 +18905,50 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform samplerCube _ShadowMapTexture;
 uniform samplerCube _LightTexture0;
-#line 402
+#line 406
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 414
+#line 418
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 427
-#line 435
-#line 449
+#line 431
+#line 439
+#line 453
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 482
+#line 486
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 486
+#line 490
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 490
+#line 494
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 512
-#line 512
+#line 516
+#line 516
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 516
+    #line 520
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
     o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 520
+    #line 524
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
     o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
-    #line 525
+    #line 529
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -19071,7 +19071,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 404
+#line 408
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -19080,7 +19080,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 501
+#line 505
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
@@ -19090,7 +19090,7 @@ struct v2f {
     highp vec3 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 493
+#line 497
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -19189,79 +19189,79 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 315
 uniform highp mat4 _MainRotation;
 uniform highp mat4 _DetailRotation;
-#line 382
+#line 386
 uniform samplerCube _ShadowMapTexture;
 uniform samplerCube _LightTexture0;
-#line 402
+#line 406
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 414
+#line 418
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 427
-#line 435
-#line 449
+#line 431
+#line 439
+#line 453
 uniform lowp vec4 _Color;
 uniform highp float _Shininess;
-#line 482
+#line 486
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
-#line 486
+#line 490
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
 uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 490
+#line 494
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
 uniform highp float _Reflectivity;
-#line 512
-#line 317
+#line 516
+#line 321
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 319
+    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 323
+    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 326
+#line 330
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 328
+    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 332
+    #line 336
     return uv;
 }
-#line 364
+#line 368
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 366
+    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 370
+    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 374
+    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 343
+#line 347
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 345
+    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 349
+    #line 353
     return tex;
 }
 #line 215
@@ -19269,61 +19269,61 @@ highp float DecodeFloatRGBA( in highp vec4 enc ) {
     highp vec4 kDecodeDot = vec4( 1.0, 0.00392157, 1.53787e-05, 6.22737e-09);
     return dot( enc, kDecodeDot);
 }
-#line 383
+#line 387
 highp float SampleCubeDistance( in highp vec3 vec ) {
     highp vec4 packDist = texture( _ShadowMapTexture, vec);
-    #line 386
+    #line 390
     return DecodeFloatRGBA( packDist);
 }
-#line 388
+#line 392
 highp float unityCubeShadow( in highp vec3 vec ) {
-    #line 390
+    #line 394
     highp float mydist = (length(vec) * _LightPositionRange.w);
     mydist *= 0.97;
     highp float z = 0.0078125;
     highp vec4 shadowVals;
-    #line 394
+    #line 398
     shadowVals.x = SampleCubeDistance( (vec + vec3( z, z, z)));
     shadowVals.y = SampleCubeDistance( (vec + vec3( (-z), (-z), z)));
     shadowVals.z = SampleCubeDistance( (vec + vec3( (-z), z, (-z))));
     shadowVals.w = SampleCubeDistance( (vec + vec3( z, (-z), (-z))));
-    #line 398
+    #line 402
     mediump vec4 shadows = xll_vecTSel_vb4_vf4_vf4 (lessThan( shadowVals, vec4( mydist)), vec4( _LightShadowData.xxxx), vec4( 1.0));
     return dot( shadows, vec4( 0.25));
 }
-#line 527
+#line 531
 lowp vec4 frag( in v2f IN ) {
-    #line 529
+    #line 533
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 533
+    #line 537
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 537
+    #line 541
     mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
     mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
     mediump vec3 normalDir = IN.worldNormal;
     mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 541
+    #line 545
     mediump float diff = ((NdotL - 0.01) / 0.99);
     lowp float atten = ((texture( _LightTextureB0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * texture( _LightTexture0, IN._LightCoord).w) * unityCubeShadow( IN._ShadowCoord));
     mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
     mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 545
+    #line 549
     highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
     specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
     light += (main.w * specularReflection);
     color.w = 1.0;
-    #line 549
+    #line 553
     highp float refrac = 0.67;
     color.w *= pow( refrac, 2.0);
     color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
     color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 553
+    #line 557
     color.xyz += (_Reflectivity * light);
     color.xyz *= light;
     return color;
