@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -92,8 +93,14 @@ namespace EVEManager
             KSPLog.print(configName + " " + SceneLoad);
             if (sceneLoad)
             {
-                Setup();
+                StartCoroutine(SetupDelay());
             }
+        }
+
+        IEnumerator SetupDelay()
+        {
+            yield return new WaitForFixedUpdate();
+            Setup();
         }
 
         public virtual void Setup()

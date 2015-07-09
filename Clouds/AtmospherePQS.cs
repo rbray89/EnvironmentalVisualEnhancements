@@ -71,6 +71,7 @@ namespace Atmosphere
                 applied = false;
             }
         }
+
         protected void OnExitMapView()
         {
             StartCoroutine(CheckForDisable());
