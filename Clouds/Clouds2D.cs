@@ -17,8 +17,6 @@ namespace Atmosphere
         float _FalloffPow = 2f;
         [Persistent]
         float _FalloffScale = 3f;
-        [Persistent, InverseScaled]
-        float _DetailDist = 0.000002f;
         [Persistent]
         float _MinLight = .5f;
         [Persistent, InverseScaled]
@@ -240,6 +238,7 @@ namespace Atmosphere
                 
                // Vector4 texVect = ShadowProjector.transform.localPosition.normalized;
                 ShadowProjector.material.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, mainRotation * ShadowProjector.transform.parent.worldToLocalMatrix);
+                ShadowProjector.material.SetMatrix(EVEManagerClass.DETAIL_ROTATION_PROPERTY, detailRotation);
                 ShadowProjector.material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, CloudMesh.transform.position);
             }
         }

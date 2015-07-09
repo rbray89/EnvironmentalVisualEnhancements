@@ -20,6 +20,8 @@ namespace Atmosphere
         [Persistent]
         float _DetailScale = 100f;
         [Persistent, InverseScaled]
+        float _DetailDist = 0.000002f;
+        [Persistent, InverseScaled]
         float _DistFade = 1.0f;
         [Persistent, InverseScaled]
         float _DistFadeVert = 0.00004f;

@@ -3,7 +3,7 @@
       _MainTex ("Main (RGB)", 2D) = "white" {}
       _DetailTex ("Detail (RGB)", 2D) = "white" {}
       _DetailScale ("Detail Scale", float) = 100
-	  _DetailDist ("Detail Distance", Range(0,1)) = 0.00875
+      _DetailDist ("Detail Distance", Range(0,1)) = 0.00875
 	  _PlanetOrigin ("Sphere Center", Vector) = (0,0,0,1)
 	  _SunDir ("Sunlight direction", Vector) = (0,0,0,1)
 	  _Radius ("Radius", Float) = 1
@@ -45,6 +45,7 @@
            	float originDist : TEXCOORD2;
 			float4 worldPos : TEXCOORD3;
 			float4 mainPos : TEXCOORD4; 
+			float4 detailPos : TEXCOORD5;
         };
  
         v2f vert (appdata_t v) 
@@ -71,6 +72,7 @@
 			float sphereDist = lerp(0, tc - tlc, sphereCheck);
 			o.worldPos = vertexPos + (_SunDir*sphereDist);
 			o.mainPos = -mul(_MainRotation, o.worldPos);
+			o.detailPos = mul(_DetailRotation, o.mainPos);
             return o;
         }
 		
@@ -79,7 +81,11 @@
 			half shadowCheck = step(0, IN.posProj.w)*step(0,IN.dotcoeff)*step(IN.originDist,_Radius);
 			shadowCheck *= step(_PlanetRadius, IN.originDist+5);
 			half4 main = GetSphereMap(_MainTex, IN.mainPos);
-			fixed4 color = main;
+			half4 detail = GetShereDetailMap(_DetailTex, IN.detailPos, _DetailScale);
+			
+			float viewDist = distance(IN.worldPos,_WorldSpaceCameraPos);
+			half detailLevel = saturate(2*_DetailDist*viewDist);
+			fixed4 color = main.rgba * lerp(detail.rgba, 1, detailLevel);
 			
 			color.a = 1.2*(1.2-color.a);
 			color = saturate(color);
