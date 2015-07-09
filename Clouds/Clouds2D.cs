@@ -60,9 +60,13 @@ namespace Atmosphere
                     if (value)
                     {
                         macroCloudMaterial.ApplyMaterialProperties(CloudMaterial, ScaledSpace.ScaleFactor);
-                        macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material, ScaledSpace.ScaleFactor);
                         atmosphereMat.ApplyMaterialProperties(CloudMaterial, ScaledSpace.ScaleFactor);
-                        atmosphereMat.ApplyMaterialProperties(ShadowProjector.material, ScaledSpace.ScaleFactor);
+
+                        if (ShadowProjector != null)
+                        {
+                            macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material, ScaledSpace.ScaleFactor);
+                            atmosphereMat.ApplyMaterialProperties(ShadowProjector.material, ScaledSpace.ScaleFactor);
+                        }
                         float scale = (float)(1000f / celestialBody.Radius);
                         CloudMaterial.DisableKeyword("SOFT_DEPTH_ON");
                         Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);
@@ -70,9 +74,14 @@ namespace Atmosphere
                     else
                     {
                         macroCloudMaterial.ApplyMaterialProperties(CloudMaterial);
-                        macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material);
                         atmosphereMat.ApplyMaterialProperties(CloudMaterial);
-                        atmosphereMat.ApplyMaterialProperties(ShadowProjector.material);
+
+                        if (ShadowProjector != null)
+                        {
+                            macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material);
+                            atmosphereMat.ApplyMaterialProperties(ShadowProjector.material);
+                        }
+                                                
                         CloudMaterial.EnableKeyword("SOFT_DEPTH_ON");
                         Reassign(EVEManagerClass.MACRO_LAYER, celestialBody.transform, 1);
                     }
