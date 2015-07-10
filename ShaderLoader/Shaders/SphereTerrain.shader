@@ -40,6 +40,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		
 		CGPROGRAM
 		
+		#include "EVEUtils.cginc"
 		#include "UnityCG.cginc"
 		#include "AutoLight.cginc"
 		#include "Lighting.cginc"
@@ -53,10 +54,6 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		#pragma multi_compile_fwdadd_fullshadows
 		#pragma multi_compile CITYOVERLAY_OFF CITYOVERLAY_ON
 		#pragma multi_compile DETAIL_MAP_OFF DETAIL_MAP_ON
-		#define PI 3.1415926535897932384626
-		#define INV_PI (1.0/PI)
-		#define TWOPI (2.0*PI) 
-		#define INV_2PI (1.0/TWOPI)
 	 
 		fixed4 _Color;
 		sampler2D _MainTex;
@@ -115,8 +112,8 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		   float3 vertexPos = mul(_Object2World, v.vertex).xyz;
 	   	   o.objnormal.w = distance(vertexPos,_WorldSpaceCameraPos);
 	   	   o.camViewDir = normalize(vertexPos - _WorldSpaceCameraPos);
-	   	   o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
-	   	   o.sphereCoords = -normalize(half4(v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz;
+	   	   o.worldNormal = normalize(mul( _Object2World, float4(v.normal, 0)).xyz);
+	   	   o.sphereCoords = -(float4(v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz;
 	   	   o.color = v.color;	
 		   o.objnormal.xyz = v.normal;
 		   
@@ -130,51 +127,33 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
     	   
 	   	   return o;
 	 	}
-	 	
-		float4 Derivatives( float3 pos )  
-		{  
-		    float lat = INV_2PI*atan2( pos.y, pos.x );  
-		    float lon = INV_PI*acos( pos.z );
-		    float latDdx = INV_2PI*length( ddx( pos.xy ) );  
-		    float latDdy = INV_2PI*length( ddy( pos.xy ) );  
-		    float longDdx = ddx( lon );  
-		    float longDdy = ddy( lon );  
-		 	
-		    return float4( latDdx , longDdx , latDdy, longDdy );  
-		} 
-	 		
+	 		 		
 		fixed4 frag (v2f IN) : COLOR
-			{
+		{
 			half4 color;
-			float3 sphereNrm = IN.sphereCoords;
-		 	float2 uv;
-		 	uv.x = .5 + (INV_2PI*atan2(sphereNrm.x, sphereNrm.z));
-		 	uv.y = INV_PI*acos(sphereNrm.y);
-		 	float4 uvdd = Derivatives(sphereNrm);
-		    half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw);
-		         
-		    half vertLerp = saturate((32*(saturate(dot(IN.objnormal, -IN.sphereCoords))-.95))+.5);
-			
-			sphereNrm = abs(sphereNrm);
-			half zxlerp = saturate(floor(1+sphereNrm.x-sphereNrm.z));
-			half3 detailCoords = lerp(sphereNrm.zxy, sphereNrm.xyz, zxlerp);
-			half nylerp = saturate(floor(1+sphereNrm.y-(lerp(sphereNrm.z, sphereNrm.x, zxlerp))));		
-			detailCoords = lerp(detailCoords, sphereNrm.yxz, nylerp);
-			half4 detail = tex2D (_midTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_DetailScale, uvdd.xy, uvdd.zw);	
-			half4 vert = tex2D (_steepTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_DetailVertScale, uvdd.xy, uvdd.zw);	
+		    half4 main = GetSphereMap(_MainTex, IN.sphereCoords);
+		    
+			float3 sphereNrm = normalize(IN.sphereCoords);
+		    half vertLerp = saturate((32*(saturate(dot(IN.objnormal.xyz, -sphereNrm))-.95))+.5);
+		    
+			half4 detail = GetShereDetailMap(_midTex, IN.sphereCoords, _DetailScale);
+			half4 vert = GetShereDetailMap(_steepTex, IN.sphereCoords, _DetailVertScale);	
 			detail = lerp(vert, detail, vertLerp);
 			
 			#ifdef CITYOVERLAY_ON
-			half4 cityoverlay = tex2D(_CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-			half4 citydarkoverlaydetail = tex2D (_CityDarkOverlayDetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_CityOverlayDetailScale, uvdd.xy, uvdd.zw);
-			half4 citylightoverlaydetail = tex2D (_CityLightOverlayDetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_CityOverlayDetailScale, uvdd.xy, uvdd.zw);
+			half4 cityoverlay = GetSphereMap(_CityOverlayTex, IN.sphereCoords);
+			half4 citydarkoverlaydetail = GetShereDetailMap(_CityDarkOverlayDetailTex, IN.sphereCoords, _CityOverlayDetailScale);
+			half4 citylightoverlaydetail = GetShereDetailMap(_CityLightOverlayDetailTex, IN.sphereCoords, _CityOverlayDetailScale); 
 			#endif
 			
-			half4 encnorm = tex2D(_BumpMap, uv, uvdd.xy, uvdd.zw);
+			half4 encnorm = GetSphereMap(_BumpMap, IN.sphereCoords);
 		    float2 localCoords = encnorm.ag; 
-            localCoords -= half2(.5);
+            localCoords -= half2(.5, .5);
             localCoords.x *= .5;
 			
+			float2 uv;
+			uv.x = .5 + (INV_2PI*atan2(sphereNrm.x, sphereNrm.z));
+			uv.y = INV_PI*acos(sphereNrm.y);
 			uv.x -= .5;
 			uv += localCoords;
 			
@@ -185,8 +164,10 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 
 			norm = -norm;
 			
+			
+			
 			half detailLevel = saturate(2*_DetailDist*IN.objnormal.w);
-			color = IN.color * lerp(detail.rgba, 1, detailLevel);
+			color = IN.color * (.5+lerp(detail.rgba, 0, detailLevel));
 			
 			
 			float tc = dot(IN.L, IN.camViewDir);

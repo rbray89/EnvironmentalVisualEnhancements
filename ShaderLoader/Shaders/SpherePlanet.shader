@@ -33,6 +33,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		
 		CGPROGRAM
 		
+		#include "EVEUtils.cginc"
 		#include "UnityCG.cginc"
 		#include "AutoLight.cginc"
 		#include "Lighting.cginc"
@@ -46,10 +47,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		#pragma multi_compile_fwdadd_fullshadows
 		#pragma multi_compile CITYOVERLAY_OFF CITYOVERLAY_ON
 		#pragma multi_compile DETAIL_MAP_OFF DETAIL_MAP_ON
-		#define PI 3.1415926535897932384626
-		#define INV_PI (1.0/PI)
-		#define TWOPI (2.0*PI) 
-		#define INV_2PI (1.0/TWOPI)
+		
 	 
 		fixed4 _Color;
 		float _Shininess;
@@ -114,40 +112,20 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	   	   return o;
 	 	}
 	 	
-		float4 Derivatives( float3 pos )  
-		{  
-		    float lat = INV_2PI*atan2( pos.x, pos.z );  
-		    float lon = INV_PI*acos( pos.y ); 
-		    float latDdx = INV_2PI*length( ddx( pos.zx ) );  
-		    float latDdy = INV_2PI*length( ddy( pos.zx ) );  
-		    float longDdx = ddx( lon );  
-		    float longDdy = ddy( lon );  
-		 	
-		    return float4( latDdx , longDdx , latDdy, longDdy );  
-		} 
 	 		
 		fixed4 frag (v2f IN) : COLOR
 		{
 			half4 color;
 			float3 sphereNrm = IN.sphereNormal;
-		 	float2 uv;
-		 	uv.x = .5 + (INV_2PI*atan2(sphereNrm.x, sphereNrm.z));
-		 	uv.y = INV_PI*acos(sphereNrm.y);
-		 	float4 uvdd = Derivatives(sphereNrm);
-		    half4 main = tex2D(_MainTex, uv, uvdd.xy, uvdd.zw);
-		    half3 norm = UnpackNormal(tex2D(_BumpMap, uv, uvdd.xy, uvdd.zw));
+		 	half4 main = GetSphereMap(_MainTex, IN.sphereNormal);
+		    half3 norm = UnpackNormal(GetSphereMap(_BumpMap, IN.sphereNormal));
 		    
-		    sphereNrm = abs(sphereNrm);
-			half zxlerp = saturate(floor(1+sphereNrm.x-sphereNrm.z));
-			half3 detailCoords = lerp(sphereNrm.zxy, sphereNrm.xyz, zxlerp);
-			half nylerp = saturate(floor(1+sphereNrm.y-(lerp(sphereNrm.z, sphereNrm.x, zxlerp))));		
-			detailCoords = lerp(detailCoords, sphereNrm.yxz, nylerp);
-			half4 detail = tex2D (_midTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_DetailScale, uvdd.xy*_DetailScale, uvdd.zw*_DetailScale);	
+		    half4 detail = GetShereDetailMap(_midTex, IN.sphereNormal, _DetailScale); 
 			
 			#ifdef CITYOVERLAY_ON
-			half4 cityoverlay = tex2D(_CityOverlayTex, uv, uvdd.xy, uvdd.zw);
-			half4 citydarkoverlaydetail = tex2D (_CityDarkOverlayDetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_CityOverlayDetailScale);//, uvdd.xy*_CityOverlayDetailScale, uvdd.zw*_CityOverlayDetailScale);
-			half4 citylightoverlaydetail = tex2D (_CityLightOverlayDetailTex, ((.5*detailCoords.zy)/(abs(detailCoords.x)) + _DetailOffset.xy) *_CityOverlayDetailScale);//, uvdd.xy*_CityOverlayDetailScale, uvdd.zw*_CityOverlayDetailScale);
+			half4 cityoverlay = GetSphereMap(_CityOverlayTex, IN.sphereNormal);
+			half4 citydarkoverlaydetail = GetShereDetailMap(_CityDarkOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale);
+			half4 citylightoverlaydetail = GetShereDetailMap(_CityLightOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale); 
 			#endif
 			
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);

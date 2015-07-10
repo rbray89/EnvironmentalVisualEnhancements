@@ -107,8 +107,7 @@ namespace Utils
 
         public static Transform GetScaledTransform(string body)
         {
-            List<Transform> transforms = ScaledSpace.Instance.scaledSpaceTransforms;
-            return transforms.Single(n => n.name == body);
+            return GetCelestialBody(body).scaledBody.transform;
         }
 
         public static Shader GetShader(Assembly assembly, String resource)

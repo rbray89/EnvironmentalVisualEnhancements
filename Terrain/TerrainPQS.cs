@@ -39,13 +39,16 @@ namespace Terrain
         
         protected void Update()
         {
-            if (this.sphere.isActiveAndEnabled)
+            if (this.sphere.isActiveAndEnabled && celestialBody != null)
             {
                 Vector3 sunDir = this.celestialBody.transform.InverseTransformDirection(Sun.Instance.sunDirection);
                 this.celestialBody.pqsController.surfaceMaterial.SetVector(EVEManagerClass.SUNDIR_PROPERTY, sunDir);
                 Vector3 planetOrigin = this.celestialBody.transform.position;
                 this.celestialBody.pqsController.surfaceMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
-                OceanBackingMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
+                if (OceanBackingMaterial != null)
+                {
+                    OceanBackingMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
+                }
             }
         }
 

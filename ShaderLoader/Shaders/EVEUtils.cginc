@@ -74,7 +74,7 @@
 	inline half4 GetShereDetailMap( sampler2D texSampler, float3 sphereVect, float detailScale)
 	{
 		float3 sphereVectNorm = normalize(sphereVect);
-	    float2 uv = GetSphereUV( sphereVectNorm, float2(0,0) );
+	    float2 uv = GetSphereUV( sphereVectNorm, float2(0,0) )*4*detailScale;
 	 	float4 uvdd = Derivatives(uv.x-.5, uv.y, sphereVectNorm);
 	 	
 		sphereVectNorm = abs(sphereVectNorm);
