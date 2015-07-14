@@ -187,10 +187,11 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			color = lerp(color, main, handoff);
 			
 			#ifdef CITYOVERLAY_ON
-			cityoverlay.a *= saturate(floor(IN.color.a+.99));
-			half4 citydarkoverlay = cityoverlay*citydarkoverlaydetail;
-			half4 citylightoverlay = cityoverlay*citylightoverlaydetail;
-			color = lerp(color, citylightoverlay, citylightoverlay.a);
+			cityoverlay.a *= 1-step(IN.color.a, 0);
+			//cityoverlay.a = 1-step(cityoverlay.a, 0);
+			citydarkoverlaydetail.a *= cityoverlay.a;
+			citylightoverlaydetail.a *= cityoverlay.a;
+			color = lerp(color, citylightoverlaydetail, citylightoverlaydetail.a);
 			#endif
 			
             color *= _Color;
@@ -216,8 +217,8 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			
 			#ifdef CITYOVERLAY_ON
 			//lightIntensity = saturate(_LightColor0.a * (SNdotL - 0.01) / 0.99 * 4 * atten);
-			citydarkoverlay.a *= 1-saturate(color.a);
-			color = lerp(color, citydarkoverlay, citydarkoverlay.a);
+			citydarkoverlaydetail.a *= 1-saturate(color.a);
+			color = lerp(color, citydarkoverlaydetail, citydarkoverlaydetail.a);
 			#endif
 			color.a = 1;
 			

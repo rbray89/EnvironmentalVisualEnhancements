@@ -127,10 +127,11 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
 			color = main.rgba * lerp(detail.rgba, 1, detailLevel);
 			#ifdef CITYOVERLAY_ON
-			cityoverlay.a *= saturate(1-main.a);
-			half4 citydarkoverlay = cityoverlay*citydarkoverlaydetail;
-			half4 citylightoverlay = cityoverlay*citylightoverlaydetail;
-			color.rgb = lerp(color.rgb, citylightoverlay.rgb, citylightoverlay.a);
+			cityoverlay.a *= 1-step(1, main.a);
+			//cityoverlay.a = 1-step(cityoverlay.a, 0);
+			citydarkoverlaydetail.a *= cityoverlay.a;
+			citylightoverlaydetail.a *= cityoverlay.a;
+			color = lerp(color, citylightoverlaydetail, citylightoverlaydetail.a);
 			#endif
 			
             color *= _Color;
@@ -164,8 +165,8 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			
 			#ifdef CITYOVERLAY_ON
 			//half lightIntensity = saturate(_LightColor0.a * (NdotL - 0.01) / 0.99 * 4 * atten);
-			citydarkoverlay.a *= 1-saturate(color.a);
-			color.rgb = lerp(color.rgb, citydarkoverlay.rgb, citydarkoverlay.a);
+			citydarkoverlaydetail.a *= 1-saturate(color.a);
+			color.rgb = lerp(color.rgb, citydarkoverlaydetail.rgb, citydarkoverlaydetail.a);
 			#endif
 			
           	return color;

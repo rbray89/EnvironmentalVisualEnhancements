@@ -148,7 +148,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 			specColor.a = lerp(1, main.a, handoff);
 			half4 colorLight = SpecularColorLight( normalize(_WorldSpaceLightPos0), IN.viewDir, normalize(IN.worldPos-_PlanetOrigin), color, specColor, _Shininess * 128, LIGHT_ATTENUATION(IN) );
 			color.rgb = colorLight.rgb;
-			color.a = lerp(1, color.a, (1-handoff)*step(0,colorLight.a));
+			color.a = lerp(1, color.a, (1-handoff)*saturate(colorLight.a));
     		
           	return color;
 		}
