@@ -97,7 +97,7 @@ namespace Utils
             else if (HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
                 CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
-                return celestialBodies.First<CelestialBody>(cb => cb.bodyName == "Kerbin");
+                return celestialBodies.First<CelestialBody>(cb => cb.isHomeWorld);
             }
             else
             {
