@@ -10,9 +10,9 @@
 		_DetailScale ("Detail Scale", Range(0,1000)) = 200
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
 		_MinLight ("Minimum Light", Range(0,1)) = .5
-		_Clarity ("Clarity", Range(0,1)) = .005
 		_LightPower ("LightPower", Float) = 1.75
-		_Reflectivity ("Reflectivity", Float) = .08
+		_PlanetOpacity ("PlanetOpacity", Float) = 1
+		_PlanetOrigin ("Planet Center", Vector) = (0,0,0,1)
 	}
 	
 SubShader {
@@ -32,7 +32,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 		
 		Program "vp" {
 // Vertex combos: 15
-//   d3d9 - ALU: 26 to 35
+//   d3d9 - ALU: 19 to 29
 SubProgram "opengl " {
 Keywords { "POINT" "SHADOWS_OFF" }
 "!!GLSL
@@ -48,20 +48,19 @@ uniform mat4 _Object2World;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
-  vec3 p_1;
-  p_1 = ((_Object2World * gl_Vertex).xyz - _WorldSpaceCameraPos);
-  vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = gl_Normal;
+  vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * gl_Vertex).xyz;
+  vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   vec4 tmpvar_3;
   tmpvar_3.x = gl_MultiTexCoord0.x;
   tmpvar_3.y = gl_MultiTexCoord0.y;
   tmpvar_3.z = gl_MultiTexCoord1.x;
   tmpvar_3.w = gl_MultiTexCoord1.y;
   gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
 }
@@ -75,9 +74,8 @@ varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying float xlv_TEXCOORD0;
-uniform float _Reflectivity;
-uniform float _LightPower;
-uniform float _MinLight;
+uniform vec3 _PlanetOrigin;
+uniform float _PlanetOpacity;
 uniform float _DetailDist;
 uniform float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -88,7 +86,6 @@ uniform vec4 _Color;
 uniform vec4 _SpecColor;
 uniform vec4 _LightColor0;
 uniform sampler2D _LightTexture0;
-
 uniform vec4 _WorldSpaceLightPos0;
 void main ()
 {
@@ -153,37 +150,41 @@ void main ()
   uv_13.x = (0.5 + (0.159155 * r_14));
   uv_13.y = (0.31831 * (1.5708 - (sign(tmpvar_12.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_12.y))) * (1.5708 + (abs(tmpvar_12.y) * (-0.214602 + (abs(tmpvar_12.y) * (0.0865667 + (abs(tmpvar_12.y) * -0.0310296)))))))))));
   vec2 tmpvar_18;
-  tmpvar_18 = dFdx(tmpvar_12.xz);
+  tmpvar_18 = ((uv_13 * 4.0) * _DetailScale);
   vec2 tmpvar_19;
-  tmpvar_19 = dFdy(tmpvar_12.xz);
-  vec4 tmpvar_20;
-  tmpvar_20.x = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_20.y = dFdx(uv_13.y);
-  tmpvar_20.z = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
-  tmpvar_20.w = dFdy(uv_13.y);
-  vec3 tmpvar_21;
-  tmpvar_21 = abs(tmpvar_12);
-  float tmpvar_22;
-  tmpvar_22 = float((tmpvar_21.z >= tmpvar_21.x));
-  vec3 tmpvar_23;
-  tmpvar_23 = mix (tmpvar_21.yxz, mix (tmpvar_21, tmpvar_21.zxy, vec3(tmpvar_22)), vec3(float((mix (tmpvar_21.x, tmpvar_21.z, tmpvar_22) >= tmpvar_21.y))));
-  vec4 tmpvar_24;
-  tmpvar_24 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) * _DetailScale), tmpvar_20.xy, tmpvar_20.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
-  color_2.xyz = tmpvar_24.xyz;
+  tmpvar_19 = dFdx(tmpvar_12.xz);
+  vec2 tmpvar_20;
+  tmpvar_20 = dFdy(tmpvar_12.xz);
+  vec4 tmpvar_21;
+  tmpvar_21.x = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
+  tmpvar_21.y = dFdx(tmpvar_18.y);
+  tmpvar_21.z = (0.159155 * sqrt(dot (tmpvar_20, tmpvar_20)));
+  tmpvar_21.w = dFdy(tmpvar_18.y);
+  vec3 tmpvar_22;
+  tmpvar_22 = abs(tmpvar_12);
+  float tmpvar_23;
+  tmpvar_23 = float((tmpvar_22.z >= tmpvar_22.x));
+  vec3 tmpvar_24;
+  tmpvar_24 = mix (tmpvar_22.yxz, mix (tmpvar_22, tmpvar_22.zxy, vec3(tmpvar_23)), vec3(float((mix (tmpvar_22.x, tmpvar_22.z, tmpvar_23) >= tmpvar_22.y))));
   vec4 tmpvar_25;
-  tmpvar_25 = normalize(_WorldSpaceLightPos0);
+  tmpvar_25 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) * _DetailScale), tmpvar_21.xy, tmpvar_21.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
+  color_2.w = tmpvar_25.w;
   float tmpvar_26;
-  tmpvar_26 = clamp (dot (xlv_TEXCOORD2, tmpvar_25.xyz), 0.0, 1.0);
-  float tmpvar_27;
-  tmpvar_27 = texture2D (_LightTexture0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3))).w;
-  vec3 i_28;
-  i_28 = -(tmpvar_25.xyz);
-  vec3 tmpvar_29;
-  tmpvar_29 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_26 - 0.01) / 0.99)) * 4.0) * tmpvar_27), 0.0, 1.0))), 0.0, 1.0) + (main_1.w * (vec3(clamp (floor((1.0 + tmpvar_26)), 0.0, 1.0)) * (((tmpvar_27 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_28 - (2.0 * (dot (xlv_TEXCOORD2, i_28) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
-  color_2.w = mix (0.4489, main_1.w, clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0));
-  color_2.xyz = (tmpvar_24.xyz * clamp (((_LightPower * tmpvar_29) - color_2.w), 0.0, 1.0));
-  color_2.xyz = (color_2.xyz + (_Reflectivity * tmpvar_29));
-  color_2.xyz = (color_2.xyz * tmpvar_29);
+  tmpvar_26 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  color_2.xyz = mix (tmpvar_25.xyz, main_1.xyz, vec3(tmpvar_26));
+  vec3 tmpvar_27;
+  tmpvar_27 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  float atten_28;
+  atten_28 = texture2D (_LightTexture0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3))).w;
+  vec4 c_29;
+  vec3 tmpvar_30;
+  tmpvar_30 = normalize(normalize(_WorldSpaceLightPos0).xyz);
+  float tmpvar_31;
+  tmpvar_31 = dot (tmpvar_27, tmpvar_30);
+  c_29.xyz = ((((color_2.xyz * _LightColor0.xyz) * tmpvar_31) + ((_LightColor0.xyz * _SpecColor.xyz) * (pow (clamp (dot (normalize((tmpvar_30 + normalize(xlv_TEXCOORD1))), tmpvar_27), 0.0, 1.0), (_Shininess * 128.0)) * tmpvar_25.w))) * (atten_28 * 4.0));
+  c_29.w = (tmpvar_31 * (atten_28 * 4.0));
+  color_2.xyz = c_29.xyz;
+  color_2.w = mix (1.0, tmpvar_25.w, ((1.0 - tmpvar_26) * float((c_29.w >= 0.0))));
   gl_FragData[0] = color_2;
 }
 
@@ -195,7 +196,6 @@ void main ()
 SubProgram "d3d9 " {
 Keywords { "POINT" "SHADOWS_OFF" }
 Bind "vertex" Vertex
-Bind "normal" Normal
 Bind "texcoord" TexCoord0
 Bind "texcoord1" TexCoord1
 Matrix 0 [glstate_matrix_mvp]
@@ -203,44 +203,36 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 30 ALU
+; 24 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord5 o5
-def c13, 0.00000000, 0, 0, 0
 dcl_position0 v0
-dcl_normal0 v1
-dcl_texcoord0 v2
-dcl_texcoord1 v3
-mov r1.xyz, v1
-mov r1.w, c13.x
-dp4 r0.z, r1, c6
-dp4 r0.x, r1, c4
-dp4 r0.y, r1, c5
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o3.xyz, r0.w, r0
+dcl_texcoord0 v1
+dcl_texcoord1 v2
+mov r1.zw, v2.xyxy
+mov r1.xy, v1
+dp4 r0.w, r1, r1
+rsq r1.w, r0.w
+mul r1.xyz, r1.w, r1
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
-mov r2.zw, v3.xyxy
-mov r2.xy, v2
-dp4 r1.x, r2, r2
-rsq r0.w, r1.x
-mul r2.xyz, r0.w, r2
-add r1.xyz, -r0, c12
-dp3 r0.w, r1, r1
-rsq r1.w, r0.w
-dp4 r0.w, v0, c7
-mov o5.xyz, -r2
-mul o2.xyz, r1.w, r1
-dp4 o4.z, r0, c10
-dp4 o4.y, r0, c9
-dp4 o4.x, r0, c8
-rcp o1.x, r1.w
+add r2.xyz, -r0, c12
+dp3 r0.w, r2, r2
+rsq r0.w, r0.w
+mov o5.xyz, -r1
+mov r1.xyz, r0
+dp4 r1.w, v0, c7
+mul o2.xyz, r0.w, r2
+dp4 o4.z, r1, c10
+dp4 o4.y, r1, c9
+dp4 o4.x, r1, c8
+rcp o1.x, r0.w
+mov o3.xyz, r0
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -266,24 +258,22 @@ uniform highp mat4 glstate_matrix_mvp;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
 }
@@ -300,9 +290,8 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -313,163 +302,161 @@ uniform lowp vec4 _Color;
 uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTexture0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  mediump vec3 normalDir_4;
-  mediump vec3 lightDirection_5;
-  mediump vec3 ambientLighting_6;
-  mediump float detailLevel_7;
-  mediump vec4 color_8;
-  mediump vec4 tex_9;
-  highp vec3 tmpvar_10;
-  tmpvar_10 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_11;
-  highp float r_12;
-  if ((abs(tmpvar_10.z) > (1e-08 * abs(tmpvar_10.x)))) {
-    highp float y_over_x_13;
-    y_over_x_13 = (tmpvar_10.x / tmpvar_10.z);
-    highp float s_14;
-    highp float x_15;
-    x_15 = (y_over_x_13 * inversesqrt(((y_over_x_13 * y_over_x_13) + 1.0)));
-    s_14 = (sign(x_15) * (1.5708 - (sqrt((1.0 - abs(x_15))) * (1.5708 + (abs(x_15) * (-0.214602 + (abs(x_15) * (0.0865667 + (abs(x_15) * -0.0310296)))))))));
-    r_12 = s_14;
-    if ((tmpvar_10.z < 0.0)) {
-      if ((tmpvar_10.x >= 0.0)) {
-        r_12 = (s_14 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_12 = (r_12 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_12 = (sign(tmpvar_10.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_11.x = (0.5 + (0.159155 * r_12));
-  uv_11.y = (0.31831 * (1.5708 - (sign(tmpvar_10.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_10.y))) * (1.5708 + (abs(tmpvar_10.y) * (-0.214602 + (abs(tmpvar_10.y) * (0.0865667 + (abs(tmpvar_10.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_16;
-  tmpvar_16 = dFdx(tmpvar_10.xz);
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdy(tmpvar_10.xz);
-  highp vec4 tmpvar_18;
-  tmpvar_18.x = (0.159155 * sqrt(dot (tmpvar_16, tmpvar_16)));
-  tmpvar_18.y = dFdx(uv_11.y);
-  tmpvar_18.z = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_18.w = dFdy(uv_11.y);
-  lowp vec4 tmpvar_19;
-  tmpvar_19 = texture2DGradEXT (_MainTex, uv_11, tmpvar_18.xy, tmpvar_18.zw);
-  tex_9 = tmpvar_19;
-  mediump vec4 tmpvar_20;
-  mediump vec3 detailCoords_21;
-  mediump float nylerp_22;
-  mediump float zxlerp_23;
-  highp vec3 tmpvar_24;
-  tmpvar_24 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_25;
-  highp float r_26;
-  if ((abs(tmpvar_24.z) > (1e-08 * abs(tmpvar_24.x)))) {
-    highp float y_over_x_27;
-    y_over_x_27 = (tmpvar_24.x / tmpvar_24.z);
-    highp float s_28;
-    highp float x_29;
-    x_29 = (y_over_x_27 * inversesqrt(((y_over_x_27 * y_over_x_27) + 1.0)));
-    s_28 = (sign(x_29) * (1.5708 - (sqrt((1.0 - abs(x_29))) * (1.5708 + (abs(x_29) * (-0.214602 + (abs(x_29) * (0.0865667 + (abs(x_29) * -0.0310296)))))))));
-    r_26 = s_28;
-    if ((tmpvar_24.z < 0.0)) {
-      if ((tmpvar_24.x >= 0.0)) {
-        r_26 = (s_28 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_26 = (r_26 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_26 = (sign(tmpvar_24.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_25.x = (0.5 + (0.159155 * r_26));
-  uv_25.y = (0.31831 * (1.5708 - (sign(tmpvar_24.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_24.y))) * (1.5708 + (abs(tmpvar_24.y) * (-0.214602 + (abs(tmpvar_24.y) * (0.0865667 + (abs(tmpvar_24.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_30;
-  tmpvar_30 = dFdx(tmpvar_24.xz);
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdy(tmpvar_24.xz);
-  highp vec4 tmpvar_32;
-  tmpvar_32.x = (0.159155 * sqrt(dot (tmpvar_30, tmpvar_30)));
-  tmpvar_32.y = dFdx(uv_25.y);
-  tmpvar_32.z = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_32.w = dFdy(uv_25.y);
-  highp vec3 tmpvar_33;
-  tmpvar_33 = abs(tmpvar_24);
-  highp float tmpvar_34;
-  tmpvar_34 = float((tmpvar_33.z >= tmpvar_33.x));
-  zxlerp_23 = tmpvar_34;
-  highp float tmpvar_35;
-  tmpvar_35 = float((mix (tmpvar_33.x, tmpvar_33.z, zxlerp_23) >= tmpvar_33.y));
-  nylerp_22 = tmpvar_35;
-  highp vec3 tmpvar_36;
-  tmpvar_36 = mix (tmpvar_33, tmpvar_33.zxy, vec3(zxlerp_23));
-  detailCoords_21 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_33.yxz, detailCoords_21, vec3(nylerp_22));
-  detailCoords_21 = tmpvar_37;
-  mediump float tmpvar_38;
-  tmpvar_38 = abs(detailCoords_21.x);
-  highp vec2 coord_39;
-  coord_39 = (((0.5 * detailCoords_21.zy) / tmpvar_38) * _DetailScale);
-  lowp vec4 tmpvar_40;
-  tmpvar_40 = texture2DGradEXT (_DetailTex, coord_39, tmpvar_32.xy, tmpvar_32.zw);
-  tmpvar_20 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_7 = tmpvar_41;
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
+  highp vec3 tmpvar_34;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_43;
-  tmpvar_43 = (mix (mix (tmpvar_20, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7)), tex_9, vec4(tmpvar_42)) * _Color);
-  color_8.xyz = tmpvar_43.xyz;
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
   highp vec3 tmpvar_44;
-  tmpvar_44 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_44;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_45;
-  normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  highp float tmpvar_47;
-  tmpvar_47 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp float tmpvar_48;
-  tmpvar_48 = texture2D (_LightTexture0, vec2(tmpvar_47)).w;
-  mediump float tmpvar_49;
-  tmpvar_49 = clamp ((((_LightColor0.w * ((tmpvar_46 - 0.01) / 0.99)) * 4.0) * tmpvar_48), 0.0, 1.0);
-  highp vec3 tmpvar_50;
-  tmpvar_50 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_49)), 0.0, 1.0);
-  light_3 = tmpvar_50;
-  mediump vec3 tmpvar_51;
-  tmpvar_51 = vec3(clamp (floor((1.0 + tmpvar_46)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_51;
-  mediump vec3 tmpvar_52;
-  mediump vec3 i_53;
-  i_53 = -(lightDirection_5);
-  tmpvar_52 = (i_53 - (2.0 * (dot (normalDir_4, i_53) * normalDir_4)));
-  highp vec3 tmpvar_54;
-  tmpvar_54 = (specularReflection_2 * (((tmpvar_48 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_52, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_54;
-  highp vec3 tmpvar_55;
-  tmpvar_55 = (light_3 + (tex_9.w * tmpvar_54));
-  light_3 = tmpvar_55;
-  highp float tmpvar_56;
-  tmpvar_56 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_8.w = mix (0.4489, tex_9.w, tmpvar_56);
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2D (_LightTexture0, vec2(tmpvar_45));
+  mediump vec3 lightDir_47;
+  lightDir_47 = tmpvar_43;
+  mediump vec3 viewDir_48;
+  viewDir_48 = xlv_TEXCOORD1;
+  mediump vec3 normal_49;
+  normal_49 = tmpvar_44;
+  mediump float atten_50;
+  atten_50 = tmpvar_46.w;
+  mediump vec4 c_51;
+  highp float nh_52;
+  mediump vec3 tmpvar_53;
+  tmpvar_53 = normalize(lightDir_47);
+  lightDir_47 = tmpvar_53;
+  mediump vec3 tmpvar_54;
+  tmpvar_54 = normalize(viewDir_48);
+  viewDir_48 = tmpvar_54;
+  mediump float tmpvar_55;
+  tmpvar_55 = dot (normal_49, tmpvar_53);
+  mediump float tmpvar_56;
+  tmpvar_56 = clamp (dot (normalize((tmpvar_53 + tmpvar_54)), normal_49), 0.0, 1.0);
+  nh_52 = tmpvar_56;
   highp vec3 tmpvar_57;
-  tmpvar_57 = clamp (((_LightPower * light_3) - color_8.w), 0.0, 1.0);
-  color_8.xyz = (tmpvar_43.xyz * tmpvar_57);
-  highp vec3 tmpvar_58;
-  tmpvar_58 = (color_8.xyz + (_Reflectivity * light_3));
-  color_8.xyz = tmpvar_58;
-  color_8.xyz = (color_8.xyz * light_3);
-  tmpvar_1 = color_8;
+  tmpvar_57 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_55) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_52, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_50 * 4.0));
+  c_51.xyz = tmpvar_57;
+  c_51.w = (tmpvar_55 * (atten_50 * 4.0));
+  color_5.xyz = c_51.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_51.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -496,24 +483,22 @@ uniform highp mat4 glstate_matrix_mvp;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
 }
@@ -530,9 +515,8 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -543,163 +527,161 @@ uniform lowp vec4 _Color;
 uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTexture0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  mediump vec3 normalDir_4;
-  mediump vec3 lightDirection_5;
-  mediump vec3 ambientLighting_6;
-  mediump float detailLevel_7;
-  mediump vec4 color_8;
-  mediump vec4 tex_9;
-  highp vec3 tmpvar_10;
-  tmpvar_10 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_11;
-  highp float r_12;
-  if ((abs(tmpvar_10.z) > (1e-08 * abs(tmpvar_10.x)))) {
-    highp float y_over_x_13;
-    y_over_x_13 = (tmpvar_10.x / tmpvar_10.z);
-    highp float s_14;
-    highp float x_15;
-    x_15 = (y_over_x_13 * inversesqrt(((y_over_x_13 * y_over_x_13) + 1.0)));
-    s_14 = (sign(x_15) * (1.5708 - (sqrt((1.0 - abs(x_15))) * (1.5708 + (abs(x_15) * (-0.214602 + (abs(x_15) * (0.0865667 + (abs(x_15) * -0.0310296)))))))));
-    r_12 = s_14;
-    if ((tmpvar_10.z < 0.0)) {
-      if ((tmpvar_10.x >= 0.0)) {
-        r_12 = (s_14 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_12 = (r_12 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_12 = (sign(tmpvar_10.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_11.x = (0.5 + (0.159155 * r_12));
-  uv_11.y = (0.31831 * (1.5708 - (sign(tmpvar_10.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_10.y))) * (1.5708 + (abs(tmpvar_10.y) * (-0.214602 + (abs(tmpvar_10.y) * (0.0865667 + (abs(tmpvar_10.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_16;
-  tmpvar_16 = dFdx(tmpvar_10.xz);
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdy(tmpvar_10.xz);
-  highp vec4 tmpvar_18;
-  tmpvar_18.x = (0.159155 * sqrt(dot (tmpvar_16, tmpvar_16)));
-  tmpvar_18.y = dFdx(uv_11.y);
-  tmpvar_18.z = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_18.w = dFdy(uv_11.y);
-  lowp vec4 tmpvar_19;
-  tmpvar_19 = texture2DGradEXT (_MainTex, uv_11, tmpvar_18.xy, tmpvar_18.zw);
-  tex_9 = tmpvar_19;
-  mediump vec4 tmpvar_20;
-  mediump vec3 detailCoords_21;
-  mediump float nylerp_22;
-  mediump float zxlerp_23;
-  highp vec3 tmpvar_24;
-  tmpvar_24 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_25;
-  highp float r_26;
-  if ((abs(tmpvar_24.z) > (1e-08 * abs(tmpvar_24.x)))) {
-    highp float y_over_x_27;
-    y_over_x_27 = (tmpvar_24.x / tmpvar_24.z);
-    highp float s_28;
-    highp float x_29;
-    x_29 = (y_over_x_27 * inversesqrt(((y_over_x_27 * y_over_x_27) + 1.0)));
-    s_28 = (sign(x_29) * (1.5708 - (sqrt((1.0 - abs(x_29))) * (1.5708 + (abs(x_29) * (-0.214602 + (abs(x_29) * (0.0865667 + (abs(x_29) * -0.0310296)))))))));
-    r_26 = s_28;
-    if ((tmpvar_24.z < 0.0)) {
-      if ((tmpvar_24.x >= 0.0)) {
-        r_26 = (s_28 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_26 = (r_26 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_26 = (sign(tmpvar_24.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_25.x = (0.5 + (0.159155 * r_26));
-  uv_25.y = (0.31831 * (1.5708 - (sign(tmpvar_24.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_24.y))) * (1.5708 + (abs(tmpvar_24.y) * (-0.214602 + (abs(tmpvar_24.y) * (0.0865667 + (abs(tmpvar_24.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_30;
-  tmpvar_30 = dFdx(tmpvar_24.xz);
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdy(tmpvar_24.xz);
-  highp vec4 tmpvar_32;
-  tmpvar_32.x = (0.159155 * sqrt(dot (tmpvar_30, tmpvar_30)));
-  tmpvar_32.y = dFdx(uv_25.y);
-  tmpvar_32.z = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_32.w = dFdy(uv_25.y);
-  highp vec3 tmpvar_33;
-  tmpvar_33 = abs(tmpvar_24);
-  highp float tmpvar_34;
-  tmpvar_34 = float((tmpvar_33.z >= tmpvar_33.x));
-  zxlerp_23 = tmpvar_34;
-  highp float tmpvar_35;
-  tmpvar_35 = float((mix (tmpvar_33.x, tmpvar_33.z, zxlerp_23) >= tmpvar_33.y));
-  nylerp_22 = tmpvar_35;
-  highp vec3 tmpvar_36;
-  tmpvar_36 = mix (tmpvar_33, tmpvar_33.zxy, vec3(zxlerp_23));
-  detailCoords_21 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_33.yxz, detailCoords_21, vec3(nylerp_22));
-  detailCoords_21 = tmpvar_37;
-  mediump float tmpvar_38;
-  tmpvar_38 = abs(detailCoords_21.x);
-  highp vec2 coord_39;
-  coord_39 = (((0.5 * detailCoords_21.zy) / tmpvar_38) * _DetailScale);
-  lowp vec4 tmpvar_40;
-  tmpvar_40 = texture2DGradEXT (_DetailTex, coord_39, tmpvar_32.xy, tmpvar_32.zw);
-  tmpvar_20 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_7 = tmpvar_41;
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
+  highp vec3 tmpvar_34;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_43;
-  tmpvar_43 = (mix (mix (tmpvar_20, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7)), tex_9, vec4(tmpvar_42)) * _Color);
-  color_8.xyz = tmpvar_43.xyz;
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
   highp vec3 tmpvar_44;
-  tmpvar_44 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_44;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_45;
-  normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  highp float tmpvar_47;
-  tmpvar_47 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp float tmpvar_48;
-  tmpvar_48 = texture2D (_LightTexture0, vec2(tmpvar_47)).w;
-  mediump float tmpvar_49;
-  tmpvar_49 = clamp ((((_LightColor0.w * ((tmpvar_46 - 0.01) / 0.99)) * 4.0) * tmpvar_48), 0.0, 1.0);
-  highp vec3 tmpvar_50;
-  tmpvar_50 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_49)), 0.0, 1.0);
-  light_3 = tmpvar_50;
-  mediump vec3 tmpvar_51;
-  tmpvar_51 = vec3(clamp (floor((1.0 + tmpvar_46)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_51;
-  mediump vec3 tmpvar_52;
-  mediump vec3 i_53;
-  i_53 = -(lightDirection_5);
-  tmpvar_52 = (i_53 - (2.0 * (dot (normalDir_4, i_53) * normalDir_4)));
-  highp vec3 tmpvar_54;
-  tmpvar_54 = (specularReflection_2 * (((tmpvar_48 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_52, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_54;
-  highp vec3 tmpvar_55;
-  tmpvar_55 = (light_3 + (tex_9.w * tmpvar_54));
-  light_3 = tmpvar_55;
-  highp float tmpvar_56;
-  tmpvar_56 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_8.w = mix (0.4489, tex_9.w, tmpvar_56);
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2D (_LightTexture0, vec2(tmpvar_45));
+  mediump vec3 lightDir_47;
+  lightDir_47 = tmpvar_43;
+  mediump vec3 viewDir_48;
+  viewDir_48 = xlv_TEXCOORD1;
+  mediump vec3 normal_49;
+  normal_49 = tmpvar_44;
+  mediump float atten_50;
+  atten_50 = tmpvar_46.w;
+  mediump vec4 c_51;
+  highp float nh_52;
+  mediump vec3 tmpvar_53;
+  tmpvar_53 = normalize(lightDir_47);
+  lightDir_47 = tmpvar_53;
+  mediump vec3 tmpvar_54;
+  tmpvar_54 = normalize(viewDir_48);
+  viewDir_48 = tmpvar_54;
+  mediump float tmpvar_55;
+  tmpvar_55 = dot (normal_49, tmpvar_53);
+  mediump float tmpvar_56;
+  tmpvar_56 = clamp (dot (normalize((tmpvar_53 + tmpvar_54)), normal_49), 0.0, 1.0);
+  nh_52 = tmpvar_56;
   highp vec3 tmpvar_57;
-  tmpvar_57 = clamp (((_LightPower * light_3) - color_8.w), 0.0, 1.0);
-  color_8.xyz = (tmpvar_43.xyz * tmpvar_57);
-  highp vec3 tmpvar_58;
-  tmpvar_58 = (color_8.xyz + (_Reflectivity * light_3));
-  color_8.xyz = tmpvar_58;
-  color_8.xyz = (color_8.xyz * light_3);
-  tmpvar_1 = color_8;
+  tmpvar_57 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_55) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_52, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_50 * 4.0));
+  c_51.xyz = tmpvar_57;
+  c_51.w = (tmpvar_55 * (atten_50 * 4.0));
+  color_5.xyz = c_51.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_51.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -740,7 +722,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 388
+#line 317
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -749,16 +731,16 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 485
+#line 515
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec3 _LightCoord;
     highp vec3 sphereNormal;
 };
-#line 477
+#line 507
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -855,48 +837,57 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 398
+#line 327
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 411
-#line 419
+#line 340
+#line 348
+#line 362
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 395
+#line 399
+#line 408
+#line 416
+#line 425
 #line 433
+#line 446
+#line 458
+#line 474
+#line 487
 uniform lowp vec4 _Color;
+#line 495
 uniform highp float _Shininess;
-#line 466
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 499
 uniform highp float _DetailScale;
-#line 470
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 474
+#line 503
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 495
-#line 495
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 525
+#line 525
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 499
+    #line 529
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 503
+    o.worldPos = vertexPos;
+    #line 533
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
-    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
+    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - vertexPos));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
-    #line 507
+    #line 537
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -915,7 +906,7 @@ void main() {
     gl_Position = vec4(xl_retval.pos);
     xlv_TEXCOORD0 = float(xl_retval.viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.viewDir);
-    xlv_TEXCOORD2 = vec3(xl_retval.worldNormal);
+    xlv_TEXCOORD2 = vec3(xl_retval.worldPos);
     xlv_TEXCOORD3 = vec3(xl_retval._LightCoord);
     xlv_TEXCOORD5 = vec3(xl_retval.sphereNormal);
 }
@@ -1008,7 +999,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 388
+#line 317
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -1017,16 +1008,16 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 485
+#line 515
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec3 _LightCoord;
     highp vec3 sphereNormal;
 };
-#line 477
+#line 507
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -1123,115 +1114,121 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 398
+#line 327
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 411
-#line 419
+#line 340
+#line 348
+#line 362
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 395
+#line 399
+#line 408
+#line 416
+#line 425
 #line 433
+#line 446
+#line 458
+#line 474
+#line 487
 uniform lowp vec4 _Color;
+#line 495
 uniform highp float _Shininess;
-#line 466
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 499
 uniform highp float _DetailScale;
-#line 470
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 474
+#line 503
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 495
-#line 321
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 525
+#line 399
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
+    #line 403
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 330
+#line 408
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
+    #line 412
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 336
     return uv;
 }
-#line 368
+#line 446
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
-    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    highp vec2 uv = ((GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0)) * 4.0) * detailScale);
+    #line 450
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
+    #line 454
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 347
+#line 425
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    #line 429
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 353
     return tex;
 }
-#line 509
+#line 474
+mediump vec4 SpecularColorLight( in mediump vec3 lightDir, in mediump vec3 viewDir, in mediump vec3 normal, in mediump vec4 color, in mediump vec4 specColor, in highp float specK, in mediump float atten ) {
+    lightDir = normalize(lightDir);
+    viewDir = normalize(viewDir);
+    #line 478
+    mediump vec3 h = normalize((lightDir + viewDir));
+    mediump float diffuse = dot( normal, lightDir);
+    highp float nh = xll_saturate_f(dot( h, normal));
+    highp float spec = (pow( nh, specK) * color.w);
+    #line 482
+    mediump vec4 c;
+    c.xyz = ((((color.xyz * _LightColor0.xyz) * diffuse) + ((_LightColor0.xyz * specColor.xyz) * spec)) * (atten * 4.0));
+    c.w = (diffuse * (atten * 4.0));
+    return c;
+}
+#line 539
 lowp vec4 frag( in v2f IN ) {
-    #line 511
+    #line 541
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 515
+    #line 545
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 519
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 normalDir = IN.worldNormal;
-    mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 523
-    mediump float diff = ((NdotL - 0.01) / 0.99);
-    lowp float atten = (texture( _LightTexture0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * 1.0);
-    mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 527
-    highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
-    specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light += (main.w * specularReflection);
-    color.w = 1.0;
-    #line 531
-    highp float refrac = 0.67;
-    color.w *= pow( refrac, 2.0);
-    color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
-    color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 535
-    color.xyz += (_Reflectivity * light);
-    color.xyz *= light;
+    #line 549
+    mediump float handoff = xll_saturate_f(pow( _PlanetOpacity, 2.0));
+    color.xyz = mix( color.xyz, main.xyz, vec3( handoff));
+    mediump vec4 specColor = _SpecColor;
+    specColor.w = mix( 1.0, main.w, handoff);
+    #line 553
+    mediump vec4 colorLight = SpecularColorLight( vec3( normalize(_WorldSpaceLightPos0)), IN.viewDir, normalize((IN.worldPos - _PlanetOrigin)), color, specColor, (_Shininess * 128.0), (texture( _LightTexture0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * 1.0));
+    color.xyz = colorLight.xyz;
+    color.w = mix( 1.0, color.w, ((1.0 - handoff) * step( 0.0, colorLight.w)));
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -1245,7 +1242,7 @@ void main() {
     xlt_IN.pos = vec4(0.0);
     xlt_IN.viewDist = float(xlv_TEXCOORD0);
     xlt_IN.viewDir = vec3(xlv_TEXCOORD1);
-    xlt_IN.worldNormal = vec3(xlv_TEXCOORD2);
+    xlt_IN.worldPos = vec3(xlv_TEXCOORD2);
     xlt_IN._LightCoord = vec3(xlv_TEXCOORD3);
     xlt_IN.sphereNormal = vec3(xlv_TEXCOORD5);
     xl_retval = frag( xlt_IN);
@@ -1269,20 +1266,19 @@ uniform mat4 _Object2World;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
-  vec3 p_1;
-  p_1 = ((_Object2World * gl_Vertex).xyz - _WorldSpaceCameraPos);
-  vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = gl_Normal;
+  vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * gl_Vertex).xyz;
+  vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   vec4 tmpvar_3;
   tmpvar_3.x = gl_MultiTexCoord0.x;
   tmpvar_3.y = gl_MultiTexCoord0.y;
   tmpvar_3.z = gl_MultiTexCoord1.x;
   tmpvar_3.w = gl_MultiTexCoord1.y;
   gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
 }
 
@@ -1294,9 +1290,8 @@ varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying float xlv_TEXCOORD0;
-uniform float _Reflectivity;
-uniform float _LightPower;
-uniform float _MinLight;
+uniform vec3 _PlanetOrigin;
+uniform float _PlanetOpacity;
 uniform float _DetailDist;
 uniform float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -1306,7 +1301,6 @@ uniform float _Shininess;
 uniform vec4 _Color;
 uniform vec4 _SpecColor;
 uniform vec4 _LightColor0;
-
 uniform vec4 _WorldSpaceLightPos0;
 void main ()
 {
@@ -1371,35 +1365,39 @@ void main ()
   uv_13.x = (0.5 + (0.159155 * r_14));
   uv_13.y = (0.31831 * (1.5708 - (sign(tmpvar_12.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_12.y))) * (1.5708 + (abs(tmpvar_12.y) * (-0.214602 + (abs(tmpvar_12.y) * (0.0865667 + (abs(tmpvar_12.y) * -0.0310296)))))))))));
   vec2 tmpvar_18;
-  tmpvar_18 = dFdx(tmpvar_12.xz);
+  tmpvar_18 = ((uv_13 * 4.0) * _DetailScale);
   vec2 tmpvar_19;
-  tmpvar_19 = dFdy(tmpvar_12.xz);
-  vec4 tmpvar_20;
-  tmpvar_20.x = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_20.y = dFdx(uv_13.y);
-  tmpvar_20.z = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
-  tmpvar_20.w = dFdy(uv_13.y);
-  vec3 tmpvar_21;
-  tmpvar_21 = abs(tmpvar_12);
-  float tmpvar_22;
-  tmpvar_22 = float((tmpvar_21.z >= tmpvar_21.x));
-  vec3 tmpvar_23;
-  tmpvar_23 = mix (tmpvar_21.yxz, mix (tmpvar_21, tmpvar_21.zxy, vec3(tmpvar_22)), vec3(float((mix (tmpvar_21.x, tmpvar_21.z, tmpvar_22) >= tmpvar_21.y))));
-  vec4 tmpvar_24;
-  tmpvar_24 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) * _DetailScale), tmpvar_20.xy, tmpvar_20.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
-  color_2.xyz = tmpvar_24.xyz;
+  tmpvar_19 = dFdx(tmpvar_12.xz);
+  vec2 tmpvar_20;
+  tmpvar_20 = dFdy(tmpvar_12.xz);
+  vec4 tmpvar_21;
+  tmpvar_21.x = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
+  tmpvar_21.y = dFdx(tmpvar_18.y);
+  tmpvar_21.z = (0.159155 * sqrt(dot (tmpvar_20, tmpvar_20)));
+  tmpvar_21.w = dFdy(tmpvar_18.y);
+  vec3 tmpvar_22;
+  tmpvar_22 = abs(tmpvar_12);
+  float tmpvar_23;
+  tmpvar_23 = float((tmpvar_22.z >= tmpvar_22.x));
+  vec3 tmpvar_24;
+  tmpvar_24 = mix (tmpvar_22.yxz, mix (tmpvar_22, tmpvar_22.zxy, vec3(tmpvar_23)), vec3(float((mix (tmpvar_22.x, tmpvar_22.z, tmpvar_23) >= tmpvar_22.y))));
   vec4 tmpvar_25;
-  tmpvar_25 = normalize(_WorldSpaceLightPos0);
+  tmpvar_25 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) * _DetailScale), tmpvar_21.xy, tmpvar_21.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
+  color_2.w = tmpvar_25.w;
   float tmpvar_26;
-  tmpvar_26 = clamp (dot (xlv_TEXCOORD2, tmpvar_25.xyz), 0.0, 1.0);
-  vec3 i_27;
-  i_27 = -(tmpvar_25.xyz);
+  tmpvar_26 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  color_2.xyz = mix (tmpvar_25.xyz, main_1.xyz, vec3(tmpvar_26));
+  vec4 tmpvar_27;
+  tmpvar_27 = normalize(_WorldSpaceLightPos0);
   vec3 tmpvar_28;
-  tmpvar_28 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp (((_LightColor0.w * ((tmpvar_26 - 0.01) / 0.99)) * 4.0), 0.0, 1.0))), 0.0, 1.0) + (main_1.w * (vec3(clamp (floor((1.0 + tmpvar_26)), 0.0, 1.0)) * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot ((i_27 - (2.0 * (dot (xlv_TEXCOORD2, i_27) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
-  color_2.w = mix (0.4489, main_1.w, clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0));
-  color_2.xyz = (tmpvar_24.xyz * clamp (((_LightPower * tmpvar_28) - color_2.w), 0.0, 1.0));
-  color_2.xyz = (color_2.xyz + (_Reflectivity * tmpvar_28));
-  color_2.xyz = (color_2.xyz * tmpvar_28);
+  tmpvar_28 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  vec4 c_29;
+  float tmpvar_30;
+  tmpvar_30 = dot (tmpvar_28, tmpvar_27.xyz);
+  c_29.xyz = ((((color_2.xyz * _LightColor0.xyz) * tmpvar_30) + ((_LightColor0.xyz * _SpecColor.xyz) * (pow (clamp (dot (normalize((tmpvar_27.xyz + normalize(xlv_TEXCOORD1))), tmpvar_28), 0.0, 1.0), (_Shininess * 128.0)) * tmpvar_25.w))) * 4.0);
+  c_29.w = (tmpvar_30 * 4.0);
+  color_2.xyz = c_29.xyz;
+  color_2.w = mix (1.0, tmpvar_25.w, ((1.0 - tmpvar_26) * float((c_29.w >= 0.0))));
   gl_FragData[0] = color_2;
 }
 
@@ -1411,46 +1409,36 @@ void main ()
 SubProgram "d3d9 " {
 Keywords { "DIRECTIONAL" "SHADOWS_OFF" }
 Bind "vertex" Vertex
-Bind "normal" Normal
 Bind "texcoord" TexCoord0
 Bind "texcoord1" TexCoord1
 Matrix 0 [glstate_matrix_mvp]
 Vector 8 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 "vs_3_0
-; 26 ALU
+; 19 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord5 o4
-def c9, 0.00000000, 0, 0, 0
 dcl_position0 v0
-dcl_normal0 v1
-dcl_texcoord0 v2
-dcl_texcoord1 v3
-mov r1.xyz, v1
-mov r1.w, c9.x
-dp4 r0.z, r1, c6
-dp4 r0.x, r1, c4
-dp4 r0.y, r1, c5
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o3.xyz, r0.w, r0
-mov r0.zw, v3.xyxy
-mov r0.xy, v2
-dp4 r0.w, r0, r0
+dcl_texcoord0 v1
+dcl_texcoord1 v2
+mov r1.zw, v2.xyxy
+mov r1.xy, v1
+dp4 r0.w, r1, r1
 rsq r1.w, r0.w
-mul r0.xyz, r1.w, r0
-dp4 r1.z, v0, c6
-dp4 r1.x, v0, c4
-dp4 r1.y, v0, c5
-add r1.xyz, -r1, c8
-dp3 r0.w, r1, r1
+mul r1.xyz, r1.w, r1
+dp4 r0.z, v0, c6
+dp4 r0.x, v0, c4
+dp4 r0.y, v0, c5
+add r2.xyz, -r0, c8
+dp3 r0.w, r2, r2
 rsq r0.w, r0.w
-mov o4.xyz, -r0
-mul o2.xyz, r0.w, r1
+mov o4.xyz, -r1
+mul o2.xyz, r0.w, r2
 rcp o1.x, r0.w
+mov o3.xyz, r0
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -1474,24 +1462,22 @@ uniform highp mat4 glstate_matrix_mvp;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
 }
 
@@ -1506,9 +1492,8 @@ varying highp vec3 xlv_TEXCOORD5;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -1518,159 +1503,152 @@ uniform highp float _Shininess;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  mediump vec3 normalDir_4;
-  mediump vec3 lightDirection_5;
-  mediump vec3 ambientLighting_6;
-  mediump float detailLevel_7;
-  mediump vec4 color_8;
-  mediump vec4 tex_9;
-  highp vec3 tmpvar_10;
-  tmpvar_10 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_11;
-  highp float r_12;
-  if ((abs(tmpvar_10.z) > (1e-08 * abs(tmpvar_10.x)))) {
-    highp float y_over_x_13;
-    y_over_x_13 = (tmpvar_10.x / tmpvar_10.z);
-    highp float s_14;
-    highp float x_15;
-    x_15 = (y_over_x_13 * inversesqrt(((y_over_x_13 * y_over_x_13) + 1.0)));
-    s_14 = (sign(x_15) * (1.5708 - (sqrt((1.0 - abs(x_15))) * (1.5708 + (abs(x_15) * (-0.214602 + (abs(x_15) * (0.0865667 + (abs(x_15) * -0.0310296)))))))));
-    r_12 = s_14;
-    if ((tmpvar_10.z < 0.0)) {
-      if ((tmpvar_10.x >= 0.0)) {
-        r_12 = (s_14 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_12 = (r_12 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_12 = (sign(tmpvar_10.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_11.x = (0.5 + (0.159155 * r_12));
-  uv_11.y = (0.31831 * (1.5708 - (sign(tmpvar_10.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_10.y))) * (1.5708 + (abs(tmpvar_10.y) * (-0.214602 + (abs(tmpvar_10.y) * (0.0865667 + (abs(tmpvar_10.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_16;
-  tmpvar_16 = dFdx(tmpvar_10.xz);
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdy(tmpvar_10.xz);
-  highp vec4 tmpvar_18;
-  tmpvar_18.x = (0.159155 * sqrt(dot (tmpvar_16, tmpvar_16)));
-  tmpvar_18.y = dFdx(uv_11.y);
-  tmpvar_18.z = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_18.w = dFdy(uv_11.y);
-  lowp vec4 tmpvar_19;
-  tmpvar_19 = texture2DGradEXT (_MainTex, uv_11, tmpvar_18.xy, tmpvar_18.zw);
-  tex_9 = tmpvar_19;
-  mediump vec4 tmpvar_20;
-  mediump vec3 detailCoords_21;
-  mediump float nylerp_22;
-  mediump float zxlerp_23;
-  highp vec3 tmpvar_24;
-  tmpvar_24 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_25;
-  highp float r_26;
-  if ((abs(tmpvar_24.z) > (1e-08 * abs(tmpvar_24.x)))) {
-    highp float y_over_x_27;
-    y_over_x_27 = (tmpvar_24.x / tmpvar_24.z);
-    highp float s_28;
-    highp float x_29;
-    x_29 = (y_over_x_27 * inversesqrt(((y_over_x_27 * y_over_x_27) + 1.0)));
-    s_28 = (sign(x_29) * (1.5708 - (sqrt((1.0 - abs(x_29))) * (1.5708 + (abs(x_29) * (-0.214602 + (abs(x_29) * (0.0865667 + (abs(x_29) * -0.0310296)))))))));
-    r_26 = s_28;
-    if ((tmpvar_24.z < 0.0)) {
-      if ((tmpvar_24.x >= 0.0)) {
-        r_26 = (s_28 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_26 = (r_26 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_26 = (sign(tmpvar_24.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_25.x = (0.5 + (0.159155 * r_26));
-  uv_25.y = (0.31831 * (1.5708 - (sign(tmpvar_24.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_24.y))) * (1.5708 + (abs(tmpvar_24.y) * (-0.214602 + (abs(tmpvar_24.y) * (0.0865667 + (abs(tmpvar_24.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_30;
-  tmpvar_30 = dFdx(tmpvar_24.xz);
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdy(tmpvar_24.xz);
-  highp vec4 tmpvar_32;
-  tmpvar_32.x = (0.159155 * sqrt(dot (tmpvar_30, tmpvar_30)));
-  tmpvar_32.y = dFdx(uv_25.y);
-  tmpvar_32.z = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_32.w = dFdy(uv_25.y);
-  highp vec3 tmpvar_33;
-  tmpvar_33 = abs(tmpvar_24);
-  highp float tmpvar_34;
-  tmpvar_34 = float((tmpvar_33.z >= tmpvar_33.x));
-  zxlerp_23 = tmpvar_34;
-  highp float tmpvar_35;
-  tmpvar_35 = float((mix (tmpvar_33.x, tmpvar_33.z, zxlerp_23) >= tmpvar_33.y));
-  nylerp_22 = tmpvar_35;
-  highp vec3 tmpvar_36;
-  tmpvar_36 = mix (tmpvar_33, tmpvar_33.zxy, vec3(zxlerp_23));
-  detailCoords_21 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_33.yxz, detailCoords_21, vec3(nylerp_22));
-  detailCoords_21 = tmpvar_37;
-  mediump float tmpvar_38;
-  tmpvar_38 = abs(detailCoords_21.x);
-  highp vec2 coord_39;
-  coord_39 = (((0.5 * detailCoords_21.zy) / tmpvar_38) * _DetailScale);
-  lowp vec4 tmpvar_40;
-  tmpvar_40 = texture2DGradEXT (_DetailTex, coord_39, tmpvar_32.xy, tmpvar_32.zw);
-  tmpvar_20 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_7 = tmpvar_41;
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
+  highp vec3 tmpvar_34;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_43;
-  tmpvar_43 = (mix (mix (tmpvar_20, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7)), tex_9, vec4(tmpvar_42)) * _Color);
-  color_8.xyz = tmpvar_43.xyz;
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
   highp vec3 tmpvar_44;
-  tmpvar_44 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_44;
-  lowp vec3 tmpvar_45;
-  tmpvar_45 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_45;
-  normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (((_LightColor0.w * ((tmpvar_46 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
-  highp vec3 tmpvar_48;
-  tmpvar_48 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_47)), 0.0, 1.0);
-  light_3 = tmpvar_48;
-  mediump vec3 tmpvar_49;
-  tmpvar_49 = vec3(clamp (floor((1.0 + tmpvar_46)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_49;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  mediump vec3 lightDir_45;
+  lightDir_45 = tmpvar_43;
+  mediump vec3 viewDir_46;
+  viewDir_46 = xlv_TEXCOORD1;
+  mediump vec3 normal_47;
+  normal_47 = tmpvar_44;
+  mediump vec4 c_48;
+  highp float nh_49;
   mediump vec3 tmpvar_50;
-  mediump vec3 i_51;
-  i_51 = -(lightDirection_5);
-  tmpvar_50 = (i_51 - (2.0 * (dot (normalDir_4, i_51) * normalDir_4)));
-  highp vec3 tmpvar_52;
-  tmpvar_52 = (specularReflection_2 * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot (tmpvar_50, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_52;
+  tmpvar_50 = normalize(viewDir_46);
+  viewDir_46 = tmpvar_50;
+  mediump float tmpvar_51;
+  tmpvar_51 = dot (normal_47, lightDir_45);
+  mediump float tmpvar_52;
+  tmpvar_52 = clamp (dot (normalize((lightDir_45 + tmpvar_50)), normal_47), 0.0, 1.0);
+  nh_49 = tmpvar_52;
   highp vec3 tmpvar_53;
-  tmpvar_53 = (light_3 + (tex_9.w * tmpvar_52));
-  light_3 = tmpvar_53;
-  highp float tmpvar_54;
-  tmpvar_54 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_8.w = mix (0.4489, tex_9.w, tmpvar_54);
-  highp vec3 tmpvar_55;
-  tmpvar_55 = clamp (((_LightPower * light_3) - color_8.w), 0.0, 1.0);
-  color_8.xyz = (tmpvar_43.xyz * tmpvar_55);
-  highp vec3 tmpvar_56;
-  tmpvar_56 = (color_8.xyz + (_Reflectivity * light_3));
-  color_8.xyz = tmpvar_56;
-  color_8.xyz = (color_8.xyz * light_3);
-  tmpvar_1 = color_8;
+  tmpvar_53 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_51) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_49, (_Shininess * 128.0)) * tmpvar_41.w))) * 4.0);
+  c_48.xyz = tmpvar_53;
+  c_48.w = (tmpvar_51 * 4.0);
+  color_5.xyz = c_48.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_48.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -1695,24 +1673,22 @@ uniform highp mat4 glstate_matrix_mvp;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
 }
 
@@ -1727,9 +1703,8 @@ varying highp vec3 xlv_TEXCOORD5;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -1739,159 +1714,152 @@ uniform highp float _Shininess;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  mediump vec3 normalDir_4;
-  mediump vec3 lightDirection_5;
-  mediump vec3 ambientLighting_6;
-  mediump float detailLevel_7;
-  mediump vec4 color_8;
-  mediump vec4 tex_9;
-  highp vec3 tmpvar_10;
-  tmpvar_10 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_11;
-  highp float r_12;
-  if ((abs(tmpvar_10.z) > (1e-08 * abs(tmpvar_10.x)))) {
-    highp float y_over_x_13;
-    y_over_x_13 = (tmpvar_10.x / tmpvar_10.z);
-    highp float s_14;
-    highp float x_15;
-    x_15 = (y_over_x_13 * inversesqrt(((y_over_x_13 * y_over_x_13) + 1.0)));
-    s_14 = (sign(x_15) * (1.5708 - (sqrt((1.0 - abs(x_15))) * (1.5708 + (abs(x_15) * (-0.214602 + (abs(x_15) * (0.0865667 + (abs(x_15) * -0.0310296)))))))));
-    r_12 = s_14;
-    if ((tmpvar_10.z < 0.0)) {
-      if ((tmpvar_10.x >= 0.0)) {
-        r_12 = (s_14 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_12 = (r_12 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_12 = (sign(tmpvar_10.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_11.x = (0.5 + (0.159155 * r_12));
-  uv_11.y = (0.31831 * (1.5708 - (sign(tmpvar_10.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_10.y))) * (1.5708 + (abs(tmpvar_10.y) * (-0.214602 + (abs(tmpvar_10.y) * (0.0865667 + (abs(tmpvar_10.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_16;
-  tmpvar_16 = dFdx(tmpvar_10.xz);
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdy(tmpvar_10.xz);
-  highp vec4 tmpvar_18;
-  tmpvar_18.x = (0.159155 * sqrt(dot (tmpvar_16, tmpvar_16)));
-  tmpvar_18.y = dFdx(uv_11.y);
-  tmpvar_18.z = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_18.w = dFdy(uv_11.y);
-  lowp vec4 tmpvar_19;
-  tmpvar_19 = texture2DGradEXT (_MainTex, uv_11, tmpvar_18.xy, tmpvar_18.zw);
-  tex_9 = tmpvar_19;
-  mediump vec4 tmpvar_20;
-  mediump vec3 detailCoords_21;
-  mediump float nylerp_22;
-  mediump float zxlerp_23;
-  highp vec3 tmpvar_24;
-  tmpvar_24 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_25;
-  highp float r_26;
-  if ((abs(tmpvar_24.z) > (1e-08 * abs(tmpvar_24.x)))) {
-    highp float y_over_x_27;
-    y_over_x_27 = (tmpvar_24.x / tmpvar_24.z);
-    highp float s_28;
-    highp float x_29;
-    x_29 = (y_over_x_27 * inversesqrt(((y_over_x_27 * y_over_x_27) + 1.0)));
-    s_28 = (sign(x_29) * (1.5708 - (sqrt((1.0 - abs(x_29))) * (1.5708 + (abs(x_29) * (-0.214602 + (abs(x_29) * (0.0865667 + (abs(x_29) * -0.0310296)))))))));
-    r_26 = s_28;
-    if ((tmpvar_24.z < 0.0)) {
-      if ((tmpvar_24.x >= 0.0)) {
-        r_26 = (s_28 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_26 = (r_26 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_26 = (sign(tmpvar_24.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_25.x = (0.5 + (0.159155 * r_26));
-  uv_25.y = (0.31831 * (1.5708 - (sign(tmpvar_24.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_24.y))) * (1.5708 + (abs(tmpvar_24.y) * (-0.214602 + (abs(tmpvar_24.y) * (0.0865667 + (abs(tmpvar_24.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_30;
-  tmpvar_30 = dFdx(tmpvar_24.xz);
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdy(tmpvar_24.xz);
-  highp vec4 tmpvar_32;
-  tmpvar_32.x = (0.159155 * sqrt(dot (tmpvar_30, tmpvar_30)));
-  tmpvar_32.y = dFdx(uv_25.y);
-  tmpvar_32.z = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_32.w = dFdy(uv_25.y);
-  highp vec3 tmpvar_33;
-  tmpvar_33 = abs(tmpvar_24);
-  highp float tmpvar_34;
-  tmpvar_34 = float((tmpvar_33.z >= tmpvar_33.x));
-  zxlerp_23 = tmpvar_34;
-  highp float tmpvar_35;
-  tmpvar_35 = float((mix (tmpvar_33.x, tmpvar_33.z, zxlerp_23) >= tmpvar_33.y));
-  nylerp_22 = tmpvar_35;
-  highp vec3 tmpvar_36;
-  tmpvar_36 = mix (tmpvar_33, tmpvar_33.zxy, vec3(zxlerp_23));
-  detailCoords_21 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_33.yxz, detailCoords_21, vec3(nylerp_22));
-  detailCoords_21 = tmpvar_37;
-  mediump float tmpvar_38;
-  tmpvar_38 = abs(detailCoords_21.x);
-  highp vec2 coord_39;
-  coord_39 = (((0.5 * detailCoords_21.zy) / tmpvar_38) * _DetailScale);
-  lowp vec4 tmpvar_40;
-  tmpvar_40 = texture2DGradEXT (_DetailTex, coord_39, tmpvar_32.xy, tmpvar_32.zw);
-  tmpvar_20 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_7 = tmpvar_41;
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
+  highp vec3 tmpvar_34;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_43;
-  tmpvar_43 = (mix (mix (tmpvar_20, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7)), tex_9, vec4(tmpvar_42)) * _Color);
-  color_8.xyz = tmpvar_43.xyz;
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
   highp vec3 tmpvar_44;
-  tmpvar_44 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_44;
-  lowp vec3 tmpvar_45;
-  tmpvar_45 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_45;
-  normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (((_LightColor0.w * ((tmpvar_46 - 0.01) / 0.99)) * 4.0), 0.0, 1.0);
-  highp vec3 tmpvar_48;
-  tmpvar_48 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_47)), 0.0, 1.0);
-  light_3 = tmpvar_48;
-  mediump vec3 tmpvar_49;
-  tmpvar_49 = vec3(clamp (floor((1.0 + tmpvar_46)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_49;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  mediump vec3 lightDir_45;
+  lightDir_45 = tmpvar_43;
+  mediump vec3 viewDir_46;
+  viewDir_46 = xlv_TEXCOORD1;
+  mediump vec3 normal_47;
+  normal_47 = tmpvar_44;
+  mediump vec4 c_48;
+  highp float nh_49;
   mediump vec3 tmpvar_50;
-  mediump vec3 i_51;
-  i_51 = -(lightDirection_5);
-  tmpvar_50 = (i_51 - (2.0 * (dot (normalDir_4, i_51) * normalDir_4)));
-  highp vec3 tmpvar_52;
-  tmpvar_52 = (specularReflection_2 * ((_LightColor0.xyz * _SpecColor.xyz) * pow (clamp (dot (tmpvar_50, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_52;
+  tmpvar_50 = normalize(viewDir_46);
+  viewDir_46 = tmpvar_50;
+  mediump float tmpvar_51;
+  tmpvar_51 = dot (normal_47, lightDir_45);
+  mediump float tmpvar_52;
+  tmpvar_52 = clamp (dot (normalize((lightDir_45 + tmpvar_50)), normal_47), 0.0, 1.0);
+  nh_49 = tmpvar_52;
   highp vec3 tmpvar_53;
-  tmpvar_53 = (light_3 + (tex_9.w * tmpvar_52));
-  light_3 = tmpvar_53;
-  highp float tmpvar_54;
-  tmpvar_54 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_8.w = mix (0.4489, tex_9.w, tmpvar_54);
-  highp vec3 tmpvar_55;
-  tmpvar_55 = clamp (((_LightPower * light_3) - color_8.w), 0.0, 1.0);
-  color_8.xyz = (tmpvar_43.xyz * tmpvar_55);
-  highp vec3 tmpvar_56;
-  tmpvar_56 = (color_8.xyz + (_Reflectivity * light_3));
-  color_8.xyz = tmpvar_56;
-  color_8.xyz = (color_8.xyz * light_3);
-  tmpvar_1 = color_8;
+  tmpvar_53 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_51) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_49, (_Shininess * 128.0)) * tmpvar_41.w))) * 4.0);
+  c_48.xyz = tmpvar_53;
+  c_48.w = (tmpvar_51 * 4.0);
+  color_5.xyz = c_48.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_48.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -1932,7 +1900,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -1941,15 +1909,15 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 483
+#line 512
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec3 sphereNormal;
 };
-#line 475
+#line 504
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -2045,45 +2013,54 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
+#line 444
+#line 456
+#line 472
+#line 484
 uniform lowp vec4 _Color;
+#line 492
 uniform highp float _Shininess;
-#line 464
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 496
 uniform highp float _DetailScale;
-#line 468
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 472
+#line 500
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 492
-#line 505
-#line 492
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 521
+#line 534
+#line 521
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 496
+    #line 525
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 500
+    o.worldPos = vertexPos;
+    #line 529
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
-    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
+    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - vertexPos));
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -2101,7 +2078,7 @@ void main() {
     gl_Position = vec4(xl_retval.pos);
     xlv_TEXCOORD0 = float(xl_retval.viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.viewDir);
-    xlv_TEXCOORD2 = vec3(xl_retval.worldNormal);
+    xlv_TEXCOORD2 = vec3(xl_retval.worldPos);
     xlv_TEXCOORD5 = vec3(xl_retval.sphereNormal);
 }
 
@@ -2193,7 +2170,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -2202,15 +2179,15 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 483
+#line 512
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec3 sphereNormal;
 };
-#line 475
+#line 504
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -2306,114 +2283,119 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
+#line 444
+#line 456
+#line 472
+#line 484
 uniform lowp vec4 _Color;
+#line 492
 uniform highp float _Shininess;
-#line 464
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 496
 uniform highp float _DetailScale;
-#line 468
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 472
+#line 500
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 492
-#line 505
-#line 321
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 521
+#line 534
+#line 397
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
+    #line 401
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 330
+#line 406
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
+    #line 410
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 336
     return uv;
 }
-#line 368
+#line 444
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
-    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    highp vec2 uv = ((GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0)) * 4.0) * detailScale);
+    #line 448
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
+    #line 452
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 347
+#line 423
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    #line 427
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 353
     return tex;
 }
-#line 505
+#line 472
+mediump vec4 SpecularColorLight( in mediump vec3 lightDir, in mediump vec3 viewDir, in mediump vec3 normal, in mediump vec4 color, in mediump vec4 specColor, in highp float specK, in mediump float atten ) {
+    viewDir = normalize(viewDir);
+    mediump vec3 h = normalize((lightDir + viewDir));
+    #line 476
+    mediump float diffuse = dot( normal, lightDir);
+    highp float nh = xll_saturate_f(dot( h, normal));
+    highp float spec = (pow( nh, specK) * color.w);
+    mediump vec4 c;
+    #line 480
+    c.xyz = ((((color.xyz * _LightColor0.xyz) * diffuse) + ((_LightColor0.xyz * specColor.xyz) * spec)) * (atten * 4.0));
+    c.w = (diffuse * (atten * 4.0));
+    return c;
+}
+#line 534
 lowp vec4 frag( in v2f IN ) {
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
-    #line 509
+    #line 538
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
-    #line 513
+    #line 542
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    #line 517
-    mediump vec3 normalDir = IN.worldNormal;
-    mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    mediump float diff = ((NdotL - 0.01) / 0.99);
-    lowp float atten = 1.0;
-    #line 521
-    mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
-    specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    #line 525
-    light += (main.w * specularReflection);
-    color.w = 1.0;
-    highp float refrac = 0.67;
-    color.w *= pow( refrac, 2.0);
-    #line 529
-    color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
-    color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    color.xyz += (_Reflectivity * light);
-    color.xyz *= light;
-    #line 533
+    mediump float handoff = xll_saturate_f(pow( _PlanetOpacity, 2.0));
+    color.xyz = mix( color.xyz, main.xyz, vec3( handoff));
+    #line 546
+    mediump vec4 specColor = _SpecColor;
+    specColor.w = mix( 1.0, main.w, handoff);
+    mediump vec4 colorLight = SpecularColorLight( vec3( normalize(_WorldSpaceLightPos0)), IN.viewDir, normalize((IN.worldPos - _PlanetOrigin)), color, specColor, (_Shininess * 128.0), 1.0);
+    color.xyz = colorLight.xyz;
+    #line 550
+    color.w = mix( 1.0, color.w, ((1.0 - handoff) * step( 0.0, colorLight.w)));
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -2426,7 +2408,7 @@ void main() {
     xlt_IN.pos = vec4(0.0);
     xlt_IN.viewDist = float(xlv_TEXCOORD0);
     xlt_IN.viewDir = vec3(xlv_TEXCOORD1);
-    xlt_IN.worldNormal = vec3(xlv_TEXCOORD2);
+    xlt_IN.worldPos = vec3(xlv_TEXCOORD2);
     xlt_IN.sphereNormal = vec3(xlv_TEXCOORD5);
     xl_retval = frag( xlt_IN);
     gl_FragData[0] = vec4(xl_retval);
@@ -2451,20 +2433,19 @@ uniform mat4 _Object2World;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
-  vec3 p_1;
-  p_1 = ((_Object2World * gl_Vertex).xyz - _WorldSpaceCameraPos);
-  vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = gl_Normal;
+  vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * gl_Vertex).xyz;
+  vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   vec4 tmpvar_3;
   tmpvar_3.x = gl_MultiTexCoord0.x;
   tmpvar_3.y = gl_MultiTexCoord0.y;
   tmpvar_3.z = gl_MultiTexCoord1.x;
   tmpvar_3.w = gl_MultiTexCoord1.y;
   gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
 }
@@ -2478,9 +2459,8 @@ varying vec4 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying float xlv_TEXCOORD0;
-uniform float _Reflectivity;
-uniform float _LightPower;
-uniform float _MinLight;
+uniform vec3 _PlanetOrigin;
+uniform float _PlanetOpacity;
 uniform float _DetailDist;
 uniform float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -2492,7 +2472,6 @@ uniform vec4 _SpecColor;
 uniform vec4 _LightColor0;
 uniform sampler2D _LightTextureB0;
 uniform sampler2D _LightTexture0;
-
 uniform vec4 _WorldSpaceLightPos0;
 void main ()
 {
@@ -2557,37 +2536,41 @@ void main ()
   uv_13.x = (0.5 + (0.159155 * r_14));
   uv_13.y = (0.31831 * (1.5708 - (sign(tmpvar_12.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_12.y))) * (1.5708 + (abs(tmpvar_12.y) * (-0.214602 + (abs(tmpvar_12.y) * (0.0865667 + (abs(tmpvar_12.y) * -0.0310296)))))))))));
   vec2 tmpvar_18;
-  tmpvar_18 = dFdx(tmpvar_12.xz);
+  tmpvar_18 = ((uv_13 * 4.0) * _DetailScale);
   vec2 tmpvar_19;
-  tmpvar_19 = dFdy(tmpvar_12.xz);
-  vec4 tmpvar_20;
-  tmpvar_20.x = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_20.y = dFdx(uv_13.y);
-  tmpvar_20.z = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
-  tmpvar_20.w = dFdy(uv_13.y);
-  vec3 tmpvar_21;
-  tmpvar_21 = abs(tmpvar_12);
-  float tmpvar_22;
-  tmpvar_22 = float((tmpvar_21.z >= tmpvar_21.x));
-  vec3 tmpvar_23;
-  tmpvar_23 = mix (tmpvar_21.yxz, mix (tmpvar_21, tmpvar_21.zxy, vec3(tmpvar_22)), vec3(float((mix (tmpvar_21.x, tmpvar_21.z, tmpvar_22) >= tmpvar_21.y))));
-  vec4 tmpvar_24;
-  tmpvar_24 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) * _DetailScale), tmpvar_20.xy, tmpvar_20.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
-  color_2.xyz = tmpvar_24.xyz;
+  tmpvar_19 = dFdx(tmpvar_12.xz);
+  vec2 tmpvar_20;
+  tmpvar_20 = dFdy(tmpvar_12.xz);
+  vec4 tmpvar_21;
+  tmpvar_21.x = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
+  tmpvar_21.y = dFdx(tmpvar_18.y);
+  tmpvar_21.z = (0.159155 * sqrt(dot (tmpvar_20, tmpvar_20)));
+  tmpvar_21.w = dFdy(tmpvar_18.y);
+  vec3 tmpvar_22;
+  tmpvar_22 = abs(tmpvar_12);
+  float tmpvar_23;
+  tmpvar_23 = float((tmpvar_22.z >= tmpvar_22.x));
+  vec3 tmpvar_24;
+  tmpvar_24 = mix (tmpvar_22.yxz, mix (tmpvar_22, tmpvar_22.zxy, vec3(tmpvar_23)), vec3(float((mix (tmpvar_22.x, tmpvar_22.z, tmpvar_23) >= tmpvar_22.y))));
   vec4 tmpvar_25;
-  tmpvar_25 = normalize(_WorldSpaceLightPos0);
+  tmpvar_25 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) * _DetailScale), tmpvar_21.xy, tmpvar_21.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
+  color_2.w = tmpvar_25.w;
   float tmpvar_26;
-  tmpvar_26 = clamp (dot (xlv_TEXCOORD2, tmpvar_25.xyz), 0.0, 1.0);
-  float tmpvar_27;
-  tmpvar_27 = ((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w);
-  vec3 i_28;
-  i_28 = -(tmpvar_25.xyz);
-  vec3 tmpvar_29;
-  tmpvar_29 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_26 - 0.01) / 0.99)) * 4.0) * tmpvar_27), 0.0, 1.0))), 0.0, 1.0) + (main_1.w * (vec3(clamp (floor((1.0 + tmpvar_26)), 0.0, 1.0)) * (((tmpvar_27 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_28 - (2.0 * (dot (xlv_TEXCOORD2, i_28) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
-  color_2.w = mix (0.4489, main_1.w, clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0));
-  color_2.xyz = (tmpvar_24.xyz * clamp (((_LightPower * tmpvar_29) - color_2.w), 0.0, 1.0));
-  color_2.xyz = (color_2.xyz + (_Reflectivity * tmpvar_29));
-  color_2.xyz = (color_2.xyz * tmpvar_29);
+  tmpvar_26 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  color_2.xyz = mix (tmpvar_25.xyz, main_1.xyz, vec3(tmpvar_26));
+  vec3 tmpvar_27;
+  tmpvar_27 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  float atten_28;
+  atten_28 = ((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w);
+  vec4 c_29;
+  vec3 tmpvar_30;
+  tmpvar_30 = normalize(normalize(_WorldSpaceLightPos0).xyz);
+  float tmpvar_31;
+  tmpvar_31 = dot (tmpvar_27, tmpvar_30);
+  c_29.xyz = ((((color_2.xyz * _LightColor0.xyz) * tmpvar_31) + ((_LightColor0.xyz * _SpecColor.xyz) * (pow (clamp (dot (normalize((tmpvar_30 + normalize(xlv_TEXCOORD1))), tmpvar_27), 0.0, 1.0), (_Shininess * 128.0)) * tmpvar_25.w))) * (atten_28 * 4.0));
+  c_29.w = (tmpvar_31 * (atten_28 * 4.0));
+  color_2.xyz = c_29.xyz;
+  color_2.w = mix (1.0, tmpvar_25.w, ((1.0 - tmpvar_26) * float((c_29.w >= 0.0))));
   gl_FragData[0] = color_2;
 }
 
@@ -2599,7 +2582,6 @@ void main ()
 SubProgram "d3d9 " {
 Keywords { "SPOT" "SHADOWS_OFF" }
 Bind "vertex" Vertex
-Bind "normal" Normal
 Bind "texcoord" TexCoord0
 Bind "texcoord1" TexCoord1
 Matrix 0 [glstate_matrix_mvp]
@@ -2607,45 +2589,37 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 25 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord5 o5
-def c13, 0.00000000, 0, 0, 0
 dcl_position0 v0
-dcl_normal0 v1
-dcl_texcoord0 v2
-dcl_texcoord1 v3
-mov r1.xyz, v1
-mov r1.w, c13.x
-dp4 r0.z, r1, c6
-dp4 r0.x, r1, c4
-dp4 r0.y, r1, c5
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o3.xyz, r0.w, r0
+dcl_texcoord0 v1
+dcl_texcoord1 v2
+mov r1.zw, v2.xyxy
+mov r1.xy, v1
+dp4 r0.w, r1, r1
+rsq r1.w, r0.w
+mul r1.xyz, r1.w, r1
+dp4 r1.w, v0, c7
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
-mov r2.zw, v3.xyxy
-mov r2.xy, v2
-dp4 r1.x, r2, r2
-rsq r0.w, r1.x
-mul r2.xyz, r0.w, r2
-add r1.xyz, -r0, c12
-dp3 r0.w, r1, r1
-rsq r1.w, r0.w
-dp4 r0.w, v0, c7
-mov o5.xyz, -r2
-mul o2.xyz, r1.w, r1
-dp4 o4.w, r0, c11
-dp4 o4.z, r0, c10
-dp4 o4.y, r0, c9
-dp4 o4.x, r0, c8
-rcp o1.x, r1.w
+add r2.xyz, -r0, c12
+dp3 r0.w, r2, r2
+rsq r0.w, r0.w
+mov o5.xyz, -r1
+mov r1.xyz, r0
+mul o2.xyz, r0.w, r2
+dp4 o4.w, r1, c11
+dp4 o4.z, r1, c10
+dp4 o4.y, r1, c9
+dp4 o4.x, r1, c8
+rcp o1.x, r0.w
+mov o3.xyz, r0
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -2671,24 +2645,22 @@ uniform highp mat4 glstate_matrix_mvp;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
 }
@@ -2705,9 +2677,8 @@ varying highp vec4 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -2719,171 +2690,165 @@ uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTextureB0;
 uniform sampler2D _LightTexture0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  lowp float atten_4;
-  mediump vec3 normalDir_5;
-  mediump vec3 lightDirection_6;
-  mediump vec3 ambientLighting_7;
-  mediump float detailLevel_8;
-  mediump vec4 color_9;
-  mediump vec4 tex_10;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_12;
-  highp float r_13;
-  if ((abs(tmpvar_11.z) > (1e-08 * abs(tmpvar_11.x)))) {
-    highp float y_over_x_14;
-    y_over_x_14 = (tmpvar_11.x / tmpvar_11.z);
-    highp float s_15;
-    highp float x_16;
-    x_16 = (y_over_x_14 * inversesqrt(((y_over_x_14 * y_over_x_14) + 1.0)));
-    s_15 = (sign(x_16) * (1.5708 - (sqrt((1.0 - abs(x_16))) * (1.5708 + (abs(x_16) * (-0.214602 + (abs(x_16) * (0.0865667 + (abs(x_16) * -0.0310296)))))))));
-    r_13 = s_15;
-    if ((tmpvar_11.z < 0.0)) {
-      if ((tmpvar_11.x >= 0.0)) {
-        r_13 = (s_15 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_13 = (r_13 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_13 = (sign(tmpvar_11.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_12.x = (0.5 + (0.159155 * r_13));
-  uv_12.y = (0.31831 * (1.5708 - (sign(tmpvar_11.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_11.y))) * (1.5708 + (abs(tmpvar_11.y) * (-0.214602 + (abs(tmpvar_11.y) * (0.0865667 + (abs(tmpvar_11.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdx(tmpvar_11.xz);
-  highp vec2 tmpvar_18;
-  tmpvar_18 = dFdy(tmpvar_11.xz);
-  highp vec4 tmpvar_19;
-  tmpvar_19.x = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_19.y = dFdx(uv_12.y);
-  tmpvar_19.z = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_19.w = dFdy(uv_12.y);
-  lowp vec4 tmpvar_20;
-  tmpvar_20 = texture2DGradEXT (_MainTex, uv_12, tmpvar_19.xy, tmpvar_19.zw);
-  tex_10 = tmpvar_20;
-  mediump vec4 tmpvar_21;
-  mediump vec3 detailCoords_22;
-  mediump float nylerp_23;
-  mediump float zxlerp_24;
-  highp vec3 tmpvar_25;
-  tmpvar_25 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_26;
-  highp float r_27;
-  if ((abs(tmpvar_25.z) > (1e-08 * abs(tmpvar_25.x)))) {
-    highp float y_over_x_28;
-    y_over_x_28 = (tmpvar_25.x / tmpvar_25.z);
-    highp float s_29;
-    highp float x_30;
-    x_30 = (y_over_x_28 * inversesqrt(((y_over_x_28 * y_over_x_28) + 1.0)));
-    s_29 = (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))));
-    r_27 = s_29;
-    if ((tmpvar_25.z < 0.0)) {
-      if ((tmpvar_25.x >= 0.0)) {
-        r_27 = (s_29 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_27 = (r_27 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_27 = (sign(tmpvar_25.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_26.x = (0.5 + (0.159155 * r_27));
-  uv_26.y = (0.31831 * (1.5708 - (sign(tmpvar_25.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_25.y))) * (1.5708 + (abs(tmpvar_25.y) * (-0.214602 + (abs(tmpvar_25.y) * (0.0865667 + (abs(tmpvar_25.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdx(tmpvar_25.xz);
-  highp vec2 tmpvar_32;
-  tmpvar_32 = dFdy(tmpvar_25.xz);
-  highp vec4 tmpvar_33;
-  tmpvar_33.x = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_33.y = dFdx(uv_26.y);
-  tmpvar_33.z = (0.159155 * sqrt(dot (tmpvar_32, tmpvar_32)));
-  tmpvar_33.w = dFdy(uv_26.y);
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
   highp vec3 tmpvar_34;
-  tmpvar_34 = abs(tmpvar_25);
-  highp float tmpvar_35;
-  tmpvar_35 = float((tmpvar_34.z >= tmpvar_34.x));
-  zxlerp_24 = tmpvar_35;
-  highp float tmpvar_36;
-  tmpvar_36 = float((mix (tmpvar_34.x, tmpvar_34.z, zxlerp_24) >= tmpvar_34.y));
-  nylerp_23 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_34, tmpvar_34.zxy, vec3(zxlerp_24));
-  detailCoords_22 = tmpvar_37;
-  highp vec3 tmpvar_38;
-  tmpvar_38 = mix (tmpvar_34.yxz, detailCoords_22, vec3(nylerp_23));
-  detailCoords_22 = tmpvar_38;
-  mediump float tmpvar_39;
-  tmpvar_39 = abs(detailCoords_22.x);
-  highp vec2 coord_40;
-  coord_40 = (((0.5 * detailCoords_22.zy) / tmpvar_39) * _DetailScale);
-  lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_40, tmpvar_33.xy, tmpvar_33.zw);
-  tmpvar_21 = tmpvar_41;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_8 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_44;
-  tmpvar_44 = (mix (mix (tmpvar_21, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8)), tex_10, vec4(tmpvar_43)) * _Color);
-  color_9.xyz = tmpvar_44.xyz;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_45;
-  highp vec3 tmpvar_46;
-  tmpvar_46 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_46;
-  normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  lowp vec4 tmpvar_45;
+  highp vec2 P_46;
+  P_46 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_45 = texture2D (_LightTexture0, P_46);
+  highp float tmpvar_47;
+  tmpvar_47 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
   lowp vec4 tmpvar_48;
-  highp vec2 P_49;
-  P_49 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
-  tmpvar_48 = texture2D (_LightTexture0, P_49);
-  highp float tmpvar_50;
-  tmpvar_50 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
-  lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2D (_LightTextureB0, vec2(tmpvar_50));
-  highp float tmpvar_52;
-  tmpvar_52 = ((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_48.w) * tmpvar_51.w);
-  atten_4 = tmpvar_52;
-  mediump float tmpvar_53;
-  tmpvar_53 = clamp ((((_LightColor0.w * ((tmpvar_47 - 0.01) / 0.99)) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_54;
-  tmpvar_54 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_53)), 0.0, 1.0);
-  light_3 = tmpvar_54;
+  tmpvar_48 = texture2D (_LightTextureB0, vec2(tmpvar_47));
+  mediump vec3 lightDir_49;
+  lightDir_49 = tmpvar_43;
+  mediump vec3 viewDir_50;
+  viewDir_50 = xlv_TEXCOORD1;
+  mediump vec3 normal_51;
+  normal_51 = tmpvar_44;
+  mediump float atten_52;
+  atten_52 = ((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_45.w) * tmpvar_48.w);
+  mediump vec4 c_53;
+  highp float nh_54;
   mediump vec3 tmpvar_55;
-  tmpvar_55 = vec3(clamp (floor((1.0 + tmpvar_47)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_55;
+  tmpvar_55 = normalize(lightDir_49);
+  lightDir_49 = tmpvar_55;
   mediump vec3 tmpvar_56;
-  mediump vec3 i_57;
-  i_57 = -(lightDirection_6);
-  tmpvar_56 = (i_57 - (2.0 * (dot (normalDir_5, i_57) * normalDir_5)));
-  highp vec3 tmpvar_58;
-  tmpvar_58 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_56, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_58;
+  tmpvar_56 = normalize(viewDir_50);
+  viewDir_50 = tmpvar_56;
+  mediump float tmpvar_57;
+  tmpvar_57 = dot (normal_51, tmpvar_55);
+  mediump float tmpvar_58;
+  tmpvar_58 = clamp (dot (normalize((tmpvar_55 + tmpvar_56)), normal_51), 0.0, 1.0);
+  nh_54 = tmpvar_58;
   highp vec3 tmpvar_59;
-  tmpvar_59 = (light_3 + (tex_10.w * tmpvar_58));
-  light_3 = tmpvar_59;
-  highp float tmpvar_60;
-  tmpvar_60 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_9.w = mix (0.4489, tex_10.w, tmpvar_60);
-  highp vec3 tmpvar_61;
-  tmpvar_61 = clamp (((_LightPower * light_3) - color_9.w), 0.0, 1.0);
-  color_9.xyz = (tmpvar_44.xyz * tmpvar_61);
-  highp vec3 tmpvar_62;
-  tmpvar_62 = (color_9.xyz + (_Reflectivity * light_3));
-  color_9.xyz = tmpvar_62;
-  color_9.xyz = (color_9.xyz * light_3);
-  tmpvar_1 = color_9;
+  tmpvar_59 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_57) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_54, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_52 * 4.0));
+  c_53.xyz = tmpvar_59;
+  c_53.w = (tmpvar_57 * (atten_52 * 4.0));
+  color_5.xyz = c_53.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_53.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -2910,24 +2875,22 @@ uniform highp mat4 glstate_matrix_mvp;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
 }
@@ -2944,9 +2907,8 @@ varying highp vec4 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -2958,171 +2920,165 @@ uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTextureB0;
 uniform sampler2D _LightTexture0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  lowp float atten_4;
-  mediump vec3 normalDir_5;
-  mediump vec3 lightDirection_6;
-  mediump vec3 ambientLighting_7;
-  mediump float detailLevel_8;
-  mediump vec4 color_9;
-  mediump vec4 tex_10;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_12;
-  highp float r_13;
-  if ((abs(tmpvar_11.z) > (1e-08 * abs(tmpvar_11.x)))) {
-    highp float y_over_x_14;
-    y_over_x_14 = (tmpvar_11.x / tmpvar_11.z);
-    highp float s_15;
-    highp float x_16;
-    x_16 = (y_over_x_14 * inversesqrt(((y_over_x_14 * y_over_x_14) + 1.0)));
-    s_15 = (sign(x_16) * (1.5708 - (sqrt((1.0 - abs(x_16))) * (1.5708 + (abs(x_16) * (-0.214602 + (abs(x_16) * (0.0865667 + (abs(x_16) * -0.0310296)))))))));
-    r_13 = s_15;
-    if ((tmpvar_11.z < 0.0)) {
-      if ((tmpvar_11.x >= 0.0)) {
-        r_13 = (s_15 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_13 = (r_13 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_13 = (sign(tmpvar_11.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_12.x = (0.5 + (0.159155 * r_13));
-  uv_12.y = (0.31831 * (1.5708 - (sign(tmpvar_11.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_11.y))) * (1.5708 + (abs(tmpvar_11.y) * (-0.214602 + (abs(tmpvar_11.y) * (0.0865667 + (abs(tmpvar_11.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdx(tmpvar_11.xz);
-  highp vec2 tmpvar_18;
-  tmpvar_18 = dFdy(tmpvar_11.xz);
-  highp vec4 tmpvar_19;
-  tmpvar_19.x = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_19.y = dFdx(uv_12.y);
-  tmpvar_19.z = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_19.w = dFdy(uv_12.y);
-  lowp vec4 tmpvar_20;
-  tmpvar_20 = texture2DGradEXT (_MainTex, uv_12, tmpvar_19.xy, tmpvar_19.zw);
-  tex_10 = tmpvar_20;
-  mediump vec4 tmpvar_21;
-  mediump vec3 detailCoords_22;
-  mediump float nylerp_23;
-  mediump float zxlerp_24;
-  highp vec3 tmpvar_25;
-  tmpvar_25 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_26;
-  highp float r_27;
-  if ((abs(tmpvar_25.z) > (1e-08 * abs(tmpvar_25.x)))) {
-    highp float y_over_x_28;
-    y_over_x_28 = (tmpvar_25.x / tmpvar_25.z);
-    highp float s_29;
-    highp float x_30;
-    x_30 = (y_over_x_28 * inversesqrt(((y_over_x_28 * y_over_x_28) + 1.0)));
-    s_29 = (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))));
-    r_27 = s_29;
-    if ((tmpvar_25.z < 0.0)) {
-      if ((tmpvar_25.x >= 0.0)) {
-        r_27 = (s_29 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_27 = (r_27 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_27 = (sign(tmpvar_25.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_26.x = (0.5 + (0.159155 * r_27));
-  uv_26.y = (0.31831 * (1.5708 - (sign(tmpvar_25.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_25.y))) * (1.5708 + (abs(tmpvar_25.y) * (-0.214602 + (abs(tmpvar_25.y) * (0.0865667 + (abs(tmpvar_25.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdx(tmpvar_25.xz);
-  highp vec2 tmpvar_32;
-  tmpvar_32 = dFdy(tmpvar_25.xz);
-  highp vec4 tmpvar_33;
-  tmpvar_33.x = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_33.y = dFdx(uv_26.y);
-  tmpvar_33.z = (0.159155 * sqrt(dot (tmpvar_32, tmpvar_32)));
-  tmpvar_33.w = dFdy(uv_26.y);
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
   highp vec3 tmpvar_34;
-  tmpvar_34 = abs(tmpvar_25);
-  highp float tmpvar_35;
-  tmpvar_35 = float((tmpvar_34.z >= tmpvar_34.x));
-  zxlerp_24 = tmpvar_35;
-  highp float tmpvar_36;
-  tmpvar_36 = float((mix (tmpvar_34.x, tmpvar_34.z, zxlerp_24) >= tmpvar_34.y));
-  nylerp_23 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_34, tmpvar_34.zxy, vec3(zxlerp_24));
-  detailCoords_22 = tmpvar_37;
-  highp vec3 tmpvar_38;
-  tmpvar_38 = mix (tmpvar_34.yxz, detailCoords_22, vec3(nylerp_23));
-  detailCoords_22 = tmpvar_38;
-  mediump float tmpvar_39;
-  tmpvar_39 = abs(detailCoords_22.x);
-  highp vec2 coord_40;
-  coord_40 = (((0.5 * detailCoords_22.zy) / tmpvar_39) * _DetailScale);
-  lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_40, tmpvar_33.xy, tmpvar_33.zw);
-  tmpvar_21 = tmpvar_41;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_8 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_44;
-  tmpvar_44 = (mix (mix (tmpvar_21, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8)), tex_10, vec4(tmpvar_43)) * _Color);
-  color_9.xyz = tmpvar_44.xyz;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_45;
-  highp vec3 tmpvar_46;
-  tmpvar_46 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_46;
-  normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  lowp vec4 tmpvar_45;
+  highp vec2 P_46;
+  P_46 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_45 = texture2D (_LightTexture0, P_46);
+  highp float tmpvar_47;
+  tmpvar_47 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
   lowp vec4 tmpvar_48;
-  highp vec2 P_49;
-  P_49 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
-  tmpvar_48 = texture2D (_LightTexture0, P_49);
-  highp float tmpvar_50;
-  tmpvar_50 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
-  lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2D (_LightTextureB0, vec2(tmpvar_50));
-  highp float tmpvar_52;
-  tmpvar_52 = ((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_48.w) * tmpvar_51.w);
-  atten_4 = tmpvar_52;
-  mediump float tmpvar_53;
-  tmpvar_53 = clamp ((((_LightColor0.w * ((tmpvar_47 - 0.01) / 0.99)) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_54;
-  tmpvar_54 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_53)), 0.0, 1.0);
-  light_3 = tmpvar_54;
+  tmpvar_48 = texture2D (_LightTextureB0, vec2(tmpvar_47));
+  mediump vec3 lightDir_49;
+  lightDir_49 = tmpvar_43;
+  mediump vec3 viewDir_50;
+  viewDir_50 = xlv_TEXCOORD1;
+  mediump vec3 normal_51;
+  normal_51 = tmpvar_44;
+  mediump float atten_52;
+  atten_52 = ((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_45.w) * tmpvar_48.w);
+  mediump vec4 c_53;
+  highp float nh_54;
   mediump vec3 tmpvar_55;
-  tmpvar_55 = vec3(clamp (floor((1.0 + tmpvar_47)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_55;
+  tmpvar_55 = normalize(lightDir_49);
+  lightDir_49 = tmpvar_55;
   mediump vec3 tmpvar_56;
-  mediump vec3 i_57;
-  i_57 = -(lightDirection_6);
-  tmpvar_56 = (i_57 - (2.0 * (dot (normalDir_5, i_57) * normalDir_5)));
-  highp vec3 tmpvar_58;
-  tmpvar_58 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_56, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_58;
+  tmpvar_56 = normalize(viewDir_50);
+  viewDir_50 = tmpvar_56;
+  mediump float tmpvar_57;
+  tmpvar_57 = dot (normal_51, tmpvar_55);
+  mediump float tmpvar_58;
+  tmpvar_58 = clamp (dot (normalize((tmpvar_55 + tmpvar_56)), normal_51), 0.0, 1.0);
+  nh_54 = tmpvar_58;
   highp vec3 tmpvar_59;
-  tmpvar_59 = (light_3 + (tex_10.w * tmpvar_58));
-  light_3 = tmpvar_59;
-  highp float tmpvar_60;
-  tmpvar_60 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_9.w = mix (0.4489, tex_10.w, tmpvar_60);
-  highp vec3 tmpvar_61;
-  tmpvar_61 = clamp (((_LightPower * light_3) - color_9.w), 0.0, 1.0);
-  color_9.xyz = (tmpvar_44.xyz * tmpvar_61);
-  highp vec3 tmpvar_62;
-  tmpvar_62 = (color_9.xyz + (_Reflectivity * light_3));
-  color_9.xyz = tmpvar_62;
-  color_9.xyz = (color_9.xyz * light_3);
-  tmpvar_1 = color_9;
+  tmpvar_59 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_57) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_54, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_52 * 4.0));
+  c_53.xyz = tmpvar_59;
+  c_53.w = (tmpvar_57 * (atten_52 * 4.0));
+  color_5.xyz = c_53.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_53.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -3163,7 +3119,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 397
+#line 326
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -3172,16 +3128,16 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 494
+#line 524
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec4 _LightCoord;
     highp vec3 sphereNormal;
 };
-#line 486
+#line 516
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -3278,49 +3234,58 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 407
+#line 336
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 420
-#line 428
+#line 349
+#line 357
+#line 371
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 404
+#line 408
+#line 417
+#line 425
+#line 434
 #line 442
+#line 455
+#line 467
+#line 483
+#line 496
 uniform lowp vec4 _Color;
+#line 504
 uniform highp float _Shininess;
-#line 475
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 508
 uniform highp float _DetailScale;
-#line 479
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 483
+#line 512
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 504
-#line 504
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 534
+#line 534
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 508
+    #line 538
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 512
+    o.worldPos = vertexPos;
+    #line 542
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
-    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
+    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - vertexPos));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
-    #line 516
+    #line 546
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -3339,7 +3304,7 @@ void main() {
     gl_Position = vec4(xl_retval.pos);
     xlv_TEXCOORD0 = float(xl_retval.viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.viewDir);
-    xlv_TEXCOORD2 = vec3(xl_retval.worldNormal);
+    xlv_TEXCOORD2 = vec3(xl_retval.worldPos);
     xlv_TEXCOORD3 = vec4(xl_retval._LightCoord);
     xlv_TEXCOORD5 = vec3(xl_retval.sphereNormal);
 }
@@ -3432,7 +3397,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 397
+#line 326
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -3441,16 +3406,16 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 494
+#line 524
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec4 _LightCoord;
     highp vec3 sphereNormal;
 };
-#line 486
+#line 516
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -3547,126 +3512,132 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 407
+#line 336
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 420
-#line 428
+#line 349
+#line 357
+#line 371
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 404
+#line 408
+#line 417
+#line 425
+#line 434
 #line 442
+#line 455
+#line 467
+#line 483
+#line 496
 uniform lowp vec4 _Color;
+#line 504
 uniform highp float _Shininess;
-#line 475
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 508
 uniform highp float _DetailScale;
-#line 479
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 483
+#line 512
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 504
-#line 321
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 534
+#line 408
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
+    #line 412
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 330
+#line 417
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
+    #line 421
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 336
     return uv;
 }
-#line 368
+#line 455
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
-    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    highp vec2 uv = ((GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0)) * 4.0) * detailScale);
+    #line 459
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
+    #line 463
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 347
+#line 434
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    #line 438
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 353
     return tex;
 }
-#line 393
+#line 483
+mediump vec4 SpecularColorLight( in mediump vec3 lightDir, in mediump vec3 viewDir, in mediump vec3 normal, in mediump vec4 color, in mediump vec4 specColor, in highp float specK, in mediump float atten ) {
+    lightDir = normalize(lightDir);
+    viewDir = normalize(viewDir);
+    #line 487
+    mediump vec3 h = normalize((lightDir + viewDir));
+    mediump float diffuse = dot( normal, lightDir);
+    highp float nh = xll_saturate_f(dot( h, normal));
+    highp float spec = (pow( nh, specK) * color.w);
+    #line 491
+    mediump vec4 c;
+    c.xyz = ((((color.xyz * _LightColor0.xyz) * diffuse) + ((_LightColor0.xyz * specColor.xyz) * spec)) * (atten * 4.0));
+    c.w = (diffuse * (atten * 4.0));
+    return c;
+}
+#line 322
 lowp float UnitySpotAttenuate( in highp vec3 LightCoord ) {
-    #line 395
+    #line 324
     return texture( _LightTextureB0, vec2( dot( LightCoord, LightCoord))).w;
 }
-#line 389
+#line 318
 lowp float UnitySpotCookie( in highp vec4 LightCoord ) {
-    #line 391
+    #line 320
     return texture( _LightTexture0, ((LightCoord.xy / LightCoord.w) + 0.5)).w;
 }
-#line 518
+#line 548
 lowp vec4 frag( in v2f IN ) {
-    #line 520
+    #line 550
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 524
+    #line 554
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 528
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 normalDir = IN.worldNormal;
-    mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 532
-    mediump float diff = ((NdotL - 0.01) / 0.99);
-    lowp float atten = (((float((IN._LightCoord.z > 0.0)) * UnitySpotCookie( IN._LightCoord)) * UnitySpotAttenuate( IN._LightCoord.xyz)) * 1.0);
-    mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 536
-    highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
-    specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light += (main.w * specularReflection);
-    color.w = 1.0;
-    #line 540
-    highp float refrac = 0.67;
-    color.w *= pow( refrac, 2.0);
-    color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
-    color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 544
-    color.xyz += (_Reflectivity * light);
-    color.xyz *= light;
+    #line 558
+    mediump float handoff = xll_saturate_f(pow( _PlanetOpacity, 2.0));
+    color.xyz = mix( color.xyz, main.xyz, vec3( handoff));
+    mediump vec4 specColor = _SpecColor;
+    specColor.w = mix( 1.0, main.w, handoff);
+    #line 562
+    mediump vec4 colorLight = SpecularColorLight( vec3( normalize(_WorldSpaceLightPos0)), IN.viewDir, normalize((IN.worldPos - _PlanetOrigin)), color, specColor, (_Shininess * 128.0), (((float((IN._LightCoord.z > 0.0)) * UnitySpotCookie( IN._LightCoord)) * UnitySpotAttenuate( IN._LightCoord.xyz)) * 1.0));
+    color.xyz = colorLight.xyz;
+    color.w = mix( 1.0, color.w, ((1.0 - handoff) * step( 0.0, colorLight.w)));
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -3680,7 +3651,7 @@ void main() {
     xlt_IN.pos = vec4(0.0);
     xlt_IN.viewDist = float(xlv_TEXCOORD0);
     xlt_IN.viewDir = vec3(xlv_TEXCOORD1);
-    xlt_IN.worldNormal = vec3(xlv_TEXCOORD2);
+    xlt_IN.worldPos = vec3(xlv_TEXCOORD2);
     xlt_IN._LightCoord = vec4(xlv_TEXCOORD3);
     xlt_IN.sphereNormal = vec3(xlv_TEXCOORD5);
     xl_retval = frag( xlt_IN);
@@ -3706,20 +3677,19 @@ uniform mat4 _Object2World;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
-  vec3 p_1;
-  p_1 = ((_Object2World * gl_Vertex).xyz - _WorldSpaceCameraPos);
-  vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = gl_Normal;
+  vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * gl_Vertex).xyz;
+  vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   vec4 tmpvar_3;
   tmpvar_3.x = gl_MultiTexCoord0.x;
   tmpvar_3.y = gl_MultiTexCoord0.y;
   tmpvar_3.z = gl_MultiTexCoord1.x;
   tmpvar_3.w = gl_MultiTexCoord1.y;
   gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
 }
@@ -3733,9 +3703,8 @@ varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying float xlv_TEXCOORD0;
-uniform float _Reflectivity;
-uniform float _LightPower;
-uniform float _MinLight;
+uniform vec3 _PlanetOrigin;
+uniform float _PlanetOpacity;
 uniform float _DetailDist;
 uniform float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -3747,7 +3716,6 @@ uniform vec4 _SpecColor;
 uniform vec4 _LightColor0;
 uniform sampler2D _LightTextureB0;
 uniform samplerCube _LightTexture0;
-
 uniform vec4 _WorldSpaceLightPos0;
 void main ()
 {
@@ -3812,37 +3780,41 @@ void main ()
   uv_13.x = (0.5 + (0.159155 * r_14));
   uv_13.y = (0.31831 * (1.5708 - (sign(tmpvar_12.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_12.y))) * (1.5708 + (abs(tmpvar_12.y) * (-0.214602 + (abs(tmpvar_12.y) * (0.0865667 + (abs(tmpvar_12.y) * -0.0310296)))))))))));
   vec2 tmpvar_18;
-  tmpvar_18 = dFdx(tmpvar_12.xz);
+  tmpvar_18 = ((uv_13 * 4.0) * _DetailScale);
   vec2 tmpvar_19;
-  tmpvar_19 = dFdy(tmpvar_12.xz);
-  vec4 tmpvar_20;
-  tmpvar_20.x = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_20.y = dFdx(uv_13.y);
-  tmpvar_20.z = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
-  tmpvar_20.w = dFdy(uv_13.y);
-  vec3 tmpvar_21;
-  tmpvar_21 = abs(tmpvar_12);
-  float tmpvar_22;
-  tmpvar_22 = float((tmpvar_21.z >= tmpvar_21.x));
-  vec3 tmpvar_23;
-  tmpvar_23 = mix (tmpvar_21.yxz, mix (tmpvar_21, tmpvar_21.zxy, vec3(tmpvar_22)), vec3(float((mix (tmpvar_21.x, tmpvar_21.z, tmpvar_22) >= tmpvar_21.y))));
-  vec4 tmpvar_24;
-  tmpvar_24 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) * _DetailScale), tmpvar_20.xy, tmpvar_20.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
-  color_2.xyz = tmpvar_24.xyz;
+  tmpvar_19 = dFdx(tmpvar_12.xz);
+  vec2 tmpvar_20;
+  tmpvar_20 = dFdy(tmpvar_12.xz);
+  vec4 tmpvar_21;
+  tmpvar_21.x = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
+  tmpvar_21.y = dFdx(tmpvar_18.y);
+  tmpvar_21.z = (0.159155 * sqrt(dot (tmpvar_20, tmpvar_20)));
+  tmpvar_21.w = dFdy(tmpvar_18.y);
+  vec3 tmpvar_22;
+  tmpvar_22 = abs(tmpvar_12);
+  float tmpvar_23;
+  tmpvar_23 = float((tmpvar_22.z >= tmpvar_22.x));
+  vec3 tmpvar_24;
+  tmpvar_24 = mix (tmpvar_22.yxz, mix (tmpvar_22, tmpvar_22.zxy, vec3(tmpvar_23)), vec3(float((mix (tmpvar_22.x, tmpvar_22.z, tmpvar_23) >= tmpvar_22.y))));
   vec4 tmpvar_25;
-  tmpvar_25 = normalize(_WorldSpaceLightPos0);
+  tmpvar_25 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) * _DetailScale), tmpvar_21.xy, tmpvar_21.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
+  color_2.w = tmpvar_25.w;
   float tmpvar_26;
-  tmpvar_26 = clamp (dot (xlv_TEXCOORD2, tmpvar_25.xyz), 0.0, 1.0);
-  float tmpvar_27;
-  tmpvar_27 = (texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3))).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
-  vec3 i_28;
-  i_28 = -(tmpvar_25.xyz);
-  vec3 tmpvar_29;
-  tmpvar_29 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_26 - 0.01) / 0.99)) * 4.0) * tmpvar_27), 0.0, 1.0))), 0.0, 1.0) + (main_1.w * (vec3(clamp (floor((1.0 + tmpvar_26)), 0.0, 1.0)) * (((tmpvar_27 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_28 - (2.0 * (dot (xlv_TEXCOORD2, i_28) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
-  color_2.w = mix (0.4489, main_1.w, clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0));
-  color_2.xyz = (tmpvar_24.xyz * clamp (((_LightPower * tmpvar_29) - color_2.w), 0.0, 1.0));
-  color_2.xyz = (color_2.xyz + (_Reflectivity * tmpvar_29));
-  color_2.xyz = (color_2.xyz * tmpvar_29);
+  tmpvar_26 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  color_2.xyz = mix (tmpvar_25.xyz, main_1.xyz, vec3(tmpvar_26));
+  vec3 tmpvar_27;
+  tmpvar_27 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  float atten_28;
+  atten_28 = (texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3))).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
+  vec4 c_29;
+  vec3 tmpvar_30;
+  tmpvar_30 = normalize(normalize(_WorldSpaceLightPos0).xyz);
+  float tmpvar_31;
+  tmpvar_31 = dot (tmpvar_27, tmpvar_30);
+  c_29.xyz = ((((color_2.xyz * _LightColor0.xyz) * tmpvar_31) + ((_LightColor0.xyz * _SpecColor.xyz) * (pow (clamp (dot (normalize((tmpvar_30 + normalize(xlv_TEXCOORD1))), tmpvar_27), 0.0, 1.0), (_Shininess * 128.0)) * tmpvar_25.w))) * (atten_28 * 4.0));
+  c_29.w = (tmpvar_31 * (atten_28 * 4.0));
+  color_2.xyz = c_29.xyz;
+  color_2.w = mix (1.0, tmpvar_25.w, ((1.0 - tmpvar_26) * float((c_29.w >= 0.0))));
   gl_FragData[0] = color_2;
 }
 
@@ -3854,7 +3826,6 @@ void main ()
 SubProgram "d3d9 " {
 Keywords { "POINT_COOKIE" "SHADOWS_OFF" }
 Bind "vertex" Vertex
-Bind "normal" Normal
 Bind "texcoord" TexCoord0
 Bind "texcoord1" TexCoord1
 Matrix 0 [glstate_matrix_mvp]
@@ -3862,44 +3833,36 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 30 ALU
+; 24 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord5 o5
-def c13, 0.00000000, 0, 0, 0
 dcl_position0 v0
-dcl_normal0 v1
-dcl_texcoord0 v2
-dcl_texcoord1 v3
-mov r1.xyz, v1
-mov r1.w, c13.x
-dp4 r0.z, r1, c6
-dp4 r0.x, r1, c4
-dp4 r0.y, r1, c5
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o3.xyz, r0.w, r0
+dcl_texcoord0 v1
+dcl_texcoord1 v2
+mov r1.zw, v2.xyxy
+mov r1.xy, v1
+dp4 r0.w, r1, r1
+rsq r1.w, r0.w
+mul r1.xyz, r1.w, r1
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
-mov r2.zw, v3.xyxy
-mov r2.xy, v2
-dp4 r1.x, r2, r2
-rsq r0.w, r1.x
-mul r2.xyz, r0.w, r2
-add r1.xyz, -r0, c12
-dp3 r0.w, r1, r1
-rsq r1.w, r0.w
-dp4 r0.w, v0, c7
-mov o5.xyz, -r2
-mul o2.xyz, r1.w, r1
-dp4 o4.z, r0, c10
-dp4 o4.y, r0, c9
-dp4 o4.x, r0, c8
-rcp o1.x, r1.w
+add r2.xyz, -r0, c12
+dp3 r0.w, r2, r2
+rsq r0.w, r0.w
+mov o5.xyz, -r1
+mov r1.xyz, r0
+dp4 r1.w, v0, c7
+mul o2.xyz, r0.w, r2
+dp4 o4.z, r1, c10
+dp4 o4.y, r1, c9
+dp4 o4.x, r1, c8
+rcp o1.x, r0.w
+mov o3.xyz, r0
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -3925,24 +3888,22 @@ uniform highp mat4 glstate_matrix_mvp;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
 }
@@ -3959,9 +3920,8 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -3973,163 +3933,163 @@ uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTextureB0;
 uniform samplerCube _LightTexture0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  mediump vec3 normalDir_4;
-  mediump vec3 lightDirection_5;
-  mediump vec3 ambientLighting_6;
-  mediump float detailLevel_7;
-  mediump vec4 color_8;
-  mediump vec4 tex_9;
-  highp vec3 tmpvar_10;
-  tmpvar_10 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_11;
-  highp float r_12;
-  if ((abs(tmpvar_10.z) > (1e-08 * abs(tmpvar_10.x)))) {
-    highp float y_over_x_13;
-    y_over_x_13 = (tmpvar_10.x / tmpvar_10.z);
-    highp float s_14;
-    highp float x_15;
-    x_15 = (y_over_x_13 * inversesqrt(((y_over_x_13 * y_over_x_13) + 1.0)));
-    s_14 = (sign(x_15) * (1.5708 - (sqrt((1.0 - abs(x_15))) * (1.5708 + (abs(x_15) * (-0.214602 + (abs(x_15) * (0.0865667 + (abs(x_15) * -0.0310296)))))))));
-    r_12 = s_14;
-    if ((tmpvar_10.z < 0.0)) {
-      if ((tmpvar_10.x >= 0.0)) {
-        r_12 = (s_14 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_12 = (r_12 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_12 = (sign(tmpvar_10.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_11.x = (0.5 + (0.159155 * r_12));
-  uv_11.y = (0.31831 * (1.5708 - (sign(tmpvar_10.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_10.y))) * (1.5708 + (abs(tmpvar_10.y) * (-0.214602 + (abs(tmpvar_10.y) * (0.0865667 + (abs(tmpvar_10.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_16;
-  tmpvar_16 = dFdx(tmpvar_10.xz);
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdy(tmpvar_10.xz);
-  highp vec4 tmpvar_18;
-  tmpvar_18.x = (0.159155 * sqrt(dot (tmpvar_16, tmpvar_16)));
-  tmpvar_18.y = dFdx(uv_11.y);
-  tmpvar_18.z = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_18.w = dFdy(uv_11.y);
-  lowp vec4 tmpvar_19;
-  tmpvar_19 = texture2DGradEXT (_MainTex, uv_11, tmpvar_18.xy, tmpvar_18.zw);
-  tex_9 = tmpvar_19;
-  mediump vec4 tmpvar_20;
-  mediump vec3 detailCoords_21;
-  mediump float nylerp_22;
-  mediump float zxlerp_23;
-  highp vec3 tmpvar_24;
-  tmpvar_24 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_25;
-  highp float r_26;
-  if ((abs(tmpvar_24.z) > (1e-08 * abs(tmpvar_24.x)))) {
-    highp float y_over_x_27;
-    y_over_x_27 = (tmpvar_24.x / tmpvar_24.z);
-    highp float s_28;
-    highp float x_29;
-    x_29 = (y_over_x_27 * inversesqrt(((y_over_x_27 * y_over_x_27) + 1.0)));
-    s_28 = (sign(x_29) * (1.5708 - (sqrt((1.0 - abs(x_29))) * (1.5708 + (abs(x_29) * (-0.214602 + (abs(x_29) * (0.0865667 + (abs(x_29) * -0.0310296)))))))));
-    r_26 = s_28;
-    if ((tmpvar_24.z < 0.0)) {
-      if ((tmpvar_24.x >= 0.0)) {
-        r_26 = (s_28 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_26 = (r_26 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_26 = (sign(tmpvar_24.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_25.x = (0.5 + (0.159155 * r_26));
-  uv_25.y = (0.31831 * (1.5708 - (sign(tmpvar_24.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_24.y))) * (1.5708 + (abs(tmpvar_24.y) * (-0.214602 + (abs(tmpvar_24.y) * (0.0865667 + (abs(tmpvar_24.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_30;
-  tmpvar_30 = dFdx(tmpvar_24.xz);
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdy(tmpvar_24.xz);
-  highp vec4 tmpvar_32;
-  tmpvar_32.x = (0.159155 * sqrt(dot (tmpvar_30, tmpvar_30)));
-  tmpvar_32.y = dFdx(uv_25.y);
-  tmpvar_32.z = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_32.w = dFdy(uv_25.y);
-  highp vec3 tmpvar_33;
-  tmpvar_33 = abs(tmpvar_24);
-  highp float tmpvar_34;
-  tmpvar_34 = float((tmpvar_33.z >= tmpvar_33.x));
-  zxlerp_23 = tmpvar_34;
-  highp float tmpvar_35;
-  tmpvar_35 = float((mix (tmpvar_33.x, tmpvar_33.z, zxlerp_23) >= tmpvar_33.y));
-  nylerp_22 = tmpvar_35;
-  highp vec3 tmpvar_36;
-  tmpvar_36 = mix (tmpvar_33, tmpvar_33.zxy, vec3(zxlerp_23));
-  detailCoords_21 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_33.yxz, detailCoords_21, vec3(nylerp_22));
-  detailCoords_21 = tmpvar_37;
-  mediump float tmpvar_38;
-  tmpvar_38 = abs(detailCoords_21.x);
-  highp vec2 coord_39;
-  coord_39 = (((0.5 * detailCoords_21.zy) / tmpvar_38) * _DetailScale);
-  lowp vec4 tmpvar_40;
-  tmpvar_40 = texture2DGradEXT (_DetailTex, coord_39, tmpvar_32.xy, tmpvar_32.zw);
-  tmpvar_20 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_7 = tmpvar_41;
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
+  highp vec3 tmpvar_34;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_43;
-  tmpvar_43 = (mix (mix (tmpvar_20, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7)), tex_9, vec4(tmpvar_42)) * _Color);
-  color_8.xyz = tmpvar_43.xyz;
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
   highp vec3 tmpvar_44;
-  tmpvar_44 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_44;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_45;
-  normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  highp float tmpvar_47;
-  tmpvar_47 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp float tmpvar_48;
-  tmpvar_48 = (texture2D (_LightTextureB0, vec2(tmpvar_47)).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
-  mediump float tmpvar_49;
-  tmpvar_49 = clamp ((((_LightColor0.w * ((tmpvar_46 - 0.01) / 0.99)) * 4.0) * tmpvar_48), 0.0, 1.0);
-  highp vec3 tmpvar_50;
-  tmpvar_50 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_49)), 0.0, 1.0);
-  light_3 = tmpvar_50;
-  mediump vec3 tmpvar_51;
-  tmpvar_51 = vec3(clamp (floor((1.0 + tmpvar_46)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_51;
-  mediump vec3 tmpvar_52;
-  mediump vec3 i_53;
-  i_53 = -(lightDirection_5);
-  tmpvar_52 = (i_53 - (2.0 * (dot (normalDir_4, i_53) * normalDir_4)));
-  highp vec3 tmpvar_54;
-  tmpvar_54 = (specularReflection_2 * (((tmpvar_48 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_52, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_54;
-  highp vec3 tmpvar_55;
-  tmpvar_55 = (light_3 + (tex_9.w * tmpvar_54));
-  light_3 = tmpvar_55;
-  highp float tmpvar_56;
-  tmpvar_56 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_8.w = mix (0.4489, tex_9.w, tmpvar_56);
-  highp vec3 tmpvar_57;
-  tmpvar_57 = clamp (((_LightPower * light_3) - color_8.w), 0.0, 1.0);
-  color_8.xyz = (tmpvar_43.xyz * tmpvar_57);
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2D (_LightTextureB0, vec2(tmpvar_45));
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = textureCube (_LightTexture0, xlv_TEXCOORD3);
+  mediump vec3 lightDir_48;
+  lightDir_48 = tmpvar_43;
+  mediump vec3 viewDir_49;
+  viewDir_49 = xlv_TEXCOORD1;
+  mediump vec3 normal_50;
+  normal_50 = tmpvar_44;
+  mediump float atten_51;
+  atten_51 = (tmpvar_46.w * tmpvar_47.w);
+  mediump vec4 c_52;
+  highp float nh_53;
+  mediump vec3 tmpvar_54;
+  tmpvar_54 = normalize(lightDir_48);
+  lightDir_48 = tmpvar_54;
+  mediump vec3 tmpvar_55;
+  tmpvar_55 = normalize(viewDir_49);
+  viewDir_49 = tmpvar_55;
+  mediump float tmpvar_56;
+  tmpvar_56 = dot (normal_50, tmpvar_54);
+  mediump float tmpvar_57;
+  tmpvar_57 = clamp (dot (normalize((tmpvar_54 + tmpvar_55)), normal_50), 0.0, 1.0);
+  nh_53 = tmpvar_57;
   highp vec3 tmpvar_58;
-  tmpvar_58 = (color_8.xyz + (_Reflectivity * light_3));
-  color_8.xyz = tmpvar_58;
-  color_8.xyz = (color_8.xyz * light_3);
-  tmpvar_1 = color_8;
+  tmpvar_58 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_56) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_53, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_51 * 4.0));
+  c_52.xyz = tmpvar_58;
+  c_52.w = (tmpvar_56 * (atten_51 * 4.0));
+  color_5.xyz = c_52.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_52.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -4156,24 +4116,22 @@ uniform highp mat4 glstate_matrix_mvp;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
 }
@@ -4190,9 +4148,8 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -4204,163 +4161,163 @@ uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTextureB0;
 uniform samplerCube _LightTexture0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  mediump vec3 normalDir_4;
-  mediump vec3 lightDirection_5;
-  mediump vec3 ambientLighting_6;
-  mediump float detailLevel_7;
-  mediump vec4 color_8;
-  mediump vec4 tex_9;
-  highp vec3 tmpvar_10;
-  tmpvar_10 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_11;
-  highp float r_12;
-  if ((abs(tmpvar_10.z) > (1e-08 * abs(tmpvar_10.x)))) {
-    highp float y_over_x_13;
-    y_over_x_13 = (tmpvar_10.x / tmpvar_10.z);
-    highp float s_14;
-    highp float x_15;
-    x_15 = (y_over_x_13 * inversesqrt(((y_over_x_13 * y_over_x_13) + 1.0)));
-    s_14 = (sign(x_15) * (1.5708 - (sqrt((1.0 - abs(x_15))) * (1.5708 + (abs(x_15) * (-0.214602 + (abs(x_15) * (0.0865667 + (abs(x_15) * -0.0310296)))))))));
-    r_12 = s_14;
-    if ((tmpvar_10.z < 0.0)) {
-      if ((tmpvar_10.x >= 0.0)) {
-        r_12 = (s_14 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_12 = (r_12 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_12 = (sign(tmpvar_10.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_11.x = (0.5 + (0.159155 * r_12));
-  uv_11.y = (0.31831 * (1.5708 - (sign(tmpvar_10.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_10.y))) * (1.5708 + (abs(tmpvar_10.y) * (-0.214602 + (abs(tmpvar_10.y) * (0.0865667 + (abs(tmpvar_10.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_16;
-  tmpvar_16 = dFdx(tmpvar_10.xz);
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdy(tmpvar_10.xz);
-  highp vec4 tmpvar_18;
-  tmpvar_18.x = (0.159155 * sqrt(dot (tmpvar_16, tmpvar_16)));
-  tmpvar_18.y = dFdx(uv_11.y);
-  tmpvar_18.z = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_18.w = dFdy(uv_11.y);
-  lowp vec4 tmpvar_19;
-  tmpvar_19 = texture2DGradEXT (_MainTex, uv_11, tmpvar_18.xy, tmpvar_18.zw);
-  tex_9 = tmpvar_19;
-  mediump vec4 tmpvar_20;
-  mediump vec3 detailCoords_21;
-  mediump float nylerp_22;
-  mediump float zxlerp_23;
-  highp vec3 tmpvar_24;
-  tmpvar_24 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_25;
-  highp float r_26;
-  if ((abs(tmpvar_24.z) > (1e-08 * abs(tmpvar_24.x)))) {
-    highp float y_over_x_27;
-    y_over_x_27 = (tmpvar_24.x / tmpvar_24.z);
-    highp float s_28;
-    highp float x_29;
-    x_29 = (y_over_x_27 * inversesqrt(((y_over_x_27 * y_over_x_27) + 1.0)));
-    s_28 = (sign(x_29) * (1.5708 - (sqrt((1.0 - abs(x_29))) * (1.5708 + (abs(x_29) * (-0.214602 + (abs(x_29) * (0.0865667 + (abs(x_29) * -0.0310296)))))))));
-    r_26 = s_28;
-    if ((tmpvar_24.z < 0.0)) {
-      if ((tmpvar_24.x >= 0.0)) {
-        r_26 = (s_28 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_26 = (r_26 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_26 = (sign(tmpvar_24.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_25.x = (0.5 + (0.159155 * r_26));
-  uv_25.y = (0.31831 * (1.5708 - (sign(tmpvar_24.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_24.y))) * (1.5708 + (abs(tmpvar_24.y) * (-0.214602 + (abs(tmpvar_24.y) * (0.0865667 + (abs(tmpvar_24.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_30;
-  tmpvar_30 = dFdx(tmpvar_24.xz);
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdy(tmpvar_24.xz);
-  highp vec4 tmpvar_32;
-  tmpvar_32.x = (0.159155 * sqrt(dot (tmpvar_30, tmpvar_30)));
-  tmpvar_32.y = dFdx(uv_25.y);
-  tmpvar_32.z = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_32.w = dFdy(uv_25.y);
-  highp vec3 tmpvar_33;
-  tmpvar_33 = abs(tmpvar_24);
-  highp float tmpvar_34;
-  tmpvar_34 = float((tmpvar_33.z >= tmpvar_33.x));
-  zxlerp_23 = tmpvar_34;
-  highp float tmpvar_35;
-  tmpvar_35 = float((mix (tmpvar_33.x, tmpvar_33.z, zxlerp_23) >= tmpvar_33.y));
-  nylerp_22 = tmpvar_35;
-  highp vec3 tmpvar_36;
-  tmpvar_36 = mix (tmpvar_33, tmpvar_33.zxy, vec3(zxlerp_23));
-  detailCoords_21 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_33.yxz, detailCoords_21, vec3(nylerp_22));
-  detailCoords_21 = tmpvar_37;
-  mediump float tmpvar_38;
-  tmpvar_38 = abs(detailCoords_21.x);
-  highp vec2 coord_39;
-  coord_39 = (((0.5 * detailCoords_21.zy) / tmpvar_38) * _DetailScale);
-  lowp vec4 tmpvar_40;
-  tmpvar_40 = texture2DGradEXT (_DetailTex, coord_39, tmpvar_32.xy, tmpvar_32.zw);
-  tmpvar_20 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_7 = tmpvar_41;
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
+  highp vec3 tmpvar_34;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_43;
-  tmpvar_43 = (mix (mix (tmpvar_20, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7)), tex_9, vec4(tmpvar_42)) * _Color);
-  color_8.xyz = tmpvar_43.xyz;
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
   highp vec3 tmpvar_44;
-  tmpvar_44 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_44;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_45;
-  normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  highp float tmpvar_47;
-  tmpvar_47 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp float tmpvar_48;
-  tmpvar_48 = (texture2D (_LightTextureB0, vec2(tmpvar_47)).w * textureCube (_LightTexture0, xlv_TEXCOORD3).w);
-  mediump float tmpvar_49;
-  tmpvar_49 = clamp ((((_LightColor0.w * ((tmpvar_46 - 0.01) / 0.99)) * 4.0) * tmpvar_48), 0.0, 1.0);
-  highp vec3 tmpvar_50;
-  tmpvar_50 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_49)), 0.0, 1.0);
-  light_3 = tmpvar_50;
-  mediump vec3 tmpvar_51;
-  tmpvar_51 = vec3(clamp (floor((1.0 + tmpvar_46)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_51;
-  mediump vec3 tmpvar_52;
-  mediump vec3 i_53;
-  i_53 = -(lightDirection_5);
-  tmpvar_52 = (i_53 - (2.0 * (dot (normalDir_4, i_53) * normalDir_4)));
-  highp vec3 tmpvar_54;
-  tmpvar_54 = (specularReflection_2 * (((tmpvar_48 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_52, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_54;
-  highp vec3 tmpvar_55;
-  tmpvar_55 = (light_3 + (tex_9.w * tmpvar_54));
-  light_3 = tmpvar_55;
-  highp float tmpvar_56;
-  tmpvar_56 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_8.w = mix (0.4489, tex_9.w, tmpvar_56);
-  highp vec3 tmpvar_57;
-  tmpvar_57 = clamp (((_LightPower * light_3) - color_8.w), 0.0, 1.0);
-  color_8.xyz = (tmpvar_43.xyz * tmpvar_57);
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2D (_LightTextureB0, vec2(tmpvar_45));
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = textureCube (_LightTexture0, xlv_TEXCOORD3);
+  mediump vec3 lightDir_48;
+  lightDir_48 = tmpvar_43;
+  mediump vec3 viewDir_49;
+  viewDir_49 = xlv_TEXCOORD1;
+  mediump vec3 normal_50;
+  normal_50 = tmpvar_44;
+  mediump float atten_51;
+  atten_51 = (tmpvar_46.w * tmpvar_47.w);
+  mediump vec4 c_52;
+  highp float nh_53;
+  mediump vec3 tmpvar_54;
+  tmpvar_54 = normalize(lightDir_48);
+  lightDir_48 = tmpvar_54;
+  mediump vec3 tmpvar_55;
+  tmpvar_55 = normalize(viewDir_49);
+  viewDir_49 = tmpvar_55;
+  mediump float tmpvar_56;
+  tmpvar_56 = dot (normal_50, tmpvar_54);
+  mediump float tmpvar_57;
+  tmpvar_57 = clamp (dot (normalize((tmpvar_54 + tmpvar_55)), normal_50), 0.0, 1.0);
+  nh_53 = tmpvar_57;
   highp vec3 tmpvar_58;
-  tmpvar_58 = (color_8.xyz + (_Reflectivity * light_3));
-  color_8.xyz = tmpvar_58;
-  color_8.xyz = (color_8.xyz * light_3);
-  tmpvar_1 = color_8;
+  tmpvar_58 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_56) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_53, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_51 * 4.0));
+  c_52.xyz = tmpvar_58;
+  c_52.w = (tmpvar_56 * (atten_51 * 4.0));
+  color_5.xyz = c_52.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_52.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -4401,7 +4358,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 389
+#line 318
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -4410,16 +4367,16 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 486
+#line 516
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec3 _LightCoord;
     highp vec3 sphereNormal;
 };
-#line 478
+#line 508
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -4516,49 +4473,58 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform samplerCube _LightTexture0;
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 399
+#line 328
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 412
-#line 420
+#line 341
+#line 349
+#line 363
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 396
+#line 400
+#line 409
+#line 417
+#line 426
 #line 434
+#line 447
+#line 459
+#line 475
+#line 488
 uniform lowp vec4 _Color;
+#line 496
 uniform highp float _Shininess;
-#line 467
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 500
 uniform highp float _DetailScale;
-#line 471
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 475
+#line 504
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 496
-#line 496
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 526
+#line 526
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 500
+    #line 530
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 504
+    o.worldPos = vertexPos;
+    #line 534
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
-    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
+    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - vertexPos));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
-    #line 508
+    #line 538
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -4577,7 +4543,7 @@ void main() {
     gl_Position = vec4(xl_retval.pos);
     xlv_TEXCOORD0 = float(xl_retval.viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.viewDir);
-    xlv_TEXCOORD2 = vec3(xl_retval.worldNormal);
+    xlv_TEXCOORD2 = vec3(xl_retval.worldPos);
     xlv_TEXCOORD3 = vec3(xl_retval._LightCoord);
     xlv_TEXCOORD5 = vec3(xl_retval.sphereNormal);
 }
@@ -4670,7 +4636,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 389
+#line 318
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -4679,16 +4645,16 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 486
+#line 516
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec3 _LightCoord;
     highp vec3 sphereNormal;
 };
-#line 478
+#line 508
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -4785,116 +4751,122 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform samplerCube _LightTexture0;
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 399
+#line 328
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 412
-#line 420
+#line 341
+#line 349
+#line 363
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 396
+#line 400
+#line 409
+#line 417
+#line 426
 #line 434
+#line 447
+#line 459
+#line 475
+#line 488
 uniform lowp vec4 _Color;
+#line 496
 uniform highp float _Shininess;
-#line 467
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 500
 uniform highp float _DetailScale;
-#line 471
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 475
+#line 504
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 496
-#line 321
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 526
+#line 400
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
+    #line 404
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 330
+#line 409
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
+    #line 413
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 336
     return uv;
 }
-#line 368
+#line 447
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
-    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    highp vec2 uv = ((GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0)) * 4.0) * detailScale);
+    #line 451
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
+    #line 455
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 347
+#line 426
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    #line 430
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 353
     return tex;
 }
-#line 510
+#line 475
+mediump vec4 SpecularColorLight( in mediump vec3 lightDir, in mediump vec3 viewDir, in mediump vec3 normal, in mediump vec4 color, in mediump vec4 specColor, in highp float specK, in mediump float atten ) {
+    lightDir = normalize(lightDir);
+    viewDir = normalize(viewDir);
+    #line 479
+    mediump vec3 h = normalize((lightDir + viewDir));
+    mediump float diffuse = dot( normal, lightDir);
+    highp float nh = xll_saturate_f(dot( h, normal));
+    highp float spec = (pow( nh, specK) * color.w);
+    #line 483
+    mediump vec4 c;
+    c.xyz = ((((color.xyz * _LightColor0.xyz) * diffuse) + ((_LightColor0.xyz * specColor.xyz) * spec)) * (atten * 4.0));
+    c.w = (diffuse * (atten * 4.0));
+    return c;
+}
+#line 540
 lowp vec4 frag( in v2f IN ) {
-    #line 512
+    #line 542
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 516
+    #line 546
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 520
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 normalDir = IN.worldNormal;
-    mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 524
-    mediump float diff = ((NdotL - 0.01) / 0.99);
-    lowp float atten = ((texture( _LightTextureB0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * texture( _LightTexture0, IN._LightCoord).w) * 1.0);
-    mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 528
-    highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
-    specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light += (main.w * specularReflection);
-    color.w = 1.0;
-    #line 532
-    highp float refrac = 0.67;
-    color.w *= pow( refrac, 2.0);
-    color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
-    color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 536
-    color.xyz += (_Reflectivity * light);
-    color.xyz *= light;
+    #line 550
+    mediump float handoff = xll_saturate_f(pow( _PlanetOpacity, 2.0));
+    color.xyz = mix( color.xyz, main.xyz, vec3( handoff));
+    mediump vec4 specColor = _SpecColor;
+    specColor.w = mix( 1.0, main.w, handoff);
+    #line 554
+    mediump vec4 colorLight = SpecularColorLight( vec3( normalize(_WorldSpaceLightPos0)), IN.viewDir, normalize((IN.worldPos - _PlanetOrigin)), color, specColor, (_Shininess * 128.0), ((texture( _LightTextureB0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * texture( _LightTexture0, IN._LightCoord).w) * 1.0));
+    color.xyz = colorLight.xyz;
+    color.w = mix( 1.0, color.w, ((1.0 - handoff) * step( 0.0, colorLight.w)));
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -4908,7 +4880,7 @@ void main() {
     xlt_IN.pos = vec4(0.0);
     xlt_IN.viewDist = float(xlv_TEXCOORD0);
     xlt_IN.viewDir = vec3(xlv_TEXCOORD1);
-    xlt_IN.worldNormal = vec3(xlv_TEXCOORD2);
+    xlt_IN.worldPos = vec3(xlv_TEXCOORD2);
     xlt_IN._LightCoord = vec3(xlv_TEXCOORD3);
     xlt_IN.sphereNormal = vec3(xlv_TEXCOORD5);
     xl_retval = frag( xlt_IN);
@@ -4934,20 +4906,19 @@ uniform mat4 _Object2World;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
-  vec3 p_1;
-  p_1 = ((_Object2World * gl_Vertex).xyz - _WorldSpaceCameraPos);
-  vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = gl_Normal;
+  vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * gl_Vertex).xyz;
+  vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   vec4 tmpvar_3;
   tmpvar_3.x = gl_MultiTexCoord0.x;
   tmpvar_3.y = gl_MultiTexCoord0.y;
   tmpvar_3.z = gl_MultiTexCoord1.x;
   tmpvar_3.w = gl_MultiTexCoord1.y;
   gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
 }
@@ -4961,9 +4932,8 @@ varying vec2 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying float xlv_TEXCOORD0;
-uniform float _Reflectivity;
-uniform float _LightPower;
-uniform float _MinLight;
+uniform vec3 _PlanetOrigin;
+uniform float _PlanetOpacity;
 uniform float _DetailDist;
 uniform float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -4974,7 +4944,6 @@ uniform vec4 _Color;
 uniform vec4 _SpecColor;
 uniform vec4 _LightColor0;
 uniform sampler2D _LightTexture0;
-
 uniform vec4 _WorldSpaceLightPos0;
 void main ()
 {
@@ -5039,37 +5008,41 @@ void main ()
   uv_13.x = (0.5 + (0.159155 * r_14));
   uv_13.y = (0.31831 * (1.5708 - (sign(tmpvar_12.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_12.y))) * (1.5708 + (abs(tmpvar_12.y) * (-0.214602 + (abs(tmpvar_12.y) * (0.0865667 + (abs(tmpvar_12.y) * -0.0310296)))))))))));
   vec2 tmpvar_18;
-  tmpvar_18 = dFdx(tmpvar_12.xz);
+  tmpvar_18 = ((uv_13 * 4.0) * _DetailScale);
   vec2 tmpvar_19;
-  tmpvar_19 = dFdy(tmpvar_12.xz);
-  vec4 tmpvar_20;
-  tmpvar_20.x = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_20.y = dFdx(uv_13.y);
-  tmpvar_20.z = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
-  tmpvar_20.w = dFdy(uv_13.y);
-  vec3 tmpvar_21;
-  tmpvar_21 = abs(tmpvar_12);
-  float tmpvar_22;
-  tmpvar_22 = float((tmpvar_21.z >= tmpvar_21.x));
-  vec3 tmpvar_23;
-  tmpvar_23 = mix (tmpvar_21.yxz, mix (tmpvar_21, tmpvar_21.zxy, vec3(tmpvar_22)), vec3(float((mix (tmpvar_21.x, tmpvar_21.z, tmpvar_22) >= tmpvar_21.y))));
-  vec4 tmpvar_24;
-  tmpvar_24 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) * _DetailScale), tmpvar_20.xy, tmpvar_20.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
-  color_2.xyz = tmpvar_24.xyz;
+  tmpvar_19 = dFdx(tmpvar_12.xz);
+  vec2 tmpvar_20;
+  tmpvar_20 = dFdy(tmpvar_12.xz);
+  vec4 tmpvar_21;
+  tmpvar_21.x = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
+  tmpvar_21.y = dFdx(tmpvar_18.y);
+  tmpvar_21.z = (0.159155 * sqrt(dot (tmpvar_20, tmpvar_20)));
+  tmpvar_21.w = dFdy(tmpvar_18.y);
+  vec3 tmpvar_22;
+  tmpvar_22 = abs(tmpvar_12);
+  float tmpvar_23;
+  tmpvar_23 = float((tmpvar_22.z >= tmpvar_22.x));
+  vec3 tmpvar_24;
+  tmpvar_24 = mix (tmpvar_22.yxz, mix (tmpvar_22, tmpvar_22.zxy, vec3(tmpvar_23)), vec3(float((mix (tmpvar_22.x, tmpvar_22.z, tmpvar_23) >= tmpvar_22.y))));
   vec4 tmpvar_25;
-  tmpvar_25 = normalize(_WorldSpaceLightPos0);
+  tmpvar_25 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) * _DetailScale), tmpvar_21.xy, tmpvar_21.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
+  color_2.w = tmpvar_25.w;
   float tmpvar_26;
-  tmpvar_26 = clamp (dot (xlv_TEXCOORD2, tmpvar_25.xyz), 0.0, 1.0);
-  float tmpvar_27;
-  tmpvar_27 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
-  vec3 i_28;
-  i_28 = -(tmpvar_25.xyz);
-  vec3 tmpvar_29;
-  tmpvar_29 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_26 - 0.01) / 0.99)) * 4.0) * tmpvar_27), 0.0, 1.0))), 0.0, 1.0) + (main_1.w * (vec3(clamp (floor((1.0 + tmpvar_26)), 0.0, 1.0)) * (((tmpvar_27 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_28 - (2.0 * (dot (xlv_TEXCOORD2, i_28) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
-  color_2.w = mix (0.4489, main_1.w, clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0));
-  color_2.xyz = (tmpvar_24.xyz * clamp (((_LightPower * tmpvar_29) - color_2.w), 0.0, 1.0));
-  color_2.xyz = (color_2.xyz + (_Reflectivity * tmpvar_29));
-  color_2.xyz = (color_2.xyz * tmpvar_29);
+  tmpvar_26 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  color_2.xyz = mix (tmpvar_25.xyz, main_1.xyz, vec3(tmpvar_26));
+  vec4 tmpvar_27;
+  tmpvar_27 = normalize(_WorldSpaceLightPos0);
+  vec3 tmpvar_28;
+  tmpvar_28 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  float atten_29;
+  atten_29 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
+  vec4 c_30;
+  float tmpvar_31;
+  tmpvar_31 = dot (tmpvar_28, tmpvar_27.xyz);
+  c_30.xyz = ((((color_2.xyz * _LightColor0.xyz) * tmpvar_31) + ((_LightColor0.xyz * _SpecColor.xyz) * (pow (clamp (dot (normalize((tmpvar_27.xyz + normalize(xlv_TEXCOORD1))), tmpvar_28), 0.0, 1.0), (_Shininess * 128.0)) * tmpvar_25.w))) * (atten_29 * 4.0));
+  c_30.w = (tmpvar_31 * (atten_29 * 4.0));
+  color_2.xyz = c_30.xyz;
+  color_2.w = mix (1.0, tmpvar_25.w, ((1.0 - tmpvar_26) * float((c_30.w >= 0.0))));
   gl_FragData[0] = color_2;
 }
 
@@ -5081,7 +5054,6 @@ void main ()
 SubProgram "d3d9 " {
 Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
 Bind "vertex" Vertex
-Bind "normal" Normal
 Bind "texcoord" TexCoord0
 Bind "texcoord1" TexCoord1
 Matrix 0 [glstate_matrix_mvp]
@@ -5089,43 +5061,35 @@ Vector 12 [_WorldSpaceCameraPos]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 29 ALU
+; 23 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord5 o5
-def c13, 0.00000000, 0, 0, 0
 dcl_position0 v0
-dcl_normal0 v1
-dcl_texcoord0 v2
-dcl_texcoord1 v3
-mov r1.xyz, v1
-mov r1.w, c13.x
-dp4 r0.z, r1, c6
-dp4 r0.x, r1, c4
-dp4 r0.y, r1, c5
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o3.xyz, r0.w, r0
+dcl_texcoord0 v1
+dcl_texcoord1 v2
+mov r1.zw, v2.xyxy
+mov r1.xy, v1
+dp4 r0.w, r1, r1
+rsq r1.w, r0.w
+mul r1.xyz, r1.w, r1
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
-mov r2.zw, v3.xyxy
-mov r2.xy, v2
-dp4 r1.x, r2, r2
-rsq r0.w, r1.x
-mul r2.xyz, r0.w, r2
-add r1.xyz, -r0, c12
-dp3 r0.w, r1, r1
-rsq r1.w, r0.w
-dp4 r0.w, v0, c7
-mov o5.xyz, -r2
-mul o2.xyz, r1.w, r1
-dp4 o4.y, r0, c9
-dp4 o4.x, r0, c8
-rcp o1.x, r1.w
+add r2.xyz, -r0, c12
+dp3 r0.w, r2, r2
+rsq r0.w, r0.w
+mov o5.xyz, -r1
+mov r1.xyz, r0
+dp4 r1.w, v0, c7
+mul o2.xyz, r0.w, r2
+dp4 o4.y, r1, c9
+dp4 o4.x, r1, c8
+rcp o1.x, r0.w
+mov o3.xyz, r0
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -5151,24 +5115,22 @@ uniform highp mat4 glstate_matrix_mvp;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
 }
@@ -5185,9 +5147,8 @@ varying highp vec2 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -5198,161 +5159,156 @@ uniform lowp vec4 _Color;
 uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTexture0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  mediump vec3 normalDir_4;
-  mediump vec3 lightDirection_5;
-  mediump vec3 ambientLighting_6;
-  mediump float detailLevel_7;
-  mediump vec4 color_8;
-  mediump vec4 tex_9;
-  highp vec3 tmpvar_10;
-  tmpvar_10 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_11;
-  highp float r_12;
-  if ((abs(tmpvar_10.z) > (1e-08 * abs(tmpvar_10.x)))) {
-    highp float y_over_x_13;
-    y_over_x_13 = (tmpvar_10.x / tmpvar_10.z);
-    highp float s_14;
-    highp float x_15;
-    x_15 = (y_over_x_13 * inversesqrt(((y_over_x_13 * y_over_x_13) + 1.0)));
-    s_14 = (sign(x_15) * (1.5708 - (sqrt((1.0 - abs(x_15))) * (1.5708 + (abs(x_15) * (-0.214602 + (abs(x_15) * (0.0865667 + (abs(x_15) * -0.0310296)))))))));
-    r_12 = s_14;
-    if ((tmpvar_10.z < 0.0)) {
-      if ((tmpvar_10.x >= 0.0)) {
-        r_12 = (s_14 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_12 = (r_12 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_12 = (sign(tmpvar_10.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_11.x = (0.5 + (0.159155 * r_12));
-  uv_11.y = (0.31831 * (1.5708 - (sign(tmpvar_10.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_10.y))) * (1.5708 + (abs(tmpvar_10.y) * (-0.214602 + (abs(tmpvar_10.y) * (0.0865667 + (abs(tmpvar_10.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_16;
-  tmpvar_16 = dFdx(tmpvar_10.xz);
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdy(tmpvar_10.xz);
-  highp vec4 tmpvar_18;
-  tmpvar_18.x = (0.159155 * sqrt(dot (tmpvar_16, tmpvar_16)));
-  tmpvar_18.y = dFdx(uv_11.y);
-  tmpvar_18.z = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_18.w = dFdy(uv_11.y);
-  lowp vec4 tmpvar_19;
-  tmpvar_19 = texture2DGradEXT (_MainTex, uv_11, tmpvar_18.xy, tmpvar_18.zw);
-  tex_9 = tmpvar_19;
-  mediump vec4 tmpvar_20;
-  mediump vec3 detailCoords_21;
-  mediump float nylerp_22;
-  mediump float zxlerp_23;
-  highp vec3 tmpvar_24;
-  tmpvar_24 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_25;
-  highp float r_26;
-  if ((abs(tmpvar_24.z) > (1e-08 * abs(tmpvar_24.x)))) {
-    highp float y_over_x_27;
-    y_over_x_27 = (tmpvar_24.x / tmpvar_24.z);
-    highp float s_28;
-    highp float x_29;
-    x_29 = (y_over_x_27 * inversesqrt(((y_over_x_27 * y_over_x_27) + 1.0)));
-    s_28 = (sign(x_29) * (1.5708 - (sqrt((1.0 - abs(x_29))) * (1.5708 + (abs(x_29) * (-0.214602 + (abs(x_29) * (0.0865667 + (abs(x_29) * -0.0310296)))))))));
-    r_26 = s_28;
-    if ((tmpvar_24.z < 0.0)) {
-      if ((tmpvar_24.x >= 0.0)) {
-        r_26 = (s_28 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_26 = (r_26 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_26 = (sign(tmpvar_24.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_25.x = (0.5 + (0.159155 * r_26));
-  uv_25.y = (0.31831 * (1.5708 - (sign(tmpvar_24.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_24.y))) * (1.5708 + (abs(tmpvar_24.y) * (-0.214602 + (abs(tmpvar_24.y) * (0.0865667 + (abs(tmpvar_24.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_30;
-  tmpvar_30 = dFdx(tmpvar_24.xz);
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdy(tmpvar_24.xz);
-  highp vec4 tmpvar_32;
-  tmpvar_32.x = (0.159155 * sqrt(dot (tmpvar_30, tmpvar_30)));
-  tmpvar_32.y = dFdx(uv_25.y);
-  tmpvar_32.z = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_32.w = dFdy(uv_25.y);
-  highp vec3 tmpvar_33;
-  tmpvar_33 = abs(tmpvar_24);
-  highp float tmpvar_34;
-  tmpvar_34 = float((tmpvar_33.z >= tmpvar_33.x));
-  zxlerp_23 = tmpvar_34;
-  highp float tmpvar_35;
-  tmpvar_35 = float((mix (tmpvar_33.x, tmpvar_33.z, zxlerp_23) >= tmpvar_33.y));
-  nylerp_22 = tmpvar_35;
-  highp vec3 tmpvar_36;
-  tmpvar_36 = mix (tmpvar_33, tmpvar_33.zxy, vec3(zxlerp_23));
-  detailCoords_21 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_33.yxz, detailCoords_21, vec3(nylerp_22));
-  detailCoords_21 = tmpvar_37;
-  mediump float tmpvar_38;
-  tmpvar_38 = abs(detailCoords_21.x);
-  highp vec2 coord_39;
-  coord_39 = (((0.5 * detailCoords_21.zy) / tmpvar_38) * _DetailScale);
-  lowp vec4 tmpvar_40;
-  tmpvar_40 = texture2DGradEXT (_DetailTex, coord_39, tmpvar_32.xy, tmpvar_32.zw);
-  tmpvar_20 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_7 = tmpvar_41;
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
+  highp vec3 tmpvar_34;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_43;
-  tmpvar_43 = (mix (mix (tmpvar_20, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7)), tex_9, vec4(tmpvar_42)) * _Color);
-  color_8.xyz = tmpvar_43.xyz;
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
   highp vec3 tmpvar_44;
-  tmpvar_44 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_44;
-  lowp vec3 tmpvar_45;
-  tmpvar_45 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_45;
-  normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp float tmpvar_47;
-  tmpvar_47 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
-  mediump float tmpvar_48;
-  tmpvar_48 = clamp ((((_LightColor0.w * ((tmpvar_46 - 0.01) / 0.99)) * 4.0) * tmpvar_47), 0.0, 1.0);
-  highp vec3 tmpvar_49;
-  tmpvar_49 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_48)), 0.0, 1.0);
-  light_3 = tmpvar_49;
-  mediump vec3 tmpvar_50;
-  tmpvar_50 = vec3(clamp (floor((1.0 + tmpvar_46)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_50;
-  mediump vec3 tmpvar_51;
-  mediump vec3 i_52;
-  i_52 = -(lightDirection_5);
-  tmpvar_51 = (i_52 - (2.0 * (dot (normalDir_4, i_52) * normalDir_4)));
-  highp vec3 tmpvar_53;
-  tmpvar_53 = (specularReflection_2 * (((tmpvar_47 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_51, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_53;
-  highp vec3 tmpvar_54;
-  tmpvar_54 = (light_3 + (tex_9.w * tmpvar_53));
-  light_3 = tmpvar_54;
-  highp float tmpvar_55;
-  tmpvar_55 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_8.w = mix (0.4489, tex_9.w, tmpvar_55);
-  highp vec3 tmpvar_56;
-  tmpvar_56 = clamp (((_LightPower * light_3) - color_8.w), 0.0, 1.0);
-  color_8.xyz = (tmpvar_43.xyz * tmpvar_56);
-  highp vec3 tmpvar_57;
-  tmpvar_57 = (color_8.xyz + (_Reflectivity * light_3));
-  color_8.xyz = tmpvar_57;
-  color_8.xyz = (color_8.xyz * light_3);
-  tmpvar_1 = color_8;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  lowp vec4 tmpvar_45;
+  tmpvar_45 = texture2D (_LightTexture0, xlv_TEXCOORD3);
+  mediump vec3 lightDir_46;
+  lightDir_46 = tmpvar_43;
+  mediump vec3 viewDir_47;
+  viewDir_47 = xlv_TEXCOORD1;
+  mediump vec3 normal_48;
+  normal_48 = tmpvar_44;
+  mediump float atten_49;
+  atten_49 = tmpvar_45.w;
+  mediump vec4 c_50;
+  highp float nh_51;
+  mediump vec3 tmpvar_52;
+  tmpvar_52 = normalize(viewDir_47);
+  viewDir_47 = tmpvar_52;
+  mediump float tmpvar_53;
+  tmpvar_53 = dot (normal_48, lightDir_46);
+  mediump float tmpvar_54;
+  tmpvar_54 = clamp (dot (normalize((lightDir_46 + tmpvar_52)), normal_48), 0.0, 1.0);
+  nh_51 = tmpvar_54;
+  highp vec3 tmpvar_55;
+  tmpvar_55 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_53) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_51, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_49 * 4.0));
+  c_50.xyz = tmpvar_55;
+  c_50.w = (tmpvar_53 * (atten_49 * 4.0));
+  color_5.xyz = c_50.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_50.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -5379,24 +5335,22 @@ uniform highp mat4 glstate_matrix_mvp;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
 }
@@ -5413,9 +5367,8 @@ varying highp vec2 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -5426,161 +5379,156 @@ uniform lowp vec4 _Color;
 uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTexture0;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  mediump vec3 normalDir_4;
-  mediump vec3 lightDirection_5;
-  mediump vec3 ambientLighting_6;
-  mediump float detailLevel_7;
-  mediump vec4 color_8;
-  mediump vec4 tex_9;
-  highp vec3 tmpvar_10;
-  tmpvar_10 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_11;
-  highp float r_12;
-  if ((abs(tmpvar_10.z) > (1e-08 * abs(tmpvar_10.x)))) {
-    highp float y_over_x_13;
-    y_over_x_13 = (tmpvar_10.x / tmpvar_10.z);
-    highp float s_14;
-    highp float x_15;
-    x_15 = (y_over_x_13 * inversesqrt(((y_over_x_13 * y_over_x_13) + 1.0)));
-    s_14 = (sign(x_15) * (1.5708 - (sqrt((1.0 - abs(x_15))) * (1.5708 + (abs(x_15) * (-0.214602 + (abs(x_15) * (0.0865667 + (abs(x_15) * -0.0310296)))))))));
-    r_12 = s_14;
-    if ((tmpvar_10.z < 0.0)) {
-      if ((tmpvar_10.x >= 0.0)) {
-        r_12 = (s_14 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_12 = (r_12 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_12 = (sign(tmpvar_10.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_11.x = (0.5 + (0.159155 * r_12));
-  uv_11.y = (0.31831 * (1.5708 - (sign(tmpvar_10.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_10.y))) * (1.5708 + (abs(tmpvar_10.y) * (-0.214602 + (abs(tmpvar_10.y) * (0.0865667 + (abs(tmpvar_10.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_16;
-  tmpvar_16 = dFdx(tmpvar_10.xz);
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdy(tmpvar_10.xz);
-  highp vec4 tmpvar_18;
-  tmpvar_18.x = (0.159155 * sqrt(dot (tmpvar_16, tmpvar_16)));
-  tmpvar_18.y = dFdx(uv_11.y);
-  tmpvar_18.z = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_18.w = dFdy(uv_11.y);
-  lowp vec4 tmpvar_19;
-  tmpvar_19 = texture2DGradEXT (_MainTex, uv_11, tmpvar_18.xy, tmpvar_18.zw);
-  tex_9 = tmpvar_19;
-  mediump vec4 tmpvar_20;
-  mediump vec3 detailCoords_21;
-  mediump float nylerp_22;
-  mediump float zxlerp_23;
-  highp vec3 tmpvar_24;
-  tmpvar_24 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_25;
-  highp float r_26;
-  if ((abs(tmpvar_24.z) > (1e-08 * abs(tmpvar_24.x)))) {
-    highp float y_over_x_27;
-    y_over_x_27 = (tmpvar_24.x / tmpvar_24.z);
-    highp float s_28;
-    highp float x_29;
-    x_29 = (y_over_x_27 * inversesqrt(((y_over_x_27 * y_over_x_27) + 1.0)));
-    s_28 = (sign(x_29) * (1.5708 - (sqrt((1.0 - abs(x_29))) * (1.5708 + (abs(x_29) * (-0.214602 + (abs(x_29) * (0.0865667 + (abs(x_29) * -0.0310296)))))))));
-    r_26 = s_28;
-    if ((tmpvar_24.z < 0.0)) {
-      if ((tmpvar_24.x >= 0.0)) {
-        r_26 = (s_28 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_26 = (r_26 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_26 = (sign(tmpvar_24.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_25.x = (0.5 + (0.159155 * r_26));
-  uv_25.y = (0.31831 * (1.5708 - (sign(tmpvar_24.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_24.y))) * (1.5708 + (abs(tmpvar_24.y) * (-0.214602 + (abs(tmpvar_24.y) * (0.0865667 + (abs(tmpvar_24.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_30;
-  tmpvar_30 = dFdx(tmpvar_24.xz);
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdy(tmpvar_24.xz);
-  highp vec4 tmpvar_32;
-  tmpvar_32.x = (0.159155 * sqrt(dot (tmpvar_30, tmpvar_30)));
-  tmpvar_32.y = dFdx(uv_25.y);
-  tmpvar_32.z = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_32.w = dFdy(uv_25.y);
-  highp vec3 tmpvar_33;
-  tmpvar_33 = abs(tmpvar_24);
-  highp float tmpvar_34;
-  tmpvar_34 = float((tmpvar_33.z >= tmpvar_33.x));
-  zxlerp_23 = tmpvar_34;
-  highp float tmpvar_35;
-  tmpvar_35 = float((mix (tmpvar_33.x, tmpvar_33.z, zxlerp_23) >= tmpvar_33.y));
-  nylerp_22 = tmpvar_35;
-  highp vec3 tmpvar_36;
-  tmpvar_36 = mix (tmpvar_33, tmpvar_33.zxy, vec3(zxlerp_23));
-  detailCoords_21 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_33.yxz, detailCoords_21, vec3(nylerp_22));
-  detailCoords_21 = tmpvar_37;
-  mediump float tmpvar_38;
-  tmpvar_38 = abs(detailCoords_21.x);
-  highp vec2 coord_39;
-  coord_39 = (((0.5 * detailCoords_21.zy) / tmpvar_38) * _DetailScale);
-  lowp vec4 tmpvar_40;
-  tmpvar_40 = texture2DGradEXT (_DetailTex, coord_39, tmpvar_32.xy, tmpvar_32.zw);
-  tmpvar_20 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_7 = tmpvar_41;
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
+  highp vec3 tmpvar_34;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_43;
-  tmpvar_43 = (mix (mix (tmpvar_20, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7)), tex_9, vec4(tmpvar_42)) * _Color);
-  color_8.xyz = tmpvar_43.xyz;
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
   highp vec3 tmpvar_44;
-  tmpvar_44 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_44;
-  lowp vec3 tmpvar_45;
-  tmpvar_45 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_45;
-  normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp float tmpvar_47;
-  tmpvar_47 = texture2D (_LightTexture0, xlv_TEXCOORD3).w;
-  mediump float tmpvar_48;
-  tmpvar_48 = clamp ((((_LightColor0.w * ((tmpvar_46 - 0.01) / 0.99)) * 4.0) * tmpvar_47), 0.0, 1.0);
-  highp vec3 tmpvar_49;
-  tmpvar_49 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_48)), 0.0, 1.0);
-  light_3 = tmpvar_49;
-  mediump vec3 tmpvar_50;
-  tmpvar_50 = vec3(clamp (floor((1.0 + tmpvar_46)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_50;
-  mediump vec3 tmpvar_51;
-  mediump vec3 i_52;
-  i_52 = -(lightDirection_5);
-  tmpvar_51 = (i_52 - (2.0 * (dot (normalDir_4, i_52) * normalDir_4)));
-  highp vec3 tmpvar_53;
-  tmpvar_53 = (specularReflection_2 * (((tmpvar_47 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_51, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_53;
-  highp vec3 tmpvar_54;
-  tmpvar_54 = (light_3 + (tex_9.w * tmpvar_53));
-  light_3 = tmpvar_54;
-  highp float tmpvar_55;
-  tmpvar_55 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_8.w = mix (0.4489, tex_9.w, tmpvar_55);
-  highp vec3 tmpvar_56;
-  tmpvar_56 = clamp (((_LightPower * light_3) - color_8.w), 0.0, 1.0);
-  color_8.xyz = (tmpvar_43.xyz * tmpvar_56);
-  highp vec3 tmpvar_57;
-  tmpvar_57 = (color_8.xyz + (_Reflectivity * light_3));
-  color_8.xyz = tmpvar_57;
-  color_8.xyz = (color_8.xyz * light_3);
-  tmpvar_1 = color_8;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  lowp vec4 tmpvar_45;
+  tmpvar_45 = texture2D (_LightTexture0, xlv_TEXCOORD3);
+  mediump vec3 lightDir_46;
+  lightDir_46 = tmpvar_43;
+  mediump vec3 viewDir_47;
+  viewDir_47 = xlv_TEXCOORD1;
+  mediump vec3 normal_48;
+  normal_48 = tmpvar_44;
+  mediump float atten_49;
+  atten_49 = tmpvar_45.w;
+  mediump vec4 c_50;
+  highp float nh_51;
+  mediump vec3 tmpvar_52;
+  tmpvar_52 = normalize(viewDir_47);
+  viewDir_47 = tmpvar_52;
+  mediump float tmpvar_53;
+  tmpvar_53 = dot (normal_48, lightDir_46);
+  mediump float tmpvar_54;
+  tmpvar_54 = clamp (dot (normalize((lightDir_46 + tmpvar_52)), normal_48), 0.0, 1.0);
+  nh_51 = tmpvar_54;
+  highp vec3 tmpvar_55;
+  tmpvar_55 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_53) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_51, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_49 * 4.0));
+  c_50.xyz = tmpvar_55;
+  c_50.w = (tmpvar_53 * (atten_49 * 4.0));
+  color_5.xyz = c_50.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_50.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -5621,7 +5569,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 388
+#line 317
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -5630,16 +5578,16 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 485
+#line 514
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec2 _LightCoord;
     highp vec3 sphereNormal;
 };
-#line 477
+#line 506
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -5736,48 +5684,57 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 398
+#line 327
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 411
-#line 419
+#line 340
+#line 348
+#line 362
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 395
+#line 399
+#line 408
+#line 416
+#line 425
 #line 433
+#line 446
+#line 458
+#line 474
+#line 486
 uniform lowp vec4 _Color;
+#line 494
 uniform highp float _Shininess;
-#line 466
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 498
 uniform highp float _DetailScale;
-#line 470
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 474
+#line 502
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 495
-#line 495
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 524
+#line 524
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 499
+    #line 528
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 503
+    o.worldPos = vertexPos;
+    #line 532
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
-    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
+    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - vertexPos));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xy;
-    #line 507
+    #line 536
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -5796,7 +5753,7 @@ void main() {
     gl_Position = vec4(xl_retval.pos);
     xlv_TEXCOORD0 = float(xl_retval.viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.viewDir);
-    xlv_TEXCOORD2 = vec3(xl_retval.worldNormal);
+    xlv_TEXCOORD2 = vec3(xl_retval.worldPos);
     xlv_TEXCOORD3 = vec2(xl_retval._LightCoord);
     xlv_TEXCOORD5 = vec3(xl_retval.sphereNormal);
 }
@@ -5889,7 +5846,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 388
+#line 317
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -5898,16 +5855,16 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 485
+#line 514
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec2 _LightCoord;
     highp vec3 sphereNormal;
 };
-#line 477
+#line 506
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -6004,115 +5961,120 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 398
+#line 327
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 411
-#line 419
+#line 340
+#line 348
+#line 362
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 395
+#line 399
+#line 408
+#line 416
+#line 425
 #line 433
+#line 446
+#line 458
+#line 474
+#line 486
 uniform lowp vec4 _Color;
+#line 494
 uniform highp float _Shininess;
-#line 466
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 498
 uniform highp float _DetailScale;
-#line 470
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 474
+#line 502
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 495
-#line 321
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 524
+#line 399
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
+    #line 403
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 330
+#line 408
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
+    #line 412
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 336
     return uv;
 }
-#line 368
+#line 446
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
-    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    highp vec2 uv = ((GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0)) * 4.0) * detailScale);
+    #line 450
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
+    #line 454
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 347
+#line 425
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    #line 429
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 353
     return tex;
 }
-#line 509
+#line 474
+mediump vec4 SpecularColorLight( in mediump vec3 lightDir, in mediump vec3 viewDir, in mediump vec3 normal, in mediump vec4 color, in mediump vec4 specColor, in highp float specK, in mediump float atten ) {
+    viewDir = normalize(viewDir);
+    mediump vec3 h = normalize((lightDir + viewDir));
+    #line 478
+    mediump float diffuse = dot( normal, lightDir);
+    highp float nh = xll_saturate_f(dot( h, normal));
+    highp float spec = (pow( nh, specK) * color.w);
+    mediump vec4 c;
+    #line 482
+    c.xyz = ((((color.xyz * _LightColor0.xyz) * diffuse) + ((_LightColor0.xyz * specColor.xyz) * spec)) * (atten * 4.0));
+    c.w = (diffuse * (atten * 4.0));
+    return c;
+}
+#line 538
 lowp vec4 frag( in v2f IN ) {
-    #line 511
+    #line 540
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 515
+    #line 544
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 519
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 normalDir = IN.worldNormal;
-    mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 523
-    mediump float diff = ((NdotL - 0.01) / 0.99);
-    lowp float atten = (texture( _LightTexture0, IN._LightCoord).w * 1.0);
-    mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 527
-    highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
-    specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light += (main.w * specularReflection);
-    color.w = 1.0;
-    #line 531
-    highp float refrac = 0.67;
-    color.w *= pow( refrac, 2.0);
-    color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
-    color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 535
-    color.xyz += (_Reflectivity * light);
-    color.xyz *= light;
+    #line 548
+    mediump float handoff = xll_saturate_f(pow( _PlanetOpacity, 2.0));
+    color.xyz = mix( color.xyz, main.xyz, vec3( handoff));
+    mediump vec4 specColor = _SpecColor;
+    specColor.w = mix( 1.0, main.w, handoff);
+    #line 552
+    mediump vec4 colorLight = SpecularColorLight( vec3( normalize(_WorldSpaceLightPos0)), IN.viewDir, normalize((IN.worldPos - _PlanetOrigin)), color, specColor, (_Shininess * 128.0), (texture( _LightTexture0, IN._LightCoord).w * 1.0));
+    color.xyz = colorLight.xyz;
+    color.w = mix( 1.0, color.w, ((1.0 - handoff) * step( 0.0, colorLight.w)));
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -6126,7 +6088,7 @@ void main() {
     xlt_IN.pos = vec4(0.0);
     xlt_IN.viewDist = float(xlv_TEXCOORD0);
     xlt_IN.viewDir = vec3(xlv_TEXCOORD1);
-    xlt_IN.worldNormal = vec3(xlv_TEXCOORD2);
+    xlt_IN.worldPos = vec3(xlv_TEXCOORD2);
     xlt_IN._LightCoord = vec2(xlv_TEXCOORD3);
     xlt_IN.sphereNormal = vec3(xlv_TEXCOORD5);
     xl_retval = frag( xlt_IN);
@@ -6154,20 +6116,19 @@ uniform mat4 unity_World2Shadow[4];
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
-  vec3 p_1;
-  p_1 = ((_Object2World * gl_Vertex).xyz - _WorldSpaceCameraPos);
-  vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = gl_Normal;
+  vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * gl_Vertex).xyz;
+  vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   vec4 tmpvar_3;
   tmpvar_3.x = gl_MultiTexCoord0.x;
   tmpvar_3.y = gl_MultiTexCoord0.y;
   tmpvar_3.z = gl_MultiTexCoord1.x;
   tmpvar_3.w = gl_MultiTexCoord1.y;
   gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -6183,9 +6144,8 @@ varying vec4 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying float xlv_TEXCOORD0;
-uniform float _Reflectivity;
-uniform float _LightPower;
-uniform float _MinLight;
+uniform vec3 _PlanetOrigin;
+uniform float _PlanetOpacity;
 uniform float _DetailDist;
 uniform float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -6198,7 +6158,6 @@ uniform vec4 _LightColor0;
 uniform sampler2D _LightTextureB0;
 uniform sampler2D _LightTexture0;
 uniform sampler2D _ShadowMapTexture;
-
 uniform vec4 _LightShadowData;
 uniform vec4 _WorldSpaceLightPos0;
 void main ()
@@ -6264,51 +6223,55 @@ void main ()
   uv_13.x = (0.5 + (0.159155 * r_14));
   uv_13.y = (0.31831 * (1.5708 - (sign(tmpvar_12.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_12.y))) * (1.5708 + (abs(tmpvar_12.y) * (-0.214602 + (abs(tmpvar_12.y) * (0.0865667 + (abs(tmpvar_12.y) * -0.0310296)))))))))));
   vec2 tmpvar_18;
-  tmpvar_18 = dFdx(tmpvar_12.xz);
+  tmpvar_18 = ((uv_13 * 4.0) * _DetailScale);
   vec2 tmpvar_19;
-  tmpvar_19 = dFdy(tmpvar_12.xz);
-  vec4 tmpvar_20;
-  tmpvar_20.x = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_20.y = dFdx(uv_13.y);
-  tmpvar_20.z = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
-  tmpvar_20.w = dFdy(uv_13.y);
-  vec3 tmpvar_21;
-  tmpvar_21 = abs(tmpvar_12);
-  float tmpvar_22;
-  tmpvar_22 = float((tmpvar_21.z >= tmpvar_21.x));
-  vec3 tmpvar_23;
-  tmpvar_23 = mix (tmpvar_21.yxz, mix (tmpvar_21, tmpvar_21.zxy, vec3(tmpvar_22)), vec3(float((mix (tmpvar_21.x, tmpvar_21.z, tmpvar_22) >= tmpvar_21.y))));
-  vec4 tmpvar_24;
-  tmpvar_24 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) * _DetailScale), tmpvar_20.xy, tmpvar_20.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
-  color_2 = tmpvar_24;
+  tmpvar_19 = dFdx(tmpvar_12.xz);
+  vec2 tmpvar_20;
+  tmpvar_20 = dFdy(tmpvar_12.xz);
+  vec4 tmpvar_21;
+  tmpvar_21.x = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
+  tmpvar_21.y = dFdx(tmpvar_18.y);
+  tmpvar_21.z = (0.159155 * sqrt(dot (tmpvar_20, tmpvar_20)));
+  tmpvar_21.w = dFdy(tmpvar_18.y);
+  vec3 tmpvar_22;
+  tmpvar_22 = abs(tmpvar_12);
+  float tmpvar_23;
+  tmpvar_23 = float((tmpvar_22.z >= tmpvar_22.x));
+  vec3 tmpvar_24;
+  tmpvar_24 = mix (tmpvar_22.yxz, mix (tmpvar_22, tmpvar_22.zxy, vec3(tmpvar_23)), vec3(float((mix (tmpvar_22.x, tmpvar_22.z, tmpvar_23) >= tmpvar_22.y))));
   vec4 tmpvar_25;
-  tmpvar_25 = normalize(_WorldSpaceLightPos0);
+  tmpvar_25 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) * _DetailScale), tmpvar_21.xy, tmpvar_21.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
+  color_2.w = tmpvar_25.w;
   float tmpvar_26;
-  tmpvar_26 = clamp (dot (xlv_TEXCOORD2, tmpvar_25.xyz), 0.0, 1.0);
-  float tmpvar_27;
-  tmpvar_27 = ((tmpvar_26 - 0.01) / 0.99);
-  vec4 tmpvar_28;
-  tmpvar_28 = texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5));
+  tmpvar_26 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  color_2.xyz = mix (tmpvar_25.xyz, main_1.xyz, vec3(tmpvar_26));
+  vec4 tmpvar_27;
+  tmpvar_27 = normalize(_WorldSpaceLightPos0);
+  vec3 tmpvar_28;
+  tmpvar_28 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
   vec4 tmpvar_29;
-  tmpvar_29 = texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz)));
+  tmpvar_29 = texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5));
   vec4 tmpvar_30;
-  tmpvar_30 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4);
-  float tmpvar_31;
-  if ((tmpvar_30.x < (xlv_TEXCOORD4.z / xlv_TEXCOORD4.w))) {
-    tmpvar_31 = _LightShadowData.x;
-  } else {
-    tmpvar_31 = 1.0;
-  };
+  tmpvar_30 = texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz)));
+  vec4 tmpvar_31;
+  tmpvar_31 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4);
   float tmpvar_32;
-  tmpvar_32 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_28.w) * tmpvar_29.w) * tmpvar_31);
-  vec3 i_33;
-  i_33 = -(tmpvar_25.xyz);
-  vec3 tmpvar_34;
-  tmpvar_34 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_27) * 4.0) * tmpvar_32), 0.0, 1.0))), 0.0, 1.0) + (main_1.w * (vec3(clamp (floor((1.0 + tmpvar_26)), 0.0, 1.0)) * (((tmpvar_32 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_33 - (2.0 * (dot (xlv_TEXCOORD2, i_33) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
-  color_2.w = mix (0.4489, main_1.w, clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0));
-  color_2.xyz = (tmpvar_24.xyz * clamp (((_LightPower * tmpvar_34) - color_2.w), 0.0, 1.0));
-  color_2.xyz = (color_2.xyz + (_Reflectivity * tmpvar_34));
-  color_2.xyz = (color_2.xyz * tmpvar_34);
+  if ((tmpvar_31.x < (xlv_TEXCOORD4.z / xlv_TEXCOORD4.w))) {
+    tmpvar_32 = _LightShadowData.x;
+  } else {
+    tmpvar_32 = 1.0;
+  };
+  float atten_33;
+  atten_33 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_29.w) * tmpvar_30.w) * tmpvar_32);
+  vec4 c_34;
+  vec3 tmpvar_35;
+  tmpvar_35 = normalize(tmpvar_27.xyz);
+  float tmpvar_36;
+  tmpvar_36 = dot (tmpvar_28, tmpvar_35);
+  c_34.xyz = ((((color_2.xyz * _LightColor0.xyz) * tmpvar_36) + ((_LightColor0.xyz * _SpecColor.xyz) * (pow (clamp (dot (normalize((tmpvar_35 + normalize(xlv_TEXCOORD1))), tmpvar_28), 0.0, 1.0), (_Shininess * 128.0)) * tmpvar_25.w))) * (atten_33 * 4.0));
+  c_34.w = (tmpvar_36 * (atten_33 * 4.0));
+  color_2.xyz = c_34.xyz;
+  color_2.w = mix (1.0, tmpvar_25.w, ((1.0 - tmpvar_26) * float((c_34.w >= 0.0))));
   gl_FragData[0] = color_2;
 }
 
@@ -6320,7 +6283,6 @@ void main ()
 SubProgram "d3d9 " {
 Keywords { "SPOT" "SHADOWS_DEPTH" }
 Bind "vertex" Vertex
-Bind "normal" Normal
 Bind "texcoord" TexCoord0
 Bind "texcoord1" TexCoord1
 Matrix 0 [glstate_matrix_mvp]
@@ -6329,7 +6291,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 35 ALU
+; 29 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -6337,42 +6299,34 @@ dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
 dcl_texcoord5 o6
-def c17, 0.00000000, 0, 0, 0
 dcl_position0 v0
-dcl_normal0 v1
-dcl_texcoord0 v2
-dcl_texcoord1 v3
-mov r1.xyz, v1
-mov r1.w, c17.x
-dp4 r0.z, r1, c10
-dp4 r0.x, r1, c8
-dp4 r0.y, r1, c9
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o3.xyz, r0.w, r0
+dcl_texcoord0 v1
+dcl_texcoord1 v2
+mov r1.zw, v2.xyxy
+mov r1.xy, v1
+dp4 r0.w, r1, r1
+rsq r1.w, r0.w
+mul r1.xyz, r1.w, r1
+dp4 r1.w, v0, c11
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
-mov r2.zw, v3.xyxy
-mov r2.xy, v2
-dp4 r1.x, r2, r2
-rsq r0.w, r1.x
-mul r2.xyz, r0.w, r2
-add r1.xyz, -r0, c16
-dp3 r0.w, r1, r1
-rsq r1.w, r0.w
-dp4 r0.w, v0, c11
-mov o6.xyz, -r2
-mul o2.xyz, r1.w, r1
-dp4 o4.w, r0, c15
-dp4 o4.z, r0, c14
-dp4 o4.y, r0, c13
-dp4 o4.x, r0, c12
-dp4 o5.w, r0, c7
-dp4 o5.z, r0, c6
-dp4 o5.y, r0, c5
-dp4 o5.x, r0, c4
-rcp o1.x, r1.w
+add r2.xyz, -r0, c16
+dp3 r0.w, r2, r2
+rsq r0.w, r0.w
+mov o6.xyz, -r1
+mov r1.xyz, r0
+mul o2.xyz, r0.w, r2
+dp4 o4.w, r1, c15
+dp4 o4.z, r1, c14
+dp4 o4.y, r1, c13
+dp4 o4.x, r1, c12
+dp4 o5.w, r1, c7
+dp4 o5.z, r1, c6
+dp4 o5.y, r1, c5
+dp4 o5.x, r1, c4
+rcp o1.x, r0.w
+mov o3.xyz, r0
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -6400,24 +6354,22 @@ uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -6436,9 +6388,8 @@ varying highp vec4 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -6451,186 +6402,178 @@ uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTextureB0;
 uniform sampler2D _LightTexture0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  lowp float atten_4;
-  mediump vec3 normalDir_5;
-  mediump vec3 lightDirection_6;
-  mediump vec3 ambientLighting_7;
-  mediump float detailLevel_8;
-  mediump vec4 color_9;
-  mediump vec4 tex_10;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_12;
-  highp float r_13;
-  if ((abs(tmpvar_11.z) > (1e-08 * abs(tmpvar_11.x)))) {
-    highp float y_over_x_14;
-    y_over_x_14 = (tmpvar_11.x / tmpvar_11.z);
-    highp float s_15;
-    highp float x_16;
-    x_16 = (y_over_x_14 * inversesqrt(((y_over_x_14 * y_over_x_14) + 1.0)));
-    s_15 = (sign(x_16) * (1.5708 - (sqrt((1.0 - abs(x_16))) * (1.5708 + (abs(x_16) * (-0.214602 + (abs(x_16) * (0.0865667 + (abs(x_16) * -0.0310296)))))))));
-    r_13 = s_15;
-    if ((tmpvar_11.z < 0.0)) {
-      if ((tmpvar_11.x >= 0.0)) {
-        r_13 = (s_15 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_13 = (r_13 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_13 = (sign(tmpvar_11.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_12.x = (0.5 + (0.159155 * r_13));
-  uv_12.y = (0.31831 * (1.5708 - (sign(tmpvar_11.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_11.y))) * (1.5708 + (abs(tmpvar_11.y) * (-0.214602 + (abs(tmpvar_11.y) * (0.0865667 + (abs(tmpvar_11.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdx(tmpvar_11.xz);
-  highp vec2 tmpvar_18;
-  tmpvar_18 = dFdy(tmpvar_11.xz);
-  highp vec4 tmpvar_19;
-  tmpvar_19.x = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_19.y = dFdx(uv_12.y);
-  tmpvar_19.z = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_19.w = dFdy(uv_12.y);
-  lowp vec4 tmpvar_20;
-  tmpvar_20 = texture2DGradEXT (_MainTex, uv_12, tmpvar_19.xy, tmpvar_19.zw);
-  tex_10 = tmpvar_20;
-  mediump vec4 tmpvar_21;
-  mediump vec3 detailCoords_22;
-  mediump float nylerp_23;
-  mediump float zxlerp_24;
-  highp vec3 tmpvar_25;
-  tmpvar_25 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_26;
-  highp float r_27;
-  if ((abs(tmpvar_25.z) > (1e-08 * abs(tmpvar_25.x)))) {
-    highp float y_over_x_28;
-    y_over_x_28 = (tmpvar_25.x / tmpvar_25.z);
-    highp float s_29;
-    highp float x_30;
-    x_30 = (y_over_x_28 * inversesqrt(((y_over_x_28 * y_over_x_28) + 1.0)));
-    s_29 = (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))));
-    r_27 = s_29;
-    if ((tmpvar_25.z < 0.0)) {
-      if ((tmpvar_25.x >= 0.0)) {
-        r_27 = (s_29 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_27 = (r_27 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_27 = (sign(tmpvar_25.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_26.x = (0.5 + (0.159155 * r_27));
-  uv_26.y = (0.31831 * (1.5708 - (sign(tmpvar_25.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_25.y))) * (1.5708 + (abs(tmpvar_25.y) * (-0.214602 + (abs(tmpvar_25.y) * (0.0865667 + (abs(tmpvar_25.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdx(tmpvar_25.xz);
-  highp vec2 tmpvar_32;
-  tmpvar_32 = dFdy(tmpvar_25.xz);
-  highp vec4 tmpvar_33;
-  tmpvar_33.x = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_33.y = dFdx(uv_26.y);
-  tmpvar_33.z = (0.159155 * sqrt(dot (tmpvar_32, tmpvar_32)));
-  tmpvar_33.w = dFdy(uv_26.y);
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
   highp vec3 tmpvar_34;
-  tmpvar_34 = abs(tmpvar_25);
-  highp float tmpvar_35;
-  tmpvar_35 = float((tmpvar_34.z >= tmpvar_34.x));
-  zxlerp_24 = tmpvar_35;
-  highp float tmpvar_36;
-  tmpvar_36 = float((mix (tmpvar_34.x, tmpvar_34.z, zxlerp_24) >= tmpvar_34.y));
-  nylerp_23 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_34, tmpvar_34.zxy, vec3(zxlerp_24));
-  detailCoords_22 = tmpvar_37;
-  highp vec3 tmpvar_38;
-  tmpvar_38 = mix (tmpvar_34.yxz, detailCoords_22, vec3(nylerp_23));
-  detailCoords_22 = tmpvar_38;
-  mediump float tmpvar_39;
-  tmpvar_39 = abs(detailCoords_22.x);
-  highp vec2 coord_40;
-  coord_40 = (((0.5 * detailCoords_22.zy) / tmpvar_39) * _DetailScale);
-  lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_40, tmpvar_33.xy, tmpvar_33.zw);
-  tmpvar_21 = tmpvar_41;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_8 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_44;
-  tmpvar_44 = (mix (mix (tmpvar_21, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8)), tex_10, vec4(tmpvar_43)) * _Color);
-  color_9 = tmpvar_44;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_45;
-  highp vec3 tmpvar_46;
-  tmpvar_46 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_46;
-  normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  mediump float tmpvar_48;
-  tmpvar_48 = ((tmpvar_47 - 0.01) / 0.99);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
-  tmpvar_49 = texture2D (_LightTexture0, P_50);
-  highp float tmpvar_51;
-  tmpvar_51 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
-  lowp vec4 tmpvar_52;
-  tmpvar_52 = texture2D (_LightTextureB0, vec2(tmpvar_51));
-  lowp float tmpvar_53;
-  mediump float shadow_54;
-  lowp vec4 tmpvar_55;
-  tmpvar_55 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4);
-  highp float tmpvar_56;
-  if ((tmpvar_55.x < (xlv_TEXCOORD4.z / xlv_TEXCOORD4.w))) {
-    tmpvar_56 = _LightShadowData.x;
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  lowp vec4 tmpvar_45;
+  highp vec2 P_46;
+  P_46 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_45 = texture2D (_LightTexture0, P_46);
+  highp float tmpvar_47;
+  tmpvar_47 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2D (_LightTextureB0, vec2(tmpvar_47));
+  lowp float tmpvar_49;
+  mediump float shadow_50;
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4);
+  highp float tmpvar_52;
+  if ((tmpvar_51.x < (xlv_TEXCOORD4.z / xlv_TEXCOORD4.w))) {
+    tmpvar_52 = _LightShadowData.x;
   } else {
-    tmpvar_56 = 1.0;
+    tmpvar_52 = 1.0;
   };
-  shadow_54 = tmpvar_56;
-  tmpvar_53 = shadow_54;
-  highp float tmpvar_57;
-  tmpvar_57 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_49.w) * tmpvar_52.w) * tmpvar_53);
-  atten_4 = tmpvar_57;
-  mediump float tmpvar_58;
-  tmpvar_58 = clamp ((((_LightColor0.w * tmpvar_48) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_59;
-  tmpvar_59 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_58)), 0.0, 1.0);
-  light_3 = tmpvar_59;
+  shadow_50 = tmpvar_52;
+  tmpvar_49 = shadow_50;
+  mediump vec3 lightDir_53;
+  lightDir_53 = tmpvar_43;
+  mediump vec3 viewDir_54;
+  viewDir_54 = xlv_TEXCOORD1;
+  mediump vec3 normal_55;
+  normal_55 = tmpvar_44;
+  mediump float atten_56;
+  atten_56 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_45.w) * tmpvar_48.w) * tmpvar_49);
+  mediump vec4 c_57;
+  highp float nh_58;
+  mediump vec3 tmpvar_59;
+  tmpvar_59 = normalize(lightDir_53);
+  lightDir_53 = tmpvar_59;
   mediump vec3 tmpvar_60;
-  tmpvar_60 = vec3(clamp (floor((1.0 + tmpvar_47)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_60;
-  mediump vec3 tmpvar_61;
-  mediump vec3 i_62;
-  i_62 = -(lightDirection_6);
-  tmpvar_61 = (i_62 - (2.0 * (dot (normalDir_5, i_62) * normalDir_5)));
+  tmpvar_60 = normalize(viewDir_54);
+  viewDir_54 = tmpvar_60;
+  mediump float tmpvar_61;
+  tmpvar_61 = dot (normal_55, tmpvar_59);
+  mediump float tmpvar_62;
+  tmpvar_62 = clamp (dot (normalize((tmpvar_59 + tmpvar_60)), normal_55), 0.0, 1.0);
+  nh_58 = tmpvar_62;
   highp vec3 tmpvar_63;
-  tmpvar_63 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_61, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_63;
-  highp vec3 tmpvar_64;
-  tmpvar_64 = (light_3 + (tex_10.w * tmpvar_63));
-  light_3 = tmpvar_64;
-  highp float tmpvar_65;
-  tmpvar_65 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_9.w = mix (0.4489, tex_10.w, tmpvar_65);
-  highp vec3 tmpvar_66;
-  tmpvar_66 = clamp (((_LightPower * light_3) - color_9.w), 0.0, 1.0);
-  color_9.xyz = (tmpvar_44.xyz * tmpvar_66);
-  highp vec3 tmpvar_67;
-  tmpvar_67 = (color_9.xyz + (_Reflectivity * light_3));
-  color_9.xyz = tmpvar_67;
-  color_9.xyz = (color_9.xyz * light_3);
-  tmpvar_1 = color_9;
+  tmpvar_63 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_61) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_58, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_56 * 4.0));
+  c_57.xyz = tmpvar_63;
+  c_57.w = (tmpvar_61 * (atten_56 * 4.0));
+  color_5.xyz = c_57.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_57.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -6659,24 +6602,22 @@ uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -6695,9 +6636,8 @@ varying highp vec4 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -6710,186 +6650,178 @@ uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTextureB0;
 uniform sampler2D _LightTexture0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  lowp float atten_4;
-  mediump vec3 normalDir_5;
-  mediump vec3 lightDirection_6;
-  mediump vec3 ambientLighting_7;
-  mediump float detailLevel_8;
-  mediump vec4 color_9;
-  mediump vec4 tex_10;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_12;
-  highp float r_13;
-  if ((abs(tmpvar_11.z) > (1e-08 * abs(tmpvar_11.x)))) {
-    highp float y_over_x_14;
-    y_over_x_14 = (tmpvar_11.x / tmpvar_11.z);
-    highp float s_15;
-    highp float x_16;
-    x_16 = (y_over_x_14 * inversesqrt(((y_over_x_14 * y_over_x_14) + 1.0)));
-    s_15 = (sign(x_16) * (1.5708 - (sqrt((1.0 - abs(x_16))) * (1.5708 + (abs(x_16) * (-0.214602 + (abs(x_16) * (0.0865667 + (abs(x_16) * -0.0310296)))))))));
-    r_13 = s_15;
-    if ((tmpvar_11.z < 0.0)) {
-      if ((tmpvar_11.x >= 0.0)) {
-        r_13 = (s_15 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_13 = (r_13 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_13 = (sign(tmpvar_11.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_12.x = (0.5 + (0.159155 * r_13));
-  uv_12.y = (0.31831 * (1.5708 - (sign(tmpvar_11.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_11.y))) * (1.5708 + (abs(tmpvar_11.y) * (-0.214602 + (abs(tmpvar_11.y) * (0.0865667 + (abs(tmpvar_11.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdx(tmpvar_11.xz);
-  highp vec2 tmpvar_18;
-  tmpvar_18 = dFdy(tmpvar_11.xz);
-  highp vec4 tmpvar_19;
-  tmpvar_19.x = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_19.y = dFdx(uv_12.y);
-  tmpvar_19.z = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_19.w = dFdy(uv_12.y);
-  lowp vec4 tmpvar_20;
-  tmpvar_20 = texture2DGradEXT (_MainTex, uv_12, tmpvar_19.xy, tmpvar_19.zw);
-  tex_10 = tmpvar_20;
-  mediump vec4 tmpvar_21;
-  mediump vec3 detailCoords_22;
-  mediump float nylerp_23;
-  mediump float zxlerp_24;
-  highp vec3 tmpvar_25;
-  tmpvar_25 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_26;
-  highp float r_27;
-  if ((abs(tmpvar_25.z) > (1e-08 * abs(tmpvar_25.x)))) {
-    highp float y_over_x_28;
-    y_over_x_28 = (tmpvar_25.x / tmpvar_25.z);
-    highp float s_29;
-    highp float x_30;
-    x_30 = (y_over_x_28 * inversesqrt(((y_over_x_28 * y_over_x_28) + 1.0)));
-    s_29 = (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))));
-    r_27 = s_29;
-    if ((tmpvar_25.z < 0.0)) {
-      if ((tmpvar_25.x >= 0.0)) {
-        r_27 = (s_29 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_27 = (r_27 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_27 = (sign(tmpvar_25.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_26.x = (0.5 + (0.159155 * r_27));
-  uv_26.y = (0.31831 * (1.5708 - (sign(tmpvar_25.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_25.y))) * (1.5708 + (abs(tmpvar_25.y) * (-0.214602 + (abs(tmpvar_25.y) * (0.0865667 + (abs(tmpvar_25.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdx(tmpvar_25.xz);
-  highp vec2 tmpvar_32;
-  tmpvar_32 = dFdy(tmpvar_25.xz);
-  highp vec4 tmpvar_33;
-  tmpvar_33.x = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_33.y = dFdx(uv_26.y);
-  tmpvar_33.z = (0.159155 * sqrt(dot (tmpvar_32, tmpvar_32)));
-  tmpvar_33.w = dFdy(uv_26.y);
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
   highp vec3 tmpvar_34;
-  tmpvar_34 = abs(tmpvar_25);
-  highp float tmpvar_35;
-  tmpvar_35 = float((tmpvar_34.z >= tmpvar_34.x));
-  zxlerp_24 = tmpvar_35;
-  highp float tmpvar_36;
-  tmpvar_36 = float((mix (tmpvar_34.x, tmpvar_34.z, zxlerp_24) >= tmpvar_34.y));
-  nylerp_23 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_34, tmpvar_34.zxy, vec3(zxlerp_24));
-  detailCoords_22 = tmpvar_37;
-  highp vec3 tmpvar_38;
-  tmpvar_38 = mix (tmpvar_34.yxz, detailCoords_22, vec3(nylerp_23));
-  detailCoords_22 = tmpvar_38;
-  mediump float tmpvar_39;
-  tmpvar_39 = abs(detailCoords_22.x);
-  highp vec2 coord_40;
-  coord_40 = (((0.5 * detailCoords_22.zy) / tmpvar_39) * _DetailScale);
-  lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_40, tmpvar_33.xy, tmpvar_33.zw);
-  tmpvar_21 = tmpvar_41;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_8 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_44;
-  tmpvar_44 = (mix (mix (tmpvar_21, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8)), tex_10, vec4(tmpvar_43)) * _Color);
-  color_9 = tmpvar_44;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_45;
-  highp vec3 tmpvar_46;
-  tmpvar_46 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_46;
-  normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  mediump float tmpvar_48;
-  tmpvar_48 = ((tmpvar_47 - 0.01) / 0.99);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
-  tmpvar_49 = texture2D (_LightTexture0, P_50);
-  highp float tmpvar_51;
-  tmpvar_51 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
-  lowp vec4 tmpvar_52;
-  tmpvar_52 = texture2D (_LightTextureB0, vec2(tmpvar_51));
-  lowp float tmpvar_53;
-  mediump float shadow_54;
-  lowp vec4 tmpvar_55;
-  tmpvar_55 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4);
-  highp float tmpvar_56;
-  if ((tmpvar_55.x < (xlv_TEXCOORD4.z / xlv_TEXCOORD4.w))) {
-    tmpvar_56 = _LightShadowData.x;
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  lowp vec4 tmpvar_45;
+  highp vec2 P_46;
+  P_46 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_45 = texture2D (_LightTexture0, P_46);
+  highp float tmpvar_47;
+  tmpvar_47 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2D (_LightTextureB0, vec2(tmpvar_47));
+  lowp float tmpvar_49;
+  mediump float shadow_50;
+  lowp vec4 tmpvar_51;
+  tmpvar_51 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4);
+  highp float tmpvar_52;
+  if ((tmpvar_51.x < (xlv_TEXCOORD4.z / xlv_TEXCOORD4.w))) {
+    tmpvar_52 = _LightShadowData.x;
   } else {
-    tmpvar_56 = 1.0;
+    tmpvar_52 = 1.0;
   };
-  shadow_54 = tmpvar_56;
-  tmpvar_53 = shadow_54;
-  highp float tmpvar_57;
-  tmpvar_57 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_49.w) * tmpvar_52.w) * tmpvar_53);
-  atten_4 = tmpvar_57;
-  mediump float tmpvar_58;
-  tmpvar_58 = clamp ((((_LightColor0.w * tmpvar_48) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_59;
-  tmpvar_59 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_58)), 0.0, 1.0);
-  light_3 = tmpvar_59;
+  shadow_50 = tmpvar_52;
+  tmpvar_49 = shadow_50;
+  mediump vec3 lightDir_53;
+  lightDir_53 = tmpvar_43;
+  mediump vec3 viewDir_54;
+  viewDir_54 = xlv_TEXCOORD1;
+  mediump vec3 normal_55;
+  normal_55 = tmpvar_44;
+  mediump float atten_56;
+  atten_56 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_45.w) * tmpvar_48.w) * tmpvar_49);
+  mediump vec4 c_57;
+  highp float nh_58;
+  mediump vec3 tmpvar_59;
+  tmpvar_59 = normalize(lightDir_53);
+  lightDir_53 = tmpvar_59;
   mediump vec3 tmpvar_60;
-  tmpvar_60 = vec3(clamp (floor((1.0 + tmpvar_47)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_60;
-  mediump vec3 tmpvar_61;
-  mediump vec3 i_62;
-  i_62 = -(lightDirection_6);
-  tmpvar_61 = (i_62 - (2.0 * (dot (normalDir_5, i_62) * normalDir_5)));
+  tmpvar_60 = normalize(viewDir_54);
+  viewDir_54 = tmpvar_60;
+  mediump float tmpvar_61;
+  tmpvar_61 = dot (normal_55, tmpvar_59);
+  mediump float tmpvar_62;
+  tmpvar_62 = clamp (dot (normalize((tmpvar_59 + tmpvar_60)), normal_55), 0.0, 1.0);
+  nh_58 = tmpvar_62;
   highp vec3 tmpvar_63;
-  tmpvar_63 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_61, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_63;
-  highp vec3 tmpvar_64;
-  tmpvar_64 = (light_3 + (tex_10.w * tmpvar_63));
-  light_3 = tmpvar_64;
-  highp float tmpvar_65;
-  tmpvar_65 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_9.w = mix (0.4489, tex_10.w, tmpvar_65);
-  highp vec3 tmpvar_66;
-  tmpvar_66 = clamp (((_LightPower * light_3) - color_9.w), 0.0, 1.0);
-  color_9.xyz = (tmpvar_44.xyz * tmpvar_66);
-  highp vec3 tmpvar_67;
-  tmpvar_67 = (color_9.xyz + (_Reflectivity * light_3));
-  color_9.xyz = tmpvar_67;
-  color_9.xyz = (color_9.xyz * light_3);
-  tmpvar_1 = color_9;
+  tmpvar_63 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_61) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_58, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_56 * 4.0));
+  c_57.xyz = tmpvar_63;
+  c_57.w = (tmpvar_61 * (atten_56 * 4.0));
+  color_5.xyz = c_57.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_57.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -6930,7 +6862,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 403
+#line 332
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -6939,17 +6871,17 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 500
+#line 530
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec4 _LightCoord;
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 492
+#line 522
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -7046,53 +6978,62 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform sampler2D _ShadowMapTexture;
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 394
+#line 323
 uniform sampler2D _LightTextureB0;
-#line 399
-#line 413
+#line 328
+#line 342
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 426
-#line 434
+#line 355
+#line 363
+#line 377
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 410
+#line 414
+#line 423
+#line 431
+#line 440
 #line 448
+#line 461
+#line 473
+#line 489
+#line 502
 uniform lowp vec4 _Color;
+#line 510
 uniform highp float _Shininess;
-#line 481
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 514
 uniform highp float _DetailScale;
-#line 485
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 489
+#line 518
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 511
-#line 511
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 541
+#line 541
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 515
+    #line 545
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 519
+    o.worldPos = vertexPos;
+    #line 549
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
-    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
+    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - vertexPos));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
-    #line 524
+    #line 554
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -7112,7 +7053,7 @@ void main() {
     gl_Position = vec4(xl_retval.pos);
     xlv_TEXCOORD0 = float(xl_retval.viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.viewDir);
-    xlv_TEXCOORD2 = vec3(xl_retval.worldNormal);
+    xlv_TEXCOORD2 = vec3(xl_retval.worldPos);
     xlv_TEXCOORD3 = vec4(xl_retval._LightCoord);
     xlv_TEXCOORD4 = vec4(xl_retval._ShadowCoord);
     xlv_TEXCOORD5 = vec3(xl_retval.sphereNormal);
@@ -7206,7 +7147,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 403
+#line 332
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -7215,17 +7156,17 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 500
+#line 530
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec4 _LightCoord;
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 492
+#line 522
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -7322,133 +7263,139 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform sampler2D _ShadowMapTexture;
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 394
+#line 323
 uniform sampler2D _LightTextureB0;
-#line 399
-#line 413
+#line 328
+#line 342
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 426
-#line 434
+#line 355
+#line 363
+#line 377
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 410
+#line 414
+#line 423
+#line 431
+#line 440
 #line 448
+#line 461
+#line 473
+#line 489
+#line 502
 uniform lowp vec4 _Color;
+#line 510
 uniform highp float _Shininess;
-#line 481
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 514
 uniform highp float _DetailScale;
-#line 485
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 489
+#line 518
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 511
-#line 321
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 541
+#line 414
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
+    #line 418
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 330
+#line 423
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
+    #line 427
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 336
     return uv;
 }
-#line 368
+#line 461
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
-    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    highp vec2 uv = ((GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0)) * 4.0) * detailScale);
+    #line 465
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
+    #line 469
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 347
+#line 440
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    #line 444
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 353
     return tex;
 }
-#line 399
+#line 489
+mediump vec4 SpecularColorLight( in mediump vec3 lightDir, in mediump vec3 viewDir, in mediump vec3 normal, in mediump vec4 color, in mediump vec4 specColor, in highp float specK, in mediump float atten ) {
+    lightDir = normalize(lightDir);
+    viewDir = normalize(viewDir);
+    #line 493
+    mediump vec3 h = normalize((lightDir + viewDir));
+    mediump float diffuse = dot( normal, lightDir);
+    highp float nh = xll_saturate_f(dot( h, normal));
+    highp float spec = (pow( nh, specK) * color.w);
+    #line 497
+    mediump vec4 c;
+    c.xyz = ((((color.xyz * _LightColor0.xyz) * diffuse) + ((_LightColor0.xyz * specColor.xyz) * spec)) * (atten * 4.0));
+    c.w = (diffuse * (atten * 4.0));
+    return c;
+}
+#line 328
 lowp float UnitySpotAttenuate( in highp vec3 LightCoord ) {
     return texture( _LightTextureB0, vec2( dot( LightCoord, LightCoord))).w;
 }
-#line 395
+#line 324
 lowp float UnitySpotCookie( in highp vec4 LightCoord ) {
     return texture( _LightTexture0, ((LightCoord.xy / LightCoord.w) + 0.5)).w;
 }
-#line 387
+#line 316
 lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
     mediump float shadow = (( (textureProj( _ShadowMapTexture, shadowCoord).x < (shadowCoord.z / shadowCoord.w)) ) ? ( _LightShadowData.x ) : ( 1.0 ));
-    #line 390
+    #line 319
     return shadow;
 }
-#line 526
+#line 556
 lowp vec4 frag( in v2f IN ) {
-    #line 528
+    #line 558
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 532
+    #line 562
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 536
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 normalDir = IN.worldNormal;
-    mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 540
-    mediump float diff = ((NdotL - 0.01) / 0.99);
-    lowp float atten = (((float((IN._LightCoord.z > 0.0)) * UnitySpotCookie( IN._LightCoord)) * UnitySpotAttenuate( IN._LightCoord.xyz)) * unitySampleShadow( IN._ShadowCoord));
-    mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 544
-    highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
-    specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light += (main.w * specularReflection);
-    color.w = 1.0;
-    #line 548
-    highp float refrac = 0.67;
-    color.w *= pow( refrac, 2.0);
-    color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
-    color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 552
-    color.xyz += (_Reflectivity * light);
-    color.xyz *= light;
+    #line 566
+    mediump float handoff = xll_saturate_f(pow( _PlanetOpacity, 2.0));
+    color.xyz = mix( color.xyz, main.xyz, vec3( handoff));
+    mediump vec4 specColor = _SpecColor;
+    specColor.w = mix( 1.0, main.w, handoff);
+    #line 570
+    mediump vec4 colorLight = SpecularColorLight( vec3( normalize(_WorldSpaceLightPos0)), IN.viewDir, normalize((IN.worldPos - _PlanetOrigin)), color, specColor, (_Shininess * 128.0), (((float((IN._LightCoord.z > 0.0)) * UnitySpotCookie( IN._LightCoord)) * UnitySpotAttenuate( IN._LightCoord.xyz)) * unitySampleShadow( IN._ShadowCoord)));
+    color.xyz = colorLight.xyz;
+    color.w = mix( 1.0, color.w, ((1.0 - handoff) * step( 0.0, colorLight.w)));
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -7463,7 +7410,7 @@ void main() {
     xlt_IN.pos = vec4(0.0);
     xlt_IN.viewDist = float(xlv_TEXCOORD0);
     xlt_IN.viewDir = vec3(xlv_TEXCOORD1);
-    xlt_IN.worldNormal = vec3(xlv_TEXCOORD2);
+    xlt_IN.worldPos = vec3(xlv_TEXCOORD2);
     xlt_IN._LightCoord = vec4(xlv_TEXCOORD3);
     xlt_IN._ShadowCoord = vec4(xlv_TEXCOORD4);
     xlt_IN.sphereNormal = vec3(xlv_TEXCOORD5);
@@ -7492,20 +7439,19 @@ uniform mat4 unity_World2Shadow[4];
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
-  vec3 p_1;
-  p_1 = ((_Object2World * gl_Vertex).xyz - _WorldSpaceCameraPos);
-  vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = gl_Normal;
+  vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * gl_Vertex).xyz;
+  vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   vec4 tmpvar_3;
   tmpvar_3.x = gl_MultiTexCoord0.x;
   tmpvar_3.y = gl_MultiTexCoord0.y;
   tmpvar_3.z = gl_MultiTexCoord1.x;
   tmpvar_3.w = gl_MultiTexCoord1.y;
   gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -7521,9 +7467,8 @@ varying vec4 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying float xlv_TEXCOORD0;
-uniform float _Reflectivity;
-uniform float _LightPower;
-uniform float _MinLight;
+uniform vec3 _PlanetOrigin;
+uniform float _PlanetOpacity;
 uniform float _DetailDist;
 uniform float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -7536,7 +7481,6 @@ uniform vec4 _LightColor0;
 uniform sampler2D _LightTextureB0;
 uniform sampler2D _LightTexture0;
 uniform sampler2DShadow _ShadowMapTexture;
-
 uniform vec4 _LightShadowData;
 uniform vec4 _WorldSpaceLightPos0;
 void main ()
@@ -7602,37 +7546,41 @@ void main ()
   uv_13.x = (0.5 + (0.159155 * r_14));
   uv_13.y = (0.31831 * (1.5708 - (sign(tmpvar_12.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_12.y))) * (1.5708 + (abs(tmpvar_12.y) * (-0.214602 + (abs(tmpvar_12.y) * (0.0865667 + (abs(tmpvar_12.y) * -0.0310296)))))))))));
   vec2 tmpvar_18;
-  tmpvar_18 = dFdx(tmpvar_12.xz);
+  tmpvar_18 = ((uv_13 * 4.0) * _DetailScale);
   vec2 tmpvar_19;
-  tmpvar_19 = dFdy(tmpvar_12.xz);
-  vec4 tmpvar_20;
-  tmpvar_20.x = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_20.y = dFdx(uv_13.y);
-  tmpvar_20.z = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
-  tmpvar_20.w = dFdy(uv_13.y);
-  vec3 tmpvar_21;
-  tmpvar_21 = abs(tmpvar_12);
-  float tmpvar_22;
-  tmpvar_22 = float((tmpvar_21.z >= tmpvar_21.x));
-  vec3 tmpvar_23;
-  tmpvar_23 = mix (tmpvar_21.yxz, mix (tmpvar_21, tmpvar_21.zxy, vec3(tmpvar_22)), vec3(float((mix (tmpvar_21.x, tmpvar_21.z, tmpvar_22) >= tmpvar_21.y))));
-  vec4 tmpvar_24;
-  tmpvar_24 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) * _DetailScale), tmpvar_20.xy, tmpvar_20.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
-  color_2.xyz = tmpvar_24.xyz;
+  tmpvar_19 = dFdx(tmpvar_12.xz);
+  vec2 tmpvar_20;
+  tmpvar_20 = dFdy(tmpvar_12.xz);
+  vec4 tmpvar_21;
+  tmpvar_21.x = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
+  tmpvar_21.y = dFdx(tmpvar_18.y);
+  tmpvar_21.z = (0.159155 * sqrt(dot (tmpvar_20, tmpvar_20)));
+  tmpvar_21.w = dFdy(tmpvar_18.y);
+  vec3 tmpvar_22;
+  tmpvar_22 = abs(tmpvar_12);
+  float tmpvar_23;
+  tmpvar_23 = float((tmpvar_22.z >= tmpvar_22.x));
+  vec3 tmpvar_24;
+  tmpvar_24 = mix (tmpvar_22.yxz, mix (tmpvar_22, tmpvar_22.zxy, vec3(tmpvar_23)), vec3(float((mix (tmpvar_22.x, tmpvar_22.z, tmpvar_23) >= tmpvar_22.y))));
   vec4 tmpvar_25;
-  tmpvar_25 = normalize(_WorldSpaceLightPos0);
+  tmpvar_25 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) * _DetailScale), tmpvar_21.xy, tmpvar_21.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
+  color_2.w = tmpvar_25.w;
   float tmpvar_26;
-  tmpvar_26 = clamp (dot (xlv_TEXCOORD2, tmpvar_25.xyz), 0.0, 1.0);
-  float tmpvar_27;
-  tmpvar_27 = (((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w) * (_LightShadowData.x + (shadow2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x * (1.0 - _LightShadowData.x))));
-  vec3 i_28;
-  i_28 = -(tmpvar_25.xyz);
-  vec3 tmpvar_29;
-  tmpvar_29 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_26 - 0.01) / 0.99)) * 4.0) * tmpvar_27), 0.0, 1.0))), 0.0, 1.0) + (main_1.w * (vec3(clamp (floor((1.0 + tmpvar_26)), 0.0, 1.0)) * (((tmpvar_27 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_28 - (2.0 * (dot (xlv_TEXCOORD2, i_28) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
-  color_2.w = mix (0.4489, main_1.w, clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0));
-  color_2.xyz = (tmpvar_24.xyz * clamp (((_LightPower * tmpvar_29) - color_2.w), 0.0, 1.0));
-  color_2.xyz = (color_2.xyz + (_Reflectivity * tmpvar_29));
-  color_2.xyz = (color_2.xyz * tmpvar_29);
+  tmpvar_26 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  color_2.xyz = mix (tmpvar_25.xyz, main_1.xyz, vec3(tmpvar_26));
+  vec3 tmpvar_27;
+  tmpvar_27 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  float atten_28;
+  atten_28 = (((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w) * (_LightShadowData.x + (shadow2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x * (1.0 - _LightShadowData.x))));
+  vec4 c_29;
+  vec3 tmpvar_30;
+  tmpvar_30 = normalize(normalize(_WorldSpaceLightPos0).xyz);
+  float tmpvar_31;
+  tmpvar_31 = dot (tmpvar_27, tmpvar_30);
+  c_29.xyz = ((((color_2.xyz * _LightColor0.xyz) * tmpvar_31) + ((_LightColor0.xyz * _SpecColor.xyz) * (pow (clamp (dot (normalize((tmpvar_30 + normalize(xlv_TEXCOORD1))), tmpvar_27), 0.0, 1.0), (_Shininess * 128.0)) * tmpvar_25.w))) * (atten_28 * 4.0));
+  c_29.w = (tmpvar_31 * (atten_28 * 4.0));
+  color_2.xyz = c_29.xyz;
+  color_2.w = mix (1.0, tmpvar_25.w, ((1.0 - tmpvar_26) * float((c_29.w >= 0.0))));
   gl_FragData[0] = color_2;
 }
 
@@ -7644,7 +7592,6 @@ void main ()
 SubProgram "d3d9 " {
 Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
 Bind "vertex" Vertex
-Bind "normal" Normal
 Bind "texcoord" TexCoord0
 Bind "texcoord1" TexCoord1
 Matrix 0 [glstate_matrix_mvp]
@@ -7653,7 +7600,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 35 ALU
+; 29 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -7661,42 +7608,34 @@ dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
 dcl_texcoord5 o6
-def c17, 0.00000000, 0, 0, 0
 dcl_position0 v0
-dcl_normal0 v1
-dcl_texcoord0 v2
-dcl_texcoord1 v3
-mov r1.xyz, v1
-mov r1.w, c17.x
-dp4 r0.z, r1, c10
-dp4 r0.x, r1, c8
-dp4 r0.y, r1, c9
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o3.xyz, r0.w, r0
+dcl_texcoord0 v1
+dcl_texcoord1 v2
+mov r1.zw, v2.xyxy
+mov r1.xy, v1
+dp4 r0.w, r1, r1
+rsq r1.w, r0.w
+mul r1.xyz, r1.w, r1
+dp4 r1.w, v0, c11
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
-mov r2.zw, v3.xyxy
-mov r2.xy, v2
-dp4 r1.x, r2, r2
-rsq r0.w, r1.x
-mul r2.xyz, r0.w, r2
-add r1.xyz, -r0, c16
-dp3 r0.w, r1, r1
-rsq r1.w, r0.w
-dp4 r0.w, v0, c11
-mov o6.xyz, -r2
-mul o2.xyz, r1.w, r1
-dp4 o4.w, r0, c15
-dp4 o4.z, r0, c14
-dp4 o4.y, r0, c13
-dp4 o4.x, r0, c12
-dp4 o5.w, r0, c7
-dp4 o5.z, r0, c6
-dp4 o5.y, r0, c5
-dp4 o5.x, r0, c4
-rcp o1.x, r1.w
+add r2.xyz, -r0, c16
+dp3 r0.w, r2, r2
+rsq r0.w, r0.w
+mov o6.xyz, -r1
+mov r1.xyz, r0
+mul o2.xyz, r0.w, r2
+dp4 o4.w, r1, c15
+dp4 o4.z, r1, c14
+dp4 o4.y, r1, c13
+dp4 o4.x, r1, c12
+dp4 o5.w, r1, c7
+dp4 o5.z, r1, c6
+dp4 o5.y, r1, c5
+dp4 o5.x, r1, c4
+rcp o1.x, r0.w
+mov o3.xyz, r0
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -7725,24 +7664,22 @@ uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -7762,9 +7699,8 @@ varying highp vec4 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -7777,181 +7713,175 @@ uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTextureB0;
 uniform sampler2D _LightTexture0;
 uniform lowp sampler2DShadow _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  lowp float atten_4;
-  mediump vec3 normalDir_5;
-  mediump vec3 lightDirection_6;
-  mediump vec3 ambientLighting_7;
-  mediump float detailLevel_8;
-  mediump vec4 color_9;
-  mediump vec4 tex_10;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_12;
-  highp float r_13;
-  if ((abs(tmpvar_11.z) > (1e-08 * abs(tmpvar_11.x)))) {
-    highp float y_over_x_14;
-    y_over_x_14 = (tmpvar_11.x / tmpvar_11.z);
-    highp float s_15;
-    highp float x_16;
-    x_16 = (y_over_x_14 * inversesqrt(((y_over_x_14 * y_over_x_14) + 1.0)));
-    s_15 = (sign(x_16) * (1.5708 - (sqrt((1.0 - abs(x_16))) * (1.5708 + (abs(x_16) * (-0.214602 + (abs(x_16) * (0.0865667 + (abs(x_16) * -0.0310296)))))))));
-    r_13 = s_15;
-    if ((tmpvar_11.z < 0.0)) {
-      if ((tmpvar_11.x >= 0.0)) {
-        r_13 = (s_15 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_13 = (r_13 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_13 = (sign(tmpvar_11.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_12.x = (0.5 + (0.159155 * r_13));
-  uv_12.y = (0.31831 * (1.5708 - (sign(tmpvar_11.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_11.y))) * (1.5708 + (abs(tmpvar_11.y) * (-0.214602 + (abs(tmpvar_11.y) * (0.0865667 + (abs(tmpvar_11.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdx(tmpvar_11.xz);
-  highp vec2 tmpvar_18;
-  tmpvar_18 = dFdy(tmpvar_11.xz);
-  highp vec4 tmpvar_19;
-  tmpvar_19.x = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_19.y = dFdx(uv_12.y);
-  tmpvar_19.z = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_19.w = dFdy(uv_12.y);
-  lowp vec4 tmpvar_20;
-  tmpvar_20 = texture2DGradEXT (_MainTex, uv_12, tmpvar_19.xy, tmpvar_19.zw);
-  tex_10 = tmpvar_20;
-  mediump vec4 tmpvar_21;
-  mediump vec3 detailCoords_22;
-  mediump float nylerp_23;
-  mediump float zxlerp_24;
-  highp vec3 tmpvar_25;
-  tmpvar_25 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_26;
-  highp float r_27;
-  if ((abs(tmpvar_25.z) > (1e-08 * abs(tmpvar_25.x)))) {
-    highp float y_over_x_28;
-    y_over_x_28 = (tmpvar_25.x / tmpvar_25.z);
-    highp float s_29;
-    highp float x_30;
-    x_30 = (y_over_x_28 * inversesqrt(((y_over_x_28 * y_over_x_28) + 1.0)));
-    s_29 = (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))));
-    r_27 = s_29;
-    if ((tmpvar_25.z < 0.0)) {
-      if ((tmpvar_25.x >= 0.0)) {
-        r_27 = (s_29 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_27 = (r_27 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_27 = (sign(tmpvar_25.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_26.x = (0.5 + (0.159155 * r_27));
-  uv_26.y = (0.31831 * (1.5708 - (sign(tmpvar_25.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_25.y))) * (1.5708 + (abs(tmpvar_25.y) * (-0.214602 + (abs(tmpvar_25.y) * (0.0865667 + (abs(tmpvar_25.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdx(tmpvar_25.xz);
-  highp vec2 tmpvar_32;
-  tmpvar_32 = dFdy(tmpvar_25.xz);
-  highp vec4 tmpvar_33;
-  tmpvar_33.x = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_33.y = dFdx(uv_26.y);
-  tmpvar_33.z = (0.159155 * sqrt(dot (tmpvar_32, tmpvar_32)));
-  tmpvar_33.w = dFdy(uv_26.y);
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
   highp vec3 tmpvar_34;
-  tmpvar_34 = abs(tmpvar_25);
-  highp float tmpvar_35;
-  tmpvar_35 = float((tmpvar_34.z >= tmpvar_34.x));
-  zxlerp_24 = tmpvar_35;
-  highp float tmpvar_36;
-  tmpvar_36 = float((mix (tmpvar_34.x, tmpvar_34.z, zxlerp_24) >= tmpvar_34.y));
-  nylerp_23 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_34, tmpvar_34.zxy, vec3(zxlerp_24));
-  detailCoords_22 = tmpvar_37;
-  highp vec3 tmpvar_38;
-  tmpvar_38 = mix (tmpvar_34.yxz, detailCoords_22, vec3(nylerp_23));
-  detailCoords_22 = tmpvar_38;
-  mediump float tmpvar_39;
-  tmpvar_39 = abs(detailCoords_22.x);
-  highp vec2 coord_40;
-  coord_40 = (((0.5 * detailCoords_22.zy) / tmpvar_39) * _DetailScale);
-  lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_40, tmpvar_33.xy, tmpvar_33.zw);
-  tmpvar_21 = tmpvar_41;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_8 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_44;
-  tmpvar_44 = (mix (mix (tmpvar_21, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8)), tex_10, vec4(tmpvar_43)) * _Color);
-  color_9.xyz = tmpvar_44.xyz;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_45;
-  highp vec3 tmpvar_46;
-  tmpvar_46 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_46;
-  normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  lowp vec4 tmpvar_45;
+  highp vec2 P_46;
+  P_46 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_45 = texture2D (_LightTexture0, P_46);
+  highp float tmpvar_47;
+  tmpvar_47 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
   lowp vec4 tmpvar_48;
-  highp vec2 P_49;
-  P_49 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
-  tmpvar_48 = texture2D (_LightTexture0, P_49);
-  highp float tmpvar_50;
-  tmpvar_50 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
-  lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2D (_LightTextureB0, vec2(tmpvar_50));
-  lowp float tmpvar_52;
-  mediump float shadow_53;
-  lowp float tmpvar_54;
-  tmpvar_54 = shadow2DProjEXT (_ShadowMapTexture, xlv_TEXCOORD4);
-  shadow_53 = tmpvar_54;
-  highp float tmpvar_55;
-  tmpvar_55 = (_LightShadowData.x + (shadow_53 * (1.0 - _LightShadowData.x)));
-  shadow_53 = tmpvar_55;
-  tmpvar_52 = shadow_53;
-  highp float tmpvar_56;
-  tmpvar_56 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_48.w) * tmpvar_51.w) * tmpvar_52);
-  atten_4 = tmpvar_56;
-  mediump float tmpvar_57;
-  tmpvar_57 = clamp ((((_LightColor0.w * ((tmpvar_47 - 0.01) / 0.99)) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_58;
-  tmpvar_58 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_57)), 0.0, 1.0);
-  light_3 = tmpvar_58;
+  tmpvar_48 = texture2D (_LightTextureB0, vec2(tmpvar_47));
+  lowp float tmpvar_49;
+  mediump float shadow_50;
+  lowp float tmpvar_51;
+  tmpvar_51 = shadow2DProjEXT (_ShadowMapTexture, xlv_TEXCOORD4);
+  shadow_50 = tmpvar_51;
+  highp float tmpvar_52;
+  tmpvar_52 = (_LightShadowData.x + (shadow_50 * (1.0 - _LightShadowData.x)));
+  shadow_50 = tmpvar_52;
+  tmpvar_49 = shadow_50;
+  mediump vec3 lightDir_53;
+  lightDir_53 = tmpvar_43;
+  mediump vec3 viewDir_54;
+  viewDir_54 = xlv_TEXCOORD1;
+  mediump vec3 normal_55;
+  normal_55 = tmpvar_44;
+  mediump float atten_56;
+  atten_56 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_45.w) * tmpvar_48.w) * tmpvar_49);
+  mediump vec4 c_57;
+  highp float nh_58;
   mediump vec3 tmpvar_59;
-  tmpvar_59 = vec3(clamp (floor((1.0 + tmpvar_47)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_59;
+  tmpvar_59 = normalize(lightDir_53);
+  lightDir_53 = tmpvar_59;
   mediump vec3 tmpvar_60;
-  mediump vec3 i_61;
-  i_61 = -(lightDirection_6);
-  tmpvar_60 = (i_61 - (2.0 * (dot (normalDir_5, i_61) * normalDir_5)));
-  highp vec3 tmpvar_62;
-  tmpvar_62 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_60, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_62;
+  tmpvar_60 = normalize(viewDir_54);
+  viewDir_54 = tmpvar_60;
+  mediump float tmpvar_61;
+  tmpvar_61 = dot (normal_55, tmpvar_59);
+  mediump float tmpvar_62;
+  tmpvar_62 = clamp (dot (normalize((tmpvar_59 + tmpvar_60)), normal_55), 0.0, 1.0);
+  nh_58 = tmpvar_62;
   highp vec3 tmpvar_63;
-  tmpvar_63 = (light_3 + (tex_10.w * tmpvar_62));
-  light_3 = tmpvar_63;
-  highp float tmpvar_64;
-  tmpvar_64 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_9.w = mix (0.4489, tex_10.w, tmpvar_64);
-  highp vec3 tmpvar_65;
-  tmpvar_65 = clamp (((_LightPower * light_3) - color_9.w), 0.0, 1.0);
-  color_9.xyz = (tmpvar_44.xyz * tmpvar_65);
-  highp vec3 tmpvar_66;
-  tmpvar_66 = (color_9.xyz + (_Reflectivity * light_3));
-  color_9.xyz = tmpvar_66;
-  color_9.xyz = (color_9.xyz * light_3);
-  tmpvar_1 = color_9;
+  tmpvar_63 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_61) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_58, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_56 * 4.0));
+  c_57.xyz = tmpvar_63;
+  c_57.w = (tmpvar_61 * (atten_56 * 4.0));
+  color_5.xyz = c_57.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_57.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -7992,7 +7922,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 404
+#line 333
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -8001,17 +7931,17 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 501
+#line 531
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec4 _LightCoord;
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 493
+#line 523
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -8108,52 +8038,61 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform lowp sampler2DShadow _ShadowMapTexture;
 uniform sampler2D _LightTexture0;
-#line 394
+#line 323
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 414
+#line 343
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 427
-#line 435
+#line 356
+#line 364
+#line 378
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 411
+#line 415
+#line 424
+#line 432
+#line 441
 #line 449
+#line 462
+#line 474
+#line 490
+#line 503
 uniform lowp vec4 _Color;
+#line 511
 uniform highp float _Shininess;
-#line 482
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 515
 uniform highp float _DetailScale;
-#line 486
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 490
+#line 519
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 512
-#line 512
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 542
+#line 542
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 516
+    #line 546
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 520
+    o.worldPos = vertexPos;
+    #line 550
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
-    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
+    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - vertexPos));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
-    #line 525
+    #line 555
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -8173,7 +8112,7 @@ void main() {
     gl_Position = vec4(xl_retval.pos);
     xlv_TEXCOORD0 = float(xl_retval.viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.viewDir);
-    xlv_TEXCOORD2 = vec3(xl_retval.worldNormal);
+    xlv_TEXCOORD2 = vec3(xl_retval.worldPos);
     xlv_TEXCOORD3 = vec4(xl_retval._LightCoord);
     xlv_TEXCOORD4 = vec4(xl_retval._ShadowCoord);
     xlv_TEXCOORD5 = vec3(xl_retval.sphereNormal);
@@ -8268,7 +8207,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 404
+#line 333
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -8277,17 +8216,17 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 501
+#line 531
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec4 _LightCoord;
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 493
+#line 523
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -8384,135 +8323,141 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform lowp sampler2DShadow _ShadowMapTexture;
 uniform sampler2D _LightTexture0;
-#line 394
+#line 323
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 414
+#line 343
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 427
-#line 435
+#line 356
+#line 364
+#line 378
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 411
+#line 415
+#line 424
+#line 432
+#line 441
 #line 449
+#line 462
+#line 474
+#line 490
+#line 503
 uniform lowp vec4 _Color;
+#line 511
 uniform highp float _Shininess;
-#line 482
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 515
 uniform highp float _DetailScale;
-#line 486
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 490
+#line 519
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 512
-#line 321
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 542
+#line 415
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
+    #line 419
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 330
+#line 424
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
+    #line 428
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 336
     return uv;
 }
-#line 368
+#line 462
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
-    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    highp vec2 uv = ((GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0)) * 4.0) * detailScale);
+    #line 466
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
+    #line 470
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 347
+#line 441
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    #line 445
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 353
     return tex;
 }
-#line 400
+#line 490
+mediump vec4 SpecularColorLight( in mediump vec3 lightDir, in mediump vec3 viewDir, in mediump vec3 normal, in mediump vec4 color, in mediump vec4 specColor, in highp float specK, in mediump float atten ) {
+    lightDir = normalize(lightDir);
+    viewDir = normalize(viewDir);
+    #line 494
+    mediump vec3 h = normalize((lightDir + viewDir));
+    mediump float diffuse = dot( normal, lightDir);
+    highp float nh = xll_saturate_f(dot( h, normal));
+    highp float spec = (pow( nh, specK) * color.w);
+    #line 498
+    mediump vec4 c;
+    c.xyz = ((((color.xyz * _LightColor0.xyz) * diffuse) + ((_LightColor0.xyz * specColor.xyz) * spec)) * (atten * 4.0));
+    c.w = (diffuse * (atten * 4.0));
+    return c;
+}
+#line 329
 lowp float UnitySpotAttenuate( in highp vec3 LightCoord ) {
-    #line 402
+    #line 331
     return texture( _LightTextureB0, vec2( dot( LightCoord, LightCoord))).w;
 }
-#line 396
+#line 325
 lowp float UnitySpotCookie( in highp vec4 LightCoord ) {
-    #line 398
+    #line 327
     return texture( _LightTexture0, ((LightCoord.xy / LightCoord.w) + 0.5)).w;
 }
-#line 387
+#line 316
 lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
     mediump float shadow = xll_shadow2Dproj( _ShadowMapTexture, shadowCoord);
-    #line 390
+    #line 319
     shadow = (_LightShadowData.x + (shadow * (1.0 - _LightShadowData.x)));
     return shadow;
 }
-#line 527
+#line 557
 lowp vec4 frag( in v2f IN ) {
-    #line 529
+    #line 559
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 533
+    #line 563
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 537
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 normalDir = IN.worldNormal;
-    mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 541
-    mediump float diff = ((NdotL - 0.01) / 0.99);
-    lowp float atten = (((float((IN._LightCoord.z > 0.0)) * UnitySpotCookie( IN._LightCoord)) * UnitySpotAttenuate( IN._LightCoord.xyz)) * unitySampleShadow( IN._ShadowCoord));
-    mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 545
-    highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
-    specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light += (main.w * specularReflection);
-    color.w = 1.0;
-    #line 549
-    highp float refrac = 0.67;
-    color.w *= pow( refrac, 2.0);
-    color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
-    color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 553
-    color.xyz += (_Reflectivity * light);
-    color.xyz *= light;
+    #line 567
+    mediump float handoff = xll_saturate_f(pow( _PlanetOpacity, 2.0));
+    color.xyz = mix( color.xyz, main.xyz, vec3( handoff));
+    mediump vec4 specColor = _SpecColor;
+    specColor.w = mix( 1.0, main.w, handoff);
+    #line 571
+    mediump vec4 colorLight = SpecularColorLight( vec3( normalize(_WorldSpaceLightPos0)), IN.viewDir, normalize((IN.worldPos - _PlanetOrigin)), color, specColor, (_Shininess * 128.0), (((float((IN._LightCoord.z > 0.0)) * UnitySpotCookie( IN._LightCoord)) * UnitySpotAttenuate( IN._LightCoord.xyz)) * unitySampleShadow( IN._ShadowCoord)));
+    color.xyz = colorLight.xyz;
+    color.w = mix( 1.0, color.w, ((1.0 - handoff) * step( 0.0, colorLight.w)));
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -8527,7 +8472,7 @@ void main() {
     xlt_IN.pos = vec4(0.0);
     xlt_IN.viewDist = float(xlv_TEXCOORD0);
     xlt_IN.viewDir = vec3(xlv_TEXCOORD1);
-    xlt_IN.worldNormal = vec3(xlv_TEXCOORD2);
+    xlt_IN.worldPos = vec3(xlv_TEXCOORD2);
     xlt_IN._LightCoord = vec4(xlv_TEXCOORD3);
     xlt_IN._ShadowCoord = vec4(xlv_TEXCOORD4);
     xlt_IN.sphereNormal = vec3(xlv_TEXCOORD5);
@@ -8556,11 +8501,10 @@ void main ()
 {
   vec4 tmpvar_1;
   tmpvar_1 = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  vec3 p_2;
-  p_2 = ((_Object2World * gl_Vertex).xyz - _WorldSpaceCameraPos);
-  vec4 tmpvar_3;
-  tmpvar_3.w = 0.0;
-  tmpvar_3.xyz = gl_Normal;
+  vec3 tmpvar_2;
+  tmpvar_2 = (_Object2World * gl_Vertex).xyz;
+  vec3 p_3;
+  p_3 = (tmpvar_2 - _WorldSpaceCameraPos);
   vec4 tmpvar_4;
   tmpvar_4.x = gl_MultiTexCoord0.x;
   tmpvar_4.y = gl_MultiTexCoord0.y;
@@ -8575,9 +8519,9 @@ void main ()
   o_5.xy = (tmpvar_7 + tmpvar_6.w);
   o_5.zw = tmpvar_1.zw;
   gl_Position = tmpvar_1;
-  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_3).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_3, p_3));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_2));
+  xlv_TEXCOORD2 = tmpvar_2;
   xlv_TEXCOORD3 = o_5;
   xlv_TEXCOORD5 = -(normalize(tmpvar_4).xyz);
 }
@@ -8591,9 +8535,8 @@ varying vec4 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying float xlv_TEXCOORD0;
-uniform float _Reflectivity;
-uniform float _LightPower;
-uniform float _MinLight;
+uniform vec3 _PlanetOrigin;
+uniform float _PlanetOpacity;
 uniform float _DetailDist;
 uniform float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -8604,7 +8547,6 @@ uniform vec4 _Color;
 uniform vec4 _SpecColor;
 uniform vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-
 uniform vec4 _WorldSpaceLightPos0;
 void main ()
 {
@@ -8669,37 +8611,41 @@ void main ()
   uv_13.x = (0.5 + (0.159155 * r_14));
   uv_13.y = (0.31831 * (1.5708 - (sign(tmpvar_12.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_12.y))) * (1.5708 + (abs(tmpvar_12.y) * (-0.214602 + (abs(tmpvar_12.y) * (0.0865667 + (abs(tmpvar_12.y) * -0.0310296)))))))))));
   vec2 tmpvar_18;
-  tmpvar_18 = dFdx(tmpvar_12.xz);
+  tmpvar_18 = ((uv_13 * 4.0) * _DetailScale);
   vec2 tmpvar_19;
-  tmpvar_19 = dFdy(tmpvar_12.xz);
-  vec4 tmpvar_20;
-  tmpvar_20.x = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_20.y = dFdx(uv_13.y);
-  tmpvar_20.z = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
-  tmpvar_20.w = dFdy(uv_13.y);
-  vec3 tmpvar_21;
-  tmpvar_21 = abs(tmpvar_12);
-  float tmpvar_22;
-  tmpvar_22 = float((tmpvar_21.z >= tmpvar_21.x));
-  vec3 tmpvar_23;
-  tmpvar_23 = mix (tmpvar_21.yxz, mix (tmpvar_21, tmpvar_21.zxy, vec3(tmpvar_22)), vec3(float((mix (tmpvar_21.x, tmpvar_21.z, tmpvar_22) >= tmpvar_21.y))));
-  vec4 tmpvar_24;
-  tmpvar_24 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) * _DetailScale), tmpvar_20.xy, tmpvar_20.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
-  color_2.xyz = tmpvar_24.xyz;
+  tmpvar_19 = dFdx(tmpvar_12.xz);
+  vec2 tmpvar_20;
+  tmpvar_20 = dFdy(tmpvar_12.xz);
+  vec4 tmpvar_21;
+  tmpvar_21.x = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
+  tmpvar_21.y = dFdx(tmpvar_18.y);
+  tmpvar_21.z = (0.159155 * sqrt(dot (tmpvar_20, tmpvar_20)));
+  tmpvar_21.w = dFdy(tmpvar_18.y);
+  vec3 tmpvar_22;
+  tmpvar_22 = abs(tmpvar_12);
+  float tmpvar_23;
+  tmpvar_23 = float((tmpvar_22.z >= tmpvar_22.x));
+  vec3 tmpvar_24;
+  tmpvar_24 = mix (tmpvar_22.yxz, mix (tmpvar_22, tmpvar_22.zxy, vec3(tmpvar_23)), vec3(float((mix (tmpvar_22.x, tmpvar_22.z, tmpvar_23) >= tmpvar_22.y))));
   vec4 tmpvar_25;
-  tmpvar_25 = normalize(_WorldSpaceLightPos0);
+  tmpvar_25 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) * _DetailScale), tmpvar_21.xy, tmpvar_21.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
+  color_2.w = tmpvar_25.w;
   float tmpvar_26;
-  tmpvar_26 = clamp (dot (xlv_TEXCOORD2, tmpvar_25.xyz), 0.0, 1.0);
+  tmpvar_26 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  color_2.xyz = mix (tmpvar_25.xyz, main_1.xyz, vec3(tmpvar_26));
   vec4 tmpvar_27;
-  tmpvar_27 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3);
-  vec3 i_28;
-  i_28 = -(tmpvar_25.xyz);
-  vec3 tmpvar_29;
-  tmpvar_29 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_26 - 0.01) / 0.99)) * 4.0) * tmpvar_27.x), 0.0, 1.0))), 0.0, 1.0) + (main_1.w * (vec3(clamp (floor((1.0 + tmpvar_26)), 0.0, 1.0)) * (((tmpvar_27.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_28 - (2.0 * (dot (xlv_TEXCOORD2, i_28) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
-  color_2.w = mix (0.4489, main_1.w, clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0));
-  color_2.xyz = (tmpvar_24.xyz * clamp (((_LightPower * tmpvar_29) - color_2.w), 0.0, 1.0));
-  color_2.xyz = (color_2.xyz + (_Reflectivity * tmpvar_29));
-  color_2.xyz = (color_2.xyz * tmpvar_29);
+  tmpvar_27 = normalize(_WorldSpaceLightPos0);
+  vec3 tmpvar_28;
+  tmpvar_28 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  vec4 tmpvar_29;
+  tmpvar_29 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3);
+  vec4 c_30;
+  float tmpvar_31;
+  tmpvar_31 = dot (tmpvar_28, tmpvar_27.xyz);
+  c_30.xyz = ((((color_2.xyz * _LightColor0.xyz) * tmpvar_31) + ((_LightColor0.xyz * _SpecColor.xyz) * (pow (clamp (dot (normalize((tmpvar_27.xyz + normalize(xlv_TEXCOORD1))), tmpvar_28), 0.0, 1.0), (_Shininess * 128.0)) * tmpvar_25.w))) * (tmpvar_29.x * 4.0));
+  c_30.w = (tmpvar_31 * (tmpvar_29.x * 4.0));
+  color_2.xyz = c_30.xyz;
+  color_2.w = mix (1.0, tmpvar_25.w, ((1.0 - tmpvar_26) * float((c_30.w >= 0.0))));
   gl_FragData[0] = color_2;
 }
 
@@ -8711,7 +8657,6 @@ void main ()
 SubProgram "d3d9 " {
 Keywords { "DIRECTIONAL" "SHADOWS_SCREEN" }
 Bind "vertex" Vertex
-Bind "normal" Normal
 Bind "texcoord" TexCoord0
 Bind "texcoord1" TexCoord1
 Matrix 0 [glstate_matrix_mvp]
@@ -8720,49 +8665,41 @@ Vector 9 [_ProjectionParams]
 Vector 10 [_ScreenParams]
 Matrix 4 [_Object2World]
 "vs_3_0
-; 31 ALU
+; 24 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
 dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord5 o5
-def c11, 0.00000000, 0.50000000, 0, 0
+def c11, 0.50000000, 0, 0, 0
 dcl_position0 v0
-dcl_normal0 v1
-dcl_texcoord0 v2
-dcl_texcoord1 v3
-mov r1.xyz, v1
-mov r1.w, c11.x
-dp4 r0.z, r1, c6
-dp4 r0.x, r1, c4
-dp4 r0.y, r1, c5
-dp3 r0.w, r0, r0
+dcl_texcoord0 v1
+dcl_texcoord1 v2
+mov r0.xy, v1
+mov r0.zw, v2.xyxy
+dp4 r0.w, r0, r0
 rsq r0.w, r0.w
-mul o3.xyz, r0.w, r0
-mov r1.zw, v3.xyxy
-mov r1.xy, v2
-dp4 r0.z, r1, r1
-dp4 r0.w, v0, c3
-dp4 r0.x, v0, c0
-dp4 r0.y, v0, c1
-mul r2.xyz, r0.xyww, c11.y
+mul r3.xyz, r0.w, r0
+dp4 r1.w, v0, c3
+dp4 r1.z, v0, c2
+dp4 r1.x, v0, c0
+dp4 r1.y, v0, c1
+mul r2.xyz, r1.xyww, c11.x
 mul r2.y, r2, c9.x
-rsq r0.z, r0.z
+dp4 r0.z, v0, c6
+dp4 r0.x, v0, c4
+dp4 r0.y, v0, c5
 mad o4.xy, r2.z, c10.zwzw, r2
-mul r2.xyz, r0.z, r1
-dp4 r0.z, v0, c2
-dp4 r1.z, v0, c6
-dp4 r1.x, v0, c4
-dp4 r1.y, v0, c5
-add r1.xyz, -r1, c8
-dp3 r1.w, r1, r1
-rsq r1.w, r1.w
-mov o5.xyz, -r2
-mov o0, r0
-mul o2.xyz, r1.w, r1
-mov o4.zw, r0
-rcp o1.x, r1.w
+add r2.xyz, -r0, c8
+dp3 r0.w, r2, r2
+rsq r0.w, r0.w
+mov o5.xyz, -r3
+mov o0, r1
+mul o2.xyz, r0.w, r2
+mov o4.zw, r1
+rcp o1.x, r0.w
+mov o3.xyz, r0
 "
 }
 
@@ -8784,24 +8721,22 @@ uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
 }
@@ -8818,9 +8753,8 @@ varying highp vec4 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -8831,172 +8765,167 @@ uniform lowp vec4 _Color;
 uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  mediump vec3 normalDir_4;
-  mediump vec3 lightDirection_5;
-  mediump vec3 ambientLighting_6;
-  mediump float detailLevel_7;
-  mediump vec4 color_8;
-  mediump vec4 tex_9;
-  highp vec3 tmpvar_10;
-  tmpvar_10 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_11;
-  highp float r_12;
-  if ((abs(tmpvar_10.z) > (1e-08 * abs(tmpvar_10.x)))) {
-    highp float y_over_x_13;
-    y_over_x_13 = (tmpvar_10.x / tmpvar_10.z);
-    highp float s_14;
-    highp float x_15;
-    x_15 = (y_over_x_13 * inversesqrt(((y_over_x_13 * y_over_x_13) + 1.0)));
-    s_14 = (sign(x_15) * (1.5708 - (sqrt((1.0 - abs(x_15))) * (1.5708 + (abs(x_15) * (-0.214602 + (abs(x_15) * (0.0865667 + (abs(x_15) * -0.0310296)))))))));
-    r_12 = s_14;
-    if ((tmpvar_10.z < 0.0)) {
-      if ((tmpvar_10.x >= 0.0)) {
-        r_12 = (s_14 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_12 = (r_12 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_12 = (sign(tmpvar_10.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_11.x = (0.5 + (0.159155 * r_12));
-  uv_11.y = (0.31831 * (1.5708 - (sign(tmpvar_10.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_10.y))) * (1.5708 + (abs(tmpvar_10.y) * (-0.214602 + (abs(tmpvar_10.y) * (0.0865667 + (abs(tmpvar_10.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_16;
-  tmpvar_16 = dFdx(tmpvar_10.xz);
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdy(tmpvar_10.xz);
-  highp vec4 tmpvar_18;
-  tmpvar_18.x = (0.159155 * sqrt(dot (tmpvar_16, tmpvar_16)));
-  tmpvar_18.y = dFdx(uv_11.y);
-  tmpvar_18.z = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_18.w = dFdy(uv_11.y);
-  lowp vec4 tmpvar_19;
-  tmpvar_19 = texture2DGradEXT (_MainTex, uv_11, tmpvar_18.xy, tmpvar_18.zw);
-  tex_9 = tmpvar_19;
-  mediump vec4 tmpvar_20;
-  mediump vec3 detailCoords_21;
-  mediump float nylerp_22;
-  mediump float zxlerp_23;
-  highp vec3 tmpvar_24;
-  tmpvar_24 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_25;
-  highp float r_26;
-  if ((abs(tmpvar_24.z) > (1e-08 * abs(tmpvar_24.x)))) {
-    highp float y_over_x_27;
-    y_over_x_27 = (tmpvar_24.x / tmpvar_24.z);
-    highp float s_28;
-    highp float x_29;
-    x_29 = (y_over_x_27 * inversesqrt(((y_over_x_27 * y_over_x_27) + 1.0)));
-    s_28 = (sign(x_29) * (1.5708 - (sqrt((1.0 - abs(x_29))) * (1.5708 + (abs(x_29) * (-0.214602 + (abs(x_29) * (0.0865667 + (abs(x_29) * -0.0310296)))))))));
-    r_26 = s_28;
-    if ((tmpvar_24.z < 0.0)) {
-      if ((tmpvar_24.x >= 0.0)) {
-        r_26 = (s_28 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_26 = (r_26 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_26 = (sign(tmpvar_24.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_25.x = (0.5 + (0.159155 * r_26));
-  uv_25.y = (0.31831 * (1.5708 - (sign(tmpvar_24.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_24.y))) * (1.5708 + (abs(tmpvar_24.y) * (-0.214602 + (abs(tmpvar_24.y) * (0.0865667 + (abs(tmpvar_24.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_30;
-  tmpvar_30 = dFdx(tmpvar_24.xz);
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdy(tmpvar_24.xz);
-  highp vec4 tmpvar_32;
-  tmpvar_32.x = (0.159155 * sqrt(dot (tmpvar_30, tmpvar_30)));
-  tmpvar_32.y = dFdx(uv_25.y);
-  tmpvar_32.z = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_32.w = dFdy(uv_25.y);
-  highp vec3 tmpvar_33;
-  tmpvar_33 = abs(tmpvar_24);
-  highp float tmpvar_34;
-  tmpvar_34 = float((tmpvar_33.z >= tmpvar_33.x));
-  zxlerp_23 = tmpvar_34;
-  highp float tmpvar_35;
-  tmpvar_35 = float((mix (tmpvar_33.x, tmpvar_33.z, zxlerp_23) >= tmpvar_33.y));
-  nylerp_22 = tmpvar_35;
-  highp vec3 tmpvar_36;
-  tmpvar_36 = mix (tmpvar_33, tmpvar_33.zxy, vec3(zxlerp_23));
-  detailCoords_21 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_33.yxz, detailCoords_21, vec3(nylerp_22));
-  detailCoords_21 = tmpvar_37;
-  mediump float tmpvar_38;
-  tmpvar_38 = abs(detailCoords_21.x);
-  highp vec2 coord_39;
-  coord_39 = (((0.5 * detailCoords_21.zy) / tmpvar_38) * _DetailScale);
-  lowp vec4 tmpvar_40;
-  tmpvar_40 = texture2DGradEXT (_DetailTex, coord_39, tmpvar_32.xy, tmpvar_32.zw);
-  tmpvar_20 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_7 = tmpvar_41;
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
+  highp vec3 tmpvar_34;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_43;
-  tmpvar_43 = (mix (mix (tmpvar_20, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7)), tex_9, vec4(tmpvar_42)) * _Color);
-  color_8.xyz = tmpvar_43.xyz;
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
   highp vec3 tmpvar_44;
-  tmpvar_44 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_44;
-  lowp vec3 tmpvar_45;
-  tmpvar_45 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_45;
-  normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp float tmpvar_47;
-  mediump float lightShadowDataX_48;
-  highp float dist_49;
-  lowp float tmpvar_50;
-  tmpvar_50 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3).x;
-  dist_49 = tmpvar_50;
-  highp float tmpvar_51;
-  tmpvar_51 = _LightShadowData.x;
-  lightShadowDataX_48 = tmpvar_51;
-  highp float tmpvar_52;
-  tmpvar_52 = max (float((dist_49 > (xlv_TEXCOORD3.z / xlv_TEXCOORD3.w))), lightShadowDataX_48);
-  tmpvar_47 = tmpvar_52;
-  mediump float tmpvar_53;
-  tmpvar_53 = clamp ((((_LightColor0.w * ((tmpvar_46 - 0.01) / 0.99)) * 4.0) * tmpvar_47), 0.0, 1.0);
-  highp vec3 tmpvar_54;
-  tmpvar_54 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_53)), 0.0, 1.0);
-  light_3 = tmpvar_54;
-  mediump vec3 tmpvar_55;
-  tmpvar_55 = vec3(clamp (floor((1.0 + tmpvar_46)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_55;
-  mediump vec3 tmpvar_56;
-  mediump vec3 i_57;
-  i_57 = -(lightDirection_5);
-  tmpvar_56 = (i_57 - (2.0 * (dot (normalDir_4, i_57) * normalDir_4)));
-  highp vec3 tmpvar_58;
-  tmpvar_58 = (specularReflection_2 * (((tmpvar_47 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_56, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_58;
-  highp vec3 tmpvar_59;
-  tmpvar_59 = (light_3 + (tex_9.w * tmpvar_58));
-  light_3 = tmpvar_59;
-  highp float tmpvar_60;
-  tmpvar_60 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_8.w = mix (0.4489, tex_9.w, tmpvar_60);
-  highp vec3 tmpvar_61;
-  tmpvar_61 = clamp (((_LightPower * light_3) - color_8.w), 0.0, 1.0);
-  color_8.xyz = (tmpvar_43.xyz * tmpvar_61);
-  highp vec3 tmpvar_62;
-  tmpvar_62 = (color_8.xyz + (_Reflectivity * light_3));
-  color_8.xyz = tmpvar_62;
-  color_8.xyz = (color_8.xyz * light_3);
-  tmpvar_1 = color_8;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  lowp float tmpvar_45;
+  mediump float lightShadowDataX_46;
+  highp float dist_47;
+  lowp float tmpvar_48;
+  tmpvar_48 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3).x;
+  dist_47 = tmpvar_48;
+  highp float tmpvar_49;
+  tmpvar_49 = _LightShadowData.x;
+  lightShadowDataX_46 = tmpvar_49;
+  highp float tmpvar_50;
+  tmpvar_50 = max (float((dist_47 > (xlv_TEXCOORD3.z / xlv_TEXCOORD3.w))), lightShadowDataX_46);
+  tmpvar_45 = tmpvar_50;
+  mediump vec3 lightDir_51;
+  lightDir_51 = tmpvar_43;
+  mediump vec3 viewDir_52;
+  viewDir_52 = xlv_TEXCOORD1;
+  mediump vec3 normal_53;
+  normal_53 = tmpvar_44;
+  mediump float atten_54;
+  atten_54 = tmpvar_45;
+  mediump vec4 c_55;
+  highp float nh_56;
+  mediump vec3 tmpvar_57;
+  tmpvar_57 = normalize(viewDir_52);
+  viewDir_52 = tmpvar_57;
+  mediump float tmpvar_58;
+  tmpvar_58 = dot (normal_53, lightDir_51);
+  mediump float tmpvar_59;
+  tmpvar_59 = clamp (dot (normalize((lightDir_51 + tmpvar_57)), normal_53), 0.0, 1.0);
+  nh_56 = tmpvar_59;
+  highp vec3 tmpvar_60;
+  tmpvar_60 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_58) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_56, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_54 * 4.0));
+  c_55.xyz = tmpvar_60;
+  c_55.w = (tmpvar_58 * (atten_54 * 4.0));
+  color_5.xyz = c_55.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_55.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -9023,17 +8952,15 @@ uniform highp vec4 _ProjectionParams;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
   highp vec4 tmpvar_1;
   tmpvar_1 = (glstate_matrix_mvp * _glesVertex);
-  highp vec3 p_2;
-  p_2 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_3;
-  tmpvar_3.w = 0.0;
-  tmpvar_3.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_2;
+  tmpvar_2 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_3;
+  p_3 = (tmpvar_2 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_4;
   tmpvar_4.x = _glesMultiTexCoord0.x;
   tmpvar_4.y = _glesMultiTexCoord0.y;
@@ -9048,9 +8975,9 @@ void main ()
   o_5.xy = (tmpvar_7 + tmpvar_6.w);
   o_5.zw = tmpvar_1.zw;
   gl_Position = tmpvar_1;
-  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_3).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_3, p_3));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_2));
+  xlv_TEXCOORD2 = tmpvar_2;
   xlv_TEXCOORD3 = o_5;
   xlv_TEXCOORD5 = -(normalize(tmpvar_4).xyz);
 }
@@ -9067,9 +8994,8 @@ varying highp vec4 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -9080,161 +9006,156 @@ uniform lowp vec4 _Color;
 uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  mediump vec3 normalDir_4;
-  mediump vec3 lightDirection_5;
-  mediump vec3 ambientLighting_6;
-  mediump float detailLevel_7;
-  mediump vec4 color_8;
-  mediump vec4 tex_9;
-  highp vec3 tmpvar_10;
-  tmpvar_10 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_11;
-  highp float r_12;
-  if ((abs(tmpvar_10.z) > (1e-08 * abs(tmpvar_10.x)))) {
-    highp float y_over_x_13;
-    y_over_x_13 = (tmpvar_10.x / tmpvar_10.z);
-    highp float s_14;
-    highp float x_15;
-    x_15 = (y_over_x_13 * inversesqrt(((y_over_x_13 * y_over_x_13) + 1.0)));
-    s_14 = (sign(x_15) * (1.5708 - (sqrt((1.0 - abs(x_15))) * (1.5708 + (abs(x_15) * (-0.214602 + (abs(x_15) * (0.0865667 + (abs(x_15) * -0.0310296)))))))));
-    r_12 = s_14;
-    if ((tmpvar_10.z < 0.0)) {
-      if ((tmpvar_10.x >= 0.0)) {
-        r_12 = (s_14 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_12 = (r_12 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_12 = (sign(tmpvar_10.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_11.x = (0.5 + (0.159155 * r_12));
-  uv_11.y = (0.31831 * (1.5708 - (sign(tmpvar_10.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_10.y))) * (1.5708 + (abs(tmpvar_10.y) * (-0.214602 + (abs(tmpvar_10.y) * (0.0865667 + (abs(tmpvar_10.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_16;
-  tmpvar_16 = dFdx(tmpvar_10.xz);
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdy(tmpvar_10.xz);
-  highp vec4 tmpvar_18;
-  tmpvar_18.x = (0.159155 * sqrt(dot (tmpvar_16, tmpvar_16)));
-  tmpvar_18.y = dFdx(uv_11.y);
-  tmpvar_18.z = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_18.w = dFdy(uv_11.y);
-  lowp vec4 tmpvar_19;
-  tmpvar_19 = texture2DGradEXT (_MainTex, uv_11, tmpvar_18.xy, tmpvar_18.zw);
-  tex_9 = tmpvar_19;
-  mediump vec4 tmpvar_20;
-  mediump vec3 detailCoords_21;
-  mediump float nylerp_22;
-  mediump float zxlerp_23;
-  highp vec3 tmpvar_24;
-  tmpvar_24 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_25;
-  highp float r_26;
-  if ((abs(tmpvar_24.z) > (1e-08 * abs(tmpvar_24.x)))) {
-    highp float y_over_x_27;
-    y_over_x_27 = (tmpvar_24.x / tmpvar_24.z);
-    highp float s_28;
-    highp float x_29;
-    x_29 = (y_over_x_27 * inversesqrt(((y_over_x_27 * y_over_x_27) + 1.0)));
-    s_28 = (sign(x_29) * (1.5708 - (sqrt((1.0 - abs(x_29))) * (1.5708 + (abs(x_29) * (-0.214602 + (abs(x_29) * (0.0865667 + (abs(x_29) * -0.0310296)))))))));
-    r_26 = s_28;
-    if ((tmpvar_24.z < 0.0)) {
-      if ((tmpvar_24.x >= 0.0)) {
-        r_26 = (s_28 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_26 = (r_26 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_26 = (sign(tmpvar_24.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_25.x = (0.5 + (0.159155 * r_26));
-  uv_25.y = (0.31831 * (1.5708 - (sign(tmpvar_24.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_24.y))) * (1.5708 + (abs(tmpvar_24.y) * (-0.214602 + (abs(tmpvar_24.y) * (0.0865667 + (abs(tmpvar_24.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_30;
-  tmpvar_30 = dFdx(tmpvar_24.xz);
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdy(tmpvar_24.xz);
-  highp vec4 tmpvar_32;
-  tmpvar_32.x = (0.159155 * sqrt(dot (tmpvar_30, tmpvar_30)));
-  tmpvar_32.y = dFdx(uv_25.y);
-  tmpvar_32.z = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_32.w = dFdy(uv_25.y);
-  highp vec3 tmpvar_33;
-  tmpvar_33 = abs(tmpvar_24);
-  highp float tmpvar_34;
-  tmpvar_34 = float((tmpvar_33.z >= tmpvar_33.x));
-  zxlerp_23 = tmpvar_34;
-  highp float tmpvar_35;
-  tmpvar_35 = float((mix (tmpvar_33.x, tmpvar_33.z, zxlerp_23) >= tmpvar_33.y));
-  nylerp_22 = tmpvar_35;
-  highp vec3 tmpvar_36;
-  tmpvar_36 = mix (tmpvar_33, tmpvar_33.zxy, vec3(zxlerp_23));
-  detailCoords_21 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_33.yxz, detailCoords_21, vec3(nylerp_22));
-  detailCoords_21 = tmpvar_37;
-  mediump float tmpvar_38;
-  tmpvar_38 = abs(detailCoords_21.x);
-  highp vec2 coord_39;
-  coord_39 = (((0.5 * detailCoords_21.zy) / tmpvar_38) * _DetailScale);
-  lowp vec4 tmpvar_40;
-  tmpvar_40 = texture2DGradEXT (_DetailTex, coord_39, tmpvar_32.xy, tmpvar_32.zw);
-  tmpvar_20 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_7 = tmpvar_41;
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
+  highp vec3 tmpvar_34;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_43;
-  tmpvar_43 = (mix (mix (tmpvar_20, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7)), tex_9, vec4(tmpvar_42)) * _Color);
-  color_8.xyz = tmpvar_43.xyz;
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
   highp vec3 tmpvar_44;
-  tmpvar_44 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_44;
-  lowp vec3 tmpvar_45;
-  tmpvar_45 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_45;
-  normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp vec4 tmpvar_47;
-  tmpvar_47 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3);
-  mediump float tmpvar_48;
-  tmpvar_48 = clamp ((((_LightColor0.w * ((tmpvar_46 - 0.01) / 0.99)) * 4.0) * tmpvar_47.x), 0.0, 1.0);
-  highp vec3 tmpvar_49;
-  tmpvar_49 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_48)), 0.0, 1.0);
-  light_3 = tmpvar_49;
-  mediump vec3 tmpvar_50;
-  tmpvar_50 = vec3(clamp (floor((1.0 + tmpvar_46)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_50;
-  mediump vec3 tmpvar_51;
-  mediump vec3 i_52;
-  i_52 = -(lightDirection_5);
-  tmpvar_51 = (i_52 - (2.0 * (dot (normalDir_4, i_52) * normalDir_4)));
-  highp vec3 tmpvar_53;
-  tmpvar_53 = (specularReflection_2 * (((tmpvar_47.x * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_51, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_53;
-  highp vec3 tmpvar_54;
-  tmpvar_54 = (light_3 + (tex_9.w * tmpvar_53));
-  light_3 = tmpvar_54;
-  highp float tmpvar_55;
-  tmpvar_55 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_8.w = mix (0.4489, tex_9.w, tmpvar_55);
-  highp vec3 tmpvar_56;
-  tmpvar_56 = clamp (((_LightPower * light_3) - color_8.w), 0.0, 1.0);
-  color_8.xyz = (tmpvar_43.xyz * tmpvar_56);
-  highp vec3 tmpvar_57;
-  tmpvar_57 = (color_8.xyz + (_Reflectivity * light_3));
-  color_8.xyz = tmpvar_57;
-  color_8.xyz = (color_8.xyz * light_3);
-  tmpvar_1 = color_8;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  lowp float tmpvar_45;
+  tmpvar_45 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD3).x;
+  mediump vec3 lightDir_46;
+  lightDir_46 = tmpvar_43;
+  mediump vec3 viewDir_47;
+  viewDir_47 = xlv_TEXCOORD1;
+  mediump vec3 normal_48;
+  normal_48 = tmpvar_44;
+  mediump float atten_49;
+  atten_49 = tmpvar_45;
+  mediump vec4 c_50;
+  highp float nh_51;
+  mediump vec3 tmpvar_52;
+  tmpvar_52 = normalize(viewDir_47);
+  viewDir_47 = tmpvar_52;
+  mediump float tmpvar_53;
+  tmpvar_53 = dot (normal_48, lightDir_46);
+  mediump float tmpvar_54;
+  tmpvar_54 = clamp (dot (normalize((lightDir_46 + tmpvar_52)), normal_48), 0.0, 1.0);
+  nh_51 = tmpvar_54;
+  highp vec3 tmpvar_55;
+  tmpvar_55 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_53) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_51, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_49 * 4.0));
+  c_50.xyz = tmpvar_55;
+  c_50.w = (tmpvar_53 * (atten_49 * 4.0));
+  color_5.xyz = c_50.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_50.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -9275,7 +9196,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -9284,16 +9205,16 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 491
+#line 520
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 483
+#line 512
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -9390,48 +9311,57 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
+#line 452
+#line 464
+#line 480
+#line 492
 uniform lowp vec4 _Color;
+#line 500
 uniform highp float _Shininess;
-#line 472
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 504
 uniform highp float _DetailScale;
-#line 476
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 480
+#line 508
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 501
-#line 501
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 530
+#line 530
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 505
+    #line 534
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 509
+    o.worldPos = vertexPos;
+    #line 538
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
-    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
+    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - vertexPos));
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
-    #line 513
+    #line 542
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -9450,7 +9380,7 @@ void main() {
     gl_Position = vec4(xl_retval.pos);
     xlv_TEXCOORD0 = float(xl_retval.viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.viewDir);
-    xlv_TEXCOORD2 = vec3(xl_retval.worldNormal);
+    xlv_TEXCOORD2 = vec3(xl_retval.worldPos);
     xlv_TEXCOORD3 = vec4(xl_retval._ShadowCoord);
     xlv_TEXCOORD5 = vec3(xl_retval.sphereNormal);
 }
@@ -9543,7 +9473,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -9552,16 +9482,16 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 491
+#line 520
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 483
+#line 512
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -9658,122 +9588,127 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
+#line 452
+#line 464
+#line 480
+#line 492
 uniform lowp vec4 _Color;
+#line 500
 uniform highp float _Shininess;
-#line 472
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 504
 uniform highp float _DetailScale;
-#line 476
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 480
+#line 508
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 501
-#line 321
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 530
+#line 405
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
+    #line 409
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 330
+#line 414
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
+    #line 418
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 336
     return uv;
 }
-#line 368
+#line 452
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
-    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    highp vec2 uv = ((GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0)) * 4.0) * detailScale);
+    #line 456
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
+    #line 460
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 347
+#line 431
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    #line 435
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 353
     return tex;
 }
-#line 388
+#line 480
+mediump vec4 SpecularColorLight( in mediump vec3 lightDir, in mediump vec3 viewDir, in mediump vec3 normal, in mediump vec4 color, in mediump vec4 specColor, in highp float specK, in mediump float atten ) {
+    viewDir = normalize(viewDir);
+    mediump vec3 h = normalize((lightDir + viewDir));
+    #line 484
+    mediump float diffuse = dot( normal, lightDir);
+    highp float nh = xll_saturate_f(dot( h, normal));
+    highp float spec = (pow( nh, specK) * color.w);
+    mediump vec4 c;
+    #line 488
+    c.xyz = ((((color.xyz * _LightColor0.xyz) * diffuse) + ((_LightColor0.xyz * specColor.xyz) * spec)) * (atten * 4.0));
+    c.w = (diffuse * (atten * 4.0));
+    return c;
+}
+#line 317
 lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
-    #line 390
+    #line 319
     highp float dist = textureProj( _ShadowMapTexture, shadowCoord).x;
     mediump float lightShadowDataX = _LightShadowData.x;
     return max( float((dist > (shadowCoord.z / shadowCoord.w))), lightShadowDataX);
 }
-#line 515
+#line 544
 lowp vec4 frag( in v2f IN ) {
-    #line 517
+    #line 546
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 521
+    #line 550
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 525
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 normalDir = IN.worldNormal;
-    mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 529
-    mediump float diff = ((NdotL - 0.01) / 0.99);
-    lowp float atten = unitySampleShadow( IN._ShadowCoord);
-    mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 533
-    highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
-    specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light += (main.w * specularReflection);
-    color.w = 1.0;
-    #line 537
-    highp float refrac = 0.67;
-    color.w *= pow( refrac, 2.0);
-    color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
-    color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 541
-    color.xyz += (_Reflectivity * light);
-    color.xyz *= light;
+    #line 554
+    mediump float handoff = xll_saturate_f(pow( _PlanetOpacity, 2.0));
+    color.xyz = mix( color.xyz, main.xyz, vec3( handoff));
+    mediump vec4 specColor = _SpecColor;
+    specColor.w = mix( 1.0, main.w, handoff);
+    #line 558
+    mediump vec4 colorLight = SpecularColorLight( vec3( normalize(_WorldSpaceLightPos0)), IN.viewDir, normalize((IN.worldPos - _PlanetOrigin)), color, specColor, (_Shininess * 128.0), unitySampleShadow( IN._ShadowCoord));
+    color.xyz = colorLight.xyz;
+    color.w = mix( 1.0, color.w, ((1.0 - handoff) * step( 0.0, colorLight.w)));
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -9787,7 +9722,7 @@ void main() {
     xlt_IN.pos = vec4(0.0);
     xlt_IN.viewDist = float(xlv_TEXCOORD0);
     xlt_IN.viewDir = vec3(xlv_TEXCOORD1);
-    xlt_IN.worldNormal = vec3(xlv_TEXCOORD2);
+    xlt_IN.worldPos = vec3(xlv_TEXCOORD2);
     xlt_IN._ShadowCoord = vec4(xlv_TEXCOORD3);
     xlt_IN.sphereNormal = vec3(xlv_TEXCOORD5);
     xl_retval = frag( xlt_IN);
@@ -9817,11 +9752,10 @@ void main ()
 {
   vec4 tmpvar_1;
   tmpvar_1 = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  vec3 p_2;
-  p_2 = ((_Object2World * gl_Vertex).xyz - _WorldSpaceCameraPos);
-  vec4 tmpvar_3;
-  tmpvar_3.w = 0.0;
-  tmpvar_3.xyz = gl_Normal;
+  vec3 tmpvar_2;
+  tmpvar_2 = (_Object2World * gl_Vertex).xyz;
+  vec3 p_3;
+  p_3 = (tmpvar_2 - _WorldSpaceCameraPos);
   vec4 tmpvar_4;
   tmpvar_4.x = gl_MultiTexCoord0.x;
   tmpvar_4.y = gl_MultiTexCoord0.y;
@@ -9836,9 +9770,9 @@ void main ()
   o_5.xy = (tmpvar_7 + tmpvar_6.w);
   o_5.zw = tmpvar_1.zw;
   gl_Position = tmpvar_1;
-  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_3).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_3, p_3));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_2));
+  xlv_TEXCOORD2 = tmpvar_2;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xy;
   xlv_TEXCOORD4 = o_5;
   xlv_TEXCOORD5 = -(normalize(tmpvar_4).xyz);
@@ -9854,9 +9788,8 @@ varying vec2 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying float xlv_TEXCOORD0;
-uniform float _Reflectivity;
-uniform float _LightPower;
-uniform float _MinLight;
+uniform vec3 _PlanetOrigin;
+uniform float _PlanetOpacity;
 uniform float _DetailDist;
 uniform float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -9868,7 +9801,6 @@ uniform vec4 _SpecColor;
 uniform vec4 _LightColor0;
 uniform sampler2D _LightTexture0;
 uniform sampler2D _ShadowMapTexture;
-
 uniform vec4 _WorldSpaceLightPos0;
 void main ()
 {
@@ -9933,37 +9865,41 @@ void main ()
   uv_13.x = (0.5 + (0.159155 * r_14));
   uv_13.y = (0.31831 * (1.5708 - (sign(tmpvar_12.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_12.y))) * (1.5708 + (abs(tmpvar_12.y) * (-0.214602 + (abs(tmpvar_12.y) * (0.0865667 + (abs(tmpvar_12.y) * -0.0310296)))))))))));
   vec2 tmpvar_18;
-  tmpvar_18 = dFdx(tmpvar_12.xz);
+  tmpvar_18 = ((uv_13 * 4.0) * _DetailScale);
   vec2 tmpvar_19;
-  tmpvar_19 = dFdy(tmpvar_12.xz);
-  vec4 tmpvar_20;
-  tmpvar_20.x = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_20.y = dFdx(uv_13.y);
-  tmpvar_20.z = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
-  tmpvar_20.w = dFdy(uv_13.y);
-  vec3 tmpvar_21;
-  tmpvar_21 = abs(tmpvar_12);
-  float tmpvar_22;
-  tmpvar_22 = float((tmpvar_21.z >= tmpvar_21.x));
-  vec3 tmpvar_23;
-  tmpvar_23 = mix (tmpvar_21.yxz, mix (tmpvar_21, tmpvar_21.zxy, vec3(tmpvar_22)), vec3(float((mix (tmpvar_21.x, tmpvar_21.z, tmpvar_22) >= tmpvar_21.y))));
-  vec4 tmpvar_24;
-  tmpvar_24 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) * _DetailScale), tmpvar_20.xy, tmpvar_20.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
-  color_2.xyz = tmpvar_24.xyz;
+  tmpvar_19 = dFdx(tmpvar_12.xz);
+  vec2 tmpvar_20;
+  tmpvar_20 = dFdy(tmpvar_12.xz);
+  vec4 tmpvar_21;
+  tmpvar_21.x = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
+  tmpvar_21.y = dFdx(tmpvar_18.y);
+  tmpvar_21.z = (0.159155 * sqrt(dot (tmpvar_20, tmpvar_20)));
+  tmpvar_21.w = dFdy(tmpvar_18.y);
+  vec3 tmpvar_22;
+  tmpvar_22 = abs(tmpvar_12);
+  float tmpvar_23;
+  tmpvar_23 = float((tmpvar_22.z >= tmpvar_22.x));
+  vec3 tmpvar_24;
+  tmpvar_24 = mix (tmpvar_22.yxz, mix (tmpvar_22, tmpvar_22.zxy, vec3(tmpvar_23)), vec3(float((mix (tmpvar_22.x, tmpvar_22.z, tmpvar_23) >= tmpvar_22.y))));
   vec4 tmpvar_25;
-  tmpvar_25 = normalize(_WorldSpaceLightPos0);
+  tmpvar_25 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) * _DetailScale), tmpvar_21.xy, tmpvar_21.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
+  color_2.w = tmpvar_25.w;
   float tmpvar_26;
-  tmpvar_26 = clamp (dot (xlv_TEXCOORD2, tmpvar_25.xyz), 0.0, 1.0);
-  float tmpvar_27;
-  tmpvar_27 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x);
-  vec3 i_28;
-  i_28 = -(tmpvar_25.xyz);
-  vec3 tmpvar_29;
-  tmpvar_29 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_26 - 0.01) / 0.99)) * 4.0) * tmpvar_27), 0.0, 1.0))), 0.0, 1.0) + (main_1.w * (vec3(clamp (floor((1.0 + tmpvar_26)), 0.0, 1.0)) * (((tmpvar_27 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_28 - (2.0 * (dot (xlv_TEXCOORD2, i_28) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
-  color_2.w = mix (0.4489, main_1.w, clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0));
-  color_2.xyz = (tmpvar_24.xyz * clamp (((_LightPower * tmpvar_29) - color_2.w), 0.0, 1.0));
-  color_2.xyz = (color_2.xyz + (_Reflectivity * tmpvar_29));
-  color_2.xyz = (color_2.xyz * tmpvar_29);
+  tmpvar_26 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  color_2.xyz = mix (tmpvar_25.xyz, main_1.xyz, vec3(tmpvar_26));
+  vec4 tmpvar_27;
+  tmpvar_27 = normalize(_WorldSpaceLightPos0);
+  vec3 tmpvar_28;
+  tmpvar_28 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  float atten_29;
+  atten_29 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x);
+  vec4 c_30;
+  float tmpvar_31;
+  tmpvar_31 = dot (tmpvar_28, tmpvar_27.xyz);
+  c_30.xyz = ((((color_2.xyz * _LightColor0.xyz) * tmpvar_31) + ((_LightColor0.xyz * _SpecColor.xyz) * (pow (clamp (dot (normalize((tmpvar_27.xyz + normalize(xlv_TEXCOORD1))), tmpvar_28), 0.0, 1.0), (_Shininess * 128.0)) * tmpvar_25.w))) * (atten_29 * 4.0));
+  c_30.w = (tmpvar_31 * (atten_29 * 4.0));
+  color_2.xyz = c_30.xyz;
+  color_2.w = mix (1.0, tmpvar_25.w, ((1.0 - tmpvar_26) * float((c_30.w >= 0.0))));
   gl_FragData[0] = color_2;
 }
 
@@ -9975,7 +9911,6 @@ void main ()
 SubProgram "d3d9 " {
 Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
 Bind "vertex" Vertex
-Bind "normal" Normal
 Bind "texcoord" TexCoord0
 Bind "texcoord1" TexCoord1
 Matrix 0 [glstate_matrix_mvp]
@@ -9985,7 +9920,7 @@ Vector 14 [_ScreenParams]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 34 ALU
+; 28 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -9993,45 +9928,38 @@ dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
 dcl_texcoord5 o6
-def c15, 0.00000000, 0.50000000, 0, 0
+def c15, 0.50000000, 0, 0, 0
 dcl_position0 v0
-dcl_normal0 v1
-dcl_texcoord0 v2
-dcl_texcoord1 v3
-mov r0.xyz, v1
-mov r0.w, c15.x
-dp4 r1.z, r0, c6
-dp4 r1.x, r0, c4
-dp4 r1.y, r0, c5
-dp3 r0.x, r1, r1
-rsq r1.w, r0.x
-mul o3.xyz, r1.w, r1
-dp4 r1.w, v0, c3
-dp4 r1.z, v0, c2
-dp4 r1.x, v0, c0
-dp4 r1.y, v0, c1
-mul r2.xyz, r1.xyww, c15.y
-mul r2.y, r2, c13.x
-mov r0.zw, v3.xyxy
-mov r0.xy, v2
+dcl_texcoord0 v1
+dcl_texcoord1 v2
+mov r0.xy, v1
+mov r0.zw, v2.xyxy
 dp4 r0.w, r0, r0
 rsq r0.w, r0.w
-mul r0.xyz, r0.w, r0
-mov o6.xyz, -r0
+mul r3.xyz, r0.w, r0
+dp4 r1.w, v0, c3
+dp4 r1.z, v0, c2
 dp4 r0.z, v0, c6
 dp4 r0.x, v0, c4
 dp4 r0.y, v0, c5
+dp4 r1.x, v0, c0
+dp4 r1.y, v0, c1
+mul r2.xyz, r1.xyww, c15.x
+mul r2.y, r2, c13.x
 mad o5.xy, r2.z, c14.zwzw, r2
 add r2.xyz, -r0, c12
 dp3 r0.w, r2, r2
+rsq r0.w, r0.w
+mul o2.xyz, r0.w, r2
+mov r2.xyz, r0
+dp4 r2.w, v0, c7
+mov o6.xyz, -r3
 mov o0, r1
-rsq r1.x, r0.w
-dp4 r0.w, v0, c7
-mul o2.xyz, r1.x, r2
-dp4 o4.y, r0, c9
-dp4 o4.x, r0, c8
+dp4 o4.y, r2, c9
+dp4 o4.x, r2, c8
 mov o5.zw, r1
-rcp o1.x, r1.x
+rcp o1.x, r0.w
+mov o3.xyz, r0
 "
 }
 
@@ -10055,24 +9983,22 @@ uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -10091,9 +10017,8 @@ varying highp vec2 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -10105,174 +10030,169 @@ uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTexture0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform lowp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  mediump vec3 normalDir_4;
-  mediump vec3 lightDirection_5;
-  mediump vec3 ambientLighting_6;
-  mediump float detailLevel_7;
-  mediump vec4 color_8;
-  mediump vec4 tex_9;
-  highp vec3 tmpvar_10;
-  tmpvar_10 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_11;
-  highp float r_12;
-  if ((abs(tmpvar_10.z) > (1e-08 * abs(tmpvar_10.x)))) {
-    highp float y_over_x_13;
-    y_over_x_13 = (tmpvar_10.x / tmpvar_10.z);
-    highp float s_14;
-    highp float x_15;
-    x_15 = (y_over_x_13 * inversesqrt(((y_over_x_13 * y_over_x_13) + 1.0)));
-    s_14 = (sign(x_15) * (1.5708 - (sqrt((1.0 - abs(x_15))) * (1.5708 + (abs(x_15) * (-0.214602 + (abs(x_15) * (0.0865667 + (abs(x_15) * -0.0310296)))))))));
-    r_12 = s_14;
-    if ((tmpvar_10.z < 0.0)) {
-      if ((tmpvar_10.x >= 0.0)) {
-        r_12 = (s_14 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_12 = (r_12 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_12 = (sign(tmpvar_10.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_11.x = (0.5 + (0.159155 * r_12));
-  uv_11.y = (0.31831 * (1.5708 - (sign(tmpvar_10.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_10.y))) * (1.5708 + (abs(tmpvar_10.y) * (-0.214602 + (abs(tmpvar_10.y) * (0.0865667 + (abs(tmpvar_10.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_16;
-  tmpvar_16 = dFdx(tmpvar_10.xz);
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdy(tmpvar_10.xz);
-  highp vec4 tmpvar_18;
-  tmpvar_18.x = (0.159155 * sqrt(dot (tmpvar_16, tmpvar_16)));
-  tmpvar_18.y = dFdx(uv_11.y);
-  tmpvar_18.z = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_18.w = dFdy(uv_11.y);
-  lowp vec4 tmpvar_19;
-  tmpvar_19 = texture2DGradEXT (_MainTex, uv_11, tmpvar_18.xy, tmpvar_18.zw);
-  tex_9 = tmpvar_19;
-  mediump vec4 tmpvar_20;
-  mediump vec3 detailCoords_21;
-  mediump float nylerp_22;
-  mediump float zxlerp_23;
-  highp vec3 tmpvar_24;
-  tmpvar_24 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_25;
-  highp float r_26;
-  if ((abs(tmpvar_24.z) > (1e-08 * abs(tmpvar_24.x)))) {
-    highp float y_over_x_27;
-    y_over_x_27 = (tmpvar_24.x / tmpvar_24.z);
-    highp float s_28;
-    highp float x_29;
-    x_29 = (y_over_x_27 * inversesqrt(((y_over_x_27 * y_over_x_27) + 1.0)));
-    s_28 = (sign(x_29) * (1.5708 - (sqrt((1.0 - abs(x_29))) * (1.5708 + (abs(x_29) * (-0.214602 + (abs(x_29) * (0.0865667 + (abs(x_29) * -0.0310296)))))))));
-    r_26 = s_28;
-    if ((tmpvar_24.z < 0.0)) {
-      if ((tmpvar_24.x >= 0.0)) {
-        r_26 = (s_28 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_26 = (r_26 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_26 = (sign(tmpvar_24.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_25.x = (0.5 + (0.159155 * r_26));
-  uv_25.y = (0.31831 * (1.5708 - (sign(tmpvar_24.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_24.y))) * (1.5708 + (abs(tmpvar_24.y) * (-0.214602 + (abs(tmpvar_24.y) * (0.0865667 + (abs(tmpvar_24.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_30;
-  tmpvar_30 = dFdx(tmpvar_24.xz);
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdy(tmpvar_24.xz);
-  highp vec4 tmpvar_32;
-  tmpvar_32.x = (0.159155 * sqrt(dot (tmpvar_30, tmpvar_30)));
-  tmpvar_32.y = dFdx(uv_25.y);
-  tmpvar_32.z = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_32.w = dFdy(uv_25.y);
-  highp vec3 tmpvar_33;
-  tmpvar_33 = abs(tmpvar_24);
-  highp float tmpvar_34;
-  tmpvar_34 = float((tmpvar_33.z >= tmpvar_33.x));
-  zxlerp_23 = tmpvar_34;
-  highp float tmpvar_35;
-  tmpvar_35 = float((mix (tmpvar_33.x, tmpvar_33.z, zxlerp_23) >= tmpvar_33.y));
-  nylerp_22 = tmpvar_35;
-  highp vec3 tmpvar_36;
-  tmpvar_36 = mix (tmpvar_33, tmpvar_33.zxy, vec3(zxlerp_23));
-  detailCoords_21 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_33.yxz, detailCoords_21, vec3(nylerp_22));
-  detailCoords_21 = tmpvar_37;
-  mediump float tmpvar_38;
-  tmpvar_38 = abs(detailCoords_21.x);
-  highp vec2 coord_39;
-  coord_39 = (((0.5 * detailCoords_21.zy) / tmpvar_38) * _DetailScale);
-  lowp vec4 tmpvar_40;
-  tmpvar_40 = texture2DGradEXT (_DetailTex, coord_39, tmpvar_32.xy, tmpvar_32.zw);
-  tmpvar_20 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_7 = tmpvar_41;
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
+  highp vec3 tmpvar_34;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_43;
-  tmpvar_43 = (mix (mix (tmpvar_20, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7)), tex_9, vec4(tmpvar_42)) * _Color);
-  color_8.xyz = tmpvar_43.xyz;
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
   highp vec3 tmpvar_44;
-  tmpvar_44 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_44;
-  lowp vec3 tmpvar_45;
-  tmpvar_45 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_45;
-  normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp float tmpvar_47;
-  mediump float lightShadowDataX_48;
-  highp float dist_49;
-  lowp float tmpvar_50;
-  tmpvar_50 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x;
-  dist_49 = tmpvar_50;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  lowp vec4 tmpvar_45;
+  tmpvar_45 = texture2D (_LightTexture0, xlv_TEXCOORD3);
+  lowp float tmpvar_46;
+  mediump float lightShadowDataX_47;
+  highp float dist_48;
+  lowp float tmpvar_49;
+  tmpvar_49 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x;
+  dist_48 = tmpvar_49;
+  highp float tmpvar_50;
+  tmpvar_50 = _LightShadowData.x;
+  lightShadowDataX_47 = tmpvar_50;
   highp float tmpvar_51;
-  tmpvar_51 = _LightShadowData.x;
-  lightShadowDataX_48 = tmpvar_51;
-  highp float tmpvar_52;
-  tmpvar_52 = max (float((dist_49 > (xlv_TEXCOORD4.z / xlv_TEXCOORD4.w))), lightShadowDataX_48);
-  tmpvar_47 = tmpvar_52;
-  lowp float tmpvar_53;
-  tmpvar_53 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * tmpvar_47);
-  mediump float tmpvar_54;
-  tmpvar_54 = clamp ((((_LightColor0.w * ((tmpvar_46 - 0.01) / 0.99)) * 4.0) * tmpvar_53), 0.0, 1.0);
-  highp vec3 tmpvar_55;
-  tmpvar_55 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_54)), 0.0, 1.0);
-  light_3 = tmpvar_55;
-  mediump vec3 tmpvar_56;
-  tmpvar_56 = vec3(clamp (floor((1.0 + tmpvar_46)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_56;
-  mediump vec3 tmpvar_57;
-  mediump vec3 i_58;
-  i_58 = -(lightDirection_5);
-  tmpvar_57 = (i_58 - (2.0 * (dot (normalDir_4, i_58) * normalDir_4)));
-  highp vec3 tmpvar_59;
-  tmpvar_59 = (specularReflection_2 * (((tmpvar_53 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_57, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_59;
-  highp vec3 tmpvar_60;
-  tmpvar_60 = (light_3 + (tex_9.w * tmpvar_59));
-  light_3 = tmpvar_60;
-  highp float tmpvar_61;
-  tmpvar_61 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_8.w = mix (0.4489, tex_9.w, tmpvar_61);
-  highp vec3 tmpvar_62;
-  tmpvar_62 = clamp (((_LightPower * light_3) - color_8.w), 0.0, 1.0);
-  color_8.xyz = (tmpvar_43.xyz * tmpvar_62);
-  highp vec3 tmpvar_63;
-  tmpvar_63 = (color_8.xyz + (_Reflectivity * light_3));
-  color_8.xyz = tmpvar_63;
-  color_8.xyz = (color_8.xyz * light_3);
-  tmpvar_1 = color_8;
+  tmpvar_51 = max (float((dist_48 > (xlv_TEXCOORD4.z / xlv_TEXCOORD4.w))), lightShadowDataX_47);
+  tmpvar_46 = tmpvar_51;
+  mediump vec3 lightDir_52;
+  lightDir_52 = tmpvar_43;
+  mediump vec3 viewDir_53;
+  viewDir_53 = xlv_TEXCOORD1;
+  mediump vec3 normal_54;
+  normal_54 = tmpvar_44;
+  mediump float atten_55;
+  atten_55 = (tmpvar_45.w * tmpvar_46);
+  mediump vec4 c_56;
+  highp float nh_57;
+  mediump vec3 tmpvar_58;
+  tmpvar_58 = normalize(viewDir_53);
+  viewDir_53 = tmpvar_58;
+  mediump float tmpvar_59;
+  tmpvar_59 = dot (normal_54, lightDir_52);
+  mediump float tmpvar_60;
+  tmpvar_60 = clamp (dot (normalize((lightDir_52 + tmpvar_58)), normal_54), 0.0, 1.0);
+  nh_57 = tmpvar_60;
+  highp vec3 tmpvar_61;
+  tmpvar_61 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_59) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_57, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_55 * 4.0));
+  c_56.xyz = tmpvar_61;
+  c_56.w = (tmpvar_59 * (atten_55 * 4.0));
+  color_5.xyz = c_56.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_56.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -10301,17 +10221,15 @@ uniform highp vec4 _ProjectionParams;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
   highp vec4 tmpvar_1;
   tmpvar_1 = (glstate_matrix_mvp * _glesVertex);
-  highp vec3 p_2;
-  p_2 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_3;
-  tmpvar_3.w = 0.0;
-  tmpvar_3.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_2;
+  tmpvar_2 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_3;
+  p_3 = (tmpvar_2 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_4;
   tmpvar_4.x = _glesMultiTexCoord0.x;
   tmpvar_4.y = _glesMultiTexCoord0.y;
@@ -10326,9 +10244,9 @@ void main ()
   o_5.xy = (tmpvar_7 + tmpvar_6.w);
   o_5.zw = tmpvar_1.zw;
   gl_Position = tmpvar_1;
-  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_3).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_3, p_3));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_2));
+  xlv_TEXCOORD2 = tmpvar_2;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xy;
   xlv_TEXCOORD4 = o_5;
   xlv_TEXCOORD5 = -(normalize(tmpvar_4).xyz);
@@ -10347,9 +10265,8 @@ varying highp vec2 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -10361,161 +10278,158 @@ uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTexture0;
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform lowp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  mediump vec3 normalDir_4;
-  mediump vec3 lightDirection_5;
-  mediump vec3 ambientLighting_6;
-  mediump float detailLevel_7;
-  mediump vec4 color_8;
-  mediump vec4 tex_9;
-  highp vec3 tmpvar_10;
-  tmpvar_10 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_11;
-  highp float r_12;
-  if ((abs(tmpvar_10.z) > (1e-08 * abs(tmpvar_10.x)))) {
-    highp float y_over_x_13;
-    y_over_x_13 = (tmpvar_10.x / tmpvar_10.z);
-    highp float s_14;
-    highp float x_15;
-    x_15 = (y_over_x_13 * inversesqrt(((y_over_x_13 * y_over_x_13) + 1.0)));
-    s_14 = (sign(x_15) * (1.5708 - (sqrt((1.0 - abs(x_15))) * (1.5708 + (abs(x_15) * (-0.214602 + (abs(x_15) * (0.0865667 + (abs(x_15) * -0.0310296)))))))));
-    r_12 = s_14;
-    if ((tmpvar_10.z < 0.0)) {
-      if ((tmpvar_10.x >= 0.0)) {
-        r_12 = (s_14 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_12 = (r_12 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_12 = (sign(tmpvar_10.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_11.x = (0.5 + (0.159155 * r_12));
-  uv_11.y = (0.31831 * (1.5708 - (sign(tmpvar_10.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_10.y))) * (1.5708 + (abs(tmpvar_10.y) * (-0.214602 + (abs(tmpvar_10.y) * (0.0865667 + (abs(tmpvar_10.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_16;
-  tmpvar_16 = dFdx(tmpvar_10.xz);
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdy(tmpvar_10.xz);
-  highp vec4 tmpvar_18;
-  tmpvar_18.x = (0.159155 * sqrt(dot (tmpvar_16, tmpvar_16)));
-  tmpvar_18.y = dFdx(uv_11.y);
-  tmpvar_18.z = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_18.w = dFdy(uv_11.y);
-  lowp vec4 tmpvar_19;
-  tmpvar_19 = texture2DGradEXT (_MainTex, uv_11, tmpvar_18.xy, tmpvar_18.zw);
-  tex_9 = tmpvar_19;
-  mediump vec4 tmpvar_20;
-  mediump vec3 detailCoords_21;
-  mediump float nylerp_22;
-  mediump float zxlerp_23;
-  highp vec3 tmpvar_24;
-  tmpvar_24 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_25;
-  highp float r_26;
-  if ((abs(tmpvar_24.z) > (1e-08 * abs(tmpvar_24.x)))) {
-    highp float y_over_x_27;
-    y_over_x_27 = (tmpvar_24.x / tmpvar_24.z);
-    highp float s_28;
-    highp float x_29;
-    x_29 = (y_over_x_27 * inversesqrt(((y_over_x_27 * y_over_x_27) + 1.0)));
-    s_28 = (sign(x_29) * (1.5708 - (sqrt((1.0 - abs(x_29))) * (1.5708 + (abs(x_29) * (-0.214602 + (abs(x_29) * (0.0865667 + (abs(x_29) * -0.0310296)))))))));
-    r_26 = s_28;
-    if ((tmpvar_24.z < 0.0)) {
-      if ((tmpvar_24.x >= 0.0)) {
-        r_26 = (s_28 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_26 = (r_26 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_26 = (sign(tmpvar_24.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_25.x = (0.5 + (0.159155 * r_26));
-  uv_25.y = (0.31831 * (1.5708 - (sign(tmpvar_24.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_24.y))) * (1.5708 + (abs(tmpvar_24.y) * (-0.214602 + (abs(tmpvar_24.y) * (0.0865667 + (abs(tmpvar_24.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_30;
-  tmpvar_30 = dFdx(tmpvar_24.xz);
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdy(tmpvar_24.xz);
-  highp vec4 tmpvar_32;
-  tmpvar_32.x = (0.159155 * sqrt(dot (tmpvar_30, tmpvar_30)));
-  tmpvar_32.y = dFdx(uv_25.y);
-  tmpvar_32.z = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_32.w = dFdy(uv_25.y);
-  highp vec3 tmpvar_33;
-  tmpvar_33 = abs(tmpvar_24);
-  highp float tmpvar_34;
-  tmpvar_34 = float((tmpvar_33.z >= tmpvar_33.x));
-  zxlerp_23 = tmpvar_34;
-  highp float tmpvar_35;
-  tmpvar_35 = float((mix (tmpvar_33.x, tmpvar_33.z, zxlerp_23) >= tmpvar_33.y));
-  nylerp_22 = tmpvar_35;
-  highp vec3 tmpvar_36;
-  tmpvar_36 = mix (tmpvar_33, tmpvar_33.zxy, vec3(zxlerp_23));
-  detailCoords_21 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_33.yxz, detailCoords_21, vec3(nylerp_22));
-  detailCoords_21 = tmpvar_37;
-  mediump float tmpvar_38;
-  tmpvar_38 = abs(detailCoords_21.x);
-  highp vec2 coord_39;
-  coord_39 = (((0.5 * detailCoords_21.zy) / tmpvar_38) * _DetailScale);
-  lowp vec4 tmpvar_40;
-  tmpvar_40 = texture2DGradEXT (_DetailTex, coord_39, tmpvar_32.xy, tmpvar_32.zw);
-  tmpvar_20 = tmpvar_40;
-  highp float tmpvar_41;
-  tmpvar_41 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_7 = tmpvar_41;
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
+  highp vec3 tmpvar_34;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_43;
-  tmpvar_43 = (mix (mix (tmpvar_20, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_7)), tex_9, vec4(tmpvar_42)) * _Color);
-  color_8.xyz = tmpvar_43.xyz;
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  lowp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
   highp vec3 tmpvar_44;
-  tmpvar_44 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_6 = tmpvar_44;
-  lowp vec3 tmpvar_45;
-  tmpvar_45 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_5 = tmpvar_45;
-  normalDir_4 = xlv_TEXCOORD2;
-  mediump float tmpvar_46;
-  tmpvar_46 = clamp (dot (normalDir_4, lightDirection_5), 0.0, 1.0);
-  lowp float tmpvar_47;
-  tmpvar_47 = (texture2D (_LightTexture0, xlv_TEXCOORD3).w * texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4).x);
-  mediump float tmpvar_48;
-  tmpvar_48 = clamp ((((_LightColor0.w * ((tmpvar_46 - 0.01) / 0.99)) * 4.0) * tmpvar_47), 0.0, 1.0);
-  highp vec3 tmpvar_49;
-  tmpvar_49 = clamp ((ambientLighting_6 + ((_MinLight + _LightColor0.xyz) * tmpvar_48)), 0.0, 1.0);
-  light_3 = tmpvar_49;
-  mediump vec3 tmpvar_50;
-  tmpvar_50 = vec3(clamp (floor((1.0 + tmpvar_46)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_50;
-  mediump vec3 tmpvar_51;
-  mediump vec3 i_52;
-  i_52 = -(lightDirection_5);
-  tmpvar_51 = (i_52 - (2.0 * (dot (normalDir_4, i_52) * normalDir_4)));
-  highp vec3 tmpvar_53;
-  tmpvar_53 = (specularReflection_2 * (((tmpvar_47 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_51, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_53;
-  highp vec3 tmpvar_54;
-  tmpvar_54 = (light_3 + (tex_9.w * tmpvar_53));
-  light_3 = tmpvar_54;
-  highp float tmpvar_55;
-  tmpvar_55 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_8.w = mix (0.4489, tex_9.w, tmpvar_55);
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  lowp vec4 tmpvar_45;
+  tmpvar_45 = texture2D (_LightTexture0, xlv_TEXCOORD3);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2DProj (_ShadowMapTexture, xlv_TEXCOORD4);
+  mediump vec3 lightDir_47;
+  lightDir_47 = tmpvar_43;
+  mediump vec3 viewDir_48;
+  viewDir_48 = xlv_TEXCOORD1;
+  mediump vec3 normal_49;
+  normal_49 = tmpvar_44;
+  mediump float atten_50;
+  atten_50 = (tmpvar_45.w * tmpvar_46.x);
+  mediump vec4 c_51;
+  highp float nh_52;
+  mediump vec3 tmpvar_53;
+  tmpvar_53 = normalize(viewDir_48);
+  viewDir_48 = tmpvar_53;
+  mediump float tmpvar_54;
+  tmpvar_54 = dot (normal_49, lightDir_47);
+  mediump float tmpvar_55;
+  tmpvar_55 = clamp (dot (normalize((lightDir_47 + tmpvar_53)), normal_49), 0.0, 1.0);
+  nh_52 = tmpvar_55;
   highp vec3 tmpvar_56;
-  tmpvar_56 = clamp (((_LightPower * light_3) - color_8.w), 0.0, 1.0);
-  color_8.xyz = (tmpvar_43.xyz * tmpvar_56);
-  highp vec3 tmpvar_57;
-  tmpvar_57 = (color_8.xyz + (_Reflectivity * light_3));
-  color_8.xyz = tmpvar_57;
-  color_8.xyz = (color_8.xyz * light_3);
-  tmpvar_1 = color_8;
+  tmpvar_56 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_54) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_52, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_50 * 4.0));
+  c_51.xyz = tmpvar_56;
+  c_51.w = (tmpvar_54 * (atten_50 * 4.0));
+  color_5.xyz = c_51.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_51.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -10556,7 +10470,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 396
+#line 325
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -10565,17 +10479,17 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 493
+#line 522
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec2 _LightCoord;
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 485
+#line 514
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -10672,52 +10586,61 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 394
+#line 323
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 406
+#line 335
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 419
-#line 427
+#line 348
+#line 356
+#line 370
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 403
+#line 407
+#line 416
+#line 424
+#line 433
 #line 441
+#line 454
+#line 466
+#line 482
+#line 494
 uniform lowp vec4 _Color;
+#line 502
 uniform highp float _Shininess;
-#line 474
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 506
 uniform highp float _DetailScale;
-#line 478
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 482
+#line 510
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 504
-#line 504
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 533
+#line 533
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 508
+    #line 537
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 512
+    o.worldPos = vertexPos;
+    #line 541
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
-    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
+    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - vertexPos));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xy;
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
-    #line 517
+    #line 546
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -10737,7 +10660,7 @@ void main() {
     gl_Position = vec4(xl_retval.pos);
     xlv_TEXCOORD0 = float(xl_retval.viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.viewDir);
-    xlv_TEXCOORD2 = vec3(xl_retval.worldNormal);
+    xlv_TEXCOORD2 = vec3(xl_retval.worldPos);
     xlv_TEXCOORD3 = vec2(xl_retval._LightCoord);
     xlv_TEXCOORD4 = vec4(xl_retval._ShadowCoord);
     xlv_TEXCOORD5 = vec3(xl_retval.sphereNormal);
@@ -10831,7 +10754,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 396
+#line 325
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -10840,17 +10763,17 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 493
+#line 522
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec2 _LightCoord;
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 485
+#line 514
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -10947,125 +10870,130 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 394
+#line 323
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 406
+#line 335
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 419
-#line 427
+#line 348
+#line 356
+#line 370
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 403
+#line 407
+#line 416
+#line 424
+#line 433
 #line 441
+#line 454
+#line 466
+#line 482
+#line 494
 uniform lowp vec4 _Color;
+#line 502
 uniform highp float _Shininess;
-#line 474
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 506
 uniform highp float _DetailScale;
-#line 478
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 482
+#line 510
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 504
-#line 321
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 533
+#line 407
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
+    #line 411
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 330
+#line 416
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
+    #line 420
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 336
     return uv;
 }
-#line 368
+#line 454
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
-    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    highp vec2 uv = ((GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0)) * 4.0) * detailScale);
+    #line 458
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
+    #line 462
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 347
+#line 433
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    #line 437
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 353
     return tex;
 }
-#line 388
+#line 482
+mediump vec4 SpecularColorLight( in mediump vec3 lightDir, in mediump vec3 viewDir, in mediump vec3 normal, in mediump vec4 color, in mediump vec4 specColor, in highp float specK, in mediump float atten ) {
+    viewDir = normalize(viewDir);
+    mediump vec3 h = normalize((lightDir + viewDir));
+    #line 486
+    mediump float diffuse = dot( normal, lightDir);
+    highp float nh = xll_saturate_f(dot( h, normal));
+    highp float spec = (pow( nh, specK) * color.w);
+    mediump vec4 c;
+    #line 490
+    c.xyz = ((((color.xyz * _LightColor0.xyz) * diffuse) + ((_LightColor0.xyz * specColor.xyz) * spec)) * (atten * 4.0));
+    c.w = (diffuse * (atten * 4.0));
+    return c;
+}
+#line 317
 lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
-    #line 390
+    #line 319
     highp float dist = textureProj( _ShadowMapTexture, shadowCoord).x;
     mediump float lightShadowDataX = _LightShadowData.x;
     return max( float((dist > (shadowCoord.z / shadowCoord.w))), lightShadowDataX);
 }
-#line 519
+#line 548
 lowp vec4 frag( in v2f IN ) {
-    #line 521
+    #line 550
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 525
+    #line 554
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 529
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 normalDir = IN.worldNormal;
-    mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 533
-    mediump float diff = ((NdotL - 0.01) / 0.99);
-    lowp float atten = (texture( _LightTexture0, IN._LightCoord).w * unitySampleShadow( IN._ShadowCoord));
-    mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 537
-    highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
-    specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light += (main.w * specularReflection);
-    color.w = 1.0;
-    #line 541
-    highp float refrac = 0.67;
-    color.w *= pow( refrac, 2.0);
-    color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
-    color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 545
-    color.xyz += (_Reflectivity * light);
-    color.xyz *= light;
+    #line 558
+    mediump float handoff = xll_saturate_f(pow( _PlanetOpacity, 2.0));
+    color.xyz = mix( color.xyz, main.xyz, vec3( handoff));
+    mediump vec4 specColor = _SpecColor;
+    specColor.w = mix( 1.0, main.w, handoff);
+    #line 562
+    mediump vec4 colorLight = SpecularColorLight( vec3( normalize(_WorldSpaceLightPos0)), IN.viewDir, normalize((IN.worldPos - _PlanetOrigin)), color, specColor, (_Shininess * 128.0), (texture( _LightTexture0, IN._LightCoord).w * unitySampleShadow( IN._ShadowCoord)));
+    color.xyz = colorLight.xyz;
+    color.w = mix( 1.0, color.w, ((1.0 - handoff) * step( 0.0, colorLight.w)));
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -11080,7 +11008,7 @@ void main() {
     xlt_IN.pos = vec4(0.0);
     xlt_IN.viewDist = float(xlv_TEXCOORD0);
     xlt_IN.viewDir = vec3(xlv_TEXCOORD1);
-    xlt_IN.worldNormal = vec3(xlv_TEXCOORD2);
+    xlt_IN.worldPos = vec3(xlv_TEXCOORD2);
     xlt_IN._LightCoord = vec2(xlv_TEXCOORD3);
     xlt_IN._ShadowCoord = vec4(xlv_TEXCOORD4);
     xlt_IN.sphereNormal = vec3(xlv_TEXCOORD5);
@@ -11109,20 +11037,19 @@ uniform vec4 _LightPositionRange;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
-  vec3 p_1;
-  p_1 = ((_Object2World * gl_Vertex).xyz - _WorldSpaceCameraPos);
-  vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = gl_Normal;
+  vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * gl_Vertex).xyz;
+  vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   vec4 tmpvar_3;
   tmpvar_3.x = gl_MultiTexCoord0.x;
   tmpvar_3.y = gl_MultiTexCoord0.y;
   tmpvar_3.z = gl_MultiTexCoord1.x;
   tmpvar_3.w = gl_MultiTexCoord1.y;
   gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -11138,9 +11065,8 @@ varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying float xlv_TEXCOORD0;
-uniform float _Reflectivity;
-uniform float _LightPower;
-uniform float _MinLight;
+uniform vec3 _PlanetOrigin;
+uniform float _PlanetOpacity;
 uniform float _DetailDist;
 uniform float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -11152,7 +11078,6 @@ uniform vec4 _SpecColor;
 uniform vec4 _LightColor0;
 uniform sampler2D _LightTexture0;
 uniform samplerCube _ShadowMapTexture;
-
 uniform vec4 _LightShadowData;
 uniform vec4 _LightPositionRange;
 uniform vec4 _WorldSpaceLightPos0;
@@ -11219,51 +11144,55 @@ void main ()
   uv_13.x = (0.5 + (0.159155 * r_14));
   uv_13.y = (0.31831 * (1.5708 - (sign(tmpvar_12.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_12.y))) * (1.5708 + (abs(tmpvar_12.y) * (-0.214602 + (abs(tmpvar_12.y) * (0.0865667 + (abs(tmpvar_12.y) * -0.0310296)))))))))));
   vec2 tmpvar_18;
-  tmpvar_18 = dFdx(tmpvar_12.xz);
+  tmpvar_18 = ((uv_13 * 4.0) * _DetailScale);
   vec2 tmpvar_19;
-  tmpvar_19 = dFdy(tmpvar_12.xz);
-  vec4 tmpvar_20;
-  tmpvar_20.x = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_20.y = dFdx(uv_13.y);
-  tmpvar_20.z = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
-  tmpvar_20.w = dFdy(uv_13.y);
-  vec3 tmpvar_21;
-  tmpvar_21 = abs(tmpvar_12);
-  float tmpvar_22;
-  tmpvar_22 = float((tmpvar_21.z >= tmpvar_21.x));
-  vec3 tmpvar_23;
-  tmpvar_23 = mix (tmpvar_21.yxz, mix (tmpvar_21, tmpvar_21.zxy, vec3(tmpvar_22)), vec3(float((mix (tmpvar_21.x, tmpvar_21.z, tmpvar_22) >= tmpvar_21.y))));
-  vec4 tmpvar_24;
-  tmpvar_24 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) * _DetailScale), tmpvar_20.xy, tmpvar_20.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
-  color_2 = tmpvar_24;
+  tmpvar_19 = dFdx(tmpvar_12.xz);
+  vec2 tmpvar_20;
+  tmpvar_20 = dFdy(tmpvar_12.xz);
+  vec4 tmpvar_21;
+  tmpvar_21.x = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
+  tmpvar_21.y = dFdx(tmpvar_18.y);
+  tmpvar_21.z = (0.159155 * sqrt(dot (tmpvar_20, tmpvar_20)));
+  tmpvar_21.w = dFdy(tmpvar_18.y);
+  vec3 tmpvar_22;
+  tmpvar_22 = abs(tmpvar_12);
+  float tmpvar_23;
+  tmpvar_23 = float((tmpvar_22.z >= tmpvar_22.x));
+  vec3 tmpvar_24;
+  tmpvar_24 = mix (tmpvar_22.yxz, mix (tmpvar_22, tmpvar_22.zxy, vec3(tmpvar_23)), vec3(float((mix (tmpvar_22.x, tmpvar_22.z, tmpvar_23) >= tmpvar_22.y))));
   vec4 tmpvar_25;
-  tmpvar_25 = normalize(_WorldSpaceLightPos0);
+  tmpvar_25 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) * _DetailScale), tmpvar_21.xy, tmpvar_21.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
+  color_2.w = tmpvar_25.w;
   float tmpvar_26;
-  tmpvar_26 = clamp (dot (xlv_TEXCOORD2, tmpvar_25.xyz), 0.0, 1.0);
-  float tmpvar_27;
-  tmpvar_27 = ((tmpvar_26 - 0.01) / 0.99);
-  vec4 tmpvar_28;
-  tmpvar_28 = texture2D (_LightTexture0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3)));
-  float tmpvar_29;
-  tmpvar_29 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
+  tmpvar_26 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  color_2.xyz = mix (tmpvar_25.xyz, main_1.xyz, vec3(tmpvar_26));
+  vec4 tmpvar_27;
+  tmpvar_27 = normalize(_WorldSpaceLightPos0);
+  vec3 tmpvar_28;
+  tmpvar_28 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  vec4 tmpvar_29;
+  tmpvar_29 = texture2D (_LightTexture0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3)));
   float tmpvar_30;
-  tmpvar_30 = dot (textureCube (_ShadowMapTexture, xlv_TEXCOORD4), vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  tmpvar_30 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
   float tmpvar_31;
-  if ((tmpvar_30 < tmpvar_29)) {
-    tmpvar_31 = _LightShadowData.x;
-  } else {
-    tmpvar_31 = 1.0;
-  };
+  tmpvar_31 = dot (textureCube (_ShadowMapTexture, xlv_TEXCOORD4), vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
   float tmpvar_32;
-  tmpvar_32 = (tmpvar_28.w * tmpvar_31);
-  vec3 i_33;
-  i_33 = -(tmpvar_25.xyz);
-  vec3 tmpvar_34;
-  tmpvar_34 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_27) * 4.0) * tmpvar_32), 0.0, 1.0))), 0.0, 1.0) + (main_1.w * (vec3(clamp (floor((1.0 + tmpvar_26)), 0.0, 1.0)) * (((tmpvar_32 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_33 - (2.0 * (dot (xlv_TEXCOORD2, i_33) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
-  color_2.w = mix (0.4489, main_1.w, clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0));
-  color_2.xyz = (tmpvar_24.xyz * clamp (((_LightPower * tmpvar_34) - color_2.w), 0.0, 1.0));
-  color_2.xyz = (color_2.xyz + (_Reflectivity * tmpvar_34));
-  color_2.xyz = (color_2.xyz * tmpvar_34);
+  if ((tmpvar_31 < tmpvar_30)) {
+    tmpvar_32 = _LightShadowData.x;
+  } else {
+    tmpvar_32 = 1.0;
+  };
+  float atten_33;
+  atten_33 = (tmpvar_29.w * tmpvar_32);
+  vec4 c_34;
+  vec3 tmpvar_35;
+  tmpvar_35 = normalize(tmpvar_27.xyz);
+  float tmpvar_36;
+  tmpvar_36 = dot (tmpvar_28, tmpvar_35);
+  c_34.xyz = ((((color_2.xyz * _LightColor0.xyz) * tmpvar_36) + ((_LightColor0.xyz * _SpecColor.xyz) * (pow (clamp (dot (normalize((tmpvar_35 + normalize(xlv_TEXCOORD1))), tmpvar_28), 0.0, 1.0), (_Shininess * 128.0)) * tmpvar_25.w))) * (atten_33 * 4.0));
+  c_34.w = (tmpvar_36 * (atten_33 * 4.0));
+  color_2.xyz = c_34.xyz;
+  color_2.w = mix (1.0, tmpvar_25.w, ((1.0 - tmpvar_26) * float((c_34.w >= 0.0))));
   gl_FragData[0] = color_2;
 }
 
@@ -11275,7 +11204,6 @@ void main ()
 SubProgram "d3d9 " {
 Keywords { "POINT" "SHADOWS_CUBE" }
 Bind "vertex" Vertex
-Bind "normal" Normal
 Bind "texcoord" TexCoord0
 Bind "texcoord1" TexCoord1
 Matrix 0 [glstate_matrix_mvp]
@@ -11284,7 +11212,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 25 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -11292,38 +11220,30 @@ dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
 dcl_texcoord5 o6
-def c14, 0.00000000, 0, 0, 0
 dcl_position0 v0
-dcl_normal0 v1
-dcl_texcoord0 v2
-dcl_texcoord1 v3
-mov r1.xyz, v1
-mov r1.w, c14.x
-dp4 r0.z, r1, c6
-dp4 r0.x, r1, c4
-dp4 r0.y, r1, c5
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o3.xyz, r0.w, r0
-dp4 r0.z, v0, c6
-dp4 r0.x, v0, c4
-dp4 r0.y, v0, c5
-mov r2.zw, v3.xyxy
-mov r2.xy, v2
-dp4 r1.x, r2, r2
-rsq r0.w, r1.x
-mul r2.xyz, r0.w, r2
-add r1.xyz, -r0, c12
-dp3 r0.w, r1, r1
+dcl_texcoord0 v1
+dcl_texcoord1 v2
+dp4 r1.z, v0, c6
+dp4 r1.x, v0, c4
+dp4 r1.y, v0, c5
+mov r0.zw, v2.xyxy
+mov r0.xy, v1
+dp4 r0.w, r0, r0
 rsq r1.w, r0.w
+mul r0.xyz, r1.w, r0
+add r2.xyz, -r1, c12
+dp3 r0.w, r2, r2
+rsq r1.w, r0.w
+mov o6.xyz, -r0
+mov r0.xyz, r1
 dp4 r0.w, v0, c7
-mov o6.xyz, -r2
-mul o2.xyz, r1.w, r1
+mul o2.xyz, r1.w, r2
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
 rcp o1.x, r1.w
-add o5.xyz, r0, -c13
+mov o3.xyz, r1
+add o5.xyz, r1, -c13
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -11351,24 +11271,22 @@ uniform highp vec4 _LightPositionRange;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -11387,9 +11305,8 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -11401,185 +11318,177 @@ uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTexture0;
 uniform samplerCube _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform highp vec4 _LightPositionRange;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  lowp float atten_4;
-  mediump vec3 normalDir_5;
-  mediump vec3 lightDirection_6;
-  mediump vec3 ambientLighting_7;
-  mediump float detailLevel_8;
-  mediump vec4 color_9;
-  mediump vec4 tex_10;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_12;
-  highp float r_13;
-  if ((abs(tmpvar_11.z) > (1e-08 * abs(tmpvar_11.x)))) {
-    highp float y_over_x_14;
-    y_over_x_14 = (tmpvar_11.x / tmpvar_11.z);
-    highp float s_15;
-    highp float x_16;
-    x_16 = (y_over_x_14 * inversesqrt(((y_over_x_14 * y_over_x_14) + 1.0)));
-    s_15 = (sign(x_16) * (1.5708 - (sqrt((1.0 - abs(x_16))) * (1.5708 + (abs(x_16) * (-0.214602 + (abs(x_16) * (0.0865667 + (abs(x_16) * -0.0310296)))))))));
-    r_13 = s_15;
-    if ((tmpvar_11.z < 0.0)) {
-      if ((tmpvar_11.x >= 0.0)) {
-        r_13 = (s_15 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_13 = (r_13 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_13 = (sign(tmpvar_11.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_12.x = (0.5 + (0.159155 * r_13));
-  uv_12.y = (0.31831 * (1.5708 - (sign(tmpvar_11.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_11.y))) * (1.5708 + (abs(tmpvar_11.y) * (-0.214602 + (abs(tmpvar_11.y) * (0.0865667 + (abs(tmpvar_11.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdx(tmpvar_11.xz);
-  highp vec2 tmpvar_18;
-  tmpvar_18 = dFdy(tmpvar_11.xz);
-  highp vec4 tmpvar_19;
-  tmpvar_19.x = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_19.y = dFdx(uv_12.y);
-  tmpvar_19.z = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_19.w = dFdy(uv_12.y);
-  lowp vec4 tmpvar_20;
-  tmpvar_20 = texture2DGradEXT (_MainTex, uv_12, tmpvar_19.xy, tmpvar_19.zw);
-  tex_10 = tmpvar_20;
-  mediump vec4 tmpvar_21;
-  mediump vec3 detailCoords_22;
-  mediump float nylerp_23;
-  mediump float zxlerp_24;
-  highp vec3 tmpvar_25;
-  tmpvar_25 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_26;
-  highp float r_27;
-  if ((abs(tmpvar_25.z) > (1e-08 * abs(tmpvar_25.x)))) {
-    highp float y_over_x_28;
-    y_over_x_28 = (tmpvar_25.x / tmpvar_25.z);
-    highp float s_29;
-    highp float x_30;
-    x_30 = (y_over_x_28 * inversesqrt(((y_over_x_28 * y_over_x_28) + 1.0)));
-    s_29 = (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))));
-    r_27 = s_29;
-    if ((tmpvar_25.z < 0.0)) {
-      if ((tmpvar_25.x >= 0.0)) {
-        r_27 = (s_29 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_27 = (r_27 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_27 = (sign(tmpvar_25.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_26.x = (0.5 + (0.159155 * r_27));
-  uv_26.y = (0.31831 * (1.5708 - (sign(tmpvar_25.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_25.y))) * (1.5708 + (abs(tmpvar_25.y) * (-0.214602 + (abs(tmpvar_25.y) * (0.0865667 + (abs(tmpvar_25.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdx(tmpvar_25.xz);
-  highp vec2 tmpvar_32;
-  tmpvar_32 = dFdy(tmpvar_25.xz);
-  highp vec4 tmpvar_33;
-  tmpvar_33.x = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_33.y = dFdx(uv_26.y);
-  tmpvar_33.z = (0.159155 * sqrt(dot (tmpvar_32, tmpvar_32)));
-  tmpvar_33.w = dFdy(uv_26.y);
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
   highp vec3 tmpvar_34;
-  tmpvar_34 = abs(tmpvar_25);
-  highp float tmpvar_35;
-  tmpvar_35 = float((tmpvar_34.z >= tmpvar_34.x));
-  zxlerp_24 = tmpvar_35;
-  highp float tmpvar_36;
-  tmpvar_36 = float((mix (tmpvar_34.x, tmpvar_34.z, zxlerp_24) >= tmpvar_34.y));
-  nylerp_23 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_34, tmpvar_34.zxy, vec3(zxlerp_24));
-  detailCoords_22 = tmpvar_37;
-  highp vec3 tmpvar_38;
-  tmpvar_38 = mix (tmpvar_34.yxz, detailCoords_22, vec3(nylerp_23));
-  detailCoords_22 = tmpvar_38;
-  mediump float tmpvar_39;
-  tmpvar_39 = abs(detailCoords_22.x);
-  highp vec2 coord_40;
-  coord_40 = (((0.5 * detailCoords_22.zy) / tmpvar_39) * _DetailScale);
-  lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_40, tmpvar_33.xy, tmpvar_33.zw);
-  tmpvar_21 = tmpvar_41;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_8 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_44;
-  tmpvar_44 = (mix (mix (tmpvar_21, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8)), tex_10, vec4(tmpvar_43)) * _Color);
-  color_9 = tmpvar_44;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_45;
-  highp vec3 tmpvar_46;
-  tmpvar_46 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_46;
-  normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  mediump float tmpvar_48;
-  tmpvar_48 = ((tmpvar_47 - 0.01) / 0.99);
-  highp float tmpvar_49;
-  tmpvar_49 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2D (_LightTexture0, vec2(tmpvar_49));
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2D (_LightTexture0, vec2(tmpvar_45));
+  highp float tmpvar_47;
+  tmpvar_47 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
+  highp vec4 packDist_48;
+  lowp vec4 tmpvar_49;
+  tmpvar_49 = textureCube (_ShadowMapTexture, xlv_TEXCOORD4);
+  packDist_48 = tmpvar_49;
+  highp float tmpvar_50;
+  tmpvar_50 = dot (packDist_48, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
   highp float tmpvar_51;
-  tmpvar_51 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
-  highp vec4 packDist_52;
-  lowp vec4 tmpvar_53;
-  tmpvar_53 = textureCube (_ShadowMapTexture, xlv_TEXCOORD4);
-  packDist_52 = tmpvar_53;
-  highp float tmpvar_54;
-  tmpvar_54 = dot (packDist_52, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  highp float tmpvar_55;
-  if ((tmpvar_54 < tmpvar_51)) {
-    tmpvar_55 = _LightShadowData.x;
+  if ((tmpvar_50 < tmpvar_47)) {
+    tmpvar_51 = _LightShadowData.x;
   } else {
-    tmpvar_55 = 1.0;
+    tmpvar_51 = 1.0;
   };
-  highp float tmpvar_56;
-  tmpvar_56 = (tmpvar_50.w * tmpvar_55);
-  atten_4 = tmpvar_56;
-  mediump float tmpvar_57;
-  tmpvar_57 = clamp ((((_LightColor0.w * tmpvar_48) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_58;
-  tmpvar_58 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_57)), 0.0, 1.0);
-  light_3 = tmpvar_58;
+  mediump vec3 lightDir_52;
+  lightDir_52 = tmpvar_43;
+  mediump vec3 viewDir_53;
+  viewDir_53 = xlv_TEXCOORD1;
+  mediump vec3 normal_54;
+  normal_54 = tmpvar_44;
+  mediump float atten_55;
+  atten_55 = (tmpvar_46.w * tmpvar_51);
+  mediump vec4 c_56;
+  highp float nh_57;
+  mediump vec3 tmpvar_58;
+  tmpvar_58 = normalize(lightDir_52);
+  lightDir_52 = tmpvar_58;
   mediump vec3 tmpvar_59;
-  tmpvar_59 = vec3(clamp (floor((1.0 + tmpvar_47)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_59;
-  mediump vec3 tmpvar_60;
-  mediump vec3 i_61;
-  i_61 = -(lightDirection_6);
-  tmpvar_60 = (i_61 - (2.0 * (dot (normalDir_5, i_61) * normalDir_5)));
+  tmpvar_59 = normalize(viewDir_53);
+  viewDir_53 = tmpvar_59;
+  mediump float tmpvar_60;
+  tmpvar_60 = dot (normal_54, tmpvar_58);
+  mediump float tmpvar_61;
+  tmpvar_61 = clamp (dot (normalize((tmpvar_58 + tmpvar_59)), normal_54), 0.0, 1.0);
+  nh_57 = tmpvar_61;
   highp vec3 tmpvar_62;
-  tmpvar_62 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_60, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_62;
-  highp vec3 tmpvar_63;
-  tmpvar_63 = (light_3 + (tex_10.w * tmpvar_62));
-  light_3 = tmpvar_63;
-  highp float tmpvar_64;
-  tmpvar_64 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_9.w = mix (0.4489, tex_10.w, tmpvar_64);
-  highp vec3 tmpvar_65;
-  tmpvar_65 = clamp (((_LightPower * light_3) - color_9.w), 0.0, 1.0);
-  color_9.xyz = (tmpvar_44.xyz * tmpvar_65);
-  highp vec3 tmpvar_66;
-  tmpvar_66 = (color_9.xyz + (_Reflectivity * light_3));
-  color_9.xyz = tmpvar_66;
-  color_9.xyz = (color_9.xyz * light_3);
-  tmpvar_1 = color_9;
+  tmpvar_62 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_60) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_57, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_55 * 4.0));
+  c_56.xyz = tmpvar_62;
+  c_56.w = (tmpvar_60 * (atten_55 * 4.0));
+  color_5.xyz = c_56.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_56.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -11608,24 +11517,22 @@ uniform highp vec4 _LightPositionRange;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -11644,9 +11551,8 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -11658,185 +11564,177 @@ uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTexture0;
 uniform samplerCube _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform highp vec4 _LightPositionRange;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  lowp float atten_4;
-  mediump vec3 normalDir_5;
-  mediump vec3 lightDirection_6;
-  mediump vec3 ambientLighting_7;
-  mediump float detailLevel_8;
-  mediump vec4 color_9;
-  mediump vec4 tex_10;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_12;
-  highp float r_13;
-  if ((abs(tmpvar_11.z) > (1e-08 * abs(tmpvar_11.x)))) {
-    highp float y_over_x_14;
-    y_over_x_14 = (tmpvar_11.x / tmpvar_11.z);
-    highp float s_15;
-    highp float x_16;
-    x_16 = (y_over_x_14 * inversesqrt(((y_over_x_14 * y_over_x_14) + 1.0)));
-    s_15 = (sign(x_16) * (1.5708 - (sqrt((1.0 - abs(x_16))) * (1.5708 + (abs(x_16) * (-0.214602 + (abs(x_16) * (0.0865667 + (abs(x_16) * -0.0310296)))))))));
-    r_13 = s_15;
-    if ((tmpvar_11.z < 0.0)) {
-      if ((tmpvar_11.x >= 0.0)) {
-        r_13 = (s_15 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_13 = (r_13 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_13 = (sign(tmpvar_11.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_12.x = (0.5 + (0.159155 * r_13));
-  uv_12.y = (0.31831 * (1.5708 - (sign(tmpvar_11.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_11.y))) * (1.5708 + (abs(tmpvar_11.y) * (-0.214602 + (abs(tmpvar_11.y) * (0.0865667 + (abs(tmpvar_11.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdx(tmpvar_11.xz);
-  highp vec2 tmpvar_18;
-  tmpvar_18 = dFdy(tmpvar_11.xz);
-  highp vec4 tmpvar_19;
-  tmpvar_19.x = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_19.y = dFdx(uv_12.y);
-  tmpvar_19.z = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_19.w = dFdy(uv_12.y);
-  lowp vec4 tmpvar_20;
-  tmpvar_20 = texture2DGradEXT (_MainTex, uv_12, tmpvar_19.xy, tmpvar_19.zw);
-  tex_10 = tmpvar_20;
-  mediump vec4 tmpvar_21;
-  mediump vec3 detailCoords_22;
-  mediump float nylerp_23;
-  mediump float zxlerp_24;
-  highp vec3 tmpvar_25;
-  tmpvar_25 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_26;
-  highp float r_27;
-  if ((abs(tmpvar_25.z) > (1e-08 * abs(tmpvar_25.x)))) {
-    highp float y_over_x_28;
-    y_over_x_28 = (tmpvar_25.x / tmpvar_25.z);
-    highp float s_29;
-    highp float x_30;
-    x_30 = (y_over_x_28 * inversesqrt(((y_over_x_28 * y_over_x_28) + 1.0)));
-    s_29 = (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))));
-    r_27 = s_29;
-    if ((tmpvar_25.z < 0.0)) {
-      if ((tmpvar_25.x >= 0.0)) {
-        r_27 = (s_29 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_27 = (r_27 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_27 = (sign(tmpvar_25.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_26.x = (0.5 + (0.159155 * r_27));
-  uv_26.y = (0.31831 * (1.5708 - (sign(tmpvar_25.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_25.y))) * (1.5708 + (abs(tmpvar_25.y) * (-0.214602 + (abs(tmpvar_25.y) * (0.0865667 + (abs(tmpvar_25.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdx(tmpvar_25.xz);
-  highp vec2 tmpvar_32;
-  tmpvar_32 = dFdy(tmpvar_25.xz);
-  highp vec4 tmpvar_33;
-  tmpvar_33.x = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_33.y = dFdx(uv_26.y);
-  tmpvar_33.z = (0.159155 * sqrt(dot (tmpvar_32, tmpvar_32)));
-  tmpvar_33.w = dFdy(uv_26.y);
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
   highp vec3 tmpvar_34;
-  tmpvar_34 = abs(tmpvar_25);
-  highp float tmpvar_35;
-  tmpvar_35 = float((tmpvar_34.z >= tmpvar_34.x));
-  zxlerp_24 = tmpvar_35;
-  highp float tmpvar_36;
-  tmpvar_36 = float((mix (tmpvar_34.x, tmpvar_34.z, zxlerp_24) >= tmpvar_34.y));
-  nylerp_23 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_34, tmpvar_34.zxy, vec3(zxlerp_24));
-  detailCoords_22 = tmpvar_37;
-  highp vec3 tmpvar_38;
-  tmpvar_38 = mix (tmpvar_34.yxz, detailCoords_22, vec3(nylerp_23));
-  detailCoords_22 = tmpvar_38;
-  mediump float tmpvar_39;
-  tmpvar_39 = abs(detailCoords_22.x);
-  highp vec2 coord_40;
-  coord_40 = (((0.5 * detailCoords_22.zy) / tmpvar_39) * _DetailScale);
-  lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_40, tmpvar_33.xy, tmpvar_33.zw);
-  tmpvar_21 = tmpvar_41;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_8 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_44;
-  tmpvar_44 = (mix (mix (tmpvar_21, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8)), tex_10, vec4(tmpvar_43)) * _Color);
-  color_9 = tmpvar_44;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_45;
-  highp vec3 tmpvar_46;
-  tmpvar_46 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_46;
-  normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  mediump float tmpvar_48;
-  tmpvar_48 = ((tmpvar_47 - 0.01) / 0.99);
-  highp float tmpvar_49;
-  tmpvar_49 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2D (_LightTexture0, vec2(tmpvar_49));
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2D (_LightTexture0, vec2(tmpvar_45));
+  highp float tmpvar_47;
+  tmpvar_47 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
+  highp vec4 packDist_48;
+  lowp vec4 tmpvar_49;
+  tmpvar_49 = textureCube (_ShadowMapTexture, xlv_TEXCOORD4);
+  packDist_48 = tmpvar_49;
+  highp float tmpvar_50;
+  tmpvar_50 = dot (packDist_48, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
   highp float tmpvar_51;
-  tmpvar_51 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
-  highp vec4 packDist_52;
-  lowp vec4 tmpvar_53;
-  tmpvar_53 = textureCube (_ShadowMapTexture, xlv_TEXCOORD4);
-  packDist_52 = tmpvar_53;
-  highp float tmpvar_54;
-  tmpvar_54 = dot (packDist_52, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  highp float tmpvar_55;
-  if ((tmpvar_54 < tmpvar_51)) {
-    tmpvar_55 = _LightShadowData.x;
+  if ((tmpvar_50 < tmpvar_47)) {
+    tmpvar_51 = _LightShadowData.x;
   } else {
-    tmpvar_55 = 1.0;
+    tmpvar_51 = 1.0;
   };
-  highp float tmpvar_56;
-  tmpvar_56 = (tmpvar_50.w * tmpvar_55);
-  atten_4 = tmpvar_56;
-  mediump float tmpvar_57;
-  tmpvar_57 = clamp ((((_LightColor0.w * tmpvar_48) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_58;
-  tmpvar_58 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_57)), 0.0, 1.0);
-  light_3 = tmpvar_58;
+  mediump vec3 lightDir_52;
+  lightDir_52 = tmpvar_43;
+  mediump vec3 viewDir_53;
+  viewDir_53 = xlv_TEXCOORD1;
+  mediump vec3 normal_54;
+  normal_54 = tmpvar_44;
+  mediump float atten_55;
+  atten_55 = (tmpvar_46.w * tmpvar_51);
+  mediump vec4 c_56;
+  highp float nh_57;
+  mediump vec3 tmpvar_58;
+  tmpvar_58 = normalize(lightDir_52);
+  lightDir_52 = tmpvar_58;
   mediump vec3 tmpvar_59;
-  tmpvar_59 = vec3(clamp (floor((1.0 + tmpvar_47)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_59;
-  mediump vec3 tmpvar_60;
-  mediump vec3 i_61;
-  i_61 = -(lightDirection_6);
-  tmpvar_60 = (i_61 - (2.0 * (dot (normalDir_5, i_61) * normalDir_5)));
+  tmpvar_59 = normalize(viewDir_53);
+  viewDir_53 = tmpvar_59;
+  mediump float tmpvar_60;
+  tmpvar_60 = dot (normal_54, tmpvar_58);
+  mediump float tmpvar_61;
+  tmpvar_61 = clamp (dot (normalize((tmpvar_58 + tmpvar_59)), normal_54), 0.0, 1.0);
+  nh_57 = tmpvar_61;
   highp vec3 tmpvar_62;
-  tmpvar_62 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_60, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_62;
-  highp vec3 tmpvar_63;
-  tmpvar_63 = (light_3 + (tex_10.w * tmpvar_62));
-  light_3 = tmpvar_63;
-  highp float tmpvar_64;
-  tmpvar_64 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_9.w = mix (0.4489, tex_10.w, tmpvar_64);
-  highp vec3 tmpvar_65;
-  tmpvar_65 = clamp (((_LightPower * light_3) - color_9.w), 0.0, 1.0);
-  color_9.xyz = (tmpvar_44.xyz * tmpvar_65);
-  highp vec3 tmpvar_66;
-  tmpvar_66 = (color_9.xyz + (_Reflectivity * light_3));
-  color_9.xyz = tmpvar_66;
-  color_9.xyz = (color_9.xyz * light_3);
-  tmpvar_1 = color_9;
+  tmpvar_62 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_60) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_57, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_55 * 4.0));
+  c_56.xyz = tmpvar_62;
+  c_56.w = (tmpvar_60 * (atten_55 * 4.0));
+  color_5.xyz = c_56.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_56.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -11877,7 +11775,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 401
+#line 330
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -11886,17 +11784,17 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 498
+#line 528
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec3 _LightCoord;
     highp vec3 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 490
+#line 520
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -11993,51 +11891,60 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform samplerCube _ShadowMapTexture;
-#line 399
+#line 328
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 411
+#line 340
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 424
-#line 432
+#line 353
+#line 361
+#line 375
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 408
+#line 412
+#line 421
+#line 429
+#line 438
 #line 446
+#line 459
+#line 471
+#line 487
+#line 500
 uniform lowp vec4 _Color;
+#line 508
 uniform highp float _Shininess;
-#line 479
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 512
 uniform highp float _DetailScale;
-#line 483
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 487
+#line 516
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 509
-#line 509
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 539
+#line 539
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 513
+    #line 543
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 517
+    o.worldPos = vertexPos;
+    #line 547
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
-    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
+    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - vertexPos));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
-    #line 522
+    #line 552
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -12057,7 +11964,7 @@ void main() {
     gl_Position = vec4(xl_retval.pos);
     xlv_TEXCOORD0 = float(xl_retval.viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.viewDir);
-    xlv_TEXCOORD2 = vec3(xl_retval.worldNormal);
+    xlv_TEXCOORD2 = vec3(xl_retval.worldPos);
     xlv_TEXCOORD3 = vec3(xl_retval._LightCoord);
     xlv_TEXCOORD4 = vec3(xl_retval._ShadowCoord);
     xlv_TEXCOORD5 = vec3(xl_retval.sphereNormal);
@@ -12151,7 +12058,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 401
+#line 330
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -12160,17 +12067,17 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 498
+#line 528
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec3 _LightCoord;
     highp vec3 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 490
+#line 520
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -12267,136 +12174,142 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform samplerCube _ShadowMapTexture;
-#line 399
+#line 328
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 411
+#line 340
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 424
-#line 432
+#line 353
+#line 361
+#line 375
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 408
+#line 412
+#line 421
+#line 429
+#line 438
 #line 446
+#line 459
+#line 471
+#line 487
+#line 500
 uniform lowp vec4 _Color;
+#line 508
 uniform highp float _Shininess;
-#line 479
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 512
 uniform highp float _DetailScale;
-#line 483
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 487
+#line 516
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 509
-#line 321
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 539
+#line 412
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
+    #line 416
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 330
+#line 421
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
+    #line 425
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 336
     return uv;
 }
-#line 368
+#line 459
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
-    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    highp vec2 uv = ((GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0)) * 4.0) * detailScale);
+    #line 463
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
+    #line 467
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 347
+#line 438
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    #line 442
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 353
     return tex;
+}
+#line 487
+mediump vec4 SpecularColorLight( in mediump vec3 lightDir, in mediump vec3 viewDir, in mediump vec3 normal, in mediump vec4 color, in mediump vec4 specColor, in highp float specK, in mediump float atten ) {
+    lightDir = normalize(lightDir);
+    viewDir = normalize(viewDir);
+    #line 491
+    mediump vec3 h = normalize((lightDir + viewDir));
+    mediump float diffuse = dot( normal, lightDir);
+    highp float nh = xll_saturate_f(dot( h, normal));
+    highp float spec = (pow( nh, specK) * color.w);
+    #line 495
+    mediump vec4 c;
+    c.xyz = ((((color.xyz * _LightColor0.xyz) * diffuse) + ((_LightColor0.xyz * specColor.xyz) * spec)) * (atten * 4.0));
+    c.w = (diffuse * (atten * 4.0));
+    return c;
 }
 #line 215
 highp float DecodeFloatRGBA( in highp vec4 enc ) {
     highp vec4 kDecodeDot = vec4( 1.0, 0.00392157, 1.53787e-05, 6.22737e-09);
     return dot( enc, kDecodeDot);
 }
-#line 387
+#line 316
 highp float SampleCubeDistance( in highp vec3 vec ) {
     highp vec4 packDist = texture( _ShadowMapTexture, vec);
-    #line 390
+    #line 319
     return DecodeFloatRGBA( packDist);
 }
-#line 392
+#line 321
 highp float unityCubeShadow( in highp vec3 vec ) {
-    #line 394
+    #line 323
     highp float mydist = (length(vec) * _LightPositionRange.w);
     mydist *= 0.97;
     highp float dist = SampleCubeDistance( vec);
     return (( (dist < mydist) ) ? ( _LightShadowData.x ) : ( 1.0 ));
 }
-#line 524
+#line 554
 lowp vec4 frag( in v2f IN ) {
-    #line 526
+    #line 556
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 530
+    #line 560
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 534
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 normalDir = IN.worldNormal;
-    mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 538
-    mediump float diff = ((NdotL - 0.01) / 0.99);
-    lowp float atten = (texture( _LightTexture0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * unityCubeShadow( IN._ShadowCoord));
-    mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 542
-    highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
-    specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light += (main.w * specularReflection);
-    color.w = 1.0;
-    #line 546
-    highp float refrac = 0.67;
-    color.w *= pow( refrac, 2.0);
-    color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
-    color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 550
-    color.xyz += (_Reflectivity * light);
-    color.xyz *= light;
+    #line 564
+    mediump float handoff = xll_saturate_f(pow( _PlanetOpacity, 2.0));
+    color.xyz = mix( color.xyz, main.xyz, vec3( handoff));
+    mediump vec4 specColor = _SpecColor;
+    specColor.w = mix( 1.0, main.w, handoff);
+    #line 568
+    mediump vec4 colorLight = SpecularColorLight( vec3( normalize(_WorldSpaceLightPos0)), IN.viewDir, normalize((IN.worldPos - _PlanetOrigin)), color, specColor, (_Shininess * 128.0), (texture( _LightTexture0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * unityCubeShadow( IN._ShadowCoord)));
+    color.xyz = colorLight.xyz;
+    color.w = mix( 1.0, color.w, ((1.0 - handoff) * step( 0.0, colorLight.w)));
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -12411,7 +12324,7 @@ void main() {
     xlt_IN.pos = vec4(0.0);
     xlt_IN.viewDist = float(xlv_TEXCOORD0);
     xlt_IN.viewDir = vec3(xlv_TEXCOORD1);
-    xlt_IN.worldNormal = vec3(xlv_TEXCOORD2);
+    xlt_IN.worldPos = vec3(xlv_TEXCOORD2);
     xlt_IN._LightCoord = vec3(xlv_TEXCOORD3);
     xlt_IN._ShadowCoord = vec3(xlv_TEXCOORD4);
     xlt_IN.sphereNormal = vec3(xlv_TEXCOORD5);
@@ -12440,20 +12353,19 @@ uniform vec4 _LightPositionRange;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
-  vec3 p_1;
-  p_1 = ((_Object2World * gl_Vertex).xyz - _WorldSpaceCameraPos);
-  vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = gl_Normal;
+  vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * gl_Vertex).xyz;
+  vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   vec4 tmpvar_3;
   tmpvar_3.x = gl_MultiTexCoord0.x;
   tmpvar_3.y = gl_MultiTexCoord0.y;
   tmpvar_3.z = gl_MultiTexCoord1.x;
   tmpvar_3.w = gl_MultiTexCoord1.y;
   gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -12469,9 +12381,8 @@ varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying float xlv_TEXCOORD0;
-uniform float _Reflectivity;
-uniform float _LightPower;
-uniform float _MinLight;
+uniform vec3 _PlanetOrigin;
+uniform float _PlanetOpacity;
 uniform float _DetailDist;
 uniform float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -12484,7 +12395,6 @@ uniform vec4 _LightColor0;
 uniform sampler2D _LightTextureB0;
 uniform samplerCube _LightTexture0;
 uniform samplerCube _ShadowMapTexture;
-
 uniform vec4 _LightShadowData;
 uniform vec4 _LightPositionRange;
 uniform vec4 _WorldSpaceLightPos0;
@@ -12551,53 +12461,57 @@ void main ()
   uv_13.x = (0.5 + (0.159155 * r_14));
   uv_13.y = (0.31831 * (1.5708 - (sign(tmpvar_12.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_12.y))) * (1.5708 + (abs(tmpvar_12.y) * (-0.214602 + (abs(tmpvar_12.y) * (0.0865667 + (abs(tmpvar_12.y) * -0.0310296)))))))))));
   vec2 tmpvar_18;
-  tmpvar_18 = dFdx(tmpvar_12.xz);
+  tmpvar_18 = ((uv_13 * 4.0) * _DetailScale);
   vec2 tmpvar_19;
-  tmpvar_19 = dFdy(tmpvar_12.xz);
-  vec4 tmpvar_20;
-  tmpvar_20.x = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_20.y = dFdx(uv_13.y);
-  tmpvar_20.z = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
-  tmpvar_20.w = dFdy(uv_13.y);
-  vec3 tmpvar_21;
-  tmpvar_21 = abs(tmpvar_12);
-  float tmpvar_22;
-  tmpvar_22 = float((tmpvar_21.z >= tmpvar_21.x));
-  vec3 tmpvar_23;
-  tmpvar_23 = mix (tmpvar_21.yxz, mix (tmpvar_21, tmpvar_21.zxy, vec3(tmpvar_22)), vec3(float((mix (tmpvar_21.x, tmpvar_21.z, tmpvar_22) >= tmpvar_21.y))));
-  vec4 tmpvar_24;
-  tmpvar_24 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) * _DetailScale), tmpvar_20.xy, tmpvar_20.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
-  color_2 = tmpvar_24;
+  tmpvar_19 = dFdx(tmpvar_12.xz);
+  vec2 tmpvar_20;
+  tmpvar_20 = dFdy(tmpvar_12.xz);
+  vec4 tmpvar_21;
+  tmpvar_21.x = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
+  tmpvar_21.y = dFdx(tmpvar_18.y);
+  tmpvar_21.z = (0.159155 * sqrt(dot (tmpvar_20, tmpvar_20)));
+  tmpvar_21.w = dFdy(tmpvar_18.y);
+  vec3 tmpvar_22;
+  tmpvar_22 = abs(tmpvar_12);
+  float tmpvar_23;
+  tmpvar_23 = float((tmpvar_22.z >= tmpvar_22.x));
+  vec3 tmpvar_24;
+  tmpvar_24 = mix (tmpvar_22.yxz, mix (tmpvar_22, tmpvar_22.zxy, vec3(tmpvar_23)), vec3(float((mix (tmpvar_22.x, tmpvar_22.z, tmpvar_23) >= tmpvar_22.y))));
   vec4 tmpvar_25;
-  tmpvar_25 = normalize(_WorldSpaceLightPos0);
+  tmpvar_25 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) * _DetailScale), tmpvar_21.xy, tmpvar_21.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
+  color_2.w = tmpvar_25.w;
   float tmpvar_26;
-  tmpvar_26 = clamp (dot (xlv_TEXCOORD2, tmpvar_25.xyz), 0.0, 1.0);
-  float tmpvar_27;
-  tmpvar_27 = ((tmpvar_26 - 0.01) / 0.99);
-  vec4 tmpvar_28;
-  tmpvar_28 = texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3)));
+  tmpvar_26 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  color_2.xyz = mix (tmpvar_25.xyz, main_1.xyz, vec3(tmpvar_26));
+  vec4 tmpvar_27;
+  tmpvar_27 = normalize(_WorldSpaceLightPos0);
+  vec3 tmpvar_28;
+  tmpvar_28 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
   vec4 tmpvar_29;
-  tmpvar_29 = textureCube (_LightTexture0, xlv_TEXCOORD3);
-  float tmpvar_30;
-  tmpvar_30 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
+  tmpvar_29 = texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3)));
+  vec4 tmpvar_30;
+  tmpvar_30 = textureCube (_LightTexture0, xlv_TEXCOORD3);
   float tmpvar_31;
-  tmpvar_31 = dot (textureCube (_ShadowMapTexture, xlv_TEXCOORD4), vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  tmpvar_31 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
   float tmpvar_32;
-  if ((tmpvar_31 < tmpvar_30)) {
-    tmpvar_32 = _LightShadowData.x;
-  } else {
-    tmpvar_32 = 1.0;
-  };
+  tmpvar_32 = dot (textureCube (_ShadowMapTexture, xlv_TEXCOORD4), vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
   float tmpvar_33;
-  tmpvar_33 = ((tmpvar_28.w * tmpvar_29.w) * tmpvar_32);
-  vec3 i_34;
-  i_34 = -(tmpvar_25.xyz);
-  vec3 tmpvar_35;
-  tmpvar_35 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_27) * 4.0) * tmpvar_33), 0.0, 1.0))), 0.0, 1.0) + (main_1.w * (vec3(clamp (floor((1.0 + tmpvar_26)), 0.0, 1.0)) * (((tmpvar_33 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_34 - (2.0 * (dot (xlv_TEXCOORD2, i_34) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
-  color_2.w = mix (0.4489, main_1.w, clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0));
-  color_2.xyz = (tmpvar_24.xyz * clamp (((_LightPower * tmpvar_35) - color_2.w), 0.0, 1.0));
-  color_2.xyz = (color_2.xyz + (_Reflectivity * tmpvar_35));
-  color_2.xyz = (color_2.xyz * tmpvar_35);
+  if ((tmpvar_32 < tmpvar_31)) {
+    tmpvar_33 = _LightShadowData.x;
+  } else {
+    tmpvar_33 = 1.0;
+  };
+  float atten_34;
+  atten_34 = ((tmpvar_29.w * tmpvar_30.w) * tmpvar_33);
+  vec4 c_35;
+  vec3 tmpvar_36;
+  tmpvar_36 = normalize(tmpvar_27.xyz);
+  float tmpvar_37;
+  tmpvar_37 = dot (tmpvar_28, tmpvar_36);
+  c_35.xyz = ((((color_2.xyz * _LightColor0.xyz) * tmpvar_37) + ((_LightColor0.xyz * _SpecColor.xyz) * (pow (clamp (dot (normalize((tmpvar_36 + normalize(xlv_TEXCOORD1))), tmpvar_28), 0.0, 1.0), (_Shininess * 128.0)) * tmpvar_25.w))) * (atten_34 * 4.0));
+  c_35.w = (tmpvar_37 * (atten_34 * 4.0));
+  color_2.xyz = c_35.xyz;
+  color_2.w = mix (1.0, tmpvar_25.w, ((1.0 - tmpvar_26) * float((c_35.w >= 0.0))));
   gl_FragData[0] = color_2;
 }
 
@@ -12609,7 +12523,6 @@ void main ()
 SubProgram "d3d9 " {
 Keywords { "POINT_COOKIE" "SHADOWS_CUBE" }
 Bind "vertex" Vertex
-Bind "normal" Normal
 Bind "texcoord" TexCoord0
 Bind "texcoord1" TexCoord1
 Matrix 0 [glstate_matrix_mvp]
@@ -12618,7 +12531,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 25 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -12626,38 +12539,30 @@ dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
 dcl_texcoord5 o6
-def c14, 0.00000000, 0, 0, 0
 dcl_position0 v0
-dcl_normal0 v1
-dcl_texcoord0 v2
-dcl_texcoord1 v3
-mov r1.xyz, v1
-mov r1.w, c14.x
-dp4 r0.z, r1, c6
-dp4 r0.x, r1, c4
-dp4 r0.y, r1, c5
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o3.xyz, r0.w, r0
-dp4 r0.z, v0, c6
-dp4 r0.x, v0, c4
-dp4 r0.y, v0, c5
-mov r2.zw, v3.xyxy
-mov r2.xy, v2
-dp4 r1.x, r2, r2
-rsq r0.w, r1.x
-mul r2.xyz, r0.w, r2
-add r1.xyz, -r0, c12
-dp3 r0.w, r1, r1
+dcl_texcoord0 v1
+dcl_texcoord1 v2
+dp4 r1.z, v0, c6
+dp4 r1.x, v0, c4
+dp4 r1.y, v0, c5
+mov r0.zw, v2.xyxy
+mov r0.xy, v1
+dp4 r0.w, r0, r0
 rsq r1.w, r0.w
+mul r0.xyz, r1.w, r0
+add r2.xyz, -r1, c12
+dp3 r0.w, r2, r2
+rsq r1.w, r0.w
+mov o6.xyz, -r0
+mov r0.xyz, r1
 dp4 r0.w, v0, c7
-mov o6.xyz, -r2
-mul o2.xyz, r1.w, r1
+mul o2.xyz, r1.w, r2
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
 rcp o1.x, r1.w
-add o5.xyz, r0, -c13
+mov o3.xyz, r1
+add o5.xyz, r1, -c13
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -12685,24 +12590,22 @@ uniform highp vec4 _LightPositionRange;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -12721,9 +12624,8 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -12736,187 +12638,179 @@ uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTextureB0;
 uniform samplerCube _LightTexture0;
 uniform samplerCube _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform highp vec4 _LightPositionRange;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  lowp float atten_4;
-  mediump vec3 normalDir_5;
-  mediump vec3 lightDirection_6;
-  mediump vec3 ambientLighting_7;
-  mediump float detailLevel_8;
-  mediump vec4 color_9;
-  mediump vec4 tex_10;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_12;
-  highp float r_13;
-  if ((abs(tmpvar_11.z) > (1e-08 * abs(tmpvar_11.x)))) {
-    highp float y_over_x_14;
-    y_over_x_14 = (tmpvar_11.x / tmpvar_11.z);
-    highp float s_15;
-    highp float x_16;
-    x_16 = (y_over_x_14 * inversesqrt(((y_over_x_14 * y_over_x_14) + 1.0)));
-    s_15 = (sign(x_16) * (1.5708 - (sqrt((1.0 - abs(x_16))) * (1.5708 + (abs(x_16) * (-0.214602 + (abs(x_16) * (0.0865667 + (abs(x_16) * -0.0310296)))))))));
-    r_13 = s_15;
-    if ((tmpvar_11.z < 0.0)) {
-      if ((tmpvar_11.x >= 0.0)) {
-        r_13 = (s_15 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_13 = (r_13 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_13 = (sign(tmpvar_11.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_12.x = (0.5 + (0.159155 * r_13));
-  uv_12.y = (0.31831 * (1.5708 - (sign(tmpvar_11.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_11.y))) * (1.5708 + (abs(tmpvar_11.y) * (-0.214602 + (abs(tmpvar_11.y) * (0.0865667 + (abs(tmpvar_11.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdx(tmpvar_11.xz);
-  highp vec2 tmpvar_18;
-  tmpvar_18 = dFdy(tmpvar_11.xz);
-  highp vec4 tmpvar_19;
-  tmpvar_19.x = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_19.y = dFdx(uv_12.y);
-  tmpvar_19.z = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_19.w = dFdy(uv_12.y);
-  lowp vec4 tmpvar_20;
-  tmpvar_20 = texture2DGradEXT (_MainTex, uv_12, tmpvar_19.xy, tmpvar_19.zw);
-  tex_10 = tmpvar_20;
-  mediump vec4 tmpvar_21;
-  mediump vec3 detailCoords_22;
-  mediump float nylerp_23;
-  mediump float zxlerp_24;
-  highp vec3 tmpvar_25;
-  tmpvar_25 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_26;
-  highp float r_27;
-  if ((abs(tmpvar_25.z) > (1e-08 * abs(tmpvar_25.x)))) {
-    highp float y_over_x_28;
-    y_over_x_28 = (tmpvar_25.x / tmpvar_25.z);
-    highp float s_29;
-    highp float x_30;
-    x_30 = (y_over_x_28 * inversesqrt(((y_over_x_28 * y_over_x_28) + 1.0)));
-    s_29 = (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))));
-    r_27 = s_29;
-    if ((tmpvar_25.z < 0.0)) {
-      if ((tmpvar_25.x >= 0.0)) {
-        r_27 = (s_29 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_27 = (r_27 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_27 = (sign(tmpvar_25.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_26.x = (0.5 + (0.159155 * r_27));
-  uv_26.y = (0.31831 * (1.5708 - (sign(tmpvar_25.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_25.y))) * (1.5708 + (abs(tmpvar_25.y) * (-0.214602 + (abs(tmpvar_25.y) * (0.0865667 + (abs(tmpvar_25.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdx(tmpvar_25.xz);
-  highp vec2 tmpvar_32;
-  tmpvar_32 = dFdy(tmpvar_25.xz);
-  highp vec4 tmpvar_33;
-  tmpvar_33.x = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_33.y = dFdx(uv_26.y);
-  tmpvar_33.z = (0.159155 * sqrt(dot (tmpvar_32, tmpvar_32)));
-  tmpvar_33.w = dFdy(uv_26.y);
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
   highp vec3 tmpvar_34;
-  tmpvar_34 = abs(tmpvar_25);
-  highp float tmpvar_35;
-  tmpvar_35 = float((tmpvar_34.z >= tmpvar_34.x));
-  zxlerp_24 = tmpvar_35;
-  highp float tmpvar_36;
-  tmpvar_36 = float((mix (tmpvar_34.x, tmpvar_34.z, zxlerp_24) >= tmpvar_34.y));
-  nylerp_23 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_34, tmpvar_34.zxy, vec3(zxlerp_24));
-  detailCoords_22 = tmpvar_37;
-  highp vec3 tmpvar_38;
-  tmpvar_38 = mix (tmpvar_34.yxz, detailCoords_22, vec3(nylerp_23));
-  detailCoords_22 = tmpvar_38;
-  mediump float tmpvar_39;
-  tmpvar_39 = abs(detailCoords_22.x);
-  highp vec2 coord_40;
-  coord_40 = (((0.5 * detailCoords_22.zy) / tmpvar_39) * _DetailScale);
-  lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_40, tmpvar_33.xy, tmpvar_33.zw);
-  tmpvar_21 = tmpvar_41;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_8 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_44;
-  tmpvar_44 = (mix (mix (tmpvar_21, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8)), tex_10, vec4(tmpvar_43)) * _Color);
-  color_9 = tmpvar_44;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_45;
-  highp vec3 tmpvar_46;
-  tmpvar_46 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_46;
-  normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  mediump float tmpvar_48;
-  tmpvar_48 = ((tmpvar_47 - 0.01) / 0.99);
-  highp float tmpvar_49;
-  tmpvar_49 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2D (_LightTextureB0, vec2(tmpvar_45));
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = textureCube (_LightTexture0, xlv_TEXCOORD3);
+  highp float tmpvar_48;
+  tmpvar_48 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
+  highp vec4 packDist_49;
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2D (_LightTextureB0, vec2(tmpvar_49));
-  lowp vec4 tmpvar_51;
-  tmpvar_51 = textureCube (_LightTexture0, xlv_TEXCOORD3);
+  tmpvar_50 = textureCube (_ShadowMapTexture, xlv_TEXCOORD4);
+  packDist_49 = tmpvar_50;
+  highp float tmpvar_51;
+  tmpvar_51 = dot (packDist_49, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
   highp float tmpvar_52;
-  tmpvar_52 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
-  highp vec4 packDist_53;
-  lowp vec4 tmpvar_54;
-  tmpvar_54 = textureCube (_ShadowMapTexture, xlv_TEXCOORD4);
-  packDist_53 = tmpvar_54;
-  highp float tmpvar_55;
-  tmpvar_55 = dot (packDist_53, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  highp float tmpvar_56;
-  if ((tmpvar_55 < tmpvar_52)) {
-    tmpvar_56 = _LightShadowData.x;
+  if ((tmpvar_51 < tmpvar_48)) {
+    tmpvar_52 = _LightShadowData.x;
   } else {
-    tmpvar_56 = 1.0;
+    tmpvar_52 = 1.0;
   };
-  highp float tmpvar_57;
-  tmpvar_57 = ((tmpvar_50.w * tmpvar_51.w) * tmpvar_56);
-  atten_4 = tmpvar_57;
-  mediump float tmpvar_58;
-  tmpvar_58 = clamp ((((_LightColor0.w * tmpvar_48) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_59;
-  tmpvar_59 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_58)), 0.0, 1.0);
-  light_3 = tmpvar_59;
+  mediump vec3 lightDir_53;
+  lightDir_53 = tmpvar_43;
+  mediump vec3 viewDir_54;
+  viewDir_54 = xlv_TEXCOORD1;
+  mediump vec3 normal_55;
+  normal_55 = tmpvar_44;
+  mediump float atten_56;
+  atten_56 = ((tmpvar_46.w * tmpvar_47.w) * tmpvar_52);
+  mediump vec4 c_57;
+  highp float nh_58;
+  mediump vec3 tmpvar_59;
+  tmpvar_59 = normalize(lightDir_53);
+  lightDir_53 = tmpvar_59;
   mediump vec3 tmpvar_60;
-  tmpvar_60 = vec3(clamp (floor((1.0 + tmpvar_47)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_60;
-  mediump vec3 tmpvar_61;
-  mediump vec3 i_62;
-  i_62 = -(lightDirection_6);
-  tmpvar_61 = (i_62 - (2.0 * (dot (normalDir_5, i_62) * normalDir_5)));
+  tmpvar_60 = normalize(viewDir_54);
+  viewDir_54 = tmpvar_60;
+  mediump float tmpvar_61;
+  tmpvar_61 = dot (normal_55, tmpvar_59);
+  mediump float tmpvar_62;
+  tmpvar_62 = clamp (dot (normalize((tmpvar_59 + tmpvar_60)), normal_55), 0.0, 1.0);
+  nh_58 = tmpvar_62;
   highp vec3 tmpvar_63;
-  tmpvar_63 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_61, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_63;
-  highp vec3 tmpvar_64;
-  tmpvar_64 = (light_3 + (tex_10.w * tmpvar_63));
-  light_3 = tmpvar_64;
-  highp float tmpvar_65;
-  tmpvar_65 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_9.w = mix (0.4489, tex_10.w, tmpvar_65);
-  highp vec3 tmpvar_66;
-  tmpvar_66 = clamp (((_LightPower * light_3) - color_9.w), 0.0, 1.0);
-  color_9.xyz = (tmpvar_44.xyz * tmpvar_66);
-  highp vec3 tmpvar_67;
-  tmpvar_67 = (color_9.xyz + (_Reflectivity * light_3));
-  color_9.xyz = tmpvar_67;
-  color_9.xyz = (color_9.xyz * light_3);
-  tmpvar_1 = color_9;
+  tmpvar_63 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_61) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_58, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_56 * 4.0));
+  c_57.xyz = tmpvar_63;
+  c_57.w = (tmpvar_61 * (atten_56 * 4.0));
+  color_5.xyz = c_57.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_57.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -12945,24 +12839,22 @@ uniform highp vec4 _LightPositionRange;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -12981,9 +12873,8 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -12996,187 +12887,179 @@ uniform lowp vec4 _LightColor0;
 uniform sampler2D _LightTextureB0;
 uniform samplerCube _LightTexture0;
 uniform samplerCube _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform highp vec4 _LightPositionRange;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  lowp float atten_4;
-  mediump vec3 normalDir_5;
-  mediump vec3 lightDirection_6;
-  mediump vec3 ambientLighting_7;
-  mediump float detailLevel_8;
-  mediump vec4 color_9;
-  mediump vec4 tex_10;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_12;
-  highp float r_13;
-  if ((abs(tmpvar_11.z) > (1e-08 * abs(tmpvar_11.x)))) {
-    highp float y_over_x_14;
-    y_over_x_14 = (tmpvar_11.x / tmpvar_11.z);
-    highp float s_15;
-    highp float x_16;
-    x_16 = (y_over_x_14 * inversesqrt(((y_over_x_14 * y_over_x_14) + 1.0)));
-    s_15 = (sign(x_16) * (1.5708 - (sqrt((1.0 - abs(x_16))) * (1.5708 + (abs(x_16) * (-0.214602 + (abs(x_16) * (0.0865667 + (abs(x_16) * -0.0310296)))))))));
-    r_13 = s_15;
-    if ((tmpvar_11.z < 0.0)) {
-      if ((tmpvar_11.x >= 0.0)) {
-        r_13 = (s_15 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_13 = (r_13 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_13 = (sign(tmpvar_11.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_12.x = (0.5 + (0.159155 * r_13));
-  uv_12.y = (0.31831 * (1.5708 - (sign(tmpvar_11.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_11.y))) * (1.5708 + (abs(tmpvar_11.y) * (-0.214602 + (abs(tmpvar_11.y) * (0.0865667 + (abs(tmpvar_11.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdx(tmpvar_11.xz);
-  highp vec2 tmpvar_18;
-  tmpvar_18 = dFdy(tmpvar_11.xz);
-  highp vec4 tmpvar_19;
-  tmpvar_19.x = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_19.y = dFdx(uv_12.y);
-  tmpvar_19.z = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_19.w = dFdy(uv_12.y);
-  lowp vec4 tmpvar_20;
-  tmpvar_20 = texture2DGradEXT (_MainTex, uv_12, tmpvar_19.xy, tmpvar_19.zw);
-  tex_10 = tmpvar_20;
-  mediump vec4 tmpvar_21;
-  mediump vec3 detailCoords_22;
-  mediump float nylerp_23;
-  mediump float zxlerp_24;
-  highp vec3 tmpvar_25;
-  tmpvar_25 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_26;
-  highp float r_27;
-  if ((abs(tmpvar_25.z) > (1e-08 * abs(tmpvar_25.x)))) {
-    highp float y_over_x_28;
-    y_over_x_28 = (tmpvar_25.x / tmpvar_25.z);
-    highp float s_29;
-    highp float x_30;
-    x_30 = (y_over_x_28 * inversesqrt(((y_over_x_28 * y_over_x_28) + 1.0)));
-    s_29 = (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))));
-    r_27 = s_29;
-    if ((tmpvar_25.z < 0.0)) {
-      if ((tmpvar_25.x >= 0.0)) {
-        r_27 = (s_29 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_27 = (r_27 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_27 = (sign(tmpvar_25.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_26.x = (0.5 + (0.159155 * r_27));
-  uv_26.y = (0.31831 * (1.5708 - (sign(tmpvar_25.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_25.y))) * (1.5708 + (abs(tmpvar_25.y) * (-0.214602 + (abs(tmpvar_25.y) * (0.0865667 + (abs(tmpvar_25.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdx(tmpvar_25.xz);
-  highp vec2 tmpvar_32;
-  tmpvar_32 = dFdy(tmpvar_25.xz);
-  highp vec4 tmpvar_33;
-  tmpvar_33.x = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_33.y = dFdx(uv_26.y);
-  tmpvar_33.z = (0.159155 * sqrt(dot (tmpvar_32, tmpvar_32)));
-  tmpvar_33.w = dFdy(uv_26.y);
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
   highp vec3 tmpvar_34;
-  tmpvar_34 = abs(tmpvar_25);
-  highp float tmpvar_35;
-  tmpvar_35 = float((tmpvar_34.z >= tmpvar_34.x));
-  zxlerp_24 = tmpvar_35;
-  highp float tmpvar_36;
-  tmpvar_36 = float((mix (tmpvar_34.x, tmpvar_34.z, zxlerp_24) >= tmpvar_34.y));
-  nylerp_23 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_34, tmpvar_34.zxy, vec3(zxlerp_24));
-  detailCoords_22 = tmpvar_37;
-  highp vec3 tmpvar_38;
-  tmpvar_38 = mix (tmpvar_34.yxz, detailCoords_22, vec3(nylerp_23));
-  detailCoords_22 = tmpvar_38;
-  mediump float tmpvar_39;
-  tmpvar_39 = abs(detailCoords_22.x);
-  highp vec2 coord_40;
-  coord_40 = (((0.5 * detailCoords_22.zy) / tmpvar_39) * _DetailScale);
-  lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_40, tmpvar_33.xy, tmpvar_33.zw);
-  tmpvar_21 = tmpvar_41;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_8 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_44;
-  tmpvar_44 = (mix (mix (tmpvar_21, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8)), tex_10, vec4(tmpvar_43)) * _Color);
-  color_9 = tmpvar_44;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_45;
-  highp vec3 tmpvar_46;
-  tmpvar_46 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_46;
-  normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  mediump float tmpvar_48;
-  tmpvar_48 = ((tmpvar_47 - 0.01) / 0.99);
-  highp float tmpvar_49;
-  tmpvar_49 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2D (_LightTextureB0, vec2(tmpvar_45));
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = textureCube (_LightTexture0, xlv_TEXCOORD3);
+  highp float tmpvar_48;
+  tmpvar_48 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
+  highp vec4 packDist_49;
   lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2D (_LightTextureB0, vec2(tmpvar_49));
-  lowp vec4 tmpvar_51;
-  tmpvar_51 = textureCube (_LightTexture0, xlv_TEXCOORD3);
+  tmpvar_50 = textureCube (_ShadowMapTexture, xlv_TEXCOORD4);
+  packDist_49 = tmpvar_50;
+  highp float tmpvar_51;
+  tmpvar_51 = dot (packDist_49, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
   highp float tmpvar_52;
-  tmpvar_52 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
-  highp vec4 packDist_53;
-  lowp vec4 tmpvar_54;
-  tmpvar_54 = textureCube (_ShadowMapTexture, xlv_TEXCOORD4);
-  packDist_53 = tmpvar_54;
-  highp float tmpvar_55;
-  tmpvar_55 = dot (packDist_53, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  highp float tmpvar_56;
-  if ((tmpvar_55 < tmpvar_52)) {
-    tmpvar_56 = _LightShadowData.x;
+  if ((tmpvar_51 < tmpvar_48)) {
+    tmpvar_52 = _LightShadowData.x;
   } else {
-    tmpvar_56 = 1.0;
+    tmpvar_52 = 1.0;
   };
-  highp float tmpvar_57;
-  tmpvar_57 = ((tmpvar_50.w * tmpvar_51.w) * tmpvar_56);
-  atten_4 = tmpvar_57;
-  mediump float tmpvar_58;
-  tmpvar_58 = clamp ((((_LightColor0.w * tmpvar_48) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_59;
-  tmpvar_59 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_58)), 0.0, 1.0);
-  light_3 = tmpvar_59;
+  mediump vec3 lightDir_53;
+  lightDir_53 = tmpvar_43;
+  mediump vec3 viewDir_54;
+  viewDir_54 = xlv_TEXCOORD1;
+  mediump vec3 normal_55;
+  normal_55 = tmpvar_44;
+  mediump float atten_56;
+  atten_56 = ((tmpvar_46.w * tmpvar_47.w) * tmpvar_52);
+  mediump vec4 c_57;
+  highp float nh_58;
+  mediump vec3 tmpvar_59;
+  tmpvar_59 = normalize(lightDir_53);
+  lightDir_53 = tmpvar_59;
   mediump vec3 tmpvar_60;
-  tmpvar_60 = vec3(clamp (floor((1.0 + tmpvar_47)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_60;
-  mediump vec3 tmpvar_61;
-  mediump vec3 i_62;
-  i_62 = -(lightDirection_6);
-  tmpvar_61 = (i_62 - (2.0 * (dot (normalDir_5, i_62) * normalDir_5)));
+  tmpvar_60 = normalize(viewDir_54);
+  viewDir_54 = tmpvar_60;
+  mediump float tmpvar_61;
+  tmpvar_61 = dot (normal_55, tmpvar_59);
+  mediump float tmpvar_62;
+  tmpvar_62 = clamp (dot (normalize((tmpvar_59 + tmpvar_60)), normal_55), 0.0, 1.0);
+  nh_58 = tmpvar_62;
   highp vec3 tmpvar_63;
-  tmpvar_63 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_61, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_63;
-  highp vec3 tmpvar_64;
-  tmpvar_64 = (light_3 + (tex_10.w * tmpvar_63));
-  light_3 = tmpvar_64;
-  highp float tmpvar_65;
-  tmpvar_65 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_9.w = mix (0.4489, tex_10.w, tmpvar_65);
-  highp vec3 tmpvar_66;
-  tmpvar_66 = clamp (((_LightPower * light_3) - color_9.w), 0.0, 1.0);
-  color_9.xyz = (tmpvar_44.xyz * tmpvar_66);
-  highp vec3 tmpvar_67;
-  tmpvar_67 = (color_9.xyz + (_Reflectivity * light_3));
-  color_9.xyz = tmpvar_67;
-  color_9.xyz = (color_9.xyz * light_3);
-  tmpvar_1 = color_9;
+  tmpvar_63 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_61) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_58, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_56 * 4.0));
+  c_57.xyz = tmpvar_63;
+  c_57.w = (tmpvar_61 * (atten_56 * 4.0));
+  color_5.xyz = c_57.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_57.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -13217,7 +13100,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 402
+#line 331
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -13226,17 +13109,17 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 499
+#line 529
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec3 _LightCoord;
     highp vec3 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 491
+#line 521
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -13333,52 +13216,61 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform samplerCube _ShadowMapTexture;
-#line 399
+#line 328
 uniform samplerCube _LightTexture0;
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 412
+#line 341
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 425
-#line 433
+#line 354
+#line 362
+#line 376
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 409
+#line 413
+#line 422
+#line 430
+#line 439
 #line 447
+#line 460
+#line 472
+#line 488
+#line 501
 uniform lowp vec4 _Color;
+#line 509
 uniform highp float _Shininess;
-#line 480
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 513
 uniform highp float _DetailScale;
-#line 484
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 488
+#line 517
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 510
-#line 510
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 540
+#line 540
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 514
+    #line 544
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 518
+    o.worldPos = vertexPos;
+    #line 548
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
-    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
+    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - vertexPos));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
-    #line 523
+    #line 553
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -13398,7 +13290,7 @@ void main() {
     gl_Position = vec4(xl_retval.pos);
     xlv_TEXCOORD0 = float(xl_retval.viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.viewDir);
-    xlv_TEXCOORD2 = vec3(xl_retval.worldNormal);
+    xlv_TEXCOORD2 = vec3(xl_retval.worldPos);
     xlv_TEXCOORD3 = vec3(xl_retval._LightCoord);
     xlv_TEXCOORD4 = vec3(xl_retval._ShadowCoord);
     xlv_TEXCOORD5 = vec3(xl_retval.sphereNormal);
@@ -13492,7 +13384,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 402
+#line 331
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -13501,17 +13393,17 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 499
+#line 529
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec3 _LightCoord;
     highp vec3 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 491
+#line 521
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -13608,137 +13500,143 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform samplerCube _ShadowMapTexture;
-#line 399
+#line 328
 uniform samplerCube _LightTexture0;
 uniform highp mat4 _LightMatrix0;
 uniform sampler2D _LightTextureB0;
-#line 412
+#line 341
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 425
-#line 433
+#line 354
+#line 362
+#line 376
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 409
+#line 413
+#line 422
+#line 430
+#line 439
 #line 447
+#line 460
+#line 472
+#line 488
+#line 501
 uniform lowp vec4 _Color;
+#line 509
 uniform highp float _Shininess;
-#line 480
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 513
 uniform highp float _DetailScale;
-#line 484
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 488
+#line 517
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 510
-#line 321
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 540
+#line 413
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
+    #line 417
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 330
+#line 422
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
+    #line 426
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 336
     return uv;
 }
-#line 368
+#line 460
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
-    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    highp vec2 uv = ((GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0)) * 4.0) * detailScale);
+    #line 464
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
+    #line 468
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 347
+#line 439
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    #line 443
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 353
     return tex;
+}
+#line 488
+mediump vec4 SpecularColorLight( in mediump vec3 lightDir, in mediump vec3 viewDir, in mediump vec3 normal, in mediump vec4 color, in mediump vec4 specColor, in highp float specK, in mediump float atten ) {
+    lightDir = normalize(lightDir);
+    viewDir = normalize(viewDir);
+    #line 492
+    mediump vec3 h = normalize((lightDir + viewDir));
+    mediump float diffuse = dot( normal, lightDir);
+    highp float nh = xll_saturate_f(dot( h, normal));
+    highp float spec = (pow( nh, specK) * color.w);
+    #line 496
+    mediump vec4 c;
+    c.xyz = ((((color.xyz * _LightColor0.xyz) * diffuse) + ((_LightColor0.xyz * specColor.xyz) * spec)) * (atten * 4.0));
+    c.w = (diffuse * (atten * 4.0));
+    return c;
 }
 #line 215
 highp float DecodeFloatRGBA( in highp vec4 enc ) {
     highp vec4 kDecodeDot = vec4( 1.0, 0.00392157, 1.53787e-05, 6.22737e-09);
     return dot( enc, kDecodeDot);
 }
-#line 387
+#line 316
 highp float SampleCubeDistance( in highp vec3 vec ) {
     highp vec4 packDist = texture( _ShadowMapTexture, vec);
-    #line 390
+    #line 319
     return DecodeFloatRGBA( packDist);
 }
-#line 392
+#line 321
 highp float unityCubeShadow( in highp vec3 vec ) {
-    #line 394
+    #line 323
     highp float mydist = (length(vec) * _LightPositionRange.w);
     mydist *= 0.97;
     highp float dist = SampleCubeDistance( vec);
     return (( (dist < mydist) ) ? ( _LightShadowData.x ) : ( 1.0 ));
 }
-#line 525
+#line 555
 lowp vec4 frag( in v2f IN ) {
-    #line 527
+    #line 557
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 531
+    #line 561
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 535
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 normalDir = IN.worldNormal;
-    mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 539
-    mediump float diff = ((NdotL - 0.01) / 0.99);
-    lowp float atten = ((texture( _LightTextureB0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * texture( _LightTexture0, IN._LightCoord).w) * unityCubeShadow( IN._ShadowCoord));
-    mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 543
-    highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
-    specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light += (main.w * specularReflection);
-    color.w = 1.0;
-    #line 547
-    highp float refrac = 0.67;
-    color.w *= pow( refrac, 2.0);
-    color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
-    color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 551
-    color.xyz += (_Reflectivity * light);
-    color.xyz *= light;
+    #line 565
+    mediump float handoff = xll_saturate_f(pow( _PlanetOpacity, 2.0));
+    color.xyz = mix( color.xyz, main.xyz, vec3( handoff));
+    mediump vec4 specColor = _SpecColor;
+    specColor.w = mix( 1.0, main.w, handoff);
+    #line 569
+    mediump vec4 colorLight = SpecularColorLight( vec3( normalize(_WorldSpaceLightPos0)), IN.viewDir, normalize((IN.worldPos - _PlanetOrigin)), color, specColor, (_Shininess * 128.0), ((texture( _LightTextureB0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * texture( _LightTexture0, IN._LightCoord).w) * unityCubeShadow( IN._ShadowCoord)));
+    color.xyz = colorLight.xyz;
+    color.w = mix( 1.0, color.w, ((1.0 - handoff) * step( 0.0, colorLight.w)));
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -13753,7 +13651,7 @@ void main() {
     xlt_IN.pos = vec4(0.0);
     xlt_IN.viewDist = float(xlv_TEXCOORD0);
     xlt_IN.viewDir = vec3(xlv_TEXCOORD1);
-    xlt_IN.worldNormal = vec3(xlv_TEXCOORD2);
+    xlt_IN.worldPos = vec3(xlv_TEXCOORD2);
     xlt_IN._LightCoord = vec3(xlv_TEXCOORD3);
     xlt_IN._ShadowCoord = vec3(xlv_TEXCOORD4);
     xlt_IN.sphereNormal = vec3(xlv_TEXCOORD5);
@@ -13782,20 +13680,19 @@ uniform mat4 unity_World2Shadow[4];
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
-  vec3 p_1;
-  p_1 = ((_Object2World * gl_Vertex).xyz - _WorldSpaceCameraPos);
-  vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = gl_Normal;
+  vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * gl_Vertex).xyz;
+  vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   vec4 tmpvar_3;
   tmpvar_3.x = gl_MultiTexCoord0.x;
   tmpvar_3.y = gl_MultiTexCoord0.y;
   tmpvar_3.z = gl_MultiTexCoord1.x;
   tmpvar_3.w = gl_MultiTexCoord1.y;
   gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -13811,9 +13708,8 @@ varying vec4 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying float xlv_TEXCOORD0;
-uniform float _Reflectivity;
-uniform float _LightPower;
-uniform float _MinLight;
+uniform vec3 _PlanetOrigin;
+uniform float _PlanetOpacity;
 uniform float _DetailDist;
 uniform float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -13827,7 +13723,6 @@ uniform sampler2D _LightTextureB0;
 uniform sampler2D _LightTexture0;
 uniform vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-
 uniform vec4 _LightShadowData;
 uniform vec4 _WorldSpaceLightPos0;
 void main ()
@@ -13893,83 +13788,87 @@ void main ()
   uv_13.x = (0.5 + (0.159155 * r_14));
   uv_13.y = (0.31831 * (1.5708 - (sign(tmpvar_12.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_12.y))) * (1.5708 + (abs(tmpvar_12.y) * (-0.214602 + (abs(tmpvar_12.y) * (0.0865667 + (abs(tmpvar_12.y) * -0.0310296)))))))))));
   vec2 tmpvar_18;
-  tmpvar_18 = dFdx(tmpvar_12.xz);
+  tmpvar_18 = ((uv_13 * 4.0) * _DetailScale);
   vec2 tmpvar_19;
-  tmpvar_19 = dFdy(tmpvar_12.xz);
-  vec4 tmpvar_20;
-  tmpvar_20.x = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_20.y = dFdx(uv_13.y);
-  tmpvar_20.z = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
-  tmpvar_20.w = dFdy(uv_13.y);
-  vec3 tmpvar_21;
-  tmpvar_21 = abs(tmpvar_12);
-  float tmpvar_22;
-  tmpvar_22 = float((tmpvar_21.z >= tmpvar_21.x));
-  vec3 tmpvar_23;
-  tmpvar_23 = mix (tmpvar_21.yxz, mix (tmpvar_21, tmpvar_21.zxy, vec3(tmpvar_22)), vec3(float((mix (tmpvar_21.x, tmpvar_21.z, tmpvar_22) >= tmpvar_21.y))));
-  vec4 tmpvar_24;
-  tmpvar_24 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) * _DetailScale), tmpvar_20.xy, tmpvar_20.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
-  color_2 = tmpvar_24;
+  tmpvar_19 = dFdx(tmpvar_12.xz);
+  vec2 tmpvar_20;
+  tmpvar_20 = dFdy(tmpvar_12.xz);
+  vec4 tmpvar_21;
+  tmpvar_21.x = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
+  tmpvar_21.y = dFdx(tmpvar_18.y);
+  tmpvar_21.z = (0.159155 * sqrt(dot (tmpvar_20, tmpvar_20)));
+  tmpvar_21.w = dFdy(tmpvar_18.y);
+  vec3 tmpvar_22;
+  tmpvar_22 = abs(tmpvar_12);
+  float tmpvar_23;
+  tmpvar_23 = float((tmpvar_22.z >= tmpvar_22.x));
+  vec3 tmpvar_24;
+  tmpvar_24 = mix (tmpvar_22.yxz, mix (tmpvar_22, tmpvar_22.zxy, vec3(tmpvar_23)), vec3(float((mix (tmpvar_22.x, tmpvar_22.z, tmpvar_23) >= tmpvar_22.y))));
   vec4 tmpvar_25;
-  tmpvar_25 = normalize(_WorldSpaceLightPos0);
+  tmpvar_25 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) * _DetailScale), tmpvar_21.xy, tmpvar_21.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
+  color_2.w = tmpvar_25.w;
   float tmpvar_26;
-  tmpvar_26 = clamp (dot (xlv_TEXCOORD2, tmpvar_25.xyz), 0.0, 1.0);
-  float tmpvar_27;
-  tmpvar_27 = ((tmpvar_26 - 0.01) / 0.99);
-  vec4 tmpvar_28;
-  tmpvar_28 = texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5));
+  tmpvar_26 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  color_2.xyz = mix (tmpvar_25.xyz, main_1.xyz, vec3(tmpvar_26));
+  vec4 tmpvar_27;
+  tmpvar_27 = normalize(_WorldSpaceLightPos0);
+  vec3 tmpvar_28;
+  tmpvar_28 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
   vec4 tmpvar_29;
-  tmpvar_29 = texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz)));
-  vec4 shadowVals_30;
-  vec3 tmpvar_31;
-  tmpvar_31 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
-  shadowVals_30.x = texture2D (_ShadowMapTexture, (tmpvar_31.xy + _ShadowOffsets[0].xy)).x;
-  shadowVals_30.y = texture2D (_ShadowMapTexture, (tmpvar_31.xy + _ShadowOffsets[1].xy)).x;
-  shadowVals_30.z = texture2D (_ShadowMapTexture, (tmpvar_31.xy + _ShadowOffsets[2].xy)).x;
-  shadowVals_30.w = texture2D (_ShadowMapTexture, (tmpvar_31.xy + _ShadowOffsets[3].xy)).x;
-  bvec4 tmpvar_32;
-  tmpvar_32 = lessThan (shadowVals_30, tmpvar_31.zzzz);
-  vec4 tmpvar_33;
-  tmpvar_33 = _LightShadowData.xxxx;
-  float tmpvar_34;
-  if (tmpvar_32.x) {
-    tmpvar_34 = tmpvar_33.x;
-  } else {
-    tmpvar_34 = 1.0;
-  };
+  tmpvar_29 = texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5));
+  vec4 tmpvar_30;
+  tmpvar_30 = texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz)));
+  vec4 shadowVals_31;
+  vec3 tmpvar_32;
+  tmpvar_32 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
+  shadowVals_31.x = texture2D (_ShadowMapTexture, (tmpvar_32.xy + _ShadowOffsets[0].xy)).x;
+  shadowVals_31.y = texture2D (_ShadowMapTexture, (tmpvar_32.xy + _ShadowOffsets[1].xy)).x;
+  shadowVals_31.z = texture2D (_ShadowMapTexture, (tmpvar_32.xy + _ShadowOffsets[2].xy)).x;
+  shadowVals_31.w = texture2D (_ShadowMapTexture, (tmpvar_32.xy + _ShadowOffsets[3].xy)).x;
+  bvec4 tmpvar_33;
+  tmpvar_33 = lessThan (shadowVals_31, tmpvar_32.zzzz);
+  vec4 tmpvar_34;
+  tmpvar_34 = _LightShadowData.xxxx;
   float tmpvar_35;
-  if (tmpvar_32.y) {
-    tmpvar_35 = tmpvar_33.y;
+  if (tmpvar_33.x) {
+    tmpvar_35 = tmpvar_34.x;
   } else {
     tmpvar_35 = 1.0;
   };
   float tmpvar_36;
-  if (tmpvar_32.z) {
-    tmpvar_36 = tmpvar_33.z;
+  if (tmpvar_33.y) {
+    tmpvar_36 = tmpvar_34.y;
   } else {
     tmpvar_36 = 1.0;
   };
   float tmpvar_37;
-  if (tmpvar_32.w) {
-    tmpvar_37 = tmpvar_33.w;
+  if (tmpvar_33.z) {
+    tmpvar_37 = tmpvar_34.z;
   } else {
     tmpvar_37 = 1.0;
   };
-  vec4 tmpvar_38;
-  tmpvar_38.x = tmpvar_34;
-  tmpvar_38.y = tmpvar_35;
-  tmpvar_38.z = tmpvar_36;
-  tmpvar_38.w = tmpvar_37;
-  float tmpvar_39;
-  tmpvar_39 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_28.w) * tmpvar_29.w) * dot (tmpvar_38, vec4(0.25, 0.25, 0.25, 0.25)));
-  vec3 i_40;
-  i_40 = -(tmpvar_25.xyz);
-  vec3 tmpvar_41;
-  tmpvar_41 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_27) * 4.0) * tmpvar_39), 0.0, 1.0))), 0.0, 1.0) + (main_1.w * (vec3(clamp (floor((1.0 + tmpvar_26)), 0.0, 1.0)) * (((tmpvar_39 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_40 - (2.0 * (dot (xlv_TEXCOORD2, i_40) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
-  color_2.w = mix (0.4489, main_1.w, clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0));
-  color_2.xyz = (tmpvar_24.xyz * clamp (((_LightPower * tmpvar_41) - color_2.w), 0.0, 1.0));
-  color_2.xyz = (color_2.xyz + (_Reflectivity * tmpvar_41));
-  color_2.xyz = (color_2.xyz * tmpvar_41);
+  float tmpvar_38;
+  if (tmpvar_33.w) {
+    tmpvar_38 = tmpvar_34.w;
+  } else {
+    tmpvar_38 = 1.0;
+  };
+  vec4 tmpvar_39;
+  tmpvar_39.x = tmpvar_35;
+  tmpvar_39.y = tmpvar_36;
+  tmpvar_39.z = tmpvar_37;
+  tmpvar_39.w = tmpvar_38;
+  float atten_40;
+  atten_40 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_29.w) * tmpvar_30.w) * dot (tmpvar_39, vec4(0.25, 0.25, 0.25, 0.25)));
+  vec4 c_41;
+  vec3 tmpvar_42;
+  tmpvar_42 = normalize(tmpvar_27.xyz);
+  float tmpvar_43;
+  tmpvar_43 = dot (tmpvar_28, tmpvar_42);
+  c_41.xyz = ((((color_2.xyz * _LightColor0.xyz) * tmpvar_43) + ((_LightColor0.xyz * _SpecColor.xyz) * (pow (clamp (dot (normalize((tmpvar_42 + normalize(xlv_TEXCOORD1))), tmpvar_28), 0.0, 1.0), (_Shininess * 128.0)) * tmpvar_25.w))) * (atten_40 * 4.0));
+  c_41.w = (tmpvar_43 * (atten_40 * 4.0));
+  color_2.xyz = c_41.xyz;
+  color_2.w = mix (1.0, tmpvar_25.w, ((1.0 - tmpvar_26) * float((c_41.w >= 0.0))));
   gl_FragData[0] = color_2;
 }
 
@@ -13981,7 +13880,6 @@ void main ()
 SubProgram "d3d9 " {
 Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
 Bind "vertex" Vertex
-Bind "normal" Normal
 Bind "texcoord" TexCoord0
 Bind "texcoord1" TexCoord1
 Matrix 0 [glstate_matrix_mvp]
@@ -13990,7 +13888,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 35 ALU
+; 29 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -13998,42 +13896,34 @@ dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
 dcl_texcoord5 o6
-def c17, 0.00000000, 0, 0, 0
 dcl_position0 v0
-dcl_normal0 v1
-dcl_texcoord0 v2
-dcl_texcoord1 v3
-mov r1.xyz, v1
-mov r1.w, c17.x
-dp4 r0.z, r1, c10
-dp4 r0.x, r1, c8
-dp4 r0.y, r1, c9
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o3.xyz, r0.w, r0
+dcl_texcoord0 v1
+dcl_texcoord1 v2
+mov r1.zw, v2.xyxy
+mov r1.xy, v1
+dp4 r0.w, r1, r1
+rsq r1.w, r0.w
+mul r1.xyz, r1.w, r1
+dp4 r1.w, v0, c11
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
-mov r2.zw, v3.xyxy
-mov r2.xy, v2
-dp4 r1.x, r2, r2
-rsq r0.w, r1.x
-mul r2.xyz, r0.w, r2
-add r1.xyz, -r0, c16
-dp3 r0.w, r1, r1
-rsq r1.w, r0.w
-dp4 r0.w, v0, c11
-mov o6.xyz, -r2
-mul o2.xyz, r1.w, r1
-dp4 o4.w, r0, c15
-dp4 o4.z, r0, c14
-dp4 o4.y, r0, c13
-dp4 o4.x, r0, c12
-dp4 o5.w, r0, c7
-dp4 o5.z, r0, c6
-dp4 o5.y, r0, c5
-dp4 o5.x, r0, c4
-rcp o1.x, r1.w
+add r2.xyz, -r0, c16
+dp3 r0.w, r2, r2
+rsq r0.w, r0.w
+mov o6.xyz, -r1
+mov r1.xyz, r0
+mul o2.xyz, r0.w, r2
+dp4 o4.w, r1, c15
+dp4 o4.z, r1, c14
+dp4 o4.y, r1, c13
+dp4 o4.x, r1, c12
+dp4 o5.w, r1, c7
+dp4 o5.z, r1, c6
+dp4 o5.y, r1, c5
+dp4 o5.x, r1, c4
+rcp o1.x, r0.w
+mov o3.xyz, r0
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -14061,24 +13951,22 @@ uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -14097,9 +13985,8 @@ varying highp vec4 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -14113,236 +14000,228 @@ uniform sampler2D _LightTextureB0;
 uniform sampler2D _LightTexture0;
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  lowp float atten_4;
-  mediump vec3 normalDir_5;
-  mediump vec3 lightDirection_6;
-  mediump vec3 ambientLighting_7;
-  mediump float detailLevel_8;
-  mediump vec4 color_9;
-  mediump vec4 tex_10;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_12;
-  highp float r_13;
-  if ((abs(tmpvar_11.z) > (1e-08 * abs(tmpvar_11.x)))) {
-    highp float y_over_x_14;
-    y_over_x_14 = (tmpvar_11.x / tmpvar_11.z);
-    highp float s_15;
-    highp float x_16;
-    x_16 = (y_over_x_14 * inversesqrt(((y_over_x_14 * y_over_x_14) + 1.0)));
-    s_15 = (sign(x_16) * (1.5708 - (sqrt((1.0 - abs(x_16))) * (1.5708 + (abs(x_16) * (-0.214602 + (abs(x_16) * (0.0865667 + (abs(x_16) * -0.0310296)))))))));
-    r_13 = s_15;
-    if ((tmpvar_11.z < 0.0)) {
-      if ((tmpvar_11.x >= 0.0)) {
-        r_13 = (s_15 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_13 = (r_13 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_13 = (sign(tmpvar_11.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_12.x = (0.5 + (0.159155 * r_13));
-  uv_12.y = (0.31831 * (1.5708 - (sign(tmpvar_11.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_11.y))) * (1.5708 + (abs(tmpvar_11.y) * (-0.214602 + (abs(tmpvar_11.y) * (0.0865667 + (abs(tmpvar_11.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdx(tmpvar_11.xz);
-  highp vec2 tmpvar_18;
-  tmpvar_18 = dFdy(tmpvar_11.xz);
-  highp vec4 tmpvar_19;
-  tmpvar_19.x = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_19.y = dFdx(uv_12.y);
-  tmpvar_19.z = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_19.w = dFdy(uv_12.y);
-  lowp vec4 tmpvar_20;
-  tmpvar_20 = texture2DGradEXT (_MainTex, uv_12, tmpvar_19.xy, tmpvar_19.zw);
-  tex_10 = tmpvar_20;
-  mediump vec4 tmpvar_21;
-  mediump vec3 detailCoords_22;
-  mediump float nylerp_23;
-  mediump float zxlerp_24;
-  highp vec3 tmpvar_25;
-  tmpvar_25 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_26;
-  highp float r_27;
-  if ((abs(tmpvar_25.z) > (1e-08 * abs(tmpvar_25.x)))) {
-    highp float y_over_x_28;
-    y_over_x_28 = (tmpvar_25.x / tmpvar_25.z);
-    highp float s_29;
-    highp float x_30;
-    x_30 = (y_over_x_28 * inversesqrt(((y_over_x_28 * y_over_x_28) + 1.0)));
-    s_29 = (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))));
-    r_27 = s_29;
-    if ((tmpvar_25.z < 0.0)) {
-      if ((tmpvar_25.x >= 0.0)) {
-        r_27 = (s_29 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_27 = (r_27 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_27 = (sign(tmpvar_25.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_26.x = (0.5 + (0.159155 * r_27));
-  uv_26.y = (0.31831 * (1.5708 - (sign(tmpvar_25.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_25.y))) * (1.5708 + (abs(tmpvar_25.y) * (-0.214602 + (abs(tmpvar_25.y) * (0.0865667 + (abs(tmpvar_25.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdx(tmpvar_25.xz);
-  highp vec2 tmpvar_32;
-  tmpvar_32 = dFdy(tmpvar_25.xz);
-  highp vec4 tmpvar_33;
-  tmpvar_33.x = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_33.y = dFdx(uv_26.y);
-  tmpvar_33.z = (0.159155 * sqrt(dot (tmpvar_32, tmpvar_32)));
-  tmpvar_33.w = dFdy(uv_26.y);
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
   highp vec3 tmpvar_34;
-  tmpvar_34 = abs(tmpvar_25);
-  highp float tmpvar_35;
-  tmpvar_35 = float((tmpvar_34.z >= tmpvar_34.x));
-  zxlerp_24 = tmpvar_35;
-  highp float tmpvar_36;
-  tmpvar_36 = float((mix (tmpvar_34.x, tmpvar_34.z, zxlerp_24) >= tmpvar_34.y));
-  nylerp_23 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_34, tmpvar_34.zxy, vec3(zxlerp_24));
-  detailCoords_22 = tmpvar_37;
-  highp vec3 tmpvar_38;
-  tmpvar_38 = mix (tmpvar_34.yxz, detailCoords_22, vec3(nylerp_23));
-  detailCoords_22 = tmpvar_38;
-  mediump float tmpvar_39;
-  tmpvar_39 = abs(detailCoords_22.x);
-  highp vec2 coord_40;
-  coord_40 = (((0.5 * detailCoords_22.zy) / tmpvar_39) * _DetailScale);
-  lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_40, tmpvar_33.xy, tmpvar_33.zw);
-  tmpvar_21 = tmpvar_41;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_8 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_44;
-  tmpvar_44 = (mix (mix (tmpvar_21, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8)), tex_10, vec4(tmpvar_43)) * _Color);
-  color_9 = tmpvar_44;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_45;
-  highp vec3 tmpvar_46;
-  tmpvar_46 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_46;
-  normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  mediump float tmpvar_48;
-  tmpvar_48 = ((tmpvar_47 - 0.01) / 0.99);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
-  tmpvar_49 = texture2D (_LightTexture0, P_50);
-  highp float tmpvar_51;
-  tmpvar_51 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
-  lowp vec4 tmpvar_52;
-  tmpvar_52 = texture2D (_LightTextureB0, vec2(tmpvar_51));
-  lowp float tmpvar_53;
-  mediump vec4 shadows_54;
-  highp vec4 shadowVals_55;
-  highp vec3 tmpvar_56;
-  tmpvar_56 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  lowp vec4 tmpvar_45;
+  highp vec2 P_46;
+  P_46 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_45 = texture2D (_LightTexture0, P_46);
+  highp float tmpvar_47;
+  tmpvar_47 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2D (_LightTextureB0, vec2(tmpvar_47));
+  lowp float tmpvar_49;
+  mediump vec4 shadows_50;
+  highp vec4 shadowVals_51;
+  highp vec3 tmpvar_52;
+  tmpvar_52 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
+  highp vec2 P_53;
+  P_53 = (tmpvar_52.xy + _ShadowOffsets[0].xy);
+  lowp float tmpvar_54;
+  tmpvar_54 = texture2D (_ShadowMapTexture, P_53).x;
+  shadowVals_51.x = tmpvar_54;
+  highp vec2 P_55;
+  P_55 = (tmpvar_52.xy + _ShadowOffsets[1].xy);
+  lowp float tmpvar_56;
+  tmpvar_56 = texture2D (_ShadowMapTexture, P_55).x;
+  shadowVals_51.y = tmpvar_56;
   highp vec2 P_57;
-  P_57 = (tmpvar_56.xy + _ShadowOffsets[0].xy);
+  P_57 = (tmpvar_52.xy + _ShadowOffsets[2].xy);
   lowp float tmpvar_58;
   tmpvar_58 = texture2D (_ShadowMapTexture, P_57).x;
-  shadowVals_55.x = tmpvar_58;
+  shadowVals_51.z = tmpvar_58;
   highp vec2 P_59;
-  P_59 = (tmpvar_56.xy + _ShadowOffsets[1].xy);
+  P_59 = (tmpvar_52.xy + _ShadowOffsets[3].xy);
   lowp float tmpvar_60;
   tmpvar_60 = texture2D (_ShadowMapTexture, P_59).x;
-  shadowVals_55.y = tmpvar_60;
-  highp vec2 P_61;
-  P_61 = (tmpvar_56.xy + _ShadowOffsets[2].xy);
-  lowp float tmpvar_62;
-  tmpvar_62 = texture2D (_ShadowMapTexture, P_61).x;
-  shadowVals_55.z = tmpvar_62;
-  highp vec2 P_63;
-  P_63 = (tmpvar_56.xy + _ShadowOffsets[3].xy);
-  lowp float tmpvar_64;
-  tmpvar_64 = texture2D (_ShadowMapTexture, P_63).x;
-  shadowVals_55.w = tmpvar_64;
-  bvec4 tmpvar_65;
-  tmpvar_65 = lessThan (shadowVals_55, tmpvar_56.zzzz);
-  highp vec4 tmpvar_66;
-  tmpvar_66 = _LightShadowData.xxxx;
-  highp float tmpvar_67;
-  if (tmpvar_65.x) {
-    tmpvar_67 = tmpvar_66.x;
+  shadowVals_51.w = tmpvar_60;
+  bvec4 tmpvar_61;
+  tmpvar_61 = lessThan (shadowVals_51, tmpvar_52.zzzz);
+  highp vec4 tmpvar_62;
+  tmpvar_62 = _LightShadowData.xxxx;
+  highp float tmpvar_63;
+  if (tmpvar_61.x) {
+    tmpvar_63 = tmpvar_62.x;
   } else {
-    tmpvar_67 = 1.0;
+    tmpvar_63 = 1.0;
   };
-  highp float tmpvar_68;
-  if (tmpvar_65.y) {
-    tmpvar_68 = tmpvar_66.y;
+  highp float tmpvar_64;
+  if (tmpvar_61.y) {
+    tmpvar_64 = tmpvar_62.y;
   } else {
-    tmpvar_68 = 1.0;
+    tmpvar_64 = 1.0;
   };
-  highp float tmpvar_69;
-  if (tmpvar_65.z) {
-    tmpvar_69 = tmpvar_66.z;
+  highp float tmpvar_65;
+  if (tmpvar_61.z) {
+    tmpvar_65 = tmpvar_62.z;
   } else {
-    tmpvar_69 = 1.0;
+    tmpvar_65 = 1.0;
   };
-  highp float tmpvar_70;
-  if (tmpvar_65.w) {
-    tmpvar_70 = tmpvar_66.w;
+  highp float tmpvar_66;
+  if (tmpvar_61.w) {
+    tmpvar_66 = tmpvar_62.w;
   } else {
-    tmpvar_70 = 1.0;
+    tmpvar_66 = 1.0;
   };
-  highp vec4 tmpvar_71;
-  tmpvar_71.x = tmpvar_67;
-  tmpvar_71.y = tmpvar_68;
-  tmpvar_71.z = tmpvar_69;
-  tmpvar_71.w = tmpvar_70;
-  shadows_54 = tmpvar_71;
-  mediump float tmpvar_72;
-  tmpvar_72 = dot (shadows_54, vec4(0.25, 0.25, 0.25, 0.25));
-  tmpvar_53 = tmpvar_72;
-  highp float tmpvar_73;
-  tmpvar_73 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_49.w) * tmpvar_52.w) * tmpvar_53);
-  atten_4 = tmpvar_73;
-  mediump float tmpvar_74;
-  tmpvar_74 = clamp ((((_LightColor0.w * tmpvar_48) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_75;
-  tmpvar_75 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_74)), 0.0, 1.0);
-  light_3 = tmpvar_75;
+  highp vec4 tmpvar_67;
+  tmpvar_67.x = tmpvar_63;
+  tmpvar_67.y = tmpvar_64;
+  tmpvar_67.z = tmpvar_65;
+  tmpvar_67.w = tmpvar_66;
+  shadows_50 = tmpvar_67;
+  mediump float tmpvar_68;
+  tmpvar_68 = dot (shadows_50, vec4(0.25, 0.25, 0.25, 0.25));
+  tmpvar_49 = tmpvar_68;
+  mediump vec3 lightDir_69;
+  lightDir_69 = tmpvar_43;
+  mediump vec3 viewDir_70;
+  viewDir_70 = xlv_TEXCOORD1;
+  mediump vec3 normal_71;
+  normal_71 = tmpvar_44;
+  mediump float atten_72;
+  atten_72 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_45.w) * tmpvar_48.w) * tmpvar_49);
+  mediump vec4 c_73;
+  highp float nh_74;
+  mediump vec3 tmpvar_75;
+  tmpvar_75 = normalize(lightDir_69);
+  lightDir_69 = tmpvar_75;
   mediump vec3 tmpvar_76;
-  tmpvar_76 = vec3(clamp (floor((1.0 + tmpvar_47)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_76;
-  mediump vec3 tmpvar_77;
-  mediump vec3 i_78;
-  i_78 = -(lightDirection_6);
-  tmpvar_77 = (i_78 - (2.0 * (dot (normalDir_5, i_78) * normalDir_5)));
+  tmpvar_76 = normalize(viewDir_70);
+  viewDir_70 = tmpvar_76;
+  mediump float tmpvar_77;
+  tmpvar_77 = dot (normal_71, tmpvar_75);
+  mediump float tmpvar_78;
+  tmpvar_78 = clamp (dot (normalize((tmpvar_75 + tmpvar_76)), normal_71), 0.0, 1.0);
+  nh_74 = tmpvar_78;
   highp vec3 tmpvar_79;
-  tmpvar_79 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_77, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_79;
-  highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 + (tex_10.w * tmpvar_79));
-  light_3 = tmpvar_80;
-  highp float tmpvar_81;
-  tmpvar_81 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_9.w = mix (0.4489, tex_10.w, tmpvar_81);
-  highp vec3 tmpvar_82;
-  tmpvar_82 = clamp (((_LightPower * light_3) - color_9.w), 0.0, 1.0);
-  color_9.xyz = (tmpvar_44.xyz * tmpvar_82);
-  highp vec3 tmpvar_83;
-  tmpvar_83 = (color_9.xyz + (_Reflectivity * light_3));
-  color_9.xyz = tmpvar_83;
-  color_9.xyz = (color_9.xyz * light_3);
-  tmpvar_1 = color_9;
+  tmpvar_79 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_77) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_74, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_72 * 4.0));
+  c_73.xyz = tmpvar_79;
+  c_73.w = (tmpvar_77 * (atten_72 * 4.0));
+  color_5.xyz = c_73.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_73.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -14371,24 +14250,22 @@ uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -14407,9 +14284,8 @@ varying highp vec4 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -14423,236 +14299,228 @@ uniform sampler2D _LightTextureB0;
 uniform sampler2D _LightTexture0;
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  lowp float atten_4;
-  mediump vec3 normalDir_5;
-  mediump vec3 lightDirection_6;
-  mediump vec3 ambientLighting_7;
-  mediump float detailLevel_8;
-  mediump vec4 color_9;
-  mediump vec4 tex_10;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_12;
-  highp float r_13;
-  if ((abs(tmpvar_11.z) > (1e-08 * abs(tmpvar_11.x)))) {
-    highp float y_over_x_14;
-    y_over_x_14 = (tmpvar_11.x / tmpvar_11.z);
-    highp float s_15;
-    highp float x_16;
-    x_16 = (y_over_x_14 * inversesqrt(((y_over_x_14 * y_over_x_14) + 1.0)));
-    s_15 = (sign(x_16) * (1.5708 - (sqrt((1.0 - abs(x_16))) * (1.5708 + (abs(x_16) * (-0.214602 + (abs(x_16) * (0.0865667 + (abs(x_16) * -0.0310296)))))))));
-    r_13 = s_15;
-    if ((tmpvar_11.z < 0.0)) {
-      if ((tmpvar_11.x >= 0.0)) {
-        r_13 = (s_15 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_13 = (r_13 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_13 = (sign(tmpvar_11.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_12.x = (0.5 + (0.159155 * r_13));
-  uv_12.y = (0.31831 * (1.5708 - (sign(tmpvar_11.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_11.y))) * (1.5708 + (abs(tmpvar_11.y) * (-0.214602 + (abs(tmpvar_11.y) * (0.0865667 + (abs(tmpvar_11.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdx(tmpvar_11.xz);
-  highp vec2 tmpvar_18;
-  tmpvar_18 = dFdy(tmpvar_11.xz);
-  highp vec4 tmpvar_19;
-  tmpvar_19.x = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_19.y = dFdx(uv_12.y);
-  tmpvar_19.z = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_19.w = dFdy(uv_12.y);
-  lowp vec4 tmpvar_20;
-  tmpvar_20 = texture2DGradEXT (_MainTex, uv_12, tmpvar_19.xy, tmpvar_19.zw);
-  tex_10 = tmpvar_20;
-  mediump vec4 tmpvar_21;
-  mediump vec3 detailCoords_22;
-  mediump float nylerp_23;
-  mediump float zxlerp_24;
-  highp vec3 tmpvar_25;
-  tmpvar_25 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_26;
-  highp float r_27;
-  if ((abs(tmpvar_25.z) > (1e-08 * abs(tmpvar_25.x)))) {
-    highp float y_over_x_28;
-    y_over_x_28 = (tmpvar_25.x / tmpvar_25.z);
-    highp float s_29;
-    highp float x_30;
-    x_30 = (y_over_x_28 * inversesqrt(((y_over_x_28 * y_over_x_28) + 1.0)));
-    s_29 = (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))));
-    r_27 = s_29;
-    if ((tmpvar_25.z < 0.0)) {
-      if ((tmpvar_25.x >= 0.0)) {
-        r_27 = (s_29 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_27 = (r_27 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_27 = (sign(tmpvar_25.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_26.x = (0.5 + (0.159155 * r_27));
-  uv_26.y = (0.31831 * (1.5708 - (sign(tmpvar_25.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_25.y))) * (1.5708 + (abs(tmpvar_25.y) * (-0.214602 + (abs(tmpvar_25.y) * (0.0865667 + (abs(tmpvar_25.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdx(tmpvar_25.xz);
-  highp vec2 tmpvar_32;
-  tmpvar_32 = dFdy(tmpvar_25.xz);
-  highp vec4 tmpvar_33;
-  tmpvar_33.x = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_33.y = dFdx(uv_26.y);
-  tmpvar_33.z = (0.159155 * sqrt(dot (tmpvar_32, tmpvar_32)));
-  tmpvar_33.w = dFdy(uv_26.y);
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
   highp vec3 tmpvar_34;
-  tmpvar_34 = abs(tmpvar_25);
-  highp float tmpvar_35;
-  tmpvar_35 = float((tmpvar_34.z >= tmpvar_34.x));
-  zxlerp_24 = tmpvar_35;
-  highp float tmpvar_36;
-  tmpvar_36 = float((mix (tmpvar_34.x, tmpvar_34.z, zxlerp_24) >= tmpvar_34.y));
-  nylerp_23 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_34, tmpvar_34.zxy, vec3(zxlerp_24));
-  detailCoords_22 = tmpvar_37;
-  highp vec3 tmpvar_38;
-  tmpvar_38 = mix (tmpvar_34.yxz, detailCoords_22, vec3(nylerp_23));
-  detailCoords_22 = tmpvar_38;
-  mediump float tmpvar_39;
-  tmpvar_39 = abs(detailCoords_22.x);
-  highp vec2 coord_40;
-  coord_40 = (((0.5 * detailCoords_22.zy) / tmpvar_39) * _DetailScale);
-  lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_40, tmpvar_33.xy, tmpvar_33.zw);
-  tmpvar_21 = tmpvar_41;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_8 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_44;
-  tmpvar_44 = (mix (mix (tmpvar_21, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8)), tex_10, vec4(tmpvar_43)) * _Color);
-  color_9 = tmpvar_44;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_45;
-  highp vec3 tmpvar_46;
-  tmpvar_46 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_46;
-  normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  mediump float tmpvar_48;
-  tmpvar_48 = ((tmpvar_47 - 0.01) / 0.99);
-  lowp vec4 tmpvar_49;
-  highp vec2 P_50;
-  P_50 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
-  tmpvar_49 = texture2D (_LightTexture0, P_50);
-  highp float tmpvar_51;
-  tmpvar_51 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
-  lowp vec4 tmpvar_52;
-  tmpvar_52 = texture2D (_LightTextureB0, vec2(tmpvar_51));
-  lowp float tmpvar_53;
-  mediump vec4 shadows_54;
-  highp vec4 shadowVals_55;
-  highp vec3 tmpvar_56;
-  tmpvar_56 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  lowp vec4 tmpvar_45;
+  highp vec2 P_46;
+  P_46 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_45 = texture2D (_LightTexture0, P_46);
+  highp float tmpvar_47;
+  tmpvar_47 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
+  lowp vec4 tmpvar_48;
+  tmpvar_48 = texture2D (_LightTextureB0, vec2(tmpvar_47));
+  lowp float tmpvar_49;
+  mediump vec4 shadows_50;
+  highp vec4 shadowVals_51;
+  highp vec3 tmpvar_52;
+  tmpvar_52 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
+  highp vec2 P_53;
+  P_53 = (tmpvar_52.xy + _ShadowOffsets[0].xy);
+  lowp float tmpvar_54;
+  tmpvar_54 = texture2D (_ShadowMapTexture, P_53).x;
+  shadowVals_51.x = tmpvar_54;
+  highp vec2 P_55;
+  P_55 = (tmpvar_52.xy + _ShadowOffsets[1].xy);
+  lowp float tmpvar_56;
+  tmpvar_56 = texture2D (_ShadowMapTexture, P_55).x;
+  shadowVals_51.y = tmpvar_56;
   highp vec2 P_57;
-  P_57 = (tmpvar_56.xy + _ShadowOffsets[0].xy);
+  P_57 = (tmpvar_52.xy + _ShadowOffsets[2].xy);
   lowp float tmpvar_58;
   tmpvar_58 = texture2D (_ShadowMapTexture, P_57).x;
-  shadowVals_55.x = tmpvar_58;
+  shadowVals_51.z = tmpvar_58;
   highp vec2 P_59;
-  P_59 = (tmpvar_56.xy + _ShadowOffsets[1].xy);
+  P_59 = (tmpvar_52.xy + _ShadowOffsets[3].xy);
   lowp float tmpvar_60;
   tmpvar_60 = texture2D (_ShadowMapTexture, P_59).x;
-  shadowVals_55.y = tmpvar_60;
-  highp vec2 P_61;
-  P_61 = (tmpvar_56.xy + _ShadowOffsets[2].xy);
-  lowp float tmpvar_62;
-  tmpvar_62 = texture2D (_ShadowMapTexture, P_61).x;
-  shadowVals_55.z = tmpvar_62;
-  highp vec2 P_63;
-  P_63 = (tmpvar_56.xy + _ShadowOffsets[3].xy);
-  lowp float tmpvar_64;
-  tmpvar_64 = texture2D (_ShadowMapTexture, P_63).x;
-  shadowVals_55.w = tmpvar_64;
-  bvec4 tmpvar_65;
-  tmpvar_65 = lessThan (shadowVals_55, tmpvar_56.zzzz);
-  highp vec4 tmpvar_66;
-  tmpvar_66 = _LightShadowData.xxxx;
-  highp float tmpvar_67;
-  if (tmpvar_65.x) {
-    tmpvar_67 = tmpvar_66.x;
+  shadowVals_51.w = tmpvar_60;
+  bvec4 tmpvar_61;
+  tmpvar_61 = lessThan (shadowVals_51, tmpvar_52.zzzz);
+  highp vec4 tmpvar_62;
+  tmpvar_62 = _LightShadowData.xxxx;
+  highp float tmpvar_63;
+  if (tmpvar_61.x) {
+    tmpvar_63 = tmpvar_62.x;
   } else {
-    tmpvar_67 = 1.0;
+    tmpvar_63 = 1.0;
   };
-  highp float tmpvar_68;
-  if (tmpvar_65.y) {
-    tmpvar_68 = tmpvar_66.y;
+  highp float tmpvar_64;
+  if (tmpvar_61.y) {
+    tmpvar_64 = tmpvar_62.y;
   } else {
-    tmpvar_68 = 1.0;
+    tmpvar_64 = 1.0;
   };
-  highp float tmpvar_69;
-  if (tmpvar_65.z) {
-    tmpvar_69 = tmpvar_66.z;
+  highp float tmpvar_65;
+  if (tmpvar_61.z) {
+    tmpvar_65 = tmpvar_62.z;
   } else {
-    tmpvar_69 = 1.0;
+    tmpvar_65 = 1.0;
   };
-  highp float tmpvar_70;
-  if (tmpvar_65.w) {
-    tmpvar_70 = tmpvar_66.w;
+  highp float tmpvar_66;
+  if (tmpvar_61.w) {
+    tmpvar_66 = tmpvar_62.w;
   } else {
-    tmpvar_70 = 1.0;
+    tmpvar_66 = 1.0;
   };
-  highp vec4 tmpvar_71;
-  tmpvar_71.x = tmpvar_67;
-  tmpvar_71.y = tmpvar_68;
-  tmpvar_71.z = tmpvar_69;
-  tmpvar_71.w = tmpvar_70;
-  shadows_54 = tmpvar_71;
-  mediump float tmpvar_72;
-  tmpvar_72 = dot (shadows_54, vec4(0.25, 0.25, 0.25, 0.25));
-  tmpvar_53 = tmpvar_72;
-  highp float tmpvar_73;
-  tmpvar_73 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_49.w) * tmpvar_52.w) * tmpvar_53);
-  atten_4 = tmpvar_73;
-  mediump float tmpvar_74;
-  tmpvar_74 = clamp ((((_LightColor0.w * tmpvar_48) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_75;
-  tmpvar_75 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_74)), 0.0, 1.0);
-  light_3 = tmpvar_75;
+  highp vec4 tmpvar_67;
+  tmpvar_67.x = tmpvar_63;
+  tmpvar_67.y = tmpvar_64;
+  tmpvar_67.z = tmpvar_65;
+  tmpvar_67.w = tmpvar_66;
+  shadows_50 = tmpvar_67;
+  mediump float tmpvar_68;
+  tmpvar_68 = dot (shadows_50, vec4(0.25, 0.25, 0.25, 0.25));
+  tmpvar_49 = tmpvar_68;
+  mediump vec3 lightDir_69;
+  lightDir_69 = tmpvar_43;
+  mediump vec3 viewDir_70;
+  viewDir_70 = xlv_TEXCOORD1;
+  mediump vec3 normal_71;
+  normal_71 = tmpvar_44;
+  mediump float atten_72;
+  atten_72 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_45.w) * tmpvar_48.w) * tmpvar_49);
+  mediump vec4 c_73;
+  highp float nh_74;
+  mediump vec3 tmpvar_75;
+  tmpvar_75 = normalize(lightDir_69);
+  lightDir_69 = tmpvar_75;
   mediump vec3 tmpvar_76;
-  tmpvar_76 = vec3(clamp (floor((1.0 + tmpvar_47)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_76;
-  mediump vec3 tmpvar_77;
-  mediump vec3 i_78;
-  i_78 = -(lightDirection_6);
-  tmpvar_77 = (i_78 - (2.0 * (dot (normalDir_5, i_78) * normalDir_5)));
+  tmpvar_76 = normalize(viewDir_70);
+  viewDir_70 = tmpvar_76;
+  mediump float tmpvar_77;
+  tmpvar_77 = dot (normal_71, tmpvar_75);
+  mediump float tmpvar_78;
+  tmpvar_78 = clamp (dot (normalize((tmpvar_75 + tmpvar_76)), normal_71), 0.0, 1.0);
+  nh_74 = tmpvar_78;
   highp vec3 tmpvar_79;
-  tmpvar_79 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_77, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_79;
-  highp vec3 tmpvar_80;
-  tmpvar_80 = (light_3 + (tex_10.w * tmpvar_79));
-  light_3 = tmpvar_80;
-  highp float tmpvar_81;
-  tmpvar_81 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_9.w = mix (0.4489, tex_10.w, tmpvar_81);
-  highp vec3 tmpvar_82;
-  tmpvar_82 = clamp (((_LightPower * light_3) - color_9.w), 0.0, 1.0);
-  color_9.xyz = (tmpvar_44.xyz * tmpvar_82);
-  highp vec3 tmpvar_83;
-  tmpvar_83 = (color_9.xyz + (_Reflectivity * light_3));
-  color_9.xyz = tmpvar_83;
-  color_9.xyz = (color_9.xyz * light_3);
-  tmpvar_1 = color_9;
+  tmpvar_79 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_77) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_74, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_72 * 4.0));
+  c_73.xyz = tmpvar_79;
+  c_73.w = (tmpvar_77 * (atten_72 * 4.0));
+  color_5.xyz = c_73.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_73.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -14693,7 +14561,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 411
+#line 340
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -14702,17 +14570,17 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 508
+#line 538
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec4 _LightCoord;
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 500
+#line 530
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -14809,54 +14677,63 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform sampler2D _ShadowMapTexture;
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 402
+#line 331
 uniform sampler2D _LightTextureB0;
-#line 407
-#line 421
+#line 336
+#line 350
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 434
-#line 442
+#line 363
+#line 371
+#line 385
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 418
+#line 422
+#line 431
+#line 439
+#line 448
 #line 456
+#line 469
+#line 481
+#line 497
+#line 510
 uniform lowp vec4 _Color;
+#line 518
 uniform highp float _Shininess;
-#line 489
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 522
 uniform highp float _DetailScale;
-#line 493
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 497
+#line 526
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 519
-#line 519
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 549
+#line 549
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 523
+    #line 553
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 527
+    o.worldPos = vertexPos;
+    #line 557
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
-    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
+    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - vertexPos));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
-    #line 532
+    #line 562
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -14876,7 +14753,7 @@ void main() {
     gl_Position = vec4(xl_retval.pos);
     xlv_TEXCOORD0 = float(xl_retval.viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.viewDir);
-    xlv_TEXCOORD2 = vec3(xl_retval.worldNormal);
+    xlv_TEXCOORD2 = vec3(xl_retval.worldPos);
     xlv_TEXCOORD3 = vec4(xl_retval._LightCoord);
     xlv_TEXCOORD4 = vec4(xl_retval._ShadowCoord);
     xlv_TEXCOORD5 = vec3(xl_retval.sphereNormal);
@@ -14979,7 +14856,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 411
+#line 340
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -14988,17 +14865,17 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 508
+#line 538
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec4 _LightCoord;
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 500
+#line 530
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -15095,143 +14972,149 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform sampler2D _ShadowMapTexture;
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 402
+#line 331
 uniform sampler2D _LightTextureB0;
-#line 407
-#line 421
+#line 336
+#line 350
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 434
-#line 442
+#line 363
+#line 371
+#line 385
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 418
+#line 422
+#line 431
+#line 439
+#line 448
 #line 456
+#line 469
+#line 481
+#line 497
+#line 510
 uniform lowp vec4 _Color;
+#line 518
 uniform highp float _Shininess;
-#line 489
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 522
 uniform highp float _DetailScale;
-#line 493
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 497
+#line 526
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 519
-#line 321
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 549
+#line 422
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
+    #line 426
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 330
+#line 431
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
+    #line 435
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 336
     return uv;
 }
-#line 368
+#line 469
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
-    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    highp vec2 uv = ((GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0)) * 4.0) * detailScale);
+    #line 473
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
+    #line 477
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 347
+#line 448
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    #line 452
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 353
     return tex;
 }
-#line 407
+#line 497
+mediump vec4 SpecularColorLight( in mediump vec3 lightDir, in mediump vec3 viewDir, in mediump vec3 normal, in mediump vec4 color, in mediump vec4 specColor, in highp float specK, in mediump float atten ) {
+    lightDir = normalize(lightDir);
+    viewDir = normalize(viewDir);
+    #line 501
+    mediump vec3 h = normalize((lightDir + viewDir));
+    mediump float diffuse = dot( normal, lightDir);
+    highp float nh = xll_saturate_f(dot( h, normal));
+    highp float spec = (pow( nh, specK) * color.w);
+    #line 505
+    mediump vec4 c;
+    c.xyz = ((((color.xyz * _LightColor0.xyz) * diffuse) + ((_LightColor0.xyz * specColor.xyz) * spec)) * (atten * 4.0));
+    c.w = (diffuse * (atten * 4.0));
+    return c;
+}
+#line 336
 lowp float UnitySpotAttenuate( in highp vec3 LightCoord ) {
     return texture( _LightTextureB0, vec2( dot( LightCoord, LightCoord))).w;
 }
-#line 403
+#line 332
 lowp float UnitySpotCookie( in highp vec4 LightCoord ) {
     return texture( _LightTexture0, ((LightCoord.xy / LightCoord.w) + 0.5)).w;
 }
-#line 388
+#line 317
 lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
-    #line 390
+    #line 319
     highp vec3 coord = (shadowCoord.xyz / shadowCoord.w);
     highp vec4 shadowVals;
     shadowVals.x = texture( _ShadowMapTexture, (vec2( coord) + _ShadowOffsets[0].xy)).x;
     shadowVals.y = texture( _ShadowMapTexture, (vec2( coord) + _ShadowOffsets[1].xy)).x;
-    #line 394
+    #line 323
     shadowVals.z = texture( _ShadowMapTexture, (vec2( coord) + _ShadowOffsets[2].xy)).x;
     shadowVals.w = texture( _ShadowMapTexture, (vec2( coord) + _ShadowOffsets[3].xy)).x;
     mediump vec4 shadows = xll_vecTSel_vb4_vf4_vf4 (lessThan( shadowVals, coord.zzzz), vec4( _LightShadowData.xxxx), vec4( 1.0));
     mediump float shadow = dot( shadows, vec4( 0.25));
-    #line 398
+    #line 327
     return shadow;
 }
-#line 534
+#line 564
 lowp vec4 frag( in v2f IN ) {
-    #line 536
+    #line 566
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 540
+    #line 570
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 544
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 normalDir = IN.worldNormal;
-    mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 548
-    mediump float diff = ((NdotL - 0.01) / 0.99);
-    lowp float atten = (((float((IN._LightCoord.z > 0.0)) * UnitySpotCookie( IN._LightCoord)) * UnitySpotAttenuate( IN._LightCoord.xyz)) * unitySampleShadow( IN._ShadowCoord));
-    mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 552
-    highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
-    specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light += (main.w * specularReflection);
-    color.w = 1.0;
-    #line 556
-    highp float refrac = 0.67;
-    color.w *= pow( refrac, 2.0);
-    color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
-    color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 560
-    color.xyz += (_Reflectivity * light);
-    color.xyz *= light;
+    #line 574
+    mediump float handoff = xll_saturate_f(pow( _PlanetOpacity, 2.0));
+    color.xyz = mix( color.xyz, main.xyz, vec3( handoff));
+    mediump vec4 specColor = _SpecColor;
+    specColor.w = mix( 1.0, main.w, handoff);
+    #line 578
+    mediump vec4 colorLight = SpecularColorLight( vec3( normalize(_WorldSpaceLightPos0)), IN.viewDir, normalize((IN.worldPos - _PlanetOrigin)), color, specColor, (_Shininess * 128.0), (((float((IN._LightCoord.z > 0.0)) * UnitySpotCookie( IN._LightCoord)) * UnitySpotAttenuate( IN._LightCoord.xyz)) * unitySampleShadow( IN._ShadowCoord)));
+    color.xyz = colorLight.xyz;
+    color.w = mix( 1.0, color.w, ((1.0 - handoff) * step( 0.0, colorLight.w)));
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -15246,7 +15129,7 @@ void main() {
     xlt_IN.pos = vec4(0.0);
     xlt_IN.viewDist = float(xlv_TEXCOORD0);
     xlt_IN.viewDir = vec3(xlv_TEXCOORD1);
-    xlt_IN.worldNormal = vec3(xlv_TEXCOORD2);
+    xlt_IN.worldPos = vec3(xlv_TEXCOORD2);
     xlt_IN._LightCoord = vec4(xlv_TEXCOORD3);
     xlt_IN._ShadowCoord = vec4(xlv_TEXCOORD4);
     xlt_IN.sphereNormal = vec3(xlv_TEXCOORD5);
@@ -15275,20 +15158,19 @@ uniform mat4 unity_World2Shadow[4];
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
-  vec3 p_1;
-  p_1 = ((_Object2World * gl_Vertex).xyz - _WorldSpaceCameraPos);
-  vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = gl_Normal;
+  vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * gl_Vertex).xyz;
+  vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   vec4 tmpvar_3;
   tmpvar_3.x = gl_MultiTexCoord0.x;
   tmpvar_3.y = gl_MultiTexCoord0.y;
   tmpvar_3.z = gl_MultiTexCoord1.x;
   tmpvar_3.w = gl_MultiTexCoord1.y;
   gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * gl_Vertex));
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -15304,9 +15186,8 @@ varying vec4 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying float xlv_TEXCOORD0;
-uniform float _Reflectivity;
-uniform float _LightPower;
-uniform float _MinLight;
+uniform vec3 _PlanetOrigin;
+uniform float _PlanetOpacity;
 uniform float _DetailDist;
 uniform float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -15320,7 +15201,6 @@ uniform sampler2D _LightTextureB0;
 uniform sampler2D _LightTexture0;
 uniform vec4 _ShadowOffsets[4];
 uniform sampler2DShadow _ShadowMapTexture;
-
 uniform vec4 _LightShadowData;
 uniform vec4 _WorldSpaceLightPos0;
 void main ()
@@ -15386,47 +15266,51 @@ void main ()
   uv_13.x = (0.5 + (0.159155 * r_14));
   uv_13.y = (0.31831 * (1.5708 - (sign(tmpvar_12.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_12.y))) * (1.5708 + (abs(tmpvar_12.y) * (-0.214602 + (abs(tmpvar_12.y) * (0.0865667 + (abs(tmpvar_12.y) * -0.0310296)))))))))));
   vec2 tmpvar_18;
-  tmpvar_18 = dFdx(tmpvar_12.xz);
+  tmpvar_18 = ((uv_13 * 4.0) * _DetailScale);
   vec2 tmpvar_19;
-  tmpvar_19 = dFdy(tmpvar_12.xz);
-  vec4 tmpvar_20;
-  tmpvar_20.x = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_20.y = dFdx(uv_13.y);
-  tmpvar_20.z = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
-  tmpvar_20.w = dFdy(uv_13.y);
-  vec3 tmpvar_21;
-  tmpvar_21 = abs(tmpvar_12);
-  float tmpvar_22;
-  tmpvar_22 = float((tmpvar_21.z >= tmpvar_21.x));
-  vec3 tmpvar_23;
-  tmpvar_23 = mix (tmpvar_21.yxz, mix (tmpvar_21, tmpvar_21.zxy, vec3(tmpvar_22)), vec3(float((mix (tmpvar_21.x, tmpvar_21.z, tmpvar_22) >= tmpvar_21.y))));
-  vec4 tmpvar_24;
-  tmpvar_24 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) * _DetailScale), tmpvar_20.xy, tmpvar_20.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
-  color_2.xyz = tmpvar_24.xyz;
+  tmpvar_19 = dFdx(tmpvar_12.xz);
+  vec2 tmpvar_20;
+  tmpvar_20 = dFdy(tmpvar_12.xz);
+  vec4 tmpvar_21;
+  tmpvar_21.x = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
+  tmpvar_21.y = dFdx(tmpvar_18.y);
+  tmpvar_21.z = (0.159155 * sqrt(dot (tmpvar_20, tmpvar_20)));
+  tmpvar_21.w = dFdy(tmpvar_18.y);
+  vec3 tmpvar_22;
+  tmpvar_22 = abs(tmpvar_12);
+  float tmpvar_23;
+  tmpvar_23 = float((tmpvar_22.z >= tmpvar_22.x));
+  vec3 tmpvar_24;
+  tmpvar_24 = mix (tmpvar_22.yxz, mix (tmpvar_22, tmpvar_22.zxy, vec3(tmpvar_23)), vec3(float((mix (tmpvar_22.x, tmpvar_22.z, tmpvar_23) >= tmpvar_22.y))));
   vec4 tmpvar_25;
-  tmpvar_25 = normalize(_WorldSpaceLightPos0);
+  tmpvar_25 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) * _DetailScale), tmpvar_21.xy, tmpvar_21.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
+  color_2.w = tmpvar_25.w;
   float tmpvar_26;
-  tmpvar_26 = clamp (dot (xlv_TEXCOORD2, tmpvar_25.xyz), 0.0, 1.0);
-  vec4 shadows_27;
-  vec3 tmpvar_28;
-  tmpvar_28 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
-  shadows_27.x = shadow2D (_ShadowMapTexture, (tmpvar_28 + _ShadowOffsets[0].xyz)).x;
-  shadows_27.y = shadow2D (_ShadowMapTexture, (tmpvar_28 + _ShadowOffsets[1].xyz)).x;
-  shadows_27.z = shadow2D (_ShadowMapTexture, (tmpvar_28 + _ShadowOffsets[2].xyz)).x;
-  shadows_27.w = shadow2D (_ShadowMapTexture, (tmpvar_28 + _ShadowOffsets[3].xyz)).x;
-  vec4 tmpvar_29;
-  tmpvar_29 = (_LightShadowData.xxxx + (shadows_27 * (1.0 - _LightShadowData.xxxx)));
-  shadows_27 = tmpvar_29;
-  float tmpvar_30;
-  tmpvar_30 = (((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w) * dot (tmpvar_29, vec4(0.25, 0.25, 0.25, 0.25)));
-  vec3 i_31;
-  i_31 = -(tmpvar_25.xyz);
-  vec3 tmpvar_32;
-  tmpvar_32 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * ((tmpvar_26 - 0.01) / 0.99)) * 4.0) * tmpvar_30), 0.0, 1.0))), 0.0, 1.0) + (main_1.w * (vec3(clamp (floor((1.0 + tmpvar_26)), 0.0, 1.0)) * (((tmpvar_30 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_31 - (2.0 * (dot (xlv_TEXCOORD2, i_31) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
-  color_2.w = mix (0.4489, main_1.w, clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0));
-  color_2.xyz = (tmpvar_24.xyz * clamp (((_LightPower * tmpvar_32) - color_2.w), 0.0, 1.0));
-  color_2.xyz = (color_2.xyz + (_Reflectivity * tmpvar_32));
-  color_2.xyz = (color_2.xyz * tmpvar_32);
+  tmpvar_26 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  color_2.xyz = mix (tmpvar_25.xyz, main_1.xyz, vec3(tmpvar_26));
+  vec3 tmpvar_27;
+  tmpvar_27 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  vec4 shadows_28;
+  vec3 tmpvar_29;
+  tmpvar_29 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
+  shadows_28.x = shadow2D (_ShadowMapTexture, (tmpvar_29 + _ShadowOffsets[0].xyz)).x;
+  shadows_28.y = shadow2D (_ShadowMapTexture, (tmpvar_29 + _ShadowOffsets[1].xyz)).x;
+  shadows_28.z = shadow2D (_ShadowMapTexture, (tmpvar_29 + _ShadowOffsets[2].xyz)).x;
+  shadows_28.w = shadow2D (_ShadowMapTexture, (tmpvar_29 + _ShadowOffsets[3].xyz)).x;
+  vec4 tmpvar_30;
+  tmpvar_30 = (_LightShadowData.xxxx + (shadows_28 * (1.0 - _LightShadowData.xxxx)));
+  shadows_28 = tmpvar_30;
+  float atten_31;
+  atten_31 = (((float((xlv_TEXCOORD3.z > 0.0)) * texture2D (_LightTexture0, ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5)).w) * texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz))).w) * dot (tmpvar_30, vec4(0.25, 0.25, 0.25, 0.25)));
+  vec4 c_32;
+  vec3 tmpvar_33;
+  tmpvar_33 = normalize(normalize(_WorldSpaceLightPos0).xyz);
+  float tmpvar_34;
+  tmpvar_34 = dot (tmpvar_27, tmpvar_33);
+  c_32.xyz = ((((color_2.xyz * _LightColor0.xyz) * tmpvar_34) + ((_LightColor0.xyz * _SpecColor.xyz) * (pow (clamp (dot (normalize((tmpvar_33 + normalize(xlv_TEXCOORD1))), tmpvar_27), 0.0, 1.0), (_Shininess * 128.0)) * tmpvar_25.w))) * (atten_31 * 4.0));
+  c_32.w = (tmpvar_34 * (atten_31 * 4.0));
+  color_2.xyz = c_32.xyz;
+  color_2.w = mix (1.0, tmpvar_25.w, ((1.0 - tmpvar_26) * float((c_32.w >= 0.0))));
   gl_FragData[0] = color_2;
 }
 
@@ -15438,7 +15322,6 @@ void main ()
 SubProgram "d3d9 " {
 Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
 Bind "vertex" Vertex
-Bind "normal" Normal
 Bind "texcoord" TexCoord0
 Bind "texcoord1" TexCoord1
 Matrix 0 [glstate_matrix_mvp]
@@ -15447,7 +15330,7 @@ Matrix 4 [unity_World2Shadow0]
 Matrix 8 [_Object2World]
 Matrix 12 [_LightMatrix0]
 "vs_3_0
-; 35 ALU
+; 29 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -15455,42 +15338,34 @@ dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
 dcl_texcoord5 o6
-def c17, 0.00000000, 0, 0, 0
 dcl_position0 v0
-dcl_normal0 v1
-dcl_texcoord0 v2
-dcl_texcoord1 v3
-mov r1.xyz, v1
-mov r1.w, c17.x
-dp4 r0.z, r1, c10
-dp4 r0.x, r1, c8
-dp4 r0.y, r1, c9
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o3.xyz, r0.w, r0
+dcl_texcoord0 v1
+dcl_texcoord1 v2
+mov r1.zw, v2.xyxy
+mov r1.xy, v1
+dp4 r0.w, r1, r1
+rsq r1.w, r0.w
+mul r1.xyz, r1.w, r1
+dp4 r1.w, v0, c11
 dp4 r0.z, v0, c10
 dp4 r0.x, v0, c8
 dp4 r0.y, v0, c9
-mov r2.zw, v3.xyxy
-mov r2.xy, v2
-dp4 r1.x, r2, r2
-rsq r0.w, r1.x
-mul r2.xyz, r0.w, r2
-add r1.xyz, -r0, c16
-dp3 r0.w, r1, r1
-rsq r1.w, r0.w
-dp4 r0.w, v0, c11
-mov o6.xyz, -r2
-mul o2.xyz, r1.w, r1
-dp4 o4.w, r0, c15
-dp4 o4.z, r0, c14
-dp4 o4.y, r0, c13
-dp4 o4.x, r0, c12
-dp4 o5.w, r0, c7
-dp4 o5.z, r0, c6
-dp4 o5.y, r0, c5
-dp4 o5.x, r0, c4
-rcp o1.x, r1.w
+add r2.xyz, -r0, c16
+dp3 r0.w, r2, r2
+rsq r0.w, r0.w
+mov o6.xyz, -r1
+mov r1.xyz, r0
+mul o2.xyz, r0.w, r2
+dp4 o4.w, r1, c15
+dp4 o4.z, r1, c14
+dp4 o4.y, r1, c13
+dp4 o4.x, r1, c12
+dp4 o5.w, r1, c7
+dp4 o5.z, r1, c6
+dp4 o5.y, r1, c5
+dp4 o5.x, r1, c4
+rcp o1.x, r0.w
+mov o3.xyz, r0
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -15519,24 +15394,22 @@ uniform highp mat4 unity_World2Shadow[4];
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex));
   xlv_TEXCOORD4 = (unity_World2Shadow[0] * (_Object2World * _glesVertex));
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -15556,9 +15429,8 @@ varying highp vec4 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -15572,202 +15444,196 @@ uniform sampler2D _LightTextureB0;
 uniform sampler2D _LightTexture0;
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  lowp float atten_4;
-  mediump vec3 normalDir_5;
-  mediump vec3 lightDirection_6;
-  mediump vec3 ambientLighting_7;
-  mediump float detailLevel_8;
-  mediump vec4 color_9;
-  mediump vec4 tex_10;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_12;
-  highp float r_13;
-  if ((abs(tmpvar_11.z) > (1e-08 * abs(tmpvar_11.x)))) {
-    highp float y_over_x_14;
-    y_over_x_14 = (tmpvar_11.x / tmpvar_11.z);
-    highp float s_15;
-    highp float x_16;
-    x_16 = (y_over_x_14 * inversesqrt(((y_over_x_14 * y_over_x_14) + 1.0)));
-    s_15 = (sign(x_16) * (1.5708 - (sqrt((1.0 - abs(x_16))) * (1.5708 + (abs(x_16) * (-0.214602 + (abs(x_16) * (0.0865667 + (abs(x_16) * -0.0310296)))))))));
-    r_13 = s_15;
-    if ((tmpvar_11.z < 0.0)) {
-      if ((tmpvar_11.x >= 0.0)) {
-        r_13 = (s_15 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_13 = (r_13 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_13 = (sign(tmpvar_11.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_12.x = (0.5 + (0.159155 * r_13));
-  uv_12.y = (0.31831 * (1.5708 - (sign(tmpvar_11.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_11.y))) * (1.5708 + (abs(tmpvar_11.y) * (-0.214602 + (abs(tmpvar_11.y) * (0.0865667 + (abs(tmpvar_11.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdx(tmpvar_11.xz);
-  highp vec2 tmpvar_18;
-  tmpvar_18 = dFdy(tmpvar_11.xz);
-  highp vec4 tmpvar_19;
-  tmpvar_19.x = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_19.y = dFdx(uv_12.y);
-  tmpvar_19.z = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_19.w = dFdy(uv_12.y);
-  lowp vec4 tmpvar_20;
-  tmpvar_20 = texture2DGradEXT (_MainTex, uv_12, tmpvar_19.xy, tmpvar_19.zw);
-  tex_10 = tmpvar_20;
-  mediump vec4 tmpvar_21;
-  mediump vec3 detailCoords_22;
-  mediump float nylerp_23;
-  mediump float zxlerp_24;
-  highp vec3 tmpvar_25;
-  tmpvar_25 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_26;
-  highp float r_27;
-  if ((abs(tmpvar_25.z) > (1e-08 * abs(tmpvar_25.x)))) {
-    highp float y_over_x_28;
-    y_over_x_28 = (tmpvar_25.x / tmpvar_25.z);
-    highp float s_29;
-    highp float x_30;
-    x_30 = (y_over_x_28 * inversesqrt(((y_over_x_28 * y_over_x_28) + 1.0)));
-    s_29 = (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))));
-    r_27 = s_29;
-    if ((tmpvar_25.z < 0.0)) {
-      if ((tmpvar_25.x >= 0.0)) {
-        r_27 = (s_29 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_27 = (r_27 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_27 = (sign(tmpvar_25.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_26.x = (0.5 + (0.159155 * r_27));
-  uv_26.y = (0.31831 * (1.5708 - (sign(tmpvar_25.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_25.y))) * (1.5708 + (abs(tmpvar_25.y) * (-0.214602 + (abs(tmpvar_25.y) * (0.0865667 + (abs(tmpvar_25.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdx(tmpvar_25.xz);
-  highp vec2 tmpvar_32;
-  tmpvar_32 = dFdy(tmpvar_25.xz);
-  highp vec4 tmpvar_33;
-  tmpvar_33.x = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_33.y = dFdx(uv_26.y);
-  tmpvar_33.z = (0.159155 * sqrt(dot (tmpvar_32, tmpvar_32)));
-  tmpvar_33.w = dFdy(uv_26.y);
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
   highp vec3 tmpvar_34;
-  tmpvar_34 = abs(tmpvar_25);
-  highp float tmpvar_35;
-  tmpvar_35 = float((tmpvar_34.z >= tmpvar_34.x));
-  zxlerp_24 = tmpvar_35;
-  highp float tmpvar_36;
-  tmpvar_36 = float((mix (tmpvar_34.x, tmpvar_34.z, zxlerp_24) >= tmpvar_34.y));
-  nylerp_23 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_34, tmpvar_34.zxy, vec3(zxlerp_24));
-  detailCoords_22 = tmpvar_37;
-  highp vec3 tmpvar_38;
-  tmpvar_38 = mix (tmpvar_34.yxz, detailCoords_22, vec3(nylerp_23));
-  detailCoords_22 = tmpvar_38;
-  mediump float tmpvar_39;
-  tmpvar_39 = abs(detailCoords_22.x);
-  highp vec2 coord_40;
-  coord_40 = (((0.5 * detailCoords_22.zy) / tmpvar_39) * _DetailScale);
-  lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_40, tmpvar_33.xy, tmpvar_33.zw);
-  tmpvar_21 = tmpvar_41;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_8 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_44;
-  tmpvar_44 = (mix (mix (tmpvar_21, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8)), tex_10, vec4(tmpvar_43)) * _Color);
-  color_9.xyz = tmpvar_44.xyz;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_45;
-  highp vec3 tmpvar_46;
-  tmpvar_46 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_46;
-  normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  lowp vec4 tmpvar_45;
+  highp vec2 P_46;
+  P_46 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
+  tmpvar_45 = texture2D (_LightTexture0, P_46);
+  highp float tmpvar_47;
+  tmpvar_47 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
   lowp vec4 tmpvar_48;
-  highp vec2 P_49;
-  P_49 = ((xlv_TEXCOORD3.xy / xlv_TEXCOORD3.w) + 0.5);
-  tmpvar_48 = texture2D (_LightTexture0, P_49);
-  highp float tmpvar_50;
-  tmpvar_50 = dot (xlv_TEXCOORD3.xyz, xlv_TEXCOORD3.xyz);
-  lowp vec4 tmpvar_51;
-  tmpvar_51 = texture2D (_LightTextureB0, vec2(tmpvar_50));
-  lowp float tmpvar_52;
-  mediump vec4 shadows_53;
-  highp vec3 tmpvar_54;
-  tmpvar_54 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
-  highp vec3 coord_55;
-  coord_55 = (tmpvar_54 + _ShadowOffsets[0].xyz);
-  lowp float tmpvar_56;
-  tmpvar_56 = shadow2DEXT (_ShadowMapTexture, coord_55);
-  shadows_53.x = tmpvar_56;
-  highp vec3 coord_57;
-  coord_57 = (tmpvar_54 + _ShadowOffsets[1].xyz);
-  lowp float tmpvar_58;
-  tmpvar_58 = shadow2DEXT (_ShadowMapTexture, coord_57);
-  shadows_53.y = tmpvar_58;
-  highp vec3 coord_59;
-  coord_59 = (tmpvar_54 + _ShadowOffsets[2].xyz);
-  lowp float tmpvar_60;
-  tmpvar_60 = shadow2DEXT (_ShadowMapTexture, coord_59);
-  shadows_53.z = tmpvar_60;
-  highp vec3 coord_61;
-  coord_61 = (tmpvar_54 + _ShadowOffsets[3].xyz);
-  lowp float tmpvar_62;
-  tmpvar_62 = shadow2DEXT (_ShadowMapTexture, coord_61);
-  shadows_53.w = tmpvar_62;
-  highp vec4 tmpvar_63;
-  tmpvar_63 = (_LightShadowData.xxxx + (shadows_53 * (1.0 - _LightShadowData.xxxx)));
-  shadows_53 = tmpvar_63;
-  mediump float tmpvar_64;
-  tmpvar_64 = dot (shadows_53, vec4(0.25, 0.25, 0.25, 0.25));
-  tmpvar_52 = tmpvar_64;
-  highp float tmpvar_65;
-  tmpvar_65 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_48.w) * tmpvar_51.w) * tmpvar_52);
-  atten_4 = tmpvar_65;
-  mediump float tmpvar_66;
-  tmpvar_66 = clamp ((((_LightColor0.w * ((tmpvar_47 - 0.01) / 0.99)) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_67;
-  tmpvar_67 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_66)), 0.0, 1.0);
-  light_3 = tmpvar_67;
+  tmpvar_48 = texture2D (_LightTextureB0, vec2(tmpvar_47));
+  lowp float tmpvar_49;
+  mediump vec4 shadows_50;
+  highp vec3 tmpvar_51;
+  tmpvar_51 = (xlv_TEXCOORD4.xyz / xlv_TEXCOORD4.w);
+  highp vec3 coord_52;
+  coord_52 = (tmpvar_51 + _ShadowOffsets[0].xyz);
+  lowp float tmpvar_53;
+  tmpvar_53 = shadow2DEXT (_ShadowMapTexture, coord_52);
+  shadows_50.x = tmpvar_53;
+  highp vec3 coord_54;
+  coord_54 = (tmpvar_51 + _ShadowOffsets[1].xyz);
+  lowp float tmpvar_55;
+  tmpvar_55 = shadow2DEXT (_ShadowMapTexture, coord_54);
+  shadows_50.y = tmpvar_55;
+  highp vec3 coord_56;
+  coord_56 = (tmpvar_51 + _ShadowOffsets[2].xyz);
+  lowp float tmpvar_57;
+  tmpvar_57 = shadow2DEXT (_ShadowMapTexture, coord_56);
+  shadows_50.z = tmpvar_57;
+  highp vec3 coord_58;
+  coord_58 = (tmpvar_51 + _ShadowOffsets[3].xyz);
+  lowp float tmpvar_59;
+  tmpvar_59 = shadow2DEXT (_ShadowMapTexture, coord_58);
+  shadows_50.w = tmpvar_59;
+  highp vec4 tmpvar_60;
+  tmpvar_60 = (_LightShadowData.xxxx + (shadows_50 * (1.0 - _LightShadowData.xxxx)));
+  shadows_50 = tmpvar_60;
+  mediump float tmpvar_61;
+  tmpvar_61 = dot (shadows_50, vec4(0.25, 0.25, 0.25, 0.25));
+  tmpvar_49 = tmpvar_61;
+  mediump vec3 lightDir_62;
+  lightDir_62 = tmpvar_43;
+  mediump vec3 viewDir_63;
+  viewDir_63 = xlv_TEXCOORD1;
+  mediump vec3 normal_64;
+  normal_64 = tmpvar_44;
+  mediump float atten_65;
+  atten_65 = (((float((xlv_TEXCOORD3.z > 0.0)) * tmpvar_45.w) * tmpvar_48.w) * tmpvar_49);
+  mediump vec4 c_66;
+  highp float nh_67;
   mediump vec3 tmpvar_68;
-  tmpvar_68 = vec3(clamp (floor((1.0 + tmpvar_47)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_68;
+  tmpvar_68 = normalize(lightDir_62);
+  lightDir_62 = tmpvar_68;
   mediump vec3 tmpvar_69;
-  mediump vec3 i_70;
-  i_70 = -(lightDirection_6);
-  tmpvar_69 = (i_70 - (2.0 * (dot (normalDir_5, i_70) * normalDir_5)));
-  highp vec3 tmpvar_71;
-  tmpvar_71 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_69, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_71;
+  tmpvar_69 = normalize(viewDir_63);
+  viewDir_63 = tmpvar_69;
+  mediump float tmpvar_70;
+  tmpvar_70 = dot (normal_64, tmpvar_68);
+  mediump float tmpvar_71;
+  tmpvar_71 = clamp (dot (normalize((tmpvar_68 + tmpvar_69)), normal_64), 0.0, 1.0);
+  nh_67 = tmpvar_71;
   highp vec3 tmpvar_72;
-  tmpvar_72 = (light_3 + (tex_10.w * tmpvar_71));
-  light_3 = tmpvar_72;
-  highp float tmpvar_73;
-  tmpvar_73 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_9.w = mix (0.4489, tex_10.w, tmpvar_73);
-  highp vec3 tmpvar_74;
-  tmpvar_74 = clamp (((_LightPower * light_3) - color_9.w), 0.0, 1.0);
-  color_9.xyz = (tmpvar_44.xyz * tmpvar_74);
-  highp vec3 tmpvar_75;
-  tmpvar_75 = (color_9.xyz + (_Reflectivity * light_3));
-  color_9.xyz = tmpvar_75;
-  color_9.xyz = (color_9.xyz * light_3);
-  tmpvar_1 = color_9;
+  tmpvar_72 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_70) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_67, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_65 * 4.0));
+  c_66.xyz = tmpvar_72;
+  c_66.w = (tmpvar_70 * (atten_65 * 4.0));
+  color_5.xyz = c_66.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_66.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -15808,7 +15674,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 411
+#line 340
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -15817,17 +15683,17 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 508
+#line 538
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec4 _LightCoord;
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 500
+#line 530
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -15924,54 +15790,63 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform lowp sampler2DShadow _ShadowMapTexture;
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 402
+#line 331
 uniform sampler2D _LightTextureB0;
-#line 407
-#line 421
+#line 336
+#line 350
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 434
-#line 442
+#line 363
+#line 371
+#line 385
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 418
+#line 422
+#line 431
+#line 439
+#line 448
 #line 456
+#line 469
+#line 481
+#line 497
+#line 510
 uniform lowp vec4 _Color;
+#line 518
 uniform highp float _Shininess;
-#line 489
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 522
 uniform highp float _DetailScale;
-#line 493
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 497
+#line 526
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 519
-#line 519
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 549
+#line 549
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 523
+    #line 553
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 527
+    o.worldPos = vertexPos;
+    #line 557
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
-    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
+    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - vertexPos));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex));
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
-    #line 532
+    #line 562
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -15991,7 +15866,7 @@ void main() {
     gl_Position = vec4(xl_retval.pos);
     xlv_TEXCOORD0 = float(xl_retval.viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.viewDir);
-    xlv_TEXCOORD2 = vec3(xl_retval.worldNormal);
+    xlv_TEXCOORD2 = vec3(xl_retval.worldPos);
     xlv_TEXCOORD3 = vec4(xl_retval._LightCoord);
     xlv_TEXCOORD4 = vec4(xl_retval._ShadowCoord);
     xlv_TEXCOORD5 = vec3(xl_retval.sphereNormal);
@@ -16086,7 +15961,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 411
+#line 340
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -16095,17 +15970,17 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 508
+#line 538
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec4 _LightCoord;
     highp vec4 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 500
+#line 530
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -16202,143 +16077,149 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform lowp sampler2DShadow _ShadowMapTexture;
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _LightTexture0;
 uniform highp mat4 _LightMatrix0;
-#line 402
+#line 331
 uniform sampler2D _LightTextureB0;
-#line 407
-#line 421
+#line 336
+#line 350
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 434
-#line 442
+#line 363
+#line 371
+#line 385
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 418
+#line 422
+#line 431
+#line 439
+#line 448
 #line 456
+#line 469
+#line 481
+#line 497
+#line 510
 uniform lowp vec4 _Color;
+#line 518
 uniform highp float _Shininess;
-#line 489
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 522
 uniform highp float _DetailScale;
-#line 493
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 497
+#line 526
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 519
-#line 321
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 549
+#line 422
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
+    #line 426
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 330
+#line 431
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
+    #line 435
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 336
     return uv;
 }
-#line 368
+#line 469
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
-    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    highp vec2 uv = ((GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0)) * 4.0) * detailScale);
+    #line 473
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
+    #line 477
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 347
+#line 448
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    #line 452
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 353
     return tex;
 }
-#line 407
+#line 497
+mediump vec4 SpecularColorLight( in mediump vec3 lightDir, in mediump vec3 viewDir, in mediump vec3 normal, in mediump vec4 color, in mediump vec4 specColor, in highp float specK, in mediump float atten ) {
+    lightDir = normalize(lightDir);
+    viewDir = normalize(viewDir);
+    #line 501
+    mediump vec3 h = normalize((lightDir + viewDir));
+    mediump float diffuse = dot( normal, lightDir);
+    highp float nh = xll_saturate_f(dot( h, normal));
+    highp float spec = (pow( nh, specK) * color.w);
+    #line 505
+    mediump vec4 c;
+    c.xyz = ((((color.xyz * _LightColor0.xyz) * diffuse) + ((_LightColor0.xyz * specColor.xyz) * spec)) * (atten * 4.0));
+    c.w = (diffuse * (atten * 4.0));
+    return c;
+}
+#line 336
 lowp float UnitySpotAttenuate( in highp vec3 LightCoord ) {
     return texture( _LightTextureB0, vec2( dot( LightCoord, LightCoord))).w;
 }
-#line 403
+#line 332
 lowp float UnitySpotCookie( in highp vec4 LightCoord ) {
     return texture( _LightTexture0, ((LightCoord.xy / LightCoord.w) + 0.5)).w;
 }
-#line 388
+#line 317
 lowp float unitySampleShadow( in highp vec4 shadowCoord ) {
-    #line 390
+    #line 319
     highp vec3 coord = (shadowCoord.xyz / shadowCoord.w);
     mediump vec4 shadows;
     shadows.x = xll_shadow2D( _ShadowMapTexture, (coord + vec3( _ShadowOffsets[0])).xyz);
     shadows.y = xll_shadow2D( _ShadowMapTexture, (coord + vec3( _ShadowOffsets[1])).xyz);
-    #line 394
+    #line 323
     shadows.z = xll_shadow2D( _ShadowMapTexture, (coord + vec3( _ShadowOffsets[2])).xyz);
     shadows.w = xll_shadow2D( _ShadowMapTexture, (coord + vec3( _ShadowOffsets[3])).xyz);
     shadows = (_LightShadowData.xxxx + (shadows * (1.0 - _LightShadowData.xxxx)));
     mediump float shadow = dot( shadows, vec4( 0.25));
-    #line 398
+    #line 327
     return shadow;
 }
-#line 534
+#line 564
 lowp vec4 frag( in v2f IN ) {
-    #line 536
+    #line 566
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 540
+    #line 570
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 544
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 normalDir = IN.worldNormal;
-    mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 548
-    mediump float diff = ((NdotL - 0.01) / 0.99);
-    lowp float atten = (((float((IN._LightCoord.z > 0.0)) * UnitySpotCookie( IN._LightCoord)) * UnitySpotAttenuate( IN._LightCoord.xyz)) * unitySampleShadow( IN._ShadowCoord));
-    mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 552
-    highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
-    specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light += (main.w * specularReflection);
-    color.w = 1.0;
-    #line 556
-    highp float refrac = 0.67;
-    color.w *= pow( refrac, 2.0);
-    color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
-    color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 560
-    color.xyz += (_Reflectivity * light);
-    color.xyz *= light;
+    #line 574
+    mediump float handoff = xll_saturate_f(pow( _PlanetOpacity, 2.0));
+    color.xyz = mix( color.xyz, main.xyz, vec3( handoff));
+    mediump vec4 specColor = _SpecColor;
+    specColor.w = mix( 1.0, main.w, handoff);
+    #line 578
+    mediump vec4 colorLight = SpecularColorLight( vec3( normalize(_WorldSpaceLightPos0)), IN.viewDir, normalize((IN.worldPos - _PlanetOrigin)), color, specColor, (_Shininess * 128.0), (((float((IN._LightCoord.z > 0.0)) * UnitySpotCookie( IN._LightCoord)) * UnitySpotAttenuate( IN._LightCoord.xyz)) * unitySampleShadow( IN._ShadowCoord)));
+    color.xyz = colorLight.xyz;
+    color.w = mix( 1.0, color.w, ((1.0 - handoff) * step( 0.0, colorLight.w)));
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -16353,7 +16234,7 @@ void main() {
     xlt_IN.pos = vec4(0.0);
     xlt_IN.viewDist = float(xlv_TEXCOORD0);
     xlt_IN.viewDir = vec3(xlv_TEXCOORD1);
-    xlt_IN.worldNormal = vec3(xlv_TEXCOORD2);
+    xlt_IN.worldPos = vec3(xlv_TEXCOORD2);
     xlt_IN._LightCoord = vec4(xlv_TEXCOORD3);
     xlt_IN._ShadowCoord = vec4(xlv_TEXCOORD4);
     xlt_IN.sphereNormal = vec3(xlv_TEXCOORD5);
@@ -16382,20 +16263,19 @@ uniform vec4 _LightPositionRange;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
-  vec3 p_1;
-  p_1 = ((_Object2World * gl_Vertex).xyz - _WorldSpaceCameraPos);
-  vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = gl_Normal;
+  vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * gl_Vertex).xyz;
+  vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   vec4 tmpvar_3;
   tmpvar_3.x = gl_MultiTexCoord0.x;
   tmpvar_3.y = gl_MultiTexCoord0.y;
   tmpvar_3.z = gl_MultiTexCoord1.x;
   tmpvar_3.w = gl_MultiTexCoord1.y;
   gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -16411,9 +16291,8 @@ varying vec3 xlv_TEXCOORD3;
 varying vec3 xlv_TEXCOORD2;
 varying vec3 xlv_TEXCOORD1;
 varying float xlv_TEXCOORD0;
-uniform float _Reflectivity;
-uniform float _LightPower;
-uniform float _MinLight;
+uniform vec3 _PlanetOrigin;
+uniform float _PlanetOpacity;
 uniform float _DetailDist;
 uniform float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -16425,7 +16304,6 @@ uniform vec4 _SpecColor;
 uniform vec4 _LightColor0;
 uniform sampler2D _LightTexture0;
 uniform samplerCube _ShadowMapTexture;
-
 uniform vec4 _LightShadowData;
 uniform vec4 _LightPositionRange;
 uniform vec4 _WorldSpaceLightPos0;
@@ -16492,1522 +16370,34 @@ void main ()
   uv_13.x = (0.5 + (0.159155 * r_14));
   uv_13.y = (0.31831 * (1.5708 - (sign(tmpvar_12.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_12.y))) * (1.5708 + (abs(tmpvar_12.y) * (-0.214602 + (abs(tmpvar_12.y) * (0.0865667 + (abs(tmpvar_12.y) * -0.0310296)))))))))));
   vec2 tmpvar_18;
-  tmpvar_18 = dFdx(tmpvar_12.xz);
+  tmpvar_18 = ((uv_13 * 4.0) * _DetailScale);
   vec2 tmpvar_19;
-  tmpvar_19 = dFdy(tmpvar_12.xz);
-  vec4 tmpvar_20;
-  tmpvar_20.x = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_20.y = dFdx(uv_13.y);
-  tmpvar_20.z = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
-  tmpvar_20.w = dFdy(uv_13.y);
-  vec3 tmpvar_21;
-  tmpvar_21 = abs(tmpvar_12);
-  float tmpvar_22;
-  tmpvar_22 = float((tmpvar_21.z >= tmpvar_21.x));
-  vec3 tmpvar_23;
-  tmpvar_23 = mix (tmpvar_21.yxz, mix (tmpvar_21, tmpvar_21.zxy, vec3(tmpvar_22)), vec3(float((mix (tmpvar_21.x, tmpvar_21.z, tmpvar_22) >= tmpvar_21.y))));
-  vec4 tmpvar_24;
-  tmpvar_24 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) * _DetailScale), tmpvar_20.xy, tmpvar_20.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
-  color_2 = tmpvar_24;
+  tmpvar_19 = dFdx(tmpvar_12.xz);
+  vec2 tmpvar_20;
+  tmpvar_20 = dFdy(tmpvar_12.xz);
+  vec4 tmpvar_21;
+  tmpvar_21.x = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
+  tmpvar_21.y = dFdx(tmpvar_18.y);
+  tmpvar_21.z = (0.159155 * sqrt(dot (tmpvar_20, tmpvar_20)));
+  tmpvar_21.w = dFdy(tmpvar_18.y);
+  vec3 tmpvar_22;
+  tmpvar_22 = abs(tmpvar_12);
+  float tmpvar_23;
+  tmpvar_23 = float((tmpvar_22.z >= tmpvar_22.x));
+  vec3 tmpvar_24;
+  tmpvar_24 = mix (tmpvar_22.yxz, mix (tmpvar_22, tmpvar_22.zxy, vec3(tmpvar_23)), vec3(float((mix (tmpvar_22.x, tmpvar_22.z, tmpvar_23) >= tmpvar_22.y))));
   vec4 tmpvar_25;
-  tmpvar_25 = normalize(_WorldSpaceLightPos0);
+  tmpvar_25 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) * _DetailScale), tmpvar_21.xy, tmpvar_21.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
+  color_2.w = tmpvar_25.w;
   float tmpvar_26;
-  tmpvar_26 = clamp (dot (xlv_TEXCOORD2, tmpvar_25.xyz), 0.0, 1.0);
-  float tmpvar_27;
-  tmpvar_27 = ((tmpvar_26 - 0.01) / 0.99);
-  vec4 tmpvar_28;
-  tmpvar_28 = texture2D (_LightTexture0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3)));
-  vec4 shadowVals_29;
-  shadowVals_29.x = dot (textureCube (_ShadowMapTexture, (xlv_TEXCOORD4 + vec3(0.0078125, 0.0078125, 0.0078125))), vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  shadowVals_29.y = dot (textureCube (_ShadowMapTexture, (xlv_TEXCOORD4 + vec3(-0.0078125, -0.0078125, 0.0078125))), vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  shadowVals_29.z = dot (textureCube (_ShadowMapTexture, (xlv_TEXCOORD4 + vec3(-0.0078125, 0.0078125, -0.0078125))), vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  shadowVals_29.w = dot (textureCube (_ShadowMapTexture, (xlv_TEXCOORD4 + vec3(0.0078125, -0.0078125, -0.0078125))), vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  bvec4 tmpvar_30;
-  tmpvar_30 = lessThan (shadowVals_29, vec4(((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97)));
-  vec4 tmpvar_31;
-  tmpvar_31 = _LightShadowData.xxxx;
-  float tmpvar_32;
-  if (tmpvar_30.x) {
-    tmpvar_32 = tmpvar_31.x;
-  } else {
-    tmpvar_32 = 1.0;
-  };
-  float tmpvar_33;
-  if (tmpvar_30.y) {
-    tmpvar_33 = tmpvar_31.y;
-  } else {
-    tmpvar_33 = 1.0;
-  };
-  float tmpvar_34;
-  if (tmpvar_30.z) {
-    tmpvar_34 = tmpvar_31.z;
-  } else {
-    tmpvar_34 = 1.0;
-  };
-  float tmpvar_35;
-  if (tmpvar_30.w) {
-    tmpvar_35 = tmpvar_31.w;
-  } else {
-    tmpvar_35 = 1.0;
-  };
-  vec4 tmpvar_36;
-  tmpvar_36.x = tmpvar_32;
-  tmpvar_36.y = tmpvar_33;
-  tmpvar_36.z = tmpvar_34;
-  tmpvar_36.w = tmpvar_35;
-  float tmpvar_37;
-  tmpvar_37 = (tmpvar_28.w * dot (tmpvar_36, vec4(0.25, 0.25, 0.25, 0.25)));
-  vec3 i_38;
-  i_38 = -(tmpvar_25.xyz);
-  vec3 tmpvar_39;
-  tmpvar_39 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_27) * 4.0) * tmpvar_37), 0.0, 1.0))), 0.0, 1.0) + (main_1.w * (vec3(clamp (floor((1.0 + tmpvar_26)), 0.0, 1.0)) * (((tmpvar_37 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_38 - (2.0 * (dot (xlv_TEXCOORD2, i_38) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
-  color_2.w = mix (0.4489, main_1.w, clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0));
-  color_2.xyz = (tmpvar_24.xyz * clamp (((_LightPower * tmpvar_39) - color_2.w), 0.0, 1.0));
-  color_2.xyz = (color_2.xyz + (_Reflectivity * tmpvar_39));
-  color_2.xyz = (color_2.xyz * tmpvar_39);
-  gl_FragData[0] = color_2;
-}
-
-
-#endif
-"
-}
-
-SubProgram "d3d9 " {
-Keywords { "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-Bind "vertex" Vertex
-Bind "normal" Normal
-Bind "texcoord" TexCoord0
-Bind "texcoord1" TexCoord1
-Matrix 0 [glstate_matrix_mvp]
-Vector 12 [_WorldSpaceCameraPos]
-Vector 13 [_LightPositionRange]
-Matrix 4 [_Object2World]
-Matrix 8 [_LightMatrix0]
-"vs_3_0
-; 31 ALU
-dcl_position o0
-dcl_texcoord0 o1
-dcl_texcoord1 o2
-dcl_texcoord2 o3
-dcl_texcoord3 o4
-dcl_texcoord4 o5
-dcl_texcoord5 o6
-def c14, 0.00000000, 0, 0, 0
-dcl_position0 v0
-dcl_normal0 v1
-dcl_texcoord0 v2
-dcl_texcoord1 v3
-mov r1.xyz, v1
-mov r1.w, c14.x
-dp4 r0.z, r1, c6
-dp4 r0.x, r1, c4
-dp4 r0.y, r1, c5
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o3.xyz, r0.w, r0
-dp4 r0.z, v0, c6
-dp4 r0.x, v0, c4
-dp4 r0.y, v0, c5
-mov r2.zw, v3.xyxy
-mov r2.xy, v2
-dp4 r1.x, r2, r2
-rsq r0.w, r1.x
-mul r2.xyz, r0.w, r2
-add r1.xyz, -r0, c12
-dp3 r0.w, r1, r1
-rsq r1.w, r0.w
-dp4 r0.w, v0, c7
-mov o6.xyz, -r2
-mul o2.xyz, r1.w, r1
-dp4 o4.z, r0, c10
-dp4 o4.y, r0, c9
-dp4 o4.x, r0, c8
-rcp o1.x, r1.w
-add o5.xyz, r0, -c13
-dp4 o0.w, v0, c3
-dp4 o0.z, v0, c2
-dp4 o0.y, v0, c1
-dp4 o0.x, v0, c0
-"
-}
-
-SubProgram "gles " {
-Keywords { "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-"!!GLES
-
-
-#ifdef VERTEX
-
-varying highp vec3 xlv_TEXCOORD5;
-varying highp vec3 xlv_TEXCOORD4;
-varying highp vec3 xlv_TEXCOORD3;
-varying highp vec3 xlv_TEXCOORD2;
-varying highp vec3 xlv_TEXCOORD1;
-varying highp float xlv_TEXCOORD0;
-uniform highp mat4 _LightMatrix0;
-uniform highp mat4 _Object2World;
-uniform highp mat4 glstate_matrix_mvp;
-uniform highp vec4 _LightPositionRange;
-uniform highp vec3 _WorldSpaceCameraPos;
-attribute vec4 _glesMultiTexCoord1;
-attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
-attribute vec4 _glesVertex;
-void main ()
-{
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
-  highp vec4 tmpvar_3;
-  tmpvar_3.x = _glesMultiTexCoord0.x;
-  tmpvar_3.y = _glesMultiTexCoord0.y;
-  tmpvar_3.z = _glesMultiTexCoord1.x;
-  tmpvar_3.w = _glesMultiTexCoord1.y;
-  gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
-  xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
-}
-
-
-
-#endif
-#ifdef FRAGMENT
-
-#extension GL_EXT_shader_texture_lod : enable
-#extension GL_OES_standard_derivatives : enable
-varying highp vec3 xlv_TEXCOORD5;
-varying highp vec3 xlv_TEXCOORD4;
-varying highp vec3 xlv_TEXCOORD3;
-varying highp vec3 xlv_TEXCOORD2;
-varying highp vec3 xlv_TEXCOORD1;
-varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
-uniform highp float _DetailDist;
-uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
-uniform highp float _MainTexHandoverDist;
-uniform sampler2D _MainTex;
-uniform highp float _Shininess;
-uniform lowp vec4 _Color;
-uniform lowp vec4 _SpecColor;
-uniform lowp vec4 _LightColor0;
-uniform sampler2D _LightTexture0;
-uniform samplerCube _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
-uniform highp vec4 _LightShadowData;
-uniform highp vec4 _LightPositionRange;
-uniform highp vec4 _WorldSpaceLightPos0;
-void main ()
-{
-  lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  lowp float atten_4;
-  mediump vec3 normalDir_5;
-  mediump vec3 lightDirection_6;
-  mediump vec3 ambientLighting_7;
-  mediump float detailLevel_8;
-  mediump vec4 color_9;
-  mediump vec4 tex_10;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_12;
-  highp float r_13;
-  if ((abs(tmpvar_11.z) > (1e-08 * abs(tmpvar_11.x)))) {
-    highp float y_over_x_14;
-    y_over_x_14 = (tmpvar_11.x / tmpvar_11.z);
-    highp float s_15;
-    highp float x_16;
-    x_16 = (y_over_x_14 * inversesqrt(((y_over_x_14 * y_over_x_14) + 1.0)));
-    s_15 = (sign(x_16) * (1.5708 - (sqrt((1.0 - abs(x_16))) * (1.5708 + (abs(x_16) * (-0.214602 + (abs(x_16) * (0.0865667 + (abs(x_16) * -0.0310296)))))))));
-    r_13 = s_15;
-    if ((tmpvar_11.z < 0.0)) {
-      if ((tmpvar_11.x >= 0.0)) {
-        r_13 = (s_15 + 3.14159);
-      } else {
-        r_13 = (r_13 - 3.14159);
-      };
-    };
-  } else {
-    r_13 = (sign(tmpvar_11.x) * 1.5708);
-  };
-  uv_12.x = (0.5 + (0.159155 * r_13));
-  uv_12.y = (0.31831 * (1.5708 - (sign(tmpvar_11.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_11.y))) * (1.5708 + (abs(tmpvar_11.y) * (-0.214602 + (abs(tmpvar_11.y) * (0.0865667 + (abs(tmpvar_11.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdx(tmpvar_11.xz);
-  highp vec2 tmpvar_18;
-  tmpvar_18 = dFdy(tmpvar_11.xz);
-  highp vec4 tmpvar_19;
-  tmpvar_19.x = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_19.y = dFdx(uv_12.y);
-  tmpvar_19.z = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_19.w = dFdy(uv_12.y);
-  lowp vec4 tmpvar_20;
-  tmpvar_20 = texture2DGradEXT (_MainTex, uv_12, tmpvar_19.xy, tmpvar_19.zw);
-  tex_10 = tmpvar_20;
-  mediump vec4 tmpvar_21;
-  mediump vec3 detailCoords_22;
-  mediump float nylerp_23;
-  mediump float zxlerp_24;
-  highp vec3 tmpvar_25;
-  tmpvar_25 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_26;
-  highp float r_27;
-  if ((abs(tmpvar_25.z) > (1e-08 * abs(tmpvar_25.x)))) {
-    highp float y_over_x_28;
-    y_over_x_28 = (tmpvar_25.x / tmpvar_25.z);
-    highp float s_29;
-    highp float x_30;
-    x_30 = (y_over_x_28 * inversesqrt(((y_over_x_28 * y_over_x_28) + 1.0)));
-    s_29 = (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))));
-    r_27 = s_29;
-    if ((tmpvar_25.z < 0.0)) {
-      if ((tmpvar_25.x >= 0.0)) {
-        r_27 = (s_29 + 3.14159);
-      } else {
-        r_27 = (r_27 - 3.14159);
-      };
-    };
-  } else {
-    r_27 = (sign(tmpvar_25.x) * 1.5708);
-  };
-  uv_26.x = (0.5 + (0.159155 * r_27));
-  uv_26.y = (0.31831 * (1.5708 - (sign(tmpvar_25.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_25.y))) * (1.5708 + (abs(tmpvar_25.y) * (-0.214602 + (abs(tmpvar_25.y) * (0.0865667 + (abs(tmpvar_25.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdx(tmpvar_25.xz);
-  highp vec2 tmpvar_32;
-  tmpvar_32 = dFdy(tmpvar_25.xz);
-  highp vec4 tmpvar_33;
-  tmpvar_33.x = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_33.y = dFdx(uv_26.y);
-  tmpvar_33.z = (0.159155 * sqrt(dot (tmpvar_32, tmpvar_32)));
-  tmpvar_33.w = dFdy(uv_26.y);
-  highp vec3 tmpvar_34;
-  tmpvar_34 = abs(tmpvar_25);
-  highp float tmpvar_35;
-  tmpvar_35 = float((tmpvar_34.z >= tmpvar_34.x));
-  zxlerp_24 = tmpvar_35;
-  highp float tmpvar_36;
-  tmpvar_36 = float((mix (tmpvar_34.x, tmpvar_34.z, zxlerp_24) >= tmpvar_34.y));
-  nylerp_23 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_34, tmpvar_34.zxy, vec3(zxlerp_24));
-  detailCoords_22 = tmpvar_37;
-  highp vec3 tmpvar_38;
-  tmpvar_38 = mix (tmpvar_34.yxz, detailCoords_22, vec3(nylerp_23));
-  detailCoords_22 = tmpvar_38;
-  mediump float tmpvar_39;
-  tmpvar_39 = abs(detailCoords_22.x);
-  highp vec2 coord_40;
-  coord_40 = (((0.5 * detailCoords_22.zy) / tmpvar_39) * _DetailScale);
-  lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_40, tmpvar_33.xy, tmpvar_33.zw);
-  tmpvar_21 = tmpvar_41;
-  highp float tmpvar_42;
-  tmpvar_42 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_8 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_44;
-  tmpvar_44 = (mix (mix (tmpvar_21, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8)), tex_10, vec4(tmpvar_43)) * _Color);
-  color_9 = tmpvar_44;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_45;
-  highp vec3 tmpvar_46;
-  tmpvar_46 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_46;
-  normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  mediump float tmpvar_48;
-  tmpvar_48 = ((tmpvar_47 - 0.01) / 0.99);
-  highp float tmpvar_49;
-  tmpvar_49 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2D (_LightTexture0, vec2(tmpvar_49));
-  highp float tmpvar_51;
-  mediump vec4 shadows_52;
-  highp vec4 shadowVals_53;
-  highp float tmpvar_54;
-  tmpvar_54 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
-  highp vec3 vec_55;
-  vec_55 = (xlv_TEXCOORD4 + vec3(0.0078125, 0.0078125, 0.0078125));
-  highp vec4 packDist_56;
-  lowp vec4 tmpvar_57;
-  tmpvar_57 = textureCube (_ShadowMapTexture, vec_55);
-  packDist_56 = tmpvar_57;
-  shadowVals_53.x = dot (packDist_56, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  highp vec3 vec_58;
-  vec_58 = (xlv_TEXCOORD4 + vec3(-0.0078125, -0.0078125, 0.0078125));
-  highp vec4 packDist_59;
-  lowp vec4 tmpvar_60;
-  tmpvar_60 = textureCube (_ShadowMapTexture, vec_58);
-  packDist_59 = tmpvar_60;
-  shadowVals_53.y = dot (packDist_59, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  highp vec3 vec_61;
-  vec_61 = (xlv_TEXCOORD4 + vec3(-0.0078125, 0.0078125, -0.0078125));
-  highp vec4 packDist_62;
-  lowp vec4 tmpvar_63;
-  tmpvar_63 = textureCube (_ShadowMapTexture, vec_61);
-  packDist_62 = tmpvar_63;
-  shadowVals_53.z = dot (packDist_62, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  highp vec3 vec_64;
-  vec_64 = (xlv_TEXCOORD4 + vec3(0.0078125, -0.0078125, -0.0078125));
-  highp vec4 packDist_65;
-  lowp vec4 tmpvar_66;
-  tmpvar_66 = textureCube (_ShadowMapTexture, vec_64);
-  packDist_65 = tmpvar_66;
-  shadowVals_53.w = dot (packDist_65, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  bvec4 tmpvar_67;
-  tmpvar_67 = lessThan (shadowVals_53, vec4(tmpvar_54));
-  highp vec4 tmpvar_68;
-  tmpvar_68 = _LightShadowData.xxxx;
-  highp float tmpvar_69;
-  if (tmpvar_67.x) {
-    tmpvar_69 = tmpvar_68.x;
-  } else {
-    tmpvar_69 = 1.0;
-  };
-  highp float tmpvar_70;
-  if (tmpvar_67.y) {
-    tmpvar_70 = tmpvar_68.y;
-  } else {
-    tmpvar_70 = 1.0;
-  };
-  highp float tmpvar_71;
-  if (tmpvar_67.z) {
-    tmpvar_71 = tmpvar_68.z;
-  } else {
-    tmpvar_71 = 1.0;
-  };
-  highp float tmpvar_72;
-  if (tmpvar_67.w) {
-    tmpvar_72 = tmpvar_68.w;
-  } else {
-    tmpvar_72 = 1.0;
-  };
-  highp vec4 tmpvar_73;
-  tmpvar_73.x = tmpvar_69;
-  tmpvar_73.y = tmpvar_70;
-  tmpvar_73.z = tmpvar_71;
-  tmpvar_73.w = tmpvar_72;
-  shadows_52 = tmpvar_73;
-  mediump float tmpvar_74;
-  tmpvar_74 = dot (shadows_52, vec4(0.25, 0.25, 0.25, 0.25));
-  tmpvar_51 = tmpvar_74;
-  highp float tmpvar_75;
-  tmpvar_75 = (tmpvar_50.w * tmpvar_51);
-  atten_4 = tmpvar_75;
-  mediump float tmpvar_76;
-  tmpvar_76 = clamp ((((_LightColor0.w * tmpvar_48) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_77;
-  tmpvar_77 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_76)), 0.0, 1.0);
-  light_3 = tmpvar_77;
-  mediump vec3 tmpvar_78;
-  tmpvar_78 = vec3(clamp (floor((1.0 + tmpvar_47)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_78;
-  mediump vec3 tmpvar_79;
-  mediump vec3 i_80;
-  i_80 = -(lightDirection_6);
-  tmpvar_79 = (i_80 - (2.0 * (dot (normalDir_5, i_80) * normalDir_5)));
-  highp vec3 tmpvar_81;
-  tmpvar_81 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_79, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_81;
-  highp vec3 tmpvar_82;
-  tmpvar_82 = (light_3 + (tex_10.w * tmpvar_81));
-  light_3 = tmpvar_82;
-  highp float tmpvar_83;
-  tmpvar_83 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_9.w = mix (0.4489, tex_10.w, tmpvar_83);
-  highp vec3 tmpvar_84;
-  tmpvar_84 = clamp (((_LightPower * light_3) - color_9.w), 0.0, 1.0);
-  color_9.xyz = (tmpvar_44.xyz * tmpvar_84);
-  highp vec3 tmpvar_85;
-  tmpvar_85 = (color_9.xyz + (_Reflectivity * light_3));
-  color_9.xyz = tmpvar_85;
-  color_9.xyz = (color_9.xyz * light_3);
-  tmpvar_1 = color_9;
-  gl_FragData[0] = tmpvar_1;
-}
-
-
-
-#endif"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-"!!GLES
-
-
-#ifdef VERTEX
-
-varying highp vec3 xlv_TEXCOORD5;
-varying highp vec3 xlv_TEXCOORD4;
-varying highp vec3 xlv_TEXCOORD3;
-varying highp vec3 xlv_TEXCOORD2;
-varying highp vec3 xlv_TEXCOORD1;
-varying highp float xlv_TEXCOORD0;
-uniform highp mat4 _LightMatrix0;
-uniform highp mat4 _Object2World;
-uniform highp mat4 glstate_matrix_mvp;
-uniform highp vec4 _LightPositionRange;
-uniform highp vec3 _WorldSpaceCameraPos;
-attribute vec4 _glesMultiTexCoord1;
-attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
-attribute vec4 _glesVertex;
-void main ()
-{
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
-  highp vec4 tmpvar_3;
-  tmpvar_3.x = _glesMultiTexCoord0.x;
-  tmpvar_3.y = _glesMultiTexCoord0.y;
-  tmpvar_3.z = _glesMultiTexCoord1.x;
-  tmpvar_3.w = _glesMultiTexCoord1.y;
-  gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
-  xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
-  xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
-}
-
-
-
-#endif
-#ifdef FRAGMENT
-
-#extension GL_EXT_shader_texture_lod : enable
-#extension GL_OES_standard_derivatives : enable
-varying highp vec3 xlv_TEXCOORD5;
-varying highp vec3 xlv_TEXCOORD4;
-varying highp vec3 xlv_TEXCOORD3;
-varying highp vec3 xlv_TEXCOORD2;
-varying highp vec3 xlv_TEXCOORD1;
-varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
-uniform highp float _DetailDist;
-uniform highp float _DetailScale;
-uniform sampler2D _DetailTex;
-uniform highp float _MainTexHandoverDist;
-uniform sampler2D _MainTex;
-uniform highp float _Shininess;
-uniform lowp vec4 _Color;
-uniform lowp vec4 _SpecColor;
-uniform lowp vec4 _LightColor0;
-uniform sampler2D _LightTexture0;
-uniform samplerCube _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
-uniform highp vec4 _LightShadowData;
-uniform highp vec4 _LightPositionRange;
-uniform highp vec4 _WorldSpaceLightPos0;
-void main ()
-{
-  lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  lowp float atten_4;
-  mediump vec3 normalDir_5;
-  mediump vec3 lightDirection_6;
-  mediump vec3 ambientLighting_7;
-  mediump float detailLevel_8;
-  mediump vec4 color_9;
-  mediump vec4 tex_10;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_12;
-  highp float r_13;
-  if ((abs(tmpvar_11.z) > (1e-08 * abs(tmpvar_11.x)))) {
-    highp float y_over_x_14;
-    y_over_x_14 = (tmpvar_11.x / tmpvar_11.z);
-    highp float s_15;
-    highp float x_16;
-    x_16 = (y_over_x_14 * inversesqrt(((y_over_x_14 * y_over_x_14) + 1.0)));
-    s_15 = (sign(x_16) * (1.5708 - (sqrt((1.0 - abs(x_16))) * (1.5708 + (abs(x_16) * (-0.214602 + (abs(x_16) * (0.0865667 + (abs(x_16) * -0.0310296)))))))));
-    r_13 = s_15;
-    if ((tmpvar_11.z < 0.0)) {
-      if ((tmpvar_11.x >= 0.0)) {
-        r_13 = (s_15 + 3.14159);
-      } else {
-        r_13 = (r_13 - 3.14159);
-      };
-    };
-  } else {
-    r_13 = (sign(tmpvar_11.x) * 1.5708);
-  };
-  uv_12.x = (0.5 + (0.159155 * r_13));
-  uv_12.y = (0.31831 * (1.5708 - (sign(tmpvar_11.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_11.y))) * (1.5708 + (abs(tmpvar_11.y) * (-0.214602 + (abs(tmpvar_11.y) * (0.0865667 + (abs(tmpvar_11.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdx(tmpvar_11.xz);
-  highp vec2 tmpvar_18;
-  tmpvar_18 = dFdy(tmpvar_11.xz);
-  highp vec4 tmpvar_19;
-  tmpvar_19.x = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_19.y = dFdx(uv_12.y);
-  tmpvar_19.z = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_19.w = dFdy(uv_12.y);
-  lowp vec4 tmpvar_20;
-  tmpvar_20 = texture2DGradEXT (_MainTex, uv_12, tmpvar_19.xy, tmpvar_19.zw);
-  tex_10 = tmpvar_20;
-  mediump vec4 tmpvar_21;
-  mediump vec3 detailCoords_22;
-  mediump float nylerp_23;
-  mediump float zxlerp_24;
-  highp vec3 tmpvar_25;
-  tmpvar_25 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_26;
-  highp float r_27;
-  if ((abs(tmpvar_25.z) > (1e-08 * abs(tmpvar_25.x)))) {
-    highp float y_over_x_28;
-    y_over_x_28 = (tmpvar_25.x / tmpvar_25.z);
-    highp float s_29;
-    highp float x_30;
-    x_30 = (y_over_x_28 * inversesqrt(((y_over_x_28 * y_over_x_28) + 1.0)));
-    s_29 = (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))));
-    r_27 = s_29;
-    if ((tmpvar_25.z < 0.0)) {
-      if ((tmpvar_25.x >= 0.0)) {
-        r_27 = (s_29 + 3.14159);
-      } else {
-        r_27 = (r_27 - 3.14159);
-      };
-    };
-  } else {
-    r_27 = (sign(tmpvar_25.x) * 1.5708);
-  };
-  uv_26.x = (0.5 + (0.159155 * r_27));
-  uv_26.y = (0.31831 * (1.5708 - (sign(tmpvar_25.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_25.y))) * (1.5708 + (abs(tmpvar_25.y) * (-0.214602 + (abs(tmpvar_25.y) * (0.0865667 + (abs(tmpvar_25.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdx(tmpvar_25.xz);
-  highp vec2 tmpvar_32;
-  tmpvar_32 = dFdy(tmpvar_25.xz);
-  highp vec4 tmpvar_33;
-  tmpvar_33.x = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_33.y = dFdx(uv_26.y);
-  tmpvar_33.z = (0.159155 * sqrt(dot (tmpvar_32, tmpvar_32)));
-  tmpvar_33.w = dFdy(uv_26.y);
-  highp vec3 tmpvar_34;
-  tmpvar_34 = abs(tmpvar_25);
-  highp float tmpvar_35;
-  tmpvar_35 = float((tmpvar_34.z >= tmpvar_34.x));
-  zxlerp_24 = tmpvar_35;
-  highp float tmpvar_36;
-  tmpvar_36 = float((mix (tmpvar_34.x, tmpvar_34.z, zxlerp_24) >= tmpvar_34.y));
-  nylerp_23 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_34, tmpvar_34.zxy, vec3(zxlerp_24));
-  detailCoords_22 = tmpvar_37;
-  highp vec3 tmpvar_38;
-  tmpvar_38 = mix (tmpvar_34.yxz, detailCoords_22, vec3(nylerp_23));
-  detailCoords_22 = tmpvar_38;
-  mediump float tmpvar_39;
-  tmpvar_39 = abs(detailCoords_22.x);
-  highp vec2 coord_40;
-  coord_40 = (((0.5 * detailCoords_22.zy) / tmpvar_39) * _DetailScale);
-  lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_40, tmpvar_33.xy, tmpvar_33.zw);
-  tmpvar_21 = tmpvar_41;
-  highp float tmpvar_42;
-  tmpvar_42 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_8 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_44;
-  tmpvar_44 = (mix (mix (tmpvar_21, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8)), tex_10, vec4(tmpvar_43)) * _Color);
-  color_9 = tmpvar_44;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_45;
-  highp vec3 tmpvar_46;
-  tmpvar_46 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_46;
-  normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  mediump float tmpvar_48;
-  tmpvar_48 = ((tmpvar_47 - 0.01) / 0.99);
-  highp float tmpvar_49;
-  tmpvar_49 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2D (_LightTexture0, vec2(tmpvar_49));
-  highp float tmpvar_51;
-  mediump vec4 shadows_52;
-  highp vec4 shadowVals_53;
-  highp float tmpvar_54;
-  tmpvar_54 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
-  highp vec3 vec_55;
-  vec_55 = (xlv_TEXCOORD4 + vec3(0.0078125, 0.0078125, 0.0078125));
-  highp vec4 packDist_56;
-  lowp vec4 tmpvar_57;
-  tmpvar_57 = textureCube (_ShadowMapTexture, vec_55);
-  packDist_56 = tmpvar_57;
-  shadowVals_53.x = dot (packDist_56, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  highp vec3 vec_58;
-  vec_58 = (xlv_TEXCOORD4 + vec3(-0.0078125, -0.0078125, 0.0078125));
-  highp vec4 packDist_59;
-  lowp vec4 tmpvar_60;
-  tmpvar_60 = textureCube (_ShadowMapTexture, vec_58);
-  packDist_59 = tmpvar_60;
-  shadowVals_53.y = dot (packDist_59, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  highp vec3 vec_61;
-  vec_61 = (xlv_TEXCOORD4 + vec3(-0.0078125, 0.0078125, -0.0078125));
-  highp vec4 packDist_62;
-  lowp vec4 tmpvar_63;
-  tmpvar_63 = textureCube (_ShadowMapTexture, vec_61);
-  packDist_62 = tmpvar_63;
-  shadowVals_53.z = dot (packDist_62, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  highp vec3 vec_64;
-  vec_64 = (xlv_TEXCOORD4 + vec3(0.0078125, -0.0078125, -0.0078125));
-  highp vec4 packDist_65;
-  lowp vec4 tmpvar_66;
-  tmpvar_66 = textureCube (_ShadowMapTexture, vec_64);
-  packDist_65 = tmpvar_66;
-  shadowVals_53.w = dot (packDist_65, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  bvec4 tmpvar_67;
-  tmpvar_67 = lessThan (shadowVals_53, vec4(tmpvar_54));
-  highp vec4 tmpvar_68;
-  tmpvar_68 = _LightShadowData.xxxx;
-  highp float tmpvar_69;
-  if (tmpvar_67.x) {
-    tmpvar_69 = tmpvar_68.x;
-  } else {
-    tmpvar_69 = 1.0;
-  };
-  highp float tmpvar_70;
-  if (tmpvar_67.y) {
-    tmpvar_70 = tmpvar_68.y;
-  } else {
-    tmpvar_70 = 1.0;
-  };
-  highp float tmpvar_71;
-  if (tmpvar_67.z) {
-    tmpvar_71 = tmpvar_68.z;
-  } else {
-    tmpvar_71 = 1.0;
-  };
-  highp float tmpvar_72;
-  if (tmpvar_67.w) {
-    tmpvar_72 = tmpvar_68.w;
-  } else {
-    tmpvar_72 = 1.0;
-  };
-  highp vec4 tmpvar_73;
-  tmpvar_73.x = tmpvar_69;
-  tmpvar_73.y = tmpvar_70;
-  tmpvar_73.z = tmpvar_71;
-  tmpvar_73.w = tmpvar_72;
-  shadows_52 = tmpvar_73;
-  mediump float tmpvar_74;
-  tmpvar_74 = dot (shadows_52, vec4(0.25, 0.25, 0.25, 0.25));
-  tmpvar_51 = tmpvar_74;
-  highp float tmpvar_75;
-  tmpvar_75 = (tmpvar_50.w * tmpvar_51);
-  atten_4 = tmpvar_75;
-  mediump float tmpvar_76;
-  tmpvar_76 = clamp ((((_LightColor0.w * tmpvar_48) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_77;
-  tmpvar_77 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_76)), 0.0, 1.0);
-  light_3 = tmpvar_77;
-  mediump vec3 tmpvar_78;
-  tmpvar_78 = vec3(clamp (floor((1.0 + tmpvar_47)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_78;
-  mediump vec3 tmpvar_79;
-  mediump vec3 i_80;
-  i_80 = -(lightDirection_6);
-  tmpvar_79 = (i_80 - (2.0 * (dot (normalDir_5, i_80) * normalDir_5)));
-  highp vec3 tmpvar_81;
-  tmpvar_81 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_79, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_81;
-  highp vec3 tmpvar_82;
-  tmpvar_82 = (light_3 + (tex_10.w * tmpvar_81));
-  light_3 = tmpvar_82;
-  highp float tmpvar_83;
-  tmpvar_83 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_9.w = mix (0.4489, tex_10.w, tmpvar_83);
-  highp vec3 tmpvar_84;
-  tmpvar_84 = clamp (((_LightPower * light_3) - color_9.w), 0.0, 1.0);
-  color_9.xyz = (tmpvar_44.xyz * tmpvar_84);
-  highp vec3 tmpvar_85;
-  tmpvar_85 = (color_9.xyz + (_Reflectivity * light_3));
-  color_9.xyz = tmpvar_85;
-  color_9.xyz = (color_9.xyz * light_3);
-  tmpvar_1 = color_9;
-  gl_FragData[0] = tmpvar_1;
-}
-
-
-
-#endif"
-}
-
-SubProgram "gles3 " {
-Keywords { "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-"!!GLES3#version 300 es
-
-
-#ifdef VERTEX
-
-#define gl_Vertex _glesVertex
-in vec4 _glesVertex;
-#define gl_Normal (normalize(_glesNormal))
-in vec3 _glesNormal;
-#define gl_MultiTexCoord0 _glesMultiTexCoord0
-in vec4 _glesMultiTexCoord0;
-#define gl_MultiTexCoord1 _glesMultiTexCoord1
-in vec4 _glesMultiTexCoord1;
-
-#line 151
-struct v2f_vertex_lit {
-    highp vec2 uv;
-    lowp vec4 diff;
-    lowp vec4 spec;
-};
-#line 187
-struct v2f_img {
-    highp vec4 pos;
-    mediump vec2 uv;
-};
-#line 181
-struct appdata_img {
-    highp vec4 vertex;
-    mediump vec2 texcoord;
-};
-#line 407
-struct SurfaceOutput {
-    lowp vec3 Albedo;
-    lowp vec3 Normal;
-    lowp vec3 Emission;
-    mediump float Specular;
-    lowp float Gloss;
-    lowp float Alpha;
-};
-#line 504
-struct v2f {
-    highp vec4 pos;
-    highp float viewDist;
-    highp vec3 viewDir;
-    highp vec3 worldNormal;
-    highp vec3 _LightCoord;
-    highp vec3 _ShadowCoord;
-    highp vec3 sphereNormal;
-};
-#line 496
-struct appdata_t {
-    highp vec4 vertex;
-    highp vec3 normal;
-    highp vec4 texcoord;
-    highp vec4 texcoord2;
-};
-uniform highp vec4 _Time;
-uniform highp vec4 _SinTime;
-#line 3
-uniform highp vec4 _CosTime;
-uniform highp vec4 unity_DeltaTime;
-uniform highp vec3 _WorldSpaceCameraPos;
-uniform highp vec4 _ProjectionParams;
-#line 7
-uniform highp vec4 _ScreenParams;
-uniform highp vec4 _ZBufferParams;
-uniform highp vec4 unity_CameraWorldClipPlanes[6];
-uniform highp vec4 _WorldSpaceLightPos0;
-#line 11
-uniform highp vec4 _LightPositionRange;
-uniform highp vec4 unity_4LightPosX0;
-uniform highp vec4 unity_4LightPosY0;
-uniform highp vec4 unity_4LightPosZ0;
-#line 15
-uniform highp vec4 unity_4LightAtten0;
-uniform highp vec4 unity_LightColor[8];
-uniform highp vec4 unity_LightPosition[8];
-uniform highp vec4 unity_LightAtten[8];
-#line 19
-uniform highp vec4 unity_SpotDirection[8];
-uniform highp vec4 unity_SHAr;
-uniform highp vec4 unity_SHAg;
-uniform highp vec4 unity_SHAb;
-#line 23
-uniform highp vec4 unity_SHBr;
-uniform highp vec4 unity_SHBg;
-uniform highp vec4 unity_SHBb;
-uniform highp vec4 unity_SHC;
-#line 27
-uniform highp vec3 unity_LightColor0;
-uniform highp vec3 unity_LightColor1;
-uniform highp vec3 unity_LightColor2;
-uniform highp vec3 unity_LightColor3;
-uniform highp vec4 unity_ShadowSplitSpheres[4];
-uniform highp vec4 unity_ShadowSplitSqRadii;
-uniform highp vec4 unity_LightShadowBias;
-#line 31
-uniform highp vec4 _LightSplitsNear;
-uniform highp vec4 _LightSplitsFar;
-uniform highp mat4 unity_World2Shadow[4];
-uniform highp vec4 _LightShadowData;
-#line 35
-uniform highp vec4 unity_ShadowFadeCenterAndType;
-uniform highp mat4 glstate_matrix_mvp;
-uniform highp mat4 glstate_matrix_modelview0;
-uniform highp mat4 glstate_matrix_invtrans_modelview0;
-#line 39
-uniform highp mat4 _Object2World;
-uniform highp mat4 _World2Object;
-uniform highp vec4 unity_Scale;
-uniform highp mat4 glstate_matrix_transpose_modelview0;
-#line 43
-uniform highp mat4 glstate_matrix_texture0;
-uniform highp mat4 glstate_matrix_texture1;
-uniform highp mat4 glstate_matrix_texture2;
-uniform highp mat4 glstate_matrix_texture3;
-#line 47
-uniform highp mat4 glstate_matrix_projection;
-uniform highp vec4 glstate_lightmodel_ambient;
-uniform highp mat4 unity_MatrixV;
-uniform highp mat4 unity_MatrixVP;
-#line 51
-uniform lowp vec4 unity_ColorSpaceGrey;
-#line 77
-#line 82
-#line 87
-#line 91
-#line 96
-#line 120
-#line 137
-#line 158
-#line 166
-#line 193
-#line 206
-#line 215
-#line 220
-#line 229
-#line 234
-#line 243
-#line 260
-#line 265
-#line 291
-#line 299
-#line 307
-#line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
-uniform samplerCube _ShadowMapTexture;
-uniform sampler2D _LightTexture0;
-#line 406
-uniform highp mat4 _LightMatrix0;
-#line 417
-uniform lowp vec4 _LightColor0;
-uniform lowp vec4 _SpecColor;
-#line 430
-#line 438
-#line 452
-uniform lowp vec4 _Color;
-uniform highp float _Shininess;
-#line 485
-uniform sampler2D _MainTex;
-uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailTex;
-uniform highp float _DetailScale;
-#line 489
-uniform highp float _DetailDist;
-uniform highp float _MinLight;
-uniform highp float _Clarity;
-uniform sampler2D _CameraDepthTexture;
-#line 493
-uniform highp mat4 _CameraToWorld;
-uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 515
-#line 515
-v2f vert( in appdata_t v ) {
-    v2f o;
-    highp vec4 vertex = v.vertex;
-    #line 519
-    o.pos = (glstate_matrix_mvp * vertex).xyzw;
-    highp vec3 vertexPos = (_Object2World * vertex).xyz;
-    o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 523
-    o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
-    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
-    o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
-    o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
-    #line 528
-    return o;
-}
-out highp float xlv_TEXCOORD0;
-out highp vec3 xlv_TEXCOORD1;
-out highp vec3 xlv_TEXCOORD2;
-out highp vec3 xlv_TEXCOORD3;
-out highp vec3 xlv_TEXCOORD4;
-out highp vec3 xlv_TEXCOORD5;
-void main() {
-    v2f xl_retval;
-    appdata_t xlt_v;
-    xlt_v.vertex = vec4(gl_Vertex);
-    xlt_v.normal = vec3(gl_Normal);
-    xlt_v.texcoord = vec4(gl_MultiTexCoord0);
-    xlt_v.texcoord2 = vec4(gl_MultiTexCoord1);
-    xl_retval = vert( xlt_v);
-    gl_Position = vec4(xl_retval.pos);
-    xlv_TEXCOORD0 = float(xl_retval.viewDist);
-    xlv_TEXCOORD1 = vec3(xl_retval.viewDir);
-    xlv_TEXCOORD2 = vec3(xl_retval.worldNormal);
-    xlv_TEXCOORD3 = vec3(xl_retval._LightCoord);
-    xlv_TEXCOORD4 = vec3(xl_retval._ShadowCoord);
-    xlv_TEXCOORD5 = vec3(xl_retval.sphereNormal);
-}
-
-
-#endif
-#ifdef FRAGMENT
-
-#define gl_FragData _glesFragData
-layout(location = 0) out mediump vec4 _glesFragData[4];
-float xll_dFdx_f(float f) {
-  return dFdx(f);
-}
-vec2 xll_dFdx_vf2(vec2 v) {
-  return dFdx(v);
-}
-vec3 xll_dFdx_vf3(vec3 v) {
-  return dFdx(v);
-}
-vec4 xll_dFdx_vf4(vec4 v) {
-  return dFdx(v);
-}
-mat2 xll_dFdx_mf2x2(mat2 m) {
-  return mat2( dFdx(m[0]), dFdx(m[1]));
-}
-mat3 xll_dFdx_mf3x3(mat3 m) {
-  return mat3( dFdx(m[0]), dFdx(m[1]), dFdx(m[2]));
-}
-mat4 xll_dFdx_mf4x4(mat4 m) {
-  return mat4( dFdx(m[0]), dFdx(m[1]), dFdx(m[2]), dFdx(m[3]));
-}
-float xll_dFdy_f(float f) {
-  return dFdy(f);
-}
-vec2 xll_dFdy_vf2(vec2 v) {
-  return dFdy(v);
-}
-vec3 xll_dFdy_vf3(vec3 v) {
-  return dFdy(v);
-}
-vec4 xll_dFdy_vf4(vec4 v) {
-  return dFdy(v);
-}
-mat2 xll_dFdy_mf2x2(mat2 m) {
-  return mat2( dFdy(m[0]), dFdy(m[1]));
-}
-mat3 xll_dFdy_mf3x3(mat3 m) {
-  return mat3( dFdy(m[0]), dFdy(m[1]), dFdy(m[2]));
-}
-mat4 xll_dFdy_mf4x4(mat4 m) {
-  return mat4( dFdy(m[0]), dFdy(m[1]), dFdy(m[2]), dFdy(m[3]));
-}
-vec4 xll_tex2Dgrad(sampler2D s, vec2 coord, vec2 ddx, vec2 ddy) {
-   return textureGrad( s, coord, ddx, ddy);
-}
-float xll_saturate_f( float x) {
-  return clamp( x, 0.0, 1.0);
-}
-vec2 xll_saturate_vf2( vec2 x) {
-  return clamp( x, 0.0, 1.0);
-}
-vec3 xll_saturate_vf3( vec3 x) {
-  return clamp( x, 0.0, 1.0);
-}
-vec4 xll_saturate_vf4( vec4 x) {
-  return clamp( x, 0.0, 1.0);
-}
-mat2 xll_saturate_mf2x2(mat2 m) {
-  return mat2( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0));
-}
-mat3 xll_saturate_mf3x3(mat3 m) {
-  return mat3( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0));
-}
-mat4 xll_saturate_mf4x4(mat4 m) {
-  return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
-}
-vec2 xll_vecTSel_vb2_vf2_vf2 (bvec2 a, vec2 b, vec2 c) {
-  return vec2 (a.x ? b.x : c.x, a.y ? b.y : c.y);
-}
-vec3 xll_vecTSel_vb3_vf3_vf3 (bvec3 a, vec3 b, vec3 c) {
-  return vec3 (a.x ? b.x : c.x, a.y ? b.y : c.y, a.z ? b.z : c.z);
-}
-vec4 xll_vecTSel_vb4_vf4_vf4 (bvec4 a, vec4 b, vec4 c) {
-  return vec4 (a.x ? b.x : c.x, a.y ? b.y : c.y, a.z ? b.z : c.z, a.w ? b.w : c.w);
-}
-#line 151
-struct v2f_vertex_lit {
-    highp vec2 uv;
-    lowp vec4 diff;
-    lowp vec4 spec;
-};
-#line 187
-struct v2f_img {
-    highp vec4 pos;
-    mediump vec2 uv;
-};
-#line 181
-struct appdata_img {
-    highp vec4 vertex;
-    mediump vec2 texcoord;
-};
-#line 407
-struct SurfaceOutput {
-    lowp vec3 Albedo;
-    lowp vec3 Normal;
-    lowp vec3 Emission;
-    mediump float Specular;
-    lowp float Gloss;
-    lowp float Alpha;
-};
-#line 504
-struct v2f {
-    highp vec4 pos;
-    highp float viewDist;
-    highp vec3 viewDir;
-    highp vec3 worldNormal;
-    highp vec3 _LightCoord;
-    highp vec3 _ShadowCoord;
-    highp vec3 sphereNormal;
-};
-#line 496
-struct appdata_t {
-    highp vec4 vertex;
-    highp vec3 normal;
-    highp vec4 texcoord;
-    highp vec4 texcoord2;
-};
-uniform highp vec4 _Time;
-uniform highp vec4 _SinTime;
-#line 3
-uniform highp vec4 _CosTime;
-uniform highp vec4 unity_DeltaTime;
-uniform highp vec3 _WorldSpaceCameraPos;
-uniform highp vec4 _ProjectionParams;
-#line 7
-uniform highp vec4 _ScreenParams;
-uniform highp vec4 _ZBufferParams;
-uniform highp vec4 unity_CameraWorldClipPlanes[6];
-uniform highp vec4 _WorldSpaceLightPos0;
-#line 11
-uniform highp vec4 _LightPositionRange;
-uniform highp vec4 unity_4LightPosX0;
-uniform highp vec4 unity_4LightPosY0;
-uniform highp vec4 unity_4LightPosZ0;
-#line 15
-uniform highp vec4 unity_4LightAtten0;
-uniform highp vec4 unity_LightColor[8];
-uniform highp vec4 unity_LightPosition[8];
-uniform highp vec4 unity_LightAtten[8];
-#line 19
-uniform highp vec4 unity_SpotDirection[8];
-uniform highp vec4 unity_SHAr;
-uniform highp vec4 unity_SHAg;
-uniform highp vec4 unity_SHAb;
-#line 23
-uniform highp vec4 unity_SHBr;
-uniform highp vec4 unity_SHBg;
-uniform highp vec4 unity_SHBb;
-uniform highp vec4 unity_SHC;
-#line 27
-uniform highp vec3 unity_LightColor0;
-uniform highp vec3 unity_LightColor1;
-uniform highp vec3 unity_LightColor2;
-uniform highp vec3 unity_LightColor3;
-uniform highp vec4 unity_ShadowSplitSpheres[4];
-uniform highp vec4 unity_ShadowSplitSqRadii;
-uniform highp vec4 unity_LightShadowBias;
-#line 31
-uniform highp vec4 _LightSplitsNear;
-uniform highp vec4 _LightSplitsFar;
-uniform highp mat4 unity_World2Shadow[4];
-uniform highp vec4 _LightShadowData;
-#line 35
-uniform highp vec4 unity_ShadowFadeCenterAndType;
-uniform highp mat4 glstate_matrix_mvp;
-uniform highp mat4 glstate_matrix_modelview0;
-uniform highp mat4 glstate_matrix_invtrans_modelview0;
-#line 39
-uniform highp mat4 _Object2World;
-uniform highp mat4 _World2Object;
-uniform highp vec4 unity_Scale;
-uniform highp mat4 glstate_matrix_transpose_modelview0;
-#line 43
-uniform highp mat4 glstate_matrix_texture0;
-uniform highp mat4 glstate_matrix_texture1;
-uniform highp mat4 glstate_matrix_texture2;
-uniform highp mat4 glstate_matrix_texture3;
-#line 47
-uniform highp mat4 glstate_matrix_projection;
-uniform highp vec4 glstate_lightmodel_ambient;
-uniform highp mat4 unity_MatrixV;
-uniform highp mat4 unity_MatrixVP;
-#line 51
-uniform lowp vec4 unity_ColorSpaceGrey;
-#line 77
-#line 82
-#line 87
-#line 91
-#line 96
-#line 120
-#line 137
-#line 158
-#line 166
-#line 193
-#line 206
-#line 215
-#line 220
-#line 229
-#line 234
-#line 243
-#line 260
-#line 265
-#line 291
-#line 299
-#line 307
-#line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
-uniform samplerCube _ShadowMapTexture;
-uniform sampler2D _LightTexture0;
-#line 406
-uniform highp mat4 _LightMatrix0;
-#line 417
-uniform lowp vec4 _LightColor0;
-uniform lowp vec4 _SpecColor;
-#line 430
-#line 438
-#line 452
-uniform lowp vec4 _Color;
-uniform highp float _Shininess;
-#line 485
-uniform sampler2D _MainTex;
-uniform highp float _MainTexHandoverDist;
-uniform sampler2D _DetailTex;
-uniform highp float _DetailScale;
-#line 489
-uniform highp float _DetailDist;
-uniform highp float _MinLight;
-uniform highp float _Clarity;
-uniform sampler2D _CameraDepthTexture;
-#line 493
-uniform highp mat4 _CameraToWorld;
-uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 515
-#line 321
-highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 323
-    highp vec2 latLong = vec2( lat, lon);
-    highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
-    highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
-    highp float longDdx = xll_dFdx_f(lon);
-    #line 327
-    highp float longDdy = xll_dFdy_f(lon);
-    return vec4( latDdx, longDdx, latDdy, longDdy);
-}
-#line 330
-highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 332
-    highp vec2 uv;
-    uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
-    uv.y = (0.31831 * acos(sphereVect.y));
-    uv += uvOffset;
-    #line 336
-    return uv;
-}
-#line 368
-mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 370
-    highp vec3 sphereVectNorm = normalize(sphereVect);
-    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
-    highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
-    sphereVectNorm = abs(sphereVectNorm);
-    #line 374
-    mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
-    mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
-    mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
-    detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 378
-    return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
-}
-#line 347
-mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 349
-    highp vec3 sphereVectNorm = normalize(sphereVect);
-    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
-    highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
-    mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 353
-    return tex;
-}
-#line 215
-highp float DecodeFloatRGBA( in highp vec4 enc ) {
-    highp vec4 kDecodeDot = vec4( 1.0, 0.00392157, 1.53787e-05, 6.22737e-09);
-    return dot( enc, kDecodeDot);
-}
-#line 387
-highp float SampleCubeDistance( in highp vec3 vec ) {
-    highp vec4 packDist = texture( _ShadowMapTexture, vec);
-    #line 390
-    return DecodeFloatRGBA( packDist);
-}
-#line 392
-highp float unityCubeShadow( in highp vec3 vec ) {
-    #line 394
-    highp float mydist = (length(vec) * _LightPositionRange.w);
-    mydist *= 0.97;
-    highp float z = 0.0078125;
-    highp vec4 shadowVals;
-    #line 398
-    shadowVals.x = SampleCubeDistance( (vec + vec3( z, z, z)));
-    shadowVals.y = SampleCubeDistance( (vec + vec3( (-z), (-z), z)));
-    shadowVals.z = SampleCubeDistance( (vec + vec3( (-z), z, (-z))));
-    shadowVals.w = SampleCubeDistance( (vec + vec3( z, (-z), (-z))));
-    #line 402
-    mediump vec4 shadows = xll_vecTSel_vb4_vf4_vf4 (lessThan( shadowVals, vec4( mydist)), vec4( _LightShadowData.xxxx), vec4( 1.0));
-    return dot( shadows, vec4( 0.25));
-}
-#line 530
-lowp vec4 frag( in v2f IN ) {
-    #line 532
-    mediump vec4 color;
-    highp vec3 sphereNrm = IN.sphereNormal;
-    mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
-    mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 536
-    mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
-    color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
-    color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
-    color *= _Color;
-    #line 540
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 normalDir = IN.worldNormal;
-    mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 544
-    mediump float diff = ((NdotL - 0.01) / 0.99);
-    lowp float atten = (texture( _LightTexture0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * unityCubeShadow( IN._ShadowCoord));
-    mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 548
-    highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
-    specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light += (main.w * specularReflection);
-    color.w = 1.0;
-    #line 552
-    highp float refrac = 0.67;
-    color.w *= pow( refrac, 2.0);
-    color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
-    color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 556
-    color.xyz += (_Reflectivity * light);
-    color.xyz *= light;
-    return color;
-}
-in highp float xlv_TEXCOORD0;
-in highp vec3 xlv_TEXCOORD1;
-in highp vec3 xlv_TEXCOORD2;
-in highp vec3 xlv_TEXCOORD3;
-in highp vec3 xlv_TEXCOORD4;
-in highp vec3 xlv_TEXCOORD5;
-void main() {
-    lowp vec4 xl_retval;
-    v2f xlt_IN;
-    xlt_IN.pos = vec4(0.0);
-    xlt_IN.viewDist = float(xlv_TEXCOORD0);
-    xlt_IN.viewDir = vec3(xlv_TEXCOORD1);
-    xlt_IN.worldNormal = vec3(xlv_TEXCOORD2);
-    xlt_IN._LightCoord = vec3(xlv_TEXCOORD3);
-    xlt_IN._ShadowCoord = vec3(xlv_TEXCOORD4);
-    xlt_IN.sphereNormal = vec3(xlv_TEXCOORD5);
-    xl_retval = frag( xlt_IN);
-    gl_FragData[0] = vec4(xl_retval);
-}
-
-
-#endif"
-}
-
-SubProgram "opengl " {
-Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-"!!GLSL
-#ifdef VERTEX
-varying vec3 xlv_TEXCOORD5;
-varying vec3 xlv_TEXCOORD4;
-varying vec3 xlv_TEXCOORD3;
-varying vec3 xlv_TEXCOORD2;
-varying vec3 xlv_TEXCOORD1;
-varying float xlv_TEXCOORD0;
-uniform mat4 _LightMatrix0;
-uniform mat4 _Object2World;
-
-uniform vec4 _LightPositionRange;
-uniform vec3 _WorldSpaceCameraPos;
-void main ()
-{
-  vec3 p_1;
-  p_1 = ((_Object2World * gl_Vertex).xyz - _WorldSpaceCameraPos);
-  vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = gl_Normal;
-  vec4 tmpvar_3;
-  tmpvar_3.x = gl_MultiTexCoord0.x;
-  tmpvar_3.y = gl_MultiTexCoord0.y;
-  tmpvar_3.z = gl_MultiTexCoord1.x;
-  tmpvar_3.w = gl_MultiTexCoord1.y;
-  gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * gl_Vertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
-  xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
-  xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
-  xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
-}
-
-
-#endif
-#ifdef FRAGMENT
-#extension GL_ARB_shader_texture_lod : enable
-varying vec3 xlv_TEXCOORD5;
-varying vec3 xlv_TEXCOORD4;
-varying vec3 xlv_TEXCOORD3;
-varying vec3 xlv_TEXCOORD2;
-varying vec3 xlv_TEXCOORD1;
-varying float xlv_TEXCOORD0;
-uniform float _Reflectivity;
-uniform float _LightPower;
-uniform float _MinLight;
-uniform float _DetailDist;
-uniform float _DetailScale;
-uniform sampler2D _DetailTex;
-uniform float _MainTexHandoverDist;
-uniform sampler2D _MainTex;
-uniform float _Shininess;
-uniform vec4 _Color;
-uniform vec4 _SpecColor;
-uniform vec4 _LightColor0;
-uniform sampler2D _LightTextureB0;
-uniform samplerCube _LightTexture0;
-uniform samplerCube _ShadowMapTexture;
-
-uniform vec4 _LightShadowData;
-uniform vec4 _LightPositionRange;
-uniform vec4 _WorldSpaceLightPos0;
-void main ()
-{
-  vec4 main_1;
-  vec4 color_2;
-  vec3 tmpvar_3;
-  tmpvar_3 = normalize(xlv_TEXCOORD5);
-  vec2 uv_4;
-  float r_5;
-  if ((abs(tmpvar_3.z) > (1e-08 * abs(tmpvar_3.x)))) {
-    float y_over_x_6;
-    y_over_x_6 = (tmpvar_3.x / tmpvar_3.z);
-    float s_7;
-    float x_8;
-    x_8 = (y_over_x_6 * inversesqrt(((y_over_x_6 * y_over_x_6) + 1.0)));
-    s_7 = (sign(x_8) * (1.5708 - (sqrt((1.0 - abs(x_8))) * (1.5708 + (abs(x_8) * (-0.214602 + (abs(x_8) * (0.0865667 + (abs(x_8) * -0.0310296)))))))));
-    r_5 = s_7;
-    if ((tmpvar_3.z < 0.0)) {
-      if ((tmpvar_3.x >= 0.0)) {
-        r_5 = (s_7 + 3.14159);
-      } else {
-        r_5 = (r_5 - 3.14159);
-      };
-    };
-  } else {
-    r_5 = (sign(tmpvar_3.x) * 1.5708);
-  };
-  uv_4.x = (0.5 + (0.159155 * r_5));
-  uv_4.y = (0.31831 * (1.5708 - (sign(tmpvar_3.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_3.y))) * (1.5708 + (abs(tmpvar_3.y) * (-0.214602 + (abs(tmpvar_3.y) * (0.0865667 + (abs(tmpvar_3.y) * -0.0310296)))))))))));
-  vec2 tmpvar_9;
-  tmpvar_9 = dFdx(tmpvar_3.xz);
-  vec2 tmpvar_10;
-  tmpvar_10 = dFdy(tmpvar_3.xz);
-  vec4 tmpvar_11;
-  tmpvar_11.x = (0.159155 * sqrt(dot (tmpvar_9, tmpvar_9)));
-  tmpvar_11.y = dFdx(uv_4.y);
-  tmpvar_11.z = (0.159155 * sqrt(dot (tmpvar_10, tmpvar_10)));
-  tmpvar_11.w = dFdy(uv_4.y);
-  main_1 = texture2DGradARB (_MainTex, uv_4, tmpvar_11.xy, tmpvar_11.zw);
-  vec3 tmpvar_12;
-  tmpvar_12 = normalize(xlv_TEXCOORD5);
-  vec2 uv_13;
-  float r_14;
-  if ((abs(tmpvar_12.z) > (1e-08 * abs(tmpvar_12.x)))) {
-    float y_over_x_15;
-    y_over_x_15 = (tmpvar_12.x / tmpvar_12.z);
-    float s_16;
-    float x_17;
-    x_17 = (y_over_x_15 * inversesqrt(((y_over_x_15 * y_over_x_15) + 1.0)));
-    s_16 = (sign(x_17) * (1.5708 - (sqrt((1.0 - abs(x_17))) * (1.5708 + (abs(x_17) * (-0.214602 + (abs(x_17) * (0.0865667 + (abs(x_17) * -0.0310296)))))))));
-    r_14 = s_16;
-    if ((tmpvar_12.z < 0.0)) {
-      if ((tmpvar_12.x >= 0.0)) {
-        r_14 = (s_16 + 3.14159);
-      } else {
-        r_14 = (r_14 - 3.14159);
-      };
-    };
-  } else {
-    r_14 = (sign(tmpvar_12.x) * 1.5708);
-  };
-  uv_13.x = (0.5 + (0.159155 * r_14));
-  uv_13.y = (0.31831 * (1.5708 - (sign(tmpvar_12.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_12.y))) * (1.5708 + (abs(tmpvar_12.y) * (-0.214602 + (abs(tmpvar_12.y) * (0.0865667 + (abs(tmpvar_12.y) * -0.0310296)))))))))));
-  vec2 tmpvar_18;
-  tmpvar_18 = dFdx(tmpvar_12.xz);
-  vec2 tmpvar_19;
-  tmpvar_19 = dFdy(tmpvar_12.xz);
-  vec4 tmpvar_20;
-  tmpvar_20.x = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_20.y = dFdx(uv_13.y);
-  tmpvar_20.z = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
-  tmpvar_20.w = dFdy(uv_13.y);
-  vec3 tmpvar_21;
-  tmpvar_21 = abs(tmpvar_12);
-  float tmpvar_22;
-  tmpvar_22 = float((tmpvar_21.z >= tmpvar_21.x));
-  vec3 tmpvar_23;
-  tmpvar_23 = mix (tmpvar_21.yxz, mix (tmpvar_21, tmpvar_21.zxy, vec3(tmpvar_22)), vec3(float((mix (tmpvar_21.x, tmpvar_21.z, tmpvar_22) >= tmpvar_21.y))));
-  vec4 tmpvar_24;
-  tmpvar_24 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_23.zy) / abs(tmpvar_23.x)) * _DetailScale), tmpvar_20.xy, tmpvar_20.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
-  color_2 = tmpvar_24;
-  vec4 tmpvar_25;
-  tmpvar_25 = normalize(_WorldSpaceLightPos0);
-  float tmpvar_26;
-  tmpvar_26 = clamp (dot (xlv_TEXCOORD2, tmpvar_25.xyz), 0.0, 1.0);
-  float tmpvar_27;
-  tmpvar_27 = ((tmpvar_26 - 0.01) / 0.99);
-  vec4 tmpvar_28;
-  tmpvar_28 = texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3)));
+  tmpvar_26 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  color_2.xyz = mix (tmpvar_25.xyz, main_1.xyz, vec3(tmpvar_26));
+  vec4 tmpvar_27;
+  tmpvar_27 = normalize(_WorldSpaceLightPos0);
+  vec3 tmpvar_28;
+  tmpvar_28 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
   vec4 tmpvar_29;
-  tmpvar_29 = textureCube (_LightTexture0, xlv_TEXCOORD3);
+  tmpvar_29 = texture2D (_LightTexture0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3)));
   vec4 shadowVals_30;
   shadowVals_30.x = dot (textureCube (_ShadowMapTexture, (xlv_TEXCOORD4 + vec3(0.0078125, 0.0078125, 0.0078125))), vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
   shadowVals_30.y = dot (textureCube (_ShadowMapTexture, (xlv_TEXCOORD4 + vec3(-0.0078125, -0.0078125, 0.0078125))), vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
@@ -18046,16 +16436,17 @@ void main ()
   tmpvar_37.y = tmpvar_34;
   tmpvar_37.z = tmpvar_35;
   tmpvar_37.w = tmpvar_36;
-  float tmpvar_38;
-  tmpvar_38 = ((tmpvar_28.w * tmpvar_29.w) * dot (tmpvar_37, vec4(0.25, 0.25, 0.25, 0.25)));
-  vec3 i_39;
-  i_39 = -(tmpvar_25.xyz);
+  float atten_38;
+  atten_38 = (tmpvar_29.w * dot (tmpvar_37, vec4(0.25, 0.25, 0.25, 0.25)));
+  vec4 c_39;
   vec3 tmpvar_40;
-  tmpvar_40 = (clamp ((gl_LightModel.ambient.xyz + ((_MinLight + _LightColor0.xyz) * clamp ((((_LightColor0.w * tmpvar_27) * 4.0) * tmpvar_38), 0.0, 1.0))), 0.0, 1.0) + (main_1.w * (vec3(clamp (floor((1.0 + tmpvar_26)), 0.0, 1.0)) * (((tmpvar_38 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot ((i_39 - (2.0 * (dot (xlv_TEXCOORD2, i_39) * xlv_TEXCOORD2))), xlv_TEXCOORD1), 0.0, 1.0), _Shininess)))));
-  color_2.w = mix (0.4489, main_1.w, clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0));
-  color_2.xyz = (tmpvar_24.xyz * clamp (((_LightPower * tmpvar_40) - color_2.w), 0.0, 1.0));
-  color_2.xyz = (color_2.xyz + (_Reflectivity * tmpvar_40));
-  color_2.xyz = (color_2.xyz * tmpvar_40);
+  tmpvar_40 = normalize(tmpvar_27.xyz);
+  float tmpvar_41;
+  tmpvar_41 = dot (tmpvar_28, tmpvar_40);
+  c_39.xyz = ((((color_2.xyz * _LightColor0.xyz) * tmpvar_41) + ((_LightColor0.xyz * _SpecColor.xyz) * (pow (clamp (dot (normalize((tmpvar_40 + normalize(xlv_TEXCOORD1))), tmpvar_28), 0.0, 1.0), (_Shininess * 128.0)) * tmpvar_25.w))) * (atten_38 * 4.0));
+  c_39.w = (tmpvar_41 * (atten_38 * 4.0));
+  color_2.xyz = c_39.xyz;
+  color_2.w = mix (1.0, tmpvar_25.w, ((1.0 - tmpvar_26) * float((c_39.w >= 0.0))));
   gl_FragData[0] = color_2;
 }
 
@@ -18065,9 +16456,8 @@ void main ()
 }
 
 SubProgram "d3d9 " {
-Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+Keywords { "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
 Bind "vertex" Vertex
-Bind "normal" Normal
 Bind "texcoord" TexCoord0
 Bind "texcoord1" TexCoord1
 Matrix 0 [glstate_matrix_mvp]
@@ -18076,7 +16466,7 @@ Vector 13 [_LightPositionRange]
 Matrix 4 [_Object2World]
 Matrix 8 [_LightMatrix0]
 "vs_3_0
-; 31 ALU
+; 25 ALU
 dcl_position o0
 dcl_texcoord0 o1
 dcl_texcoord1 o2
@@ -18084,38 +16474,30 @@ dcl_texcoord2 o3
 dcl_texcoord3 o4
 dcl_texcoord4 o5
 dcl_texcoord5 o6
-def c14, 0.00000000, 0, 0, 0
 dcl_position0 v0
-dcl_normal0 v1
-dcl_texcoord0 v2
-dcl_texcoord1 v3
-mov r1.xyz, v1
-mov r1.w, c14.x
-dp4 r0.z, r1, c6
-dp4 r0.x, r1, c4
-dp4 r0.y, r1, c5
-dp3 r0.w, r0, r0
-rsq r0.w, r0.w
-mul o3.xyz, r0.w, r0
-dp4 r0.z, v0, c6
-dp4 r0.x, v0, c4
-dp4 r0.y, v0, c5
-mov r2.zw, v3.xyxy
-mov r2.xy, v2
-dp4 r1.x, r2, r2
-rsq r0.w, r1.x
-mul r2.xyz, r0.w, r2
-add r1.xyz, -r0, c12
-dp3 r0.w, r1, r1
+dcl_texcoord0 v1
+dcl_texcoord1 v2
+dp4 r1.z, v0, c6
+dp4 r1.x, v0, c4
+dp4 r1.y, v0, c5
+mov r0.zw, v2.xyxy
+mov r0.xy, v1
+dp4 r0.w, r0, r0
 rsq r1.w, r0.w
+mul r0.xyz, r1.w, r0
+add r2.xyz, -r1, c12
+dp3 r0.w, r2, r2
+rsq r1.w, r0.w
+mov o6.xyz, -r0
+mov r0.xyz, r1
 dp4 r0.w, v0, c7
-mov o6.xyz, -r2
-mul o2.xyz, r1.w, r1
+mul o2.xyz, r1.w, r2
 dp4 o4.z, r0, c10
 dp4 o4.y, r0, c9
 dp4 o4.x, r0, c8
 rcp o1.x, r1.w
-add o5.xyz, r0, -c13
+mov o3.xyz, r1
+add o5.xyz, r1, -c13
 dp4 o0.w, v0, c3
 dp4 o0.z, v0, c2
 dp4 o0.y, v0, c1
@@ -18124,7 +16506,7 @@ dp4 o0.x, v0, c0
 }
 
 SubProgram "gles " {
-Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+Keywords { "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
 "!!GLES
 
 
@@ -18143,24 +16525,22 @@ uniform highp vec4 _LightPositionRange;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -18179,9 +16559,8 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -18191,246 +16570,235 @@ uniform highp float _Shininess;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
-uniform sampler2D _LightTextureB0;
-uniform samplerCube _LightTexture0;
+uniform sampler2D _LightTexture0;
 uniform samplerCube _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform highp vec4 _LightPositionRange;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  lowp float atten_4;
-  mediump vec3 normalDir_5;
-  mediump vec3 lightDirection_6;
-  mediump vec3 ambientLighting_7;
-  mediump float detailLevel_8;
-  mediump vec4 color_9;
-  mediump vec4 tex_10;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_12;
-  highp float r_13;
-  if ((abs(tmpvar_11.z) > (1e-08 * abs(tmpvar_11.x)))) {
-    highp float y_over_x_14;
-    y_over_x_14 = (tmpvar_11.x / tmpvar_11.z);
-    highp float s_15;
-    highp float x_16;
-    x_16 = (y_over_x_14 * inversesqrt(((y_over_x_14 * y_over_x_14) + 1.0)));
-    s_15 = (sign(x_16) * (1.5708 - (sqrt((1.0 - abs(x_16))) * (1.5708 + (abs(x_16) * (-0.214602 + (abs(x_16) * (0.0865667 + (abs(x_16) * -0.0310296)))))))));
-    r_13 = s_15;
-    if ((tmpvar_11.z < 0.0)) {
-      if ((tmpvar_11.x >= 0.0)) {
-        r_13 = (s_15 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_13 = (r_13 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_13 = (sign(tmpvar_11.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_12.x = (0.5 + (0.159155 * r_13));
-  uv_12.y = (0.31831 * (1.5708 - (sign(tmpvar_11.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_11.y))) * (1.5708 + (abs(tmpvar_11.y) * (-0.214602 + (abs(tmpvar_11.y) * (0.0865667 + (abs(tmpvar_11.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdx(tmpvar_11.xz);
-  highp vec2 tmpvar_18;
-  tmpvar_18 = dFdy(tmpvar_11.xz);
-  highp vec4 tmpvar_19;
-  tmpvar_19.x = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_19.y = dFdx(uv_12.y);
-  tmpvar_19.z = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_19.w = dFdy(uv_12.y);
-  lowp vec4 tmpvar_20;
-  tmpvar_20 = texture2DGradEXT (_MainTex, uv_12, tmpvar_19.xy, tmpvar_19.zw);
-  tex_10 = tmpvar_20;
-  mediump vec4 tmpvar_21;
-  mediump vec3 detailCoords_22;
-  mediump float nylerp_23;
-  mediump float zxlerp_24;
-  highp vec3 tmpvar_25;
-  tmpvar_25 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_26;
-  highp float r_27;
-  if ((abs(tmpvar_25.z) > (1e-08 * abs(tmpvar_25.x)))) {
-    highp float y_over_x_28;
-    y_over_x_28 = (tmpvar_25.x / tmpvar_25.z);
-    highp float s_29;
-    highp float x_30;
-    x_30 = (y_over_x_28 * inversesqrt(((y_over_x_28 * y_over_x_28) + 1.0)));
-    s_29 = (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))));
-    r_27 = s_29;
-    if ((tmpvar_25.z < 0.0)) {
-      if ((tmpvar_25.x >= 0.0)) {
-        r_27 = (s_29 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_27 = (r_27 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_27 = (sign(tmpvar_25.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_26.x = (0.5 + (0.159155 * r_27));
-  uv_26.y = (0.31831 * (1.5708 - (sign(tmpvar_25.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_25.y))) * (1.5708 + (abs(tmpvar_25.y) * (-0.214602 + (abs(tmpvar_25.y) * (0.0865667 + (abs(tmpvar_25.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdx(tmpvar_25.xz);
-  highp vec2 tmpvar_32;
-  tmpvar_32 = dFdy(tmpvar_25.xz);
-  highp vec4 tmpvar_33;
-  tmpvar_33.x = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_33.y = dFdx(uv_26.y);
-  tmpvar_33.z = (0.159155 * sqrt(dot (tmpvar_32, tmpvar_32)));
-  tmpvar_33.w = dFdy(uv_26.y);
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
   highp vec3 tmpvar_34;
-  tmpvar_34 = abs(tmpvar_25);
-  highp float tmpvar_35;
-  tmpvar_35 = float((tmpvar_34.z >= tmpvar_34.x));
-  zxlerp_24 = tmpvar_35;
-  highp float tmpvar_36;
-  tmpvar_36 = float((mix (tmpvar_34.x, tmpvar_34.z, zxlerp_24) >= tmpvar_34.y));
-  nylerp_23 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_34, tmpvar_34.zxy, vec3(zxlerp_24));
-  detailCoords_22 = tmpvar_37;
-  highp vec3 tmpvar_38;
-  tmpvar_38 = mix (tmpvar_34.yxz, detailCoords_22, vec3(nylerp_23));
-  detailCoords_22 = tmpvar_38;
-  mediump float tmpvar_39;
-  tmpvar_39 = abs(detailCoords_22.x);
-  highp vec2 coord_40;
-  coord_40 = (((0.5 * detailCoords_22.zy) / tmpvar_39) * _DetailScale);
-  lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_40, tmpvar_33.xy, tmpvar_33.zw);
-  tmpvar_21 = tmpvar_41;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_8 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_44;
-  tmpvar_44 = (mix (mix (tmpvar_21, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8)), tex_10, vec4(tmpvar_43)) * _Color);
-  color_9 = tmpvar_44;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_45;
-  highp vec3 tmpvar_46;
-  tmpvar_46 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_46;
-  normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  mediump float tmpvar_48;
-  tmpvar_48 = ((tmpvar_47 - 0.01) / 0.99);
-  highp float tmpvar_49;
-  tmpvar_49 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2D (_LightTextureB0, vec2(tmpvar_49));
-  lowp vec4 tmpvar_51;
-  tmpvar_51 = textureCube (_LightTexture0, xlv_TEXCOORD3);
-  highp float tmpvar_52;
-  mediump vec4 shadows_53;
-  highp vec4 shadowVals_54;
-  highp float tmpvar_55;
-  tmpvar_55 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
-  highp vec3 vec_56;
-  vec_56 = (xlv_TEXCOORD4 + vec3(0.0078125, 0.0078125, 0.0078125));
-  highp vec4 packDist_57;
-  lowp vec4 tmpvar_58;
-  tmpvar_58 = textureCube (_ShadowMapTexture, vec_56);
-  packDist_57 = tmpvar_58;
-  shadowVals_54.x = dot (packDist_57, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  highp vec3 vec_59;
-  vec_59 = (xlv_TEXCOORD4 + vec3(-0.0078125, -0.0078125, 0.0078125));
-  highp vec4 packDist_60;
-  lowp vec4 tmpvar_61;
-  tmpvar_61 = textureCube (_ShadowMapTexture, vec_59);
-  packDist_60 = tmpvar_61;
-  shadowVals_54.y = dot (packDist_60, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  highp vec3 vec_62;
-  vec_62 = (xlv_TEXCOORD4 + vec3(-0.0078125, 0.0078125, -0.0078125));
-  highp vec4 packDist_63;
-  lowp vec4 tmpvar_64;
-  tmpvar_64 = textureCube (_ShadowMapTexture, vec_62);
-  packDist_63 = tmpvar_64;
-  shadowVals_54.z = dot (packDist_63, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  highp vec3 vec_65;
-  vec_65 = (xlv_TEXCOORD4 + vec3(0.0078125, -0.0078125, -0.0078125));
-  highp vec4 packDist_66;
-  lowp vec4 tmpvar_67;
-  tmpvar_67 = textureCube (_ShadowMapTexture, vec_65);
-  packDist_66 = tmpvar_67;
-  shadowVals_54.w = dot (packDist_66, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  bvec4 tmpvar_68;
-  tmpvar_68 = lessThan (shadowVals_54, vec4(tmpvar_55));
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2D (_LightTexture0, vec2(tmpvar_45));
+  highp float tmpvar_47;
+  mediump vec4 shadows_48;
+  highp vec4 shadowVals_49;
+  highp float tmpvar_50;
+  tmpvar_50 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
+  highp vec3 vec_51;
+  vec_51 = (xlv_TEXCOORD4 + vec3(0.0078125, 0.0078125, 0.0078125));
+  highp vec4 packDist_52;
+  lowp vec4 tmpvar_53;
+  tmpvar_53 = textureCube (_ShadowMapTexture, vec_51);
+  packDist_52 = tmpvar_53;
+  shadowVals_49.x = dot (packDist_52, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  highp vec3 vec_54;
+  vec_54 = (xlv_TEXCOORD4 + vec3(-0.0078125, -0.0078125, 0.0078125));
+  highp vec4 packDist_55;
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = textureCube (_ShadowMapTexture, vec_54);
+  packDist_55 = tmpvar_56;
+  shadowVals_49.y = dot (packDist_55, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  highp vec3 vec_57;
+  vec_57 = (xlv_TEXCOORD4 + vec3(-0.0078125, 0.0078125, -0.0078125));
+  highp vec4 packDist_58;
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = textureCube (_ShadowMapTexture, vec_57);
+  packDist_58 = tmpvar_59;
+  shadowVals_49.z = dot (packDist_58, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  highp vec3 vec_60;
+  vec_60 = (xlv_TEXCOORD4 + vec3(0.0078125, -0.0078125, -0.0078125));
+  highp vec4 packDist_61;
+  lowp vec4 tmpvar_62;
+  tmpvar_62 = textureCube (_ShadowMapTexture, vec_60);
+  packDist_61 = tmpvar_62;
+  shadowVals_49.w = dot (packDist_61, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  bvec4 tmpvar_63;
+  tmpvar_63 = lessThan (shadowVals_49, vec4(tmpvar_50));
+  highp vec4 tmpvar_64;
+  tmpvar_64 = _LightShadowData.xxxx;
+  highp float tmpvar_65;
+  if (tmpvar_63.x) {
+    tmpvar_65 = tmpvar_64.x;
+  } else {
+    tmpvar_65 = 1.0;
+  };
+  highp float tmpvar_66;
+  if (tmpvar_63.y) {
+    tmpvar_66 = tmpvar_64.y;
+  } else {
+    tmpvar_66 = 1.0;
+  };
+  highp float tmpvar_67;
+  if (tmpvar_63.z) {
+    tmpvar_67 = tmpvar_64.z;
+  } else {
+    tmpvar_67 = 1.0;
+  };
+  highp float tmpvar_68;
+  if (tmpvar_63.w) {
+    tmpvar_68 = tmpvar_64.w;
+  } else {
+    tmpvar_68 = 1.0;
+  };
   highp vec4 tmpvar_69;
-  tmpvar_69 = _LightShadowData.xxxx;
-  highp float tmpvar_70;
-  if (tmpvar_68.x) {
-    tmpvar_70 = tmpvar_69.x;
-  } else {
-    tmpvar_70 = 1.0;
-  };
-  highp float tmpvar_71;
-  if (tmpvar_68.y) {
-    tmpvar_71 = tmpvar_69.y;
-  } else {
-    tmpvar_71 = 1.0;
-  };
-  highp float tmpvar_72;
-  if (tmpvar_68.z) {
-    tmpvar_72 = tmpvar_69.z;
-  } else {
-    tmpvar_72 = 1.0;
-  };
-  highp float tmpvar_73;
-  if (tmpvar_68.w) {
-    tmpvar_73 = tmpvar_69.w;
-  } else {
-    tmpvar_73 = 1.0;
-  };
-  highp vec4 tmpvar_74;
-  tmpvar_74.x = tmpvar_70;
-  tmpvar_74.y = tmpvar_71;
-  tmpvar_74.z = tmpvar_72;
-  tmpvar_74.w = tmpvar_73;
-  shadows_53 = tmpvar_74;
-  mediump float tmpvar_75;
-  tmpvar_75 = dot (shadows_53, vec4(0.25, 0.25, 0.25, 0.25));
-  tmpvar_52 = tmpvar_75;
-  highp float tmpvar_76;
-  tmpvar_76 = ((tmpvar_50.w * tmpvar_51.w) * tmpvar_52);
-  atten_4 = tmpvar_76;
-  mediump float tmpvar_77;
-  tmpvar_77 = clamp ((((_LightColor0.w * tmpvar_48) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_78;
-  tmpvar_78 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_77)), 0.0, 1.0);
-  light_3 = tmpvar_78;
-  mediump vec3 tmpvar_79;
-  tmpvar_79 = vec3(clamp (floor((1.0 + tmpvar_47)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_79;
-  mediump vec3 tmpvar_80;
-  mediump vec3 i_81;
-  i_81 = -(lightDirection_6);
-  tmpvar_80 = (i_81 - (2.0 * (dot (normalDir_5, i_81) * normalDir_5)));
-  highp vec3 tmpvar_82;
-  tmpvar_82 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_80, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_82;
-  highp vec3 tmpvar_83;
-  tmpvar_83 = (light_3 + (tex_10.w * tmpvar_82));
-  light_3 = tmpvar_83;
-  highp float tmpvar_84;
-  tmpvar_84 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_9.w = mix (0.4489, tex_10.w, tmpvar_84);
-  highp vec3 tmpvar_85;
-  tmpvar_85 = clamp (((_LightPower * light_3) - color_9.w), 0.0, 1.0);
-  color_9.xyz = (tmpvar_44.xyz * tmpvar_85);
-  highp vec3 tmpvar_86;
-  tmpvar_86 = (color_9.xyz + (_Reflectivity * light_3));
-  color_9.xyz = tmpvar_86;
-  color_9.xyz = (color_9.xyz * light_3);
-  tmpvar_1 = color_9;
+  tmpvar_69.x = tmpvar_65;
+  tmpvar_69.y = tmpvar_66;
+  tmpvar_69.z = tmpvar_67;
+  tmpvar_69.w = tmpvar_68;
+  shadows_48 = tmpvar_69;
+  mediump float tmpvar_70;
+  tmpvar_70 = dot (shadows_48, vec4(0.25, 0.25, 0.25, 0.25));
+  tmpvar_47 = tmpvar_70;
+  mediump vec3 lightDir_71;
+  lightDir_71 = tmpvar_43;
+  mediump vec3 viewDir_72;
+  viewDir_72 = xlv_TEXCOORD1;
+  mediump vec3 normal_73;
+  normal_73 = tmpvar_44;
+  mediump float atten_74;
+  atten_74 = (tmpvar_46.w * tmpvar_47);
+  mediump vec4 c_75;
+  highp float nh_76;
+  mediump vec3 tmpvar_77;
+  tmpvar_77 = normalize(lightDir_71);
+  lightDir_71 = tmpvar_77;
+  mediump vec3 tmpvar_78;
+  tmpvar_78 = normalize(viewDir_72);
+  viewDir_72 = tmpvar_78;
+  mediump float tmpvar_79;
+  tmpvar_79 = dot (normal_73, tmpvar_77);
+  mediump float tmpvar_80;
+  tmpvar_80 = clamp (dot (normalize((tmpvar_77 + tmpvar_78)), normal_73), 0.0, 1.0);
+  nh_76 = tmpvar_80;
+  highp vec3 tmpvar_81;
+  tmpvar_81 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_79) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_76, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_74 * 4.0));
+  c_75.xyz = tmpvar_81;
+  c_75.w = (tmpvar_79 * (atten_74 * 4.0));
+  color_5.xyz = c_75.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_75.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -18440,7 +16808,7 @@ void main ()
 }
 
 SubProgram "glesdesktop " {
-Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+Keywords { "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
 "!!GLES
 
 
@@ -18459,24 +16827,22 @@ uniform highp vec4 _LightPositionRange;
 uniform highp vec3 _WorldSpaceCameraPos;
 attribute vec4 _glesMultiTexCoord1;
 attribute vec4 _glesMultiTexCoord0;
-attribute vec3 _glesNormal;
 attribute vec4 _glesVertex;
 void main ()
 {
-  highp vec3 p_1;
-  p_1 = ((_Object2World * _glesVertex).xyz - _WorldSpaceCameraPos);
-  highp vec4 tmpvar_2;
-  tmpvar_2.w = 0.0;
-  tmpvar_2.xyz = normalize(_glesNormal);
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
   highp vec4 tmpvar_3;
   tmpvar_3.x = _glesMultiTexCoord0.x;
   tmpvar_3.y = _glesMultiTexCoord0.y;
   tmpvar_3.z = _glesMultiTexCoord1.x;
   tmpvar_3.w = _glesMultiTexCoord1.y;
   gl_Position = (glstate_matrix_mvp * _glesVertex);
-  xlv_TEXCOORD0 = sqrt(dot (p_1, p_1));
-  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - (_Object2World * _glesVertex).xyz));
-  xlv_TEXCOORD2 = normalize((_Object2World * tmpvar_2).xyz);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
   xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
   xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
   xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
@@ -18495,9 +16861,8 @@ varying highp vec3 xlv_TEXCOORD3;
 varying highp vec3 xlv_TEXCOORD2;
 varying highp vec3 xlv_TEXCOORD1;
 varying highp float xlv_TEXCOORD0;
-uniform highp float _Reflectivity;
-uniform highp float _LightPower;
-uniform highp float _MinLight;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
 uniform highp float _DetailDist;
 uniform highp float _DetailScale;
 uniform sampler2D _DetailTex;
@@ -18507,246 +16872,235 @@ uniform highp float _Shininess;
 uniform lowp vec4 _Color;
 uniform lowp vec4 _SpecColor;
 uniform lowp vec4 _LightColor0;
-uniform sampler2D _LightTextureB0;
-uniform samplerCube _LightTexture0;
+uniform sampler2D _LightTexture0;
 uniform samplerCube _ShadowMapTexture;
-uniform highp vec4 glstate_lightmodel_ambient;
 uniform highp vec4 _LightShadowData;
 uniform highp vec4 _LightPositionRange;
 uniform highp vec4 _WorldSpaceLightPos0;
 void main ()
 {
   lowp vec4 tmpvar_1;
-  highp vec3 specularReflection_2;
-  mediump vec3 light_3;
-  lowp float atten_4;
-  mediump vec3 normalDir_5;
-  mediump vec3 lightDirection_6;
-  mediump vec3 ambientLighting_7;
-  mediump float detailLevel_8;
-  mediump vec4 color_9;
-  mediump vec4 tex_10;
-  highp vec3 tmpvar_11;
-  tmpvar_11 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_12;
-  highp float r_13;
-  if ((abs(tmpvar_11.z) > (1e-08 * abs(tmpvar_11.x)))) {
-    highp float y_over_x_14;
-    y_over_x_14 = (tmpvar_11.x / tmpvar_11.z);
-    highp float s_15;
-    highp float x_16;
-    x_16 = (y_over_x_14 * inversesqrt(((y_over_x_14 * y_over_x_14) + 1.0)));
-    s_15 = (sign(x_16) * (1.5708 - (sqrt((1.0 - abs(x_16))) * (1.5708 + (abs(x_16) * (-0.214602 + (abs(x_16) * (0.0865667 + (abs(x_16) * -0.0310296)))))))));
-    r_13 = s_15;
-    if ((tmpvar_11.z < 0.0)) {
-      if ((tmpvar_11.x >= 0.0)) {
-        r_13 = (s_15 + 3.14159);
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
       } else {
-        r_13 = (r_13 - 3.14159);
+        r_9 = (r_9 - 3.14159);
       };
     };
   } else {
-    r_13 = (sign(tmpvar_11.x) * 1.5708);
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
   };
-  uv_12.x = (0.5 + (0.159155 * r_13));
-  uv_12.y = (0.31831 * (1.5708 - (sign(tmpvar_11.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_11.y))) * (1.5708 + (abs(tmpvar_11.y) * (-0.214602 + (abs(tmpvar_11.y) * (0.0865667 + (abs(tmpvar_11.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_17;
-  tmpvar_17 = dFdx(tmpvar_11.xz);
-  highp vec2 tmpvar_18;
-  tmpvar_18 = dFdy(tmpvar_11.xz);
-  highp vec4 tmpvar_19;
-  tmpvar_19.x = (0.159155 * sqrt(dot (tmpvar_17, tmpvar_17)));
-  tmpvar_19.y = dFdx(uv_12.y);
-  tmpvar_19.z = (0.159155 * sqrt(dot (tmpvar_18, tmpvar_18)));
-  tmpvar_19.w = dFdy(uv_12.y);
-  lowp vec4 tmpvar_20;
-  tmpvar_20 = texture2DGradEXT (_MainTex, uv_12, tmpvar_19.xy, tmpvar_19.zw);
-  tex_10 = tmpvar_20;
-  mediump vec4 tmpvar_21;
-  mediump vec3 detailCoords_22;
-  mediump float nylerp_23;
-  mediump float zxlerp_24;
-  highp vec3 tmpvar_25;
-  tmpvar_25 = normalize(xlv_TEXCOORD5);
-  highp vec2 uv_26;
-  highp float r_27;
-  if ((abs(tmpvar_25.z) > (1e-08 * abs(tmpvar_25.x)))) {
-    highp float y_over_x_28;
-    y_over_x_28 = (tmpvar_25.x / tmpvar_25.z);
-    highp float s_29;
-    highp float x_30;
-    x_30 = (y_over_x_28 * inversesqrt(((y_over_x_28 * y_over_x_28) + 1.0)));
-    s_29 = (sign(x_30) * (1.5708 - (sqrt((1.0 - abs(x_30))) * (1.5708 + (abs(x_30) * (-0.214602 + (abs(x_30) * (0.0865667 + (abs(x_30) * -0.0310296)))))))));
-    r_27 = s_29;
-    if ((tmpvar_25.z < 0.0)) {
-      if ((tmpvar_25.x >= 0.0)) {
-        r_27 = (s_29 + 3.14159);
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
       } else {
-        r_27 = (r_27 - 3.14159);
+        r_23 = (r_23 - 3.14159);
       };
     };
   } else {
-    r_27 = (sign(tmpvar_25.x) * 1.5708);
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
   };
-  uv_26.x = (0.5 + (0.159155 * r_27));
-  uv_26.y = (0.31831 * (1.5708 - (sign(tmpvar_25.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_25.y))) * (1.5708 + (abs(tmpvar_25.y) * (-0.214602 + (abs(tmpvar_25.y) * (0.0865667 + (abs(tmpvar_25.y) * -0.0310296)))))))))));
-  highp vec2 tmpvar_31;
-  tmpvar_31 = dFdx(tmpvar_25.xz);
-  highp vec2 tmpvar_32;
-  tmpvar_32 = dFdy(tmpvar_25.xz);
-  highp vec4 tmpvar_33;
-  tmpvar_33.x = (0.159155 * sqrt(dot (tmpvar_31, tmpvar_31)));
-  tmpvar_33.y = dFdx(uv_26.y);
-  tmpvar_33.z = (0.159155 * sqrt(dot (tmpvar_32, tmpvar_32)));
-  tmpvar_33.w = dFdy(uv_26.y);
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
   highp vec3 tmpvar_34;
-  tmpvar_34 = abs(tmpvar_25);
-  highp float tmpvar_35;
-  tmpvar_35 = float((tmpvar_34.z >= tmpvar_34.x));
-  zxlerp_24 = tmpvar_35;
-  highp float tmpvar_36;
-  tmpvar_36 = float((mix (tmpvar_34.x, tmpvar_34.z, zxlerp_24) >= tmpvar_34.y));
-  nylerp_23 = tmpvar_36;
-  highp vec3 tmpvar_37;
-  tmpvar_37 = mix (tmpvar_34, tmpvar_34.zxy, vec3(zxlerp_24));
-  detailCoords_22 = tmpvar_37;
-  highp vec3 tmpvar_38;
-  tmpvar_38 = mix (tmpvar_34.yxz, detailCoords_22, vec3(nylerp_23));
-  detailCoords_22 = tmpvar_38;
-  mediump float tmpvar_39;
-  tmpvar_39 = abs(detailCoords_22.x);
-  highp vec2 coord_40;
-  coord_40 = (((0.5 * detailCoords_22.zy) / tmpvar_39) * _DetailScale);
-  lowp vec4 tmpvar_41;
-  tmpvar_41 = texture2DGradEXT (_DetailTex, coord_40, tmpvar_33.xy, tmpvar_33.zw);
-  tmpvar_21 = tmpvar_41;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
   highp float tmpvar_42;
-  tmpvar_42 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
-  detailLevel_8 = tmpvar_42;
-  highp float tmpvar_43;
-  tmpvar_43 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  mediump vec4 tmpvar_44;
-  tmpvar_44 = (mix (mix (tmpvar_21, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_8)), tex_10, vec4(tmpvar_43)) * _Color);
-  color_9 = tmpvar_44;
-  highp vec3 tmpvar_45;
-  tmpvar_45 = glstate_lightmodel_ambient.xyz;
-  ambientLighting_7 = tmpvar_45;
-  highp vec3 tmpvar_46;
-  tmpvar_46 = normalize(_WorldSpaceLightPos0).xyz;
-  lightDirection_6 = tmpvar_46;
-  normalDir_5 = xlv_TEXCOORD2;
-  mediump float tmpvar_47;
-  tmpvar_47 = clamp (dot (normalDir_5, lightDirection_6), 0.0, 1.0);
-  mediump float tmpvar_48;
-  tmpvar_48 = ((tmpvar_47 - 0.01) / 0.99);
-  highp float tmpvar_49;
-  tmpvar_49 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
-  lowp vec4 tmpvar_50;
-  tmpvar_50 = texture2D (_LightTextureB0, vec2(tmpvar_49));
-  lowp vec4 tmpvar_51;
-  tmpvar_51 = textureCube (_LightTexture0, xlv_TEXCOORD3);
-  highp float tmpvar_52;
-  mediump vec4 shadows_53;
-  highp vec4 shadowVals_54;
-  highp float tmpvar_55;
-  tmpvar_55 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
-  highp vec3 vec_56;
-  vec_56 = (xlv_TEXCOORD4 + vec3(0.0078125, 0.0078125, 0.0078125));
-  highp vec4 packDist_57;
-  lowp vec4 tmpvar_58;
-  tmpvar_58 = textureCube (_ShadowMapTexture, vec_56);
-  packDist_57 = tmpvar_58;
-  shadowVals_54.x = dot (packDist_57, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  highp vec3 vec_59;
-  vec_59 = (xlv_TEXCOORD4 + vec3(-0.0078125, -0.0078125, 0.0078125));
-  highp vec4 packDist_60;
-  lowp vec4 tmpvar_61;
-  tmpvar_61 = textureCube (_ShadowMapTexture, vec_59);
-  packDist_60 = tmpvar_61;
-  shadowVals_54.y = dot (packDist_60, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  highp vec3 vec_62;
-  vec_62 = (xlv_TEXCOORD4 + vec3(-0.0078125, 0.0078125, -0.0078125));
-  highp vec4 packDist_63;
-  lowp vec4 tmpvar_64;
-  tmpvar_64 = textureCube (_ShadowMapTexture, vec_62);
-  packDist_63 = tmpvar_64;
-  shadowVals_54.z = dot (packDist_63, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  highp vec3 vec_65;
-  vec_65 = (xlv_TEXCOORD4 + vec3(0.0078125, -0.0078125, -0.0078125));
-  highp vec4 packDist_66;
-  lowp vec4 tmpvar_67;
-  tmpvar_67 = textureCube (_ShadowMapTexture, vec_65);
-  packDist_66 = tmpvar_67;
-  shadowVals_54.w = dot (packDist_66, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
-  bvec4 tmpvar_68;
-  tmpvar_68 = lessThan (shadowVals_54, vec4(tmpvar_55));
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2D (_LightTexture0, vec2(tmpvar_45));
+  highp float tmpvar_47;
+  mediump vec4 shadows_48;
+  highp vec4 shadowVals_49;
+  highp float tmpvar_50;
+  tmpvar_50 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
+  highp vec3 vec_51;
+  vec_51 = (xlv_TEXCOORD4 + vec3(0.0078125, 0.0078125, 0.0078125));
+  highp vec4 packDist_52;
+  lowp vec4 tmpvar_53;
+  tmpvar_53 = textureCube (_ShadowMapTexture, vec_51);
+  packDist_52 = tmpvar_53;
+  shadowVals_49.x = dot (packDist_52, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  highp vec3 vec_54;
+  vec_54 = (xlv_TEXCOORD4 + vec3(-0.0078125, -0.0078125, 0.0078125));
+  highp vec4 packDist_55;
+  lowp vec4 tmpvar_56;
+  tmpvar_56 = textureCube (_ShadowMapTexture, vec_54);
+  packDist_55 = tmpvar_56;
+  shadowVals_49.y = dot (packDist_55, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  highp vec3 vec_57;
+  vec_57 = (xlv_TEXCOORD4 + vec3(-0.0078125, 0.0078125, -0.0078125));
+  highp vec4 packDist_58;
+  lowp vec4 tmpvar_59;
+  tmpvar_59 = textureCube (_ShadowMapTexture, vec_57);
+  packDist_58 = tmpvar_59;
+  shadowVals_49.z = dot (packDist_58, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  highp vec3 vec_60;
+  vec_60 = (xlv_TEXCOORD4 + vec3(0.0078125, -0.0078125, -0.0078125));
+  highp vec4 packDist_61;
+  lowp vec4 tmpvar_62;
+  tmpvar_62 = textureCube (_ShadowMapTexture, vec_60);
+  packDist_61 = tmpvar_62;
+  shadowVals_49.w = dot (packDist_61, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  bvec4 tmpvar_63;
+  tmpvar_63 = lessThan (shadowVals_49, vec4(tmpvar_50));
+  highp vec4 tmpvar_64;
+  tmpvar_64 = _LightShadowData.xxxx;
+  highp float tmpvar_65;
+  if (tmpvar_63.x) {
+    tmpvar_65 = tmpvar_64.x;
+  } else {
+    tmpvar_65 = 1.0;
+  };
+  highp float tmpvar_66;
+  if (tmpvar_63.y) {
+    tmpvar_66 = tmpvar_64.y;
+  } else {
+    tmpvar_66 = 1.0;
+  };
+  highp float tmpvar_67;
+  if (tmpvar_63.z) {
+    tmpvar_67 = tmpvar_64.z;
+  } else {
+    tmpvar_67 = 1.0;
+  };
+  highp float tmpvar_68;
+  if (tmpvar_63.w) {
+    tmpvar_68 = tmpvar_64.w;
+  } else {
+    tmpvar_68 = 1.0;
+  };
   highp vec4 tmpvar_69;
-  tmpvar_69 = _LightShadowData.xxxx;
-  highp float tmpvar_70;
-  if (tmpvar_68.x) {
-    tmpvar_70 = tmpvar_69.x;
-  } else {
-    tmpvar_70 = 1.0;
-  };
-  highp float tmpvar_71;
-  if (tmpvar_68.y) {
-    tmpvar_71 = tmpvar_69.y;
-  } else {
-    tmpvar_71 = 1.0;
-  };
-  highp float tmpvar_72;
-  if (tmpvar_68.z) {
-    tmpvar_72 = tmpvar_69.z;
-  } else {
-    tmpvar_72 = 1.0;
-  };
-  highp float tmpvar_73;
-  if (tmpvar_68.w) {
-    tmpvar_73 = tmpvar_69.w;
-  } else {
-    tmpvar_73 = 1.0;
-  };
-  highp vec4 tmpvar_74;
-  tmpvar_74.x = tmpvar_70;
-  tmpvar_74.y = tmpvar_71;
-  tmpvar_74.z = tmpvar_72;
-  tmpvar_74.w = tmpvar_73;
-  shadows_53 = tmpvar_74;
-  mediump float tmpvar_75;
-  tmpvar_75 = dot (shadows_53, vec4(0.25, 0.25, 0.25, 0.25));
-  tmpvar_52 = tmpvar_75;
-  highp float tmpvar_76;
-  tmpvar_76 = ((tmpvar_50.w * tmpvar_51.w) * tmpvar_52);
-  atten_4 = tmpvar_76;
-  mediump float tmpvar_77;
-  tmpvar_77 = clamp ((((_LightColor0.w * tmpvar_48) * 4.0) * atten_4), 0.0, 1.0);
-  highp vec3 tmpvar_78;
-  tmpvar_78 = clamp ((ambientLighting_7 + ((_MinLight + _LightColor0.xyz) * tmpvar_77)), 0.0, 1.0);
-  light_3 = tmpvar_78;
-  mediump vec3 tmpvar_79;
-  tmpvar_79 = vec3(clamp (floor((1.0 + tmpvar_47)), 0.0, 1.0));
-  specularReflection_2 = tmpvar_79;
-  mediump vec3 tmpvar_80;
-  mediump vec3 i_81;
-  i_81 = -(lightDirection_6);
-  tmpvar_80 = (i_81 - (2.0 * (dot (normalDir_5, i_81) * normalDir_5)));
-  highp vec3 tmpvar_82;
-  tmpvar_82 = (specularReflection_2 * (((atten_4 * _LightColor0.xyz) * _SpecColor.xyz) * pow (clamp (dot (tmpvar_80, xlv_TEXCOORD1), 0.0, 1.0), _Shininess)));
-  specularReflection_2 = tmpvar_82;
-  highp vec3 tmpvar_83;
-  tmpvar_83 = (light_3 + (tex_10.w * tmpvar_82));
-  light_3 = tmpvar_83;
-  highp float tmpvar_84;
-  tmpvar_84 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
-  color_9.w = mix (0.4489, tex_10.w, tmpvar_84);
-  highp vec3 tmpvar_85;
-  tmpvar_85 = clamp (((_LightPower * light_3) - color_9.w), 0.0, 1.0);
-  color_9.xyz = (tmpvar_44.xyz * tmpvar_85);
-  highp vec3 tmpvar_86;
-  tmpvar_86 = (color_9.xyz + (_Reflectivity * light_3));
-  color_9.xyz = tmpvar_86;
-  color_9.xyz = (color_9.xyz * light_3);
-  tmpvar_1 = color_9;
+  tmpvar_69.x = tmpvar_65;
+  tmpvar_69.y = tmpvar_66;
+  tmpvar_69.z = tmpvar_67;
+  tmpvar_69.w = tmpvar_68;
+  shadows_48 = tmpvar_69;
+  mediump float tmpvar_70;
+  tmpvar_70 = dot (shadows_48, vec4(0.25, 0.25, 0.25, 0.25));
+  tmpvar_47 = tmpvar_70;
+  mediump vec3 lightDir_71;
+  lightDir_71 = tmpvar_43;
+  mediump vec3 viewDir_72;
+  viewDir_72 = xlv_TEXCOORD1;
+  mediump vec3 normal_73;
+  normal_73 = tmpvar_44;
+  mediump float atten_74;
+  atten_74 = (tmpvar_46.w * tmpvar_47);
+  mediump vec4 c_75;
+  highp float nh_76;
+  mediump vec3 tmpvar_77;
+  tmpvar_77 = normalize(lightDir_71);
+  lightDir_71 = tmpvar_77;
+  mediump vec3 tmpvar_78;
+  tmpvar_78 = normalize(viewDir_72);
+  viewDir_72 = tmpvar_78;
+  mediump float tmpvar_79;
+  tmpvar_79 = dot (normal_73, tmpvar_77);
+  mediump float tmpvar_80;
+  tmpvar_80 = clamp (dot (normalize((tmpvar_77 + tmpvar_78)), normal_73), 0.0, 1.0);
+  nh_76 = tmpvar_80;
+  highp vec3 tmpvar_81;
+  tmpvar_81 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_79) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_76, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_74 * 4.0));
+  c_75.xyz = tmpvar_81;
+  c_75.w = (tmpvar_79 * (atten_74 * 4.0));
+  color_5.xyz = c_75.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_75.w >= 0.0))));
+  tmpvar_1 = color_5;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -18756,7 +17110,7 @@ void main ()
 }
 
 SubProgram "gles3 " {
-Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+Keywords { "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
 "!!GLES3#version 300 es
 
 
@@ -18787,7 +17141,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 408
+#line 336
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -18796,17 +17150,17 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 505
+#line 534
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec3 _LightCoord;
     highp vec3 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 497
+#line 526
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -18903,52 +17257,60 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform samplerCube _ShadowMapTexture;
-uniform samplerCube _LightTexture0;
-#line 406
+uniform sampler2D _LightTexture0;
+#line 335
 uniform highp mat4 _LightMatrix0;
-uniform sampler2D _LightTextureB0;
-#line 418
+#line 346
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 431
-#line 439
-#line 453
+#line 359
+#line 367
+#line 381
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 414
+#line 418
+#line 427
+#line 435
+#line 444
+#line 452
+#line 465
+#line 477
+#line 493
+#line 506
 uniform lowp vec4 _Color;
+#line 514
 uniform highp float _Shininess;
-#line 486
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 518
 uniform highp float _DetailScale;
-#line 490
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 494
+#line 522
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 516
-#line 516
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 545
+#line 545
 v2f vert( in appdata_t v ) {
     v2f o;
     highp vec4 vertex = v.vertex;
-    #line 520
+    #line 549
     o.pos = (glstate_matrix_mvp * vertex).xyzw;
     highp vec3 vertexPos = (_Object2World * vertex).xyz;
     o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
-    o.worldNormal = normalize((_Object2World * vec4( v.normal, 0.0)).xyz);
-    #line 524
+    o.worldPos = vertexPos;
+    #line 553
     o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
-    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - (_Object2World * vertex).xyz));
+    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - vertexPos));
     o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
     o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
-    #line 529
+    #line 558
     return o;
 }
 out highp float xlv_TEXCOORD0;
@@ -18968,7 +17330,7 @@ void main() {
     gl_Position = vec4(xl_retval.pos);
     xlv_TEXCOORD0 = float(xl_retval.viewDist);
     xlv_TEXCOORD1 = vec3(xl_retval.viewDir);
-    xlv_TEXCOORD2 = vec3(xl_retval.worldNormal);
+    xlv_TEXCOORD2 = vec3(xl_retval.worldPos);
     xlv_TEXCOORD3 = vec3(xl_retval._LightCoord);
     xlv_TEXCOORD4 = vec3(xl_retval._ShadowCoord);
     xlv_TEXCOORD5 = vec3(xl_retval.sphereNormal);
@@ -19071,7 +17433,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 408
+#line 336
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -19080,17 +17442,17 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 505
+#line 534
 struct v2f {
     highp vec4 pos;
     highp float viewDist;
     highp vec3 viewDir;
-    highp vec3 worldNormal;
+    highp vec3 worldPos;
     highp vec3 _LightCoord;
     highp vec3 _ShadowCoord;
     highp vec3 sphereNormal;
 };
-#line 497
+#line 526
 struct appdata_t {
     highp vec4 vertex;
     highp vec3 normal;
@@ -19187,145 +17549,150 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform samplerCube _ShadowMapTexture;
-uniform samplerCube _LightTexture0;
-#line 406
+uniform sampler2D _LightTexture0;
+#line 335
 uniform highp mat4 _LightMatrix0;
-uniform sampler2D _LightTextureB0;
-#line 418
+#line 346
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 431
-#line 439
-#line 453
+#line 359
+#line 367
+#line 381
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 414
+#line 418
+#line 427
+#line 435
+#line 444
+#line 452
+#line 465
+#line 477
+#line 493
+#line 506
 uniform lowp vec4 _Color;
+#line 514
 uniform highp float _Shininess;
-#line 486
 uniform sampler2D _MainTex;
 uniform highp float _MainTexHandoverDist;
 uniform sampler2D _DetailTex;
+#line 518
 uniform highp float _DetailScale;
-#line 490
 uniform highp float _DetailDist;
 uniform highp float _MinLight;
-uniform highp float _Clarity;
 uniform sampler2D _CameraDepthTexture;
-#line 494
+#line 522
 uniform highp mat4 _CameraToWorld;
 uniform highp float _LightPower;
-uniform highp float _Reflectivity;
-#line 516
-#line 321
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 545
+#line 418
 highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
-    #line 323
     highp vec2 latLong = vec2( lat, lon);
     highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
+    #line 422
     highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
     highp float longDdx = xll_dFdx_f(lon);
-    #line 327
     highp float longDdy = xll_dFdy_f(lon);
     return vec4( latDdx, longDdx, latDdy, longDdy);
 }
-#line 330
+#line 427
 highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
-    #line 332
     highp vec2 uv;
     uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
+    #line 431
     uv.y = (0.31831 * acos(sphereVect.y));
     uv += uvOffset;
-    #line 336
     return uv;
 }
-#line 368
+#line 465
 mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
-    #line 370
     highp vec3 sphereVectNorm = normalize(sphereVect);
-    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    highp vec2 uv = ((GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0)) * 4.0) * detailScale);
+    #line 469
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     sphereVectNorm = abs(sphereVectNorm);
-    #line 374
     mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
     mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
+    #line 473
     mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
     detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
-    #line 378
     return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
 }
-#line 347
+#line 444
 mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
-    #line 349
     highp vec3 sphereVectNorm = normalize(sphereVect);
     highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    #line 448
     highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
     mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
-    #line 353
     return tex;
+}
+#line 493
+mediump vec4 SpecularColorLight( in mediump vec3 lightDir, in mediump vec3 viewDir, in mediump vec3 normal, in mediump vec4 color, in mediump vec4 specColor, in highp float specK, in mediump float atten ) {
+    lightDir = normalize(lightDir);
+    viewDir = normalize(viewDir);
+    #line 497
+    mediump vec3 h = normalize((lightDir + viewDir));
+    mediump float diffuse = dot( normal, lightDir);
+    highp float nh = xll_saturate_f(dot( h, normal));
+    highp float spec = (pow( nh, specK) * color.w);
+    #line 501
+    mediump vec4 c;
+    c.xyz = ((((color.xyz * _LightColor0.xyz) * diffuse) + ((_LightColor0.xyz * specColor.xyz) * spec)) * (atten * 4.0));
+    c.w = (diffuse * (atten * 4.0));
+    return c;
 }
 #line 215
 highp float DecodeFloatRGBA( in highp vec4 enc ) {
     highp vec4 kDecodeDot = vec4( 1.0, 0.00392157, 1.53787e-05, 6.22737e-09);
     return dot( enc, kDecodeDot);
 }
-#line 387
+#line 316
 highp float SampleCubeDistance( in highp vec3 vec ) {
     highp vec4 packDist = texture( _ShadowMapTexture, vec);
-    #line 390
+    #line 319
     return DecodeFloatRGBA( packDist);
 }
-#line 392
+#line 321
 highp float unityCubeShadow( in highp vec3 vec ) {
-    #line 394
+    #line 323
     highp float mydist = (length(vec) * _LightPositionRange.w);
     mydist *= 0.97;
     highp float z = 0.0078125;
     highp vec4 shadowVals;
-    #line 398
+    #line 327
     shadowVals.x = SampleCubeDistance( (vec + vec3( z, z, z)));
     shadowVals.y = SampleCubeDistance( (vec + vec3( (-z), (-z), z)));
     shadowVals.z = SampleCubeDistance( (vec + vec3( (-z), z, (-z))));
     shadowVals.w = SampleCubeDistance( (vec + vec3( z, (-z), (-z))));
-    #line 402
+    #line 331
     mediump vec4 shadows = xll_vecTSel_vb4_vf4_vf4 (lessThan( shadowVals, vec4( mydist)), vec4( _LightShadowData.xxxx), vec4( 1.0));
     return dot( shadows, vec4( 0.25));
 }
-#line 531
+#line 560
 lowp vec4 frag( in v2f IN ) {
-    #line 533
+    #line 562
     mediump vec4 color;
     highp vec3 sphereNrm = IN.sphereNormal;
     mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
     mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
-    #line 537
+    #line 566
     mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
     color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
     color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
     color *= _Color;
-    #line 541
-    mediump vec3 ambientLighting = vec3( glstate_lightmodel_ambient);
-    mediump vec3 lightDirection = vec3( normalize(_WorldSpaceLightPos0));
-    mediump vec3 normalDir = IN.worldNormal;
-    mediump float NdotL = xll_saturate_f(dot( normalDir, lightDirection));
-    #line 545
-    mediump float diff = ((NdotL - 0.01) / 0.99);
-    lowp float atten = ((texture( _LightTextureB0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * texture( _LightTexture0, IN._LightCoord).w) * unityCubeShadow( IN._ShadowCoord));
-    mediump float lightIntensity = xll_saturate_f((((_LightColor0.w * diff) * 4.0) * atten));
-    mediump vec3 light = xll_saturate_vf3((ambientLighting + ((_MinLight + _LightColor0.xyz) * lightIntensity)));
-    #line 549
-    highp vec3 specularReflection = vec3( xll_saturate_f(floor((1.0 + NdotL))));
-    specularReflection *= (((atten * vec3( _LightColor0)) * vec3( _SpecColor)) * pow( xll_saturate_f(dot( reflect( (-lightDirection), normalDir), IN.viewDir)), _Shininess));
-    light += (main.w * specularReflection);
-    color.w = 1.0;
-    #line 553
-    highp float refrac = 0.67;
-    color.w *= pow( refrac, 2.0);
-    color.w = mix( color.w, main.w, xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0)));
-    color.xyz *= xll_saturate_vf3(((_LightPower * light) - color.w));
-    #line 557
-    color.xyz += (_Reflectivity * light);
-    color.xyz *= light;
+    #line 570
+    mediump float handoff = xll_saturate_f(pow( _PlanetOpacity, 2.0));
+    color.xyz = mix( color.xyz, main.xyz, vec3( handoff));
+    mediump vec4 specColor = _SpecColor;
+    specColor.w = mix( 1.0, main.w, handoff);
+    #line 574
+    mediump vec4 colorLight = SpecularColorLight( vec3( normalize(_WorldSpaceLightPos0)), IN.viewDir, normalize((IN.worldPos - _PlanetOrigin)), color, specColor, (_Shininess * 128.0), (texture( _LightTexture0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * unityCubeShadow( IN._ShadowCoord)));
+    color.xyz = colorLight.xyz;
+    color.w = mix( 1.0, color.w, ((1.0 - handoff) * step( 0.0, colorLight.w)));
     return color;
 }
 in highp float xlv_TEXCOORD0;
@@ -19340,7 +17707,1491 @@ void main() {
     xlt_IN.pos = vec4(0.0);
     xlt_IN.viewDist = float(xlv_TEXCOORD0);
     xlt_IN.viewDir = vec3(xlv_TEXCOORD1);
-    xlt_IN.worldNormal = vec3(xlv_TEXCOORD2);
+    xlt_IN.worldPos = vec3(xlv_TEXCOORD2);
+    xlt_IN._LightCoord = vec3(xlv_TEXCOORD3);
+    xlt_IN._ShadowCoord = vec3(xlv_TEXCOORD4);
+    xlt_IN.sphereNormal = vec3(xlv_TEXCOORD5);
+    xl_retval = frag( xlt_IN);
+    gl_FragData[0] = vec4(xl_retval);
+}
+
+
+#endif"
+}
+
+SubProgram "opengl " {
+Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+"!!GLSL
+#ifdef VERTEX
+varying vec3 xlv_TEXCOORD5;
+varying vec3 xlv_TEXCOORD4;
+varying vec3 xlv_TEXCOORD3;
+varying vec3 xlv_TEXCOORD2;
+varying vec3 xlv_TEXCOORD1;
+varying float xlv_TEXCOORD0;
+uniform mat4 _LightMatrix0;
+uniform mat4 _Object2World;
+
+uniform vec4 _LightPositionRange;
+uniform vec3 _WorldSpaceCameraPos;
+void main ()
+{
+  vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * gl_Vertex).xyz;
+  vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
+  vec4 tmpvar_3;
+  tmpvar_3.x = gl_MultiTexCoord0.x;
+  tmpvar_3.y = gl_MultiTexCoord0.y;
+  tmpvar_3.z = gl_MultiTexCoord1.x;
+  tmpvar_3.w = gl_MultiTexCoord1.y;
+  gl_Position = (gl_ModelViewProjectionMatrix * gl_Vertex);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
+  xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * gl_Vertex)).xyz;
+  xlv_TEXCOORD4 = ((_Object2World * gl_Vertex).xyz - _LightPositionRange.xyz);
+  xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
+}
+
+
+#endif
+#ifdef FRAGMENT
+#extension GL_ARB_shader_texture_lod : enable
+varying vec3 xlv_TEXCOORD5;
+varying vec3 xlv_TEXCOORD4;
+varying vec3 xlv_TEXCOORD3;
+varying vec3 xlv_TEXCOORD2;
+varying vec3 xlv_TEXCOORD1;
+varying float xlv_TEXCOORD0;
+uniform vec3 _PlanetOrigin;
+uniform float _PlanetOpacity;
+uniform float _DetailDist;
+uniform float _DetailScale;
+uniform sampler2D _DetailTex;
+uniform float _MainTexHandoverDist;
+uniform sampler2D _MainTex;
+uniform float _Shininess;
+uniform vec4 _Color;
+uniform vec4 _SpecColor;
+uniform vec4 _LightColor0;
+uniform sampler2D _LightTextureB0;
+uniform samplerCube _LightTexture0;
+uniform samplerCube _ShadowMapTexture;
+uniform vec4 _LightShadowData;
+uniform vec4 _LightPositionRange;
+uniform vec4 _WorldSpaceLightPos0;
+void main ()
+{
+  vec4 main_1;
+  vec4 color_2;
+  vec3 tmpvar_3;
+  tmpvar_3 = normalize(xlv_TEXCOORD5);
+  vec2 uv_4;
+  float r_5;
+  if ((abs(tmpvar_3.z) > (1e-08 * abs(tmpvar_3.x)))) {
+    float y_over_x_6;
+    y_over_x_6 = (tmpvar_3.x / tmpvar_3.z);
+    float s_7;
+    float x_8;
+    x_8 = (y_over_x_6 * inversesqrt(((y_over_x_6 * y_over_x_6) + 1.0)));
+    s_7 = (sign(x_8) * (1.5708 - (sqrt((1.0 - abs(x_8))) * (1.5708 + (abs(x_8) * (-0.214602 + (abs(x_8) * (0.0865667 + (abs(x_8) * -0.0310296)))))))));
+    r_5 = s_7;
+    if ((tmpvar_3.z < 0.0)) {
+      if ((tmpvar_3.x >= 0.0)) {
+        r_5 = (s_7 + 3.14159);
+      } else {
+        r_5 = (r_5 - 3.14159);
+      };
+    };
+  } else {
+    r_5 = (sign(tmpvar_3.x) * 1.5708);
+  };
+  uv_4.x = (0.5 + (0.159155 * r_5));
+  uv_4.y = (0.31831 * (1.5708 - (sign(tmpvar_3.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_3.y))) * (1.5708 + (abs(tmpvar_3.y) * (-0.214602 + (abs(tmpvar_3.y) * (0.0865667 + (abs(tmpvar_3.y) * -0.0310296)))))))))));
+  vec2 tmpvar_9;
+  tmpvar_9 = dFdx(tmpvar_3.xz);
+  vec2 tmpvar_10;
+  tmpvar_10 = dFdy(tmpvar_3.xz);
+  vec4 tmpvar_11;
+  tmpvar_11.x = (0.159155 * sqrt(dot (tmpvar_9, tmpvar_9)));
+  tmpvar_11.y = dFdx(uv_4.y);
+  tmpvar_11.z = (0.159155 * sqrt(dot (tmpvar_10, tmpvar_10)));
+  tmpvar_11.w = dFdy(uv_4.y);
+  main_1 = texture2DGradARB (_MainTex, uv_4, tmpvar_11.xy, tmpvar_11.zw);
+  vec3 tmpvar_12;
+  tmpvar_12 = normalize(xlv_TEXCOORD5);
+  vec2 uv_13;
+  float r_14;
+  if ((abs(tmpvar_12.z) > (1e-08 * abs(tmpvar_12.x)))) {
+    float y_over_x_15;
+    y_over_x_15 = (tmpvar_12.x / tmpvar_12.z);
+    float s_16;
+    float x_17;
+    x_17 = (y_over_x_15 * inversesqrt(((y_over_x_15 * y_over_x_15) + 1.0)));
+    s_16 = (sign(x_17) * (1.5708 - (sqrt((1.0 - abs(x_17))) * (1.5708 + (abs(x_17) * (-0.214602 + (abs(x_17) * (0.0865667 + (abs(x_17) * -0.0310296)))))))));
+    r_14 = s_16;
+    if ((tmpvar_12.z < 0.0)) {
+      if ((tmpvar_12.x >= 0.0)) {
+        r_14 = (s_16 + 3.14159);
+      } else {
+        r_14 = (r_14 - 3.14159);
+      };
+    };
+  } else {
+    r_14 = (sign(tmpvar_12.x) * 1.5708);
+  };
+  uv_13.x = (0.5 + (0.159155 * r_14));
+  uv_13.y = (0.31831 * (1.5708 - (sign(tmpvar_12.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_12.y))) * (1.5708 + (abs(tmpvar_12.y) * (-0.214602 + (abs(tmpvar_12.y) * (0.0865667 + (abs(tmpvar_12.y) * -0.0310296)))))))))));
+  vec2 tmpvar_18;
+  tmpvar_18 = ((uv_13 * 4.0) * _DetailScale);
+  vec2 tmpvar_19;
+  tmpvar_19 = dFdx(tmpvar_12.xz);
+  vec2 tmpvar_20;
+  tmpvar_20 = dFdy(tmpvar_12.xz);
+  vec4 tmpvar_21;
+  tmpvar_21.x = (0.159155 * sqrt(dot (tmpvar_19, tmpvar_19)));
+  tmpvar_21.y = dFdx(tmpvar_18.y);
+  tmpvar_21.z = (0.159155 * sqrt(dot (tmpvar_20, tmpvar_20)));
+  tmpvar_21.w = dFdy(tmpvar_18.y);
+  vec3 tmpvar_22;
+  tmpvar_22 = abs(tmpvar_12);
+  float tmpvar_23;
+  tmpvar_23 = float((tmpvar_22.z >= tmpvar_22.x));
+  vec3 tmpvar_24;
+  tmpvar_24 = mix (tmpvar_22.yxz, mix (tmpvar_22, tmpvar_22.zxy, vec3(tmpvar_23)), vec3(float((mix (tmpvar_22.x, tmpvar_22.z, tmpvar_23) >= tmpvar_22.y))));
+  vec4 tmpvar_25;
+  tmpvar_25 = (mix (mix (texture2DGradARB (_DetailTex, (((0.5 * tmpvar_24.zy) / abs(tmpvar_24.x)) * _DetailScale), tmpvar_21.xy, tmpvar_21.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0))), main_1, vec4(clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0))) * _Color);
+  color_2.w = tmpvar_25.w;
+  float tmpvar_26;
+  tmpvar_26 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  color_2.xyz = mix (tmpvar_25.xyz, main_1.xyz, vec3(tmpvar_26));
+  vec4 tmpvar_27;
+  tmpvar_27 = normalize(_WorldSpaceLightPos0);
+  vec3 tmpvar_28;
+  tmpvar_28 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  vec4 tmpvar_29;
+  tmpvar_29 = texture2D (_LightTextureB0, vec2(dot (xlv_TEXCOORD3, xlv_TEXCOORD3)));
+  vec4 tmpvar_30;
+  tmpvar_30 = textureCube (_LightTexture0, xlv_TEXCOORD3);
+  vec4 shadowVals_31;
+  shadowVals_31.x = dot (textureCube (_ShadowMapTexture, (xlv_TEXCOORD4 + vec3(0.0078125, 0.0078125, 0.0078125))), vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  shadowVals_31.y = dot (textureCube (_ShadowMapTexture, (xlv_TEXCOORD4 + vec3(-0.0078125, -0.0078125, 0.0078125))), vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  shadowVals_31.z = dot (textureCube (_ShadowMapTexture, (xlv_TEXCOORD4 + vec3(-0.0078125, 0.0078125, -0.0078125))), vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  shadowVals_31.w = dot (textureCube (_ShadowMapTexture, (xlv_TEXCOORD4 + vec3(0.0078125, -0.0078125, -0.0078125))), vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  bvec4 tmpvar_32;
+  tmpvar_32 = lessThan (shadowVals_31, vec4(((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97)));
+  vec4 tmpvar_33;
+  tmpvar_33 = _LightShadowData.xxxx;
+  float tmpvar_34;
+  if (tmpvar_32.x) {
+    tmpvar_34 = tmpvar_33.x;
+  } else {
+    tmpvar_34 = 1.0;
+  };
+  float tmpvar_35;
+  if (tmpvar_32.y) {
+    tmpvar_35 = tmpvar_33.y;
+  } else {
+    tmpvar_35 = 1.0;
+  };
+  float tmpvar_36;
+  if (tmpvar_32.z) {
+    tmpvar_36 = tmpvar_33.z;
+  } else {
+    tmpvar_36 = 1.0;
+  };
+  float tmpvar_37;
+  if (tmpvar_32.w) {
+    tmpvar_37 = tmpvar_33.w;
+  } else {
+    tmpvar_37 = 1.0;
+  };
+  vec4 tmpvar_38;
+  tmpvar_38.x = tmpvar_34;
+  tmpvar_38.y = tmpvar_35;
+  tmpvar_38.z = tmpvar_36;
+  tmpvar_38.w = tmpvar_37;
+  float atten_39;
+  atten_39 = ((tmpvar_29.w * tmpvar_30.w) * dot (tmpvar_38, vec4(0.25, 0.25, 0.25, 0.25)));
+  vec4 c_40;
+  vec3 tmpvar_41;
+  tmpvar_41 = normalize(tmpvar_27.xyz);
+  float tmpvar_42;
+  tmpvar_42 = dot (tmpvar_28, tmpvar_41);
+  c_40.xyz = ((((color_2.xyz * _LightColor0.xyz) * tmpvar_42) + ((_LightColor0.xyz * _SpecColor.xyz) * (pow (clamp (dot (normalize((tmpvar_41 + normalize(xlv_TEXCOORD1))), tmpvar_28), 0.0, 1.0), (_Shininess * 128.0)) * tmpvar_25.w))) * (atten_39 * 4.0));
+  c_40.w = (tmpvar_42 * (atten_39 * 4.0));
+  color_2.xyz = c_40.xyz;
+  color_2.w = mix (1.0, tmpvar_25.w, ((1.0 - tmpvar_26) * float((c_40.w >= 0.0))));
+  gl_FragData[0] = color_2;
+}
+
+
+#endif
+"
+}
+
+SubProgram "d3d9 " {
+Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+Bind "vertex" Vertex
+Bind "texcoord" TexCoord0
+Bind "texcoord1" TexCoord1
+Matrix 0 [glstate_matrix_mvp]
+Vector 12 [_WorldSpaceCameraPos]
+Vector 13 [_LightPositionRange]
+Matrix 4 [_Object2World]
+Matrix 8 [_LightMatrix0]
+"vs_3_0
+; 25 ALU
+dcl_position o0
+dcl_texcoord0 o1
+dcl_texcoord1 o2
+dcl_texcoord2 o3
+dcl_texcoord3 o4
+dcl_texcoord4 o5
+dcl_texcoord5 o6
+dcl_position0 v0
+dcl_texcoord0 v1
+dcl_texcoord1 v2
+dp4 r1.z, v0, c6
+dp4 r1.x, v0, c4
+dp4 r1.y, v0, c5
+mov r0.zw, v2.xyxy
+mov r0.xy, v1
+dp4 r0.w, r0, r0
+rsq r1.w, r0.w
+mul r0.xyz, r1.w, r0
+add r2.xyz, -r1, c12
+dp3 r0.w, r2, r2
+rsq r1.w, r0.w
+mov o6.xyz, -r0
+mov r0.xyz, r1
+dp4 r0.w, v0, c7
+mul o2.xyz, r1.w, r2
+dp4 o4.z, r0, c10
+dp4 o4.y, r0, c9
+dp4 o4.x, r0, c8
+rcp o1.x, r1.w
+mov o3.xyz, r1
+add o5.xyz, r1, -c13
+dp4 o0.w, v0, c3
+dp4 o0.z, v0, c2
+dp4 o0.y, v0, c1
+dp4 o0.x, v0, c0
+"
+}
+
+SubProgram "gles " {
+Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying highp vec3 xlv_TEXCOORD5;
+varying highp vec3 xlv_TEXCOORD4;
+varying highp vec3 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD2;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp float xlv_TEXCOORD0;
+uniform highp mat4 _LightMatrix0;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp vec4 _LightPositionRange;
+uniform highp vec3 _WorldSpaceCameraPos;
+attribute vec4 _glesMultiTexCoord1;
+attribute vec4 _glesMultiTexCoord0;
+attribute vec4 _glesVertex;
+void main ()
+{
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
+  highp vec4 tmpvar_3;
+  tmpvar_3.x = _glesMultiTexCoord0.x;
+  tmpvar_3.y = _glesMultiTexCoord0.y;
+  tmpvar_3.z = _glesMultiTexCoord1.x;
+  tmpvar_3.w = _glesMultiTexCoord1.y;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
+  xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
+  xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
+  xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+#extension GL_EXT_shader_texture_lod : enable
+#extension GL_OES_standard_derivatives : enable
+varying highp vec3 xlv_TEXCOORD5;
+varying highp vec3 xlv_TEXCOORD4;
+varying highp vec3 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD2;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp float xlv_TEXCOORD0;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
+uniform highp float _DetailDist;
+uniform highp float _DetailScale;
+uniform sampler2D _DetailTex;
+uniform highp float _MainTexHandoverDist;
+uniform sampler2D _MainTex;
+uniform highp float _Shininess;
+uniform lowp vec4 _Color;
+uniform lowp vec4 _SpecColor;
+uniform lowp vec4 _LightColor0;
+uniform sampler2D _LightTextureB0;
+uniform samplerCube _LightTexture0;
+uniform samplerCube _ShadowMapTexture;
+uniform highp vec4 _LightShadowData;
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 _WorldSpaceLightPos0;
+void main ()
+{
+  lowp vec4 tmpvar_1;
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
+      } else {
+        r_9 = (r_9 - 3.14159);
+      };
+    };
+  } else {
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
+  };
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
+      } else {
+        r_23 = (r_23 - 3.14159);
+      };
+    };
+  } else {
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
+  };
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
+  highp vec3 tmpvar_34;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
+  highp float tmpvar_42;
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2D (_LightTextureB0, vec2(tmpvar_45));
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = textureCube (_LightTexture0, xlv_TEXCOORD3);
+  highp float tmpvar_48;
+  mediump vec4 shadows_49;
+  highp vec4 shadowVals_50;
+  highp float tmpvar_51;
+  tmpvar_51 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
+  highp vec3 vec_52;
+  vec_52 = (xlv_TEXCOORD4 + vec3(0.0078125, 0.0078125, 0.0078125));
+  highp vec4 packDist_53;
+  lowp vec4 tmpvar_54;
+  tmpvar_54 = textureCube (_ShadowMapTexture, vec_52);
+  packDist_53 = tmpvar_54;
+  shadowVals_50.x = dot (packDist_53, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  highp vec3 vec_55;
+  vec_55 = (xlv_TEXCOORD4 + vec3(-0.0078125, -0.0078125, 0.0078125));
+  highp vec4 packDist_56;
+  lowp vec4 tmpvar_57;
+  tmpvar_57 = textureCube (_ShadowMapTexture, vec_55);
+  packDist_56 = tmpvar_57;
+  shadowVals_50.y = dot (packDist_56, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  highp vec3 vec_58;
+  vec_58 = (xlv_TEXCOORD4 + vec3(-0.0078125, 0.0078125, -0.0078125));
+  highp vec4 packDist_59;
+  lowp vec4 tmpvar_60;
+  tmpvar_60 = textureCube (_ShadowMapTexture, vec_58);
+  packDist_59 = tmpvar_60;
+  shadowVals_50.z = dot (packDist_59, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  highp vec3 vec_61;
+  vec_61 = (xlv_TEXCOORD4 + vec3(0.0078125, -0.0078125, -0.0078125));
+  highp vec4 packDist_62;
+  lowp vec4 tmpvar_63;
+  tmpvar_63 = textureCube (_ShadowMapTexture, vec_61);
+  packDist_62 = tmpvar_63;
+  shadowVals_50.w = dot (packDist_62, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  bvec4 tmpvar_64;
+  tmpvar_64 = lessThan (shadowVals_50, vec4(tmpvar_51));
+  highp vec4 tmpvar_65;
+  tmpvar_65 = _LightShadowData.xxxx;
+  highp float tmpvar_66;
+  if (tmpvar_64.x) {
+    tmpvar_66 = tmpvar_65.x;
+  } else {
+    tmpvar_66 = 1.0;
+  };
+  highp float tmpvar_67;
+  if (tmpvar_64.y) {
+    tmpvar_67 = tmpvar_65.y;
+  } else {
+    tmpvar_67 = 1.0;
+  };
+  highp float tmpvar_68;
+  if (tmpvar_64.z) {
+    tmpvar_68 = tmpvar_65.z;
+  } else {
+    tmpvar_68 = 1.0;
+  };
+  highp float tmpvar_69;
+  if (tmpvar_64.w) {
+    tmpvar_69 = tmpvar_65.w;
+  } else {
+    tmpvar_69 = 1.0;
+  };
+  highp vec4 tmpvar_70;
+  tmpvar_70.x = tmpvar_66;
+  tmpvar_70.y = tmpvar_67;
+  tmpvar_70.z = tmpvar_68;
+  tmpvar_70.w = tmpvar_69;
+  shadows_49 = tmpvar_70;
+  mediump float tmpvar_71;
+  tmpvar_71 = dot (shadows_49, vec4(0.25, 0.25, 0.25, 0.25));
+  tmpvar_48 = tmpvar_71;
+  mediump vec3 lightDir_72;
+  lightDir_72 = tmpvar_43;
+  mediump vec3 viewDir_73;
+  viewDir_73 = xlv_TEXCOORD1;
+  mediump vec3 normal_74;
+  normal_74 = tmpvar_44;
+  mediump float atten_75;
+  atten_75 = ((tmpvar_46.w * tmpvar_47.w) * tmpvar_48);
+  mediump vec4 c_76;
+  highp float nh_77;
+  mediump vec3 tmpvar_78;
+  tmpvar_78 = normalize(lightDir_72);
+  lightDir_72 = tmpvar_78;
+  mediump vec3 tmpvar_79;
+  tmpvar_79 = normalize(viewDir_73);
+  viewDir_73 = tmpvar_79;
+  mediump float tmpvar_80;
+  tmpvar_80 = dot (normal_74, tmpvar_78);
+  mediump float tmpvar_81;
+  tmpvar_81 = clamp (dot (normalize((tmpvar_78 + tmpvar_79)), normal_74), 0.0, 1.0);
+  nh_77 = tmpvar_81;
+  highp vec3 tmpvar_82;
+  tmpvar_82 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_80) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_77, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_75 * 4.0));
+  c_76.xyz = tmpvar_82;
+  c_76.w = (tmpvar_80 * (atten_75 * 4.0));
+  color_5.xyz = c_76.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_76.w >= 0.0))));
+  tmpvar_1 = color_5;
+  gl_FragData[0] = tmpvar_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+"!!GLES
+
+
+#ifdef VERTEX
+
+varying highp vec3 xlv_TEXCOORD5;
+varying highp vec3 xlv_TEXCOORD4;
+varying highp vec3 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD2;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp float xlv_TEXCOORD0;
+uniform highp mat4 _LightMatrix0;
+uniform highp mat4 _Object2World;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp vec4 _LightPositionRange;
+uniform highp vec3 _WorldSpaceCameraPos;
+attribute vec4 _glesMultiTexCoord1;
+attribute vec4 _glesMultiTexCoord0;
+attribute vec4 _glesVertex;
+void main ()
+{
+  highp vec3 tmpvar_1;
+  tmpvar_1 = (_Object2World * _glesVertex).xyz;
+  highp vec3 p_2;
+  p_2 = (tmpvar_1 - _WorldSpaceCameraPos);
+  highp vec4 tmpvar_3;
+  tmpvar_3.x = _glesMultiTexCoord0.x;
+  tmpvar_3.y = _glesMultiTexCoord0.y;
+  tmpvar_3.z = _glesMultiTexCoord1.x;
+  tmpvar_3.w = _glesMultiTexCoord1.y;
+  gl_Position = (glstate_matrix_mvp * _glesVertex);
+  xlv_TEXCOORD0 = sqrt(dot (p_2, p_2));
+  xlv_TEXCOORD1 = normalize((_WorldSpaceCameraPos - tmpvar_1));
+  xlv_TEXCOORD2 = tmpvar_1;
+  xlv_TEXCOORD3 = (_LightMatrix0 * (_Object2World * _glesVertex)).xyz;
+  xlv_TEXCOORD4 = ((_Object2World * _glesVertex).xyz - _LightPositionRange.xyz);
+  xlv_TEXCOORD5 = -(normalize(tmpvar_3).xyz);
+}
+
+
+
+#endif
+#ifdef FRAGMENT
+
+#extension GL_EXT_shader_texture_lod : enable
+#extension GL_OES_standard_derivatives : enable
+varying highp vec3 xlv_TEXCOORD5;
+varying highp vec3 xlv_TEXCOORD4;
+varying highp vec3 xlv_TEXCOORD3;
+varying highp vec3 xlv_TEXCOORD2;
+varying highp vec3 xlv_TEXCOORD1;
+varying highp float xlv_TEXCOORD0;
+uniform highp vec3 _PlanetOrigin;
+uniform highp float _PlanetOpacity;
+uniform highp float _DetailDist;
+uniform highp float _DetailScale;
+uniform sampler2D _DetailTex;
+uniform highp float _MainTexHandoverDist;
+uniform sampler2D _MainTex;
+uniform highp float _Shininess;
+uniform lowp vec4 _Color;
+uniform lowp vec4 _SpecColor;
+uniform lowp vec4 _LightColor0;
+uniform sampler2D _LightTextureB0;
+uniform samplerCube _LightTexture0;
+uniform samplerCube _ShadowMapTexture;
+uniform highp vec4 _LightShadowData;
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 _WorldSpaceLightPos0;
+void main ()
+{
+  lowp vec4 tmpvar_1;
+  mediump vec4 specColor_2;
+  mediump float handoff_3;
+  mediump float detailLevel_4;
+  mediump vec4 color_5;
+  mediump vec4 tex_6;
+  highp vec3 tmpvar_7;
+  tmpvar_7 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_8;
+  highp float r_9;
+  if ((abs(tmpvar_7.z) > (1e-08 * abs(tmpvar_7.x)))) {
+    highp float y_over_x_10;
+    y_over_x_10 = (tmpvar_7.x / tmpvar_7.z);
+    highp float s_11;
+    highp float x_12;
+    x_12 = (y_over_x_10 * inversesqrt(((y_over_x_10 * y_over_x_10) + 1.0)));
+    s_11 = (sign(x_12) * (1.5708 - (sqrt((1.0 - abs(x_12))) * (1.5708 + (abs(x_12) * (-0.214602 + (abs(x_12) * (0.0865667 + (abs(x_12) * -0.0310296)))))))));
+    r_9 = s_11;
+    if ((tmpvar_7.z < 0.0)) {
+      if ((tmpvar_7.x >= 0.0)) {
+        r_9 = (s_11 + 3.14159);
+      } else {
+        r_9 = (r_9 - 3.14159);
+      };
+    };
+  } else {
+    r_9 = (sign(tmpvar_7.x) * 1.5708);
+  };
+  uv_8.x = (0.5 + (0.159155 * r_9));
+  uv_8.y = (0.31831 * (1.5708 - (sign(tmpvar_7.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_7.y))) * (1.5708 + (abs(tmpvar_7.y) * (-0.214602 + (abs(tmpvar_7.y) * (0.0865667 + (abs(tmpvar_7.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_13;
+  tmpvar_13 = dFdx(tmpvar_7.xz);
+  highp vec2 tmpvar_14;
+  tmpvar_14 = dFdy(tmpvar_7.xz);
+  highp vec4 tmpvar_15;
+  tmpvar_15.x = (0.159155 * sqrt(dot (tmpvar_13, tmpvar_13)));
+  tmpvar_15.y = dFdx(uv_8.y);
+  tmpvar_15.z = (0.159155 * sqrt(dot (tmpvar_14, tmpvar_14)));
+  tmpvar_15.w = dFdy(uv_8.y);
+  lowp vec4 tmpvar_16;
+  tmpvar_16 = texture2DGradEXT (_MainTex, uv_8, tmpvar_15.xy, tmpvar_15.zw);
+  tex_6 = tmpvar_16;
+  mediump vec4 tmpvar_17;
+  mediump vec3 detailCoords_18;
+  mediump float nylerp_19;
+  mediump float zxlerp_20;
+  highp vec3 tmpvar_21;
+  tmpvar_21 = normalize(xlv_TEXCOORD5);
+  highp vec2 uv_22;
+  highp float r_23;
+  if ((abs(tmpvar_21.z) > (1e-08 * abs(tmpvar_21.x)))) {
+    highp float y_over_x_24;
+    y_over_x_24 = (tmpvar_21.x / tmpvar_21.z);
+    highp float s_25;
+    highp float x_26;
+    x_26 = (y_over_x_24 * inversesqrt(((y_over_x_24 * y_over_x_24) + 1.0)));
+    s_25 = (sign(x_26) * (1.5708 - (sqrt((1.0 - abs(x_26))) * (1.5708 + (abs(x_26) * (-0.214602 + (abs(x_26) * (0.0865667 + (abs(x_26) * -0.0310296)))))))));
+    r_23 = s_25;
+    if ((tmpvar_21.z < 0.0)) {
+      if ((tmpvar_21.x >= 0.0)) {
+        r_23 = (s_25 + 3.14159);
+      } else {
+        r_23 = (r_23 - 3.14159);
+      };
+    };
+  } else {
+    r_23 = (sign(tmpvar_21.x) * 1.5708);
+  };
+  uv_22.x = (0.5 + (0.159155 * r_23));
+  uv_22.y = (0.31831 * (1.5708 - (sign(tmpvar_21.y) * (1.5708 - (sqrt((1.0 - abs(tmpvar_21.y))) * (1.5708 + (abs(tmpvar_21.y) * (-0.214602 + (abs(tmpvar_21.y) * (0.0865667 + (abs(tmpvar_21.y) * -0.0310296)))))))))));
+  highp vec2 tmpvar_27;
+  tmpvar_27 = ((uv_22 * 4.0) * _DetailScale);
+  highp vec2 tmpvar_28;
+  tmpvar_28 = dFdx(tmpvar_21.xz);
+  highp vec2 tmpvar_29;
+  tmpvar_29 = dFdy(tmpvar_21.xz);
+  highp vec4 tmpvar_30;
+  tmpvar_30.x = (0.159155 * sqrt(dot (tmpvar_28, tmpvar_28)));
+  tmpvar_30.y = dFdx(tmpvar_27.y);
+  tmpvar_30.z = (0.159155 * sqrt(dot (tmpvar_29, tmpvar_29)));
+  tmpvar_30.w = dFdy(tmpvar_27.y);
+  highp vec3 tmpvar_31;
+  tmpvar_31 = abs(tmpvar_21);
+  highp float tmpvar_32;
+  tmpvar_32 = float((tmpvar_31.z >= tmpvar_31.x));
+  zxlerp_20 = tmpvar_32;
+  highp float tmpvar_33;
+  tmpvar_33 = float((mix (tmpvar_31.x, tmpvar_31.z, zxlerp_20) >= tmpvar_31.y));
+  nylerp_19 = tmpvar_33;
+  highp vec3 tmpvar_34;
+  tmpvar_34 = mix (tmpvar_31, tmpvar_31.zxy, vec3(zxlerp_20));
+  detailCoords_18 = tmpvar_34;
+  highp vec3 tmpvar_35;
+  tmpvar_35 = mix (tmpvar_31.yxz, detailCoords_18, vec3(nylerp_19));
+  detailCoords_18 = tmpvar_35;
+  mediump float tmpvar_36;
+  tmpvar_36 = abs(detailCoords_18.x);
+  highp vec2 coord_37;
+  coord_37 = (((0.5 * detailCoords_18.zy) / tmpvar_36) * _DetailScale);
+  lowp vec4 tmpvar_38;
+  tmpvar_38 = texture2DGradEXT (_DetailTex, coord_37, tmpvar_30.xy, tmpvar_30.zw);
+  tmpvar_17 = tmpvar_38;
+  highp float tmpvar_39;
+  tmpvar_39 = clamp (((2.0 * _DetailDist) * xlv_TEXCOORD0), 0.0, 1.0);
+  detailLevel_4 = tmpvar_39;
+  highp float tmpvar_40;
+  tmpvar_40 = clamp (pow ((_MainTexHandoverDist * xlv_TEXCOORD0), 3.0), 0.0, 1.0);
+  mediump vec4 tmpvar_41;
+  tmpvar_41 = (mix (mix (tmpvar_17, vec4(1.0, 1.0, 1.0, 1.0), vec4(detailLevel_4)), tex_6, vec4(tmpvar_40)) * _Color);
+  color_5.w = tmpvar_41.w;
+  highp float tmpvar_42;
+  tmpvar_42 = clamp (pow (_PlanetOpacity, 2.0), 0.0, 1.0);
+  handoff_3 = tmpvar_42;
+  color_5.xyz = mix (tmpvar_41.xyz, tex_6.xyz, vec3(handoff_3));
+  specColor_2.xyz = _SpecColor.xyz;
+  specColor_2.w = mix (1.0, tex_6.w, handoff_3);
+  highp vec3 tmpvar_43;
+  tmpvar_43 = normalize(_WorldSpaceLightPos0).xyz;
+  highp vec3 tmpvar_44;
+  tmpvar_44 = normalize((xlv_TEXCOORD2 - _PlanetOrigin));
+  highp float tmpvar_45;
+  tmpvar_45 = dot (xlv_TEXCOORD3, xlv_TEXCOORD3);
+  lowp vec4 tmpvar_46;
+  tmpvar_46 = texture2D (_LightTextureB0, vec2(tmpvar_45));
+  lowp vec4 tmpvar_47;
+  tmpvar_47 = textureCube (_LightTexture0, xlv_TEXCOORD3);
+  highp float tmpvar_48;
+  mediump vec4 shadows_49;
+  highp vec4 shadowVals_50;
+  highp float tmpvar_51;
+  tmpvar_51 = ((sqrt(dot (xlv_TEXCOORD4, xlv_TEXCOORD4)) * _LightPositionRange.w) * 0.97);
+  highp vec3 vec_52;
+  vec_52 = (xlv_TEXCOORD4 + vec3(0.0078125, 0.0078125, 0.0078125));
+  highp vec4 packDist_53;
+  lowp vec4 tmpvar_54;
+  tmpvar_54 = textureCube (_ShadowMapTexture, vec_52);
+  packDist_53 = tmpvar_54;
+  shadowVals_50.x = dot (packDist_53, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  highp vec3 vec_55;
+  vec_55 = (xlv_TEXCOORD4 + vec3(-0.0078125, -0.0078125, 0.0078125));
+  highp vec4 packDist_56;
+  lowp vec4 tmpvar_57;
+  tmpvar_57 = textureCube (_ShadowMapTexture, vec_55);
+  packDist_56 = tmpvar_57;
+  shadowVals_50.y = dot (packDist_56, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  highp vec3 vec_58;
+  vec_58 = (xlv_TEXCOORD4 + vec3(-0.0078125, 0.0078125, -0.0078125));
+  highp vec4 packDist_59;
+  lowp vec4 tmpvar_60;
+  tmpvar_60 = textureCube (_ShadowMapTexture, vec_58);
+  packDist_59 = tmpvar_60;
+  shadowVals_50.z = dot (packDist_59, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  highp vec3 vec_61;
+  vec_61 = (xlv_TEXCOORD4 + vec3(0.0078125, -0.0078125, -0.0078125));
+  highp vec4 packDist_62;
+  lowp vec4 tmpvar_63;
+  tmpvar_63 = textureCube (_ShadowMapTexture, vec_61);
+  packDist_62 = tmpvar_63;
+  shadowVals_50.w = dot (packDist_62, vec4(1.0, 0.00392157, 1.53787e-05, 6.22737e-09));
+  bvec4 tmpvar_64;
+  tmpvar_64 = lessThan (shadowVals_50, vec4(tmpvar_51));
+  highp vec4 tmpvar_65;
+  tmpvar_65 = _LightShadowData.xxxx;
+  highp float tmpvar_66;
+  if (tmpvar_64.x) {
+    tmpvar_66 = tmpvar_65.x;
+  } else {
+    tmpvar_66 = 1.0;
+  };
+  highp float tmpvar_67;
+  if (tmpvar_64.y) {
+    tmpvar_67 = tmpvar_65.y;
+  } else {
+    tmpvar_67 = 1.0;
+  };
+  highp float tmpvar_68;
+  if (tmpvar_64.z) {
+    tmpvar_68 = tmpvar_65.z;
+  } else {
+    tmpvar_68 = 1.0;
+  };
+  highp float tmpvar_69;
+  if (tmpvar_64.w) {
+    tmpvar_69 = tmpvar_65.w;
+  } else {
+    tmpvar_69 = 1.0;
+  };
+  highp vec4 tmpvar_70;
+  tmpvar_70.x = tmpvar_66;
+  tmpvar_70.y = tmpvar_67;
+  tmpvar_70.z = tmpvar_68;
+  tmpvar_70.w = tmpvar_69;
+  shadows_49 = tmpvar_70;
+  mediump float tmpvar_71;
+  tmpvar_71 = dot (shadows_49, vec4(0.25, 0.25, 0.25, 0.25));
+  tmpvar_48 = tmpvar_71;
+  mediump vec3 lightDir_72;
+  lightDir_72 = tmpvar_43;
+  mediump vec3 viewDir_73;
+  viewDir_73 = xlv_TEXCOORD1;
+  mediump vec3 normal_74;
+  normal_74 = tmpvar_44;
+  mediump float atten_75;
+  atten_75 = ((tmpvar_46.w * tmpvar_47.w) * tmpvar_48);
+  mediump vec4 c_76;
+  highp float nh_77;
+  mediump vec3 tmpvar_78;
+  tmpvar_78 = normalize(lightDir_72);
+  lightDir_72 = tmpvar_78;
+  mediump vec3 tmpvar_79;
+  tmpvar_79 = normalize(viewDir_73);
+  viewDir_73 = tmpvar_79;
+  mediump float tmpvar_80;
+  tmpvar_80 = dot (normal_74, tmpvar_78);
+  mediump float tmpvar_81;
+  tmpvar_81 = clamp (dot (normalize((tmpvar_78 + tmpvar_79)), normal_74), 0.0, 1.0);
+  nh_77 = tmpvar_81;
+  highp vec3 tmpvar_82;
+  tmpvar_82 = ((((color_5.xyz * _LightColor0.xyz) * tmpvar_80) + ((_LightColor0.xyz * specColor_2.xyz) * (pow (nh_77, (_Shininess * 128.0)) * tmpvar_41.w))) * (atten_75 * 4.0));
+  c_76.xyz = tmpvar_82;
+  c_76.w = (tmpvar_80 * (atten_75 * 4.0));
+  color_5.xyz = c_76.xyz;
+  color_5.w = mix (1.0, tmpvar_41.w, ((1.0 - handoff_3) * float((c_76.w >= 0.0))));
+  tmpvar_1 = color_5;
+  gl_FragData[0] = tmpvar_1;
+}
+
+
+
+#endif"
+}
+
+SubProgram "gles3 " {
+Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
+"!!GLES3#version 300 es
+
+
+#ifdef VERTEX
+
+#define gl_Vertex _glesVertex
+in vec4 _glesVertex;
+#define gl_Normal (normalize(_glesNormal))
+in vec3 _glesNormal;
+#define gl_MultiTexCoord0 _glesMultiTexCoord0
+in vec4 _glesMultiTexCoord0;
+#define gl_MultiTexCoord1 _glesMultiTexCoord1
+in vec4 _glesMultiTexCoord1;
+
+#line 151
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 187
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 181
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 337
+struct SurfaceOutput {
+    lowp vec3 Albedo;
+    lowp vec3 Normal;
+    lowp vec3 Emission;
+    mediump float Specular;
+    lowp float Gloss;
+    lowp float Alpha;
+};
+#line 535
+struct v2f {
+    highp vec4 pos;
+    highp float viewDist;
+    highp vec3 viewDir;
+    highp vec3 worldPos;
+    highp vec3 _LightCoord;
+    highp vec3 _ShadowCoord;
+    highp vec3 sphereNormal;
+};
+#line 527
+struct appdata_t {
+    highp vec4 vertex;
+    highp vec3 normal;
+    highp vec4 texcoord;
+    highp vec4 texcoord2;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform highp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
+#line 19
+uniform highp vec4 unity_SpotDirection[8];
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+#line 23
+uniform highp vec4 unity_SHBr;
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+#line 27
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+#line 31
+uniform highp vec4 _LightSplitsNear;
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+#line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+#line 39
+uniform highp mat4 _Object2World;
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+#line 43
+uniform highp mat4 glstate_matrix_texture0;
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+#line 47
+uniform highp mat4 glstate_matrix_projection;
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+#line 51
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 315
+uniform samplerCube _ShadowMapTexture;
+uniform samplerCube _LightTexture0;
+#line 335
+uniform highp mat4 _LightMatrix0;
+uniform sampler2D _LightTextureB0;
+#line 347
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _SpecColor;
+#line 360
+#line 368
+#line 382
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 415
+#line 419
+#line 428
+#line 436
+#line 445
+#line 453
+#line 466
+#line 478
+#line 494
+#line 507
+uniform lowp vec4 _Color;
+#line 515
+uniform highp float _Shininess;
+uniform sampler2D _MainTex;
+uniform highp float _MainTexHandoverDist;
+uniform sampler2D _DetailTex;
+#line 519
+uniform highp float _DetailScale;
+uniform highp float _DetailDist;
+uniform highp float _MinLight;
+uniform sampler2D _CameraDepthTexture;
+#line 523
+uniform highp mat4 _CameraToWorld;
+uniform highp float _LightPower;
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 546
+#line 546
+v2f vert( in appdata_t v ) {
+    v2f o;
+    highp vec4 vertex = v.vertex;
+    #line 550
+    o.pos = (glstate_matrix_mvp * vertex).xyzw;
+    highp vec3 vertexPos = (_Object2World * vertex).xyz;
+    o.viewDist = distance( vertexPos, _WorldSpaceCameraPos);
+    o.worldPos = vertexPos;
+    #line 554
+    o.sphereNormal = (-normalize(vec4( v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz);
+    o.viewDir = normalize((_WorldSpaceCameraPos.xyz - vertexPos));
+    o._LightCoord = (_LightMatrix0 * (_Object2World * v.vertex)).xyz;
+    o._ShadowCoord = ((_Object2World * v.vertex).xyz - _LightPositionRange.xyz);
+    #line 559
+    return o;
+}
+out highp float xlv_TEXCOORD0;
+out highp vec3 xlv_TEXCOORD1;
+out highp vec3 xlv_TEXCOORD2;
+out highp vec3 xlv_TEXCOORD3;
+out highp vec3 xlv_TEXCOORD4;
+out highp vec3 xlv_TEXCOORD5;
+void main() {
+    v2f xl_retval;
+    appdata_t xlt_v;
+    xlt_v.vertex = vec4(gl_Vertex);
+    xlt_v.normal = vec3(gl_Normal);
+    xlt_v.texcoord = vec4(gl_MultiTexCoord0);
+    xlt_v.texcoord2 = vec4(gl_MultiTexCoord1);
+    xl_retval = vert( xlt_v);
+    gl_Position = vec4(xl_retval.pos);
+    xlv_TEXCOORD0 = float(xl_retval.viewDist);
+    xlv_TEXCOORD1 = vec3(xl_retval.viewDir);
+    xlv_TEXCOORD2 = vec3(xl_retval.worldPos);
+    xlv_TEXCOORD3 = vec3(xl_retval._LightCoord);
+    xlv_TEXCOORD4 = vec3(xl_retval._ShadowCoord);
+    xlv_TEXCOORD5 = vec3(xl_retval.sphereNormal);
+}
+
+
+#endif
+#ifdef FRAGMENT
+
+#define gl_FragData _glesFragData
+layout(location = 0) out mediump vec4 _glesFragData[4];
+float xll_dFdx_f(float f) {
+  return dFdx(f);
+}
+vec2 xll_dFdx_vf2(vec2 v) {
+  return dFdx(v);
+}
+vec3 xll_dFdx_vf3(vec3 v) {
+  return dFdx(v);
+}
+vec4 xll_dFdx_vf4(vec4 v) {
+  return dFdx(v);
+}
+mat2 xll_dFdx_mf2x2(mat2 m) {
+  return mat2( dFdx(m[0]), dFdx(m[1]));
+}
+mat3 xll_dFdx_mf3x3(mat3 m) {
+  return mat3( dFdx(m[0]), dFdx(m[1]), dFdx(m[2]));
+}
+mat4 xll_dFdx_mf4x4(mat4 m) {
+  return mat4( dFdx(m[0]), dFdx(m[1]), dFdx(m[2]), dFdx(m[3]));
+}
+float xll_dFdy_f(float f) {
+  return dFdy(f);
+}
+vec2 xll_dFdy_vf2(vec2 v) {
+  return dFdy(v);
+}
+vec3 xll_dFdy_vf3(vec3 v) {
+  return dFdy(v);
+}
+vec4 xll_dFdy_vf4(vec4 v) {
+  return dFdy(v);
+}
+mat2 xll_dFdy_mf2x2(mat2 m) {
+  return mat2( dFdy(m[0]), dFdy(m[1]));
+}
+mat3 xll_dFdy_mf3x3(mat3 m) {
+  return mat3( dFdy(m[0]), dFdy(m[1]), dFdy(m[2]));
+}
+mat4 xll_dFdy_mf4x4(mat4 m) {
+  return mat4( dFdy(m[0]), dFdy(m[1]), dFdy(m[2]), dFdy(m[3]));
+}
+vec4 xll_tex2Dgrad(sampler2D s, vec2 coord, vec2 ddx, vec2 ddy) {
+   return textureGrad( s, coord, ddx, ddy);
+}
+float xll_saturate_f( float x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec2 xll_saturate_vf2( vec2 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec3 xll_saturate_vf3( vec3 x) {
+  return clamp( x, 0.0, 1.0);
+}
+vec4 xll_saturate_vf4( vec4 x) {
+  return clamp( x, 0.0, 1.0);
+}
+mat2 xll_saturate_mf2x2(mat2 m) {
+  return mat2( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0));
+}
+mat3 xll_saturate_mf3x3(mat3 m) {
+  return mat3( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0));
+}
+mat4 xll_saturate_mf4x4(mat4 m) {
+  return mat4( clamp(m[0], 0.0, 1.0), clamp(m[1], 0.0, 1.0), clamp(m[2], 0.0, 1.0), clamp(m[3], 0.0, 1.0));
+}
+vec2 xll_vecTSel_vb2_vf2_vf2 (bvec2 a, vec2 b, vec2 c) {
+  return vec2 (a.x ? b.x : c.x, a.y ? b.y : c.y);
+}
+vec3 xll_vecTSel_vb3_vf3_vf3 (bvec3 a, vec3 b, vec3 c) {
+  return vec3 (a.x ? b.x : c.x, a.y ? b.y : c.y, a.z ? b.z : c.z);
+}
+vec4 xll_vecTSel_vb4_vf4_vf4 (bvec4 a, vec4 b, vec4 c) {
+  return vec4 (a.x ? b.x : c.x, a.y ? b.y : c.y, a.z ? b.z : c.z, a.w ? b.w : c.w);
+}
+#line 151
+struct v2f_vertex_lit {
+    highp vec2 uv;
+    lowp vec4 diff;
+    lowp vec4 spec;
+};
+#line 187
+struct v2f_img {
+    highp vec4 pos;
+    mediump vec2 uv;
+};
+#line 181
+struct appdata_img {
+    highp vec4 vertex;
+    mediump vec2 texcoord;
+};
+#line 337
+struct SurfaceOutput {
+    lowp vec3 Albedo;
+    lowp vec3 Normal;
+    lowp vec3 Emission;
+    mediump float Specular;
+    lowp float Gloss;
+    lowp float Alpha;
+};
+#line 535
+struct v2f {
+    highp vec4 pos;
+    highp float viewDist;
+    highp vec3 viewDir;
+    highp vec3 worldPos;
+    highp vec3 _LightCoord;
+    highp vec3 _ShadowCoord;
+    highp vec3 sphereNormal;
+};
+#line 527
+struct appdata_t {
+    highp vec4 vertex;
+    highp vec3 normal;
+    highp vec4 texcoord;
+    highp vec4 texcoord2;
+};
+uniform highp vec4 _Time;
+uniform highp vec4 _SinTime;
+#line 3
+uniform highp vec4 _CosTime;
+uniform highp vec4 unity_DeltaTime;
+uniform highp vec3 _WorldSpaceCameraPos;
+uniform highp vec4 _ProjectionParams;
+#line 7
+uniform highp vec4 _ScreenParams;
+uniform highp vec4 _ZBufferParams;
+uniform highp vec4 unity_CameraWorldClipPlanes[6];
+uniform highp vec4 _WorldSpaceLightPos0;
+#line 11
+uniform highp vec4 _LightPositionRange;
+uniform highp vec4 unity_4LightPosX0;
+uniform highp vec4 unity_4LightPosY0;
+uniform highp vec4 unity_4LightPosZ0;
+#line 15
+uniform highp vec4 unity_4LightAtten0;
+uniform highp vec4 unity_LightColor[8];
+uniform highp vec4 unity_LightPosition[8];
+uniform highp vec4 unity_LightAtten[8];
+#line 19
+uniform highp vec4 unity_SpotDirection[8];
+uniform highp vec4 unity_SHAr;
+uniform highp vec4 unity_SHAg;
+uniform highp vec4 unity_SHAb;
+#line 23
+uniform highp vec4 unity_SHBr;
+uniform highp vec4 unity_SHBg;
+uniform highp vec4 unity_SHBb;
+uniform highp vec4 unity_SHC;
+#line 27
+uniform highp vec3 unity_LightColor0;
+uniform highp vec3 unity_LightColor1;
+uniform highp vec3 unity_LightColor2;
+uniform highp vec3 unity_LightColor3;
+uniform highp vec4 unity_ShadowSplitSpheres[4];
+uniform highp vec4 unity_ShadowSplitSqRadii;
+uniform highp vec4 unity_LightShadowBias;
+#line 31
+uniform highp vec4 _LightSplitsNear;
+uniform highp vec4 _LightSplitsFar;
+uniform highp mat4 unity_World2Shadow[4];
+uniform highp vec4 _LightShadowData;
+#line 35
+uniform highp vec4 unity_ShadowFadeCenterAndType;
+uniform highp mat4 glstate_matrix_mvp;
+uniform highp mat4 glstate_matrix_modelview0;
+uniform highp mat4 glstate_matrix_invtrans_modelview0;
+#line 39
+uniform highp mat4 _Object2World;
+uniform highp mat4 _World2Object;
+uniform highp vec4 unity_Scale;
+uniform highp mat4 glstate_matrix_transpose_modelview0;
+#line 43
+uniform highp mat4 glstate_matrix_texture0;
+uniform highp mat4 glstate_matrix_texture1;
+uniform highp mat4 glstate_matrix_texture2;
+uniform highp mat4 glstate_matrix_texture3;
+#line 47
+uniform highp mat4 glstate_matrix_projection;
+uniform highp vec4 glstate_lightmodel_ambient;
+uniform highp mat4 unity_MatrixV;
+uniform highp mat4 unity_MatrixVP;
+#line 51
+uniform lowp vec4 unity_ColorSpaceGrey;
+#line 77
+#line 82
+#line 87
+#line 91
+#line 96
+#line 120
+#line 137
+#line 158
+#line 166
+#line 193
+#line 206
+#line 215
+#line 220
+#line 229
+#line 234
+#line 243
+#line 260
+#line 265
+#line 291
+#line 299
+#line 307
+#line 311
+#line 315
+uniform samplerCube _ShadowMapTexture;
+uniform samplerCube _LightTexture0;
+#line 335
+uniform highp mat4 _LightMatrix0;
+uniform sampler2D _LightTextureB0;
+#line 347
+uniform lowp vec4 _LightColor0;
+uniform lowp vec4 _SpecColor;
+#line 360
+#line 368
+#line 382
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 415
+#line 419
+#line 428
+#line 436
+#line 445
+#line 453
+#line 466
+#line 478
+#line 494
+#line 507
+uniform lowp vec4 _Color;
+#line 515
+uniform highp float _Shininess;
+uniform sampler2D _MainTex;
+uniform highp float _MainTexHandoverDist;
+uniform sampler2D _DetailTex;
+#line 519
+uniform highp float _DetailScale;
+uniform highp float _DetailDist;
+uniform highp float _MinLight;
+uniform sampler2D _CameraDepthTexture;
+#line 523
+uniform highp mat4 _CameraToWorld;
+uniform highp float _LightPower;
+uniform highp float _PlanetOpacity;
+uniform highp vec3 _PlanetOrigin;
+#line 546
+#line 419
+highp vec4 Derivatives( in highp float lat, in highp float lon, in highp vec3 pos ) {
+    highp vec2 latLong = vec2( lat, lon);
+    highp float latDdx = (0.159155 * length(xll_dFdx_vf2(pos.xz)));
+    #line 423
+    highp float latDdy = (0.159155 * length(xll_dFdy_vf2(pos.xz)));
+    highp float longDdx = xll_dFdx_f(lon);
+    highp float longDdy = xll_dFdy_f(lon);
+    return vec4( latDdx, longDdx, latDdy, longDdy);
+}
+#line 428
+highp vec2 GetSphereUV( in highp vec3 sphereVect, in highp vec2 uvOffset ) {
+    highp vec2 uv;
+    uv.x = (0.5 + (0.159155 * atan( sphereVect.x, sphereVect.z)));
+    #line 432
+    uv.y = (0.31831 * acos(sphereVect.y));
+    uv += uvOffset;
+    return uv;
+}
+#line 466
+mediump vec4 GetShereDetailMap( in sampler2D texSampler, in highp vec3 sphereVect, in highp float detailScale ) {
+    highp vec3 sphereVectNorm = normalize(sphereVect);
+    highp vec2 uv = ((GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0)) * 4.0) * detailScale);
+    #line 470
+    highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
+    sphereVectNorm = abs(sphereVectNorm);
+    mediump float zxlerp = step( sphereVectNorm.x, sphereVectNorm.z);
+    mediump float nylerp = step( sphereVectNorm.y, mix( sphereVectNorm.x, sphereVectNorm.z, zxlerp));
+    #line 474
+    mediump vec3 detailCoords = mix( sphereVectNorm.xyz, sphereVectNorm.zxy, vec3( zxlerp));
+    detailCoords = mix( sphereVectNorm.yxz, detailCoords, vec3( nylerp));
+    return xll_tex2Dgrad( texSampler, (((0.5 * detailCoords.zy) / abs(detailCoords.x)) * detailScale), uvdd.xy, uvdd.zw);
+}
+#line 445
+mediump vec4 GetSphereMap( in sampler2D texSampler, in highp vec3 sphereVect ) {
+    highp vec3 sphereVectNorm = normalize(sphereVect);
+    highp vec2 uv = GetSphereUV( sphereVectNorm, vec2( 0.0, 0.0));
+    #line 449
+    highp vec4 uvdd = Derivatives( (uv.x - 0.5), uv.y, sphereVectNorm);
+    mediump vec4 tex = xll_tex2Dgrad( texSampler, uv, uvdd.xy, uvdd.zw);
+    return tex;
+}
+#line 494
+mediump vec4 SpecularColorLight( in mediump vec3 lightDir, in mediump vec3 viewDir, in mediump vec3 normal, in mediump vec4 color, in mediump vec4 specColor, in highp float specK, in mediump float atten ) {
+    lightDir = normalize(lightDir);
+    viewDir = normalize(viewDir);
+    #line 498
+    mediump vec3 h = normalize((lightDir + viewDir));
+    mediump float diffuse = dot( normal, lightDir);
+    highp float nh = xll_saturate_f(dot( h, normal));
+    highp float spec = (pow( nh, specK) * color.w);
+    #line 502
+    mediump vec4 c;
+    c.xyz = ((((color.xyz * _LightColor0.xyz) * diffuse) + ((_LightColor0.xyz * specColor.xyz) * spec)) * (atten * 4.0));
+    c.w = (diffuse * (atten * 4.0));
+    return c;
+}
+#line 215
+highp float DecodeFloatRGBA( in highp vec4 enc ) {
+    highp vec4 kDecodeDot = vec4( 1.0, 0.00392157, 1.53787e-05, 6.22737e-09);
+    return dot( enc, kDecodeDot);
+}
+#line 316
+highp float SampleCubeDistance( in highp vec3 vec ) {
+    highp vec4 packDist = texture( _ShadowMapTexture, vec);
+    #line 319
+    return DecodeFloatRGBA( packDist);
+}
+#line 321
+highp float unityCubeShadow( in highp vec3 vec ) {
+    #line 323
+    highp float mydist = (length(vec) * _LightPositionRange.w);
+    mydist *= 0.97;
+    highp float z = 0.0078125;
+    highp vec4 shadowVals;
+    #line 327
+    shadowVals.x = SampleCubeDistance( (vec + vec3( z, z, z)));
+    shadowVals.y = SampleCubeDistance( (vec + vec3( (-z), (-z), z)));
+    shadowVals.z = SampleCubeDistance( (vec + vec3( (-z), z, (-z))));
+    shadowVals.w = SampleCubeDistance( (vec + vec3( z, (-z), (-z))));
+    #line 331
+    mediump vec4 shadows = xll_vecTSel_vb4_vf4_vf4 (lessThan( shadowVals, vec4( mydist)), vec4( _LightShadowData.xxxx), vec4( 1.0));
+    return dot( shadows, vec4( 0.25));
+}
+#line 561
+lowp vec4 frag( in v2f IN ) {
+    #line 563
+    mediump vec4 color;
+    highp vec3 sphereNrm = IN.sphereNormal;
+    mediump vec4 main = GetSphereMap( _MainTex, sphereNrm);
+    mediump vec4 detail = GetShereDetailMap( _DetailTex, sphereNrm, _DetailScale);
+    #line 567
+    mediump float detailLevel = xll_saturate_f(((2.0 * _DetailDist) * IN.viewDist));
+    color = mix( detail.xyzw, vec4( 1.0), vec4( detailLevel));
+    color = mix( color, main, vec4( xll_saturate_f(pow( (_MainTexHandoverDist * IN.viewDist), 3.0))));
+    color *= _Color;
+    #line 571
+    mediump float handoff = xll_saturate_f(pow( _PlanetOpacity, 2.0));
+    color.xyz = mix( color.xyz, main.xyz, vec3( handoff));
+    mediump vec4 specColor = _SpecColor;
+    specColor.w = mix( 1.0, main.w, handoff);
+    #line 575
+    mediump vec4 colorLight = SpecularColorLight( vec3( normalize(_WorldSpaceLightPos0)), IN.viewDir, normalize((IN.worldPos - _PlanetOrigin)), color, specColor, (_Shininess * 128.0), ((texture( _LightTextureB0, vec2( dot( IN._LightCoord, IN._LightCoord))).w * texture( _LightTexture0, IN._LightCoord).w) * unityCubeShadow( IN._ShadowCoord)));
+    color.xyz = colorLight.xyz;
+    color.w = mix( 1.0, color.w, ((1.0 - handoff) * step( 0.0, colorLight.w)));
+    return color;
+}
+in highp float xlv_TEXCOORD0;
+in highp vec3 xlv_TEXCOORD1;
+in highp vec3 xlv_TEXCOORD2;
+in highp vec3 xlv_TEXCOORD3;
+in highp vec3 xlv_TEXCOORD4;
+in highp vec3 xlv_TEXCOORD5;
+void main() {
+    lowp vec4 xl_retval;
+    v2f xlt_IN;
+    xlt_IN.pos = vec4(0.0);
+    xlt_IN.viewDist = float(xlv_TEXCOORD0);
+    xlt_IN.viewDir = vec3(xlv_TEXCOORD1);
+    xlt_IN.worldPos = vec3(xlv_TEXCOORD2);
     xlt_IN._LightCoord = vec3(xlv_TEXCOORD3);
     xlt_IN._ShadowCoord = vec3(xlv_TEXCOORD4);
     xlt_IN.sphereNormal = vec3(xlv_TEXCOORD5);
@@ -19355,7 +19206,7 @@ void main() {
 }
 Program "fp" {
 // Fragment combos: 15
-//   d3d9 - ALU: 112 to 132, TEX: 6 to 12
+//   d3d9 - ALU: 123 to 147, TEX: 6 to 12
 SubProgram "opengl " {
 Keywords { "POINT" "SHADOWS_OFF" }
 "!!GLSL"
@@ -19363,32 +19214,30 @@ Keywords { "POINT" "SHADOWS_OFF" }
 
 SubProgram "d3d9 " {
 Keywords { "POINT" "SHADOWS_OFF" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightColor0]
-Vector 3 [_SpecColor]
-Vector 4 [_Color]
-Float 5 [_Shininess]
-Float 6 [_MainTexHandoverDist]
-Float 7 [_DetailScale]
-Float 8 [_DetailDist]
-Float 9 [_MinLight]
-Float 10 [_LightPower]
-Float 11 [_Reflectivity]
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightColor0]
+Vector 2 [_SpecColor]
+Vector 3 [_Color]
+Float 4 [_Shininess]
+Float 5 [_MainTexHandoverDist]
+Float 6 [_DetailScale]
+Float 7 [_DetailDist]
+Float 8 [_PlanetOpacity]
+Vector 9 [_PlanetOrigin]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTexture0] 2D
 "ps_3_0
-; 114 ALU, 7 TEX
+; 128 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c17, -0.44897461, 0.44897461, 0, 0
+def c10, 1.00000000, 0.00000000, 4.00000000, -0.21211439
+def c11, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c12, 3.14159298, 0.31830987, -0.01348047, 0.05747731
+def c13, -0.12123910, 0.19563590, -0.33299461, 0.99999559
+def c14, 1.57079601, 0.15915494, 0.50000000, 1.27323949
+def c15, -1.00000000, 128.00000000, 0, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -19396,115 +19245,127 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord5 v4.xyz
 dp3 r0.x, v4, v4
 rsq r0.x, r0.x
-mul r3.xyz, r0.x, v4
-abs r2.xyz, r3
-add r0.w, r2.z, -r2.x
-add r0.xyz, r2.zxyw, -r2
-cmp r0.w, r0, c12.y, c12.x
-mad r0.xyz, r0.w, r0, r2
-add r0.w, -r2.y, r0.x
-add r0.xyz, -r2.yxzw, r0
-cmp r0.w, r0, c12.y, c12.x
-mad r0.xyz, r0.w, r0, r2.yxzw
+mul r2.xyz, r0.x, v4
+abs r1.xyz, r2
+add r0.w, r1.z, -r1.x
+add r0.xyz, r1.zxyw, -r1
+cmp r0.w, r0, c10.x, c10.y
+mad r0.xyz, r0.w, r0, r1
+add r0.w, -r1.y, r0.x
+add r0.xyz, -r1.yxzw, r0
+cmp r0.w, r0, c10.x, c10.y
+mad r0.xyz, r0.w, r0, r1.yxzw
 abs_pp r0.x, r0
-rcp_pp r0.w, r0.x
-abs r2.y, r3.z
-mul_pp r0.zw, r0.xyzy, r0.w
-max r0.x, r2, r2.y
-mul_pp r0.zw, r0, c16.y
+rcp_pp r0.x, r0.x
+mul_pp r0.zw, r0.xyzy, r0.x
+abs r1.y, r2.z
+max r0.x, r1, r1.y
 rcp r0.y, r0.x
-min r0.x, r2, r2.y
-mul r0.x, r0, r0.y
-mul r1.xy, r0.zwzw, c7.x
-abs r0.w, r3.y
-mul r0.y, r0.x, r0.x
-mad r0.z, r0.y, c14.y, c14
-mad r0.z, r0, r0.y, c14.w
-add r1.w, -r0, c12.y
-mad r1.z, r0.w, c12, c12.w
-mad r1.z, r1, r0.w, c13.x
-rsq r1.w, r1.w
-mad r2.z, r0, r0.y, c15.x
-mad r0.w, r1.z, r0, c13.y
-rcp r1.w, r1.w
-mul r1.z, r0.w, r1.w
-cmp r0.w, r3.y, c12.x, c12.y
-mul r1.w, r0, r1.z
-mad r0.z, -r1.w, c13, r1
-mad r1.z, r2, r0.y, c15.y
-mad r0.z, r0.w, c13.w, r0
-mul r1.w, r0.z, c14.x
-mad r0.y, r1.z, r0, c15.z
-mul r3.y, r0, r0.x
-dsx r2.zw, r3.xyxz
-mul r2.zw, r2, r2
-add r1.z, r2, r2.w
-dsy r0.xz, r3
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-rsq r0.x, r1.z
+min r0.x, r1, r1.y
+mul_pp r1.zw, r0, c14.z
+mul r0.z, r0.x, r0.y
+mul r0.w, r0.z, r0.z
+mul r0.xy, r1.zwzw, c6.x
+abs r1.z, r2.y
+add r2.w, -r1.z, c10.x
+mad r1.w, r1.z, c11.x, c11.y
+mad r1.w, r1, r1.z, c10
+rsq r2.w, r2.w
+mad r3.x, r0.w, c12.z, c12.w
+mad r1.z, r1.w, r1, c11
+rcp r2.w, r2.w
+mul r1.w, r1.z, r2
+cmp r1.z, r2.y, c10.y, c10.x
+mul r2.y, r1.z, r1.w
+mad r2.w, r3.x, r0, c13.x
+mad r1.w, -r2.y, c11, r1
+mad r2.y, r1.z, c12.x, r1.w
+mad r2.w, r2, r0, c13.y
+mad r1.z, r2.w, r0.w, c13
+mad r0.w, r1.z, r0, c13
+mul r1.w, r2.y, c6.x
+mul r1.z, r1.w, c14.w
+mul r2.w, r0, r0.z
+dsx r0.zw, r2.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
 rsq r0.z, r0.z
-dsx r0.w, r1
-dsy r0.y, r1.w
-rcp r1.z, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c16.x
-mul r0.x, r1.z, c16
-texldd r1.xyz, r1, s1, r0.zwzw, r0
-add r2.z, -r3.y, c15.w
-add r2.x, r2, -r2.y
-cmp r2.w, -r2.x, r3.y, r2.z
-add r3.w, -r2, c13
-mul r3.y, v0.x, c8.x
-cmp r2.w, r3.z, r2, r3
-add_pp r2.xyz, -r1, c12.y
-mul_sat r3.y, r3, c13.z
-mad_pp r2.xyz, r3.y, r2, r1
-cmp r1.x, r3, r2.w, -r2.w
-mad r3.x, r1, c16, c16.y
-mov r3.y, r1.w
-texldd r0, r3, s0, r0.zwzw, r0
-dp4 r1.y, c1, c1
-rsq r1.x, r1.y
-mul r1.xyz, r1.x, c1
-dp3_pp r1.w, v2, -r1
-mul_pp r3.xyz, v2, r1.w
-mad_pp r3.xyz, -r3, c13.z, -r1
-mul r1.w, v0.x, c6.x
-mul r3.w, r1, r1
-add_pp r0.xyz, r0, -r2
-mul_sat r1.w, r3, r1
-mad_pp r0.xyz, r1.w, r0, r2
-mul_pp r2.xyz, r0, c4
-dp3_pp_sat r2.w, r3, v1
-pow_pp r3, r2.w, c5.x
+rcp r0.z, r0.z
+mul r3.z, r0, c14.y
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsy r1.zw, r2.xyxz
+mul r1.zw, r1, r1
+add r0.w, r1.z, r1
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r3.x, r0.w, c14.y
+texldd r0, r0, s1, r3.zwzw, r3
+add r1.z, -r2.w, c14.x
+add r1.x, r1, -r1.y
+cmp r2.w, -r1.x, r2, r1.z
+add r3.y, -r2.w, c12.x
+add_pp r1, -r0, c10.x
+cmp r2.z, r2, r2.w, r3.y
+mul r3.w, v0.x, c7.x
+mul_sat r2.w, r3, c11
+mad_pp r1, r2.w, r1, r0
+mul r0.z, r2.y, c12.y
+cmp r0.x, r2, r2.z, -r2.z
+mov r0.y, r0.z
+dsx r0.w, r0.z
+dsy r2.y, r0.z
+mov r0.z, r3
+mad r0.x, r0, c14.y, c14.z
+mov r2.x, r3
+texldd r2, r0, s0, r0.zwzw, r2
+dp4 r0.x, c0, c0
+rsq r0.x, r0.x
+add_pp r3, r2, -r1
+mul r0.w, v0.x, c5.x
+mul r2.w, r0, r0
+mul_sat r0.w, r2, r0
+mad_pp r1, r0.w, r3, r1
+mul r0.xyz, r0.x, c0
+dp3_pp r0.w, r0, r0
+mul_pp r1, r1, c3
+add_pp r4.xyz, -r1, r2
+rsq_pp r0.w, r0.w
+mul_pp r3.xyz, r0.w, r0
+dp3_pp r2.w, v1, v1
+rsq_pp r0.x, r2.w
+mad_pp r0.xyz, r0.x, v1, r3
+dp3_pp r0.w, r0, r0
+rsq_pp r2.w, r0.w
+add r2.xyz, v2, -c9
+dp3 r0.w, r2, r2
+mul_pp r0.xyz, r2.w, r0
+rsq r2.w, r0.w
+mul r2.xyz, r2.w, r2
+mov r0.w, c4.x
+dp3_pp_sat r3.w, r2, r0
+mul r2.w, c15.y, r0
+pow r0, r3.w, r2.w
+mul_sat r0.y, c8.x, c8.x
+mul r0.w, r1, r0.x
+mad_pp r1.xyz, r0.y, r4, r1
 dp3 r0.x, v3, v3
-mov_pp r0.z, r3.x
-dp3_pp_sat r0.y, v2, r1
-add_pp r3.x, r0.y, c12.y
+dp3_pp r0.z, r2, r3
+mul_pp r1.xyz, r1, c1
+mul_pp r2.xyz, r0.z, r1
+mov_pp r1.xyz, c1
+mul_pp r1.xyz, c2, r1
 texld r0.x, r0.x, s2
-mul r1.xyz, r0.x, c2
-mul r1.xyz, r1, c3
-add_pp r0.y, r0, c16.z
-mul_pp r0.y, r0, c2.w
-mul_pp r0.y, r0, r0.x
-mul r1.xyz, r1, r0.z
-frc_pp r3.y, r3.x
-add_pp_sat r0.z, r3.x, -r3.y
-mul r1.xyz, r0.z, r1
-mul r1.xyz, r0.w, r1
-add_pp r2.w, r0, c17.x
-mul_pp_sat r0.w, r0.y, c16
-mov r0.x, c9
-add r0.xyz, c2, r0.x
-mad_sat r0.xyz, r0, r0.w, c0
-add_pp r0.xyz, r0, r1
-mad_pp r0.w, r1, r2, c17.y
-mul r3.xyz, r0, c11.x
-mad_sat r1.xyz, r0, c10.x, -r0.w
-mad_pp r1.xyz, r2, r1, r3
-mul_pp oC0.xyz, r1, r0
-mov_pp oC0.w, r0
+mad r1.xyz, r1, r0.w, r2
+mul_pp r0.w, r0.x, c10.z
+mul_pp r0.x, r0, r0.z
+mul_pp r0.x, r0, c10.z
+cmp_pp r0.z, r0.x, c10.x, c10.y
+mul oC0.xyz, r1, r0.w
+add_pp r0.x, -r0.y, c10
+add_pp r0.w, r1, c15.x
+mul_pp r0.x, r0, r0.z
+mad_pp oC0.w, r0.x, r0, c10.x
 "
 }
 
@@ -19530,142 +19391,149 @@ Keywords { "DIRECTIONAL" "SHADOWS_OFF" }
 
 SubProgram "d3d9 " {
 Keywords { "DIRECTIONAL" "SHADOWS_OFF" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightColor0]
-Vector 3 [_SpecColor]
-Vector 4 [_Color]
-Float 5 [_Shininess]
-Float 6 [_MainTexHandoverDist]
-Float 7 [_DetailScale]
-Float 8 [_DetailDist]
-Float 9 [_MinLight]
-Float 10 [_LightPower]
-Float 11 [_Reflectivity]
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightColor0]
+Vector 2 [_SpecColor]
+Vector 3 [_Color]
+Float 4 [_Shininess]
+Float 5 [_MainTexHandoverDist]
+Float 6 [_DetailScale]
+Float 7 [_DetailDist]
+Float 8 [_PlanetOpacity]
+Vector 9 [_PlanetOrigin]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 "ps_3_0
-; 112 ALU, 6 TEX
+; 123 ALU, 6 TEX
 dcl_2d s0
 dcl_2d s1
-def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c17, -0.44897461, 0.44897461, 0, 0
+def c10, 1.00000000, 0.00000000, 4.00000000, -0.21211439
+def c11, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c12, 3.14159298, 0.31830987, -0.01348047, 0.05747731
+def c13, -0.12123910, 0.19563590, -0.33299461, 0.99999559
+def c14, 1.57079601, 0.15915494, 0.50000000, 1.27323949
+def c15, -1.00000000, 128.00000000, 0, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
 dcl_texcoord5 v3.xyz
 dp3 r0.x, v3, v3
 rsq r0.x, r0.x
-mul r3.xyz, r0.x, v3
-abs r0.xyz, r3
-add r0.w, r0.z, -r0.x
-dsy r2.zw, r3.xyxz
-add r1.xyz, r0.zxyw, -r0
-cmp r0.w, r0, c12.y, c12.x
-mad r1.xyz, r0.w, r1, r0
-add r0.w, -r0.y, r1.x
-cmp r1.w, r0, c12.y, c12.x
-add r1.xyz, -r0.yxzw, r1
-mad r1.xyz, r1.w, r1, r0.yxzw
-abs r1.w, r3.y
-abs r0.w, r3.z
-max r0.y, r0.x, r0.w
-rcp r0.z, r0.y
-min r0.y, r0.x, r0.w
-mul r0.y, r0, r0.z
-add r2.y, -r1.w, c12
-mad r2.x, r1.w, c12.z, c12.w
-mad r2.x, r2, r1.w, c13
-abs_pp r1.x, r1
-rcp_pp r1.x, r1.x
-mul_pp r1.xy, r1.zyzw, r1.x
-mul r0.z, r0.y, r0.y
-mad r1.z, r0, c14.y, c14
-mad r1.z, r1, r0, c14.w
-mad r1.z, r1, r0, c15.x
-mad r1.z, r1, r0, c15.y
-mad r1.z, r1, r0, c15
-mul_pp r1.xy, r1, c16.y
-rsq r2.y, r2.y
-mul r2.zw, r2, r2
-mul r1.z, r1, r0.y
-add r0.x, r0, -r0.w
-mad r1.w, r2.x, r1, c13.y
-rcp r2.y, r2.y
-mul r2.x, r1.w, r2.y
-cmp r1.w, r3.y, c12.x, c12.y
-mul r2.y, r1.w, r2.x
-mad r0.z, -r2.y, c13, r2.x
-mad r0.y, r1.w, c13.w, r0.z
-mul r1.w, r0.y, c14.x
-add r0.z, -r1, c15.w
-cmp r3.y, -r0.x, r1.z, r0.z
-add r0.z, r2, r2.w
-dsx r2.xy, r3.xzzw
-mul r2.xy, r2, r2
-add r0.x, r2, r2.y
+mul r2.xyz, r0.x, v3
+abs r1.xyz, r2
+abs r1.w, r2.y
+add r0.w, r1.z, -r1.x
+add r3.x, -r1.w, c10
+mad r2.w, r1, c11.x, c11.y
+mad r2.w, r2, r1, c10
+rsq r3.x, r3.x
+add r0.xyz, r1.zxyw, -r1
+cmp r0.w, r0, c10.x, c10.y
+mad r0.xyz, r0.w, r0, r1
+add r0.w, -r1.y, r0.x
+add r0.xyz, -r1.yxzw, r0
+cmp r0.w, r0, c10.x, c10.y
+mad r0.xyz, r0.w, r0, r1.yxzw
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+abs r1.y, r2.z
+max r0.z, r1.x, r1.y
+rcp r0.w, r0.z
+min r0.z, r1.x, r1.y
+mul r0.z, r0, r0.w
+mul r0.w, r0.z, r0.z
+mul_pp r0.xy, r0, c14.z
+mad r1.z, r0.w, c12, c12.w
+mad r1.w, r2, r1, c11.z
+rcp r3.x, r3.x
+mul r2.w, r1, r3.x
+cmp r1.w, r2.y, c10.y, c10.x
+mul r2.y, r1.w, r2.w
+mad r3.x, r1.z, r0.w, c13
+mad r1.z, -r2.y, c11.w, r2.w
+mad r2.y, r1.w, c12.x, r1.z
+mad r2.w, r3.x, r0, c13.y
+mad r1.z, r2.w, r0.w, c13
+mad r0.w, r1.z, r0, c13
+mul r2.w, r0, r0.z
+mul r1.w, r2.y, c6.x
+mul r1.z, r1.w, c14.w
+dsx r0.zw, r2.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
 rsq r0.z, r0.z
-add r2.w, -r3.y, c13
-cmp r2.w, r3.z, r3.y, r2
-rsq r0.x, r0.x
-dsx r0.w, r1
-dsy r0.y, r1.w
-rcp r1.z, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c16.x
-mul r0.x, r1.z, c16
-mul r1.xy, r1, c7.x
-texldd r1.xyz, r1, s1, r0.zwzw, r0
-add_pp r2.xyz, -r1, c12.y
-cmp r2.w, r3.x, r2, -r2
-mul r3.y, v0.x, c8.x
-mul_sat r3.x, r3.y, c13.z
-mad_pp r1.xyz, r3.x, r2, r1
-mad r2.x, r2.w, c16, c16.y
-mov r2.y, r1.w
-texldd r0, r2, s0, r0.zwzw, r0
-dp4_pp r2.z, c1, c1
-rsq_pp r1.w, r2.z
-mul_pp r2.xyz, r1.w, c1
-dp3_pp r2.w, v2, -r2
-mul_pp r3.xyz, v2, r2.w
-mad_pp r3.xyz, -r3, c13.z, -r2
-dp3_pp_sat r2.x, v2, r2
-mul r1.w, v0.x, c6.x
-add_pp r2.y, r2.x, c12
-frc_pp r2.z, r2.y
-mul r2.w, r1, r1
-dp3_pp_sat r3.x, r3, v1
-add_pp r0.xyz, r0, -r1
-mul_sat r2.w, r2, r1
-mad_pp r0.xyz, r2.w, r0, r1
-pow_pp r1, r3.x, c5.x
-add_pp r1.w, r0, c17.x
-mov_pp r3.x, r1
-mov r1.xyz, c2
-mul r1.xyz, c3, r1
-mul r1.xyz, r1, r3.x
-add_pp_sat r2.y, r2, -r2.z
-mul r1.xyz, r2.y, r1
-add_pp r3.x, r2, c16.z
-mul r2.xyz, r0.w, r1
-mul_pp r1.x, r3, c2.w
-mul_pp_sat r3.x, r1, c16.w
-mov r0.w, c9.x
-add r1.xyz, c2, r0.w
-mad_sat r1.xyz, r1, r3.x, c0
-add_pp r1.xyz, r1, r2
-mad_pp r0.w, r2, r1, c17.y
-mul_pp r0.xyz, r0, c4
-mul r3.xyz, r1, c11.x
-mad_sat r2.xyz, r1, c10.x, -r0.w
-mad_pp r0.xyz, r0, r2, r3
-mul_pp oC0.xyz, r0, r1
-mov_pp oC0.w, r0
+rcp r0.z, r0.z
+mul r3.z, r0, c14.y
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsy r1.zw, r2.xyxz
+mul r1.zw, r1, r1
+add r0.w, r1.z, r1
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r3.x, r0.w, c14.y
+mul r0.xy, r0, c6.x
+texldd r0, r0, s1, r3.zwzw, r3
+add r1.z, -r2.w, c14.x
+add r1.x, r1, -r1.y
+cmp r3.y, -r1.x, r2.w, r1.z
+add r3.w, -r3.y, c12.x
+mul r2.w, v0.x, c7.x
+add_pp r1, -r0, c10.x
+mul_sat r2.w, r2, c11
+mad_pp r1, r2.w, r1, r0
+mul r0.z, r2.y, c12.y
+cmp r2.z, r2, r3.y, r3.w
+cmp r0.x, r2, r2.z, -r2.z
+mov r2.x, r3
+mul r3.x, v0, c5
+dsy r2.y, r0.z
+mov r0.y, r0.z
+dsx r0.w, r0.z
+mov r0.z, r3
+mad r0.x, r0, c14.y, c14.z
+texldd r0, r0, s0, r0.zwzw, r2
+add_pp r2, r0, -r1
+mul r3.y, r3.x, r3.x
+mul_sat r0.w, r3.y, r3.x
+mad_pp r1, r0.w, r2, r1
+mul_pp r1, r1, c3
+add_pp r3.xyz, -r1, r0
+dp4_pp r0.w, c0, c0
+rsq_pp r0.x, r0.w
+mul_sat r2.w, c8.x, c8.x
+mad_pp r3.xyz, r2.w, r3, r1
+mul_pp r2.xyz, r0.x, c0
+dp3_pp r0.y, v1, v1
+rsq_pp r0.x, r0.y
+mad_pp r0.xyz, r0.x, v1, r2
+dp3_pp r0.w, r0, r0
+rsq_pp r3.w, r0.w
+add r1.xyz, v2, -c9
+dp3 r0.w, r1, r1
+mul_pp r0.xyz, r3.w, r0
+rsq r3.w, r0.w
+mul r1.xyz, r3.w, r1
+mov r0.w, c4.x
+dp3_pp_sat r4.x, r1, r0
+mul r3.w, c15.y, r0
+pow r0, r4.x, r3.w
+dp3_pp r0.w, r1, r2
+mov r2.x, r0
+mul_pp r3.xyz, r3, c1
+mov_pp r0.xyz, c1
+mul_pp r1.xyz, r0.w, r3
+mul r2.x, r1.w, r2
+mul_pp r0.xyz, c2, r0
+mad r0.xyz, r0, r2.x, r1
+mul oC0.xyz, r0, c10.z
+mul_pp r0.x, r0.w, c10.z
+cmp_pp r0.y, r0.x, c10.x, c10
+add_pp r0.x, -r2.w, c10
+add_pp r0.z, r1.w, c15.x
+mul_pp r0.x, r0, r0.y
+mad_pp oC0.w, r0.x, r0.z, c10.x
 "
 }
 
@@ -19691,34 +19559,32 @@ Keywords { "SPOT" "SHADOWS_OFF" }
 
 SubProgram "d3d9 " {
 Keywords { "SPOT" "SHADOWS_OFF" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightColor0]
-Vector 3 [_SpecColor]
-Vector 4 [_Color]
-Float 5 [_Shininess]
-Float 6 [_MainTexHandoverDist]
-Float 7 [_DetailScale]
-Float 8 [_DetailDist]
-Float 9 [_MinLight]
-Float 10 [_LightPower]
-Float 11 [_Reflectivity]
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightColor0]
+Vector 2 [_SpecColor]
+Vector 3 [_Color]
+Float 4 [_Shininess]
+Float 5 [_MainTexHandoverDist]
+Float 6 [_DetailScale]
+Float 7 [_DetailDist]
+Float 8 [_PlanetOpacity]
+Vector 9 [_PlanetOrigin]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTexture0] 2D
 SetTexture 3 [_LightTextureB0] 2D
 "ps_3_0
-; 119 ALU, 8 TEX
+; 133 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
-def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c17, -0.44897461, 0.44897461, 0, 0
+def c10, 1.00000000, 0.00000000, 0.50000000, 4.00000000
+def c11, -0.01872930, 0.07426100, -0.21211439, 1.57072902
+def c12, 2.00000000, 3.14159298, 0.31830987, -0.12123910
+def c13, -0.01348047, 0.05747731, 0.19563590, -0.33299461
+def c14, 0.99999559, 1.57079601, 0.15915494, 0.50000000
+def c15, 1.27323949, -1.00000000, 128.00000000, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -19726,121 +19592,133 @@ dcl_texcoord3 v3
 dcl_texcoord5 v4.xyz
 dp3 r0.x, v4, v4
 rsq r0.x, r0.x
-mul r1.xyz, r0.x, v4
-abs r3.xyz, r1
-abs r2.y, r1
-add r0.w, r3.z, -r3.x
-add r2.z, -r2.y, c12.y
-mad r2.w, r2.y, c12.z, c12
-mad r2.w, r2, r2.y, c13.x
-mad r2.y, r2.w, r2, c13
-rsq r2.z, r2.z
-rcp r2.z, r2.z
-add r0.xyz, r3.zxyw, -r3
-cmp r0.w, r0, c12.y, c12.x
-mad r0.xyz, r0.w, r0, r3
-add r0.w, -r3.y, r0.x
-add r0.xyz, -r3.yxzw, r0
-cmp r0.w, r0, c12.y, c12.x
-mad r0.xyz, r0.w, r0, r3.yxzw
-abs r1.w, r1.z
-dsx r3.zw, r1.xyxz
-mul r3.zw, r3, r3
+mul r2.xyz, r0.x, v4
+abs r1.xyz, r2
+add r0.w, r1.z, -r1.x
+add r0.xyz, r1.zxyw, -r1
+cmp r0.w, r0, c10.x, c10.y
+mad r0.xyz, r0.w, r0, r1
+add r0.w, -r1.y, r0.x
+add r0.xyz, -r1.yxzw, r0
+cmp r0.w, r0, c10.x, c10.y
+mad r0.xyz, r0.w, r0, r1.yxzw
 abs_pp r0.x, r0
 rcp_pp r0.x, r0.x
-mul_pp r0.xy, r0.zyzw, r0.x
-max r0.w, r3.x, r1
-rcp r0.z, r0.w
-min r0.w, r3.x, r1
-mul r0.z, r0.w, r0
+mul_pp r0.zw, r0.xyzy, r0.x
+abs r1.y, r2.z
+max r0.x, r1, r1.y
+rcp r0.y, r0.x
+min r0.x, r1, r1.y
+mul_pp r1.zw, r0, c10.z
+mul r0.z, r0.x, r0.y
 mul r0.w, r0.z, r0.z
-mad r2.x, r0.w, c14.y, c14.z
-mul_pp r0.xy, r0, c16.y
-mad r2.x, r2, r0.w, c14.w
-cmp r2.w, r1.y, c12.x, c12.y
-mul r2.z, r2.y, r2
-mad r1.y, r2.x, r0.w, c15.x
-mul r2.y, r2.w, r2.z
-mad r2.x, -r2.y, c13.z, r2.z
-mad r1.y, r1, r0.w, c15
-mad r1.y, r1, r0.w, c15.z
-mad r2.x, r2.w, c13.w, r2
-mul r0.w, r2.x, c14.x
-dsy r2.xz, r1
-mul r2.xz, r2, r2
-mul r1.y, r1, r0.z
-add r0.z, r2.x, r2
-add r3.y, r3.z, r3.w
-rsq r2.x, r3.y
+mul r0.xy, r1.zwzw, c6.x
+abs r1.z, r2.y
+add r2.w, -r1.z, c10.x
+mad r1.w, r1.z, c11.x, c11.y
+mad r1.w, r1, r1.z, c11.z
+rsq r2.w, r2.w
+mad r3.x, r0.w, c13, c13.y
+mad r1.z, r1.w, r1, c11.w
+rcp r2.w, r2.w
+mul r1.w, r1.z, r2
+cmp r1.z, r2.y, c10.y, c10.x
+mul r2.y, r1.z, r1.w
+mad r2.w, r3.x, r0, c12
+mad r1.w, -r2.y, c12.x, r1
+mad r2.y, r1.z, c12, r1.w
+mad r2.w, r2, r0, c13.z
+mad r1.z, r2.w, r0.w, c13.w
+mad r0.w, r1.z, r0, c14.x
+mul r1.w, r2.y, c6.x
+mul r1.z, r1.w, c15.x
+mul r2.w, r0, r0.z
+dsx r0.zw, r2.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
-rcp r2.x, r2.x
-dsx r2.y, r0.w
-dsy r2.w, r0
-mul r2.z, r0, c16.x
-add r3.y, -r1, c15.w
-add r1.w, r3.x, -r1
-cmp r3.w, -r1, r1.y, r3.y
-add r1.y, -r3.w, c13.w
-cmp r1.y, r1.z, r3.w, r1
-cmp r1.y, r1.x, r1, -r1
-mul r1.w, v0.x, c8.x
-dp4 r1.x, c1, c1
-mul_sat r1.z, r1.w, c13
-mul r2.x, r2, c16
-mul r0.xy, r0, c7.x
-texldd r0.xyz, r0, s1, r2, r2.zwzw
-add_pp r3.xyz, -r0, c12.y
-mad_pp r0.xyz, r1.z, r3, r0
-mad r3.x, r1.y, c16, c16.y
-mov r3.y, r0.w
-texldd r2, r3, s0, r2, r2.zwzw
-rsq r1.x, r1.x
-mul r1.xyz, r1.x, c1
-dp3_pp r0.w, v2, -r1
-mul_pp r3.xyz, v2, r0.w
-mad_pp r3.xyz, -r3, c13.z, -r1
-mul r0.w, v0.x, c6.x
-mul r3.w, r0, r0
-add_pp r2.xyz, r2, -r0
-mul_sat r0.w, r3, r0
-mad_pp r0.xyz, r0.w, r2, r0
-dp3_pp_sat r2.y, v2, r1
-dp3_pp_sat r1.w, r3, v1
-pow_pp r3, r1.w, c5.x
-add_pp r2.x, r2.w, c17
-mad_pp r0.w, r0, r2.x, c17.y
-dp3 r1.x, v3, v3
-mov_pp r2.z, r3.x
-rcp r1.w, v3.w
-mad r3.xy, v3, r1.w, c16.y
-texld r1.w, r3, s2
-add_pp r3.y, r2, c12
-cmp r1.y, -v3.z, c12.x, c12
-add_pp r2.y, r2, c16.z
-mul_pp r1.y, r1, r1.w
-texld r1.x, r1.x, s3
-mul_pp r1.w, r1.y, r1.x
-mul r1.xyz, r1.w, c2
-mul_pp r2.y, r2, c2.w
-mul_pp r1.w, r2.y, r1
-mul r1.xyz, r1, c3
-mul r1.xyz, r1, r2.z
-frc_pp r3.x, r3.y
-add_pp_sat r2.z, r3.y, -r3.x
-mul r1.xyz, r2.z, r1
-mov r2.y, c9.x
-add r3.xyz, c2, r2.y
-mul_pp_sat r1.w, r1, c16
-mad_sat r3.xyz, r3, r1.w, c0
-mul r1.xyz, r2.w, r1
-add_pp r1.xyz, r3, r1
-mul_pp r0.xyz, r0, c4
-mul r2.xyz, r1, c11.x
-mad_sat r3.xyz, r1, c10.x, -r0.w
-mad_pp r0.xyz, r0, r3, r2
-mul_pp oC0.xyz, r0, r1
-mov_pp oC0.w, r0
+mul r3.z, r0, c14
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsy r1.zw, r2.xyxz
+mul r1.zw, r1, r1
+add r0.w, r1.z, r1
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r3.x, r0.w, c14.z
+texldd r0, r0, s1, r3.zwzw, r3
+add r1.z, -r2.w, c14.y
+add r1.x, r1, -r1.y
+cmp r2.w, -r1.x, r2, r1.z
+add r3.y, -r2.w, c12
+add_pp r1, -r0, c10.x
+cmp r2.z, r2, r2.w, r3.y
+mul r3.w, v0.x, c7.x
+mul_sat r2.w, r3, c12.x
+mad_pp r1, r2.w, r1, r0
+mul r0.z, r2.y, c12
+cmp r0.x, r2, r2.z, -r2.z
+mov r0.y, r0.z
+dsx r0.w, r0.z
+dsy r2.y, r0.z
+mov r0.z, r3
+mad r0.x, r0, c14.z, c14.w
+mov r2.x, r3
+texldd r2, r0, s0, r0.zwzw, r2
+dp4 r0.x, c0, c0
+rsq r0.x, r0.x
+add_pp r3, r2, -r1
+mul r0.w, v0.x, c5.x
+mul r2.w, r0, r0
+mul_sat r0.w, r2, r0
+mad_pp r1, r0.w, r3, r1
+mul r0.xyz, r0.x, c0
+dp3_pp r0.w, r0, r0
+mul_pp r1, r1, c3
+add_pp r4.xyz, -r1, r2
+rsq_pp r0.w, r0.w
+mul_pp r3.xyz, r0.w, r0
+dp3_pp r2.w, v1, v1
+rsq_pp r0.x, r2.w
+mad_pp r0.xyz, r0.x, v1, r3
+dp3_pp r0.w, r0, r0
+rsq_pp r2.w, r0.w
+add r2.xyz, v2, -c9
+dp3 r0.w, r2, r2
+mul_pp r0.xyz, r2.w, r0
+rsq r2.w, r0.w
+mul r2.xyz, r2.w, r2
+mov r0.w, c4.x
+mul r2.w, c15.z, r0
+dp3_pp_sat r3.w, r2, r0
+pow r0, r3.w, r2.w
+mul_sat r0.y, c8.x, c8.x
+mul r2.w, r1, r0.x
+mad_pp r1.xyz, r0.y, r4, r1
+dp3_pp r0.z, r2, r3
+mul_pp r1.xyz, r1, c1
+mul_pp r2.xyz, r0.z, r1
+rcp r0.x, v3.w
+mad r3.xy, v3, r0.x, c10.z
+texld r0.w, r3, s2
+mov_pp r1.xyz, c1
+mul_pp r1.xyz, c2, r1
+dp3 r0.x, v3, v3
+cmp r3.x, -v3.z, c10.y, c10
+mul_pp r0.w, r3.x, r0
+texld r0.x, r0.x, s3
+mul_pp r0.x, r0.w, r0
+mul_pp r0.w, r0.x, c10
+mul_pp r0.x, r0, r0.z
+mul_pp r0.x, r0, c10.w
+cmp_pp r0.z, r0.x, c10.x, c10.y
+mad r1.xyz, r1, r2.w, r2
+mul oC0.xyz, r1, r0.w
+add_pp r0.x, -r0.y, c10
+add_pp r0.w, r1, c15.y
+mul_pp r0.x, r0, r0.z
+mad_pp oC0.w, r0.x, r0, c10.x
 "
 }
 
@@ -19866,34 +19744,32 @@ Keywords { "POINT_COOKIE" "SHADOWS_OFF" }
 
 SubProgram "d3d9 " {
 Keywords { "POINT_COOKIE" "SHADOWS_OFF" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightColor0]
-Vector 3 [_SpecColor]
-Vector 4 [_Color]
-Float 5 [_Shininess]
-Float 6 [_MainTexHandoverDist]
-Float 7 [_DetailScale]
-Float 8 [_DetailDist]
-Float 9 [_MinLight]
-Float 10 [_LightPower]
-Float 11 [_Reflectivity]
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightColor0]
+Vector 2 [_SpecColor]
+Vector 3 [_Color]
+Float 4 [_Shininess]
+Float 5 [_MainTexHandoverDist]
+Float 6 [_DetailScale]
+Float 7 [_DetailDist]
+Float 8 [_PlanetOpacity]
+Vector 9 [_PlanetOrigin]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTextureB0] 2D
 SetTexture 3 [_LightTexture0] CUBE
 "ps_3_0
-; 115 ALU, 8 TEX
+; 129 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_cube s3
-def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c17, -0.44897461, 0.44897461, 0, 0
+def c10, 1.00000000, 0.00000000, 4.00000000, -0.21211439
+def c11, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c12, 3.14159298, 0.31830987, -0.01348047, 0.05747731
+def c13, -0.12123910, 0.19563590, -0.33299461, 0.99999559
+def c14, 1.57079601, 0.15915494, 0.50000000, 1.27323949
+def c15, -1.00000000, 128.00000000, 0, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -19901,117 +19777,129 @@ dcl_texcoord3 v3.xyz
 dcl_texcoord5 v4.xyz
 dp3 r0.x, v4, v4
 rsq r0.x, r0.x
-mul r3.xyz, r0.x, v4
-abs r2.xyz, r3
-abs r1.y, r3
-add r0.w, r2.z, -r2.x
-add r1.w, -r1.y, c12.y
-mad r1.z, r1.y, c12, c12.w
-mad r1.z, r1, r1.y, c13.x
-rsq r1.w, r1.w
-add r0.xyz, r2.zxyw, -r2
-cmp r0.w, r0, c12.y, c12.x
-mad r0.xyz, r0.w, r0, r2
-add r0.w, -r2.y, r0.x
-add r0.xyz, -r2.yxzw, r0
-cmp r0.w, r0, c12.y, c12.x
-mad r0.xyz, r0.w, r0, r2.yxzw
-abs r2.y, r3.z
-max r0.w, r2.x, r2.y
+mul r2.xyz, r0.x, v4
+abs r1.xyz, r2
+abs r1.w, r2.y
+add r0.w, r1.z, -r1.x
+add r3.x, -r1.w, c10
+mad r2.w, r1, c11.x, c11.y
+mad r2.w, r2, r1, c10
+rsq r3.x, r3.x
+add r0.xyz, r1.zxyw, -r1
+cmp r0.w, r0, c10.x, c10.y
+mad r0.xyz, r0.w, r0, r1
+add r0.w, -r1.y, r0.x
+add r0.xyz, -r1.yxzw, r0
+cmp r0.w, r0, c10.x, c10.y
+mad r0.xyz, r0.w, r0, r1.yxzw
 abs_pp r0.x, r0
 rcp_pp r0.x, r0.x
 mul_pp r0.xy, r0.zyzw, r0.x
-min r0.z, r2.x, r2.y
-rcp r0.w, r0.w
+abs r1.y, r2.z
+max r0.z, r1.x, r1.y
+rcp r0.w, r0.z
+min r0.z, r1.x, r1.y
 mul r0.z, r0, r0.w
 mul r0.w, r0.z, r0.z
-mad r1.x, r0.w, c14.y, c14.z
-mad r1.x, r1, r0.w, c14.w
-mul_pp r0.xy, r0, c16.y
-mad r2.z, r1.x, r0.w, c15.x
-mad r1.y, r1.z, r1, c13
-rcp r1.w, r1.w
-mul r1.z, r1.y, r1.w
-cmp r1.y, r3, c12.x, c12
-mul r1.w, r1.y, r1.z
-mad r1.x, -r1.w, c13.z, r1.z
-mad r1.z, r2, r0.w, c15.y
-mad r1.x, r1.y, c13.w, r1
-mad r1.y, r1.z, r0.w, c15.z
-mul r0.w, r1.x, c14.x
-mul r3.y, r1, r0.z
-dsx r2.zw, r3.xyxz
-mul r2.zw, r2, r2
-add r0.z, r2, r2.w
-dsy r1.xz, r3
-mul r1.xz, r1, r1
-add r1.x, r1, r1.z
+mul_pp r0.xy, r0, c14.z
+mad r1.z, r0.w, c12, c12.w
+mad r1.w, r2, r1, c11.z
+rcp r3.x, r3.x
+mul r2.w, r1, r3.x
+cmp r1.w, r2.y, c10.y, c10.x
+mul r2.y, r1.w, r2.w
+mad r3.x, r1.z, r0.w, c13
+mad r1.z, -r2.y, c11.w, r2.w
+mad r2.y, r1.w, c12.x, r1.z
+mad r2.w, r3.x, r0, c13.y
+mad r1.z, r2.w, r0.w, c13
+mad r0.w, r1.z, r0, c13
+mul r2.w, r0, r0.z
+mul r1.w, r2.y, c6.x
+mul r1.z, r1.w, c14.w
+dsx r0.zw, r2.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-dsx r1.w, r0
-dsy r1.y, r0.w
-mul r1.z, r0, c16.x
-add r2.z, -r3.y, c15.w
-add r2.x, r2, -r2.y
-cmp r2.w, -r2.x, r3.y, r2.z
-add r3.w, -r2, c13
-mul r3.y, v0.x, c8.x
-cmp r2.w, r3.z, r2, r3
-mul r1.x, r1, c16
-mul r0.xy, r0, c7.x
-texldd r0.xyz, r0, s1, r1.zwzw, r1
-add_pp r2.xyz, -r0, c12.y
-mul_sat r3.y, r3, c13.z
-mad_pp r0.xyz, r3.y, r2, r0
-cmp r2.x, r3, r2.w, -r2.w
-mad r3.x, r2, c16, c16.y
-mov r3.y, r0.w
-texldd r1, r3, s0, r1.zwzw, r1
-dp4 r2.y, c1, c1
-rsq r2.x, r2.y
-mul r2.xyz, r2.x, c1
-dp3_pp r0.w, v2, -r2
-mul_pp r3.xyz, v2, r0.w
-mad_pp r3.xyz, -r3, c13.z, -r2
-dp3_pp_sat r2.x, v2, r2
-add_pp r2.y, r2.x, c12
-mul r0.w, v0.x, c6.x
-frc_pp r2.z, r2.y
-mul r2.w, r0, r0
-dp3_pp_sat r3.x, r3, v1
-add_pp r1.xyz, r1, -r0
-mul_sat r2.w, r2, r0
-mad_pp r1.xyz, r2.w, r1, r0
-pow_pp r0, r3.x, c5.x
-mov_pp r3.y, r0.x
+mul r3.z, r0, c14.y
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsy r1.zw, r2.xyxz
+mul r1.zw, r1, r1
+add r0.w, r1.z, r1
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r3.x, r0.w, c14.y
+mul r0.xy, r0, c6.x
+texldd r0, r0, s1, r3.zwzw, r3
+add r1.z, -r2.w, c14.x
+add r1.x, r1, -r1.y
+cmp r3.y, -r1.x, r2.w, r1.z
+add r3.w, -r3.y, c12.x
+mul r2.w, v0.x, c7.x
+add_pp r1, -r0, c10.x
+mul_sat r2.w, r2, c11
+mad_pp r0, r2.w, r1, r0
+mul r1.z, r2.y, c12.y
+cmp r2.z, r2, r3.y, r3.w
+cmp r1.x, r2, r2.z, -r2.z
+mov r2.x, r3
+mul r3.x, v0, c5
+mul r3.y, r3.x, r3.x
+mov r1.y, r1.z
+dsx r1.w, r1.z
+dsy r2.y, r1.z
+mov r1.z, r3
+mad r1.x, r1, c14.y, c14.z
+texldd r2, r1, s0, r1.zwzw, r2
+add_pp r1, r2, -r0
+mul_sat r3.x, r3.y, r3
+mad_pp r1, r3.x, r1, r0
+mul_pp r1, r1, c3
+dp4 r2.w, c0, c0
+rsq r2.w, r2.w
+mul r0.xyz, r2.w, c0
+dp3_pp r0.w, r0, r0
+add_pp r3.xyz, -r1, r2
+rsq_pp r0.w, r0.w
+mul_pp r2.xyz, r0.w, r0
+dp3_pp r2.w, v1, v1
+rsq_pp r0.x, r2.w
+mad_pp r0.xyz, r0.x, v1, r2
+dp3_pp r0.w, r0, r0
+rsq_pp r3.w, r0.w
+mul_sat r2.w, c8.x, c8.x
+mad_pp r3.xyz, r2.w, r3, r1
+add r1.xyz, v2, -c9
+dp3 r0.w, r1, r1
+mul_pp r0.xyz, r3.w, r0
+rsq r3.w, r0.w
+mul r1.xyz, r3.w, r1
+mov r0.w, c4.x
+dp3_pp_sat r4.x, r1, r0
+mul r3.w, c15.y, r0
+pow r0, r4.x, r3.w
+dp3_pp r0.y, r1, r2
+mul r0.z, r1.w, r0.x
+mul_pp r3.xyz, r3, c1
+mov_pp r2.xyz, c1
 dp3 r0.x, v3, v3
-add_pp r3.x, r1.w, c17
-texld r0.x, r0.x, s2
+mul_pp r1.xyz, r0.y, r3
+mul_pp r2.xyz, c2, r2
+mad r1.xyz, r2, r0.z, r1
 texld r0.w, v3, s3
-mul r0.w, r0.x, r0
-mul r0.xyz, r0.w, c2
-mul r0.xyz, r0, c3
-mul r0.xyz, r0, r3.y
-add_pp_sat r2.y, r2, -r2.z
-add_pp r2.x, r2, c16.z
-mul r0.xyz, r2.y, r0
-mul_pp r3.y, r2.x, c2.w
-mul r2.xyz, r1.w, r0
-mul_pp r0.y, r3, r0.w
-mul_pp_sat r0.w, r0.y, c16
-mov r0.x, c9
-add r0.xyz, c2, r0.x
-mad_sat r0.xyz, r0, r0.w, c0
-mad_pp r0.w, r2, r3.x, c17.y
-add_pp r0.xyz, r0, r2
-mul_pp r1.xyz, r1, c4
-mul r3.xyz, r0, c11.x
-mad_sat r2.xyz, r0, c10.x, -r0.w
-mad_pp r1.xyz, r1, r2, r3
-mul_pp oC0.xyz, r1, r0
-mov_pp oC0.w, r0
+texld r0.x, r0.x, s2
+mul r0.x, r0, r0.w
+mul_pp r0.z, r0.x, c10
+mul_pp r0.x, r0, r0.y
+mul_pp r0.x, r0, c10.z
+cmp_pp r0.y, r0.x, c10.x, c10
+mul oC0.xyz, r1, r0.z
+add_pp r0.x, -r2.w, c10
+add_pp r0.z, r1.w, c15.x
+mul_pp r0.x, r0, r0.y
+mad_pp oC0.w, r0.x, r0.z, c10.x
 "
 }
 
@@ -20037,32 +19925,30 @@ Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
 
 SubProgram "d3d9 " {
 Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightColor0]
-Vector 3 [_SpecColor]
-Vector 4 [_Color]
-Float 5 [_Shininess]
-Float 6 [_MainTexHandoverDist]
-Float 7 [_DetailScale]
-Float 8 [_DetailDist]
-Float 9 [_MinLight]
-Float 10 [_LightPower]
-Float 11 [_Reflectivity]
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightColor0]
+Vector 2 [_SpecColor]
+Vector 3 [_Color]
+Float 4 [_Shininess]
+Float 5 [_MainTexHandoverDist]
+Float 6 [_DetailScale]
+Float 7 [_DetailDist]
+Float 8 [_PlanetOpacity]
+Vector 9 [_PlanetOrigin]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTexture0] 2D
 "ps_3_0
-; 113 ALU, 7 TEX
+; 125 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c17, -0.44897461, 0.44897461, 0, 0
+def c10, 1.00000000, 0.00000000, 4.00000000, -0.21211439
+def c11, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c12, 3.14159298, 0.31830987, -0.01348047, 0.05747731
+def c13, -0.12123910, 0.19563590, -0.33299461, 0.99999559
+def c14, 1.57079601, 0.15915494, 0.50000000, 1.27323949
+def c15, -1.00000000, 128.00000000, 0, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -20070,502 +19956,151 @@ dcl_texcoord3 v3.xy
 dcl_texcoord5 v4.xyz
 dp3 r0.x, v4, v4
 rsq r0.x, r0.x
-mul r3.xyz, r0.x, v4
-abs r2.xyz, r3
-add r0.w, r2.z, -r2.x
-add r0.xyz, r2.zxyw, -r2
-cmp r0.w, r0, c12.y, c12.x
-mad r0.xyz, r0.w, r0, r2
-add r0.w, -r2.y, r0.x
-add r0.xyz, -r2.yxzw, r0
-cmp r0.w, r0, c12.y, c12.x
-mad r0.xyz, r0.w, r0, r2.yxzw
-abs_pp r0.x, r0
-rcp_pp r0.w, r0.x
-abs r2.y, r3.z
-mul_pp r0.zw, r0.xyzy, r0.w
-max r0.x, r2, r2.y
-mul_pp r0.zw, r0, c16.y
-rcp r0.y, r0.x
-min r0.x, r2, r2.y
-mul r0.x, r0, r0.y
-mul r1.xy, r0.zwzw, c7.x
-abs r0.w, r3.y
-mul r0.y, r0.x, r0.x
-mad r0.z, r0.y, c14.y, c14
-mad r0.z, r0, r0.y, c14.w
-add r1.w, -r0, c12.y
-mad r1.z, r0.w, c12, c12.w
-mad r1.z, r1, r0.w, c13.x
-rsq r1.w, r1.w
-mad r2.z, r0, r0.y, c15.x
-mad r0.w, r1.z, r0, c13.y
-rcp r1.w, r1.w
-mul r1.z, r0.w, r1.w
-cmp r0.w, r3.y, c12.x, c12.y
-mul r1.w, r0, r1.z
-mad r0.z, -r1.w, c13, r1
-mad r1.z, r2, r0.y, c15.y
-mad r0.z, r0.w, c13.w, r0
-mul r1.w, r0.z, c14.x
-mad r0.y, r1.z, r0, c15.z
-mul r3.y, r0, r0.x
-dsx r2.zw, r3.xyxz
-mul r2.zw, r2, r2
-add r1.z, r2, r2.w
-dsy r0.xz, r3
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-rsq r0.x, r1.z
-rsq r0.z, r0.z
-dsx r0.w, r1
-dsy r0.y, r1.w
-rcp r1.z, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c16.x
-mul r0.x, r1.z, c16
-texldd r1.xyz, r1, s1, r0.zwzw, r0
-add r2.z, -r3.y, c15.w
-add r2.x, r2, -r2.y
-cmp r2.w, -r2.x, r3.y, r2.z
-add r3.w, -r2, c13
-cmp r2.w, r3.z, r2, r3
-mul r3.y, v0.x, c8.x
-add_pp r2.xyz, -r1, c12.y
-mul_sat r3.y, r3, c13.z
-mad_pp r1.xyz, r3.y, r2, r1
-cmp r2.x, r3, r2.w, -r2.w
-mad r3.x, r2, c16, c16.y
-mov r3.y, r1.w
-texldd r0, r3, s0, r0.zwzw, r0
-dp4_pp r2.y, c1, c1
-rsq_pp r2.x, r2.y
-mul_pp r2.xyz, r2.x, c1
-dp3_pp r1.w, v2, -r2
-mul_pp r3.xyz, v2, r1.w
-mad_pp r3.xyz, -r3, c13.z, -r2
-dp3_pp_sat r2.x, v2, r2
-add_pp r2.y, r2.x, c12
-mul r1.w, v0.x, c6.x
-frc_pp r2.z, r2.y
-mul r2.w, r1, r1
-dp3_pp_sat r3.x, r3, v1
-add_pp r0.xyz, r0, -r1
-mul_sat r2.w, r2, r1
-mad_pp r0.xyz, r2.w, r0, r1
-pow_pp r1, r3.x, c5.x
-mov_pp r3.x, r1
-texld r3.w, v3, s2
-mul r1.xyz, r3.w, c2
-mul r1.xyz, r1, c3
-mul r1.xyz, r1, r3.x
-add_pp_sat r2.y, r2, -r2.z
-add_pp r2.x, r2, c16.z
-mul r1.xyz, r2.y, r1
-mul_pp r3.x, r2, c2.w
-mul r2.xyz, r0.w, r1
-mul_pp r1.x, r3, r3.w
-add_pp r1.w, r0, c17.x
-mul_pp_sat r3.x, r1, c16.w
-mov r0.w, c9.x
-add r1.xyz, c2, r0.w
-mad_sat r1.xyz, r1, r3.x, c0
-add_pp r1.xyz, r1, r2
-mad_pp r0.w, r2, r1, c17.y
-mul_pp r0.xyz, r0, c4
-mul r3.xyz, r1, c11.x
-mad_sat r2.xyz, r1, c10.x, -r0.w
-mad_pp r0.xyz, r0, r2, r3
-mul_pp oC0.xyz, r0, r1
-mov_pp oC0.w, r0
-"
-}
-
-SubProgram "gles " {
-Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "SPOT" "SHADOWS_DEPTH" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "SPOT" "SHADOWS_DEPTH" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightShadowData]
-Vector 3 [_LightColor0]
-Vector 4 [_SpecColor]
-Vector 5 [_Color]
-Float 6 [_Shininess]
-Float 7 [_MainTexHandoverDist]
-Float 8 [_DetailScale]
-Float 9 [_DetailDist]
-Float 10 [_MinLight]
-Float 11 [_LightPower]
-Float 12 [_Reflectivity]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_LightTexture0] 2D
-SetTexture 3 [_LightTextureB0] 2D
-SetTexture 4 [_ShadowMapTexture] 2D
-"ps_3_0
-; 122 ALU, 9 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, -0.44897461, 0.44897461, 0, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3
-dcl_texcoord4 v4
-dcl_texcoord5 v5.xyz
-dp3 r0.x, v5, v5
-rsq r0.x, r0.x
-mul r0.xyz, r0.x, v5
-abs r1.xyz, r0
+mul r2.xyz, r0.x, v4
+abs r1.xyz, r2
+abs r1.w, r2.y
 add r0.w, r1.z, -r1.x
-add r2.xyz, r1.zxyw, -r1
-cmp r0.w, r0, c13.y, c13.x
-mad r2.xyz, r0.w, r2, r1
-add r0.w, -r1.y, r2.x
-add r2.xyz, -r1.yxzw, r2
-cmp r0.w, r0, c13.y, c13.x
-mad r2.xyz, r0.w, r2, r1.yxzw
-abs_pp r1.y, r2.x
-abs r0.w, r0.z
-rcp_pp r1.y, r1.y
-mul_pp r1.zw, r2.xyzy, r1.y
-abs r2.z, r0.y
-max r2.x, r1, r0.w
-rcp r1.y, r2.x
-min r2.x, r1, r0.w
-mul r1.y, r2.x, r1
-mul r2.x, r1.y, r1.y
-mad r2.y, r2.x, c15, c15.z
-add r2.w, -r2.z, c13.y
-mad r3.x, r2.z, c13.z, c13.w
-mad r3.x, r3, r2.z, c14
-mad r2.z, r3.x, r2, c14.y
-mul_pp r1.zw, r1, c17.y
-rsq r2.w, r2.w
-rcp r2.w, r2.w
-mul r1.zw, r1, c8.x
-mad r2.y, r2, r2.x, c15.w
-cmp r3.x, r0.y, c13, c13.y
-mul r2.w, r2.z, r2
-mad r0.y, r2, r2.x, c16.x
-mad r0.y, r0, r2.x, c16
-mul r2.z, r3.x, r2.w
-mad r2.y, -r2.z, c14.z, r2.w
-mad r2.x, r0.y, r2, c16.z
-mad r2.y, r3.x, c14.w, r2
-mul r0.y, r2, c15.x
-mul r1.y, r2.x, r1
-dsx r2.zw, r0.xyxz
-mul r2.zw, r2, r2
-dsy r2.xy, r0.xzzw
-mul r2.xy, r2, r2
-add r2.x, r2, r2.y
-add r2.z, r2, r2.w
-rsq r2.y, r2.z
-rcp r2.y, r2.y
-rsq r2.x, r2.x
-rcp r2.x, r2.x
-dsx r3.y, r0
-dsy r3.w, r0.y
-mul r3.x, r2.y, c17
-mul r3.z, r2.x, c17.x
-texldd r2.xyz, r1.zwzw, s1, r3, r3.zwzw
-add r0.w, r1.x, -r0
-add r1.z, -r1.y, c16.w
-cmp r2.w, -r0, r1.y, r1.z
-add r1.w, -r2, c14
-cmp r0.z, r0, r2.w, r1.w
-cmp r0.x, r0, r0.z, -r0.z
-mul r0.w, v0.x, c9.x
-dp4 r0.z, c1, c1
-add_pp r1.xyz, -r2, c13.y
-mul_sat r0.w, r0, c14.z
-mad_pp r1.xyz, r0.w, r1, r2
-rsq r0.z, r0.z
-mul r2.xyz, r0.z, c1
-mad r0.x, r0, c17, c17.y
-texldd r0, r0, s0, r3, r3.zwzw
-dp3_pp r1.w, v2, -r2
-mul_pp r3.xyz, v2, r1.w
-mad_pp r3.xyz, -r3, c14.z, -r2
-dp3_pp_sat r2.y, v2, r2
-mul r1.w, v0.x, c7.x
-mul r3.w, r1, r1
-add_pp r0.xyz, r0, -r1
-mul_sat r1.w, r3, r1
-mad_pp r0.xyz, r1.w, r0, r1
-dp3_pp_sat r2.w, r3, v1
-pow_pp r3, r2.w, c6.x
-add_pp r3.y, r2, c13
-add_pp r1.z, r0.w, c18.x
-texldp r1.x, v4, s4
-rcp r1.y, v4.w
-mad r1.y, -v4.z, r1, r1.x
-mov r1.x, c2
-cmp r2.z, r1.y, c13.y, r1.x
-rcp r2.x, v3.w
-mad r1.xy, v3, r2.x, c17.y
-texld r2.w, r1, s2
-dp3 r2.x, v3, v3
-cmp r1.y, -v3.z, c13.x, c13
-mul_pp r1.y, r1, r2.w
-texld r1.x, r2.x, s3
-mul_pp r1.x, r1.y, r1
-mul_pp r1.x, r1, r2.z
-mul r2.xzw, r1.x, c3.xyyz
-frc_pp r1.y, r3
-mul r2.xzw, r2, c4.xyyz
-mul r2.xzw, r2, r3.x
-add_pp_sat r1.y, r3, -r1
-add_pp r3.x, r2.y, c17.z
-mul r2.xyz, r1.y, r2.xzww
-mul_pp r1.y, r3.x, c3.w
-mul r2.xyz, r0.w, r2
-mul_pp r0.w, r1.y, r1.x
-mov r1.x, c10
-mul_pp_sat r0.w, r0, c17
-add r3.xyz, c3, r1.x
-mad_sat r3.xyz, r3, r0.w, c0
-mad_pp r0.w, r1, r1.z, c18.y
-add_pp r2.xyz, r3, r2
-mul_pp r0.xyz, r0, c5
-mul r1.xyz, r2, c12.x
-mad_sat r3.xyz, r2, c11.x, -r0.w
-mad_pp r0.xyz, r0, r3, r1
-mul_pp oC0.xyz, r0, r2
-mov_pp oC0.w, r0
-"
-}
-
-SubProgram "gles " {
-Keywords { "SPOT" "SHADOWS_DEPTH" }
-"!!GLES"
-}
-
-SubProgram "glesdesktop " {
-Keywords { "SPOT" "SHADOWS_DEPTH" }
-"!!GLES"
-}
-
-SubProgram "gles3 " {
-Keywords { "SPOT" "SHADOWS_DEPTH" }
-"!!GLES3"
-}
-
-SubProgram "opengl " {
-Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-"!!GLSL"
-}
-
-SubProgram "d3d9 " {
-Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightShadowData]
-Vector 3 [_LightColor0]
-Vector 4 [_SpecColor]
-Vector 5 [_Color]
-Float 6 [_Shininess]
-Float 7 [_MainTexHandoverDist]
-Float 8 [_DetailScale]
-Float 9 [_DetailDist]
-Float 10 [_MinLight]
-Float 11 [_LightPower]
-Float 12 [_Reflectivity]
-SetTexture 0 [_MainTex] 2D
-SetTexture 1 [_DetailTex] 2D
-SetTexture 2 [_LightTexture0] 2D
-SetTexture 3 [_LightTextureB0] 2D
-SetTexture 4 [_ShadowMapTexture] 2D
-"ps_3_0
-; 122 ALU, 9 TEX
-dcl_2d s0
-dcl_2d s1
-dcl_2d s2
-dcl_2d s3
-dcl_2d s4
-def c13, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c14, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c15, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c16, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c17, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c18, -0.44897461, 0.44897461, 0, 0
-dcl_texcoord0 v0.x
-dcl_texcoord1 v1.xyz
-dcl_texcoord2 v2.xyz
-dcl_texcoord3 v3
-dcl_texcoord4 v4
-dcl_texcoord5 v5.xyz
-dp3 r0.x, v5, v5
-rsq r0.x, r0.x
-mul r1.xyz, r0.x, v5
-abs r3.xyz, r1
-abs r2.y, r1
-add r0.w, r3.z, -r3.x
-add r2.z, -r2.y, c13.y
-mad r2.w, r2.y, c13.z, c13
-mad r2.w, r2, r2.y, c14.x
-mad r2.y, r2.w, r2, c14
-rsq r2.z, r2.z
-rcp r2.z, r2.z
-add r0.xyz, r3.zxyw, -r3
-cmp r0.w, r0, c13.y, c13.x
-mad r0.xyz, r0.w, r0, r3
-add r0.w, -r3.y, r0.x
-add r0.xyz, -r3.yxzw, r0
-cmp r0.w, r0, c13.y, c13.x
-mad r0.xyz, r0.w, r0, r3.yxzw
-abs r1.w, r1.z
-dsx r3.zw, r1.xyxz
-mul r3.zw, r3, r3
+add r3.x, -r1.w, c10
+mad r2.w, r1, c11.x, c11.y
+mad r2.w, r2, r1, c10
+rsq r3.x, r3.x
+add r0.xyz, r1.zxyw, -r1
+cmp r0.w, r0, c10.x, c10.y
+mad r0.xyz, r0.w, r0, r1
+add r0.w, -r1.y, r0.x
+add r0.xyz, -r1.yxzw, r0
+cmp r0.w, r0, c10.x, c10.y
+mad r0.xyz, r0.w, r0, r1.yxzw
 abs_pp r0.x, r0
 rcp_pp r0.x, r0.x
 mul_pp r0.xy, r0.zyzw, r0.x
-max r0.w, r3.x, r1
-rcp r0.z, r0.w
-min r0.w, r3.x, r1
-mul r0.z, r0.w, r0
+abs r1.y, r2.z
+max r0.z, r1.x, r1.y
+rcp r0.w, r0.z
+min r0.z, r1.x, r1.y
+mul r0.z, r0, r0.w
 mul r0.w, r0.z, r0.z
-mad r2.x, r0.w, c15.y, c15.z
-mul_pp r0.xy, r0, c17.y
-mad r2.x, r2, r0.w, c15.w
-cmp r2.w, r1.y, c13.x, c13.y
-mul r2.z, r2.y, r2
-mad r1.y, r2.x, r0.w, c16.x
-mul r2.y, r2.w, r2.z
-mad r2.x, -r2.y, c14.z, r2.z
-mad r1.y, r1, r0.w, c16
-mad r1.y, r1, r0.w, c16.z
-mad r2.x, r2.w, c14.w, r2
-mul r0.w, r2.x, c15.x
-dsy r2.xz, r1
-mul r2.xz, r2, r2
-mul r1.y, r1, r0.z
-add r0.z, r2.x, r2
-add r3.y, r3.z, r3.w
-rsq r2.x, r3.y
+mul_pp r0.xy, r0, c14.z
+mad r1.z, r0.w, c12, c12.w
+mad r1.w, r2, r1, c11.z
+rcp r3.x, r3.x
+mul r2.w, r1, r3.x
+cmp r1.w, r2.y, c10.y, c10.x
+mul r2.y, r1.w, r2.w
+mad r3.x, r1.z, r0.w, c13
+mad r1.z, -r2.y, c11.w, r2.w
+mad r2.y, r1.w, c12.x, r1.z
+mad r2.w, r3.x, r0, c13.y
+mad r1.z, r2.w, r0.w, c13
+mad r0.w, r1.z, r0, c13
+mul r2.w, r0, r0.z
+mul r1.w, r2.y, c6.x
+mul r1.z, r1.w, c14.w
+dsx r0.zw, r2.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
-rcp r2.x, r2.x
-dsx r2.y, r0.w
-dsy r2.w, r0
-mul r2.z, r0, c17.x
-add r3.y, -r1, c16.w
-add r1.w, r3.x, -r1
-cmp r3.w, -r1, r1.y, r3.y
-add r1.y, -r3.w, c14.w
-cmp r1.y, r1.z, r3.w, r1
-cmp r1.y, r1.x, r1, -r1
-mul r1.w, v0.x, c9.x
-dp4 r1.x, c1, c1
-mul_sat r1.z, r1.w, c14
-mul r2.x, r2, c17
-mul r0.xy, r0, c8.x
-texldd r0.xyz, r0, s1, r2, r2.zwzw
-add_pp r3.xyz, -r0, c13.y
-mad_pp r0.xyz, r1.z, r3, r0
-mad r3.x, r1.y, c17, c17.y
-mov r3.y, r0.w
-texldd r2, r3, s0, r2, r2.zwzw
-rsq r1.x, r1.x
-mul r1.xyz, r1.x, c1
-dp3_pp r0.w, v2, -r1
-mul_pp r3.xyz, v2, r0.w
-mad_pp r3.xyz, -r3, c14.z, -r1
-mul r0.w, v0.x, c7.x
-mul r3.w, r0, r0
-add_pp r2.xyz, r2, -r0
-mul_sat r0.w, r3, r0
-mad_pp r0.xyz, r0.w, r2, r0
-mul_pp r2.xyz, r0, c5
-dp3_pp_sat r0.z, v2, r1
-dp3_pp_sat r1.w, r3, v1
-pow_pp r3, r1.w, c6.x
-add_pp r3.y, r0.z, c13
-add_pp r0.y, r2.w, c18.x
-mad_pp r0.w, r0, r0.y, c18.y
-mov r0.x, c2
-add r1.x, c13.y, -r0
-texldp r0.x, v4, s4
-mad r1.z, r0.x, r1.x, c2.x
-rcp r1.y, v3.w
-mad r1.xy, v3, r1.y, c17.y
-texld r1.w, r1, s2
-dp3 r0.x, v3, v3
-cmp r1.x, -v3.z, c13, c13.y
-mul_pp r1.x, r1, r1.w
-frc_pp r1.w, r3.y
-texld r0.x, r0.x, s3
-mul_pp r0.x, r1, r0
-mul_pp r0.x, r0, r1.z
-mul r1.xyz, r0.x, c3
-mul r1.xyz, r1, c4
-add_pp r0.z, r0, c17
-mul_pp r0.z, r0, c3.w
-mul_pp r0.x, r0.z, r0
-mul r1.xyz, r1, r3.x
-add_pp_sat r1.w, r3.y, -r1
-mov r0.z, c10.x
-mul r1.xyz, r1.w, r1
-mul_pp_sat r0.x, r0, c17.w
-add r3.xyz, c3, r0.z
-mad_sat r3.xyz, r3, r0.x, c0
-mul r1.xyz, r2.w, r1
-add_pp r1.xyz, r3, r1
-mul r0.xyz, r1, c12.x
-mad_sat r3.xyz, r1, c11.x, -r0.w
-mad_pp r0.xyz, r2, r3, r0
-mul_pp oC0.xyz, r0, r1
-mov_pp oC0.w, r0
+mul r3.z, r0, c14.y
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsy r1.zw, r2.xyxz
+mul r1.zw, r1, r1
+add r0.w, r1.z, r1
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r3.x, r0.w, c14.y
+mul r0.xy, r0, c6.x
+texldd r0, r0, s1, r3.zwzw, r3
+add r1.z, -r2.w, c14.x
+add r1.x, r1, -r1.y
+cmp r3.y, -r1.x, r2.w, r1.z
+add r3.w, -r3.y, c12.x
+mul r2.w, v0.x, c7.x
+add_pp r1, -r0, c10.x
+mul_sat r2.w, r2, c11
+mad_pp r1, r2.w, r1, r0
+mul r0.z, r2.y, c12.y
+cmp r2.z, r2, r3.y, r3.w
+cmp r0.x, r2, r2.z, -r2.z
+mov r2.x, r3
+mul r3.x, v0, c5
+dsy r2.y, r0.z
+mov r0.y, r0.z
+dsx r0.w, r0.z
+mov r0.z, r3
+mad r0.x, r0, c14.y, c14.z
+texldd r0, r0, s0, r0.zwzw, r2
+add_pp r2, r0, -r1
+mul r3.y, r3.x, r3.x
+mul_sat r0.w, r3.y, r3.x
+mad_pp r1, r0.w, r2, r1
+mul_pp r1, r1, c3
+add_pp r3.xyz, -r1, r0
+dp4_pp r0.w, c0, c0
+rsq_pp r0.x, r0.w
+mul_sat r2.w, c8.x, c8.x
+mad_pp r3.xyz, r2.w, r3, r1
+mul_pp r2.xyz, r0.x, c0
+dp3_pp r0.y, v1, v1
+rsq_pp r0.x, r0.y
+mad_pp r0.xyz, r0.x, v1, r2
+dp3_pp r0.w, r0, r0
+rsq_pp r3.w, r0.w
+add r1.xyz, v2, -c9
+dp3 r0.w, r1, r1
+mul_pp r0.xyz, r3.w, r0
+rsq r3.w, r0.w
+mul r1.xyz, r3.w, r1
+mov r0.w, c4.x
+mul r3.w, c15.y, r0
+dp3_pp_sat r4.x, r1, r0
+pow r0, r4.x, r3.w
+dp3_pp r0.w, r1, r2
+mov r2.x, r0
+mul_pp r3.xyz, r3, c1
+mov_pp r0.xyz, c1
+mul_pp r1.xyz, r0.w, r3
+texld r3.w, v3, s2
+mul r2.x, r1.w, r2
+mul_pp r0.xyz, c2, r0
+mad r0.xyz, r0, r2.x, r1
+mul_pp r1.x, r3.w, c10.z
+mul oC0.xyz, r0, r1.x
+mul_pp r0.w, r3, r0
+mul_pp r0.x, r0.w, c10.z
+cmp_pp r0.y, r0.x, c10.x, c10
+add_pp r0.x, -r2.w, c10
+add_pp r0.z, r1.w, c15.x
+mul_pp r0.x, r0, r0.y
+mad_pp oC0.w, r0.x, r0.z, c10.x
 "
 }
 
 SubProgram "gles " {
-Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
 "!!GLES"
 }
 
 SubProgram "gles3 " {
-Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_OFF" }
 "!!GLES3"
 }
 
 SubProgram "opengl " {
-Keywords { "DIRECTIONAL" "SHADOWS_SCREEN" }
+Keywords { "SPOT" "SHADOWS_DEPTH" }
 "!!GLSL"
 }
 
 SubProgram "d3d9 " {
-Keywords { "DIRECTIONAL" "SHADOWS_SCREEN" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
+Keywords { "SPOT" "SHADOWS_DEPTH" }
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightShadowData]
 Vector 2 [_LightColor0]
 Vector 3 [_SpecColor]
 Vector 4 [_Color]
@@ -20573,23 +20108,405 @@ Float 5 [_Shininess]
 Float 6 [_MainTexHandoverDist]
 Float 7 [_DetailScale]
 Float 8 [_DetailDist]
-Float 9 [_MinLight]
-Float 10 [_LightPower]
-Float 11 [_Reflectivity]
+Float 9 [_PlanetOpacity]
+Vector 10 [_PlanetOrigin]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_LightTexture0] 2D
+SetTexture 3 [_LightTextureB0] 2D
+SetTexture 4 [_ShadowMapTexture] 2D
+"ps_3_0
+; 138 ALU, 9 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+def c11, 1.00000000, 0.00000000, 0.50000000, 4.00000000
+def c12, -0.01872930, 0.07426100, -0.21211439, 1.57072902
+def c13, 2.00000000, 3.14159298, 0.31830987, -0.12123910
+def c14, -0.01348047, 0.05747731, 0.19563590, -0.33299461
+def c15, 0.99999559, 1.57079601, 0.15915494, 0.50000000
+def c16, 1.27323949, -1.00000000, 128.00000000, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3
+dcl_texcoord4 v4
+dcl_texcoord5 v5.xyz
+dp3 r0.x, v5, v5
+rsq r0.x, r0.x
+mul r2.xyz, r0.x, v5
+abs r1.xyz, r2
+add r0.w, r1.z, -r1.x
+add r0.xyz, r1.zxyw, -r1
+cmp r0.w, r0, c11.x, c11.y
+mad r0.xyz, r0.w, r0, r1
+add r0.w, -r1.y, r0.x
+add r0.xyz, -r1.yxzw, r0
+cmp r0.w, r0, c11.x, c11.y
+mad r0.xyz, r0.w, r0, r1.yxzw
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.zw, r0.xyzy, r0.x
+abs r1.y, r2.z
+max r0.x, r1, r1.y
+rcp r0.y, r0.x
+min r0.x, r1, r1.y
+mul_pp r1.zw, r0, c11.z
+mul r0.z, r0.x, r0.y
+mul r0.w, r0.z, r0.z
+mul r0.xy, r1.zwzw, c7.x
+abs r1.z, r2.y
+add r2.w, -r1.z, c11.x
+mad r1.w, r1.z, c12.x, c12.y
+mad r1.w, r1, r1.z, c12.z
+rsq r2.w, r2.w
+mad r3.x, r0.w, c14, c14.y
+mad r1.z, r1.w, r1, c12.w
+rcp r2.w, r2.w
+mul r1.w, r1.z, r2
+cmp r1.z, r2.y, c11.y, c11.x
+mul r2.y, r1.z, r1.w
+mad r2.w, r3.x, r0, c13
+mad r1.w, -r2.y, c13.x, r1
+mad r2.y, r1.z, c13, r1.w
+mad r2.w, r2, r0, c14.z
+mad r1.z, r2.w, r0.w, c14.w
+mad r0.w, r1.z, r0, c15.x
+mul r1.w, r2.y, c7.x
+mul r1.z, r1.w, c16.x
+mul r2.w, r0, r0.z
+dsx r0.zw, r2.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r3.z, r0, c15
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsy r1.zw, r2.xyxz
+mul r1.zw, r1, r1
+add r0.w, r1.z, r1
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r3.x, r0.w, c15.z
+texldd r0, r0, s1, r3.zwzw, r3
+add r1.z, -r2.w, c15.y
+add r1.x, r1, -r1.y
+cmp r2.w, -r1.x, r2, r1.z
+add r3.y, -r2.w, c13
+add_pp r1, -r0, c11.x
+cmp r2.z, r2, r2.w, r3.y
+mul r3.w, v0.x, c8.x
+mul_sat r2.w, r3, c13.x
+mad_pp r1, r2.w, r1, r0
+mul r0.z, r2.y, c13
+cmp r0.x, r2, r2.z, -r2.z
+mov r0.y, r0.z
+dsx r0.w, r0.z
+dsy r2.y, r0.z
+mov r0.z, r3
+mad r0.x, r0, c15.z, c15.w
+mov r2.x, r3
+texldd r2, r0, s0, r0.zwzw, r2
+dp4 r0.x, c0, c0
+rsq r0.x, r0.x
+add_pp r3, r2, -r1
+mul r0.w, v0.x, c6.x
+mul r2.w, r0, r0
+mul_sat r0.w, r2, r0
+mad_pp r1, r0.w, r3, r1
+mul r0.xyz, r0.x, c0
+dp3_pp r0.w, r0, r0
+mul_pp r1, r1, c4
+add_pp r4.xyz, -r1, r2
+rsq_pp r0.w, r0.w
+mul_pp r3.xyz, r0.w, r0
+dp3_pp r2.w, v1, v1
+rsq_pp r0.x, r2.w
+mad_pp r0.xyz, r0.x, v1, r3
+dp3_pp r0.w, r0, r0
+rsq_pp r2.w, r0.w
+add r2.xyz, v2, -c10
+dp3 r0.w, r2, r2
+mul_pp r0.xyz, r2.w, r0
+rsq r2.w, r0.w
+mul r2.xyz, r2.w, r2
+mov r0.w, c5.x
+mul r2.w, c16.z, r0
+dp3_pp_sat r3.w, r2, r0
+pow r0, r3.w, r2.w
+mul_sat r0.y, c9.x, c9.x
+dp3_pp r0.z, r2, r3
+mul r2.w, r1, r0.x
+mad_pp r1.xyz, r0.y, r4, r1
+mul_pp r1.xyz, r1, c2
+mul_pp r2.xyz, r0.z, r1
+mov_pp r1.xyz, c2
+mul_pp r1.xyz, c3, r1
+texldp r0.x, v4, s4
+rcp r0.w, v4.w
+mad r0.w, -v4.z, r0, r0.x
+mov r3.x, c1
+cmp r3.z, r0.w, c11.x, r3.x
+rcp r0.x, v3.w
+mad r3.xy, v3, r0.x, c11.z
+texld r0.w, r3, s2
+dp3 r0.x, v3, v3
+cmp r3.x, -v3.z, c11.y, c11
+mul_pp r0.w, r3.x, r0
+texld r0.x, r0.x, s3
+mul_pp r0.x, r0.w, r0
+mul_pp r0.x, r0, r3.z
+mul_pp r0.w, r0.x, c11
+mul_pp r0.x, r0, r0.z
+mul_pp r0.x, r0, c11.w
+cmp_pp r0.z, r0.x, c11.x, c11.y
+mad r1.xyz, r1, r2.w, r2
+mul oC0.xyz, r1, r0.w
+add_pp r0.x, -r0.y, c11
+add_pp r0.w, r1, c16.y
+mul_pp r0.x, r0, r0.z
+mad_pp oC0.w, r0.x, r0, c11.x
+"
+}
+
+SubProgram "gles " {
+Keywords { "SPOT" "SHADOWS_DEPTH" }
+"!!GLES"
+}
+
+SubProgram "glesdesktop " {
+Keywords { "SPOT" "SHADOWS_DEPTH" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "SPOT" "SHADOWS_DEPTH" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightShadowData]
+Vector 2 [_LightColor0]
+Vector 3 [_SpecColor]
+Vector 4 [_Color]
+Float 5 [_Shininess]
+Float 6 [_MainTexHandoverDist]
+Float 7 [_DetailScale]
+Float 8 [_DetailDist]
+Float 9 [_PlanetOpacity]
+Vector 10 [_PlanetOrigin]
+SetTexture 0 [_MainTex] 2D
+SetTexture 1 [_DetailTex] 2D
+SetTexture 2 [_LightTexture0] 2D
+SetTexture 3 [_LightTextureB0] 2D
+SetTexture 4 [_ShadowMapTexture] 2D
+"ps_3_0
+; 137 ALU, 9 TEX
+dcl_2d s0
+dcl_2d s1
+dcl_2d s2
+dcl_2d s3
+dcl_2d s4
+def c11, 0.00000000, 1.00000000, 0.50000000, 4.00000000
+def c12, -0.01872930, 0.07426100, -0.21211439, 1.57072902
+def c13, 2.00000000, 3.14159298, 0.31830987, -0.12123910
+def c14, -0.01348047, 0.05747731, 0.19563590, -0.33299461
+def c15, 0.99999559, 1.57079601, 0.15915494, 0.50000000
+def c16, 1.27323949, -1.00000000, 128.00000000, 0
+dcl_texcoord0 v0.x
+dcl_texcoord1 v1.xyz
+dcl_texcoord2 v2.xyz
+dcl_texcoord3 v3
+dcl_texcoord4 v4
+dcl_texcoord5 v5.xyz
+dp3 r0.x, v5, v5
+rsq r0.x, r0.x
+mul r2.xyz, r0.x, v5
+abs r1.xyz, r2
+add r0.w, r1.z, -r1.x
+add r0.xyz, r1.zxyw, -r1
+cmp r0.w, r0, c11.y, c11.x
+mad r0.xyz, r0.w, r0, r1
+add r0.w, -r1.y, r0.x
+add r0.xyz, -r1.yxzw, r0
+cmp r0.w, r0, c11.y, c11.x
+mad r0.xyz, r0.w, r0, r1.yxzw
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.zw, r0.xyzy, r0.x
+abs r1.y, r2.z
+max r0.x, r1, r1.y
+rcp r0.y, r0.x
+min r0.x, r1, r1.y
+mul_pp r1.zw, r0, c11.z
+mul r0.z, r0.x, r0.y
+mul r0.w, r0.z, r0.z
+mul r0.xy, r1.zwzw, c7.x
+abs r1.z, r2.y
+add r2.w, -r1.z, c11.y
+mad r1.w, r1.z, c12.x, c12.y
+mad r1.w, r1, r1.z, c12.z
+rsq r2.w, r2.w
+mad r3.x, r0.w, c14, c14.y
+mad r1.z, r1.w, r1, c12.w
+rcp r2.w, r2.w
+mul r1.w, r1.z, r2
+cmp r1.z, r2.y, c11.x, c11.y
+mul r2.y, r1.z, r1.w
+mad r2.w, r3.x, r0, c13
+mad r1.w, -r2.y, c13.x, r1
+mad r2.y, r1.z, c13, r1.w
+mad r2.w, r2, r0, c14.z
+mad r1.z, r2.w, r0.w, c14.w
+mad r0.w, r1.z, r0, c15.x
+mul r1.w, r2.y, c7.x
+mul r1.z, r1.w, c16.x
+mul r2.w, r0, r0.z
+dsx r0.zw, r2.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
+rsq r0.z, r0.z
+rcp r0.z, r0.z
+mul r3.z, r0, c15
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsy r1.zw, r2.xyxz
+mul r1.zw, r1, r1
+add r0.w, r1.z, r1
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r3.x, r0.w, c15.z
+texldd r0, r0, s1, r3.zwzw, r3
+add r1.z, -r2.w, c15.y
+add r1.x, r1, -r1.y
+cmp r2.w, -r1.x, r2, r1.z
+add r3.y, -r2.w, c13
+add_pp r1, -r0, c11.y
+cmp r2.z, r2, r2.w, r3.y
+mul r3.w, v0.x, c8.x
+mul_sat r2.w, r3, c13.x
+mad_pp r1, r2.w, r1, r0
+mul r0.z, r2.y, c13
+cmp r0.x, r2, r2.z, -r2.z
+mov r0.y, r0.z
+dsx r0.w, r0.z
+dsy r2.y, r0.z
+mov r0.z, r3
+mad r0.x, r0, c15.z, c15.w
+mov r2.x, r3
+texldd r2, r0, s0, r0.zwzw, r2
+dp4 r0.x, c0, c0
+rsq r0.x, r0.x
+add_pp r3, r2, -r1
+mul r0.w, v0.x, c6.x
+mul r2.w, r0, r0
+mul_sat r0.w, r2, r0
+mad_pp r1, r0.w, r3, r1
+mul r0.xyz, r0.x, c0
+dp3_pp r0.w, r0, r0
+mul_pp r1, r1, c4
+add_pp r4.xyz, -r1, r2
+rsq_pp r0.w, r0.w
+mul_pp r3.xyz, r0.w, r0
+dp3_pp r2.w, v1, v1
+rsq_pp r0.x, r2.w
+mad_pp r0.xyz, r0.x, v1, r3
+dp3_pp r0.w, r0, r0
+rsq_pp r2.w, r0.w
+add r2.xyz, v2, -c10
+dp3 r0.w, r2, r2
+mul_pp r0.xyz, r2.w, r0
+rsq r2.w, r0.w
+mul r2.xyz, r2.w, r2
+mov r0.w, c5.x
+mul r2.w, c16.z, r0
+dp3_pp_sat r3.w, r2, r0
+pow r0, r3.w, r2.w
+mul_sat r0.y, c9.x, c9.x
+mul r2.w, r1, r0.x
+mad_pp r1.xyz, r0.y, r4, r1
+dp3_pp r0.z, r2, r3
+mul_pp r1.xyz, r1, c2
+mul_pp r2.xyz, r0.z, r1
+mov r0.x, c1
+add r3.x, c11.y, -r0
+texldp r0.x, v4, s4
+mad r3.z, r0.x, r3.x, c1.x
+rcp r0.w, v3.w
+mad r3.xy, v3, r0.w, c11.z
+texld r0.w, r3, s2
+mov_pp r1.xyz, c2
+dp3 r0.x, v3, v3
+cmp r3.x, -v3.z, c11, c11.y
+mul_pp r1.xyz, c3, r1
+mul_pp r0.w, r3.x, r0
+texld r0.x, r0.x, s3
+mul_pp r0.x, r0.w, r0
+mul_pp r0.x, r0, r3.z
+mul_pp r0.w, r0.x, c11
+mul_pp r0.x, r0, r0.z
+mul_pp r0.x, r0, c11.w
+cmp_pp r0.z, r0.x, c11.y, c11.x
+mad r1.xyz, r1, r2.w, r2
+mul oC0.xyz, r1, r0.w
+add_pp r0.x, -r0.y, c11.y
+add_pp r0.w, r1, c16.y
+mul_pp r0.x, r0, r0.z
+mad_pp oC0.w, r0.x, r0, c11.y
+"
+}
+
+SubProgram "gles " {
+Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+"!!GLES"
+}
+
+SubProgram "gles3 " {
+Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_NATIVE" }
+"!!GLES3"
+}
+
+SubProgram "opengl " {
+Keywords { "DIRECTIONAL" "SHADOWS_SCREEN" }
+"!!GLSL"
+}
+
+SubProgram "d3d9 " {
+Keywords { "DIRECTIONAL" "SHADOWS_SCREEN" }
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightColor0]
+Vector 2 [_SpecColor]
+Vector 3 [_Color]
+Float 4 [_Shininess]
+Float 5 [_MainTexHandoverDist]
+Float 6 [_DetailScale]
+Float 7 [_DetailDist]
+Float 8 [_PlanetOpacity]
+Vector 9 [_PlanetOrigin]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_ShadowMapTexture] 2D
 "ps_3_0
-; 113 ALU, 7 TEX
+; 125 ALU, 7 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
-def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c17, -0.44897461, 0.44897461, 0, 0
+def c10, 1.00000000, 0.00000000, 4.00000000, -0.21211439
+def c11, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c12, 3.14159298, 0.31830987, -0.01348047, 0.05747731
+def c13, -0.12123910, 0.19563590, -0.33299461, 0.99999559
+def c14, 1.57079601, 0.15915494, 0.50000000, 1.27323949
+def c15, -1.00000000, 128.00000000, 0, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -20597,114 +20514,124 @@ dcl_texcoord3 v3
 dcl_texcoord5 v4.xyz
 dp3 r0.x, v4, v4
 rsq r0.x, r0.x
-mul r3.xyz, r0.x, v4
-abs r2.xyz, r3
-add r0.w, r2.z, -r2.x
-add r0.xyz, r2.zxyw, -r2
-cmp r0.w, r0, c12.y, c12.x
-mad r0.xyz, r0.w, r0, r2
-add r0.w, -r2.y, r0.x
-add r0.xyz, -r2.yxzw, r0
-cmp r0.w, r0, c12.y, c12.x
-mad r0.xyz, r0.w, r0, r2.yxzw
+mul r2.xyz, r0.x, v4
+abs r1.xyz, r2
+abs r1.w, r2.y
+add r0.w, r1.z, -r1.x
+add r3.x, -r1.w, c10
+mad r2.w, r1, c11.x, c11.y
+mad r2.w, r2, r1, c10
+rsq r3.x, r3.x
+add r0.xyz, r1.zxyw, -r1
+cmp r0.w, r0, c10.x, c10.y
+mad r0.xyz, r0.w, r0, r1
+add r0.w, -r1.y, r0.x
+add r0.xyz, -r1.yxzw, r0
+cmp r0.w, r0, c10.x, c10.y
+mad r0.xyz, r0.w, r0, r1.yxzw
 abs_pp r0.x, r0
-rcp_pp r0.w, r0.x
-abs r2.y, r3.z
-mul_pp r0.zw, r0.xyzy, r0.w
-max r0.x, r2, r2.y
-mul_pp r0.zw, r0, c16.y
-rcp r0.y, r0.x
-min r0.x, r2, r2.y
-mul r0.x, r0, r0.y
-mul r1.xy, r0.zwzw, c7.x
-abs r0.w, r3.y
-mul r0.y, r0.x, r0.x
-mad r0.z, r0.y, c14.y, c14
-mad r0.z, r0, r0.y, c14.w
-add r1.w, -r0, c12.y
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+abs r1.y, r2.z
+max r0.z, r1.x, r1.y
+rcp r0.w, r0.z
+min r0.z, r1.x, r1.y
+mul r0.z, r0, r0.w
+mul r0.w, r0.z, r0.z
+mul_pp r0.xy, r0, c14.z
 mad r1.z, r0.w, c12, c12.w
-mad r1.z, r1, r0.w, c13.x
-rsq r1.w, r1.w
-mad r2.z, r0, r0.y, c15.x
-mad r0.w, r1.z, r0, c13.y
-rcp r1.w, r1.w
-mul r1.z, r0.w, r1.w
-cmp r0.w, r3.y, c12.x, c12.y
-mul r1.w, r0, r1.z
-mad r0.z, -r1.w, c13, r1
-mad r1.z, r2, r0.y, c15.y
-mad r0.z, r0.w, c13.w, r0
-mul r1.w, r0.z, c14.x
-mad r0.y, r1.z, r0, c15.z
-mul r3.y, r0, r0.x
-dsx r2.zw, r3.xyxz
-mul r2.zw, r2, r2
-add r1.z, r2, r2.w
-dsy r0.xz, r3
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-rsq r0.x, r1.z
+mad r1.w, r2, r1, c11.z
+rcp r3.x, r3.x
+mul r2.w, r1, r3.x
+cmp r1.w, r2.y, c10.y, c10.x
+mul r2.y, r1.w, r2.w
+mad r3.x, r1.z, r0.w, c13
+mad r1.z, -r2.y, c11.w, r2.w
+mad r2.y, r1.w, c12.x, r1.z
+mad r2.w, r3.x, r0, c13.y
+mad r1.z, r2.w, r0.w, c13
+mad r0.w, r1.z, r0, c13
+mul r2.w, r0, r0.z
+mul r1.w, r2.y, c6.x
+mul r1.z, r1.w, c14.w
+dsx r0.zw, r2.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
 rsq r0.z, r0.z
-dsx r0.w, r1
-dsy r0.y, r1.w
-rcp r1.z, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c16.x
-mul r0.x, r1.z, c16
-texldd r1.xyz, r1, s1, r0.zwzw, r0
-add r2.z, -r3.y, c15.w
-add r2.x, r2, -r2.y
-cmp r2.w, -r2.x, r3.y, r2.z
-add r3.w, -r2, c13
-mul r3.y, v0.x, c8.x
-add_pp r2.xyz, -r1, c12.y
-mul_sat r3.y, r3, c13.z
-mad_pp r1.xyz, r3.y, r2, r1
-cmp r2.w, r3.z, r2, r3
-cmp r2.x, r3, r2.w, -r2.w
-mad r3.x, r2, c16, c16.y
-mov r3.y, r1.w
-texldd r0, r3, s0, r0.zwzw, r0
-dp4_pp r2.y, c1, c1
-rsq_pp r2.x, r2.y
-mul_pp r2.xyz, r2.x, c1
-dp3_pp r1.w, v2, -r2
-mul_pp r3.xyz, v2, r1.w
-mad_pp r3.xyz, -r3, c13.z, -r2
-dp3_pp_sat r2.x, v2, r2
-add_pp r2.y, r2.x, c12
-mul r1.w, v0.x, c6.x
-frc_pp r2.z, r2.y
-mul r2.w, r1, r1
-dp3_pp_sat r3.x, r3, v1
-add_pp r0.xyz, r0, -r1
-mul_sat r2.w, r2, r1
-mad_pp r0.xyz, r2.w, r0, r1
-pow_pp r1, r3.x, c5.x
-mov_pp r3.y, r1.x
-texldp r3.x, v3, s2
-mul r1.xyz, r3.x, c2
-mul r1.xyz, r1, c3
-mul r1.xyz, r1, r3.y
-add_pp_sat r2.y, r2, -r2.z
-add_pp r2.x, r2, c16.z
-mul r1.xyz, r2.y, r1
-mul_pp r3.y, r2.x, c2.w
-mul r2.xyz, r0.w, r1
-mul_pp r1.x, r3.y, r3
-add_pp r1.w, r0, c17.x
-mul_pp_sat r3.x, r1, c16.w
-mov r0.w, c9.x
-add r1.xyz, c2, r0.w
-mad_sat r1.xyz, r1, r3.x, c0
-add_pp r1.xyz, r1, r2
-mad_pp r0.w, r2, r1, c17.y
-mul_pp r0.xyz, r0, c4
-mul r3.xyz, r1, c11.x
-mad_sat r2.xyz, r1, c10.x, -r0.w
-mad_pp r0.xyz, r0, r2, r3
-mul_pp oC0.xyz, r0, r1
-mov_pp oC0.w, r0
+rcp r0.z, r0.z
+mul r3.z, r0, c14.y
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsy r1.zw, r2.xyxz
+mul r1.zw, r1, r1
+add r0.w, r1.z, r1
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r3.x, r0.w, c14.y
+mul r0.xy, r0, c6.x
+texldd r0, r0, s1, r3.zwzw, r3
+add r1.z, -r2.w, c14.x
+add r1.x, r1, -r1.y
+cmp r3.y, -r1.x, r2.w, r1.z
+add r3.w, -r3.y, c12.x
+mul r2.w, v0.x, c7.x
+add_pp r1, -r0, c10.x
+mul_sat r2.w, r2, c11
+mad_pp r1, r2.w, r1, r0
+mul r0.z, r2.y, c12.y
+cmp r2.z, r2, r3.y, r3.w
+cmp r0.x, r2, r2.z, -r2.z
+mov r2.x, r3
+mul r3.x, v0, c5
+dsy r2.y, r0.z
+mov r0.y, r0.z
+dsx r0.w, r0.z
+mov r0.z, r3
+mad r0.x, r0, c14.y, c14.z
+texldd r0, r0, s0, r0.zwzw, r2
+add_pp r2, r0, -r1
+mul r3.y, r3.x, r3.x
+mul_sat r0.w, r3.y, r3.x
+mad_pp r1, r0.w, r2, r1
+mul_pp r1, r1, c3
+add_pp r3.xyz, -r1, r0
+dp4_pp r0.w, c0, c0
+rsq_pp r0.x, r0.w
+mul_sat r2.w, c8.x, c8.x
+mad_pp r3.xyz, r2.w, r3, r1
+mul_pp r2.xyz, r0.x, c0
+dp3_pp r0.y, v1, v1
+rsq_pp r0.x, r0.y
+mad_pp r0.xyz, r0.x, v1, r2
+dp3_pp r0.w, r0, r0
+rsq_pp r3.w, r0.w
+add r1.xyz, v2, -c9
+dp3 r0.w, r1, r1
+mul_pp r0.xyz, r3.w, r0
+rsq r3.w, r0.w
+mul r1.xyz, r3.w, r1
+mov r0.w, c4.x
+dp3_pp_sat r4.x, r1, r0
+mul r3.w, c15.y, r0
+pow r0, r4.x, r3.w
+dp3_pp r0.w, r1, r2
+mov r2.x, r0
+mul r2.y, r1.w, r2.x
+mul_pp r3.xyz, r3, c1
+mov_pp r0.xyz, c1
+mul_pp r1.xyz, r0.w, r3
+texldp r2.x, v3, s2
+mul_pp r0.xyz, c2, r0
+mad r0.xyz, r0, r2.y, r1
+mul_pp r1.x, r2, c10.z
+mul oC0.xyz, r0, r1.x
+mul_pp r0.w, r2.x, r0
+mul_pp r0.x, r0.w, c10.z
+cmp_pp r0.y, r0.x, c10.x, c10
+add_pp r0.x, -r2.w, c10
+add_pp r0.z, r1.w, c15.x
+mul_pp r0.x, r0, r0.y
+mad_pp oC0.w, r0.x, r0.z, c10.x
 "
 }
 
@@ -20730,34 +20657,32 @@ Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
 
 SubProgram "d3d9 " {
 Keywords { "DIRECTIONAL_COOKIE" "SHADOWS_SCREEN" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightColor0]
-Vector 3 [_SpecColor]
-Vector 4 [_Color]
-Float 5 [_Shininess]
-Float 6 [_MainTexHandoverDist]
-Float 7 [_DetailScale]
-Float 8 [_DetailDist]
-Float 9 [_MinLight]
-Float 10 [_LightPower]
-Float 11 [_Reflectivity]
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightColor0]
+Vector 2 [_SpecColor]
+Vector 3 [_Color]
+Float 4 [_Shininess]
+Float 5 [_MainTexHandoverDist]
+Float 6 [_DetailScale]
+Float 7 [_DetailDist]
+Float 8 [_PlanetOpacity]
+Vector 9 [_PlanetOrigin]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_ShadowMapTexture] 2D
 SetTexture 3 [_LightTexture0] 2D
 "ps_3_0
-; 113 ALU, 8 TEX
+; 126 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
-def c12, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c13, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c14, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c15, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c16, 0.15915494, 0.50000000, -0.01000214, 4.03944778
-def c17, -0.44897461, 0.44897461, 0, 0
+def c10, 1.00000000, 0.00000000, 4.00000000, -0.21211439
+def c11, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c12, 3.14159298, 0.31830987, -0.01348047, 0.05747731
+def c13, -0.12123910, 0.19563590, -0.33299461, 0.99999559
+def c14, 1.57079601, 0.15915494, 0.50000000, 1.27323949
+def c15, -1.00000000, 128.00000000, 0, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -20766,115 +20691,126 @@ dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
 dp3 r0.x, v5, v5
 rsq r0.x, r0.x
-mul r3.xyz, r0.x, v5
-abs r2.xyz, r3
-add r0.w, r2.z, -r2.x
-add r0.xyz, r2.zxyw, -r2
-cmp r0.w, r0, c12.y, c12.x
-mad r0.xyz, r0.w, r0, r2
-add r0.w, -r2.y, r0.x
-add r0.xyz, -r2.yxzw, r0
-cmp r0.w, r0, c12.y, c12.x
-mad r0.xyz, r0.w, r0, r2.yxzw
+mul r2.xyz, r0.x, v5
+abs r1.xyz, r2
+abs r1.w, r2.y
+add r0.w, r1.z, -r1.x
+add r3.x, -r1.w, c10
+mad r2.w, r1, c11.x, c11.y
+mad r2.w, r2, r1, c10
+rsq r3.x, r3.x
+add r0.xyz, r1.zxyw, -r1
+cmp r0.w, r0, c10.x, c10.y
+mad r0.xyz, r0.w, r0, r1
+add r0.w, -r1.y, r0.x
+add r0.xyz, -r1.yxzw, r0
+cmp r0.w, r0, c10.x, c10.y
+mad r0.xyz, r0.w, r0, r1.yxzw
 abs_pp r0.x, r0
-rcp_pp r0.w, r0.x
-abs r2.y, r3.z
-mul_pp r0.zw, r0.xyzy, r0.w
-max r0.x, r2, r2.y
-mul_pp r0.zw, r0, c16.y
-rcp r0.y, r0.x
-min r0.x, r2, r2.y
-mul r0.x, r0, r0.y
-mul r1.xy, r0.zwzw, c7.x
-abs r0.w, r3.y
-mul r0.y, r0.x, r0.x
-mad r0.z, r0.y, c14.y, c14
-mad r0.z, r0, r0.y, c14.w
-add r1.w, -r0, c12.y
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+abs r1.y, r2.z
+max r0.z, r1.x, r1.y
+rcp r0.w, r0.z
+min r0.z, r1.x, r1.y
+mul r0.z, r0, r0.w
+mul r0.w, r0.z, r0.z
+mul_pp r0.xy, r0, c14.z
 mad r1.z, r0.w, c12, c12.w
-mad r1.z, r1, r0.w, c13.x
-rsq r1.w, r1.w
-mad r2.z, r0, r0.y, c15.x
-mad r0.w, r1.z, r0, c13.y
-rcp r1.w, r1.w
-mul r1.z, r0.w, r1.w
-cmp r0.w, r3.y, c12.x, c12.y
-mul r1.w, r0, r1.z
-mad r0.z, -r1.w, c13, r1
-mad r1.z, r2, r0.y, c15.y
-mad r0.z, r0.w, c13.w, r0
-mul r1.w, r0.z, c14.x
-mad r0.y, r1.z, r0, c15.z
-mul r3.y, r0, r0.x
-dsx r2.zw, r3.xyxz
-mul r2.zw, r2, r2
-add r1.z, r2, r2.w
-dsy r0.xz, r3
-mul r0.xz, r0, r0
-add r0.z, r0.x, r0
-rsq r0.x, r1.z
+mad r1.w, r2, r1, c11.z
+rcp r3.x, r3.x
+mul r2.w, r1, r3.x
+cmp r1.w, r2.y, c10.y, c10.x
+mul r2.y, r1.w, r2.w
+mad r3.x, r1.z, r0.w, c13
+mad r1.z, -r2.y, c11.w, r2.w
+mad r2.y, r1.w, c12.x, r1.z
+mad r2.w, r3.x, r0, c13.y
+mad r1.z, r2.w, r0.w, c13
+mad r0.w, r1.z, r0, c13
+mul r2.w, r0, r0.z
+mul r1.w, r2.y, c6.x
+mul r1.z, r1.w, c14.w
+dsx r0.zw, r2.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
 rsq r0.z, r0.z
-dsx r0.w, r1
-dsy r0.y, r1.w
-rcp r1.z, r0.z
-rcp r0.x, r0.x
-mul r0.z, r0.x, c16.x
-mul r0.x, r1.z, c16
-texldd r1.xyz, r1, s1, r0.zwzw, r0
-add r2.z, -r3.y, c15.w
-add r2.x, r2, -r2.y
-cmp r2.w, -r2.x, r3.y, r2.z
-add r3.w, -r2, c13
-mul r3.y, v0.x, c8.x
-add_pp r2.xyz, -r1, c12.y
-mul_sat r3.y, r3, c13.z
-mad_pp r1.xyz, r3.y, r2, r1
-cmp r2.w, r3.z, r2, r3
-cmp r2.x, r3, r2.w, -r2.w
-mul r2.w, v0.x, c6.x
-mul r3.w, r2, r2
-mad r3.x, r2, c16, c16.y
-mov r3.y, r1.w
-texldd r0, r3, s0, r0.zwzw, r0
-dp4_pp r2.y, c1, c1
-rsq_pp r2.x, r2.y
-mul_pp r2.xyz, r2.x, c1
-dp3_pp r1.w, v2, -r2
-mul_pp r3.xyz, v2, r1.w
-mad_pp r3.xyz, -r3, c13.z, -r2
-dp3_pp_sat r2.x, v2, r2
-add_pp r2.y, r2.x, c12
-frc_pp r2.z, r2.y
-add_pp r0.xyz, r0, -r1
-mul_sat r2.w, r3, r2
-mad_pp r0.xyz, r2.w, r0, r1
-dp3_pp_sat r1.w, r3, v1
-pow_pp r3, r1.w, c5.x
-mul_pp r1.xyz, r0, c4
-add_pp r3.y, r0.w, c17.x
+rcp r0.z, r0.z
+mul r3.z, r0, c14.y
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsy r1.zw, r2.xyxz
+mul r1.zw, r1, r1
+add r0.w, r1.z, r1
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r3.x, r0.w, c14.y
+mul r0.xy, r0, c6.x
+texldd r0, r0, s1, r3.zwzw, r3
+add r1.z, -r2.w, c14.x
+add r1.x, r1, -r1.y
+cmp r3.y, -r1.x, r2.w, r1.z
+add r3.w, -r3.y, c12.x
+mul r2.w, v0.x, c7.x
+add_pp r1, -r0, c10.x
+mul_sat r2.w, r2, c11
+mad_pp r1, r2.w, r1, r0
+mul r0.z, r2.y, c12.y
+cmp r2.z, r2, r3.y, r3.w
+cmp r0.x, r2, r2.z, -r2.z
+mov r2.x, r3
+mul r3.x, v0, c5
+dsy r2.y, r0.z
+mov r0.y, r0.z
+dsx r0.w, r0.z
+mov r0.z, r3
+mad r0.x, r0, c14.y, c14.z
+texldd r0, r0, s0, r0.zwzw, r2
+add_pp r2, r0, -r1
+mul r3.y, r3.x, r3.x
+mul_sat r0.w, r3.y, r3.x
+mad_pp r1, r0.w, r2, r1
+mul_pp r1, r1, c3
+add_pp r3.xyz, -r1, r0
+dp4_pp r0.w, c0, c0
+rsq_pp r0.x, r0.w
+mul_sat r2.w, c8.x, c8.x
+mad_pp r3.xyz, r2.w, r3, r1
+mul_pp r2.xyz, r0.x, c0
+dp3_pp r0.y, v1, v1
+rsq_pp r0.x, r0.y
+mad_pp r0.xyz, r0.x, v1, r2
+dp3_pp r0.w, r0, r0
+rsq_pp r3.w, r0.w
+add r1.xyz, v2, -c9
+dp3 r0.w, r1, r1
+mul_pp r0.xyz, r3.w, r0
+rsq r3.w, r0.w
+mul r1.xyz, r3.w, r1
+mov r0.w, c4.x
+mul r3.w, c15.y, r0
+dp3_pp_sat r4.x, r1, r0
+pow r0, r4.x, r3.w
+mov r0.w, r0.x
+dp3_pp r3.w, r1, r2
+mov_pp r0.xyz, c1
+mul_pp r3.xyz, r3, c1
+mul_pp r1.xyz, r3.w, r3
+mul r3.x, r1.w, r0.w
+mul_pp r2.xyz, c2, r0
 texldp r0.x, v4, s2
-texld r1.w, v3, s3
-mul r1.w, r1, r0.x
-mul r0.xyz, r1.w, c2
-mul r0.xyz, r0, c3
-mul r0.xyz, r0, r3.x
-add_pp_sat r2.y, r2, -r2.z
-add_pp r2.x, r2, c16.z
-mul r0.xyz, r2.y, r0
-mul_pp r3.x, r2, c2.w
-mul r2.xyz, r0.w, r0
-mul_pp r0.y, r3.x, r1.w
-mul_pp_sat r0.w, r0.y, c16
-mov r0.x, c9
-add r0.xyz, c2, r0.x
-mad_sat r0.xyz, r0, r0.w, c0
-mad_pp r0.w, r2, r3.y, c17.y
-add_pp r0.xyz, r0, r2
-mul r3.xyz, r0, c11.x
-mad_sat r2.xyz, r0, c10.x, -r0.w
-mad_pp r1.xyz, r1, r2, r3
-mul_pp oC0.xyz, r1, r0
-mov_pp oC0.w, r0
+texld r0.w, v3, s3
+mul r0.w, r0, r0.x
+mad r0.xyz, r2, r3.x, r1
+mul_pp r1.x, r0.w, c10.z
+mul oC0.xyz, r0, r1.x
+mul_pp r0.w, r0, r3
+mul_pp r0.x, r0.w, c10.z
+cmp_pp r0.y, r0.x, c10.x, c10
+add_pp r0.x, -r2.w, c10
+add_pp r0.z, r1.w, c15.x
+mul_pp r0.x, r0, r0.y
+mad_pp oC0.w, r0.x, r0.z, c10.x
 "
 }
 
@@ -20900,37 +20836,35 @@ Keywords { "POINT" "SHADOWS_CUBE" }
 
 SubProgram "d3d9 " {
 Keywords { "POINT" "SHADOWS_CUBE" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightPositionRange]
-Vector 3 [_LightShadowData]
-Vector 4 [_LightColor0]
-Vector 5 [_SpecColor]
-Vector 6 [_Color]
-Float 7 [_Shininess]
-Float 8 [_MainTexHandoverDist]
-Float 9 [_DetailScale]
-Float 10 [_DetailDist]
-Float 11 [_MinLight]
-Float 12 [_LightPower]
-Float 13 [_Reflectivity]
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightPositionRange]
+Vector 2 [_LightShadowData]
+Vector 3 [_LightColor0]
+Vector 4 [_SpecColor]
+Vector 5 [_Color]
+Float 6 [_Shininess]
+Float 7 [_MainTexHandoverDist]
+Float 8 [_DetailScale]
+Float 9 [_DetailDist]
+Float 10 [_PlanetOpacity]
+Vector 11 [_PlanetOrigin]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_ShadowMapTexture] CUBE
 SetTexture 3 [_LightTexture0] 2D
 "ps_3_0
-; 123 ALU, 8 TEX
+; 137 ALU, 8 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
 dcl_2d s3
-def c14, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c15, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c18, 0.15915494, 0.50000000, -0.01000214, 0.97000003
-def c19, 1.00000000, 0.00392157, 0.00001538, 0.00000001
-def c20, 4.03944778, -0.44897461, 0.44897461, 0
+def c12, 1.00000000, 0.00000000, 0.97000003, 4.00000000
+def c13, 1.00000000, 0.00392157, 0.00001538, 0.00000001
+def c14, -0.01872930, 0.07426100, -0.21211439, 1.57072902
+def c15, 2.00000000, 3.14159298, 0.31830987, -0.12123910
+def c16, -0.01348047, 0.05747731, 0.19563590, -0.33299461
+def c17, 0.99999559, 1.57079601, 0.15915494, 0.50000000
+def c18, 1.27323949, -1.00000000, 128.00000000, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -20939,125 +20873,137 @@ dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dp3 r0.x, v5, v5
 rsq r0.x, r0.x
-mul r3.xyz, r0.x, v5
-abs r1.xyz, r3
+mul r2.xyz, r0.x, v5
+abs r1.xyz, r2
 add r0.w, r1.z, -r1.x
-dsy r2.zw, r3.xyxz
 add r0.xyz, r1.zxyw, -r1
-cmp r0.w, r0, c14.y, c14.x
+cmp r0.w, r0, c12.x, c12.y
 mad r0.xyz, r0.w, r0, r1
 add r0.w, -r1.y, r0.x
-mul r2.zw, r2, r2
-abs r1.w, r3.z
 add r0.xyz, -r1.yxzw, r0
-cmp r0.w, r0, c14.y, c14.x
+cmp r0.w, r0, c12.x, c12.y
 mad r0.xyz, r0.w, r0, r1.yxzw
-abs r1.z, r3.y
-max r0.w, r1.x, r1
-abs_pp r1.y, r0.x
-add r2.y, -r1.z, c14
-mad r2.x, r1.z, c14.z, c14.w
-mad r2.x, r2, r1.z, c15
-rsq r2.y, r2.y
-min r0.x, r1, r1.w
-rcp r0.w, r0.w
-mul r0.w, r0.x, r0
-rcp_pp r0.x, r1.y
-mul_pp r0.xy, r0.zyzw, r0.x
-mul r1.y, r0.w, r0.w
-mad r0.z, r1.y, c16.y, c16
-mad r0.z, r0, r1.y, c16.w
-mad r0.z, r0, r1.y, c17.x
-mad r0.z, r0, r1.y, c17.y
-mad r1.y, r0.z, r1, c17.z
-mul_pp r0.xy, r0, c18.y
-mul r1.y, r1, r0.w
-mad r1.z, r2.x, r1, c15.y
-rcp r2.y, r2.y
-mul r2.x, r1.z, r2.y
-cmp r1.z, r3.y, c14.x, c14.y
-mul r2.y, r1.z, r2.x
-mad r0.z, -r2.y, c15, r2.x
-mad r0.z, r1, c15.w, r0
-mul r0.w, r0.z, c16.x
-add r0.z, r1.x, -r1.w
-add r1.z, -r1.y, c17.w
-cmp r3.y, -r0.z, r1, r1.z
-add r1.x, r2.z, r2.w
-dsx r2.xy, r3.xzzw
-mul r2.xy, r2, r2
-add r0.z, r2.x, r2.y
-add r2.w, -r3.y, c15
-cmp r2.w, r3.z, r3.y, r2
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.zw, r0.xyzy, r0.x
+abs r1.y, r2.z
+max r0.x, r1, r1.y
+rcp r0.y, r0.x
+min r0.x, r1, r1.y
+mul_pp r1.zw, r0, c17.w
+mul r0.z, r0.x, r0.y
+mul r0.w, r0.z, r0.z
+mul r0.xy, r1.zwzw, c8.x
+abs r1.z, r2.y
+add r2.w, -r1.z, c12.x
+mad r1.w, r1.z, c14.x, c14.y
+mad r1.w, r1, r1.z, c14.z
+rsq r2.w, r2.w
+mad r3.x, r0.w, c16, c16.y
+mad r1.z, r1.w, r1, c14.w
+rcp r2.w, r2.w
+mul r1.w, r1.z, r2
+cmp r1.z, r2.y, c12.y, c12.x
+mul r2.y, r1.z, r1.w
+mad r2.w, r3.x, r0, c15
+mad r1.w, -r2.y, c15.x, r1
+mad r2.y, r1.z, c15, r1.w
+mad r2.w, r2, r0, c16.z
+mad r1.z, r2.w, r0.w, c16.w
+mad r0.w, r1.z, r0, c17.x
+mul r1.w, r2.y, c8.x
+mul r1.z, r1.w, c18.x
+mul r2.w, r0, r0.z
+dsx r0.zw, r2.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-dsx r1.w, r0
-dsy r1.y, r0.w
-mul r1.z, r0, c18.x
-cmp r2.w, r3.x, r2, -r2
-mul r3.y, v0.x, c10.x
-mul r1.x, r1, c18
-mul r0.xy, r0, c9.x
-texldd r0.xyz, r0, s1, r1.zwzw, r1
-add_pp r2.xyz, -r0, c14.y
-mul_sat r3.x, r3.y, c15.z
-mad_pp r0.xyz, r3.x, r2, r0
-mad r2.x, r2.w, c18, c18.y
-mov r2.y, r0.w
-texldd r1, r2, s0, r1.zwzw, r1
-dp4 r2.z, c1, c1
-rsq r0.w, r2.z
-mul r2.xyz, r0.w, c1
-dp3_pp r2.w, v2, -r2
-mul_pp r3.xyz, v2, r2.w
-mad_pp r3.xyz, -r3, c15.z, -r2
-dp3_pp_sat r2.x, v2, r2
-add_pp r2.y, r2.x, c14
-mul r0.w, v0.x, c8.x
-frc_pp r2.z, r2.y
+mul r3.z, r0, c17
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsy r1.zw, r2.xyxz
+mul r1.zw, r1, r1
+add r0.w, r1.z, r1
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r3.x, r0.w, c17.z
+texldd r0, r0, s1, r3.zwzw, r3
+add r1.z, -r2.w, c17.y
+add r1.x, r1, -r1.y
+cmp r2.w, -r1.x, r2, r1.z
+add r3.y, -r2.w, c15
+add_pp r1, -r0, c12.x
+cmp r2.z, r2, r2.w, r3.y
+mul r3.w, v0.x, c9.x
+mul_sat r2.w, r3, c15.x
+mad_pp r1, r2.w, r1, r0
+mul r0.z, r2.y, c15
+cmp r0.x, r2, r2.z, -r2.z
+mov r0.y, r0.z
+dsx r0.w, r0.z
+dsy r2.y, r0.z
+mov r0.z, r3
+mad r0.x, r0, c17.z, c17.w
+mov r2.x, r3
+texldd r2, r0, s0, r0.zwzw, r2
+dp4 r0.x, c0, c0
+rsq r0.x, r0.x
+add_pp r3, r2, -r1
+mul r0.w, v0.x, c7.x
 mul r2.w, r0, r0
-add_pp r1.xyz, r1, -r0
-mul_sat r2.w, r2, r0
-mad_pp r0.xyz, r2.w, r1, r0
-dp3_pp_sat r3.x, r3, v1
-mul_pp r1.xyz, r0, c6
-pow_pp r0, r3.x, c7.x
-dp3 r0.y, v4, v4
-rsq r3.z, r0.y
-mov_pp r3.y, r0.x
-texld r0, v4, s2
-dp4 r0.y, r0, c19
-rcp r3.z, r3.z
-mul r0.x, r3.z, c2.w
-mad r0.y, -r0.x, c18.w, r0
-mov r0.z, c3.x
+mul_sat r0.w, r2, r0
+mad_pp r1, r0.w, r3, r1
+mul r0.xyz, r0.x, c0
+dp3_pp r0.w, r0, r0
+mul_pp r1, r1, c5
+add_pp r4.xyz, -r1, r2
+rsq_pp r0.w, r0.w
+mul_pp r3.xyz, r0.w, r0
+dp3_pp r2.w, v1, v1
+rsq_pp r0.x, r2.w
+mad_pp r0.xyz, r0.x, v1, r3
+dp3_pp r0.w, r0, r0
+rsq_pp r2.w, r0.w
+add r2.xyz, v2, -c11
+dp3 r0.w, r2, r2
+mul_pp r0.xyz, r2.w, r0
+rsq r2.w, r0.w
+mul r2.xyz, r2.w, r2
+mov r0.w, c6.x
+mul r2.w, c18.z, r0
+dp3_pp_sat r3.w, r2, r0
+pow r0, r3.w, r2.w
+mul_sat r0.y, c10.x, c10.x
+dp3_pp r0.z, r2, r3
+texld r2, v4, s2
+dp4 r2.x, r2, c13
+mul r0.w, r1, r0.x
+mad_pp r1.xyz, r0.y, r4, r1
+mul_pp r1.xyz, r1, c3
+dp3 r0.x, v4, v4
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r0.x, r0, c1.w
+mad r0.x, -r0, c12.z, r2
+mov r2.y, c2.x
+cmp r2.w, r0.x, c12.x, r2.y
 dp3 r0.x, v3, v3
-add_pp r3.x, r1.w, c20.y
-cmp r0.y, r0, c14, r0.z
+mov_pp r2.xyz, c3
 texld r0.x, r0.x, s3
-mul r0.w, r0.x, r0.y
-mul r0.xyz, r0.w, c4
-mul r0.xyz, r0, c5
-mul r0.xyz, r0, r3.y
-add_pp_sat r2.y, r2, -r2.z
-add_pp r2.x, r2, c18.z
-mul r0.xyz, r2.y, r0
-mul_pp r3.y, r2.x, c4.w
-mul r2.xyz, r1.w, r0
-mul_pp r0.y, r3, r0.w
-mul_pp_sat r0.w, r0.y, c20.x
-mov r0.x, c11
-add r0.xyz, c4, r0.x
-mad_sat r0.xyz, r0, r0.w, c0
-mad_pp r0.w, r2, r3.x, c20.z
-add_pp r0.xyz, r0, r2
-mul r3.xyz, r0, c13.x
-mad_sat r2.xyz, r0, c12.x, -r0.w
-mad_pp r1.xyz, r1, r2, r3
-mul_pp oC0.xyz, r1, r0
-mov_pp oC0.w, r0
+mul_pp r1.xyz, r0.z, r1
+mul_pp r2.xyz, c4, r2
+mul r0.x, r0, r2.w
+mad r1.xyz, r2, r0.w, r1
+mul_pp r0.w, r0.x, c12
+mul_pp r0.x, r0, r0.z
+mul_pp r0.x, r0, c12.w
+cmp_pp r0.z, r0.x, c12.x, c12.y
+mul oC0.xyz, r1, r0.w
+add_pp r0.x, -r0.y, c12
+add_pp r0.w, r1, c18.y
+mul_pp r0.x, r0, r0.z
+mad_pp oC0.w, r0.x, r0, c12.x
 "
 }
 
@@ -21083,39 +21029,37 @@ Keywords { "POINT_COOKIE" "SHADOWS_CUBE" }
 
 SubProgram "d3d9 " {
 Keywords { "POINT_COOKIE" "SHADOWS_CUBE" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightPositionRange]
-Vector 3 [_LightShadowData]
-Vector 4 [_LightColor0]
-Vector 5 [_SpecColor]
-Vector 6 [_Color]
-Float 7 [_Shininess]
-Float 8 [_MainTexHandoverDist]
-Float 9 [_DetailScale]
-Float 10 [_DetailDist]
-Float 11 [_MinLight]
-Float 12 [_LightPower]
-Float 13 [_Reflectivity]
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightPositionRange]
+Vector 2 [_LightShadowData]
+Vector 3 [_LightColor0]
+Vector 4 [_SpecColor]
+Vector 5 [_Color]
+Float 6 [_Shininess]
+Float 7 [_MainTexHandoverDist]
+Float 8 [_DetailScale]
+Float 9 [_DetailDist]
+Float 10 [_PlanetOpacity]
+Vector 11 [_PlanetOrigin]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_ShadowMapTexture] CUBE
 SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_LightTexture0] CUBE
 "ps_3_0
-; 124 ALU, 9 TEX
+; 138 ALU, 9 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
 dcl_2d s3
 dcl_cube s4
-def c14, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c15, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c18, 0.15915494, 0.50000000, -0.01000214, 0.97000003
-def c19, 1.00000000, 0.00392157, 0.00001538, 0.00000001
-def c20, 4.03944778, -0.44897461, 0.44897461, 0
+def c12, 1.00000000, 0.00000000, 0.97000003, 4.00000000
+def c13, 1.00000000, 0.00392157, 0.00001538, 0.00000001
+def c14, -0.01872930, 0.07426100, -0.21211439, 1.57072902
+def c15, 2.00000000, 3.14159298, 0.31830987, -0.12123910
+def c16, -0.01348047, 0.05747731, 0.19563590, -0.33299461
+def c17, 0.99999559, 1.57079601, 0.15915494, 0.50000000
+def c18, 1.27323949, -1.00000000, 128.00000000, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -21124,127 +21068,139 @@ dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dp3 r0.x, v5, v5
 rsq r0.x, r0.x
-mul r3.xyz, r0.x, v5
-abs r2.xyz, r3
-abs r1.y, r3
-add r0.w, r2.z, -r2.x
-add r1.w, -r1.y, c14.y
-mad r1.z, r1.y, c14, c14.w
-mad r1.z, r1, r1.y, c15.x
-rsq r1.w, r1.w
-add r0.xyz, r2.zxyw, -r2
-cmp r0.w, r0, c14.y, c14.x
-mad r0.xyz, r0.w, r0, r2
-add r0.w, -r2.y, r0.x
-add r0.xyz, -r2.yxzw, r0
-cmp r0.w, r0, c14.y, c14.x
-mad r0.xyz, r0.w, r0, r2.yxzw
-abs r2.y, r3.z
-max r0.w, r2.x, r2.y
+mul r2.xyz, r0.x, v5
+abs r1.xyz, r2
+add r0.w, r1.z, -r1.x
+add r0.xyz, r1.zxyw, -r1
+cmp r0.w, r0, c12.x, c12.y
+mad r0.xyz, r0.w, r0, r1
+add r0.w, -r1.y, r0.x
+add r0.xyz, -r1.yxzw, r0
+cmp r0.w, r0, c12.x, c12.y
+mad r0.xyz, r0.w, r0, r1.yxzw
 abs_pp r0.x, r0
 rcp_pp r0.x, r0.x
-mul_pp r0.xy, r0.zyzw, r0.x
-min r0.z, r2.x, r2.y
-rcp r0.w, r0.w
-mul r0.z, r0, r0.w
+mul_pp r0.zw, r0.xyzy, r0.x
+abs r1.y, r2.z
+max r0.x, r1, r1.y
+rcp r0.y, r0.x
+min r0.x, r1, r1.y
+mul_pp r1.zw, r0, c17.w
+mul r0.z, r0.x, r0.y
 mul r0.w, r0.z, r0.z
-mad r1.x, r0.w, c16.y, c16.z
-mad r1.x, r1, r0.w, c16.w
-mul_pp r0.xy, r0, c18.y
-mad r2.z, r1.x, r0.w, c17.x
-mad r1.y, r1.z, r1, c15
-rcp r1.w, r1.w
-mul r1.z, r1.y, r1.w
-cmp r1.y, r3, c14.x, c14
-mul r1.w, r1.y, r1.z
-mad r1.x, -r1.w, c15.z, r1.z
-mad r1.z, r2, r0.w, c17.y
-mad r1.x, r1.y, c15.w, r1
-mad r1.y, r1.z, r0.w, c17.z
-mul r0.w, r1.x, c16.x
-mul r3.y, r1, r0.z
-dsx r2.zw, r3.xyxz
-mul r2.zw, r2, r2
-add r0.z, r2, r2.w
-dsy r1.xz, r3
-mul r1.xz, r1, r1
-add r1.x, r1, r1.z
+mul r0.xy, r1.zwzw, c8.x
+abs r1.z, r2.y
+add r2.w, -r1.z, c12.x
+mad r1.w, r1.z, c14.x, c14.y
+mad r1.w, r1, r1.z, c14.z
+rsq r2.w, r2.w
+mad r3.x, r0.w, c16, c16.y
+mad r1.z, r1.w, r1, c14.w
+rcp r2.w, r2.w
+mul r1.w, r1.z, r2
+cmp r1.z, r2.y, c12.y, c12.x
+mul r2.y, r1.z, r1.w
+mad r2.w, r3.x, r0, c15
+mad r1.w, -r2.y, c15.x, r1
+mad r2.y, r1.z, c15, r1.w
+mad r2.w, r2, r0, c16.z
+mad r1.z, r2.w, r0.w, c16.w
+mad r0.w, r1.z, r0, c17.x
+mul r1.w, r2.y, c8.x
+mul r1.z, r1.w, c18.x
+mul r2.w, r0, r0.z
+dsx r0.zw, r2.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-dsx r1.w, r0
-dsy r1.y, r0.w
-mul r1.z, r0, c18.x
-add r2.z, -r3.y, c17.w
-add r2.x, r2, -r2.y
-cmp r2.w, -r2.x, r3.y, r2.z
-add r3.w, -r2, c15
-mul r3.y, v0.x, c10.x
-cmp r2.w, r3.z, r2, r3
-mul r1.x, r1, c18
-mul r0.xy, r0, c9.x
-texldd r0.xyz, r0, s1, r1.zwzw, r1
-add_pp r2.xyz, -r0, c14.y
-mul_sat r3.y, r3, c15.z
-mad_pp r0.xyz, r3.y, r2, r0
-cmp r2.x, r3, r2.w, -r2.w
-mad r3.x, r2, c18, c18.y
-mov r3.y, r0.w
-texldd r1, r3, s0, r1.zwzw, r1
-dp4 r2.y, c1, c1
-rsq r2.x, r2.y
-mul r2.xyz, r2.x, c1
-dp3_pp r0.w, v2, -r2
-mul_pp r3.xyz, v2, r0.w
-mad_pp r3.xyz, -r3, c15.z, -r2
-dp3_pp_sat r2.x, v2, r2
-add_pp r2.y, r2.x, c14
-dp3_pp_sat r3.x, r3, v1
-mul r0.w, v0.x, c8.x
-frc_pp r2.z, r2.y
+mul r3.z, r0, c17
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsy r1.zw, r2.xyxz
+mul r1.zw, r1, r1
+add r0.w, r1.z, r1
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r3.x, r0.w, c17.z
+texldd r0, r0, s1, r3.zwzw, r3
+add r1.z, -r2.w, c17.y
+add r1.x, r1, -r1.y
+cmp r2.w, -r1.x, r2, r1.z
+add r3.y, -r2.w, c15
+add_pp r1, -r0, c12.x
+cmp r2.z, r2, r2.w, r3.y
+mul r3.w, v0.x, c9.x
+mul_sat r2.w, r3, c15.x
+mad_pp r1, r2.w, r1, r0
+mul r0.z, r2.y, c15
+cmp r0.x, r2, r2.z, -r2.z
+mov r0.y, r0.z
+dsx r0.w, r0.z
+dsy r2.y, r0.z
+mov r0.z, r3
+mad r0.x, r0, c17.z, c17.w
+mov r2.x, r3
+texldd r2, r0, s0, r0.zwzw, r2
+dp4 r0.x, c0, c0
+rsq r0.x, r0.x
+add_pp r3, r2, -r1
+mul r0.w, v0.x, c7.x
 mul r2.w, r0, r0
-dp3 r3.z, v4, v4
-add_pp r1.xyz, r1, -r0
-mul_sat r2.w, r2, r0
-mad_pp r1.xyz, r2.w, r1, r0
-pow_pp r0, r3.x, c7.x
-mov_pp r3.y, r0.x
-texld r0, v4, s2
-dp4 r0.y, r0, c19
-rsq r3.z, r3.z
-rcp r0.x, r3.z
-mul r0.x, r0, c2.w
-mad r0.x, -r0, c18.w, r0.y
-mov r0.z, c3.x
-cmp r0.y, r0.x, c14, r0.z
+mul_sat r0.w, r2, r0
+mad_pp r1, r0.w, r3, r1
+mul r0.xyz, r0.x, c0
+dp3_pp r0.w, r0, r0
+mul_pp r1, r1, c5
+add_pp r4.xyz, -r1, r2
+rsq_pp r0.w, r0.w
+mul_pp r3.xyz, r0.w, r0
+dp3_pp r2.w, v1, v1
+rsq_pp r0.x, r2.w
+mad_pp r0.xyz, r0.x, v1, r3
+dp3_pp r0.w, r0, r0
+rsq_pp r2.w, r0.w
+add r2.xyz, v2, -c11
+dp3 r0.w, r2, r2
+mul_pp r0.xyz, r2.w, r0
+rsq r2.w, r0.w
+mul r2.xyz, r2.w, r2
+mov r0.w, c6.x
+mul r2.w, c18.z, r0
+dp3_pp_sat r3.w, r2, r0
+pow r0, r3.w, r2.w
+mul_sat r0.y, c10.x, c10.x
+dp3_pp r0.z, r2, r3
+texld r2, v4, s2
+dp4 r0.w, r2, c13
+mul r3.x, r1.w, r0
+mad_pp r1.xyz, r0.y, r4, r1
+mul_pp r1.xyz, r1, c3
+dp3 r0.x, v4, v4
+rsq r0.x, r0.x
+rcp r0.x, r0.x
+mul r0.x, r0, c1.w
+mad r0.x, -r0, c12.z, r0.w
+mov r2.x, c2
+cmp r2.w, r0.x, c12.x, r2.x
+mov_pp r2.xyz, c3
 dp3 r0.x, v3, v3
-add_pp r3.x, r1.w, c20.y
+mul_pp r1.xyz, r0.z, r1
+mul_pp r2.xyz, c4, r2
 texld r0.w, v3, s4
 texld r0.x, r0.x, s3
 mul r0.x, r0, r0.w
-mul r0.w, r0.x, r0.y
-mul r0.xyz, r0.w, c4
-mul r0.xyz, r0, c5
-mul r0.xyz, r0, r3.y
-add_pp_sat r2.y, r2, -r2.z
-add_pp r2.x, r2, c18.z
-mul r0.xyz, r2.y, r0
-mul_pp r3.y, r2.x, c4.w
-mul r2.xyz, r1.w, r0
-mul_pp r0.y, r3, r0.w
-mul_pp_sat r0.w, r0.y, c20.x
-mov r0.x, c11
-add r0.xyz, c4, r0.x
-mad_sat r0.xyz, r0, r0.w, c0
-mad_pp r0.w, r2, r3.x, c20.z
-add_pp r0.xyz, r0, r2
-mul_pp r1.xyz, r1, c6
-mul r3.xyz, r0, c13.x
-mad_sat r2.xyz, r0, c12.x, -r0.w
-mad_pp r1.xyz, r1, r2, r3
-mul_pp oC0.xyz, r1, r0
-mov_pp oC0.w, r0
+mul r0.x, r0, r2.w
+mul_pp r0.w, r0.x, c12
+mul_pp r0.x, r0, r0.z
+mul_pp r0.x, r0, c12.w
+cmp_pp r0.z, r0.x, c12.x, c12.y
+mad r1.xyz, r2, r3.x, r1
+mul oC0.xyz, r1, r0.w
+add_pp r0.x, -r0.y, c12
+add_pp r0.w, r1, c18.y
+mul_pp r0.x, r0, r0.z
+mad_pp oC0.w, r0.x, r0, c12.x
 "
 }
 
@@ -21270,41 +21226,40 @@ Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
 
 SubProgram "d3d9 " {
 Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightShadowData]
-Vector 3 [_ShadowOffsets0]
-Vector 4 [_ShadowOffsets1]
-Vector 5 [_ShadowOffsets2]
-Vector 6 [_ShadowOffsets3]
-Vector 7 [_LightColor0]
-Vector 8 [_SpecColor]
-Vector 9 [_Color]
-Float 10 [_Shininess]
-Float 11 [_MainTexHandoverDist]
-Float 12 [_DetailScale]
-Float 13 [_DetailDist]
-Float 14 [_MinLight]
-Float 15 [_LightPower]
-Float 16 [_Reflectivity]
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightShadowData]
+Vector 2 [_ShadowOffsets0]
+Vector 3 [_ShadowOffsets1]
+Vector 4 [_ShadowOffsets2]
+Vector 5 [_ShadowOffsets3]
+Vector 6 [_LightColor0]
+Vector 7 [_SpecColor]
+Vector 8 [_Color]
+Float 9 [_Shininess]
+Float 10 [_MainTexHandoverDist]
+Float 11 [_DetailScale]
+Float 12 [_DetailDist]
+Float 13 [_PlanetOpacity]
+Vector 14 [_PlanetOrigin]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTexture0] 2D
 SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_ShadowMapTexture] 2D
 "ps_3_0
-; 132 ALU, 12 TEX
+; 147 ALU, 12 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c17, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c18, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c19, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c20, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c21, 0.15915494, 0.50000000, -0.01000214, 0.25000000
-def c22, 4.03944778, -0.44897461, 0.44897461, 0
+def c15, 1.00000000, 0.00000000, 0.50000000, 0.25000000
+def c16, 4.00000000, -0.01872930, 0.07426100, -0.21211439
+def c17, 1.57072902, 2.00000000, 3.14159298, 0.31830987
+def c18, -0.01348047, 0.05747731, -0.12123910, 0.19563590
+def c19, -0.33299461, 0.99999559, 1.57079601, 0.15915494
+def c20, 0.15915494, 0.50000000, 1.27323949, -1.00000000
+def c21, 128.00000000, 0, 0, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -21313,138 +21268,151 @@ dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
 dp3 r0.x, v5, v5
 rsq r0.x, r0.x
-mul r3.xyz, r0.x, v5
-abs r1.xyz, r3
+mul r2.xyz, r0.x, v5
+abs r1.xyz, r2
+abs r1.w, r2.y
 add r0.w, r1.z, -r1.x
-dsy r2.zw, r3.xyxz
+add r3.x, -r1.w, c15
+mad r2.w, r1, c16.y, c16.z
+mad r2.w, r2, r1, c16
+rsq r3.x, r3.x
 add r0.xyz, r1.zxyw, -r1
-cmp r0.w, r0, c17.y, c17.x
+cmp r0.w, r0, c15.x, c15.y
 mad r0.xyz, r0.w, r0, r1
 add r0.w, -r1.y, r0.x
-mul r2.zw, r2, r2
-abs r1.w, r3.z
 add r0.xyz, -r1.yxzw, r0
-cmp r0.w, r0, c17.y, c17.x
+cmp r0.w, r0, c15.x, c15.y
 mad r0.xyz, r0.w, r0, r1.yxzw
-abs r1.z, r3.y
-max r0.w, r1.x, r1
-abs_pp r1.y, r0.x
-add r2.y, -r1.z, c17
-mad r2.x, r1.z, c17.z, c17.w
-mad r2.x, r2, r1.z, c18
-rsq r2.y, r2.y
-min r0.x, r1, r1.w
-rcp r0.w, r0.w
-mul r0.w, r0.x, r0
-rcp_pp r0.x, r1.y
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
 mul_pp r0.xy, r0.zyzw, r0.x
-mul r1.y, r0.w, r0.w
-mad r0.z, r1.y, c19.y, c19
-mad r0.z, r0, r1.y, c19.w
-mad r0.z, r0, r1.y, c20.x
-mad r0.z, r0, r1.y, c20.y
-mad r1.y, r0.z, r1, c20.z
-mul_pp r0.xy, r0, c21.y
-mul r1.y, r1, r0.w
-mad r1.z, r2.x, r1, c18.y
-rcp r2.y, r2.y
-mul r2.x, r1.z, r2.y
-cmp r1.z, r3.y, c17.x, c17.y
-mul r2.y, r1.z, r2.x
-mad r0.z, -r2.y, c18, r2.x
-mad r0.z, r1, c18.w, r0
-mul r0.w, r0.z, c19.x
-add r0.z, r1.x, -r1.w
-add r1.z, -r1.y, c20.w
-cmp r3.y, -r0.z, r1, r1.z
-add r1.x, r2.z, r2.w
-dsx r2.xy, r3.xzzw
-mul r2.xy, r2, r2
-add r0.z, r2.x, r2.y
-add r2.w, -r3.y, c18
-cmp r2.w, r3.z, r3.y, r2
+abs r1.y, r2.z
+max r0.z, r1.x, r1.y
+rcp r0.w, r0.z
+min r0.z, r1.x, r1.y
+mul r0.z, r0, r0.w
+mul r0.w, r0.z, r0.z
+mul_pp r0.xy, r0, c15.z
+mad r1.z, r0.w, c18.x, c18.y
+mad r1.w, r2, r1, c17.x
+rcp r3.x, r3.x
+mul r2.w, r1, r3.x
+cmp r1.w, r2.y, c15.y, c15.x
+mul r2.y, r1.w, r2.w
+mad r3.x, r1.z, r0.w, c18.z
+mad r1.z, -r2.y, c17.y, r2.w
+mad r2.y, r1.w, c17.z, r1.z
+mad r2.w, r3.x, r0, c18
+mad r1.z, r2.w, r0.w, c19.x
+mad r0.w, r1.z, r0, c19.y
+mul r2.w, r0, r0.z
+mul r1.w, r2.y, c11.x
+mul r1.z, r1.w, c20
+dsx r0.zw, r2.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-dsx r1.w, r0
-dsy r1.y, r0.w
-mul r1.z, r0, c21.x
-cmp r2.w, r3.x, r2, -r2
-mul r3.y, v0.x, c13.x
-mul_sat r3.x, r3.y, c18.z
-mul r1.x, r1, c21
-mul r0.xy, r0, c12.x
-texldd r0.xyz, r0, s1, r1.zwzw, r1
-add_pp r2.xyz, -r0, c17.y
-mad_pp r0.xyz, r3.x, r2, r0
-mov r2.y, r0.w
-mad r2.x, r2.w, c21, c21.y
-texldd r1, r2, s0, r1.zwzw, r1
-dp4 r0.w, c1, c1
+mul r3.z, r0, c19.w
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsy r1.zw, r2.xyxz
+mul r1.zw, r1, r1
+add r0.w, r1.z, r1
 rsq r0.w, r0.w
-mul r2.xyz, r0.w, c1
-dp3_pp r3.x, v2, -r2
-mul r0.w, v0.x, c11.x
-mul r2.w, r0, r0
-mul_pp r3.xyz, v2, r3.x
-mad_pp r3.xyz, -r3, c18.z, -r2
-dp3_pp_sat r3.y, r3, v1
-rcp r3.z, v4.w
-dp3_pp_sat r2.x, v2, r2
-add_pp r2.y, r2.x, c17
-frc_pp r2.z, r2.y
-add_pp r1.xyz, r1, -r0
-mul_sat r2.w, r2, r0
-mad_pp r0.xyz, r2.w, r1, r0
-mul_pp r1.xyz, r0, c9
-pow_pp r0, r3.y, c10.x
-mad r4.xy, v4, r3.z, c6
-mov_pp r3.y, r0.x
-texld r0.x, r4, s4
-mad r4.xy, v4, r3.z, c5
+rcp r0.w, r0.w
+mul r3.x, r0.w, c19.w
+mul r0.xy, r0, c11.x
+texldd r0, r0, s1, r3.zwzw, r3
+add r1.z, -r2.w, c19
+add r1.x, r1, -r1.y
+cmp r3.y, -r1.x, r2.w, r1.z
+add r3.w, -r3.y, c17.z
+mul r2.w, v0.x, c12.x
+add_pp r1, -r0, c15.x
+mul_sat r2.w, r2, c17.y
+mad_pp r1, r2.w, r1, r0
+mul r0.z, r2.y, c17.w
+cmp r2.z, r2, r3.y, r3.w
+cmp r0.x, r2, r2.z, -r2.z
+mov r2.x, r3
+mul r3.x, v0, c10
+dsy r2.y, r0.z
+mov r0.y, r0.z
+dsx r0.w, r0.z
+mov r0.z, r3
+mad r0.x, r0, c20, c20.y
+texldd r0, r0, s0, r0.zwzw, r2
+add_pp r2, r0, -r1
+mul r3.y, r3.x, r3.x
+mul_sat r0.w, r3.y, r3.x
+mad_pp r1, r0.w, r2, r1
+mul_pp r2, r1, c8
+dp4 r0.w, c0, c0
+rsq r1.x, r0.w
+add_pp r0.xyz, -r2, r0
+mul_sat r1.w, c13.x, c13.x
+mad_pp r0.xyz, r1.w, r0, r2
+mul_pp r3.xyz, r0, c6
+add r0.xyz, v2, -c14
+dp3 r0.w, r0, r0
+mul r1.xyz, r1.x, c0
+rsq r0.w, r0.w
+mul r0.xyz, r0.w, r0
+dp3_pp r2.x, r1, r1
+rsq_pp r0.w, r2.x
+mul_pp r1.xyz, r0.w, r1
+dp3_pp r2.x, v1, v1
+rsq_pp r0.w, r2.x
+mad_pp r2.xyz, r0.w, v1, r1
+dp3_pp r3.w, r0, r1
+mul_pp r1.xyz, r3.w, r3
+dp3_pp r0.w, r2, r2
+rsq_pp r3.x, r0.w
+mul_pp r2.xyz, r3.x, r2
+mov r0.w, c9.x
+dp3_pp_sat r2.x, r0, r2
+mul r3.x, c21, r0.w
+pow r0, r2.x, r3.x
+rcp r3.x, v4.w
+mov r2.z, r0.x
+mad r2.xy, v4, r3.x, c5
+texld r0.x, r2, s4
+mad r2.xy, v4, r3.x, c4
 mov r0.w, r0.x
-texld r0.x, r4, s4
-mad r4.xy, v4, r3.z, c4
+texld r0.x, r2, s4
+mad r2.xy, v4, r3.x, c3
 mov r0.z, r0.x
-texld r0.x, r4, s4
-mad r4.xy, v4, r3.z, c3
+texld r0.x, r2, s4
+mad r2.xy, v4, r3.x, c2
 mov r0.y, r0.x
-texld r0.x, r4, s4
-mad r0, -v4.z, r3.z, r0
-rcp r3.z, v3.w
-mov r3.w, c2.x
-cmp r0, r0, c17.y, r3.w
-dp4_pp r0.y, r0, c21.w
-mad r4.xy, v3, r3.z, c21.y
+texld r0.x, r2, s4
+mov r2.x, c1
+mad r0, -v4.z, r3.x, r0
+cmp r0, r0, c15.x, r2.x
+dp4_pp r0.y, r0, c15.w
+mul r3.z, r2.w, r2
+rcp r0.x, v3.w
+mad r3.xy, v3, r0.x, c15.z
 dp3 r0.x, v3, v3
-add_pp r3.x, r1.w, c22.y
-texld r0.w, r4, s2
-cmp r0.z, -v3, c17.x, c17.y
+texld r0.w, r3, s2
+cmp r0.z, -v3, c15.y, c15.x
 mul_pp r0.z, r0, r0.w
 texld r0.x, r0.x, s3
 mul_pp r0.x, r0.z, r0
 mul_pp r0.w, r0.x, r0.y
-mul r0.xyz, r0.w, c7
-mul r0.xyz, r0, c8
-mul r0.xyz, r0, r3.y
-add_pp_sat r2.y, r2, -r2.z
-add_pp r2.x, r2, c21.z
-mul r0.xyz, r2.y, r0
-mul_pp r3.y, r2.x, c7.w
-mul r2.xyz, r1.w, r0
-mul_pp r0.y, r3, r0.w
-mul_pp_sat r0.w, r0.y, c22.x
-mov r0.x, c14
-add r0.xyz, c7, r0.x
-mad_sat r0.xyz, r0, r0.w, c0
-mad_pp r0.w, r2, r3.x, c22.z
-add_pp r0.xyz, r0, r2
-mul r3.xyz, r0, c16.x
-mad_sat r2.xyz, r0, c15.x, -r0.w
-mad_pp r1.xyz, r1, r2, r3
-mul_pp oC0.xyz, r1, r0
-mov_pp oC0.w, r0
+mov_pp r2.xyz, c6
+mul_pp r0.xyz, c7, r2
+mad r0.xyz, r0, r3.z, r1
+mul_pp r1.x, r0.w, c16
+mul oC0.xyz, r0, r1.x
+mul_pp r0.w, r0, r3
+mul_pp r0.x, r0.w, c16
+cmp_pp r0.y, r0.x, c15.x, c15
+add_pp r0.x, -r1.w, c15
+add_pp r0.z, r2.w, c20.w
+mul_pp r0.x, r0, r0.y
+mad_pp oC0.w, r0.x, r0.z, c15.x
 "
 }
 
@@ -21470,41 +21438,40 @@ Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
 
 SubProgram "d3d9 " {
 Keywords { "SPOT" "SHADOWS_DEPTH" "SHADOWS_SOFT" "SHADOWS_NATIVE" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightShadowData]
-Vector 3 [_ShadowOffsets0]
-Vector 4 [_ShadowOffsets1]
-Vector 5 [_ShadowOffsets2]
-Vector 6 [_ShadowOffsets3]
-Vector 7 [_LightColor0]
-Vector 8 [_SpecColor]
-Vector 9 [_Color]
-Float 10 [_Shininess]
-Float 11 [_MainTexHandoverDist]
-Float 12 [_DetailScale]
-Float 13 [_DetailDist]
-Float 14 [_MinLight]
-Float 15 [_LightPower]
-Float 16 [_Reflectivity]
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightShadowData]
+Vector 2 [_ShadowOffsets0]
+Vector 3 [_ShadowOffsets1]
+Vector 4 [_ShadowOffsets2]
+Vector 5 [_ShadowOffsets3]
+Vector 6 [_LightColor0]
+Vector 7 [_SpecColor]
+Vector 8 [_Color]
+Float 9 [_Shininess]
+Float 10 [_MainTexHandoverDist]
+Float 11 [_DetailScale]
+Float 12 [_DetailDist]
+Float 13 [_PlanetOpacity]
+Vector 14 [_PlanetOrigin]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_LightTexture0] 2D
 SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_ShadowMapTexture] 2D
 "ps_3_0
-; 131 ALU, 12 TEX
+; 145 ALU, 12 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_2d s2
 dcl_2d s3
 dcl_2d s4
-def c17, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c18, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c19, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c20, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c21, 0.15915494, 0.50000000, -0.01000214, 0.25000000
-def c22, 4.03944778, -0.44897461, 0.44897461, 0
+def c15, 0.00000000, 1.00000000, 0.50000000, 0.25000000
+def c16, 4.00000000, -0.01872930, 0.07426100, -0.21211439
+def c17, 1.57072902, 2.00000000, 3.14159298, 0.31830987
+def c18, -0.01348047, 0.05747731, -0.12123910, 0.19563590
+def c19, -0.33299461, 0.99999559, 1.57079601, 0.15915494
+def c20, 0.15915494, 0.50000000, 1.27323949, -1.00000000
+def c21, 128.00000000, 0, 0, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -21513,137 +21480,149 @@ dcl_texcoord4 v4
 dcl_texcoord5 v5.xyz
 dp3 r0.x, v5, v5
 rsq r0.x, r0.x
-mul r3.xyz, r0.x, v5
-abs r1.xyz, r3
-add r0.w, r1.z, -r1.x
-add r0.xyz, r1.zxyw, -r1
-cmp r0.w, r0, c17.y, c17.x
-mad r0.xyz, r0.w, r0, r1
-add r0.w, -r1.y, r0.x
-add r0.xyz, -r1.yxzw, r0
-cmp r0.w, r0, c17.y, c17.x
-mad r2.xyz, r0.w, r0, r1.yxzw
-abs r1.w, r3.z
-max r0.x, r1, r1.w
+mul r2.xyz, r0.x, v5
+abs r3.xyz, r2
+add r0.w, r3.z, -r3.x
+add r0.xyz, r3.zxyw, -r3
+cmp r0.w, r0, c15.y, c15.x
+mad r0.xyz, r0.w, r0, r3
+add r0.w, -r3.y, r0.x
+abs r2.w, r2.z
+add r0.xyz, -r3.yxzw, r0
+cmp r0.w, r0, c15.y, c15.x
+mad r0.xyz, r0.w, r0, r3.yxzw
+dsx r3.zw, r2.xyxz
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.zw, r0.xyzy, r0.x
+max r0.x, r3, r2.w
+mul_pp r0.zw, r0, c15.z
 rcp r0.y, r0.x
-min r0.x, r1, r1.w
-mul r0.z, r0.x, r0.y
-abs_pp r0.w, r2.x
-rcp_pp r0.x, r0.w
-mul_pp r2.xy, r2.zyzw, r0.x
-mul r0.w, r0.z, r0.z
-mad r0.x, r0.w, c19.y, c19.z
-mad r1.y, r0.x, r0.w, c19.w
-mul_pp r2.xy, r2, c21.y
-mad r1.z, r1.y, r0.w, c20.x
-mul r0.xy, r2, c12.x
-abs r1.y, r3
-mad r2.y, r1.z, r0.w, c20
-dsy r2.zw, r3.xyxz
-add r2.x, -r1.y, c17.y
-mad r1.z, r1.y, c17, c17.w
-mad r1.z, r1, r1.y, c18.x
-rsq r2.x, r2.x
-mul r2.zw, r2, r2
-mad r2.y, r2, r0.w, c20.z
-mad r1.y, r1.z, r1, c18
-rcp r2.x, r2.x
-mul r1.z, r1.y, r2.x
-cmp r1.y, r3, c17.x, c17
-mul r2.x, r1.y, r1.z
-mad r0.w, -r2.x, c18.z, r1.z
-mul r1.z, r2.y, r0
-mad r0.z, r1.y, c18.w, r0.w
-mul r0.w, r0.z, c19.x
-add r0.z, r1.x, -r1.w
-add r1.y, -r1.z, c20.w
-cmp r3.y, -r0.z, r1.z, r1
-add r1.x, r2.z, r2.w
-dsx r2.xy, r3.xzzw
-mul r2.xy, r2, r2
-add r0.z, r2.x, r2.y
-add r2.w, -r3.y, c18
-cmp r2.w, r3.z, r3.y, r2
+min r0.x, r3, r2.w
+mul r0.x, r0, r0.y
+mul r1.xy, r0.zwzw, c11.x
+abs r0.w, r2.y
+mul r0.y, r0.x, r0.x
+add r1.w, -r0, c15.y
+mad r1.z, r0.w, c16.y, c16
+mad r1.z, r1, r0.w, c16.w
+rsq r1.w, r1.w
+mad r0.z, r0.y, c18.x, c18.y
+mad r0.w, r1.z, r0, c17.x
+rcp r1.w, r1.w
+mul r1.z, r0.w, r1.w
+cmp r0.w, r2.y, c15.x, c15.y
+mul r1.w, r0, r1.z
+mad r2.y, r0.z, r0, c18.z
+mad r0.z, -r1.w, c17.y, r1
+mad r1.z, r2.y, r0.y, c18.w
+mad r2.y, r0.w, c17.z, r0.z
+mad r0.z, r1, r0.y, c19.x
+mad r0.y, r0.z, r0, c19
+mul r0.w, r2.y, c11.x
+mul r0.z, r0.w, c20
+mul r3.y, r0, r0.x
+dsy r1.zw, r2.xyxz
+mul r3.zw, r3, r3
+add r0.x, r3.z, r3.w
+rsq r0.x, r0.x
+mul r1.zw, r1, r1
+dsx r0.w, r0.z
+dsy r0.y, r0.z
+add r0.z, r1, r1.w
 rsq r0.z, r0.z
-rcp r0.z, r0.z
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-dsx r1.w, r0
-dsy r1.y, r0.w
-mul r1.z, r0, c21.x
-mul r1.x, r1, c21
-texldd r0.xyz, r0, s1, r1.zwzw, r1
-add_pp r2.xyz, -r0, c17.y
-cmp r2.w, r3.x, r2, -r2
-mul r3.y, v0.x, c13.x
-mul_sat r3.x, r3.y, c18.z
-mad_pp r0.xyz, r3.x, r2, r0
-mov r2.y, r0.w
-mad r2.x, r2.w, c21, c21.y
-texldd r1, r2, s0, r1.zwzw, r1
-mul r0.w, v0.x, c11.x
-mul r2.x, r0.w, r0.w
-rcp r3.x, v4.w
-mul_sat r2.w, r2.x, r0
-add_pp r1.xyz, r1, -r0
-mad_pp r0.xyz, r2.w, r1, r0
-mul_pp r1.xyz, r0, c9
-mad r0.xyz, v4, r3.x, c6
-texld r0.x, r0, s4
-mad r2.xyz, v4, r3.x, c5
-mov_pp r0.w, r0.x
-texld r0.x, r2, s4
-mad r2.xyz, v4, r3.x, c4
-mov_pp r0.z, r0.x
-texld r0.x, r2, s4
-mad r2.xyz, v4, r3.x, c3
-mov_pp r0.y, r0.x
-texld r0.x, r2, s4
-mov r2.y, c2.x
-add r2.y, c17, -r2
-mad r0, r0, r2.y, c2.x
-dp4_pp r0.y, r0, c21.w
+rcp r1.z, r0.z
+rcp r0.x, r0.x
+mul r0.z, r0.x, c19.w
+mul r0.x, r1.z, c19.w
+texldd r1, r1, s1, r0.zwzw, r0
+add r0.w, -r3.y, c19.z
+add r0.y, r3.x, -r2.w
+cmp r0.y, -r0, r3, r0.w
+add r2.w, -r0.y, c17.z
+mul r0.w, v0.x, c12.x
+add_pp r3, -r1, c15.y
+mul_sat r0.w, r0, c17.y
+mad_pp r1, r0.w, r3, r1
+cmp r0.y, r2.z, r0, r2.w
+cmp r0.w, r2.x, r0.y, -r0.y
+mul r0.y, r2, c17.w
+mad r2.x, r0.w, c20, c20.y
+mul r3.x, v0, c10
+mov r2.y, r0
+dsx r0.w, r0.y
+dsy r0.y, r0
+texldd r0, r2, s0, r0.zwzw, r0
+add_pp r2, r0, -r1
+mul r3.y, r3.x, r3.x
+mul_sat r0.w, r3.y, r3.x
+mad_pp r1, r0.w, r2, r1
+mul_pp r1, r1, c8
+add_pp r2.xyz, -r1, r0
+mul_sat r0.y, c13.x, c13.x
+mad_pp r1.xyz, r0.y, r2, r1
+mul_pp r2.xyz, r1, c6
+dp4 r0.w, c0, c0
+rsq r0.w, r0.w
+mul r0.xzw, r0.w, c0.xyyz
+dp3_pp r2.w, r0.xzww, r0.xzww
+rsq_pp r1.x, r2.w
+mul_pp r0.xzw, r1.x, r0
+add r3.xyz, v2, -c14
+dp3 r1.x, r3, r3
+rsq r2.w, r1.x
+dp3_pp r1.y, v1, v1
+rsq_pp r1.x, r1.y
+mad_pp r1.xyz, r1.x, v1, r0.xzww
+mul r3.xyz, r2.w, r3
+dp3_pp r0.z, r3, r0.xzww
+dp3_pp r2.w, r1, r1
+rsq_pp r0.x, r2.w
+mul_pp r1.xyz, r0.x, r1
+dp3_pp_sat r0.x, r3, r1
+mov r0.w, c9.x
+mul r1.x, c21, r0.w
+pow r3, r0.x, r1.x
+rcp r0.w, v4.w
+mad r1.xyz, v4, r0.w, c5
+mov r0.x, r3
+mad r3.xyz, v4, r0.w, c4
+texld r3.x, r3, s4
+texld r1.x, r1, s4
+mov_pp r3.w, r1.x
+mad r1.xyz, v4, r0.w, c3
+texld r1.x, r1, s4
+mov_pp r3.y, r1.x
+mad r1.xyz, v4, r0.w, c2
+mov_pp r3.z, r3.x
+mov r2.w, c1.x
+add r0.w, c15.y, -r2
+texld r3.x, r1, s4
+mad r3, r3, r0.w, c1.x
+mul r2.w, r1, r0.x
+mov_pp r1.xyz, c6
+mul_pp r2.xyz, r0.z, r2
+mul_pp r1.xyz, c7, r1
+dp4_pp r3.z, r3, c15.w
 rcp r0.x, v3.w
-mad r4.xy, v3, r0.x, c21.y
-dp4 r2.x, c1, c1
-rsq r2.x, r2.x
-mul r2.xyz, r2.x, c1
-dp3_pp r0.z, v2, -r2
-mul_pp r3.xyz, v2, r0.z
+mad r3.xy, v3, r0.x, c15.z
+texld r0.w, r3, s2
 dp3 r0.x, v3, v3
-mad_pp r3.xyz, -r3, c18.z, -r2
-texld r0.w, r4, s2
-cmp r0.z, -v3, c17.x, c17.y
-mul_pp r0.z, r0, r0.w
+cmp r3.x, -v3.z, c15, c15.y
+mul_pp r0.w, r3.x, r0
 texld r0.x, r0.x, s3
-mul_pp r0.x, r0.z, r0
-mul_pp r4.x, r0, r0.y
-add_pp r3.w, r1, c22.y
-mul r0.xyz, r4.x, c7
-dp3_pp_sat r4.y, r3, v1
-mul r3.xyz, r0, c8
-pow_pp r0, r4.y, c10.x
-dp3_pp_sat r0.w, v2, r2
-add_pp r2.x, r0.w, c17.y
-frc_pp r2.y, r2.x
-add_pp r0.w, r0, c21.z
-mul r0.xyz, r3, r0.x
-add_pp_sat r2.x, r2, -r2.y
-mul r0.xyz, r2.x, r0
-mul_pp r0.w, r0, c7
-mul r0.xyz, r1.w, r0
-mul_pp r1.w, r0, r4.x
-mov r0.w, c14.x
-add r2.xyz, c7, r0.w
-mad_pp r0.w, r2, r3, c22.z
-mul_pp_sat r1.w, r1, c22.x
-mad_sat r2.xyz, r2, r1.w, c0
-add_pp r0.xyz, r2, r0
-mul r3.xyz, r0, c16.x
-mad_sat r2.xyz, r0, c15.x, -r0.w
-mad_pp r1.xyz, r1, r2, r3
-mul_pp oC0.xyz, r1, r0
-mov_pp oC0.w, r0
+mul_pp r0.x, r0.w, r0
+mul_pp r0.x, r0, r3.z
+mul_pp r0.w, r0.x, c16.x
+mul_pp r0.x, r0, r0.z
+mul_pp r0.x, r0, c16
+cmp_pp r0.z, r0.x, c15.y, c15.x
+mad r1.xyz, r1, r2.w, r2
+mul oC0.xyz, r1, r0.w
+add_pp r0.x, -r0.y, c15.y
+add_pp r0.w, r1, c20
+mul_pp r0.x, r0, r0.z
+mad_pp oC0.w, r0.x, r0, c15.y
 "
 }
 
@@ -21664,38 +21643,36 @@ Keywords { "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
 
 SubProgram "d3d9 " {
 Keywords { "POINT" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightPositionRange]
-Vector 3 [_LightShadowData]
-Vector 4 [_LightColor0]
-Vector 5 [_SpecColor]
-Vector 6 [_Color]
-Float 7 [_Shininess]
-Float 8 [_MainTexHandoverDist]
-Float 9 [_DetailScale]
-Float 10 [_DetailDist]
-Float 11 [_MinLight]
-Float 12 [_LightPower]
-Float 13 [_Reflectivity]
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightPositionRange]
+Vector 2 [_LightShadowData]
+Vector 3 [_LightColor0]
+Vector 4 [_SpecColor]
+Vector 5 [_Color]
+Float 6 [_Shininess]
+Float 7 [_MainTexHandoverDist]
+Float 8 [_DetailScale]
+Float 9 [_DetailDist]
+Float 10 [_PlanetOpacity]
+Vector 11 [_PlanetOrigin]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_ShadowMapTexture] CUBE
 SetTexture 3 [_LightTexture0] 2D
 "ps_3_0
-; 130 ALU, 11 TEX
+; 146 ALU, 11 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
 dcl_2d s3
-def c14, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c15, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c18, 0.15915494, 0.50000000, -0.01000214, 0.00781250
-def c19, 0.00781250, -0.00781250, 0.97000003, 0.25000000
-def c20, 1.00000000, 0.00392157, 0.00001538, 0.00000001
-def c21, 4.03944778, -0.44897461, 0.44897461, 0
+def c12, 1.00000000, 0.00000000, 0.00781250, -0.00781250
+def c13, 1.00000000, 0.00392157, 0.00001538, 0.00000001
+def c14, 0.97000003, 0.25000000, 4.00000000, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 3.14159298, 0.31830987, -0.01348047, 0.05747731
+def c17, -0.12123910, 0.19563590, -0.33299461, 0.99999559
+def c18, 1.57079601, 0.15915494, 0.50000000, 1.27323949
+def c19, -1.00000000, 128.00000000, 0, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -21704,135 +21681,149 @@ dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dp3 r0.x, v5, v5
 rsq r0.x, r0.x
-mul r3.xyz, r0.x, v5
-abs r1.xyz, r3
+mul r2.xyz, r0.x, v5
+abs r1.xyz, r2
+abs r1.w, r2.y
 add r0.w, r1.z, -r1.x
+add r3.x, -r1.w, c12
+mad r2.w, r1, c15.x, c15.y
+mad r2.w, r2, r1, c14
+rsq r3.x, r3.x
 add r0.xyz, r1.zxyw, -r1
-cmp r0.w, r0, c14.y, c14.x
+cmp r0.w, r0, c12.x, c12.y
 mad r0.xyz, r0.w, r0, r1
 add r0.w, -r1.y, r0.x
 add r0.xyz, -r1.yxzw, r0
-cmp r0.w, r0, c14.y, c14.x
-mad r2.xyz, r0.w, r0, r1.yxzw
-abs r1.w, r3.z
-max r0.x, r1, r1.w
-rcp r0.y, r0.x
-min r0.x, r1, r1.w
-mul r0.z, r0.x, r0.y
-abs_pp r0.w, r2.x
-rcp_pp r0.x, r0.w
-mul_pp r2.xy, r2.zyzw, r0.x
+cmp r0.w, r0, c12.x, c12.y
+mad r0.xyz, r0.w, r0, r1.yxzw
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+abs r1.y, r2.z
+max r0.z, r1.x, r1.y
+rcp r0.w, r0.z
+min r0.z, r1.x, r1.y
+mul r0.z, r0, r0.w
 mul r0.w, r0.z, r0.z
-mad r0.x, r0.w, c16.y, c16.z
-mad r1.y, r0.x, r0.w, c16.w
-mul_pp r2.xy, r2, c18.y
-mad r1.z, r1.y, r0.w, c17.x
-mul r0.xy, r2, c9.x
-abs r1.y, r3
-mad r2.y, r1.z, r0.w, c17
-dsy r2.zw, r3.xyxz
-add r2.x, -r1.y, c14.y
-mad r1.z, r1.y, c14, c14.w
-mad r1.z, r1, r1.y, c15.x
-rsq r2.x, r2.x
-mul r2.zw, r2, r2
-mad r2.y, r2, r0.w, c17.z
-mad r1.y, r1.z, r1, c15
-rcp r2.x, r2.x
-mul r1.z, r1.y, r2.x
-cmp r1.y, r3, c14.x, c14
-mul r2.x, r1.y, r1.z
-mad r0.w, -r2.x, c15.z, r1.z
-mul r1.z, r2.y, r0
-mad r0.z, r1.y, c15.w, r0.w
-mul r0.w, r0.z, c16.x
-add r0.z, r1.x, -r1.w
-add r1.y, -r1.z, c17.w
-cmp r3.y, -r0.z, r1.z, r1
-add r1.x, r2.z, r2.w
-dsx r2.xy, r3.xzzw
-mul r2.xy, r2, r2
-add r0.z, r2.x, r2.y
-add r2.w, -r3.y, c15
-cmp r2.w, r3.z, r3.y, r2
+mul_pp r0.xy, r0, c18.z
+mad r1.z, r0.w, c16, c16.w
+mad r1.w, r2, r1, c15.z
+rcp r3.x, r3.x
+mul r2.w, r1, r3.x
+cmp r1.w, r2.y, c12.y, c12.x
+mul r2.y, r1.w, r2.w
+mad r3.x, r1.z, r0.w, c17
+mad r1.z, -r2.y, c15.w, r2.w
+mad r2.y, r1.w, c16.x, r1.z
+mad r2.w, r3.x, r0, c17.y
+mad r1.z, r2.w, r0.w, c17
+mad r0.w, r1.z, r0, c17
+mul r2.w, r0, r0.z
+mul r1.w, r2.y, c8.x
+mul r1.z, r1.w, c18.w
+dsx r0.zw, r2.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-dsx r1.w, r0
-dsy r1.y, r0.w
-mul r1.z, r0, c18.x
-mul r1.x, r1, c18
-texldd r0.xyz, r0, s1, r1.zwzw, r1
-add_pp r2.xyz, -r0, c14.y
-cmp r2.w, r3.x, r2, -r2
-mul r3.y, v0.x, c10.x
-mul_sat r3.x, r3.y, c15.z
-mad_pp r0.xyz, r3.x, r2, r0
-mov r2.y, r0.w
-mad r2.x, r2.w, c18, c18.y
-texldd r2, r2, s0, r1.zwzw, r1
-mul r0.w, v0.x, c8.x
-mul r1.w, r0, r0
-mul_sat r4.x, r1.w, r0.w
-add_pp r1.xyz, r2, -r0
-mad_pp r1.xyz, r4.x, r1, r0
-mul_pp r2.xyz, r1, c6
-add r0.xyz, v4, c19.xyyw
-texld r0, r0, s2
-dp4 r3.w, r0, c20
-add r0.xyz, v4, c19.yxyw
-texld r0, r0, s2
-dp4 r3.z, r0, c20
-add r1.xyz, v4, c19.yyxw
-texld r1, r1, s2
-dp4 r3.y, r1, c20
-dp3 r0.w, v4, v4
+mul r3.z, r0, c18.y
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsy r1.zw, r2.xyxz
+mul r1.zw, r1, r1
+add r0.w, r1.z, r1
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r3.x, r0.w, c18.y
+mul r0.xy, r0, c8.x
+texldd r0, r0, s1, r3.zwzw, r3
+add r1.z, -r2.w, c18.x
+add r1.x, r1, -r1.y
+cmp r3.y, -r1.x, r2.w, r1.z
+add r3.w, -r3.y, c16.x
+mul r2.w, v0.x, c9.x
+add_pp r1, -r0, c12.x
+mul_sat r2.w, r2, c15
+mad_pp r1, r2.w, r1, r0
+mul r0.z, r2.y, c16.y
+cmp r2.z, r2, r3.y, r3.w
+cmp r0.x, r2, r2.z, -r2.z
+mov r2.x, r3
+mul r3.x, v0, c7
+dsy r2.y, r0.z
+mov r0.y, r0.z
+dsx r0.w, r0.z
+mov r0.z, r3
+mad r0.x, r0, c18.y, c18.z
+texldd r0, r0, s0, r0.zwzw, r2
+add_pp r2, r0, -r1
+mul r3.y, r3.x, r3.x
+mul_sat r0.w, r3.y, r3.x
+mad_pp r1, r0.w, r2, r1
+mul_pp r4, r1, c5
+dp4 r0.w, c0, c0
 rsq r1.x, r0.w
-add r0.xyz, v4, c18.w
+mul r1.xyz, r1.x, c0
+add_pp r0.xyz, -r4, r0
+mul_sat r2.w, c10.x, c10.x
+mad_pp r0.xyz, r2.w, r0, r4
+mul_pp r2.xyz, r0, c3
+add r0.xyz, v2, -c11
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul r0.xyz, r0.w, r0
+dp3_pp r1.w, r1, r1
+rsq_pp r0.w, r1.w
+mul_pp r3.xyz, r0.w, r1
+dp3_pp r4.x, r0, r3
+dp3_pp r1.w, v1, v1
+rsq_pp r0.w, r1.w
+mad_pp r1.xyz, r0.w, v1, r3
+dp3_pp r0.w, r1, r1
+rsq_pp r1.w, r0.w
+mul_pp r1.xyz, r1.w, r1
+mov r0.w, c6.x
+dp3_pp_sat r0.x, r0, r1
+mul r0.w, c19.y, r0
+pow r1, r0.x, r0.w
+mov r4.y, r1.x
+add r0.xyz, v4, c12.zwww
 texld r0, r0, s2
-dp4 r3.x, r0, c20
-rcp r1.x, r1.x
-mul r0.x, r1, c2.w
-dp4 r1.x, c1, c1
-mad r0, -r0.x, c19.z, r3
-mov r1.y, c3.x
-cmp r0, r0, c14.y, r1.y
-dp4_pp r0.y, r0, c19.w
+dp4 r3.w, r0, c13
+add r0.xyz, v4, c12.wzww
+texld r0, r0, s2
+dp4 r3.z, r0, c13
+add r1.xyz, v4, c12.wwzw
+texld r1, r1, s2
+dp4 r3.y, r1, c13
+add r0.xyz, v4, c12.z
+texld r0, r0, s2
+dp3 r1.x, v4, v4
 rsq r1.x, r1.x
-mul r1.xyz, r1.x, c1
-dp3_pp r0.z, v2, -r1
-mul_pp r3.xyz, v2, r0.z
-mad_pp r3.xyz, -r3, c15.z, -r1
+dp4 r3.x, r0, c13
+rcp r0.x, r1.x
+mul r0.x, r0, c1.w
+mov r1.x, c2
+mad r0, -r0.x, c14.x, r3
+cmp r0, r0, c12.x, r1.x
+dp4_pp r0.y, r0, c14.y
 dp3 r0.x, v3, v3
 texld r0.x, r0.x, s3
-mul r1.w, r0.x, r0.y
-mul r0.xyz, r1.w, c4
-dp3_pp_sat r3.w, r3, v1
-mul r3.xyz, r0, c5
-pow_pp r0, r3.w, c7.x
-dp3_pp_sat r0.w, v2, r1
-add_pp r1.x, r0.w, c14.y
-frc_pp r1.y, r1.x
-add_pp r0.w, r0, c18.z
-add_pp_sat r1.x, r1, -r1.y
-mul r0.xyz, r3, r0.x
-mul r0.xyz, r1.x, r0
-mul_pp r0.w, r0, c4
-mul_pp r1.x, r0.w, r1.w
-mov r0.w, c11.x
-mul_pp_sat r1.w, r1.x, c21.x
-add r1.xyz, c4, r0.w
-add_pp r4.y, r2.w, c21
-mad_pp r0.w, r4.x, r4.y, c21.z
-mad_sat r1.xyz, r1, r1.w, c0
-mul r0.xyz, r2.w, r0
-add_pp r0.xyz, r1, r0
-mul r3.xyz, r0, c13.x
-mad_sat r1.xyz, r0, c12.x, -r0.w
-mad_pp r1.xyz, r2, r1, r3
-mul_pp oC0.xyz, r1, r0
-mov_pp oC0.w, r0
+mul r0.w, r0.x, r0.y
+mov_pp r1.xyz, c3
+mul_pp r0.xyz, c4, r1
+mul_pp r1.x, r0.w, c14.z
+mul_pp r2.xyz, r4.x, r2
+mul r1.w, r4, r4.y
+mad r0.xyz, r0, r1.w, r2
+mul oC0.xyz, r0, r1.x
+mul_pp r0.w, r0, r4.x
+mul_pp r0.x, r0.w, c14.z
+cmp_pp r0.y, r0.x, c12.x, c12
+add_pp r0.x, -r2.w, c12
+add_pp r0.z, r4.w, c19.x
+mul_pp r0.x, r0, r0.y
+mad_pp oC0.w, r0.x, r0.z, c12.x
 "
 }
 
@@ -21858,40 +21849,38 @@ Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
 
 SubProgram "d3d9 " {
 Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
-Vector 0 [glstate_lightmodel_ambient]
-Vector 1 [_WorldSpaceLightPos0]
-Vector 2 [_LightPositionRange]
-Vector 3 [_LightShadowData]
-Vector 4 [_LightColor0]
-Vector 5 [_SpecColor]
-Vector 6 [_Color]
-Float 7 [_Shininess]
-Float 8 [_MainTexHandoverDist]
-Float 9 [_DetailScale]
-Float 10 [_DetailDist]
-Float 11 [_MinLight]
-Float 12 [_LightPower]
-Float 13 [_Reflectivity]
+Vector 0 [_WorldSpaceLightPos0]
+Vector 1 [_LightPositionRange]
+Vector 2 [_LightShadowData]
+Vector 3 [_LightColor0]
+Vector 4 [_SpecColor]
+Vector 5 [_Color]
+Float 6 [_Shininess]
+Float 7 [_MainTexHandoverDist]
+Float 8 [_DetailScale]
+Float 9 [_DetailDist]
+Float 10 [_PlanetOpacity]
+Vector 11 [_PlanetOrigin]
 SetTexture 0 [_MainTex] 2D
 SetTexture 1 [_DetailTex] 2D
 SetTexture 2 [_ShadowMapTexture] CUBE
 SetTexture 3 [_LightTextureB0] 2D
 SetTexture 4 [_LightTexture0] CUBE
 "ps_3_0
-; 131 ALU, 12 TEX
+; 147 ALU, 12 TEX
 dcl_2d s0
 dcl_2d s1
 dcl_cube s2
 dcl_2d s3
 dcl_cube s4
-def c14, 0.00000000, 1.00000000, -0.01872930, 0.07426100
-def c15, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c16, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c17, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c18, 0.15915494, 0.50000000, -0.01000214, 0.00781250
-def c19, 0.00781250, -0.00781250, 0.97000003, 0.25000000
-def c20, 1.00000000, 0.00392157, 0.00001538, 0.00000001
-def c21, 4.03944778, -0.44897461, 0.44897461, 0
+def c12, 1.00000000, 0.00000000, 0.00781250, -0.00781250
+def c13, 1.00000000, 0.00392157, 0.00001538, 0.00000001
+def c14, 0.97000003, 0.25000000, 4.00000000, -0.21211439
+def c15, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c16, 3.14159298, 0.31830987, -0.01348047, 0.05747731
+def c17, -0.12123910, 0.19563590, -0.33299461, 0.99999559
+def c18, 1.57079601, 0.15915494, 0.50000000, 1.27323949
+def c19, -1.00000000, 128.00000000, 0, 0
 dcl_texcoord0 v0.x
 dcl_texcoord1 v1.xyz
 dcl_texcoord2 v2.xyz
@@ -21900,137 +21889,151 @@ dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
 dp3 r0.x, v5, v5
 rsq r0.x, r0.x
-mul r3.xyz, r0.x, v5
-abs r1.xyz, r3
+mul r2.xyz, r0.x, v5
+abs r1.xyz, r2
+abs r1.w, r2.y
 add r0.w, r1.z, -r1.x
+add r3.x, -r1.w, c12
+mad r2.w, r1, c15.x, c15.y
+mad r2.w, r2, r1, c14
+rsq r3.x, r3.x
 add r0.xyz, r1.zxyw, -r1
-cmp r0.w, r0, c14.y, c14.x
+cmp r0.w, r0, c12.x, c12.y
 mad r0.xyz, r0.w, r0, r1
 add r0.w, -r1.y, r0.x
 add r0.xyz, -r1.yxzw, r0
-cmp r0.w, r0, c14.y, c14.x
-mad r2.xyz, r0.w, r0, r1.yxzw
-abs r1.w, r3.z
-max r0.x, r1, r1.w
-rcp r0.y, r0.x
-min r0.x, r1, r1.w
-mul r0.z, r0.x, r0.y
-abs_pp r0.w, r2.x
-rcp_pp r0.x, r0.w
-mul_pp r2.xy, r2.zyzw, r0.x
+cmp r0.w, r0, c12.x, c12.y
+mad r0.xyz, r0.w, r0, r1.yxzw
+abs_pp r0.x, r0
+rcp_pp r0.x, r0.x
+mul_pp r0.xy, r0.zyzw, r0.x
+abs r1.y, r2.z
+max r0.z, r1.x, r1.y
+rcp r0.w, r0.z
+min r0.z, r1.x, r1.y
+mul r0.z, r0, r0.w
 mul r0.w, r0.z, r0.z
-mad r0.x, r0.w, c16.y, c16.z
-mad r1.y, r0.x, r0.w, c16.w
-mul_pp r2.xy, r2, c18.y
-mad r1.z, r1.y, r0.w, c17.x
-mul r0.xy, r2, c9.x
-abs r1.y, r3
-mad r2.y, r1.z, r0.w, c17
-dsy r2.zw, r3.xyxz
-add r2.x, -r1.y, c14.y
-mad r1.z, r1.y, c14, c14.w
-mad r1.z, r1, r1.y, c15.x
-rsq r2.x, r2.x
-mul r2.zw, r2, r2
-mad r2.y, r2, r0.w, c17.z
-mad r1.y, r1.z, r1, c15
-rcp r2.x, r2.x
-mul r1.z, r1.y, r2.x
-cmp r1.y, r3, c14.x, c14
-mul r2.x, r1.y, r1.z
-mad r0.w, -r2.x, c15.z, r1.z
-mul r1.z, r2.y, r0
-mad r0.z, r1.y, c15.w, r0.w
-mul r0.w, r0.z, c16.x
-add r0.z, r1.x, -r1.w
-add r1.y, -r1.z, c17.w
-cmp r3.y, -r0.z, r1.z, r1
-add r1.x, r2.z, r2.w
-dsx r2.xy, r3.xzzw
-mul r2.xy, r2, r2
-add r0.z, r2.x, r2.y
-add r2.w, -r3.y, c15
-cmp r2.w, r3.z, r3.y, r2
+mul_pp r0.xy, r0, c18.z
+mad r1.z, r0.w, c16, c16.w
+mad r1.w, r2, r1, c15.z
+rcp r3.x, r3.x
+mul r2.w, r1, r3.x
+cmp r1.w, r2.y, c12.y, c12.x
+mul r2.y, r1.w, r2.w
+mad r3.x, r1.z, r0.w, c17
+mad r1.z, -r2.y, c15.w, r2.w
+mad r2.y, r1.w, c16.x, r1.z
+mad r2.w, r3.x, r0, c17.y
+mad r1.z, r2.w, r0.w, c17
+mad r0.w, r1.z, r0, c17
+mul r2.w, r0, r0.z
+mul r1.w, r2.y, c8.x
+mul r1.z, r1.w, c18.w
+dsx r0.zw, r2.xyxz
+mul r0.zw, r0, r0
+add r0.z, r0, r0.w
 rsq r0.z, r0.z
 rcp r0.z, r0.z
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-dsx r1.w, r0
-dsy r1.y, r0.w
-mul r1.z, r0, c18.x
-mul r1.x, r1, c18
-texldd r0.xyz, r0, s1, r1.zwzw, r1
-add_pp r2.xyz, -r0, c14.y
-cmp r2.w, r3.x, r2, -r2
-mul r3.y, v0.x, c10.x
-mul_sat r3.x, r3.y, c15.z
-mad_pp r0.xyz, r3.x, r2, r0
-mov r2.y, r0.w
-mad r2.x, r2.w, c18, c18.y
-texldd r1, r2, s0, r1.zwzw, r1
-mul r0.w, v0.x, c8.x
-mul r2.x, r0.w, r0.w
-mul_sat r4.x, r2, r0.w
-add_pp r1.xyz, r1, -r0
-mad_pp r1.xyz, r4.x, r1, r0
-add r0.xyz, v4, c19.xyyw
+mul r3.z, r0, c18.y
+dsx r3.w, r1.z
+dsy r3.y, r1.z
+dsy r1.zw, r2.xyxz
+mul r1.zw, r1, r1
+add r0.w, r1.z, r1
+rsq r0.w, r0.w
+rcp r0.w, r0.w
+mul r3.x, r0.w, c18.y
+mul r0.xy, r0, c8.x
+texldd r0, r0, s1, r3.zwzw, r3
+add r1.z, -r2.w, c18.x
+add r1.x, r1, -r1.y
+cmp r3.y, -r1.x, r2.w, r1.z
+add r3.w, -r3.y, c16.x
+mul r2.w, v0.x, c9.x
+add_pp r1, -r0, c12.x
+mul_sat r2.w, r2, c15
+mad_pp r1, r2.w, r1, r0
+mul r0.z, r2.y, c16.y
+cmp r2.z, r2, r3.y, r3.w
+cmp r0.x, r2, r2.z, -r2.z
+mov r2.x, r3
+mul r3.x, v0, c7
+dsy r2.y, r0.z
+mov r0.y, r0.z
+dsx r0.w, r0.z
+mov r0.z, r3
+mad r0.x, r0, c18.y, c18.z
+texldd r0, r0, s0, r0.zwzw, r2
+add_pp r2, r0, -r1
+mul r3.y, r3.x, r3.x
+mul_sat r0.w, r3.y, r3.x
+mad_pp r1, r0.w, r2, r1
+mul_pp r4, r1, c5
+dp4 r0.w, c0, c0
+rsq r2.x, r0.w
+mul r2.xyz, r2.x, c0
+add_pp r0.xyz, -r4, r0
+mul_sat r1.w, c10.x, c10.x
+mad_pp r0.xyz, r1.w, r0, r4
+mul_pp r1.xyz, r0, c3
+add r0.xyz, v2, -c11
+dp3 r0.w, r0, r0
+rsq r0.w, r0.w
+mul r0.xyz, r0.w, r0
+dp3_pp r2.w, r2, r2
+rsq_pp r0.w, r2.w
+mul_pp r3.xyz, r0.w, r2
+dp3_pp r4.x, r0, r3
+dp3_pp r2.w, v1, v1
+rsq_pp r0.w, r2.w
+mad_pp r2.xyz, r0.w, v1, r3
+dp3_pp r0.w, r2, r2
+rsq_pp r2.w, r0.w
+mul_pp r2.xyz, r2.w, r2
+mov r0.w, c6.x
+dp3_pp_sat r0.x, r0, r2
+mul r0.w, c19.y, r0
+pow r2, r0.x, r0.w
+mov r4.y, r2.x
+add r0.xyz, v4, c12.zwww
 texld r0, r0, s2
-dp4 r3.w, r0, c20
-add r0.xyz, v4, c19.yxyw
+dp4 r3.w, r0, c13
+add r0.xyz, v4, c12.wzww
 texld r0, r0, s2
-dp4 r3.z, r0, c20
-add r2.xyz, v4, c19.yyxw
+dp4 r3.z, r0, c13
+add r2.xyz, v4, c12.wwzw
 texld r2, r2, s2
-dp4 r3.y, r2, c20
-add r0.xyz, v4, c18.w
+dp4 r3.y, r2, c13
+add r0.xyz, v4, c12.z
 texld r0, r0, s2
 dp3 r2.x, v4, v4
-dp4 r3.x, r0, c20
+mul_pp r1.xyz, r4.x, r1
 rsq r2.x, r2.x
+dp4 r3.x, r0, c13
 rcp r0.x, r2.x
-dp4 r2.x, c1, c1
-mul r0.x, r0, c2.w
-rsq r2.x, r2.x
-mul r2.xyz, r2.x, c1
-mad r0, -r0.x, c19.z, r3
-mov r2.w, c3.x
-cmp r0, r0, c14.y, r2.w
-dp4_pp r0.y, r0, c19.w
-dp3_pp r2.w, v2, -r2
-mul_pp r3.xyz, v2, r2.w
-mad_pp r3.xyz, -r3, c15.z, -r2
+mul r0.x, r0, c1.w
+mov r2.x, c2
+mad r0, -r0.x, c14.x, r3
+cmp r0, r0, c12.x, r2.x
+dp4_pp r0.y, r0, c14.y
 dp3 r0.x, v3, v3
-add_pp r4.y, r1.w, c21
 texld r0.w, v3, s4
 texld r0.x, r0.x, s3
 mul r0.x, r0, r0.w
-mul r2.w, r0.x, r0.y
-mul r0.xyz, r2.w, c4
-dp3_pp_sat r3.w, r3, v1
-mul r3.xyz, r0, c5
-pow_pp r0, r3.w, c7.x
-dp3_pp_sat r0.w, v2, r2
-add_pp r2.x, r0.w, c14.y
-frc_pp r2.y, r2.x
-add_pp r0.w, r0, c18.z
-mul r0.xyz, r3, r0.x
-add_pp_sat r2.x, r2, -r2.y
-mul r0.xyz, r2.x, r0
-mul_pp r0.w, r0, c4
-mul r0.xyz, r1.w, r0
-mul_pp r1.w, r0, r2
-mov r0.w, c11.x
-add r2.xyz, c4, r0.w
-mad_pp r0.w, r4.x, r4.y, c21.z
-mul_pp_sat r1.w, r1, c21.x
-mad_sat r2.xyz, r2, r1.w, c0
-add_pp r0.xyz, r2, r0
-mul_pp r1.xyz, r1, c6
-mul r3.xyz, r0, c13.x
-mad_sat r2.xyz, r0, c12.x, -r0.w
-mad_pp r1.xyz, r1, r2, r3
-mul_pp oC0.xyz, r1, r0
-mov_pp oC0.w, r0
+mul r0.w, r0.x, r0.y
+mov_pp r2.xyz, c3
+mul r2.w, r4, r4.y
+mul_pp r0.xyz, c4, r2
+mad r0.xyz, r0, r2.w, r1
+mul_pp r1.x, r0.w, c14.z
+mul oC0.xyz, r0, r1.x
+mul_pp r0.w, r0, r4.x
+mul_pp r0.x, r0.w, c14.z
+cmp_pp r0.y, r0.x, c12.x, c12
+add_pp r0.x, -r1.w, c12
+add_pp r0.z, r4.w, c19.x
+mul_pp r0.x, r0, r0.y
+mad_pp oC0.w, r0.x, r0.z, c12.x
 "
 }
 
@@ -22051,7 +22054,7 @@ Keywords { "POINT_COOKIE" "SHADOWS_CUBE" "SHADOWS_SOFT" }
 
 }
 
-#LINE 144
+#LINE 155
 
 	
 		}
@@ -25065,7 +25068,7 @@ Keywords { "SHADOWS_NATIVE" "SHADOWS_SPLIT_SPHERES" }
 
 }
 
-#LINE 183
+#LINE 194
 
 
 		}
@@ -29767,7 +29770,7 @@ Keywords { "DIRECTIONAL_COOKIE" }
 
 }
 
-#LINE 244
+#LINE 255
 
         }
 		

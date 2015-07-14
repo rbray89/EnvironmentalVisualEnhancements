@@ -21,6 +21,7 @@ namespace Terrain
 
         GameObject OceanBacking = null;
         Material OceanBackingMaterial;
+        Material OceanSurfaceMaterial;
 
         public override void OnSphereActive()
         {
@@ -48,6 +49,7 @@ namespace Terrain
                 if (OceanBackingMaterial != null)
                 {
                     OceanBackingMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
+                    OceanSurfaceMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
                 }
             }
         }
@@ -105,18 +107,19 @@ namespace Terrain
                 if (oceanMaterial != null && pqs.ChildSpheres.Length > 0)
                 {
                     PQS ocean = pqs.ChildSpheres[0];
+                    OceanSurfaceMaterial = ocean.surfaceMaterial;
 
-                    keywords = ocean.surfaceMaterial.shaderKeywords;
-                    originalOceanShader = ocean.surfaceMaterial.shader;
+                    keywords = OceanSurfaceMaterial.shaderKeywords;
+                    originalOceanShader = OceanSurfaceMaterial.shader;
                     TerrainManager.Log("Ocean Shader Name: " + originalOceanShader.name);
-                    ocean.surfaceMaterial.shader = TerrainManager.OceanShader;
+                    OceanSurfaceMaterial.shader = TerrainManager.OceanShader;
                     foreach (String keyword in keywords)
                     {
-                        ocean.surfaceMaterial.EnableKeyword(keyword);
+                        OceanSurfaceMaterial.EnableKeyword(keyword);
                     }
 
-                    terrainMaterial.ApplyMaterialProperties(ocean.surfaceMaterial);
-                    oceanMaterial.ApplyMaterialProperties(ocean.surfaceMaterial);
+                    terrainMaterial.ApplyMaterialProperties(OceanSurfaceMaterial);
+                    oceanMaterial.ApplyMaterialProperties(OceanSurfaceMaterial);
 
                     PQSLandControl landControl = (PQSLandControl)pqs.transform.GetComponentInChildren(typeof(PQSLandControl));
                     if (landControl != null)
@@ -151,7 +154,7 @@ namespace Terrain
                     if (oceanMaterial != null && pqs.ChildSpheres.Length > 0)
                     {
                         PQS ocean = pqs.ChildSpheres[0];
-                        ocean.surfaceMaterial.SetFloat("_MainTexHandoverDist", (float)(1f / cbt.deactivateAltitude));
+                        OceanSurfaceMaterial.SetFloat("_MainTexHandoverDist", (float)(1f / cbt.deactivateAltitude));
                     }
                     pqs.surfaceMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius);
                 }

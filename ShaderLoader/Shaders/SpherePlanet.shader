@@ -2,7 +2,7 @@
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_SpecColor ("Specular tint", Color) = (1,1,1,1)
-		_Shininess ("Shininess", Float) = 10
+		_Shininess ("Shininess", Float) = 0.078125
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_BumpMap ("Normalmap", 2D) = "bump" {}
 		_midTex ("Detail (RGB)", 2D) = "white" {}
@@ -78,11 +78,11 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		struct v2f {
 			float4 pos : SV_POSITION;
 			float  viewDist : TEXCOORD0;
-			float3 viewDir : TEXCOORD1;
+			float3 viewDirT : TEXCOORD1;
 			float3 sphereNormal : TEXCOORD2;
-    		float3 lightDirection : TEXCOORD5;
+			float3 worldNormal : TEXCOORD3;
+    		float3 lightDirT : TEXCOORD5;
     		LIGHTING_COORDS(6,7)
-    		float terminator : TEXCOORD8;
 		};	
 		
 
@@ -98,15 +98,11 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	   	   
 	   	   o.sphereNormal = -normalize(v.vertex);
 		   
-		   half3 worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
+		   o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
 
-    		half NdotL = dot (worldNormal, normalize(_WorldSpaceLightPos0));
-		   half termlerp = saturate(10*-NdotL);
-    	   o.terminator = lerp(1,saturate(floor(1.01+NdotL)), termlerp);
-    		
     		TANGENT_SPACE_ROTATION; 
-        	o.lightDirection = normalize(mul(rotation, ObjSpaceLightDir(v.vertex)));
-        	o.viewDir = normalize(mul(rotation, ObjSpaceViewDir(v.vertex)));
+        	o.lightDirT = normalize(mul(rotation, ObjSpaceLightDir(v.vertex)));
+        	o.viewDirT = normalize(mul(rotation, ObjSpaceViewDir(v.vertex)));
     		TRANSFER_VERTEX_TO_FRAGMENT(o);
     
 	   	   return o;
@@ -118,7 +114,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half4 color;
 			float3 sphereNrm = IN.sphereNormal;
 		 	half4 main = GetSphereMap(_MainTex, IN.sphereNormal);
-		    half3 norm = UnpackNormal(GetSphereMap(_BumpMap, IN.sphereNormal));
+		    half3 normT = UnpackNormal(GetSphereMap(_BumpMap, IN.sphereNormal));
 		    
 		    half4 detail = GetShereDetailMap(_midTex, IN.sphereNormal, _DetailScale); 
 			
@@ -134,36 +130,43 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			cityoverlay.a *= saturate(1-main.a);
 			half4 citydarkoverlay = cityoverlay*citydarkoverlaydetail;
 			half4 citylightoverlay = cityoverlay*citylightoverlaydetail;
-			color = lerp(color, citylightoverlay, citylightoverlay.a);
+			color.rgb = lerp(color.rgb, citylightoverlay.rgb, citylightoverlay.a);
 			#endif
 			
             color *= _Color;
             
           	//lighting
           	
-            half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
-			half NdotL = dot (norm, IN.lightDirection);
-	        fixed atten = LIGHT_ATTENUATION(IN); 
-			half lightIntensity = saturate(_LightColor0.a * NdotL * 2 * atten);
-			half3 light = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
-			
-            float3 specularReflection = atten * _LightColor0.rgb
-                  * _SpecColor.rgb * pow(max(0.0, dot(
-                  reflect(-IN.lightDirection, norm), 
-                  IN.viewDir)), _Shininess);
+            //half4 light = GetLighting( normT, IN.lightDirT, LIGHT_ATTENUATION(IN), 0);
+            /*
+            float h = normalize(IN.lightDirT+IN.viewDirT);
+            float nh = saturate(dot (normT, h));
+
+            float spec = pow(nh, _Shininess * 128.0)*main.a;
+            float3 specularReflection = LIGHT_ATTENUATION(IN) * 2 * _LightColor0.rgb
+                  * _SpecColor.rgb * spec;
  			
- 			light *= lerp(IN.terminator, 1, main.a);
-            light += main.a*specularReflection;
+ 			half NdotL = dot (IN.worldNormal, normalize(_WorldSpaceLightPos0));
+			half termlerp = saturate(10*-NdotL);
+			half terminator = lerp(1,saturate(floor(1.01+NdotL)), termlerp);
+ 			light.rgb *= lerp(terminator, 1, main.a);
+            light.rgb += specularReflection;
 			
-			color.rgb += _Albedo*light;
-			color.rgb *= light;
+			color.rgb += _Albedo*light.rgb;
+			color.rgb *= light.rgb;
+			*/
+			
+			half4 specColor = _SpecColor;
+			specColor.a = main.a;
+			color = SpecularColorLight( IN.lightDirT, IN.viewDirT, normT, color, specColor, _Shininess * 128, LIGHT_ATTENUATION(IN) );
+			color *= lerp(Terminator( normalize(_WorldSpaceLightPos0), IN.worldNormal), 1, main.a);
+			
 			
 			#ifdef CITYOVERLAY_ON
-			lightIntensity = saturate(_LightColor0.a * (NdotL - 0.01) / 0.99 * 4 * atten);
-			citydarkoverlay.a *= 1-saturate(lightIntensity);
-			color = lerp(color, citydarkoverlay, citydarkoverlay.a);
+			//half lightIntensity = saturate(_LightColor0.a * (NdotL - 0.01) / 0.99 * 4 * atten);
+			citydarkoverlay.a *= 1-saturate(color.a);
+			color.rgb = lerp(color.rgb, citydarkoverlay.rgb, citydarkoverlay.a);
 			#endif
-			color.a = 1;
 			
           	return color;
 		}

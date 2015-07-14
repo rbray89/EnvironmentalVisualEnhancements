@@ -10,9 +10,9 @@
 		_DetailScale ("Detail Scale", Range(0,1000)) = 200
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
 		_MinLight ("Minimum Light", Range(0,1)) = .5
-		_Clarity ("Clarity", Range(0,1)) = .005
 		_LightPower ("LightPower", Float) = 1.75
-		_Reflectivity ("Reflectivity", Float) = .08
+		_PlanetOpacity ("PlanetOpacity", Float) = 1
+		_PlanetOrigin ("Planet Center", Vector) = (0,0,0,1)
 	}
 	
 SubShader {
@@ -53,11 +53,11 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 		float _DetailScale;
 		float _DetailDist;
 		float _MinLight;
-		float _Clarity;
 		sampler2D _CameraDepthTexture;
 		float4x4 _CameraToWorld;
 		float _LightPower;
-		float _Reflectivity;
+		float _PlanetOpacity;
+		float3 _PlanetOrigin;
 		
 		struct appdata_t {
 				float4 vertex : POSITION;
@@ -70,7 +70,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 			float4 pos : SV_POSITION;
 			float  viewDist : TEXCOORD0;
 			float3 viewDir : TEXCOORD1;
-			float3 worldNormal : TEXCOORD2;
+			float3 worldPos : TEXCOORD2;
 			LIGHTING_COORDS(3,4)
 			float3 sphereNormal : TEXCOORD5;
 		};	
@@ -88,9 +88,9 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 			float3 vertexPos = mul(_Object2World, vertex).xyz;
 			o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
 
-			o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
+			o.worldPos = vertexPos;
 			o.sphereNormal = -normalize(half4(v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz;
-			o.viewDir = normalize(_WorldSpaceCameraPos.xyz - mul(_Object2World, vertex).xyz);
+			o.viewDir = normalize(_WorldSpaceCameraPos.xyz - vertexPos);
 
 			TRANSFER_VERTEX_TO_FRAGMENT(o);
 
@@ -110,7 +110,11 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 			color = lerp(color, main, saturate(pow(_MainTexHandoverDist*IN.viewDist,3)));
             color *= _Color;
             
+            half handoff = saturate(pow(_PlanetOpacity,2));
+			color.rgb = lerp(color.rgb, main.rgb, handoff);
+            
           	//lighting
+            /*
             half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
 			half3 lightDirection = normalize(_WorldSpaceLightPos0);
 			half3 normalDir = IN.worldNormal;
@@ -131,14 +135,21 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 			
 			
 			color.a = 1;
-
-    		float refrac = .67;//.65-(.55*dot(IN.viewDir, IN.worldNormal));
+			
+			float refrac = .67;//.65-(.55*dot(IN.viewDir, IN.worldNormal));
 			color.a *= pow(refrac,2);
 			color.a = lerp(color.a, main.a, saturate(pow(_MainTexHandoverDist*IN.viewDist,3)));
 			color.rgb *= saturate((_LightPower*light)-color.a);
 			color.rgb += _Reflectivity*light;
 			color.rgb *= light;
 			
+			*/
+			half4 specColor = _SpecColor;
+			specColor.a = lerp(1, main.a, handoff);
+			half4 colorLight = SpecularColorLight( normalize(_WorldSpaceLightPos0), IN.viewDir, normalize(IN.worldPos-_PlanetOrigin), color, specColor, _Shininess * 128, LIGHT_ATTENUATION(IN) );
+			color.rgb = colorLight.rgb;
+			color.a = lerp(1, color.a, (1-handoff)*step(0,colorLight.a));
+    		
           	return color;
 		}
 		ENDCG

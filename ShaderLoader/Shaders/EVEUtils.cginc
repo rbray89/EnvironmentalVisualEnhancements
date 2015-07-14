@@ -3,6 +3,8 @@
 
 	
 	#include "UnityCG.cginc"
+	#include "AutoLight.cginc"
+	#include "Lighting.cginc"
 	#define PI 3.1415926535897932384626
 	#define INV_PI (1.0/PI)
 	#define TWOPI (2.0*PI) 
@@ -93,4 +95,43 @@
 		return saturate(fadeDist) * saturate(distVert);
 	}
 			
+	inline half4 GetLighting(half3 worldNorm, half3 lightDir, fixed atten, fixed ambient)
+	{
+		half3 ambientLighting = ambient * UNITY_LIGHTMODEL_AMBIENT;
+		half NdotL = dot (worldNorm, lightDir);
+		half lightIntensity = saturate(_LightColor0.a * NdotL * 2 * atten);
+		half4 light;
+		light.rgb = max(ambientLighting + (_LightColor0.rgb * lightIntensity), 0);
+		light.a = max(ambientLighting + lightIntensity, 0);
+		
+		return light;
+	}
+	
+	// Calculates Blinn-Phong (specular) lighting model
+	inline half4 SpecularColorLight( half3 lightDir, half3 viewDir, half3 normal, half4 color, half4 specColor, float specK, half atten )
+	{
+	    #ifndef USING_DIRECTIONAL_LIGHT
+	    lightDir = normalize(lightDir);
+	    #endif
+	    viewDir = normalize(viewDir);
+	    half3 h = normalize( lightDir + viewDir );
+	    
+	    half diffuse = dot( normal, lightDir );
+	    
+	    float nh = saturate( dot( h, normal ) );
+	    float spec = pow( nh, specK ) * color.a;
+	    
+	    half4 c;
+	    c.rgb = (color.rgb * _LightColor0.rgb * diffuse + _LightColor0.rgb * specColor.rgb * spec) * (atten * 4);
+	    c.a = diffuse*(atten * 4);//_LightColor0.a * specColor.a * spec * atten; // specular passes by default put highlights to overbright
+	    return c;
+	}
+	
+	inline half Terminator(half3 lightDir, half3 normal)
+	{
+		half NdotL = dot( normal, lightDir );
+		half termlerp = saturate(10*-NdotL);
+		half terminator = lerp(1,saturate(floor(1.01+NdotL)), termlerp);
+		return terminator;
+	}
 #endif

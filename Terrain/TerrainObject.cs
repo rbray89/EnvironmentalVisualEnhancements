@@ -32,6 +32,10 @@ namespace Terrain
         [Persistent]
         float _MinLight = .5f;
         [Persistent]
+        Color _SpecColor = Color.grey;
+        [Persistent]
+        float _Shininess = .4f;
+        [Persistent]
         float _Albedo = .02f;
         [Persistent]
         Color _OceanColor = Color.blue;
@@ -48,9 +52,9 @@ namespace Terrain
         [Persistent]
         Color _UnderColor = Color.white;
         [Persistent]
-        Color _SpecColor = Color.white;
+        Color _SpecColor = Color.grey;
         [Persistent]
-        float _Shininess = 10;
+        float _Shininess = .4f;
         [Persistent]
         String _DetailTex = "";
         [Persistent]
