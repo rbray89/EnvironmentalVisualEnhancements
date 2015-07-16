@@ -1,11 +1,9 @@
 ﻿Shader "EVE/Ocean" {
 	Properties {
-		_Color ("Color Tint", Color) = (1,1,1,1)
-		_UnderColor ("Color Tint", Color) = (1,1,1,1)
+		_SurfaceColor ("Color Tint", Color) = (1,1,1,1)
 		_SpecColor ("Specular tint", Color) = (1,1,1,1)
 		_Shininess ("Shininess", Float) = 10
 		_MainTex ("Main (RGB)", 2D) = "white" {}
-		_MainTexHandoverDist ("Handover Distance", Float) = 1
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
 		_DetailScale ("Detail Scale", Range(0,1000)) = 200
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
@@ -45,10 +43,9 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 		#pragma multi_compile_fwdbase
 		#pragma multi_compile_fwdadd_fullshadows
 		
-		fixed4 _Color;
+		fixed4 _SurfaceColor;
 		float _Shininess;
 		sampler2D _MainTex;
-		float _MainTexHandoverDist;
 		sampler2D _DetailTex;
 		float _DetailScale;
 		float _DetailDist;
@@ -105,50 +102,22 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 		    half4 main = GetSphereMap(_MainTex, sphereNrm);
 			half4 detail = GetShereDetailMap(_DetailTex, sphereNrm, _DetailScale);
 			
-			half detailLevel = saturate(2*_DetailDist*IN.viewDist);
-			color = lerp(detail.rgba, 1, detailLevel);
-			color = lerp(color, main, saturate(pow(_MainTexHandoverDist*IN.viewDist,3)));
-            color *= _Color;
+			color = _SurfaceColor;            
+            
+            half detailLevel = saturate(2*_DetailDist*IN.viewDist);
+			color.rgb += .5*lerp(detail.rgb-.5, 0, detailLevel);
             
             half handoff = saturate(pow(_PlanetOpacity,2));
 			color.rgb = lerp(color.rgb, main.rgb, handoff);
             
-          	//lighting
-            /*
-            half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
-			half3 lightDirection = normalize(_WorldSpaceLightPos0);
-			half3 normalDir = IN.worldNormal;
-			half NdotL = saturate(dot (normalDir, lightDirection));
-	        half diff = (NdotL - 0.01) / 0.99;
-	        fixed atten = LIGHT_ATTENUATION(IN); 
-			half lightIntensity = saturate(_LightColor0.a * diff * 4 * atten);
-			half3 light = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
-			
-            float3 specularReflection = saturate(floor(1+NdotL));
-            
-            specularReflection *= atten * float3(_LightColor0) 
-                  * float3(_SpecColor) * pow(saturate( dot(
-                  reflect(-lightDirection, normalDir), 
-                  IN.viewDir)), _Shininess);
- 
-            light += main.a*specularReflection;
-			
-			
-			color.a = 1;
-			
-			float refrac = .67;//.65-(.55*dot(IN.viewDir, IN.worldNormal));
-			color.a *= pow(refrac,2);
-			color.a = lerp(color.a, main.a, saturate(pow(_MainTexHandoverDist*IN.viewDist,3)));
-			color.rgb *= saturate((_LightPower*light)-color.a);
-			color.rgb += _Reflectivity*light;
-			color.rgb *= light;
-			
-			*/
 			half4 specColor = _SpecColor;
 			specColor.a = lerp(1, main.a, handoff);
 			half4 colorLight = SpecularColorLight( normalize(_WorldSpaceLightPos0), IN.viewDir, normalize(IN.worldPos-_PlanetOrigin), color, specColor, _Shininess * 128, LIGHT_ATTENUATION(IN) );
-			color.rgb = colorLight.rgb;
-			color.a = lerp(1, color.a, (1-handoff)*saturate(colorLight.a));
+			
+			color.a = lerp(1, color.a, saturate(colorLight.a*4));
+			color.a = lerp(color.a, 1, saturate(length(colorLight.rgb)-length(2*color.rgb)));
+			color.a = lerp(color.a, 1, handoff);
+    		color.rgb = colorLight.rgb;
     		
           	return color;
 		}

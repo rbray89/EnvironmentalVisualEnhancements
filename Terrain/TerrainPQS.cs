@@ -144,7 +144,7 @@ namespace Terrain
                     OceanBacking.transform.localScale = Vector3.one;
                     OceanBacking.layer = EVEManagerClass.MACRO_LAYER;
                     OceanBackingMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius);
-                    OceanBackingMaterial.color = terrainMaterial.OceanColor;
+                    terrainMaterial.ApplyMaterialProperties(OceanBackingMaterial);
                 }
 
                 PQSMod_CelestialBodyTransform cbt = (PQSMod_CelestialBodyTransform)pqs.transform.GetComponentInChildren(typeof(PQSMod_CelestialBodyTransform));

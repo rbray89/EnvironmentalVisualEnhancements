@@ -1,6 +1,6 @@
 ﻿Shader "EVE/OceanBack" {
 	Properties {
-		_Color ("Color Tint", Color) = (1,1,1,1)
+		_OceanColor ("Color Tint", Color) = (1,1,1,1)
 		_OceanRadius ("Ocean Radius", Float) = 63000
 		_PlanetOrigin ("Sphere Center", Vector) = (0,0,0,1)
 	}
@@ -51,12 +51,12 @@ void main ()
 varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD1;
 uniform float _OceanRadius;
-uniform vec4 _Color;
+uniform vec4 _OceanColor;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
   vec4 color_1;
-  color_1.xyz = _Color.xyz;
+  color_1.xyz = _OceanColor.xyz;
   float tmpvar_2;
   tmpvar_2 = dot (xlv_TEXCOORD5, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
   color_1.w = (float((_OceanRadius >= sqrt((dot (xlv_TEXCOORD5, xlv_TEXCOORD5) - (tmpvar_2 * tmpvar_2))))) * float((tmpvar_2 >= 0.0)));
@@ -174,7 +174,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -183,7 +183,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 472
+#line 501
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -191,7 +191,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 465
+#line 494
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -286,30 +286,39 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
-uniform lowp vec4 _Color;
+#line 444
+#line 456
+#line 472
+#line 484
+uniform lowp vec4 _OceanColor;
+#line 492
 uniform highp float _OceanRadius;
-#line 464
 uniform highp vec3 _PlanetOrigin;
-#line 481
-#line 493
-#line 481
+#line 510
+#line 522
+#line 510
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 485
+    #line 514
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 489
+    #line 518
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     return o;
 }
@@ -354,7 +363,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -363,7 +372,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 472
+#line 501
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -371,7 +380,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 465
+#line 494
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -466,31 +475,40 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
-uniform lowp vec4 _Color;
+#line 444
+#line 456
+#line 472
+#line 484
+uniform lowp vec4 _OceanColor;
+#line 492
 uniform highp float _OceanRadius;
-#line 464
 uniform highp vec3 _PlanetOrigin;
-#line 481
-#line 493
-#line 493
+#line 510
+#line 522
+#line 522
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 497
+    #line 526
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 501
+    #line 530
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -544,12 +562,12 @@ void main ()
 varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD1;
 uniform float _OceanRadius;
-uniform vec4 _Color;
+uniform vec4 _OceanColor;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
   vec4 color_1;
-  color_1.xyz = _Color.xyz;
+  color_1.xyz = _OceanColor.xyz;
   float tmpvar_2;
   tmpvar_2 = dot (xlv_TEXCOORD5, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
   color_1.w = (float((_OceanRadius >= sqrt((dot (xlv_TEXCOORD5, xlv_TEXCOORD5) - (tmpvar_2 * tmpvar_2))))) * float((tmpvar_2 >= 0.0)));
@@ -667,7 +685,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -676,7 +694,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 472
+#line 501
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -684,7 +702,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 465
+#line 494
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -779,30 +797,39 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
-uniform lowp vec4 _Color;
+#line 444
+#line 456
+#line 472
+#line 484
+uniform lowp vec4 _OceanColor;
+#line 492
 uniform highp float _OceanRadius;
-#line 464
 uniform highp vec3 _PlanetOrigin;
-#line 481
-#line 493
-#line 481
+#line 510
+#line 522
+#line 510
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 485
+    #line 514
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 489
+    #line 518
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     return o;
 }
@@ -847,7 +874,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -856,7 +883,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 472
+#line 501
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -864,7 +891,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 465
+#line 494
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -959,31 +986,40 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
-uniform lowp vec4 _Color;
+#line 444
+#line 456
+#line 472
+#line 484
+uniform lowp vec4 _OceanColor;
+#line 492
 uniform highp float _OceanRadius;
-#line 464
 uniform highp vec3 _PlanetOrigin;
-#line 481
-#line 493
-#line 493
+#line 510
+#line 522
+#line 522
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 497
+    #line 526
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 501
+    #line 530
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -1037,12 +1073,12 @@ void main ()
 varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD1;
 uniform float _OceanRadius;
-uniform vec4 _Color;
+uniform vec4 _OceanColor;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
   vec4 color_1;
-  color_1.xyz = _Color.xyz;
+  color_1.xyz = _OceanColor.xyz;
   float tmpvar_2;
   tmpvar_2 = dot (xlv_TEXCOORD5, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
   color_1.w = (float((_OceanRadius >= sqrt((dot (xlv_TEXCOORD5, xlv_TEXCOORD5) - (tmpvar_2 * tmpvar_2))))) * float((tmpvar_2 >= 0.0)));
@@ -1160,7 +1196,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -1169,7 +1205,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 472
+#line 501
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -1177,7 +1213,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 465
+#line 494
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -1272,30 +1308,39 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
-uniform lowp vec4 _Color;
+#line 444
+#line 456
+#line 472
+#line 484
+uniform lowp vec4 _OceanColor;
+#line 492
 uniform highp float _OceanRadius;
-#line 464
 uniform highp vec3 _PlanetOrigin;
-#line 481
-#line 493
-#line 481
+#line 510
+#line 522
+#line 510
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 485
+    #line 514
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 489
+    #line 518
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     return o;
 }
@@ -1340,7 +1385,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -1349,7 +1394,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 472
+#line 501
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -1357,7 +1402,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 465
+#line 494
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -1452,31 +1497,40 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
-uniform lowp vec4 _Color;
+#line 444
+#line 456
+#line 472
+#line 484
+uniform lowp vec4 _OceanColor;
+#line 492
 uniform highp float _OceanRadius;
-#line 464
 uniform highp vec3 _PlanetOrigin;
-#line 481
-#line 493
-#line 493
+#line 510
+#line 522
+#line 522
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 497
+    #line 526
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 501
+    #line 530
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -1543,12 +1597,12 @@ void main ()
 varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD1;
 uniform float _OceanRadius;
-uniform vec4 _Color;
+uniform vec4 _OceanColor;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
   vec4 color_1;
-  color_1.xyz = _Color.xyz;
+  color_1.xyz = _OceanColor.xyz;
   float tmpvar_2;
   tmpvar_2 = dot (xlv_TEXCOORD5, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
   color_1.w = (float((_OceanRadius >= sqrt((dot (xlv_TEXCOORD5, xlv_TEXCOORD5) - (tmpvar_2 * tmpvar_2))))) * float((tmpvar_2 >= 0.0)));
@@ -1681,7 +1735,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -1690,7 +1744,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -1699,7 +1753,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -1795,32 +1849,41 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 490
+#line 519
+#line 532
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 494
+    #line 523
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 498
+    #line 527
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
@@ -1868,7 +1931,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -1877,7 +1940,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -1886,7 +1949,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -1982,33 +2045,42 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 503
+#line 519
+#line 532
+#line 532
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 507
+    #line 536
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 511
+    #line 540
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -2077,12 +2149,12 @@ void main ()
 varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD1;
 uniform float _OceanRadius;
-uniform vec4 _Color;
+uniform vec4 _OceanColor;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
   vec4 color_1;
-  color_1.xyz = _Color.xyz;
+  color_1.xyz = _OceanColor.xyz;
   float tmpvar_2;
   tmpvar_2 = dot (xlv_TEXCOORD5, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
   color_1.w = (float((_OceanRadius >= sqrt((dot (xlv_TEXCOORD5, xlv_TEXCOORD5) - (tmpvar_2 * tmpvar_2))))) * float((tmpvar_2 >= 0.0)));
@@ -2215,7 +2287,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -2224,7 +2296,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -2233,7 +2305,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -2329,32 +2401,41 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 490
+#line 519
+#line 532
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 494
+    #line 523
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 498
+    #line 527
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
@@ -2402,7 +2483,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -2411,7 +2492,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -2420,7 +2501,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -2516,33 +2597,42 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 503
+#line 519
+#line 532
+#line 532
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 507
+    #line 536
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 511
+    #line 540
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -2611,12 +2701,12 @@ void main ()
 varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD1;
 uniform float _OceanRadius;
-uniform vec4 _Color;
+uniform vec4 _OceanColor;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
   vec4 color_1;
-  color_1.xyz = _Color.xyz;
+  color_1.xyz = _OceanColor.xyz;
   float tmpvar_2;
   tmpvar_2 = dot (xlv_TEXCOORD5, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
   color_1.w = (float((_OceanRadius >= sqrt((dot (xlv_TEXCOORD5, xlv_TEXCOORD5) - (tmpvar_2 * tmpvar_2))))) * float((tmpvar_2 >= 0.0)));
@@ -2749,7 +2839,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -2758,7 +2848,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -2767,7 +2857,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -2863,32 +2953,41 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 490
+#line 519
+#line 532
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 494
+    #line 523
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 498
+    #line 527
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
@@ -2936,7 +3035,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -2945,7 +3044,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -2954,7 +3053,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -3050,33 +3149,42 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 503
+#line 519
+#line 532
+#line 532
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 507
+    #line 536
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 511
+    #line 540
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -3132,12 +3240,12 @@ void main ()
 varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD1;
 uniform float _OceanRadius;
-uniform vec4 _Color;
+uniform vec4 _OceanColor;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
   vec4 color_1;
-  color_1.xyz = _Color.xyz;
+  color_1.xyz = _OceanColor.xyz;
   float tmpvar_2;
   tmpvar_2 = dot (xlv_TEXCOORD5, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
   color_1.w = (float((_OceanRadius >= sqrt((dot (xlv_TEXCOORD5, xlv_TEXCOORD5) - (tmpvar_2 * tmpvar_2))))) * float((tmpvar_2 >= 0.0)));
@@ -3255,7 +3363,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -3264,7 +3372,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 472
+#line 501
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -3272,7 +3380,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 465
+#line 494
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -3367,30 +3475,39 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
-uniform lowp vec4 _Color;
+#line 444
+#line 456
+#line 472
+#line 484
+uniform lowp vec4 _OceanColor;
+#line 492
 uniform highp float _OceanRadius;
-#line 464
 uniform highp vec3 _PlanetOrigin;
-#line 481
-#line 493
-#line 481
+#line 510
+#line 522
+#line 510
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 485
+    #line 514
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 489
+    #line 518
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     return o;
 }
@@ -3435,7 +3552,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -3444,7 +3561,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 472
+#line 501
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -3452,7 +3569,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 465
+#line 494
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -3547,31 +3664,40 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
-uniform lowp vec4 _Color;
+#line 444
+#line 456
+#line 472
+#line 484
+uniform lowp vec4 _OceanColor;
+#line 492
 uniform highp float _OceanRadius;
-#line 464
 uniform highp vec3 _PlanetOrigin;
-#line 481
-#line 493
-#line 493
+#line 510
+#line 522
+#line 522
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 497
+    #line 526
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 501
+    #line 530
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -3638,12 +3764,12 @@ void main ()
 varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD1;
 uniform float _OceanRadius;
-uniform vec4 _Color;
+uniform vec4 _OceanColor;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
   vec4 color_1;
-  color_1.xyz = _Color.xyz;
+  color_1.xyz = _OceanColor.xyz;
   float tmpvar_2;
   tmpvar_2 = dot (xlv_TEXCOORD5, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
   color_1.w = (float((_OceanRadius >= sqrt((dot (xlv_TEXCOORD5, xlv_TEXCOORD5) - (tmpvar_2 * tmpvar_2))))) * float((tmpvar_2 >= 0.0)));
@@ -3776,7 +3902,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -3785,7 +3911,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -3794,7 +3920,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -3890,32 +4016,41 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 490
+#line 519
+#line 532
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 494
+    #line 523
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 498
+    #line 527
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
@@ -3963,7 +4098,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -3972,7 +4107,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -3981,7 +4116,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -4077,33 +4212,42 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 503
+#line 519
+#line 532
+#line 532
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 507
+    #line 536
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 511
+    #line 540
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -4161,7 +4305,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -4170,7 +4314,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -4179,7 +4323,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -4275,32 +4419,41 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 490
+#line 519
+#line 532
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 494
+    #line 523
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 498
+    #line 527
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
@@ -4348,7 +4501,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -4357,7 +4510,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -4366,7 +4519,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -4462,33 +4615,42 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 503
+#line 519
+#line 532
+#line 532
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 507
+    #line 536
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 511
+    #line 540
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -4546,7 +4708,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -4555,7 +4717,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -4564,7 +4726,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -4660,32 +4822,41 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 490
+#line 519
+#line 532
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 494
+    #line 523
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 498
+    #line 527
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
@@ -4733,7 +4904,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -4742,7 +4913,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -4751,7 +4922,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -4847,33 +5018,42 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 503
+#line 519
+#line 532
+#line 532
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 507
+    #line 536
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 511
+    #line 540
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -4931,7 +5111,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -4940,7 +5120,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -4949,7 +5129,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -5045,32 +5225,41 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 490
+#line 519
+#line 532
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 494
+    #line 523
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 498
+    #line 527
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
@@ -5118,7 +5307,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -5127,7 +5316,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -5136,7 +5325,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -5232,33 +5421,42 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 503
+#line 519
+#line 532
+#line 532
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 507
+    #line 536
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 511
+    #line 540
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -5316,7 +5514,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -5325,7 +5523,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -5334,7 +5532,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -5430,32 +5628,41 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 490
+#line 519
+#line 532
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 494
+    #line 523
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 498
+    #line 527
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
@@ -5503,7 +5710,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -5512,7 +5719,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -5521,7 +5728,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -5617,33 +5824,42 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 503
+#line 519
+#line 532
+#line 532
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 507
+    #line 536
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 511
+    #line 540
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -5699,12 +5915,12 @@ void main ()
 varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD1;
 uniform float _OceanRadius;
-uniform vec4 _Color;
+uniform vec4 _OceanColor;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
   vec4 color_1;
-  color_1.xyz = _Color.xyz;
+  color_1.xyz = _OceanColor.xyz;
   float tmpvar_2;
   tmpvar_2 = dot (xlv_TEXCOORD5, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
   color_1.w = (float((_OceanRadius >= sqrt((dot (xlv_TEXCOORD5, xlv_TEXCOORD5) - (tmpvar_2 * tmpvar_2))))) * float((tmpvar_2 >= 0.0)));
@@ -5822,7 +6038,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -5831,7 +6047,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 472
+#line 501
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -5839,7 +6055,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 465
+#line 494
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -5934,30 +6150,39 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
-uniform lowp vec4 _Color;
+#line 444
+#line 456
+#line 472
+#line 484
+uniform lowp vec4 _OceanColor;
+#line 492
 uniform highp float _OceanRadius;
-#line 464
 uniform highp vec3 _PlanetOrigin;
-#line 481
-#line 493
-#line 481
+#line 510
+#line 522
+#line 510
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 485
+    #line 514
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 489
+    #line 518
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     return o;
 }
@@ -6002,7 +6227,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -6011,7 +6236,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 472
+#line 501
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -6019,7 +6244,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 465
+#line 494
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -6114,31 +6339,40 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
-uniform lowp vec4 _Color;
+#line 444
+#line 456
+#line 472
+#line 484
+uniform lowp vec4 _OceanColor;
+#line 492
 uniform highp float _OceanRadius;
-#line 464
 uniform highp vec3 _PlanetOrigin;
-#line 481
-#line 493
-#line 493
+#line 510
+#line 522
+#line 522
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 497
+    #line 526
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 501
+    #line 530
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -6192,12 +6426,12 @@ void main ()
 varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD1;
 uniform float _OceanRadius;
-uniform vec4 _Color;
+uniform vec4 _OceanColor;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
   vec4 color_1;
-  color_1.xyz = _Color.xyz;
+  color_1.xyz = _OceanColor.xyz;
   float tmpvar_2;
   tmpvar_2 = dot (xlv_TEXCOORD5, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
   color_1.w = (float((_OceanRadius >= sqrt((dot (xlv_TEXCOORD5, xlv_TEXCOORD5) - (tmpvar_2 * tmpvar_2))))) * float((tmpvar_2 >= 0.0)));
@@ -6315,7 +6549,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -6324,7 +6558,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 472
+#line 501
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -6332,7 +6566,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 465
+#line 494
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -6427,30 +6661,39 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
-uniform lowp vec4 _Color;
+#line 444
+#line 456
+#line 472
+#line 484
+uniform lowp vec4 _OceanColor;
+#line 492
 uniform highp float _OceanRadius;
-#line 464
 uniform highp vec3 _PlanetOrigin;
-#line 481
-#line 493
-#line 481
+#line 510
+#line 522
+#line 510
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 485
+    #line 514
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 489
+    #line 518
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     return o;
 }
@@ -6495,7 +6738,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -6504,7 +6747,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 472
+#line 501
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -6512,7 +6755,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 465
+#line 494
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -6607,31 +6850,40 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
-uniform lowp vec4 _Color;
+#line 444
+#line 456
+#line 472
+#line 484
+uniform lowp vec4 _OceanColor;
+#line 492
 uniform highp float _OceanRadius;
-#line 464
 uniform highp vec3 _PlanetOrigin;
-#line 481
-#line 493
-#line 493
+#line 510
+#line 522
+#line 522
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 497
+    #line 526
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 501
+    #line 530
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -6685,12 +6937,12 @@ void main ()
 varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD1;
 uniform float _OceanRadius;
-uniform vec4 _Color;
+uniform vec4 _OceanColor;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
   vec4 color_1;
-  color_1.xyz = _Color.xyz;
+  color_1.xyz = _OceanColor.xyz;
   float tmpvar_2;
   tmpvar_2 = dot (xlv_TEXCOORD5, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
   color_1.w = (float((_OceanRadius >= sqrt((dot (xlv_TEXCOORD5, xlv_TEXCOORD5) - (tmpvar_2 * tmpvar_2))))) * float((tmpvar_2 >= 0.0)));
@@ -6808,7 +7060,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -6817,7 +7069,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 472
+#line 501
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -6825,7 +7077,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 465
+#line 494
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -6920,30 +7172,39 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
-uniform lowp vec4 _Color;
+#line 444
+#line 456
+#line 472
+#line 484
+uniform lowp vec4 _OceanColor;
+#line 492
 uniform highp float _OceanRadius;
-#line 464
 uniform highp vec3 _PlanetOrigin;
-#line 481
-#line 493
-#line 481
+#line 510
+#line 522
+#line 510
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 485
+    #line 514
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 489
+    #line 518
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     return o;
 }
@@ -6988,7 +7249,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -6997,7 +7258,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 472
+#line 501
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -7005,7 +7266,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 465
+#line 494
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -7100,31 +7361,40 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
-uniform lowp vec4 _Color;
+#line 444
+#line 456
+#line 472
+#line 484
+uniform lowp vec4 _OceanColor;
+#line 492
 uniform highp float _OceanRadius;
-#line 464
 uniform highp vec3 _PlanetOrigin;
-#line 481
-#line 493
-#line 493
+#line 510
+#line 522
+#line 522
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 497
+    #line 526
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 501
+    #line 530
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -7191,12 +7461,12 @@ void main ()
 varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD1;
 uniform float _OceanRadius;
-uniform vec4 _Color;
+uniform vec4 _OceanColor;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
   vec4 color_1;
-  color_1.xyz = _Color.xyz;
+  color_1.xyz = _OceanColor.xyz;
   float tmpvar_2;
   tmpvar_2 = dot (xlv_TEXCOORD5, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
   color_1.w = (float((_OceanRadius >= sqrt((dot (xlv_TEXCOORD5, xlv_TEXCOORD5) - (tmpvar_2 * tmpvar_2))))) * float((tmpvar_2 >= 0.0)));
@@ -7329,7 +7599,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -7338,7 +7608,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -7347,7 +7617,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -7443,32 +7713,41 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 490
+#line 519
+#line 532
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 494
+    #line 523
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 498
+    #line 527
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
@@ -7516,7 +7795,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -7525,7 +7804,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -7534,7 +7813,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -7630,33 +7909,42 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 503
+#line 519
+#line 532
+#line 532
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 507
+    #line 536
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 511
+    #line 540
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -7725,12 +8013,12 @@ void main ()
 varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD1;
 uniform float _OceanRadius;
-uniform vec4 _Color;
+uniform vec4 _OceanColor;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
   vec4 color_1;
-  color_1.xyz = _Color.xyz;
+  color_1.xyz = _OceanColor.xyz;
   float tmpvar_2;
   tmpvar_2 = dot (xlv_TEXCOORD5, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
   color_1.w = (float((_OceanRadius >= sqrt((dot (xlv_TEXCOORD5, xlv_TEXCOORD5) - (tmpvar_2 * tmpvar_2))))) * float((tmpvar_2 >= 0.0)));
@@ -7863,7 +8151,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -7872,7 +8160,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -7881,7 +8169,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -7977,32 +8265,41 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 490
+#line 519
+#line 532
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 494
+    #line 523
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 498
+    #line 527
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
@@ -8050,7 +8347,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -8059,7 +8356,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -8068,7 +8365,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -8164,33 +8461,42 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 503
+#line 519
+#line 532
+#line 532
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 507
+    #line 536
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 511
+    #line 540
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -8259,12 +8565,12 @@ void main ()
 varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD1;
 uniform float _OceanRadius;
-uniform vec4 _Color;
+uniform vec4 _OceanColor;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
   vec4 color_1;
-  color_1.xyz = _Color.xyz;
+  color_1.xyz = _OceanColor.xyz;
   float tmpvar_2;
   tmpvar_2 = dot (xlv_TEXCOORD5, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
   color_1.w = (float((_OceanRadius >= sqrt((dot (xlv_TEXCOORD5, xlv_TEXCOORD5) - (tmpvar_2 * tmpvar_2))))) * float((tmpvar_2 >= 0.0)));
@@ -8397,7 +8703,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -8406,7 +8712,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -8415,7 +8721,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -8511,32 +8817,41 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 490
+#line 519
+#line 532
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 494
+    #line 523
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 498
+    #line 527
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
@@ -8584,7 +8899,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -8593,7 +8908,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -8602,7 +8917,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -8698,33 +9013,42 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 503
+#line 519
+#line 532
+#line 532
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 507
+    #line 536
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 511
+    #line 540
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -8780,12 +9104,12 @@ void main ()
 varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD1;
 uniform float _OceanRadius;
-uniform vec4 _Color;
+uniform vec4 _OceanColor;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
   vec4 color_1;
-  color_1.xyz = _Color.xyz;
+  color_1.xyz = _OceanColor.xyz;
   float tmpvar_2;
   tmpvar_2 = dot (xlv_TEXCOORD5, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
   color_1.w = (float((_OceanRadius >= sqrt((dot (xlv_TEXCOORD5, xlv_TEXCOORD5) - (tmpvar_2 * tmpvar_2))))) * float((tmpvar_2 >= 0.0)));
@@ -8903,7 +9227,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -8912,7 +9236,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 472
+#line 501
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -8920,7 +9244,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 465
+#line 494
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -9015,30 +9339,39 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
-uniform lowp vec4 _Color;
+#line 444
+#line 456
+#line 472
+#line 484
+uniform lowp vec4 _OceanColor;
+#line 492
 uniform highp float _OceanRadius;
-#line 464
 uniform highp vec3 _PlanetOrigin;
-#line 481
-#line 493
-#line 481
+#line 510
+#line 522
+#line 510
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 485
+    #line 514
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 489
+    #line 518
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     return o;
 }
@@ -9083,7 +9416,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 386
+#line 315
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -9092,7 +9425,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 472
+#line 501
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -9100,7 +9433,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 465
+#line 494
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -9195,31 +9528,40 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 299
 #line 307
 #line 311
-#line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 396
+#line 325
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 409
-#line 417
+#line 338
+#line 346
+#line 360
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 393
+#line 397
+#line 406
+#line 414
+#line 423
 #line 431
-uniform lowp vec4 _Color;
+#line 444
+#line 456
+#line 472
+#line 484
+uniform lowp vec4 _OceanColor;
+#line 492
 uniform highp float _OceanRadius;
-#line 464
 uniform highp vec3 _PlanetOrigin;
-#line 481
-#line 493
-#line 493
+#line 510
+#line 522
+#line 522
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 497
+    #line 526
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 501
+    #line 530
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -9286,12 +9628,12 @@ void main ()
 varying vec3 xlv_TEXCOORD5;
 varying vec3 xlv_TEXCOORD1;
 uniform float _OceanRadius;
-uniform vec4 _Color;
+uniform vec4 _OceanColor;
 uniform vec3 _WorldSpaceCameraPos;
 void main ()
 {
   vec4 color_1;
-  color_1.xyz = _Color.xyz;
+  color_1.xyz = _OceanColor.xyz;
   float tmpvar_2;
   tmpvar_2 = dot (xlv_TEXCOORD5, normalize((xlv_TEXCOORD1 - _WorldSpaceCameraPos)));
   color_1.w = (float((_OceanRadius >= sqrt((dot (xlv_TEXCOORD5, xlv_TEXCOORD5) - (tmpvar_2 * tmpvar_2))))) * float((tmpvar_2 >= 0.0)));
@@ -9424,7 +9766,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -9433,7 +9775,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -9442,7 +9784,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -9538,32 +9880,41 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 490
+#line 519
+#line 532
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 494
+    #line 523
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 498
+    #line 527
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
@@ -9611,7 +9962,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -9620,7 +9971,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -9629,7 +9980,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -9725,33 +10076,42 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform sampler2D _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 503
+#line 519
+#line 532
+#line 532
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 507
+    #line 536
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 511
+    #line 540
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -9809,7 +10169,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -9818,7 +10178,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -9827,7 +10187,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -9923,32 +10283,41 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 490
+#line 519
+#line 532
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 494
+    #line 523
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 498
+    #line 527
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
@@ -9996,7 +10365,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -10005,7 +10374,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -10014,7 +10383,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -10110,33 +10479,42 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 503
+#line 519
+#line 532
+#line 532
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 507
+    #line 536
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 511
+    #line 540
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -10194,7 +10572,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -10203,7 +10581,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -10212,7 +10590,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -10308,32 +10686,41 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 490
+#line 519
+#line 532
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 494
+    #line 523
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 498
+    #line 527
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
@@ -10381,7 +10768,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -10390,7 +10777,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -10399,7 +10786,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -10495,33 +10882,42 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 503
+#line 519
+#line 532
+#line 532
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 507
+    #line 536
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 511
+    #line 540
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -10579,7 +10975,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -10588,7 +10984,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -10597,7 +10993,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -10693,32 +11089,41 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 490
+#line 519
+#line 532
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 494
+    #line 523
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 498
+    #line 527
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
@@ -10766,7 +11171,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -10775,7 +11180,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -10784,7 +11189,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -10880,33 +11285,42 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 503
+#line 519
+#line 532
+#line 532
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 507
+    #line 536
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 511
+    #line 540
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -10964,7 +11378,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -10973,7 +11387,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -10982,7 +11396,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -11078,32 +11492,41 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 490
+#line 519
+#line 532
+#line 519
 v2f vert( in appdata_t v ) {
     v2f o;
-    #line 494
+    #line 523
     o.pos = (glstate_matrix_mvp * v.vertex);
     highp vec3 vertexPos = (_Object2World * v.vertex).xyz;
     o.worldVert = vertexPos;
     o.worldOrigin = _PlanetOrigin;
-    #line 498
+    #line 527
     o.L = (o.worldOrigin - _WorldSpaceCameraPos.xyz);
     o._ShadowCoord = (unity_World2Shadow[0] * (_Object2World * v.vertex));
     return o;
@@ -11151,7 +11574,7 @@ struct appdata_img {
     highp vec4 vertex;
     mediump vec2 texcoord;
 };
-#line 394
+#line 323
 struct SurfaceOutput {
     lowp vec3 Albedo;
     lowp vec3 Normal;
@@ -11160,7 +11583,7 @@ struct SurfaceOutput {
     lowp float Gloss;
     lowp float Alpha;
 };
-#line 480
+#line 509
 struct v2f {
     highp vec4 pos;
     highp vec4 scrPos;
@@ -11169,7 +11592,7 @@ struct v2f {
     highp vec3 worldOrigin;
     highp vec3 L;
 };
-#line 473
+#line 502
 struct appdata_t {
     highp vec4 vertex;
     lowp vec4 color;
@@ -11265,33 +11688,42 @@ uniform lowp vec4 unity_ColorSpaceGrey;
 #line 307
 #line 311
 #line 315
-uniform highp mat4 _MainRotation;
-uniform highp mat4 _DetailRotation;
-#line 386
 uniform highp vec4 _ShadowOffsets[4];
 uniform lowp sampler2DShadow _ShadowMapTexture;
-#line 404
+#line 333
 uniform lowp vec4 _LightColor0;
 uniform lowp vec4 _SpecColor;
-#line 417
-#line 425
+#line 346
+#line 354
+#line 368
+uniform highp mat4 _MainRotation;
+uniform highp mat4 _DetailRotation;
+#line 401
+#line 405
+#line 414
+#line 422
+#line 431
 #line 439
-uniform lowp vec4 _Color;
+#line 452
+#line 464
+#line 480
+#line 492
+uniform lowp vec4 _OceanColor;
+#line 500
 uniform highp float _OceanRadius;
-#line 472
 uniform highp vec3 _PlanetOrigin;
-#line 490
-#line 503
-#line 503
+#line 519
+#line 532
+#line 532
 lowp vec4 frag( in v2f IN ) {
-    mediump vec4 color = _Color;
+    mediump vec4 color = _OceanColor;
     mediump vec3 worldDir = normalize((IN.worldVert - _WorldSpaceCameraPos.xyz));
-    #line 507
+    #line 536
     highp float tc = dot( IN.L, worldDir);
     highp float d = sqrt((dot( IN.L, IN.L) - (tc * tc)));
     highp vec3 norm = normalize((-IN.L));
     highp float d2 = pow( d, 2.0);
-    #line 511
+    #line 540
     highp float td = sqrt((dot( IN.L, IN.L) - d2));
     mediump float sphereCheck = (step( d, _OceanRadius) * step( 0.0, tc));
     color.w = sphereCheck;
@@ -11332,7 +11764,7 @@ Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHA
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 Vector 0 [_WorldSpaceCameraPos]
-Vector 1 [_Color]
+Vector 1 [_OceanColor]
 Float 2 [_OceanRadius]
 "ps_3_0
 ; 14 ALU
@@ -11359,7 +11791,7 @@ mov_pp oC0.xyz, c1
 SubProgram "d3d11 " {
 Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 ConstBuffer "$Globals" 208 // 196 used size, 8 vars
-Vector 176 [_Color] 4
+Vector 176 [_OceanColor] 4
 Float 192 [_OceanRadius]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
@@ -11408,7 +11840,7 @@ Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHAD
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 Vector 0 [_WorldSpaceCameraPos]
-Vector 1 [_Color]
+Vector 1 [_OceanColor]
 Float 2 [_OceanRadius]
 "ps_3_0
 ; 14 ALU
@@ -11435,7 +11867,7 @@ mov_pp oC0.xyz, c1
 SubProgram "d3d11 " {
 Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 ConstBuffer "$Globals" 208 // 196 used size, 8 vars
-Vector 176 [_Color] 4
+Vector 176 [_OceanColor] 4
 Float 192 [_OceanRadius]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
@@ -11484,7 +11916,7 @@ Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADO
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_OFF" }
 Vector 0 [_WorldSpaceCameraPos]
-Vector 1 [_Color]
+Vector 1 [_OceanColor]
 Float 2 [_OceanRadius]
 "ps_3_0
 ; 14 ALU
@@ -11511,7 +11943,7 @@ mov_pp oC0.xyz, c1
 SubProgram "d3d11 " {
 Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_OFF" }
 ConstBuffer "$Globals" 208 // 196 used size, 8 vars
-Vector 176 [_Color] 4
+Vector 176 [_OceanColor] 4
 Float 192 [_OceanRadius]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
@@ -11560,7 +11992,7 @@ Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHA
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
 Vector 0 [_WorldSpaceCameraPos]
-Vector 1 [_Color]
+Vector 1 [_OceanColor]
 Float 2 [_OceanRadius]
 "ps_3_0
 ; 14 ALU
@@ -11587,7 +12019,7 @@ mov_pp oC0.xyz, c1
 SubProgram "d3d11 " {
 Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
 ConstBuffer "$Globals" 272 // 260 used size, 9 vars
-Vector 240 [_Color] 4
+Vector 240 [_OceanColor] 4
 Float 256 [_OceanRadius]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
@@ -11637,7 +12069,7 @@ Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHAD
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
 Vector 0 [_WorldSpaceCameraPos]
-Vector 1 [_Color]
+Vector 1 [_OceanColor]
 Float 2 [_OceanRadius]
 "ps_3_0
 ; 14 ALU
@@ -11664,7 +12096,7 @@ mov_pp oC0.xyz, c1
 SubProgram "d3d11 " {
 Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
 ConstBuffer "$Globals" 272 // 260 used size, 9 vars
-Vector 240 [_Color] 4
+Vector 240 [_OceanColor] 4
 Float 256 [_OceanRadius]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
@@ -11714,7 +12146,7 @@ Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADO
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_SCREEN" }
 Vector 0 [_WorldSpaceCameraPos]
-Vector 1 [_Color]
+Vector 1 [_OceanColor]
 Float 2 [_OceanRadius]
 "ps_3_0
 ; 14 ALU
@@ -11741,7 +12173,7 @@ mov_pp oC0.xyz, c1
 SubProgram "d3d11 " {
 Keywords { "WORLD_SPACE_OFF" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_SCREEN" }
 ConstBuffer "$Globals" 272 // 260 used size, 9 vars
-Vector 240 [_Color] 4
+Vector 240 [_OceanColor] 4
 Float 256 [_OceanRadius]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
@@ -11791,7 +12223,7 @@ Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHAD
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 Vector 0 [_WorldSpaceCameraPos]
-Vector 1 [_Color]
+Vector 1 [_OceanColor]
 Float 2 [_OceanRadius]
 "ps_3_0
 ; 14 ALU
@@ -11818,7 +12250,7 @@ mov_pp oC0.xyz, c1
 SubProgram "d3d11 " {
 Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 ConstBuffer "$Globals" 208 // 196 used size, 8 vars
-Vector 176 [_Color] 4
+Vector 176 [_OceanColor] 4
 Float 192 [_OceanRadius]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
@@ -11867,7 +12299,7 @@ Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADO
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 Vector 0 [_WorldSpaceCameraPos]
-Vector 1 [_Color]
+Vector 1 [_OceanColor]
 Float 2 [_OceanRadius]
 "ps_3_0
 ; 14 ALU
@@ -11894,7 +12326,7 @@ mov_pp oC0.xyz, c1
 SubProgram "d3d11 " {
 Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_OFF" }
 ConstBuffer "$Globals" 208 // 196 used size, 8 vars
-Vector 176 [_Color] 4
+Vector 176 [_OceanColor] 4
 Float 192 [_OceanRadius]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
@@ -11943,7 +12375,7 @@ Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOW
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_OFF" }
 Vector 0 [_WorldSpaceCameraPos]
-Vector 1 [_Color]
+Vector 1 [_OceanColor]
 Float 2 [_OceanRadius]
 "ps_3_0
 ; 14 ALU
@@ -11970,7 +12402,7 @@ mov_pp oC0.xyz, c1
 SubProgram "d3d11 " {
 Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_OFF" }
 ConstBuffer "$Globals" 208 // 196 used size, 8 vars
-Vector 176 [_Color] 4
+Vector 176 [_OceanColor] 4
 Float 192 [_OceanRadius]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
@@ -12019,7 +12451,7 @@ Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHAD
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
 Vector 0 [_WorldSpaceCameraPos]
-Vector 1 [_Color]
+Vector 1 [_OceanColor]
 Float 2 [_OceanRadius]
 "ps_3_0
 ; 14 ALU
@@ -12046,7 +12478,7 @@ mov_pp oC0.xyz, c1
 SubProgram "d3d11 " {
 Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_OFF" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
 ConstBuffer "$Globals" 272 // 260 used size, 9 vars
-Vector 240 [_Color] 4
+Vector 240 [_OceanColor] 4
 Float 256 [_OceanRadius]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
@@ -12096,7 +12528,7 @@ Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADO
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
 Vector 0 [_WorldSpaceCameraPos]
-Vector 1 [_Color]
+Vector 1 [_OceanColor]
 Float 2 [_OceanRadius]
 "ps_3_0
 ; 14 ALU
@@ -12123,7 +12555,7 @@ mov_pp oC0.xyz, c1
 SubProgram "d3d11 " {
 Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_OFF" "SHADOWS_SCREEN" }
 ConstBuffer "$Globals" 272 // 260 used size, 9 vars
-Vector 240 [_Color] 4
+Vector 240 [_OceanColor] 4
 Float 256 [_OceanRadius]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3
@@ -12173,7 +12605,7 @@ Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOW
 SubProgram "d3d9 " {
 Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_SCREEN" }
 Vector 0 [_WorldSpaceCameraPos]
-Vector 1 [_Color]
+Vector 1 [_OceanColor]
 Float 2 [_OceanRadius]
 "ps_3_0
 ; 14 ALU
@@ -12200,7 +12632,7 @@ mov_pp oC0.xyz, c1
 SubProgram "d3d11 " {
 Keywords { "WORLD_SPACE_ON" "DIRECTIONAL" "LIGHTMAP_ON" "DIRLIGHTMAP_ON" "SHADOWS_SCREEN" }
 ConstBuffer "$Globals" 272 // 260 used size, 9 vars
-Vector 240 [_Color] 4
+Vector 240 [_OceanColor] 4
 Float 256 [_OceanRadius]
 ConstBuffer "UnityPerCamera" 128 // 76 used size, 8 vars
 Vector 64 [_WorldSpaceCameraPos] 3

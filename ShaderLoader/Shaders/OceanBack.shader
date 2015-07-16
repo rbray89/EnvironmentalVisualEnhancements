@@ -1,6 +1,6 @@
 ﻿Shader "EVE/OceanBack" {
 	Properties {
-		_Color ("Color Tint", Color) = (1,1,1,1)
+		_OceanColor ("Color Tint", Color) = (1,1,1,1)
 		_OceanRadius ("Ocean Radius", Float) = 63000
 		_PlanetOrigin ("Sphere Center", Vector) = (0,0,0,1)
 	}
@@ -34,7 +34,7 @@ SubShader {
 		#define MAG_ONE 1.4142135623730950488016887242097
 		#pragma fragmentoption ARB_precision_hint_fastest
 
-		fixed4 _Color;
+		fixed4 _OceanColor;
 		float _OceanRadius;
 		float3 _PlanetOrigin;
 		
@@ -75,7 +75,7 @@ SubShader {
 	 		
 		fixed4 frag (v2f IN) : COLOR
 			{
-			half4 color = _Color;
+			half4 color = _OceanColor;
 			
 			half3 worldDir = normalize(IN.worldVert - _WorldSpaceCameraPos.xyz);
 			float tc = dot(IN.L, worldDir);

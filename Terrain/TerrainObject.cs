@@ -41,20 +41,12 @@ namespace Terrain
         Color _OceanColor = Color.blue;
         [Persistent]
         float _OceanDepthFactor = .002f;
-
-        public Color OceanColor { get {return _OceanColor;}}
     }
 
     public class OceanMaterial : MaterialManager
     {
         [Persistent]
-        Color _Color = Color.white;
-        [Persistent]
-        Color _UnderColor = Color.white;
-        [Persistent]
-        Color _SpecColor = Color.grey;
-        [Persistent]
-        float _Shininess = .4f;
+        Color _SurfaceColor = Color.white;
         [Persistent]
         String _DetailTex = "";
         [Persistent]

@@ -168,7 +168,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			
 			
 			half detailLevel = saturate(2*_DetailDist*IN.objnormal.w);
-			color = IN.color + .50*(lerp(detail.rgba-.5, 0, detailLevel));
+			color = IN.color + .750*(lerp(detail.rgba-.5, 0, detailLevel));
 			
 			
 			float tc = dot(IN.L, IN.viewDir);
