@@ -102,7 +102,7 @@ namespace Utils
         public static CelestialBody GetCelestialBody(String body)
         {
             CelestialBody[] celestialBodies = FlightGlobals.Bodies.ToArray();
-            return celestialBodies.First(n => n.bodyName == body);
+            return celestialBodies.FirstOrDefault(n => n.bodyName == body);
         }
 
         public static Transform GetScaledTransform(string body)

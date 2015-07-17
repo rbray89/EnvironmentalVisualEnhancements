@@ -68,6 +68,7 @@ namespace Terrain
 
         protected new void Update()
         {
+            
             if(!camerasInitialized)
             {
                 Camera[] cameras = Camera.allCameras;
@@ -84,8 +85,7 @@ namespace Terrain
                     ScaledCamera.Instance.camera.depthTextureMode = DepthTextureMode.Depth;
                 }
             }
-
-            
+                       
         }
 
     }
