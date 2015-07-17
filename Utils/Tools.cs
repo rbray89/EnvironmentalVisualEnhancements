@@ -101,8 +101,8 @@ namespace Utils
 
         public static CelestialBody GetCelestialBody(String body)
         {
-            CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
-            return celestialBodies.Single(n => n.bodyName == body);
+            CelestialBody[] celestialBodies = FlightGlobals.Bodies.ToArray();
+            return celestialBodies.First(n => n.bodyName == body);
         }
 
         public static Transform GetScaledTransform(string body)
