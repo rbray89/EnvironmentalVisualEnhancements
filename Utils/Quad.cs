@@ -8,7 +8,7 @@ namespace Utils
 {
     public static class Quad
     {
-        public static void Create(GameObject gameObject, float size, Color color, Vector3 up, float maxScale = 0)
+        public static void Create(GameObject gameObject, float size, Color32 color, Vector3 up, float maxScale = 0)
         {
             MeshFilter filter = gameObject.AddComponent<MeshFilter>();
             Mesh mesh = filter.mesh;
@@ -42,10 +42,10 @@ namespace Utils
 
             mesh.colors = new Color[4]
             {
-                new Color(color.r, color.g, color.b, color.a),
-                new Color(color.r, color.g, color.b, color.a),
-                new Color(color.r, color.g, color.b, color.a),
-                new Color(color.r, color.g, color.b, color.a)
+                color,
+                color,
+                color,
+                color
             };
 
             Tools.CalculateMeshTangents(mesh);

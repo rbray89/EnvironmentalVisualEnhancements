@@ -12,7 +12,7 @@ namespace Atmosphere
     public class AtmosphereMaterial : MaterialManager
     {
         [Persistent]
-        Color _Color = new Color(1, 1, 1, 1);
+        Color32 _Color = Color.white;
         [Persistent]
         String _MainTex = "";
         [Persistent]

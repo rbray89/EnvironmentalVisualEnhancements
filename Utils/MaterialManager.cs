@@ -75,7 +75,13 @@ namespace Utils
                 else if (obj.GetType() == typeof(Color))
                 {
                     Color value = (Color)obj;
-                    KSPLog.print(name + ": " + value * scaleValue);
+                    KSPLog.print(name + ": " + value);
+                }
+                //Color
+                else if (obj.GetType() == typeof(Color32))
+                {
+                    Color32 value = (Color32)obj;
+                    KSPLog.print(name + ": " + value);
                 }
                 //Vector3
                 else if (obj.GetType() == typeof(Vector3))
@@ -95,6 +101,7 @@ namespace Utils
             Scale = scale;
             Cache();
             ApplyCache(material, scale);
+            Log();
         }
 
         private void Cache()
@@ -174,7 +181,13 @@ namespace Utils
                 else if (obj.GetType() == typeof(Color))
                 {
                     Color value = (Color)obj;
-                    material.SetColor(name, value * scaleValue);
+                    material.SetColor(name, value);
+                }
+                //Color32
+                else if (obj.GetType() == typeof(Color32))
+                {
+                    Color32 value = (Color32)obj;
+                    material.SetColor(name, value);
                 }
                 //Vector3
                 else if (obj.GetType() == typeof(Vector3))

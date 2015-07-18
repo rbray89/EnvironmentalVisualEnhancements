@@ -244,19 +244,9 @@ namespace EVEManager
                 {
                     if (field.Name != "body")
                     {
-                        String value = configNode.GetValue(field.Name);
-                        if(value == null)
-                        {
-                            value = ConfigNode.CreateConfigFromObject(obj, new ConfigNode("TMP")).GetValue(field.Name);
-                            configNode.AddValue(field.Name, value);
-                        }
                         
-                        Rect labelRect = GUIHelper.GetSplitRect(placementBase, ref placement);
-                        Rect fieldRect = GUIHelper.GetSplitRect(placementBase, ref placement);
-                        GUIHelper.SplitRect(ref labelRect, ref fieldRect, 3f / 7);
-                        GUI.Label(labelRect, field.Name);
-                        value = GUI.TextField(fieldRect, value);
-                        configNode.SetValue(field.Name, value);
+                        GUIHelper.DrawField(placementBase, ref placement, obj, field, configNode);
+
                         placement.y++;
                     }
                 }

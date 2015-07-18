@@ -118,7 +118,7 @@ namespace Terrain
                         OceanSurfaceMaterial.EnableKeyword(keyword);
                     }
 
-                    terrainMaterial.ApplyMaterialProperties(OceanSurfaceMaterial);
+                    terrainMaterial.ApplyMaterialProperties(ocean.surfaceMaterial);
                     oceanMaterial.ApplyMaterialProperties(OceanSurfaceMaterial);
 
                     PQSLandControl landControl = (PQSLandControl)pqs.transform.GetComponentInChildren(typeof(PQSLandControl));

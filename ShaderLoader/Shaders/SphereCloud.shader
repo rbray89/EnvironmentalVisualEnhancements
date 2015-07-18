@@ -118,7 +118,7 @@ SubShader {
 			
 			float viewDist = distance(IN.worldVert,_WorldSpaceCameraPos);
 			half detailLevel = saturate(2*_DetailDist*viewDist);
-			color = main.rgba * lerp(detail.rgba, 1, detailLevel);
+			color = _Color * main.rgba * lerp(detail.rgba, 1, detailLevel);
 
 			float rim = saturate(dot(IN.viewDir, IN.worldNormal));
 			rim = saturate(pow(_FalloffScale*rim,_FalloffPow));

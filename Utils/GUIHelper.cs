@@ -96,7 +96,7 @@ namespace Utils
             }
             else if (HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
-                CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
+                CelestialBody[] celestialBodies = FlightGlobals.Bodies.ToArray();
                 return celestialBodies.First<CelestialBody>(cb => cb.isHomeWorld);
             }
             else
@@ -108,7 +108,7 @@ namespace Utils
 
         public static string DrawBodySelector(Rect placementBase, ref Rect placement)
         {
-            CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
+            CelestialBody[] celestialBodies = FlightGlobals.Bodies.ToArray();
             GUIStyle gsCenter = new GUIStyle(GUI.skin.label);
             gsCenter.alignment = TextAnchor.MiddleCenter;
 
@@ -156,6 +156,39 @@ namespace Utils
             }
             placement.y++;
             return currentBody.bodyName;
+        }
+
+        public static void DrawField(Rect placementBase, ref Rect placement, object obj, FieldInfo field, ConfigNode config)
+        {
+            
+            String value = config.GetValue(field.Name);
+            if (value == null)
+            {
+                value = ConfigNode.CreateConfigFromObject(obj, new ConfigNode("TMP")).GetValue(field.Name);
+                config.AddValue(field.Name, value);
+            }
+
+            Rect labelRect = GUIHelper.GetSplitRect(placementBase, ref placement);
+            Rect fieldRect = GUIHelper.GetSplitRect(placementBase, ref placement);
+            GUIHelper.SplitRect(ref labelRect, ref fieldRect, 3f / 7);
+            GUI.Label(labelRect, field.Name);
+
+            if (false )// && field.FieldType == typeof(Color))
+            {
+                Color color = ConfigNode.ParseColor(value);
+                Color32 color255 = color;
+                value = GUI.TextField(fieldRect, ConfigNode.WriteColor(color255));
+                value = ConfigNode.WriteVector(ConfigNode.ParseVector4(value) / 255f);
+                config.SetValue(field.Name, value);
+            }
+            else
+            {
+                value = GUI.TextField(fieldRect, value);
+                config.SetValue(field.Name, value);
+            }
+
+            
+
         }
 
         public static ConfigNode DrawObjectSelector(ConfigNode.ConfigNodeList nodeList, ref int selectedObjIndex, ref String objString, ref Vector2 objListPos, Rect placementBase, ref Rect placement)

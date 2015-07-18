@@ -14,7 +14,7 @@ namespace Terrain
     public class TerrainMaterial : MaterialManager
     {
         [Persistent] 
-        Color _Color = Color.white;
+        Color32 _Color = Color.white;
         [Persistent]
         String _MainTex = "";
 		[Persistent]
@@ -32,13 +32,13 @@ namespace Terrain
         [Persistent]
         float _MinLight = .5f;
         [Persistent]
-        Color _SpecColor = Color.grey;
+        Color32 _SpecColor = Color.grey;
         [Persistent]
         float _Shininess = .4f;
         [Persistent]
         float _Albedo = .02f;
         [Persistent]
-        Color _OceanColor = Color.blue;
+        Color32 _OceanColor = Color.blue;
         [Persistent]
         float _OceanDepthFactor = .002f;
     }
@@ -46,7 +46,7 @@ namespace Terrain
     public class OceanMaterial : MaterialManager
     {
         [Persistent]
-        Color _SurfaceColor = Color.white;
+        Color32 _SurfaceColor = Color.white;
         [Persistent]
         String _DetailTex = "";
         [Persistent]

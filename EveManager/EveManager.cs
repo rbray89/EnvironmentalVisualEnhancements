@@ -72,7 +72,7 @@ namespace EVEManager
 
         private void DrawMainWindow(int windowID)
         {
-            CelestialBody[] celestialBodies = CelestialBody.FindObjectsOfType(typeof(CelestialBody)) as CelestialBody[];
+            CelestialBody[] celestialBodies = FlightGlobals.Bodies.ToArray();
             EVEManagerClass currentManager;
 
             Rect placement = new Rect(0, 0, 0, 1);

@@ -46,16 +46,16 @@ namespace Atmosphere
         }
 
 
-        internal void Update(Color color)
+        internal void Update(Color32 color)
         {
             MeshFilter filter = particle.GetComponent<MeshFilter>();
             Mesh mesh = filter.mesh;
             mesh.colors = new Color[4]
             {
-                new Color(color.r, color.g, color.b, color.a),
-                new Color(color.r, color.g, color.b, color.a),
-                new Color(color.r, color.g, color.b, color.a),
-                new Color(color.r, color.g, color.b, color.a)
+                color,
+                color,
+                color,
+                color
             };
         }
 
