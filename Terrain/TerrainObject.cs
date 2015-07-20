@@ -32,7 +32,7 @@ namespace Terrain
         [Persistent]
         float _MinLight = .5f;
         [Persistent]
-        Color32 _SpecColor = Color.grey;
+        Color32 _SpecularColor = Color.grey;
         [Persistent]
         float _Shininess = .4f;
         [Persistent]

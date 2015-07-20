@@ -1,7 +1,7 @@
 ﻿Shader "EVE/Planet" {
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
-		_SpecColor ("Specular tint", Color) = (1,1,1,1)
+		_SpecularColor ("Specular tint", Color) = (1,1,1,1)
 		_Shininess ("Shininess", Float) = 0.078125
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_BumpMap ("Normalmap", 2D) = "bump" {}
@@ -51,6 +51,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	 
 		fixed4 _Color;
 		float _Shininess;
+		half4 _SpecularColor;
 		sampler2D _MainTex;
 		sampler2D _BumpMap;
 		sampler2D _midTex;
@@ -136,28 +137,8 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			
             color *= _Color;
             
-          	//lighting
-          	
-            //half4 light = GetLighting( normT, IN.lightDirT, LIGHT_ATTENUATION(IN), 0);
-            /*
-            float h = normalize(IN.lightDirT+IN.viewDirT);
-            float nh = saturate(dot (normT, h));
-
-            float spec = pow(nh, _Shininess * 128.0)*main.a;
-            float3 specularReflection = LIGHT_ATTENUATION(IN) * 2 * _LightColor0.rgb
-                  * _SpecColor.rgb * spec;
- 			
- 			half NdotL = dot (IN.worldNormal, normalize(_WorldSpaceLightPos0));
-			half termlerp = saturate(10*-NdotL);
-			half terminator = lerp(1,saturate(floor(1.01+NdotL)), termlerp);
- 			light.rgb *= lerp(terminator, 1, main.a);
-            light.rgb += specularReflection;
-			
-			color.rgb += _Albedo*light.rgb;
-			color.rgb *= light.rgb;
-			*/
-			
-			half4 specColor = _SpecColor;
+          	//lighting		
+			half4 specColor = _SpecularColor;
 			specColor.a = main.a;
 			color = SpecularColorLight( IN.lightDirT, IN.viewDirT, normT, color, specColor, _Shininess * 128, LIGHT_ATTENUATION(IN) );
 			color *= lerp(Terminator( normalize(_WorldSpaceLightPos0), IN.worldNormal), 1, main.a);

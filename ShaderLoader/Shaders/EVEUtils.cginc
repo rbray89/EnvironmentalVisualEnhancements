@@ -119,7 +119,7 @@
 	    half diffuse = dot( normal, lightDir );
 	    
 	    float nh = saturate( dot( h, normal ) );
-	    float spec = pow( nh, specK ) * color.a;
+	    float spec = pow( nh, specK ) * specColor.a;
 	    
 	    half4 c;
 	    c.rgb = (color.rgb * _LightColor0.rgb * diffuse + _LightColor0.rgb * specColor.rgb * spec) * (atten * 4);

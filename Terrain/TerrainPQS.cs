@@ -97,11 +97,11 @@ namespace Terrain
                 TerrainManager.Log("Terrain Shader Name: " + originalTerrainShader.name);
                 String[] keywords = pqs.surfaceMaterial.shaderKeywords;
                 pqs.surfaceMaterial.shader = TerrainManager.TerrainShader;
-                foreach (String keyword in keywords)
+            /*    foreach (String keyword in keywords)
                 {
                     pqs.surfaceMaterial.EnableKeyword(keyword);
                 }
-
+                */
                 terrainMaterial.ApplyMaterialProperties(pqs.surfaceMaterial);
 
                 if (oceanMaterial != null && pqs.ChildSpheres.Length > 0)
@@ -113,12 +113,12 @@ namespace Terrain
                     originalOceanShader = OceanSurfaceMaterial.shader;
                     TerrainManager.Log("Ocean Shader Name: " + originalOceanShader.name);
                     OceanSurfaceMaterial.shader = TerrainManager.OceanShader;
-                    foreach (String keyword in keywords)
+                  /*  foreach (String keyword in keywords)
                     {
                         OceanSurfaceMaterial.EnableKeyword(keyword);
                     }
-
-                    terrainMaterial.ApplyMaterialProperties(ocean.surfaceMaterial);
+                    */
+                    terrainMaterial.ApplyMaterialProperties(OceanSurfaceMaterial);
                     oceanMaterial.ApplyMaterialProperties(OceanSurfaceMaterial);
 
                     PQSLandControl landControl = (PQSLandControl)pqs.transform.GetComponentInChildren(typeof(PQSLandControl));

@@ -3,7 +3,7 @@
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_BumpMap ("Normalmap", 2D) = "bump" {}
-		_SpecColor ("Specular tint", Color) = (1,1,1,1)
+		_SpecularColor ("Specular tint", Color) = (1,1,1,1)
 		_Shininess ("Shininess", Float) = 0.078125
 		_midTex ("Detail (RGB)", 2D) = "white" {}
 		_steepTex ("Detail for Vertical Surfaces (RGB)", 2D) = "white" {}
@@ -58,6 +58,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 	 
 		fixed4 _Color;
 		float _Shininess;
+		half4 _SpecularColor;
 		sampler2D _MainTex;
 		sampler2D _BumpMap;
 		sampler2D _midTex;
@@ -195,20 +196,9 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			#endif
 			
             color *= _Color;
-            /*
-          	//lighting
-            half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
-			half3 lightDirection = normalize(_WorldSpaceLightPos0);
-			half TNdotL = saturate(dot (IN.worldNormal, lightDirection));
-			half SNdotL = saturate(dot (norm, -_SunDir));
-			half NdotL = lerp(TNdotL, SNdotL, handoff);
-	        fixed atten = LIGHT_ATTENUATION(IN); 
-			half lightIntensity = saturate(_LightColor0.a * NdotL * 4 * atten);
-			half3 light = saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
-			*/
-			
-			half4 specColor = _SpecColor;
-			specColor.a = main.a;
+            			
+			half4 specColor = _SpecularColor;
+			specColor.a = lerp(0, main.a, saturate(length(IN.sphereCoords) - _OceanRadius));
 			//world
 			half4 lightColor = SpecularColorLight( normalize(_WorldSpaceLightPos0), IN.viewDir, IN.worldNormal, color, specColor, _Shininess * 128, LIGHT_ATTENUATION(IN) );
 			lightColor *= lerp(Terminator( normalize(_WorldSpaceLightPos0), IN.worldNormal), 1, main.a);

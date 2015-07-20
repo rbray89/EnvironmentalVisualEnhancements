@@ -1,7 +1,7 @@
 ﻿Shader "EVE/Ocean" {
 	Properties {
 		_SurfaceColor ("Color Tint", Color) = (1,1,1,1)
-		_SpecColor ("Specular tint", Color) = (1,1,1,1)
+		_SpecularColor ("Specular tint", Color) = (1,0,0,1)
 		_Shininess ("Shininess", Float) = 10
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
@@ -45,6 +45,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 		
 		fixed4 _SurfaceColor;
 		float _Shininess;
+		half4 _SpecularColor;
 		sampler2D _MainTex;
 		sampler2D _DetailTex;
 		float _DetailScale;
@@ -110,7 +111,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
             half handoff = saturate(pow(_PlanetOpacity,2));
 			color.rgb = lerp(color.rgb, main.rgb, handoff);
             
-			half4 specColor = _SpecColor;
+			half4 specColor = _SpecularColor;
 			specColor.a = lerp(1, main.a, handoff);
 			half4 colorLight = SpecularColorLight( normalize(_WorldSpaceLightPos0), IN.viewDir, normalize(IN.worldPos-_PlanetOrigin), color, specColor, _Shininess * 128, LIGHT_ATTENUATION(IN) );
 			
