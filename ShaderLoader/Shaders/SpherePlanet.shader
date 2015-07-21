@@ -2,7 +2,7 @@
 	Properties {
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_SpecularColor ("Specular tint", Color) = (1,1,1,1)
-		_Shininess ("Shininess", Float) = 0.078125
+		_SpecularPower ("Shininess", Float) = 0.078125
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_BumpMap ("Normalmap", 2D) = "bump" {}
 		_midTex ("Detail (RGB)", 2D) = "white" {}
@@ -50,7 +50,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		
 	 
 		fixed4 _Color;
-		float _Shininess;
+		float _SpecularPower;
 		half4 _SpecularColor;
 		sampler2D _MainTex;
 		sampler2D _BumpMap;
@@ -140,7 +140,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
           	//lighting		
 			half4 specColor = _SpecularColor;
 			specColor.a = main.a;
-			color = SpecularColorLight( IN.lightDirT, IN.viewDirT, normT, color, specColor, _Shininess * 128, LIGHT_ATTENUATION(IN) );
+			color = SpecularColorLight( IN.lightDirT, IN.viewDirT, normT, color, specColor, _SpecularPower, LIGHT_ATTENUATION(IN) );
 			color *= lerp(Terminator( normalize(_WorldSpaceLightPos0), IN.worldNormal), 1, main.a);
 			
 			

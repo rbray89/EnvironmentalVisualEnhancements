@@ -2,7 +2,7 @@
 	Properties {
 		_SurfaceColor ("Color Tint", Color) = (1,1,1,1)
 		_SpecularColor ("Specular tint", Color) = (1,0,0,1)
-		_Shininess ("Shininess", Float) = 10
+		_SpecularPower ("Shininess", Float) = 10
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
 		_DetailScale ("Detail Scale", Range(0,1000)) = 200
@@ -44,7 +44,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 		#pragma multi_compile_fwdadd_fullshadows
 		
 		fixed4 _SurfaceColor;
-		float _Shininess;
+		float _SpecularPower;
 		half4 _SpecularColor;
 		sampler2D _MainTex;
 		sampler2D _DetailTex;
@@ -113,7 +113,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
             
 			half4 specColor = _SpecularColor;
 			specColor.a = lerp(1, main.a, handoff);
-			half4 colorLight = SpecularColorLight( normalize(_WorldSpaceLightPos0), IN.viewDir, normalize(IN.worldPos-_PlanetOrigin), color, specColor, _Shininess * 128, LIGHT_ATTENUATION(IN) );
+			half4 colorLight = SpecularColorLight( _WorldSpaceLightPos0, IN.viewDir, (IN.worldPos-_PlanetOrigin), color, specColor, _SpecularPower, LIGHT_ATTENUATION(IN) );
 			
 			color.a = lerp(1, color.a, saturate(colorLight.a*4));
 			color.a = lerp(color.a, 1, saturate(length(colorLight.rgb)-length(2*color.rgb)));

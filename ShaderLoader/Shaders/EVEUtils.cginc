@@ -110,10 +110,10 @@
 	// Calculates Blinn-Phong (specular) lighting model
 	inline half4 SpecularColorLight( half3 lightDir, half3 viewDir, half3 normal, half4 color, half4 specColor, float specK, half atten )
 	{
-	    #ifndef USING_DIRECTIONAL_LIGHT
+	    
 	    lightDir = normalize(lightDir);
-	    #endif
 	    viewDir = normalize(viewDir);
+	    normal = normalize(normal);
 	    half3 h = normalize( lightDir + viewDir );
 	    
 	    half diffuse = dot( normal, lightDir );

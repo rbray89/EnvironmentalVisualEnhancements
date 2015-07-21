@@ -34,7 +34,7 @@ namespace Terrain
         [Persistent]
         Color32 _SpecularColor = Color.grey;
         [Persistent]
-        float _Shininess = .4f;
+        float _SpecularPower = 51.2f;
         [Persistent]
         float _Albedo = .02f;
         [Persistent]

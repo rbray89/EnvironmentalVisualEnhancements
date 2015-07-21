@@ -4,7 +4,7 @@
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_BumpMap ("Normalmap", 2D) = "bump" {}
 		_SpecularColor ("Specular tint", Color) = (1,1,1,1)
-		_Shininess ("Shininess", Float) = 0.078125
+		_SpecularPower ("Shininess", Float) = 0.078125
 		_midTex ("Detail (RGB)", 2D) = "white" {}
 		_steepTex ("Detail for Vertical Surfaces (RGB)", 2D) = "white" {}
 		_DetailScale ("Detail Scale", Range(0,1000)) = 200
@@ -57,7 +57,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		#pragma multi_compile DETAIL_MAP_OFF DETAIL_MAP_ON
 	 
 		fixed4 _Color;
-		float _Shininess;
+		float _SpecularPower;
 		half4 _SpecularColor;
 		sampler2D _MainTex;
 		sampler2D _BumpMap;
@@ -200,7 +200,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			half4 specColor = _SpecularColor;
 			specColor.a = lerp(0, main.a, saturate(length(IN.sphereCoords) - _OceanRadius));
 			//world
-			half4 lightColor = SpecularColorLight( normalize(_WorldSpaceLightPos0), IN.viewDir, IN.worldNormal, color, specColor, _Shininess * 128, LIGHT_ATTENUATION(IN) );
+			half4 lightColor = SpecularColorLight( _WorldSpaceLightPos0, IN.viewDir, IN.worldNormal, color, specColor, _SpecularPower, LIGHT_ATTENUATION(IN) );
 			lightColor *= lerp(Terminator( normalize(_WorldSpaceLightPos0), IN.worldNormal), 1, main.a);
 			color = lerp(color, lightColor, saturate((length(IN.sphereCoords+50) - _OceanRadius)/50));
 			
