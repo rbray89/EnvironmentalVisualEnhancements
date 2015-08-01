@@ -55,7 +55,8 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		#pragma multi_compile_fwdadd_fullshadows
 		#pragma multi_compile CITYOVERLAY_OFF CITYOVERLAY_ON
 		#pragma multi_compile DETAIL_MAP_OFF DETAIL_MAP_ON
-	 
+	    #pragma multi_compile OCEAN_OFF OCEAN_ON
+	    
 		fixed4 _Color;
 		float _SpecularPower;
 		half4 _SpecularColor;
@@ -172,6 +173,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			color = IN.color + .750*(lerp(detail.rgba-.5, 0, detailLevel));
 			
 			
+			#ifdef OCEAN_ON
 			float tc = dot(IN.L, IN.viewDir);
 			float d = sqrt(dot(IN.L,IN.L)-dot(tc,tc));
 			half sphereCheck = step(d, _OceanRadius)*step(0.0, tc);
@@ -183,6 +185,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			float depthFactor = saturate(oceandepth * _OceanDepthFactor);
 			float vertexDepth = _OceanDepthFactor*15*saturate(floor(1+ oceandepth ));
 			color = lerp(color, _OceanColor, depthFactor + vertexDepth );
+			#endif
 			
 			half handoff = saturate(pow(_PlanetOpacity,2));
 			color = lerp(color, main, handoff);
@@ -198,12 +201,20 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
             color *= _Color;
             			
 			half4 specColor = _SpecularColor;
-			specColor.a = lerp(0, main.a, saturate(length(IN.sphereCoords) - _OceanRadius));
+			#ifdef OCEAN_ON
+			specColor.a = lerp(main.a, 0, saturate(length(IN.sphereCoords) - _OceanRadius));
+			#endif
+			
 			//world
 			half4 lightColor = SpecularColorLight( _WorldSpaceLightPos0, IN.viewDir, IN.worldNormal, color, specColor, _SpecularPower, LIGHT_ATTENUATION(IN) );
+			
+			#ifdef OCEAN_ON
 			lightColor *= lerp(Terminator( normalize(_WorldSpaceLightPos0), IN.worldNormal), 1, main.a);
 			color = lerp(color, lightColor, saturate((length(IN.sphereCoords+50) - _OceanRadius)/50));
-			
+			#else
+			lightColor *= Terminator( normalize(_WorldSpaceLightPos0), IN.worldNormal);
+			color = lightColor;
+			#endif
 			
 			#ifdef CITYOVERLAY_ON
 			//lightIntensity = saturate(_LightColor0.a * (SNdotL - 0.01) / 0.99 * 4 * atten);

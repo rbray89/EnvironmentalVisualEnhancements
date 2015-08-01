@@ -47,6 +47,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		#pragma multi_compile_fwdadd_fullshadows
 		#pragma multi_compile CITYOVERLAY_OFF CITYOVERLAY_ON
 		#pragma multi_compile DETAIL_MAP_OFF DETAIL_MAP_ON
+	    #pragma multi_compile OCEAN_OFF OCEAN_ON
 		
 	 
 		fixed4 _Color;
@@ -139,10 +140,17 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
             
           	//lighting		
 			half4 specColor = _SpecularColor;
+			#ifdef OCEAN_ON
 			specColor.a = main.a;
-			color = SpecularColorLight( IN.lightDirT, IN.viewDirT, normT, color, specColor, _SpecularPower, LIGHT_ATTENUATION(IN) );
-			color *= lerp(Terminator( normalize(_WorldSpaceLightPos0), IN.worldNormal), 1, main.a);
+			#endif
 			
+			color = SpecularColorLight( IN.lightDirT, IN.viewDirT, normT, color, specColor, _SpecularPower, LIGHT_ATTENUATION(IN) );
+			
+			#ifdef OCEAN_ON
+			color *= lerp(Terminator( normalize(_WorldSpaceLightPos0), IN.worldNormal), 1, main.a);
+			#else
+			color *= Terminator( normalize(_WorldSpaceLightPos0), IN.worldNormal);
+			#endif
 			
 			#ifdef CITYOVERLAY_ON
 			//half lightIntensity = saturate(_LightColor0.a * (NdotL - 0.01) / 0.99 * 4 * atten);

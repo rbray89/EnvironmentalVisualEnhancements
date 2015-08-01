@@ -97,17 +97,20 @@ namespace Terrain
                 TerrainManager.Log("Terrain Shader Name: " + originalTerrainShader.name);
                 String[] keywords = pqs.surfaceMaterial.shaderKeywords;
                 pqs.surfaceMaterial.shader = TerrainManager.TerrainShader;
-            /*    foreach (String keyword in keywords)
-                {
-                    pqs.surfaceMaterial.EnableKeyword(keyword);
-                }
-                */
+                /*    foreach (String keyword in keywords)
+                    {
+                        pqs.surfaceMaterial.EnableKeyword(keyword);
+                    }
+                    */
                 terrainMaterial.ApplyMaterialProperties(pqs.surfaceMaterial);
 
                 if (oceanMaterial != null && pqs.ChildSpheres.Length > 0)
                 {
                     PQS ocean = pqs.ChildSpheres[0];
                     OceanSurfaceMaterial = ocean.surfaceMaterial;
+
+                    pqs.surfaceMaterial.EnableKeyword("OCEAN_ON");
+                    mr.material.EnableKeyword("OCEAN_ON");
 
                     keywords = OceanSurfaceMaterial.shaderKeywords;
                     originalOceanShader = OceanSurfaceMaterial.shader;
@@ -145,6 +148,11 @@ namespace Terrain
                     OceanBacking.layer = EVEManagerClass.MACRO_LAYER;
                     OceanBackingMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius);
                     terrainMaterial.ApplyMaterialProperties(OceanBackingMaterial);
+                }
+                else
+                {
+                    pqs.surfaceMaterial.DisableKeyword("OCEAN_ON");
+                    mr.material.DisableKeyword("OCEAN_ON");
                 }
 
                 PQSMod_CelestialBodyTransform cbt = (PQSMod_CelestialBodyTransform)pqs.transform.GetComponentInChildren(typeof(PQSMod_CelestialBodyTransform));
