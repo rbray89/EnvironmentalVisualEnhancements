@@ -173,7 +173,7 @@ namespace Utils
             GUIHelper.SplitRect(ref labelRect, ref fieldRect, 3f / 7);
             GUI.Label(labelRect, field.Name);
 
-            if (false )// && field.FieldType == typeof(Color))
+            /*if (false )// && field.FieldType == typeof(Color))
             {
                 Color color = ConfigNode.ParseColor(value);
                 Color32 color255 = color;
@@ -181,7 +181,7 @@ namespace Utils
                 value = ConfigNode.WriteVector(ConfigNode.ParseVector4(value) / 255f);
                 config.SetValue(field.Name, value);
             }
-            else
+            else*/
             {
                 value = GUI.TextField(fieldRect, value);
                 config.SetValue(field.Name, value);

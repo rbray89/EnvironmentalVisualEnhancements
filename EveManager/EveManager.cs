@@ -53,7 +53,8 @@ namespace EVEManager
                 }
             }
         }
-        
+
+        #pragma warning disable 0649
         private GUISkin _mySkin;
         private Rect _mainWindowRect = new Rect(0, 0, 840, 800);
 

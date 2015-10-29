@@ -96,6 +96,9 @@
     <Compile Include="VolumeSection.cs" />
   </ItemGroup>
   <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\EveManager\EVEManager.csproj">
       <Project>{499e8c5c-c83e-4aea-bb01-eed705bd747f}</Project>
       <Name>EVEManager</Name>
@@ -113,14 +116,11 @@
       <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /Y $(TargetFileName) "$(SolutionDir)GameData\EnvironmentalVisualEnhancements\Plugins\"
-xcopy "$(SolutionDir)GameData" "C:\Users\Ryan\Documents\ksp\ksp-$(PlatformName)-1-0-4\GameData" /e /y /i /r
-7za a -tzip "$(SolutionDir)$(PlatformName)-Release.zip" "$(SolutionDir)GameData"</PostBuildEvent>
+xcopy "$(SolutionDir)GameData" "C:\Users\rbray\Documents\ksp\ksp-$(PlatformName)-experimentals\GameData" /e /y /i /r
+7z a -tzip "$(SolutionDir)$(PlatformName)-Release.zip" "$(SolutionDir)GameData"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>
