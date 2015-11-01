@@ -374,24 +374,27 @@ namespace EVEManager
                 
             }
 
-            if ((objectType & ObjectType.MULTIPLE) == ObjectType.MULTIPLE)
+            if (selectedConfig != null)
             {
-                ConfigNode bodyNode;
-                if(!selectedConfig.Node.HasNode(body))
+                if ((objectType & ObjectType.MULTIPLE) == ObjectType.MULTIPLE)
                 {
-                    bodyNode = selectedConfig.Node.AddNode(body);
+                    ConfigNode bodyNode;
+                    if (!selectedConfig.Node.HasNode(body))
+                    {
+                        bodyNode = selectedConfig.Node.AddNode(body);
+                    }
+                    else
+                    {
+                        bodyNode = selectedConfig.Node.GetNode(body);
+                    }
+
+                    objNode = GUIHelper.DrawObjectSelector(bodyNode.nodes, ref selectedObjIndex, ref objNameEditString, ref objListPos, placementBase, ref placement);
+
                 }
                 else
                 {
-                    bodyNode = selectedConfig.Node.GetNode(body);
+                    objNode = DrawNodeManagement(placementBase, ref placement, selectedConfig.Node, body);
                 }
-
-                objNode = GUIHelper.DrawObjectSelector(bodyNode.nodes, ref selectedObjIndex, ref objNameEditString, ref objListPos, placementBase, ref placement);
-                
-            }
-            else
-            {
-                objNode = DrawNodeManagement(placementBase, ref placement, selectedConfig.Node, body);
             }
 
             if (this.configNode != null)

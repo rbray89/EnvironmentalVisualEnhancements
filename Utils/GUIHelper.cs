@@ -347,12 +347,17 @@ namespace Utils
                     selectedIndex = 0;
                 }
             }
-            T currentObj = objList[selectedIndex];
-            if (currentObj != null)
+            T currentObj = default(T);
+            if (selectedIndex < objList.Count)
             {
-                GUIStyle gsCenter = new GUIStyle(GUI.skin.label);
-                gsCenter.alignment = TextAnchor.MiddleCenter;
-                GUI.Label(centerRect, currentObj.Name, gsCenter);
+                currentObj = objList[selectedIndex];
+                if (currentObj != null)
+                {
+                    GUIStyle gsCenter = new GUIStyle(GUI.skin.label);
+                    gsCenter.alignment = TextAnchor.MiddleCenter;
+                    GUI.Label(centerRect, currentObj.Name, gsCenter);
+                }
+
             }
             placement.y++;
             return currentObj;

@@ -23,56 +23,7 @@ namespace CityLights
         String _CityLightOverlayDetailTex = "";
     }
 
-    public class MaterialPQS : PQSMod
-    {
-        Material material;
-        Material PQSMaterial;
-        PQS parent;
-        public void Set(CelestialBody cb, Material mat)
-        {
-            material = mat;
-
-            PQS pqs = null;
-            if (cb != null && cb.pqsController != null)
-            {
-                pqs = cb.pqsController;
-                parent = pqs;
-                PQSMaterial = pqs.surfaceMaterial;
-            }
-            else
-            {
-                CityLightsManager.Log("No PQS!");
-            }
-            if (pqs != null)
-            {
-                this.sphere = pqs;
-                this.transform.parent = pqs.transform;
-                this.transform.localPosition = Vector3.zero;
-                this.transform.localRotation = Quaternion.identity;
-                this.transform.localScale = Vector3.one;
-            }
-        }
-
-        public override void OnQuadCreate(PQ quad)
-        {
-            if (parent.useSharedMaterial)
-            {
-                quad.meshRenderer.sharedMaterials = new Material[] { PQSMaterial, material };
-            }
-            else
-            {
-                quad.meshRenderer.materials = new Material[] { PQSMaterial, material };
-            }
-        }
-
-      /*  protected void Update()
-        {
-            Vector3 sunDir = this.transform.InverseTransformDirection(Sun.Instance.sunDirection);
-            material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, sunDir);
-            //Vector3 planetOrigin = this.transform.position;
-            //material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
-        }*/
-    }
+    
 
         public class CityLightsObject : IEVEObject
     {
@@ -86,6 +37,7 @@ namespace CityLights
         CityLightsMaterial cityLightsMaterial = null;
         Material scaledMat;
         Material macroMat;
+        String materialName = Guid.NewGuid().ToString();
 
         public void LoadConfigNode(ConfigNode node, String body)
         {
@@ -109,7 +61,7 @@ namespace CityLights
                 macroMat = new Material(ShaderLoaderClass.FindShader("EVE/TerrainCityLight"));
                 test.ApplyMaterialProperties(macroMat);
                 cityLightsMaterial.ApplyMaterialProperties(macroMat);
-                materialPQS.Set(celestialBody, macroMat);
+                materialPQS.Apply(celestialBody, macroMat);
             }
             Transform transform = Tools.GetScaledTransform(body);
             if (transform != null)
@@ -122,8 +74,10 @@ namespace CityLights
                     test.ApplyMaterialProperties(scaledMat);
                     cityLightsMaterial.ApplyMaterialProperties(scaledMat);
                     scaledMat.SetTexture("_MainTex", mr.material.GetTexture("_MainTex"));
-                    Material[] materials = new Material[] { mr.material, scaledMat };
-                    mr.materials = materials;
+                    scaledMat.name = materialName;
+                    List<Material> materials = new List<Material>(mr.materials);
+                    materials.Add(scaledMat);
+                    mr.materials = materials.ToArray();
                     
                 }
             }
@@ -132,19 +86,19 @@ namespace CityLights
         public void Remove()
         {
             CelestialBody celestialBody = Tools.GetCelestialBody(body);
-            if (celestialBody != null)
-            {
-                celestialBody.pqsController.surfaceMaterial.DisableKeyword("CITYOVERLAY_ON");
-            }
+            CityLightsManager.Log("Removing City Lights obj");
             Transform transform = Tools.GetScaledTransform(body);
             if (transform != null)
             {
                 MeshRenderer mr = (MeshRenderer)transform.GetComponent(typeof(MeshRenderer));
                 if (mr != null)
                 {
-                    mr.material.DisableKeyword("CITYOVERLAY_ON");
+                    List<Material> materials = new List<Material>(mr.materials);
+                    materials.Remove(materials.Find(mat => mat.name.Contains(materialName)));
+                    mr.materials = materials.ToArray();
                 }
             }
+            materialPQS.Remove();
         }
     }
 
