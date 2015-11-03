@@ -37,7 +37,7 @@ namespace Atmosphere
         Material CloudMaterial;
         Projector ShadowProjector = null;
         GameObject ShadowProjectorGO = null;
-        AtmosphereMaterial atmosphereMat = null;
+        CloudsMaterial cloudsMat = null;
 
         [Persistent]
         bool shadow = true;
@@ -52,18 +52,18 @@ namespace Atmosphere
             get { return CloudMesh.layer == EVEManagerClass.SCALED_LAYER; }
             set
             {
-                AtmosphereManager.Log("Clouds2D is now " + (value ? "SCALED" : "MACRO"));
+                CloudsManager.Log("Clouds2D is now " + (value ? "SCALED" : "MACRO"));
                 if (isScaled != value)
                 {
                     if (value)
                     {
                         macroCloudMaterial.ApplyMaterialProperties(CloudMaterial, ScaledSpace.ScaleFactor);
-                        atmosphereMat.ApplyMaterialProperties(CloudMaterial, ScaledSpace.ScaleFactor);
+                        cloudsMat.ApplyMaterialProperties(CloudMaterial, ScaledSpace.ScaleFactor);
 
                         if (ShadowProjector != null)
                         {
                             macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material, ScaledSpace.ScaleFactor);
-                            atmosphereMat.ApplyMaterialProperties(ShadowProjector.material, ScaledSpace.ScaleFactor);
+                            cloudsMat.ApplyMaterialProperties(ShadowProjector.material, ScaledSpace.ScaleFactor);
                         }
                         float scale = (float)(1000f / celestialBody.Radius);
                         CloudMaterial.DisableKeyword("SOFT_DEPTH_ON");
@@ -72,12 +72,12 @@ namespace Atmosphere
                     else
                     {
                         macroCloudMaterial.ApplyMaterialProperties(CloudMaterial);
-                        atmosphereMat.ApplyMaterialProperties(CloudMaterial);
+                        cloudsMat.ApplyMaterialProperties(CloudMaterial);
 
                         if (ShadowProjector != null)
                         {
                             macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material);
-                            atmosphereMat.ApplyMaterialProperties(ShadowProjector.material);
+                            cloudsMat.ApplyMaterialProperties(ShadowProjector.material);
                         }
                                                 
                         CloudMaterial.EnableKeyword("SOFT_DEPTH_ON");
@@ -117,7 +117,7 @@ namespace Atmosphere
             }
         }
 
-        internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, AtmosphereMaterial atmosphereMaterial, float radius, float speed)
+        internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, CloudsMaterial cloudsMaterial, float radius, float speed)
         {
             Remove();
             this.celestialBody = celestialBody;
@@ -126,7 +126,7 @@ namespace Atmosphere
             CloudMesh = hp.GameObject;
             this.radius = radius;
             macroCloudMaterial.Radius = radius;
-            this.atmosphereMat = atmosphereMaterial;
+            this.cloudsMat = cloudsMaterial;
 
             if (shadow)
             {
@@ -187,7 +187,7 @@ namespace Atmosphere
                     ShadowProjectorGO.layer = EVEManagerClass.SCALED_LAYER;
                     ShadowProjector.ignoreLayers = ~((1 << 29) | (1 << 23) | (1 << 18) | (1 << 10));// | (1 << 9));
                     sunTransform = Tools.GetScaledTransform(Sun.Instance.sun.bodyName);
-                    AtmosphereManager.Log("Camera mask: "+ScaledCamera.Instance.camera.cullingMask);
+                    CloudsManager.Log("Camera mask: "+ScaledCamera.Instance.camera.cullingMask);
                 }
             }
         }

@@ -61,7 +61,6 @@ namespace Atmosphere
         GameObject AtmosphereMesh;
         Material AtmosphereMaterial;
 
-        [Persistent]
         AtmosphereVolumeMaterial atmosphereMaterial;
 
         CelestialBody celestialBody = null;
@@ -93,6 +92,12 @@ namespace Atmosphere
         }
 
         private static Shader atmosphereShader = null;
+
+        public AtmosphereVolume(AtmosphereVolumeMaterial atmosphereMat)
+        {
+            this.atmosphereMaterial = atmosphereMat;
+        }
+
         private static Shader AtmosphereShader
         {
             get
@@ -111,7 +116,7 @@ namespace Atmosphere
             this.scaledCelestialTransform = scaledCelestialTransform;
             SimpleCube hp = new SimpleCube(2000, ref AtmosphereMaterial, AtmosphereShader);
             AtmosphereMesh = hp.GameObject;
-
+            
             atmosphereMaterial.Scale = 500f / (float)celestialBody.Radius;
 
             this.radius = radius;

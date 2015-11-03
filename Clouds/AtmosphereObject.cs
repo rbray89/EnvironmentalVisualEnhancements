@@ -9,23 +9,6 @@ using Utils;
 
 namespace Atmosphere
 {
-    public class AtmosphereMaterial : MaterialManager
-    {
-        [Persistent]
-        Color32 _Color = Color.white;
-        [Persistent]
-        String _MainTex = "";
-        [Persistent]
-        String _DetailTex = "";
-        [Persistent]
-        float _DetailScale = 100f;
-        [Persistent, InverseScaled]
-        float _DetailDist = 0.000002f;
-        [Persistent, InverseScaled]
-        float _DistFade = 1.0f;
-        [Persistent, InverseScaled]
-        float _DistFadeVert = 0.00004f;
-    }
 
     public class AtmosphereObject : MonoBehaviour, IEVEObject
     {
@@ -39,21 +22,11 @@ namespace Atmosphere
         
         [Persistent]
         float altitude = 1000f;
-        [Persistent]
-        float speed = 30;
-        [Persistent]
-        float detailSpeed;
-        [Persistent]
-        Vector3 offset = new Vector3(0, 0, 0);
-        [Persistent]
-        AtmosphereMaterial settings;
 
-        [Persistent, Optional]
+        [Persistent]
+        AtmosphereVolumeMaterial atmosphereMaterial = null;
+
         AtmosphereVolume atmosphere = null;
-        [Persistent, Optional]
-        CloudsVolume layerVolume = null;
-        [Persistent, Optional]
-        Clouds2D layer2D = null;
 
         private AtmospherePQS atmospherePQS = null;
         private CelestialBody celestialBody;
@@ -77,7 +50,8 @@ namespace Atmosphere
             
             GameObject go = new GameObject();
             atmospherePQS = go.AddComponent<AtmospherePQS>();
-            atmospherePQS.Apply(body, settings, layer2D, layerVolume, atmosphere, altitude, speed, detailSpeed, offset);
+            atmosphere = new AtmosphereVolume(atmosphereMaterial);
+            atmospherePQS.Apply(body, atmosphere, altitude);
         }
 
         public void Remove()
@@ -88,7 +62,7 @@ namespace Atmosphere
 
             GameObject.DestroyImmediate(atmospherePQS);
             GameObject.DestroyImmediate(go);
-
+            atmosphere = null;
         }
 
     }

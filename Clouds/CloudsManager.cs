@@ -1,0 +1,42 @@
+﻿using EVEManager;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using UnityEngine;
+using Utils;
+
+namespace Atmosphere
+{
+    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
+    public class CloudsManager : GenericEVEManager<CloudsObject>
+    {
+        protected override ObjectType objectType { get { return ObjectType.PLANET | ObjectType.MULTIPLE; } }
+        protected override String configName { get{return "EVE_CLOUDS";} }
+
+        protected override void ApplyConfigNode(ConfigNode node, String body)
+        {
+            GameObject go = new GameObject();
+            CloudsObject newObject = go.AddComponent<CloudsObject>();
+            go.transform.parent = Tools.GetCelestialBody(body).bodyTransform;
+            newObject.LoadConfigNode(node, body);
+            ObjectList.Add(newObject);
+            newObject.Apply();
+        }
+
+        protected override void Clean()
+        {
+            CloudsManager.Log("Cleaning Clouds!");
+            foreach (CloudsObject obj in ObjectList)
+            {
+                obj.Remove();
+                GameObject go = obj.gameObject;
+                go.transform.parent = null;
+
+                GameObject.DestroyImmediate(obj);
+                GameObject.DestroyImmediate(go);
+            }
+            ObjectList.Clear();
+        }
+    }
+}

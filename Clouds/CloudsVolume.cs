@@ -64,7 +64,7 @@ namespace Atmosphere
             }
         }
 
-        public void Apply(AtmosphereMaterial material, float radius, float speed, Transform parent)
+        public void Apply(CloudsMaterial material, float radius, float speed, Transform parent)
         {
             Remove();
             particleMaterial.MaxScale = size.y;
