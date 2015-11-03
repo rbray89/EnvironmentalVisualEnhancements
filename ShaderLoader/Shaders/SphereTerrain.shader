@@ -76,8 +76,6 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		float _OceanDepthFactor;
 		fixed4 _OceanColor;
 		float3 _PlanetOrigin;
-		uniform float4x4 _Rotation;
-		uniform float4x4 _InvRotation;
 		
 		#ifdef CITYOVERLAY_ON
 		sampler2D _CityOverlayTex;

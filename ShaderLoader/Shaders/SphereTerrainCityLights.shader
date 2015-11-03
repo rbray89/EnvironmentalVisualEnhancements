@@ -9,7 +9,6 @@
 		_CityDarkOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
 		_CityLightOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
 		_PlanetOpacity ("PlanetOpacity", Float) = 1
-		_SunDir ("Sun Direction", Vector) = (1,1,1,1)
 	}
 	Category {
 	   Lighting On
@@ -47,7 +46,6 @@
 		half4 _SpecularColor;
 		float _DetailDist;
 		
-		half3 _SunDir;
 		float _PlanetOpacity;
 		
 		sampler2D _CityOverlayTex;
@@ -89,7 +87,7 @@
 		   o.objnormal.xyz = v.normal;
 		   
 		   float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
-		   half NdotL = dot (o.sphereCoords, lightDirection);//normalize(_SunDir));//lightDirection);
+		   half NdotL = dot (o.sphereCoords, lightDirection);
 		   half termlerp = saturate(10*-NdotL);
     	   o.terminator = lerp(1,saturate(floor(1.01+NdotL)), termlerp);
 			

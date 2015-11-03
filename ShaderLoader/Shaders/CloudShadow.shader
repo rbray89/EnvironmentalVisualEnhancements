@@ -61,16 +61,16 @@
 	   	   	float3 worldOrigin = _PlanetOrigin;
 	   	   	float3 L = worldOrigin - vertexPos;
 	   	   	o.originDist = length(L);
-	   	    float tc = dot(L,- _SunDir);
+	   	    float tc = dot(L,-_SunDir);
 	   	    o.dotcoeff = tc;
 			float d = sqrt(dot(L,L)-(tc*tc));
 			float d2 = pow(d,2);
 			float td = sqrt(dot(L,L)-d2);		
 			float sphereRadius = _Radius;
-			half sphereCheck = step(d, sphereRadius)*step(0.0, tc);
+			half sphereCheck = step(d, sphereRadius)*step(o.originDist, sphereRadius);
 			float tlc = sqrt((sphereRadius*sphereRadius)-d2);
-			float sphereDist = lerp(0, tc - tlc, sphereCheck);
-			o.worldPos = vertexPos + (_SunDir*sphereDist);
+			float sphereDist = lerp(0, tlc - td, sphereCheck);
+			o.worldPos = vertexPos + (-_SunDir*sphereDist);
 			o.mainPos = -mul(_MainRotation, o.worldPos);
 			o.detailPos = mul(_DetailRotation, o.mainPos);
             return o;
@@ -78,7 +78,7 @@
 		
 		fixed4 frag (v2f IN) : COLOR
 		{
-			half shadowCheck = step(0, IN.posProj.w)*step(0,IN.dotcoeff)*step(IN.originDist,_Radius);
+			half shadowCheck = step(0, IN.posProj.w)*step(IN.dotcoeff,0)*step(IN.originDist,_Radius);
 			shadowCheck *= step(_PlanetRadius, IN.originDist+5);
 			half4 main = GetSphereMap(_MainTex, IN.mainPos);
 			half4 detail = GetShereDetailMap(_DetailTex, IN.detailPos, _DetailScale);

@@ -66,7 +66,6 @@ namespace Atmosphere
                             cloudsMat.ApplyMaterialProperties(ShadowProjector.material, ScaledSpace.ScaleFactor);
                         }
                         float scale = (float)(1000f / celestialBody.Radius);
-                        CloudMaterial.DisableKeyword("SOFT_DEPTH_ON");
                         Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);
                     }
                     else
@@ -80,7 +79,6 @@ namespace Atmosphere
                             cloudsMat.ApplyMaterialProperties(ShadowProjector.material);
                         }
                                                 
-                        CloudMaterial.EnableKeyword("SOFT_DEPTH_ON");
                         Reassign(EVEManagerClass.MACRO_LAYER, celestialBody.transform, 1);
                     }
                     isScaled = value;
@@ -160,11 +158,13 @@ namespace Atmosphere
                 CloudMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius * scale);
                 CloudMaterial.EnableKeyword("WORLD_SPACE_ON");
                 CloudMaterial.DisableKeyword("WORLD_SPACE_OFF");
+                CloudMaterial.EnableKeyword("SOFT_DEPTH_ON");
             }
             else
             {
                 CloudMaterial.EnableKeyword("WORLD_SPACE_OFF");
                 CloudMaterial.DisableKeyword("WORLD_SPACE_ON");
+                CloudMaterial.DisableKeyword("SOFT_DEPTH_ON");
             }
             if (ShadowProjector != null)
             {
@@ -184,8 +184,7 @@ namespace Atmosphere
                 }
                 else
                 {
-                    ShadowProjectorGO.layer = EVEManagerClass.SCALED_LAYER;
-                    ShadowProjector.ignoreLayers = ~((1 << 29) | (1 << 23) | (1 << 18) | (1 << 10));// | (1 << 9));
+                    ShadowProjector.ignoreLayers = ~((1 << 29) | (1 << 23) | (1 << 18) | (1 << 10) | (1 << 9));
                     sunTransform = Tools.GetScaledTransform(Sun.Instance.sun.bodyName);
                     CloudsManager.Log("Camera mask: "+ScaledCamera.Instance.camera.cullingMask);
                 }
@@ -200,11 +199,11 @@ namespace Atmosphere
                 GameObject.DestroyImmediate(CloudMesh);
                 CloudMesh = null;
             }
-            if(ShadowProjector != null)
+            if(ShadowProjectorGO != null)
             {
-                ShadowProjector.transform.parent = null;
-                GameObject.DestroyImmediate(ShadowProjector);
-                ShadowProjector = null;
+                ShadowProjectorGO.transform.parent = null;
+                GameObject.DestroyImmediate(ShadowProjectorGO);
+                ShadowProjectorGO = null;
             }
         }
 
@@ -220,7 +219,7 @@ namespace Atmosphere
                     ShadowProjector.transform.localPosition = radiusScale * -sunDirection;
                     ShadowProjector.transform.forward = worldSunDir;
 
-                    ShadowProjector.material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, -worldSunDir);
+                    ShadowProjector.material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, worldSunDir);
                 }
             }
             CloudMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, CloudMesh.transform.position);
@@ -235,8 +234,6 @@ namespace Atmosphere
 
             if (ShadowProjector != null)
             {
-                
-               // Vector4 texVect = ShadowProjector.transform.localPosition.normalized;
                 ShadowProjector.material.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, mainRotation * ShadowProjector.transform.parent.worldToLocalMatrix);
                 ShadowProjector.material.SetMatrix(EVEManagerClass.DETAIL_ROTATION_PROPERTY, detailRotation);
                 ShadowProjector.material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, CloudMesh.transform.position);
