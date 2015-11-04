@@ -99,6 +99,7 @@ namespace CityLights
                 }
             }
             materialPQS.Remove();
+            GameObject.DestroyImmediate(materialPQS);
         }
     }
 

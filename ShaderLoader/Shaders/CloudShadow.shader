@@ -19,6 +19,7 @@
 		#pragma glsl
         #pragma vertex vert  
         #pragma fragment frag 
+		#pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
  		
         uniform sampler2D _MainTex; 
  		float4 _MainOffset;
@@ -41,7 +42,7 @@
         struct v2f {
            	float4 pos : SV_POSITION;
            	float4 posProj : TEXCOORD0;
-           	float dotcoeff : TEXCOORD1;
+           	float shadowCheck : TEXCOORD1;
            	float originDist : TEXCOORD2;
 			float4 worldPos : TEXCOORD3;
 			float4 mainPos : TEXCOORD4; 
@@ -53,33 +54,45 @@
            	v2f o;
             o.posProj = mul(_Projector, v.vertex);
             o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
-            float3 normView = normalize(float3(_Projector[2][0],_Projector[2][1], _Projector[2][2]));
-    		
-			float4 vertexPos = mul(_Object2World, v.vertex);
-	   	   	o.worldPos = vertexPos;
-
-	   	   	float3 worldOrigin = _PlanetOrigin;
+            
+    		o.worldPos = mul(_Object2World, v.vertex);
+    		#ifdef WORLD_SPACE_ON
+			float4 vertexPos = o.worldPos;
+			float3 worldOrigin = _PlanetOrigin;
+			#else
+			float4 vertexPos = v.vertex;
+			float3 worldOrigin = float3(0,0,0);
+			#endif
+			
+	   	   	
 	   	   	float3 L = worldOrigin - vertexPos;
 	   	   	o.originDist = length(L);
 	   	    float tc = dot(L,-_SunDir);
-	   	    o.dotcoeff = tc;
 			float d = sqrt(dot(L,L)-(tc*tc));
 			float d2 = pow(d,2);
 			float td = sqrt(dot(L,L)-d2);		
 			float sphereRadius = _Radius;
-			half sphereCheck = step(d, sphereRadius)*step(o.originDist, sphereRadius);
+			o.shadowCheck = step(o.originDist, sphereRadius)*step(tc, 0.0);
+				//saturate((step(d, sphereRadius)*step(0.0, tc))+
+				//(step(o.originDist, sphereRadius)));
 			float tlc = sqrt((sphereRadius*sphereRadius)-d2);
-			float sphereDist = lerp(0, tlc - td, sphereCheck);
-			o.worldPos = vertexPos + (-_SunDir*sphereDist);
-			o.mainPos = -mul(_MainRotation, o.worldPos);
+			float sphereDist = 	lerp(lerp(tlc-td, tc-tlc, step(0.0, tc)), 
+								lerp(tlc-td, tc+tlc, step(0.0, tc)),  step(o.originDist, sphereRadius));
+			float4 planetPos = vertexPos + (-_SunDir*sphereDist);
+			o.mainPos = -mul(_MainRotation, planetPos);
 			o.detailPos = mul(_DetailRotation, o.mainPos);
             return o;
         }
 		
 		fixed4 frag (v2f IN) : COLOR
 		{
-			half shadowCheck = step(0, IN.posProj.w)*step(IN.dotcoeff,0)*step(IN.originDist,_Radius);
+			half shadowCheck = step(0, IN.posProj.w)*IN.shadowCheck;
+			
+			//Ocean filter
+			#ifdef WORLD_SPACE_ON
 			shadowCheck *= step(_PlanetRadius, IN.originDist+5);
+			#endif
+			
 			half4 main = GetSphereMap(_MainTex, IN.mainPos);
 			half4 detail = GetShereDetailMap(_DetailTex, IN.detailPos, _DetailScale);
 			

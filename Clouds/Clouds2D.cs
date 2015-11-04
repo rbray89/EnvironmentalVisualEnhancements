@@ -117,6 +117,7 @@ namespace Atmosphere
 
         internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, CloudsMaterial cloudsMaterial, float radius, float speed)
         {
+            CloudsManager.Log("Applying 2D clouds...");
             Remove();
             this.celestialBody = celestialBody;
             this.scaledCelestialTransform = scaledCelestialTransform;
@@ -157,13 +158,13 @@ namespace Atmosphere
             {
                 CloudMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius * scale);
                 CloudMaterial.EnableKeyword("WORLD_SPACE_ON");
-                CloudMaterial.DisableKeyword("WORLD_SPACE_OFF");
+                ShadowProjector.material.EnableKeyword("WORLD_SPACE_ON");
                 CloudMaterial.EnableKeyword("SOFT_DEPTH_ON");
             }
             else
             {
-                CloudMaterial.EnableKeyword("WORLD_SPACE_OFF");
                 CloudMaterial.DisableKeyword("WORLD_SPACE_ON");
+                ShadowProjector.material.DisableKeyword("WORLD_SPACE_ON");
                 CloudMaterial.DisableKeyword("SOFT_DEPTH_ON");
             }
             if (ShadowProjector != null)
@@ -193,6 +194,7 @@ namespace Atmosphere
 
         public void Remove()
         {
+            CloudsManager.Log("Removing 2D clouds...");
             if (CloudMesh != null)
             {
                 CloudMesh.transform.parent = null;
@@ -202,7 +204,10 @@ namespace Atmosphere
             if(ShadowProjectorGO != null)
             {
                 ShadowProjectorGO.transform.parent = null;
+                ShadowProjector.transform.parent = null;
+                GameObject.DestroyImmediate(ShadowProjector);
                 GameObject.DestroyImmediate(ShadowProjectorGO);
+                ShadowProjector = null;
                 ShadowProjectorGO = null;
             }
         }
@@ -219,7 +224,15 @@ namespace Atmosphere
                     ShadowProjector.transform.localPosition = radiusScale * -sunDirection;
                     ShadowProjector.transform.forward = worldSunDir;
 
-                    ShadowProjector.material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, worldSunDir);
+                    if (Scaled)
+                    {
+                        ShadowProjector.material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, sunDirection);
+                    }
+                    else
+                    {
+                        ShadowProjector.material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, worldSunDir);
+                    }
+                    
                 }
             }
             CloudMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, CloudMesh.transform.position);
@@ -234,7 +247,15 @@ namespace Atmosphere
 
             if (ShadowProjector != null)
             {
-                ShadowProjector.material.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, mainRotation * ShadowProjector.transform.parent.worldToLocalMatrix);
+                if(Scaled)
+                {
+                    ShadowProjector.material.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, mainRotation);
+                }
+                else
+                {
+                    ShadowProjector.material.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, mainRotation * ShadowProjector.transform.parent.worldToLocalMatrix);
+                }
+                
                 ShadowProjector.material.SetMatrix(EVEManagerClass.DETAIL_ROTATION_PROPERTY, detailRotation);
                 ShadowProjector.material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, CloudMesh.transform.position);
             }

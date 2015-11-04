@@ -22,7 +22,6 @@
    	    float _DetailScale;
 		float _DetailDist;
 		float4 _SunDir;
-		float _Radius;
 		float _PlanetRadius;
 		
 		float3 _PlanetOrigin;
@@ -61,15 +60,14 @@
 		
 		fixed4 frag (v2f IN) : COLOR
 		{
-			half shadowCheck = step(0, IN.posProj.w)*step(0,IN.dotcoeff)*step(IN.originDist,_Radius);
+			half shadowCheck = step(0, IN.posProj.w);
 			shadowCheck *= step(_PlanetRadius, IN.originDist+5);
 			
 			
 	   	    float tc = dot(IN.L,- _SunDir);
 
 			float d = sqrt(dot(IN.L,IN.L)-(tc*tc));
-			float sphereRadius = _Radius;
-			half sphereCheck = step(d, sphereRadius)*step(0.0, tc);
+			half sphereCheck = step(d, _PlanetRadius)*step(0.0, tc);
 
 			fixed4 color = half4(1,1,1,sphereCheck);
 			

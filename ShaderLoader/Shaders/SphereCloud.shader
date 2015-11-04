@@ -139,8 +139,8 @@ SubShader {
 			float td = sqrt(dot(IN.L,IN.L)-d2);		 
 			float tlc = sqrt((_OceanRadius*_OceanRadius)-d2);
 			
-			half sphereCheck = step(d, _OceanRadius)*step(0.0, tc);
-			float sphereDist = lerp(tlc+td, tc-tlc, step(0.0, tc));
+			half sphereCheck = saturate(step(d, _OceanRadius)*step(0.0, tc) + step( length(IN.L), _OceanRadius));
+			float sphereDist = lerp(tlc-td, tc-tlc, step(0.0, tc));
 			sphereCheck *= step(sphereDist, dist);
 			
 			color.a *= 1-sphereCheck;

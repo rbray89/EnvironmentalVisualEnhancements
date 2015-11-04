@@ -18,6 +18,7 @@
 	   Tags {
 	   "Queue"="Transparent"
 	   "RenderMode"="Transparent"
+	   "IgnoreProjector"="True"
 	   }
 	   SubShader {  	
         Pass {

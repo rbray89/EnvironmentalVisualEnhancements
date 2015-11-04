@@ -15,6 +15,7 @@ namespace Utils
 
         public void Apply(CelestialBody cb, Material mat)
         {
+            KSPLog.print("Applying PQS Material Manager!");
             material = new Material( mat);
             material.name = materialName;
 
@@ -41,7 +42,8 @@ namespace Utils
 
         public void Remove()
         {
-            foreach(PQ pq in parent.quads)
+            KSPLog.print("Removing PQS Material Manager!");
+            foreach (PQ pq in parent.quads)
             {
                 Remove(pq);
             }
@@ -81,23 +83,22 @@ namespace Utils
             if (parent.useSharedMaterial)
             {
                 List<Material> materials = new List<Material>(quad.meshRenderer.sharedMaterials);
-                materials.Add(material);
-                quad.meshRenderer.sharedMaterials = materials.ToArray();
+                if(!materials.Exists(mat => mat.name.Contains(materialName)))
+                {
+                    materials.Add(material);
+                    quad.meshRenderer.sharedMaterials = materials.ToArray();
+                }
             }
             else
             {
                 List<Material> materials = new List<Material>(quad.meshRenderer.materials);
-                materials.Add(material);
-                quad.meshRenderer.materials = materials.ToArray();
+                if (!materials.Exists(mat => mat.name.Contains(materialName)))
+                {
+                    materials.Add(material);
+                    quad.meshRenderer.materials = materials.ToArray();
+                }
             }
         }
 
-        /*  protected void Update()
-          {
-              Vector3 sunDir = this.transform.InverseTransformDirection(Sun.Instance.sunDirection);
-              material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, sunDir);
-              //Vector3 planetOrigin = this.transform.position;
-              //material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
-          }*/
     }
 }

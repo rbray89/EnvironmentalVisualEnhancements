@@ -73,22 +73,17 @@ namespace CelestialShadows
         
         protected void Update()
         {
-            ShadowManager.Log("Update!");
-            if (!this.sphere.isActiveAndEnabled && celestialBody != null)
+            if ( celestialBody != null)
             {
-                ShadowManager.Log("Updating stuff!");
                 Vector3 worldSunDir = Vector3.Normalize(Sun.Instance.sunDirection);
-                //Vector3 sunDirection = Vector3.Normalize(ShadowProjector.transform.parent.InverseTransformDirection(worldSunDir));//sunTransform.position));
-                //ShadowProjector.transform.localPosition = radiusScale * sunDirection;
-                CelestialBody kerbin = FlightGlobals.currentMainBody;
-                ShadowProjector.transform.parent = kerbin.transform;
                 Vector3 sunDirection = Vector3.Normalize(ShadowProjector.transform.parent.InverseTransformDirection(worldSunDir));//sunTransform.position));
-                ShadowProjector.transform.localPosition = (float)(kerbin.Radius+10000) * -sunDirection;
+                ShadowProjector.transform.localPosition = radiusScale * sunDirection;
+               
                 ShadowProjector.transform.forward = worldSunDir;
 
                 ShadowProjector.material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, worldSunDir);
                 Vector3 planetOrigin = celestialBody.transform.position;
-                ShadowProjector.material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, ShadowProjector.transform.position);
+                ShadowProjector.material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
             }
         }
 
