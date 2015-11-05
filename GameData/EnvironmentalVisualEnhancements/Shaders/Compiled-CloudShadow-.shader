@@ -1,7 +1,8 @@
-// Compiled shader for all platforms, uncompressed size: 106.2KB
+// Compiled shader for all platforms, uncompressed size: 107.1KB
 
 Shader "EVE/CloudShadow" {
 Properties {
+ _Color ("Color Tint", Color) = (1,1,1,1)
  _MainTex ("Main (RGB)", 2D) = "white" {}
  _DetailTex ("Detail (RGB)", 2D) = "white" {}
  _DetailScale ("Detail Scale", Float) = 100
@@ -17,21 +18,21 @@ SubShader {
  // Stats for Vertex shader:
  //       d3d11 : 46 math
  //        d3d9 : 51 avg math (50..52)
- //        gles : 156 avg math (154..158), 2 texture, 6 branch
- //       gles3 : 156 avg math (154..158), 2 texture, 6 branch
- //   glesdesktop : 156 avg math (154..158), 2 texture, 6 branch
+ //        gles : 157 avg math (155..159), 2 texture, 6 branch
+ //       gles3 : 157 avg math (155..159), 2 texture, 6 branch
+ //   glesdesktop : 157 avg math (155..159), 2 texture, 6 branch
  //       metal : 42 math
- //      opengl : 156 avg math (154..158), 2 texture, 6 branch
+ //      opengl : 157 avg math (155..159), 2 texture, 6 branch
  // Stats for Fragment shader:
- //       d3d11 : 100 avg math (98..102)
- //        d3d9 : 120 avg math (118..122), 6 texture
- //       metal : 156 avg math (154..158), 2 texture, 6 branch
+ //       d3d11 : 103 avg math (101..105)
+ //        d3d9 : 122 avg math (120..124), 6 texture
+ //       metal : 157 avg math (155..159), 2 texture, 6 branch
  Pass {
   ZWrite Off
-  Blend DstColor Zero
+  Blend Zero SrcColor
 Program "vp" {
 SubProgram "opengl " {
-// Stats: 154 math, 2 textures, 6 branches
+// Stats: 155 math, 2 textures, 6 branches
 Keywords { "WORLD_SPACE_OFF" }
 "!!GLSL
 #ifdef VERTEX
@@ -91,6 +92,7 @@ void main ()
 #extension GL_ARB_shader_texture_lod : enable
 uniform vec3 _WorldSpaceCameraPos;
 uniform sampler2D _MainTex;
+uniform vec4 _Color;
 uniform sampler2D _DetailTex;
 uniform float _DetailScale;
 uniform float _DetailDist;
@@ -226,17 +228,15 @@ void main ()
   vec4 tmpvar_23;
   tmpvar_23 = (xlv_TEXCOORD3 - tmpvar_22);
   vec4 tmpvar_24;
-  tmpvar_24 = (tmpvar_10 * mix (texture2DGradARB (_DetailTex, (
+  tmpvar_24 = ((_Color * tmpvar_10) * mix (texture2DGradARB (_DetailTex, (
     ((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x))
    * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (
     ((2.0 * _DetailDist) * sqrt(dot (tmpvar_23, tmpvar_23)))
   , 0.0, 1.0))));
-  color_1.xyz = tmpvar_24.xyz;
-  color_1.w = (1.2 * (1.2 - tmpvar_24.w));
-  vec4 tmpvar_25;
-  tmpvar_25 = clamp (color_1, 0.0, 1.0);
-  color_1 = tmpvar_25;
-  gl_FragData[0] = vec4(mix (1.0, tmpvar_25.w, tmpvar_2));
+  color_1.w = tmpvar_24.w;
+  color_1.xyz = clamp ((tmpvar_24.xyz - tmpvar_24.w), 0.0, 1.0);
+  color_1.xyz = vec3(mix (1.0, color_1.x, tmpvar_24.w));
+  gl_FragData[0] = vec4(mix (1.0, color_1.x, tmpvar_2));
 }
 
 
@@ -320,19 +320,19 @@ SubProgram "d3d11 " {
 // Stats: 46 math
 Keywords { "WORLD_SPACE_OFF" }
 Bind "vertex" Vertex
-ConstBuffer "$Globals" 336
+ConstBuffer "$Globals" 352
 Matrix 48 [_MainRotation]
 Matrix 112 [_DetailRotation]
-Matrix 272 [_Projector]
-Vector 224 [_SunDir]
-Float 240 [_Radius]
+Matrix 288 [_Projector]
+Vector 240 [_SunDir]
+Float 256 [_Radius]
 ConstBuffer "UnityPerDraw" 336
 Matrix 0 [glstate_matrix_mvp]
 Matrix 192 [_Object2World]
 BindCB  "$Globals" 0
 BindCB  "UnityPerDraw" 1
 "vs_4_0
-eefiecedaabdldemfknpbhanodkelhajfnkmekicabaaaaaagaaiaaaaadaaaaaa
+eefiecedkpcnbkpmdhobmdagckeagibjckdmjkilabaaaaaagaaiaaaaadaaaaaa
 cmaaaaaahmaaaaaaemabaaaaejfdeheoeiaaaaaaacaaaaaaaiaaaaaadiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaebaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahaaaaaafaepfdejfeejepeoaaeoepfcenebemaaepfdeheo
@@ -343,7 +343,7 @@ adaaaaaaacaaaaaaacanaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaalmaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaalmaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklfdeieefcamahaaaaeaaaabaamdabaaaafjaaaaae
-egiocaaaaaaaaaaabfaaaaaafjaaaaaeegiocaaaabaaaaaabaaaaaaafpaaaaad
+egiocaaaaaaaaaaabgaaaaaafjaaaaaeegiocaaaabaaaaaabaaaaaaafpaaaaad
 pcbabaaaaaaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaadpccabaaa
 abaaaaaagfaaaaadbccabaaaacaaaaaagfaaaaadcccabaaaacaaaaaagfaaaaad
 pccabaaaadaaaaaagfaaaaadpccabaaaaeaaaaaagfaaaaadpccabaaaafaaaaaa
@@ -352,17 +352,17 @@ abaaaaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaa
 agbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
 abaaaaaaacaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaa
 aaaaaaaaegiocaaaabaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaa
-diaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaaaaaaaaabcaaaaaa
-dcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaabbaaaaaaagbabaaaaaaaaaaa
-egaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaabdaaaaaa
+diaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaaaaaaaaabdaaaaaa
+dcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaabcaaaaaaagbabaaaaaaaaaaa
+egaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaabeaaaaaa
 kgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaabaaaaaaegiocaaa
-aaaaaaaabeaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaabaaaaaajbcaabaaa
+aaaaaaaabfaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaabaaaaaajbcaabaaa
 aaaaaaaaegbcbaiaebaaaaaaaaaaaaaaegbcbaiaebaaaaaaaaaaaaaaelaaaaaf
 ccaabaaaaaaaaaaaakaabaaaaaaaaaaabnaaaaaiecaabaaaaaaaaaaaakiacaaa
-aaaaaaaaapaaaaaabkaabaaaaaaaaaaadgaaaaafcccabaaaacaaaaaabkaabaaa
+aaaaaaaabaaaaaaabkaabaaaaaaaaaaadgaaaaafcccabaaaacaaaaaabkaabaaa
 aaaaaaaaabaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaaaaaiadp
 baaaaaakecaabaaaaaaaaaaaegbcbaiaebaaaaaaaaaaaaaaegiccaiaebaaaaaa
-aaaaaaaaaoaaaaaabnaaaaahicaabaaaaaaaaaaaabeaaaaaaaaaaaaackaabaaa
+aaaaaaaaapaaaaaabnaaaaahicaabaaaaaaaaaaaabeaaaaaaaaaaaaackaabaaa
 aaaaaaaaabaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
 diaaaaahbccabaaaacaaaaaadkaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaai
 pcaabaaaabaaaaaafgbfbaaaaaaaaaaaegiocaaaabaaaaaaanaaaaaadcaaaaak
@@ -374,7 +374,7 @@ ckaabaiaebaaaaaaaaaaaaaackaabaaaaaaaaaaaakaabaaaaaaaaaaaelaaaaaf
 icaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaa
 aaaaaaaadkaabaaaaaaaaaaadcaaaaakbcaabaaaaaaaaaaadkaabaiaebaaaaaa
 aaaaaaaadkaabaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaamicaabaaaaaaaaaaa
-akiacaaaaaaaaaaaapaaaaaaakiacaaaaaaaaaaaapaaaaaaakaabaiaebaaaaaa
+akiacaaaaaaaaaaabaaaaaaaakiacaaaaaaaaaaabaaaaaaaakaabaiaebaaaaaa
 abaaaaaaelaaaaafjcaabaaaaaaaaaaaagambaaaaaaaaaaaaaaaaaahbcaabaaa
 abaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaa
 akaabaiaebaaaaaaaaaaaaaadkaabaaaaaaaaaaaaaaaaaaiicaabaaaaaaaaaaa
@@ -387,7 +387,7 @@ ebaaaaaaaaaaaaaaakaabaaaabaaaaaadcaaaaajbcaabaaaaaaaaaaackaabaaa
 aaaaaaaaakaabaaaabaaaaaaakaabaaaaaaaaaaaaaaaaaaibcaabaaaaaaaaaaa
 dkaabaiaebaaaaaaaaaaaaaaakaabaaaaaaaaaaadcaaaaajbcaabaaaaaaaaaaa
 bkaabaaaaaaaaaaaakaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaalpcaabaaa
-aaaaaaaaegiocaiaebaaaaaaaaaaaaaaaoaaaaaaagaabaaaaaaaaaaaegbobaaa
+aaaaaaaaegiocaiaebaaaaaaaaaaaaaaapaaaaaaagaabaaaaaaaaaaaegbobaaa
 aaaaaaaadiaaaaaipcaabaaaabaaaaaafgafbaaaaaaaaaaaegiocaaaaaaaaaaa
 aeaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaaaaaaaaaadaaaaaaagaabaaa
 aaaaaaaaegaobaaaabaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaaaaaaaaa
@@ -402,7 +402,7 @@ aaaaaaaaakaaaaaapgapbaiaebaaaaaaaaaaaaaaegaobaaaabaaaaaadoaaaaab
 "
 }
 SubProgram "gles " {
-// Stats: 154 math, 2 textures, 6 branches
+// Stats: 155 math, 2 textures, 6 branches
 Keywords { "WORLD_SPACE_OFF" }
 "!!GLES
 
@@ -469,6 +469,7 @@ void main ()
 #extension GL_OES_standard_derivatives : enable
 uniform highp vec3 _WorldSpaceCameraPos;
 uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
 uniform highp float _DetailDist;
@@ -632,15 +633,13 @@ void main ()
   )), 0.0, 1.0);
   tmpvar_36 = tmpvar_37;
   mediump vec4 tmpvar_38;
-  tmpvar_38 = (tmpvar_13 * mix (tmpvar_14, vec4(1.0, 1.0, 1.0, 1.0), vec4(tmpvar_36)));
+  tmpvar_38 = ((_Color * tmpvar_13) * mix (tmpvar_14, vec4(1.0, 1.0, 1.0, 1.0), vec4(tmpvar_36)));
   color_2 = tmpvar_38;
-  color_2.w = (1.2 * (1.2 - color_2.w));
-  lowp vec4 tmpvar_39;
-  tmpvar_39 = clamp (color_2, 0.0, 1.0);
-  color_2 = tmpvar_39;
-  mediump vec4 tmpvar_40;
-  tmpvar_40 = vec4(mix (1.0, tmpvar_39.w, shadowCheck_3));
-  tmpvar_1 = tmpvar_40;
+  color_2.xyz = clamp ((color_2.xyz - color_2.w), 0.0, 1.0);
+  color_2.xyz = vec3(mix (1.0, color_2.x, color_2.w));
+  mediump vec4 tmpvar_39;
+  tmpvar_39 = vec4(mix (1.0, color_2.x, shadowCheck_3));
+  tmpvar_1 = tmpvar_39;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -649,7 +648,7 @@ void main ()
 #endif"
 }
 SubProgram "glesdesktop " {
-// Stats: 154 math, 2 textures, 6 branches
+// Stats: 155 math, 2 textures, 6 branches
 Keywords { "WORLD_SPACE_OFF" }
 "!!GLES
 
@@ -716,6 +715,7 @@ void main ()
 #extension GL_OES_standard_derivatives : enable
 uniform highp vec3 _WorldSpaceCameraPos;
 uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
 uniform highp float _DetailDist;
@@ -879,15 +879,13 @@ void main ()
   )), 0.0, 1.0);
   tmpvar_36 = tmpvar_37;
   mediump vec4 tmpvar_38;
-  tmpvar_38 = (tmpvar_13 * mix (tmpvar_14, vec4(1.0, 1.0, 1.0, 1.0), vec4(tmpvar_36)));
+  tmpvar_38 = ((_Color * tmpvar_13) * mix (tmpvar_14, vec4(1.0, 1.0, 1.0, 1.0), vec4(tmpvar_36)));
   color_2 = tmpvar_38;
-  color_2.w = (1.2 * (1.2 - color_2.w));
-  lowp vec4 tmpvar_39;
-  tmpvar_39 = clamp (color_2, 0.0, 1.0);
-  color_2 = tmpvar_39;
-  mediump vec4 tmpvar_40;
-  tmpvar_40 = vec4(mix (1.0, tmpvar_39.w, shadowCheck_3));
-  tmpvar_1 = tmpvar_40;
+  color_2.xyz = clamp ((color_2.xyz - color_2.w), 0.0, 1.0);
+  color_2.xyz = vec3(mix (1.0, color_2.x, color_2.w));
+  mediump vec4 tmpvar_39;
+  tmpvar_39 = vec4(mix (1.0, color_2.x, shadowCheck_3));
+  tmpvar_1 = tmpvar_39;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -896,7 +894,7 @@ void main ()
 #endif"
 }
 SubProgram "gles3 " {
-// Stats: 154 math, 2 textures, 6 branches
+// Stats: 155 math, 2 textures, 6 branches
 Keywords { "WORLD_SPACE_OFF" }
 "!!GLES3#version 300 es
 
@@ -964,6 +962,7 @@ void main ()
 layout(location=0) out mediump vec4 _glesFragData[4];
 uniform highp vec3 _WorldSpaceCameraPos;
 uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
 uniform highp float _DetailDist;
@@ -1127,15 +1126,13 @@ void main ()
   )), 0.0, 1.0);
   tmpvar_36 = tmpvar_37;
   mediump vec4 tmpvar_38;
-  tmpvar_38 = (tmpvar_13 * mix (tmpvar_14, vec4(1.0, 1.0, 1.0, 1.0), vec4(tmpvar_36)));
+  tmpvar_38 = ((_Color * tmpvar_13) * mix (tmpvar_14, vec4(1.0, 1.0, 1.0, 1.0), vec4(tmpvar_36)));
   color_2 = tmpvar_38;
-  color_2.w = (1.2 * (1.2 - color_2.w));
-  lowp vec4 tmpvar_39;
-  tmpvar_39 = clamp (color_2, 0.0, 1.0);
-  color_2 = tmpvar_39;
-  mediump vec4 tmpvar_40;
-  tmpvar_40 = vec4(mix (1.0, tmpvar_39.w, shadowCheck_3));
-  tmpvar_1 = tmpvar_40;
+  color_2.xyz = clamp ((color_2.xyz - color_2.w), 0.0, 1.0);
+  color_2.xyz = vec3(mix (1.0, color_2.x, color_2.w));
+  mediump vec4 tmpvar_39;
+  tmpvar_39 = vec4(mix (1.0, color_2.x, shadowCheck_3));
+  tmpvar_1 = tmpvar_39;
   _glesFragData[0] = tmpvar_1;
 }
 
@@ -1221,7 +1218,7 @@ vertex xlatMtlShaderOutput xlatMtlMain (xlatMtlShaderInput _mtl_i [[stage_in]], 
 "
 }
 SubProgram "opengl " {
-// Stats: 158 math, 2 textures, 6 branches
+// Stats: 159 math, 2 textures, 6 branches
 Keywords { "WORLD_SPACE_ON" }
 "!!GLSL
 #ifdef VERTEX
@@ -1284,6 +1281,7 @@ void main ()
 #extension GL_ARB_shader_texture_lod : enable
 uniform vec3 _WorldSpaceCameraPos;
 uniform sampler2D _MainTex;
+uniform vec4 _Color;
 uniform sampler2D _DetailTex;
 uniform float _DetailScale;
 uniform float _DetailDist;
@@ -1425,17 +1423,15 @@ void main ()
   vec4 tmpvar_23;
   tmpvar_23 = (xlv_TEXCOORD3 - tmpvar_22);
   vec4 tmpvar_24;
-  tmpvar_24 = (tmpvar_10 * mix (texture2DGradARB (_DetailTex, (
+  tmpvar_24 = ((_Color * tmpvar_10) * mix (texture2DGradARB (_DetailTex, (
     ((0.5 * tmpvar_21.zy) / abs(tmpvar_21.x))
    * _DetailScale), tmpvar_18.xy, tmpvar_18.zw), vec4(1.0, 1.0, 1.0, 1.0), vec4(clamp (
     ((2.0 * _DetailDist) * sqrt(dot (tmpvar_23, tmpvar_23)))
   , 0.0, 1.0))));
-  color_1.xyz = tmpvar_24.xyz;
-  color_1.w = (1.2 * (1.2 - tmpvar_24.w));
-  vec4 tmpvar_25;
-  tmpvar_25 = clamp (color_1, 0.0, 1.0);
-  color_1 = tmpvar_25;
-  gl_FragData[0] = vec4(mix (1.0, tmpvar_25.w, tmpvar_2));
+  color_1.w = tmpvar_24.w;
+  color_1.xyz = clamp ((tmpvar_24.xyz - tmpvar_24.w), 0.0, 1.0);
+  color_1.xyz = vec3(mix (1.0, color_1.x, tmpvar_24.w));
+  gl_FragData[0] = vec4(mix (1.0, color_1.x, tmpvar_2));
 }
 
 
@@ -1522,20 +1518,20 @@ SubProgram "d3d11 " {
 // Stats: 46 math
 Keywords { "WORLD_SPACE_ON" }
 Bind "vertex" Vertex
-ConstBuffer "$Globals" 336
+ConstBuffer "$Globals" 352
 Matrix 48 [_MainRotation]
 Matrix 112 [_DetailRotation]
-Matrix 272 [_Projector]
-Vector 224 [_SunDir]
-Float 240 [_Radius]
-Vector 256 [_PlanetOrigin] 3
+Matrix 288 [_Projector]
+Vector 240 [_SunDir]
+Float 256 [_Radius]
+Vector 272 [_PlanetOrigin] 3
 ConstBuffer "UnityPerDraw" 336
 Matrix 0 [glstate_matrix_mvp]
 Matrix 192 [_Object2World]
 BindCB  "$Globals" 0
 BindCB  "UnityPerDraw" 1
 "vs_4_0
-eefieceddminccapcmjjapeehebngehmfdfaacniabaaaaaahmaiaaaaadaaaaaa
+eefiecedebhkkmnlhmnplhpmplflnfallkmomaheabaaaaaahmaiaaaaadaaaaaa
 cmaaaaaahmaaaaaaemabaaaaejfdeheoeiaaaaaaacaaaaaaaiaaaaaadiaaaaaa
 aaaaaaaaaaaaaaaaadaaaaaaaaaaaaaaapapaaaaebaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaahaaaaaafaepfdejfeejepeoaaeoepfcenebemaaepfdeheo
@@ -1546,7 +1542,7 @@ adaaaaaaacaaaaaaacanaaaalmaaaaaaadaaaaaaaaaaaaaaadaaaaaaadaaaaaa
 apaaaaaalmaaaaaaaeaaaaaaaaaaaaaaadaaaaaaaeaaaaaaapaaaaaalmaaaaaa
 afaaaaaaaaaaaaaaadaaaaaaafaaaaaaapaaaaaafdfgfpfaepfdejfeejepeoaa
 feeffiedepepfceeaaklklklfdeieefcciahaaaaeaaaabaamkabaaaafjaaaaae
-egiocaaaaaaaaaaabfaaaaaafjaaaaaeegiocaaaabaaaaaabaaaaaaafpaaaaad
+egiocaaaaaaaaaaabgaaaaaafjaaaaaeegiocaaaabaaaaaabaaaaaaafpaaaaad
 pcbabaaaaaaaaaaaghaaaaaepccabaaaaaaaaaaaabaaaaaagfaaaaadpccabaaa
 abaaaaaagfaaaaadbccabaaaacaaaaaagfaaaaadcccabaaaacaaaaaagfaaaaad
 pccabaaaadaaaaaagfaaaaadpccabaaaaeaaaaaagfaaaaadpccabaaaafaaaaaa
@@ -1555,21 +1551,21 @@ abaaaaaaabaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaaaaaaaaa
 agbabaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaa
 abaaaaaaacaaaaaakgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaa
 aaaaaaaaegiocaaaabaaaaaaadaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaa
-diaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaaaaaaaaabcaaaaaa
-dcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaabbaaaaaaagbabaaaaaaaaaaa
-egaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaabdaaaaaa
+diaaaaaipcaabaaaaaaaaaaafgbfbaaaaaaaaaaaegiocaaaaaaaaaaabdaaaaaa
+dcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaabcaaaaaaagbabaaaaaaaaaaa
+egaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaaaaaaaaabeaaaaaa
 kgbkbaaaaaaaaaaaegaobaaaaaaaaaaadcaaaaakpccabaaaabaaaaaaegiocaaa
-aaaaaaaabeaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaaipcaabaaa
+aaaaaaaabfaaaaaapgbpbaaaaaaaaaaaegaobaaaaaaaaaaadiaaaaaipcaabaaa
 aaaaaaaafgbfbaaaaaaaaaaaegiocaaaabaaaaaaanaaaaaadcaaaaakpcaabaaa
 aaaaaaaaegiocaaaabaaaaaaamaaaaaaagbabaaaaaaaaaaaegaobaaaaaaaaaaa
 dcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaaoaaaaaakgbkbaaaaaaaaaaa
 egaobaaaaaaaaaaadcaaaaakpcaabaaaaaaaaaaaegiocaaaabaaaaaaapaaaaaa
 pgbpbaaaaaaaaaaaegaobaaaaaaaaaaaaaaaaaajhcaabaaaabaaaaaaegacbaia
-ebaaaaaaaaaaaaaaegiccaaaaaaaaaaabaaaaaaabaaaaaahicaabaaaabaaaaaa
+ebaaaaaaaaaaaaaaegiccaaaaaaaaaaabbaaaaaabaaaaaahicaabaaaabaaaaaa
 egacbaaaabaaaaaaegacbaaaabaaaaaabaaaaaajbcaabaaaabaaaaaaegacbaaa
-abaaaaaaegiccaiaebaaaaaaaaaaaaaaaoaaaaaaelaaaaafccaabaaaabaaaaaa
+abaaaaaaegiccaiaebaaaaaaaaaaaaaaapaaaaaaelaaaaafccaabaaaabaaaaaa
 dkaabaaaabaaaaaadgaaaaafcccabaaaacaaaaaabkaabaaaabaaaaaabnaaaaai
-ccaabaaaabaaaaaaakiacaaaaaaaaaaaapaaaaaabkaabaaaabaaaaaabnaaaaah
+ccaabaaaabaaaaaaakiacaaaaaaaaaaabaaaaaaabkaabaaaabaaaaaabnaaaaah
 ecaabaaaabaaaaaaabeaaaaaaaaaaaaaakaabaaaabaaaaaaabaaaaakgcaabaaa
 abaaaaaafgagbaaaabaaaaaaaceaaaaaaaaaaaaaaaaaiadpaaaaiadpaaaaaaaa
 diaaaaahbccabaaaacaaaaaackaabaaaabaaaaaabkaabaaaabaaaaaadgaaaaaf
@@ -1578,7 +1574,7 @@ ebaaaaaaabaaaaaaakaabaaaabaaaaaadkaabaaaabaaaaaaelaaaaafecaabaaa
 abaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaabaaaaaa
 ckaabaaaabaaaaaadcaaaaakecaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
 ckaabaaaabaaaaaadkaabaaaabaaaaaadcaaaaamicaabaaaabaaaaaaakiacaaa
-aaaaaaaaapaaaaaaakiacaaaaaaaaaaaapaaaaaaakaabaiaebaaaaaaacaaaaaa
+aaaaaaaabaaaaaaaakiacaaaaaaaaaaabaaaaaaaakaabaiaebaaaaaaacaaaaaa
 elaaaaafmcaabaaaabaaaaaakgaobaaaabaaaaaaaaaaaaahbcaabaaaacaaaaaa
 dkaabaaaabaaaaaaakaabaaaabaaaaaaaaaaaaaiecaabaaaabaaaaaackaabaia
 ebaaaaaaabaaaaaadkaabaaaabaaaaaaaaaaaaaiicaabaaaabaaaaaadkaabaia
@@ -1591,7 +1587,7 @@ abaaaaaaakaabaaaacaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
 akaabaaaacaaaaaackaabaaaabaaaaaaaaaaaaaibcaabaaaabaaaaaadkaabaia
 ebaaaaaaabaaaaaaakaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaabkaabaaa
 abaaaaaaakaabaaaabaaaaaadkaabaaaabaaaaaadcaaaaalpcaabaaaaaaaaaaa
-egiocaiaebaaaaaaaaaaaaaaaoaaaaaaagaabaaaabaaaaaaegaobaaaaaaaaaaa
+egiocaiaebaaaaaaaaaaaaaaapaaaaaaagaabaaaabaaaaaaegaobaaaaaaaaaaa
 diaaaaaipcaabaaaabaaaaaafgafbaaaaaaaaaaaegiocaaaaaaaaaaaaeaaaaaa
 dcaaaaakpcaabaaaabaaaaaaegiocaaaaaaaaaaaadaaaaaaagaabaaaaaaaaaaa
 egaobaaaabaaaaaadcaaaaakpcaabaaaabaaaaaaegiocaaaaaaaaaaaafaaaaaa
@@ -1605,7 +1601,7 @@ aaaaaaaaegaobaaaabaaaaaadcaaaaalpccabaaaafaaaaaaegiocaaaaaaaaaaa
 akaaaaaapgapbaiaebaaaaaaaaaaaaaaegaobaaaabaaaaaadoaaaaab"
 }
 SubProgram "gles " {
-// Stats: 158 math, 2 textures, 6 branches
+// Stats: 159 math, 2 textures, 6 branches
 Keywords { "WORLD_SPACE_ON" }
 "!!GLES
 
@@ -1675,6 +1671,7 @@ void main ()
 #extension GL_OES_standard_derivatives : enable
 uniform highp vec3 _WorldSpaceCameraPos;
 uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
 uniform highp float _DetailDist;
@@ -1845,15 +1842,13 @@ void main ()
   )), 0.0, 1.0);
   tmpvar_37 = tmpvar_38;
   mediump vec4 tmpvar_39;
-  tmpvar_39 = (tmpvar_14 * mix (tmpvar_15, vec4(1.0, 1.0, 1.0, 1.0), vec4(tmpvar_37)));
+  tmpvar_39 = ((_Color * tmpvar_14) * mix (tmpvar_15, vec4(1.0, 1.0, 1.0, 1.0), vec4(tmpvar_37)));
   color_2 = tmpvar_39;
-  color_2.w = (1.2 * (1.2 - color_2.w));
-  lowp vec4 tmpvar_40;
-  tmpvar_40 = clamp (color_2, 0.0, 1.0);
-  color_2 = tmpvar_40;
-  mediump vec4 tmpvar_41;
-  tmpvar_41 = vec4(mix (1.0, tmpvar_40.w, shadowCheck_3));
-  tmpvar_1 = tmpvar_41;
+  color_2.xyz = clamp ((color_2.xyz - color_2.w), 0.0, 1.0);
+  color_2.xyz = vec3(mix (1.0, color_2.x, color_2.w));
+  mediump vec4 tmpvar_40;
+  tmpvar_40 = vec4(mix (1.0, color_2.x, shadowCheck_3));
+  tmpvar_1 = tmpvar_40;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -1862,7 +1857,7 @@ void main ()
 #endif"
 }
 SubProgram "glesdesktop " {
-// Stats: 158 math, 2 textures, 6 branches
+// Stats: 159 math, 2 textures, 6 branches
 Keywords { "WORLD_SPACE_ON" }
 "!!GLES
 
@@ -1932,6 +1927,7 @@ void main ()
 #extension GL_OES_standard_derivatives : enable
 uniform highp vec3 _WorldSpaceCameraPos;
 uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
 uniform highp float _DetailDist;
@@ -2102,15 +2098,13 @@ void main ()
   )), 0.0, 1.0);
   tmpvar_37 = tmpvar_38;
   mediump vec4 tmpvar_39;
-  tmpvar_39 = (tmpvar_14 * mix (tmpvar_15, vec4(1.0, 1.0, 1.0, 1.0), vec4(tmpvar_37)));
+  tmpvar_39 = ((_Color * tmpvar_14) * mix (tmpvar_15, vec4(1.0, 1.0, 1.0, 1.0), vec4(tmpvar_37)));
   color_2 = tmpvar_39;
-  color_2.w = (1.2 * (1.2 - color_2.w));
-  lowp vec4 tmpvar_40;
-  tmpvar_40 = clamp (color_2, 0.0, 1.0);
-  color_2 = tmpvar_40;
-  mediump vec4 tmpvar_41;
-  tmpvar_41 = vec4(mix (1.0, tmpvar_40.w, shadowCheck_3));
-  tmpvar_1 = tmpvar_41;
+  color_2.xyz = clamp ((color_2.xyz - color_2.w), 0.0, 1.0);
+  color_2.xyz = vec3(mix (1.0, color_2.x, color_2.w));
+  mediump vec4 tmpvar_40;
+  tmpvar_40 = vec4(mix (1.0, color_2.x, shadowCheck_3));
+  tmpvar_1 = tmpvar_40;
   gl_FragData[0] = tmpvar_1;
 }
 
@@ -2119,7 +2113,7 @@ void main ()
 #endif"
 }
 SubProgram "gles3 " {
-// Stats: 158 math, 2 textures, 6 branches
+// Stats: 159 math, 2 textures, 6 branches
 Keywords { "WORLD_SPACE_ON" }
 "!!GLES3#version 300 es
 
@@ -2190,6 +2184,7 @@ void main ()
 layout(location=0) out mediump vec4 _glesFragData[4];
 uniform highp vec3 _WorldSpaceCameraPos;
 uniform sampler2D _MainTex;
+uniform lowp vec4 _Color;
 uniform sampler2D _DetailTex;
 uniform highp float _DetailScale;
 uniform highp float _DetailDist;
@@ -2360,15 +2355,13 @@ void main ()
   )), 0.0, 1.0);
   tmpvar_37 = tmpvar_38;
   mediump vec4 tmpvar_39;
-  tmpvar_39 = (tmpvar_14 * mix (tmpvar_15, vec4(1.0, 1.0, 1.0, 1.0), vec4(tmpvar_37)));
+  tmpvar_39 = ((_Color * tmpvar_14) * mix (tmpvar_15, vec4(1.0, 1.0, 1.0, 1.0), vec4(tmpvar_37)));
   color_2 = tmpvar_39;
-  color_2.w = (1.2 * (1.2 - color_2.w));
-  lowp vec4 tmpvar_40;
-  tmpvar_40 = clamp (color_2, 0.0, 1.0);
-  color_2 = tmpvar_40;
-  mediump vec4 tmpvar_41;
-  tmpvar_41 = vec4(mix (1.0, tmpvar_40.w, shadowCheck_3));
-  tmpvar_1 = tmpvar_41;
+  color_2.xyz = clamp ((color_2.xyz - color_2.w), 0.0, 1.0);
+  color_2.xyz = vec3(mix (1.0, color_2.x, color_2.w));
+  mediump vec4 tmpvar_40;
+  tmpvar_40 = vec4(mix (1.0, color_2.x, shadowCheck_3));
+  tmpvar_1 = tmpvar_40;
   _glesFragData[0] = tmpvar_1;
 }
 
@@ -2464,155 +2457,158 @@ Keywords { "WORLD_SPACE_OFF" }
 "!!GLSL"
 }
 SubProgram "d3d9 " {
-// Stats: 118 math, 6 textures
+// Stats: 120 math, 6 textures
 Keywords { "WORLD_SPACE_OFF" }
 Vector 0 [_WorldSpaceCameraPos]
-Float 1 [_DetailScale]
-Float 2 [_DetailDist]
+Vector 1 [_Color]
+Float 2 [_DetailScale]
+Float 3 [_DetailDist]
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 "ps_3_0
 dcl_2d s0
 dcl_2d s1
-def c3, 1.00000000, 0.00000000, -0.01872930, 0.07426100
-def c4, -0.21211439, 1.57072902, 2.00000000, 3.14159298
-def c5, 0.31830987, -0.01348047, 0.05747731, -0.12123910
-def c6, 0.19563590, -0.33299461, 0.99999559, 1.57079601
-def c7, 0.15915494, 0.50000000, 1.27323949, 1.20019531
-def c8, -1.00000000, 0, 0, 0
+def c4, 1.00000000, 0.00000000, -0.01872930, 0.07426100
+def c5, -0.21211439, 1.57072902, 2.00000000, 3.14159298
+def c6, 0.31830987, -0.01348047, 0.05747731, -0.12123910
+def c7, 0.19563590, -0.33299461, 0.99999559, 1.57079601
+def c8, 0.15915494, 0.50000000, 1.27323949, -1.00000000
 dcl_texcoord0 v0.xyzw
 dcl_texcoord1 v1.x
 dcl_texcoord3 v2.xyz
 dcl_texcoord4 v3.xyz
 dcl_texcoord5 v4.xyz
-dp3 r0.x, v4, v4
+dp3 r0.x, v3, v3
 rsq r0.x, r0.x
-mul r2.xyz, r0.x, v4
-abs r0.xyz, r2
-dsx r3.zw, r2.xyxz
-add r0.w, r0.z, -r0.x
-dsy r2.xz, r2
-mul r2.xz, r2, r2
-add r1.xyz, r0.zxyw, -r0
-cmp r0.w, r0, c3.x, c3.y
-mad r1.xyz, r0.w, r1, r0
-add r0.w, r1.x, -r0.y
-add r1.xyz, r1, -r0.yxzw
-cmp r0.w, r0, c3.x, c3.y
-mad r0.xyz, r0.w, r1, r0.yxzw
-abs_pp r0.x, r0
-rcp_pp r0.x, r0.x
-mul_pp r0.xy, r0.zyzw, r0.x
-mul_pp r0.xy, r0, c7.y
-abs r0.z, r2.y
-mul r1.xy, r0, c1.x
-add r0.x, -r0.z, c3
-mad r0.y, r0.z, c3.z, c3.w
-mad r0.y, r0, r0.z, c4.x
-mad r0.y, r0, r0.z, c4
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r0.y, r0, r0.x
-cmp r0.z, r2.y, c3.y, c3.x
-mul r0.x, r0.z, r0.y
-mad r0.x, -r0, c4.z, r0.y
-dp3 r0.w, v3, v3
-rsq r0.y, r0.w
-mad r0.w, r0.z, c4, r0.x
-mul r0.xyz, r0.y, v3
-mul r0.w, r0, c1.x
-mul r0.w, r0, c7.z
-abs r2.w, r0.x
-abs r3.x, r0.z
-max r1.z, r2.w, r3.x
-min r1.w, r2, r3.x
-rcp r1.z, r1.z
-mul r3.y, r1.w, r1.z
-mul r3.zw, r3, r3
-add r1.z, r3, r3.w
-rsq r1.z, r1.z
-rcp r1.z, r1.z
+mul r1.xyz, r0.x, v3
+abs r1.w, r1.z
+abs r0.w, r1.x
+max r0.y, r0.w, r1.w
+min r0.x, r0.w, r1.w
+add r0.w, r0, -r1
+abs r1.w, r1.y
+rcp r0.y, r0.y
+mul r2.w, r0.x, r0.y
+mul r4.x, r2.w, r2.w
+mad r3.x, r4, c6.y, c6.z
+mad r3.w, r3.x, r4.x, c6
+dp3 r0.z, v4, v4
+rsq r0.x, r0.z
+mul r0.xyz, r0.x, v4
+abs r2.xyz, r0
+add r4.y, r2.z, -r2.x
+mad r3.w, r3, r4.x, c7.x
+cmp r1.y, r1, c4, c4.x
+add r3.xyz, r2.zxyw, -r2
+cmp r4.y, r4, c4.x, c4
+mad r3.xyz, r4.y, r3, r2
+mad r4.y, r3.w, r4.x, c7
+add r4.z, r3.x, -r2.y
+mad r4.x, r4.y, r4, c7.z
+mul r2.w, r4.x, r2
+dsy r4.xy, r1.xzzw
+add r3.xyz, r3, -r2.yxzw
+cmp r3.w, r4.z, c4.x, c4.y
+mad r2.xyz, r3.w, r3, r2.yxzw
+add r3.x, -r2.w, c7.w
+cmp r0.w, -r0, r2, r3.x
+dsx r3.zw, r1.xyxz
+add r3.x, -r1.w, c4
+mad r2.w, r1, c4.z, c4
+mad r2.w, r2, r1, c5.x
+rsq r3.x, r3.x
+rcp r3.x, r3.x
+mad r1.w, r2, r1, c5.y
+mul r1.w, r1, r3.x
+mul r2.w, r1.y, r1
+add r3.x, -r0.w, c5.w
+mad r1.w, -r2, c5.z, r1
+cmp r2.w, r1.z, r0, r3.x
+mad r0.w, r1.y, c5, r1
+mul r0.w, r0, c6.x
+cmp r1.y, r1.x, r2.w, -r2.w
+mad r3.x, r1.y, c8, c8.y
+mul r4.xy, r4, r4
+add r1.x, r4, r4.y
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+mov r3.y, r0.w
+dsy r1.y, r0.w
 dsx r1.w, r0
-dsy r2.y, r0.w
-add r0.w, r2.x, r2.z
+mul r3.zw, r3, r3
+add r0.w, r3.z, r3
 rsq r0.w, r0.w
 rcp r0.w, r0.w
-mul r2.x, r0.w, c7
-mul r1.z, r1, c7.x
-texldd r0.w, r1, s1, r1.zwzw, r2
-mul r2.x, r3.y, r3.y
-add r1.xyz, -v2, c0
-dp3 r1.x, r1, r1
-mad r2.y, r2.x, c5, c5.z
-mad r2.y, r2, r2.x, c5.w
-mad r1.y, r2, r2.x, c6.x
-mad r1.y, r1, r2.x, c6
-mad r1.y, r1, r2.x, c6.z
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-mul r1.x, r1, c2
-abs r1.z, r0.y
-add_pp r1.w, -r0, c3.x
-mul_sat r1.x, r1, c4.z
-mad_pp r2.x, r1, r1.w, r0.w
-mul r1.y, r1, r3
-add r1.x, r2.w, -r3
-dsy r2.zw, r0.xyxz
-add r0.w, -r1.y, c6
-cmp r0.w, -r1.x, r1.y, r0
-add r1.x, -r1.z, c3
-mad r1.y, r1.z, c3.z, c3.w
-mad r1.y, r1, r1.z, c4.x
-mad r1.y, r1, r1.z, c4
-cmp r1.z, r0.y, c3.y, c3.x
-add r0.y, -r0.w, c4.w
-cmp r0.y, r0.z, r0.w, r0
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-mul r1.y, r1, r1.x
-mul r1.x, r1.z, r1.y
-mad r1.x, -r1, c4.z, r1.y
-mad r0.w, r1.z, c4, r1.x
-cmp r0.y, r0.x, r0, -r0
-mul r0.w, r0, c5.x
-dsx r1.zw, r0.xyxz
-mad r1.x, r0.y, c7, c7.y
-mul r1.zw, r1, r1
-add r0.z, r1, r1.w
-rsq r0.z, r0.z
+mul r1.z, r0.w, c8.x
+abs_pp r0.w, r2.x
+mul r1.x, r1, c8
+texldd r1.xw, r3, s0, r1.zwzw, r1
+abs r1.y, r0
+add r2.x, -r1.y, c4
+mad r1.z, r1.y, c4, c4.w
+mad r1.z, r1, r1.y, c5.x
+rsq r2.x, r2.x
+rcp_pp r0.w, r0.w
+rcp r2.x, r2.x
+mad r1.y, r1.z, r1, c5
+mul r1.y, r1, r2.x
+mul_pp r2.xy, r2.zyzw, r0.w
+dsx r2.zw, r0.xyxz
+cmp r0.y, r0, c4, c4.x
+mul r1.z, r0.y, r1.y
+mad r0.w, -r1.z, c5.z, r1.y
+mad r0.y, r0, c5.w, r0.w
+mul r0.y, r0, c2.x
+mul r1.z, r0.y, c8
+add r3.xyz, -v2, c0
+dp3 r0.y, r3, r3
+rsq r1.y, r0.y
+dsy r3.xy, r0.xzzw
+mul_pp r2.xy, r2, c8.y
 mul r2.zw, r2, r2
+mul r3.xy, r3, r3
 add r0.x, r2.z, r2.w
-dsx r0.y, r0.w
-mov r1.y, r0.w
+add r0.z, r3.x, r3.y
 rsq r0.x, r0.x
+dsy r0.y, r1.z
+mul r2.xy, r2, c2.x
+dsx r0.w, r1.z
+rsq r0.z, r0.z
+rcp r0.x, r0.x
 rcp r1.z, r0.z
-rcp r0.z, r0.x
-mul r0.x, r1.z, c7
-dsy r0.w, r0
-mul r0.z, r0, c7.x
-texldd r0.w, r1, s0, r0, r0.zwzw
-mad_pp r0.x, -r0.w, r2, c7.w
-mul_pp_sat r0.x, r0, c7.w
-cmp r0.y, v0.w, c3.x, c3
-add_pp r0.x, r0, c8
-mul r0.y, r0, v1.x
-mad_pp oC0, r0.y, r0.x, c3.x
+mul r0.z, r0.x, c8.x
+mul r0.x, r1.z, c8
+texldd r0.xw, r2, s1, r0.zwzw, r0
+rcp r1.y, r1.y
+mul r0.y, r1, c3.x
+add_pp r2.xy, -r0.xwzw, c4.x
+mul_sat r0.y, r0, c5.z
+mad_pp r0.zw, r0.y, r2.xyxy, r0.xyxw
+mul_pp r0.xy, r1.xwzw, c1.xwzw
+mul_pp r0.xy, r0, r0.zwzw
+add_pp_sat r0.x, r0, -r0.y
+add_pp r0.z, r0.x, c8.w
+cmp r0.x, v0.w, c4, c4.y
+mul_pp r0.y, r0, r0.z
+mul r0.x, r0, v1
+mad_pp oC0, r0.x, r0.y, c4.x
 "
 }
 SubProgram "d3d11 " {
-// Stats: 98 math
+// Stats: 101 math
 Keywords { "WORLD_SPACE_OFF" }
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-ConstBuffer "$Globals" 336
-Float 208 [_DetailScale]
-Float 212 [_DetailDist]
+ConstBuffer "$Globals" 352
+Vector 192 [_Color]
+Float 224 [_DetailScale]
+Float 228 [_DetailDist]
 ConstBuffer "UnityPerCamera" 128
 Vector 64 [_WorldSpaceCameraPos] 3
 BindCB  "$Globals" 0
 BindCB  "UnityPerCamera" 1
 "ps_4_0
-eefiecedaogglaolmgjghojeimbmchkfghgpijooabaaaaaabmaoaaaaadaaaaaa
+eefiecedpheojmbbenmajfamegjbhlgeliaokkemabaaaaaajiaoaaaaadaaaaaa
 cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapaiaaaalmaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -2621,110 +2617,114 @@ adaaaaaaaaaaaaaaadaaaaaaadaaaaaaapahaaaalmaaaaaaaeaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaapahaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 apahaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
 cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcoeamaaaaeaaaaaaadjadaaaa
-fjaaaaaeegiocaaaaaaaaaaaaoaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcgaanaaaaeaaaaaaafiadaaaa
+fjaaaaaeegiocaaaaaaaaaaaapaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaa
 fkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaa
 aaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaagcbaaaadicbabaaa
 abaaaaaagcbaaaadbcbabaaaacaaaaaagcbaaaadhcbabaaaadaaaaaagcbaaaad
 hcbabaaaaeaaaaaagcbaaaadhcbabaaaafaaaaaagfaaaaadpccabaaaaaaaaaaa
-giaaaaacaeaaaaaadgaaaaafecaabaaaaaaaaaaaabeaaaaaaaaaaaaabaaaaaah
-icaabaaaaaaaaaaaegbcbaaaafaaaaaaegbcbaaaafaaaaaaeeaaaaaficaabaaa
-aaaaaaaadkaabaaaaaaaaaaadiaaaaahpcaabaaaabaaaaaapgapbaaaaaaaaaaa
-bgbjbaaaafaaaaaadgaaaaaghcaabaaaacaaaaaajgahbaiambaaaaaaabaaaaaa
-aaaaaaaihcaabaaaadaaaaaahgaobaiaibaaaaaaabaaaaaaegacbaaaacaaaaaa
-bnaaaaajicaabaaaaaaaaaaadkaabaiaibaaaaaaabaaaaaabkaabaiaibaaaaaa
-abaaaaaaabaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadp
-diaaaaahicaabaaaacaaaaaackaabaaaadaaaaaadkaabaaaaaaaaaaadcaaaaak
-dcaabaaaaaaaaaaapgapbaaaaaaaaaaaegaabaaaadaaaaaajgafbaiaibaaaaaa
-abaaaaaaaaaaaaahhcaabaaaaaaaaaaaegacbaaaaaaaaaaabgahbaaaacaaaaaa
-aaaaaaajbcaabaaaacaaaaaabkaabaiambaaaaaaabaaaaaadkaabaiaibaaaaaa
-abaaaaaadcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaacaaaaaa
-bkaabaiaibaaaaaaabaaaaaabnaaaaaiicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-ckaabaiaibaaaaaaabaaaaaaabaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
-abeaaaaaaaaaiadpdcaaaaakhcaabaaaaaaaaaaapgapbaaaaaaaaaaaegacbaaa
-aaaaaaaaggalbaiaibaaaaaaabaaaaaadiaaaaakgcaabaaaaaaaaaaakgajbaaa
-aaaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaahdcaabaaa
-aaaaaaaajgafbaaaaaaaaaaaagaabaaaaaaaaaaadcaaaaakecaabaaaaaaaaaaa
-akaabaiaibaaaaaaabaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaak
-ecaabaaaaaaaaaaackaabaaaaaaaaaaaakaabaiaibaaaaaaabaaaaaaabeaaaaa
-iedefjlodcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaaakaabaiaibaaaaaa
-abaaaaaaabeaaaaakeanmjdpaaaaaaaiicaabaaaaaaaaaaaakaabaiambaaaaaa
-abaaaaaaabeaaaaaaaaaiadpelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaa
-diaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaadcaaaaaj
-bcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejea
-dbaaaaaiecaabaaaabaaaaaackaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
-abaaaaahbcaabaaaabaaaaaackaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaaj
-ecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
-diaaaaaihcaabaaaaaaaaaaaegacbaaaaaaaaaaaagiacaaaaaaaaaaaanaaaaaa
-diaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdpalaaaaaf
-ccaabaaaacaaaaaackaabaaaaaaaaaaaamaaaaafccaabaaaadaaaaaackaabaaa
-aaaaaaaaalaaaaafmcaabaaaaaaaaaaafganbaaaabaaaaaaamaaaaafdcaabaaa
-abaaaaaangafbaaaabaaaaaaapaaaaahbcaabaaaabaaaaaaegaabaaaabaaaaaa
-egaabaaaabaaaaaaelaaaaafbcaabaaaabaaaaaaakaabaaaabaaaaaadiaaaaah
-bcaabaaaadaaaaaaakaabaaaabaaaaaaabeaaaaaidpjccdoapaaaaahecaabaaa
-aaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafecaabaaaaaaaaaaa
-ckaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaa
-idpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaaaaaaaaaeghobaaaabaaaaaa
-aagabaaaabaaaaaaegaabaaaacaaaaaaegaabaaaadaaaaaaaaaaaaaibcaabaaa
-aaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaaaaaaiadpaaaaaaajhcaabaaa
-abaaaaaaegbcbaaaadaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaah
-ccaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaaabaaaaaaelaaaaafccaabaaa
-aaaaaaaabkaabaaaaaaaaaaaapcaaaaiccaabaaaaaaaaaaafgafbaaaaaaaaaaa
-fgifcaaaaaaaaaaaanaaaaaadcaaaaajbcaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akaabaaaaaaaaaaadkaabaaaaaaaaaaabaaaaaahccaabaaaaaaaaaaaegbcbaaa
-aeaaaaaaegbcbaaaaeaaaaaaeeaaaaafccaabaaaaaaaaaaabkaabaaaaaaaaaaa
-diaaaaahocaabaaaaaaaaaaafgafbaaaaaaaaaaaagbgbaaaaeaaaaaadeaaaaaj
-bcaabaaaabaaaaaackaabaiaibaaaaaaaaaaaaaabkaabaiaibaaaaaaaaaaaaaa
-aoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadp
-akaabaaaabaaaaaaddaaaaajccaabaaaabaaaaaackaabaiaibaaaaaaaaaaaaaa
-bkaabaiaibaaaaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaa
-bkaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaaakaabaaaabaaaaaaakaabaaa
-abaaaaaadcaaaaajecaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaafpkokkdm
-abeaaaaadgfkkolndcaaaaajecaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
-abaaaaaaabeaaaaaochgdidodcaaaaajecaabaaaabaaaaaabkaabaaaabaaaaaa
-ckaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaajccaabaaaabaaaaaabkaabaaa
-abaaaaaackaabaaaabaaaaaaabeaaaaadiphhpdpdiaaaaahecaabaaaabaaaaaa
-bkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaabaaaaaackaabaaa
-abaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajicaabaaaabaaaaaa
-ckaabaiaibaaaaaaaaaaaaaabkaabaiaibaaaaaaaaaaaaaaabaaaaahecaabaaa
-abaaaaaadkaabaaaabaaaaaackaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaa
-akaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaadbaaaaaigcaabaaa
-abaaaaaakgalbaaaaaaaaaaakgalbaiaebaaaaaaaaaaaaaaabaaaaahccaabaaa
-abaaaaaabkaabaaaabaaaaaaabeaaaaanlapejmaaaaaaaahbcaabaaaabaaaaaa
-bkaabaaaabaaaaaaakaabaaaabaaaaaaddaaaaahccaabaaaabaaaaaackaabaaa
-aaaaaaaabkaabaaaaaaaaaaadbaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
-bkaabaiaebaaaaaaabaaaaaadeaaaaahicaabaaaabaaaaaackaabaaaaaaaaaaa
-bkaabaaaaaaaaaaabnaaaaaiicaabaaaabaaaaaadkaabaaaabaaaaaadkaabaia
-ebaaaaaaabaaaaaaabaaaaahccaabaaaabaaaaaadkaabaaaabaaaaaabkaabaaa
-abaaaaaadhaaaaakbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaiaebaaaaaa
-abaaaaaaakaabaaaabaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaa
-abeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaaabaaaaaadkaabaia
-ibaaaaaaaaaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaakicaabaaa
-abaaaaaadkaabaaaabaaaaaadkaabaiaibaaaaaaaaaaaaaaabeaaaaaiedefjlo
-dcaaaaakicaabaaaabaaaaaadkaabaaaabaaaaaadkaabaiaibaaaaaaaaaaaaaa
-abeaaaaakeanmjdpaaaaaaaiicaabaaaaaaaaaaadkaabaiambaaaaaaaaaaaaaa
-abeaaaaaaaaaiadpelaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaah
-bcaabaaaacaaaaaadkaabaaaaaaaaaaadkaabaaaabaaaaaadcaaaaajbcaabaaa
-acaaaaaaakaabaaaacaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaah
-ecaabaaaabaaaaaackaabaaaabaaaaaaakaabaaaacaaaaaadcaaaaajicaabaaa
-aaaaaaaadkaabaaaabaaaaaadkaabaaaaaaaaaaackaabaaaabaaaaaadiaaaaah
-ccaabaaaabaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjkcdoalaaaaafccaabaaa
-acaaaaaabkaabaaaabaaaaaaamaaaaafccaabaaaadaaaaaabkaabaaaabaaaaaa
-alaaaaafmcaabaaaabaaaaaafgajbaaaaaaaaaaaamaaaaafgcaabaaaaaaaaaaa
-fgagbaaaaaaaaaaaapaaaaahccaabaaaaaaaaaaajgafbaaaaaaaaaaajgafbaaa
-aaaaaaaaelaaaaafccaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahbcaabaaa
-adaaaaaabkaabaaaaaaaaaaaabeaaaaaidpjccdoapaaaaahccaabaaaaaaaaaaa
-ogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaafccaabaaaaaaaaaaabkaabaaa
-aaaaaaaadiaaaaahbcaabaaaacaaaaaabkaabaaaaaaaaaaaabeaaaaaidpjccdo
-ejaaaaanpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaaaaaaaaaaaagabaaa
-aaaaaaaaegaabaaaacaaaaaaegaabaaaadaaaaaadcaaaaakbcaabaaaaaaaaaaa
-dkaabaiaebaaaaaaabaaaaaaakaabaaaaaaaaaaaabeaaaaajkjjjjdpdicaaaah
-bcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaajkjjjjdpaaaaaaahbcaabaaa
-aaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaialpbnaaaaahccaabaaaaaaaaaaa
-dkbabaaaabaaaaaaabeaaaaaaaaaaaaaabaaaaahccaabaaaaaaaaaaabkaabaaa
-aaaaaaaaabeaaaaaaaaaiadpdiaaaaahccaabaaaaaaaaaaabkaabaaaaaaaaaaa
-akbabaaaacaaaaaadcaaaaampccabaaaaaaaaaaafgafbaaaaaaaaaaaagaabaaa
-aaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpdoaaaaab"
+giaaaaacafaaaaaabaaaaaahbcaabaaaaaaaaaaaegbcbaaaaeaaaaaaegbcbaaa
+aeaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahhcaabaaa
+aaaaaaaaagaabaaaaaaaaaaaigbbbaaaaeaaaaaadeaaaaajicaabaaaaaaaaaaa
+bkaabaiaibaaaaaaaaaaaaaaakaabaiaibaaaaaaaaaaaaaaaoaaaaakicaabaaa
+aaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpdkaabaaaaaaaaaaa
+ddaaaaajbcaabaaaabaaaaaabkaabaiaibaaaaaaaaaaaaaaakaabaiaibaaaaaa
+aaaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaa
+diaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaaj
+ccaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkoln
+dcaaaaajccaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+ochgdidodcaaaaajccaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaa
+abeaaaaaaebnkjlodcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaa
+abaaaaaaabeaaaaadiphhpdpdiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaadcaaaaajccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaa
+aaaaaamaabeaaaaanlapmjdpdbaaaaajecaabaaaabaaaaaabkaabaiaibaaaaaa
+aaaaaaaaakaabaiaibaaaaaaaaaaaaaaabaaaaahccaabaaaabaaaaaackaabaaa
+abaaaaaabkaabaaaabaaaaaadcaaaaajicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaabkaabaaaabaaaaaadbaaaaaidcaabaaaabaaaaaajgafbaaa
+aaaaaaaajgafbaiaebaaaaaaaaaaaaaaabaaaaahbcaabaaaabaaaaaaakaabaaa
+abaaaaaaabeaaaaanlapejmaaaaaaaahicaabaaaaaaaaaaadkaabaaaaaaaaaaa
+akaabaaaabaaaaaaddaaaaahbcaabaaaabaaaaaabkaabaaaaaaaaaaaakaabaaa
+aaaaaaaadbaaaaaibcaabaaaabaaaaaaakaabaaaabaaaaaaakaabaiaebaaaaaa
+abaaaaaadeaaaaahecaabaaaabaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaa
+bnaaaaaiecaabaaaabaaaaaackaabaaaabaaaaaackaabaiaebaaaaaaabaaaaaa
+abaaaaahbcaabaaaabaaaaaackaabaaaabaaaaaaakaabaaaabaaaaaadhaaaaak
+icaabaaaaaaaaaaaakaabaaaabaaaaaadkaabaiaebaaaaaaaaaaaaaadkaabaaa
+aaaaaaaadcaaaaajbcaabaaaacaaaaaadkaabaaaaaaaaaaaabeaaaaaidpjccdo
+abeaaaaaaaaaaadpdcaaaaakicaabaaaaaaaaaaackaabaiaibaaaaaaaaaaaaaa
+abeaaaaadagojjlmabeaaaaachbgjidndcaaaaakicaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaiaibaaaaaaaaaaaaaaabeaaaaaiedefjlodcaaaaakicaabaaa
+aaaaaaaadkaabaaaaaaaaaaackaabaiaibaaaaaaaaaaaaaaabeaaaaakeanmjdp
+aaaaaaaiecaabaaaaaaaaaaackaabaiambaaaaaaaaaaaaaaabeaaaaaaaaaiadp
+elaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaa
+ckaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaa
+abaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejeaabaaaaahbcaabaaaabaaaaaa
+bkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaadkaabaaa
+aaaaaaaackaabaaaaaaaaaaaakaabaaaabaaaaaadiaaaaahccaabaaaacaaaaaa
+ckaabaaaaaaaaaaaabeaaaaaidpjkcdoalaaaaafccaabaaaabaaaaaabkaabaaa
+acaaaaaaamaaaaafccaabaaaadaaaaaabkaabaaaacaaaaaaalaaaaafmcaabaaa
+aaaaaaaaagaebaaaaaaaaaaaamaaaaafdcaabaaaaaaaaaaaegaabaaaaaaaaaaa
+apaaaaahbcaabaaaaaaaaaaaegaabaaaaaaaaaaaegaabaaaaaaaaaaaelaaaaaf
+bcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaahbcaabaaaadaaaaaaakaabaaa
+aaaaaaaaabeaaaaaidpjccdoapaaaaahbcaabaaaaaaaaaaaogakbaaaaaaaaaaa
+ogakbaaaaaaaaaaaelaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+bcaabaaaabaaaaaaakaabaaaaaaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaa
+aaaaaaaaegaabaaaacaaaaaaeghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaa
+abaaaaaaegaabaaaadaaaaaadiaaaaaipcaabaaaaaaaaaaaegaobaaaaaaaaaaa
+egiocaaaaaaaaaaaamaaaaaadgaaaaafecaabaaaabaaaaaaabeaaaaaaaaaaaaa
+baaaaaahicaabaaaabaaaaaaegbcbaaaafaaaaaaegbcbaaaafaaaaaaeeaaaaaf
+icaabaaaabaaaaaadkaabaaaabaaaaaadiaaaaahpcaabaaaacaaaaaapgapbaaa
+abaaaaaabgbjbaaaafaaaaaadgaaaaaghcaabaaaadaaaaaajgahbaiambaaaaaa
+acaaaaaaaaaaaaaihcaabaaaaeaaaaaahgaobaiaibaaaaaaacaaaaaaegacbaaa
+adaaaaaabnaaaaajicaabaaaabaaaaaadkaabaiaibaaaaaaacaaaaaabkaabaia
+ibaaaaaaacaaaaaaabaaaaahicaabaaaabaaaaaadkaabaaaabaaaaaaabeaaaaa
+aaaaiadpdiaaaaahicaabaaaadaaaaaackaabaaaaeaaaaaadkaabaaaabaaaaaa
+dcaaaaakdcaabaaaabaaaaaapgapbaaaabaaaaaaegaabaaaaeaaaaaajgafbaia
+ibaaaaaaacaaaaaaaaaaaaahhcaabaaaabaaaaaaegacbaaaabaaaaaabgahbaaa
+adaaaaaaaaaaaaajbcaabaaaadaaaaaabkaabaiambaaaaaaacaaaaaadkaabaia
+ibaaaaaaacaaaaaadcaaaaakicaabaaaabaaaaaadkaabaaaabaaaaaaakaabaaa
+adaaaaaabkaabaiaibaaaaaaacaaaaaabnaaaaaiicaabaaaabaaaaaadkaabaaa
+abaaaaaackaabaiaibaaaaaaacaaaaaaabaaaaahicaabaaaabaaaaaadkaabaaa
+abaaaaaaabeaaaaaaaaaiadpdcaaaaakhcaabaaaabaaaaaapgapbaaaabaaaaaa
+egacbaaaabaaaaaaggalbaiaibaaaaaaacaaaaaadiaaaaakgcaabaaaabaaaaaa
+kgajbaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadpaaaaaaaaaoaaaaah
+dcaabaaaabaaaaaajgafbaaaabaaaaaaagaabaaaabaaaaaadcaaaaakecaabaaa
+abaaaaaaakaabaiaibaaaaaaacaaaaaaabeaaaaadagojjlmabeaaaaachbgjidn
+dcaaaaakecaabaaaabaaaaaackaabaaaabaaaaaaakaabaiaibaaaaaaacaaaaaa
+abeaaaaaiedefjlodcaaaaakecaabaaaabaaaaaackaabaaaabaaaaaaakaabaia
+ibaaaaaaacaaaaaaabeaaaaakeanmjdpaaaaaaaiicaabaaaabaaaaaaakaabaia
+mbaaaaaaacaaaaaaabeaaaaaaaaaiadpelaaaaaficaabaaaabaaaaaadkaabaaa
+abaaaaaadiaaaaahbcaabaaaacaaaaaadkaabaaaabaaaaaackaabaaaabaaaaaa
+dcaaaaajbcaabaaaacaaaaaaakaabaaaacaaaaaaabeaaaaaaaaaaamaabeaaaaa
+nlapejeadbaaaaaiecaabaaaacaaaaaackaabaaaacaaaaaackaabaiaebaaaaaa
+acaaaaaaabaaaaahbcaabaaaacaaaaaackaabaaaacaaaaaaakaabaaaacaaaaaa
+dcaaaaajecaabaaaabaaaaaackaabaaaabaaaaaadkaabaaaabaaaaaaakaabaaa
+acaaaaaadiaaaaaihcaabaaaabaaaaaaegacbaaaabaaaaaaagiacaaaaaaaaaaa
+aoaaaaaadiaaaaahecaabaaaabaaaaaackaabaaaabaaaaaaabeaaaaaidpjkcdp
+alaaaaafccaabaaaadaaaaaackaabaaaabaaaaaaamaaaaafccaabaaaaeaaaaaa
+ckaabaaaabaaaaaaalaaaaafmcaabaaaabaaaaaafganbaaaacaaaaaaamaaaaaf
+dcaabaaaacaaaaaangafbaaaacaaaaaaapaaaaahbcaabaaaacaaaaaaegaabaaa
+acaaaaaaegaabaaaacaaaaaaelaaaaafbcaabaaaacaaaaaaakaabaaaacaaaaaa
+diaaaaahbcaabaaaaeaaaaaaakaabaaaacaaaaaaabeaaaaaidpjccdoapaaaaah
+ecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaafecaabaaa
+abaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaaadaaaaaackaabaaaabaaaaaa
+abeaaaaaidpjccdoejaaaaanpcaabaaaabaaaaaaegaabaaaabaaaaaaeghobaaa
+abaaaaaaaagabaaaabaaaaaaegaabaaaadaaaaaaegaabaaaaeaaaaaaaaaaaaal
+pcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaaaceaaaaaaaaaiadpaaaaiadp
+aaaaiadpaaaaiadpaaaaaaajhcaabaaaadaaaaaaegbcbaaaadaaaaaaegiccaia
+ebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaaadaaaaaaegacbaaaadaaaaaa
+egacbaaaadaaaaaaelaaaaafbcaabaaaadaaaaaaakaabaaaadaaaaaaapcaaaai
+bcaabaaaadaaaaaaagaabaaaadaaaaaafgifcaaaaaaaaaaaaoaaaaaadcaaaaaj
+pcaabaaaabaaaaaaagaabaaaadaaaaaaegaobaaaacaaaaaaegaobaaaabaaaaaa
+diaaaaahicaabaaaacaaaaaadkaabaaaaaaaaaaadkaabaaaabaaaaaadccaaaak
+hcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaaabaaaaaapgapbaiaebaaaaaa
+acaaaaaaaaaaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaaceaaaaaaaaaialp
+aaaaialpaaaaialpaaaaaaaadiaaaaahhcaabaaaacaaaaaaegacbaaaaaaaaaaa
+pgapbaaaacaaaaaaaaaaaaakpcaabaaaaaaaaaaaegaobaaaacaaaaaaaceaaaaa
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaialpbnaaaaahbcaabaaaabaaaaaadkbabaaa
+abaaaaaaabeaaaaaaaaaaaaaabaaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaa
+abeaaaaaaaaaiadpdiaaaaahbcaabaaaabaaaaaaakaabaaaabaaaaaaakbabaaa
+acaaaaaadcaaaaampccabaaaaaaaaaaaagaabaaaabaaaaaaegaobaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpdoaaaaab"
 }
 SubProgram "gles " {
 Keywords { "WORLD_SPACE_OFF" }
@@ -2739,14 +2739,15 @@ Keywords { "WORLD_SPACE_OFF" }
 "!!GLES3"
 }
 SubProgram "metal " {
-// Stats: 154 math, 2 textures, 6 branches
+// Stats: 155 math, 2 textures, 6 branches
 Keywords { "WORLD_SPACE_OFF" }
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-ConstBuffer "$Globals" 24
+ConstBuffer "$Globals" 32
 Vector 0 [_WorldSpaceCameraPos] 3
-Float 16 [_DetailScale]
-Float 20 [_DetailDist]
+VectorHalf 16 [_Color] 4
+Float 24 [_DetailScale]
+Float 28 [_DetailDist]
 "metal_fs
 #include <metal_stdlib>
 using namespace metal;
@@ -2762,6 +2763,7 @@ struct xlatMtlShaderOutput {
 };
 struct xlatMtlShaderUniform {
   float3 _WorldSpaceCameraPos;
+  half4 _Color;
   float _DetailScale;
   float _DetailDist;
 };
@@ -2923,15 +2925,13 @@ fragment xlatMtlShaderOutput xlatMtlMain (xlatMtlShaderInput _mtl_i [[stage_in]]
   )), 0.0, 1.0);
   tmpvar_36 = half(tmpvar_37);
   half4 tmpvar_38;
-  tmpvar_38 = (tmpvar_13 * mix (tmpvar_14, (half4)float4(1.0, 1.0, 1.0, 1.0), half4(tmpvar_36)));
+  tmpvar_38 = ((_mtl_u._Color * tmpvar_13) * mix (tmpvar_14, (half4)float4(1.0, 1.0, 1.0, 1.0), half4(tmpvar_36)));
   color_2 = tmpvar_38;
-  color_2.w = ((half)1.2 * ((half)1.2 - color_2.w));
+  color_2.xyz = clamp ((color_2.xyz - color_2.w), (half)0.0, (half)1.0);
+  color_2.xyz = half3(mix ((half)1.0, color_2.x, color_2.w));
   half4 tmpvar_39;
-  tmpvar_39 = clamp (color_2, (half)0.0, (half)1.0);
-  color_2 = tmpvar_39;
-  half4 tmpvar_40;
-  tmpvar_40 = half4(mix ((half)1.0, tmpvar_39.w, shadowCheck_3));
-  tmpvar_1 = tmpvar_40;
+  tmpvar_39 = half4(mix ((half)1.0, color_2.x, shadowCheck_3));
+  tmpvar_1 = tmpvar_39;
   _mtl_o._glesFragData_0 = tmpvar_1;
   return _mtl_o;
 }
@@ -2943,162 +2943,166 @@ Keywords { "WORLD_SPACE_ON" }
 "!!GLSL"
 }
 SubProgram "d3d9 " {
-// Stats: 122 math, 6 textures
+// Stats: 124 math, 6 textures
 Keywords { "WORLD_SPACE_ON" }
 Vector 0 [_WorldSpaceCameraPos]
-Float 1 [_DetailScale]
-Float 2 [_DetailDist]
-Float 3 [_PlanetRadius]
+Vector 1 [_Color]
+Float 2 [_DetailScale]
+Float 3 [_DetailDist]
+Float 4 [_PlanetRadius]
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
 "ps_3_0
 dcl_2d s0
 dcl_2d s1
-def c4, 1.00000000, 0.00000000, 5.00000000, -0.21211439
-def c5, -0.01872930, 0.07426100, 1.57072902, 2.00000000
-def c6, 3.14159298, 0.31830987, -0.01348047, 0.05747731
-def c7, -0.12123910, 0.19563590, -0.33299461, 0.99999559
-def c8, 1.57079601, 0.15915494, 0.50000000, 1.27323949
-def c9, 1.20019531, -1.00000000, 0, 0
+def c5, 1.00000000, 0.00000000, 5.00000000, -0.21211439
+def c6, -0.01872930, 0.07426100, 1.57072902, 2.00000000
+def c7, 3.14159298, 0.31830987, -0.01348047, 0.05747731
+def c8, -0.12123910, 0.19563590, -0.33299461, 0.99999559
+def c9, 1.57079601, 0.15915494, 0.50000000, 1.27323949
+def c10, -1.00000000, 0, 0, 0
 dcl_texcoord0 v0.xyzw
 dcl_texcoord1 v1.x
 dcl_texcoord2 v2.x
 dcl_texcoord3 v3.xyz
 dcl_texcoord4 v4.xyz
 dcl_texcoord5 v5.xyz
-dp3 r0.x, v5, v5
+dp3 r0.x, v4, v4
 rsq r0.x, r0.x
-mul r2.xyz, r0.x, v5
-abs r0.xyz, r2
-dsx r3.zw, r2.xyxz
-add r0.w, r0.z, -r0.x
-dsy r2.xz, r2
-mul r2.xz, r2, r2
-add r1.xyz, r0.zxyw, -r0
-cmp r0.w, r0, c4.x, c4.y
-mad r1.xyz, r0.w, r1, r0
-add r0.w, r1.x, -r0.y
-add r1.xyz, r1, -r0.yxzw
-cmp r0.w, r0, c4.x, c4.y
-mad r0.xyz, r0.w, r1, r0.yxzw
-abs_pp r0.x, r0
-rcp_pp r0.x, r0.x
-mul_pp r0.xy, r0.zyzw, r0.x
-mul_pp r0.xy, r0, c8.z
-abs r0.z, r2.y
-mul r1.xy, r0, c1.x
-add r0.x, -r0.z, c4
-mad r0.y, r0.z, c5.x, c5
-mad r0.y, r0, r0.z, c4.w
-mad r0.y, r0, r0.z, c5.z
-rsq r0.x, r0.x
-rcp r0.x, r0.x
-mul r0.y, r0, r0.x
-cmp r0.z, r2.y, c4.y, c4.x
-mul r0.x, r0.z, r0.y
-mad r0.x, -r0, c5.w, r0.y
-dp3 r0.w, v4, v4
-rsq r0.y, r0.w
-mad r0.w, r0.z, c6.x, r0.x
-mul r0.xyz, r0.y, v4
-mul r0.w, r0, c1.x
-mul r0.w, r0, c8
-abs r2.w, r0.x
-abs r3.x, r0.z
-max r1.z, r2.w, r3.x
-min r1.w, r2, r3.x
-rcp r1.z, r1.z
-mul r3.y, r1.w, r1.z
-mul r3.zw, r3, r3
-add r1.z, r3, r3.w
-rsq r1.z, r1.z
-rcp r1.z, r1.z
+mul r1.xyz, r0.x, v4
+abs r1.w, r1.z
+abs r0.w, r1.x
+max r0.y, r0.w, r1.w
+min r0.x, r0.w, r1.w
+add r0.w, r0, -r1
+abs r1.w, r1.y
+rcp r0.y, r0.y
+mul r2.w, r0.x, r0.y
+mul r4.x, r2.w, r2.w
+mad r3.x, r4, c7.z, c7.w
+mad r3.w, r3.x, r4.x, c8.x
+dp3 r0.z, v5, v5
+rsq r0.x, r0.z
+mul r0.xyz, r0.x, v5
+abs r2.xyz, r0
+add r4.y, r2.z, -r2.x
+mad r3.w, r3, r4.x, c8.y
+cmp r1.y, r1, c5, c5.x
+add r3.xyz, r2.zxyw, -r2
+cmp r4.y, r4, c5.x, c5
+mad r3.xyz, r4.y, r3, r2
+mad r4.y, r3.w, r4.x, c8.z
+add r4.z, r3.x, -r2.y
+mad r4.x, r4.y, r4, c8.w
+mul r2.w, r4.x, r2
+dsy r4.xy, r1.xzzw
+add r3.xyz, r3, -r2.yxzw
+cmp r3.w, r4.z, c5.x, c5.y
+mad r2.xyz, r3.w, r3, r2.yxzw
+add r3.x, -r2.w, c9
+cmp r0.w, -r0, r2, r3.x
+dsx r3.zw, r1.xyxz
+add r3.x, -r1.w, c5
+mad r2.w, r1, c6.x, c6.y
+mad r2.w, r2, r1, c5
+rsq r3.x, r3.x
+rcp r3.x, r3.x
+mad r1.w, r2, r1, c6.z
+mul r1.w, r1, r3.x
+mul r2.w, r1.y, r1
+add r3.x, -r0.w, c7
+mad r1.w, -r2, c6, r1
+cmp r2.w, r1.z, r0, r3.x
+mad r0.w, r1.y, c7.x, r1
+mul r0.w, r0, c7.y
+cmp r1.y, r1.x, r2.w, -r2.w
+mad r3.x, r1.y, c9.y, c9.z
+mul r4.xy, r4, r4
+add r1.x, r4, r4.y
+rsq r1.x, r1.x
+rcp r1.x, r1.x
+mov r3.y, r0.w
+dsy r1.y, r0.w
 dsx r1.w, r0
-dsy r2.y, r0.w
-add r0.w, r2.x, r2.z
+mul r3.zw, r3, r3
+add r0.w, r3.z, r3
 rsq r0.w, r0.w
 rcp r0.w, r0.w
-mul r2.x, r0.w, c8.y
-mul r1.z, r1, c8.y
-texldd r0.w, r1, s1, r1.zwzw, r2
-mul r2.x, r3.y, r3.y
-add r1.xyz, -v3, c0
-dp3 r1.x, r1, r1
-mad r2.y, r2.x, c6.z, c6.w
-mad r2.y, r2, r2.x, c7.x
-mad r1.y, r2, r2.x, c7
-mad r1.y, r1, r2.x, c7.z
-mad r1.y, r1, r2.x, c7.w
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-mul r1.x, r1, c2
-abs r1.z, r0.y
-add_pp r1.w, -r0, c4.x
-mul_sat r1.x, r1, c5.w
-mad_pp r2.x, r1, r1.w, r0.w
-mul r1.y, r1, r3
-add r1.x, r2.w, -r3
-dsy r2.zw, r0.xyxz
-add r0.w, -r1.y, c8.x
-cmp r0.w, -r1.x, r1.y, r0
-add r1.x, -r1.z, c4
-mad r1.y, r1.z, c5.x, c5
-mad r1.y, r1, r1.z, c4.w
-mad r1.y, r1, r1.z, c5.z
-cmp r1.z, r0.y, c4.y, c4.x
-add r0.y, -r0.w, c6.x
-cmp r0.y, r0.z, r0.w, r0
-rsq r1.x, r1.x
-rcp r1.x, r1.x
-mul r1.y, r1, r1.x
-mul r1.x, r1.z, r1.y
-mad r1.x, -r1, c5.w, r1.y
-mad r0.w, r1.z, c6.x, r1.x
-cmp r0.y, r0.x, r0, -r0
-mul r0.w, r0, c6.y
-dsx r1.zw, r0.xyxz
-mad r1.x, r0.y, c8.y, c8.z
-mul r1.zw, r1, r1
-add r0.z, r1, r1.w
-rsq r0.z, r0.z
+mul r1.z, r0.w, c9.y
+abs_pp r0.w, r2.x
+mul r1.x, r1, c9.y
+texldd r1.xw, r3, s0, r1.zwzw, r1
+abs r1.y, r0
+add r2.x, -r1.y, c5
+mad r1.z, r1.y, c6.x, c6.y
+mad r1.z, r1, r1.y, c5.w
+rsq r2.x, r2.x
+rcp_pp r0.w, r0.w
+rcp r2.x, r2.x
+mad r1.y, r1.z, r1, c6.z
+mul r1.y, r1, r2.x
+mul_pp r2.xy, r2.zyzw, r0.w
+dsx r2.zw, r0.xyxz
+cmp r0.y, r0, c5, c5.x
+mul r1.z, r0.y, r1.y
+mad r0.w, -r1.z, c6, r1.y
+mad r0.y, r0, c7.x, r0.w
+mul r0.y, r0, c2.x
+mul r1.z, r0.y, c9.w
+add r3.xyz, -v3, c0
+dp3 r0.y, r3, r3
+rsq r1.y, r0.y
+dsy r3.xy, r0.xzzw
+mul_pp r2.xy, r2, c9.z
 mul r2.zw, r2, r2
+mul r3.xy, r3, r3
 add r0.x, r2.z, r2.w
-dsx r0.y, r0.w
-mov r1.y, r0.w
+add r0.z, r3.x, r3.y
 rsq r0.x, r0.x
+dsy r0.y, r1.z
+mul r2.xy, r2, c2.x
+dsx r0.w, r1.z
+rsq r0.z, r0.z
+rcp r0.x, r0.x
 rcp r1.z, r0.z
-rcp r0.z, r0.x
-mul r0.x, r1.z, c8.y
-mul r0.z, r0, c8.y
-dsy r0.w, r0
-texldd r0.w, r1, s0, r0, r0.zwzw
-mad_pp r0.x, -r0.w, r2, c9
-mul_pp_sat r0.x, r0, c9
-add r0.y, v2.x, -c3.x
-add r0.y, r0, c4.z
-cmp r0.z, v0.w, c4.x, c4.y
-add_pp r0.x, r0, c9.y
-cmp r0.y, r0, c4.x, c4
-mul r0.z, r0, v1.x
-mul_pp r0.y, r0.z, r0
-mad_pp oC0, r0.y, r0.x, c4.x
+mul r0.z, r0.x, c9.y
+mul r0.x, r1.z, c9.y
+texldd r0.xw, r2, s1, r0.zwzw, r0
+rcp r1.y, r1.y
+mul r0.y, r1, c3.x
+add_pp r2.xy, -r0.xwzw, c5.x
+mul_sat r0.y, r0, c6.w
+mad_pp r0.zw, r0.y, r2.xyxy, r0.xyxw
+mul_pp r0.xy, r1.xwzw, c1.xwzw
+mul_pp r0.xy, r0, r0.zwzw
+add_pp_sat r0.x, r0, -r0.y
+add_pp r0.z, r0.x, c10.x
+add r0.x, v2, -c4
+mul_pp r0.z, r0.y, r0
+add r0.y, r0.x, c5.z
+cmp r0.x, v0.w, c5, c5.y
+cmp r0.y, r0, c5.x, c5
+mul r0.x, r0, v1
+mul_pp r0.x, r0, r0.y
+mad_pp oC0, r0.x, r0.z, c5.x
 "
 }
 SubProgram "d3d11 " {
-// Stats: 102 math
+// Stats: 105 math
 Keywords { "WORLD_SPACE_ON" }
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-ConstBuffer "$Globals" 336
-Float 208 [_DetailScale]
-Float 212 [_DetailDist]
-Float 244 [_PlanetRadius]
+ConstBuffer "$Globals" 352
+Vector 192 [_Color]
+Float 224 [_DetailScale]
+Float 228 [_DetailDist]
+Float 260 [_PlanetRadius]
 ConstBuffer "UnityPerCamera" 128
 Vector 64 [_WorldSpaceCameraPos] 3
 BindCB  "$Globals" 0
 BindCB  "UnityPerCamera" 1
 "ps_4_0
-eefiecedepioglenjdhfadgkhfiffkbdhkjhblegabaaaaaajmaoaaaaadaaaaaa
+eefiecedaaheddmjcjkdmjknkfcgcicjadhalnfpabaaaaaabiapaaaaadaaaaaa
 cmaaaaaapmaaaaaadaabaaaaejfdeheomiaaaaaaahaaaaaaaiaaaaaalaaaaaaa
 aaaaaaaaabaaaaaaadaaaaaaaaaaaaaaapaaaaaalmaaaaaaaaaaaaaaaaaaaaaa
 adaaaaaaabaaaaaaapaiaaaalmaaaaaaabaaaaaaaaaaaaaaadaaaaaaacaaaaaa
@@ -3107,114 +3111,118 @@ adaaaaaaaaaaaaaaadaaaaaaadaaaaaaapahaaaalmaaaaaaaeaaaaaaaaaaaaaa
 adaaaaaaaeaaaaaaapahaaaalmaaaaaaafaaaaaaaaaaaaaaadaaaaaaafaaaaaa
 apahaaaafdfgfpfaepfdejfeejepeoaafeeffiedepepfceeaaklklklepfdeheo
 cmaaaaaaabaaaaaaaiaaaaaacaaaaaaaaaaaaaaaaaaaaaaaadaaaaaaaaaaaaaa
-apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcgeanaaaaeaaaaaaafjadaaaa
-fjaaaaaeegiocaaaaaaaaaaabaaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaa
+apaaaaaafdfgfpfegbhcghgfheaaklklfdeieefcoaanaaaaeaaaaaaahiadaaaa
+fjaaaaaeegiocaaaaaaaaaaabbaaaaaafjaaaaaeegiocaaaabaaaaaaafaaaaaa
 fkaaaaadaagabaaaaaaaaaaafkaaaaadaagabaaaabaaaaaafibiaaaeaahabaaa
 aaaaaaaaffffaaaafibiaaaeaahabaaaabaaaaaaffffaaaagcbaaaadicbabaaa
 abaaaaaagcbaaaadbcbabaaaacaaaaaagcbaaaadccbabaaaacaaaaaagcbaaaad
 hcbabaaaadaaaaaagcbaaaadhcbabaaaaeaaaaaagcbaaaadhcbabaaaafaaaaaa
-gfaaaaadpccabaaaaaaaaaaagiaaaaacaeaaaaaadgaaaaafecaabaaaaaaaaaaa
-abeaaaaaaaaaaaaabaaaaaahicaabaaaaaaaaaaaegbcbaaaafaaaaaaegbcbaaa
-afaaaaaaeeaaaaaficaabaaaaaaaaaaadkaabaaaaaaaaaaadiaaaaahpcaabaaa
-abaaaaaapgapbaaaaaaaaaaabgbjbaaaafaaaaaadgaaaaaghcaabaaaacaaaaaa
-jgahbaiambaaaaaaabaaaaaaaaaaaaaihcaabaaaadaaaaaahgaobaiaibaaaaaa
-abaaaaaaegacbaaaacaaaaaabnaaaaajicaabaaaaaaaaaaadkaabaiaibaaaaaa
-abaaaaaabkaabaiaibaaaaaaabaaaaaaabaaaaahicaabaaaaaaaaaaadkaabaaa
-aaaaaaaaabeaaaaaaaaaiadpdiaaaaahicaabaaaacaaaaaackaabaaaadaaaaaa
-dkaabaaaaaaaaaaadcaaaaakdcaabaaaaaaaaaaapgapbaaaaaaaaaaaegaabaaa
-adaaaaaajgafbaiaibaaaaaaabaaaaaaaaaaaaahhcaabaaaaaaaaaaaegacbaaa
-aaaaaaaabgahbaaaacaaaaaaaaaaaaajbcaabaaaacaaaaaabkaabaiambaaaaaa
-abaaaaaadkaabaiaibaaaaaaabaaaaaadcaaaaakicaabaaaaaaaaaaadkaabaaa
-aaaaaaaaakaabaaaacaaaaaabkaabaiaibaaaaaaabaaaaaabnaaaaaiicaabaaa
-aaaaaaaadkaabaaaaaaaaaaackaabaiaibaaaaaaabaaaaaaabaaaaahicaabaaa
-aaaaaaaadkaabaaaaaaaaaaaabeaaaaaaaaaiadpdcaaaaakhcaabaaaaaaaaaaa
-pgapbaaaaaaaaaaaegacbaaaaaaaaaaaggalbaiaibaaaaaaabaaaaaadiaaaaak
-gcaabaaaaaaaaaaakgajbaaaaaaaaaaaaceaaaaaaaaaaaaaaaaaaadpaaaaaadp
-aaaaaaaaaoaaaaahdcaabaaaaaaaaaaajgafbaaaaaaaaaaaagaabaaaaaaaaaaa
-dcaaaaakecaabaaaaaaaaaaaakaabaiaibaaaaaaabaaaaaaabeaaaaadagojjlm
-abeaaaaachbgjidndcaaaaakecaabaaaaaaaaaaackaabaaaaaaaaaaaakaabaia
-ibaaaaaaabaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaaaaaaaaackaabaaa
-aaaaaaaaakaabaiaibaaaaaaabaaaaaaabeaaaaakeanmjdpaaaaaaaiicaabaaa
-aaaaaaaaakaabaiambaaaaaaabaaaaaaabeaaaaaaaaaiadpelaaaaaficaabaaa
-aaaaaaaadkaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaa
-ckaabaaaaaaaaaaadcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaa
-aaaaaamaabeaaaaanlapejeadbaaaaaiecaabaaaabaaaaaackaabaaaabaaaaaa
+gfaaaaadpccabaaaaaaaaaaagiaaaaacafaaaaaabaaaaaahbcaabaaaaaaaaaaa
+egbcbaaaaeaaaaaaegbcbaaaaeaaaaaaeeaaaaafbcaabaaaaaaaaaaaakaabaaa
+aaaaaaaadiaaaaahhcaabaaaaaaaaaaaagaabaaaaaaaaaaaigbbbaaaaeaaaaaa
+deaaaaajicaabaaaaaaaaaaabkaabaiaibaaaaaaaaaaaaaaakaabaiaibaaaaaa
+aaaaaaaaaoaaaaakicaabaaaaaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadp
+aaaaiadpdkaabaaaaaaaaaaaddaaaaajbcaabaaaabaaaaaabkaabaiaibaaaaaa
+aaaaaaaaakaabaiaibaaaaaaaaaaaaaadiaaaaahicaabaaaaaaaaaaadkaabaaa
+aaaaaaaaakaabaaaabaaaaaadiaaaaahbcaabaaaabaaaaaadkaabaaaaaaaaaaa
+dkaabaaaaaaaaaaadcaaaaajccaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaa
+fpkokkdmabeaaaaadgfkkolndcaaaaajccaabaaaabaaaaaaakaabaaaabaaaaaa
+bkaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajccaabaaaabaaaaaaakaabaaa
+abaaaaaabkaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaajbcaabaaaabaaaaaa
+akaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaadiphhpdpdiaaaaahccaabaaa
+abaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaadcaaaaajccaabaaaabaaaaaa
+bkaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdpdbaaaaajecaabaaa
+abaaaaaabkaabaiaibaaaaaaaaaaaaaaakaabaiaibaaaaaaaaaaaaaaabaaaaah
+ccaabaaaabaaaaaackaabaaaabaaaaaabkaabaaaabaaaaaadcaaaaajicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaadbaaaaai
+dcaabaaaabaaaaaajgafbaaaaaaaaaaajgafbaiaebaaaaaaaaaaaaaaabaaaaah
+bcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaanlapejmaaaaaaaahicaabaaa
+aaaaaaaadkaabaaaaaaaaaaaakaabaaaabaaaaaaddaaaaahbcaabaaaabaaaaaa
+bkaabaaaaaaaaaaaakaabaaaaaaaaaaadbaaaaaibcaabaaaabaaaaaaakaabaaa
+abaaaaaaakaabaiaebaaaaaaabaaaaaadeaaaaahecaabaaaabaaaaaabkaabaaa
+aaaaaaaaakaabaaaaaaaaaaabnaaaaaiecaabaaaabaaaaaackaabaaaabaaaaaa
 ckaabaiaebaaaaaaabaaaaaaabaaaaahbcaabaaaabaaaaaackaabaaaabaaaaaa
-akaabaaaabaaaaaadcaaaaajecaabaaaaaaaaaaackaabaaaaaaaaaaadkaabaaa
-aaaaaaaaakaabaaaabaaaaaadiaaaaaihcaabaaaaaaaaaaaegacbaaaaaaaaaaa
-agiacaaaaaaaaaaaanaaaaaadiaaaaahecaabaaaaaaaaaaackaabaaaaaaaaaaa
-abeaaaaaidpjkcdpalaaaaafccaabaaaacaaaaaackaabaaaaaaaaaaaamaaaaaf
-ccaabaaaadaaaaaackaabaaaaaaaaaaaalaaaaafmcaabaaaaaaaaaaafganbaaa
-abaaaaaaamaaaaafdcaabaaaabaaaaaangafbaaaabaaaaaaapaaaaahbcaabaaa
-abaaaaaaegaabaaaabaaaaaaegaabaaaabaaaaaaelaaaaafbcaabaaaabaaaaaa
-akaabaaaabaaaaaadiaaaaahbcaabaaaadaaaaaaakaabaaaabaaaaaaabeaaaaa
-idpjccdoapaaaaahecaabaaaaaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaa
-elaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaa
-ckaabaaaaaaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaa
-aaaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaacaaaaaaegaabaaa
-adaaaaaaaaaaaaaibcaabaaaaaaaaaaadkaabaiaebaaaaaaaaaaaaaaabeaaaaa
-aaaaiadpaaaaaaajhcaabaaaabaaaaaaegbcbaaaadaaaaaaegiccaiaebaaaaaa
-abaaaaaaaeaaaaaabaaaaaahccaabaaaaaaaaaaaegacbaaaabaaaaaaegacbaaa
-abaaaaaaelaaaaafccaabaaaaaaaaaaabkaabaaaaaaaaaaaapcaaaaiccaabaaa
-aaaaaaaafgafbaaaaaaaaaaafgifcaaaaaaaaaaaanaaaaaadcaaaaajbcaabaaa
-aaaaaaaabkaabaaaaaaaaaaaakaabaaaaaaaaaaadkaabaaaaaaaaaaabaaaaaah
-ccaabaaaaaaaaaaaegbcbaaaaeaaaaaaegbcbaaaaeaaaaaaeeaaaaafccaabaaa
-aaaaaaaabkaabaaaaaaaaaaadiaaaaahocaabaaaaaaaaaaafgafbaaaaaaaaaaa
-agbgbaaaaeaaaaaadeaaaaajbcaabaaaabaaaaaackaabaiaibaaaaaaaaaaaaaa
-bkaabaiaibaaaaaaaaaaaaaaaoaaaaakbcaabaaaabaaaaaaaceaaaaaaaaaiadp
-aaaaiadpaaaaiadpaaaaiadpakaabaaaabaaaaaaddaaaaajccaabaaaabaaaaaa
-ckaabaiaibaaaaaaaaaaaaaabkaabaiaibaaaaaaaaaaaaaadiaaaaahbcaabaaa
-abaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaa
-akaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaajecaabaaaabaaaaaabkaabaaa
-abaaaaaaabeaaaaafpkokkdmabeaaaaadgfkkolndcaaaaajecaabaaaabaaaaaa
-bkaabaaaabaaaaaackaabaaaabaaaaaaabeaaaaaochgdidodcaaaaajecaabaaa
-abaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaaabeaaaaaaebnkjlodcaaaaaj
-ccaabaaaabaaaaaabkaabaaaabaaaaaackaabaaaabaaaaaaabeaaaaadiphhpdp
-diaaaaahecaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaaj
-ecaabaaaabaaaaaackaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapmjdp
-dbaaaaajicaabaaaabaaaaaackaabaiaibaaaaaaaaaaaaaabkaabaiaibaaaaaa
-aaaaaaaaabaaaaahecaabaaaabaaaaaadkaabaaaabaaaaaackaabaaaabaaaaaa
-dcaaaaajbcaabaaaabaaaaaaakaabaaaabaaaaaabkaabaaaabaaaaaackaabaaa
-abaaaaaadbaaaaaigcaabaaaabaaaaaakgalbaaaaaaaaaaakgalbaiaebaaaaaa
-aaaaaaaaabaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaaabeaaaaanlapejma
-aaaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaaddaaaaah
-ccaabaaaabaaaaaackaabaaaaaaaaaaabkaabaaaaaaaaaaadbaaaaaiccaabaaa
-abaaaaaabkaabaaaabaaaaaabkaabaiaebaaaaaaabaaaaaadeaaaaahicaabaaa
-abaaaaaackaabaaaaaaaaaaabkaabaaaaaaaaaaabnaaaaaiicaabaaaabaaaaaa
-dkaabaaaabaaaaaadkaabaiaebaaaaaaabaaaaaaabaaaaahccaabaaaabaaaaaa
-dkaabaaaabaaaaaabkaabaaaabaaaaaadhaaaaakbcaabaaaabaaaaaabkaabaaa
-abaaaaaaakaabaiaebaaaaaaabaaaaaaakaabaaaabaaaaaadcaaaaajbcaabaaa
-abaaaaaaakaabaaaabaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaak
-icaabaaaabaaaaaadkaabaiaibaaaaaaaaaaaaaaabeaaaaadagojjlmabeaaaaa
-chbgjidndcaaaaakicaabaaaabaaaaaadkaabaaaabaaaaaadkaabaiaibaaaaaa
-aaaaaaaaabeaaaaaiedefjlodcaaaaakicaabaaaabaaaaaadkaabaaaabaaaaaa
-dkaabaiaibaaaaaaaaaaaaaaabeaaaaakeanmjdpaaaaaaaiicaabaaaaaaaaaaa
-dkaabaiambaaaaaaaaaaaaaaabeaaaaaaaaaiadpelaaaaaficaabaaaaaaaaaaa
-dkaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaadkaabaaaaaaaaaaadkaabaaa
-abaaaaaadcaaaaajbcaabaaaacaaaaaaakaabaaaacaaaaaaabeaaaaaaaaaaama
-abeaaaaanlapejeaabaaaaahecaabaaaabaaaaaackaabaaaabaaaaaaakaabaaa
-acaaaaaadcaaaaajicaabaaaaaaaaaaadkaabaaaabaaaaaadkaabaaaaaaaaaaa
-ckaabaaaabaaaaaadiaaaaahccaabaaaabaaaaaadkaabaaaaaaaaaaaabeaaaaa
-idpjkcdoalaaaaafccaabaaaacaaaaaabkaabaaaabaaaaaaamaaaaafccaabaaa
-adaaaaaabkaabaaaabaaaaaaalaaaaafmcaabaaaabaaaaaafgajbaaaaaaaaaaa
-amaaaaafgcaabaaaaaaaaaaafgagbaaaaaaaaaaaapaaaaahccaabaaaaaaaaaaa
-jgafbaaaaaaaaaaajgafbaaaaaaaaaaaelaaaaafccaabaaaaaaaaaaabkaabaaa
-aaaaaaaadiaaaaahbcaabaaaadaaaaaabkaabaaaaaaaaaaaabeaaaaaidpjccdo
-apaaaaahccaabaaaaaaaaaaaogakbaaaabaaaaaaogakbaaaabaaaaaaelaaaaaf
-ccaabaaaaaaaaaaabkaabaaaaaaaaaaadiaaaaahbcaabaaaacaaaaaabkaabaaa
-aaaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaabaaaaaaegaabaaaabaaaaaa
-eghobaaaaaaaaaaaaagabaaaaaaaaaaaegaabaaaacaaaaaaegaabaaaadaaaaaa
-dcaaaaakbcaabaaaaaaaaaaadkaabaiaebaaaaaaabaaaaaaakaabaaaaaaaaaaa
-abeaaaaajkjjjjdpdicaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaa
-jkjjjjdpaaaaaaahbcaabaaaaaaaaaaaakaabaaaaaaaaaaaabeaaaaaaaaaialp
-bnaaaaahccaabaaaaaaaaaaadkbabaaaabaaaaaaabeaaaaaaaaaaaaaabaaaaah
-ccaabaaaaaaaaaaabkaabaaaaaaaaaaaabeaaaaaaaaaiadpdiaaaaahccaabaaa
-aaaaaaaabkaabaaaaaaaaaaaakbabaaaacaaaaaaaaaaaaahecaabaaaaaaaaaaa
-bkbabaaaacaaaaaaabeaaaaaaaaakaeabnaaaaaiecaabaaaaaaaaaaackaabaaa
-aaaaaaaabkiacaaaaaaaaaaaapaaaaaaabaaaaahecaabaaaaaaaaaaackaabaaa
-aaaaaaaaabeaaaaaaaaaiadpdiaaaaahccaabaaaaaaaaaaackaabaaaaaaaaaaa
-bkaabaaaaaaaaaaadcaaaaampccabaaaaaaaaaaafgafbaaaaaaaaaaaagaabaaa
-aaaaaaaaaceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpdoaaaaab"
+akaabaaaabaaaaaadhaaaaakicaabaaaaaaaaaaaakaabaaaabaaaaaadkaabaia
+ebaaaaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaajbcaabaaaacaaaaaadkaabaaa
+aaaaaaaaabeaaaaaidpjccdoabeaaaaaaaaaaadpdcaaaaakicaabaaaaaaaaaaa
+ckaabaiaibaaaaaaaaaaaaaaabeaaaaadagojjlmabeaaaaachbgjidndcaaaaak
+icaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaiaibaaaaaaaaaaaaaaabeaaaaa
+iedefjlodcaaaaakicaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaiaibaaaaaa
+aaaaaaaaabeaaaaakeanmjdpaaaaaaaiecaabaaaaaaaaaaackaabaiambaaaaaa
+aaaaaaaaabeaaaaaaaaaiadpelaaaaafecaabaaaaaaaaaaackaabaaaaaaaaaaa
+diaaaaahbcaabaaaabaaaaaackaabaaaaaaaaaaadkaabaaaaaaaaaaadcaaaaaj
+bcaabaaaabaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaaamaabeaaaaanlapejea
+abaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaaabaaaaaadcaaaaaj
+ecaabaaaaaaaaaaadkaabaaaaaaaaaaackaabaaaaaaaaaaaakaabaaaabaaaaaa
+diaaaaahccaabaaaacaaaaaackaabaaaaaaaaaaaabeaaaaaidpjkcdoalaaaaaf
+ccaabaaaabaaaaaabkaabaaaacaaaaaaamaaaaafccaabaaaadaaaaaabkaabaaa
+acaaaaaaalaaaaafmcaabaaaaaaaaaaaagaebaaaaaaaaaaaamaaaaafdcaabaaa
+aaaaaaaaegaabaaaaaaaaaaaapaaaaahbcaabaaaaaaaaaaaegaabaaaaaaaaaaa
+egaabaaaaaaaaaaaelaaaaafbcaabaaaaaaaaaaaakaabaaaaaaaaaaadiaaaaah
+bcaabaaaadaaaaaaakaabaaaaaaaaaaaabeaaaaaidpjccdoapaaaaahbcaabaaa
+aaaaaaaaogakbaaaaaaaaaaaogakbaaaaaaaaaaaelaaaaafbcaabaaaaaaaaaaa
+akaabaaaaaaaaaaadiaaaaahbcaabaaaabaaaaaaakaabaaaaaaaaaaaabeaaaaa
+idpjccdoejaaaaanpcaabaaaaaaaaaaaegaabaaaacaaaaaaeghobaaaaaaaaaaa
+aagabaaaaaaaaaaaegaabaaaabaaaaaaegaabaaaadaaaaaadiaaaaaipcaabaaa
+aaaaaaaaegaobaaaaaaaaaaaegiocaaaaaaaaaaaamaaaaaadgaaaaafecaabaaa
+abaaaaaaabeaaaaaaaaaaaaabaaaaaahicaabaaaabaaaaaaegbcbaaaafaaaaaa
+egbcbaaaafaaaaaaeeaaaaaficaabaaaabaaaaaadkaabaaaabaaaaaadiaaaaah
+pcaabaaaacaaaaaapgapbaaaabaaaaaabgbjbaaaafaaaaaadgaaaaaghcaabaaa
+adaaaaaajgahbaiambaaaaaaacaaaaaaaaaaaaaihcaabaaaaeaaaaaahgaobaia
+ibaaaaaaacaaaaaaegacbaaaadaaaaaabnaaaaajicaabaaaabaaaaaadkaabaia
+ibaaaaaaacaaaaaabkaabaiaibaaaaaaacaaaaaaabaaaaahicaabaaaabaaaaaa
+dkaabaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaahicaabaaaadaaaaaackaabaaa
+aeaaaaaadkaabaaaabaaaaaadcaaaaakdcaabaaaabaaaaaapgapbaaaabaaaaaa
+egaabaaaaeaaaaaajgafbaiaibaaaaaaacaaaaaaaaaaaaahhcaabaaaabaaaaaa
+egacbaaaabaaaaaabgahbaaaadaaaaaaaaaaaaajbcaabaaaadaaaaaabkaabaia
+mbaaaaaaacaaaaaadkaabaiaibaaaaaaacaaaaaadcaaaaakicaabaaaabaaaaaa
+dkaabaaaabaaaaaaakaabaaaadaaaaaabkaabaiaibaaaaaaacaaaaaabnaaaaai
+icaabaaaabaaaaaadkaabaaaabaaaaaackaabaiaibaaaaaaacaaaaaaabaaaaah
+icaabaaaabaaaaaadkaabaaaabaaaaaaabeaaaaaaaaaiadpdcaaaaakhcaabaaa
+abaaaaaapgapbaaaabaaaaaaegacbaaaabaaaaaaggalbaiaibaaaaaaacaaaaaa
+diaaaaakgcaabaaaabaaaaaakgajbaaaabaaaaaaaceaaaaaaaaaaaaaaaaaaadp
+aaaaaadpaaaaaaaaaoaaaaahdcaabaaaabaaaaaajgafbaaaabaaaaaaagaabaaa
+abaaaaaadcaaaaakecaabaaaabaaaaaaakaabaiaibaaaaaaacaaaaaaabeaaaaa
+dagojjlmabeaaaaachbgjidndcaaaaakecaabaaaabaaaaaackaabaaaabaaaaaa
+akaabaiaibaaaaaaacaaaaaaabeaaaaaiedefjlodcaaaaakecaabaaaabaaaaaa
+ckaabaaaabaaaaaaakaabaiaibaaaaaaacaaaaaaabeaaaaakeanmjdpaaaaaaai
+icaabaaaabaaaaaaakaabaiambaaaaaaacaaaaaaabeaaaaaaaaaiadpelaaaaaf
+icaabaaaabaaaaaadkaabaaaabaaaaaadiaaaaahbcaabaaaacaaaaaadkaabaaa
+abaaaaaackaabaaaabaaaaaadcaaaaajbcaabaaaacaaaaaaakaabaaaacaaaaaa
+abeaaaaaaaaaaamaabeaaaaanlapejeadbaaaaaiecaabaaaacaaaaaackaabaaa
+acaaaaaackaabaiaebaaaaaaacaaaaaaabaaaaahbcaabaaaacaaaaaackaabaaa
+acaaaaaaakaabaaaacaaaaaadcaaaaajecaabaaaabaaaaaackaabaaaabaaaaaa
+dkaabaaaabaaaaaaakaabaaaacaaaaaadiaaaaaihcaabaaaabaaaaaaegacbaaa
+abaaaaaaagiacaaaaaaaaaaaaoaaaaaadiaaaaahecaabaaaabaaaaaackaabaaa
+abaaaaaaabeaaaaaidpjkcdpalaaaaafccaabaaaadaaaaaackaabaaaabaaaaaa
+amaaaaafccaabaaaaeaaaaaackaabaaaabaaaaaaalaaaaafmcaabaaaabaaaaaa
+fganbaaaacaaaaaaamaaaaafdcaabaaaacaaaaaangafbaaaacaaaaaaapaaaaah
+bcaabaaaacaaaaaaegaabaaaacaaaaaaegaabaaaacaaaaaaelaaaaafbcaabaaa
+acaaaaaaakaabaaaacaaaaaadiaaaaahbcaabaaaaeaaaaaaakaabaaaacaaaaaa
+abeaaaaaidpjccdoapaaaaahecaabaaaabaaaaaaogakbaaaabaaaaaaogakbaaa
+abaaaaaaelaaaaafecaabaaaabaaaaaackaabaaaabaaaaaadiaaaaahbcaabaaa
+adaaaaaackaabaaaabaaaaaaabeaaaaaidpjccdoejaaaaanpcaabaaaabaaaaaa
+egaabaaaabaaaaaaeghobaaaabaaaaaaaagabaaaabaaaaaaegaabaaaadaaaaaa
+egaabaaaaeaaaaaaaaaaaaalpcaabaaaacaaaaaaegaobaiaebaaaaaaabaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpaaaaaaajhcaabaaaadaaaaaa
+egbcbaaaadaaaaaaegiccaiaebaaaaaaabaaaaaaaeaaaaaabaaaaaahbcaabaaa
+adaaaaaaegacbaaaadaaaaaaegacbaaaadaaaaaaelaaaaafbcaabaaaadaaaaaa
+akaabaaaadaaaaaaapcaaaaibcaabaaaadaaaaaaagaabaaaadaaaaaafgifcaaa
+aaaaaaaaaoaaaaaadcaaaaajpcaabaaaabaaaaaaagaabaaaadaaaaaaegaobaaa
+acaaaaaaegaobaaaabaaaaaadiaaaaahicaabaaaacaaaaaadkaabaaaaaaaaaaa
+dkaabaaaabaaaaaadccaaaakhcaabaaaaaaaaaaaegacbaaaaaaaaaaaegacbaaa
+abaaaaaapgapbaiaebaaaaaaacaaaaaaaaaaaaakhcaabaaaaaaaaaaaegacbaaa
+aaaaaaaaaceaaaaaaaaaialpaaaaialpaaaaialpaaaaaaaadiaaaaahhcaabaaa
+acaaaaaaegacbaaaaaaaaaaapgapbaaaacaaaaaaaaaaaaakpcaabaaaaaaaaaaa
+egaobaaaacaaaaaaaceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaialpbnaaaaah
+bcaabaaaabaaaaaadkbabaaaabaaaaaaabeaaaaaaaaaaaaaabaaaaahbcaabaaa
+abaaaaaaakaabaaaabaaaaaaabeaaaaaaaaaiadpdiaaaaahbcaabaaaabaaaaaa
+akaabaaaabaaaaaaakbabaaaacaaaaaaaaaaaaahccaabaaaabaaaaaabkbabaaa
+acaaaaaaabeaaaaaaaaakaeabnaaaaaiccaabaaaabaaaaaabkaabaaaabaaaaaa
+bkiacaaaaaaaaaaabaaaaaaaabaaaaahccaabaaaabaaaaaabkaabaaaabaaaaaa
+abeaaaaaaaaaiadpdiaaaaahbcaabaaaabaaaaaabkaabaaaabaaaaaaakaabaaa
+abaaaaaadcaaaaampccabaaaaaaaaaaaagaabaaaabaaaaaaegaobaaaaaaaaaaa
+aceaaaaaaaaaiadpaaaaiadpaaaaiadpaaaaiadpdoaaaaab"
 }
 SubProgram "gles " {
 Keywords { "WORLD_SPACE_ON" }
@@ -3229,15 +3237,16 @@ Keywords { "WORLD_SPACE_ON" }
 "!!GLES3"
 }
 SubProgram "metal " {
-// Stats: 158 math, 2 textures, 6 branches
+// Stats: 159 math, 2 textures, 6 branches
 Keywords { "WORLD_SPACE_ON" }
 SetTexture 0 [_MainTex] 2D 0
 SetTexture 1 [_DetailTex] 2D 1
-ConstBuffer "$Globals" 28
+ConstBuffer "$Globals" 36
 Vector 0 [_WorldSpaceCameraPos] 3
-Float 16 [_DetailScale]
-Float 20 [_DetailDist]
-Float 24 [_PlanetRadius]
+VectorHalf 16 [_Color] 4
+Float 24 [_DetailScale]
+Float 28 [_DetailDist]
+Float 32 [_PlanetRadius]
 "metal_fs
 #include <metal_stdlib>
 using namespace metal;
@@ -3254,6 +3263,7 @@ struct xlatMtlShaderOutput {
 };
 struct xlatMtlShaderUniform {
   float3 _WorldSpaceCameraPos;
+  half4 _Color;
   float _DetailScale;
   float _DetailDist;
   float _PlanetRadius;
@@ -3421,15 +3431,13 @@ fragment xlatMtlShaderOutput xlatMtlMain (xlatMtlShaderInput _mtl_i [[stage_in]]
   )), 0.0, 1.0);
   tmpvar_37 = half(tmpvar_38);
   half4 tmpvar_39;
-  tmpvar_39 = (tmpvar_14 * mix (tmpvar_15, (half4)float4(1.0, 1.0, 1.0, 1.0), half4(tmpvar_37)));
+  tmpvar_39 = ((_mtl_u._Color * tmpvar_14) * mix (tmpvar_15, (half4)float4(1.0, 1.0, 1.0, 1.0), half4(tmpvar_37)));
   color_2 = tmpvar_39;
-  color_2.w = ((half)1.2 * ((half)1.2 - color_2.w));
+  color_2.xyz = clamp ((color_2.xyz - color_2.w), (half)0.0, (half)1.0);
+  color_2.xyz = half3(mix ((half)1.0, color_2.x, color_2.w));
   half4 tmpvar_40;
-  tmpvar_40 = clamp (color_2, (half)0.0, (half)1.0);
-  color_2 = tmpvar_40;
-  half4 tmpvar_41;
-  tmpvar_41 = half4(mix ((half)1.0, tmpvar_40.w, shadowCheck_3));
-  tmpvar_1 = tmpvar_41;
+  tmpvar_40 = half4(mix ((half)1.0, color_2.x, shadowCheck_3));
+  tmpvar_1 = tmpvar_40;
   _mtl_o._glesFragData_0 = tmpvar_1;
   return _mtl_o;
 }

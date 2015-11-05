@@ -1,5 +1,6 @@
 ﻿Shader "EVE/CloudShadow" {
    Properties {
+	  _Color ("Color Tint", Color) = (1,1,1,1)
       _MainTex ("Main (RGB)", 2D) = "white" {}
       _DetailTex ("Detail (RGB)", 2D) = "white" {}
       _DetailScale ("Detail Scale", float) = 100
@@ -11,7 +12,7 @@
    }
    SubShader {
       Pass {      
-        Blend DstColor Zero
+        Blend Zero SrcColor
         ZWrite Off
         CGPROGRAM
 		#include "EVEUtils.cginc"
@@ -23,6 +24,7 @@
  		
         uniform sampler2D _MainTex; 
  		float4 _MainOffset;
+ 		fixed4 _Color;
 		uniform sampler2D _DetailTex;
 	    fixed4 _DetailOffset;
    	    float _DetailScale;
@@ -98,13 +100,11 @@
 			
 			float viewDist = distance(IN.worldPos,_WorldSpaceCameraPos);
 			half detailLevel = saturate(2*_DetailDist*viewDist);
-			fixed4 color = main.rgba * lerp(detail.rgba, 1, detailLevel);
+			fixed4 color = _Color * main.rgba * lerp(detail.rgba, 1, detailLevel);
 			
-			color.a = 1.2*(1.2-color.a);
-			color = saturate(color);
-			
-		
-			return lerp(1, color.a, shadowCheck);
+			color.rgb = saturate(color.rgb - color.a);
+			color.rgb = lerp(1, color.rgb, color.a);
+			return lerp(1, color, shadowCheck);
 		}
  
          ENDCG

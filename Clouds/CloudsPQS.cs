@@ -17,7 +17,7 @@ namespace Atmosphere
         private float speed;
         CloudsVolume layerVolume = null;
         Clouds2D layer2D = null;
-        CloudsMaterial material = null;
+        CloudsMaterial cloudsMaterial = null;
         CelestialBody celestialBody = null;
         Transform scaledCelestialTransform = null;
 
@@ -41,7 +41,7 @@ namespace Atmosphere
             {
                 if (layerVolume != null)
                 {
-                    layerVolume.Apply(material, (float)celestialBody.Radius + altitude, speed, celestialBody.transform);
+                    layerVolume.Apply(cloudsMaterial, (float)celestialBody.Radius + altitude, speed, celestialBody.transform);
                 }
                 applied = true;
             }
@@ -147,10 +147,10 @@ namespace Atmosphere
             }
         }
 
-        internal void Apply(String body, CloudsMaterial material, Clouds2D layer2D, CloudsVolume layerVolume, float altitude, float speed, float detailSpeed, Vector2 offset)
+        internal void Apply(String body, CloudsMaterial cloudsMaterial, Clouds2D layer2D, CloudsVolume layerVolume, float altitude, float speed, float detailSpeed, Vector2 offset)
         {
             this.body = body;
-            this.material = material;
+            this.cloudsMaterial = cloudsMaterial;
             this.layer2D = layer2D;
             this.layerVolume = layerVolume;
             this.altitude = altitude;
@@ -186,7 +186,7 @@ namespace Atmosphere
                 
                 if (layer2D != null)
                 {
-                    this.layer2D.Apply(celestialBody, scaledCelestialTransform, material, radius, speed);
+                    this.layer2D.Apply(celestialBody, scaledCelestialTransform, cloudsMaterial, radius, speed);
                 }
                 if (!pqs.isActive || HighLogic.LoadedScene == GameScenes.TRACKSTATION)
                 {

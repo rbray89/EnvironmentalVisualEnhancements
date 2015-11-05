@@ -15,7 +15,7 @@ Properties {
  _PlanetOpacity ("PlanetOpacity", Float) = 1
 }
 SubShader { 
- Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderMode"="Transparent" }
+ Tags { "QUEUE"="Geometry+1" "IGNOREPROJECTOR"="true" "RenderMode"="Transparent" }
 
 
  // Stats for Vertex shader:
@@ -31,7 +31,7 @@ SubShader {
  //        d3d9 : 118 avg math (108..129), 14 avg texture (12..18)
  //       metal : 322 avg math (313..336), 6 avg texture (4..10), 12 avg branch (12..16)
  Pass {
-  Tags { "LIGHTMODE"="ForwardBase" "SHADOWSUPPORT"="true" "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderMode"="Transparent" }
+  Tags { "LIGHTMODE"="ForwardBase" "SHADOWSUPPORT"="true" "QUEUE"="Geometry+1" "IGNOREPROJECTOR"="true" "RenderMode"="Transparent" }
   Lighting On
   ZWrite Off
   Blend SrcAlpha OneMinusSrcAlpha

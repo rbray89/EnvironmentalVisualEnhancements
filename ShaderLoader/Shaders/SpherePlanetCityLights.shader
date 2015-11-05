@@ -18,7 +18,7 @@
 	   Cull Back
 	   Blend SrcAlpha OneMinusSrcAlpha
 	   Tags {
-	   "Queue"="Transparent"
+	   "Queue"="Geometry+1"
 	   "RenderMode"="Transparent"
 	   "IgnoreProjector"="True"
 	   }
