@@ -174,6 +174,7 @@ namespace Atmosphere
                 ShadowProjector.farClipPlane = dist;
                 ShadowProjector.orthographicSize = worldRadiusScale;
 
+                ShadowProjector.material.SetFloat("_Radius", (float)radiusScale);
                 ShadowProjector.material.SetFloat("_PlanetRadius", (float)celestialBody.Radius*scale);
                 ShadowProjector.transform.parent = parent;
                 //ShadowProjector.transform.localScale = scale * Vector3.one;
@@ -254,10 +255,10 @@ namespace Atmosphere
                 else
                 {
                     ShadowProjector.material.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, mainRotation * ShadowProjector.transform.parent.worldToLocalMatrix);
+                    ShadowProjector.material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, CloudMesh.transform.position);
                 }
                 
                 ShadowProjector.material.SetMatrix(EVEManagerClass.DETAIL_ROTATION_PROPERTY, detailRotation);
-                ShadowProjector.material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, CloudMesh.transform.position);
             }
         }
 

@@ -23,8 +23,8 @@
 
 Category {
 	
-	Tags { "Queue"="Transparent-5" "IgnoreProjector"="True" "RenderType"="Transparent" }
-	Blend SrcAlpha OneMinusSrcAlpha
+	Tags { "Queue"="Transparent-3" "IgnoreProjector"="True" "RenderType"="Transparent" }
+	Blend OneMinusDstAlpha One
 	Fog { Mode Off}
 	ZTest Off
 	ColorMask RGB
