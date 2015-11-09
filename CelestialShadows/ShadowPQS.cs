@@ -66,14 +66,7 @@ namespace CelestialShadows
         }
 
 
-        public override void OnSphereActive()
-        {
-            Scaled = true;
-        }
-        public override void OnSphereInactive()
-        {
-            Scaled = false;
-        }
+
         
         protected void Update()
         {
@@ -133,15 +126,34 @@ namespace CelestialShadows
             onEnterMapView = new Callback(OnEnterMapView);
             MapView.OnEnterMapView += onEnterMapView;
 
+            GameEvents.onGameSceneLoadRequested.Add(GameSceneLoaded);
+
             this.OnSetup();
             pqs.EnableSphere();
 
             Scaled = false;
         }
 
-        private void OnEnterMapView()
+        public override void OnSphereActive()
         {
             Scaled = true;
+        }
+
+        public override void OnSphereInactive()
+        {
+            if (MapView.MapIsEnabled)
+            {
+                Scaled = true;
+            }
+            else
+            {
+                Scaled = false;
+            }
+        }
+
+        private void OnEnterMapView()
+        {
+          Scaled = true;
         }
 
         protected void OnExitMapView()
@@ -201,6 +213,18 @@ namespace CelestialShadows
                 ShadowProjector.transform.parent = null;
                 GameObject.DestroyImmediate(ShadowProjector);
                 ShadowProjector = null;
+            }
+            MapView.OnExitMapView -= onExitMapView;
+            MapView.OnEnterMapView -= onEnterMapView;
+            GameEvents.onGameSceneLoadRequested.Remove(GameSceneLoaded);
+        }
+
+        private void GameSceneLoaded(GameScenes scene)
+        {
+            if (scene == GameScenes.TRACKSTATION)
+            {
+                this.OnSphereInactive();
+                sphere.isActive = false;
             }
         }
     }
