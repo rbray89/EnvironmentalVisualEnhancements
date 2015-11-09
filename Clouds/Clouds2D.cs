@@ -186,7 +186,7 @@ namespace Atmosphere
                 }
                 else
                 {
-                    ShadowProjector.ignoreLayers = ~((1 << 29) | (1 << 23) | (1 << 18) | (1 << 10) | (1 << 9));
+                    ShadowProjector.ignoreLayers = ~((1 << 10));
                     sunTransform = Tools.GetScaledTransform(Sun.Instance.sun.bodyName);
                     CloudsManager.Log("Camera mask: "+ScaledCamera.Instance.camera.cullingMask);
                 }

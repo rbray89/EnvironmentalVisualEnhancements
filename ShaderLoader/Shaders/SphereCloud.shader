@@ -147,12 +147,10 @@ SubShader {
 			#endif
 			
           	//lighting
-			half3 ambientLighting = UNITY_LIGHTMODEL_AMBIENT;
-			half3 lightDirection = normalize(_WorldSpaceLightPos0);
-			half NdotL = saturate(dot (IN.worldNormal, lightDirection));
-	        half diff = (NdotL - 0.01) / 0.99;
-			half lightIntensity = saturate(_LightColor0.a * diff * 4);
-			color.rgb *= saturate(ambientLighting + ((_MinLight + _LightColor0.rgb) * lightIntensity));
+          	half transparency = color.a;
+			color = SpecularColorLight( _WorldSpaceLightPos0, IN.viewDir, IN.worldNormal, color, 0, 0, LIGHT_ATTENUATION(IN) );
+			color *= Terminator( normalize(_WorldSpaceLightPos0), IN.worldNormal);
+			color.a = transparency;
 			#ifdef SOFT_DEPTH_ON
 			float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.projPos)));
 			depth = LinearEyeDepth (depth);

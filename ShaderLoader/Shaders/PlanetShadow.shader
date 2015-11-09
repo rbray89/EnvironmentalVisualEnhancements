@@ -37,8 +37,10 @@
            	float4 posProj : TEXCOORD0;
            	float dotcoeff : TEXCOORD1;
            	float originDist : TEXCOORD2;
-			float4 worldPos : TEXCOORD3;
-			float3 L : TEXCOORD7;
+			float nDotL : TEXCOORD3;
+			float4 worldPos : TEXCOORD4;
+			float3 L : TEXCOORD5;
+			
         };
  
         v2f vert (appdata_t v) 
@@ -54,15 +56,13 @@
 	   	   	float3 worldOrigin = _PlanetOrigin;
 	   	   	o.L = worldOrigin - vertexPos;
 	   	   	o.originDist = length(o.L);
-	   	   	
+	   	   	o.nDotL = -dot(_SunDir, mul(_Object2World, float4(v.normal,0)).xyz);
             return o;
         }
 		
 		fixed4 frag (v2f IN) : COLOR
 		{
-			half shadowCheck = step(0, IN.posProj.w);
-			shadowCheck *= step(_PlanetRadius, IN.originDist+5);
-			
+			half shadowCheck = step(0, IN.posProj.w)*step(0, IN.nDotL);			
 			
 	   	    float tc = dot(IN.L,- _SunDir);
 

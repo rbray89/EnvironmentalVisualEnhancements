@@ -2,6 +2,7 @@
 using PQSManager;
 using ShaderLoader;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,6 +21,9 @@ namespace CelestialShadows
 
         Projector ShadowProjector = null;
         GameObject ShadowProjectorGO = null;
+
+        Callback onExitMapView;
+        Callback onEnterMapView;
 
         float radiusScale;
 
@@ -64,27 +68,24 @@ namespace CelestialShadows
 
         public override void OnSphereActive()
         {
-           
+            Scaled = true;
         }
         public override void OnSphereInactive()
         {
-
+            Scaled = false;
         }
         
         protected void Update()
         {
-            if ( celestialBody != null)
-            {
-                Vector3 worldSunDir = Vector3.Normalize(Sun.Instance.sunDirection);
-                Vector3 sunDirection = Vector3.Normalize(ShadowProjector.transform.parent.InverseTransformDirection(worldSunDir));//sunTransform.position));
-                ShadowProjector.transform.localPosition = radiusScale * sunDirection;
+            Vector3 worldSunDir = Vector3.Normalize(Sun.Instance.sunDirection);
+            Vector3 sunDirection = Vector3.Normalize(ShadowProjector.transform.parent.InverseTransformDirection(worldSunDir));//sunTransform.position));
+            ShadowProjector.transform.localPosition = radiusScale * sunDirection;
                
-                ShadowProjector.transform.forward = worldSunDir;
+            ShadowProjector.transform.forward = worldSunDir;
 
-                ShadowProjector.material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, worldSunDir);
-                Vector3 planetOrigin = celestialBody.transform.position;
-                ShadowProjector.material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
-            }
+            ShadowProjector.material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, worldSunDir);
+            Vector3 planetOrigin = ShadowProjector.transform.parent.transform.position;
+            ShadowProjector.material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
         }
 
 
@@ -93,7 +94,7 @@ namespace CelestialShadows
         internal void Apply(string body)
         {
             celestialBody = Tools.GetCelestialBody(body);
-            this.scaledCelestialTransform = scaledCelestialTransform;
+            this.scaledCelestialTransform = Tools.GetScaledTransform(body);
 
             PQS pqs = null;
             if (celestialBody != null && celestialBody.pqsController != null)
@@ -125,8 +126,12 @@ namespace CelestialShadows
             ShadowProjector.fieldOfView = 60;
             ShadowProjector.aspectRatio = 1;
             ShadowProjector.orthographic = true;
-            ShadowProjector.transform.parent = celestialBody.transform;
             ShadowProjector.material = new Material(ShadowShader);
+
+            onExitMapView = new Callback(OnExitMapView);
+            MapView.OnExitMapView += onExitMapView;
+            onEnterMapView = new Callback(OnEnterMapView);
+            MapView.OnEnterMapView += onEnterMapView;
 
             this.OnSetup();
             pqs.EnableSphere();
@@ -134,10 +139,34 @@ namespace CelestialShadows
             Scaled = false;
         }
 
+        private void OnEnterMapView()
+        {
+            Scaled = true;
+        }
+
+        protected void OnExitMapView()
+        {
+            StartCoroutine(CheckForDisable());
+        }
+
+        IEnumerator CheckForDisable()
+        {
+            yield return new WaitForFixedUpdate();
+            if (!sphere.isActive)
+            {
+                OnSphereInactive();
+            }
+            else
+            {
+                OnSphereActive();
+            }
+        }
+
         public void Reassign(int layer, Transform parent, float scale)
         {
 
-            radiusScale = (float)celestialBody.Radius * scale;
+            radiusScale =(float) celestialBody.Radius * scale;
+            float worldRadiusScale = Vector3.Distance(parent.transform.TransformPoint(Vector3.up * radiusScale), parent.transform.TransformPoint(Vector3.zero));
 
             if (ShadowProjector != null)
             {
@@ -145,9 +174,9 @@ namespace CelestialShadows
                 ShadowManager.Log("Reassigning!");
                 float dist = (float)(20000000);
                 ShadowProjector.farClipPlane = dist;
-                ShadowProjector.orthographicSize = radiusScale;
+                ShadowProjector.orthographicSize = worldRadiusScale;
 
-                ShadowProjector.material.SetFloat("_PlanetRadius", radiusScale);
+                ShadowProjector.material.SetFloat("_PlanetRadius", worldRadiusScale);
                 ShadowProjector.transform.parent = parent;
                 //ShadowProjector.transform.localScale = scale * Vector3.one;
                 ShadowProjectorGO.layer = layer;
@@ -157,7 +186,7 @@ namespace CelestialShadows
                 }
                 else
                 {
-                    ShadowProjector.ignoreLayers = ~((1 << 29) | (1 << 23) | (1 << 18) | (1 << 10));// | (1 << 9));
+                    ShadowProjector.ignoreLayers = ~((1 << 10));// | (1 << 9));
                 }
             }
         }
