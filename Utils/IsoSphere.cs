@@ -192,6 +192,8 @@ namespace Utils
                 verticies[i] = verticies[i].normalized * radius;
             }
             mesh.vertices = verticies;
+            mesh.RecalculateBounds();
+            mesh.Optimize();
         }
     }
 
