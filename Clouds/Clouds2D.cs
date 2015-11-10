@@ -158,13 +158,11 @@ namespace Atmosphere
             {
                 CloudMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius * scale);
                 CloudMaterial.EnableKeyword("WORLD_SPACE_ON");
-                ShadowProjector.material.EnableKeyword("WORLD_SPACE_ON");
                 CloudMaterial.EnableKeyword("SOFT_DEPTH_ON");
             }
             else
             {
                 CloudMaterial.DisableKeyword("WORLD_SPACE_ON");
-                ShadowProjector.material.DisableKeyword("WORLD_SPACE_ON");
                 CloudMaterial.DisableKeyword("SOFT_DEPTH_ON");
             }
             if (ShadowProjector != null)
@@ -183,12 +181,14 @@ namespace Atmosphere
                 {
                     ShadowProjector.ignoreLayers = ~((1 << 19) | (1 << 15) | 2 | 1);
                     sunTransform = Tools.GetCelestialBody(Sun.Instance.sun.bodyName).transform;
+                    ShadowProjector.material.EnableKeyword("WORLD_SPACE_ON");
                 }
                 else
                 {
                     ShadowProjector.ignoreLayers = ~((1 << 10));
                     sunTransform = Tools.GetScaledTransform(Sun.Instance.sun.bodyName);
                     CloudsManager.Log("Camera mask: "+ScaledCamera.Instance.camera.cullingMask);
+                    ShadowProjector.material.DisableKeyword("WORLD_SPACE_ON");
                 }
             }
         }
