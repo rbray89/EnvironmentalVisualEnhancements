@@ -13,8 +13,6 @@ namespace Atmosphere
 {
     public class particleVolumeMaterial : MaterialManager
     {
-        [Persistent]
-        Color32 _Color = Color.white;
         [Persistent, Clamped]
         String _TopTex = "";
         [Persistent, Clamped]
