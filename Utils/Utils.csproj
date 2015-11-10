@@ -99,7 +99,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /Y $(TargetFileName) "$(SolutionDir)\GameData\EnvironmentalVisualEnhancements\Plugins\";
+    <PostBuildEvent>copy /Y $(TargetFileName) "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Plugins\";
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>

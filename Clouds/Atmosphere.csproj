@@ -121,9 +121,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /Y $(TargetFileName) "$(SolutionDir)GameData\EnvironmentalVisualEnhancements\Plugins\"
-xcopy "$(SolutionDir)GameData" "C:\Users\rbray\Documents\ksp\ksp-$(PlatformName)-1-0-5\GameData" /e /y /i /r
-7z a -tzip "$(SolutionDir)$(PlatformName)-Release.zip" "$(SolutionDir)GameData"</PostBuildEvent>
+    <PostBuildEvent>xcopy  $(TargetFileName) "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Plugins\" /e /y /i /r
+xcopy "$(SolutionDir)ContentConfigs\GameData" "C:\Users\rbray\Documents\ksp\ksp-$(PlatformName)-1-0-5\GameData" /e /y /i /r
+xcopy "$(SolutionDir)ContentEVE\GameData" "C:\Users\rbray\Documents\ksp\ksp-$(PlatformName)-1-0-5\GameData" /e /y /i /r
+7z a -tzip "$(SolutionDir)$(PlatformName)-Configs-Release.zip" "$(SolutionDir)ContentConfigs\GameData"
+7z a -tzip "$(SolutionDir)$(PlatformName)-EVE-Release.zip" "$(SolutionDir)ContentEVE\GameData"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>
