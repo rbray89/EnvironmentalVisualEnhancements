@@ -47,7 +47,7 @@ namespace EVEManager
                 HighLogic.LoadedScene == GameScenes.MAINMENU || HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
                 bool alt = (Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt));
-                if (alt && Input.GetKeyDown(KeyCode.E) && sceneLoad)
+                if (alt && Input.GetKeyDown(KeyCode.Alpha0) && sceneLoad)
                 {
                     useEditor = !useEditor;
                 }
