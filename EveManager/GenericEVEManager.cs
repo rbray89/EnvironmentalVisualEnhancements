@@ -81,6 +81,8 @@ namespace EVEManager
         private static List<ConfigWrapper> ConfigFiles = new List<ConfigWrapper>();
         private static int selectedConfigIndex = 0;
 
+
+        protected static Vector2 configListPos = Vector2.zero;
         protected static Vector2 objListPos = Vector2.zero;
         protected static int selectedObjIndex = -1;
         protected static String objNameEditString = "";
@@ -202,37 +204,7 @@ namespace EVEManager
 
         private void HandleGUI(object obj, ConfigNode configNode, Rect placementBase, ref Rect placement)
         {
-            /*
-            var objfields = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
-                    field => Attribute.IsDefined(field, typeof(Persistent)));
-                    foreach (FieldInfo fi in objfields)
-                        */
-            /*if(field.FieldType == typeof(String))
-            {
-                GUI.Label(labelRect, field.Name);
-                GUI.TextField(fieldRect, field.GetValue(obj).ToString());
-                placement.y++;
-            }
-            else if (field.FieldType == typeof(Vector3))
-            {
-                GUI.Label(labelRect, field.Name);
-                GUI.TextField(fieldRect, ((Vector3)field.GetValue(obj)).ToString("F3"));
-                placement.y++;
-            }
-            else if (field.FieldType == typeof(Color))
-            {
-                GUI.Label(labelRect, field.Name);
-                GUI.TextField(fieldRect, ((Color)field.GetValue(obj)).ToString("F3"));
-                placement.y++;
-            }
-            else if (field.FieldType == typeof(float))
-            {
-                GUI.Label(labelRect, field.Name);
-                GUI.TextField(fieldRect, ((float)field.GetValue(obj)).ToString("F3"));
-                placement.y++;
-            }
-             */
-            
+
             var objfields = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
                     field => Attribute.IsDefined(field, typeof(Persistent)));
             foreach (FieldInfo field in objfields)
@@ -303,7 +275,7 @@ namespace EVEManager
                         float height = boxPlacement.y + 1;
                         if (node != null)
                         {
-                            height = boxPlacement.y + GUIHelper.GetFieldCount(node) + .25f;
+                            height = boxPlacement.y + GUIHelper.GetNodeHeightCount(node) + .25f;
                             boxPlacement.y++;
 
                             object subObj = field.GetValue(obj);
@@ -322,6 +294,51 @@ namespace EVEManager
                     }
                 }
             }
+        }
+
+        private void HandleConfigGUI(ConfigNode objNode, Rect placementBase, ref Rect placement)
+        {
+
+            float height = 30;
+            placement.height = ((placementBase.height - (placementBase.y)) / height) - placement.y;
+            Rect selectBoxOutlineRect = GUIHelper.GetSplitRect(placementBase, ref placement);
+            Rect selectBoxRect = selectBoxOutlineRect;
+            placement.height = 0;
+            Rect selectBoxItemsRect = new Rect();
+            if (configNode != null)
+            {
+                selectBoxItemsRect = GUIHelper.GetSplitRect(placementBase, ref placement, configNode);
+            }
+            if (objNode != null)
+            {
+                selectBoxItemsRect = GUIHelper.GetSplitRect(placementBase, ref placement, objNode);
+            }
+
+            
+            GUI.Box(selectBoxOutlineRect, "");
+            selectBoxRect.x += 10;
+            selectBoxRect.width -= 20;
+            selectBoxRect.y += 10;
+            selectBoxRect.height -= 20;
+
+            selectBoxItemsRect.x = 0;
+            selectBoxItemsRect.y = 0;
+            selectBoxItemsRect.width = selectBoxRect.width - 20;
+
+            configListPos = GUI.BeginScrollView(selectBoxRect, configListPos, selectBoxItemsRect);
+            placement.y = 0;
+            placement.height = 1;
+            if (this.configNode != null)
+            {
+                HandleGUI(this, this.configNode, selectBoxItemsRect, ref placement);
+            }
+
+            if (objNode != null)
+            {
+                HandleGUI(new T(), objNode, selectBoxItemsRect, ref placement);
+            }
+            GUI.EndScrollView();
+
         }
 
         private void DrawConfigManagement(Rect placementBase, ref Rect placement)
@@ -397,15 +414,7 @@ namespace EVEManager
                 }
             }
 
-            if (this.configNode != null)
-            {
-                HandleGUI(this, this.configNode, placementBase, ref placement);
-            }
-
-            if (objNode != null)
-            {
-                HandleGUI(new T(), objNode, placementBase, ref placement);
-            }
+            HandleConfigGUI(objNode, placementBase, ref placement);
             
         }
 

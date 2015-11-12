@@ -31,14 +31,14 @@ namespace Utils
         protected static int selectedBodyIndex = 0; 
         protected static CelestialBody currentBody;
         
-        public static float GetFieldCount(ConfigNode node)
+        public static float GetNodeHeightCount(ConfigNode node)
         {
             float fieldCount = 1;
             
             fieldCount += node.CountValues;
             foreach(ConfigNode n in node.nodes)
             {
-                fieldCount += GetFieldCount(n)+.5f;
+                fieldCount += GetNodeHeightCount(n)+.5f;
             }
 
             return fieldCount;
@@ -48,15 +48,15 @@ namespace Utils
         {
             if (node != null)
             {
-                placement.height = GetFieldCount(node);
+                placement.height = GetNodeHeightCount(node);
             }
-            float width = placementBase.width / 3;
+            float width = placementBase.width;
             float height = 30;
-            if (((placement.y + placement.height) * height) + placementBase.y + 25 > placementBase.height)
-            {
-                placement.x++;
-                placement.y = 0;
-            }
+//            if (((placement.y + placement.height) * height) + placementBase.y + 25 > placementBase.height)
+//            {
+//                placement.x++;
+//                placement.y = 0;
+//            }
             float x = (placement.x * width) + placementBase.x;
             float y = (placement.y * height) + placementBase.y;
             width += placement.width;

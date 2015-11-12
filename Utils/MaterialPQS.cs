@@ -80,22 +80,25 @@ namespace Utils
 
         public override void OnQuadCreate(PQ quad)
         {
-            if (parent.useSharedMaterial)
+            if (quad.sphereRoot == this.parent)
             {
-                List<Material> materials = new List<Material>(quad.meshRenderer.sharedMaterials);
-                if(!materials.Exists(mat => mat.name.Contains(materialName)))
+                if (parent.useSharedMaterial)
                 {
-                    materials.Add(material);
-                    quad.meshRenderer.sharedMaterials = materials.ToArray();
+                    List<Material> materials = new List<Material>(quad.meshRenderer.sharedMaterials);
+                    if (!materials.Exists(mat => mat.name.Contains(materialName)))
+                    {
+                        materials.Add(material);
+                        quad.meshRenderer.sharedMaterials = materials.ToArray();
+                    }
                 }
-            }
-            else
-            {
-                List<Material> materials = new List<Material>(quad.meshRenderer.materials);
-                if (!materials.Exists(mat => mat.name.Contains(materialName)))
+                else
                 {
-                    materials.Add(material);
-                    quad.meshRenderer.materials = materials.ToArray();
+                    List<Material> materials = new List<Material>(quad.meshRenderer.materials);
+                    if (!materials.Exists(mat => mat.name.Contains(materialName)))
+                    {
+                        materials.Add(material);
+                        quad.meshRenderer.materials = materials.ToArray();
+                    }
                 }
             }
         }
