@@ -32,7 +32,7 @@ namespace Atmosphere
         public override void OnSphereActive()
         {
 
-            CloudsManager.Log("CloudsPQS: OnSphereActive");
+            CloudsManager.Log("CloudsPQS: ("+this.name+") OnSphereActive");
             if (layer2D != null)
             {
                 layer2D.Scaled = false;
@@ -48,7 +48,7 @@ namespace Atmosphere
         }
         public override void OnSphereInactive()
         {
-            CloudsManager.Log("CloudsPQS: OnSphereInactive");
+            CloudsManager.Log("CloudsPQS: (" + this.name + ") OnSphereInactive");
             if (layer2D != null)
             {
                 layer2D.Scaled = true;
@@ -105,7 +105,7 @@ namespace Atmosphere
 
             if (this.sphere != null && visible)
             {
-                if (sphere.isActive && HighLogic.LoadedScene != GameScenes.TRACKSTATION && !MapView.MapIsEnabled)
+                if (HighLogic.LoadedScene == GameScenes.SPACECENTER || (HighLogic.LoadedScene == GameScenes.FLIGHT && sphere.isActive && !MapView.MapIsEnabled))
                 {
                     if (layer2D != null)
                     {
@@ -174,6 +174,10 @@ namespace Atmosphere
             {
                 this.sphere = pqs;
                 this.transform.parent = pqs.transform;
+                this.requirements = PQS.ModiferRequirements.Default;
+                this.modEnabled = true;
+                this.order += 10;
+
                 this.transform.localPosition = Vector3.zero;
                 this.transform.localRotation = Quaternion.identity;
                 this.transform.localScale = Vector3.one;

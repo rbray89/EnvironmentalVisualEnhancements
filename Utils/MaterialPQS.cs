@@ -10,7 +10,6 @@ namespace Utils
     {
         Material material;
         Material PQSMaterial;
-        PQS parent;
         String materialName = Guid.NewGuid().ToString();
 
         public void Apply(CelestialBody cb, Material mat)
@@ -23,7 +22,6 @@ namespace Utils
             if (cb != null && cb.pqsController != null)
             {
                 pqs = cb.pqsController;
-                parent = pqs;
                 PQSMaterial = pqs.surfaceMaterial;
             }
             else
@@ -34,6 +32,10 @@ namespace Utils
             {
                 this.sphere = pqs;
                 this.transform.parent = pqs.transform;
+                this.requirements = PQS.ModiferRequirements.Default;
+                this.modEnabled = true;
+                this.order += 10;
+
                 this.transform.localPosition = Vector3.zero;
                 this.transform.localRotation = Quaternion.identity;
                 this.transform.localScale = Vector3.one;
@@ -43,20 +45,24 @@ namespace Utils
         public void Remove()
         {
             KSPLog.print("Removing PQS Material Manager!");
-            foreach (PQ pq in parent.quads)
+            if(this.sphere != null && this.sphere.quads != null)
+            foreach (PQ pq in this.sphere.quads)
             {
-                Remove(pq);
+                OnQuadDestroy(pq);
             }
             this.sphere = null;
             this.enabled = false;
             this.transform.parent = null;
+            this.requirements = PQS.ModiferRequirements.Default;
+            this.modEnabled = true;
+            this.order += 10;
         }
 
-        private void Remove(PQ quad)
+        public override void OnQuadDestroy(PQ quad)
         {
-            if (quad != null)
+            if (quad != null && this.sphere != null)
             {
-                if (parent.useSharedMaterial)
+                if (this.sphere.useSharedMaterial)
                 {
                     List<Material> materials = new List<Material>(quad.meshRenderer.sharedMaterials);
                     materials.Remove(materials.Find(mat => mat.name.Contains(materialName)));
@@ -72,7 +78,7 @@ namespace Utils
                 {
                     foreach (PQ pq in quad.subNodes)
                     {
-                        Remove(pq);
+                        OnQuadDestroy(pq);
                     }
                 }
             }
@@ -80,9 +86,9 @@ namespace Utils
 
         public override void OnQuadCreate(PQ quad)
         {
-            if (quad.sphereRoot == this.parent)
+            if (quad.sphereRoot == this.sphere)
             {
-                if (parent.useSharedMaterial)
+                if (this.sphere.useSharedMaterial)
                 {
                     List<Material> materials = new List<Material>(quad.meshRenderer.sharedMaterials);
                     if (!materials.Exists(mat => mat.name.Contains(materialName)))

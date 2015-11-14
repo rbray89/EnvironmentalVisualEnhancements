@@ -75,6 +75,7 @@ namespace Atmosphere
             
             GameObject go = new GameObject();
             cloudsPQS = go.AddComponent<CloudsPQS>();
+            go.name = this.name;
             cloudsPQS.Apply(body, settings, layer2D, layerVolume, altitude, speed, detailSpeed, offset);
         }
 

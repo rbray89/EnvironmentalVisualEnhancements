@@ -107,6 +107,10 @@ namespace CelestialShadows
                 ShadowManager.Log("PQS Assignment!");
                 this.sphere = pqs;
                 this.transform.parent = pqs.transform;
+                this.requirements = PQS.ModiferRequirements.Default;
+                this.modEnabled = true;
+                this.order += 10;
+
                 this.transform.localPosition = Vector3.zero;
                 this.transform.localRotation = Quaternion.identity;
                 this.transform.localScale = Vector3.one;
