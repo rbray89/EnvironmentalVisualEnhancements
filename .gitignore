@@ -219,3 +219,6 @@ pip-log.txt
 
 #Certain Shaders
 ShaderReplacer/Shaders/*
+ShaderLoader/CompiledShaders/*
+ContentEVE/GameData/EnvironmentalVisualEnhancements/Shaders/*
+
