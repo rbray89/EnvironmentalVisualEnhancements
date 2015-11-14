@@ -45,11 +45,11 @@ namespace Atmosphere
         Projector ShadowProjector = null;
         GameObject ShadowProjectorGO = null;
         CloudsMaterial cloudsMat = null;
-
-        [Persistent]
-        CloudShadowMaterial shadowMaterial = null;
+        
         [Persistent]
         Clouds2DMaterial macroCloudMaterial = null;
+        [Persistent, Optional]
+        CloudShadowMaterial shadowMaterial = null;
 
         bool isScaled = false;
         public bool Scaled

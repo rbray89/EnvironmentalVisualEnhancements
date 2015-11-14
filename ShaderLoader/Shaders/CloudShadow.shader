@@ -72,11 +72,12 @@
 				float3 L = worldOrigin - vertexPos;
 				o.originDist = length(L);
 				float tc = dot(L,-_SunDir);
+				float ntc = dot(normalize(L), _SunDir);
 				float d = sqrt(dot(L,L) - (tc*tc));
 				float d2 = pow(d,2);
 				float td = sqrt(dot(L,L) - d2);
 				float sphereRadius = _Radius;
-				o.shadowCheck = step(o.originDist, sphereRadius)*step(tc, 0.0);
+				o.shadowCheck = step(o.originDist, sphereRadius)*saturate(ntc*100);
 				//saturate((step(d, sphereRadius)*step(0.0, tc))+
 				//(step(o.originDist, sphereRadius)));
 				float tlc = sqrt((sphereRadius*sphereRadius) - d2);
@@ -94,7 +95,7 @@
 
 				//Ocean filter
 				#ifdef WORLD_SPACE_ON
-				shadowCheck *= step(_PlanetRadius, IN.originDist + 5);
+				shadowCheck *= saturate(.2*((IN.originDist + 5) - _PlanetRadius));
 				#endif
 
 				half4 main = GetSphereMap(_MainTex, IN.mainPos);
