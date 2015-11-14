@@ -16,6 +16,7 @@ namespace Terrain
         [Persistent] 
         Color32 _Color = Color.white;
         [Persistent]
+        #pragma warning disable 0414
         String _MainTex = "";
 		[Persistent]
         String _midTex = "";

@@ -14,6 +14,8 @@ namespace Atmosphere
         [Persistent]
         Color32 _Color = Color.white;
         [Persistent]
+
+        #pragma warning disable 0414
         String _MainTex = "";
         [Persistent]
         String _DetailTex = "";
@@ -42,11 +44,11 @@ namespace Atmosphere
         [Persistent]
         float speed = 30;
         [Persistent]
-        float detailSpeed;
+        float detailSpeed = 0;
         [Persistent]
         Vector3 offset = new Vector3(0, 0, 0);
         [Persistent]
-        CloudsMaterial settings;
+        CloudsMaterial settings = null;
         
         [Persistent, Optional]
         CloudsVolume layerVolume = null;

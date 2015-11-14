@@ -14,6 +14,7 @@ namespace CityLights
     public class CityLightsMaterial : MaterialManager
     {
         [Persistent]
+        #pragma warning disable 0414
         String _CityOverlayTex = "";
         [Persistent]
         float _CityOverlayDetailScale = 80f;

@@ -15,9 +15,7 @@ namespace Atmosphere
         float halfRad;
         float outCheck;
         float opp;
-        bool forceUpdate;
-
-        bool atmosphere = true;
+        
 
         float Magnitude;
         VolumeSection[] moveSections;
@@ -54,9 +52,7 @@ namespace Atmosphere
         public VolumeManager(float cloudSphereRadius, Vector2 size,Material cloudParticleMaterial, Transform transform, float radius, int divisions)
             : this(cloudSphereRadius, transform, radius, divisions)
         {
-            atmosphere = false;
             VolumeList.Add(new VolumeSection( cloudParticleMaterial, size, transform, Center.localPosition, Magnitude, radius, divisions));
-            forceUpdate = true;
         }
 
         public void Update(Vector3 pos)

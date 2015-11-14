@@ -14,6 +14,7 @@ namespace Atmosphere
     public class Clouds2DMaterial : MaterialManager
     {
         [Persistent]
+        #pragma warning disable 0414
         float _FalloffPow = 2f;
         [Persistent]
         float _FalloffScale = 3f;
@@ -31,6 +32,12 @@ namespace Atmosphere
         public float Radius { set { _Radius = value; } }
     }
 
+    public class CloudShadowMaterial : MaterialManager
+    {
+        [Persistent]
+        float _ShadowFactor = .75f;
+    }
+
     class Clouds2D
     {
         GameObject CloudMesh;
@@ -40,11 +47,9 @@ namespace Atmosphere
         CloudsMaterial cloudsMat = null;
 
         [Persistent]
-        bool shadow = true;
+        CloudShadowMaterial shadowMaterial = null;
         [Persistent]
-        Vector3 shadowOffset = new Vector3(0, 0, 0);
-        [Persistent]
-        Clouds2DMaterial macroCloudMaterial;
+        Clouds2DMaterial macroCloudMaterial = null;
 
         bool isScaled = false;
         public bool Scaled
@@ -127,7 +132,7 @@ namespace Atmosphere
             macroCloudMaterial.Radius = radius;
             this.cloudsMat = cloudsMaterial;
 
-            if (shadow)
+            if (shadowMaterial != null)
             {
                 ShadowProjectorGO = new GameObject();
                 ShadowProjector = ShadowProjectorGO.AddComponent<Projector>();
@@ -137,6 +142,7 @@ namespace Atmosphere
                 ShadowProjector.orthographic = true;
                 ShadowProjector.transform.parent = celestialBody.transform;
                 ShadowProjector.material = new Material(CloudShadowShader);
+                shadowMaterial.ApplyMaterialProperties(ShadowProjector.material);
             }
             sunTransform = Sun.Instance.sun.transform;
 

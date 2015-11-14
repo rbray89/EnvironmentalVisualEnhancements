@@ -13,6 +13,7 @@ namespace Atmosphere
     public class AtmosphereVolumeMaterial : MaterialManager
     {
         [Persistent]
+        #pragma warning disable 0414
         Color32 _Color = Color.white;
         [Persistent]
         float _DensityFactorA = 2f;

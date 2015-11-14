@@ -14,6 +14,8 @@ namespace Atmosphere
     public class particleVolumeMaterial : MaterialManager
     {
         [Persistent, Clamped]
+
+        #pragma warning disable 0414
         String _TopTex = "";
         [Persistent, Clamped]
 	    String _LeftTex = "";
@@ -44,7 +46,7 @@ namespace Atmosphere
         [Persistent]
         float rotationSpeed = .01f;
         [Persistent]
-        particleVolumeMaterial particleMaterial;
+        particleVolumeMaterial particleMaterial = null;
 
         Material ParticleMaterial;
         VolumeManager volumeManager;

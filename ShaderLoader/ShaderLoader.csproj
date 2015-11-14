@@ -92,15 +92,20 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <None Include="Shaders\CloudParticle.shader" />
     <None Include="Shaders\CloudShadow.shader" />
+    <None Include="Shaders\CloudVolumeParticle.shader" />
     <None Include="Shaders\EVEUtils.cginc" />
+    <None Include="Shaders\OceanBack.shader" />
+    <None Include="Shaders\PlanetShadow.shader" />
     <None Include="Shaders\SphereAtmosphere.shader" />
-    <None Include="Shaders\SphereCityLights.shader" />
     <None Include="Shaders\SphereCloud.shader" />
     <None Include="Shaders\SphereOcean.shader" />
     <None Include="Shaders\SpherePlanet.shader" />
+    <None Include="Shaders\SpherePlanetCityLights.shader" />
+    <None Include="Shaders\SpherePlanetLighting.shader" />
     <None Include="Shaders\SphereTerrain.shader" />
+    <None Include="Shaders\SphereTerrainCityLights.shader" />
+    <None Include="Shaders\SphereTerrainLighting.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
