@@ -17,8 +17,49 @@ namespace CelestialShadows
     {
         protected override ObjectType objectType { get { return ObjectType.PLANET; } }
         protected override String configName { get { return "EVE_SHADOWS"; } }
-       
+        protected static ShadowProjector shadowProjector = null;
 
-        
+        public override void Setup()
+        {
+            
+
+            if ((ObjectType.STATIC & objectType) != ObjectType.STATIC)
+            {
+                Managers.Add(this);
+                Managers.RemoveAll(item => item == null);
+                LoadConfig();
+                if( configs.Length > 0 && shadowProjector == null)
+                {
+                    shadowProjector = new ShadowProjector();
+                }
+            }
+            else
+            {
+                StaticSetup(this);
+            }
+        }
+
+        protected new void Update()
+        {
+            if (shadowProjector != null)
+            {
+                if (HighLogic.LoadedScene == GameScenes.SPACECENTER || (HighLogic.LoadedScene == GameScenes.FLIGHT && !MapView.MapIsEnabled))
+                {
+                    if (FlightGlobals.ready && FlightGlobals.activeTarget != null)
+                    {
+                        shadowProjector.UpdatePos(FlightGlobals.activeTarget.transform.position);
+                    }
+                    if (FlightCamera.fetch != null)
+                    {
+                        shadowProjector.UpdatePos(FlightCamera.fetch.mainCamera.transform.position);
+                    }
+                    else
+                    {
+                        shadowProjector.UpdatePos(SpaceCenter.Instance.SpaceCenterTransform.position);
+                    }
+                }
+            }
+        }
+
     }
 }

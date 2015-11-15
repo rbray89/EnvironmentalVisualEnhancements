@@ -68,6 +68,7 @@
     <Compile Include="ShadowManager.cs" />
     <Compile Include="ShadowObject.cs" />
     <Compile Include="ShadowPQS.cs" />
+    <Compile Include="ShadowProjector.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EveManager\EVEManager.csproj">

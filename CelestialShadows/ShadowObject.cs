@@ -20,7 +20,7 @@ namespace CelestialShadows
         private String body;
         private ConfigNode node;
 
-        ShadowPQS shadowPQS;
+        ShadowComponent shadow;
 
         public void LoadConfigNode(ConfigNode node, String body)
         {
@@ -36,15 +36,15 @@ namespace CelestialShadows
         public void Apply()
         {
             GameObject go = new GameObject();
-            shadowPQS = go.AddComponent<ShadowPQS>();
-            shadowPQS.Apply( body );
+            shadow = go.AddComponent<ShadowComponent>();
+            shadow.Apply( body );
         }
 
         public void Remove()
         {
-            shadowPQS.Remove();
-            GameObject go = shadowPQS.gameObject;
-            GameObject.DestroyImmediate(shadowPQS);
+            shadow.Remove();
+            GameObject go = shadow.gameObject;
+            GameObject.DestroyImmediate(shadow);
             GameObject.DestroyImmediate(go);
         }
     }
