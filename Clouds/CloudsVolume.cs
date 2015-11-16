@@ -13,14 +13,14 @@ namespace Atmosphere
 {
     public class particleVolumeMaterial : MaterialManager
     {
+#pragma warning disable 0169
+#pragma warning disable 0414
         [Persistent, Clamped]
-
-        #pragma warning disable 0414
-        String _TopTex = "";
+        Texture2D _TopTex;
         [Persistent, Clamped]
-	    String _LeftTex = "";
+        Texture2D _LeftTex;
 	    [Persistent, Clamped]
-	    String _FrontTex = "";
+        Texture2D _FrontTex;
 	    [Persistent]
 	    float _LightScatter = 0.55f;
 	    [Persistent]

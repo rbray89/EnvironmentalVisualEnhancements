@@ -23,15 +23,12 @@ namespace PQSManager
 
         public void LoadConfigNode(ConfigNode node, String body)
         {
-            ConfigNode.LoadObjectFromConfig(this, node);
+            ConfigHelper.LoadObjectFromConfig(this, node);
             this.node = node;
             this.body = body;
             name = node.name;
         }
-        public ConfigNode GetConfigNode()
-        {
-            return ConfigNode.CreateConfigFromObject(this, new ConfigNode(body));
-        }
+
         public void Apply() 
         { 
             CelestialBody cb = Tools.GetCelestialBody(body);

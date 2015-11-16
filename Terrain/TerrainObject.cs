@@ -13,17 +13,18 @@ namespace Terrain
     
     public class TerrainMaterial : MaterialManager
     {
+#pragma warning disable 0169
+#pragma warning disable 0414
         [Persistent] 
         Color _Color = Color.white;
         [Persistent]
-        #pragma warning disable 0414
-        String _MainTex = "";
+        Texture2D _MainTex;
 		[Persistent]
-        String _midTex = "";
-		[Persistent] 
-        String _steepTex = "";
+        Texture2D _midTex;
+		[Persistent]
+        Texture2D _steepTex;
         [Persistent]
-        String _BumpMap = "";
+        Texture2D _BumpMap;
         [Persistent]
         float _DetailScale = 4000f;
         [Persistent]
@@ -49,7 +50,7 @@ namespace Terrain
         [Persistent]
         Color _SurfaceColor = Color.white;
         [Persistent]
-        String _DetailTex = "";
+        Texture2D _DetailTex;
         [Persistent]
         float _DetailScale = 4000f;
         [Persistent]
@@ -80,13 +81,9 @@ namespace Terrain
 
         public void LoadConfigNode(ConfigNode node, String body)
         {
-            ConfigNode.LoadObjectFromConfig(this, node);
+            ConfigHelper.LoadObjectFromConfig(this, node);
             this.node = node;
             this.body = body;
-        }
-        public ConfigNode GetConfigNode()
-        {
-            return ConfigNode.CreateConfigFromObject(this, new ConfigNode(body));
         }
 
         public void Apply()

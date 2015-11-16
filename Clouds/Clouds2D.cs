@@ -13,8 +13,9 @@ namespace Atmosphere
 {
     public class Clouds2DMaterial : MaterialManager
     {
+#pragma warning disable 0169
+#pragma warning disable 0414
         [Persistent]
-        #pragma warning disable 0414
         float _FalloffPow = 2f;
         [Persistent]
         float _FalloffScale = 3f;

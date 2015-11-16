@@ -126,6 +126,17 @@ namespace Utils
 
                         cache.Add(name, texture);
                     }
+                    else if (field.FieldType == typeof(Texture2D))
+                    {
+                        bool isClamped = Attribute.IsDefined(field, typeof(Clamped));
+                        Texture2D texture = (Texture2D)field.GetValue(this);
+                        if (texture != null && isClamped)
+                        {
+                            texture.wrapMode = TextureWrapMode.Clamp;
+                        }
+
+                        cache.Add(name, texture);
+                    }
                     else
                     {
                         bool isScaled = Attribute.IsDefined(field, typeof(Scaled));
@@ -188,12 +199,29 @@ namespace Utils
                 {
                     Color32 value = (Color32)obj;
                     material.SetColor(name, value);
+                }//Vector2
+                else if (obj.GetType() == typeof(Vector2))
+                {
+                    Vector2 value = (Vector2)obj;
+                    material.SetVector(name, value * scaleValue);
                 }
                 //Vector3
                 else if (obj.GetType() == typeof(Vector3))
                 {
                     Vector3 value = (Vector3)obj;
                     material.SetVector(name, value * scaleValue);
+                }
+                //Vector4
+                else if (obj.GetType() == typeof(Vector4))
+                {
+                    Vector4 value = (Vector4)obj;
+                    material.SetVector(name, value * scaleValue);
+                }
+                //Vector4
+                else if (obj.GetType() == typeof(Matrix4x4))
+                {
+                    Matrix4x4 value = (Matrix4x4)obj;
+                    material.SetMatrix(name, value);
                 }
 
             }

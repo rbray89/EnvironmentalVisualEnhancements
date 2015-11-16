@@ -8,24 +8,6 @@ using UnityEngine;
 namespace Utils
 {
 
-    public interface INamed
-    {
-        String Name { get; set; }
-    }
-
-    public class ConfigWrapper : INamed
-    {
-        public String Name { get { return name; } set { } }
-        public ConfigNode Node { get { return node; } }
-        string name;
-        ConfigNode node;
-        public ConfigWrapper(UrlDir.UrlConfig uc)
-        {
-            name = uc.parent.url;
-            node = uc.config;
-        }
-    }
-
     public class GUIHelper
     {
 
@@ -159,68 +141,18 @@ namespace Utils
             return currentBody.bodyName;
         }
 
-        public static bool CanParse(Type t, String value)
-        {
-            if (t == typeof(String))
-            {
-                return GameDatabase.Instance.ExistsTexture(value);
-            }
-            //float
-            else if (t == typeof(float))
-            {
-                float r;
-                return float.TryParse(value, out r);
-            }
-            //Color
-            else if (t == typeof(Color))
-            {
-                try
-                {
-                    ConfigNode.ParseColor(value);
-                }
-                catch
-                {
-                    return false;
-                }
-                return true;
-            }
-            //Color
-            else if (t == typeof(Color32))
-            {
-                try
-                {
-                    ConfigNode.ParseColor32(value);
-                }
-                catch
-                {
-                    return false;
-                }
-                return true;
-            }
-            //Vector3
-            else if (t == typeof(Vector3))
-            {
-                try
-                {
-                    ConfigNode.ParseVector3(value);
-                }
-                catch
-                {
-                    return false;
-                }
-                return true;
-            }
-            return false;
-        } 
-
         public static void DrawField(Rect placementBase, ref Rect placement, object obj, FieldInfo field, ConfigNode config)
         {
             
             String value = config.GetValue(field.Name);
             if (value == null)
             {
-                value = ConfigNode.CreateConfigFromObject(obj, new ConfigNode("TMP")).GetValue(field.Name);
+                value = ConfigHelper.CreateConfigFromObject(obj, new ConfigNode("TMP")).GetValue(field.Name);
                 config.AddValue(field.Name, value);
+            }
+            if (value == null)
+            {
+                value = "";
             }
 
             Rect labelRect = GUIHelper.GetSplitRect(placementBase, ref placement);
@@ -251,7 +183,7 @@ namespace Utils
             else*/
             {
                 GUIStyle fieldStyle = new GUIStyle(GUI.skin.textField);
-                if(value != "" && !CanParse(field.FieldType, value))
+                if(value != "" && !ConfigHelper.CanParse(field, value))
                 {
                     fieldStyle.normal.textColor = Color.red;
                     fieldStyle.active.textColor = Color.red;

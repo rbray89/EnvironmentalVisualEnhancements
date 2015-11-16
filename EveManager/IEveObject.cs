@@ -11,7 +11,6 @@ namespace EVEManager
         ConfigNode ConfigNode { get; }
         String Body { get; }
         void LoadConfigNode(ConfigNode node, String body);
-        ConfigNode GetConfigNode();
         void Apply();
         void Remove();
     }

@@ -9,47 +9,7 @@ using Utils;
 
 namespace EVEManager
 {
-    public class Optional : System.Attribute
-    {
-        public String Field;
-        public object Value;
-        bool nullCheck = false;
-        public Optional()
-        {
-            Field = null;
-        }
-        public Optional(String field)
-        {
-            Field = field;
-            nullCheck = true;
-        }
-        public Optional(String field, object value)
-        {
-            Field = field;
-            Value = value;
-        }
-
-        public bool isActive(ConfigNode node)
-        {
-            if(nullCheck)
-            {
-                return node.HasNode(Field);
-            }
-            else
-            {
-                if (Field != null)
-                {
-                    return node.GetValue(Field) == Value.ToString();
-                }
-                else
-                {
-                    return true;
-                }
-            }
-        }
-    }
     
-
     [KSPAddon(KSPAddon.Startup.Instantly, true)]
     public class GenericEVEManager<T> : EVEManagerClass where T : IEVEObject, new()
     {

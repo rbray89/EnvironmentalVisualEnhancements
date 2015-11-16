@@ -13,15 +13,16 @@ namespace CityLights
 {
     public class CityLightsMaterial : MaterialManager
     {
+#pragma warning disable 0169
+#pragma warning disable 0414
         [Persistent]
-        #pragma warning disable 0414
-        String _CityOverlayTex = "";
+        Texture2D _CityOverlayTex;
         [Persistent]
         float _CityOverlayDetailScale = 80f;
         [Persistent]
-        String _CityDarkOverlayDetailTex = "";
+        Texture2D _CityDarkOverlayDetailTex;
         [Persistent]
-        String _CityLightOverlayDetailTex = "";
+        Texture2D _CityLightOverlayDetailTex;
     }
 
     
@@ -42,13 +43,9 @@ namespace CityLights
 
         public void LoadConfigNode(ConfigNode node, String body)
         {
-            ConfigNode.LoadObjectFromConfig(this, node);
+            ConfigHelper.LoadObjectFromConfig(this, node);
             this.node = node;
             this.body = body;
-        }
-        public ConfigNode GetConfigNode()
-        {
-            return ConfigNode.CreateConfigFromObject(this, new ConfigNode(body));
         }
 
         public void Apply()
