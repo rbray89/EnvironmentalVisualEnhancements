@@ -181,7 +181,7 @@ namespace Utils
                 else if (obj.GetType() == typeof(Color))
                 {
                     Color value = (Color)obj;
-                    material.SetColor(name, value);
+                    material.SetColor(name, value/256f);
                 }
                 //Color32
                 else if (obj.GetType() == typeof(Color32))

@@ -11,10 +11,9 @@ namespace Atmosphere
 {
     public class CloudsMaterial : MaterialManager
     {
-        [Persistent]
-        Color32 _Color = Color.white;
-        [Persistent]
-
+        [Persistent, Tooltip("Color to be applied to clouds.")]
+        Color _Color = Color.white;
+        [Persistent, Tooltip("Main texture used with clouds.")]
         #pragma warning disable 0414
         String _MainTex = "";
         [Persistent]
@@ -47,7 +46,7 @@ namespace Atmosphere
         float detailSpeed = 0;
         [Persistent]
         Vector3 offset = new Vector3(0, 0, 0);
-        [Persistent]
+        [Persistent, Tooltip("Settings for the cloud rendering")]
         CloudsMaterial settings = null;
         
         [Persistent, Optional]

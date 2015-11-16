@@ -14,7 +14,7 @@ namespace Atmosphere
     {
         [Persistent]
         #pragma warning disable 0414
-        Color32 _Color = Color.white;
+        Color _Color = Color.white;
         [Persistent]
         float _DensityFactorA = 2f;
         [Persistent]
@@ -45,7 +45,7 @@ namespace Atmosphere
         float _DensityCutoffScale = 1;
 
         [Persistent]
-        Color32 _SunsetColor = new Color(1, 0, 0, .45f);
+        Color _SunsetColor = new Color(1, 0, 0, .45f);
         [Scaled]
         float _OceanRadius;
         [Scaled]

@@ -48,6 +48,7 @@ namespace EVEManager
             }
         }
     }
+    
 
     [KSPAddon(KSPAddon.Startup.Instantly, true)]
     public class GenericEVEManager<T> : EVEManagerClass where T : IEVEObject, new()
@@ -250,7 +251,19 @@ namespace EVEManager
                         Rect titleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
                         GUIHelper.SplitRect(ref toggleRect, ref titleRect, (1f / 16));
 
-                        GUI.Label(titleRect, field.Name);
+                        String tooltipText = "";
+                        if (Attribute.IsDefined(field, typeof(TooltipAttribute)))
+                        {
+                            TooltipAttribute tt = (TooltipAttribute)Attribute.GetCustomAttribute(field, typeof(TooltipAttribute));
+                            tooltipText = tt.tooltip;
+                        }
+                        GUIStyle style = new GUIStyle(GUI.skin.label);
+                        GUIContent gc = new GUIContent(field.Name, tooltipText);
+
+                        Vector2 labelSize = style.CalcSize(gc);
+                        titleRect.width = Mathf.Min(labelSize.x, titleRect.width);
+                        GUI.Label(titleRect, gc);
+
                         bool removeable = node == null ? false : true;
                         if (isOptional)
                         {
@@ -380,17 +393,18 @@ namespace EVEManager
         {
             string body = null;
             ConfigNode objNode = null;
-            
-            ConfigWrapper selectedConfig = GUIHelper.DrawSelector<ConfigWrapper>(ConfigFiles, ref selectedConfigIndex, 16, placementBase, ref placement);
-
-            DrawConfigManagement(placementBase, ref placement);
-
-            if ((objectType & ObjectType.PLANET) == ObjectType.PLANET)
+            ConfigWrapper selectedConfig = null;
+            if (ConfigFiles.Count > 0)
             {
-                body = GUIHelper.DrawBodySelector(placementBase, ref placement);
-                
-            }
+                selectedConfig = GUIHelper.DrawSelector<ConfigWrapper>(ConfigFiles, ref selectedConfigIndex, 16, placementBase, ref placement);
+                DrawConfigManagement(placementBase, ref placement);
+                if ((objectType & ObjectType.PLANET) == ObjectType.PLANET)
+                {
+                    body = GUIHelper.DrawBodySelector(placementBase, ref placement);
 
+                }
+            }
+            
             if (selectedConfig != null)
             {
                 if ((objectType & ObjectType.MULTIPLE) == ObjectType.MULTIPLE)
@@ -412,9 +426,16 @@ namespace EVEManager
                 {
                     objNode = DrawNodeManagement(placementBase, ref placement, selectedConfig.Node, body);
                 }
+
+                HandleConfigGUI(objNode, placementBase, ref placement);
+            }
+            else
+            {
+                placement.height = 4;
+                Rect textRect = GUIHelper.GetSplitRect(placementBase, ref placement);
+                GUI.TextArea(textRect, "No config! Please add a config with the content of \""+this.configName+"{}\" to populate.");
             }
 
-            HandleConfigGUI(objNode, placementBase, ref placement);
             
         }
 

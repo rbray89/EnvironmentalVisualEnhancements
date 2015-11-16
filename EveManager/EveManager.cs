@@ -28,6 +28,7 @@ namespace EVEManager
 
         public String Name { get { return this.GetType().Name; } set { } }
 
+        private Texture2D ToolTipBackground;
         private void Awake()
         {
             ROTATION_PROPERTY = Shader.PropertyToID("_Rotation");
@@ -39,6 +40,13 @@ namespace EVEManager
             PLANET_ORIGIN_PROPERTY = Shader.PropertyToID("_PlanetOrigin");
             WORLD_2_PLANET_PROPERTY = Shader.PropertyToID("_World2Planet");
             useEditor = false;
+            ToolTipBackground = new Texture2D(4, 4);
+            List<Color> colors = new List<Color>();
+            for(int x = 0; x < ToolTipBackground.width* ToolTipBackground.height; x++)
+            {
+                colors.Add(Color.white);
+            }
+            ToolTipBackground.SetPixels(colors.ToArray());
         }
 
         private void Update()
@@ -88,7 +96,20 @@ namespace EVEManager
                 currentManager.DrawGUI(placementBase, placement);
             }
 
-            GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+            if (GUI.tooltip != "")
+            {
+                GUIStyle toolStyle = new GUIStyle(GUI.skin.textField);
+                toolStyle.normal.background = ToolTipBackground;
+                toolStyle.normal.textColor = Color.black;
+                Vector2 size = toolStyle.CalcSize(new GUIContent(GUI.tooltip));
+                GUI.backgroundColor = Color.white;
+                GUI.color = Color.white;
+                GUI.color = Color.white;
+                GUI.contentColor = Color.black;
+                
+                GUI.Label(new Rect(Mouse.screenPos.x + 15, Mouse.screenPos.y + 15, size.x, size.y), new GUIContent( GUI.tooltip, ToolTipBackground), toolStyle);
+                GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+            }
         }
 
         public virtual void DrawGUI(Rect val, Rect val2)

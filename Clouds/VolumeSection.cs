@@ -46,19 +46,6 @@ namespace Atmosphere
         }
 
 
-        internal void Update(Color32 color)
-        {
-            MeshFilter filter = particle.GetComponent<MeshFilter>();
-            Mesh mesh = filter.mesh;
-            mesh.colors = new Color[4]
-            {
-                color,
-                color,
-                color,
-                color
-            };
-        }
-
         internal void Destroy()
         {
             GameObject.DestroyImmediate(particle);

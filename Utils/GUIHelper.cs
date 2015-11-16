@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace Utils
 {
+
     public interface INamed
     {
         String Name { get; set; }
@@ -28,17 +29,17 @@ namespace Utils
     public class GUIHelper
     {
 
-        protected static int selectedBodyIndex = 0; 
+        protected static int selectedBodyIndex = 0;
         protected static CelestialBody currentBody;
-        
+
         public static float GetNodeHeightCount(ConfigNode node)
         {
             float fieldCount = 1;
-            
+
             fieldCount += node.CountValues;
-            foreach(ConfigNode n in node.nodes)
+            foreach (ConfigNode n in node.nodes)
             {
-                fieldCount += GetNodeHeightCount(n)+.5f;
+                fieldCount += GetNodeHeightCount(n) + .5f;
             }
 
             return fieldCount;
@@ -52,11 +53,11 @@ namespace Utils
             }
             float width = placementBase.width;
             float height = 30;
-//            if (((placement.y + placement.height) * height) + placementBase.y + 25 > placementBase.height)
-//            {
-//                placement.x++;
-//                placement.y = 0;
-//            }
+            //            if (((placement.y + placement.height) * height) + placementBase.y + 25 > placementBase.height)
+            //            {
+            //                placement.x++;
+            //                placement.y = 0;
+            //            }
             float x = (placement.x * width) + placementBase.x;
             float y = (placement.y * height) + placementBase.y;
             width += placement.width;
@@ -158,6 +159,60 @@ namespace Utils
             return currentBody.bodyName;
         }
 
+        public static bool CanParse(Type t, String value)
+        {
+            if (t == typeof(String))
+            {
+                return GameDatabase.Instance.ExistsTexture(value);
+            }
+            //float
+            else if (t == typeof(float))
+            {
+                float r;
+                return float.TryParse(value, out r);
+            }
+            //Color
+            else if (t == typeof(Color))
+            {
+                try
+                {
+                    ConfigNode.ParseColor(value);
+                }
+                catch
+                {
+                    return false;
+                }
+                return true;
+            }
+            //Color
+            else if (t == typeof(Color32))
+            {
+                try
+                {
+                    ConfigNode.ParseColor32(value);
+                }
+                catch
+                {
+                    return false;
+                }
+                return true;
+            }
+            //Vector3
+            else if (t == typeof(Vector3))
+            {
+                try
+                {
+                    ConfigNode.ParseVector3(value);
+                }
+                catch
+                {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        } 
+
         public static void DrawField(Rect placementBase, ref Rect placement, object obj, FieldInfo field, ConfigNode config)
         {
             
@@ -171,8 +226,20 @@ namespace Utils
             Rect labelRect = GUIHelper.GetSplitRect(placementBase, ref placement);
             Rect fieldRect = GUIHelper.GetSplitRect(placementBase, ref placement);
             GUIHelper.SplitRect(ref labelRect, ref fieldRect, 3f / 7);
-            GUI.Label(labelRect, field.Name);
+            String tooltipText = "";
+            if (Attribute.IsDefined(field, typeof(TooltipAttribute)))
+            {
+                TooltipAttribute tt = (TooltipAttribute)Attribute.GetCustomAttribute(field, typeof(TooltipAttribute));
+                tooltipText = tt.tooltip;
+            }
+            GUIStyle style = new GUIStyle(GUI.skin.label);
+            GUIContent gc = new GUIContent(field.Name, tooltipText);
 
+            Vector2 labelSize = style.CalcSize(gc);
+            labelRect.width = Mathf.Min(labelSize.x, labelRect.width);
+            GUI.Label(labelRect,gc);
+
+            
             /*if (false )// && field.FieldType == typeof(Color))
             {
                 Color color = ConfigNode.ParseColor(value);
@@ -183,8 +250,17 @@ namespace Utils
             }
             else*/
             {
-                value = GUI.TextField(fieldRect, value);
+                GUIStyle fieldStyle = new GUIStyle(GUI.skin.textField);
+                if(value != "" && !CanParse(field.FieldType, value))
+                {
+                    fieldStyle.normal.textColor = Color.red;
+                    fieldStyle.active.textColor = Color.red;
+                    fieldStyle.focused.textColor = Color.red;
+                    fieldStyle.hover.textColor = Color.red;
+                }
+                value = GUI.TextField(fieldRect, value, fieldStyle);
                 config.SetValue(field.Name, value);
+
             }
 
             
@@ -331,7 +407,7 @@ namespace Utils
             GUIHelper.SplitRect(ref leftRect, ref centerRect, 1f / (ratio));
             GUIHelper.SplitRect(ref centerRect, ref rightRect, (ratio - 2) / (ratio-1));
 
-            if (GUI.Button(leftRect, "<"))
+            if (objList.Count > 1 && GUI.Button(leftRect, "<"))
             {
                 selectedIndex--;
                 if (selectedIndex < 0)
@@ -339,7 +415,7 @@ namespace Utils
                     selectedIndex = objList.Count - 1;
                 }
             }
-            if (GUI.Button(rightRect, ">"))
+            if (objList.Count > 1 && GUI.Button(rightRect, ">"))
             {
                 selectedIndex++;
                 if (selectedIndex >= objList.Count)
