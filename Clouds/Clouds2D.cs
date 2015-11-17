@@ -121,6 +121,21 @@ namespace Atmosphere
             }
         }
 
+        private bool _enabled = true;
+        public bool enabled { get {return _enabled; }
+            set
+            {
+                _enabled = value;
+                if (CloudMesh != null)
+                {
+                    CloudMesh.SetActive(value);
+                }
+                if (ShadowProjector != null)
+                {
+                    ShadowProjector.enabled = value;
+                }
+            } }
+
         internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, CloudsMaterial cloudsMaterial, float radius)
         {
             CloudsManager.Log("Applying 2D clouds...");

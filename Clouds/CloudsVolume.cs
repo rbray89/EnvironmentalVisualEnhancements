@@ -61,6 +61,16 @@ namespace Atmosphere
             }
         }
 
+        private bool _enabled = true;
+        public bool enabled
+        {
+            get { return _enabled; }
+            set
+            {
+                _enabled = value;
+            }
+        }
+
         public void Apply(CloudsMaterial material, float radius, Transform parent)
         {
             Remove();

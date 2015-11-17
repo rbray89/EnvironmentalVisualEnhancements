@@ -21,12 +21,33 @@ namespace Atmosphere
         Transform scaledCelestialTransform = null;
 
         Callback onExitMapView;
-        private bool applied = false;
+        private bool volumeApplied = false;
         private float radius;
 
         Vector3 detailPeriod;
         Vector3 mainPeriod;
         Vector3 offset;
+
+
+        public new bool enabled
+        {
+            get
+            {
+                return base.enabled;
+            }
+            set
+            {
+                base.enabled = value;
+                if (layer2D != null)
+                {
+                    layer2D.enabled = value;
+                }
+                if (layerVolume != null)
+                {
+                    layerVolume.enabled = value;
+                }
+            }
+        }
 
         public override void OnSphereActive()
         {
@@ -36,13 +57,13 @@ namespace Atmosphere
             {
                 layer2D.Scaled = false;
             }
-            if (!applied)
+            if (!volumeApplied)
             {
                 if (layerVolume != null)
                 {
                     layerVolume.Apply(cloudsMaterial, (float)celestialBody.Radius + altitude, celestialBody.transform);
                 }
-                applied = true;
+                volumeApplied = true;
             }
         }
         public override void OnSphereInactive()
@@ -59,7 +80,7 @@ namespace Atmosphere
                 {
                     layerVolume.Remove();
                 }
-                applied = false;
+                volumeApplied = false;
             }
         }
 
@@ -77,7 +98,7 @@ namespace Atmosphere
                 {
                     layerVolume.Remove();
                 }
-                applied = false;
+                volumeApplied = false;
             }
             else
             {
@@ -117,7 +138,7 @@ namespace Atmosphere
                                                detailRotationMatrix);
                     }
                 }
-                else
+                else 
                 {
                     Transform transform = ScaledCamera.Instance.camera.transform;
                     Vector3 pos = scaledCelestialTransform.InverseTransformPoint(transform.position);
@@ -215,13 +236,23 @@ namespace Atmosphere
 
         private void GameSceneLoaded(GameScenes scene)
         {
-            if (scene == GameScenes.TRACKSTATION)
+            if (scene != GameScenes.SPACECENTER && scene != GameScenes.FLIGHT)
             {
                 this.OnSphereInactive();
                 sphere.isActive = false;
             }
+            if (scene != GameScenes.SPACECENTER && scene != GameScenes.FLIGHT && scene != GameScenes.TRACKSTATION)
+            {
+                this.OnSphereInactive();
+                sphere.isActive = false;
+                this.enabled = false;
+            }
+            else
+            {
+                this.enabled = true;
+            }
         }
-
+        
         public void Remove()
         {
             if (layer2D != null)
@@ -234,7 +265,7 @@ namespace Atmosphere
             }
             layer2D = null;
             layerVolume = null;
-            applied = false;
+            volumeApplied = false;
             this.sphere = null;
             this.enabled = false;
             this.transform.parent = null;
