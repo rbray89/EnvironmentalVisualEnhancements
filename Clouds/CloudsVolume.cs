@@ -21,10 +21,6 @@ namespace Atmosphere
         Texture2D _LeftTex;
 	    [Persistent, Clamped]
         Texture2D _FrontTex;
-	    [Persistent]
-	    float _LightScatter = 0.55f;
-	    [Persistent]
-	    float _MinLight = .5f;
         [Persistent]
         float _InvFade = .008f;
 
@@ -32,19 +28,20 @@ namespace Atmosphere
         public float MaxScale { set { _MaxScale = value; } }
         Vector3 _MaxTrans;
         public Vector3 MaxTrans { set { _MaxTrans = value; } }
-
+        float _NoiseScale;
+        public float NoiseScale { set { _NoiseScale = value; } }
     }
 
     class CloudsVolume
     {
-        [Persistent]
-        Vector3 size = new Vector3(4000, 1, 0);
-        [Persistent]
+        [Persistent, Tooltip("[min size of particle],[max scale of particle]")]
+        Vector2 size = new Vector2(4000, 1);
+        [Persistent, Tooltip("max x,y,z translation of particle")]
         Vector3 maxTranslation = new Vector3(0, 0, 0);
+        [Persistent, Tooltip("[size of cover],[number of divisions (more is denser particles)]")]
+        Vector2 area = new Vector2(24000,4);
         [Persistent]
-        Vector3 area = new Vector3(24000,4, 0);
-        [Persistent]
-        float rotationSpeed = .01f;
+        float rotationSpeed = 0.002f;
         [Persistent]
         particleVolumeMaterial particleMaterial = null;
 
@@ -64,11 +61,12 @@ namespace Atmosphere
             }
         }
 
-        public void Apply(CloudsMaterial material, float radius, float speed, Transform parent)
+        public void Apply(CloudsMaterial material, float radius, Transform parent)
         {
             Remove();
             particleMaterial.MaxScale = size.y;
             particleMaterial.MaxTrans = maxTranslation;
+            particleMaterial.NoiseScale = 30f / radius;
 
             ParticleMaterial = new Material(ParticleCloudShader);
             particleMaterial.ApplyMaterialProperties(ParticleMaterial);

@@ -95,6 +95,7 @@
     <None Include="Shaders\CloudShadow.shader" />
     <None Include="Shaders\CloudVolumeParticle.shader" />
     <None Include="Shaders\EVEUtils.cginc" />
+    <None Include="Shaders\noiseSimplex.cginc" />
     <None Include="Shaders\OceanBack.shader" />
     <None Include="Shaders\PlanetShadow.shader" />
     <None Include="Shaders\SphereAtmosphere.shader" />

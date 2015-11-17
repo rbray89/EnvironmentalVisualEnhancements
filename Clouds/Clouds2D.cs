@@ -121,7 +121,7 @@ namespace Atmosphere
             }
         }
 
-        internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, CloudsMaterial cloudsMaterial, float radius, float speed)
+        internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, CloudsMaterial cloudsMaterial, float radius)
         {
             CloudsManager.Log("Applying 2D clouds...");
             Remove();

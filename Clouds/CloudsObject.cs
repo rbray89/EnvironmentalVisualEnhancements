@@ -42,9 +42,9 @@ namespace Atmosphere
         [Persistent]
         float altitude = 1000f;
         [Persistent]
-        float speed = 30;
+        Vector3 speed = new Vector3(0, 30, 0);
         [Persistent]
-        float detailSpeed = 0;
+        Vector3 detailSpeed = new Vector3(0,5,0);
         [Persistent]
         Vector3 offset = new Vector3(0, 0, 0);
         [Persistent, Tooltip("Settings for the cloud rendering")]

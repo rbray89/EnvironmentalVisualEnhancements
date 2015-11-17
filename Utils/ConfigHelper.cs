@@ -207,7 +207,7 @@ namespace Utils
             {
                 try
                 {
-                    return ConfigNode.ParseVector2(value);
+                    return (Vector2)ConfigNode.ParseVector2(value);
                 }
                 catch { return null; }
             }

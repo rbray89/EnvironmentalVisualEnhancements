@@ -14,9 +14,67 @@
 	uniform float4x4 _MainRotation;
 	uniform float4x4 _DetailRotation;
 	
+
+	/*=========================================================================*
+	* R A N D _ R O T A T I O N Author: Jim Arvo, 1991 *
+	* *
+	* This routine maps three values (x[0], x[1], x[2]) in the range [0,1] *
+	* into a 3x3 rotation matrix, M. Uniformly distributed random variables *
+	* x0, x1, and x2 create uniformly distributed random rotation matrices. *
+	* To create small uniformly distributed "perturbations", supply *
+	* samples in the following ranges *
+	* *
+	* x[0] in [ 0, d ] *
+	* x[1] in [ 0, 1 ] *
+	* x[2] in [ 0, d ] *
+	* *
+	* where 0 < d < 1 controls the size of the perturbation. Any of the *
+	* random variables may be stratified (or "jittered") for a slightly more *
+	* even distribution. *
+	* *
+	*=========================================================================*/
+	float4x4 rand_rotation(float3 x, float scale, float3 trans)
+	{
+		float theta = x[0] * TWOPI; /* Rotation about the pole (Z). */
+		float phi = x[1] * TWOPI; /* For direction of pole deflection. */
+		float z = x[2] * 2.0; /* For magnitude of pole deflection. */
+
+							  /* Compute a vector V used for distributing points over the sphere */
+							  /* via the reflection I - V Transpose(V). This formulation of V */
+							  /* will guarantee that if x[1] and x[2] are uniformly distributed, */
+							  /* the reflected points will be uniform on the sphere. Note that V */
+							  /* has length sqrt(2) to eliminate the 2 in the Householder matrix. */
+
+		float r = sqrt(z);
+		float Vx = sin(phi) * r;
+		float Vy = cos(phi) * r;
+		float Vz = sqrt(2.0 - z);
+
+		/* Compute the row vector S = Transpose(V) * R, where R is a simple */
+		/* rotation by theta about the z-axis. No need to compute Sz since */
+		/* it's just Vz. */
+
+		float st = sin(theta);
+		float ct = cos(theta);
+		float Sx = Vx * ct - Vy * st;
+		float Sy = Vx * st + Vy * ct;
+
+		/* Construct the rotation matrix ( V Transpose(V) - I ) R, which */
+		/* is equivalent to V S - R. */
+
+
+		float4x4 M = float4x4(
+			scale*(Vx * Sx - ct), Vy * Sx + st, Vz * Sx, trans.x,
+			Vx * Sy - st, scale*(Vy * Sy - ct), Vz * Sy, trans.y,
+			Vx * Vz, Vy * Vz, scale*(1.0 - z), trans.z,
+			0, 0, 0, 1);
+
+		return M;
+	}
+
 	inline float3 hash( float3 val )
 	{
-		return frac(sin(val)*123.5453);
+		return frac(sin(val)*1232.53);
 	}
 	
 	inline float4 Derivatives( float lat, float lon, float3 pos)  
