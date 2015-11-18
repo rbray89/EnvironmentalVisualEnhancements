@@ -70,9 +70,9 @@ namespace Utils
     {
         public static bool CanParse(FieldInfo field, String value)
         {
-            if(Parse(field, value)!=null)
-            { return true; }
-            else { return false; }
+            object test = null;
+            Parse(field, value, ref test);
+            return test != null;
         }
 
         public static ConfigNode CreateConfigFromObject(object obj, ConfigNode node)
@@ -125,117 +125,132 @@ namespace Utils
             return true;
         }
 
-        private static object Parse(FieldInfo field, string value)
+        private static bool Parse(FieldInfo field, string value, ref object obj)
         {
-            if(field.FieldType == typeof(Texture2D))
+            obj = null;
+            if (field.FieldType == typeof(Texture2D))
             {
-                if(GameDatabase.Instance.ExistsTexture(value))
+                if (GameDatabase.Instance.ExistsTexture(value))
                 {
                     bool isNormal = value.Contains("Bump") | value.Contains("Bmp") | value.Contains("Normal") | value.Contains("Nrm");
-                    return GameDatabase.Instance.GetTexture(value, isNormal);
+                    obj = GameDatabase.Instance.GetTexture(value, isNormal);
                 }
+                return true;
             }
             else if (field.FieldType == typeof(float))
             {
                 try
                 {
-                    return float.Parse(value);
+                    obj = float.Parse(value);
+                    return true;
                 }
-                catch { return null; }
+                catch { return false; }
             }
             else if (field.FieldType == typeof(double))
             {
                 try
                 {
-                    return double.Parse(value);
+                    obj = double.Parse(value);
+                    return true;
                 }
-                catch { return null; }
+                catch {  }
+            }
+            else if (field.FieldType == typeof(bool))
+            {
+                try
+                {
+                    obj = bool.Parse(value);
+                    return true;
+                }
+                catch {  }
             }
             else if(field.FieldType == typeof(String))
             {
-                return value;
+                obj = value;
+                return true;
             }
             else if(field.FieldType == typeof(Color))
             {
                 try
                 {
-                    return ConfigNode.ParseColor(value);
+                    obj = (Color)ConfigNode.ParseVector4(value);
+                    return true;
                 }
-                catch { return null; }
-            }
-            else if (field.FieldType == typeof(Color32))
-            {
-                try
-                {
-                    return ConfigNode.ParseColor32(value);
-                }
-                catch { return null; }
+                catch {  }
             }
             else if (field.FieldType.IsEnum)
             {
                 try
                 {
-                    return ConfigNode.ParseEnum(field.FieldType, value);
+                    obj = ConfigNode.ParseEnum(field.FieldType, value);
+                    return true;
                 }
-                catch { return null; }
+                catch {  }
             }
             else if (field.FieldType == typeof(Matrix4x4))
             {
                 try
                 {
-                    return ConfigNode.ParseMatrix4x4(value);
+                    obj = ConfigNode.ParseMatrix4x4(value);
+                    return true;
                 }
-                catch { return null; }
+                catch {  }
             }
             else if (field.FieldType == typeof(Quaternion))
             {
                 try
                 {
-                    return ConfigNode.ParseQuaternion(value);
+                    obj = ConfigNode.ParseQuaternion(value);
+                    return true;
                 }
-                catch { return null; }
+                catch {  }
             }
             else if (field.FieldType == typeof(QuaternionD))
             {
                 try
                 {
-                    return ConfigNode.ParseQuaternionD(value);
+                    obj = ConfigNode.ParseQuaternionD(value);
+                    return true;
                 }
-                catch { return null; }
+                catch {  }
             }
             else if (field.FieldType == typeof(Vector2))
             {
                 try
                 {
-                    return (Vector2)ConfigNode.ParseVector2(value);
+                    obj = (Vector2)ConfigNode.ParseVector2(value);
+                    return true;
                 }
-                catch { return null; }
+                catch {  }
             }
             else if (field.FieldType == typeof(Vector3))
             {
                 try
                 {
-                    return ConfigNode.ParseVector3(value);
+                    obj = ConfigNode.ParseVector3(value);
+                    return true;
                 }
-                catch { return null; }
+                catch {  }
             }
             else if (field.FieldType == typeof(Vector3d))
             {
                 try
                 {
-                    return ConfigNode.ParseVector3D(value);
+                    obj = ConfigNode.ParseVector3D(value);
+                    return true;
                 }
-                catch { return null; }
+                catch {  }
             }
             else if (field.FieldType == typeof(Vector4))
             {
                 try
                 {
-                    return ConfigNode.ParseVector4(value);
+                    obj = ConfigNode.ParseVector4(value);
+                    return true;
                 }
-                catch { return null; }
+                catch { }
             }
-            return null;
+            return false;
         }
 
         private static bool Parse(object obj, FieldInfo field, ConfigNode node)
@@ -243,8 +258,8 @@ namespace Utils
             bool hasValue = node.HasValue(field.Name);
             if (hasValue)
             {
-                object objValue = Parse(field, node.GetValue(field.Name));
-                if(objValue != null)
+                object objValue = null;
+                if(Parse(field, node.GetValue(field.Name), ref objValue))
                 {
                     field.SetValue(obj, objValue);
                 }

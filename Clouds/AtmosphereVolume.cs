@@ -15,7 +15,7 @@ namespace Atmosphere
 #pragma warning disable 0169
 #pragma warning disable 0414
         [Persistent]
-        Color _Color = Color.white;
+        Color _Color = 256 * Color.white;
         [Persistent]
         float _DensityFactorA = 2f;
         [Persistent]

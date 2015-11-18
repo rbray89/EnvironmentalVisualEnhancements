@@ -14,7 +14,7 @@ namespace Atmosphere
 #pragma warning disable 0169
 #pragma warning disable 0414
         [Persistent, Tooltip("Color to be applied to clouds.")]
-        Color _Color = Color.white;
+        Color _Color = 256*Color.white;
         [Persistent, Tooltip("Main texture used with clouds.")]
         Texture2D _MainTex;
         [Persistent]

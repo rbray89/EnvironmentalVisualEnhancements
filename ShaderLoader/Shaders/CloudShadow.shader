@@ -15,6 +15,7 @@
 		Pass {
 			Blend Zero SrcColor
 			ZWrite Off
+			Offset -.25, -.25
 			CGPROGRAM
 			#include "EVEUtils.cginc"
 			#pragma target 3.0
@@ -105,7 +106,7 @@
 				half detailLevel = saturate(2 * _DetailDist*viewDist);
 				fixed4 color = _Color * main.rgba * lerp(detail.rgba, 1, detailLevel);
 
-				color.rgb = saturate(color.rgb - color.a);
+				color.rgb = saturate(color.rgb * (1- color.a));
 				color.rgb = lerp(1, color.rgb, _ShadowFactor*color.a);
 				return lerp(1, color, shadowCheck);
 			}

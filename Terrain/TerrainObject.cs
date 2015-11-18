@@ -16,7 +16,7 @@ namespace Terrain
 #pragma warning disable 0169
 #pragma warning disable 0414
         [Persistent] 
-        Color _Color = Color.white;
+        Color _Color = 256 * Color.white;
         [Persistent]
         Texture2D _MainTex;
 		[Persistent]
@@ -48,7 +48,7 @@ namespace Terrain
     public class OceanMaterial : MaterialManager
     {
         [Persistent]
-        Color _SurfaceColor = Color.white;
+        Color _SurfaceColor = 256 * Color.white;
         [Persistent]
         Texture2D _DetailTex;
         [Persistent]
