@@ -22,12 +22,12 @@ namespace Atmosphere
 
         Callback onExitMapView;
         private bool volumeApplied = false;
-        private float radius;
+        private double radius;
 
-        Vector3 detailPeriod;
-        Vector3 mainPeriod;
+        Vector3d detailPeriod;
+        Vector3d mainPeriod;
         Vector3 offset;
-
+        Matrix4x4 rotationAxis;
 
         public new bool enabled
         {
@@ -110,21 +110,30 @@ namespace Atmosphere
         {
             bool visible = HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER;
 
-            float ut = (float)Planetarium.GetUniversalTime();
-            Vector3 detailRotation = (ut * detailPeriod);
-            detailRotation -= new Vector3((int)detailRotation.x, (int)detailRotation.y, (int)detailRotation.z);
+            double ut = Planetarium.GetUniversalTime();
+            Vector3d detailRotation = (ut * detailPeriod);
+            detailRotation -= new Vector3d((int)detailRotation.x, (int)detailRotation.y, (int)detailRotation.z);
             detailRotation *= 360;
             detailRotation += offset;
-            Vector3 mainRotation = (ut * mainPeriod);
-            mainRotation -= new Vector3((int)mainPeriod.x, (int)mainPeriod.y, (int)mainPeriod.z);
+            Vector3d mainRotation = (ut * mainPeriod);
+            mainRotation -= new Vector3d((int)mainRotation.x, (int)mainRotation.y, (int)mainRotation.z);
             mainRotation *= 360f;
             mainRotation += offset;
 
-            Quaternion rotation = Quaternion.Euler(mainRotation);
-            Matrix4x4 mainRotationMatrix = Matrix4x4.TRS(Vector3.zero, rotation, Vector3.one);
+           // mainRotation.y = celestialBody.rotationAngle;
+            QuaternionD mainRotationQ = //QuaternionD.Euler(mainRotation);
+                QuaternionD.AngleAxis(mainRotation.x, (Vector3)rotationAxis.GetRow(0)) *
+                QuaternionD.AngleAxis(mainRotation.y, (Vector3)rotationAxis.GetRow(1)) *
+                QuaternionD.AngleAxis(mainRotation.z, (Vector3)rotationAxis.GetRow(2));
+            Matrix4x4 mainRotationMatrix = Matrix4x4.TRS(Vector3.zero, mainRotationQ, Vector3.one).inverse;
 
-            rotation = Quaternion.Euler(detailRotation);
-            Matrix4x4 detailRotationMatrix = Matrix4x4.TRS(Vector3.zero, rotation, Vector3.one);
+            QuaternionD detailRotationQ = //Quaternion.Euler(detailRotation);
+                QuaternionD.AngleAxis(detailRotation.x, (Vector3)rotationAxis.GetRow(0)) *
+                QuaternionD.AngleAxis(detailRotation.y, (Vector3)rotationAxis.GetRow(1)) *
+                QuaternionD.AngleAxis(detailRotation.z, (Vector3)rotationAxis.GetRow(2));
+            Matrix4x4 detailRotationMatrix = Matrix4x4.TRS(Vector3.zero, detailRotationQ, Vector3.one).inverse;
+
+            Matrix4x4 world2SphereMatrix = this.sphere.transform.worldToLocalMatrix;
 
             if (this.sphere != null && visible)
             {
@@ -132,8 +141,8 @@ namespace Atmosphere
                 {
                     if (layer2D != null)
                     {
-                        layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition), 
-                                               this.sphere.transform.worldToLocalMatrix,
+                        layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition),
+                                               world2SphereMatrix,
                                                mainRotationMatrix,
                                                detailRotationMatrix);
                     }
@@ -155,14 +164,16 @@ namespace Atmosphere
                     if(FlightCamera.fetch != null)
                     {
                         layerVolume.UpdatePos(FlightCamera.fetch.mainCamera.transform.position,
-                                               Quaternion.Euler(-mainRotation),
+                                               world2SphereMatrix,
+                                               mainRotationQ,
                                                mainRotationMatrix,
                                                detailRotationMatrix);
                     }
                     else
                     {
                         layerVolume.UpdatePos(this.sphere.target.position,
-                                               Quaternion.Euler(-mainRotation),
+                                               world2SphereMatrix,
+                                               mainRotationQ,
                                                mainRotationMatrix,
                                                detailRotationMatrix);
                     }
@@ -170,14 +181,15 @@ namespace Atmosphere
             }
         }
 
-        internal void Apply(String body, CloudsMaterial cloudsMaterial, Clouds2D layer2D, CloudsVolume layerVolume, float altitude, Vector3 speed, Vector3 detailSpeed, Vector3 offset)
+        internal void Apply(String body, CloudsMaterial cloudsMaterial, Clouds2D layer2D, CloudsVolume layerVolume, float altitude, Vector3d speed, Vector3d detailSpeed, Vector3 offset, Matrix4x4 rotationAxis)
         {
             this.body = body;
             this.cloudsMaterial = cloudsMaterial;
             this.layer2D = layer2D;
             this.layerVolume = layerVolume;
             this.altitude = altitude;
-            this.offset = offset;
+            this.offset = -offset;
+            this.rotationAxis = rotationAxis;
 
             celestialBody = Tools.GetCelestialBody(body);
             scaledCelestialTransform = Tools.GetScaledTransform(body);
@@ -203,16 +215,16 @@ namespace Atmosphere
                 this.transform.localPosition = Vector3.zero;
                 this.transform.localRotation = Quaternion.identity;
                 this.transform.localScale = Vector3.one;
-                this.radius = (float)(altitude + celestialBody.Radius);
+                this.radius = (altitude + celestialBody.Radius);
                 
                 
-                float circumference = 2f * Mathf.PI * radius;
-                mainPeriod = (speed) / circumference;
-                detailPeriod = (detailSpeed) / circumference;
+                double circumference = 2f * Mathf.PI * radius;
+                mainPeriod = -(speed) / circumference;
+                detailPeriod = -(detailSpeed) / circumference;
                 
                 if (layer2D != null)
                 {
-                    this.layer2D.Apply(celestialBody, scaledCelestialTransform, cloudsMaterial, radius);
+                    this.layer2D.Apply(celestialBody, scaledCelestialTransform, cloudsMaterial, (float)radius);
                 }
                 if (!pqs.isActive || HighLogic.LoadedScene == GameScenes.TRACKSTATION)
                 {

@@ -235,7 +235,7 @@ namespace Atmosphere
             }
         }
 
-        internal void UpdateRotation(Quaternion rotation, Matrix4x4 World2Planet, Matrix4x4 mainRotationMatrix, Matrix4x4 detailRotationMatrix)
+        internal void UpdateRotation(QuaternionD rotation, Matrix4x4 World2Planet, Matrix4x4 mainRotationMatrix, Matrix4x4 detailRotationMatrix)
         {
             if (rotation != null)
             {
@@ -264,7 +264,7 @@ namespace Atmosphere
 
         private void SetRotations(Matrix4x4 World2Planet, Matrix4x4 mainRotation, Matrix4x4 detailRotation)
         {
-            Matrix4x4 rotation = mainRotation*(World2Planet * CloudMesh.transform.localToWorldMatrix);
+            Matrix4x4 rotation = (mainRotation*World2Planet) * CloudMesh.transform.localToWorldMatrix;
             CloudMaterial.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, rotation);
             CloudMaterial.SetMatrix(EVEManagerClass.DETAIL_ROTATION_PROPERTY, detailRotation);
 

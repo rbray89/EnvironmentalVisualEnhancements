@@ -77,7 +77,6 @@ namespace Atmosphere
             particleMaterial.MaxScale = size.y;
             particleMaterial.MaxTrans = maxTranslation;
             particleMaterial.NoiseScale = 30f / radius;
-
             ParticleMaterial = new Material(ParticleCloudShader);
             particleMaterial.ApplyMaterialProperties(ParticleMaterial);
             material.ApplyMaterialProperties(ParticleMaterial);
@@ -103,19 +102,21 @@ namespace Atmosphere
             }
         }
 
-        internal void UpdatePos(Vector3 WorldPos, Quaternion rotation,  Matrix4x4 mainRotationMatrix, Matrix4x4 detailRotationMatrix)
+        internal void UpdatePos(Vector3 WorldPos, Matrix4x4 World2Planet, QuaternionD rotation,  Matrix4x4 mainRotationMatrix, Matrix4x4 detailRotationMatrix)
         {
             if (HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
+
+
+                Matrix4x4 rotationMatrix = mainRotationMatrix* World2Planet;
+                ParticleMaterial.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, rotationMatrix);
+                ParticleMaterial.SetMatrix(EVEManagerClass.DETAIL_ROTATION_PROPERTY, detailRotationMatrix);
+
+                volumeHolder.transform.localRotation = rotation;
                 Vector3 intendedPoint = volumeHolder.transform.InverseTransformPoint(WorldPos);
                 intendedPoint.Normalize();
                 volumeManager.Update(intendedPoint);
 
-                volumeHolder.transform.localRotation = rotation;
-
-                Matrix4x4 rotationMatrix = mainRotationMatrix* volumeHolder.transform.parent.worldToLocalMatrix;
-                ParticleMaterial.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, rotationMatrix);
-                ParticleMaterial.SetMatrix(EVEManagerClass.DETAIL_ROTATION_PROPERTY, detailRotationMatrix);
 
                 double ut = Planetarium.GetUniversalTime();
                 double particleRotation = (ut * rotationSpeed);

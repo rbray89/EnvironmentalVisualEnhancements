@@ -96,7 +96,7 @@ SubShader {
 		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
 	   	   o.worldVert = vertexPos;
 	   	   o.worldNormal = normalize(vertexPos-origin);
-	   	   o.objMain = -mul(_MainRotation, v.vertex);
+	   	   o.objMain = mul(_MainRotation, v.vertex);
 	   	   o.objDetail = mul(_DetailRotation, o.objMain);
 	   	   o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
 	   	   #ifdef SOFT_DEPTH_ON

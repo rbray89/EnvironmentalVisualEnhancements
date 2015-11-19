@@ -93,7 +93,7 @@
 
 					float4 origin = mul(_Object2World, float4(0,0,0,1));
 
-					float4 planet_pos = -mul(_MainRotation, origin);
+					float4 planet_pos = mul(_MainRotation, origin);
 					float3 normalized = _NoiseScale*(planet_pos.xyz);
 					float3 hashVect =  .5*(float3(snoise(normalized), snoise(2*normalized), snoise(4* normalized))+1);
 
@@ -105,7 +105,7 @@
 
 					origin = mul(_Object2World, localOrigin);
 
-					planet_pos = -mul(_MainRotation, origin);
+					planet_pos = mul(_MainRotation, origin);
 					float3 detail_pos = mul(_DetailRotation, planet_pos).xyz;
 					//o.color = v.color;
 					o.color = GetSphereMapNoLOD( _MainTex, planet_pos.xyz);

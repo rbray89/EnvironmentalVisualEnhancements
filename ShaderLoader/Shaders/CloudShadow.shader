@@ -85,7 +85,7 @@
 				float sphereDist = lerp(lerp(tlc - td, tc - tlc, step(0.0, tc)),
 				lerp(tlc - td, tc + tlc, step(0.0, tc)), step(o.originDist, sphereRadius));
 				float4 planetPos = vertexPos + (-_SunDir*sphereDist);
-				o.mainPos = -mul(_MainRotation, planetPos);
+				o.mainPos = mul(_MainRotation, planetPos);
 				o.detailPos = mul(_DetailRotation, o.mainPos);
 				return o;
 			}
