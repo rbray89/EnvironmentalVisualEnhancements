@@ -29,6 +29,7 @@ namespace Atmosphere
         Vector3 offset;
         Matrix4x4 rotationAxis;
 
+        bool killBodyRotation;
         public new bool enabled
         {
             get
@@ -120,17 +121,22 @@ namespace Atmosphere
             mainRotation *= 360f;
             mainRotation += offset;
 
-           // mainRotation.y = celestialBody.rotationAngle;
-            QuaternionD mainRotationQ = //QuaternionD.Euler(mainRotation);
+
+            QuaternionD mainRotationQ = Quaternion.identity;
+            if (killBodyRotation)
+            {
+                mainRotationQ = QuaternionD.AngleAxis(celestialBody.rotationAngle, Vector3.up);
+            }
+            mainRotationQ*= 
                 QuaternionD.AngleAxis(mainRotation.x, (Vector3)rotationAxis.GetRow(0)) *
                 QuaternionD.AngleAxis(mainRotation.y, (Vector3)rotationAxis.GetRow(1)) *
                 QuaternionD.AngleAxis(mainRotation.z, (Vector3)rotationAxis.GetRow(2));
             Matrix4x4 mainRotationMatrix = Matrix4x4.TRS(Vector3.zero, mainRotationQ, Vector3.one).inverse;
 
             QuaternionD detailRotationQ = //Quaternion.Euler(detailRotation);
-                QuaternionD.AngleAxis(detailRotation.x, (Vector3)rotationAxis.GetRow(0)) *
-                QuaternionD.AngleAxis(detailRotation.y, (Vector3)rotationAxis.GetRow(1)) *
-                QuaternionD.AngleAxis(detailRotation.z, (Vector3)rotationAxis.GetRow(2));
+                QuaternionD.AngleAxis(detailRotation.x, Vector3.right) *
+                QuaternionD.AngleAxis(detailRotation.y, Vector3.up) *
+                QuaternionD.AngleAxis(detailRotation.z, Vector3.forward);
             Matrix4x4 detailRotationMatrix = Matrix4x4.TRS(Vector3.zero, detailRotationQ, Vector3.one).inverse;
 
             Matrix4x4 world2SphereMatrix = this.sphere.transform.worldToLocalMatrix;
@@ -181,7 +187,7 @@ namespace Atmosphere
             }
         }
 
-        internal void Apply(String body, CloudsMaterial cloudsMaterial, Clouds2D layer2D, CloudsVolume layerVolume, float altitude, Vector3d speed, Vector3d detailSpeed, Vector3 offset, Matrix4x4 rotationAxis)
+        internal void Apply(String body, CloudsMaterial cloudsMaterial, Clouds2D layer2D, CloudsVolume layerVolume, float altitude, Vector3d speed, Vector3d detailSpeed, Vector3 offset, Matrix4x4 rotationAxis, bool killBodyRotation)
         {
             this.body = body;
             this.cloudsMaterial = cloudsMaterial;
@@ -190,6 +196,7 @@ namespace Atmosphere
             this.altitude = altitude;
             this.offset = -offset;
             this.rotationAxis = rotationAxis;
+            this.killBodyRotation = killBodyRotation;
 
             celestialBody = Tools.GetCelestialBody(body);
             scaledCelestialTransform = Tools.GetScaledTransform(body);

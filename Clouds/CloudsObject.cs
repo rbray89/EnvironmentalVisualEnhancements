@@ -41,9 +41,13 @@ namespace Atmosphere
         
         [Persistent, Tooltip("Altitude above sea level for clouds.")]
         float altitude = 1000f;
-        [Persistent, Tooltip("Speed of rotation (m/s) applied to main texture of each axis of rotation.\n First value is applied to axis0, etc.")]
+        [Persistent, Tooltip("Enabling this will stop the cloud from moving with the celestial body.")]
+        bool killBodyRotation = false;
+        [Persistent, Tooltip("Speed of rotation (m/s) applied to main texture of"+
+                             "\n each axis of rotation." +
+                             "\n First value is applied to axis0, etc.")]
         Vector3 speed = new Vector3(0, 30, 0);
-        [Persistent, Tooltip("Speed of detail rotation (m/s) applied to each axis of rotation.")]
+        [Persistent, Tooltip("Speed of detail rotation (m/s) applied to XYZ axis of rotation.")]
         Vector3 detailSpeed = new Vector3(0,5,0);
         [Persistent, Tooltip("Offset of texturing in degrees around Axis below")]
         Vector3 offset = new Vector3(0, 0, 0);
@@ -85,7 +89,7 @@ namespace Atmosphere
             rotationAxis.SetRow(0, rotationAxis0);
             rotationAxis.SetRow(1, rotationAxis1);
             rotationAxis.SetRow(2, rotationAxis2);
-            cloudsPQS.Apply(body, settings, layer2D, layerVolume, altitude, speed, detailSpeed, offset, rotationAxis);
+            cloudsPQS.Apply(body, settings, layer2D, layerVolume, altitude, speed, detailSpeed, offset, rotationAxis, killBodyRotation);
         }
 
         public void Remove()
