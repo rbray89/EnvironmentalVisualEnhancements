@@ -53,9 +53,6 @@ namespace Utils
             this.sphere = null;
             this.enabled = false;
             this.transform.parent = null;
-            this.requirements = PQS.ModiferRequirements.Default;
-            this.modEnabled = true;
-            this.order += 10;
         }
 
         public override void OnQuadDestroy(PQ quad)

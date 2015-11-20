@@ -28,14 +28,16 @@ namespace EVEManager
         protected static List<T> ObjectList = new List<T>();
         protected static UrlDir.UrlConfig[] configs;
 
-        protected static bool spaceCenterReload = true;
+        protected static bool spaceCenterReload = false;
+        protected static bool hasLoaded = false;
         protected virtual bool sceneConfigLoad { get {
-            bool load = HighLogic.LoadedScene == GameScenes.MAINMENU;
-            if (spaceCenterReload && HighLogic.LoadedScene == SceneLoad)
+            bool load = !hasLoaded && HighLogic.LoadedScene == SceneLoad;
+            if (spaceCenterReload && HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
                 spaceCenterReload = false;
                 load = true;
             }
+                hasLoaded = true;
             return load; } }
         protected ConfigNode ConfigNode { get { return configNode; } }
         protected ConfigNode configNode;
@@ -54,7 +56,7 @@ namespace EVEManager
         internal void Awake()
         {
             KSPLog.print(configName + " " + SceneLoad);
-            if (sceneLoad)
+            if (guiLoad)
             {
                 StartCoroutine(SetupDelay());
             }
@@ -70,8 +72,8 @@ namespace EVEManager
         {
             if ((ObjectType.STATIC & objectType) != ObjectType.STATIC)
             {
-                Managers.Add(this);
                 Managers.RemoveAll(item => item == null);
+                Managers.Add(this);
                 LoadConfig();
             }
             else
@@ -98,7 +100,7 @@ namespace EVEManager
 
         public virtual void LoadConfig()
         {
-            if (HighLogic.LoadedScene == GameScenes.MAINMENU)
+            if (sceneConfigLoad)
             {
                 Log("Loading...");
                 configs = GameDatabase.Instance.GetConfigs(configName);
@@ -107,9 +109,6 @@ namespace EVEManager
                 {
                     ConfigFiles.Add(new ConfigWrapper(config));
                 }
-            }
-            if (sceneConfigLoad)
-            {
                 Apply();
             }
         }

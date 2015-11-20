@@ -101,7 +101,7 @@ namespace Utils
             Scale = scale;
             Cache();
             ApplyCache(material, scale);
-            Log();
+            //Log();
         }
 
         private void Cache()
