@@ -16,9 +16,9 @@ namespace Atmosphere
         [Persistent, Tooltip("Color to be applied to clouds.")]
         Color _Color = 256*Color.white;
         [Persistent, Tooltip("Main texture used with clouds.")]
-        Texture2D _MainTex;
+        TextureWrapper _MainTex;
         [Persistent]
-        Texture2D _DetailTex;
+        TextureWrapper _DetailTex;
         [Persistent]
         float _DetailScale = 100f;
         [Persistent, InverseScaled]

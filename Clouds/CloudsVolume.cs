@@ -16,11 +16,11 @@ namespace Atmosphere
 #pragma warning disable 0169
 #pragma warning disable 0414
         [Persistent, Clamped]
-        Texture2D _TopTex;
+        TextureWrapper _TopTex;
         [Persistent, Clamped]
-        Texture2D _LeftTex;
+        TextureWrapper _LeftTex;
 	    [Persistent, Clamped]
-        Texture2D _FrontTex;
+        TextureWrapper _FrontTex;
         [Persistent]
         float _InvFade = .008f;
 

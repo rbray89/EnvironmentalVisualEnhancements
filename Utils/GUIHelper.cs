@@ -14,39 +14,70 @@ namespace Utils
         protected static int selectedBodyIndex = 0;
         protected static CelestialBody currentBody;
 
-        public static float GetNodeHeightCount(ConfigNode node)
+        public static float GetNodeHeightCount(ConfigNode node, Type T)
         {
             float fieldCount = 1;
+            var objfields = T.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
+                    f => Attribute.IsDefined(f, typeof(Persistent)));
+            
 
-            fieldCount += node.CountValues;
-            foreach (ConfigNode n in node.nodes)
+            foreach (FieldInfo field in objfields)
             {
-                fieldCount += GetNodeHeightCount(n) + .5f;
+                bool isNode = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
+                fi => Attribute.IsDefined(fi, typeof(Persistent))).Count() > 0 ? true : false;
+                if (isNode)
+                {
+                    if (node.HasNode(field.Name))
+                    {
+                        fieldCount += GetNodeHeightCount(node.GetNode(field.Name), field.FieldType);
+                    }
+                }
+                fieldCount += 1;
             }
 
             return fieldCount;
         }
-
-        public static Rect GetSplitRect(Rect placementBase, ref Rect placement, ConfigNode node = null)
+        
+        public static Rect GetSplitRect(Rect placementBase, ref Rect placement, ConfigNode node, Type T)
         {
             if (node != null)
             {
-                placement.height = GetNodeHeightCount(node);
+                placement.height = GetNodeHeightCount(node, T);
             }
             float width = placementBase.width;
             float height = 30;
-            //            if (((placement.y + placement.height) * height) + placementBase.y + 25 > placementBase.height)
-            //            {
-            //                placement.x++;
-            //                placement.y = 0;
-            //            }
+            float elemHeight = 25;
+
             float x = (placement.x * width) + placementBase.x;
             float y = (placement.y * height) + placementBase.y;
             width += placement.width;
-            height = height * placement.height;
-            if (node == null)
+            if (placement.height > 1)
             {
-                height -= 5;
+                height = height * placement.height;
+            }
+            else
+            {
+                height = elemHeight;
+            }
+            return new Rect(x, y, width - 10, height);
+        }
+
+        public static Rect GetSplitRect(Rect placementBase, ref Rect placement)
+        {
+            float width = placementBase.width;
+            float height = 30;
+            float elemHeight = 25;
+
+            float x = (placement.x * width) + placementBase.x;
+            float y = (placement.y * height) + placementBase.y;
+            width += placement.width;
+            if (placement.height > 1)
+            {
+                height = height * placement.height;
+            }
+            else
+            {
+                height = elemHeight;
             }
             return new Rect(x, y, width - 10, height);
         }
@@ -145,14 +176,14 @@ namespace Utils
         {
             
             String value = config.GetValue(field.Name);
+            String defaultValue = ConfigHelper.CreateConfigFromObject(obj, new ConfigNode("TMP")).GetValue(field.Name);
             if (value == null)
             {
-                value = ConfigHelper.CreateConfigFromObject(obj, new ConfigNode("TMP")).GetValue(field.Name);
-                config.AddValue(field.Name, value);
-            }
-            if (value == null)
-            {
-                value = "";
+                if (defaultValue == null)
+                {
+                    defaultValue = "";
+                }
+                value = defaultValue;
             }
 
             Rect labelRect = GUIHelper.GetSplitRect(placementBase, ref placement);
@@ -190,9 +221,18 @@ namespace Utils
                     fieldStyle.focused.textColor = Color.red;
                     fieldStyle.hover.textColor = Color.red;
                 }
-                value = GUI.TextField(fieldRect, value, fieldStyle);
-                config.SetValue(field.Name, value);
-
+                string newValue = GUI.TextField(fieldRect, value, fieldStyle);
+                if (value != defaultValue || value != newValue)
+                {
+                    if (config.HasValue(field.Name))
+                    {
+                        config.SetValue(field.Name, newValue);
+                    }
+                    else
+                    {
+                        config.AddValue(field.Name, newValue);
+                    }
+                }
             }
 
             

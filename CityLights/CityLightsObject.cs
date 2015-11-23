@@ -16,13 +16,13 @@ namespace CityLights
 #pragma warning disable 0169
 #pragma warning disable 0414
         [Persistent]
-        Texture2D _CityOverlayTex;
+        TextureWrapper _CityOverlayTex;
         [Persistent]
         float _CityOverlayDetailScale = 80f;
         [Persistent]
-        Texture2D _CityDarkOverlayDetailTex;
+        TextureWrapper _CityDarkOverlayDetailTex;
         [Persistent]
-        Texture2D _CityLightOverlayDetailTex;
+        TextureWrapper _CityLightOverlayDetailTex;
     }
 
     

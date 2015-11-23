@@ -7,6 +7,28 @@ using UnityEngine;
 
 namespace Utils
 {
+    [FlagsAttribute]
+    public enum TextureTypeEnum
+    {
+        Normal = 0x0,
+        AlphaMap = 0x1,
+        Clamped = 0x2
+    }
+
+    public class TextureType : System.Attribute
+    {
+        public TextureTypeEnum Type;
+        public TextureType(TextureTypeEnum type)
+        {
+            Type = type;
+        }
+    }
+
+    public class UserDefinedType : System.Attribute
+    { }
+
+    
+
     public class MaterialManager
     {
 
@@ -14,13 +36,13 @@ namespace Utils
         {
         }
 
+        
+
+
         public class InverseScaled : System.Attribute
         {
         }
 
-        public class Clamped : System.Attribute
-        {
-        }
 
         public class ScaledValue
         {
@@ -101,7 +123,7 @@ namespace Utils
             Scale = scale;
             Cache();
             ApplyCache(material, scale);
-            //Log();
+            Log();
         }
 
         private void Cache()
@@ -113,29 +135,19 @@ namespace Utils
                 {
                     String name = field.Name;
                     //texture
-                    if (field.FieldType == typeof(String))
+                    if (field.FieldType == typeof(TextureWrapper))
                     {
-                        String textureName = (String)field.GetValue(this);
-                        bool isNormal = textureName.Contains("Bump") | textureName.Contains("Bmp") | textureName.Contains("Normal") | textureName.Contains("Nrm");
-                        bool isClamped = Attribute.IsDefined(field, typeof(Clamped));
-                        Texture2D texture = GameDatabase.Instance.GetTexture(textureName, isNormal);
-                        if (isClamped)
+                        TextureWrapper texture = (TextureWrapper)field.GetValue(this);
+                        if (texture != null)
                         {
-                            texture.wrapMode = TextureWrapMode.Clamp;
+                            bool isNormal = Attribute.IsDefined(field, typeof(BumpMap));
+                            bool isClamped = Attribute.IsDefined(field, typeof(Clamped));
+                            cache.Add(name, texture.GetTexture(isNormal, isClamped));
                         }
-
-                        cache.Add(name, texture);
-                    }
-                    else if (field.FieldType == typeof(Texture2D))
-                    {
-                        bool isClamped = Attribute.IsDefined(field, typeof(Clamped));
-                        Texture2D texture = (Texture2D)field.GetValue(this);
-                        if (texture != null && isClamped)
+                        else
                         {
-                            texture.wrapMode = TextureWrapMode.Clamp;
+                            cache.Add(name, null);
                         }
-
-                        cache.Add(name, texture);
                     }
                     else
                     {

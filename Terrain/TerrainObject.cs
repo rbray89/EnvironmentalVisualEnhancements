@@ -18,13 +18,13 @@ namespace Terrain
         [Persistent] 
         Color _Color = 256 * Color.white;
         [Persistent]
-        Texture2D _MainTex;
+        TextureWrapper _MainTex;
 		[Persistent]
-        Texture2D _midTex;
+        TextureWrapper _midTex;
 		[Persistent]
-        Texture2D _steepTex;
+        TextureWrapper _steepTex;
         [Persistent]
-        Texture2D _BumpMap;
+        TextureWrapper _BumpMap;
         [Persistent]
         float _DetailScale = 4000f;
         [Persistent]
@@ -50,7 +50,7 @@ namespace Terrain
         [Persistent]
         Color _SurfaceColor = 256 * Color.white;
         [Persistent]
-        Texture2D _DetailTex;
+        TextureWrapper _DetailTex;
         [Persistent]
         float _DetailScale = 4000f;
         [Persistent]

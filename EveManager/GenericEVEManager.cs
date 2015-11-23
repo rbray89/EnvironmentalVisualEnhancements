@@ -185,85 +185,79 @@ namespace EVEManager
                 else
                 {
                     bool isOptional = Attribute.IsDefined(field, typeof(Optional));
-                    bool show = true;
+                    
+                    ConfigNode node = configNode.GetNode(field.Name);
+                    GUIStyle gsRight = new GUIStyle(GUI.skin.label);
+                    gsRight.alignment = TextAnchor.MiddleCenter;
+
+                    placement.y += .5f;
+                    Rect boxRect = GUIHelper.GetSplitRect(placementBase, ref placement, node, field.FieldType);
+                    GUI.Box(boxRect, "");
+                    placement.height = 1;
+
+                    Rect boxPlacementBase = new Rect(placementBase);
+                    boxPlacementBase.x += 10;
+                    Rect boxPlacement = new Rect(placement);
+                    boxPlacement.width -= 20;
+
+                    Rect toggleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
+                    Rect titleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
+                    GUIHelper.SplitRect(ref toggleRect, ref titleRect, (1f / 16));
+
+                    String tooltipText = "";
+                    if (Attribute.IsDefined(field, typeof(TooltipAttribute)))
+                    {
+                        TooltipAttribute tt = (TooltipAttribute)Attribute.GetCustomAttribute(field, typeof(TooltipAttribute));
+                        tooltipText = tt.tooltip;
+                    }
+                    GUIStyle style = new GUIStyle(GUI.skin.label);
+                    GUIContent gc = new GUIContent(field.Name, tooltipText);
+
+                    Vector2 labelSize = style.CalcSize(gc);
+                    titleRect.width = Mathf.Min(labelSize.x, titleRect.width);
+                    GUI.Label(titleRect, gc);
+
+                    bool removeable = node == null ? false : true;
                     if (isOptional)
                     {
-                        Optional op = (Optional)Attribute.GetCustomAttribute(field, typeof(Optional));
-                        show = op.isActive(configNode);
+                        if (removeable != GUI.Toggle(toggleRect, removeable, ""))
+                        {
+                            if (removeable)
+                            {
+                                configNode.RemoveNode(field.Name);
+                                node = null;
+                            }
+                            else
+                            {
+                                node = configNode.AddNode(new ConfigNode(field.Name));
+                            }
+                        }
                     }
-                    if (show)
+                    else if (node == null)
                     {
-                        ConfigNode node = configNode.GetNode(field.Name);
-                        GUIStyle gsRight = new GUIStyle(GUI.skin.label);
-                        gsRight.alignment = TextAnchor.MiddleCenter;
 
-                        Rect boxRect = GUIHelper.GetSplitRect(placementBase, ref placement, node);
-                        GUI.Box(boxRect, "");
-                        placement.height = 1;
-
-                        Rect boxPlacementBase = new Rect(placementBase);
-                        boxPlacementBase.x += 10;
-                        Rect boxPlacement = new Rect(placement);
-                        boxPlacement.width -= 20;
-
-                        Rect toggleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
-                        Rect titleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
-                        GUIHelper.SplitRect(ref toggleRect, ref titleRect, (1f / 16));
-
-                        String tooltipText = "";
-                        if (Attribute.IsDefined(field, typeof(TooltipAttribute)))
-                        {
-                            TooltipAttribute tt = (TooltipAttribute)Attribute.GetCustomAttribute(field, typeof(TooltipAttribute));
-                            tooltipText = tt.tooltip;
-                        }
-                        GUIStyle style = new GUIStyle(GUI.skin.label);
-                        GUIContent gc = new GUIContent(field.Name, tooltipText);
-
-                        Vector2 labelSize = style.CalcSize(gc);
-                        titleRect.width = Mathf.Min(labelSize.x, titleRect.width);
-                        GUI.Label(titleRect, gc);
-
-                        bool removeable = node == null ? false : true;
-                        if (isOptional)
-                        {
-                            if (removeable != GUI.Toggle(toggleRect, removeable, ""))
-                            {
-                                if (removeable)
-                                {
-                                    configNode.RemoveNode(field.Name);
-                                    node = null;
-                                }
-                                else
-                                {
-                                    node = configNode.AddNode(new ConfigNode(field.Name));
-                                }
-                            }
-                        }
-                        else if (node == null)
-                        {
-
-                            node = configNode.AddNode(new ConfigNode(field.Name));
-                        }
-                        float height = boxPlacement.y + 1;
-                        if (node != null)
-                        {
-                            height = boxPlacement.y + GUIHelper.GetNodeHeightCount(node) + .25f;
-                            boxPlacement.y++;
-
-                            object subObj = field.GetValue(obj);
-                            if (subObj == null)
-                            {
-                                ConstructorInfo ctor = field.FieldType.GetConstructor(System.Type.EmptyTypes);
-                                subObj = ctor.Invoke(null);
-                            }
-
-                            HandleGUI(subObj, node, boxPlacementBase, ref boxPlacement);
-
-                        }
-
-                        placement.y = height;
-                        placement.x = boxPlacement.x;
+                        node = configNode.AddNode(new ConfigNode(field.Name));
                     }
+                    float height = boxPlacement.y + 1;
+                    if (node != null)
+                    {
+                        height = boxPlacement.y + GUIHelper.GetNodeHeightCount(node, field.FieldType);
+                        boxPlacement.y++;
+
+                        object subObj = field.GetValue(obj);
+                        if (subObj == null)
+                        {
+                            ConstructorInfo ctor = field.FieldType.GetConstructor(System.Type.EmptyTypes);
+                            subObj = ctor.Invoke(null);
+                        }
+
+                        HandleGUI(subObj, node, boxPlacementBase, ref boxPlacement);
+
+                    }
+
+                    placement.y = height;
+                    placement.x = boxPlacement.x;
+                    
                 }
             }
         }
@@ -279,11 +273,11 @@ namespace EVEManager
             Rect selectBoxItemsRect = new Rect();
             if (configNode != null)
             {
-                selectBoxItemsRect = GUIHelper.GetSplitRect(placementBase, ref placement, configNode);
+                selectBoxItemsRect = GUIHelper.GetSplitRect(placementBase, ref placement, configNode, this.GetType());
             }
             if (objNode != null)
             {
-                selectBoxItemsRect = GUIHelper.GetSplitRect(placementBase, ref placement, objNode);
+                selectBoxItemsRect = GUIHelper.GetSplitRect(placementBase, ref placement, objNode, typeof(T));
             }
 
             

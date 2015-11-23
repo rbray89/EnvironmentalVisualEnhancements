@@ -7,45 +7,15 @@ using UnityEngine;
 
 namespace Utils
 {
-
+    
     public class Optional : System.Attribute
     {
-        public String Field;
-        public object Value;
-        bool nullCheck = false;
-        public Optional()
-        {
-            Field = null;
-        }
-        public Optional(String field)
-        {
-            Field = field;
-            nullCheck = true;
-        }
-        public Optional(String field, object value)
-        {
-            Field = field;
-            Value = value;
-        }
+    }
 
-        public bool isActive(ConfigNode node)
-        {
-            if (nullCheck)
-            {
-                return node.HasNode(Field);
-            }
-            else
-            {
-                if (Field != null)
-                {
-                    return node.GetValue(Field) == Value.ToString();
-                }
-                else
-                {
-                    return true;
-                }
-            }
-        }
+
+    public class NodeOptional : System.Attribute
+    {
+       
     }
 
     public interface INamed
@@ -71,8 +41,8 @@ namespace Utils
         public static bool CanParse(FieldInfo field, String value)
         {
             object test = null;
-            Parse(field, value, ref test);
-            return test != null;
+            
+            return Parse(field, value, ref test);
         }
 
         public static ConfigNode CreateConfigFromObject(object obj, ConfigNode node)
@@ -128,14 +98,11 @@ namespace Utils
         private static bool Parse(FieldInfo field, string value, ref object obj)
         {
             obj = null;
-            if (field.FieldType == typeof(Texture2D))
+            if (field.FieldType == typeof(TextureWrapper))
             {
-                if (GameDatabase.Instance.ExistsTexture(value))
-                {
-                    bool isNormal = value.Contains("Bump") | value.Contains("Bmp") | value.Contains("Normal") | value.Contains("Nrm");
-                    obj = GameDatabase.Instance.GetTexture(value, isNormal);
-                }
-                return true;
+                TextureWrapper tex = new TextureWrapper(value);
+                obj = tex;
+                return tex.exists();
             }
             else if (field.FieldType == typeof(float))
             {
@@ -144,7 +111,7 @@ namespace Utils
                     obj = float.Parse(value);
                     return true;
                 }
-                catch { return false; }
+                catch { }
             }
             else if (field.FieldType == typeof(double))
             {
@@ -255,11 +222,11 @@ namespace Utils
 
         private static bool Parse(object obj, FieldInfo field, ConfigNode node)
         {
-            bool hasValue = node.HasValue(field.Name);
-            if (hasValue)
+            if (node.HasValue(field.Name))
             {
                 object objValue = null;
-                if(Parse(field, node.GetValue(field.Name), ref objValue))
+                Parse(field, node.GetValue(field.Name), ref objValue);
+                if (objValue != null)
                 {
                     field.SetValue(obj, objValue);
                 }
@@ -268,7 +235,7 @@ namespace Utils
                     return false;
                 }
             }
-            
+
             return true;
         }
     }
