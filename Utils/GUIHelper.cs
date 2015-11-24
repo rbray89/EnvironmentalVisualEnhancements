@@ -10,7 +10,9 @@ namespace Utils
 
     public class GUIHelper
     {
-
+        protected static int elementHeight = 24;
+        protected static int elementBuffer = 8;
+        public static int totalElementHeight { get { return elementBuffer + elementHeight; } }
         protected static int selectedBodyIndex = 0;
         protected static CelestialBody currentBody;
 
@@ -25,14 +27,24 @@ namespace Utils
             {
                 bool isNode = ConfigHelper.IsNode(field, node);
 
-                if (isNode)
+                if (ConfigHelper.ConditionsMet(field, node))
                 {
-                    if (node.HasNode(field.Name))
+                    if (isNode)
                     {
-                        fieldCount += GetNodeHeightCount(node.GetNode(field.Name), field.FieldType);
+                        if (node.HasNode(field.Name))
+                        {
+                            fieldCount += GetNodeHeightCount(node.GetNode(field.Name), field.FieldType);
+                        }
+                        else
+                        {
+                            fieldCount += 1;
+                        }
+                    }
+                    else if(field.Name != "value")
+                    {
+                        fieldCount += 1;
                     }
                 }
-                fieldCount += 1;
             }
 
             return fieldCount;
@@ -45,19 +57,18 @@ namespace Utils
                 placement.height = GetNodeHeightCount(node, T);
             }
             float width = placementBase.width;
-            float height = 30;
-            float elemHeight = 25;
+            float height;
 
             float x = (placement.x * width) + placementBase.x;
-            float y = (placement.y * height) + placementBase.y;
+            float y = (placement.y * totalElementHeight) + placementBase.y;
             width += placement.width;
             if (placement.height > 1)
             {
-                height = height * placement.height;
+                height = (totalElementHeight * placement.height)-(elementBuffer/2);
             }
             else
             {
-                height = elemHeight;
+                height = elementHeight;
             }
             return new Rect(x, y, width - 10, height);
         }
@@ -65,19 +76,18 @@ namespace Utils
         public static Rect GetSplitRect(Rect placementBase, ref Rect placement)
         {
             float width = placementBase.width;
-            float height = 30;
-            float elemHeight = 25;
+            float height;
 
             float x = (placement.x * width) + placementBase.x;
-            float y = (placement.y * height) + placementBase.y;
+            float y = (placement.y * totalElementHeight) + placementBase.y;
             width += placement.width;
             if (placement.height > 1)
             {
-                height = height * placement.height;
+                height = totalElementHeight * placement.height - (elementBuffer / 2);
             }
             else
             {
-                height = elemHeight;
+                height = elementHeight;
             }
             return new Rect(x, y, width - 10, height);
         }
@@ -222,7 +232,7 @@ namespace Utils
                     fieldStyle.hover.textColor = Color.red;
                 }
                 string newValue = GUI.TextField(fieldRect, value, fieldStyle);
-                if (value != defaultValue || value != newValue)
+                if (newValue != defaultValue && value != newValue)
                 {
                     if (config.HasValue(field.Name))
                     {
@@ -232,6 +242,10 @@ namespace Utils
                     {
                         config.AddValue(field.Name, newValue);
                     }
+                }
+                else if(newValue == defaultValue && config.HasValue(field.Name))
+                {
+                    config.RemoveValue(field.Name);
                 }
             }
 
@@ -252,6 +266,7 @@ namespace Utils
             placement.height = 1;
             Rect optButtonRect = GetSplitRect(placementBase, ref placement);
             SplitRect(ref selectBoxRect, ref optButtonRect, (15f / 16));
+
 
             GUI.Box(selectBoxOutlineRect, "");
             selectBoxRect.x += 10;
@@ -411,7 +426,6 @@ namespace Utils
             return currentObj;
         }
 
-
         public static void HandleGUI(object obj, ConfigNode configNode, Rect placementBase, ref Rect placement)
         {
 
@@ -422,17 +436,8 @@ namespace Utils
                 bool isNode = ConfigHelper.IsNode(field, configNode);
                 bool isNodeOptional = Attribute.IsDefined(field, typeof(NodeOptional));
 
-                if (!isNode)
-                {
-                    if (field.Name != "body")
-                    {
 
-                        GUIHelper.DrawField(placementBase, ref placement, obj, field, configNode);
-
-                        placement.y++;
-                    }
-                }
-                else
+                if(isNode || isNodeOptional)
                 {
                     bool isOptional = Attribute.IsDefined(field, typeof(Optional));
 
@@ -440,7 +445,6 @@ namespace Utils
                     GUIStyle gsRight = new GUIStyle(GUI.skin.label);
                     gsRight.alignment = TextAnchor.MiddleCenter;
 
-                    placement.y += .5f;
                     Rect boxRect = GUIHelper.GetSplitRect(placementBase, ref placement, node, field.FieldType);
                     GUI.Box(boxRect, "");
                     placement.height = 1;
@@ -452,6 +456,11 @@ namespace Utils
 
                     Rect toggleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
                     Rect titleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
+                    Rect fieldRect = GUIHelper.GetSplitRect(placementBase, ref placement);
+                    if (isNodeOptional)
+                    {
+                        GUIHelper.SplitRect(ref titleRect, ref fieldRect, (1f / 2));
+                    }
                     GUIHelper.SplitRect(ref toggleRect, ref titleRect, (1f / 16));
 
                     String tooltipText = "";
@@ -468,9 +477,44 @@ namespace Utils
                     GUI.Label(titleRect, gc);
 
                     bool removeable = node == null ? false : true;
-                    if (isOptional)
+                    if (isOptional || isNodeOptional)
                     {
-                        if (removeable != GUI.Toggle(toggleRect, removeable, ""))
+                        String value = null;
+                        String defaultValue = ConfigHelper.CreateConfigFromObject(obj, new ConfigNode("TMP")).GetValue(field.Name);
+                        String newValue = "";
+                        if (isNodeOptional)
+                        {
+                            if (configNode.HasValue(field.Name))
+                            {
+                                value = configNode.GetValue(field.Name);
+                            }
+                            else if (node != null && node.HasValue("value"))
+                            {
+                                value = node.GetValue("value");
+                            }
+                            
+                            if (value == null)
+                            {
+                                if (defaultValue == null)
+                                {
+                                    defaultValue = "";
+                                }
+                                value = defaultValue;
+                            }
+
+                            GUIStyle fieldStyle = new GUIStyle(GUI.skin.textField);
+                            if (value != "" && !ConfigHelper.CanParse(field, value))
+                            {
+                                fieldStyle.normal.textColor = Color.red;
+                                fieldStyle.active.textColor = Color.red;
+                                fieldStyle.focused.textColor = Color.red;
+                                fieldStyle.hover.textColor = Color.red;
+                            }
+                            newValue = GUI.TextField(fieldRect, value, fieldStyle);
+
+                        }
+                        bool toggle = removeable != GUI.Toggle(toggleRect, removeable, "");
+                        if (toggle)
                         {
                             if (removeable)
                             {
@@ -482,10 +526,59 @@ namespace Utils
                                 node = configNode.AddNode(new ConfigNode(field.Name));
                             }
                         }
+
+                        if (isNodeOptional)
+                        {
+                            if ((newValue != defaultValue && value != newValue) || toggle)
+                            {
+                                if (newValue != defaultValue)
+                                {
+                                    if (node != null)
+                                    {
+
+                                        if (node.HasValue("value"))
+                                        {
+                                            node.SetValue("value", newValue);
+                                        }
+                                        else
+                                        {
+                                            node.AddValue("value", newValue);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (configNode.HasValue(field.Name))
+                                        {
+                                            configNode.SetValue(field.Name, newValue);
+                                        }
+                                        else
+                                        {
+                                            configNode.AddValue(field.Name, newValue);
+                                        }
+                                    }
+                                }
+                                else if (newValue == defaultValue)
+                                {
+                                    if (node != null)
+                                    {
+                                        if (node.HasValue("value"))
+                                        {
+                                            node.RemoveValue("value");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (configNode.HasValue(field.Name))
+                                        {
+                                            configNode.RemoveValue(field.Name);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                     else if (node == null)
                     {
-
                         node = configNode.AddNode(new ConfigNode(field.Name));
                     }
                     float height = boxPlacement.y + 1;
@@ -509,7 +602,23 @@ namespace Utils
                     placement.x = boxPlacement.x;
 
                 }
+                else
+                {
+                    if (ConfigHelper.ConditionsMet(field, configNode))
+                    {
+                        if (field.Name != "body" && field.Name != "value")
+                        {
+                            GUIHelper.DrawField(placementBase, ref placement, obj, field, configNode);
+                            placement.y++;
+                        }
+                    }
+                    else if(configNode.HasValue(field.Name))
+                    {
+                        configNode.RemoveValue(field.Name);
+                    }
+                }
             }
+            
         }
 
     }

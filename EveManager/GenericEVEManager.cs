@@ -166,8 +166,8 @@ namespace EVEManager
         private void HandleConfigGUI(ConfigNode objNode, Rect placementBase, ref Rect placement)
         {
 
-            float height = 30;
-            placement.height = ((placementBase.height - (placementBase.y)) / height) - placement.y;
+
+            placement.height = ((placementBase.height - (placementBase.y)) / GUIHelper.totalElementHeight) - placement.y;
             Rect selectBoxOutlineRect = GUIHelper.GetSplitRect(placementBase, ref placement);
             Rect selectBoxRect = selectBoxOutlineRect;
             placement.height = 0;

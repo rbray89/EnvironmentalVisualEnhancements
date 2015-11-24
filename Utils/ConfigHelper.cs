@@ -27,6 +27,11 @@ namespace Utils
         {
             this.method = method;
         }
+        public bool CheckConditional(Type T, ConfigNode config)
+        {
+            MethodInfo methodInfo = T.GetMethod(method);
+            return (bool)methodInfo.Invoke(null, new object[] { config });
+        }
     }
 
     public interface INamed
@@ -49,32 +54,43 @@ namespace Utils
 
     public static class ConfigHelper
     {
+
+        public static bool ConditionsMet(FieldInfo field, ConfigNode node)
+        {
+            bool isConditional = Attribute.IsDefined(field, typeof(Conditional));
+            Conditional conditional = (Conditional)Attribute.GetCustomAttribute(field, typeof(Conditional));
+            try
+            {
+                return (!isConditional || (isConditional && conditional.CheckConditional(field.DeclaringType, node)));
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         public static bool IsNode(FieldInfo field, ConfigNode node)
         {
-
-            object[] attributesF = field.GetCustomAttributes(false);
-            object[] attributesT = field.FieldType.GetCustomAttributes(false);
-
-            
-            bool isPossibleNode = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
+            bool isNode = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
                fi => Attribute.IsDefined(fi, typeof(Persistent))).Count() > 0 ? true : false;
-            bool isNode = isPossibleNode;
-            bool isValue = false;
-            if (attributesT.Length > 0)
+             
+            //Field Checks first, they would take precidence.
+            if(Attribute.IsDefined(field, typeof(NodeOptional)))
             {
-                isValue |= attributesT.Count(att => att.GetType() == typeof(ValueNode)) > 0;
-                bool isOptional = attributesT.Count(att => att.GetType() == typeof(NodeOptional)) > 0;
-                isValue &= !isOptional;
-                isNode = isPossibleNode && !isValue;
+                isNode &= node.HasNode(field.Name);
             }
-            if (attributesF.Length > 0)
+            else if(Attribute.IsDefined(field, typeof(ValueNode)))
             {
-                isValue |= attributesF.Count(att => att.GetType() == typeof(ValueNode)) > 0;
-                bool isOptional = attributesF.Count(att => att.GetType() == typeof(NodeOptional)) > 0;
-                isValue &= !isOptional;
-                isNode = !isValue && isPossibleNode && (!isOptional || (isOptional && node.HasNode(field.Name)));
+                isNode = false;
             }
-            
+            else if(Attribute.IsDefined(field.FieldType, typeof(NodeOptional)))
+            {
+                isNode &= node.HasNode(field.Name);
+            }
+            else if(Attribute.IsDefined(field.FieldType, typeof(ValueNode)))
+            {
+                isNode = false;
+            }
 
             return isNode;
         }

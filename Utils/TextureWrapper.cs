@@ -17,10 +17,10 @@ namespace Utils
     [ValueNode]
     public class TextureWrapper
     {
-        string value;
+        bool isNormal = false;
 
         [Persistent]
-        bool isNormal = false;
+        string value;
         [Persistent]
         bool isClamped = false;
         [Persistent]
@@ -30,6 +30,10 @@ namespace Utils
         
         public TextureTypeEnum Type { get { return type; } }
         public Vector4 AlphaMask { get { return alphaMask; } set { alphaMask = value; } }
+
+        public TextureWrapper()
+        {
+        }
 
         public TextureWrapper(string tex)
         {
@@ -67,7 +71,10 @@ namespace Utils
             {
                 return true;
             }
-            else return false;
+            else
+            {
+                return false;
+            }
         }
     }
 }
