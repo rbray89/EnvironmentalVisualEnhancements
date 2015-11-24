@@ -14,15 +14,18 @@ namespace Utils
     {
     }
 
+    [ValueNode]
     public class TextureWrapper
     {
         string value;
 
-        
+        [Persistent]
         bool isNormal = false;
+        [Persistent]
         bool isClamped = false;
-
+        [Persistent]
         TextureTypeEnum type;
+        [Persistent, Conditional("alphaMaskEval")]
         Vector4 alphaMask = new Vector4(0, 0, 0, 1);
         
         public TextureTypeEnum Type { get { return type; } }
@@ -56,6 +59,15 @@ namespace Utils
         public bool exists()
         {
             return GameDatabase.Instance.ExistsTexture(value);
+        }
+
+        public static bool alphaMaskEval(ConfigNode node)
+        {
+            if (node.HasValue("type") && ((TextureTypeEnum)ConfigNode.ParseEnum(typeof(TextureTypeEnum), node.GetValue("type")) & TextureTypeEnum.AlphaMap) == TextureTypeEnum.AlphaMap)
+            {
+                return true;
+            }
+            else return false;
         }
     }
 }

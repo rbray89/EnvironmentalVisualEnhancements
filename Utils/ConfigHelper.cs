@@ -12,10 +12,21 @@ namespace Utils
     {
     }
 
-
+    public class ValueNode : System.Attribute
+    {
+    }
     public class NodeOptional : System.Attribute
     {
-       
+    }
+
+    public class Conditional: System.Attribute
+    {
+        private string method;
+        public string Method { get { return method; } }
+        public Conditional(string method)
+        {
+            this.method = method;
+        }
     }
 
     public interface INamed
@@ -38,6 +49,36 @@ namespace Utils
 
     public static class ConfigHelper
     {
+        public static bool IsNode(FieldInfo field, ConfigNode node)
+        {
+
+            object[] attributesF = field.GetCustomAttributes(false);
+            object[] attributesT = field.FieldType.GetCustomAttributes(false);
+
+            
+            bool isPossibleNode = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
+               fi => Attribute.IsDefined(fi, typeof(Persistent))).Count() > 0 ? true : false;
+            bool isNode = isPossibleNode;
+            bool isValue = false;
+            if (attributesT.Length > 0)
+            {
+                isValue |= attributesT.Count(att => att.GetType() == typeof(ValueNode)) > 0;
+                bool isOptional = attributesT.Count(att => att.GetType() == typeof(NodeOptional)) > 0;
+                isValue &= !isOptional;
+                isNode = isPossibleNode && !isValue;
+            }
+            if (attributesF.Length > 0)
+            {
+                isValue |= attributesF.Count(att => att.GetType() == typeof(ValueNode)) > 0;
+                bool isOptional = attributesF.Count(att => att.GetType() == typeof(NodeOptional)) > 0;
+                isValue &= !isOptional;
+                isNode = !isValue && isPossibleNode && (!isOptional || (isOptional && node.HasNode(field.Name)));
+            }
+            
+
+            return isNode;
+        }
+
         public static bool CanParse(FieldInfo field, String value)
         {
             object test = null;
@@ -56,8 +97,7 @@ namespace Utils
                    field => Attribute.IsDefined(field, typeof(Persistent)));
             foreach (FieldInfo field in objfields)
             {
-                bool isNode = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
-                    fi => Attribute.IsDefined(fi, typeof(Persistent))).Count() > 0 ? true : false;
+                bool isNode = IsNode(field, node);
 
                 if (!isNode)
                 {

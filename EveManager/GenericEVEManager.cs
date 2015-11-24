@@ -162,106 +162,7 @@ namespace EVEManager
             }
         }
 
-        private void HandleGUI(object obj, ConfigNode configNode, Rect placementBase, ref Rect placement)
-        {
-
-            var objfields = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
-                    field => Attribute.IsDefined(field, typeof(Persistent)));
-            foreach (FieldInfo field in objfields)
-            {
-                bool isNode = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
-                    fi => Attribute.IsDefined(fi, typeof(Persistent))).Count() > 0 ? true : false;
-
-                if(!isNode)
-                {
-                    if (field.Name != "body")
-                    {
-                        
-                        GUIHelper.DrawField(placementBase, ref placement, obj, field, configNode);
-
-                        placement.y++;
-                    }
-                }
-                else
-                {
-                    bool isOptional = Attribute.IsDefined(field, typeof(Optional));
-                    
-                    ConfigNode node = configNode.GetNode(field.Name);
-                    GUIStyle gsRight = new GUIStyle(GUI.skin.label);
-                    gsRight.alignment = TextAnchor.MiddleCenter;
-
-                    placement.y += .5f;
-                    Rect boxRect = GUIHelper.GetSplitRect(placementBase, ref placement, node, field.FieldType);
-                    GUI.Box(boxRect, "");
-                    placement.height = 1;
-
-                    Rect boxPlacementBase = new Rect(placementBase);
-                    boxPlacementBase.x += 10;
-                    Rect boxPlacement = new Rect(placement);
-                    boxPlacement.width -= 20;
-
-                    Rect toggleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
-                    Rect titleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
-                    GUIHelper.SplitRect(ref toggleRect, ref titleRect, (1f / 16));
-
-                    String tooltipText = "";
-                    if (Attribute.IsDefined(field, typeof(TooltipAttribute)))
-                    {
-                        TooltipAttribute tt = (TooltipAttribute)Attribute.GetCustomAttribute(field, typeof(TooltipAttribute));
-                        tooltipText = tt.tooltip;
-                    }
-                    GUIStyle style = new GUIStyle(GUI.skin.label);
-                    GUIContent gc = new GUIContent(field.Name, tooltipText);
-
-                    Vector2 labelSize = style.CalcSize(gc);
-                    titleRect.width = Mathf.Min(labelSize.x, titleRect.width);
-                    GUI.Label(titleRect, gc);
-
-                    bool removeable = node == null ? false : true;
-                    if (isOptional)
-                    {
-                        if (removeable != GUI.Toggle(toggleRect, removeable, ""))
-                        {
-                            if (removeable)
-                            {
-                                configNode.RemoveNode(field.Name);
-                                node = null;
-                            }
-                            else
-                            {
-                                node = configNode.AddNode(new ConfigNode(field.Name));
-                            }
-                        }
-                    }
-                    else if (node == null)
-                    {
-
-                        node = configNode.AddNode(new ConfigNode(field.Name));
-                    }
-                    float height = boxPlacement.y + 1;
-                    if (node != null)
-                    {
-                        height = boxPlacement.y + GUIHelper.GetNodeHeightCount(node, field.FieldType);
-                        boxPlacement.y++;
-
-                        object subObj = field.GetValue(obj);
-                        if (subObj == null)
-                        {
-                            ConstructorInfo ctor = field.FieldType.GetConstructor(System.Type.EmptyTypes);
-                            subObj = ctor.Invoke(null);
-                        }
-
-                        HandleGUI(subObj, node, boxPlacementBase, ref boxPlacement);
-
-                    }
-
-                    placement.y = height;
-                    placement.x = boxPlacement.x;
-                    
-                }
-            }
-        }
-
+       
         private void HandleConfigGUI(ConfigNode objNode, Rect placementBase, ref Rect placement)
         {
 
@@ -296,12 +197,12 @@ namespace EVEManager
             placement.height = 1;
             if (this.configNode != null)
             {
-                HandleGUI(this, this.configNode, selectBoxItemsRect, ref placement);
+                GUIHelper.HandleGUI(this, this.configNode, selectBoxItemsRect, ref placement);
             }
 
             if (objNode != null)
             {
-                HandleGUI(new T(), objNode, selectBoxItemsRect, ref placement);
+                GUIHelper.HandleGUI(new T(), objNode, selectBoxItemsRect, ref placement);
             }
             GUI.EndScrollView();
 
