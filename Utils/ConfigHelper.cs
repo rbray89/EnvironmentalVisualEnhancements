@@ -69,7 +69,7 @@ namespace Utils
             }
         }
 
-        public static bool IsNode(FieldInfo field, ConfigNode node)
+        public static bool IsNode(FieldInfo field, ConfigNode node, bool checkConfig = true)
         {
             bool isNode = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
                fi => Attribute.IsDefined(fi, typeof(Persistent))).Count() > 0 ? true : false;
@@ -77,7 +77,10 @@ namespace Utils
             //Field Checks first, they would take precidence.
             if(Attribute.IsDefined(field, typeof(NodeOptional)))
             {
-                isNode &= node.HasNode(field.Name);
+                if (checkConfig)
+                {
+                    isNode &= node.HasNode(field.Name);
+                }
             }
             else if(Attribute.IsDefined(field, typeof(ValueNode)))
             {
@@ -85,7 +88,10 @@ namespace Utils
             }
             else if(Attribute.IsDefined(field.FieldType, typeof(NodeOptional)))
             {
-                isNode &= node.HasNode(field.Name);
+                if (checkConfig)
+                {
+                    isNode &= node.HasNode(field.Name);
+                }
             }
             else if(Attribute.IsDefined(field.FieldType, typeof(ValueNode)))
             {

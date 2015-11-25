@@ -18,7 +18,5 @@ namespace Utils
             return new byte[4] { color.b, color.g, color.r, color.a };
         }
     }
-
-   
-    
+ 
 }

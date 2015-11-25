@@ -167,18 +167,18 @@ namespace EVEManager
         {
 
 
-            placement.height = ((placementBase.height - (placementBase.y)) / GUIHelper.totalElementHeight) - placement.y;
-            Rect selectBoxOutlineRect = GUIHelper.GetSplitRect(placementBase, ref placement);
+            placement.height = ((placementBase.height - (placementBase.y)) / GUIHelper.elementHeight) - placement.y;
+            Rect selectBoxOutlineRect = GUIHelper.GetRect(placementBase, ref placement);
             Rect selectBoxRect = selectBoxOutlineRect;
             placement.height = 0;
             Rect selectBoxItemsRect = new Rect();
             if (configNode != null)
             {
-                selectBoxItemsRect = GUIHelper.GetSplitRect(placementBase, ref placement, configNode, this.GetType());
+                selectBoxItemsRect = GUIHelper.GetRect(placementBase, ref placement, configNode, this.GetType());
             }
             if (objNode != null)
             {
-                selectBoxItemsRect = GUIHelper.GetSplitRect(placementBase, ref placement, objNode, typeof(T));
+                selectBoxItemsRect = GUIHelper.GetRect(placementBase, ref placement, objNode, typeof(T));
             }
 
             
@@ -210,8 +210,8 @@ namespace EVEManager
 
         private void DrawConfigManagement(Rect placementBase, ref Rect placement)
         {
-            Rect applyRect = GUIHelper.GetSplitRect(placementBase, ref placement);
-            Rect saveRect = GUIHelper.GetSplitRect(placementBase, ref placement);
+            Rect applyRect = GUIHelper.GetRect(placementBase, ref placement);
+            Rect saveRect = GUIHelper.GetRect(placementBase, ref placement);
             GUIHelper.SplitRect(ref applyRect, ref saveRect, 1f / 2);
             if(GUI.Button(applyRect, "Apply"))
             {
@@ -226,7 +226,7 @@ namespace EVEManager
 
         private ConfigNode DrawNodeManagement(Rect placementBase, ref Rect placement, ConfigNode node, String body)
         {
-            Rect applyRect = GUIHelper.GetSplitRect(placementBase, ref placement);
+            Rect applyRect = GUIHelper.GetRect(placementBase, ref placement);
 
             ConfigNode objNode = node.GetNode(body);
 
@@ -272,7 +272,7 @@ namespace EVEManager
                     {
                         bodyNode = selectedConfig.Node.GetNode(body);
                     }
-
+                    placement.height = 5;
                     objNode = GUIHelper.DrawObjectSelector(bodyNode.nodes, ref selectedObjIndex, ref objNameEditString, ref objListPos, placementBase, ref placement);
 
                 }
@@ -286,7 +286,7 @@ namespace EVEManager
             else
             {
                 placement.height = 4;
-                Rect textRect = GUIHelper.GetSplitRect(placementBase, ref placement);
+                Rect textRect = GUIHelper.GetRect(placementBase, ref placement);
                 GUI.TextArea(textRect, "No config! Please add a config with the content of \""+this.configName+"{}\" to populate.");
             }
 

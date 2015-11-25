@@ -7,12 +7,11 @@ using UnityEngine;
 
 namespace Utils
 {
-    [FlagsAttribute]
+
     public enum TextureTypeEnum
     {
-        Normal = 0x0,
-        AlphaMap = 0x1,
-        Clamped = 0x2
+        RGBA,
+        AlphaMap
     }
 
     public class TextureType : System.Attribute

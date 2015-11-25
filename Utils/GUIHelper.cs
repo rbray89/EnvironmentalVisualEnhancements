@@ -10,24 +10,25 @@ namespace Utils
 
     public class GUIHelper
     {
-        protected static int elementHeight = 24;
-        protected static int elementBuffer = 8;
-        public static int totalElementHeight { get { return elementBuffer + elementHeight; } }
+        public const float spacingOffset = .25f;
+        public const float elementHeight = 22;
+        public const float valueRatio = (3f / 7);
+
         protected static int selectedBodyIndex = 0;
         protected static CelestialBody currentBody;
-
+        
         public static float GetNodeHeightCount(ConfigNode node, Type T)
         {
-            float fieldCount = 1;
+            float fieldCount = 1f+ (2f*spacingOffset);
             var objfields = T.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
                     f => Attribute.IsDefined(f, typeof(Persistent)));
             
 
             foreach (FieldInfo field in objfields)
             {
-                bool isNode = ConfigHelper.IsNode(field, node);
+                bool isNode = ConfigHelper.IsNode(field, node, false);
 
-                if (ConfigHelper.ConditionsMet(field, node))
+                if ( node != null && ConfigHelper.ConditionsMet(field, node))
                 {
                     if (isNode)
                     {
@@ -37,12 +38,13 @@ namespace Utils
                         }
                         else
                         {
-                            fieldCount += 1;
+                            fieldCount += GetNodeHeightCount(null, field.FieldType);
                         }
+                        fieldCount += spacingOffset;
                     }
                     else if(field.Name != "value")
                     {
-                        fieldCount += 1;
+                        fieldCount += 1f+ spacingOffset;
                     }
                 }
             }
@@ -50,45 +52,28 @@ namespace Utils
             return fieldCount;
         }
         
-        public static Rect GetSplitRect(Rect placementBase, ref Rect placement, ConfigNode node, Type T)
+        public static Rect GetRect(Rect placementBase, ref Rect placement, ConfigNode node, Type T)
         {
-            if (node != null)
-            {
-                placement.height = GetNodeHeightCount(node, T);
-            }
+            placement.height = GetNodeHeightCount(node, T);
             float width = placementBase.width;
             float height;
 
             float x = (placement.x * width) + placementBase.x;
-            float y = (placement.y * totalElementHeight) + placementBase.y;
+            float y = (placement.y * elementHeight) + placementBase.y;
             width += placement.width;
-            if (placement.height > 1)
-            {
-                height = (totalElementHeight * placement.height)-(elementBuffer/2);
-            }
-            else
-            {
-                height = elementHeight;
-            }
+            height = (elementHeight * placement.height);
             return new Rect(x, y, width - 10, height);
         }
 
-        public static Rect GetSplitRect(Rect placementBase, ref Rect placement)
+        public static Rect GetRect(Rect placementBase, ref Rect placement)
         {
             float width = placementBase.width;
             float height;
 
             float x = (placement.x * width) + placementBase.x;
-            float y = (placement.y * totalElementHeight) + placementBase.y;
+            float y = (placement.y * elementHeight) + placementBase.y;
             width += placement.width;
-            if (placement.height > 1)
-            {
-                height = totalElementHeight * placement.height - (elementBuffer / 2);
-            }
-            else
-            {
-                height = elementHeight;
-            }
+            height = (elementHeight * placement.height);
             return new Rect(x, y, width - 10, height);
         }
 
@@ -138,9 +123,9 @@ namespace Utils
 
             currentBody = GUIHelper.GetMapBody();
 
-            Rect leftRect = GetSplitRect(placementBase, ref placement);
-            Rect centerRect = GetSplitRect(placementBase, ref placement);
-            Rect rightRect = GetSplitRect(placementBase, ref placement);
+            Rect leftRect = GetRect(placementBase, ref placement);
+            Rect centerRect = GetRect(placementBase, ref placement);
+            Rect rightRect = GetRect(placementBase, ref placement);
             SplitRect(ref leftRect, ref centerRect, 1f / 4);
             SplitRect(ref centerRect, ref rightRect, 2f / 3);
             if (MapView.MapIsEnabled || HighLogic.LoadedScene == GameScenes.TRACKSTATION)
@@ -184,7 +169,7 @@ namespace Utils
 
         public static void DrawField(Rect placementBase, ref Rect placement, object obj, FieldInfo field, ConfigNode config)
         {
-            
+            placement.height = 1;
             String value = config.GetValue(field.Name);
             String defaultValue = ConfigHelper.CreateConfigFromObject(obj, new ConfigNode("TMP")).GetValue(field.Name);
             if (value == null)
@@ -196,9 +181,9 @@ namespace Utils
                 value = defaultValue;
             }
 
-            Rect labelRect = GUIHelper.GetSplitRect(placementBase, ref placement);
-            Rect fieldRect = GUIHelper.GetSplitRect(placementBase, ref placement);
-            GUIHelper.SplitRect(ref labelRect, ref fieldRect, 3f / 7);
+            Rect labelRect = GUIHelper.GetRect(placementBase, ref placement);
+            Rect fieldRect = GUIHelper.GetRect(placementBase, ref placement);
+            GUIHelper.SplitRect(ref labelRect, ref fieldRect, valueRatio);
             String tooltipText = "";
             if (Attribute.IsDefined(field, typeof(TooltipAttribute)))
             {
@@ -212,59 +197,88 @@ namespace Utils
             labelRect.width = Mathf.Min(labelSize.x, labelRect.width);
             GUI.Label(labelRect,gc);
 
-            
-            /*if (false )// && field.FieldType == typeof(Color))
+            string newValue = value;
+            if (field.FieldType.IsEnum)
             {
-                Color color = ConfigNode.ParseColor(value);
-                Color32 color255 = color;
-                value = GUI.TextField(fieldRect, ConfigNode.WriteColor(color255));
-                value = ConfigNode.WriteVector(ConfigNode.ParseVector4(value) / 255f);
-                config.SetValue(field.Name, value);
+
+                newValue = ComboBox(fieldRect, value, Enum.GetNames(field.FieldType));
             }
-            else*/
+            else
             {
                 GUIStyle fieldStyle = new GUIStyle(GUI.skin.textField);
-                if(value != "" && !ConfigHelper.CanParse(field, value))
+                if (value != "" && !ConfigHelper.CanParse(field, value))
                 {
                     fieldStyle.normal.textColor = Color.red;
                     fieldStyle.active.textColor = Color.red;
                     fieldStyle.focused.textColor = Color.red;
                     fieldStyle.hover.textColor = Color.red;
                 }
-                string newValue = GUI.TextField(fieldRect, value, fieldStyle);
-                if (newValue != defaultValue && value != newValue)
-                {
-                    if (config.HasValue(field.Name))
-                    {
-                        config.SetValue(field.Name, newValue);
-                    }
-                    else
-                    {
-                        config.AddValue(field.Name, newValue);
-                    }
-                }
-                else if(newValue == defaultValue && config.HasValue(field.Name))
-                {
-                    config.RemoveValue(field.Name);
-                }
+                newValue = GUI.TextField(fieldRect, value, fieldStyle);
             }
 
-            
+            if (newValue != defaultValue && value != newValue)
+            {
+                if (config.HasValue(field.Name))
+                {
+                    config.SetValue(field.Name, newValue);
+                }
+                else
+                {
+                    config.AddValue(field.Name, newValue);
+                }
+            }
+            else if(newValue == defaultValue && config.HasValue(field.Name))
+            {
+                config.RemoveValue(field.Name);
+            }
+            placement.y += 1f;
+        }
 
+        private static string ComboBox(Rect fieldRect, string value, string[] list)
+        {
+            GUIStyle gs = new GUIStyle(GUI.skin.textField);
+            GUI.Box(fieldRect, value, gs);
+            fieldRect.x += fieldRect.width - (2* elementHeight);
+            fieldRect.width = elementHeight;
+            Rect fieldRectUp = new Rect(fieldRect);
+            Rect fieldRectDown = new Rect(fieldRect);
+            fieldRectDown.x += fieldRectDown.width;
+            gs.font.RequestCharactersInTexture("\u25b6\u25c0");
+            if (GUI.Button(fieldRectUp, "\u25c0", gs))
+            {
+                int index = Array.IndexOf(list, value);
+                index--;
+                if(index < 0)
+                {
+                    index = list.Length-1;
+                }
+                value = list[index];
+            }
+            if(GUI.Button(fieldRectDown, "\u25b6", gs))
+            {
+                int index = Array.IndexOf(list, value);
+                index++;
+                if (index >= list.Length)
+                {
+                    index = 0;
+                }
+                value = list[index];
+            }
+            return value;
         }
 
         public static ConfigNode DrawObjectSelector(ConfigNode.ConfigNodeList nodeList, ref int selectedObjIndex, ref String objString, ref Vector2 objListPos, Rect placementBase, ref Rect placement)
         {
             String[] objList = nodeList.DistinctNames();
-            placement.height = 5;
-            Rect selectBoxOutlineRect = GetSplitRect(placementBase, ref placement);
-            placement.height = 4;
-            Rect selectBoxRect = GetSplitRect(placementBase, ref placement);
+            float nodeHeight = placement.height;
+            Rect selectBoxOutlineRect = GetRect(placementBase, ref placement);
+            placement.height = nodeHeight-1;
+            Rect selectBoxRect = GetRect(placementBase, ref placement);
             placement.height = nodeList.Count;
-            Rect selectBoxItemsRect = GetSplitRect(placementBase, ref placement);
+            Rect selectBoxItemsRect = GetRect(placementBase, ref placement);
             
             placement.height = 1;
-            Rect optButtonRect = GetSplitRect(placementBase, ref placement);
+            Rect optButtonRect = GetRect(placementBase, ref placement);
             SplitRect(ref selectBoxRect, ref optButtonRect, (15f / 16));
 
 
@@ -293,7 +307,7 @@ namespace Utils
             }
             selectedObjIndex = GUI.SelectionGrid(selectBoxItemsRect, selectedObjIndex, objList, 1);
             GUI.EndScrollView();
-            placement.y += 4;
+            placement.y += nodeHeight-1;
 
             optButtonRect.x -= 5;
             optButtonRect.y += 10;
@@ -312,7 +326,7 @@ namespace Utils
                         nodeList.Add(item);
                     }
                 }
-                optButtonRect.y += 60;
+                optButtonRect.y += optButtonRect.height*(nodeHeight-3);
                 if (GUI.Button(optButtonRect, "v") && selectedObjIndex < nodeList.Count - 1)
                 {
                     
@@ -328,7 +342,7 @@ namespace Utils
                     }
                 }
             }
-            Rect listEditTextRect = GetSplitRect(placementBase, ref placement);
+            Rect listEditTextRect = GetRect(placementBase, ref placement);
             listEditTextRect.x += 10;
             listEditTextRect.width -= 20;
             listEditTextRect.y -= 5;
@@ -377,7 +391,7 @@ namespace Utils
                     selectedObjIndex = nodeList.Count -1;
                 }
             }
-            placement.y++;
+            placement.y +=1 + spacingOffset;
             
             if(nodeList.Count == 0)
             {
@@ -388,9 +402,9 @@ namespace Utils
 
         public static T DrawSelector<T>(List<T> objList, ref int selectedIndex, float ratio, Rect placementBase, ref Rect placement) where T : INamed
         {
-            Rect leftRect = GUIHelper.GetSplitRect(placementBase, ref placement);
-            Rect centerRect = GUIHelper.GetSplitRect(placementBase, ref placement);
-            Rect rightRect = GUIHelper.GetSplitRect(placementBase, ref placement);
+            Rect leftRect = GUIHelper.GetRect(placementBase, ref placement);
+            Rect centerRect = GUIHelper.GetRect(placementBase, ref placement);
+            Rect rightRect = GUIHelper.GetRect(placementBase, ref placement);
             GUIHelper.SplitRect(ref leftRect, ref centerRect, 1f / (ratio));
             GUIHelper.SplitRect(ref centerRect, ref rightRect, (ratio - 2) / (ratio-1));
 
@@ -422,7 +436,7 @@ namespace Utils
                 }
 
             }
-            placement.y++;
+            placement.y += 1 + spacingOffset;
             return currentObj;
         }
 
@@ -436,30 +450,34 @@ namespace Utils
                 bool isNode = ConfigHelper.IsNode(field, configNode);
                 bool isNodeOptional = Attribute.IsDefined(field, typeof(NodeOptional));
 
-
-                if(isNode || isNodeOptional)
+                
+                if (isNode || isNodeOptional)
                 {
+                    placement.y += spacingOffset;
                     bool isOptional = Attribute.IsDefined(field, typeof(Optional));
 
                     ConfigNode node = configNode.GetNode(field.Name);
                     GUIStyle gsRight = new GUIStyle(GUI.skin.label);
                     gsRight.alignment = TextAnchor.MiddleCenter;
 
-                    Rect boxRect = GUIHelper.GetSplitRect(placementBase, ref placement, node, field.FieldType);
-                    GUI.Box(boxRect, "");
+                    
+                    Rect boxRect = GUIHelper.GetRect(placementBase, ref placement, node, field.FieldType);
+                    GUIStyle gs = new GUIStyle(GUI.skin.textField);
+                    GUI.Box(boxRect, "", gs);
                     placement.height = 1;
+                    placement.y += spacingOffset;
 
                     Rect boxPlacementBase = new Rect(placementBase);
                     boxPlacementBase.x += 10;
                     Rect boxPlacement = new Rect(placement);
                     boxPlacement.width -= 20;
 
-                    Rect toggleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
-                    Rect titleRect = GUIHelper.GetSplitRect(boxPlacementBase, ref boxPlacement);
-                    Rect fieldRect = GUIHelper.GetSplitRect(placementBase, ref placement);
+                    Rect toggleRect = GUIHelper.GetRect(boxPlacementBase, ref boxPlacement);
+                    Rect titleRect = GUIHelper.GetRect(boxPlacementBase, ref boxPlacement);
+                    Rect fieldRect = GUIHelper.GetRect(placementBase, ref boxPlacement);
                     if (isNodeOptional)
                     {
-                        GUIHelper.SplitRect(ref titleRect, ref fieldRect, (1f / 2));
+                        GUIHelper.SplitRect(ref titleRect, ref fieldRect, valueRatio);
                     }
                     GUIHelper.SplitRect(ref toggleRect, ref titleRect, (1f / 16));
 
@@ -581,12 +599,9 @@ namespace Utils
                     {
                         node = configNode.AddNode(new ConfigNode(field.Name));
                     }
-                    float height = boxPlacement.y + 1;
+                    boxPlacement.y += 1f;
                     if (node != null)
                     {
-                        height = boxPlacement.y + GUIHelper.GetNodeHeightCount(node, field.FieldType);
-                        boxPlacement.y++;
-
                         object subObj = field.GetValue(obj);
                         if (subObj == null)
                         {
@@ -597,8 +612,9 @@ namespace Utils
                         HandleGUI(subObj, node, boxPlacementBase, ref boxPlacement);
 
                     }
+                    boxPlacement.y += spacingOffset;
 
-                    placement.y = height;
+                    placement.y = boxPlacement.y;
                     placement.x = boxPlacement.x;
 
                 }
@@ -608,8 +624,8 @@ namespace Utils
                     {
                         if (field.Name != "body" && field.Name != "value")
                         {
+                            placement.y += spacingOffset;
                             GUIHelper.DrawField(placementBase, ref placement, obj, field, configNode);
-                            placement.y++;
                         }
                     }
                     else if(configNode.HasValue(field.Name))
