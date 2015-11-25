@@ -243,7 +243,7 @@ namespace Utils
             Rect fieldRectUp = new Rect(fieldRect);
             Rect fieldRectDown = new Rect(fieldRect);
             fieldRectDown.x += fieldRectDown.width;
-            gs.font.RequestCharactersInTexture("\u25b6\u25c0");
+            //gs.font.RequestCharactersInTexture("\u25b6\u25c0");
             if (GUI.Button(fieldRectUp, "\u25c0", gs))
             {
                 int index = Array.IndexOf(list, value);
