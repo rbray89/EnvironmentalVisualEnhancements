@@ -14,6 +14,10 @@ namespace Utils
         public const float elementHeight = 22;
         public const float valueRatio = (3f / 7);
 
+        public const string UP_ARROW = "\u2191";
+        public const string DOWN_ARROW = "\u2193";
+        public const string LEFT_ARROW = "\u2190";
+        public const string RIGHT_ARROW = "\u2192";
         protected static int selectedBodyIndex = 0;
         protected static CelestialBody currentBody;
         
@@ -130,7 +134,7 @@ namespace Utils
             SplitRect(ref centerRect, ref rightRect, 2f / 3);
             if (MapView.MapIsEnabled || HighLogic.LoadedScene == GameScenes.TRACKSTATION)
             {
-                if (GUI.Button(leftRect, "<"))
+                if (GUI.Button(leftRect, LEFT_ARROW))
                 {
                     selectedBodyIndex--;
                     if (selectedBodyIndex < 0)
@@ -140,7 +144,7 @@ namespace Utils
                     currentBody = celestialBodies[selectedBodyIndex];
                     MapView.MapCamera.SetTarget(currentBody.bodyName);
                 }
-                if (GUI.Button(rightRect, ">"))
+                if (GUI.Button(rightRect, RIGHT_ARROW))
                 {
                     selectedBodyIndex++;
                     if (selectedBodyIndex >= celestialBodies.Length)
@@ -237,14 +241,16 @@ namespace Utils
         private static string ComboBox(Rect fieldRect, string value, string[] list)
         {
             GUIStyle gs = new GUIStyle(GUI.skin.textField);
-            GUI.Box(fieldRect, value, gs);
-            fieldRect.x += fieldRect.width - (2* elementHeight);
-            fieldRect.width = elementHeight;
+            
             Rect fieldRectUp = new Rect(fieldRect);
-            Rect fieldRectDown = new Rect(fieldRect);
+            fieldRectUp.x += fieldRect.width - (2 * elementHeight);
+            fieldRectUp.width = elementHeight;
+            Rect fieldRectDown = new Rect(fieldRectUp);
             fieldRectDown.x += fieldRectDown.width;
-            //gs.font.RequestCharactersInTexture("\u25b6\u25c0");
-            if (GUI.Button(fieldRectUp, "\u25c0", gs))
+            fieldRect.width -= 2 * fieldRectUp.width;
+            GUI.Box(fieldRect, value, gs);
+
+            if (GUI.Button(fieldRectUp, LEFT_ARROW, gs))
             {
                 int index = Array.IndexOf(list, value);
                 index--;
@@ -254,7 +260,7 @@ namespace Utils
                 }
                 value = list[index];
             }
-            if(GUI.Button(fieldRectDown, "\u25b6", gs))
+            if(GUI.Button(fieldRectDown, RIGHT_ARROW, gs))
             {
                 int index = Array.IndexOf(list, value);
                 index++;
@@ -313,7 +319,7 @@ namespace Utils
             optButtonRect.y += 10;
             if (nodeList.Count > 0)
             {
-                if (GUI.Button(optButtonRect, "^") && selectedObjIndex > 0)
+                if (GUI.Button(optButtonRect, UP_ARROW) && selectedObjIndex > 0)
                 {
                     int moveIndex = selectedObjIndex;
                     ConfigNode item = nodeList[--selectedObjIndex];
@@ -327,7 +333,7 @@ namespace Utils
                     }
                 }
                 optButtonRect.y += optButtonRect.height*(nodeHeight-3);
-                if (GUI.Button(optButtonRect, "v") && selectedObjIndex < nodeList.Count - 1)
+                if (GUI.Button(optButtonRect, DOWN_ARROW) && selectedObjIndex < nodeList.Count - 1)
                 {
                     
                     ConfigNode item = nodeList[selectedObjIndex];
@@ -408,7 +414,7 @@ namespace Utils
             GUIHelper.SplitRect(ref leftRect, ref centerRect, 1f / (ratio));
             GUIHelper.SplitRect(ref centerRect, ref rightRect, (ratio - 2) / (ratio-1));
 
-            if (objList.Count > 1 && GUI.Button(leftRect, "<"))
+            if (objList.Count > 1 && GUI.Button(leftRect, LEFT_ARROW))
             {
                 selectedIndex--;
                 if (selectedIndex < 0)
@@ -416,7 +422,7 @@ namespace Utils
                     selectedIndex = objList.Count - 1;
                 }
             }
-            if (objList.Count > 1 && GUI.Button(rightRect, ">"))
+            if (objList.Count > 1 && GUI.Button(rightRect, RIGHT_ARROW))
             {
                 selectedIndex++;
                 if (selectedIndex >= objList.Count)
