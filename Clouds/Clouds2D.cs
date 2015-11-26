@@ -74,6 +74,10 @@ namespace Atmosphere
                             cloudsMat.ApplyMaterialProperties(ShadowProjector.material, ScaledSpace.ScaleFactor);
                         }
                         float scale = (float)(1000f / celestialBody.Radius);
+                        if (HighLogic.LoadedScene == GameScenes.MAINMENU)
+                        {
+                            scale *= 1.008f;
+                        }
                         Reassign(scaledLayer, scaledCelestialTransform, scale);
                     }
                     else
@@ -208,7 +212,6 @@ namespace Atmosphere
             if(HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
                 mainMenuSunlight = GameObject.FindObjectsOfType<Light>().Last(l => l.isActiveAndEnabled);
-                CloudMesh.transform.localScale *= 1.08f;
             }
 
             if (ShadowProjector != null)
