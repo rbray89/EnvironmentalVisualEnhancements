@@ -57,7 +57,7 @@ namespace Atmosphere
         bool isScaled = false;
         public bool Scaled
         {
-            get { return CloudMesh.layer == EVEManagerClass.SCALED_LAYER; }
+            get { return isScaled; }
             set
             {
                 CloudsManager.Log("Clouds2D is now " + (value ? "SCALED" : "MACRO"));
@@ -171,10 +171,6 @@ namespace Atmosphere
                 ShadowProjector.transform.parent = celestialBody.transform;
                 ShadowProjector.material = new Material(CloudShadowShader);
                 shadowMaterial.ApplyMaterialProperties(ShadowProjector.material);
-                GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                sphere.transform.localScale = 100*Vector3.one;
-                sphere.transform.parent = ShadowProjector.transform;
-                sphere.layer = layer;
             }
 
 
@@ -212,6 +208,7 @@ namespace Atmosphere
             if(HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
                 mainMenuSunlight = GameObject.FindObjectsOfType<Light>().Last(l => l.isActiveAndEnabled);
+                CloudMesh.transform.localScale *= 1.08f;
             }
 
             if (ShadowProjector != null)
@@ -236,12 +233,7 @@ namespace Atmosphere
                     ShadowProjector.ignoreLayers = ~((1 << layer));
                     ShadowProjector.material.DisableKeyword("WORLD_SPACE_ON");
                 }
-
-                if(HighLogic.LoadedScene == GameScenes.MAINMENU)
-                {
-                    ShadowProjector.material.EnableKeyword("WORLD_SPACE_ON");
-                    ShadowProjector.material.SetFloat("_PlanetRadius", 1);
-                }
+                
             }
         }
 
@@ -281,15 +273,15 @@ namespace Atmosphere
                     ShadowProjector.transform.localPosition = radiusScale * -sunDirection;
                     ShadowProjector.transform.forward = worldSunDir;
 
-                    if (Scaled || HighLogic.LoadedScene == GameScenes.MAINMENU)
+                    if (Scaled)
                     {
-                        ShadowProjector.material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, sunDirection);
+                        ShadowProjector.material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, sunDirection); 
                     }
                     else
                     {
                         ShadowProjector.material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, worldSunDir);
                     }
-                    
+
                 }
             }
             CloudMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, CloudMesh.transform.position);
@@ -304,14 +296,14 @@ namespace Atmosphere
 
             if (ShadowProjector != null)
             {
-                if(!Scaled || HighLogic.LoadedScene == GameScenes.MAINMENU)
+                if(Scaled)
                 {
-                    ShadowProjector.material.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, mainRotation * ShadowProjector.transform.parent.worldToLocalMatrix);
-                    ShadowProjector.material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, ShadowProjector.transform.parent.transform.position);
+                    ShadowProjector.material.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, mainRotation);
                 }
                 else
                 {
-                    ShadowProjector.material.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, mainRotation);
+                    ShadowProjector.material.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, mainRotation * ShadowProjector.transform.parent.worldToLocalMatrix);
+                    ShadowProjector.material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, ShadowProjector.transform.parent.position);
                 }
 
                 ShadowProjector.material.SetMatrix(EVEManagerClass.DETAIL_ROTATION_PROPERTY, detailRotation);

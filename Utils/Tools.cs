@@ -110,6 +110,11 @@ namespace Utils
             return GetCelestialBody(body).scaledBody.transform;
         }
 
+        public static GameObject GetMainMenuObject(string name)
+        {
+            return GameObject.FindObjectsOfType<GameObject>().FirstOrDefault(b => b.name == name && b.transform.parent.name.Contains("Scene"));
+        }
+
         public static Shader GetShader(Assembly assembly, String resource)
         {
             StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream(resource));

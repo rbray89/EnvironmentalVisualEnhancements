@@ -121,11 +121,13 @@ namespace Atmosphere
                 {
                     CloudsManager.Log(light.name + " : " + light.isActiveAndEnabled + " : " + light.type);
                 }
-                
-                GameObject go = GameObject.FindObjectsOfType<GameObject>().Last(b => b.name == body && b.activeInHierarchy);
+
+                GameObject go = Tools.GetMainMenuObject(body);
+
                 if (go != null && go.transform != mainMenuBodyTransform)
                 {
                     mainMenuCamera = GameObject.FindObjectsOfType<Camera>().First(c => ( c.cullingMask & (1<<go.layer) ) > 0 && c.isActiveAndEnabled);
+                    CloudsManager.Log(" " + go.transform.childCount);
 
                     if (layer2D != null)
                     {
@@ -208,6 +210,7 @@ namespace Atmosphere
                         //mainMenuCamera.transform.position -= 5 * mainMenuCamera.transform.forward;
                         Transform transform = mainMenuCamera.transform;
                         Vector3 pos = mainMenuBodyTransform.InverseTransformPoint(transform.position);
+
                         mainMenuLayer.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos),
                                                    mainMenuBodyTransform.worldToLocalMatrix,
                                                    mainRotationMatrix,
@@ -219,7 +222,7 @@ namespace Atmosphere
                         Vector3 pos = scaledCelestialTransform.InverseTransformPoint(transform.position);
 
                         layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos),
-                                               scaledCelestialTransform.transform.worldToLocalMatrix,
+                                               scaledCelestialTransform.worldToLocalMatrix,
                                                mainRotationMatrix,
                                                detailRotationMatrix);
 

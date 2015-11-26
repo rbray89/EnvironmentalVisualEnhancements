@@ -104,8 +104,8 @@ namespace CityLights
         {
             if (HighLogic.LoadedScene == GameScenes.MAINMENU )
             {
-                GameObject go = GameObject.FindObjectsOfType<GameObject>().Where(b => b.name == body).LastOrDefault();
-                
+                GameObject go = Tools.GetMainMenuObject(body);
+
                 if (go != mainMenuBody && go != null)
                 {
                     mainMenuBody = go;
