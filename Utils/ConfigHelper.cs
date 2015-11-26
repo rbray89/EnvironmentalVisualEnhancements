@@ -34,14 +34,9 @@ namespace Utils
         }
     }
 
-    public interface INamed
+    public class ConfigWrapper 
     {
-        String Name { get; set; }
-    }
-
-    public class ConfigWrapper : INamed
-    {
-        public String Name { get { return name; } set { } }
+        public override String ToString(){ return name; }
         public ConfigNode Node { get { return node; } }
         string name;
         ConfigNode node;

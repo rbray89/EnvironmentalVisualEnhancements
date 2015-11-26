@@ -37,7 +37,10 @@ namespace EVEManager
                 spaceCenterReload = false;
                 load = true;
             }
+            if (load)
+            {
                 hasLoaded = true;
+            }
             return load; } }
         protected ConfigNode ConfigNode { get { return configNode; } }
         protected ConfigNode configNode;
@@ -56,7 +59,10 @@ namespace EVEManager
         internal void Awake()
         {
             KSPLog.print(configName + " " + SceneLoad);
-            if (guiLoad)
+            Managers.RemoveAll(item => item == null || item.GetType() == this.GetType());
+            Managers.Add(this);
+
+            if (sceneConfigLoad)
             {
                 StartCoroutine(SetupDelay());
             }
@@ -72,8 +78,6 @@ namespace EVEManager
         {
             if ((ObjectType.STATIC & objectType) != ObjectType.STATIC)
             {
-                Managers.RemoveAll(item => item == null);
-                Managers.Add(this);
                 LoadConfig();
             }
             else
@@ -86,8 +90,6 @@ namespace EVEManager
         {
             if (staticInitialized == false)
             {
-                Managers.Add(instance);
-                Managers.RemoveAll(item => item == null);
                 instance.LoadConfig();
                 staticInitialized = true;
             }
@@ -100,17 +102,16 @@ namespace EVEManager
 
         public virtual void LoadConfig()
         {
-            if (sceneConfigLoad)
+            
+            Log("Loading...");
+            configs = GameDatabase.Instance.GetConfigs(configName);
+            ConfigFiles.Clear();
+            foreach (UrlDir.UrlConfig config in configs)
             {
-                Log("Loading...");
-                configs = GameDatabase.Instance.GetConfigs(configName);
-                ConfigFiles.Clear();
-                foreach (UrlDir.UrlConfig config in configs)
-                {
-                    ConfigFiles.Add(new ConfigWrapper(config));
-                }
-                Apply();
+                ConfigFiles.Add(new ConfigWrapper(config));
             }
+            Apply();
+            
         }
 
         public virtual void Apply()
@@ -221,7 +222,7 @@ namespace EVEManager
             {
                 this.SaveConfig();
             }
-            placement.y++;
+            placement.y += 1 + GUIHelper.spacingOffset;
         }
 
         private ConfigNode DrawNodeManagement(Rect placementBase, ref Rect placement, ConfigNode node, String body)
@@ -239,7 +240,7 @@ namespace EVEManager
                 node.RemoveNode(body);
                 objNode = null;
             }
-            placement.y++;
+            placement.y += 1 + GUIHelper.spacingOffset;
             return objNode;
         }
 

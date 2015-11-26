@@ -9,14 +9,18 @@ using Utils;
 
 namespace EVEManager
 {
+    public delegate void SceneChangeEvent(GameScenes scene);
+
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
-    public class EVEManagerClass : MonoBehaviour, INamed
+    public class EVEManagerClass : MonoBehaviour
     {
+        public static SceneChangeEvent OnSceneChange;
+
         protected virtual bool guiLoad { get { return HighLogic.LoadedScene == GameScenes.MAINMENU || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.TRACKSTATION; } }
         private static bool useEditor = false;
         public static List<EVEManagerClass> Managers = new List<EVEManagerClass>();
-        public static int SCALED_LAYER = 10;
-        public static int MACRO_LAYER = 15;
+        public const int SCALED_LAYER = 10;
+        public const int MACRO_LAYER = 15;
         public static int ROTATION_PROPERTY;
         public static int INVROTATION_PROPERTY;
         public static int MAIN_ROTATION_PROPERTY;
@@ -26,7 +30,8 @@ namespace EVEManager
         public static int WORLD_2_PLANET_PROPERTY;
         public static int DETAIL_ROTATION_PROPERTY;
 
-        public String Name { get { return this.GetType().Name; } set { } }
+
+        public override String ToString() { return this.GetType().Name; }
 
         private Texture2D ToolTipBackground;
         private void Awake()
@@ -47,6 +52,11 @@ namespace EVEManager
                 colors.Add(Color.white);
             }
             ToolTipBackground.SetPixels(colors.ToArray());
+
+            if (OnSceneChange != null)
+            {
+                OnSceneChange(HighLogic.LoadedScene);
+            }
         }
 
         private void Update()

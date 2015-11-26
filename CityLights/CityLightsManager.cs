@@ -16,7 +16,6 @@ namespace CityLights
     {
         protected override ObjectType objectType { get { return ObjectType.PLANET; } }
         protected override String configName { get { return "EVE_CITY_LIGHTS"; } }
-        //protected override GameScenes SceneLoad { get { return GameScenes.SPACECENTER; } }
 
         public CityLightsManager()
         { }

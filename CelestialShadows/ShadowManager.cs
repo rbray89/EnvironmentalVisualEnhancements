@@ -25,8 +25,8 @@ namespace CelestialShadows
 
             if ((ObjectType.STATIC & objectType) != ObjectType.STATIC)
             {
+                Managers.RemoveAll(item => item == null || item.GetType() == this.GetType());
                 Managers.Add(this);
-                Managers.RemoveAll(item => item == null);
                 LoadConfig();
                 if( configs.Length > 0 && shadowProjector == null)
                 {

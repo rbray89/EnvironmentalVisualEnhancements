@@ -29,7 +29,7 @@ namespace CityLights
 
         public class CityLightsObject : IEVEObject
     {
-        public String Name { get { return body; } set { } }
+        public override String ToString() { return body; }
         public ConfigNode ConfigNode { get { return node; } }
         public String Body { get { return body; } }
         private String body;
@@ -40,6 +40,9 @@ namespace CityLights
         Material scaledMat;
         Material macroMat;
         String materialName = Guid.NewGuid().ToString();
+        GameObject mainMenuBody = null;
+
+        SceneChangeEvent onSceneChange;
 
         public void LoadConfigNode(ConfigNode node, String body)
         {
@@ -50,6 +53,7 @@ namespace CityLights
 
         public void Apply()
         {
+            
             CelestialBody celestialBody = Tools.GetCelestialBody(body);
             TerrainMaterial test = new TerrainMaterial();
             if (celestialBody != null)
@@ -79,6 +83,53 @@ namespace CityLights
                     
                 }
             }
+            ApplyToMainMenu();
+            onSceneChange = new SceneChangeEvent(SceneLoaded);
+            EVEManagerClass.OnSceneChange += onSceneChange;
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU)
+            {
+                ApplyToMainMenu();
+            }
+        }
+
+        private void SceneLoaded(GameScenes scene)
+        {
+            if (scene == GameScenes.MAINMENU)
+            {
+                ApplyToMainMenu();
+            }
+        }
+
+        private void ApplyToMainMenu()
+        {
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU )
+            {
+                GameObject go = GameObject.FindObjectsOfType<GameObject>().Where(b => b.name == body).LastOrDefault();
+                
+                if (go != mainMenuBody && go != null)
+                {
+                    mainMenuBody = go;
+                    MeshRenderer mr = (MeshRenderer)mainMenuBody.GetComponent(typeof(MeshRenderer));
+                    if (mr != null)
+                    {
+                        scaledMat.SetTexture("_MainTex", mr.material.GetTexture("_MainTex"));
+                        scaledMat.name = materialName;
+                        List<Material> materials = new List<Material>(mr.materials);
+                        materials.Add(scaledMat);
+                        mr.materials = materials.ToArray();
+
+                        CityLightsManager.Log("Applied to main Menu");
+                    }
+                }
+                else if(go == null)
+                {
+                    CityLightsManager.Log("Cannot Find to apply to main Menu!");
+                }
+                else if (mainMenuBody == go)
+                {
+                    CityLightsManager.Log("Already Applied to main Menu!");
+                }
+            }
         }
 
         public void Remove()
@@ -96,7 +147,18 @@ namespace CityLights
                     mr.materials = materials.ToArray();
                 }
             }
+            if(mainMenuBody != null)
+            {
+                MeshRenderer mr = (MeshRenderer)mainMenuBody.GetComponent(typeof(MeshRenderer));
+                if (mr != null)
+                {
+                    List<Material> materials = new List<Material>(mr.materials);
+                    materials.Remove(materials.Find(mat => mat.name.Contains(materialName)));
+                    mr.materials = materials.ToArray();
+                }
+            }
             materialPQS.Remove();
+            EVEManagerClass.OnSceneChange -= onSceneChange;
             GameObject.DestroyImmediate(materialPQS);
         }
     }

@@ -101,7 +101,6 @@ namespace Utils
 
         public static CelestialBody GetCelestialBody(String body)
         {
-            KSPLog.print("GetCelestialBody: Searching for " + body);
             CelestialBody[] celestialBodies = FlightGlobals.Bodies.ToArray();
             return celestialBodies.FirstOrDefault(n => n.bodyName == body);
         }

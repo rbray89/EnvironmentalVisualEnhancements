@@ -6,7 +6,7 @@ using Utils;
 
 namespace EVEManager
 {
-    public interface IEVEObject : INamed
+    public interface IEVEObject
     {
         ConfigNode ConfigNode { get; }
         String Body { get; }

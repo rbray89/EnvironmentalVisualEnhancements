@@ -52,6 +52,8 @@ namespace Atmosphere
         [Persistent, Optional]
         CloudShadowMaterial shadowMaterial = null;
 
+        int scaledLayer = 0;
+        Light mainMenuSunlight;
         bool isScaled = false;
         public bool Scaled
         {
@@ -72,7 +74,7 @@ namespace Atmosphere
                             cloudsMat.ApplyMaterialProperties(ShadowProjector.material, ScaledSpace.ScaleFactor);
                         }
                         float scale = (float)(1000f / celestialBody.Radius);
-                        Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);
+                        Reassign(scaledLayer, scaledCelestialTransform, scale);
                     }
                     else
                     {
@@ -93,11 +95,20 @@ namespace Atmosphere
         }
         CelestialBody celestialBody = null;
         Transform scaledCelestialTransform = null;
-        Transform sunTransform;
         float radius;     
         float radiusScale;
         
         private static Shader cloudShader = null;
+
+        internal Clouds2D CloneForMainMenu(GameObject mainMenuBody)
+        {
+            Clouds2D mainMenu = new Clouds2D();
+            mainMenu.macroCloudMaterial = this.macroCloudMaterial;
+            mainMenu.shadowMaterial = this.shadowMaterial;
+            mainMenu.Apply(this.celestialBody, mainMenuBody.transform, this.cloudsMat, this.radius, mainMenuBody.layer);
+            return mainMenu;
+        }
+
         private static Shader CloudShader
         {
             get
@@ -136,7 +147,7 @@ namespace Atmosphere
                 }
             } }
 
-        internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, CloudsMaterial cloudsMaterial, float radius)
+        internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, CloudsMaterial cloudsMaterial, float radius, int layer = EVEManagerClass.SCALED_LAYER)
         {
             CloudsManager.Log("Applying 2D clouds...");
             Remove();
@@ -147,7 +158,8 @@ namespace Atmosphere
             this.radius = radius;
             macroCloudMaterial.Radius = radius;
             this.cloudsMat = cloudsMaterial;
-
+            this.scaledLayer = layer;
+            
             if (shadowMaterial != null)
             {
                 ShadowProjectorGO = new GameObject();
@@ -159,8 +171,12 @@ namespace Atmosphere
                 ShadowProjector.transform.parent = celestialBody.transform;
                 ShadowProjector.material = new Material(CloudShadowShader);
                 shadowMaterial.ApplyMaterialProperties(ShadowProjector.material);
+                GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                sphere.transform.localScale = 100*Vector3.one;
+                sphere.transform.parent = ShadowProjector.transform;
+                sphere.layer = layer;
             }
-            sunTransform = Sun.Instance.sun.transform;
+
 
             
             Scaled = true;
@@ -178,15 +194,26 @@ namespace Atmosphere
 
             if (layer == EVEManagerClass.MACRO_LAYER)
             {
+                mainMenuSunlight = Sun.Instance.light;
                 CloudMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius * scale);
                 CloudMaterial.EnableKeyword("WORLD_SPACE_ON");
                 CloudMaterial.EnableKeyword("SOFT_DEPTH_ON");
             }
             else
             {
+                //hack to get protected variable
+                FieldInfo field = typeof(Sun).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(
+                    f => f.Name == "scaledSunLight" );
+                mainMenuSunlight = (Light)field.GetValue(Sun.Instance);
                 CloudMaterial.DisableKeyword("WORLD_SPACE_ON");
                 CloudMaterial.DisableKeyword("SOFT_DEPTH_ON");
             }
+
+            if(HighLogic.LoadedScene == GameScenes.MAINMENU)
+            {
+                mainMenuSunlight = GameObject.FindObjectsOfType<Light>().Last(l => l.isActiveAndEnabled);
+            }
+
             if (ShadowProjector != null)
             {
 
@@ -197,29 +224,32 @@ namespace Atmosphere
                 ShadowProjector.material.SetFloat("_Radius", (float)radiusScale);
                 ShadowProjector.material.SetFloat("_PlanetRadius", (float)celestialBody.Radius*scale);
                 ShadowProjector.transform.parent = parent;
-                //ShadowProjector.transform.localScale = scale * Vector3.one;
+
                 ShadowProjectorGO.layer = layer;
                 if (layer == EVEManagerClass.MACRO_LAYER)
                 {
                     ShadowProjector.ignoreLayers = ~((1 << 19) | (1 << 15) | 2 | 1);
-                    sunTransform = Tools.GetCelestialBody(Sun.Instance.sun.bodyName).transform;
                     ShadowProjector.material.EnableKeyword("WORLD_SPACE_ON");
                 }
                 else
                 {
-                    ShadowProjector.ignoreLayers = ~((1 << 10));
-                    sunTransform = Tools.GetScaledTransform(Sun.Instance.sun.bodyName);
-                    CloudsManager.Log("Camera mask: "+ScaledCamera.Instance.camera.cullingMask);
+                    ShadowProjector.ignoreLayers = ~((1 << layer));
                     ShadowProjector.material.DisableKeyword("WORLD_SPACE_ON");
+                }
+
+                if(HighLogic.LoadedScene == GameScenes.MAINMENU)
+                {
+                    ShadowProjector.material.EnableKeyword("WORLD_SPACE_ON");
+                    ShadowProjector.material.SetFloat("_PlanetRadius", 1);
                 }
             }
         }
 
         public void Remove()
         {
-            CloudsManager.Log("Removing 2D clouds...");
             if (CloudMesh != null)
             {
+                CloudsManager.Log("Removing 2D clouds...");
                 CloudMesh.transform.parent = null;
                 GameObject.DestroyImmediate(CloudMesh);
                 CloudMesh = null;
@@ -242,12 +272,16 @@ namespace Atmosphere
                 CloudMesh.transform.localRotation = rotation;
                 if (ShadowProjector != null)
                 {
-                    Vector3 worldSunDir = Vector3.Normalize(Sun.Instance.sunDirection);
-                    Vector3 sunDirection = Vector3.Normalize(ShadowProjector.transform.parent.InverseTransformDirection(worldSunDir));//sunTransform.position));
+                    Vector3 worldSunDir;
+                    Vector3 sunDirection;
+
+                    worldSunDir = Vector3.Normalize(mainMenuSunlight.transform.forward);
+                    sunDirection = Vector3.Normalize(ShadowProjector.transform.parent.InverseTransformDirection(worldSunDir));
+
                     ShadowProjector.transform.localPosition = radiusScale * -sunDirection;
                     ShadowProjector.transform.forward = worldSunDir;
 
-                    if (Scaled)
+                    if (Scaled || HighLogic.LoadedScene == GameScenes.MAINMENU)
                     {
                         ShadowProjector.material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, sunDirection);
                     }
@@ -270,16 +304,16 @@ namespace Atmosphere
 
             if (ShadowProjector != null)
             {
-                if(Scaled)
+                if(!Scaled || HighLogic.LoadedScene == GameScenes.MAINMENU)
                 {
-                    ShadowProjector.material.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, mainRotation);
+                    ShadowProjector.material.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, mainRotation * ShadowProjector.transform.parent.worldToLocalMatrix);
+                    ShadowProjector.material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, ShadowProjector.transform.parent.transform.position);
                 }
                 else
                 {
-                    ShadowProjector.material.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, mainRotation * ShadowProjector.transform.parent.worldToLocalMatrix);
-                    ShadowProjector.material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, CloudMesh.transform.position);
+                    ShadowProjector.material.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, mainRotation);
                 }
-                
+
                 ShadowProjector.material.SetMatrix(EVEManagerClass.DETAIL_ROTATION_PROPERTY, detailRotation);
             }
         }

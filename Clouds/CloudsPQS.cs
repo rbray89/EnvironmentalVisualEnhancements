@@ -20,7 +20,12 @@ namespace Atmosphere
         CelestialBody celestialBody = null;
         Transform scaledCelestialTransform = null;
 
+        Transform mainMenuBodyTransform = null;
+        Clouds2D mainMenuLayer = null;
+        Camera mainMenuCamera = null;
+
         Callback onExitMapView;
+        SceneChangeEvent onSceneChange;
         private bool volumeApplied = false;
         private double radius;
 
@@ -107,11 +112,56 @@ namespace Atmosphere
             }
         }
 
+        private void ApplyToMainMenu()
+        {
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU)
+            {
+                Light[] lights = GameObject.FindObjectsOfType<Light>();
+                foreach(Light light in lights)
+                {
+                    CloudsManager.Log(light.name + " : " + light.isActiveAndEnabled + " : " + light.type);
+                }
+                
+                GameObject go = GameObject.FindObjectsOfType<GameObject>().Last(b => b.name == body && b.activeInHierarchy);
+                if (go != null && go.transform != mainMenuBodyTransform)
+                {
+                    mainMenuCamera = GameObject.FindObjectsOfType<Camera>().First(c => ( c.cullingMask & (1<<go.layer) ) > 0 && c.isActiveAndEnabled);
+
+                    if (layer2D != null)
+                    {
+                        if (mainMenuLayer != null)
+                        {
+                            mainMenuLayer.Remove();
+                        }
+                        mainMenuBodyTransform = go.transform;
+                        mainMenuLayer = layer2D.CloneForMainMenu(go);
+                        CloudsManager.Log(this.name + " Applying to main menu!");
+                    }
+                }
+                else if (go == null)
+                {
+                    CloudsManager.Log("Cannot Find to apply to main Menu!");
+                }
+                else if (mainMenuBodyTransform == go.transform)
+                {
+                    CloudsManager.Log("Already Applied to main Menu!");
+                }
+            }
+        }
+
         protected void Update()
         {
-            bool visible = HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER;
+            bool visible = HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.MAINMENU;
 
-            double ut = Planetarium.GetUniversalTime();
+            double ut;
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU)
+            {
+                ut = Time.time;
+            }
+            else
+            {
+                ut = Planetarium.GetUniversalTime();
+            }
             Vector3d detailRotation = (ut * detailPeriod);
             detailRotation -= new Vector3d((int)detailRotation.x, (int)detailRotation.y, (int)detailRotation.z);
             detailRotation *= 360;
@@ -138,31 +188,41 @@ namespace Atmosphere
                 QuaternionD.AngleAxis(detailRotation.y, Vector3.up) *
                 QuaternionD.AngleAxis(detailRotation.z, Vector3.forward);
             Matrix4x4 detailRotationMatrix = Matrix4x4.TRS(Vector3.zero, detailRotationQ, Vector3.one).inverse;
-
-            Matrix4x4 world2SphereMatrix = this.sphere.transform.worldToLocalMatrix;
-
+            
             if (this.sphere != null && visible)
             {
-                if (HighLogic.LoadedScene == GameScenes.SPACECENTER || (HighLogic.LoadedScene == GameScenes.FLIGHT && sphere.isActive && !MapView.MapIsEnabled))
+                Matrix4x4 world2SphereMatrix = this.sphere.transform.worldToLocalMatrix;
+                if (layer2D != null)
                 {
-                    if (layer2D != null)
+                    if (HighLogic.LoadedScene == GameScenes.SPACECENTER || (HighLogic.LoadedScene == GameScenes.FLIGHT && sphere.isActive && !MapView.MapIsEnabled))
                     {
+
                         layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition),
                                                world2SphereMatrix,
                                                mainRotationMatrix,
                                                detailRotationMatrix);
+
                     }
-                }
-                else 
-                {
-                    Transform transform = ScaledCamera.Instance.camera.transform;
-                    Vector3 pos = scaledCelestialTransform.InverseTransformPoint(transform.position);
-                    if (layer2D != null)
+                    else if (HighLogic.LoadedScene == GameScenes.MAINMENU && mainMenuLayer != null)
                     {
+                        //mainMenuCamera.transform.position -= 5 * mainMenuCamera.transform.forward;
+                        Transform transform = mainMenuCamera.transform;
+                        Vector3 pos = mainMenuBodyTransform.InverseTransformPoint(transform.position);
+                        mainMenuLayer.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos),
+                                                   mainMenuBodyTransform.worldToLocalMatrix,
+                                                   mainRotationMatrix,
+                                                   detailRotationMatrix);
+                    }
+                    else if (MapView.MapIsEnabled || HighLogic.LoadedScene == GameScenes.TRACKSTATION)
+                    {
+                        Transform transform = ScaledCamera.Instance.camera.transform;
+                        Vector3 pos = scaledCelestialTransform.InverseTransformPoint(transform.position);
+
                         layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos),
                                                scaledCelestialTransform.transform.worldToLocalMatrix,
                                                mainRotationMatrix,
                                                detailRotationMatrix);
+
                     }
                 }
                 if (layerVolume != null && sphere.isActive)
@@ -233,6 +293,7 @@ namespace Atmosphere
                 {
                     this.layer2D.Apply(celestialBody, scaledCelestialTransform, cloudsMaterial, (float)radius);
                 }
+
                 if (!pqs.isActive || HighLogic.LoadedScene == GameScenes.TRACKSTATION)
                 {
                     this.OnSphereInactive();
@@ -250,17 +311,23 @@ namespace Atmosphere
             }
             onExitMapView = new Callback(OnExitMapView);
             MapView.OnExitMapView += onExitMapView;
-            GameEvents.onGameSceneLoadRequested.Add(GameSceneLoaded);
+            onSceneChange = new SceneChangeEvent(SceneLoaded);
+            EVEManagerClass.OnSceneChange += onSceneChange;
+
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU)
+            {
+                ApplyToMainMenu();
+            }
         }
 
-        private void GameSceneLoaded(GameScenes scene)
+        private void SceneLoaded(GameScenes scene)
         {
             if (scene != GameScenes.SPACECENTER && scene != GameScenes.FLIGHT)
             {
                 this.OnSphereInactive();
                 sphere.isActive = false;
             }
-            if (scene != GameScenes.SPACECENTER && scene != GameScenes.FLIGHT && scene != GameScenes.TRACKSTATION)
+            if (scene != GameScenes.SPACECENTER && scene != GameScenes.FLIGHT && scene != GameScenes.TRACKSTATION && scene != GameScenes.MAINMENU)
             {
                 this.OnSphereInactive();
                 sphere.isActive = false;
@@ -270,6 +337,20 @@ namespace Atmosphere
             {
                 this.enabled = true;
             }
+
+            if (scene == GameScenes.MAINMENU)
+            {
+                ApplyToMainMenu();
+            }
+            else
+            {
+                if (mainMenuLayer != null)
+                {
+                    mainMenuLayer.Remove();
+                }
+                mainMenuLayer = null;
+            }
+
         }
         
         public void Remove()
@@ -278,18 +359,23 @@ namespace Atmosphere
             {
                 layer2D.Remove();
             }
+            if(mainMenuLayer != null)
+            {
+                mainMenuLayer.Remove();
+            }
             if (layerVolume != null)
             {
                 layerVolume.Remove();
             }
             layer2D = null;
+            mainMenuLayer = null;
             layerVolume = null;
             volumeApplied = false;
             this.sphere = null;
             this.enabled = false;
             this.transform.parent = null;
             MapView.OnExitMapView -= onExitMapView;
-            GameEvents.onGameSceneLoadRequested.Remove(GameSceneLoaded);
+            EVEManagerClass.OnSceneChange -= onSceneChange;
         }
     }
 }
