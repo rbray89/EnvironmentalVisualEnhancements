@@ -96,11 +96,11 @@ namespace Utils
             return isNode;
         }
 
-        public static bool CanParse(FieldInfo field, String value)
+        public static bool CanParse(FieldInfo field, String value, ConfigNode node = null)
         {
             object test = null;
             
-            return Parse(field, value, ref test);
+            return Parse(field, value, ref test, node);
         }
 
         public static ConfigNode CreateConfigFromObject(object obj, ConfigNode node)
@@ -152,12 +152,20 @@ namespace Utils
             return true;
         }
 
-        private static bool Parse(FieldInfo field, string value, ref object obj)
+        private static bool Parse(FieldInfo field, string value, ref object obj, ConfigNode node = null)
         {
             obj = null;
             if (field.FieldType == typeof(TextureWrapper))
             {
-                TextureWrapper tex = new TextureWrapper(value);
+                TextureWrapper tex = null;
+                if (node != null)
+                {
+                    tex = new TextureWrapper(node);
+                }
+                else
+                {
+                    tex = new TextureWrapper(value);
+                }
                 obj = tex;
                 return tex.exists();
             }

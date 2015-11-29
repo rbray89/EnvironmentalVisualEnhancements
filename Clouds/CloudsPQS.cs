@@ -116,12 +116,7 @@ namespace Atmosphere
         {
             if (HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
-                Light[] lights = GameObject.FindObjectsOfType<Light>();
-                foreach(Light light in lights)
-                {
-                    CloudsManager.Log(light.name + " : " + light.isActiveAndEnabled + " : " + light.type);
-                }
-
+                
                 GameObject go = Tools.GetMainMenuObject(body);
 
                 if (go != null && go.transform != mainMenuBodyTransform)

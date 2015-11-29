@@ -11,7 +11,9 @@ namespace Utils
     public enum TextureTypeEnum
     {
         RGBA,
-        AlphaMap
+        AlphaMap,
+        CubeMap,
+        AlphaCubeMap
     }
 
     public class TextureType : System.Attribute
@@ -86,6 +88,16 @@ namespace Utils
                     Texture2D value = (Texture2D)obj;
                     KSPLog.print(name+": "+ value);
                 }
+                else if (obj.GetType() == typeof(Texture))
+                {
+                    Texture value = (Texture)obj;
+                    KSPLog.print(name + ": " + value);
+                }
+                else if (obj.GetType() == typeof(Cubemap))
+                {
+                    Cubemap value = (Cubemap)obj;
+                    KSPLog.print(name + ": " + value);
+                }
                 //float
                 else if (obj.GetType() == typeof(float))
                 {
@@ -141,7 +153,9 @@ namespace Utils
                         {
                             bool isNormal = Attribute.IsDefined(field, typeof(BumpMap));
                             bool isClamped = Attribute.IsDefined(field, typeof(Clamped));
-                            cache.Add(name, texture.GetTexture(isNormal, isClamped));
+                            texture.IsNormal = isNormal;
+                            texture.IsClamped = isClamped;
+                            cache.Add(name, texture);
                         }
                         else
                         {
@@ -192,6 +206,11 @@ namespace Utils
                 {
                     Texture2D value = (Texture2D)obj;
                     material.SetTexture(name, value);
+                }
+                else if (obj.GetType() == typeof(TextureWrapper))
+                {
+                    TextureWrapper value = (TextureWrapper)obj;
+                    value.ApplyTexture(material, name);
                 }
                 //float
                 else if (obj.GetType() == typeof(float))

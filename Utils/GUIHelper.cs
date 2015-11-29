@@ -498,7 +498,7 @@ namespace Utils
                             }
 
                             GUIStyle fieldStyle = new GUIStyle(GUI.skin.textField);
-                            if (value != "" && !ConfigHelper.CanParse(field, value))
+                            if (value != "" && !ConfigHelper.CanParse(field, value, node))
                             {
                                 fieldStyle.normal.textColor = Color.red;
                                 fieldStyle.active.textColor = Color.red;
@@ -515,10 +515,12 @@ namespace Utils
                             {
                                 configNode.RemoveNode(field.Name);
                                 node = null;
+                                configNode.AddValue(field.Name, newValue);
                             }
                             else
                             {
                                 node = configNode.AddNode(new ConfigNode(field.Name));
+                                node.AddValue("value", newValue);
                             }
                         }
 

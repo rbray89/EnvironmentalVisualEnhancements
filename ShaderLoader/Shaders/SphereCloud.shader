@@ -3,54 +3,63 @@ Shader "EVE/Cloud" {
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_MainTex ("Main (RGB)", 2D) = "white" {}
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
-		_FalloffPow ("Falloff Power", Range(0,3)) = 2
-		_FalloffScale ("Falloff Scale", Range(0,20)) = 3
-		_DetailScale ("Detail Scale", Range(0,100)) = 100
-		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
-		_MinLight ("Minimum Light", Range(0,1)) = .5
-		_DistFade ("Fade Distance", Range(0,100)) = 10
-		_DistFadeVert ("Fade Scale", Range(0,1)) = .002
-		_RimDist ("Rim Distance", Range(0,1)) = 1
-		_RimDistSub ("Rim Distance Sub", Range(0,2)) = 1.01
-		_InvFade ("Soft Particles Factor", Range(0.01,3.0)) = .01
-		_OceanRadius ("Ocean Radius", Float) = 63000
-	  	_PlanetOrigin ("Sphere Center", Vector) = (0,0,0,1)
-		
+		_FalloffPow("Falloff Power", Range(0,3)) = 2
+		_FalloffScale("Falloff Scale", Range(0,20)) = 3
+		_DetailScale("Detail Scale", Range(0,100)) = 100
+		_DetailDist("Detail Distance", Range(0,1)) = 0.00875
+		_MinLight("Minimum Light", Range(0,1)) = .5
+		_DistFade("Fade Distance", Range(0,100)) = 10
+		_DistFadeVert("Fade Scale", Range(0,1)) = .002
+		_RimDist("Rim Distance", Range(0,1)) = 1
+		_RimDistSub("Rim Distance Sub", Range(0,2)) = 1.01
+		_InvFade("Soft Particles Factor", Range(0.01,3.0)) = .01
+		_OceanRadius("Ocean Radius", Float) = 63000
+		_PlanetOrigin("Sphere Center", Vector) = (0,0,0,1)
+
 	}
 
-Category {
-	
-	Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" }
-	Blend SrcAlpha OneMinusSrcAlpha
-	Fog { Mode Global}
-	AlphaTest Greater 0
-	ColorMask RGB
-	Cull Off Lighting On ZWrite Off
-	
-SubShader {
-	Pass {
+		Category{
 
-		Lighting On
-		Tags { "LightMode"="ForwardBase"}
-		
-		CGPROGRAM
-		
-		#include "EVEUtils.cginc"
-		#include "UnityCG.cginc"
-		#include "AutoLight.cginc"
-		#include "Lighting.cginc"
-		#pragma target 3.0
-		#pragma glsl
-		#pragma vertex vert
-		#pragma fragment frag
-		#define MAG_ONE 1.4142135623730950488016887242097
-		#pragma fragmentoption ARB_precision_hint_fastest
-		#pragma multi_compile_fwdbase
-		#pragma multi_compile_fwdadd_fullshadows
-		#pragma multi_compile SOFT_DEPTH_OFF SOFT_DEPTH_ON
-		#pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
-	 
+			Tags { "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+			Blend SrcAlpha OneMinusSrcAlpha
+			Fog { Mode Global}
+			AlphaTest Greater 0
+			ColorMask RGB
+			Cull Off Lighting On ZWrite Off
+
+		SubShader {
+			Pass {
+
+				Lighting On
+				Tags { "LightMode" = "ForwardBase"}
+
+				CGPROGRAM
+
+				#include "EVEUtils.cginc"
+				#include "UnityCG.cginc"
+				#include "AutoLight.cginc"
+				#include "Lighting.cginc"
+				#pragma target 3.0
+				#pragma glsl
+				#pragma vertex vert
+				#pragma fragment frag
+				#define MAG_ONE 1.4142135623730950488016887242097
+				#pragma fragmentoption ARB_precision_hint_fastest
+				#pragma multi_compile_fwdbase
+				#pragma multi_compile_fwdadd_fullshadows
+				#pragma multi_compile SOFT_DEPTH_OFF SOFT_DEPTH_ON
+				#pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
+				#pragma multi_compile MainTex CUBE_MainTex CUBE_RGB2_MainTex
+
+		#ifdef CUBE_MainTex
+		uniform samplerCUBE cube_MainTex;
+		#elif defined (CUBE_RGB2_MainTex)
+		sampler2D cube_MainTexPOS;
+		sampler2D cube_MainTexNEG;
+		#else
 		sampler2D _MainTex;
+		#endif
+
 		sampler2D _DetailTex;
 		fixed4 _Color;
 		float _FalloffPow;
@@ -113,7 +122,13 @@ SubShader {
 		fixed4 frag (v2f IN) : COLOR
 			{
 			half4 color;
+			#ifdef CUBE_MainTex
+			half4 main = texCUBE(cube_MainTex, normalize(IN.objMain));
+			#elif defined (CUBE_RGB2_MainTex)
+			half4 main = GetSphereMapCube(cube_MainTexPOS, cube_MainTexNEG, IN.objMain);
+			#else
 		    half4 main = GetSphereMap(_MainTex, IN.objMain);
+			#endif
 			half4 detail = GetShereDetailMap(_DetailTex, IN.objDetail, _DetailScale);
 			
 			float viewDist = distance(IN.worldVert,_WorldSpaceCameraPos);
