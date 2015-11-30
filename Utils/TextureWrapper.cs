@@ -7,6 +7,24 @@ using UnityEngine;
 namespace Utils
 {
 
+    public enum TextureTypeEnum
+    {
+        RGBA,
+        AlphaMap,
+        CubeMap,
+        AlphaCubeMap,
+        RGB2_CubeMap
+    }
+
+    public class TextureType : System.Attribute
+    {
+        public TextureTypeEnum Type;
+        public TextureType(TextureTypeEnum type)
+        {
+            Type = type;
+        }
+    }
+
     public class BumpMap : System.Attribute
     { }
 
@@ -16,31 +34,36 @@ namespace Utils
 
     public class CubemapWrapper
     {
-        enum CubeType
-        {
-            Unity,
-            ColorMapped
-        }
 
-        private CubeType type;
+        private TextureTypeEnum type;
         private bool isNormal;
         public string name;
 
         Texture2D texPlus;
         Texture2D texMinus;
+        Cubemap cubTex;
 
-        public CubemapWrapper(string value, bool isNormal)
+        public CubemapWrapper(string value, TextureTypeEnum cubeType, bool isNormal, bool isClamped)
         {
             this.name = value;
             this.isNormal = isNormal;
-            texPlus = GameDatabase.Instance.GetTexture(value + "+", isNormal);
-            texMinus = GameDatabase.Instance.GetTexture(value + "-", isNormal);
-            type = CubeType.ColorMapped;
+            type = cubeType;
+            if (type == TextureTypeEnum.RGB2_CubeMap)
+            {
+                texPlus = GameDatabase.Instance.GetTexture(value + "+", isNormal);
+                texPlus.wrapMode = isClamped ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
+                texMinus = GameDatabase.Instance.GetTexture(value + "-", isNormal);
+                texMinus.wrapMode = isClamped ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
+            }
+            else if(type == TextureTypeEnum.CubeMap || type == TextureTypeEnum.AlphaCubeMap)
+            {
+                
+            }
         }
 
         internal void ApplyCubeMap(Material mat, string name)
         {
-            if (type == CubeType.ColorMapped)
+            if (type == TextureTypeEnum.RGB2_CubeMap)
             {
                 mat.SetTexture("cube" + name + "POS", texPlus);
                 mat.SetTexture("cube" + name + "NEG", texMinus);
@@ -54,9 +77,16 @@ namespace Utils
             }
         }
 
-        internal static bool Exists(string value)
+        internal static bool Exists(string value, TextureTypeEnum type)
         {
-            return GameDatabase.Instance.ExistsTexture(value + "+") && GameDatabase.Instance.ExistsTexture(value + "-");
+            if (type == TextureTypeEnum.RGB2_CubeMap)
+            {
+                return GameDatabase.Instance.ExistsTexture(value + "+") && GameDatabase.Instance.ExistsTexture(value + "-");
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 
@@ -94,14 +124,18 @@ namespace Utils
         {
             if (node != null)
             {
-                if(node.HasValue("value"))
-                    value = node.GetValue("value");
-                if (node.HasValue("isClamped"))
-                    isClamped = bool.Parse(node.GetValue("isClamped"));
-                if (node.HasValue("type"))
-                    type = (TextureTypeEnum) ConfigNode.ParseEnum(typeof(TextureTypeEnum), node.GetValue("type"));
-                if (node.HasValue("alphaMask"))
-                    alphaMask = ConfigNode.ParseVector4(node.GetValue("alphaMask"));
+                try
+                {
+                    if (node.HasValue("value"))
+                        value = node.GetValue("value");
+                    if (node.HasValue("isClamped"))
+                        isClamped = bool.Parse(node.GetValue("isClamped"));
+                    if (node.HasValue("type"))
+                        type = (TextureTypeEnum)ConfigNode.ParseEnum(typeof(TextureTypeEnum), node.GetValue("type"));
+                    if (node.HasValue("alphaMask"))
+                        alphaMask = ConfigNode.ParseVector4(node.GetValue("alphaMask"));
+                }
+                catch { }
             }
         }
 
@@ -111,7 +145,7 @@ namespace Utils
             if (type == TextureTypeEnum.AlphaCubeMap || type == TextureTypeEnum.CubeMap)
             {
                 bool cubemapExists = CubemapList.Exists(c => c.name == value);
-                CubemapWrapper cubeMap = fetchCubeMap(value, isNormal);
+                CubemapWrapper cubeMap = fetchCubeMap();
                 CubemapList.Add(cubeMap);
                 cubeMap.ApplyCubeMap(mat, name);
             }
@@ -128,7 +162,7 @@ namespace Utils
             
         }
 
-        private CubemapWrapper fetchCubeMap(string value, bool isNormal)
+        private CubemapWrapper fetchCubeMap()
         {
             bool cubemapExists = CubemapList.Exists(c => c.name == value);
             if(cubemapExists)
@@ -137,7 +171,7 @@ namespace Utils
             }
             else
             {
-                CubemapWrapper cubemap = new CubemapWrapper(value, isNormal);
+                CubemapWrapper cubemap = new CubemapWrapper(value, type, isNormal, isClamped);
                 CubemapList.Add(cubemap);
                 return cubemap;
             }
@@ -147,11 +181,11 @@ namespace Utils
         public bool exists()
         {
             bool cubemapExists = CubemapList.Exists(c => c.name == value);
-            if (type == TextureTypeEnum.AlphaCubeMap || type == TextureTypeEnum.CubeMap)
+            if (type == TextureTypeEnum.AlphaCubeMap || type == TextureTypeEnum.CubeMap || type == TextureTypeEnum.RGB2_CubeMap)
             {
                 if(!cubemapExists)
                 {
-                    cubemapExists = CubemapWrapper.Exists(value);
+                    cubemapExists = CubemapWrapper.Exists(value, type);
                 }
                 return cubemapExists;
             }

@@ -137,14 +137,14 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 			float3 sphereNrm = normalize(IN.sphereCoords);
 		    half vertLerp = saturate((32*(saturate(dot(IN.objnormal.xyz, -sphereNrm))-.95))+.5);
 		    
-			half4 detail = GetShereDetailMap(_midTex, IN.sphereCoords, _DetailScale);
-			half4 vert = GetShereDetailMap(_steepTex, IN.sphereCoords, _DetailVertScale);	
+			half4 detail = GetSphereDetailMap(_midTex, IN.sphereCoords, _DetailScale);
+			half4 vert = GetSphereDetailMap(_steepTex, IN.sphereCoords, _DetailVertScale);	
 			detail = lerp(vert, detail, vertLerp);
 			
 			#ifdef CITYOVERLAY_ON
 			half4 cityoverlay = GetSphereMap(_CityOverlayTex, IN.sphereCoords);
-			half4 citydarkoverlaydetail = GetShereDetailMap(_CityDarkOverlayDetailTex, IN.sphereCoords, _CityOverlayDetailScale);
-			half4 citylightoverlaydetail = GetShereDetailMap(_CityLightOverlayDetailTex, IN.sphereCoords, _CityOverlayDetailScale); 
+			half4 citydarkoverlaydetail = GetSphereDetailMap(_CityDarkOverlayDetailTex, IN.sphereCoords, _CityOverlayDetailScale);
+			half4 citylightoverlaydetail = GetSphereDetailMap(_CityLightOverlayDetailTex, IN.sphereCoords, _CityOverlayDetailScale); 
 			#endif
 			
 			half4 encnorm = GetSphereMap(_BumpMap, IN.sphereCoords);

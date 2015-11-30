@@ -106,8 +106,8 @@
 
 
 					half4 cityoverlay = GetSphereMap(_CityOverlayTex, IN.sphereNormal);
-					half4 citydarkoverlaydetail = GetShereDetailMap(_CityDarkOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale);
-					half4 citylightoverlaydetail = GetShereDetailMap(_CityLightOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale);
+					half4 citydarkoverlaydetail = GetSphereDetailMap(_CityDarkOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale);
+					half4 citylightoverlaydetail = GetSphereDetailMap(_CityLightOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale);
 
 
 					half detailLevel = saturate(2*_DetailDist*IN.viewDist);

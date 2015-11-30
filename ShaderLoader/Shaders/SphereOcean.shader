@@ -101,7 +101,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 			float3 sphereNrm = IN.sphereNormal;
 		 	
 		    half4 main = GetSphereMap(_MainTex, sphereNrm);
-			half4 detail = GetShereDetailMap(_DetailTex, sphereNrm, _DetailScale);
+			half4 detail = GetSphereDetailMap(_DetailTex, sphereNrm, _DetailScale);
 			
 			color = _SurfaceColor;            
             

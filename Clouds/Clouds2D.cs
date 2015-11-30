@@ -53,7 +53,7 @@ namespace Atmosphere
         CloudShadowMaterial shadowMaterial = null;
 
         int scaledLayer = 0;
-        Light mainMenuSunlight;
+        Light Sunlight;
         bool isScaled = false;
         public bool Scaled
         {
@@ -194,7 +194,7 @@ namespace Atmosphere
 
             if (layer == EVEManagerClass.MACRO_LAYER)
             {
-                mainMenuSunlight = Sun.Instance.light;
+                Sunlight = Sun.Instance.light;
                 CloudMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius * scale);
                 CloudMaterial.EnableKeyword("WORLD_SPACE_ON");
                 CloudMaterial.EnableKeyword("SOFT_DEPTH_ON");
@@ -204,14 +204,14 @@ namespace Atmosphere
                 //hack to get protected variable
                 FieldInfo field = typeof(Sun).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(
                     f => f.Name == "scaledSunLight" );
-                mainMenuSunlight = (Light)field.GetValue(Sun.Instance);
+                Sunlight = (Light)field.GetValue(Sun.Instance);
                 CloudMaterial.DisableKeyword("WORLD_SPACE_ON");
                 CloudMaterial.DisableKeyword("SOFT_DEPTH_ON");
             }
 
             if(HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
-                mainMenuSunlight = GameObject.FindObjectsOfType<Light>().Last(l => l.isActiveAndEnabled);
+                Sunlight = GameObject.FindObjectsOfType<Light>().Last(l => l.isActiveAndEnabled);
             }
 
             if (ShadowProjector != null)
@@ -265,12 +265,12 @@ namespace Atmosphere
             if (rotation != null)
             {
                 CloudMesh.transform.localRotation = rotation;
-                if (ShadowProjector != null)
+                if (ShadowProjector != null && Sunlight != null)
                 {
                     Vector3 worldSunDir;
                     Vector3 sunDirection;
 
-                    worldSunDir = Vector3.Normalize(mainMenuSunlight.transform.forward);
+                    worldSunDir = Vector3.Normalize(Sunlight.transform.forward);
                     sunDirection = Vector3.Normalize(ShadowProjector.transform.parent.InverseTransformDirection(worldSunDir));
 
                     ShadowProjector.transform.localPosition = radiusScale * -sunDirection;

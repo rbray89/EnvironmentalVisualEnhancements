@@ -118,12 +118,12 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		 	half4 main = GetSphereMap(_MainTex, IN.sphereNormal);
 		    half3 normT = UnpackNormal(GetSphereMap(_BumpMap, IN.sphereNormal));
 		    
-		    half4 detail = GetShereDetailMap(_midTex, IN.sphereNormal, _DetailScale); 
+		    half4 detail = GetSphereDetailMap(_midTex, IN.sphereNormal, _DetailScale); 
 			
 			#ifdef CITYOVERLAY_ON
 			half4 cityoverlay = GetSphereMap(_CityOverlayTex, IN.sphereNormal);
-			half4 citydarkoverlaydetail = GetShereDetailMap(_CityDarkOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale);
-			half4 citylightoverlaydetail = GetShereDetailMap(_CityLightOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale); 
+			half4 citydarkoverlaydetail = GetSphereDetailMap(_CityDarkOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale);
+			half4 citylightoverlaydetail = GetSphereDetailMap(_CityLightOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale); 
 			#endif
 			
 			half detailLevel = saturate(2*_DetailDist*IN.viewDist);

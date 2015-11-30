@@ -107,8 +107,8 @@
 
 
 					half4 cityoverlay = GetSphereMap(_CityOverlayTex, IN.sphereCoords);
-					half4 citydarkoverlaydetail = GetShereDetailMap(_CityDarkOverlayDetailTex, IN.sphereCoords, _CityOverlayDetailScale);
-					half4 citylightoverlaydetail = GetShereDetailMap(_CityLightOverlayDetailTex, IN.sphereCoords, _CityOverlayDetailScale);
+					half4 citydarkoverlaydetail = GetSphereDetailMap(_CityDarkOverlayDetailTex, IN.sphereCoords, _CityOverlayDetailScale);
+					half4 citylightoverlaydetail = GetSphereDetailMap(_CityLightOverlayDetailTex, IN.sphereCoords, _CityOverlayDetailScale);
 
 
 					cityoverlay.a *= 1-step(IN.color.a, 0);

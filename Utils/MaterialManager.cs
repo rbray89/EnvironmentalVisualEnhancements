@@ -8,23 +8,6 @@ using UnityEngine;
 namespace Utils
 {
 
-    public enum TextureTypeEnum
-    {
-        RGBA,
-        AlphaMap,
-        CubeMap,
-        AlphaCubeMap
-    }
-
-    public class TextureType : System.Attribute
-    {
-        public TextureTypeEnum Type;
-        public TextureType(TextureTypeEnum type)
-        {
-            Type = type;
-        }
-    }
-
     public class UserDefinedType : System.Attribute
     { }
 

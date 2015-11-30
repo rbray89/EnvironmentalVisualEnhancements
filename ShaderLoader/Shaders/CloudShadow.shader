@@ -50,8 +50,8 @@
 				float shadowCheck : TEXCOORD1;
 				float originDist : TEXCOORD2;
 				float4 worldPos : TEXCOORD3;
-				float4 mainPos : TEXCOORD4;
-				float4 detailPos : TEXCOORD5;
+				float3 mainPos : TEXCOORD4;
+				float3 detailPos : TEXCOORD5;
 			};
 
 			v2f vert(appdata_t v)
@@ -70,7 +70,7 @@
 				#endif
 
 
-				float3 L = worldOrigin - vertexPos;
+				float3 L = worldOrigin - vertexPos.xyz;
 				o.originDist = length(L);
 				float tc = dot(L,-_SunDir);
 				float ntc = dot(normalize(L), _SunDir);
@@ -85,8 +85,9 @@
 				float sphereDist = lerp(lerp(tlc - td, tc - tlc, step(0.0, tc)),
 				lerp(tlc - td, tc + tlc, step(0.0, tc)), step(o.originDist, sphereRadius));
 				float4 planetPos = vertexPos + (-_SunDir*sphereDist);
-				o.mainPos = mul(_MainRotation, planetPos);
-				o.detailPos = mul(_DetailRotation, o.mainPos);
+				planetPos = (mul(_MainRotation, planetPos));
+				o.mainPos = planetPos.xyz;
+				o.detailPos = (mul(_DetailRotation, planetPos)).xyz;
 				return o;
 			}
 
@@ -100,9 +101,9 @@
 				#endif
 
 				half4 main = GetSphereMap(_MainTex, IN.mainPos);
-				half4 detail = GetShereDetailMap(_DetailTex, IN.detailPos, _DetailScale);
+				half4 detail = GetSphereDetailMap(_DetailTex, IN.detailPos, _DetailScale);
 
-				float viewDist = distance(IN.worldPos,_WorldSpaceCameraPos);
+				float viewDist = distance(IN.worldPos.xyz,_WorldSpaceCameraPos);
 				half detailLevel = saturate(2 * _DetailDist*viewDist);
 				fixed4 color = _Color * main.rgba * lerp(detail.rgba, 1, detailLevel);
 

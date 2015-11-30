@@ -45,13 +45,22 @@
 				#define MAG_ONE 1.4142135623730950488016887242097
 				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile_fwdbase
-
+				#pragma multi_compile MainTex CUBE_MainTex CUBE_RGB2_MainTex
 
 
 				sampler2D _TopTex;
 				sampler2D _LeftTex;
 				sampler2D _FrontTex;
+
+				#ifdef CUBE_MainTex
+				uniform samplerCUBE cube_MainTex;
+				#elif defined (CUBE_RGB2_MainTex)
+				sampler2D cube_MainTexPOS;
+				sampler2D cube_MainTexNEG;
+				#else
 				sampler2D _MainTex;
+				#endif
+
 				sampler2D _DetailTex;
 				float _DetailScale;
 				fixed4 _Color;
@@ -90,6 +99,7 @@
 				v2f vert (appdata_t v)
 				{
 					v2f o;
+					UNITY_INITIALIZE_OUTPUT(v2f, o);
 
 					float4 origin = mul(_Object2World, float4(0,0,0,1));
 
@@ -107,9 +117,20 @@
 
 					planet_pos = mul(_MainRotation, origin);
 					float3 detail_pos = mul(_DetailRotation, planet_pos).xyz;
-					//o.color = v.color;
-					o.color = GetSphereMapNoLOD( _MainTex, planet_pos.xyz);
-					o.color *= GetShereDetailMapNoLOD(_DetailTex, detail_pos, _DetailScale);
+
+					#ifdef CUBE_MainTex
+					//o.color = half4 (1,1,1,1);
+					half4 uv;
+					uv.xyz = normalize(planet_pos.xyz);
+					uv.w = 0;
+					o.color = texCUBElod(cube_MainTex, uv );
+					#elif defined (CUBE_RGB2_MainTex)
+					o.color = GetSphereMapCubeNoLOD(cube_MainTexPOS, cube_MainTexNEG, planet_pos.xyz);
+					#else
+					o.color = GetSphereMapNoLOD(_MainTex, planet_pos.xyz);
+					#endif				
+					
+					o.color.rgba *= GetSphereDetailMapNoLOD(_DetailTex, detail_pos, _DetailScale);
 
 					o.color.a *= GetDistanceFade(distance(origin,_WorldSpaceCameraPos), _DistFade, _DistFadeVert);
 

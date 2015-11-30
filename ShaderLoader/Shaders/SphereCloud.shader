@@ -129,7 +129,7 @@ Shader "EVE/Cloud" {
 			#else
 		    half4 main = GetSphereMap(_MainTex, IN.objMain);
 			#endif
-			half4 detail = GetShereDetailMap(_DetailTex, IN.objDetail, _DetailScale);
+			half4 detail = GetSphereDetailMap(_DetailTex, IN.objDetail, _DetailScale);
 			
 			float viewDist = distance(IN.worldVert,_WorldSpaceCameraPos);
 			half detailLevel = saturate(2*_DetailDist*viewDist);
