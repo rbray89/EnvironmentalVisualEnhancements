@@ -23,9 +23,17 @@
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
+			#pragma multi_compile MainTex CUBE_MainTex CUBE_RGB2_MainTex
 
-			uniform sampler2D _MainTex;
-			float4 _MainOffset;
+#ifdef CUBE_MainTex
+			uniform samplerCUBE cube_MainTex;
+#elif defined (CUBE_RGB2_MainTex)
+			sampler2D cube_MainTexPOS;
+			sampler2D cube_MainTexNEG;
+#else
+			sampler2D _MainTex;
+#endif
+
 			fixed4 _Color;
 			uniform sampler2D _DetailTex;
 			fixed4 _DetailOffset;
@@ -61,13 +69,13 @@
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 
 				o.worldPos = mul(_Object2World, v.vertex);
-				#ifdef WORLD_SPACE_ON
+#ifdef WORLD_SPACE_ON
 				float4 vertexPos = o.worldPos;
 				float3 worldOrigin = _PlanetOrigin;
-				#else
+#else
 				float4 vertexPos = v.vertex;
 				float3 worldOrigin = float3(0,0,0);
-				#endif
+#endif
 
 
 				float3 L = worldOrigin - vertexPos.xyz;
@@ -96,11 +104,17 @@
 				half shadowCheck = step(0, IN.posProj.w)*IN.shadowCheck;
 
 				//Ocean filter
-				#ifdef WORLD_SPACE_ON
+#ifdef WORLD_SPACE_ON
 				shadowCheck *= saturate(.2*((IN.originDist + 5) - _PlanetRadius));
-				#endif
+#endif
 
+#ifdef CUBE_MainTex
+				half4 main = GetSphereMapCube(cube_MainTex, IN.mainPos);
+#elif defined (CUBE_RGB2_MainTex)
+				half4 main = GetSphereMapCube(cube_MainTexPOS, cube_MainTexNEG, IN.mainPos);
+#else
 				half4 main = GetSphereMap(_MainTex, IN.mainPos);
+#endif
 				half4 detail = GetSphereDetailMap(_DetailTex, IN.detailPos, _DetailScale);
 
 				float viewDist = distance(IN.worldPos.xyz,_WorldSpaceCameraPos);

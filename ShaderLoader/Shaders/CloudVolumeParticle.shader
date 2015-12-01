@@ -119,11 +119,7 @@
 					float3 detail_pos = mul(_DetailRotation, planet_pos).xyz;
 
 					#ifdef CUBE_MainTex
-					//o.color = half4 (1,1,1,1);
-					half4 uv;
-					uv.xyz = normalize(planet_pos.xyz);
-					uv.w = 0;
-					o.color = texCUBElod(cube_MainTex, uv );
+					GetSphereMapCubeNoLOD(cube_MainTex, planet_pos.xyz);
 					#elif defined (CUBE_RGB2_MainTex)
 					o.color = GetSphereMapCubeNoLOD(cube_MainTexPOS, cube_MainTexNEG, planet_pos.xyz);
 					#else

@@ -1,8 +1,8 @@
 Shader "EVE/Cloud" {
-	Properties {
-		_Color ("Color Tint", Color) = (1,1,1,1)
-		_MainTex ("Main (RGB)", 2D) = "white" {}
-		_DetailTex ("Detail (RGB)", 2D) = "white" {}
+	Properties{
+		_Color("Color Tint", Color) = (1,1,1,1)
+		_MainTex("Main (RGB)", 2D) = "white" {}
+		_DetailTex("Detail (RGB)", 2D) = "white" {}
 		_FalloffPow("Falloff Power", Range(0,3)) = 2
 		_FalloffScale("Falloff Scale", Range(0,20)) = 3
 		_DetailScale("Detail Scale", Range(0,100)) = 100
@@ -15,17 +15,16 @@ Shader "EVE/Cloud" {
 		_InvFade("Soft Particles Factor", Range(0.01,3.0)) = .01
 		_OceanRadius("Ocean Radius", Float) = 63000
 		_PlanetOrigin("Sphere Center", Vector) = (0,0,0,1)
-
 	}
 
-		Category{
+	Category{
 
-			Tags { "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
-			Blend SrcAlpha OneMinusSrcAlpha
-			Fog { Mode Global}
-			AlphaTest Greater 0
-			ColorMask RGB
-			Cull Off Lighting On ZWrite Off
+		Tags { "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Blend SrcAlpha OneMinusSrcAlpha
+		Fog { Mode Global}
+		AlphaTest Greater 0
+		ColorMask RGB
+		Cull Off Lighting On ZWrite Off
 
 		SubShader {
 			Pass {
@@ -51,135 +50,135 @@ Shader "EVE/Cloud" {
 				#pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
 				#pragma multi_compile MainTex CUBE_MainTex CUBE_RGB2_MainTex
 
-		#ifdef CUBE_MainTex
-		uniform samplerCUBE cube_MainTex;
-		#elif defined (CUBE_RGB2_MainTex)
-		sampler2D cube_MainTexPOS;
-		sampler2D cube_MainTexNEG;
-		#else
-		sampler2D _MainTex;
-		#endif
+#ifdef CUBE_MainTex
+				uniform samplerCUBE cube_MainTex;
+#elif defined (CUBE_RGB2_MainTex)
+				sampler2D cube_MainTexPOS;
+				sampler2D cube_MainTexNEG;
+#else
+				sampler2D _MainTex;
+#endif
 
-		sampler2D _DetailTex;
-		fixed4 _Color;
-		float _FalloffPow;
-		float _FalloffScale;
-		float _DetailScale;
-		float _DetailDist;
-		float _MinLight;
-		float _DistFade;
-		float _DistFadeVert;
-		float _RimDist;
-		float _RimDistSub;
-		float _OceanRadius;
-		float _InvFade;
-		float3 _PlanetOrigin;
-		sampler2D _CameraDepthTexture;
-			
-		struct appdata_t {
-				float4 vertex : POSITION;
-				fixed4 color : COLOR;
-				float3 normal : NORMAL;
-			};
+				sampler2D _DetailTex;
+				fixed4 _Color;
+				float _FalloffPow;
+				float _FalloffScale;
+				float _DetailScale;
+				float _DetailDist;
+				float _MinLight;
+				float _DistFade;
+				float _DistFadeVert;
+				float _RimDist;
+				float _RimDistSub;
+				float _OceanRadius;
+				float _InvFade;
+				float3 _PlanetOrigin;
+				sampler2D _CameraDepthTexture;
 
-		struct v2f {
-			float4 pos : SV_POSITION;
-			float3 worldVert : TEXCOORD0;
-			float3 L : TEXCOORD1;
-			float4 objDetail : TEXCOORD2;
-			float4 objMain : TEXCOORD3;
-			float3 worldNormal : TEXCOORD4;
-			float3 viewDir : TEXCOORD5;
-			LIGHTING_COORDS(6,7)
-			float4 projPos : TEXCOORD8;
-		};	
-		
+				struct appdata_t {
+					float4 vertex : POSITION;
+					fixed4 color : COLOR;
+					float3 normal : NORMAL;
+				};
 
-		v2f vert (appdata_t v)
-		{
-			v2f o;
-			
-			o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
-			
-		   float4 vertexPos = mul(_Object2World, v.vertex);
-		   float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
-	   	   o.worldVert = vertexPos;
-	   	   o.worldNormal = normalize(vertexPos-origin);
-	   	   o.objMain = mul(_MainRotation, v.vertex);
-	   	   o.objDetail = mul(_DetailRotation, o.objMain);
-	   	   o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
-	   	   #ifdef SOFT_DEPTH_ON
-	   	   o.projPos = ComputeScreenPos (o.pos);
-			COMPUTE_EYEDEPTH(o.projPos.z);
-			TRANSFER_VERTEX_TO_FRAGMENT(o);
-		   #endif
-		   
-		   o.L = _PlanetOrigin - _WorldSpaceCameraPos.xyz;
-		   
-	   	   return o;
-	 	}
-	 		
-		fixed4 frag (v2f IN) : COLOR
-			{
-			half4 color;
-			#ifdef CUBE_MainTex
-			half4 main = texCUBE(cube_MainTex, normalize(IN.objMain));
-			#elif defined (CUBE_RGB2_MainTex)
-			half4 main = GetSphereMapCube(cube_MainTexPOS, cube_MainTexNEG, IN.objMain);
-			#else
-		    half4 main = GetSphereMap(_MainTex, IN.objMain);
-			#endif
-			half4 detail = GetSphereDetailMap(_DetailTex, IN.objDetail, _DetailScale);
-			
-			float viewDist = distance(IN.worldVert,_WorldSpaceCameraPos);
-			half detailLevel = saturate(2*_DetailDist*viewDist);
-			color = _Color * main.rgba * lerp(detail.rgba, 1, detailLevel);
+				struct v2f {
+					float4 pos : SV_POSITION;
+					float3 worldVert : TEXCOORD0;
+					float3 L : TEXCOORD1;
+					float4 objDetail : TEXCOORD2;
+					float4 objMain : TEXCOORD3;
+					float3 worldNormal : TEXCOORD4;
+					float3 viewDir : TEXCOORD5;
+					LIGHTING_COORDS(6,7)
+					float4 projPos : TEXCOORD8;
+				};
 
-			float rim = saturate(dot(IN.viewDir, IN.worldNormal));
-			rim = saturate(pow(_FalloffScale*rim,_FalloffPow));
-			float dist = distance(IN.worldVert,_WorldSpaceCameraPos);
-			float distLerp = saturate(_RimDist*(distance(_PlanetOrigin,_WorldSpaceCameraPos)-_RimDistSub*distance(IN.worldVert,_PlanetOrigin)));
-			float distFade = 1-GetDistanceFade(dist, _DistFade, _DistFadeVert);
-	   	   	float distAlpha = lerp(distFade, rim, distLerp);
 
-			color.a = lerp(0, color.a,  distAlpha);
+				v2f vert(appdata_t v)
+				{
+					v2f o;
 
-			
-			#ifdef WORLD_SPACE_ON
-			half3 worldDir = normalize(IN.worldVert - _WorldSpaceCameraPos.xyz);
-			float tc = dot(IN.L, worldDir);
-			float d = sqrt(dot(IN.L,IN.L)-(tc*tc));
-			float3 norm = normalize(-IN.L);
-			float d2 = pow(d,2);
-			float td = sqrt(dot(IN.L,IN.L)-d2);		 
-			float tlc = sqrt((_OceanRadius*_OceanRadius)-d2);
-			
-			half sphereCheck = saturate(step(d, _OceanRadius)*step(0.0, tc) + step( length(IN.L), _OceanRadius));
-			float sphereDist = lerp(tlc-td, tc-tlc, step(0.0, tc));
-			sphereCheck *= step(sphereDist, dist);
-			
-			color.a *= 1-sphereCheck;
-			#endif
-			
-          	//lighting
-          	half transparency = color.a;
-			color = SpecularColorLight( _WorldSpaceLightPos0, IN.viewDir, IN.worldNormal, color, 0, 0, LIGHT_ATTENUATION(IN) );
-			color *= Terminator( normalize(_WorldSpaceLightPos0), IN.worldNormal);
-			color.a = transparency;
-			#ifdef SOFT_DEPTH_ON
-			float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.projPos)));
-			depth = LinearEyeDepth (depth);
-			float partZ = IN.projPos.z;
-			float fade = saturate (_InvFade * (depth-partZ));
-			color.a *= fade;
-			#endif
-          	return color;
+					o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+
+					float4 vertexPos = mul(_Object2World, v.vertex);
+					float3 origin = mul(_Object2World, float4(0,0,0,1)).xyz;
+					o.worldVert = vertexPos;
+					o.worldNormal = normalize(vertexPos - origin);
+					o.objMain = mul(_MainRotation, v.vertex);
+					o.objDetail = mul(_DetailRotation, o.objMain);
+					o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
+#ifdef SOFT_DEPTH_ON
+					o.projPos = ComputeScreenPos(o.pos);
+					COMPUTE_EYEDEPTH(o.projPos.z);
+					TRANSFER_VERTEX_TO_FRAGMENT(o);
+#endif
+
+					o.L = _PlanetOrigin - _WorldSpaceCameraPos.xyz;
+
+					return o;
+				}
+
+				fixed4 frag(v2f IN) : COLOR
+				{
+					half4 color;
+#ifdef CUBE_MainTex
+					half4 main = texCUBE(cube_MainTex, normalize(IN.objMain));
+#elif defined (CUBE_RGB2_MainTex)
+					half4 main = GetSphereMapCube(cube_MainTexPOS, cube_MainTexNEG, IN.objMain);
+#else
+					half4 main = GetSphereMap(_MainTex, IN.objMain);
+#endif
+					half4 detail = GetSphereDetailMap(_DetailTex, IN.objDetail, _DetailScale);
+
+					float viewDist = distance(IN.worldVert,_WorldSpaceCameraPos);
+					half detailLevel = saturate(2 * _DetailDist*viewDist);
+					color = _Color * main.rgba * lerp(detail.rgba, 1, detailLevel);
+
+					float rim = saturate(dot(IN.viewDir, IN.worldNormal));
+					rim = saturate(pow(_FalloffScale*rim,_FalloffPow));
+					float dist = distance(IN.worldVert,_WorldSpaceCameraPos);
+					float distLerp = saturate(_RimDist*(distance(_PlanetOrigin,_WorldSpaceCameraPos) - _RimDistSub*distance(IN.worldVert,_PlanetOrigin)));
+					float distFade = 1 - GetDistanceFade(dist, _DistFade, _DistFadeVert);
+					float distAlpha = lerp(distFade, rim, distLerp);
+
+					color.a = lerp(0, color.a, distAlpha);
+
+
+#ifdef WORLD_SPACE_ON
+					half3 worldDir = normalize(IN.worldVert - _WorldSpaceCameraPos.xyz);
+					float tc = dot(IN.L, worldDir);
+					float d = sqrt(dot(IN.L,IN.L) - (tc*tc));
+					float3 norm = normalize(-IN.L);
+					float d2 = pow(d,2);
+					float td = sqrt(dot(IN.L,IN.L) - d2);
+					float tlc = sqrt((_OceanRadius*_OceanRadius) - d2);
+
+					half sphereCheck = saturate(step(d, _OceanRadius)*step(0.0, tc) + step(length(IN.L), _OceanRadius));
+					float sphereDist = lerp(tlc - td, tc - tlc, step(0.0, tc));
+					sphereCheck *= step(sphereDist, dist);
+
+					color.a *= 1 - sphereCheck;
+#endif
+
+					//lighting
+					half transparency = color.a;
+					color = SpecularColorLight(_WorldSpaceLightPos0, IN.viewDir, IN.worldNormal, color, 0, 0, LIGHT_ATTENUATION(IN));
+					color *= Terminator(normalize(_WorldSpaceLightPos0), IN.worldNormal);
+					color.a = transparency;
+#ifdef SOFT_DEPTH_ON
+					float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.projPos)));
+					depth = LinearEyeDepth(depth);
+					float partZ = IN.projPos.z;
+					float fade = saturate(_InvFade * (depth - partZ));
+					color.a *= fade;
+#endif
+					return color;
+				}
+				ENDCG
+
+			}
+
 		}
-		ENDCG
-	
-		}
-		
-	} 
-	
-}
+
+	}
 }
