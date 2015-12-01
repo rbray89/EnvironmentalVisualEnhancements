@@ -110,8 +110,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-xcopy "$(ProjectDir)CompiledShaders\*.shader" "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Shaders" /yir
+    <PostBuildEvent>xcopy "$(ProjectDir)CompiledShaders\*" "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Shaders" /yir
 copy /Y $(TargetFileName) "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Plugins\";</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>

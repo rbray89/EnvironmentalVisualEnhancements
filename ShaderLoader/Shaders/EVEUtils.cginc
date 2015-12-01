@@ -224,9 +224,9 @@
 	inline half4 GetSphereDetailMap( sampler2D texSampler, float3 sphereVect, float detailScale)
 	{
 		float3 sphereVectNorm = normalize(sphereVect);
-	    float2 uv = GetSphereUV( sphereVectNorm, float2(0,0) )*4*detailScale;
-	 	float4 uvdd = Derivatives(uv.x-.5, uv.y, sphereVectNorm);
-	 	//uv = GetSphereCubeUV(sphereVectNorm);
+	    float2 uv = GetSphereUV( sphereVectNorm, float2(0,0) )*2*detailScale;
+		float4 uvdd = Derivatives(uv.x - .5, uv.y, sphereVectNorm);
+	 	uv = GetSphereCubeUV(sphereVectNorm);
 		half4 tex = tex2D(texSampler, uv*detailScale, uvdd.xy, uvdd.zw);
 		return 	tex;
 	}

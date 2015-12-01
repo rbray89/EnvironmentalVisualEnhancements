@@ -18,7 +18,7 @@ namespace CityLights
         [Persistent]
         TextureWrapper _CityOverlayTex;
         [Persistent]
-        float _CityOverlayDetailScale = 80f;
+        float _CityOverlayDetailScale = 200f;
         [Persistent]
         TextureWrapper _CityDarkOverlayDetailTex;
         [Persistent]

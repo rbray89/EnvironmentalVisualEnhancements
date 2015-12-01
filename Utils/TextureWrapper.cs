@@ -6,14 +6,14 @@ using UnityEngine;
 
 namespace Utils
 {
-
+    [Flags]
     public enum TextureTypeEnum
     {
-        RGBA,
-        AlphaMap,
-        CubeMap,
-        AlphaCubeMap,
-        RGB2_CubeMap
+        RGBA = 0x1,
+        AlphaMap = 0x6,
+        CubeMap = 0xc,
+        AlphaCubeMap = 0x4,
+        RGB2_CubeMap = 0x8,
     }
 
     public class TextureType : System.Attribute
@@ -54,6 +54,8 @@ namespace Utils
                 texPlus.wrapMode = isClamped ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
                 texMinus = GameDatabase.Instance.GetTexture(value + "-", isNormal);
                 texMinus.wrapMode = isClamped ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
+
+                KSPLog.print("Creating " + name + " Cubemap");
             }
             else if(type == TextureTypeEnum.CubeMap || type == TextureTypeEnum.AlphaCubeMap)
             {
@@ -68,6 +70,7 @@ namespace Utils
                 mat.SetTexture("cube" + name + "POS", texPlus);
                 mat.SetTexture("cube" + name + "NEG", texMinus);
                 mat.EnableKeyword("CUBE_RGB2" + name);
+                KSPLog.print("Applying " + name + " Cubemap");
             }
             else
             {
@@ -142,11 +145,9 @@ namespace Utils
         public void ApplyTexture(Material mat, string name)
         {
             Texture texture = null;
-            if (type == TextureTypeEnum.AlphaCubeMap || type == TextureTypeEnum.CubeMap)
+            if ((type & TextureTypeEnum.CubeMap) > 0)
             {
-                bool cubemapExists = CubemapList.Exists(c => c.name == value);
                 CubemapWrapper cubeMap = fetchCubeMap();
-                CubemapList.Add(cubeMap);
                 cubeMap.ApplyCubeMap(mat, name);
             }
             else
@@ -181,7 +182,7 @@ namespace Utils
         public bool exists()
         {
             bool cubemapExists = CubemapList.Exists(c => c.name == value);
-            if (type == TextureTypeEnum.AlphaCubeMap || type == TextureTypeEnum.CubeMap || type == TextureTypeEnum.RGB2_CubeMap)
+            if ((type & TextureTypeEnum.CubeMap) > 0)
             {
                 if(!cubemapExists)
                 {
@@ -201,7 +202,7 @@ namespace Utils
             if (node.HasValue("type"))
             {
                 TextureTypeEnum type = (TextureTypeEnum)ConfigNode.ParseEnum(typeof(TextureTypeEnum), node.GetValue("type"));
-                if (type == TextureTypeEnum.AlphaCubeMap || type == TextureTypeEnum.AlphaMap)
+                if ((type & TextureTypeEnum.AlphaMap) > 0)
                 {
                     return true;
                 }

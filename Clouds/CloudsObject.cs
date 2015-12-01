@@ -20,7 +20,7 @@ namespace Atmosphere
         [Persistent]
         TextureWrapper _DetailTex;
         [Persistent]
-        float _DetailScale = 100f;
+        float _DetailScale = 200f;
         [Persistent, InverseScaled]
         float _DetailDist = 0.000002f;
         [Persistent, InverseScaled]
