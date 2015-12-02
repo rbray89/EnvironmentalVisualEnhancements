@@ -347,8 +347,8 @@ namespace Utils
             string newValue = value;
             if (field.FieldType.IsEnum)
             {
-
-                newValue = ComboBox(fieldRect, value, Enum.GetNames(field.FieldType));
+                newValue = ComboBox(fieldRect, value, field.FieldType.GetFields().Where(
+                    m => (m.IsLiteral) && !Attribute.IsDefined(m, typeof(EnumMask))).Select(m => m.Name).ToArray());
             }
             else
             {
@@ -515,12 +515,14 @@ namespace Utils
                             {
                                 configNode.RemoveNode(field.Name);
                                 node = null;
-                                configNode.AddValue(field.Name, newValue);
                             }
                             else
                             {
                                 node = configNode.AddNode(new ConfigNode(field.Name));
-                                node.AddValue("value", newValue);
+                                if (configNode.HasValue(field.Name))
+                                {
+                                    configNode.RemoveValue(field.Name);
+                                }
                             }
                         }
 
@@ -532,7 +534,6 @@ namespace Utils
                                 {
                                     if (node != null)
                                     {
-
                                         if (node.HasValue("value"))
                                         {
                                             node.SetValue("value", newValue);
@@ -554,7 +555,7 @@ namespace Utils
                                         }
                                     }
                                 }
-                                else if (newValue == defaultValue)
+                                if (newValue == defaultValue)
                                 {
                                     if (node != null)
                                     {

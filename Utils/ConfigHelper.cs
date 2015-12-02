@@ -18,7 +18,9 @@ namespace Utils
     public class NodeOptional : System.Attribute
     {
     }
-
+    public class EnumMask : System.Attribute
+    {
+    }
     public class Conditional: System.Attribute
     {
         private string method;

@@ -217,6 +217,10 @@ pip-log.txt
 #Releases
 *.dll
 
+#debug info
+*.pdb
+*.mdb
+
 #Certain Shaders
 ShaderReplacer/Shaders/*
 ShaderLoader/CompiledShaders/*

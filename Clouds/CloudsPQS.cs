@@ -122,7 +122,6 @@ namespace Atmosphere
                 if (go != null && go.transform != mainMenuBodyTransform)
                 {
                     mainMenuCamera = GameObject.FindObjectsOfType<Camera>().First(c => ( c.cullingMask & (1<<go.layer) ) > 0 && c.isActiveAndEnabled);
-                    CloudsManager.Log(" " + go.transform.childCount);
 
                     if (layer2D != null)
                     {
