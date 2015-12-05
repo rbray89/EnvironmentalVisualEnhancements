@@ -85,6 +85,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FakeOceanPQS.cs" />
     <Compile Include="TerrainManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TerrainPQS.cs" />

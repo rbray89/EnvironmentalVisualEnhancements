@@ -123,7 +123,8 @@ if $(ConfigurationName) == Release del /s "$(SolutionDir)ContentEVE\*.mdb"
 if $(ConfigurationName) == Release del "$(SolutionDir)$(PlatformName)-Configs-Release.zip"
 if $(ConfigurationName) == Release del "$(SolutionDir)$(PlatformName)-EVE-Release.zip"
 if $(ConfigurationName) == Release 7z a -tzip "$(SolutionDir)$(PlatformName)-Configs-Release.zip" "$(SolutionDir)ContentConfigs\GameData"
-if $(ConfigurationName) == Release 7z a -tzip "$(SolutionDir)$(PlatformName)-EVE-Release.zip" "$(SolutionDir)ContentEVE\GameData"</PostBuildEvent>
+if $(ConfigurationName) == Release 7z a -tzip "$(SolutionDir)$(PlatformName)-EVE-Release.zip" "$(SolutionDir)ContentEVE\GameData"
+if $(ConfigurationName) == Release 7z a -y -tzip "$(SolutionDir)$(PlatformName)-EVE.zip" "$(SolutionDir)$(PlatformName)-EVE-Release.zip" "$(SolutionDir)$(PlatformName)-Configs-Release.zip"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

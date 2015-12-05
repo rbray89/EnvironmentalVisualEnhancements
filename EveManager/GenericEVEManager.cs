@@ -61,7 +61,6 @@ namespace EVEManager
             KSPLog.print(configName + " " + SceneLoad);
             Managers.RemoveAll(item => item == null || item.GetType() == this.GetType());
             Managers.Add(this);
-
             if (sceneConfigLoad)
             {
                 StartCoroutine(SetupDelay());
@@ -76,6 +75,7 @@ namespace EVEManager
 
         public virtual void Setup()
         {
+            
             if ((ObjectType.STATIC & objectType) != ObjectType.STATIC)
             {
                 LoadConfig();

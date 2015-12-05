@@ -141,6 +141,36 @@ namespace Terrain
                                 lcOcean.color = lcBeach.color;
                             }
                         }
+
+                        /*
+
+                    
+                PQS ocean =
+                sphere.ChildSpheres[0];
+                GameObject container = ocean.gameObject;
+                
+                FakeOceanPQS fakeOcean1 = new GameObject().AddComponent<FakeOceanPQS>();
+                fakeOcean1.CloneFrom(ocean);
+                Destroy(ocean);
+                FakeOceanPQS fakeOcean = container.AddComponent<FakeOceanPQS>();
+                fakeOcean.CloneFrom(fakeOcean1);
+                Destroy(fakeOcean1);
+                    FieldInfo field = typeof(PQS).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(
+                f => f.FieldType == typeof(PQS[]));
+                field.SetValue(sphere, new PQS[] {fakeOcean });
+               
+                PQSMod_CelestialBodyTransform cbt = sphere.GetComponentsInChildren<PQSMod_CelestialBodyTransform>()[0];
+                cbt.secondaryFades = new PQSMod_CelestialBodyTransform.AltitudeFade[] { };
+                
+
+
+
+
+
+                        */
+
+
+
                     }
 
                     SimpleCube hp = new SimpleCube(2000, ref OceanBackingMaterial, TerrainManager.OceanBackingShader);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using UnityEngine;
 
@@ -39,17 +40,24 @@ namespace Utils
                 this.transform.localPosition = Vector3.zero;
                 this.transform.localRotation = Quaternion.identity;
                 this.transform.localScale = Vector3.one;
+
             }
+
+            if (this.sphere != null && this.sphere.quads != null)
+                foreach (PQ pq in this.sphere.quads)
+                {
+                    OnQuadCreate(pq);
+                }
         }
 
         public void Remove()
         {
             KSPLog.print("Removing PQS Material Manager!");
             if(this.sphere != null && this.sphere.quads != null)
-            foreach (PQ pq in this.sphere.quads)
-            {
-                OnQuadDestroy(pq);
-            }
+                foreach (PQ pq in this.sphere.quads)
+                {
+                    OnQuadDestroy(pq);
+                }
             this.sphere = null;
             this.enabled = false;
             this.transform.parent = null;
