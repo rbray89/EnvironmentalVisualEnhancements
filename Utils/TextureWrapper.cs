@@ -81,6 +81,7 @@ namespace Utils
                         GameObject.DestroyImmediate(tex);
                     }
                     cubeTex.Apply(true, true);
+                    cubeTex.SmoothEdges();
                 }
             }
         }
@@ -121,6 +122,16 @@ namespace Utils
         }
     }
 
+    public enum AlphaMaskEnum
+    {
+        [EnumMask]
+        ALPHAMAP_NONE,
+        ALPHAMAP_R,
+        ALPHAMAP_G,
+        ALPHAMAP_B,
+        ALPHAMAP_A
+    }
+
     [ValueNode]
     public class TextureWrapper
     {
@@ -134,10 +145,8 @@ namespace Utils
         [Persistent]
         TextureTypeEnum type = TextureTypeEnum.RGBA;
         [Persistent, Conditional("alphaMaskEval")]
-        Vector4 alphaMask = new Vector4(0, 0, 0, 1);
-
-        public TextureTypeEnum Type { get { return type; } }
-        public Vector4 AlphaMask { get { return alphaMask; } set { alphaMask = value; } }
+        AlphaMaskEnum alphaMask = AlphaMaskEnum.ALPHAMAP_NONE;
+        
 
         public bool IsNormal { get { return isNormal; } set { isNormal = value; } }
         public bool IsClamped { get { return isClamped; } set { isClamped = value; } }
@@ -164,7 +173,7 @@ namespace Utils
                     if (node.HasValue("type"))
                         type = (TextureTypeEnum)ConfigNode.ParseEnum(typeof(TextureTypeEnum), node.GetValue("type"));
                     if (node.HasValue("alphaMask"))
-                        alphaMask = ConfigNode.ParseVector4(node.GetValue("alphaMask"));
+                        alphaMask = (AlphaMaskEnum)ConfigNode.ParseEnum(typeof(AlphaMaskEnum), node.GetValue("alphaMask"));
                 }
                 catch { }
             }
@@ -188,7 +197,7 @@ namespace Utils
                 mat.SetTexture(name, texture);
                 KSPLog.print("Setting texure "+value);
             }
-            
+            mat.EnableKeyword(alphaMask + name);
         }
 
         private CubemapWrapper fetchCubeMap()

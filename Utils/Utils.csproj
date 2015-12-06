@@ -95,6 +95,7 @@
     <Compile Include="IsoSphere.cs" />
     <Compile Include="MaterialManager.cs" />
     <Compile Include="Quad.cs" />
+    <Compile Include="TextureConverter.cs" />
     <Compile Include="TextureWrapper.cs" />
     <Compile Include="Tools.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -40,7 +40,7 @@ namespace Utils
                 this.transform.localPosition = Vector3.zero;
                 this.transform.localRotation = Quaternion.identity;
                 this.transform.localScale = Vector3.one;
-
+                
             }
 
             if (this.sphere != null && this.sphere.quads != null)

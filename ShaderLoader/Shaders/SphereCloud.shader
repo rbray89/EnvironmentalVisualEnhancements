@@ -49,6 +49,7 @@ Shader "EVE/Cloud" {
 				#pragma multi_compile SOFT_DEPTH_OFF SOFT_DEPTH_ON
 				#pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
 				#pragma multi_compile MainTex CUBE_MainTex CUBE_RGB2_MainTex
+				#pragma multi_compile ALPHAMAP_NONE_MainTex ALPHAMAP_R_MainTex ALPHAMAP_G_MainTex ALPHAMAP_B_MainTex ALPHAMAP_A_MainTex
 
 #ifdef CUBE_MainTex
 				uniform samplerCUBE cube_MainTex;
@@ -57,6 +58,10 @@ Shader "EVE/Cloud" {
 				sampler2D cube_MainTexNEG;
 #else
 				sampler2D _MainTex;
+#endif
+
+#ifndef ALPHAMAP_NONE_MainTex
+		half4 ALPHAMAP_MainTex;
 #endif
 
 				sampler2D _DetailTex;
@@ -128,6 +133,17 @@ Shader "EVE/Cloud" {
 #else
 					half4 main = GetSphereMap(_MainTex, IN.objMain);
 #endif
+
+#ifdef ALPHAMAP_R_MainTex
+					main = half4(1, 1, 1, main.r);
+#elif ALPHAMAP_G_MainTex
+					main = half4(1, 1, 1, main.g);
+#elif ALPHAMAP_B_MainTex
+					main = half4(1, 1, 1, main.b);
+#elif ALPHAMAP_A_MainTex
+					main = half4(1, 1, 1, main.a);
+#endif
+
 					half4 detail = GetSphereDetailMap(_DetailTex, IN.objDetail, _DetailScale);
 
 					float viewDist = distance(IN.worldVert,_WorldSpaceCameraPos);
