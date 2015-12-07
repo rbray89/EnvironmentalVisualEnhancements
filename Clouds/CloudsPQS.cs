@@ -148,97 +148,99 @@ namespace Atmosphere
         protected void Update()
         {
             bool visible = HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.MAINMENU;
-
-            double ut;
-            if (HighLogic.LoadedScene == GameScenes.MAINMENU)
+            if (visible)
             {
-                ut = Time.time;
-            }
-            else
-            {
-                ut = Planetarium.GetUniversalTime();
-            }
-            Vector3d detailRotation = (ut * detailPeriod);
-            detailRotation -= new Vector3d((int)detailRotation.x, (int)detailRotation.y, (int)detailRotation.z);
-            detailRotation *= 360;
-            detailRotation += offset;
-            Vector3d mainRotation = (ut * mainPeriod);
-            mainRotation -= new Vector3d((int)mainRotation.x, (int)mainRotation.y, (int)mainRotation.z);
-            mainRotation *= 360f;
-            mainRotation += offset;
-
-
-            QuaternionD mainRotationQ = Quaternion.identity;
-            if (killBodyRotation)
-            {
-                mainRotationQ = QuaternionD.AngleAxis(celestialBody.rotationAngle, Vector3.up);
-            }
-            mainRotationQ*= 
-                QuaternionD.AngleAxis(mainRotation.x, (Vector3)rotationAxis.GetRow(0)) *
-                QuaternionD.AngleAxis(mainRotation.y, (Vector3)rotationAxis.GetRow(1)) *
-                QuaternionD.AngleAxis(mainRotation.z, (Vector3)rotationAxis.GetRow(2));
-            Matrix4x4 mainRotationMatrix = Matrix4x4.TRS(Vector3.zero, mainRotationQ, Vector3.one).inverse;
-
-            QuaternionD detailRotationQ = //Quaternion.Euler(detailRotation);
-                QuaternionD.AngleAxis(detailRotation.x, Vector3.right) *
-                QuaternionD.AngleAxis(detailRotation.y, Vector3.up) *
-                QuaternionD.AngleAxis(detailRotation.z, Vector3.forward);
-            Matrix4x4 detailRotationMatrix = Matrix4x4.TRS(Vector3.zero, detailRotationQ, Vector3.one).inverse;
-            
-            if (this.sphere != null && visible)
-            {
-                Matrix4x4 world2SphereMatrix = this.sphere.transform.worldToLocalMatrix;
-                if (layer2D != null)
+                double ut;
+                if (HighLogic.LoadedScene == GameScenes.MAINMENU)
                 {
-                    if (HighLogic.LoadedScene == GameScenes.SPACECENTER || (HighLogic.LoadedScene == GameScenes.FLIGHT && sphere.isActive && !MapView.MapIsEnabled))
+                    ut = Time.time;
+                }
+                else
+                {
+                    ut = Planetarium.GetUniversalTime();
+                }
+                Vector3d detailRotation = (ut * detailPeriod);
+                detailRotation -= new Vector3d((int)detailRotation.x, (int)detailRotation.y, (int)detailRotation.z);
+                detailRotation *= 360;
+                detailRotation += offset;
+                Vector3d mainRotation = (ut * mainPeriod);
+                mainRotation -= new Vector3d((int)mainRotation.x, (int)mainRotation.y, (int)mainRotation.z);
+                mainRotation *= 360f;
+                mainRotation += offset;
+
+
+                QuaternionD mainRotationQ = Quaternion.identity;
+                if (killBodyRotation)
+                {
+                    mainRotationQ = QuaternionD.AngleAxis(celestialBody.rotationAngle, Vector3.up);
+                }
+                mainRotationQ *=
+                    QuaternionD.AngleAxis(mainRotation.x, (Vector3)rotationAxis.GetRow(0)) *
+                    QuaternionD.AngleAxis(mainRotation.y, (Vector3)rotationAxis.GetRow(1)) *
+                    QuaternionD.AngleAxis(mainRotation.z, (Vector3)rotationAxis.GetRow(2));
+                Matrix4x4 mainRotationMatrix = Matrix4x4.TRS(Vector3.zero, mainRotationQ, Vector3.one).inverse;
+
+                QuaternionD detailRotationQ = //Quaternion.Euler(detailRotation);
+                    QuaternionD.AngleAxis(detailRotation.x, Vector3.right) *
+                    QuaternionD.AngleAxis(detailRotation.y, Vector3.up) *
+                    QuaternionD.AngleAxis(detailRotation.z, Vector3.forward);
+                Matrix4x4 detailRotationMatrix = Matrix4x4.TRS(Vector3.zero, detailRotationQ, Vector3.one).inverse;
+
+                if (this.sphere != null)
+                {
+                    Matrix4x4 world2SphereMatrix = this.sphere.transform.worldToLocalMatrix;
+                    if (layer2D != null)
                     {
+                        if (HighLogic.LoadedScene == GameScenes.SPACECENTER || (HighLogic.LoadedScene == GameScenes.FLIGHT && sphere.isActive && !MapView.MapIsEnabled))
+                        {
 
-                        layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition),
-                                               world2SphereMatrix,
-                                               mainRotationMatrix,
-                                               detailRotationMatrix);
-
-                    }
-                    else if (HighLogic.LoadedScene == GameScenes.MAINMENU && mainMenuLayer != null)
-                    {
-                        //mainMenuCamera.transform.position -= 5 * mainMenuCamera.transform.forward;
-                        Transform transform = mainMenuCamera.transform;
-                        Vector3 pos = mainMenuBodyTransform.InverseTransformPoint(transform.position);
-
-                        mainMenuLayer.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos),
-                                                   mainMenuBodyTransform.worldToLocalMatrix,
+                            layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, this.sphere.relativeTargetPosition),
+                                                   world2SphereMatrix,
                                                    mainRotationMatrix,
                                                    detailRotationMatrix);
-                    }
-                    else if (MapView.MapIsEnabled || HighLogic.LoadedScene == GameScenes.TRACKSTATION)
-                    {
-                        Transform transform = ScaledCamera.Instance.camera.transform;
-                        Vector3 pos = scaledCelestialTransform.InverseTransformPoint(transform.position);
 
-                        layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos),
-                                               scaledCelestialTransform.worldToLocalMatrix,
-                                               mainRotationMatrix,
-                                               detailRotationMatrix);
+                        }
+                        else if (HighLogic.LoadedScene == GameScenes.MAINMENU && mainMenuLayer != null)
+                        {
+                            //mainMenuCamera.transform.position -= 5 * mainMenuCamera.transform.forward; 
+                            Transform transform = mainMenuCamera.transform;
+                            Vector3 pos = mainMenuBodyTransform.InverseTransformPoint(transform.position);
 
+                            mainMenuLayer.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos),
+                                                       mainMenuBodyTransform.worldToLocalMatrix,
+                                                       mainRotationMatrix,
+                                                       detailRotationMatrix);
+                        }
+                        else if (MapView.MapIsEnabled || HighLogic.LoadedScene == GameScenes.TRACKSTATION || (HighLogic.LoadedScene == GameScenes.FLIGHT && !sphere.isActive))
+                        {
+                            Transform transform = ScaledCamera.Instance.camera.transform;
+                            Vector3 pos = scaledCelestialTransform.InverseTransformPoint(transform.position);
+
+                            layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos),
+                                                   scaledCelestialTransform.worldToLocalMatrix,
+                                                   mainRotationMatrix,
+                                                   detailRotationMatrix);
+
+                        }
                     }
-                }
-                if (layerVolume != null && sphere.isActive)
-                {
-                    if(FlightCamera.fetch != null)
+                    if (layerVolume != null && sphere.isActive)
                     {
-                        layerVolume.UpdatePos(FlightCamera.fetch.mainCamera.transform.position,
-                                               world2SphereMatrix,
-                                               mainRotationQ,
-                                               mainRotationMatrix,
-                                               detailRotationMatrix);
-                    }
-                    else
-                    {
-                        layerVolume.UpdatePos(this.sphere.target.position,
-                                               world2SphereMatrix,
-                                               mainRotationQ,
-                                               mainRotationMatrix,
-                                               detailRotationMatrix);
+                        if (FlightCamera.fetch != null)
+                        {
+                            layerVolume.UpdatePos(FlightCamera.fetch.mainCamera.transform.position,
+                                                   world2SphereMatrix,
+                                                   mainRotationQ,
+                                                   mainRotationMatrix,
+                                                   detailRotationMatrix);
+                        }
+                        else
+                        {
+                            layerVolume.UpdatePos(this.sphere.target.position,
+                                                   world2SphereMatrix,
+                                                   mainRotationQ,
+                                                   mainRotationMatrix,
+                                                   detailRotationMatrix);
+                        }
                     }
                 }
             }

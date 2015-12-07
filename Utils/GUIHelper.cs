@@ -425,10 +425,10 @@ namespace Utils
             foreach (FieldInfo field in objfields)
             {
                 bool isNode = ConfigHelper.IsNode(field, configNode);
-                bool isNodeOptional = Attribute.IsDefined(field, typeof(NodeOptional));
+                bool isValueNode = ConfigHelper.IsValueNode(field);
 
                 
-                if (isNode || isNodeOptional)
+                if (isNode || isValueNode)
                 {
                     placement.y += spacingOffset;
                     bool isOptional = Attribute.IsDefined(field, typeof(Optional));
@@ -452,7 +452,7 @@ namespace Utils
                     Rect toggleRect = GUIHelper.GetRect(boxPlacementBase, ref boxPlacement);
                     Rect titleRect = GUIHelper.GetRect(boxPlacementBase, ref boxPlacement);
                     Rect fieldRect = GUIHelper.GetRect(placementBase, ref boxPlacement);
-                    if (isNodeOptional)
+                    if (isValueNode)
                     {
                         GUIHelper.SplitRect(ref titleRect, ref fieldRect, valueRatio);
                     }
@@ -472,12 +472,12 @@ namespace Utils
                     GUI.Label(titleRect, gc);
 
                     bool removeable = node == null ? false : true;
-                    if (isOptional || isNodeOptional)
+                    if (isOptional || isValueNode)
                     {
                         String value = null;
                         String defaultValue = ConfigHelper.CreateConfigFromObject(obj, new ConfigNode("TMP")).GetValue(field.Name);
                         String newValue = "";
-                        if (isNodeOptional)
+                        if (isValueNode)
                         {
                             if (configNode.HasValue(field.Name))
                             {
@@ -526,7 +526,7 @@ namespace Utils
                             }
                         }
 
-                        if (isNodeOptional)
+                        if (isValueNode)
                         {
                             if ((newValue != defaultValue && value != newValue) || toggle)
                             {

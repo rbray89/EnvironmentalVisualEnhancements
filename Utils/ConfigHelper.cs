@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Utils
@@ -14,10 +15,23 @@ namespace Utils
 
     public class ValueNode : System.Attribute
     {
+        private string fieldMask;
+
+        public ValueNode(string fieldMask)
+        {
+            this.fieldMask = fieldMask;
+        }
+
+        internal bool IsAllowed(string name)
+        {
+            return Regex.IsMatch(name, fieldMask);
+        }
     }
-    public class NodeOptional : System.Attribute
-    {
-    }
+
+//    public class NodeOptional : System.Attribute
+//    {
+//    }
+
     public class EnumMask : System.Attribute
     {
     }
@@ -56,14 +70,53 @@ namespace Utils
         {
             bool isConditional = Attribute.IsDefined(field, typeof(Conditional));
             Conditional conditional = (Conditional)Attribute.GetCustomAttribute(field, typeof(Conditional));
-            try
+            
+            bool conditionsMet = true;
+            bool isValueNode = IsValueNode(field);
+            if(isValueNode)
             {
-                return (!isConditional || (isConditional && conditional.CheckConditional(field.DeclaringType, node)));
+                conditionsMet &= ValueNodeIsAllowed(field);
             }
-            catch
+            if (isConditional)
             {
-                return false;
+                try
+                {
+                    conditionsMet &= conditional.CheckConditional(field.DeclaringType, node);
+                }
+                catch
+                {
+                    conditionsMet &= false;
+                }
             }
+
+            return conditionsMet;
+        }
+
+        public static bool ValueNodeIsAllowed(FieldInfo field)
+        {
+            bool isAllowed = true;
+            if (Attribute.IsDefined(field.DeclaringType, typeof(ValueNode), true))
+            {
+                ValueNode valueNode = (ValueNode)Attribute.GetCustomAttribute(field.DeclaringType, typeof(ValueNode), true);
+                isAllowed = valueNode.IsAllowed(field.Name);
+            }
+            
+            return isAllowed;
+        }
+
+        public static bool IsValueNode(FieldInfo field)
+        {
+            bool isNode = false;
+            if (Attribute.IsDefined(field, typeof(ValueNode)))
+            {
+                isNode = true;
+            }
+            else if (Attribute.IsDefined(field.FieldType, typeof(ValueNode)))
+            {
+                isNode |= true;
+            }
+
+            return isNode;
         }
 
         public static bool IsNode(FieldInfo field, ConfigNode node, bool checkConfig = true)
@@ -72,27 +125,35 @@ namespace Utils
                fi => Attribute.IsDefined(fi, typeof(Persistent))).Count() > 0 ? true : false;
              
             //Field Checks first, they would take precidence.
-            if(Attribute.IsDefined(field, typeof(NodeOptional)))
+         /*   if(Attribute.IsDefined(field, typeof(NodeOptional)))
             {
                 if (checkConfig)
                 {
                     isNode &= node.HasNode(field.Name);
                 }
             }
-            else if(Attribute.IsDefined(field, typeof(ValueNode)))
-            {
-                isNode = false;
-            }
-            else if(Attribute.IsDefined(field.FieldType, typeof(NodeOptional)))
+            else 
+            */
+            if(Attribute.IsDefined(field, typeof(ValueNode)))
             {
                 if (checkConfig)
                 {
                     isNode &= node.HasNode(field.Name);
                 }
             }
-            else if(Attribute.IsDefined(field.FieldType, typeof(ValueNode)))
+    /*        else if(Attribute.IsDefined(field.FieldType, typeof(NodeOptional)))
             {
-                isNode = false;
+                if (checkConfig)
+                {
+                    isNode &= node.HasNode(field.Name);
+                }
+            }
+     */       else if(Attribute.IsDefined(field.FieldType, typeof(ValueNode)))
+            {
+                if (checkConfig)
+                {
+                    isNode &= node.HasNode(field.Name);
+                }
             }
 
             return isNode;
@@ -101,8 +162,7 @@ namespace Utils
         public static bool CanParse(FieldInfo field, String value, ConfigNode node = null)
         {
             object test = null;
-            
-            return Parse(field, value, ref test, node);
+            return Parse(field, ref test, value, node);
         }
 
         public static ConfigNode CreateConfigFromObject(object obj, ConfigNode node)
@@ -116,66 +176,33 @@ namespace Utils
                    field => Attribute.IsDefined(field, typeof(Persistent)));
             foreach (FieldInfo field in objfields)
             {
-                bool isNode = IsNode(field, node);
-
-                if (!isNode)
+                object objValue = null;
+                bool canParse = Parse(field, ref objValue, node.GetValue(field.Name), node.GetNode(field.Name));
+                if (objValue != null)
                 {
-                    if(!ConfigHelper.Parse(obj, field, node))
-                    {
-                        KSPLog.print("unable to parse \"" + field.Name + "\" in \""+node.name+"\"!");
-                        return false;
-                    }
+                    field.SetValue(obj, objValue);
                 }
-                else
+                if (!canParse)
                 {
-                    bool isOptional = Attribute.IsDefined(field, typeof(Optional));
-                    
-                    if (node.HasNode(field.Name))
-                    {
-                        ConfigNode subNode = node.GetNode(field.Name);
-                        object subObj = field.GetValue(obj);
-                        if (subObj == null)
-                        {
-                            ConstructorInfo ctor = field.FieldType.GetConstructor(System.Type.EmptyTypes);
-                            subObj = ctor.Invoke(null);
-                        }
-                        if(!LoadObjectFromConfig(subObj, subNode))
-                        {
-                            return false;
-                        }
-                        field.SetValue(obj, subObj);
-                    } else if(!isOptional)
-                    {
-                        KSPLog.print("non-optional field \"" + field.Name + "\" in \"" + node.name + "\" is not set!");
-                        return false;
-                    }
+                    KSPLog.print("unable to parse \"" + field.Name + "\" in \""+node.name+"\"!");
+                    return false;
                 }
+                   
             }
             return true;
         }
 
-        private static bool Parse(FieldInfo field, string value, ref object obj, ConfigNode node = null)
+        private static bool Parse(FieldInfo field, ref object obj, string value, ConfigNode node = null)
         {
             obj = null;
-            if (field.FieldType == typeof(TextureWrapper))
-            {
-                TextureWrapper tex = null;
-                if (node != null)
-                {
-                    tex = new TextureWrapper(node);
-                }
-                else
-                {
-                    tex = new TextureWrapper(value);
-                }
-                obj = tex;
-                return tex.exists();
-            }
-            else if (field.FieldType == typeof(float))
+            if (field.FieldType == typeof(float))
             {
                 try
                 {
-                    obj = float.Parse(value);
+                    if (value != null)
+                    {
+                        obj = float.Parse(value);
+                    }
                     return true;
                 }
                 catch { }
@@ -184,7 +211,10 @@ namespace Utils
             {
                 try
                 {
-                    obj = double.Parse(value);
+                    if (value != null)
+                    {
+                        obj = double.Parse(value);
+                    }
                     return true;
                 }
                 catch {  }
@@ -193,7 +223,10 @@ namespace Utils
             {
                 try
                 {
-                    obj = bool.Parse(value);
+                    if (value != null)
+                    {
+                        obj = bool.Parse(value);
+                    }
                     return true;
                 }
                 catch {  }
@@ -207,7 +240,10 @@ namespace Utils
             {
                 try
                 {
-                    obj = (Color)ConfigNode.ParseVector4(value);
+                    if (value != null)
+                    {
+                        obj = (Color)ConfigNode.ParseVector4(value);
+                    }
                     return true;
                 }
                 catch {  }
@@ -216,7 +252,10 @@ namespace Utils
             {
                 try
                 {
-                    obj = ConfigNode.ParseEnum(field.FieldType, value);
+                    if (value != null)
+                    {
+                        obj = ConfigNode.ParseEnum(field.FieldType, value);
+                    }
                     return true;
                 }
                 catch {  }
@@ -225,7 +264,10 @@ namespace Utils
             {
                 try
                 {
-                    obj = ConfigNode.ParseMatrix4x4(value);
+                    if (value != null)
+                    {
+                        obj = ConfigNode.ParseMatrix4x4(value);
+                    }
                     return true;
                 }
                 catch {  }
@@ -234,7 +276,10 @@ namespace Utils
             {
                 try
                 {
-                    obj = ConfigNode.ParseQuaternion(value);
+                    if (value != null)
+                    {
+                        obj = ConfigNode.ParseQuaternion(value);
+                    }
                     return true;
                 }
                 catch {  }
@@ -243,7 +288,10 @@ namespace Utils
             {
                 try
                 {
-                    obj = ConfigNode.ParseQuaternionD(value);
+                    if (value != null)
+                    {
+                        obj = ConfigNode.ParseQuaternionD(value);
+                    }
                     return true;
                 }
                 catch {  }
@@ -252,7 +300,10 @@ namespace Utils
             {
                 try
                 {
-                    obj = (Vector2)ConfigNode.ParseVector2(value);
+                    if (value != null)
+                    {
+                        obj = (Vector2)ConfigNode.ParseVector2(value);
+                    }
                     return true;
                 }
                 catch {  }
@@ -261,7 +312,10 @@ namespace Utils
             {
                 try
                 {
-                    obj = ConfigNode.ParseVector3(value);
+                    if (value != null)
+                    {
+                        obj = ConfigNode.ParseVector3(value);
+                    }
                     return true;
                 }
                 catch {  }
@@ -270,7 +324,10 @@ namespace Utils
             {
                 try
                 {
-                    obj = ConfigNode.ParseVector3D(value);
+                    if (value != null)
+                    {
+                        obj = ConfigNode.ParseVector3D(value);
+                    }
                     return true;
                 }
                 catch {  }
@@ -279,31 +336,49 @@ namespace Utils
             {
                 try
                 {
-                    obj = ConfigNode.ParseVector4(value);
+                    if (value != null)
+                    {
+                        obj = ConfigNode.ParseVector4(value);
+                    }
                     return true;
                 }
                 catch { }
             }
-            return false;
-        }
-
-        private static bool Parse(object obj, FieldInfo field, ConfigNode node)
-        {
-            if (node.HasValue(field.Name))
+            else
             {
-                object objValue = null;
-                Parse(field, node.GetValue(field.Name), ref objValue);
-                if (objValue != null)
+                bool isOptional = Attribute.IsDefined(field, typeof(Optional));
+                bool valueNode = IsValueNode(field);
+
+                ConstructorInfo ctor = field.FieldType.GetConstructor(System.Type.EmptyTypes);
+                obj = ctor.Invoke(null);
+                
+                if (node != null)
                 {
-                    field.SetValue(obj, objValue);
+                    if (!LoadObjectFromConfig(obj, node))
+                    {
+                        return false;
+                    }
                 }
-                else
+                else if(valueNode && value != null)
                 {
+                    obj.GetType().GetField("value", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(obj, value);
+                }
+                else if (!isOptional)
+                {
+                    KSPLog.print("non-optional field \"" + field.Name + "\" in \"" + node.name + "\" is not set!");
                     return false;
                 }
+                MethodInfo validate = obj.GetType().GetMethod("isValid");
+                if (node != null && validate != null)
+                {
+                    return (bool)validate.Invoke(obj, null);
+                }
+                
+                return true;
             }
 
-            return true;
+             return false;
         }
+
     }
 }
