@@ -19,7 +19,7 @@ namespace Utils
         public const string LEFT_ARROW = "\u2190";//"\u23f4";
         public const string RIGHT_ARROW = "\u2192";//"\u23f5";
         
-        public static float GetNodeHeightCount(ConfigNode node, Type T)
+        public static float GetNodeHeightCount(ConfigNode node, Type T, FieldInfo parent)
         {
             float fieldCount = 1f+ (2f*spacingOffset);
             var objfields = T.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
@@ -30,21 +30,21 @@ namespace Utils
             {
                 bool isNode = ConfigHelper.IsNode(field, node, false);
 
-                if ( node != null && ConfigHelper.ConditionsMet(field, node))
+                if ( node != null && ConfigHelper.ConditionsMet(field, parent, node))
                 {
                     if (isNode)
                     {
                         if (node.HasNode(field.Name))
                         {
-                            fieldCount += GetNodeHeightCount(node.GetNode(field.Name), field.FieldType);
+                            fieldCount += GetNodeHeightCount(node.GetNode(field.Name), field.FieldType, field);
                         }
                         else
                         {
-                            fieldCount += GetNodeHeightCount(null, field.FieldType);
+                            fieldCount += GetNodeHeightCount(null, field.FieldType, field);
                         }
                         fieldCount += spacingOffset;
                     }
-                    else if(field.Name != "value")
+                    else if(field.Name != ConfigHelper.VALUE_FIELD)
                     {
                         fieldCount += 1f+ spacingOffset;
                     }
@@ -54,9 +54,9 @@ namespace Utils
             return fieldCount;
         }
         
-        public static Rect GetRect(Rect placementBase, ref Rect placement, ConfigNode node, Type T)
+        public static Rect GetRect(Rect placementBase, ref Rect placement, ConfigNode node, Type T, FieldInfo field)
         {
-            placement.height = GetNodeHeightCount(node, T);
+            placement.height = GetNodeHeightCount(node, T, field);
             float width = placementBase.width;
             float height;
 
@@ -417,7 +417,7 @@ namespace Utils
         }
 
         
-        public static void HandleGUI(object obj, ConfigNode configNode, Rect placementBase, ref Rect placement)
+        public static void HandleGUI(object obj, FieldInfo objInfo, ConfigNode configNode, Rect placementBase, ref Rect placement)
         {
 
             var objfields = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
@@ -438,7 +438,7 @@ namespace Utils
                     gsRight.alignment = TextAnchor.MiddleCenter;
 
                     
-                    Rect boxRect = GUIHelper.GetRect(placementBase, ref placement, node, field.FieldType);
+                    Rect boxRect = GUIHelper.GetRect(placementBase, ref placement, node, field.FieldType, field);
                     GUIStyle gs = new GUIStyle(GUI.skin.textField);
                     GUI.Box(boxRect, "", gs);
                     placement.height = 1;
@@ -483,9 +483,9 @@ namespace Utils
                             {
                                 value = configNode.GetValue(field.Name);
                             }
-                            else if (node != null && node.HasValue("value"))
+                            else if (node != null && node.HasValue(ConfigHelper.VALUE_FIELD))
                             {
-                                value = node.GetValue("value");
+                                value = node.GetValue(ConfigHelper.VALUE_FIELD);
                             }
                             
                             if (value == null)
@@ -534,13 +534,13 @@ namespace Utils
                                 {
                                     if (node != null)
                                     {
-                                        if (node.HasValue("value"))
+                                        if (node.HasValue(ConfigHelper.VALUE_FIELD))
                                         {
-                                            node.SetValue("value", newValue);
+                                            node.SetValue(ConfigHelper.VALUE_FIELD, newValue);
                                         }
                                         else
                                         {
-                                            node.AddValue("value", newValue);
+                                            node.AddValue(ConfigHelper.VALUE_FIELD, newValue);
                                         }
                                     }
                                     else
@@ -559,9 +559,9 @@ namespace Utils
                                 {
                                     if (node != null)
                                     {
-                                        if (node.HasValue("value"))
+                                        if (node.HasValue(ConfigHelper.VALUE_FIELD))
                                         {
-                                            node.RemoveValue("value");
+                                            node.RemoveValue(ConfigHelper.VALUE_FIELD);
                                         }
                                     }
                                     else
@@ -589,7 +589,7 @@ namespace Utils
                             subObj = ctor.Invoke(null);
                         }
 
-                        HandleGUI(subObj, node, boxPlacementBase, ref boxPlacement);
+                        HandleGUI(subObj, field, node, boxPlacementBase, ref boxPlacement);
 
                     }
                     boxPlacement.y += spacingOffset;
@@ -600,9 +600,9 @@ namespace Utils
                 }
                 else
                 {
-                    if (ConfigHelper.ConditionsMet(field, configNode))
+                    if (ConfigHelper.ConditionsMet(field, objInfo, configNode))
                     {
-                        if (field.Name != "body" && field.Name != "value")
+                        if (field.Name != "body" && field.Name != ConfigHelper.VALUE_FIELD)
                         {
                             placement.y += spacingOffset;
                             GUIHelper.DrawField(placementBase, ref placement, obj, field, configNode);

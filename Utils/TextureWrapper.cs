@@ -124,8 +124,6 @@ namespace Utils
 
     public enum AlphaMaskEnum
     {
-        [EnumMask]
-        ALPHAMAP_NONE,
         ALPHAMAP_R,
         ALPHAMAP_G,
         ALPHAMAP_B,
@@ -141,7 +139,7 @@ namespace Utils
         DXT5 = TextureFormat.DXT5
     }
 
-    [ValueNode("isClamped|format")]
+    [ValueNode, ValueFilter("isClamped|format")]
     public class TextureWrapper
     {
         private static List<CubemapWrapper> CubemapList = new List<CubemapWrapper>();
@@ -158,7 +156,7 @@ namespace Utils
         [Persistent]
         TextureTypeEnum type = TextureTypeEnum.RGBA;
         [Persistent, Conditional("alphaMaskEval")]
-        AlphaMaskEnum alphaMask = AlphaMaskEnum.ALPHAMAP_NONE;
+        AlphaMaskEnum alphaMask = AlphaMaskEnum.ALPHAMAP_A;
         
 
         public bool IsNormal { get { return isNormal; } set { isNormal = value; } }
@@ -187,7 +185,10 @@ namespace Utils
                 mat.SetTexture(name, texture);
                 KSPLog.print("Setting texure "+value);
             }
-            mat.EnableKeyword(alphaMask + name);
+            if ((type & TextureTypeEnum.AlphaMapMask) > 0)
+            {
+                mat.EnableKeyword(alphaMask + name);
+            }
         }
 
         private CubemapWrapper fetchCubeMap()

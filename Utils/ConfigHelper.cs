@@ -15,9 +15,13 @@ namespace Utils
 
     public class ValueNode : System.Attribute
     {
+    }
+
+    public class ValueFilter : System.Attribute
+    {
         private string fieldMask;
 
-        public ValueNode(string fieldMask)
+        public ValueFilter(string fieldMask)
         {
             this.fieldMask = fieldMask;
         }
@@ -27,10 +31,7 @@ namespace Utils
             return Regex.IsMatch(name, fieldMask);
         }
     }
-
-//    public class NodeOptional : System.Attribute
-//    {
-//    }
+    
 
     public class EnumMask : System.Attribute
     {
@@ -65,18 +66,17 @@ namespace Utils
 
     public static class ConfigHelper
     {
+        public const string VALUE_FIELD = "value";
 
-        public static bool ConditionsMet(FieldInfo field, ConfigNode node)
+        public static bool ConditionsMet(FieldInfo field, FieldInfo parent, ConfigNode node)
         {
             bool isConditional = Attribute.IsDefined(field, typeof(Conditional));
             Conditional conditional = (Conditional)Attribute.GetCustomAttribute(field, typeof(Conditional));
             
             bool conditionsMet = true;
-            bool isValueNode = IsValueNode(field);
-            if(isValueNode)
-            {
-                conditionsMet &= ValueNodeIsAllowed(field);
-            }
+
+            conditionsMet &= ValueIsAllowed(field, parent);
+            
             if (isConditional)
             {
                 try
@@ -92,13 +92,25 @@ namespace Utils
             return conditionsMet;
         }
 
-        public static bool ValueNodeIsAllowed(FieldInfo field)
+        public static bool ValueIsAllowed(FieldInfo field, FieldInfo parent)
         {
             bool isAllowed = true;
-            if (Attribute.IsDefined(field.DeclaringType, typeof(ValueNode), true))
+            if (field.Name != VALUE_FIELD)
             {
-                ValueNode valueNode = (ValueNode)Attribute.GetCustomAttribute(field.DeclaringType, typeof(ValueNode), true);
-                isAllowed = valueNode.IsAllowed(field.Name);
+                ValueFilter filter = null;
+                if(parent != null && Attribute.IsDefined(parent, typeof(ValueFilter)))
+                {
+                    filter = (ValueFilter)Attribute.GetCustomAttribute(parent, typeof(ValueFilter));
+                }
+                else if(Attribute.IsDefined(field.DeclaringType, typeof(ValueFilter)))
+                {
+                    filter = (ValueFilter)Attribute.GetCustomAttribute(field.DeclaringType, typeof(ValueFilter));
+                }
+                if (filter != null)
+                {
+                    isAllowed = filter.IsAllowed(field.Name);
+                }
+                
             }
             
             return isAllowed;
@@ -124,16 +136,6 @@ namespace Utils
             bool isNode = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
                fi => Attribute.IsDefined(fi, typeof(Persistent))).Count() > 0 ? true : false;
              
-            //Field Checks first, they would take precidence.
-         /*   if(Attribute.IsDefined(field, typeof(NodeOptional)))
-            {
-                if (checkConfig)
-                {
-                    isNode &= node.HasNode(field.Name);
-                }
-            }
-            else 
-            */
             if(Attribute.IsDefined(field, typeof(ValueNode)))
             {
                 if (checkConfig)
@@ -141,14 +143,7 @@ namespace Utils
                     isNode &= node.HasNode(field.Name);
                 }
             }
-    /*        else if(Attribute.IsDefined(field.FieldType, typeof(NodeOptional)))
-            {
-                if (checkConfig)
-                {
-                    isNode &= node.HasNode(field.Name);
-                }
-            }
-     */       else if(Attribute.IsDefined(field.FieldType, typeof(ValueNode)))
+            else if(Attribute.IsDefined(field.FieldType, typeof(ValueNode)))
             {
                 if (checkConfig)
                 {
@@ -361,7 +356,7 @@ namespace Utils
                 }
                 else if(valueNode && value != null)
                 {
-                    obj.GetType().GetField("value", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(obj, value);
+                    obj.GetType().GetField(VALUE_FIELD, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(obj, value);
                 }
                 else if (!isOptional)
                 {
@@ -369,7 +364,7 @@ namespace Utils
                     return false;
                 }
                 MethodInfo validate = obj.GetType().GetMethod("isValid");
-                if (node != null && validate != null)
+                if (validate != null && obj != null)
                 {
                     return (bool)validate.Invoke(obj, null);
                 }

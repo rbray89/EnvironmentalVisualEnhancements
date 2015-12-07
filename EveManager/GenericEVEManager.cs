@@ -175,11 +175,11 @@ namespace EVEManager
             Rect selectBoxItemsRect = new Rect();
             if (configNode != null)
             {
-                selectBoxItemsRect = GUIHelper.GetRect(placementBase, ref placement, configNode, this.GetType());
+                selectBoxItemsRect = GUIHelper.GetRect(placementBase, ref placement, configNode, this.GetType(), null);
             }
             if (objNode != null)
             {
-                selectBoxItemsRect = GUIHelper.GetRect(placementBase, ref placement, objNode, typeof(T));
+                selectBoxItemsRect = GUIHelper.GetRect(placementBase, ref placement, objNode, typeof(T), null);
             }
 
             
@@ -198,12 +198,12 @@ namespace EVEManager
             placement.height = 1;
             if (this.configNode != null)
             {
-                GUIHelper.HandleGUI(this, this.configNode, selectBoxItemsRect, ref placement);
+                GUIHelper.HandleGUI(this, null, this.configNode, selectBoxItemsRect, ref placement);
             }
 
             if (objNode != null)
             {
-                GUIHelper.HandleGUI(new T(), objNode, selectBoxItemsRect, ref placement);
+                GUIHelper.HandleGUI(new T(), null, objNode, selectBoxItemsRect, ref placement);
             }
             GUI.EndScrollView();
 
