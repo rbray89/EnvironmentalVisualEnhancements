@@ -7,6 +7,10 @@ using UnityEngine;
 
 namespace Utils
 {
+    public class GUIHidden : Attribute
+    {
+
+    }
 
     public class GUIHelper
     {
@@ -18,7 +22,7 @@ namespace Utils
         public const string DOWN_ARROW = "\u2193";//"\u23f7";
         public const string LEFT_ARROW = "\u2190";//"\u23f4";
         public const string RIGHT_ARROW = "\u2192";//"\u23f5";
-        
+    
         public static float GetNodeHeightCount(ConfigNode node, Type T, FieldInfo parent)
         {
             float fieldCount = 1f+ (2f*spacingOffset);
@@ -44,7 +48,7 @@ namespace Utils
                         }
                         fieldCount += spacingOffset;
                     }
-                    else if(field.Name != ConfigHelper.VALUE_FIELD)
+                    else if(!Attribute.IsDefined(field, typeof(GUIHidden)))
                     {
                         fieldCount += 1f+ spacingOffset;
                     }
@@ -135,9 +139,18 @@ namespace Utils
             return currentBody.bodyName;
         }
 
-        public static ConfigNode DrawObjectSelector(ConfigNode.ConfigNodeList nodeList, ref int selectedObjIndex, ref String objString, ref Vector2 objListPos, Rect placementBase, ref Rect placement)
+        public static ConfigNode DrawObjectSelector(ConfigNode sourceNode, ref int selectedObjIndex, ref String objString, ref Vector2 objListPos, Rect placementBase, ref Rect placement, ConfigNode.Value filter = null)
         {
-            String[] objList = nodeList.DistinctNames();
+            List<ConfigNode> nodeList;
+            if (filter != null)
+            {
+                nodeList = sourceNode.GetNodes(ConfigHelper.OBJECT_NODE, filter.name, filter.value).ToList();
+            }
+            else
+            {
+                nodeList = sourceNode.GetNodes().ToList();
+            }
+            String[] objList = nodeList.Select(node=>node.GetValue(ConfigHelper.NAME_FIELD)).ToArray();
             float nodeHeight = placement.height;
             Rect selectBoxOutlineRect = GetRect(placementBase, ref placement);
             placement.height = nodeHeight - 1;
@@ -187,11 +200,15 @@ namespace Utils
                     ConfigNode item = nodeList[--selectedObjIndex];
                     nodeList.Remove(item);
                     nodeList.Add(item);
+                    sourceNode.RemoveNode(item);
+                    sourceNode.AddNode(item);
                     for (int i = moveIndex; i < nodeList.Count - 1; i++)
                     {
                         item = nodeList[moveIndex];
                         nodeList.Remove(item);
                         nodeList.Add(item);
+                        sourceNode.RemoveNode(item);
+                        sourceNode.AddNode(item);
                     }
                 }
                 optButtonRect.y += optButtonRect.height * (nodeHeight - 3);
@@ -201,12 +218,16 @@ namespace Utils
                     ConfigNode item = nodeList[selectedObjIndex];
                     nodeList.Remove(item);
                     nodeList.Add(item);
+                    sourceNode.RemoveNode(item);
+                    sourceNode.AddNode(item);
                     int moveIndex = ++selectedObjIndex;
                     for (int i = moveIndex; i < nodeList.Count - 1; i++)
                     {
                         item = nodeList[moveIndex];
                         nodeList.Remove(item);
                         nodeList.Add(item);
+                        sourceNode.RemoveNode(item);
+                        sourceNode.AddNode(item);
                     }
                 }
             }
@@ -230,19 +251,22 @@ namespace Utils
 
             if (selectedObjIndex != oldselectedObjIndex && nodeList.Count > 0)
             {
-                objString = nodeList[selectedObjIndex].name;
+                objString = nodeList[selectedObjIndex].GetValue(ConfigHelper.NAME_FIELD);
             }
             objString = GUI.TextField(listEditTextRect, objString);
             String name = objString;
-            if (objString.Length > 0 && !objString.Contains(' ') && !nodeList.Contains(objString))
+            if (objString.Length > 0 && !objString.Contains(' ') && !nodeList.Exists(n => n.GetValue(ConfigHelper.NAME_FIELD) == name))
             {
                 if (nodeList.Count > 0 && GUI.Button(listEditRect, "#"))
                 {
-                    nodeList[selectedObjIndex].name = objString;
+                    nodeList[selectedObjIndex].SetValue(ConfigHelper.NAME_FIELD, objString, true);
                 }
                 if (GUI.Button(listAddRect, "+"))
                 {
-                    nodeList.Add(new ConfigNode(objString));
+                    ConfigNode newNode = new ConfigNode(ConfigHelper.OBJECT_NODE);
+                    newNode.SetValue(ConfigHelper.NAME_FIELD, objString, true);
+                    nodeList.Add(newNode);
+                    sourceNode.AddNode(newNode);
                 }
             }
             else
@@ -254,6 +278,7 @@ namespace Utils
             {
                 ConfigNode item = nodeList[selectedObjIndex];
                 nodeList.Remove(item);
+                sourceNode.RemoveNode(item);
                 if (selectedObjIndex >= nodeList.Count)
                 {
                     selectedObjIndex = nodeList.Count - 1;
@@ -316,69 +341,67 @@ namespace Utils
 
         public static void DrawField(Rect placementBase, ref Rect placement, object obj, FieldInfo field, ConfigNode config)
         {
-            placement.height = 1;
-            String value = config.GetValue(field.Name);
-            String defaultValue = ConfigHelper.CreateConfigFromObject(obj, new ConfigNode("TMP")).GetValue(field.Name);
-            if (value == null)
+            if (!Attribute.IsDefined(field, typeof(GUIHidden)))
             {
-                if (defaultValue == null)
+                placement.y += spacingOffset;
+                placement.height = 1;
+                String value = config.GetValue(field.Name);
+                String defaultValue = ConfigHelper.CreateConfigFromObject(obj, new ConfigNode("TMP")).GetValue(field.Name);
+                if (value == null)
                 {
-                    defaultValue = "";
+                    if (defaultValue == null)
+                    {
+                        defaultValue = "";
+                    }
+                    value = defaultValue;
                 }
-                value = defaultValue;
-            }
 
-            Rect labelRect = GUIHelper.GetRect(placementBase, ref placement);
-            Rect fieldRect = GUIHelper.GetRect(placementBase, ref placement);
-            GUIHelper.SplitRect(ref labelRect, ref fieldRect, valueRatio);
-            String tooltipText = "";
-            if (Attribute.IsDefined(field, typeof(TooltipAttribute)))
-            {
-                TooltipAttribute tt = (TooltipAttribute)Attribute.GetCustomAttribute(field, typeof(TooltipAttribute));
-                tooltipText = tt.tooltip;
-            }
-            GUIStyle style = new GUIStyle(GUI.skin.label);
-            GUIContent gc = new GUIContent(field.Name, tooltipText);
-
-            Vector2 labelSize = style.CalcSize(gc);
-            labelRect.width = Mathf.Min(labelSize.x, labelRect.width);
-            GUI.Label(labelRect,gc);
-
-            string newValue = value;
-            if (field.FieldType.IsEnum)
-            {
-                newValue = ComboBox(fieldRect, value, field.FieldType.GetFields().Where(
-                    m => (m.IsLiteral) && !Attribute.IsDefined(m, typeof(EnumMask))).Select(m => m.Name).ToArray());
-            }
-            else
-            {
-                GUIStyle fieldStyle = new GUIStyle(GUI.skin.textField);
-                if (value != "" && !ConfigHelper.CanParse(field, value))
+                Rect labelRect = GUIHelper.GetRect(placementBase, ref placement);
+                Rect fieldRect = GUIHelper.GetRect(placementBase, ref placement);
+                GUIHelper.SplitRect(ref labelRect, ref fieldRect, valueRatio);
+                String tooltipText = "";
+                if (Attribute.IsDefined(field, typeof(TooltipAttribute)))
                 {
-                    fieldStyle.normal.textColor = Color.red;
-                    fieldStyle.active.textColor = Color.red;
-                    fieldStyle.focused.textColor = Color.red;
-                    fieldStyle.hover.textColor = Color.red;
+                    TooltipAttribute tt = (TooltipAttribute)Attribute.GetCustomAttribute(field, typeof(TooltipAttribute));
+                    tooltipText = tt.tooltip;
                 }
-                newValue = GUI.TextField(fieldRect, value, fieldStyle);
-            }
+                GUIStyle style = new GUIStyle(GUI.skin.label);
+                GUIContent gc = new GUIContent(field.Name, tooltipText);
 
-            if (newValue != defaultValue && value != newValue)
-            {
-                if (config.HasValue(field.Name))
+                Vector2 labelSize = style.CalcSize(gc);
+                labelRect.width = Mathf.Min(labelSize.x, labelRect.width);
+                GUI.Label(labelRect, gc);
+
+                string newValue = value;
+                if (field.FieldType.IsEnum)
                 {
-                    config.SetValue(field.Name, newValue);
+                    newValue = ComboBox(fieldRect, value, field.FieldType.GetFields().Where(
+                        m => (m.IsLiteral) && !Attribute.IsDefined(m, typeof(EnumMask))).Select(m => m.Name).ToArray());
                 }
                 else
                 {
-                    config.AddValue(field.Name, newValue);
+                    GUIStyle fieldStyle = new GUIStyle(GUI.skin.textField);
+                    if (value != "" && !ConfigHelper.CanParse(field, value))
+                    {
+                        fieldStyle.normal.textColor = Color.red;
+                        fieldStyle.active.textColor = Color.red;
+                        fieldStyle.focused.textColor = Color.red;
+                        fieldStyle.hover.textColor = Color.red;
+                    }
+                    newValue = GUI.TextField(fieldRect, value, fieldStyle);
                 }
+
+                if (newValue != defaultValue && value != newValue)
+                {
+                    config.SetValue(field.Name, newValue, true);
+
+                }
+                else if (newValue == defaultValue && config.HasValue(field.Name))
+                {
+                    config.RemoveValue(field.Name);
+                }
+                placement.y += 1f;
             }
-            else if(newValue == defaultValue && config.HasValue(field.Name))
-            {
-                config.RemoveValue(field.Name);
-            }
-            placement.y += 1f;
         }
 
         private static string ComboBox(Rect fieldRect, string value, string[] list)
@@ -476,6 +499,12 @@ namespace Utils
                     {
                         String value = null;
                         String defaultValue = ConfigHelper.CreateConfigFromObject(obj, new ConfigNode("TMP")).GetValue(field.Name);
+                        String valueField = "";
+                        if (isValueNode)
+                        {
+                            valueField = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(
+                                f => Attribute.IsDefined(f, typeof(Persistent))).Name;
+                        }
                         String newValue = "";
                         if (isValueNode)
                         {
@@ -483,9 +512,9 @@ namespace Utils
                             {
                                 value = configNode.GetValue(field.Name);
                             }
-                            else if (node != null && node.HasValue(ConfigHelper.VALUE_FIELD))
+                            else if (node != null && node.HasValue(valueField))
                             {
-                                value = node.GetValue(ConfigHelper.VALUE_FIELD);
+                                value = node.GetValue(valueField);
                             }
                             
                             if (value == null)
@@ -534,34 +563,21 @@ namespace Utils
                                 {
                                     if (node != null)
                                     {
-                                        if (node.HasValue(ConfigHelper.VALUE_FIELD))
-                                        {
-                                            node.SetValue(ConfigHelper.VALUE_FIELD, newValue);
-                                        }
-                                        else
-                                        {
-                                            node.AddValue(ConfigHelper.VALUE_FIELD, newValue);
-                                        }
+                                        node.SetValue(valueField, newValue, true);
+                                        
                                     }
                                     else
                                     {
-                                        if (configNode.HasValue(field.Name))
-                                        {
-                                            configNode.SetValue(field.Name, newValue);
-                                        }
-                                        else
-                                        {
-                                            configNode.AddValue(field.Name, newValue);
-                                        }
+                                        configNode.SetValue(field.Name, newValue,true);
                                     }
                                 }
                                 if (newValue == defaultValue)
                                 {
                                     if (node != null)
                                     {
-                                        if (node.HasValue(ConfigHelper.VALUE_FIELD))
+                                        if (node.HasValue(valueField))
                                         {
-                                            node.RemoveValue(ConfigHelper.VALUE_FIELD);
+                                            node.RemoveValue(valueField);
                                         }
                                     }
                                     else
@@ -602,11 +618,7 @@ namespace Utils
                 {
                     if (ConfigHelper.ConditionsMet(field, objInfo, configNode))
                     {
-                        if (field.Name != "body" && field.Name != ConfigHelper.VALUE_FIELD)
-                        {
-                            placement.y += spacingOffset;
-                            GUIHelper.DrawField(placementBase, ref placement, obj, field, configNode);
-                        }
+                        GUIHelper.DrawField(placementBase, ref placement, obj, field, configNode);
                     }
                     else if(configNode.HasValue(field.Name))
                     {

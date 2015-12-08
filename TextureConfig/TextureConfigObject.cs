@@ -16,7 +16,7 @@ namespace TextureConfig
         
         public override String ToString() { return name; }
 
-        public void LoadConfigNode(ConfigNode node, String TYPE)
+        public void LoadConfigNode(ConfigNode node)
         {
             ConfigHelper.LoadObjectFromConfig(this, node);
         }

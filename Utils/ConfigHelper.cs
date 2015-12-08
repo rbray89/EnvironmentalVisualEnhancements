@@ -17,6 +17,10 @@ namespace Utils
     {
     }
 
+    public class NodeValue : System.Attribute
+    {
+    }
+
     public class ValueFilter : System.Attribute
     {
         private string fieldMask;
@@ -66,7 +70,9 @@ namespace Utils
 
     public static class ConfigHelper
     {
-        public const string VALUE_FIELD = "value";
+        public const string NAME_FIELD = "name";
+        public const string BODY_FIELD = "body";
+        public const string OBJECT_NODE = "OBJECT";
 
         public static bool ConditionsMet(FieldInfo field, FieldInfo parent, ConfigNode node)
         {
@@ -95,7 +101,7 @@ namespace Utils
         public static bool ValueIsAllowed(FieldInfo field, FieldInfo parent)
         {
             bool isAllowed = true;
-            if (field.Name != VALUE_FIELD)
+            if (!Attribute.IsDefined(field, typeof(NodeValue)))
             {
                 ValueFilter filter = null;
                 if(parent != null && Attribute.IsDefined(parent, typeof(ValueFilter)))
@@ -356,7 +362,8 @@ namespace Utils
                 }
                 else if(valueNode && value != null)
                 {
-                    obj.GetType().GetField(VALUE_FIELD, BindingFlags.Instance | BindingFlags.NonPublic).SetValue(obj, value);
+                    obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(
+                   f => Attribute.IsDefined(f, typeof(NodeValue))).SetValue(obj, value);
                 }
                 else if (!isOptional)
                 {

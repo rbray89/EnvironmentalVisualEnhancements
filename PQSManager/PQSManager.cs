@@ -14,15 +14,15 @@ namespace PQSManager
         protected override ObjectType objectType { get { return ObjectType.BODY|ObjectType.STATIC; } }
         protected override String configName { get { return "PQS_MANAGER"; } }
 
-        protected override void ApplyConfigNode(ConfigNode node, String body)
+        protected override void ApplyConfigNode(ConfigNode node)
         {
             GameObject go = new GameObject();
             PQSWrapper newObject = go.AddComponent<PQSWrapper>();
-            go.transform.parent = Tools.GetCelestialBody(body).bodyTransform;
+            go.transform.parent = Tools.GetCelestialBody(node.GetValue(ConfigHelper.BODY_FIELD)).bodyTransform;
             go.transform.localPosition = Vector3.zero;
             go.transform.localRotation = Quaternion.identity;
             go.transform.localScale = Vector3.one;
-            newObject.LoadConfigNode(node, body);
+            newObject.LoadConfigNode(node);
             ObjectList.Add(newObject);
             newObject.Apply();
         }

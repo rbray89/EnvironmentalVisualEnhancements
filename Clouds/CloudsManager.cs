@@ -14,12 +14,12 @@ namespace Atmosphere
         protected override ObjectType objectType { get { return ObjectType.BODY | ObjectType.MULTIPLE; } }
         protected override String configName { get{return "EVE_CLOUDS";} }
 
-        protected override void ApplyConfigNode(ConfigNode node, String body)
+        protected override void ApplyConfigNode(ConfigNode node)
         {
             GameObject go = new GameObject();
             CloudsObject newObject = go.AddComponent<CloudsObject>();
-            go.transform.parent = Tools.GetCelestialBody(body).bodyTransform;
-            newObject.LoadConfigNode(node, body);
+            go.transform.parent = Tools.GetCelestialBody(node.GetValue(ConfigHelper.BODY_FIELD)).bodyTransform;
+            newObject.LoadConfigNode(node);
             ObjectList.Add(newObject);
             newObject.Apply();
         }

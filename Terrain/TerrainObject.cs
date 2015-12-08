@@ -67,9 +67,10 @@ namespace Terrain
 
     public class TerrainObject : IEVEObject
     {
+#pragma warning disable 0649
         public override String ToString() { return body; }
-        private String body;
-        private ConfigNode node;
+        [Persistent, GUIHidden]
+        String body;
         [Persistent, Optional] 
         TerrainMaterial terrainMaterial = null;
         [Persistent, Optional]
@@ -77,11 +78,9 @@ namespace Terrain
 
         TerrainPQS terrainPQS;
 
-        public void LoadConfigNode(ConfigNode node, String body)
+        public void LoadConfigNode(ConfigNode node)
         {
             ConfigHelper.LoadObjectFromConfig(this, node);
-            this.node = node;
-            this.body = body;
         }
 
         public void Apply()

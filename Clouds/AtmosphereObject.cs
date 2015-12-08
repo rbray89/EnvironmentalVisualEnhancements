@@ -12,12 +12,10 @@ namespace Atmosphere
 
     public class AtmosphereObject : MonoBehaviour, IEVEObject
     {
-        public String Name { get { return name; } set { name = node.name = value; } }
-        private new String name;
-        private ConfigNode node;
+#pragma warning disable 0649
+        [Persistent]
         private String body;
 
-        
         [Persistent]
         float altitude = 1000f;
 
@@ -29,12 +27,9 @@ namespace Atmosphere
         private AtmospherePQS atmospherePQS = null;
         private CelestialBody celestialBody;
         private Transform scaledCelestialTransform;
-        public void LoadConfigNode(ConfigNode node, String body)
+        public void LoadConfigNode(ConfigNode node)
         {
             ConfigHelper.LoadObjectFromConfig(this, node);
-            this.node = node;
-            this.body = body;
-            name = node.name;
         }
 
         public void Apply()

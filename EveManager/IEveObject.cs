@@ -8,7 +8,7 @@ namespace EVEManager
 {
     public interface IEVEObject
     {
-        void LoadConfigNode(ConfigNode node, String name);
+        void LoadConfigNode(ConfigNode node);
         void Apply();
         void Remove();
     }

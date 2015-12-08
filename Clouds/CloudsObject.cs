@@ -31,10 +31,11 @@ namespace Atmosphere
 
     public class CloudsObject : MonoBehaviour, IEVEObject
     {
-        public String Name { get { return name; } set { name = node.name = value; } }
-        private new String name;
-        private ConfigNode node;
-        private String body;
+#pragma warning disable 0649
+        [Persistent, GUIHidden]
+        new String name;
+        [Persistent, GUIHidden]
+        String body;
 
         
         [Persistent, Tooltip("Altitude above sea level for clouds.")]
@@ -67,12 +68,9 @@ namespace Atmosphere
         private CloudsPQS cloudsPQS = null;
         private CelestialBody celestialBody;
         private Transform scaledCelestialTransform;
-        public void LoadConfigNode(ConfigNode node, String body)
+        public void LoadConfigNode(ConfigNode node)
         {
             ConfigHelper.LoadObjectFromConfig(this, node);
-            this.node = node;
-            this.body = body;
-            name = node.name;
         }
 
         public void Apply()

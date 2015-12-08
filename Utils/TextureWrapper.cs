@@ -163,7 +163,7 @@ namespace Utils
 
 #pragma warning disable 0649
 #pragma warning disable 0414
-        [Persistent]
+        [Persistent, GUIHidden, NodeValue]
         string value;
         [Persistent]
         bool isClamped = false;

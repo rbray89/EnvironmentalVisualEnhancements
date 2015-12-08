@@ -14,17 +14,15 @@ namespace CelestialShadows
 
     public class ShadowObject : IEVEObject
     {
-        public String Name { get { return body; } set { } }
+#pragma warning disable 0649
+        [Persistent, GUIHidden]
         private String body;
-        private ConfigNode node;
 
         ShadowComponent shadow;
 
-        public void LoadConfigNode(ConfigNode node, String body)
+        public void LoadConfigNode(ConfigNode node)
         {
             ConfigHelper.LoadObjectFromConfig(this, node);
-            this.node = node;
-            this.body = body;
         }
 
         public void Apply()

@@ -10,22 +10,21 @@ namespace PQSManager
 {
     public class PQSWrapper : PQS, IEVEObject 
     {
+#pragma warning disable 0649
+        [Persistent, GUIHidden]
+        String body;
+
         [Persistent]
         float deactivateDistance = 175000;
 
-        String body;
-        ConfigNode node;
         float cameraDistance;
         public override String ToString() { return body; }
         
         public String Body { get { return body; } }
 
-        public void LoadConfigNode(ConfigNode node, String body)
+        public void LoadConfigNode(ConfigNode node)
         {
             ConfigHelper.LoadObjectFromConfig(this, node);
-            this.node = node;
-            this.body = body;
-            name = node.name;
         }
 
         public void Apply() 

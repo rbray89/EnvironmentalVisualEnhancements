@@ -30,23 +30,23 @@ namespace CityLights
         public class CityLightsObject : IEVEObject
     {
         public override String ToString() { return body; }
-        private String body;
-        private ConfigNode node;
-        private MaterialPQS materialPQS;
+
+#pragma warning disable 0649
+        [Persistent, GUIHidden]
+        string body;
+
         [Persistent]
         CityLightsMaterial cityLightsMaterial = null;
         Material scaledMat;
         Material macroMat;
         String materialName = Guid.NewGuid().ToString();
         GameObject mainMenuBody = null;
-
+        MaterialPQS materialPQS;
         SceneChangeEvent onSceneChange;
 
-        public void LoadConfigNode(ConfigNode node, String body)
+        public void LoadConfigNode(ConfigNode node)
         {
             ConfigHelper.LoadObjectFromConfig(this, node);
-            this.node = node;
-            this.body = body;
         }
 
         public void Apply()
