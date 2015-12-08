@@ -17,8 +17,7 @@ namespace PQSManager
         ConfigNode node;
         float cameraDistance;
         public override String ToString() { return body; }
-
-        public ConfigNode ConfigNode { get { return node; } }
+        
         public String Body { get { return body; } }
 
         public void LoadConfigNode(ConfigNode node, String body)

@@ -15,7 +15,7 @@ namespace Terrain
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class TerrainManager : GenericEVEManager<TerrainObject>
     {
-        protected override ObjectType objectType { get { return ObjectType.PLANET; } }
+        protected override ObjectType objectType { get { return ObjectType.BODY; } }
         protected override String configName { get { return "EVE_TERRAIN"; } }
 
         private bool camerasInitialized = false;

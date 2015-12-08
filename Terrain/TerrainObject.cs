@@ -68,8 +68,6 @@ namespace Terrain
     public class TerrainObject : IEVEObject
     {
         public override String ToString() { return body; }
-        public ConfigNode ConfigNode { get { return node; } }
-        public String Body { get { return body; } }
         private String body;
         private ConfigNode node;
         [Persistent, Optional] 

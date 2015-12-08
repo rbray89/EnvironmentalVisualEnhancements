@@ -11,7 +11,7 @@ namespace PQSManager
     [KSPAddon(KSPAddon.Startup.MainMenu, false)]
     public class PQSManagerClass : GenericEVEManager<PQSWrapper>
     {
-        protected override ObjectType objectType { get { return ObjectType.PLANET|ObjectType.STATIC; } }
+        protected override ObjectType objectType { get { return ObjectType.BODY|ObjectType.STATIC; } }
         protected override String configName { get { return "PQS_MANAGER"; } }
 
         protected override void ApplyConfigNode(ConfigNode node, String body)

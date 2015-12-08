@@ -45,6 +45,8 @@ namespace Utils
     public class CubemapWrapper
     {
 
+        private static Dictionary<String,CubemapWrapper> CubemapList = new Dictionary<String,CubemapWrapper>();
+
         private TextureTypeEnum type;
         private bool isNormal;
         public string name;
@@ -120,6 +122,21 @@ namespace Utils
                 return false;
             }
         }
+
+        public static CubemapWrapper fetchCubeMap(TextureWrapper textureWrapper)
+        {
+            bool cubemapExists = CubemapList.ContainsKey(textureWrapper.Name);
+            if (cubemapExists)
+            {
+                return CubemapList[textureWrapper.Name];
+            }
+            else
+            {
+                CubemapWrapper cubemap = new CubemapWrapper(textureWrapper.Name, textureWrapper.Type, textureWrapper.IsNormal, textureWrapper.IsClamped);
+                CubemapList[textureWrapper.Name] = cubemap;
+                return cubemap;
+            }
+        }
     }
 
     public enum AlphaMaskEnum
@@ -142,7 +159,6 @@ namespace Utils
     [ValueNode, ValueFilter("isClamped|format")]
     public class TextureWrapper
     {
-        private static List<CubemapWrapper> CubemapList = new List<CubemapWrapper>();
         bool isNormal = false;
 
 #pragma warning disable 0649
@@ -161,6 +177,10 @@ namespace Utils
 
         public bool IsNormal { get { return isNormal; } set { isNormal = value; } }
         public bool IsClamped { get { return isClamped; } set { isClamped = value; } }
+        public string Name { get { return value; } }
+        public TextureFormatSimplified Format { get { return format; } }
+        public TextureTypeEnum Type { get { return type; } }
+        public AlphaMaskEnum AlphaMask { get { return alphaMask; } }
 
         public TextureWrapper()
         {
@@ -169,20 +189,19 @@ namespace Utils
 
         public void ApplyTexture(Material mat, string name)
         {
-            Texture texture = null;
+            GameDatabase.TextureInfo texture = null;
             if ((type & TextureTypeEnum.CubeMapMask) > 0)
             {
-                CubemapWrapper cubeMap = fetchCubeMap();
+                CubemapWrapper cubeMap = CubemapWrapper.fetchCubeMap(this);
                 cubeMap.ApplyCubeMap(mat, name);
             }
             else
             {
-                texture = GameDatabase.Instance.GetTexture(value, isNormal);
+                texture = GameDatabase.Instance.GetTextureInfo(value);
             }
             if (texture != null)
             {
-                texture.wrapMode = isClamped ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
-                mat.SetTexture(name, texture);
+                mat.SetTexture(name, texture.texture);
                 KSPLog.print("Setting texure "+value);
             }
             if ((type & TextureTypeEnum.AlphaMapMask) > 0)
@@ -191,32 +210,11 @@ namespace Utils
             }
         }
 
-        private CubemapWrapper fetchCubeMap()
-        {
-            bool cubemapExists = CubemapList.Exists(c => c.name == value);
-            if(cubemapExists)
-            {
-                return CubemapList.First(c => c.name == value);
-            }
-            else
-            {
-                CubemapWrapper cubemap = new CubemapWrapper(value, type, isNormal, isClamped);
-                CubemapList.Add(cubemap);
-                return cubemap;
-            }
-        }
-        
-
         public bool isValid()
         {
-            bool cubemapExists = CubemapList.Exists(c => c.name == value);
             if ((type & TextureTypeEnum.CubeMapMask) > 0)
             {
-                if(!cubemapExists)
-                {
-                    cubemapExists = CubemapWrapper.Exists(value, type);
-                }
-                return cubemapExists;
+                return CubemapWrapper.Exists(value, type);
             }
             else
             {

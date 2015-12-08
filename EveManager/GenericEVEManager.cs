@@ -16,7 +16,7 @@ namespace EVEManager
         [Flags] protected enum ObjectType
         {
             NONE = 0,
-            PLANET = 1,
+            BODY = 1,
             GLOBAL = 2,
             MULTIPLE = 4,
             STATIC = 8
@@ -24,6 +24,7 @@ namespace EVEManager
         protected virtual ObjectType objectType { get { return ObjectType.NONE; } }
         protected virtual String configName { get { return ""; } }
         protected virtual GameScenes SceneLoad { get { return GameScenes.MAINMENU; } }
+        protected virtual bool DelayedLoad { get { return true; } }
 
         protected static List<T> ObjectList = new List<T>();
         protected static UrlDir.UrlConfig[] configs;
@@ -63,7 +64,14 @@ namespace EVEManager
             Managers.Add(this);
             if (sceneConfigLoad)
             {
-                StartCoroutine(SetupDelay());
+                if (DelayedLoad)
+                {
+                    StartCoroutine(SetupDelay());
+                }
+                else
+                {
+                    Setup();
+                }
             }
         }
 
@@ -124,9 +132,16 @@ namespace EVEManager
                 {
                     if ((objectType & ObjectType.MULTIPLE) == ObjectType.MULTIPLE)
                     {
-                        foreach (ConfigNode bodyNode in node.nodes)
+                        if ((objectType & ObjectType.BODY) == ObjectType.BODY)
                         {
-                            ApplyConfigNode(bodyNode, node.name);
+                            foreach (ConfigNode bodyNode in node.nodes)
+                            {
+                                ApplyConfigNode(bodyNode, node.name);
+                            }
+                        }
+                        else
+                        {
+                            ApplyConfigNode(node, node.name);
                         }
                     }
                     else
@@ -137,10 +152,10 @@ namespace EVEManager
             }
         }
 
-        protected virtual void ApplyConfigNode(ConfigNode node, String body)
+        protected virtual void ApplyConfigNode(ConfigNode node, String name)
         {
             T newObject = new T();
-            newObject.LoadConfigNode(node, body);
+            newObject.LoadConfigNode(node, name);
             ObjectList.Add(newObject);
             newObject.Apply();
         }
@@ -253,10 +268,9 @@ namespace EVEManager
             {
                 selectedConfig = GUIHelper.DrawSelector<ConfigWrapper>(ConfigFiles, ref selectedConfigIndex, 16, placementBase, ref placement);
                 DrawConfigManagement(placementBase, ref placement);
-                if ((objectType & ObjectType.PLANET) == ObjectType.PLANET)
+                if ((objectType & ObjectType.BODY) == ObjectType.BODY)
                 {
                     body = GUIHelper.DrawBodySelector(placementBase, ref placement);
-
                 }
             }
             
@@ -264,18 +278,25 @@ namespace EVEManager
             {
                 if ((objectType & ObjectType.MULTIPLE) == ObjectType.MULTIPLE)
                 {
-                    ConfigNode bodyNode;
-                    if (!selectedConfig.Node.HasNode(body))
+                    if ((objectType & ObjectType.BODY) == ObjectType.BODY)
                     {
-                        bodyNode = selectedConfig.Node.AddNode(body);
+                        ConfigNode bodyNode;
+                        if (!selectedConfig.Node.HasNode(body))
+                        {
+                            bodyNode = selectedConfig.Node.AddNode(body);
+                        }
+                        else
+                        {
+                            bodyNode = selectedConfig.Node.GetNode(body);
+                        }
+                        placement.height = 5;
+                        objNode = GUIHelper.DrawObjectSelector(bodyNode.nodes, ref selectedObjIndex, ref objNameEditString, ref objListPos, placementBase, ref placement);
                     }
                     else
                     {
-                        bodyNode = selectedConfig.Node.GetNode(body);
+                        placement.height = 5;
+                        objNode = GUIHelper.DrawObjectSelector(selectedConfig.Node.nodes, ref selectedObjIndex, ref objNameEditString, ref objListPos, placementBase, ref placement);
                     }
-                    placement.height = 5;
-                    objNode = GUIHelper.DrawObjectSelector(bodyNode.nodes, ref selectedObjIndex, ref objNameEditString, ref objListPos, placementBase, ref placement);
-
                 }
                 else
                 {

@@ -11,7 +11,7 @@ namespace Atmosphere
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class CloudsManager : GenericEVEManager<CloudsObject>
     {
-        protected override ObjectType objectType { get { return ObjectType.PLANET | ObjectType.MULTIPLE; } }
+        protected override ObjectType objectType { get { return ObjectType.BODY | ObjectType.MULTIPLE; } }
         protected override String configName { get{return "EVE_CLOUDS";} }
 
         protected override void ApplyConfigNode(ConfigNode node, String body)

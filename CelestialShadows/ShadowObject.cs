@@ -15,8 +15,6 @@ namespace CelestialShadows
     public class ShadowObject : IEVEObject
     {
         public String Name { get { return body; } set { } }
-        public ConfigNode ConfigNode { get { return node; } }
-        public String Body { get { return body; } }
         private String body;
         private ConfigNode node;
 

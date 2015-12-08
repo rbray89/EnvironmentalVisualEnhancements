@@ -13,8 +13,6 @@ namespace Atmosphere
     public class AtmosphereObject : MonoBehaviour, IEVEObject
     {
         public String Name { get { return name; } set { name = node.name = value; } }
-        public ConfigNode ConfigNode { get { return node; } }
-        public String Body { get { return body; } }
         private new String name;
         private ConfigNode node;
         private String body;
