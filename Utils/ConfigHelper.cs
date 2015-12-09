@@ -185,10 +185,9 @@ namespace Utils
                 }
                 if (!canParse)
                 {
-                    KSPLog.print("unable to parse \"" + field.Name + "\" in \""+node.name+"\"!");
-                    return false;
+                    throw new UnityException("Unable to parse \"" + field.Name + "\" in \"" + node.name + "\"!");  
                 }
-                   
+                  
             }
             return true;
         }
@@ -355,7 +354,11 @@ namespace Utils
                 
                 if (node != null)
                 {
-                    if (!LoadObjectFromConfig(obj, node))
+                    try
+                    {
+                        LoadObjectFromConfig(obj, node);
+                    }
+                    catch
                     {
                         return false;
                     }

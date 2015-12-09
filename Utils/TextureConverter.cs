@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace ActiveTextureManagement
+namespace Utils
 {
-    class TextureConverter
+    public class TextureConverter
     {
 
         const int MAX_IMAGE_SIZE = 8096 * 8096 * 3;
@@ -154,7 +154,7 @@ namespace ActiveTextureManagement
             return color;
         }
 
-        public static void MBMToTexture(GameDatabase.TextureInfo texture, bool mipmaps)
+        public static void MBMToTexture(GameDatabase.TextureInfo texture, TextureFormat format, bool mipmaps)
         {
             TextureConverter.InitImageBuffer();
             FileStream mbmStream = new FileStream(texture.file.fullPath, FileMode.Open, FileAccess.Read);
@@ -183,21 +183,15 @@ namespace ActiveTextureManagement
             }
 
             mbmStream.Position = 16;
-            int format = mbmStream.ReadByte();
+            int mbmFormat = mbmStream.ReadByte();
             mbmStream.Position += 3;
 
             int imageSize = (int)(width * height * 3);
-            TextureFormat texformat = TextureFormat.RGB24;
             bool alpha = false;
-            if (format == 32)
+            if (mbmFormat == 32)
             {
                 imageSize += (int)(width * height);
-                texformat = TextureFormat.ARGB32;
                 alpha = true;
-            }
-            if (texture.isNormalMap)
-            {
-                texformat = TextureFormat.ARGB32;
             }
 
             mbmStream.Read(imageBuffer, 0, MAX_IMAGE_SIZE);
@@ -229,12 +223,12 @@ namespace ActiveTextureManagement
             }
 
 
-            tex.Resize((int)width, (int)height, texformat, mipmaps);
+            tex.Resize((int)width, (int)height, format, mipmaps);
             tex.SetPixels32(colors);
             tex.Apply(mipmaps, false);
         }
 
-        public static void IMGToTexture(GameDatabase.TextureInfo texture, bool mipmaps, bool isNormalFormat)
+        public static void IMGToTexture(GameDatabase.TextureInfo texture, TextureFormat format, bool mipmaps)
         {
 
             TextureConverter.InitImageBuffer();
@@ -245,16 +239,11 @@ namespace ActiveTextureManagement
 
             Texture2D tex = texture.texture;
             tex.LoadImage(imageBuffer);
-            bool convertToNormalFormat = texture.isNormalMap && !isNormalFormat ? true : false;
+            bool convertToNormalFormat = texture.isNormalMap ? true : false;
             bool hasMipmaps = tex.mipmapCount == 1 ? false : true;
 
-            TextureFormat format = tex.format;
-            if (texture.isNormalMap)
-            {
-                format = TextureFormat.ARGB32;
-            }
-      
-            else if (convertToNormalFormat || hasMipmaps != mipmaps || format != tex.format)
+
+            if (convertToNormalFormat || hasMipmaps != mipmaps || format != tex.format)
             {
                 Color32[] pixels = tex.GetPixels32();
                 if (convertToNormalFormat)
@@ -271,12 +260,12 @@ namespace ActiveTextureManagement
                     tex.Resize(tex.width, tex.height, format, mipmaps);
                 }
                 tex.SetPixels32(pixels);
-                tex.Apply(mipmaps);
+                tex.Apply(mipmaps, false);
             }
 
         }
 
-        public static void TGAToTexture(GameDatabase.TextureInfo texture, bool mipmaps)
+        public static void TGAToTexture(GameDatabase.TextureInfo texture, TextureFormat format, bool mipmaps)
         {
 
             TextureConverter.InitImageBuffer();
@@ -291,11 +280,7 @@ namespace ActiveTextureManagement
 
             int depth = imageBuffer[16];
             bool alpha = depth == 32 ? true : false;
-            TextureFormat texFormat = depth == 32 ? TextureFormat.RGBA32 : TextureFormat.RGB24;
-            if(texture.isNormalMap)
-            {
-                texFormat = TextureFormat.ARGB32;
-            }
+            
             bool convertToNormalFormat = texture.isNormalMap ? true : false; 
 
             Texture2D tex = texture.texture;
@@ -389,33 +374,37 @@ namespace ActiveTextureManagement
                 KSPLog.print("TGA format is not supported!");
             }
             
-            tex.Resize((int)width, (int)height, texFormat, mipmaps);
+            tex.Resize((int)width, (int)height, format, mipmaps);
             tex.SetPixels32(colors);
             tex.Apply(mipmaps, false);
         }
 
-        public static void GetReadable(GameDatabase.TextureInfo texture, bool mipmaps)
+        public static bool GetReadable(GameDatabase.TextureInfo texture, TextureFormat format, bool mipmaps)
         {
-           
+            KSPLog.print("Getting readable tex from " + texture.file.url +"."+ texture.file.fileExtension);
             if (texture.file.fileExtension == "png" ||
             texture.file.fileExtension == "truecolor")
             {
-                IMGToTexture(texture, mipmaps, false);
+                IMGToTexture(texture, format, mipmaps);
+                return true;
             }
             else if (texture.file.fileExtension == "jpg" ||
             texture.file.fileExtension == "jpeg")
             {
-                IMGToTexture(texture, mipmaps, false);
+                IMGToTexture(texture, format, mipmaps);
+                return true;
             }
             else if (texture.file.fileExtension == "tga")
             {
-                TGAToTexture(texture, mipmaps);
+                TGAToTexture(texture, format, mipmaps);
+                return true;
             }
             else if (texture.file.fileExtension == "mbm")
             {
-                MBMToTexture(texture, mipmaps);
-                   
-            }            
+                MBMToTexture(texture, format, mipmaps);
+                return true;
+            }
+            return false;
         }
 
 

@@ -13,6 +13,7 @@ namespace Utils
         AlphaMap = 0x2,
         CubeMap = 0x4,
         AlphaCubeMap = 0x8,
+        [EnumMask] //This will hide it from the GUI until it is supported.
         RGB2_CubeMap = 0x10,
 
         [EnumMask]
@@ -48,44 +49,41 @@ namespace Utils
         private static Dictionary<String,CubemapWrapper> CubemapList = new Dictionary<String,CubemapWrapper>();
 
         private TextureTypeEnum type;
-        private bool isNormal;
         public string name;
 
         Texture2D texPositive;
         Texture2D texNegative;
         Cubemap cubeTex;
 
-        public CubemapWrapper(string value, TextureTypeEnum cubeType, bool isNormal, bool isClamped)
+        public CubemapWrapper(string value, Texture2D[] textures, TextureTypeEnum cubeType, TextureFormat format, bool mipmaps, bool readable)
         {
             this.name = value;
-            this.isNormal = isNormal;
-            type = cubeType;
+            type = cubeType == TextureTypeEnum.RGB2_CubeMap? TextureTypeEnum.RGB2_CubeMap : TextureTypeEnum.CubeMap;
             if (type == TextureTypeEnum.RGB2_CubeMap)
             {
-                texPositive = GameDatabase.Instance.GetTexture(value + "+", isNormal);
-                texPositive.wrapMode = isClamped ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
-                texNegative = GameDatabase.Instance.GetTexture(value + "-", isNormal);
-                texNegative.wrapMode = isClamped ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
+                texPositive = textures[0];
+                texPositive.wrapMode = TextureWrapMode.Clamp;
+                texNegative = textures[1];
+                texNegative.wrapMode = TextureWrapMode.Clamp;
 
                 KSPLog.print("Creating " + name + " Cubemap");
             }
-            else if (type == TextureTypeEnum.CubeMap || type == TextureTypeEnum.AlphaCubeMap)
+            else
             {
-                Texture2D tex = GameDatabase.Instance.GetTexture(value + "_" + Enum.GetName(typeof(CubemapFace), CubemapFace.PositiveX), isNormal);
-                if (tex != null)
+                cubeTex = new Cubemap(textures[0].width, format, mipmaps);
+                foreach (CubemapFace face in Enum.GetValues(typeof(CubemapFace)))
                 {
-                    cubeTex = new Cubemap(tex.width, TextureFormat.RGBA32, true);
-                    foreach (CubemapFace face in Enum.GetValues(typeof(CubemapFace)))
-                    {
-                        tex = GameDatabase.Instance.GetTexture(value + "_" + Enum.GetName(typeof(CubemapFace), face), isNormal);
-                        cubeTex.SetPixels(tex.GetPixels(), face);
-                        GameDatabase.Instance.RemoveTexture(tex.name);
-                        GameObject.DestroyImmediate(tex);
-                    }
-                    cubeTex.Apply(true, true);
-                    cubeTex.SmoothEdges();
+                    Texture2D tex = textures[(int)face];
+                    cubeTex.SetPixels(tex.GetPixels(), face);
                 }
+                cubeTex.Apply(mipmaps, !readable);
+                cubeTex.SmoothEdges();
             }
+        }
+
+        public static void GenerateCubemapWrapper(string value, Texture2D[] textures, TextureTypeEnum cubeType, TextureFormat format, bool mipmaps, bool readable)
+        {
+            CubemapList[value] = new CubemapWrapper(value, textures, cubeType, format, mipmaps, readable);
         }
 
         internal void ApplyCubeMap(Material mat, string name)
@@ -99,7 +97,7 @@ namespace Utils
             }
             else
             {
-                //Right now we don't load the cubemaps really... Should consider setting it up.
+                KSPLog.print("Setting cube" + name);
                 mat.SetTexture("cube" + name, cubeTex);
                 mat.EnableKeyword("CUBE" + name);
             }
@@ -107,20 +105,8 @@ namespace Utils
 
         internal static bool Exists(string value, TextureTypeEnum type)
         {
-            if (type == TextureTypeEnum.RGB2_CubeMap)
-            {
-                return GameDatabase.Instance.ExistsTexture(value + "+") && GameDatabase.Instance.ExistsTexture(value + "-");
-            }
-            else
-            {
-                foreach (CubemapFace face in Enum.GetValues(typeof(CubemapFace)))
-                {
-                    if (!GameDatabase.Instance.ExistsTexture(value + "_" + Enum.GetName(typeof(CubemapFace), face)))
-                    { return false; }
-                    return true;
-                }
-                return false;
-            }
+            //Only the one type supported for now
+            return (CubemapList.ContainsKey(value));// && CubemapList[value].type == type);
         }
 
         public static CubemapWrapper fetchCubeMap(TextureWrapper textureWrapper)
@@ -132,9 +118,7 @@ namespace Utils
             }
             else
             {
-                CubemapWrapper cubemap = new CubemapWrapper(textureWrapper.Name, textureWrapper.Type, textureWrapper.IsNormal, textureWrapper.IsClamped);
-                CubemapList[textureWrapper.Name] = cubemap;
-                return cubemap;
+                return null;
             }
         }
     }
@@ -147,14 +131,7 @@ namespace Utils
         ALPHAMAP_A
     }
 
-    public enum TextureFormatSimplified
-    {
-        Default = -1,
-        RGBA32 = TextureFormat.RGBA32,
-        RGB24 = TextureFormat.RGB24,
-        DXT1 = TextureFormat.DXT1,
-        DXT5 = TextureFormat.DXT5
-    }
+    
 
     [ValueNode, ValueFilter("isClamped|format")]
     public class TextureWrapper
@@ -168,8 +145,6 @@ namespace Utils
         [Persistent]
         bool isClamped = false;
         [Persistent]
-        TextureFormatSimplified format = TextureFormatSimplified.Default;
-        [Persistent]
         TextureTypeEnum type = TextureTypeEnum.RGBA;
         [Persistent, Conditional("alphaMaskEval")]
         AlphaMaskEnum alphaMask = AlphaMaskEnum.ALPHAMAP_A;
@@ -178,7 +153,6 @@ namespace Utils
         public bool IsNormal { get { return isNormal; } set { isNormal = value; } }
         public bool IsClamped { get { return isClamped; } set { isClamped = value; } }
         public string Name { get { return value; } }
-        public TextureFormatSimplified Format { get { return format; } }
         public TextureTypeEnum Type { get { return type; } }
         public AlphaMaskEnum AlphaMask { get { return alphaMask; } }
 
@@ -201,8 +175,8 @@ namespace Utils
             }
             if (texture != null)
             {
+                texture.texture.wrapMode = isClamped ? TextureWrapMode.Clamp : TextureWrapMode.Clamp;
                 mat.SetTexture(name, texture.texture);
-                KSPLog.print("Setting texure "+value);
             }
             if ((type & TextureTypeEnum.AlphaMapMask) > 0)
             {
@@ -224,18 +198,12 @@ namespace Utils
 
         public static bool alphaMaskEval(ConfigNode node)
         {
-
-            if (node.HasValue("type"))
+            TextureWrapper test = new TextureWrapper();
+            ConfigNode.LoadObjectFromConfig(test, node);
+            
+            if ((test.type & TextureTypeEnum.AlphaMapMask) > 0)
             {
-                TextureTypeEnum type = (TextureTypeEnum)ConfigNode.ParseEnum(typeof(TextureTypeEnum), node.GetValue("type"));
-                if ((type & TextureTypeEnum.AlphaMapMask) > 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return true;
             }
             else
             {

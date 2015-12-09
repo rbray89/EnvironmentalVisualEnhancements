@@ -127,7 +127,7 @@ Shader "EVE/Cloud" {
 				{
 					half4 color;
 #ifdef CUBE_MainTex
-					half4 main = texCUBE(cube_MainTex, normalize(IN.objMain));
+					half4 main = texCUBE(cube_MainTex, IN.objMain);
 #elif defined (CUBE_RGB2_MainTex)
 					half4 main = GetSphereMapCube(cube_MainTexPOS, cube_MainTexNEG, IN.objMain);
 #else
