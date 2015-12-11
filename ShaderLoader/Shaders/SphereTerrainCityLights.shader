@@ -41,6 +41,8 @@
 				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile_fwdbase
 				#pragma multi_compile_fwdadd_fullshadows
+#pragma multi_compile MainTex CUBE_CityOverlayTex CUBE_RGB2_CityOverlayTex
+#pragma multi_compile ALPHAMAP_NONE_CityOverlayTex ALPHAMAP_R_CityOverlayTex ALPHAMAP_G_CityOverlayTex ALPHAMAP_B_CityOverlayTex ALPHAMAP_A_CityOverlayTex
 
 
 				fixed4 _Color;
@@ -50,7 +52,15 @@
 
 				float _PlanetOpacity;
 
+#ifdef CUBE_CityOverlayTex
+				uniform samplerCUBE cube_CityOverlayTex;
+#elif defined (CUBE_RGB2_CityOverlayTex)
+				sampler2D cube_CityOverlayTexPOS;
+				sampler2D cube_CityOverlayTexNEG;
+#else
 				sampler2D _CityOverlayTex;
+#endif
+
 				float _CityOverlayDetailScale;
 				sampler2D _CityDarkOverlayDetailTex;
 				sampler2D _CityLightOverlayDetailTex;
@@ -105,8 +115,24 @@
 					float3 sphereNrm = normalize(IN.sphereCoords);
 					half vertLerp = saturate((32*(saturate(dot(IN.objnormal.xyz, -sphereNrm))-.95))+.5);
 
-
+#ifdef CUBE_CityOverlayTex
+					half4 cityoverlay = texCUBE(cube_CityOverlayTex, IN.sphereCoords);
+#elif defined (CUBE_RGB2_CityOverlayTex)
+					half4 cityoverlay = GetSphereMapCube(cube_CityOverlayTexPOS, cube_CityOverlayTexNEG, IN.sphereCoords);
+#else
 					half4 cityoverlay = GetSphereMap(_CityOverlayTex, IN.sphereCoords);
+#endif
+
+#ifdef ALPHAMAP_R_CityOverlayTex
+					cityoverlay = half4(1, 1, 1, cityoverlay.r);
+#elif ALPHAMAP_G_CityOverlayTex
+					cityoverlay = half4(1, 1, 1, cityoverlay.g);
+#elif ALPHAMAP_B_CityOverlayTex
+					cityoverlay = half4(1, 1, 1, cityoverlay.b);
+#elif ALPHAMAP_A_CityOverlayTex
+					cityoverlay = half4(1, 1, 1, cityoverlay.a);
+#endif
+
 					half4 citydarkoverlaydetail = GetSphereDetailMap(_CityDarkOverlayDetailTex, IN.sphereCoords, _CityOverlayDetailScale);
 					half4 citylightoverlaydetail = GetSphereDetailMap(_CityLightOverlayDetailTex, IN.sphereCoords, _CityOverlayDetailScale);
 

@@ -15,7 +15,7 @@ namespace CityLights
     {
 #pragma warning disable 0169
 #pragma warning disable 0414
-        [Persistent]
+        [Persistent, ValueFilter("isClamped|format|type|alphaMask")]
         TextureWrapper _CityOverlayTex;
         [Persistent]
         float _CityOverlayDetailScale = 200f;
