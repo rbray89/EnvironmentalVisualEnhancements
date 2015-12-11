@@ -117,10 +117,10 @@ namespace EVEManager
                 GUI.color = Color.white;
                 GUI.contentColor = Color.black;
                 
-                GUI.Label(new Rect(Mouse.screenPos.x + 15, Mouse.screenPos.y + 15, size.x, size.y), new GUIContent( GUI.tooltip, ToolTipBackground), toolStyle);
+                GUI.Label(new Rect(Mouse.screenPos.x + 15 - _mainWindowRect.x, Mouse.screenPos.y + 15- _mainWindowRect.y, size.x, size.y), new GUIContent( GUI.tooltip, ToolTipBackground), toolStyle);
                 
             }
-            GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+            GUI.DragWindow(new Rect(0, 0, 10000, 20));
         }
 
         public virtual void DrawGUI(Rect val, Rect val2)

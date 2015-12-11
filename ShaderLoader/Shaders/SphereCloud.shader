@@ -35,20 +35,15 @@ Shader "EVE/Cloud" {
 				CGPROGRAM
 
 				#include "EVEUtils.cginc"
-				#include "UnityCG.cginc"
-				#include "AutoLight.cginc"
-				#include "Lighting.cginc"
 				#pragma target 3.0
 				#pragma glsl
 				#pragma vertex vert
 				#pragma fragment frag
 				#define MAG_ONE 1.4142135623730950488016887242097
-				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile_fwdbase
-				#pragma multi_compile_fwdadd_fullshadows
 				#pragma multi_compile SOFT_DEPTH_OFF SOFT_DEPTH_ON
 				#pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
-				#pragma multi_compile MainTex CUBE_MainTex CUBE_RGB2_MainTex
+				#pragma multi_compile MainTex CUBE_MainTex  
 				#pragma multi_compile ALPHAMAP_NONE_MainTex ALPHAMAP_R_MainTex ALPHAMAP_G_MainTex ALPHAMAP_B_MainTex ALPHAMAP_A_MainTex
 
 #ifdef CUBE_MainTex
@@ -127,7 +122,7 @@ Shader "EVE/Cloud" {
 				{
 					half4 color;
 #ifdef CUBE_MainTex
-					half4 main = texCUBE(cube_MainTex, IN.objMain);
+					half4 main = GetSphereMapCube(cube_MainTex, IN.objMain);
 #elif defined (CUBE_RGB2_MainTex)
 					half4 main = GetSphereMapCube(cube_MainTexPOS, cube_MainTexNEG, IN.objMain);
 #else

@@ -10,10 +10,17 @@
 	#define TWOPI (2.0*PI) 
 	#define INV_2PI (1.0/TWOPI)
 	#define SQRT_2 (1.41421356237)
-	
+#pragma fragmentoption ARB_precision_hint_fastest
+
+#ifdef DIRLIGHT_ONLY
+#define DIRECTIONAL 1
+#define SHADOWS_OFF 1
+#define LIGHTMAP_OFF 1
+#define DIRLIGHTMAP_OFF 1
+#endif
+
 	uniform float4x4 _MainRotation;
 	uniform float4x4 _DetailRotation;
-	
 
 	/*=========================================================================*
 	* R A N D _ R O T A T I O N Author: Jim Arvo, 1991 *

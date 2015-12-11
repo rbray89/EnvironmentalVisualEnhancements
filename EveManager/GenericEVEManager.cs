@@ -227,15 +227,16 @@ namespace EVEManager
         {
             Rect applyRect = GUIHelper.GetRect(placementBase, ref placement);
 
-            ConfigNode objNode = node.GetNode(body);
+            ConfigNode objNode = node.GetNode(ConfigHelper.OBJECT_NODE, ConfigHelper.BODY_FIELD, body);
 
             if (objNode == null && GUI.Button(applyRect, "Add"))
             {
-                objNode = node.AddNode(body);
+                objNode = node.AddNode(ConfigHelper.OBJECT_NODE);
+                objNode.SetValue(ConfigHelper.BODY_FIELD, body, true);
             }
             else if (objNode != null && GUI.Button(applyRect, "Remove"))
             {
-                node.RemoveNode(body);
+                node.RemoveNode(objNode);
                 objNode = null;
             }
             placement.y += 1 + GUIHelper.spacingOffset;

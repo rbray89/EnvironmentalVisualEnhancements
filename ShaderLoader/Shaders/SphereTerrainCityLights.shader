@@ -30,9 +30,6 @@
 				CGPROGRAM
 
 				#include "EVEUtils.cginc"
-				#include "UnityCG.cginc"
-				#include "AutoLight.cginc"
-				#include "Lighting.cginc"
 				#pragma target 3.0
 				#pragma glsl
 				#pragma vertex vert
@@ -40,10 +37,8 @@
 				#define MAG_ONE 1.4142135623730950488016887242097
 				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile_fwdbase
-				#pragma multi_compile_fwdadd_fullshadows
-#pragma multi_compile MainTex CUBE_CityOverlayTex CUBE_RGB2_CityOverlayTex
+#pragma multi_compile MainTex CUBE_CityOverlayTex 
 #pragma multi_compile ALPHAMAP_NONE_CityOverlayTex ALPHAMAP_R_CityOverlayTex ALPHAMAP_G_CityOverlayTex ALPHAMAP_B_CityOverlayTex ALPHAMAP_A_CityOverlayTex
-
 
 				fixed4 _Color;
 				float _SpecularPower;
@@ -116,7 +111,7 @@
 					half vertLerp = saturate((32*(saturate(dot(IN.objnormal.xyz, -sphereNrm))-.95))+.5);
 
 #ifdef CUBE_CityOverlayTex
-					half4 cityoverlay = texCUBE(cube_CityOverlayTex, IN.sphereCoords);
+					half4 cityoverlay = GetSphereMapCube(cube_CityOverlayTex, IN.sphereCoords);
 #elif defined (CUBE_RGB2_CityOverlayTex)
 					half4 cityoverlay = GetSphereMapCube(cube_CityOverlayTexPOS, cube_CityOverlayTexNEG, IN.sphereCoords);
 #else
