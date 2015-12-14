@@ -6,6 +6,17 @@ using UnityEngine;
 
 namespace Utils
 {
+
+    public static class LayerExtensions
+    {
+
+        public static int Mask(this Tools.Layer layer)
+        {
+            return 1 << (int)layer;
+        }
+
+    }
+
     public static class ColorExtensions
     {
         public static uint u(this Color32 color)

@@ -36,8 +36,8 @@ namespace CelestialShadows
                 StaticSetup(this);
             }
         }
-
-        protected new void Update()
+        
+        protected void LateUpdate()
         {
             if (shadowProjector != null)
             {

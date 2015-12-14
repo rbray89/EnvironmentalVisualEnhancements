@@ -131,7 +131,7 @@ namespace Utils
         ALPHAMAP_A
     }
 
-    
+
 
     [ValueNode, ValueFilter("isClamped|format")]
     public class TextureWrapper
@@ -148,7 +148,7 @@ namespace Utils
         TextureTypeEnum type = TextureTypeEnum.RGBA;
         [Persistent, Conditional("alphaMaskEval")]
         AlphaMaskEnum alphaMask = AlphaMaskEnum.ALPHAMAP_A;
-        
+
 
         public bool IsNormal { get { return isNormal; } set { isNormal = value; } }
         public bool IsClamped { get { return isClamped; } set { isClamped = value; } }
@@ -159,7 +159,7 @@ namespace Utils
         public TextureWrapper()
         {
 
-        } 
+        }
 
         public void ApplyTexture(Material mat, string name)
         {
@@ -175,7 +175,7 @@ namespace Utils
             }
             if (texture != null)
             {
-                texture.texture.wrapMode = isClamped ? TextureWrapMode.Clamp : TextureWrapMode.Clamp;
+                texture.texture.wrapMode = isClamped ? TextureWrapMode.Clamp : TextureWrapMode.Repeat;
                 mat.SetTexture(name, texture.texture);
             }
             if ((type & TextureTypeEnum.AlphaMapMask) > 0)
@@ -186,7 +186,11 @@ namespace Utils
 
         public bool isValid()
         {
-            if ((type & TextureTypeEnum.CubeMapMask) > 0)
+            if (value == null || value == "")
+            {
+                return true;
+            }
+            else if ((type & TextureTypeEnum.CubeMapMask) > 0)
             {
                 return CubemapWrapper.Exists(value, type);
             }

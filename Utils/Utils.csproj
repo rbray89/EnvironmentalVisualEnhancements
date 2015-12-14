@@ -88,6 +88,7 @@
     <Compile Include="ClassExtensions.cs" />
     <Compile Include="ConfigHelper.cs" />
     <Compile Include="MaterialPQS.cs" />
+    <Compile Include="ShaderProperties.cs" />
     <Compile Include="SimpleCube.cs" />
     <Compile Include="GUIHelper.cs" />
     <Compile Include="HalfSphere.cs" />

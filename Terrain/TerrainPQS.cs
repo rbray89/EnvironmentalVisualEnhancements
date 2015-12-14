@@ -38,18 +38,18 @@ namespace Terrain
             }
         }
         
-        protected void Update()
+        protected void LateUpdate()
         {
             if (this.sphere.isActiveAndEnabled && celestialBody != null)
             {
                 Vector3 sunDir = this.celestialBody.transform.InverseTransformDirection(Sun.Instance.sunDirection);
-                this.celestialBody.pqsController.surfaceMaterial.SetVector(EVEManagerClass.SUNDIR_PROPERTY, sunDir);
+                this.celestialBody.pqsController.surfaceMaterial.SetVector(ShaderProperties.SUNDIR_PROPERTY, sunDir);
                 Vector3 planetOrigin = this.celestialBody.transform.position;
-                this.celestialBody.pqsController.surfaceMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
+                this.celestialBody.pqsController.surfaceMaterial.SetVector(ShaderProperties.PLANET_ORIGIN_PROPERTY, planetOrigin);
                 if (OceanBackingMaterial != null)
                 {
-                    OceanBackingMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
-                    OceanSurfaceMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
+                    OceanBackingMaterial.SetVector(ShaderProperties.PLANET_ORIGIN_PROPERTY, planetOrigin);
+                    OceanSurfaceMaterial.SetVector(ShaderProperties.PLANET_ORIGIN_PROPERTY, planetOrigin);
                 }
             }
         }
@@ -164,7 +164,7 @@ namespace Terrain
                     OceanBacking.transform.parent = FlightCamera.fetch.transform;
                     OceanBacking.transform.localPosition = Vector3.zero;
                     OceanBacking.transform.localScale = Vector3.one;
-                    OceanBacking.layer = EVEManagerClass.MACRO_LAYER;
+                    OceanBacking.layer = (int)Tools.Layer.Local;
                     OceanBackingMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius);
                     terrainMaterial.ApplyMaterialProperties(OceanBackingMaterial);
                 }

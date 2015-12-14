@@ -2,13 +2,12 @@
 	Properties {
 	_Color ("Color Tint", Color) = (1,1,1,1)
 	_SpecularColor ("Specular tint", Color) = (1,1,1,1)
-	_SpecularPower ("Shininess", Float) = 0.078125
-	_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
-	_CityOverlayTex ("Overlay (RGB)", 2D) = "white" {}
+	_CityOverlayTex ("Overlay (RGBA)", 2D) = "white" {}
 	_CityOverlayDetailScale ("Overlay Detail Scale", Range(0,1000)) = 80
 	_CityDarkOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
 	_CityLightOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
 	_PlanetOpacity ("PlanetOpacity", Float) = 1
+	_PlanetOrigin("Sphere Center", Vector) = (0,0,0,1)
 	}
 	Category {
 		Lighting On
@@ -46,6 +45,7 @@
 				float _DetailDist;
 
 				float _PlanetOpacity;
+				float3 _PlanetOrigin;
 
 #ifdef CUBE_CityOverlayTex
 				uniform samplerCUBE cube_CityOverlayTex;
@@ -88,7 +88,7 @@
 					float3 vertexPos = mul(_Object2World, v.vertex).xyz;
 					o.objnormal.w = distance(vertexPos,_WorldSpaceCameraPos);
 					o.viewDir = normalize(vertexPos - _WorldSpaceCameraPos);
-					o.worldNormal = normalize(mul( _Object2World, float4(v.normal, 0)).xyz);
+					o.worldNormal = normalize(vertexPos - _PlanetOrigin);
 					o.sphereCoords = -(float4(v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz;
 					o.color = v.color;
 					o.objnormal.xyz = v.normal;
@@ -108,7 +108,6 @@
 					half4 color;
 
 					float3 sphereNrm = normalize(IN.sphereCoords);
-					half vertLerp = saturate((32*(saturate(dot(IN.objnormal.xyz, -sphereNrm))-.95))+.5);
 
 #ifdef CUBE_CityOverlayTex
 					half4 cityoverlay = GetSphereMapCube(cube_CityOverlayTex, IN.sphereCoords);

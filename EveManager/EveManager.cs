@@ -19,16 +19,6 @@ namespace EVEManager
         protected virtual bool guiLoad { get { return HighLogic.LoadedScene == GameScenes.MAINMENU || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.TRACKSTATION; } }
         private static bool useEditor = false;
         public static List<EVEManagerClass> Managers = new List<EVEManagerClass>();
-        public const int SCALED_LAYER = 10;
-        public const int MACRO_LAYER = 15;
-        public static int ROTATION_PROPERTY;
-        public static int INVROTATION_PROPERTY;
-        public static int MAIN_ROTATION_PROPERTY;
-        public static int SHADOWOFFSET_PROPERTY;
-        public static int SUNDIR_PROPERTY;
-        public static int PLANET_ORIGIN_PROPERTY;
-        public static int WORLD_2_PLANET_PROPERTY;
-        public static int DETAIL_ROTATION_PROPERTY;
 
 
         public override String ToString() { return this.GetType().Name; }
@@ -36,14 +26,6 @@ namespace EVEManager
         private Texture2D ToolTipBackground;
         private void Awake()
         {
-            ROTATION_PROPERTY = Shader.PropertyToID("_Rotation");
-            INVROTATION_PROPERTY = Shader.PropertyToID("_InvRotation");
-            MAIN_ROTATION_PROPERTY = Shader.PropertyToID("_MainRotation");
-            DETAIL_ROTATION_PROPERTY = Shader.PropertyToID("_DetailRotation");
-            SHADOWOFFSET_PROPERTY = Shader.PropertyToID("_ShadowOffset");
-            SUNDIR_PROPERTY = Shader.PropertyToID("_SunDir");
-            PLANET_ORIGIN_PROPERTY = Shader.PropertyToID("_PlanetOrigin");
-            WORLD_2_PLANET_PROPERTY = Shader.PropertyToID("_World2Planet");
             useEditor = false;
             ToolTipBackground = new Texture2D(4, 4);
             List<Color> colors = new List<Color>();

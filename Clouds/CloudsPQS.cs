@@ -145,7 +145,7 @@ namespace Atmosphere
             }
         }
 
-        protected void Update()
+        protected void LateUpdate()
         {
             
             bool visible = HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.MAINMENU;

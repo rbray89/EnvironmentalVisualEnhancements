@@ -2,6 +2,7 @@
 using ShaderLoader;
 using System;
 using UnityEngine;
+using Utils;
 
 namespace CelestialShadows
 {
@@ -37,7 +38,7 @@ namespace CelestialShadows
             projector.orthographicSize = 2 * 10000000;
             
             //ShadowProjector.transform.localScale = scale * Vector3.one;
-            projectorGO.layer = EVEManagerClass.MACRO_LAYER;
+            projectorGO.layer = (int)Tools.Layer.Local;
 
             projector.material = new Material(ShadowShader);
         }
@@ -50,7 +51,7 @@ namespace CelestialShadows
 
             projector.transform.forward = worldSunDir;
 
-            projector.material.SetVector(EVEManagerClass.SUNDIR_PROPERTY, worldSunDir);
+            projector.material.SetVector(ShaderProperties.SUNDIR_PROPERTY, worldSunDir);
             //Vector3 planetOrigin = projector.transform.parent.transform.position;
             //projector.material.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
         }

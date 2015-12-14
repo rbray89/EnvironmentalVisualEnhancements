@@ -163,7 +163,14 @@ namespace Utils
         public static bool CanParse(FieldInfo field, String value, ConfigNode node = null)
         {
             object test = null;
-            return Parse(field, ref test, value, node);
+            try
+            {
+                return Parse(field, ref test, value, node);
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public static ConfigNode CreateConfigFromObject(object obj, ConfigNode node)
@@ -178,7 +185,15 @@ namespace Utils
             foreach (FieldInfo field in objfields)
             {
                 object objValue = null;
-                bool canParse = Parse(field, ref objValue, node.GetValue(field.Name), node.GetNode(field.Name));
+                bool canParse = false;
+                try
+                {
+                    canParse = Parse(field, ref objValue, node.GetValue(field.Name), node.GetNode(field.Name));
+                }
+                catch(Exception e)
+                {
+                    throw new UnityException("Unable to parse \"" + field.Name + "\" in \"" + node.name + "\"!", e);
+                }
                 if (objValue != null)
                 {
                     field.SetValue(obj, objValue);
@@ -350,30 +365,25 @@ namespace Utils
                 bool valueNode = IsValueNode(field);
 
                 ConstructorInfo ctor = field.FieldType.GetConstructor(System.Type.EmptyTypes);
-                obj = ctor.Invoke(null);
+                
                 
                 if (node != null)
                 {
-                    try
-                    {
-                        LoadObjectFromConfig(obj, node);
-                    }
-                    catch
-                    {
-                        return false;
-                    }
+                    obj = ctor.Invoke(null);
+                    LoadObjectFromConfig(obj, node);
                 }
-                else if(valueNode && value != null)
+                else if(valueNode)
                 {
+                    obj = ctor.Invoke(null);
                     obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(
                    f => Attribute.IsDefined(f, typeof(NodeValue))).SetValue(obj, value);
                 }
                 else if (!isOptional)
                 {
-                    KSPLog.print("non-optional field \"" + field.Name + "\" in \"" + node.name + "\" is not set!");
-                    return false;
+                    obj = ctor.Invoke(null);
                 }
-                MethodInfo validate = obj.GetType().GetMethod("isValid");
+
+                MethodInfo validate = field.FieldType.GetMethod("isValid");
                 if (validate != null && obj != null)
                 {
                     return (bool)validate.Invoke(obj, null);

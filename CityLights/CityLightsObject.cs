@@ -53,13 +53,11 @@ namespace CityLights
         {
             
             CelestialBody celestialBody = Tools.GetCelestialBody(body);
-            TerrainMaterial test = new TerrainMaterial();
             if (celestialBody != null)
             {
                 GameObject go = new GameObject();
                 materialPQS = go.AddComponent<MaterialPQS>();
                 macroMat = new Material(ShaderLoaderClass.FindShader("EVE/TerrainCityLight"));
-                test.ApplyMaterialProperties(macroMat);
                 cityLightsMaterial.ApplyMaterialProperties(macroMat);
                 materialPQS.Apply(celestialBody, macroMat);
             }
@@ -71,7 +69,6 @@ namespace CityLights
                 {
                     scaledMat = new Material(ShaderLoaderClass.FindShader("EVE/PlanetCityLight"));
                    
-                    test.ApplyMaterialProperties(scaledMat);
                     cityLightsMaterial.ApplyMaterialProperties(scaledMat);
                     scaledMat.SetTexture("_MainTex", mr.material.GetTexture("_MainTex"));
                     scaledMat.name = materialName;

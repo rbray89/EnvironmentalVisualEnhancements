@@ -85,7 +85,7 @@ namespace Atmosphere
             volumeHolder.transform.localPosition = Vector3.zero;
             volumeHolder.transform.localScale = Vector3.one;
             volumeHolder.transform.localRotation = Quaternion.identity;
-            volumeHolder.layer = EVEManagerClass.MACRO_LAYER;
+            volumeHolder.layer = (int)Tools.Layer.Local;
             volumeManager = new VolumeManager(radius, size, ParticleMaterial, volumeHolder.transform, area.x, (int)area.y);
             
         }
@@ -109,8 +109,8 @@ namespace Atmosphere
 
 
                 Matrix4x4 rotationMatrix = mainRotationMatrix* World2Planet;
-                ParticleMaterial.SetMatrix(EVEManagerClass.MAIN_ROTATION_PROPERTY, rotationMatrix);
-                ParticleMaterial.SetMatrix(EVEManagerClass.DETAIL_ROTATION_PROPERTY, detailRotationMatrix);
+                ParticleMaterial.SetMatrix(ShaderProperties.MAIN_ROTATION_PROPERTY, rotationMatrix);
+                ParticleMaterial.SetMatrix(ShaderProperties.DETAIL_ROTATION_PROPERTY, detailRotationMatrix);
 
                 volumeHolder.transform.localRotation = rotation;
                 Vector3 intendedPoint = volumeHolder.transform.InverseTransformPoint(WorldPos);
@@ -121,7 +121,7 @@ namespace Atmosphere
                 double ut = Planetarium.GetUniversalTime();
                 double particleRotation = (ut * rotationSpeed);
                 particleRotation -= (int)particleRotation;
-                ParticleMaterial.SetFloat(EVEManagerClass.ROTATION_PROPERTY, (float)particleRotation);
+                ParticleMaterial.SetFloat(ShaderProperties.ROTATION_PROPERTY, (float)particleRotation);
             }
         }
 

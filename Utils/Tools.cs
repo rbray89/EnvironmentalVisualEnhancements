@@ -11,6 +11,23 @@ namespace Utils
 {
     public class Tools
     {
+
+        public enum Layer
+        {
+            Default = 0,
+            TransparentFX = 1,
+            Water = 4,
+            UI = 5,
+            Atmosphere = 9,
+            Scaled = 10,
+            Local = 15,
+            Kerbals = 16,
+            Sky = 18,
+            Parts = 19,
+            Internal = 20,
+            ScaledSpaceSun = 23
+        }
+
         public static void CalculateMeshTangents(Mesh mesh)
         {
             //speed up math by copying the mesh arrays

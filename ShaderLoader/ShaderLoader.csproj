@@ -90,7 +90,9 @@
       <Name>Utils</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Shaders\PartIVA.shader" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\CloudShadow.shader" />
     <None Include="Shaders\CloudVolumeParticle.shader" />

@@ -32,7 +32,7 @@ namespace Atmosphere
             particle.transform.localRotation = Quaternion.Euler(0, 0, 0);
 
             particle.transform.localScale = Vector3.one;
-            particle.layer = EVEManagerClass.MACRO_LAYER;
+            particle.layer = (int)Tools.Layer.Local;
 
             Vector3 up = particle.transform.InverseTransformDirection(worldUp);
             Quad.Create(particle, (int)size.x, Color.white, up, size.y);

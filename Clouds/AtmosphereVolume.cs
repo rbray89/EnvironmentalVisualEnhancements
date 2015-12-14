@@ -71,7 +71,7 @@ namespace Atmosphere
 
         public bool Scaled
         {
-            get { return AtmosphereMesh.layer == EVEManagerClass.SCALED_LAYER; }
+            get { return AtmosphereMesh.layer == (int)Tools.Layer.Scaled; }
             set
             {
                 if (value)
@@ -80,14 +80,14 @@ namespace Atmosphere
                     atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial, ScaledSpace.ScaleFactor);
                     AtmosphereMaterial.EnableKeyword("WORLD_SPACE_OFF");
                     AtmosphereMaterial.DisableKeyword("WORLD_SPACE_ON");
-                    Reassign(EVEManagerClass.SCALED_LAYER, scaledCelestialTransform, scale);
+                    Reassign(Tools.Layer.Scaled, scaledCelestialTransform, scale);
                 }
                 else
                 {
                     atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial);
                     AtmosphereMaterial.DisableKeyword("WORLD_SPACE_OFF");
                     AtmosphereMaterial.EnableKeyword("WORLD_SPACE_ON");
-                    Reassign(EVEManagerClass.MACRO_LAYER, FlightCamera.fetch.transform, 1);
+                    Reassign(Tools.Layer.Local, FlightCamera.fetch.transform, 1);
                 }
                 
             }
@@ -138,12 +138,12 @@ namespace Atmosphere
         }
 
 
-        public void Reassign(int layer, Transform parent, float scale)
+        public void Reassign(Tools.Layer layer, Transform parent, float scale)
         {
             AtmosphereMesh.transform.parent = parent;
             AtmosphereMesh.transform.localPosition = Vector3.zero;
             AtmosphereMesh.transform.localScale = scale * Vector3.one;
-            AtmosphereMesh.layer = layer;
+            AtmosphereMesh.layer = (int)layer;
         }
 
         public void Remove()
@@ -159,7 +159,7 @@ namespace Atmosphere
         internal void UpdatePosition()
         {
             Vector3 planetOrigin = celestialBody.transform.position;
-            AtmosphereMaterial.SetVector(EVEManagerClass.PLANET_ORIGIN_PROPERTY, planetOrigin);
+            AtmosphereMaterial.SetVector(ShaderProperties.PLANET_ORIGIN_PROPERTY, planetOrigin);
         }
 
 

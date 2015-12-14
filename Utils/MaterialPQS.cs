@@ -13,6 +13,12 @@ namespace Utils
         Material PQSMaterial;
         String materialName = Guid.NewGuid().ToString();
 
+
+        public void LateUpdate()
+        {
+            material.SetVector(ShaderProperties.PLANET_ORIGIN_PROPERTY, this.transform.parent.position);
+        }
+
         public void Apply(CelestialBody cb, Material mat)
         {
             KSPLog.print("Applying PQS Material Manager!");
@@ -46,8 +52,84 @@ namespace Utils
             if (this.sphere != null && this.sphere.quads != null)
                 foreach (PQ pq in this.sphere.quads)
                 {
-                    OnQuadCreate(pq);
+                    ApplyToQuadMaterials(pq);
                 }
+        }
+
+        private void AddMaterial(MeshRenderer meshRenderer)
+        {
+            if (this.sphere.useSharedMaterial)
+            {
+                List<Material> materials = new List<Material>(meshRenderer.sharedMaterials);
+                if (!materials.Exists(mat => mat.name.Contains(materialName)))
+                {
+                    materials.Add(material);
+                    meshRenderer.sharedMaterials = materials.ToArray();
+                }
+            }
+            else
+            {
+                List<Material> materials = new List<Material>(meshRenderer.materials);
+                if (!materials.Exists(mat => mat.name.Contains(materialName)))
+                {
+                    materials.Add(material);
+                    meshRenderer.materials = materials.ToArray();
+                }
+            }
+        }
+
+        private void RemoveMaterial(MeshRenderer mr)
+        {
+            if (this.sphere.useSharedMaterial)
+            {
+                List<Material> materials = new List<Material>(mr.sharedMaterials);
+                materials.Remove(materials.Find(mat => mat.name.Contains(materialName)));
+                mr.sharedMaterials = materials.ToArray();
+            }
+            else
+            {
+                List<Material> materials = new List<Material>(mr.materials);
+                materials.Remove(materials.Find(mat => mat.name.Contains(materialName)));
+                mr.materials = materials.ToArray();
+            }
+        }
+
+        private void ApplyToQuadMaterials(PQ pq)
+        {
+            MeshRenderer[] renderers = pq.GetComponentsInChildren<MeshRenderer>();
+            foreach (MeshRenderer mr in renderers)
+            {
+                AddMaterial(mr);
+            }
+        }
+
+        public void RemoveFromQuads(PQ quad)
+        {
+            if (quad != null && this.sphere != null)
+            {
+                RemoveMaterial(quad.meshRenderer);
+                if (quad.subNodes != null)
+                {
+                    foreach (PQ pq in quad.subNodes)
+                    {
+                        RemoveFromQuads(pq);
+                    }
+                }
+            }
+        }
+
+        public override void OnQuadDestroy(PQ quad)
+        {
+            RemoveFromQuads(quad);
+        }
+        
+
+        public override void OnQuadCreate(PQ quad)
+        {
+            if (quad.sphereRoot == this.sphere)
+            {
+                AddMaterial(quad.meshRenderer);
+            }
         }
 
         public void Remove()
@@ -56,63 +138,14 @@ namespace Utils
             if(this.sphere != null && this.sphere.quads != null)
                 foreach (PQ pq in this.sphere.quads)
                 {
-                    OnQuadDestroy(pq);
+                    RemoveFromQuads(pq);
                 }
             this.sphere = null;
             this.enabled = false;
             this.transform.parent = null;
         }
 
-        public override void OnQuadDestroy(PQ quad)
-        {
-            if (quad != null && this.sphere != null)
-            {
-                if (this.sphere.useSharedMaterial)
-                {
-                    List<Material> materials = new List<Material>(quad.meshRenderer.sharedMaterials);
-                    materials.Remove(materials.Find(mat => mat.name.Contains(materialName)));
-                    quad.meshRenderer.sharedMaterials = materials.ToArray();
-                }
-                else
-                {
-                    List<Material> materials = new List<Material>(quad.meshRenderer.materials);
-                    materials.Remove(materials.Find(mat => mat.name.Contains(materialName)));
-                    quad.meshRenderer.materials = materials.ToArray();
-                }
-                if (quad.subNodes != null)
-                {
-                    foreach (PQ pq in quad.subNodes)
-                    {
-                        OnQuadDestroy(pq);
-                    }
-                }
-            }
-        }
 
-        public override void OnQuadCreate(PQ quad)
-        {
-            if (quad.sphereRoot == this.sphere)
-            {
-                if (this.sphere.useSharedMaterial)
-                {
-                    List<Material> materials = new List<Material>(quad.meshRenderer.sharedMaterials);
-                    if (!materials.Exists(mat => mat.name.Contains(materialName)))
-                    {
-                        materials.Add(material);
-                        quad.meshRenderer.sharedMaterials = materials.ToArray();
-                    }
-                }
-                else
-                {
-                    List<Material> materials = new List<Material>(quad.meshRenderer.materials);
-                    if (!materials.Exists(mat => mat.name.Contains(materialName)))
-                    {
-                        materials.Add(material);
-                        quad.meshRenderer.materials = materials.ToArray();
-                    }
-                }
-            }
-        }
-
+        
     }
 }
