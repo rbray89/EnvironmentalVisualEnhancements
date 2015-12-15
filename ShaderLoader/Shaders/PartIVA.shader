@@ -4,36 +4,54 @@
 		_Shininess("Shininess", Range(0.03,1)) = 0.078125
 		_IVATex("Base (RGB) Gloss (A)", 2D) = "white" {}
 	}
+
 		SubShader{
-		Tags{ "RenderType" = "Transparent" "IgnoreProjector" = "True" "Queue" = "Transparent" }
-		LOD 400
+		Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		LOD 100
+
+		ZWrite Off
+		Blend SrcAlpha OneMinusSrcAlpha
+
+		Pass{
 		CGPROGRAM
-#pragma surface surf BlinnPhong alpha
+#pragma vertex vert
+#pragma fragment frag
 
-		
+#include "UnityCG.cginc"
 
-		sampler2D _MainTex;
-		sampler2D _IVATex;
-		sampler2D _BumpMap;
-		sampler2D _Emissive;
-		half _Shininess;
-
-	struct Input {
-		float2 uv_MainTex;
-		float4 screenPos;
+	struct appdata_t {
+		float4 vertex : POSITION;
+		float2 texcoord : TEXCOORD0;
 	};
 
-	void surf(Input IN, inout SurfaceOutput o) {
-		fixed4 tex = tex2D(_MainTex, IN.uv_MainTex);
-		float2 screenUV = IN.screenPos.xy / IN.screenPos.w;
-		fixed4 IVAtex = tex2D(_IVATex, screenUV);
-		fixed4 final = lerp(tex, IVAtex, tex.a);
-		o.Albedo = final.rgb;
-		o.Gloss = tex.a;
-		o.Alpha = final.a;
-		o.Specular = _Shininess;
+	struct v2f {
+		float4 vertex : SV_POSITION;
+		half2 texcoord : TEXCOORD0;
+		float4 scrPos : TEXCOORD1;
+	};
+
+	sampler2D _MainTex;
+	sampler2D _IVATex;
+	float4 _MainTex_ST;
+
+	v2f vert(appdata_t v)
+	{
+		v2f o;
+		o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+		o.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
+		o.scrPos = ComputeScreenPos(o.vertex);
+		o.scrPos.xy /= o.scrPos.w;
+		return o;
 	}
-	ENDCG
+
+	fixed4 frag(v2f i) : COLOR
+	{
+		fixed4 tex = tex2D(_MainTex, i.texcoord);
+		fixed4 iva = tex2D(_IVATex, i.scrPos.xy);
+		iva = lerp(0, iva, tex.a);
+	return iva;
 	}
-		FallBack "Self-Illumin/Specular"
+		ENDCG
+	}
+	}
 }
