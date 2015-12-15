@@ -113,7 +113,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy "$(ProjectDir)CompiledShaders\*" "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Shaders" /yir
-xcopy $(TargetFileName) "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Plugins\";
+xcopy $(TargetFileName) "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Plugins\" /eyir
 
 call "C:\Program Files (x86)\Mono\bin\pdb2mdb" $(TargetFileName)
 xcopy  $(TargetName).pdb "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Plugins\" /eyir

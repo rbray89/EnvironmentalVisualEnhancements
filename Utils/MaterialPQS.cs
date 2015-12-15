@@ -14,7 +14,7 @@ namespace Utils
         String materialName = Guid.NewGuid().ToString();
 
 
-        public void LateUpdate()
+        public void Update()
         {
             material.SetVector(ShaderProperties.PLANET_ORIGIN_PROPERTY, this.transform.parent.position);
         }

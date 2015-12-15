@@ -38,7 +38,7 @@ namespace Terrain
             }
         }
         
-        protected void LateUpdate()
+        protected void Update()
         {
             if (this.sphere.isActiveAndEnabled && celestialBody != null)
             {

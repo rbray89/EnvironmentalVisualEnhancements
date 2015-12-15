@@ -87,10 +87,6 @@
       <Project>{c0d6b86d-11b6-4abb-8517-877c1721e8a2}</Project>
       <Name>CityLights</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Clouds\Atmosphere.csproj">
-      <Project>{8df6a385-18e6-4e76-a060-4c3847ca3046}</Project>
-      <Name>Atmosphere</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EveManager\EVEManager.csproj">
       <Project>{499e8c5c-c83e-4aea-bb01-eed705bd747f}</Project>
       <Name>EVEManager</Name>
