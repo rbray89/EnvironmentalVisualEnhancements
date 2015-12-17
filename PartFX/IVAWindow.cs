@@ -89,34 +89,35 @@ namespace PartFX
         String partUrl;
         [ConfigItem]
         List<string> renderers;
-
-        public override void OnLoad(ConfigNode node)
-        {
-          
-        }
-
+        
         public override void OnStart(StartState state)
         {
-            IVAWindowManager.Log("Start Part: " + part.name);
-            IVAWindowManager.Log("State: " + state);
-            LoadConfigNode();
-            SetMaterial();
+            if (state != StartState.Editor)
+            {
+                IVAWindowManager.Log("Start Part: " + part.name);
+                IVAWindowManager.Log("State: " + state);
+                LoadConfigNode();
+                SetMaterial();
+            }
         }
 
         public void Update()
         {
-            IVAWindowManager.Log("Update Part: " + part.name);
-            if (part.internalModel == null)
+            if (HighLogic.LoadedSceneIsFlight)
             {
-                part.CreateInternalModel();
-            }
-            if (part.internalModel != null)
-            {
-                part.internalModel.enabled = true;
-                part.internalModel.SetVisible(true);
-                part.internalModel.transform.position = InternalSpace.WorldToInternal(part.transform.position);
-                part.internalModel.transform.rotation = InternalSpace.WorldToInternal(part.transform.rotation);
-                part.internalModel.transform.Rotate(90, 0, 180);
+                IVAWindowManager.Log("Update Part: " + part.name);
+                if (part.internalModel == null)
+                {
+                    part.CreateInternalModel();
+                }
+                if (part.internalModel != null)
+                {
+                    part.internalModel.enabled = true;
+                    part.internalModel.SetVisible(true);
+                    part.internalModel.transform.position = InternalSpace.WorldToInternal(part.transform.position);
+                    part.internalModel.transform.rotation = InternalSpace.WorldToInternal(part.transform.rotation);
+                    part.internalModel.transform.Rotate(90, 0, 180);
+                }
             }
         }
 
