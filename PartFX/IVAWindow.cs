@@ -101,11 +101,11 @@ namespace PartFX
             }
         }
 
-        public void Update()
+        public void LateUpdate()
         {
             if (HighLogic.LoadedSceneIsFlight)
             {
-                IVAWindowManager.Log("Update Part: " + part.name);
+               // IVAWindowManager.Log("Update Part: " + part.name);
                 if (part.internalModel == null)
                 {
                     part.CreateInternalModel();
@@ -150,16 +150,6 @@ namespace PartFX
         public override void OnInactive()
         {
             IVAWindowManager.Log("Inactive Part: "+part.name);
-            if (part.internalModel != null)
-            {
-                part.internalModel.enabled = false;
-                part.internalModel.SetVisible(false);
-            }
-        }
-
-        public void OnDestroy()
-        {
-            IVAWindowManager.Log("Destroy Part: " + part.name);
             if (part.internalModel != null)
             {
                 part.internalModel.enabled = false;
