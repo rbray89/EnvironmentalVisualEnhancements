@@ -36,15 +36,19 @@ namespace PartFX
             {
                 if (ap.internalConfig.HasData)
                 {
-                    //IVAWindowManager.Log("URL: " + ap.partUrl);
                     if (ap.partUrl == partUrl)
                     {
+                        IVAWindowManager.Log("Found: " + ap.partUrl);
                         Part part = ap.partPrefab;
                         ModuleIVAWindow module = (ModuleIVAWindow)part.AddModule("ModuleIVAWindow");
                         MethodInfo mI = typeof(PartModule).GetMethod("Awake", BindingFlags.NonPublic | BindingFlags.Instance);
                         mI.Invoke(module, null);
                         module.Load(moduleNode);
                         module.LoadConfigNode(moduleNode);
+                        foreach (MeshRenderer mr in part.FindModelComponents<MeshRenderer>())
+                        {
+                            IVAWindowManager.Log("renderer: " + mr.name);
+                        }
                     }
                 }
             }
@@ -71,7 +75,8 @@ namespace PartFX
                     if (ap.partUrl == partUrl)
                     {
                         Part part = ap.partPrefab;
-                        PartModule module = part.FindModuleImplementing<ModuleIVAWindow>();
+                        ModuleIVAWindow module = part.FindModuleImplementing<ModuleIVAWindow>();
+                        module.Remove();
                         part.RemoveModule(module);
                     }
                 }
@@ -81,7 +86,8 @@ namespace PartFX
             {
                 if (part.partInfo.partUrl == partUrl)
                 {
-                    PartModule module = part.FindModuleImplementing<ModuleIVAWindow>();
+                    ModuleIVAWindow module = part.FindModuleImplementing<ModuleIVAWindow>();
+                    module.Remove();
                     part.RemoveModule(module);
                 }
             }
@@ -103,6 +109,8 @@ namespace PartFX
                 return windowShader;
             }
         }
+
+        private const string materialName = "IVAWindowOverlay";
 
 #pragma warning disable 0649
 #pragma warning disable 0169
@@ -154,12 +162,12 @@ namespace PartFX
 
         private void AddMaterial(MeshRenderer mr)
         {
-            IVAWindowManager.Log("material: " + mr.name);
-            if (renderers.BinarySearch(mr.name) >= 0 && mr.materials.Length == 1)
+            List<Material> materials = new List<Material>(mr.materials);
+            if (renderers.BinarySearch(mr.name) >= 0 && !materials.Exists(mat => mat.name.Contains(materialName)))
             {
                 IVAWindowManager.Log("Adding to: " + mr.name);
-                List<Material> materials = new List<Material>(mr.materials);
                 Material windowMat = new Material(WindowShader);
+                windowMat.name = materialName;
                 windowMat.mainTexture = mr.material.mainTexture;
                 windowMat.SetTexture("_IVATex", IVARenderCam.RT);
                 windowMat.SetFloat("_Clarity", 1f);
@@ -194,5 +202,23 @@ namespace PartFX
             }
         }
 
+        public void Remove()
+        {
+            foreach (MeshRenderer mr in part.FindModelComponents<MeshRenderer>())
+            {
+                RemoveMaterial(mr);
+            }
+        }
+
+        private void RemoveMaterial(MeshRenderer mr)
+        {
+            if (renderers.BinarySearch(mr.name) >= 0 && mr.materials.Length > 1)
+            {
+                IVAWindowManager.Log("Removing from: " + mr.name);
+                List<Material> materials = new List<Material>(mr.materials);
+                materials.Remove(materials.Find(mat => mat.name.Contains(materialName)));
+                mr.materials = materials.ToArray();
+            }
+            }
     }
 }
