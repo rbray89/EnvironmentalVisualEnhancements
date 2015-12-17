@@ -12,6 +12,16 @@ namespace Utils
 
     }
 
+    public class ConfigName : Attribute
+    {
+        string name;
+        public string Name { get { return name; } }
+        public ConfigName(string name)
+        {
+            this.name = name;
+        }
+    }
+
     public class GUIHelper
     {
         public const float spacingOffset = .25f;
@@ -27,7 +37,7 @@ namespace Utils
         {
             float fieldCount = 1f+ (2f*spacingOffset);
             var objfields = T.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
-                    f => Attribute.IsDefined(f, typeof(Persistent)));
+                    f => Attribute.IsDefined(f, typeof(ConfigItem)));
             
 
             foreach (FieldInfo field in objfields)
@@ -139,7 +149,7 @@ namespace Utils
             return currentBody.bodyName;
         }
 
-        public static ConfigNode DrawObjectSelector(ConfigNode sourceNode, ref int selectedObjIndex, ref String objString, ref Vector2 objListPos, Rect placementBase, ref Rect placement, ConfigNode.Value filter = null)
+        public static ConfigNode DrawObjectSelector<T>(ConfigNode sourceNode, ref int selectedObjIndex, ref String objString, ref Vector2 objListPos, Rect placementBase, ref Rect placement, ConfigNode.Value filter = null)
         {
             List<ConfigNode> nodeList;
             if (filter != null)
@@ -150,7 +160,10 @@ namespace Utils
             {
                 nodeList = sourceNode.GetNodes().ToList();
             }
-            String[] objList = nodeList.Select(node=>node.GetValue(ConfigHelper.NAME_FIELD)).ToArray();
+
+            string configName = ((ConfigName)Attribute.GetCustomAttribute(typeof(T), typeof(ConfigName))).Name;
+
+            String[] objList = nodeList.Select(node=>node.GetValue(configName)).ToArray();
             float nodeHeight = placement.height;
             Rect selectBoxOutlineRect = GetRect(placementBase, ref placement);
             placement.height = nodeHeight - 1;
@@ -251,20 +264,20 @@ namespace Utils
 
             if (selectedObjIndex != oldselectedObjIndex && nodeList.Count > 0)
             {
-                objString = nodeList[selectedObjIndex].GetValue(ConfigHelper.NAME_FIELD);
+                objString = nodeList[selectedObjIndex].GetValue(configName);
             }
             objString = GUI.TextField(listEditTextRect, objString);
             String name = objString;
-            if (objString.Length > 0 && !objString.Contains(' ') && !nodeList.Exists(n => n.GetValue(ConfigHelper.NAME_FIELD) == name))
+            if (objString.Length > 0 && !objString.Contains(' ') && !nodeList.Exists(n => n.GetValue(configName) == name))
             {
                 if (nodeList.Count > 0 && GUI.Button(listEditRect, "#"))
                 {
-                    nodeList[selectedObjIndex].SetValue(ConfigHelper.NAME_FIELD, objString, true);
+                    nodeList[selectedObjIndex].SetValue(configName, objString, true);
                 }
                 if (GUI.Button(listAddRect, "+"))
                 {
                     ConfigNode newNode = new ConfigNode(ConfigHelper.OBJECT_NODE);
-                    newNode.SetValue(ConfigHelper.NAME_FIELD, objString, true);
+                    newNode.SetValue(configName, objString, true);
                     nodeList.Add(newNode);
                     sourceNode.AddNode(newNode);
                 }
@@ -444,7 +457,7 @@ namespace Utils
         {
 
             var objfields = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
-                    field => Attribute.IsDefined(field, typeof(Persistent)));
+                    field => Attribute.IsDefined(field, typeof(ConfigItem)));
             foreach (FieldInfo field in objfields)
             {
                 bool isNode = ConfigHelper.IsNode(field, configNode);
@@ -503,7 +516,7 @@ namespace Utils
                         if (isValueNode)
                         {
                             valueField = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(
-                                f => Attribute.IsDefined(f, typeof(Persistent))).Name;
+                                f => Attribute.IsDefined(f, typeof(ConfigItem))).Name;
                         }
                         String newValue = "";
                         if (isValueNode)

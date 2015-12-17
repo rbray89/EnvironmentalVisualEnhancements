@@ -15,13 +15,13 @@ namespace Atmosphere
     {
 #pragma warning disable 0169
 #pragma warning disable 0414
-        [Persistent, Clamped]
+        [ConfigItem, Clamped]
         TextureWrapper _TopTex;
-        [Persistent, Clamped]
+        [ConfigItem, Clamped]
         TextureWrapper _LeftTex;
-	    [Persistent, Clamped]
+	    [ConfigItem, Clamped]
         TextureWrapper _FrontTex;
-        [Persistent]
+        [ConfigItem]
         float _InvFade = .008f;
 
         float _MaxScale;
@@ -34,15 +34,15 @@ namespace Atmosphere
 
     class CloudsVolume
     {
-        [Persistent, Tooltip("[min size of particle],[max scale of particle]")]
+        [ConfigItem, Tooltip("[min size of particle],[max scale of particle]")]
         Vector2 size = new Vector2(4000, 1);
-        [Persistent, Tooltip("max x,y,z translation of particle")]
+        [ConfigItem, Tooltip("max x,y,z translation of particle")]
         Vector3 maxTranslation = new Vector3(0, 0, 0);
-        [Persistent, Tooltip("[size of cover],[number of divisions (more is denser particles)]")]
+        [ConfigItem, Tooltip("[size of cover],[number of divisions (more is denser particles)]")]
         Vector2 area = new Vector2(24000,4);
-        [Persistent]
+        [ConfigItem]
         float rotationSpeed = 0.002f;
-        [Persistent]
+        [ConfigItem]
         particleVolumeMaterial particleMaterial = null;
 
         Material ParticleMaterial;

@@ -15,13 +15,13 @@ namespace CityLights
     {
 #pragma warning disable 0169
 #pragma warning disable 0414
-        [Persistent, ValueFilter("isClamped|format|type|alphaMask")]
+        [ConfigItem, ValueFilter("isClamped|format|type|alphaMask")]
         TextureWrapper _CityOverlayTex;
-        [Persistent]
+        [ConfigItem]
         float _CityOverlayDetailScale = 200f;
-        [Persistent]
+        [ConfigItem]
         TextureWrapper _CityDarkOverlayDetailTex;
-        [Persistent]
+        [ConfigItem]
         TextureWrapper _CityLightOverlayDetailTex;
     }
 
@@ -32,10 +32,10 @@ namespace CityLights
         public override String ToString() { return body; }
 
 #pragma warning disable 0649
-        [Persistent, GUIHidden]
+        [ConfigItem, GUIHidden]
         string body;
 
-        [Persistent]
+        [ConfigItem]
         CityLightsMaterial cityLightsMaterial = null;
         Material scaledMat;
         Material macroMat;

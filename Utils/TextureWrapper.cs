@@ -140,13 +140,13 @@ namespace Utils
 
 #pragma warning disable 0649
 #pragma warning disable 0414
-        [Persistent, GUIHidden, NodeValue]
+        [ConfigItem, GUIHidden, NodeValue]
         string value;
-        [Persistent]
+        [ConfigItem]
         bool isClamped = false;
-        [Persistent]
+        [ConfigItem]
         TextureTypeEnum type = TextureTypeEnum.RGBA;
-        [Persistent, Conditional("alphaMaskEval")]
+        [ConfigItem, Conditional("alphaMaskEval")]
         AlphaMaskEnum alphaMask = AlphaMaskEnum.ALPHAMAP_A;
 
 
@@ -167,7 +167,10 @@ namespace Utils
             if ((type & TextureTypeEnum.CubeMapMask) > 0)
             {
                 CubemapWrapper cubeMap = CubemapWrapper.fetchCubeMap(this);
-                cubeMap.ApplyCubeMap(mat, name);
+                if (cubeMap != null)
+                {
+                    cubeMap.ApplyCubeMap(mat, name);
+                }
             }
             else
             {

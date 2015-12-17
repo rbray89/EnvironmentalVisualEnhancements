@@ -15,53 +15,53 @@ namespace Terrain
     {
 #pragma warning disable 0169
 #pragma warning disable 0414
-        [Persistent] 
+        [ConfigItem] 
         Color _Color = 256 * Color.white;
-        [Persistent]
+        [ConfigItem]
         TextureWrapper _MainTex;
-		[Persistent]
+		[ConfigItem]
         TextureWrapper _midTex;
-		[Persistent]
+		[ConfigItem]
         TextureWrapper _steepTex;
-        [Persistent]
+        [ConfigItem]
         TextureWrapper _BumpMap;
-        [Persistent]
+        [ConfigItem]
         float _DetailScale = 4000f;
-        [Persistent]
+        [ConfigItem]
         float _DetailVertScale = 200f;
-        [Persistent]
+        [ConfigItem]
         float _DetailDist = 0.00875f;
-        [Persistent]
+        [ConfigItem]
         float _MinLight = .5f;
-        [Persistent]
+        [ConfigItem]
         Color _SpecularColor = Color.grey;
-        [Persistent]
+        [ConfigItem]
         float _SpecularPower = 51.2f;
-        [Persistent]
+        [ConfigItem]
         float _Albedo = .02f;
-        [Persistent]
+        [ConfigItem]
         Color _OceanColor = Color.blue;
-        [Persistent]
+        [ConfigItem]
         float _OceanDepthFactor = .002f;
     }
 
     public class OceanMaterial : MaterialManager
     {
-        [Persistent]
+        [ConfigItem]
         Color _SurfaceColor = 256 * Color.white;
-        [Persistent]
+        [ConfigItem]
         TextureWrapper _DetailTex;
-        [Persistent]
+        [ConfigItem]
         float _DetailScale = 4000f;
-        [Persistent]
+        [ConfigItem]
         float _DetailDist = 0.00875f;
-        [Persistent]
+        [ConfigItem]
         float _MinLight = .5f;
-        [Persistent]
+        [ConfigItem]
         float _Clarity = .005f;
-        [Persistent]
+        [ConfigItem]
         float _LightPower = 1.75f;
-        [Persistent]
+        [ConfigItem]
         float _Reflectivity = .08f;
     }
 
@@ -69,11 +69,11 @@ namespace Terrain
     {
 #pragma warning disable 0649
         public override String ToString() { return body; }
-        [Persistent, GUIHidden]
+        [ConfigItem, GUIHidden]
         String body;
-        [Persistent, Optional] 
+        [ConfigItem, Optional] 
         TerrainMaterial terrainMaterial = null;
-        [Persistent, Optional]
+        [ConfigItem, Optional]
         OceanMaterial oceanMaterial = null;
 
         TerrainPQS terrainPQS;

@@ -8,7 +8,10 @@ using UnityEngine;
 
 namespace Utils
 {
-    
+    public class ConfigItem : System.Attribute
+    {
+
+    }
     public class Optional : System.Attribute
     {
     }
@@ -70,7 +73,6 @@ namespace Utils
 
     public static class ConfigHelper
     {
-        public const string NAME_FIELD = "name";
         public const string BODY_FIELD = "body";
         public const string OBJECT_NODE = "OBJECT";
 
@@ -140,7 +142,7 @@ namespace Utils
         public static bool IsNode(FieldInfo field, ConfigNode node, bool checkConfig = true)
         {
             bool isNode = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
-               fi => Attribute.IsDefined(fi, typeof(Persistent))).Count() > 0 ? true : false;
+               fi => Attribute.IsDefined(fi, typeof(ConfigItem))).Count() > 0 ? true : false;
              
             if(Attribute.IsDefined(field, typeof(ValueNode)))
             {
@@ -165,7 +167,7 @@ namespace Utils
             object test = null;
             try
             {
-                return Parse(field, ref test, value, node);
+                return Parse(field, ref test, new string[] { value }, node);
             }
             catch
             {
@@ -181,14 +183,14 @@ namespace Utils
         public static bool LoadObjectFromConfig(object obj, ConfigNode node)
         {
             var objfields = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
-                   field => Attribute.IsDefined(field, typeof(Persistent)));
+                   field => Attribute.IsDefined(field, typeof(ConfigItem)));
             foreach (FieldInfo field in objfields)
             {
                 object objValue = null;
                 bool canParse = false;
                 try
                 {
-                    canParse = Parse(field, ref objValue, node.GetValue(field.Name), node.GetNode(field.Name));
+                    canParse = Parse(field, ref objValue, node.GetValues(field.Name), node.GetNode(field.Name));
                 }
                 catch(Exception e)
                 {
@@ -207,16 +209,16 @@ namespace Utils
             return true;
         }
 
-        private static bool Parse(FieldInfo field, ref object obj, string value, ConfigNode node = null)
+        private static bool Parse(FieldInfo field, ref object obj, string[] value, ConfigNode node = null)
         {
             obj = null;
             if (field.FieldType == typeof(float))
             {
                 try
                 {
-                    if (value != null)
+                    if (value != null && value.Length > 0)
                     {
-                        obj = float.Parse(value);
+                        obj = float.Parse(value[0]);
                     }
                     return true;
                 }
@@ -226,9 +228,9 @@ namespace Utils
             {
                 try
                 {
-                    if (value != null)
+                    if (value != null && value.Length > 0)
                     {
-                        obj = double.Parse(value);
+                        obj = double.Parse(value[0]);
                     }
                     return true;
                 }
@@ -238,9 +240,9 @@ namespace Utils
             {
                 try
                 {
-                    if (value != null)
+                    if (value != null && value.Length > 0)
                     {
-                        obj = bool.Parse(value);
+                        obj = bool.Parse(value[0]);
                     }
                     return true;
                 }
@@ -248,16 +250,19 @@ namespace Utils
             }
             else if(field.FieldType == typeof(String))
             {
-                obj = value;
+                if (value != null && value.Length > 0)
+                {
+                    obj = value[0];
+                }
                 return true;
             }
             else if(field.FieldType == typeof(Color))
             {
                 try
                 {
-                    if (value != null)
+                    if (value != null && value.Length > 0)
                     {
-                        obj = (Color)ConfigNode.ParseVector4(value);
+                        obj = (Color)ConfigNode.ParseVector4(value[0]);
                     }
                     return true;
                 }
@@ -267,9 +272,9 @@ namespace Utils
             {
                 try
                 {
-                    if (value != null)
+                    if (value != null && value.Length > 0)
                     {
-                        obj = ConfigNode.ParseEnum(field.FieldType, value);
+                        obj = ConfigNode.ParseEnum(field.FieldType, value[0]);
                     }
                     return true;
                 }
@@ -279,9 +284,9 @@ namespace Utils
             {
                 try
                 {
-                    if (value != null)
+                    if (value != null && value.Length > 0)
                     {
-                        obj = ConfigNode.ParseMatrix4x4(value);
+                        obj = ConfigNode.ParseMatrix4x4(value[0]);
                     }
                     return true;
                 }
@@ -291,9 +296,9 @@ namespace Utils
             {
                 try
                 {
-                    if (value != null)
+                    if (value != null && value.Length > 0)
                     {
-                        obj = ConfigNode.ParseQuaternion(value);
+                        obj = ConfigNode.ParseQuaternion(value[0]);
                     }
                     return true;
                 }
@@ -303,9 +308,9 @@ namespace Utils
             {
                 try
                 {
-                    if (value != null)
+                    if (value != null && value.Length > 0)
                     {
-                        obj = ConfigNode.ParseQuaternionD(value);
+                        obj = ConfigNode.ParseQuaternionD(value[0]);
                     }
                     return true;
                 }
@@ -315,9 +320,9 @@ namespace Utils
             {
                 try
                 {
-                    if (value != null)
+                    if (value != null && value.Length > 0)
                     {
-                        obj = (Vector2)ConfigNode.ParseVector2(value);
+                        obj = (Vector2)ConfigNode.ParseVector2(value[0]);
                     }
                     return true;
                 }
@@ -327,9 +332,9 @@ namespace Utils
             {
                 try
                 {
-                    if (value != null)
+                    if (value != null && value.Length > 0)
                     {
-                        obj = ConfigNode.ParseVector3(value);
+                        obj = ConfigNode.ParseVector3(value[0]);
                     }
                     return true;
                 }
@@ -339,9 +344,9 @@ namespace Utils
             {
                 try
                 {
-                    if (value != null)
+                    if (value != null && value.Length > 0)
                     {
-                        obj = ConfigNode.ParseVector3D(value);
+                        obj = ConfigNode.ParseVector3D(value[0]);
                     }
                     return true;
                 }
@@ -351,9 +356,21 @@ namespace Utils
             {
                 try
                 {
-                    if (value != null)
+                    if (value != null && value.Length > 0)
                     {
-                        obj = ConfigNode.ParseVector4(value);
+                        obj = ConfigNode.ParseVector4(value[0]);
+                    }
+                    return true;
+                }
+                catch { }
+            }
+            else if (field.FieldType == typeof(List<string>))
+            {
+                try
+                {
+                    if (value != null && value.Length > 0)
+                    {
+                        obj = new List<string>(value);
                     }
                     return true;
                 }
@@ -372,11 +389,11 @@ namespace Utils
                     obj = ctor.Invoke(null);
                     LoadObjectFromConfig(obj, node);
                 }
-                else if(valueNode)
+                else if(valueNode && value != null && value.Length > 0)
                 {
                     obj = ctor.Invoke(null);
                     obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(
-                   f => Attribute.IsDefined(f, typeof(NodeValue))).SetValue(obj, value);
+                   f => Attribute.IsDefined(f, typeof(NodeValue))).SetValue(obj, value[0]);
                 }
                 else if (!isOptional)
                 {

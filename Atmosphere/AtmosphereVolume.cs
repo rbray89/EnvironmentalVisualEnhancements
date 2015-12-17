@@ -14,38 +14,38 @@ namespace Atmosphere
     {
 #pragma warning disable 0169
 #pragma warning disable 0414
-        [Persistent]
+        [ConfigItem]
         Color _Color = 256 * Color.white;
-        [Persistent]
+        [ConfigItem]
         float _DensityFactorA = 2f;
-        [Persistent]
+        [ConfigItem]
         float _DensityFactorB = 1f;
-        [Persistent]
+        [ConfigItem]
         float _DensityFactorC = 1f;
-        [Persistent]
+        [ConfigItem]
         float _DensityFactorD = 42f;
-        [Persistent]
+        [ConfigItem]
         float _DensityFactorE = 0f;
         [InverseScaled]
         float _Scale = 1f;
-        [Persistent]
+        [ConfigItem]
         float _Visibility = .5f;
-        [Persistent]
+        [ConfigItem]
         float _DensityVisibilityBase = 2.71f;
-		[Persistent]
+		[ConfigItem]
         float _DensityVisibilityPow = .001f;
-		[Persistent]
+		[ConfigItem]
         float _DensityVisibilityOffset = 1;
-		[Persistent]
+		[ConfigItem]
         float _DensityCutoffBase = 2.71f;
-		[Persistent]
+		[ConfigItem]
         float _DensityCutoffPow = .001f;
-		[Persistent]
+		[ConfigItem]
         float _DensityCutoffOffset = 1;
-		[Persistent]
+		[ConfigItem]
         float _DensityCutoffScale = 1;
 
-        [Persistent]
+        [ConfigItem]
         Color _SunsetColor = new Color(1, 0, 0, .45f);
         [Scaled]
         float _OceanRadius;

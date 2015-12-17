@@ -15,17 +15,17 @@ namespace Atmosphere
     {
 #pragma warning disable 0169
 #pragma warning disable 0414
-        [Persistent]
+        [ConfigItem]
         float _FalloffPow = 2f;
-        [Persistent]
+        [ConfigItem]
         float _FalloffScale = 3f;
-        [Persistent]
+        [ConfigItem]
         float _MinLight = .5f;
-        [Persistent, InverseScaled]
+        [ConfigItem, InverseScaled]
         float _RimDist = 0.0001f;
-        [Persistent, InverseScaled]
+        [ConfigItem, InverseScaled]
         float _RimDistSub = 1.01f;
-        [Persistent, InverseScaled]
+        [ConfigItem, InverseScaled]
         float _InvFade = .008f;
         [Scaled]
         float _Radius = 1000f;
@@ -35,7 +35,7 @@ namespace Atmosphere
 
     public class CloudShadowMaterial : MaterialManager
     {
-        [Persistent]
+        [ConfigItem]
         float _ShadowFactor = .75f;
     }
 
@@ -47,9 +47,9 @@ namespace Atmosphere
         GameObject ShadowProjectorGO = null;
         CloudsMaterial cloudsMat = null;
         
-        [Persistent]
+        [ConfigItem]
         Clouds2DMaterial macroCloudMaterial = null;
-        [Persistent, Optional]
+        [ConfigItem, Optional]
         CloudShadowMaterial shadowMaterial = null;
 
         Tools.Layer scaledLayer = Tools.Layer.Scaled;

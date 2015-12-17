@@ -15,7 +15,7 @@ namespace CelestialShadows
     public class ShadowObject : IEVEObject
     {
 #pragma warning disable 0649
-        [Persistent, GUIHidden]
+        [ConfigItem, GUIHidden]
         private String body;
 
         ShadowComponent shadow;

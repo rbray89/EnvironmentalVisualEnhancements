@@ -43,7 +43,7 @@ namespace EVEManager
                 hasLoaded = true;
             }
             return load; } }
-        protected ConfigNode ConfigNode { get { return configNode; } }
+        protected ConfigNode ManagerConfigNode { get { return configNode; } }
         protected ConfigNode configNode;
         private static List<ConfigWrapper> ConfigFiles = new List<ConfigWrapper>();
         private static int selectedConfigIndex = 0;
@@ -265,12 +265,12 @@ namespace EVEManager
                     if ((objectType & ObjectType.BODY) == ObjectType.BODY)
                     {
                         placement.height = 5;
-                        objNode = GUIHelper.DrawObjectSelector(selectedConfig.Node, ref selectedObjIndex, ref objNameEditString, ref objListPos, placementBase, ref placement, new ConfigNode.Value(ConfigHelper.BODY_FIELD, body));
+                        objNode = GUIHelper.DrawObjectSelector<T>(selectedConfig.Node, ref selectedObjIndex, ref objNameEditString, ref objListPos, placementBase, ref placement, new ConfigNode.Value(ConfigHelper.BODY_FIELD, body));
                     }
                     else
                     {
                         placement.height = 5;
-                        objNode = GUIHelper.DrawObjectSelector(selectedConfig.Node, ref selectedObjIndex, ref objNameEditString, ref objListPos, placementBase, ref placement);
+                        objNode = GUIHelper.DrawObjectSelector<T>(selectedConfig.Node, ref selectedObjIndex, ref objNameEditString, ref objListPos, placementBase, ref placement);
                     }
                 }
                 else

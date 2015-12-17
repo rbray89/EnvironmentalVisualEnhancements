@@ -36,7 +36,7 @@
 				#define MAG_ONE 1.4142135623730950488016887242097
 				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile_fwdbase
-#pragma multi_compile MainTex CUBE_CityOverlayTex 
+#pragma multi_compile CityOverlayTex CUBE_CityOverlayTex  
 #pragma multi_compile ALPHAMAP_NONE_CityOverlayTex ALPHAMAP_R_CityOverlayTex ALPHAMAP_G_CityOverlayTex ALPHAMAP_B_CityOverlayTex ALPHAMAP_A_CityOverlayTex
 
 				fixed4 _Color;
@@ -75,7 +75,7 @@
 					float4 objnormal : TEXCOORD1;
 					LIGHTING_COORDS(2,3)
 					float3 worldNormal : TEXCOORD4;
-					float3 sphereCoords : TEXCOORD5;
+					float3 sphereNormal : TEXCOORD5;
 					float terminator : TEXCOORD6;
 					float3 viewDir : TEXCOORD7;
 				};
@@ -89,12 +89,12 @@
 					o.objnormal.w = distance(vertexPos,_WorldSpaceCameraPos);
 					o.viewDir = normalize(vertexPos - _WorldSpaceCameraPos);
 					o.worldNormal = normalize(vertexPos - _PlanetOrigin);
-					o.sphereCoords = -(float4(v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz;
+					o.sphereNormal = -(float4(v.texcoord.x, v.texcoord.y, v.texcoord2.x, v.texcoord2.y)).xyz;
 					o.color = v.color;
 					o.objnormal.xyz = v.normal;
 
 					float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
-					half NdotL = dot (o.sphereCoords, lightDirection);
+					half NdotL = dot (o.sphereNormal, lightDirection);
 					half termlerp = saturate(10*-NdotL);
 					o.terminator = lerp(1,saturate(floor(1.01+NdotL)), termlerp);
 
@@ -107,15 +107,15 @@
 				{
 					half4 color;
 
-					float3 sphereNrm = normalize(IN.sphereCoords);
 
 #ifdef CUBE_CityOverlayTex
-					half4 cityoverlay = GetSphereMapCube(cube_CityOverlayTex, IN.sphereCoords);
+					half4 cityoverlay = GetSphereMapCube(cube_CityOverlayTex, IN.sphereNormal);
 #elif defined (CUBE_RGB2_CityOverlayTex)
-					half4 cityoverlay = GetSphereMapCube(cube_CityOverlayTexPOS, cube_CityOverlayTexNEG, IN.sphereCoords);
+					half4 cityoverlay = GetSphereMapCube(cube_CityOverlayTexPOS, cube_CityOverlayTexNEG, IN.sphereNormal);
 #else
-					half4 cityoverlay = GetSphereMap(_CityOverlayTex, IN.sphereCoords);
+					half4 cityoverlay = GetSphereMap(_CityOverlayTex, IN.sphereNormal);
 #endif
+
 
 #ifdef ALPHAMAP_R_CityOverlayTex
 					cityoverlay = half4(1, 1, 1, cityoverlay.r);
@@ -127,8 +127,8 @@
 					cityoverlay = half4(1, 1, 1, cityoverlay.a);
 #endif
 
-					half4 citydarkoverlaydetail = GetSphereDetailMap(_CityDarkOverlayDetailTex, IN.sphereCoords, _CityOverlayDetailScale);
-					half4 citylightoverlaydetail = GetSphereDetailMap(_CityLightOverlayDetailTex, IN.sphereCoords, _CityOverlayDetailScale);
+					half4 citydarkoverlaydetail = GetSphereDetailMap(_CityDarkOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale);
+					half4 citylightoverlaydetail = GetSphereDetailMap(_CityLightOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale);
 
 
 					cityoverlay.a *= 1-step(IN.color.a, 0);

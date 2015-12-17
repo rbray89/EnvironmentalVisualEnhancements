@@ -1,8 +1,9 @@
 ﻿Shader "EVE/RealWindows" {
 	Properties{
 		_MainTex("_MainTex (RGB spec(A))", 2D) = "white" {}
-		_Shininess("Shininess", Range(0.03,1)) = 0.078125
 		_IVATex("Base (RGB) Gloss (A)", 2D) = "white" {}
+		_Clarity("Clarity", Float) = 1.1
+		_Shininess("Shininess", Float) = 0
 	}
 
 		SubShader{
@@ -33,6 +34,8 @@
 	sampler2D _MainTex;
 	sampler2D _IVATex;
 	float4 _MainTex_ST;
+	float _Clarity;
+	float _Shininess;
 
 	v2f vert(appdata_t v)
 	{
@@ -48,7 +51,7 @@
 	{
 		fixed4 tex = tex2D(_MainTex, i.texcoord);
 		fixed4 iva = tex2D(_IVATex, i.scrPos.xy);
-		iva = lerp(0, iva, tex.a);
+		iva.a = lerp(0, iva.a, saturate( tex.a*_Clarity));
 	return iva;
 	}
 		ENDCG

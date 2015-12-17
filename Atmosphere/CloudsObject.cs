@@ -13,56 +13,57 @@ namespace Atmosphere
     {
 #pragma warning disable 0169
 #pragma warning disable 0414
-        [Persistent, Tooltip("Color to be applied to clouds.")]
+        [ConfigItem, Tooltip("Color to be applied to clouds.")]
         Color _Color = 256*Color.white;
-        [Persistent, ValueFilter("isClamped|format|type|alphaMask"), Tooltip("Main texture used with clouds.")]
+        [ConfigItem, ValueFilter("isClamped|format|type|alphaMask"), Tooltip("Main texture used with clouds.")]
         TextureWrapper _MainTex;
-        [Persistent]
+        [ConfigItem]
         TextureWrapper _DetailTex;
-        [Persistent]
+        [ConfigItem]
         float _DetailScale = 200f;
-        [Persistent, InverseScaled]
+        [ConfigItem, InverseScaled]
         float _DetailDist = 0.000002f;
-        [Persistent, InverseScaled]
+        [ConfigItem, InverseScaled]
         float _DistFade = 1.0f;
-        [Persistent, InverseScaled]
+        [ConfigItem, InverseScaled]
         float _DistFadeVert = 0.00004f;
     }
 
+    [ConfigName("name")]
     public class CloudsObject : MonoBehaviour, IEVEObject
     {
 #pragma warning disable 0649
-        [Persistent, GUIHidden]
+        [ConfigItem, GUIHidden]
         new String name;
-        [Persistent, GUIHidden]
+        [ConfigItem, GUIHidden]
         String body;
 
         
-        [Persistent, Tooltip("Altitude above sea level for clouds.")]
+        [ConfigItem, Tooltip("Altitude above sea level for clouds.")]
         float altitude = 1000f;
-        [Persistent, Tooltip("Enabling this will stop the cloud from moving with the celestial body.")]
+        [ConfigItem, Tooltip("Enabling this will stop the cloud from moving with the celestial body.")]
         bool killBodyRotation = false;
-        [Persistent, Tooltip("Speed of rotation (m/s) applied to main texture of"+
+        [ConfigItem, Tooltip("Speed of rotation (m/s) applied to main texture of"+
                              "\n each axis of rotation." +
                              "\n First value is applied to axis0, etc.")]
         Vector3 speed = new Vector3(0, 30, 0);
-        [Persistent, Tooltip("Speed of detail rotation (m/s) applied to XYZ axis of rotation.")]
+        [ConfigItem, Tooltip("Speed of detail rotation (m/s) applied to XYZ axis of rotation.")]
         Vector3 detailSpeed = new Vector3(0,5,0);
-        [Persistent, Tooltip("Offset of texturing in degrees around Axis below")]
+        [ConfigItem, Tooltip("Offset of texturing in degrees around Axis below")]
         Vector3 offset = new Vector3(0, 0, 0);
-        [Persistent, Tooltip("Axis0 [Default is X-Axis]")]
+        [ConfigItem, Tooltip("Axis0 [Default is X-Axis]")]
         Vector3 rotationAxis0 = new Vector3(1,0,0);
-        [Persistent, Tooltip("Axis1 [Default is Y-Axis]")]
+        [ConfigItem, Tooltip("Axis1 [Default is Y-Axis]")]
         Vector3 rotationAxis1 = new Vector3(0, 1, 0);
-        [Persistent, Tooltip("Axis2 [Default is Z-Axis]")]
+        [ConfigItem, Tooltip("Axis2 [Default is Z-Axis]")]
         Vector3 rotationAxis2 = new Vector3(0, 0, 1);
 
-        [Persistent, Tooltip("Settings for the cloud rendering")]
+        [ConfigItem, Tooltip("Settings for the cloud rendering")]
         CloudsMaterial settings = null;
         
-        [Persistent, Optional]
+        [ConfigItem, Optional]
         CloudsVolume layerVolume = null;
-        [Persistent, Optional]
+        [ConfigItem, Optional]
         Clouds2D layer2D = null;
 
         private CloudsPQS cloudsPQS = null;

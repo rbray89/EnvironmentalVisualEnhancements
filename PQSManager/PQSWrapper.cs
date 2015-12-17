@@ -11,10 +11,10 @@ namespace PQSManager
     public class PQSWrapper : PQS, IEVEObject 
     {
 #pragma warning disable 0649
-        [Persistent, GUIHidden]
+        [ConfigItem, GUIHidden]
         String body;
 
-        [Persistent]
+        [ConfigItem]
         float deactivateDistance = 175000;
 
         float cameraDistance;

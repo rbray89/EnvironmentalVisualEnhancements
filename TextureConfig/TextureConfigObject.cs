@@ -8,6 +8,7 @@ using Utils;
 
 namespace TextureConfig
 {
+    [ConfigName("name")]
     public class TextureConfigObject : IEVEObject 
     {
         
@@ -21,30 +22,30 @@ namespace TextureConfig
         }
 
 #pragma warning disable 0649
-        [Persistent, GUIHidden]
+        [ConfigItem, GUIHidden]
         String name;
-        [Persistent]
+        [ConfigItem]
         TextureFormatSimplified format = TextureFormatSimplified.Default;
-        [Persistent]
+        [ConfigItem]
         bool mipmaps = true;
-        [Persistent]
+        [ConfigItem]
         bool isNormalMap = false;
-        [Persistent]
+        [ConfigItem]
         bool isReadable = false;
-        [Persistent, Conditional("formatEval")]
+        [ConfigItem, Conditional("formatEval")]
         bool isCubeMap = false;
 
-        [Persistent, Conditional("cubeMapEval")]
+        [ConfigItem, Conditional("cubeMapEval")]
         String texXn;
-        [Persistent, Conditional("cubeMapEval")]
+        [ConfigItem, Conditional("cubeMapEval")]
         String texXp;
-        [Persistent, Conditional("cubeMapEval")]
+        [ConfigItem, Conditional("cubeMapEval")]
         String texYn;
-        [Persistent, Conditional("cubeMapEval")]
+        [ConfigItem, Conditional("cubeMapEval")]
         String texYp;
-        [Persistent, Conditional("cubeMapEval")]
+        [ConfigItem, Conditional("cubeMapEval")]
         String texZn;
-        [Persistent, Conditional("cubeMapEval")]
+        [ConfigItem, Conditional("cubeMapEval")]
         String texZp;
 
         public override String ToString() { return name; }

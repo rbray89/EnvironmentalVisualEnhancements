@@ -13,13 +13,13 @@ namespace Atmosphere
     public class AtmosphereObject : MonoBehaviour, IEVEObject
     {
 #pragma warning disable 0649
-        [Persistent]
+        [ConfigItem]
         private String body;
 
-        [Persistent]
+        [ConfigItem]
         float altitude = 1000f;
 
-        [Persistent]
+        [ConfigItem]
         AtmosphereVolumeMaterial atmosphereMaterial = null;
 
         AtmosphereVolume atmosphere = null;

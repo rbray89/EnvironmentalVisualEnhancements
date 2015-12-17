@@ -38,7 +38,7 @@
 				#pragma fragment frag
 				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile_fwdbase
-#pragma multi_compile MainTex CUBE_CityOverlayTex  
+#pragma multi_compile CityOverlayTex CUBE_CityOverlayTex  
 #pragma multi_compile ALPHAMAP_NONE_CityOverlayTex ALPHAMAP_R_CityOverlayTex ALPHAMAP_G_CityOverlayTex ALPHAMAP_B_CityOverlayTex ALPHAMAP_A_CityOverlayTex
 
 				fixed4 _Color;
@@ -104,7 +104,6 @@
 				fixed4 frag (v2f IN) : COLOR
 				{
 					half4 color;
-					float3 sphereNrm = IN.sphereNormal;
 					half4 main = GetSphereMap(_MainTex, IN.sphereNormal);
 					half3 normT = UnpackNormal(GetSphereMap(_BumpMap, IN.sphereNormal));
 
@@ -131,8 +130,8 @@
 					half4 citylightoverlaydetail = GetSphereDetailMap(_CityLightOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale);
 
 
-					half detailLevel = saturate(2*_DetailDist*IN.viewDist);
-					//cityoverlay.a *= 1-step(1, main.a);
+					//half detailLevel = saturate(2*_DetailDist*IN.viewDist);
+					cityoverlay.a *= 1-step(1, main.a);
 					//cityoverlay.a = 1-step(cityoverlay.a, 0);
 					citydarkoverlaydetail.a *= cityoverlay.a;
 					citylightoverlaydetail.a *= cityoverlay.a;
