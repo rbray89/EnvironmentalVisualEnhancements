@@ -36,7 +36,7 @@ namespace PartFX
             {
                 if (ap.internalConfig.HasData)
                 {
-                    IVAWindowManager.Log("URL: " + partUrl);
+                    //IVAWindowManager.Log("URL: " + ap.partUrl);
                     if (ap.partUrl == partUrl)
                     {
                         Part part = ap.partPrefab;
@@ -46,6 +46,18 @@ namespace PartFX
                         module.Load(moduleNode);
                         module.LoadConfigNode(moduleNode);
                     }
+                }
+            }
+            Part[] parts = GameObject.FindObjectsOfType<Part>();
+            foreach(Part part in parts)
+            {
+                if (part.partInfo.partUrl == partUrl)
+                {
+                    ModuleIVAWindow module = (ModuleIVAWindow)part.AddModule("ModuleIVAWindow");
+                    MethodInfo mI = typeof(PartModule).GetMethod("Awake", BindingFlags.NonPublic | BindingFlags.Instance);
+                    mI.Invoke(module, null);
+                    module.Load(moduleNode);
+                    module.OnStart(PartModule.StartState.None);
                 }
             }
         }
@@ -62,6 +74,15 @@ namespace PartFX
                         PartModule module = part.FindModuleImplementing<ModuleIVAWindow>();
                         part.RemoveModule(module);
                     }
+                }
+            }
+            Part[] parts = GameObject.FindObjectsOfType<Part>();
+            foreach (Part part in parts)
+            {
+                if (part.partInfo.partUrl == partUrl)
+                {
+                    PartModule module = part.FindModuleImplementing<ModuleIVAWindow>();
+                    part.RemoveModule(module);
                 }
             }
         }
@@ -164,10 +185,7 @@ namespace PartFX
             if (node != null)
             {
                 ConfigHelper.LoadObjectFromConfig(this, node);
-                if (!ConfigStash.ContainsKey(partUrl))
-                {
-                    ConfigStash.Add(partUrl, node);
-                }
+                ConfigStash[partUrl] = node;
             }
             else
             {

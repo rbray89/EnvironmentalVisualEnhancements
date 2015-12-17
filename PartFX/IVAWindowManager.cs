@@ -10,7 +10,7 @@ using System.Reflection;
 
 namespace PartFX
 {
-    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
+    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class IVAWindowManager : GenericEVEManager<IVAWindowObject>
     {
         protected override ObjectType objectType { get { return ObjectType.STATIC | ObjectType.MULTIPLE; } }
