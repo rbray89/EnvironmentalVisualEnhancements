@@ -39,9 +39,10 @@ namespace PartFX
         {
             get
             {
+                float scale = .75f;
                 if (rt == null)
                 {
-                    rt = new RenderTexture(Screen.width, Screen.height, 16, RenderTextureFormat.ARGB32);
+                    rt = new RenderTexture((int)(scale * Screen.width), (int)(scale * Screen.height), 16, RenderTextureFormat.ARGB32);
                 }
                 return rt;
             }

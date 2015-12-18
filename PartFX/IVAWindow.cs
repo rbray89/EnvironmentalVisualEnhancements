@@ -32,6 +32,12 @@ namespace PartFX
 
         public void Apply()
         {
+            Shader[] shaders = (Shader[]) Resources.FindObjectsOfTypeAll(typeof(Shader));
+            foreach(Shader shader in shaders)
+            {
+            //    IVAWindowManager.Log("Shader: " + shader.name);
+            }
+
             foreach (AvailablePart ap in PartLoader.LoadedPartsList)
             {
                 if (ap.internalConfig.HasData)
@@ -48,6 +54,7 @@ namespace PartFX
                         foreach (MeshRenderer mr in part.FindModelComponents<MeshRenderer>())
                         {
                             IVAWindowManager.Log("renderer: " + mr.name);
+                            IVAWindowManager.Log("shader: " + mr.material.shader);
                         }
                     }
                 }
@@ -114,8 +121,6 @@ namespace PartFX
 
 #pragma warning disable 0649
 #pragma warning disable 0169
-        [ConfigItem, GUIHidden]
-        String partUrl;
         [ConfigItem]
         List<string> renderers;
         
@@ -165,6 +170,8 @@ namespace PartFX
             List<Material> materials = new List<Material>(mr.materials);
             if (renderers.BinarySearch(mr.name) >= 0 && !materials.Exists(mat => mat.name.Contains(materialName)))
             {
+                mr.material.shader = ShaderLoaderClass.FindShader("KSP/Alpha/Cutoff Bumped");
+                KSPLog.print(mr.material.shader.name);
                 IVAWindowManager.Log("Adding to: " + mr.name);
                 Material windowMat = new Material(WindowShader);
                 windowMat.name = materialName;

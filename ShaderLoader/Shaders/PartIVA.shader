@@ -51,7 +51,7 @@
 	{
 		fixed4 tex = tex2D(_MainTex, i.texcoord);
 		fixed4 iva = tex2D(_IVATex, i.scrPos.xy);
-		iva.a = lerp(0, iva.a, saturate( tex.a*_Clarity));
+		iva.a = lerp(0, iva.a, saturate( (1-tex.a)*_Clarity));
 	return iva;
 	}
 		ENDCG
