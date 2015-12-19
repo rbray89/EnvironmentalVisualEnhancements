@@ -201,7 +201,8 @@ namespace EVEManager
 
             if (objNode != null)
             {
-                GUIHelper.HandleGUI(new T(), null, objNode, selectBoxItemsRect, ref placement);
+                T obj = new T();
+                GUIHelper.HandleGUI(obj, null, objNode, selectBoxItemsRect, ref placement);
             }
             GUI.EndScrollView();
 

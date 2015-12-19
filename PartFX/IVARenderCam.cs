@@ -39,7 +39,7 @@ namespace PartFX
         {
             get
             {
-                float scale = .75f;
+                float scale = .70f;
                 if (rt == null)
                 {
                     rt = new RenderTexture((int)(scale * Screen.width), (int)(scale * Screen.height), 16, RenderTextureFormat.ARGB32);

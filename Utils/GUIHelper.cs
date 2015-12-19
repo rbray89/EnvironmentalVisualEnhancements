@@ -359,7 +359,7 @@ namespace Utils
                 placement.y += spacingOffset;
                 placement.height = 1;
                 String value = config.GetValue(field.Name);
-                String defaultValue = ConfigHelper.CreateConfigFromObject(obj, new ConfigNode("TMP")).GetValue(field.Name);
+                String defaultValue = ConfigHelper.GetConfigValue(obj, field);
                 if (value == null)
                 {
                     if (defaultValue == null)
@@ -511,12 +511,12 @@ namespace Utils
                     if (isOptional || isValueNode)
                     {
                         String value = null;
-                        String defaultValue = ConfigHelper.CreateConfigFromObject(obj, new ConfigNode("TMP")).GetValue(field.Name);
+                        String defaultValue = ConfigHelper.GetConfigValue(obj, field);
                         String valueField = "";
                         if (isValueNode)
                         {
                             valueField = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(
-                                f => Attribute.IsDefined(f, typeof(ConfigItem))).Name;
+                                f => Attribute.IsDefined(f, typeof(NodeValue))).Name;
                         }
                         String newValue = "";
                         if (isValueNode)

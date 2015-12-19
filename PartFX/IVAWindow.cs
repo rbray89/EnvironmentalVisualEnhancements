@@ -8,6 +8,15 @@ using System.Reflection;
 
 namespace PartFX
 {
+    public class IVAWindowMaterial : MaterialManager
+    {
+#pragma warning disable 0169
+#pragma warning disable 0414
+        [ConfigItem]
+        float _Clarity = .65f;
+        [ConfigItem]
+        Color _RearWindowColor = new Color(82,107,117,255);
+    }
 
     [ConfigName("partUrl")]
     public class IVAWindowObject : IEVEObject
@@ -19,6 +28,10 @@ namespace PartFX
         String partUrl;
         [ConfigItem]
         List<string> renderers;
+        [ConfigItem]
+        Vector3 offset = Vector3.zero;
+        [ConfigItem]
+        IVAWindowMaterial windowMaterial = null;
 
         ConfigNode moduleNode;
 
@@ -123,7 +136,11 @@ namespace PartFX
 #pragma warning disable 0169
         [ConfigItem]
         List<string> renderers;
-        
+        [ConfigItem]
+        Vector3 offset = Vector3.zero;
+        [ConfigItem]
+        IVAWindowMaterial windowMaterial = null;
+
         public override void OnStart(StartState state)
         {
             if (state != StartState.Editor)
@@ -151,6 +168,7 @@ namespace PartFX
                     part.internalModel.transform.position = InternalSpace.WorldToInternal(part.transform.position);
                     part.internalModel.transform.rotation = InternalSpace.WorldToInternal(part.transform.rotation);
                     part.internalModel.transform.Rotate(90, 0, 180);
+                    part.internalModel.transform.Translate(offset);
                 }
             }
         }
@@ -177,7 +195,7 @@ namespace PartFX
                 windowMat.name = materialName;
                 windowMat.mainTexture = mr.material.mainTexture;
                 windowMat.SetTexture("_IVATex", IVARenderCam.RT);
-                windowMat.SetFloat("_Clarity", 1f);
+                windowMaterial.ApplyMaterialProperties(windowMat);
                 materials.Add(windowMat);
                 mr.materials = materials.ToArray();
             }

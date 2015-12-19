@@ -177,7 +177,131 @@ namespace Utils
 
         public static ConfigNode CreateConfigFromObject(object obj, ConfigNode node)
         {
-            return ConfigNode.CreateConfigFromObject(obj, node);
+            var objfields = obj.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(
+                   field => Attribute.IsDefined(field, typeof(ConfigItem)));
+            foreach (FieldInfo field in objfields)
+            {
+                string value = GetConfigValue(obj, field);
+                node.SetValue(field.Name, value, true);
+            }
+            return node;
+        }
+
+        public static string GetConfigValue(object obj, FieldInfo field, int index = 0)
+        {
+            object value = field.GetValue(obj);
+            if (field.FieldType == typeof(float))
+            {
+                try
+                {
+                    return ((float)value).ToString("G8");
+                }
+                catch { }
+            }
+            else if (field.FieldType == typeof(double))
+            {
+                try
+                {
+                    return ((double)value).ToString("G8");
+                }
+                catch { }
+            }
+            else if (field.FieldType == typeof(bool))
+            {
+                try
+                {
+                    return ((bool)value).ToString();
+                }
+                catch { }
+            }
+            else if (field.FieldType == typeof(String))
+            {
+                return (string)value;
+            }
+            else if (field.FieldType == typeof(Color))
+            {
+                try
+                {
+                    return ConfigNode.WriteColor((Color)value);
+                }
+                catch { }
+            }
+            else if (field.FieldType.IsEnum)
+            {
+                try
+                {
+                    return ConfigNode.WriteEnum((Enum) value);
+                }
+                catch { }
+            }
+            else if (field.FieldType == typeof(Matrix4x4))
+            {
+                try
+                {
+                    return ConfigNode.WriteMatrix4x4((Matrix4x4)value);
+                }
+                catch { }
+            }
+            else if (field.FieldType == typeof(Quaternion))
+            {
+                try
+                {
+                    return ConfigNode.WriteQuaternion((Quaternion)value);
+                }
+                catch { }
+            }
+            else if (field.FieldType == typeof(Vector2))
+            {
+                try
+                {
+                    return ConfigNode.WriteVector((Vector2)value);
+                }
+                catch { }
+            }
+            else if (field.FieldType == typeof(Vector3))
+            {
+                try
+                {
+                    return ConfigNode.WriteVector((Vector3)value);
+                }
+                catch { }
+            }
+            else if (field.FieldType == typeof(Vector4))
+            {
+                try
+                {
+                    return ConfigNode.WriteVector((Vector4)value);
+                }
+                catch { }
+            }
+            else if (field.FieldType == typeof(List<string>))
+            {
+                try
+                {
+                    List<string> list = (List<string>)value;
+                    if(list.Count > index)
+                    {
+                        return list[index];
+                    }
+                    return "";
+                }
+                catch { }
+            }
+            else
+            {
+                bool isOptional = Attribute.IsDefined(field, typeof(Optional));
+                bool valueNode = IsValueNode(field);
+                
+                if (valueNode && value != null)
+                {
+                    return (string)value.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(
+                   f => Attribute.IsDefined(f, typeof(NodeValue))).GetValue(value);
+                }
+                
+                return "";
+            }
+
+            return "";
         }
 
         public static bool LoadObjectFromConfig(object obj, ConfigNode node)
@@ -304,18 +428,6 @@ namespace Utils
                 }
                 catch {  }
             }
-            else if (field.FieldType == typeof(QuaternionD))
-            {
-                try
-                {
-                    if (value != null && value.Length > 0)
-                    {
-                        obj = ConfigNode.ParseQuaternionD(value[0]);
-                    }
-                    return true;
-                }
-                catch {  }
-            }
             else if (field.FieldType == typeof(Vector2))
             {
                 try
@@ -335,18 +447,6 @@ namespace Utils
                     if (value != null && value.Length > 0)
                     {
                         obj = ConfigNode.ParseVector3(value[0]);
-                    }
-                    return true;
-                }
-                catch {  }
-            }
-            else if (field.FieldType == typeof(Vector3d))
-            {
-                try
-                {
-                    if (value != null && value.Length > 0)
-                    {
-                        obj = ConfigNode.ParseVector3D(value[0]);
                     }
                     return true;
                 }
