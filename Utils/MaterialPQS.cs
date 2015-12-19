@@ -10,7 +10,6 @@ namespace Utils
     public class MaterialPQS : PQSMod
     {
         Material material;
-        Material PQSMaterial;
         String materialName = Guid.NewGuid().ToString();
 
 
@@ -19,17 +18,17 @@ namespace Utils
             material.SetVector(ShaderProperties.PLANET_ORIGIN_PROPERTY, this.transform.parent.position);
         }
 
-        public void Apply(CelestialBody cb, Material mat)
+        public void Apply(CelestialBody cb, MaterialManager mat, Shader shader)
         {
             KSPLog.print("Applying PQS Material Manager!");
-            material = new Material( mat);
+            material = new Material( shader);
             material.name = materialName;
+            mat.ApplyMaterialProperties(material);
 
             PQS pqs = null;
             if (cb != null && cb.pqsController != null)
             {
                 pqs = cb.pqsController;
-                PQSMaterial = pqs.surfaceMaterial;
             }
             else
             {

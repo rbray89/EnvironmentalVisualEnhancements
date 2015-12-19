@@ -57,9 +57,7 @@ namespace CityLights
             {
                 GameObject go = new GameObject();
                 materialPQS = go.AddComponent<MaterialPQS>();
-                macroMat = new Material(ShaderLoaderClass.FindShader("EVE/TerrainCityLight"));
-                cityLightsMaterial.ApplyMaterialProperties(macroMat);
-                materialPQS.Apply(celestialBody, macroMat);
+                materialPQS.Apply(celestialBody, cityLightsMaterial, ShaderLoaderClass.FindShader("EVE/TerrainCityLight"));
             }
             Transform transform = Tools.GetScaledTransform(body);
             if (transform != null)
