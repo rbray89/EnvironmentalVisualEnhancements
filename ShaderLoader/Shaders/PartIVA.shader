@@ -21,7 +21,7 @@
 #pragma glsl
 #pragma vertex vert
 #pragma fragment frag
-#pragma multi_compile TRANSPARENT NOT_TRANSPARENT
+#pragma multi_compile TRANSPARENT_OFF TRANSPARENT
 
 	struct appdata_t {
 		float4 vertex : POSITION;

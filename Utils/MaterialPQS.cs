@@ -22,7 +22,7 @@ namespace Utils
         {
             KSPLog.print("Applying PQS Material Manager!");
             material = new Material( shader);
-            material.name = materialName;
+            material.name = materialName; 
             mat.ApplyMaterialProperties(material);
 
             PQS pqs = null;

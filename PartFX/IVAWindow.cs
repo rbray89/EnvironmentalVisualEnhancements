@@ -16,6 +16,11 @@ namespace PartFX
         float _Clarity = .65f;
         [ConfigItem]
         Color _RearWindowColor = new Color(82,107,117,255);
+        [ConfigItem]
+        bool TRANSPARENT = false;
+
+        public bool Transparent { get { return TRANSPARENT; } }
+
     }
 
     [ConfigName("partUrl")]
@@ -188,7 +193,11 @@ namespace PartFX
             List<Material> materials = new List<Material>(mr.materials);
             if (renderers.BinarySearch(mr.name) >= 0 && !materials.Exists(mat => mat.name.Contains(materialName)))
             {
-                mr.material.shader = ShaderLoaderClass.FindShader("KSP/Alpha/Cutoff Bumped");
+
+                if (windowMaterial.Transparent)
+                {
+                    mr.material.shader = ShaderLoaderClass.FindShader("KSP/Alpha/Cutoff Bumped");
+                }
                 KSPLog.print(mr.material.shader.name);
                 IVAWindowManager.Log("Adding to: " + mr.name);
                 Material windowMat = new Material(WindowShader);

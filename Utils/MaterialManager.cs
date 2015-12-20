@@ -230,11 +230,30 @@ namespace Utils
                     Vector4 value = (Vector4)obj;
                     material.SetVector(name, value * scaleValue);
                 }
-                //Vector4
+                //Matrix
                 else if (obj.GetType() == typeof(Matrix4x4))
                 {
                     Matrix4x4 value = (Matrix4x4)obj;
                     material.SetMatrix(name, value);
+                }
+                //bool
+                else if (obj.GetType() == typeof(bool))
+                {
+                    bool value = (bool)obj;
+                    if (value)
+                    {
+                        material.EnableKeyword(name);
+                    }
+                    else
+                    {
+                        material.DisableKeyword(name);
+                    }
+                }
+                //enum
+                else if (obj.GetType().IsEnum)
+                {
+                    String value = Enum.GetName(obj.GetType(), obj);
+                    material.EnableKeyword(value);
                 }
 
             }

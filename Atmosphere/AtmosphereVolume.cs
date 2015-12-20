@@ -78,14 +78,12 @@ namespace Atmosphere
                 {
                     float scale = (float)(radius / celestialBody.Radius);
                     atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial, ScaledSpace.ScaleFactor);
-                    AtmosphereMaterial.EnableKeyword("WORLD_SPACE_OFF");
-                    AtmosphereMaterial.DisableKeyword("WORLD_SPACE_ON");
+                    AtmosphereMaterial.DisableKeyword("WORLD_SPACE_OFF");
                     Reassign(Tools.Layer.Scaled, scaledCelestialTransform, scale);
                 }
                 else
                 {
                     atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial);
-                    AtmosphereMaterial.DisableKeyword("WORLD_SPACE_OFF");
                     AtmosphereMaterial.EnableKeyword("WORLD_SPACE_ON");
                     Reassign(Tools.Layer.Local, FlightCamera.fetch.transform, 1);
                 }
