@@ -280,7 +280,7 @@ namespace Utils
                     newNode.SetValue(configName, objString, true);
                     if( filter != null)
                     {
-                        newNode.AddValue(filter.name, filter.value);
+                        newNode.SetValue(filter.name, filter.value, true);
                     }
                     nodeList.Add(newNode);
                     sourceNode.AddNode(newNode);

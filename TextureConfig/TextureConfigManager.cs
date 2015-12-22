@@ -12,7 +12,7 @@ namespace TextureConfig
     public class TextureConfig : GenericEVEManager<TextureConfigObject>
     {
         protected override ObjectType objectType { get { return ObjectType.STATIC | ObjectType.MULTIPLE; } }
-        protected override String configName { get { return "TEXTURE_CONFIG"; } }
+        protected override String configName { get { return "EVE_TEXTURE_CONFIG"; } }
         protected override bool DelayedLoad { get { return false; } }
 
     }
