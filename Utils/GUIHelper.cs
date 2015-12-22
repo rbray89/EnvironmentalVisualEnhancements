@@ -278,6 +278,10 @@ namespace Utils
                 {
                     ConfigNode newNode = new ConfigNode(ConfigHelper.OBJECT_NODE);
                     newNode.SetValue(configName, objString, true);
+                    if( filter != null)
+                    {
+                        newNode.AddValue(filter.name, filter.value);
+                    }
                     nodeList.Add(newNode);
                     sourceNode.AddNode(newNode);
                 }

@@ -19,7 +19,12 @@ namespace ShaderLoader
             foreach (string shader in Directory.GetFiles(shaderFolder))
             {
                 StreamReader shaderStream = new StreamReader(shader);
-                Material shaderMat = new Material(shaderStream.ReadToEnd());
+                String shaderString = shaderStream.ReadToEnd();
+                if (SystemInfo.graphicsDeviceVersion.Contains("OpenGL"))
+                {
+                    shaderString = shaderString.Replace("Offset 0, 0", "Offset -.25, -.25");
+                }
+                Material shaderMat = new Material(shaderString);
                 KSPLog.print("Loading shader " + shaderMat.shader.name);
             }
 

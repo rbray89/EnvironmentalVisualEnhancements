@@ -346,7 +346,7 @@ namespace Utils
                     }
                     return true;
                 }
-                catch { }
+                catch { throw new Exception("Can't parse " + value[0] + " to float"); }
             }
             else if (field.FieldType == typeof(double))
             {
@@ -358,7 +358,7 @@ namespace Utils
                     }
                     return true;
                 }
-                catch {  }
+                catch { throw new Exception("Can't parse " + value[0] + " to double"); }
             }
             else if (field.FieldType == typeof(bool))
             {
@@ -370,7 +370,7 @@ namespace Utils
                     }
                     return true;
                 }
-                catch {  }
+                catch { throw new Exception("Can't parse " + value[0] + " to bool"); }
             }
             else if(field.FieldType == typeof(String))
             {
@@ -390,7 +390,7 @@ namespace Utils
                     }
                     return true;
                 }
-                catch {  }
+                catch { throw new Exception("Can't parse " + value[0] + " to Color"); }
             }
             else if (field.FieldType.IsEnum)
             {
@@ -402,7 +402,7 @@ namespace Utils
                     }
                     return true;
                 }
-                catch {  }
+                catch { throw new Exception("Can't parse " + value[0] + " to enum "+field.FieldType); }
             }
             else if (field.FieldType == typeof(Matrix4x4))
             {
@@ -414,7 +414,7 @@ namespace Utils
                     }
                     return true;
                 }
-                catch {  }
+                catch { throw new Exception("Can't parse " + value[0] + " to Matrix4x4"); }
             }
             else if (field.FieldType == typeof(Quaternion))
             {
@@ -426,7 +426,7 @@ namespace Utils
                     }
                     return true;
                 }
-                catch {  }
+                catch { throw new Exception("Can't parse " + value[0] + " to Quaternion"); }
             }
             else if (field.FieldType == typeof(Vector2))
             {
@@ -438,7 +438,7 @@ namespace Utils
                     }
                     return true;
                 }
-                catch {  }
+                catch { throw new Exception("Can't parse " + value[0] + " to Vector2"); }
             }
             else if (field.FieldType == typeof(Vector3))
             {
@@ -450,7 +450,7 @@ namespace Utils
                     }
                     return true;
                 }
-                catch {  }
+                catch { throw new Exception("Can't parse " + value[0] + " to Vector3"); }
             }
             else if (field.FieldType == typeof(Vector4))
             {
@@ -462,7 +462,7 @@ namespace Utils
                     }
                     return true;
                 }
-                catch { }
+                catch { throw new Exception("Can't parse " + value[0] + " to Vector4"); }
             }
             else if (field.FieldType == typeof(List<string>))
             {
@@ -474,7 +474,7 @@ namespace Utils
                     }
                     return true;
                 }
-                catch { }
+                catch { throw new Exception("Can't parse " + value + " to List<string>"); }
             }
             else
             {
@@ -508,8 +508,7 @@ namespace Utils
                 
                 return true;
             }
-
-             return false;
+            
         }
 
     }

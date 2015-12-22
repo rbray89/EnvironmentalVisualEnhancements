@@ -16,7 +16,7 @@
 		Lighting On
 		ZWrite Off
 		Cull Back
-		Offset -.25, -.25
+		Offset 0, 0
 		Blend SrcAlpha OneMinusSrcAlpha
 		Tags {
 			"Queue"="Geometry+1"
@@ -38,7 +38,7 @@
 				#pragma fragment frag
 				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile_fwdbase
-#pragma multi_compile CityOverlayTex CUBE_CityOverlayTex  
+#pragma multi_compile CityOverlayTex CUBE_CityOverlayTex CUBE_RGB2_CityOverlayTex
 #pragma multi_compile ALPHAMAP_NONE_CityOverlayTex ALPHAMAP_R_CityOverlayTex ALPHAMAP_G_CityOverlayTex ALPHAMAP_B_CityOverlayTex ALPHAMAP_A_CityOverlayTex
 
 				fixed4 _Color;

@@ -43,7 +43,7 @@ Shader "EVE/Cloud" {
 				#pragma multi_compile_fwdbase
 				#pragma multi_compile SOFT_DEPTH_OFF SOFT_DEPTH_ON
 				#pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
-				#pragma multi_compile MainTex CUBE_MainTex  
+				#pragma multi_compile MainTex CUBE_MainTex CUBE_RGB2_MainTex
 				#pragma multi_compile ALPHAMAP_NONE_MainTex ALPHAMAP_R_MainTex ALPHAMAP_G_MainTex ALPHAMAP_B_MainTex ALPHAMAP_A_MainTex
 
 #ifdef CUBE_MainTex

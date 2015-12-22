@@ -15,7 +15,7 @@
 		Pass {
 			Blend Zero SrcColor
 			ZWrite Off
-			Offset -.25, -.25
+			Offset 0, 0
 			CGPROGRAM
 			#include "EVEUtils.cginc"
 			#pragma target 3.0
@@ -23,7 +23,7 @@
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
-			#pragma multi_compile MainTex CUBE_MainTex 
+			#pragma multi_compile MainTex CUBE_MainTex CUBE_RGB2_MainTex
 			#pragma multi_compile ALPHAMAP_NONE_MainTex ALPHAMAP_R_MainTex ALPHAMAP_G_MainTex ALPHAMAP_B_MainTex ALPHAMAP_A_MainTex
 
 #ifdef CUBE_MainTex

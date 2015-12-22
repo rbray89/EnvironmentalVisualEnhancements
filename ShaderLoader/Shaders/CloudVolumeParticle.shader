@@ -42,7 +42,7 @@
 				#define MAG_ONE 1.4142135623730950488016887242097
 				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile_fwdbase
-				#pragma multi_compile MainTex CUBE_MainTex 
+				#pragma multi_compile MainTex CUBE_MainTex CUBE_RGB2_MainTex
 				#pragma multi_compile ALPHAMAP_NONE_MainTex ALPHAMAP_R_MainTex ALPHAMAP_G_MainTex ALPHAMAP_B_MainTex ALPHAMAP_A_MainTex
 
 				sampler2D _TopTex;
