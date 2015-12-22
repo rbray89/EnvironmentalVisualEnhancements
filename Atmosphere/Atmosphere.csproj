@@ -88,6 +88,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\_BuildManager\Properties\AssemblyVersionInfo.cs">
+      <Link>Properties\AssemblyVersionInfo.cs</Link>
+    </Compile>
     <Compile Include="CloudsPQS.cs" />
     <Compile Include="CloudsManager.cs" />
     <Compile Include="AtmosphereManager.cs" />

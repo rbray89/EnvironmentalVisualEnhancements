@@ -238,13 +238,15 @@ namespace Utils
             imgStream.Close();
 
             Texture2D tex = texture.texture;
-            tex.LoadImage(imageBuffer);
             bool convertToNormalFormat = texture.isNormalMap ? true : false;
             bool hasMipmaps = tex.mipmapCount == 1 ? false : true;
 
 
             if (convertToNormalFormat || hasMipmaps != mipmaps || format != tex.format)
             {
+                tex = new Texture2D(texture.texture.width, texture.texture.height);
+                tex.LoadImage(imageBuffer);
+
                 Color32[] pixels = tex.GetPixels32();
                 if (convertToNormalFormat)
                 {
@@ -255,12 +257,12 @@ namespace Utils
                         pixels[i].b = pixels[i].g;
                     }
                 }
-                if (tex.format != format || hasMipmaps != mipmaps)
+                if (texture.texture.format != format || hasMipmaps != mipmaps)
                 {
-                    tex.Resize(tex.width, tex.height, format, mipmaps);
+                    texture.texture.Resize(tex.width, tex.height, format, mipmaps);
                 }
-                tex.SetPixels32(pixels);
-                tex.Apply(mipmaps, false);
+                texture.texture.SetPixels32(pixels);
+                texture.texture.Apply(mipmaps, false);
             }
 
         }

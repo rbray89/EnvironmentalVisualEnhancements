@@ -132,12 +132,6 @@ namespace Utils
             return GameObject.FindObjectsOfType<GameObject>().FirstOrDefault(b => b.name == name && b.transform.parent.name.Contains("Scene"));
         }
 
-        public static Shader GetShader(Assembly assembly, String resource)
-        {
-            StreamReader shaderStreamReader = new StreamReader(assembly.GetManifestResourceStream(resource));
-            String shaderTxt = shaderStreamReader.ReadToEnd();
-            return new Material(shaderTxt).shader;
-        }
 
     }
 }

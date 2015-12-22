@@ -10,7 +10,6 @@ using Utils;
 namespace EVEManager
 {
     
-    [KSPAddon(KSPAddon.Startup.Instantly, true)]
     public class GenericEVEManager<T> : EVEManagerClass where T : IEVEObject, new()
     {
         [Flags] protected enum ObjectType

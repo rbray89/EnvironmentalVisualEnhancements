@@ -67,18 +67,31 @@
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Assembly-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\KSPResources\Assembly-CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\KSPResources\UnityEngine.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Properties\AssemblyVersionInfo.cs" />
     <Compile Include="_BuildManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Atmosphere\Atmosphere.csproj">
+      <Project>{8df6a385-18e6-4e76-a060-4c3847ca3046}</Project>
+      <Name>Atmosphere</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CelestialShadows\CelestialShadows.csproj">
       <Project>{113cb5cb-7fa2-40a7-9d06-f2ad1fbeadfb}</Project>
       <Name>CelestialShadows</Name>
@@ -90,6 +103,10 @@
     <ProjectReference Include="..\EveManager\EVEManager.csproj">
       <Project>{499e8c5c-c83e-4aea-bb01-eed705bd747f}</Project>
       <Name>EVEManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PartFX\PartFX.csproj">
+      <Project>{08c5f3e9-1567-4679-aca2-360351b636bd}</Project>
+      <Name>PartFX</Name>
     </ProjectReference>
     <ProjectReference Include="..\PQSManager\PQSManager.csproj">
       <Project>{bdc8381a-c16b-4fd1-afb4-d30ea906e367}</Project>
@@ -103,6 +120,10 @@
       <Project>{00bdfd23-ec77-4876-ac73-11aa9124ea35}</Project>
       <Name>Terrain</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TextureConfig\TextureConfig.csproj">
+      <Project>{671765e7-9d23-456f-b5c5-97fbdefd229e}</Project>
+      <Name>TextureConfig</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utils\Utils.csproj">
       <Project>{8b24314b-4b75-43f3-b31c-ffa9fc83fb70}</Project>
       <Name>Utils</Name>
@@ -110,7 +131,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
+    <PostBuildEvent>xcopy  $(TargetFileName) "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Plugins\" /eyir
+
+call "C:\Program Files (x86)\Mono\bin\pdb2mdb.bat" $(TargetFileName)
+xcopy  $(TargetName).pdb "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Plugins\" /eyir
+xcopy  $(TargetFileName).mdb "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Plugins\" /eyir
+
+
 xcopy "$(SolutionDir)ContentConfigs\GameData" "C:\Users\rbray\Documents\ksp\ksp-$(PlatformName)-1-0-5\GameData" /e /y /i /r
 xcopy "$(SolutionDir)ContentEVE\GameData" "C:\Users\rbray\Documents\ksp\ksp-$(PlatformName)-1-0-5\GameData" /e /y /i /r
 

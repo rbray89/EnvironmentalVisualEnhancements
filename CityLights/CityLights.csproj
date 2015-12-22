@@ -85,6 +85,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\_BuildManager\Properties\AssemblyVersionInfo.cs">
+      <Link>Properties\AssemblyVersionInfo.cs</Link>
+    </Compile>
     <Compile Include="CityLightsManager.cs" />
     <Compile Include="CityLightsObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

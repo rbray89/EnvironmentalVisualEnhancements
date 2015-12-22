@@ -85,6 +85,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\_BuildManager\Properties\AssemblyVersionInfo.cs">
+      <Link>Properties\AssemblyVersionInfo.cs</Link>
+    </Compile>
     <Compile Include="FakeOceanPQS.cs" />
     <Compile Include="TerrainManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
