@@ -152,22 +152,7 @@ namespace Atmosphere
             bool visible = HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.MAINMENU;
             if (visible)
             {
-                if (!camerasInitialized)
-                {
-                    Camera[] cameras = Camera.allCameras;
-                    foreach (Camera cam in cameras)
-                    {
-                        if (cam.name == "Camera 01" || cam.name == "Camera 00")
-                        {
-                            cam.depthTextureMode = DepthTextureMode.Depth;
-                            camerasInitialized = true;
-                        }
-                    }
-                    if (ScaledCamera.Instance != null && ScaledCamera.Instance.camera != null)
-                    {
-                        ScaledCamera.Instance.camera.depthTextureMode = DepthTextureMode.Depth;
-                    }
-                }
+                
 
                 double ut;
                 if (HighLogic.LoadedScene == GameScenes.MAINMENU)
@@ -366,6 +351,26 @@ namespace Atmosphere
                     mainMenuLayer.Remove();
                 }
                 mainMenuLayer = null;
+            }
+
+            if(scene == GameScenes.SPACECENTER)
+            {
+                if (!camerasInitialized)
+                {
+                    Camera[] cameras = Camera.allCameras;
+                    foreach (Camera cam in cameras)
+                    {
+                        if (cam.name == "Camera 01" || cam.name == "Camera 00")
+                        {
+                            cam.depthTextureMode = DepthTextureMode.Depth;
+                            camerasInitialized = true;
+                        }
+                    }
+                    if (ScaledCamera.Instance != null && ScaledCamera.Instance.camera != null)
+                    {
+                        ScaledCamera.Instance.camera.depthTextureMode = DepthTextureMode.Depth;
+                    }
+                }
             }
 
         }
