@@ -90,7 +90,6 @@ namespace TextureConfig
             if (GameDatabase.Instance.ExistsTexture(name))
             {
                 GameDatabase.TextureInfo info = GameDatabase.Instance.GetTextureInfo(name);
-
                 TextureFormat texFormat;
 
                 if (format == TextureFormatSimplified.Default)

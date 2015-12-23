@@ -8,11 +8,10 @@ using Utils;
 
 namespace PQSManager
 {
-    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
     public class PQSManagerClass : GenericEVEManager<PQSWrapper>
     {
-        protected override ObjectType objectType { get { return ObjectType.BODY|ObjectType.STATIC; } }
-        protected override String configName { get { return "PQS_MANAGER"; } }
+        public override ObjectType objectType { get { return ObjectType.BODY|ObjectType.STATIC; } }
+        public override String configName { get { return "PQS_MANAGER"; } }
 
         protected override void ApplyConfigNode(ConfigNode node)
         {
@@ -43,7 +42,7 @@ namespace PQSManager
 
         static public PQS GetPQS(String body)
         {
-            StaticSetup(new PQSManagerClass());
+            StaticSetup();
             return ObjectList.Find(pqs => pqs.Body == body);
         }
     }

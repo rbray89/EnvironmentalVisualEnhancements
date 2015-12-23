@@ -11,29 +11,19 @@ using ShaderLoader;
 
 namespace CelestialShadows
 {
-       
-    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
+    
     public class ShadowManager : GenericEVEManager<ShadowObject>
     {
-        protected override ObjectType objectType { get { return ObjectType.BODY; } }
-        protected override String configName { get { return "EVE_SHADOWS"; } }
+        public override ObjectType objectType { get { return ObjectType.BODY; } }
+        public override String configName { get { return "EVE_SHADOWS"; } }
         protected static ShadowProjector shadowProjector = null;
 
         public override void Setup()
         {
-            if ((ObjectType.STATIC & objectType) != ObjectType.STATIC)
+            base.Setup();
+            if( configs.Length > 0 && shadowProjector == null)
             {
-                Managers.RemoveAll(item => item == null || item.GetType() == this.GetType());
-                Managers.Add(this);
-                LoadConfig();
-                if( configs.Length > 0 && shadowProjector == null)
-                {
-                    shadowProjector = new ShadowProjector();
-                }
-            }
-            else
-            {
-                StaticSetup(this);
+                shadowProjector = new ShadowProjector();
             }
         }
        /* 

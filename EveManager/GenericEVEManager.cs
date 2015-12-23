@@ -9,42 +9,31 @@ using Utils;
 
 namespace EVEManager
 {
+
     
-    public class GenericEVEManager<T> : EVEManagerClass where T : IEVEObject, new()
+    public abstract class GenericEVEManager<T> : EVEManagerBase where T : IEVEObject, new()
     {
-        [Flags] protected enum ObjectType
-        {
-            NONE = 0,
-            BODY = 1,
-            GLOBAL = 2,
-            MULTIPLE = 4,
-            STATIC = 8
-        }
-        protected virtual ObjectType objectType { get { return ObjectType.NONE; } }
-        protected virtual String configName { get { return ""; } }
-        protected virtual GameScenes SceneLoad { get { return GameScenes.MAINMENU; } }
-        protected virtual bool DelayedLoad { get { return true; } }
+
+        public override bool DelayedLoad { get { return true; } }
+        public override GameScenes SceneLoad { get { return GameScenes.MAINMENU; } }
+        public override int LoadOrder { get { return 100; } }
+        
+        public override String ToString() { return this.GetType().Name; }
 
         protected static List<T> ObjectList = new List<T>();
         protected static UrlDir.UrlConfig[] configs;
+        protected override UrlDir.UrlConfig[] Configs { get { return configs; } set { configs = value; } }
+        protected static List<ConfigWrapper> configFiles = new List<ConfigWrapper>();
+        protected override List<ConfigWrapper> ConfigFiles { get { return configFiles; } }
+        protected static GenericEVEManager<T> instance;
+        protected static GenericEVEManager<T> Instance { get { return instance; } }
 
         protected static bool spaceCenterReload = false;
         protected static bool hasLoaded = false;
-        protected virtual bool sceneConfigLoad { get {
-            bool load = !hasLoaded && HighLogic.LoadedScene == SceneLoad;
-            if (spaceCenterReload && HighLogic.LoadedScene == GameScenes.SPACECENTER)
-            {
-                spaceCenterReload = false;
-                load = true;
-            }
-            if (load)
-            {
-                hasLoaded = true;
-            }
-            return load; } }
+        
         protected ConfigNode ManagerConfigNode { get { return configNode; } }
         protected ConfigNode configNode;
-        private static List<ConfigWrapper> ConfigFiles = new List<ConfigWrapper>();
+
         private static int selectedConfigIndex = 0;
 
 
@@ -56,31 +45,19 @@ namespace EVEManager
         public virtual void GenerateGUI(){}
         private static bool staticInitialized = false;
 
-        internal void Awake()
+        public GenericEVEManager()
         {
-            KSPLog.print(configName + " " + SceneLoad);
-            Managers.RemoveAll(item => item == null || item.GetType() == this.GetType());
-            Managers.Add(this);
-            if (sceneConfigLoad)
+            if (instance == null)
             {
-                if (DelayedLoad)
-                {
-                    StartCoroutine(SetupDelay());
-                }
-                else
-                {
-                    Setup();
-                }
+                instance = this;
+            }
+            else
+            {
+                throw new UnityException("Attempted double instance!");
             }
         }
 
-        IEnumerator SetupDelay()
-        {
-            yield return new WaitForFixedUpdate();
-            Setup();
-        }
-
-        public virtual void Setup()
+        public override void Setup()
         {
             
             if ((ObjectType.STATIC & objectType) != ObjectType.STATIC)
@@ -89,11 +66,11 @@ namespace EVEManager
             }
             else
             {
-                StaticSetup(this);
+                StaticSetup();
             }
         }
 
-        public static void StaticSetup(GenericEVEManager<T> instance)
+        protected static void StaticSetup()
         {
             if (staticInitialized == false)
             {
@@ -101,40 +78,9 @@ namespace EVEManager
                 staticInitialized = true;
             }
         }
+        
 
-        protected virtual void SingleSetup()
-        {
-
-        }
-
-        public virtual void LoadConfig()
-        {
-            
-            Log("Loading...");
-            configs = GameDatabase.Instance.GetConfigs(configName);
-            ConfigFiles.Clear();
-            foreach (UrlDir.UrlConfig config in configs)
-            {
-                ConfigFiles.Add(new ConfigWrapper(config));
-            }
-            Apply();
-            
-        }
-
-        public virtual void Apply()
-        {
-            Clean();
-            SingleSetup();
-            foreach (UrlDir.UrlConfig config in configs)
-            {
-                foreach (ConfigNode node in config.config.nodes)
-                {
-                    ApplyConfigNode(node);
-                }
-            }
-        }
-
-        protected virtual void ApplyConfigNode(ConfigNode node)
+        protected override void ApplyConfigNode(ConfigNode node)
         {
             T newObject = new T();
             newObject.LoadConfigNode(node);
@@ -142,7 +88,7 @@ namespace EVEManager
             newObject.Apply();
         }
 
-        protected virtual void Clean()
+        protected override void Clean()
         {
             foreach (T obj in ObjectList)
             {
@@ -150,17 +96,7 @@ namespace EVEManager
             }
             ObjectList.Clear();
         }
-
-        public void SaveConfig()
-        {
-            Log("Saving...");
-            foreach (UrlDir.UrlConfig config in configs)
-            {
-                config.parent.SaveConfigs();
-            }
-        }
-
-       
+              
         private void HandleConfigGUI(ConfigNode objNode, Rect placementBase, ref Rect placement)
         {
 
@@ -252,14 +188,14 @@ namespace EVEManager
             {
                 selectedConfig = GUIHelper.DrawSelector<ConfigWrapper>(ConfigFiles, ref selectedConfigIndex, 16, placementBase, ref placement);
                 DrawConfigManagement(placementBase, ref placement);
-                if ((objectType & ObjectType.BODY) == ObjectType.BODY)
-                {
-                    body = GUIHelper.DrawBodySelector(placementBase, ref placement);
-                }
             }
             
             if (selectedConfig != null)
             {
+                if ((objectType & ObjectType.BODY) == ObjectType.BODY)
+                {
+                    body = GUIHelper.DrawBodySelector(placementBase, ref placement);
+                }
                 if ((objectType & ObjectType.MULTIPLE) == ObjectType.MULTIPLE)
                 {
                     if ((objectType & ObjectType.BODY) == ObjectType.BODY)
@@ -290,19 +226,9 @@ namespace EVEManager
             
         }
 
-        
-
-        protected void OnGUI()
+        public static void Log(String message)
         {
-        }
-
-        protected void Update()
-        {
-        }
-
-        public new static void Log(String message)
-        {
-            UnityEngine.Debug.Log(typeof(T).Name + ": " + message);
+            Instance.ILog(message);
         }
     }
 

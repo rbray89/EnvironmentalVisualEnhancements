@@ -10,13 +10,10 @@ using System.Reflection;
 
 namespace PartFX
 {
-    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class IVAWindowManager : GenericEVEManager<IVAWindowObject>
     {
-        protected override ObjectType objectType { get { return ObjectType.STATIC | ObjectType.MULTIPLE; } }
-        protected override String configName { get { return "IVA_WINDOW_CONFIG"; } }
-        protected override bool DelayedLoad { get { return false; } }
-        protected override GameScenes SceneLoad { get { return GameScenes.MAINMENU; } }
+        public override ObjectType objectType { get { return ObjectType.STATIC | ObjectType.MULTIPLE; } }
+        public override String configName { get { return "IVA_WINDOW_CONFIG"; } }
         
     }
 

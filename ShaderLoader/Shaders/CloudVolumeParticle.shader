@@ -42,6 +42,7 @@
 				#define MAG_ONE 1.4142135623730950488016887242097
 				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile_fwdbase
+				#pragma multi_compile SOFT_DEPTH_OFF SOFT_DEPTH_ON
 				#pragma multi_compile MainTex CUBE_MainTex CUBE_RGB2_MainTex
 				#pragma multi_compile ALPHAMAP_NONE_MainTex ALPHAMAP_R_MainTex ALPHAMAP_G_MainTex ALPHAMAP_B_MainTex ALPHAMAP_A_MainTex
 
@@ -191,8 +192,10 @@
 					color *= Terminator( normalize(_WorldSpaceLightPos0), worldNormal);
 					o.color.rgb = color.rgb;
 
+#ifdef SOFT_DEPTH_ON
 					o.projPos = ComputeScreenPos (o.pos);
 					COMPUTE_EYEDEPTH(o.projPos.z);
+#endif
 
 					return o;
 				}
@@ -217,11 +220,14 @@
 					color.rgb = prev.rgb;
 					color.a = prev.a;
 
+
+#ifdef SOFT_DEPTH_ON
 					float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.projPos)));
 					depth = LinearEyeDepth (depth);
 					float partZ = IN.projPos.z;
 					float fade = saturate (_InvFade * (depth-partZ));
 					color.a *= fade;
+#endif
 
 					return color;
 				}

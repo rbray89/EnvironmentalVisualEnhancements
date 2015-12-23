@@ -1,5 +1,4 @@
-﻿
-using EVEManager;
+﻿using EVEManager;
 using ShaderLoader;
 using System;
 using System.Collections.Generic;
@@ -77,8 +76,8 @@ namespace CityLights
                 }
             }
             ApplyToMainMenu();
-            onSceneChange = new SceneChangeEvent(SceneLoaded);
-            EVEManagerClass.OnSceneChange += onSceneChange;
+
+            GameEvents.onGameSceneLoadRequested.Add(SceneLoaded);
             if (HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
                 ApplyToMainMenu();
@@ -151,7 +150,8 @@ namespace CityLights
                 }
             }
             materialPQS.Remove();
-            EVEManagerClass.OnSceneChange -= onSceneChange;
+
+            GameEvents.onGameSceneLoadRequested.Add(SceneLoaded);
             GameObject.DestroyImmediate(materialPQS);
         }
     }

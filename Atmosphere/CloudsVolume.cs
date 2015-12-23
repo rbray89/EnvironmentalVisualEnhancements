@@ -80,6 +80,8 @@ namespace Atmosphere
             ParticleMaterial = new Material(ParticleCloudShader);
             particleMaterial.ApplyMaterialProperties(ParticleMaterial);
             material.ApplyMaterialProperties(ParticleMaterial);
+            ParticleMaterial.EnableKeyword("SOFT_DEPTH_ON");
+
             volumeHolder = new GameObject();
             volumeHolder.transform.parent = parent;
             volumeHolder.transform.localPosition = Vector3.zero;

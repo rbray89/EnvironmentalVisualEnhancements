@@ -11,14 +11,12 @@ using ShaderLoader;
 
 namespace Terrain
 {
-       
-    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class TerrainManager : GenericEVEManager<TerrainObject>
     {
-        protected override ObjectType objectType { get { return ObjectType.BODY; } }
-        protected override String configName { get { return "EVE_TERRAIN"; } }
+        public override ObjectType objectType { get { return ObjectType.BODY; } }
+        public override String configName { get { return "EVE_TERRAIN"; } }
 
-        private bool camerasInitialized = false;
+        //private bool camerasInitialized = false;
         private static Shader oceanShader = null;
         private static Shader planetShader = null;
         private static Shader terrainShader = null;
@@ -65,28 +63,7 @@ namespace Terrain
                 } return oceanBackingShader;
             }
         }
-
-        protected new void Update()
-        {
-            
-            if(!camerasInitialized)
-            {
-                Camera[] cameras = Camera.allCameras;
-                foreach (Camera cam in cameras)
-                {
-                    if (cam.name == "Camera 01" || cam.name == "Camera 00")
-                    {
-                        cam.depthTextureMode = DepthTextureMode.Depth;
-                        camerasInitialized = true;
-                    }
-                }
-                if (ScaledCamera.Instance != null && ScaledCamera.Instance.camera != null)
-                {
-                    ScaledCamera.Instance.camera.depthTextureMode = DepthTextureMode.Depth;
-                }
-            }
-                       
-        }
+        
 
     }
 }

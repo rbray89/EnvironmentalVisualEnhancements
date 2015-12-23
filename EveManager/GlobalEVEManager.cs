@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,18 +13,17 @@ namespace EVEManager
     public delegate void SceneChangeEvent(GameScenes scene);
 
     [KSPAddon(KSPAddon.Startup.EveryScene, false)]
-    public class EVEManagerClass : MonoBehaviour
+    public class GlobalEVEManager : MonoBehaviour
     {
-        public static SceneChangeEvent OnSceneChange;
+        private static List<EVEManagerBase> Managers = null;
 
-        protected virtual bool guiLoad { get { return HighLogic.LoadedScene == GameScenes.MAINMENU || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.TRACKSTATION; } }
+        protected bool guiLoad { get { return HighLogic.LoadedScene == GameScenes.MAINMENU || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.TRACKSTATION; } }
+
         private static bool useEditor = false;
-        public static List<EVEManagerClass> Managers = new List<EVEManagerClass>();
-
-
-        public override String ToString() { return this.GetType().Name; }
+        
 
         private Texture2D ToolTipBackground;
+
         private void Awake()
         {
             useEditor = false;
@@ -35,9 +35,29 @@ namespace EVEManager
             }
             ToolTipBackground.SetPixels(colors.ToArray());
 
-            if (OnSceneChange != null)
+            if(HighLogic.LoadedScene == GameScenes.LOADING && Managers == null)
             {
-                OnSceneChange(HighLogic.LoadedScene);
+                Managers = EVEManagerBase.GetManagers();
+            }
+            
+
+            Setup(false);
+            StartCoroutine(SetupDelay());
+        }
+
+
+        IEnumerator SetupDelay()
+        {
+            yield return new WaitForFixedUpdate();
+            Setup(true);
+        }
+
+        private void Setup(bool late)
+        {
+            List<EVEManagerBase> managers = Managers.Where(m => m.SceneLoad == HighLogic.LoadedScene && m.DelayedLoad == late).OrderBy(m => m.LoadOrder).ToList();
+            foreach(EVEManagerBase manager in managers)
+            {
+                manager.Setup();
             }
         }
 
@@ -74,14 +94,14 @@ namespace EVEManager
         private void DrawMainWindow(int windowID)
         {
             CelestialBody[] celestialBodies = FlightGlobals.Bodies.ToArray();
-            EVEManagerClass currentManager;
+            EVEManagerBase currentManager;
 
             Rect placement = new Rect(0, 0, 0, 1);
             float width = _mainWindowRect.width - 10;
             float height = _mainWindowRect.height - 10;
             Rect placementBase = new Rect(10, 25, width, height);
 
-            currentManager = GUIHelper.DrawSelector<EVEManagerClass>(Managers, ref selectedManagerIndex, 4, placementBase, ref placement);
+            currentManager = GUIHelper.DrawSelector<EVEManagerBase>(Managers, ref selectedManagerIndex, 4, placementBase, ref placement);
 
             if (currentManager != null)
             {
@@ -104,10 +124,7 @@ namespace EVEManager
             }
             GUI.DragWindow(new Rect(0, 0, 10000, 20));
         }
-
-        public virtual void DrawGUI(Rect val, Rect val2)
-        {
-        }
+        
 
         public static void Log(String message)
         {

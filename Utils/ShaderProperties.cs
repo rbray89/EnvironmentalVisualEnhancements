@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Utils
 {
 
-    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
+    [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     public class ShaderProperties : MonoBehaviour
     {
 

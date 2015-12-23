@@ -88,8 +88,9 @@
     <Compile Include="..\_BuildManager\Properties\AssemblyVersionInfo.cs">
       <Link>Properties\AssemblyVersionInfo.cs</Link>
     </Compile>
-    <Compile Include="EVEManager.cs" />
+    <Compile Include="GlobalEVEManager.cs" />
     <Compile Include="GenericEVEManager.cs" />
+    <Compile Include="IEVEManager.cs" />
     <Compile Include="IEVEObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -12,6 +12,8 @@ namespace Atmosphere
 {
     public class CloudsPQS : PQSMod
     {
+        static bool camerasInitialized = false;
+
         private String body;
         private float altitude;
         CloudsVolume layerVolume = null;
@@ -24,8 +26,7 @@ namespace Atmosphere
         Clouds2D mainMenuLayer = null;
         Camera mainMenuCamera = null;
 
-        Callback onExitMapView;
-        SceneChangeEvent onSceneChange;
+
         private bool volumeApplied = false;
         private double radius;
 
@@ -90,7 +91,7 @@ namespace Atmosphere
             }
         }
 
-        protected void OnExitMapView()
+        protected void ExitMapView()
         {
             StartCoroutine(CheckForDisable());
         }
@@ -151,6 +152,23 @@ namespace Atmosphere
             bool visible = HighLogic.LoadedScene == GameScenes.TRACKSTATION || HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER || HighLogic.LoadedScene == GameScenes.MAINMENU;
             if (visible)
             {
+                if (!camerasInitialized)
+                {
+                    Camera[] cameras = Camera.allCameras;
+                    foreach (Camera cam in cameras)
+                    {
+                        if (cam.name == "Camera 01" || cam.name == "Camera 00")
+                        {
+                            cam.depthTextureMode = DepthTextureMode.Depth;
+                            camerasInitialized = true;
+                        }
+                    }
+                    if (ScaledCamera.Instance != null && ScaledCamera.Instance.camera != null)
+                    {
+                        ScaledCamera.Instance.camera.depthTextureMode = DepthTextureMode.Depth;
+                    }
+                }
+
                 double ut;
                 if (HighLogic.LoadedScene == GameScenes.MAINMENU)
                 {
@@ -309,10 +327,9 @@ namespace Atmosphere
             {
                 CloudsManager.Log("PQS is null somehow!?");
             }
-            onExitMapView = new Callback(OnExitMapView);
-            MapView.OnExitMapView += onExitMapView;
-            onSceneChange = new SceneChangeEvent(SceneLoaded);
-            EVEManagerClass.OnSceneChange += onSceneChange;
+
+            GameEvents.OnMapExited.Add(ExitMapView);
+            GameEvents.onGameSceneLoadRequested.Add(SceneLoaded);
 
             if (HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
@@ -374,8 +391,8 @@ namespace Atmosphere
             this.sphere = null;
             this.enabled = false;
             this.transform.parent = null;
-            MapView.OnExitMapView -= onExitMapView;
-            EVEManagerClass.OnSceneChange -= onSceneChange;
+            GameEvents.OnMapExited.Remove(ExitMapView);
+            GameEvents.onGameSceneLoadRequested.Remove(SceneLoaded);
         }
     }
 }

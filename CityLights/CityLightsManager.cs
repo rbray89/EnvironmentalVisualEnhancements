@@ -11,11 +11,11 @@ using Terrain;
 
 namespace CityLights
 {
-    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
+
     public class CityLightsManager: GenericEVEManager<CityLightsObject>   
     {
-        protected override ObjectType objectType { get { return ObjectType.BODY; } }
-        protected override String configName { get { return "EVE_CITY_LIGHTS"; } }
+        public override ObjectType objectType { get { return ObjectType.BODY; } }
+        public override String configName { get { return "EVE_CITY_LIGHTS"; } }
         
 
         public CityLightsManager()
