@@ -117,6 +117,7 @@ namespace TextureUnloader
 
             public static void UnLoadFromRenderer(MeshRenderer renderer)
             {
+                TextureUnloaderManager.Log("UnLoadFromRenderer " + renderer.name);
                 foreach (Material material in renderer.materials)
                 {
                     UnLoadFromMaterial(material);
@@ -152,8 +153,9 @@ namespace TextureUnloader
                 }
                 else if(texture != null)
                 {
-                    TextureConverter.Minimize(texture);
-                    textureDictionary[texture.name] = new TexRefCnt(texture);
+                    TexRefCnt texRef = new TexRefCnt(texture);
+                    textureDictionary[texture.name] = texRef;
+                    TextureConverter.Minimize(texRef.texInfo);
                 }
             }
 
@@ -173,6 +175,11 @@ namespace TextureUnloader
         }
 
         public override void OnInactive()
+        {
+            Remove();
+        }
+
+        public void OnDestroy()
         {
             Remove();
         }

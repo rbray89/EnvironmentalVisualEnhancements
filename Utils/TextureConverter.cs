@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using UnityEngine;
 
@@ -548,29 +549,46 @@ namespace Utils
 
         public static void Reload(GameDatabase.TextureInfo texInfo)
         {
-            GetReadable(texInfo);
-            if(texInfo.isCompressed && texInfo.texture.format != TextureFormat.DXT1 && texInfo.texture.format != TextureFormat.DXT5)
-            {
-                texInfo.texture.Compress(true);
-            }
-            if(!texInfo.isReadable)
-            {
-                texInfo.texture.Apply(true, true);
-            }
-        }
-
-        public static void Minimize(Texture2D texture)
-        {
-            texture.LoadImage(placeholder);
-            //texture.Resize(32, 32, TextureFormat.RGBA32, true);
-            //texture.Apply(true, false);
+            GameDatabase.TextureInfo tmp = new GameDatabase.TextureInfo(texInfo.file, new Texture2D(2, 2), texInfo.isNormalMap, texInfo.isReadable, texInfo.isCompressed);
+            GetReadable(tmp);
+            Color32[] orig = tmp.texture.GetPixels32();
+            tmp.texture.Resize(tmp.texture.width, tmp.texture.height, TextureFormat.RGBA32, false);
+            tmp.texture.SetPixels32(orig);
+            texInfo.texture.LoadImage(tmp.texture.EncodeToPNG());
+            GameObject.DestroyImmediate(tmp.texture);
         }
 
         public static void Minimize(GameDatabase.TextureInfo texInfo)
         {
-            texInfo.texture.LoadImage(placeholder);
-            //texInfo.texture.Resize(32, 32, TextureFormat.RGBA32, true);
-            //texInfo.texture.Apply(true, false);
+            if (texInfo.texture.width != 32 || texInfo.texture.height != 32)
+            {
+                texInfo.texture.LoadImage(placeholder);
+                System.GC.Collect();
+                Debug.Log("Freeing " + texInfo.texture.name);
+                
+                string scaled = Directory.GetParent(Assembly.GetExecutingAssembly().Location)+ "/texCache/" + texInfo.file.url;
+
+                if (File.Exists(scaled))
+                {
+                    byte[] png = System.IO.File.ReadAllBytes(scaled);
+                    texInfo.texture.LoadImage(png);
+                }
+                else
+                {
+                    GameDatabase.TextureInfo tmp = new GameDatabase.TextureInfo(texInfo.file, new Texture2D(2, 2), texInfo.isNormalMap, texInfo.isReadable, texInfo.isCompressed);
+                    GetReadable(tmp);
+                    Color32[] resized = TextureConverter.ResizePixels(tmp.texture.GetPixels32(), tmp.texture.width, tmp.texture.height, 32, 32);
+                    tmp.texture.Resize(32, 32, TextureFormat.RGBA32, false);
+                    tmp.texture.SetPixels32(resized);
+                    byte[] png = tmp.texture.EncodeToPNG();
+                    Directory.GetParent(scaled).Create();
+                    System.IO.File.WriteAllBytes(scaled, png);
+
+                    Debug.Log("Caching @" + scaled);
+                    texInfo.texture.LoadImage(png);
+                    GameObject.DestroyImmediate(tmp.texture);
+                }
+            }
         }
     }
 }
