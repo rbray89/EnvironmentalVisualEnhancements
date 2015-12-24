@@ -14,7 +14,8 @@ namespace PartFX
     {
         public override ObjectType objectType { get { return ObjectType.STATIC | ObjectType.MULTIPLE; } }
         public override String configName { get { return "IVA_WINDOW_CONFIG"; } }
-        
+        public override int LoadOrder { get { return 20; } }
+
     }
 
     

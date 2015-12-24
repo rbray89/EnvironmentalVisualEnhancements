@@ -57,6 +57,7 @@ namespace TextureConfig
 
         public void Apply() 
         {
+
             if(isCubeMap)
             {
                 ReplaceIfNecessary(texXn, format, isNormalMap, mipmaps, true);

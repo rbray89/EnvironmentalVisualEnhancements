@@ -12,6 +12,7 @@ namespace PQSManager
     {
         public override ObjectType objectType { get { return ObjectType.BODY|ObjectType.STATIC; } }
         public override String configName { get { return "PQS_MANAGER"; } }
+        public override int LoadOrder { get { return 10; } }
 
         protected override void ApplyConfigNode(ConfigNode node)
         {

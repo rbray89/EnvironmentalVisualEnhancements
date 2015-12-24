@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Utils
 {
 
-    [KSPAddon(KSPAddon.Startup.MainMenu, true)]
+    [KSPAddon(KSPAddon.Startup.Instantly, true)]
     public class ShaderProperties : MonoBehaviour
     {
 
@@ -28,6 +28,18 @@ namespace Utils
         public static int WORLD_2_PLANET_PROPERTY { get { return _World2Planet; } }
         private static int _World2Planet;
 
+
+        public static int _MainTex_PROPERTY { get { return _MainTex; } }
+        private static int _MainTex;
+        public static int _BumpMap_PROPERTY { get { return _BumpMap; } }
+        private static int _BumpMap;
+        public static int _Emissive_PROPERTY { get { return _Emissive; } }
+        private static int _Emissive;
+        public static int _IVATex_PROPERTY { get { return _IVATex; } }
+        private static int _IVATex;
+
+ 
+
         private void Awake()
         {
             _Rotation = Shader.PropertyToID("_Rotation");
@@ -38,6 +50,11 @@ namespace Utils
             _SunDir = Shader.PropertyToID("_SunDir");
             _PlanetOrigin = Shader.PropertyToID("_PlanetOrigin");
             _World2Planet = Shader.PropertyToID("_World2Planet");
+
+            _MainTex = Shader.PropertyToID("_MainTex");
+            _BumpMap = Shader.PropertyToID("_BumpMap");
+            _Emissive = Shader.PropertyToID("_Emissive");
+            _IVATex = Shader.PropertyToID("_IVATex");
         }
     }
 }

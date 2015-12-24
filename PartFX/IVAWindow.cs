@@ -44,7 +44,7 @@ namespace PartFX
         {
             ConfigHelper.LoadObjectFromConfig(this, node);
             moduleNode = new ConfigNode("MODULE");
-            moduleNode.SetValue("name", "ModuleIVAWindow", true);
+            moduleNode.SetValue("name", typeof(ModuleIVAWindow).Name, true);
             node.CopyTo(moduleNode);
         }
 
@@ -64,7 +64,7 @@ namespace PartFX
                     {
                         IVAWindowManager.Log("Found: " + ap.partUrl);
                         Part part = ap.partPrefab;
-                        ModuleIVAWindow module = (ModuleIVAWindow)part.AddModule("ModuleIVAWindow");
+                        ModuleIVAWindow module = (ModuleIVAWindow)part.AddModule(typeof(ModuleIVAWindow).Name);
                         MethodInfo mI = typeof(PartModule).GetMethod("Awake", BindingFlags.NonPublic | BindingFlags.Instance);
                         mI.Invoke(module, null);
                         module.Load(moduleNode);
@@ -82,7 +82,7 @@ namespace PartFX
             {
                 if (part.partInfo.partUrl == partUrl)
                 {
-                    ModuleIVAWindow module = (ModuleIVAWindow)part.AddModule("ModuleIVAWindow");
+                    ModuleIVAWindow module = (ModuleIVAWindow)part.AddModule(typeof(ModuleIVAWindow).Name);
                     MethodInfo mI = typeof(PartModule).GetMethod("Awake", BindingFlags.NonPublic | BindingFlags.Instance);
                     mI.Invoke(module, null);
                     module.Load(moduleNode);

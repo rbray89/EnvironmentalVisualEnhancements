@@ -9,21 +9,22 @@ namespace Utils
 {
     public class TextureConverter
     {
+        private static byte[] placeholder = new byte[] {   0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52, 0x00,
+                                                    0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x02, 0x08, 0x02, 0x00, 0x00, 0x00, 0xFD, 0xD4, 0x9A, 0x73, 0x00,
+                                                    0x00, 0x00, 0x16, 0x49, 0x44, 0x41, 0x54, 0x08, 0xD7, 0x63, 0xFC, 0xFF, 0xFF, 0x3F, 0x03, 0x03, 0x03,
+                                                    0x13, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x00, 0x24, 0x06, 0x03, 0x01, 0xBD, 0x1E, 0xE3, 0xBA, 0x00,
+                                                    0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82 };
 
-        const int MAX_IMAGE_SIZE = 8096 * 8096 * 3;
-        static byte[] imageBuffer = null;
-
-        public static void InitImageBuffer()
+        private static bool texHasAlpha(byte[] colors)
         {
-            if (imageBuffer == null)
+            for (int i = 3; i < colors.Length; i += 4)
             {
-                imageBuffer = new byte[MAX_IMAGE_SIZE];
+                if (colors[i] < byte.MaxValue)
+                {
+                    return true;
+                }
             }
-        }
-
-        public static void DestroyImageBuffer()
-        {
-            imageBuffer = null;
+            return false;
         }
 
         private static Color32[] ResizePixels(Color32[] pixels, int width, int height, int newWidth, int newHeight)
@@ -156,7 +157,7 @@ namespace Utils
 
         public static void MBMToTexture(GameDatabase.TextureInfo texture, TextureFormat format, bool mipmaps)
         {
-            TextureConverter.InitImageBuffer();
+            
             FileStream mbmStream = new FileStream(texture.file.fullPath, FileMode.Open, FileAccess.Read);
             mbmStream.Position = 4;
 
@@ -194,10 +195,13 @@ namespace Utils
                 alpha = true;
             }
 
-            mbmStream.Read(imageBuffer, 0, MAX_IMAGE_SIZE);
+            byte[] imageBuffer = new byte[mbmStream.Length];
+            mbmStream.Read(imageBuffer, 0, imageBuffer.Length);
+
+           
             mbmStream.Close();
 
-            Texture2D tex = texture.texture;
+            
             
             Color32[] colors = new Color32[width * height];
             int n = 0;
@@ -223,58 +227,43 @@ namespace Utils
             }
 
 
-            tex.Resize((int)width, (int)height, format, mipmaps);
-            tex.SetPixels32(colors);
-            tex.Apply(mipmaps, false);
+            texture.texture = new Texture2D((int)width, (int)height, format, mipmaps);
+            texture.texture.SetPixels32(colors);
+            texture.texture.Apply(mipmaps, false);
         }
 
         public static void IMGToTexture(GameDatabase.TextureInfo texture, TextureFormat format, bool mipmaps)
         {
+            byte[] imageBuffer = System.IO.File.ReadAllBytes(texture.file.fullPath);
 
-            TextureConverter.InitImageBuffer();
-            FileStream imgStream = new FileStream(texture.file.fullPath, FileMode.Open, FileAccess.Read);
-            imgStream.Position = 0;
-            imgStream.Read(imageBuffer, 0, MAX_IMAGE_SIZE);
-            imgStream.Close();
-
-            Texture2D tex = texture.texture;
+            Texture2D tex = new Texture2D(2,2);
             bool convertToNormalFormat = texture.isNormalMap ? true : false;
             bool hasMipmaps = tex.mipmapCount == 1 ? false : true;
 
 
-            if (convertToNormalFormat || hasMipmaps != mipmaps || format != tex.format)
-            {
-                tex = new Texture2D(texture.texture.width, texture.texture.height);
-                tex.LoadImage(imageBuffer);
+            tex.LoadImage(imageBuffer);
 
-                Color32[] pixels = tex.GetPixels32();
-                if (convertToNormalFormat)
+            Color32[] colors = tex.GetPixels32();
+            if (convertToNormalFormat)
+            {
+                for (int i = 0; i < colors.Length; i++)
                 {
-                    for (int i = 0; i < pixels.Length; i++)
-                    {
-                        pixels[i].a = pixels[i].r;
-                        pixels[i].r = pixels[i].g;
-                        pixels[i].b = pixels[i].g;
-                    }
+                    colors[i].a = colors[i].r;
+                    colors[i].r = colors[i].g;
+                    colors[i].b = colors[i].g;
                 }
-                if (texture.texture.format != format || hasMipmaps != mipmaps)
-                {
-                    texture.texture.Resize(tex.width, tex.height, format, mipmaps);
-                }
-                texture.texture.SetPixels32(pixels);
-                texture.texture.Apply(mipmaps, false);
             }
+                
+            texture.texture = new Texture2D(tex.width, tex.height, format, mipmaps);
+            texture.texture.SetPixels32(colors);
+            texture.texture.Apply(mipmaps, false);
 
         }
 
         public static void TGAToTexture(GameDatabase.TextureInfo texture, TextureFormat format, bool mipmaps)
         {
 
-            TextureConverter.InitImageBuffer();
-            FileStream tgaStream = new FileStream(texture.file.fullPath, FileMode.Open, FileAccess.Read);
-            tgaStream.Position = 0;
-            tgaStream.Read(imageBuffer, 0, MAX_IMAGE_SIZE);
-            tgaStream.Close();
+            byte[] imageBuffer = System.IO.File.ReadAllBytes(texture.file.fullPath);
 
             byte imgType = imageBuffer[2];
             int width = imageBuffer[12] | (imageBuffer[13] << 8);
@@ -284,8 +273,7 @@ namespace Utils
             bool alpha = depth == 32 ? true : false;
             
             bool convertToNormalFormat = texture.isNormalMap ? true : false; 
-
-            Texture2D tex = texture.texture;
+            
 
             Color32[] colors = new Color32[width * height];
             int n = 18;
@@ -375,51 +363,214 @@ namespace Utils
             {
                 KSPLog.print("TGA format is not supported!");
             }
-            
-            tex.Resize((int)width, (int)height, format, mipmaps);
-            tex.SetPixels32(colors);
-            tex.Apply(mipmaps, false);
+
+            texture.texture = new Texture2D(width, height, format, mipmaps);
+            texture.texture.SetPixels32(colors);
+            texture.texture.Apply(mipmaps, false);
         }
 
-        public static bool GetReadable(GameDatabase.TextureInfo texture, TextureFormat format, bool mipmaps)
+        public static void DDSToTexture(GameDatabase.TextureInfo texture, TextureFormat format, bool mipmaps)
+        {
+            /**
+             * Kopernicus Planetary System Modifier
+             * ====================================
+             * Created by: BryceSchroeder and Teknoman117 (aka. Nathaniel R. Lewis)
+             * Maintained by: Thomas P., NathanKell and KillAshley
+             * Additional Content by: Gravitasi, aftokino, KCreator, Padishar, Kragrathea, OvenProofMars, zengei, MrHappyFace
+             * ------------------------------------------------------------- 
+             * This library is free software; you can redistribute it and/or
+             * modify it under the terms of the GNU Lesser General Public
+             * License as published by the Free Software Foundation; either
+             * version 3 of the License, or (at your option) any later version.
+             *
+             * This library is distributed in the hope that it will be useful,
+             * but WITHOUT ANY WARRANTY; without even the implied warranty of
+             * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+             * Lesser General Public License for more details.
+             *
+             * You should have received a copy of the GNU Lesser General Public
+             * License along with this library; if not, write to the Free Software
+             * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+             * MA 02110-1301  USA
+             * 
+             * This library is intended to be used as a plugin for Kerbal Space Program
+             * which is copyright 2011-2015 Squad. Your usage of Kerbal Space Program
+             * itself is governed by the terms of its EULA, not the license above.
+             * 
+             * https://kerbalspaceprogram.com
+             */
+            // Borrowed from stock KSP 1.0 DDS loader (hi Mike!)
+            // Also borrowed the extra bits from Sarbian.
+            byte[] buffer = System.IO.File.ReadAllBytes(texture.file.fullPath);
+            System.IO.BinaryReader binaryReader = new System.IO.BinaryReader(new System.IO.MemoryStream(buffer));
+            uint num = binaryReader.ReadUInt32();
+            if (num == DDSHeaders.DDSValues.uintMagic)
+            {
+
+                DDSHeaders.DDSHeader dDSHeader = new DDSHeaders.DDSHeader(binaryReader);
+
+                if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDX10)
+                {
+                    new DDSHeaders.DDSHeaderDX10(binaryReader);
+                }
+                bool alpha = (dDSHeader.dwFlags & 0x00000002) != 0;
+                bool fourcc = (dDSHeader.dwFlags & 0x00000004) != 0;
+                bool rgb = (dDSHeader.dwFlags & 0x00000040) != 0;
+                bool alphapixel = (dDSHeader.dwFlags & 0x00000001) != 0;
+                bool luminance = (dDSHeader.dwFlags & 0x00020000) != 0;
+                bool rgb888 = dDSHeader.ddspf.dwRBitMask == 0x000000ff && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x00ff0000;
+                //bool bgr888 = dDSHeader.ddspf.dwRBitMask == 0x00ff0000 && dDSHeader.ddspf.dwGBitMask == 0x0000ff00 && dDSHeader.ddspf.dwBBitMask == 0x000000ff;
+                bool rgb565 = dDSHeader.ddspf.dwRBitMask == 0x0000F800 && dDSHeader.ddspf.dwGBitMask == 0x000007E0 && dDSHeader.ddspf.dwBBitMask == 0x0000001F;
+                bool argb4444 = dDSHeader.ddspf.dwABitMask == 0x0000f000 && dDSHeader.ddspf.dwRBitMask == 0x00000f00 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x0000000f;
+                bool rbga4444 = dDSHeader.ddspf.dwABitMask == 0x0000000f && dDSHeader.ddspf.dwRBitMask == 0x0000f000 && dDSHeader.ddspf.dwGBitMask == 0x000000f0 && dDSHeader.ddspf.dwBBitMask == 0x00000f00;
+
+                bool mipmap = (dDSHeader.dwCaps & DDSHeaders.DDSPixelFormatCaps.MIPMAP) != (DDSHeaders.DDSPixelFormatCaps)0u;
+                bool isNormalMap = ((dDSHeader.ddspf.dwFlags & 524288u) != 0u || (dDSHeader.ddspf.dwFlags & 2147483648u) != 0u);
+                if (fourcc)
+                {
+                    if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT1)
+                    {
+                        texture.texture = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT1, mipmap);
+                        texture.texture.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                    }
+                    else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT3)
+                    {
+                        texture.texture = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, (TextureFormat)11, mipmap);
+                        texture.texture.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                    }
+                    else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT5)
+                    {
+                        texture.texture = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT5, mipmap);
+                        texture.texture.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                    }
+                    else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT2)
+                    {
+                        Debug.Log("DXT2 not supported");
+                    }
+                    else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT4)
+                    {
+                        Debug.Log("DXT4 not supported: ");
+                    }
+                    else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDX10)
+                    {
+                        Debug.Log("DX10 dds not supported: ");
+                    }
+                    else
+                        fourcc = false;
+                }
+                if (!fourcc)
+                {
+                    TextureFormat textureFormat = TextureFormat.ARGB32;
+                    bool ok = true;
+                    if (rgb && (rgb888 /*|| bgr888*/))
+                    {
+                        // RGB or RGBA format
+                        textureFormat = alphapixel
+                        ? TextureFormat.RGBA32
+                        : TextureFormat.RGB24;
+                    }
+                    else if (rgb && rgb565)
+                    {
+                        // Nvidia texconv B5G6R5_UNORM
+                        textureFormat = TextureFormat.RGB565;
+                    }
+                    else if (rgb && alphapixel && argb4444)
+                    {
+                        // Nvidia texconv B4G4R4A4_UNORM
+                        textureFormat = TextureFormat.ARGB4444;
+                    }
+                    else if (rgb && alphapixel && rbga4444)
+                    {
+                        textureFormat = TextureFormat.RGBA4444;
+                    }
+                    else if (!rgb && alpha != luminance)
+                    {
+                        // A8 format or Luminance 8
+                        textureFormat = TextureFormat.Alpha8;
+                    }
+                    else
+                    {
+                        ok = false;
+                        Debug.Log("Only DXT1, DXT5, A8, RGB24, RGBA32, RGB565, ARGB4444 and RGBA4444 are supported");
+                    }
+                    if (ok)
+                    {
+                        texture.texture = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, textureFormat, mipmap);
+                        texture.texture.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                    }
+
+                }
+            }
+            else
+                Debug.Log("Bad DDS header.");
+        }
+
+        public static bool GetReadable(GameDatabase.TextureInfo texture, TextureFormat texFormat = 0, bool mipmaps = true)
         {
             KSPLog.print("Getting readable tex from " + texture.file.url +"."+ texture.file.fileExtension);
+
+            TextureFormat format = texFormat == 0 ? TextureFormat.RGBA32 : texFormat;
+
             if (texture.file.fileExtension == "png" ||
             texture.file.fileExtension == "truecolor")
             {
                 IMGToTexture(texture, format, mipmaps);
+                texture.texture.name = texture.name;
                 return true;
             }
             else if (texture.file.fileExtension == "jpg" ||
             texture.file.fileExtension == "jpeg")
             {
                 IMGToTexture(texture, format, mipmaps);
+                texture.texture.name = texture.name;
                 return true;
             }
             else if (texture.file.fileExtension == "tga")
             {
                 TGAToTexture(texture, format, mipmaps);
+                texture.texture.name = texture.name;
+                return true;
+            }
+            else if (texture.file.fileExtension == "dds")
+            {
+                DDSToTexture(texture, format, mipmaps);
+                texture.texture.name = texture.name;
                 return true;
             }
             else if (texture.file.fileExtension == "mbm")
             {
                 MBMToTexture(texture, format, mipmaps);
+                texture.texture.name = texture.name;
                 return true;
             }
             return false;
         }
 
-
-        private static bool texHasAlpha(byte[] colors)
+        public static void Reload(GameDatabase.TextureInfo texInfo)
         {
-            for (int i = 3; i < colors.Length; i+=4)
+            GetReadable(texInfo);
+            if(texInfo.isCompressed && texInfo.texture.format != TextureFormat.DXT1 && texInfo.texture.format != TextureFormat.DXT5)
             {
-                if (colors[i] < byte.MaxValue)
-                {
-                    return true;
-                }
+                texInfo.texture.Compress(true);
             }
-            return false;
+            if(!texInfo.isReadable)
+            {
+                texInfo.texture.Apply(true, true);
+            }
+        }
+
+        public static void Minimize(Texture2D texture)
+        {
+            texture.LoadImage(placeholder);
+            //texture.Resize(32, 32, TextureFormat.RGBA32, true);
+            //texture.Apply(true, false);
+        }
+
+        public static void Minimize(GameDatabase.TextureInfo texInfo)
+        {
+            texInfo.texture.LoadImage(placeholder);
+            //texInfo.texture.Resize(32, 32, TextureFormat.RGBA32, true);
+            //texInfo.texture.Apply(true, false);
         }
     }
 }
