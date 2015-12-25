@@ -220,6 +220,15 @@ namespace PartFX
             }
         }
         
+        public void OnDestroy()
+        {
+            IVAWindowManager.Log("OnDestroy Part: " + part.name);
+            if (part.internalModel != null)
+            {
+                part.internalModel.enabled = false;
+                part.internalModel.SetVisible(false);
+            }
+        }
 
         public void LoadConfigNode(ConfigNode node = null)
         {

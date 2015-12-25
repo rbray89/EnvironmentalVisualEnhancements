@@ -63,6 +63,7 @@ namespace PartFX
                     ivaCam.clearFlags = CameraClearFlags.SolidColor;
                     ivaCam.depthTextureMode = DepthTextureMode.None;
                     ivaCam.backgroundColor = Color.clear;
+                    ivaCam.transform.parent = null;
                     go.AddComponent<CameraMover>();
                 }
                 return ivaCam;

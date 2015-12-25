@@ -112,7 +112,7 @@ namespace TextureConfig
                 }
                 //Pretty ineficient to not check beforehand, but makes the logic much simpler by simply reloading the textures.
                 info.isNormalMap = isNormalMap;
-                TextureConverter.GetReadable(info, texFormat, mipmaps);
+                TextureConverter.Reload(info, false, default(Vector2), null, mipmaps);
                 info.isReadable = true;
                 info.isCompressed = false;
                 bool compress = (format == TextureFormatSimplified.DXT1 || format == TextureFormatSimplified.DXT5);

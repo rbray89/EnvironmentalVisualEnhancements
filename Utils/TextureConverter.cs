@@ -16,30 +16,25 @@ namespace Utils
                                                     0x13, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x00, 0x24, 0x06, 0x03, 0x01, 0xBD, 0x1E, 0xE3, 0xBA, 0x00,
                                                     0x00, 0x00, 0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82 };
 
-        private static bool texHasAlpha(byte[] colors)
-        {
-            for (int i = 3; i < colors.Length; i += 4)
-            {
-                if (colors[i] < byte.MaxValue)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         private static Color32[] ResizePixels(Color32[] pixels, int width, int height, int newWidth, int newHeight)
         {
-            Color32[] newPixels = new Color32[newWidth * newHeight];
-            int index = 0;
-            for (int h = 0; h < newHeight; h++)
+            if (width != newWidth || height != newHeight)
             {
-                for (int w = 0; w < newWidth; w++)
+                Color32[] newPixels = new Color32[newWidth * newHeight];
+                int index = 0;
+                for (int h = 0; h < newHeight; h++)
                 {
-                    newPixels[index++] = GetPixel(pixels, width, height, ((float)w) / newWidth, ((float)h) / newHeight, newWidth, newHeight);
+                    for (int w = 0; w < newWidth; w++)
+                    {
+                        newPixels[index++] = GetPixel(pixels, width, height, ((float)w) / newWidth, ((float)h) / newHeight, newWidth, newHeight);
+                    }
                 }
+                return newPixels;
             }
-            return newPixels;
+            else
+            {
+                return pixels;
+            }
         }
 
         public static void ConvertToUnityNormalMap(Color32[] colors)
@@ -156,7 +151,20 @@ namespace Utils
             return color;
         }
 
-        public static void MBMToTexture(GameDatabase.TextureInfo texture, TextureFormat format, bool mipmaps)
+
+        private static bool HasAlpha(Color32[] colors)
+        {
+            foreach(Color32 color in colors)
+            {
+                if(color.a<byte.MaxValue)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public static void MBMToTexture(GameDatabase.TextureInfo texture, bool inPlace, Vector2 size, string cache = null, bool mipmaps = false)
         {
             
             FileStream mbmStream = new FileStream(texture.file.fullPath, FileMode.Open, FileAccess.Read);
@@ -181,7 +189,7 @@ namespace Utils
             }
             else
             {
-                convertToNormalFormat = texture.isNormalMap ? true : false;
+                convertToNormalFormat = texture.isNormalMap;
             }
 
             mbmStream.Position = 16;
@@ -190,6 +198,7 @@ namespace Utils
 
             int imageSize = (int)(width * height * 3);
             bool alpha = false;
+            bool hasAlpha = false;
             if (mbmFormat == 32)
             {
                 imageSize += (int)(width * height);
@@ -214,6 +223,10 @@ namespace Utils
                 if (alpha)
                 {
                     colors[i].a = imageBuffer[n++];
+                    if(colors[i].a < Byte.MaxValue)
+                    {
+                        hasAlpha = true;
+                    }
                 }
                 else
                 {
@@ -227,23 +240,58 @@ namespace Utils
                 }
             }
 
-
-            texture.texture = new Texture2D((int)width, (int)height, format, mipmaps);
-            texture.texture.SetPixels32(colors);
-            texture.texture.Apply(mipmaps, false);
+            TextureFormat format = hasAlpha ? TextureFormat.RGBA32 : TextureFormat.RGB24;
+            Vector2 newSize = size == default(Vector2) ? new Vector2(width, height) : size;
+            if(inPlace)
+            {
+                //This is a small hack to re-load the texture, even when it isn't readable. Unfortnately,
+                //we can't control compression, mipmaps, or anything else really, as the texture is still
+                //marked as unreadable. This will update the size and pixel data however.
+                colors = ResizePixels(colors, (int)width, (int)height, (int)newSize.x, (int)newSize.y);
+                Texture2D tmpTex = new Texture2D((int)newSize.x, (int)newSize.y, TextureFormat.ARGB32, mipmaps);
+                tmpTex.SetPixels32(colors);
+                tmpTex.Apply(false);
+                byte[] file;
+                if (hasAlpha)
+                {
+                    file = tmpTex.EncodeToPNG();
+                }
+                else
+                {
+                    file = tmpTex.EncodeToPNG();//file = tmpTex.EncodeToJPG();
+                }
+                if (cache != null)
+                {
+                    Directory.GetParent(cache).Create();
+                    System.IO.File.WriteAllBytes(cache, file);
+                }
+                texture.texture.LoadImage(file);
+                GameObject.DestroyImmediate(tmpTex);
+            }
+            else
+            {
+                colors = ResizePixels(colors, (int)width, (int)height, (int)newSize.x, (int)newSize.y);
+                GameObject.DestroyImmediate(texture.texture);
+                texture.texture = new Texture2D((int)newSize.x, (int)newSize.y, format, mipmaps);
+                texture.texture.SetPixels32(colors);
+                if (texture.isCompressed)
+                {
+                    texture.texture.Compress(true);
+                }
+                texture.texture.Apply(mipmaps, !texture.isReadable);
+            }
         }
 
-        public static void IMGToTexture(GameDatabase.TextureInfo texture, TextureFormat format, bool mipmaps)
+        public static void IMGToTexture(GameDatabase.TextureInfo texture, bool inPlace, Vector2 size, string cache = null, bool mipmaps = false)
         {
             byte[] imageBuffer = System.IO.File.ReadAllBytes(texture.file.fullPath);
 
             Texture2D tex = new Texture2D(2,2);
-            bool convertToNormalFormat = texture.isNormalMap ? true : false;
+            bool convertToNormalFormat = texture.isNormalMap;
             bool hasMipmaps = tex.mipmapCount == 1 ? false : true;
-
-
+            
             tex.LoadImage(imageBuffer);
-
+            
             Color32[] colors = tex.GetPixels32();
             if (convertToNormalFormat)
             {
@@ -254,14 +302,54 @@ namespace Utils
                     colors[i].b = colors[i].g;
                 }
             }
-                
-            texture.texture = new Texture2D(tex.width, tex.height, format, mipmaps);
-            texture.texture.SetPixels32(colors);
-            texture.texture.Apply(mipmaps, false);
+
+            bool hasAlpha = HasAlpha(colors);
+
+            TextureFormat format = hasAlpha ? TextureFormat.RGBA32 : TextureFormat.RGB24;
+            Vector2 newSize = size == default(Vector2) ? new Vector2(tex.width, tex.height) : size;
+            if (inPlace)
+            {
+                //This is a small hack to re-load the texture, even when it isn't readable. Unfortnately,
+                //we can't control compression, mipmaps, or anything else really, as the texture is still
+                //marked as unreadable. This will update the size and pixel data however.
+                colors = ResizePixels(colors, tex.width, tex.height, (int)newSize.x, (int)newSize.y);
+                Texture2D tmpTex = new Texture2D((int)newSize.x, (int)newSize.y, TextureFormat.ARGB32, mipmaps);
+                tmpTex.SetPixels32(colors);
+                tmpTex.Apply(false);
+                //TODO: this could be optimized when not resizing to use the encoding above.
+                byte[] file;
+                if (hasAlpha)
+                {
+                    file = tmpTex.EncodeToPNG();
+                }
+                else
+                {
+                    file = tmpTex.EncodeToPNG();//file = tmpTex.EncodeToJPG();
+                }
+                if (cache != null)
+                {
+                    Directory.GetParent(cache).Create();
+                    System.IO.File.WriteAllBytes(cache, file);
+                }
+                texture.texture.LoadImage(file);
+                GameObject.DestroyImmediate(tmpTex);
+            }
+            else
+            {
+                colors = ResizePixels(colors, tex.width, tex.height, (int)newSize.x, (int)newSize.y);
+                GameObject.DestroyImmediate(texture.texture);
+                texture.texture = new Texture2D((int)newSize.x, (int)newSize.y, format, mipmaps);
+                texture.texture.SetPixels32(colors);
+                if (texture.isCompressed)
+                {
+                    texture.texture.Compress(true);
+                }
+                texture.texture.Apply(mipmaps, !texture.isReadable);
+            }
 
         }
-
-        public static void TGAToTexture(GameDatabase.TextureInfo texture, TextureFormat format, bool mipmaps)
+        
+        public static void TGAToTexture(GameDatabase.TextureInfo texture, bool inPlace, Vector2 size, string cache = null, bool mipmaps = false)
         {
 
             byte[] imageBuffer = System.IO.File.ReadAllBytes(texture.file.fullPath);
@@ -272,8 +360,8 @@ namespace Utils
 
             int depth = imageBuffer[16];
             bool alpha = depth == 32 ? true : false;
-            
-            bool convertToNormalFormat = texture.isNormalMap ? true : false; 
+            bool hasAlpha = false;
+            bool convertToNormalFormat = texture.isNormalMap; 
             
 
             Color32[] colors = new Color32[width * height];
@@ -288,6 +376,10 @@ namespace Utils
                     if (alpha)
                     {
                         colors[i].a = imageBuffer[n++];
+                        if(colors[i].a < byte.MaxValue)
+                        {
+                            hasAlpha = false;
+                        }
                     }
                     else
                     {
@@ -365,12 +457,49 @@ namespace Utils
                 KSPLog.print("TGA format is not supported!");
             }
 
-            texture.texture = new Texture2D(width, height, format, mipmaps);
-            texture.texture.SetPixels32(colors);
-            texture.texture.Apply(mipmaps, false);
+            TextureFormat format = hasAlpha ? TextureFormat.RGBA32 : TextureFormat.RGB24;
+            Vector2 newSize = size == default(Vector2) ? new Vector2(width, height) : size;
+            if (inPlace)
+            {
+                //This is a small hack to re-load the texture, even when it isn't readable. Unfortnately,
+                //we can't control compression, mipmaps, or anything else really, as the texture is still
+                //marked as unreadable. This will update the size and pixel data however.
+                colors = ResizePixels(colors, (int)width, (int)height, (int)newSize.x, (int)newSize.y);
+                Texture2D tmpTex = new Texture2D((int)newSize.x, (int)newSize.y, TextureFormat.ARGB32, mipmaps);
+                tmpTex.SetPixels32(colors);
+                tmpTex.Apply(false);
+                byte[] file;
+                if (hasAlpha)
+                {
+                    file = tmpTex.EncodeToPNG();
+                }
+                else
+                {
+                    file = tmpTex.EncodeToPNG();//file = tmpTex.EncodeToJPG();
+                }
+                if (cache != null)
+                {
+                    Directory.GetParent(cache).Create();
+                    System.IO.File.WriteAllBytes(cache, file);
+                }
+                texture.texture.LoadImage(file);
+                GameObject.DestroyImmediate(tmpTex);
+            }
+            else
+            {
+                colors = ResizePixels(colors, (int)width, (int)height, (int)newSize.x, (int)newSize.y);
+                GameObject.DestroyImmediate(texture.texture);
+                texture.texture = new Texture2D((int)newSize.x, (int)newSize.y, format, mipmaps);
+                texture.texture.SetPixels32(colors);
+                if (texture.isCompressed)
+                {
+                    texture.texture.Compress(true);
+                }
+                texture.texture.Apply(mipmaps, !texture.isReadable);
+            }
         }
 
-        public static void DDSToTexture(GameDatabase.TextureInfo texture, TextureFormat format, bool mipmaps)
+        public static void DDSToTexture(GameDatabase.TextureInfo texture, bool inPlace, Vector2 size, string cache = null, bool mipmaps = false)
         {
             /**
              * Kopernicus Planetary System Modifier
@@ -427,22 +556,108 @@ namespace Utils
 
                 bool mipmap = (dDSHeader.dwCaps & DDSHeaders.DDSPixelFormatCaps.MIPMAP) != (DDSHeaders.DDSPixelFormatCaps)0u;
                 bool isNormalMap = ((dDSHeader.ddspf.dwFlags & 524288u) != 0u || (dDSHeader.ddspf.dwFlags & 2147483648u) != 0u);
+
+                Vector2 newSize = size == default(Vector2) ? new Vector2(dDSHeader.dwWidth, dDSHeader.dwHeight) : size;
                 if (fourcc)
                 {
                     if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT1)
                     {
-                        texture.texture = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT1, mipmap);
-                        texture.texture.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                        if (inPlace)
+                        {
+                            //This is a small hack to re-load the texture, even when it isn't readable. Unfortnately,
+                            //we can't control compression, mipmaps, or anything else really, as the texture is still
+                            //marked as unreadable. This will update the size and pixel data however.
+                            Texture2D tmpTex = new Texture2D((int)newSize.x, (int)newSize.y, TextureFormat.ARGB32, mipmap);
+                            Texture2D tmpTexSrc = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT1, mipmap);
+                            tmpTexSrc.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                            Color32[] colors = tmpTexSrc.GetPixels32();
+                            colors = ResizePixels(colors, tmpTexSrc.width, tmpTexSrc.height, (int)newSize.x, (int)newSize.y);
+                            tmpTex.SetPixels32(colors);
+                            tmpTex.Apply(false);
+                            //size using JPG to force DXT1
+
+                            byte[] file = tmpTex.EncodeToPNG();//tmpTex.EncodeToJPG();
+                            if (cache != null)
+                            {
+                                Directory.GetParent(cache).Create();
+                                System.IO.File.WriteAllBytes(cache, file);
+                            }
+                            texture.texture.LoadImage(file);
+
+                            GameObject.DestroyImmediate(tmpTex);
+                            GameDatabase.DestroyImmediate(tmpTexSrc);
+                        }
+                        else
+                        {
+                            GameObject.DestroyImmediate(texture.texture);
+                            texture.texture = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT1, mipmap);
+                            texture.texture.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                        }
                     }
                     else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT3)
                     {
-                        texture.texture = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, (TextureFormat)11, mipmap);
-                        texture.texture.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                        if (inPlace)
+                        {
+                            //This is a small hack to re-load the texture, even when it isn't readable. Unfortnately,
+                            //we can't control compression, mipmaps, or anything else really, as the texture is still
+                            //marked as unreadable. This will update the size and pixel data however.
+                            Texture2D tmpTex = new Texture2D((int)newSize.x, (int)newSize.y, TextureFormat.ARGB32, mipmap);
+                            Texture2D tmpTexSrc = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, (TextureFormat)11, mipmap);
+                            tmpTexSrc.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                            Color32[] colors = tmpTexSrc.GetPixels32();
+                            colors = ResizePixels(colors, tmpTexSrc.width, tmpTexSrc.height, (int)newSize.x, (int)newSize.y);
+                            tmpTex.SetPixels32(colors);
+                            tmpTex.Apply(false);
+                            //size using JPG to force DXT5
+                            byte[] file = tmpTex.EncodeToPNG();
+                            if (cache != null)
+                            {
+                                Directory.GetParent(cache).Create();
+                                System.IO.File.WriteAllBytes(cache, file);
+                            }
+                            texture.texture.LoadImage(file);
+
+                            GameObject.DestroyImmediate(tmpTex);
+                            GameDatabase.DestroyImmediate(tmpTexSrc);
+                        }
+                        else
+                        {
+                            GameObject.DestroyImmediate(texture.texture);
+                            texture.texture = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, (TextureFormat)11, mipmap);
+                            texture.texture.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                        }
                     }
                     else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT5)
                     {
-                        texture.texture = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT5, mipmap);
-                        texture.texture.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                        if (inPlace)
+                        {
+                            //This is a small hack to re-load the texture, even when it isn't readable. Unfortnately,
+                            //we can't control compression, mipmaps, or anything else really, as the texture is still
+                            //marked as unreadable. This will update the size and pixel data however.
+                            Texture2D tmpTex = new Texture2D((int)newSize.x, (int)newSize.y, TextureFormat.ARGB32, mipmap);
+                            Texture2D tmpTexSrc = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT5, mipmap);
+                            tmpTexSrc.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                            Color32[] colors = tmpTexSrc.GetPixels32();
+                            colors = ResizePixels(colors, tmpTexSrc.width, tmpTexSrc.height, (int)newSize.x, (int)newSize.y);
+                            tmpTex.SetPixels32(colors);
+                            tmpTex.Apply(false);
+                            //size using JPG to force DXT5 
+                            byte[] file = tmpTex.EncodeToPNG();
+                            if (cache != null)
+                            {
+                                Directory.GetParent(cache).Create();
+                                System.IO.File.WriteAllBytes(cache, file);
+                            }
+                            texture.texture.LoadImage(file);
+                            GameObject.DestroyImmediate(tmpTex);
+                            GameDatabase.DestroyImmediate(tmpTexSrc);
+                        }
+                        else
+                        {
+                            GameObject.DestroyImmediate(texture.texture);
+                            texture.texture = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, TextureFormat.DXT5, mipmap);
+                            texture.texture.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                        }
                     }
                     else if (dDSHeader.ddspf.dwFourCC == DDSHeaders.DDSValues.uintDXT2)
                     {
@@ -496,8 +711,42 @@ namespace Utils
                     }
                     if (ok)
                     {
-                        texture.texture = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, textureFormat, mipmap);
-                        texture.texture.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                        if (inPlace)
+                        {
+                            //This is a small hack to re-load the texture, even when it isn't readable. Unfortnately,
+                            //we can't control compression, mipmaps, or anything else really, as the texture is still
+                            //marked as unreadable. This will update the size and pixel data however.
+                            Texture2D tmpTex = new Texture2D((int)newSize.x, (int)newSize.y, TextureFormat.ARGB32, mipmap);
+                            Texture2D tmpTexSrc = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, textureFormat, mipmap);
+                            tmpTexSrc.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                            Color32[] colors = tmpTexSrc.GetPixels32();
+                            colors = ResizePixels(colors, tmpTexSrc.width, tmpTexSrc.height, (int)newSize.x, (int)newSize.y);
+                            tmpTex.SetPixels32(colors);
+                            tmpTex.Apply(false);
+                            //size using JPG to force alpha-less
+                            byte[] file;
+                            if (alphapixel)
+                            {
+                                file = tmpTex.EncodeToPNG();
+                            }
+                            else
+                            {
+                                file = tmpTex.EncodeToPNG();//file = tmpTex.EncodeToJPG();
+                            }
+                            if (cache != null)
+                            {
+                                Directory.GetParent(cache).Create();
+                                System.IO.File.WriteAllBytes(cache, file);
+                            }
+                            texture.texture.LoadImage(file);
+                            GameDatabase.DestroyImmediate(tmpTex);
+                            GameDatabase.DestroyImmediate(tmpTexSrc);
+                        }
+                        else
+                        {
+                            texture.texture = new Texture2D((int)dDSHeader.dwWidth, (int)dDSHeader.dwHeight, textureFormat, mipmap);
+                            texture.texture.LoadRawTextureData(binaryReader.ReadBytes((int)(binaryReader.BaseStream.Length - binaryReader.BaseStream.Position)));
+                        }
                     }
 
                 }
@@ -506,87 +755,65 @@ namespace Utils
                 Debug.Log("Bad DDS header.");
         }
 
-        public static bool GetReadable(GameDatabase.TextureInfo texture, TextureFormat texFormat = 0, bool mipmaps = true)
+        public static bool Reload(GameDatabase.TextureInfo texture, bool inPlace, Vector2 size = default(Vector2), string cache = null, bool mipmaps = true)
         {
             KSPLog.print("Getting readable tex from " + texture.file.url +"."+ texture.file.fileExtension);
-
-            TextureFormat format = texFormat == 0 ? TextureFormat.RGBA32 : texFormat;
-
-            if (texture.file.fileExtension == "png" ||
+            
+            if (texture.file.fileExtension == "jpg" ||
+            texture.file.fileExtension == "jpeg" ||
+            texture.file.fileExtension == "png" ||
             texture.file.fileExtension == "truecolor")
             {
-                IMGToTexture(texture, format, mipmaps);
-                texture.texture.name = texture.name;
-                return true;
-            }
-            else if (texture.file.fileExtension == "jpg" ||
-            texture.file.fileExtension == "jpeg")
-            {
-                IMGToTexture(texture, format, mipmaps);
+                IMGToTexture(texture, inPlace, size, cache, mipmaps);
                 texture.texture.name = texture.name;
                 return true;
             }
             else if (texture.file.fileExtension == "tga")
             {
-                TGAToTexture(texture, format, mipmaps);
-                texture.texture.name = texture.name;
-                return true;
-            }
-            else if (texture.file.fileExtension == "dds")
-            {
-                DDSToTexture(texture, format, mipmaps);
+                TGAToTexture(texture, inPlace, size, cache, mipmaps);
                 texture.texture.name = texture.name;
                 return true;
             }
             else if (texture.file.fileExtension == "mbm")
             {
-                MBMToTexture(texture, format, mipmaps);
+                MBMToTexture(texture, inPlace, size, cache, mipmaps);
+                texture.texture.name = texture.name;
+                return true;
+            }
+            else if (texture.file.fileExtension == "dds")
+            {
+                DDSToTexture(texture, inPlace, size, cache, mipmaps);
                 texture.texture.name = texture.name;
                 return true;
             }
             return false;
         }
 
-        public static void Reload(GameDatabase.TextureInfo texInfo)
-        {
-            GameDatabase.TextureInfo tmp = new GameDatabase.TextureInfo(texInfo.file, new Texture2D(2, 2), texInfo.isNormalMap, texInfo.isReadable, texInfo.isCompressed);
-            GetReadable(tmp);
-            Color32[] orig = tmp.texture.GetPixels32();
-            tmp.texture.Resize(tmp.texture.width, tmp.texture.height, TextureFormat.RGBA32, false);
-            tmp.texture.SetPixels32(orig);
-            texInfo.texture.LoadImage(tmp.texture.EncodeToPNG());
-            GameObject.DestroyImmediate(tmp.texture);
-        }
-
         public static void Minimize(GameDatabase.TextureInfo texInfo)
         {
-            if (texInfo.texture.width != 32 || texInfo.texture.height != 32)
+            Vector2 scaleSize = new Vector2(32, 32);
+
+            if (texInfo.texture.width != scaleSize.x || texInfo.texture.height != scaleSize.y)
             {
                 texInfo.texture.LoadImage(placeholder);
                 System.GC.Collect();
-                Debug.Log("Freeing " + texInfo.texture.name);
+                KSPLog.print("Freeing " + texInfo.texture.name);
                 
-                string scaled = Directory.GetParent(Assembly.GetExecutingAssembly().Location)+ "/texCache/" + texInfo.file.url;
+                string scaled = Directory.GetParent(Assembly.GetExecutingAssembly().Location)+ "/scaledTexCache/" + texInfo.file.url;
 
                 if (File.Exists(scaled))
                 {
-                    byte[] png = System.IO.File.ReadAllBytes(scaled);
-                    texInfo.texture.LoadImage(png);
+                    KSPLog.print("Loaded From cache @" + scaled);
+                    byte[] cache = System.IO.File.ReadAllBytes(scaled);
+                    texInfo.texture.LoadImage(cache);
                 }
                 else
                 {
-                    GameDatabase.TextureInfo tmp = new GameDatabase.TextureInfo(texInfo.file, new Texture2D(2, 2), texInfo.isNormalMap, texInfo.isReadable, texInfo.isCompressed);
-                    GetReadable(tmp);
-                    Color32[] resized = TextureConverter.ResizePixels(tmp.texture.GetPixels32(), tmp.texture.width, tmp.texture.height, 32, 32);
-                    tmp.texture.Resize(32, 32, TextureFormat.RGBA32, false);
-                    tmp.texture.SetPixels32(resized);
-                    byte[] png = tmp.texture.EncodeToPNG();
-                    Directory.GetParent(scaled).Create();
-                    System.IO.File.WriteAllBytes(scaled, png);
 
-                    Debug.Log("Caching @" + scaled);
-                    texInfo.texture.LoadImage(png);
-                    GameObject.DestroyImmediate(tmp.texture);
+                    KSPLog.print("Caching @" + scaled);
+                    GameDatabase.TextureInfo tmp = new GameDatabase.TextureInfo(texInfo.file, null, texInfo.isNormalMap, true, false);
+                    Reload(texInfo, true, scaleSize, scaled);
+                    
                 }
             }
         }
