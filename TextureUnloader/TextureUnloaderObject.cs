@@ -64,10 +64,6 @@ namespace TextureUnloader
             {
                 LoadFromMaterial(material);
             }
-            foreach (Material material in renderer.sharedMaterials)
-            {
-                LoadFromMaterial(material);
-            }
         }
 
         public static void LoadFromMaterial(Material material)
@@ -151,7 +147,6 @@ namespace TextureUnloader
     public class TextureUnloaderPartModule : PartModule
     {
         
-
         bool removed = false;
          
         public override void OnStart(StartState state)
