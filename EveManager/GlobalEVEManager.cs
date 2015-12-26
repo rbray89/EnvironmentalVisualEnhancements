@@ -57,7 +57,14 @@ namespace EVEManager
             List<EVEManagerBase> managers = Managers.Where(m => m.SceneLoad == HighLogic.LoadedScene && m.DelayedLoad == late).OrderBy(m => m.LoadOrder).ToList();
             foreach(EVEManagerBase manager in managers)
             {
-                manager.Setup();
+                try
+                {
+                    manager.Setup();
+                }
+                catch(Exception e)
+                {
+                    Log("Issue loading " + manager.GetType().Name + "! Error:\n" + e.ToString());
+                }
             }
         }
 
