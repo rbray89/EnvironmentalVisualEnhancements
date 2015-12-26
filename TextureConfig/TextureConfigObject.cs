@@ -91,30 +91,14 @@ namespace TextureConfig
             if (GameDatabase.Instance.ExistsTexture(name))
             {
                 GameDatabase.TextureInfo info = GameDatabase.Instance.GetTextureInfo(name);
-                TextureFormat texFormat;
 
-                if (format == TextureFormatSimplified.Default)
-                {
-                    texFormat = info.texture.format;
-                }
-                else
-                {
-                    texFormat = (TextureFormat)format;
-                }
-
-                if (texFormat == TextureFormat.DXT1)
-                {
-                    texFormat = TextureFormat.RGB24;
-                }
-                else if (texFormat == TextureFormat.DXT5)
-                {
-                    texFormat = TextureFormat.RGBA32;
-                }
+                
                 //Pretty ineficient to not check beforehand, but makes the logic much simpler by simply reloading the textures.
                 info.isNormalMap = isNormalMap;
-                TextureConverter.Reload(info, false, default(Vector2), null, mipmaps);
                 info.isReadable = true;
                 info.isCompressed = false;
+                TextureConverter.Reload(info, false, default(Vector2), null, mipmaps);
+
                 bool compress = (format == TextureFormatSimplified.DXT1 || format == TextureFormatSimplified.DXT5);
 
                 if (compress)
