@@ -4,7 +4,7 @@ EnvironmentalVisualEnhancements
 Visual enhancements including clouds, lights, etc.
 
 
-Some portions of this project are under the GNU General Public License (Equirectangular2Cubic) 
+Some portions of this project are under the GNU General Public License (DDS texture loader) 
 and should be distributed as-such. This project was added to replace the functionality of the
 texture importer that would normally be able to perform this task upon loading the textures, but
 was unavailable to modders. 
