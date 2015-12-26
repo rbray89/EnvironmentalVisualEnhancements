@@ -55,7 +55,7 @@ namespace Utils
         Texture2D texNegative;
         Cubemap cubeTex;
 
-        public CubemapWrapper(string value, Texture2D[] textures, TextureTypeEnum cubeType, TextureFormat format, bool mipmaps, bool readable)
+        public CubemapWrapper(string value, Texture2D[] textures, TextureTypeEnum cubeType, bool mipmaps, bool readable)
         {
             this.name = value;
             type = cubeType == TextureTypeEnum.RGB2_CubeMap? TextureTypeEnum.RGB2_CubeMap : TextureTypeEnum.CubeMap;
@@ -70,7 +70,7 @@ namespace Utils
             }
             else
             {
-                cubeTex = new Cubemap(textures[0].width, format, mipmaps);
+                cubeTex = new Cubemap(textures[0].width, TextureFormat.RGBA32, mipmaps);
                 foreach (CubemapFace face in Enum.GetValues(typeof(CubemapFace)))
                 {
                     Texture2D tex = textures[(int)face];
@@ -81,9 +81,9 @@ namespace Utils
             }
         }
 
-        public static void GenerateCubemapWrapper(string value, Texture2D[] textures, TextureTypeEnum cubeType, TextureFormat format, bool mipmaps, bool readable)
+        public static void GenerateCubemapWrapper(string value, Texture2D[] textures, TextureTypeEnum cubeType, bool mipmaps, bool readable)
         {
-            CubemapList[value] = new CubemapWrapper(value, textures, cubeType, format, mipmaps, readable);
+            CubemapList[value] = new CubemapWrapper(value, textures, cubeType, mipmaps, readable);
         }
 
         internal void ApplyCubeMap(Material mat, string name)

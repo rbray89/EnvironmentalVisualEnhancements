@@ -12,20 +12,10 @@ namespace TextureConfig
     public class TextureConfigObject : IEVEObject 
     {
         
-        public enum TextureFormatSimplified
-        {
-            Default = -1,
-            RGBA32 = TextureFormat.RGBA32,
-            RGB24 = TextureFormat.RGB24,
-            DXT1 = TextureFormat.DXT1,
-            DXT5 = TextureFormat.DXT5
-        }
 
 #pragma warning disable 0649
         [ConfigItem, GUIHidden]
         String name;
-        [ConfigItem]
-        TextureFormatSimplified format = TextureFormatSimplified.Default;
         [ConfigItem]
         bool mipmaps = true;
         [ConfigItem]
@@ -33,6 +23,8 @@ namespace TextureConfig
         [ConfigItem]
         bool isReadable = false;
         [ConfigItem, Conditional("formatEval")]
+        bool isCompressed = false;
+        [ConfigItem]
         bool isCubeMap = false;
 
         [ConfigItem, Conditional("cubeMapEval")]
@@ -60,12 +52,12 @@ namespace TextureConfig
 
             if(isCubeMap)
             {
-                ReplaceIfNecessary(texXn, format, isNormalMap, mipmaps, true);
-                ReplaceIfNecessary(texYn, format, isNormalMap, mipmaps, true);
-                ReplaceIfNecessary(texZn, format, isNormalMap, mipmaps, true);
-                ReplaceIfNecessary(texXp, format, isNormalMap, mipmaps, true);
-                ReplaceIfNecessary(texYp, format, isNormalMap, mipmaps, true);
-                ReplaceIfNecessary(texZp, format, isNormalMap, mipmaps, true);
+                ReplaceIfNecessary(texXn, isNormalMap, mipmaps, true, false);
+                ReplaceIfNecessary(texYn, isNormalMap, mipmaps, true, false);
+                ReplaceIfNecessary(texZn, isNormalMap, mipmaps, true, false);
+                ReplaceIfNecessary(texXp, isNormalMap, mipmaps, true, false);
+                ReplaceIfNecessary(texYp, isNormalMap, mipmaps, true, false);
+                ReplaceIfNecessary(texZp, isNormalMap, mipmaps, true, false);
                 Texture2D[] textures = new Texture2D[6];
                 textures[(int)CubemapFace.NegativeX] = GameDatabase.Instance.GetTexture(texXn, isNormalMap);
                 textures[(int)CubemapFace.NegativeY] = GameDatabase.Instance.GetTexture(texYn, isNormalMap);
@@ -73,7 +65,7 @@ namespace TextureConfig
                 textures[(int)CubemapFace.PositiveX] = GameDatabase.Instance.GetTexture(texXp, isNormalMap);
                 textures[(int)CubemapFace.PositiveY] = GameDatabase.Instance.GetTexture(texYp, isNormalMap);
                 textures[(int)CubemapFace.PositiveZ] = GameDatabase.Instance.GetTexture(texZp, isNormalMap);
-                CubemapWrapper.GenerateCubemapWrapper(name, textures, TextureTypeEnum.CubeMap,(TextureFormat) format, mipmaps, isReadable);
+                CubemapWrapper.GenerateCubemapWrapper(name, textures, TextureTypeEnum.CubeMap, mipmaps, isReadable);
                 foreach(Texture2D tex in textures)
                 {
                     GameDatabase.Instance.RemoveTexture(tex.name);
@@ -82,11 +74,11 @@ namespace TextureConfig
             }
             else
             {
-                ReplaceIfNecessary(name, format, isNormalMap, mipmaps, isReadable);
+                ReplaceIfNecessary(name, isNormalMap, mipmaps, isReadable, isCompressed);
             }
         }
 
-        private static void ReplaceIfNecessary(string name, TextureFormatSimplified format, bool isNormalMap, bool mipmaps, bool isReadable)
+        private static void ReplaceIfNecessary(string name, bool isNormalMap, bool mipmaps, bool isReadable, bool isCompressed)
         {
             if (GameDatabase.Instance.ExistsTexture(name))
             {
@@ -98,20 +90,6 @@ namespace TextureConfig
                 info.isReadable = true;
                 info.isCompressed = false;
                 TextureConverter.Reload(info, false, default(Vector2), null, mipmaps);
-
-                bool compress = (format == TextureFormatSimplified.DXT1 || format == TextureFormatSimplified.DXT5);
-
-                if (compress)
-                {
-                    info.texture.Compress(true);
-                    info.isCompressed = true;
-                }
-                if ( !isReadable)
-                {
-                    //mipmaps were generated earlier in GetReadable if requested...
-                    info.texture.Apply(false, !isReadable);
-                    info.isReadable = false;
-                }
                 info.texture.name = name;
             }
         }
@@ -126,13 +104,6 @@ namespace TextureConfig
 
             return test.isCubeMap;
         }
-
-        public static bool formatEval(ConfigNode node)
-        {
-            TextureConfigObject test = new TextureConfigObject();
-            ConfigNode.LoadObjectFromConfig(test, node);
-
-            return test.format == TextureFormatSimplified.RGB24 || test.format == TextureFormatSimplified.RGBA32;
-        }
+        
     }
 }
