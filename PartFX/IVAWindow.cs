@@ -69,6 +69,7 @@ namespace PartFX
                         mI.Invoke(module, null);
                         module.Load(moduleNode);
                         module.LoadConfigNode(moduleNode);
+                        module.SetMaterial();
                         foreach (MeshRenderer mr in part.FindModelComponents<MeshRenderer>())
                         {
                             IVAWindowManager.Log("renderer: " + mr.name);
@@ -87,6 +88,7 @@ namespace PartFX
                     mI.Invoke(module, null);
                     module.Load(moduleNode);
                     module.OnStart(PartModule.StartState.None);
+                    module.SetMaterial();
                 }
             }
         }
@@ -153,7 +155,7 @@ namespace PartFX
                 IVAWindowManager.Log("Start Part: " + part.name);
                 IVAWindowManager.Log("State: " + state);
                 LoadConfigNode();
-                SetMaterial();
+               // SetMaterial();
             }
         }
 
@@ -182,24 +184,24 @@ namespace PartFX
         {
             IVAWindowManager.Log("--SetMaterial--");
             IVAWindowManager.Log(part.name);
-            foreach (MeshRenderer mr in part.FindModelComponents<MeshRenderer>())
+            foreach (Renderer mr in part.FindModelComponents<Renderer>())
             {
                 AddMaterial(mr);
             }
         }
 
-        private void AddMaterial(MeshRenderer mr)
+        private void AddMaterial(Renderer mr)
         {
             List<Material> materials = new List<Material>(mr.materials);
             if (renderers.BinarySearch(mr.name) >= 0 && !materials.Exists(mat => mat.name.Contains(materialName)))
             {
-
                 if (windowMaterial.Transparent)
                 {
                     mr.material.shader = ShaderLoaderClass.FindShader("KSP/Alpha/Cutoff Bumped");
                 }
-                KSPLog.print(mr.material.shader.name);
+                
                 IVAWindowManager.Log("Adding to: " + mr.name);
+                IVAWindowManager.Log("Shader: "+mr.material.shader.name);
                 Material windowMat = new Material(WindowShader);
                 windowMat.name = materialName;
                 windowMat.mainTexture = mr.material.mainTexture;

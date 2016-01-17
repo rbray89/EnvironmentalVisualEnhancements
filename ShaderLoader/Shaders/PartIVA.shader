@@ -4,15 +4,15 @@
 		_IVATex("Base (RGB) Gloss (A)", 2D) = "white" {}
 		_Clarity("Clarity", Float) = 1.1
 		_Shininess("Shininess", Float) = 0
-		_RearWindowColor("Sunlight direction", Vector) = (.1,.2,.75,0)
 	}
 
 		SubShader{
-			Tags{ "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+			Tags{ "Queue" = "Geometry+1" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 
 			ZWrite Off
 			Blend SrcAlpha OneMinusSrcAlpha
 			Offset 0, 0
+			Lighting Off
 		
 			Pass{
 			CGPROGRAM
