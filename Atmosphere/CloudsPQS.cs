@@ -353,23 +353,20 @@ namespace Atmosphere
                 mainMenuLayer = null;
             }
 
-            if(scene == GameScenes.SPACECENTER)
+            if(scene == GameScenes.SPACECENTER || scene == GameScenes.FLIGHT)
             {
-                if (!camerasInitialized)
+                Camera[] cameras = Camera.allCameras;
+                foreach (Camera cam in cameras)
                 {
-                    Camera[] cameras = Camera.allCameras;
-                    foreach (Camera cam in cameras)
+                    if (cam.name == "Camera 01" || cam.name == "Camera 00")
                     {
-                        if (cam.name == "Camera 01" || cam.name == "Camera 00")
-                        {
-                            cam.depthTextureMode = DepthTextureMode.Depth;
-                            camerasInitialized = true;
-                        }
+                        cam.depthTextureMode = DepthTextureMode.Depth;
+                        camerasInitialized = true;
                     }
-                    if (ScaledCamera.Instance != null && ScaledCamera.Instance.camera != null)
-                    {
-                        ScaledCamera.Instance.camera.depthTextureMode = DepthTextureMode.Depth;
-                    }
+                }
+                if (ScaledCamera.Instance != null && ScaledCamera.Instance.camera != null)
+                {
+                    ScaledCamera.Instance.camera.depthTextureMode = DepthTextureMode.Depth;
                 }
             }
 
