@@ -15,7 +15,7 @@ namespace Atmosphere
 #pragma warning disable 0414
         [ConfigItem, Tooltip("Color to be applied to clouds.")]
         Color _Color = 255*Color.white;
-        [ConfigItem, ValueFilter("isClamped|format|type|alphaMask"), Tooltip("Main texture used with clouds.")]
+        [ConfigItem, Index(1), ValueFilter("isClamped|format|type|alphaMask"), Tooltip("Main texture used with clouds.")]
         TextureWrapper _MainTex;
         [ConfigItem]
         TextureWrapper _DetailTex;

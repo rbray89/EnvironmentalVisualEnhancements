@@ -43,6 +43,15 @@ namespace Utils
     {
     }
 
+    public class Index : System.Attribute
+    {
+        public int value;
+        public Index(int i)
+        {
+            value = i;
+        }
+    }
+
     public class CubemapWrapper
     {
 
@@ -86,20 +95,20 @@ namespace Utils
             CubemapList[value] = new CubemapWrapper(value, textures, cubeType, mipmaps, readable);
         }
 
-        internal void ApplyCubeMap(Material mat, string name)
+        internal void ApplyCubeMap(Material mat, string name, int index)
         {
             if (type == TextureTypeEnum.RGB2_CubeMap)
             {
                 mat.SetTexture("cube" + name + "POS", texPositive);
                 mat.SetTexture("cube" + name + "NEG", texNegative);
-                mat.EnableKeyword("CUBE_RGB2" + name);
+                mat.EnableKeyword("MAP_TYPE_CUBE2_" + index.ToString());
                 KSPLog.print("Applying " + name + " Cubemap");
             }
             else
             {
                 KSPLog.print("Setting cube" + name);
                 mat.SetTexture("cube" + name, cubeTex);
-                mat.EnableKeyword("CUBE" + name);
+                mat.EnableKeyword("MAP_TYPE_CUBE_" + index.ToString());
             }
         }
 
@@ -149,9 +158,10 @@ namespace Utils
         [ConfigItem, Conditional("alphaMaskEval")]
         AlphaMaskEnum alphaMask = AlphaMaskEnum.ALPHAMAP_A;
 
-
+        int index = 0;
         public bool IsNormal { get { return isNormal; } set { isNormal = value; } }
         public bool IsClamped { get { return isClamped; } set { isClamped = value; } }
+        public int Index { get { return index; } set { index = value; } }
         public string Name { get { return value; } }
         public TextureTypeEnum Type { get { return type; } }
         public AlphaMaskEnum AlphaMask { get { return alphaMask; } }
@@ -169,7 +179,7 @@ namespace Utils
                 CubemapWrapper cubeMap = CubemapWrapper.fetchCubeMap(this);
                 if (cubeMap != null)
                 {
-                    cubeMap.ApplyCubeMap(mat, name);
+                    cubeMap.ApplyCubeMap(mat, name, index);
                 }
             }
             else
@@ -183,7 +193,7 @@ namespace Utils
             }
             if ((type & TextureTypeEnum.AlphaMapMask) > 0)
             {
-                mat.EnableKeyword(alphaMask + name);
+                mat.EnableKeyword(alphaMask+"_"+ index);
             }
         }
 

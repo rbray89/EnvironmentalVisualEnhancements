@@ -136,8 +136,10 @@ namespace Utils
                         {
                             bool isNormal = Attribute.IsDefined(field, typeof(BumpMap));
                             bool isClamped = Attribute.IsDefined(field, typeof(Clamped));
+                            int index = Attribute.IsDefined(field, typeof(Index)) ? ((Index) Attribute.GetCustomAttribute(field, typeof(Index))).value: 0;
                             texture.IsNormal = isNormal;
                             texture.IsClamped = isClamped;
+                            texture.Index = index;
                             cache.Add(name, texture);
                         }
                         else

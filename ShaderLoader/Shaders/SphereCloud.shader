@@ -34,6 +34,7 @@ Shader "EVE/Cloud" {
 
 				CGPROGRAM
 
+
 				#include "EVEUtils.cginc"
 				#pragma target 3.0
 				#pragma glsl
@@ -43,21 +44,14 @@ Shader "EVE/Cloud" {
 				#pragma multi_compile_fwdbase
 				#pragma multi_compile SOFT_DEPTH_OFF SOFT_DEPTH_ON
 				#pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
-				#pragma multi_compile MainTex CUBE_MainTex CUBE_RGB2_MainTex
-				#pragma multi_compile ALPHAMAP_NONE_MainTex ALPHAMAP_R_MainTex ALPHAMAP_G_MainTex ALPHAMAP_B_MainTex ALPHAMAP_A_MainTex
-
-#ifdef CUBE_MainTex
-				uniform samplerCUBE cube_MainTex;
-#elif defined (CUBE_RGB2_MainTex)
-				sampler2D cube_MainTexPOS;
-				sampler2D cube_MainTexNEG;
-#else
-				sampler2D _MainTex;
+				#pragma multi_compile MAP_TYPE_1 MAP_TYPE_CUBE_1 MAP_TYPE_CUBE2_1 MAP_TYPE_CUBE6_1
+#ifndef MAP_TYPE_CUBE2_1
+				#pragma multi_compile ALPHAMAP_N_1 ALPHAMAP_R_1 ALPHAMAP_G_1 ALPHAMAP_B_1 ALPHAMAP_A_1
 #endif
+				#include "alphaMap.cginc"
+				#include "cubeMap.cginc"
 
-#ifndef ALPHAMAP_NONE_MainTex
-		half4 ALPHAMAP_MainTex;
-#endif
+				CUBEMAP_DEF(_MainTex)
 
 				sampler2D _DetailTex;
 				fixed4 _Color;
@@ -121,25 +115,12 @@ Shader "EVE/Cloud" {
 				fixed4 frag(v2f IN) : COLOR
 				{
 					half4 color;
-#ifdef CUBE_MainTex
-					half4 main = GetSphereMapCube(cube_MainTex, IN.objMain);
-#elif defined (CUBE_RGB2_MainTex)
-					half4 main = GetSphereMapCube(cube_MainTexPOS, cube_MainTexNEG, IN.objMain);
-#else
-					half4 main = GetSphereMap(_MainTex, IN.objMain);
-#endif
+					half4 main;
 
-#ifdef ALPHAMAP_R_MainTex
-					main = half4(1, 1, 1, main.r);
-#elif ALPHAMAP_G_MainTex
-					main = half4(1, 1, 1, main.g);
-#elif ALPHAMAP_B_MainTex
-					main = half4(1, 1, 1, main.b);
-#elif ALPHAMAP_A_MainTex
-					main = half4(1, 1, 1, main.a);
-#endif
+					main = GET_CUBE_MAP_1(_MainTex, IN.objMain);
+					main = ALPHA_COLOR_1(main);
 
-					half4 detail = GetSphereDetailMap(_DetailTex, IN.objDetail, _DetailScale);
+					half4 detail = GetCubeDetailMap(_DetailTex, IN.objDetail, _DetailScale);
 
 					float viewDist = distance(IN.worldVert,_WorldSpaceCameraPos);
 					half detailLevel = saturate(2 * _DetailDist*viewDist);

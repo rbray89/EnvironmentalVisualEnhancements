@@ -23,21 +23,16 @@
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
-			#pragma multi_compile MainTex CUBE_MainTex CUBE_RGB2_MainTex
-			#pragma multi_compile ALPHAMAP_NONE_MainTex ALPHAMAP_R_MainTex ALPHAMAP_G_MainTex ALPHAMAP_B_MainTex ALPHAMAP_A_MainTex
-
-#ifdef CUBE_MainTex
-			uniform samplerCUBE cube_MainTex;
-#elif defined (CUBE_RGB2_MainTex)
-			sampler2D cube_MainTexPOS;
-			sampler2D cube_MainTexNEG;
-#else
-			sampler2D _MainTex;
+#pragma multi_compile MAP_TYPE_1 MAP_TYPE_CUBE_1 MAP_TYPE_CUBE2_1 MAP_TYPE_CUBE6_1
+#ifndef MAP_TYPE_CUBE2_1
+#pragma multi_compile ALPHAMAP_N_1 ALPHAMAP_R_1 ALPHAMAP_G_1 ALPHAMAP_B_1 ALPHAMAP_A_1
 #endif
 
-#ifndef ALPHAMAP_NONE_MainTex
-			half4 ALPHAMAP_MainTex;
-#endif
+#include "alphaMap.cginc"
+#include "cubeMap.cginc"
+
+			CUBEMAP_DEF(_MainTex)
+
 			fixed4 _Color;
 			uniform sampler2D _DetailTex;
 			fixed4 _DetailOffset;
@@ -112,25 +107,10 @@
 				shadowCheck *= saturate(.2*((IN.originDist + 5) - _PlanetRadius));
 #endif
 
-#ifdef CUBE_MainTex
-				half4 main = GetSphereMapCube(cube_MainTex, IN.mainPos);
-#elif defined (CUBE_RGB2_MainTex)
-				half4 main = GetSphereMapCube(cube_MainTexPOS, cube_MainTexNEG, IN.mainPos);
-#else
-				half4 main = GetSphereMap(_MainTex, IN.mainPos);
-#endif
+				half4 main = GET_CUBE_MAP_1(_MainTex, IN.mainPos);
+				main = ALPHA_COLOR_1(main);
 
-#ifdef ALPHAMAP_R_MainTex
-				main = half4(1, 1, 1, main.r);
-#elif ALPHAMAP_G_MainTex
-				main = half4(1, 1, 1, main.g);
-#elif ALPHAMAP_B_MainTex
-				main = half4(1, 1, 1, main.b);
-#elif ALPHAMAP_A_MainTex
-				main = half4(1, 1, 1, main.a);
-#endif
-
-				half4 detail = GetSphereDetailMap(_DetailTex, IN.detailPos, _DetailScale);
+				half4 detail = GetCubeDetailMap(_DetailTex, IN.detailPos, _DetailScale);
 
 				float viewDist = distance(IN.worldPos.xyz,_WorldSpaceCameraPos);
 				half detailLevel = saturate(2 * _DetailDist*viewDist);

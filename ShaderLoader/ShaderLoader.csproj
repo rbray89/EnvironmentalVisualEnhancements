@@ -94,6 +94,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\alphaMap.cginc" />
+    <None Include="Shaders\cubeMap.cginc" />
     <None Include="Shaders\PartIVA.shader" />
   </ItemGroup>
   <ItemGroup>

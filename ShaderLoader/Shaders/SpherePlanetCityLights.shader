@@ -38,8 +38,14 @@
 				#pragma fragment frag
 				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile_fwdbase
-#pragma multi_compile CityOverlayTex CUBE_CityOverlayTex CUBE_RGB2_CityOverlayTex
-#pragma multi_compile ALPHAMAP_NONE_CityOverlayTex ALPHAMAP_R_CityOverlayTex ALPHAMAP_G_CityOverlayTex ALPHAMAP_B_CityOverlayTex ALPHAMAP_A_CityOverlayTex
+#pragma multi_compile MAP_TYPE_1 MAP_TYPE_CUBE_1 MAP_TYPE_CUBE2_1 MAP_TYPE_CUBE6_1
+#ifndef MAP_TYPE_CUBE2_1
+#pragma multi_compile ALPHAMAP_N_1 ALPHAMAP_R_1 ALPHAMAP_G_1 ALPHAMAP_B_1 ALPHAMAP_A_1
+#endif
+#include "alphaMap.cginc"
+#include "cubeMap.cginc"
+
+				CUBEMAP_DEF(_CityOverlayTex)
 
 				fixed4 _Color;
 				float _SpecularPower;
@@ -47,15 +53,6 @@
 				sampler2D _MainTex;
 				sampler2D _BumpMap;
 				float _DetailDist;
-
-#ifdef CUBE_CityOverlayTex
-				uniform samplerCUBE cube_CityOverlayTex;
-#elif defined (CUBE_RGB2_CityOverlayTex)
-				sampler2D cube_CityOverlayTexPOS;
-				sampler2D cube_CityOverlayTexNEG;
-#else
-				sampler2D _CityOverlayTex;
-#endif
 
 				float _CityOverlayDetailScale;
 				sampler2D _CityDarkOverlayDetailTex;
@@ -104,30 +101,14 @@
 				fixed4 frag (v2f IN) : COLOR
 				{
 					half4 color;
-					half4 main = GetSphereMap(_MainTex, IN.sphereNormal);
-					half3 normT = UnpackNormal(GetSphereMap(_BumpMap, IN.sphereNormal));
+					half4 main = GetCubeMap(_MainTex, IN.sphereNormal);
+					half3 normT = UnpackNormal(GetCubeMap(_BumpMap, IN.sphereNormal));
 
-#ifdef CUBE_CityOverlayTex
-					half4 cityoverlay = GetSphereMapCube(cube_CityOverlayTex, IN.sphereNormal);
-#elif defined (CUBE_RGB2_CityOverlayTex)
-					half4 cityoverlay = GetSphereMapCube(cube_CityOverlayTexPOS, cube_CityOverlayTexNEG, IN.sphereNormal);
-#else
-					half4 cityoverlay = GetSphereMap(_CityOverlayTex, IN.sphereNormal);
-#endif
+					half4 cityoverlay = GET_CUBE_MAP_1(_CityOverlayTex, IN.sphereNormal);
+					cityoverlay = ALPHA_COLOR_1(cityoverlay);
 
-
-#ifdef ALPHAMAP_R_CityOverlayTex
-					cityoverlay = half4(1, 1, 1, cityoverlay.r);
-#elif ALPHAMAP_G_CityOverlayTex
-					cityoverlay = half4(1, 1, 1, cityoverlay.g);
-#elif ALPHAMAP_B_CityOverlayTex
-					cityoverlay = half4(1, 1, 1, cityoverlay.b);
-#elif ALPHAMAP_A_CityOverlayTex
-					cityoverlay = half4(1, 1, 1, cityoverlay.a);
-#endif
-
-					half4 citydarkoverlaydetail = GetSphereDetailMap(_CityDarkOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale);
-					half4 citylightoverlaydetail = GetSphereDetailMap(_CityLightOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale);
+					half4 citydarkoverlaydetail = GetCubeDetailMap(_CityDarkOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale);
+					half4 citylightoverlaydetail = GetCubeDetailMap(_CityLightOverlayDetailTex, IN.sphereNormal, _CityOverlayDetailScale);
 
 
 					//half detailLevel = saturate(2*_DetailDist*IN.viewDist);

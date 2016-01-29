@@ -14,7 +14,7 @@ namespace CityLights
     {
 #pragma warning disable 0169
 #pragma warning disable 0414
-        [ConfigItem, ValueFilter("isClamped|format|type|alphaMask")]
+        [ConfigItem, Index(1), ValueFilter("isClamped|format|type|alphaMask")]
         TextureWrapper _CityOverlayTex;
         [ConfigItem]
         float _CityOverlayDetailScale = 200f;

@@ -10,7 +10,7 @@
 	#define TWOPI (2.0*PI) 
 	#define INV_2PI (1.0/TWOPI)
 	#define SQRT_2 (1.41421356237)
-#pragma fragmentoption ARB_precision_hint_fastest
+	#pragma fragmentoption ARB_precision_hint_fastest
 
 #ifdef DIRLIGHT_ONLY
 #define DIRECTIONAL 1
@@ -21,6 +21,7 @@
 
 	uniform float4x4 _MainRotation;
 	uniform float4x4 _DetailRotation;
+
 
 	/*=========================================================================*
 	* R A N D _ R O T A T I O N Author: Jim Arvo, 1991 *
@@ -92,158 +93,6 @@
 		return float4(ddx(uvCont), ddy(uvCont));
 	}
 
-	inline float4 CubeDerivatives(float2 uv, float scale)
-	{
-		float2 uvCont = uv;
-		//Make the UV continuous. 
-		uvCont = abs(uvCont - (.5*scale));
-		return float4(ddx(uvCont), ddy(uvCont));
-	}
-
-    inline float2 GetSphereUV( float3 sphereVect, float2 uvOffset )
-    {
-      float2 uv;
-      uv.x = .5 + (INV_2PI*atan2(sphereVect.x, sphereVect.z));
-	  uv.y = INV_PI*acos(sphereVect.y);
-	  uv += uvOffset;
-	  return uv;
-    }
-
-	inline float2 GetSphereCubeUV(float3 sphereVectNorm)
-	{
-		float3 sphereVectNormAbs = abs(sphereVectNorm);
-		half zxlerp = step(sphereVectNormAbs.x, sphereVectNormAbs.z);
-		half nylerp = step(sphereVectNormAbs.y, max(sphereVectNormAbs.x, sphereVectNormAbs.z));
-
-		half s = lerp(sphereVectNorm.x, sphereVectNorm.z, zxlerp);
-		s = sign(lerp(sphereVectNorm.y, s, nylerp));
-
-		float3 detailCoords = lerp(float3(1, -s, 1)*sphereVectNorm.xzy, float3(1, s, 1)*sphereVectNorm.zxy, zxlerp);
-		detailCoords = lerp(float3(1, 1, -s)*sphereVectNorm.yxz, detailCoords, nylerp);
-
-		float2 uv;
-		uv.x = ((.5*detailCoords.y) / abs(detailCoords.x)) + .5;
-		uv.y = ((.5*detailCoords.z) / abs(detailCoords.x)) + .5;
-		return uv;
-	}
-
-
-	inline half4 GetSphereMapNoLOD( sampler2D texSampler, float3 sphereVect)  
-	{  
-	    float4 uv;
-	    float3 sphereVectNorm = normalize(sphereVect);
-	    uv.xy = GetSphereUV( sphereVectNorm, float2(0,0) );
-	    uv.zw = float2(0,0);
-	    half4 tex = tex2Dlod(texSampler, uv);
-	    return tex;
-	} 
-	
-	inline half4 GetSphereMap( sampler2D texSampler, float3 sphereVect)  
-	{  
-	    float3 sphereVectNorm = normalize(sphereVect);
-	    float2 uv = GetSphereUV( sphereVectNorm, float2(0,0) );
-	 	
-	 	float4 uvdd = Derivatives(uv);
-	    half4 tex = tex2D(texSampler, uv, uvdd.xy, uvdd.zw);
-	    return tex;
-	} 
-
-	inline half4 GetSphereMapCubeNoLOD(samplerCUBE texSampler, float3 sphereVect)
-	{
-		half4 uv;
-		uv.xyz = normalize(sphereVect);
-		uv.w = 0;
-		half4 tex = texCUBElod(texSampler, uv);
-		return tex;
-	}
-
-	inline half4 GetSphereMapCube(samplerCUBE texSampler, float3 sphereVect)
-	{
-		half4 tex = texCUBE(texSampler, normalize(sphereVect));
-		return tex;
-	}
-
-	inline half4 GetSphereMapCubeNoLOD(sampler2D texSamplerPos, sampler2D texSamplerNeg, float3 sphereVect)
-	{
-
-		float3 sphereVectNorm = normalize(sphereVect);
-		float3 sphereVectNormAbs = abs(sphereVectNorm);
-
-		float4 uv;
-		uv.zw = float2(0, 0);
-
-		half zxlerp = step(sphereVectNormAbs.x, sphereVectNormAbs.z);
-		half nylerp = step(sphereVectNormAbs.y, lerp(sphereVectNormAbs.x, sphereVectNormAbs.z, zxlerp));
-		
-		half s = lerp(sphereVectNorm.x, sphereVectNorm.z, zxlerp);
-		s = sign(lerp(sphereVectNorm.y, s, nylerp));
-
-		half3 detailCoords = lerp(half3(1,-s,1)*sphereVectNorm.xzy, half3(1, s, 1)*sphereVectNorm.zxy, zxlerp);
-		detailCoords = lerp(half3(1, 1, -s)*sphereVectNorm.yzx, detailCoords, nylerp);
-
-		uv.xy = ((.5*detailCoords.yz) / abs(detailCoords.x)) + .5;
-
-		half4 texPos = tex2Dlod(texSamplerPos, uv);
-		half4 texNeg = tex2Dlod(texSamplerNeg, uv);
-
-		half4 tex = lerp(texNeg, texPos, step(0, s));
-
-		half alpha = lerp(tex.r, tex.b, zxlerp);
-		alpha = lerp(tex.g, alpha, nylerp);
-		return half4(tex.a, tex.a, tex.a, alpha);
-
-	}
-	
-	inline half4 GetSphereMapCube(sampler2D texSamplerPos, sampler2D texSamplerNeg, float3 sphereVect)
-	{
-
-		float3 sphereVectNorm = normalize(sphereVect);
-		float3 sphereVectNormAbs = abs(sphereVectNorm);
-
-
-		half zxlerp = step(sphereVectNormAbs.x, sphereVectNormAbs.z);
-		half nylerp = step(sphereVectNormAbs.y, lerp(sphereVectNormAbs.x, sphereVectNormAbs.z, zxlerp));
-
-		half s = lerp(sphereVectNorm.x, sphereVectNorm.z, zxlerp);
-		s = sign(lerp(-sphereVectNorm.y, s, nylerp));
-
-		half3 detailCoords = lerp(half3(1, -s, 1)*sphereVectNorm.xzy, half3(1, s, 1)*sphereVectNorm.zxy, zxlerp);
-		detailCoords = lerp(half3(1, 1, -s)*sphereVectNorm.yzx, detailCoords, nylerp);
-
-		float2 uv = ((.5*detailCoords.yz) / abs(detailCoords.x)) + .5;
-
-		float4 uvdd = CubeDerivatives(uv, 1);
-
-		half4 texPos = tex2D(texSamplerPos, uv, uvdd.xy, uvdd.zw);
-		half4 texNeg = tex2D(texSamplerNeg, uv, uvdd.xy, uvdd.zw);
-
-		half4 tex = lerp(texNeg, texPos, step(0, s));
-
-		half alpha = lerp(tex.r, tex.b, zxlerp);
-		alpha = lerp(tex.g, alpha, nylerp);
-		return half4(tex.a, tex.a, tex.a, alpha);
-
-	}
-
-	inline half4 GetSphereDetailMapNoLOD( sampler2D texSampler, float3 sphereVect, float detailScale)
-	{
-		float3 sphereVectNorm = normalize(sphereVect);
-		float4 uv;
-		uv.xy = GetSphereCubeUV(sphereVectNorm)*detailScale;
-		uv.zw = float2(0,0);
-		half4 tex = tex2Dlod(texSampler, uv);
-		return tex;
-	}
-	
-	inline half4 GetSphereDetailMap( sampler2D texSampler, float3 sphereVect, float detailScale)
-	{
-		float3 sphereVectNorm = normalize(sphereVect);
-		float2 uv = GetSphereCubeUV(sphereVectNorm)*detailScale;
-	    float4 uvdd = CubeDerivatives(uv, detailScale);
-		half4 tex = tex2D(texSampler, uv, uvdd.xy, uvdd.zw);
-		return 	tex;
-	}
-	
 	inline float GetDistanceFade( float dist, float fade, float fadeVert )
 	{
 		float fadeDist = fade*dist;

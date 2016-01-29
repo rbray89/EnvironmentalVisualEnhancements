@@ -34,7 +34,6 @@
 				CGPROGRAM
 				#include "EVEUtils.cginc"
 				#include "noiseSimplex.cginc"
-
 				#pragma target 3.0
 				#pragma glsl
 				#pragma vertex vert
@@ -43,25 +42,21 @@
 				#pragma fragmentoption ARB_precision_hint_fastest
 				#pragma multi_compile_fwdbase
 				#pragma multi_compile SOFT_DEPTH_OFF SOFT_DEPTH_ON
-				#pragma multi_compile MainTex CUBE_MainTex CUBE_RGB2_MainTex
-				#pragma multi_compile ALPHAMAP_NONE_MainTex ALPHAMAP_R_MainTex ALPHAMAP_G_MainTex ALPHAMAP_B_MainTex ALPHAMAP_A_MainTex
+#pragma multi_compile MAP_TYPE_1 MAP_TYPE_CUBE_1 MAP_TYPE_CUBE2_1 MAP_TYPE_CUBE6_1
+#ifndef MAP_TYPE_CUBE2_1
+#pragma multi_compile ALPHAMAP_N_1 ALPHAMAP_R_1 ALPHAMAP_G_1 ALPHAMAP_B_1 ALPHAMAP_A_1
+#endif
+
+
+				#include "alphaMap.cginc"
+				#include "cubeMap.cginc"
+
+				CUBEMAP_DEF(_MainTex)
 
 				sampler2D _TopTex;
 				sampler2D _LeftTex;
 				sampler2D _FrontTex;
 
-#ifdef CUBE_MainTex
-				uniform samplerCUBE cube_MainTex;
-#elif defined (CUBE_RGB2_MainTex)
-				sampler2D cube_MainTexPOS;
-				sampler2D cube_MainTexNEG;
-#else
-				sampler2D _MainTex;
-#endif
-
-#ifndef ALPHAMAP_NONE_MainTex
-				half4 ALPHAMAP_MainTex;
-#endif
 
 				sampler2D _DetailTex;
 				float _DetailScale;
@@ -94,6 +89,7 @@
 					float2 texcoordXZ : TEXCOORD2;
 					float2 texcoordXY : TEXCOORD3;
 					float4 projPos : TEXCOORD4;
+					float3 planetPos : TEXCOORD5;
 					//LIGHTING_COORDS(5,6)
 
 				};
@@ -119,26 +115,12 @@
 
 					planet_pos = mul(_MainRotation, origin);
 					float3 detail_pos = mul(_DetailRotation, planet_pos).xyz;
+					o.planetPos = planet_pos.xyz;
+					o.color = half4(1, 1, 1, 1);
+					//o.color = GET_NO_LOD_CUBE_MAP_1(_MainTex, planet_pos.xyz);
+					//o.color = ALPHA_COLOR_1(o.color);
 
-#ifdef CUBE_MainTex
-					o.color = GetSphereMapCubeNoLOD(cube_MainTex, planet_pos.xyz);
-#elif defined (CUBE_RGB2_MainTex)
-					o.color = GetSphereMapCubeNoLOD(cube_MainTexPOS, cube_MainTexNEG, planet_pos.xyz);
-#else
-					o.color = GetSphereMapNoLOD(_MainTex, planet_pos.xyz);
-#endif				
-					
-#ifdef ALPHAMAP_R_MainTex
-					o.color = half4(1, 1, 1, o.color.r);
-#elif ALPHAMAP_G_MainTex
-					o.color = half4(1, 1, 1, o.color.g);
-#elif ALPHAMAP_B_MainTex
-					o.color = half4(1, 1, 1, o.color.b);
-#elif ALPHAMAP_A_MainTex
-					o.color = half4(1, 1, 1, o.color.a);
-#endif
-
-					o.color.rgba *= GetSphereDetailMapNoLOD(_DetailTex, detail_pos, _DetailScale);
+					o.color.rgba *= GetCubeDetailMapNoLOD(_DetailTex, detail_pos, _DetailScale);
 
 					o.color.a *= GetDistanceFade(distance(origin,_WorldSpaceCameraPos), _DistFade, _DistFadeVert);
 
@@ -213,8 +195,12 @@
 					//half4 tex = (xtex*xval)+(ytex*yval)+(ztex*zval);
 					half4 tex = lerp(lerp(xtex, ytex, yval), ztex, zval);
 
-					half4 prev = .94*_Color * IN.color * tex;
+					half4 prev = GET_NO_LOD_CUBE_MAP_1(_MainTex, IN.planetPos);
+					prev = ALPHA_COLOR_1(prev);
 
+					prev *= .94*_Color * IN.color * tex;
+
+					
 
 					half4 color;
 					color.rgb = prev.rgb;
