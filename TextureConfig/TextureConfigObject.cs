@@ -52,12 +52,12 @@ namespace TextureConfig
 
             if(isCubeMap)
             {
-                ReplaceIfNecessary(texXn, isNormalMap, mipmaps, true, false);
-                ReplaceIfNecessary(texYn, isNormalMap, mipmaps, true, false);
-                ReplaceIfNecessary(texZn, isNormalMap, mipmaps, true, false);
-                ReplaceIfNecessary(texXp, isNormalMap, mipmaps, true, false);
-                ReplaceIfNecessary(texYp, isNormalMap, mipmaps, true, false);
-                ReplaceIfNecessary(texZp, isNormalMap, mipmaps, true, false);
+                ReplaceIfNecessary(texXn, isNormalMap, mipmaps, isReadable, isCompressed);
+                ReplaceIfNecessary(texYn, isNormalMap, mipmaps, isReadable, isCompressed);
+                ReplaceIfNecessary(texZn, isNormalMap, mipmaps, isReadable, isCompressed);
+                ReplaceIfNecessary(texXp, isNormalMap, mipmaps, isReadable, isCompressed);
+                ReplaceIfNecessary(texYp, isNormalMap, mipmaps, isReadable, isCompressed);
+                ReplaceIfNecessary(texZp, isNormalMap, mipmaps, isReadable, isCompressed);
                 Texture2D[] textures = new Texture2D[6];
                 textures[(int)CubemapFace.NegativeX] = GameDatabase.Instance.GetTexture(texXn, isNormalMap);
                 textures[(int)CubemapFace.NegativeY] = GameDatabase.Instance.GetTexture(texYn, isNormalMap);
@@ -66,11 +66,12 @@ namespace TextureConfig
                 textures[(int)CubemapFace.PositiveY] = GameDatabase.Instance.GetTexture(texYp, isNormalMap);
                 textures[(int)CubemapFace.PositiveZ] = GameDatabase.Instance.GetTexture(texZp, isNormalMap);
                 CubemapWrapper.GenerateCubemapWrapper(name, textures, TextureTypeEnum.CubeMap, mipmaps, isReadable);
-                foreach(Texture2D tex in textures)
+             /*   foreach(Texture2D tex in textures)
                 {
                     GameDatabase.Instance.RemoveTexture(tex.name);
                     GameObject.DestroyImmediate(tex);
                 }
+                */
             }
             else
             {
@@ -100,7 +101,7 @@ namespace TextureConfig
         public static bool cubeMapEval(ConfigNode node)
         {
             TextureConfigObject test = new TextureConfigObject();
-            ConfigNode.LoadObjectFromConfig(test, node);
+            ConfigHelper.LoadObjectFromConfig(test, node);
 
             return test.isCubeMap;
         }

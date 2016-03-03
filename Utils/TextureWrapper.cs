@@ -62,24 +62,30 @@ namespace Utils
 
         Texture2D texPositive;
         Texture2D texNegative;
+        Texture2D[] texList;
         Cubemap cubeTex;
 
         public CubemapWrapper(string value, Texture2D[] textures, TextureTypeEnum cubeType, bool mipmaps, bool readable)
         {
             this.name = value;
             type = cubeType == TextureTypeEnum.RGB2_CubeMap? TextureTypeEnum.RGB2_CubeMap : TextureTypeEnum.CubeMap;
+            KSPLog.print("Creating " + name + " Cubemap");
+
+            foreach (Texture2D tex in textures)
+            {
+                tex.wrapMode = TextureWrapMode.Clamp;
+            }
+
             if (type == TextureTypeEnum.RGB2_CubeMap)
             {
                 texPositive = textures[0];
-                texPositive.wrapMode = TextureWrapMode.Clamp;
                 texNegative = textures[1];
-                texNegative.wrapMode = TextureWrapMode.Clamp;
-
-                KSPLog.print("Creating " + name + " Cubemap");
             }
             else
             {
+                /*
                 cubeTex = new Cubemap(textures[0].width, TextureFormat.RGBA32, mipmaps);
+                
                 foreach (CubemapFace face in Enum.GetValues(typeof(CubemapFace)))
                 {
                     Texture2D tex = textures[(int)face];
@@ -87,6 +93,9 @@ namespace Utils
                 }
                 cubeTex.Apply(mipmaps, !readable);
                 cubeTex.SmoothEdges();
+                */
+                texList = textures;
+                
             }
         }
 
@@ -106,9 +115,19 @@ namespace Utils
             }
             else
             {
+                /*
                 KSPLog.print("Setting cube" + name);
                 mat.SetTexture("cube" + name, cubeTex);
                 mat.EnableKeyword("MAP_TYPE_CUBE_" + index.ToString());
+                */
+                mat.SetTexture("cube" + name + "xn", texList[(int)CubemapFace.NegativeX]);
+                mat.SetTexture("cube" + name + "yn", texList[(int)CubemapFace.NegativeY]);
+                mat.SetTexture("cube" + name + "zn", texList[(int)CubemapFace.NegativeZ]);
+                mat.SetTexture("cube" + name + "xp", texList[(int)CubemapFace.PositiveX]);
+                mat.SetTexture("cube" + name + "yp", texList[(int)CubemapFace.PositiveY]);
+                mat.SetTexture("cube" + name + "zp", texList[(int)CubemapFace.PositiveZ]);
+                mat.EnableKeyword("MAP_TYPE_CUBE6_" + index.ToString());
+                
             }
         }
 
@@ -216,7 +235,7 @@ namespace Utils
         public static bool alphaMaskEval(ConfigNode node)
         {
             TextureWrapper test = new TextureWrapper();
-            ConfigNode.LoadObjectFromConfig(test, node);
+            ConfigHelper.LoadObjectFromConfig(test, node);
             
             if ((test.type & TextureTypeEnum.AlphaMapMask) > 0)
             {

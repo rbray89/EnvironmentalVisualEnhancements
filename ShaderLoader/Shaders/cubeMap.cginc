@@ -32,8 +32,22 @@
 inline float4 CubeDerivatives(float2 uv, float scale)
 {
 	float2 uvCont = uv;
+
 	//Make the UV continuous. 
 	uvCont = abs(uvCont - (.5*scale));
+
+	uvCont.x = max(uvCont.x, uvCont.y);
+	uvCont.y = min(uvCont.x, uvCont.y);
+
+	return float4(ddx(uvCont), ddy(uvCont));
+}
+
+
+inline float4 Derivatives(float2 uv)
+{
+	float2 uvCont = uv;
+	//Make the UV continuous. 
+	uvCont.x = abs(uvCont.x - .5);
 	return float4(ddx(uvCont), ddy(uvCont));
 }
 
@@ -103,25 +117,25 @@ inline half4 GetCubeMap(samplerCUBE texSampler, float3 cubeVect)
 
 inline half4 GetCubeMapNoLOD(sampler2D texXn, sampler2D texXp, sampler2D texYn, sampler2D texYp, sampler2D texZn, sampler2D texZp, float3 cubeVect)
 {
-	
-	float3 cubeVectNorm = normalize(cubeVect);
-	float3 cubeVectNormAbs = abs(cubeVectNorm);
-
 	float4 uv;
 	uv.zw = float2(0, 0);
 
+	float3 cubeVectNorm = normalize(cubeVect);
+	float3 cubeVectNormAbs = abs(cubeVectNorm);
+
+
 	half zxlerp = step(cubeVectNormAbs.x, cubeVectNormAbs.z);
-	half nylerp = step(cubeVectNormAbs.y, lerp(cubeVectNormAbs.x, cubeVectNormAbs.z, zxlerp));
+	half nylerp = step(cubeVectNormAbs.y, max(cubeVectNormAbs.x, cubeVectNormAbs.z));
 
 	half s = lerp(cubeVectNorm.x, cubeVectNorm.z, zxlerp);
-	s = sign(lerp(cubeVectNorm.y, s, nylerp));
+	s = sign(lerp(-cubeVectNorm.y, s, nylerp));
 
-	half3 detailCoords = lerp(half3(1, -s, 1)*cubeVectNorm.xzy, half3(1, s, 1)*cubeVectNorm.zxy, zxlerp);
-	detailCoords = lerp(half3(1, 1, -s)*cubeVectNorm.yzx, detailCoords, nylerp);
+	half3 detailCoords = lerp(half3(1, -s, -1)*cubeVectNorm.xzy, half3(1, s, -1)*cubeVectNorm.zxy, zxlerp);
+	detailCoords = lerp(half3(1, 1, s)*cubeVectNorm.yxz, detailCoords, nylerp);
 
 	uv.xy = ((.5*detailCoords.yz) / abs(detailCoords.x)) + .5;
 
-	/*
+	
 	half4 sampxn = tex2Dlod(texXn, uv);
 	half4 sampxp = tex2Dlod(texXp, uv);
 	half4 sampyn = tex2Dlod(texYn, uv);
@@ -135,44 +149,7 @@ inline half4 GetCubeMapNoLOD(sampler2D texXn, sampler2D texXp, sampler2D texYn, 
 	
 	half4 samp = lerp(sampx, sampz, zxlerp);
 		  samp = lerp(sampy, samp, nylerp);
-	*/
-	half4 samp;
-	if (s > 0)
-	{
-		if (nylerp <= 0)
-		{
-			samp = tex2Dlod(texYp, uv);
-		}
-		else
-		{
-			if (zxlerp > 0)
-			{
-				samp = tex2Dlod(texZp, uv);
-			}
-			else
-			{
-				samp = tex2Dlod(texXp, uv);
-			}
-		}
-	}
-	else
-	{
-		if (nylerp <= 0)
-		{
-			samp = tex2Dlod(texYn, uv);
-		}
-		else
-		{
-			if (zxlerp > 0)
-			{
-				samp = tex2Dlod(texZn, uv);
-			}
-			else
-			{
-				samp = tex2Dlod(texXn, uv);
-			}
-		}
-	}
+	
 
 	return samp;
 	
@@ -181,20 +158,21 @@ inline half4 GetCubeMapNoLOD(sampler2D texXn, sampler2D texXp, sampler2D texYn, 
 inline half4 GetCubeMap(sampler2D texXn, sampler2D texXp, sampler2D texYn, sampler2D texYp, sampler2D texZn, sampler2D texZp, float3 cubeVect)
 {
 	float3 cubeVectNorm = normalize(cubeVect);
+	
 	float3 cubeVectNormAbs = abs(cubeVectNorm);
 
 
 	half zxlerp = step(cubeVectNormAbs.x, cubeVectNormAbs.z);
-	half nylerp = step(cubeVectNormAbs.y, lerp(cubeVectNormAbs.x, cubeVectNormAbs.z, zxlerp));
+	half nylerp = step(cubeVectNormAbs.y, max(cubeVectNormAbs.x, cubeVectNormAbs.z));
 
 	half s = lerp(cubeVectNorm.x, cubeVectNorm.z, zxlerp);
-	s = sign(lerp(-cubeVectNorm.y, s, nylerp));
+	s = sign(lerp(cubeVectNorm.y, s, nylerp));
 
-	half3 detailCoords = lerp(half3(1, -s, 1)*cubeVectNorm.xzy, half3(1, s, 1)*cubeVectNorm.zxy, zxlerp);
-	detailCoords = lerp(half3(1, 1, -s)*cubeVectNorm.yzx, detailCoords, nylerp);
+	half3 detailCoords = lerp(half3(1, -s, -1)*cubeVectNorm.xzy, half3(1, s, -1)*cubeVectNorm.zxy, zxlerp);
+	detailCoords = lerp(half3(1, 1, s)*cubeVectNorm.yxz, detailCoords, nylerp);
 
 	float2 uv = ((.5*detailCoords.yz) / abs(detailCoords.x)) + .5;
-
+	//this fixes UV discontinuity on Y-X seam by swapping uv coords in derivative calcs when in the X quadrants.
 	float4 uvdd = CubeDerivatives(uv, 1);
 
 
@@ -224,13 +202,13 @@ inline half4 GetCubeMapNoLOD(sampler2D texSamplerPos, sampler2D texSamplerNeg, f
 	uv.zw = float2(0, 0);
 
 	half zxlerp = step(cubeVectNormAbs.x, cubeVectNormAbs.z);
-	half nylerp = step(cubeVectNormAbs.y, lerp(cubeVectNormAbs.x, cubeVectNormAbs.z, zxlerp));
+	half nylerp = step(cubeVectNormAbs.y, max(cubeVectNormAbs.x, cubeVectNormAbs.z));
 
 	half s = lerp(cubeVectNorm.x, cubeVectNorm.z, zxlerp);
 	s = sign(lerp(cubeVectNorm.y, s, nylerp));
 
-	half3 detailCoords = lerp(half3(1, -s, 1)*cubeVectNorm.xzy, half3(1, s, 1)*cubeVectNorm.zxy, zxlerp);
-	detailCoords = lerp(half3(1, 1, -s)*cubeVectNorm.yzx, detailCoords, nylerp);
+	half3 detailCoords = lerp(half3(1, -s, -1)*cubeVectNorm.xzy, half3(1, s, -1)*cubeVectNorm.zxy, zxlerp);
+	detailCoords = lerp(half3(1, 1, s)*cubeVectNorm.yxz, detailCoords, nylerp);
 
 	uv.xy = ((.5*detailCoords.yz) / abs(detailCoords.x)) + .5;
 
@@ -258,8 +236,8 @@ inline half4 GetCubeMap(sampler2D texSamplerPos, sampler2D texSamplerNeg, float3
 	half s = lerp(cubeVectNorm.x, cubeVectNorm.z, zxlerp);
 	s = sign(lerp(-cubeVectNorm.y, s, nylerp));
 
-	half3 detailCoords = lerp(half3(1, -s, 1)*cubeVectNorm.xzy, half3(1, s, 1)*cubeVectNorm.zxy, zxlerp);
-	detailCoords = lerp(half3(1, 1, -s)*cubeVectNorm.yzx, detailCoords, nylerp);
+	half3 detailCoords = lerp(half3(1, -s, -1)*cubeVectNorm.xzy, half3(1, s, -1)*cubeVectNorm.zxy, zxlerp);
+	detailCoords = lerp(half3(1, 1, s)*cubeVectNorm.yxz, detailCoords, nylerp);
 
 	float2 uv = ((.5*detailCoords.yz) / abs(detailCoords.x)) + .5;
 

@@ -43,6 +43,7 @@ namespace PartFX
                 if (rt == null)
                 {
                     rt = new RenderTexture((int)(scale * Screen.width), (int)(scale * Screen.height), 16, RenderTextureFormat.ARGB32);
+                    rt.filterMode = FilterMode.Trilinear;
                 }
                 return rt;
             }

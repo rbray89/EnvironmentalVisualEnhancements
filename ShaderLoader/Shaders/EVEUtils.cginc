@@ -85,14 +85,6 @@
 		return frac(sin(val)*1232.53);
 	}
 
-	inline float4 Derivatives(float2 uv)
-	{
-		float2 uvCont = uv;
-		//Make the UV continuous. 
-		uvCont.x = abs(uvCont.x - .5);
-		return float4(ddx(uvCont), ddy(uvCont));
-	}
-
 	inline float GetDistanceFade( float dist, float fade, float fadeVert )
 	{
 		float fadeDist = fade*dist;
