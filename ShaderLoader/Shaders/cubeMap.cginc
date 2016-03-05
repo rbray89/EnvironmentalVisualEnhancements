@@ -31,13 +31,13 @@
 
 inline float4 CubeDerivatives(float2 uv, float scale)
 {
-	float2 uvCont = uv;
-
+	
 	//Make the UV continuous. 
-	uvCont = abs(uvCont - (.5*scale));
+	float2 uvS = abs(uv - (.5*scale));
 
-	uvCont.x = max(uvCont.x, uvCont.y);
-	uvCont.y = min(uvCont.x, uvCont.y);
+	float2 uvCont;
+	uvCont.x = max(uvS.x, uvS.y);
+	uvCont.y = min(uvS.x, uvS.y);
 
 	return float4(ddx(uvCont), ddy(uvCont));
 }
