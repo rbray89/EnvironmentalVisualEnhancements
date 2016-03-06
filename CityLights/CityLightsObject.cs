@@ -61,7 +61,7 @@ namespace CityLights
             Transform transform = Tools.GetScaledTransform(body);
             if (transform != null)
             {
-                MeshRenderer mr = (MeshRenderer)transform.GetComponent(typeof(MeshRenderer));
+                MeshRenderer mr = transform.GetComponent<MeshRenderer>();
                 if (mr != null)
                 {
                     scaledMat = new Material(ShaderLoaderClass.FindShader("EVE/PlanetCityLight"));
@@ -101,7 +101,7 @@ namespace CityLights
                 if (go != mainMenuBody && go != null)
                 {
                     mainMenuBody = go;
-                    MeshRenderer mr = (MeshRenderer)mainMenuBody.GetComponent(typeof(MeshRenderer));
+                    MeshRenderer mr = mainMenuBody.GetComponent<MeshRenderer>();
                     if (mr != null)
                     {
                         scaledMat.SetTexture("_MainTex", mr.material.GetTexture("_MainTex"));
@@ -131,7 +131,7 @@ namespace CityLights
             Transform transform = Tools.GetScaledTransform(body);
             if (transform != null)
             {
-                MeshRenderer mr = (MeshRenderer)transform.GetComponent(typeof(MeshRenderer));
+                MeshRenderer mr = transform.GetComponent<MeshRenderer>();
                 if (mr != null)
                 {
                     List<Material> materials = new List<Material>(mr.materials);
@@ -141,7 +141,7 @@ namespace CityLights
             }
             if(mainMenuBody != null)
             {
-                MeshRenderer mr = (MeshRenderer)mainMenuBody.GetComponent(typeof(MeshRenderer));
+                MeshRenderer mr = mainMenuBody.GetComponent<MeshRenderer>();
                 if (mr != null)
                 {
                     List<Material> materials = new List<Material>(mr.materials);
