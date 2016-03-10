@@ -148,7 +148,7 @@ xcopy  $(TargetFileName).mdb "$(SolutionDir)ContentEVE\GameData\EnvironmentalVis
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>echo "Running Pre-build"
-copy /Y "$(SolutionDir)KSPResources\$(ConfigurationName)\*.dll" "$(SolutionDir)KSPResources"</PreBuildEvent>
+xcopy "$(SolutionDir)KSPResources\$(ConfigurationName)\*.dll" "$(SolutionDir)KSPResources" /eyir</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

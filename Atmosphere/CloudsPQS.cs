@@ -364,9 +364,9 @@ namespace Atmosphere
                         camerasInitialized = true;
                     }
                 }
-                if (ScaledCamera.Instance != null && ScaledCamera.Instance.galaxyCamera != null)
+                if (ScaledCamera.Instance != null && ScaledCamera.Instance.GetComponent<Camera>() != null)
                 {
-                    ScaledCamera.Instance.galaxyCamera.depthTextureMode = DepthTextureMode.Depth;
+                    ScaledCamera.Instance.GetComponent<Camera>().depthTextureMode = DepthTextureMode.Depth;
                 }
             }
 
