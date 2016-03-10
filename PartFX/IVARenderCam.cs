@@ -58,7 +58,7 @@ namespace PartFX
                 {
                     GameObject go = new GameObject("IVA -ext- Cam");
                     ivaCam = go.AddComponent<Camera>();
-                    ivaCam.CopyFrom(InternalCamera.Instance.GetComponent<Camera>());
+                    ivaCam.CopyFrom(InternalCamera.Instance.camera);
                     ivaCam.targetTexture = RT;
                     ivaCam.depth = 0;
                     ivaCam.clearFlags = CameraClearFlags.SolidColor;

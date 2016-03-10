@@ -1,0 +1,3 @@
+Drop the x64 libs here.
+
+Assembly-CSharp.dll and UnityEngine.dll

@@ -111,11 +111,11 @@ namespace Utils
                 MapObject target = MapView.MapCamera.target;
                 switch (target.type)
                 {
-                    case MapObject.ObjectType.CelestialBody:
+                    case MapObject.MapObjectType.CELESTIALBODY:
                         return target.celestialBody;
-                    case MapObject.ObjectType.ManeuverNode:
+                    case MapObject.MapObjectType.MANEUVERNODE:
                         return target.maneuverNode.patch.referenceBody;
-                    case MapObject.ObjectType.Vessel:
+                    case MapObject.MapObjectType.VESSEL:
                         return target.vessel.mainBody;
                 }
             }

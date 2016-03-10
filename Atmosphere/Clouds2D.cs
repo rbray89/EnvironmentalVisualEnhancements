@@ -194,7 +194,7 @@ namespace Atmosphere
 
             if (layer == Tools.Layer.Local)
             {
-                Sunlight = Sun.Instance.GetComponent<Light>();
+                Sunlight = Sun.Instance.light;
                 CloudMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius * scale);
                 CloudMaterial.EnableKeyword("WORLD_SPACE_ON");
                 CloudMaterial.EnableKeyword("SOFT_DEPTH_ON");
