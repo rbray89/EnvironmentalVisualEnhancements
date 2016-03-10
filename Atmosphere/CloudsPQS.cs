@@ -217,7 +217,7 @@ namespace Atmosphere
                         }
                         else if (MapView.MapIsEnabled || HighLogic.LoadedScene == GameScenes.TRACKSTATION || (HighLogic.LoadedScene == GameScenes.FLIGHT && !sphere.isActive))
                         {
-                            Transform transform = ScaledCamera.Instance.camera.transform;
+                            Transform transform = ScaledCamera.Instance.GetComponent<Camera>().transform;
                             Vector3 pos = scaledCelestialTransform.InverseTransformPoint(transform.position);
 
                             layer2D.UpdateRotation(Quaternion.FromToRotation(Vector3.up, pos),
@@ -364,9 +364,9 @@ namespace Atmosphere
                         camerasInitialized = true;
                     }
                 }
-                if (ScaledCamera.Instance != null && ScaledCamera.Instance.camera != null)
+                if (ScaledCamera.Instance != null && ScaledCamera.Instance.GetComponent<Camera>() != null)
                 {
-                    ScaledCamera.Instance.camera.depthTextureMode = DepthTextureMode.Depth;
+                    ScaledCamera.Instance.GetComponent<Camera>().depthTextureMode = DepthTextureMode.Depth;
                 }
             }
 
