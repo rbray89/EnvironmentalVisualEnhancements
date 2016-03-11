@@ -7,7 +7,7 @@
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
 		_DetailScale ("Detail Scale", Range(0,1000)) = 100
 		_DistFade ("Distance Fade Near", Range(0,1)) = 1.0
-		_DistFadeVert ("Distance Fade Vertical", Range(0,1)) = 0.00004
+		_DistFadeVert ("Distance Fade Vertical", Range(0,1)) = 0.004
 		_Color ("Color Tint", Color) = (1,1,1,1)
 		_InvFade ("Soft Particles Factor", Range(0.01,3.0)) = .01
 		_Rotation ("Rotation", float) = 0
@@ -23,7 +23,7 @@
 		Fog { Mode Global}
 		AlphaTest Greater 0
 		ColorMask RGB
-		Cull Off Lighting On ZWrite Off
+		Cull Back Lighting On ZWrite Off
 
 		SubShader {
 			Pass {

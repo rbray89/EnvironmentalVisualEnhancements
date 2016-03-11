@@ -52,12 +52,12 @@ namespace TextureConfig
 
             if(isCubeMap)
             {
-                ReplaceIfNecessary(texXn, isNormalMap, mipmaps, isReadable, isCompressed);
-                ReplaceIfNecessary(texYn, isNormalMap, mipmaps, isReadable, isCompressed);
-                ReplaceIfNecessary(texZn, isNormalMap, mipmaps, isReadable, isCompressed);
-                ReplaceIfNecessary(texXp, isNormalMap, mipmaps, isReadable, isCompressed);
-                ReplaceIfNecessary(texYp, isNormalMap, mipmaps, isReadable, isCompressed);
-                ReplaceIfNecessary(texZp, isNormalMap, mipmaps, isReadable, isCompressed);
+                //ReplaceIfNecessary(texXn, isNormalMap, mipmaps, isReadable, isCompressed);
+                //ReplaceIfNecessary(texYn, isNormalMap, mipmaps, isReadable, isCompressed);
+                //ReplaceIfNecessary(texZn, isNormalMap, mipmaps, isReadable, isCompressed);
+                //ReplaceIfNecessary(texXp, isNormalMap, mipmaps, isReadable, isCompressed);
+                //ReplaceIfNecessary(texYp, isNormalMap, mipmaps, isReadable, isCompressed);
+                //ReplaceIfNecessary(texZp, isNormalMap, mipmaps, isReadable, isCompressed);
                 Texture2D[] textures = new Texture2D[6];
                 textures[(int)CubemapFace.NegativeX] = GameDatabase.Instance.GetTexture(texXn, isNormalMap);
                 textures[(int)CubemapFace.NegativeY] = GameDatabase.Instance.GetTexture(texYn, isNormalMap);
