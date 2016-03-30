@@ -25,11 +25,22 @@ namespace EVEManager
         public static List<EVEManagerBase> GetManagers()
         {
             List<EVEManagerBase> objects = new List<EVEManagerBase>();
-            foreach (Type type in
-                AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
-                .Where(m => m.IsClass && !m.IsAbstract && m.IsSubclassOf(typeof(EVEManagerBase))))
+
+            Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (Assembly assembly in assemblies)
             {
-                objects.Add((EVEManagerBase)Activator.CreateInstance(type, null));
+                try
+                {
+                    foreach( Type type in assembly.GetTypes()
+                        .Where(m => m.IsClass && !m.IsAbstract && m.IsSubclassOf(typeof(EVEManagerBase))))
+                    {
+                        objects.Add((EVEManagerBase)Activator.CreateInstance(type, null));
+                    }
+                }
+                catch(Exception e)
+                {
+                    Debug.Log("EVEManagerBase.GetManagers(): Unable to load assembly: "+e.InnerException);
+                }
             }
             return objects;
         }
