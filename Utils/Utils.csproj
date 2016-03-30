@@ -149,9 +149,7 @@ xcopy  $(TargetFileName).mdb "$(SolutionDir)ContentEVE\GameData\EnvironmentalVis
   <PropertyGroup>
     <PreBuildEvent>echo "Running Pre-build"
 del /s "$(SolutionDir)KSPResources\*.dll"
-if $(ConfigurationName) == Release xcopy "$(SolutionDir)KSPResources\$(ConfigurationName)\*.dll" "$(SolutionDir)KSPResources" /eyir
-if $(ConfigurationName) == Debug xcopy "$(SolutionDir)KSPResources\$(ConfigurationName)\*.dll" "$(SolutionDir)KSPResources" /eyir
-if $(ConfigurationName) == experimentals xcopy "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\*.dll" "$(SolutionDir)KSPResources" /eyir</PreBuildEvent>
+xcopy "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\*.dll" "$(SolutionDir)KSPResources" /eyir</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
