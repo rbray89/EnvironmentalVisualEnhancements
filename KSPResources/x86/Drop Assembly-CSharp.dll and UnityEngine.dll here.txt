@@ -1,3 +1,0 @@
-Drop the x86 libs here.
-
-Assembly-CSharp.dll and UnityEngine.dll

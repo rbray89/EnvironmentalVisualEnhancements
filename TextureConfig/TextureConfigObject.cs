@@ -52,12 +52,14 @@ namespace TextureConfig
 
             if(isCubeMap)
             {
+                
                 ReplaceIfNecessary(texXn, isNormalMap, mipmaps, isReadable, isCompressed);
                 ReplaceIfNecessary(texYn, isNormalMap, mipmaps, isReadable, isCompressed);
                 ReplaceIfNecessary(texZn, isNormalMap, mipmaps, isReadable, isCompressed);
                 ReplaceIfNecessary(texXp, isNormalMap, mipmaps, isReadable, isCompressed);
                 ReplaceIfNecessary(texYp, isNormalMap, mipmaps, isReadable, isCompressed);
                 ReplaceIfNecessary(texZp, isNormalMap, mipmaps, isReadable, isCompressed);
+                
                 Texture2D[] textures = new Texture2D[6];
                 textures[(int)CubemapFace.NegativeX] = GameDatabase.Instance.GetTexture(texXn, isNormalMap);
                 textures[(int)CubemapFace.NegativeY] = GameDatabase.Instance.GetTexture(texYn, isNormalMap);
@@ -79,19 +81,37 @@ namespace TextureConfig
             }
         }
 
-        private static void ReplaceIfNecessary(string name, bool isNormalMap, bool mipmaps, bool isReadable, bool isCompressed)
+        private static void ReplaceIfNecessary(string name, bool normalMap, bool mipmaps, bool readable, bool compressed)
         {
             if (GameDatabase.Instance.ExistsTexture(name))
             {
                 GameDatabase.TextureInfo info = GameDatabase.Instance.GetTextureInfo(name);
+                bool isReadable = false;
+                try { info.texture.GetPixel(0, 0); isReadable = true; }
+                catch { }
+                bool hasMipmaps = info.texture.mipmapCount > 0;
+                bool isCompressed = (info.texture.format == TextureFormat.DXT1 || info.texture.format == TextureFormat.DXT5);
+                bool isNormalMap = info.isNormalMap;
 
                 
-                //Pretty ineficient to not check beforehand, but makes the logic much simpler by simply reloading the textures.
-                info.isNormalMap = isNormalMap;
-                info.isReadable = true;
-                info.isCompressed = false;
-                TextureConverter.Reload(info, false, default(Vector2), null, mipmaps);
-                info.texture.name = name;
+                if (!isReadable || ( isCompressed && !compressed) || (isNormalMap != normalMap))
+                {
+                    //Pretty ineficient to not check beforehand, but makes the logic much simpler by simply reloading the textures.
+                    info.isNormalMap = normalMap;
+                    info.isReadable = readable;
+                    info.isCompressed = compressed;
+                    TextureConverter.Reload(info, false, default(Vector2), null, mipmaps);
+                    info.texture.name = name;
+                }
+                else if (isReadable != readable || isCompressed != compressed || hasMipmaps != mipmaps)
+                {
+                    if(compressed)
+                    {
+                        info.texture.Compress(true);
+                    }
+                    info.texture.Apply(mipmaps, !readable);
+                }
+                
             }
         }
 

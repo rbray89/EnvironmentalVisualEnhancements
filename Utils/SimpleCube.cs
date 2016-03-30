@@ -15,7 +15,7 @@ namespace Utils
         {
             
             GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            GameObject.Destroy(cube.collider);
+            GameObject.Destroy(cube.GetComponent<Collider>());
             cube.transform.localScale = Vector3.one;
             meshContainer = cube;
             

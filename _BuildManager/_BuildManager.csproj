@@ -66,10 +66,40 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'experimentals|AnyCPU'">
+    <OutputPath>bin\experimentals\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'experimentals|x86'">
+    <OutputPath>bin\x86\experimentals\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'experimentals|x64'">
+    <OutputPath>bin\x64\experimentals\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>ManagedMinimumRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\KSPResources\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="KSPUtil">
+      <HintPath>..\KSPResources\KSPUtil.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -138,8 +168,8 @@ xcopy  $(TargetName).pdb "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualE
 xcopy  $(TargetFileName).mdb "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Plugins\" /eyir
 
 
-xcopy "$(SolutionDir)ContentConfigs\GameData" "C:\Users\rbray\Documents\ksp\ksp-$(PlatformName)-1-0-5\GameData" /e /y /i /r
-xcopy "$(SolutionDir)ContentEVE\GameData" "C:\Users\rbray\Documents\ksp\ksp-$(PlatformName)-1-0-5\GameData" /e /y /i /r
+xcopy "$(SolutionDir)ContentConfigs\GameData" "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData" /eyir
+xcopy "$(SolutionDir)ContentEVE\GameData" "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData" /eyir
 
 if $(ConfigurationName) == Release del /s "$(SolutionDir)ContentEVE\*.pdb"
 if $(ConfigurationName) == Release del /s "$(SolutionDir)ContentEVE\*.mdb"
