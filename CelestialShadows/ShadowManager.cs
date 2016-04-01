@@ -21,14 +21,17 @@ namespace CelestialShadows
         public override void Setup()
         {
             base.Setup();
-            if( configs.Length > 0 && shadowProjector == null)
+            /*
+            if ( configs.Length > 0 && shadowProjector == null)
             {
                 shadowProjector = new ShadowProjector();
             }
+            */
         }
-       /* 
+       
         protected void Update()
         {
+            /*
             if (shadowProjector != null)
             {
                 if (HighLogic.LoadedScene == GameScenes.SPACECENTER || (HighLogic.LoadedScene == GameScenes.FLIGHT && !MapView.MapIsEnabled))
@@ -47,7 +50,8 @@ namespace CelestialShadows
                     }
                 }
             }
+            */
         }
-        */
+        
     }
 }

@@ -1,24 +1,24 @@
 ﻿Shader "EVE/CloudVolumeParticle" {
 	Properties {
-		_TopTex ("Particle Texture", 2D) = "white" {}
-		_LeftTex ("Particle Texture", 2D) = "white" {}
-		_FrontTex ("Particle Texture", 2D) = "white" {}
-		_MainTex ("Main (RGB)", 2D) = "white" {}
-		_DetailTex ("Detail (RGB)", 2D) = "white" {}
-		_DetailScale ("Detail Scale", Range(0,1000)) = 100
-		_DistFade ("Distance Fade Near", Range(0,1)) = 1.0
-		_DistFadeVert ("Distance Fade Vertical", Range(0,1)) = 0.004
-		_Color ("Color Tint", Color) = (1,1,1,1)
-		_InvFade ("Soft Particles Factor", Range(0.01,3.0)) = .01
-		_Rotation ("Rotation", float) = 0
-		_MaxScale ("Max Scale", float) = 1
-		_MaxTrans ("Max Translation", Vector) = (0,0,0)
-		_NoiseScale("Noise Scale", float) = .0005
+		_TopTex("Particle Texture", 2D) = "white" {}
+		_LeftTex("Particle Texture", 2D) = "white" {}
+		_FrontTex("Particle Texture", 2D) = "white" {}
+		_MainTex("Main (RGB)", 2D) = "white" {}
+		_DetailTex("Detail (RGB)", 2D) = "white" {}
+		_DetailScale("Detail Scale", Range(0,1000)) = 100
+		_DistFade("Distance Fade Near", Range(0,1)) = 1.0
+		_DistFadeVert("Distance Fade Vertical", Range(0,1)) = 0.004
+		_Color("Color Tint", Color) = (1,1,1,1)
+		_InvFade("Soft Particles Factor", Range(0.01,3.0)) = .01
+		_Rotation("Rotation", Float) = 0
+		_MaxScale("Max Scale", Float) = 1
+		_MaxTrans("Max Translation", Vector) = (0,0,0)
+		_NoiseScale("Noise Scale", Vector) = (1,2,.0005)
 	}
 
 	Category {
 
-		Tags { "Queue"="Transparent+1" "IgnoreProjector"="True" "RenderType"="Transparent" }
+		Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "DisableBatching"="True" }
 		Blend SrcAlpha OneMinusSrcAlpha
 		Fog { Mode Global}
 		AlphaTest Greater 0
@@ -57,7 +57,6 @@
 				sampler2D _LeftTex;
 				sampler2D _FrontTex;
 
-
 				sampler2D _DetailTex;
 				float _DetailScale;
 				fixed4 _Color;
@@ -66,7 +65,7 @@
 				float _InvFade;
 				float _Rotation;
 				float _MaxScale;
-				float _NoiseScale;
+				float3 _NoiseScale;
 				float3 _MaxTrans;
 
 				sampler2D _CameraDepthTexture;
@@ -102,8 +101,8 @@
 					float4 origin = mul(_Object2World, float4(0,0,0,1));
 
 					float4 planet_pos = mul(_MainRotation, origin);
-					float3 normalized = _NoiseScale*(planet_pos.xyz);
-					float3 hashVect =  .5*(float3(snoise(normalized), snoise(2*normalized), snoise(4* normalized))+1);
+					float3 normalized = _NoiseScale.z*(planet_pos.xyz);
+					float3 hashVect =  .5*(float3(snoise(normalized), snoise(_NoiseScale.x*normalized), snoise(_NoiseScale.y*normalized))+1);
 
 					float4 localOrigin;
 					localOrigin.xyz = (2*hashVect-1)*_MaxTrans;

@@ -28,8 +28,8 @@ namespace Atmosphere
         public float MaxScale { set { _MaxScale = value; } }
         Vector3 _MaxTrans;
         public Vector3 MaxTrans { set { _MaxTrans = value; } }
-        float _NoiseScale;
-        public float NoiseScale { set { _NoiseScale = value; } }
+        Vector3 _NoiseScale;
+        public Vector3 NoiseScale { set { _NoiseScale = value; } }
     }
 
     class CloudsVolume
@@ -44,6 +44,8 @@ namespace Atmosphere
         float rotationSpeed = 0.002f;
         [ConfigItem]
         particleVolumeMaterial particleMaterial = null;
+        [ConfigItem]
+        Vector3 noiseScale = new Vector3(1.5f, 2.5f, 60);
 
         Material ParticleMaterial;
         VolumeManager volumeManager;
@@ -76,7 +78,7 @@ namespace Atmosphere
             Remove();
             particleMaterial.MaxScale = size.y;
             particleMaterial.MaxTrans = maxTranslation;
-            particleMaterial.NoiseScale = 30f / radius;
+            particleMaterial.NoiseScale =  new Vector3(noiseScale.x, noiseScale.y, noiseScale.z / radius);
             ParticleMaterial = new Material(ParticleCloudShader);
             particleMaterial.ApplyMaterialProperties(ParticleMaterial);
             material.ApplyMaterialProperties(ParticleMaterial);

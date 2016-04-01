@@ -117,9 +117,6 @@
     <Compile Include="..\_BuildManager\Properties\AssemblyVersionInfo.cs">
       <Link>Properties\AssemblyVersionInfo.cs</Link>
     </Compile>
-    <Compile Include="IVARenderCam.cs" />
-    <Compile Include="IVAWindowManager.cs" />
-    <Compile Include="IVAWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -59,7 +59,7 @@ namespace EVEManager
 
         public override void Setup()
         {
-            
+            ILog("Running Setup");
             if ((ObjectType.STATIC & objectType) != ObjectType.STATIC)
             {
                 LoadConfig();
