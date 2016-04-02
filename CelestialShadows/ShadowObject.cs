@@ -19,20 +19,35 @@ namespace CelestialShadows
     public class ShadowComponent : MonoBehaviour
     {
         Material shadowMat;
-        internal void Apply(Material mat)
+        CelestialBody body;
+        internal void Apply(Material mat, CelestialBody cb)
         {
             shadowMat = mat;
+            body = cb;
         }
 
         internal void OnPreCull()
         {
-            shadowMat.SetVector("_SunPos", Sun.Instance.sun.scaledBody.transform.position);
+            
             Matrix4x4 bodies = new Matrix4x4();
 
             CelestialBody celestialBody = Tools.GetCelestialBody("Mun");
             bodies.SetRow(0, celestialBody.scaledBody.transform.position);
             bodies[0, 3] = (float)(ScaledSpace.InverseScaleFactor * celestialBody.Radius);
+
+            shadowMat.SetVector("_SunPos", Sun.Instance.sun.scaledBody.transform.position);
             shadowMat.SetMatrix("_ShadowBodies", bodies);
+
+            foreach (Transform child in body.scaledBody.transform)
+            {
+                MeshRenderer cmr = child.GetComponent<MeshRenderer>();
+                ShadowManager.Log(child.name);
+                if (cmr != null)
+                {
+                    cmr.material.SetVector("_SunPos", Sun.Instance.sun.scaledBody.transform.position);
+                    cmr.material.SetMatrix("_ShadowBodies", bodies);
+                }
+            }
             /*
             ShadowManager.Log("_SunPos: " + Sun.Instance.sun.scaledBody.transform.position);
             ShadowManager.Log("_SunRadius: " + (float)(ScaledSpace.InverseScaleFactor * Sun.Instance.sun.Radius));
@@ -86,6 +101,14 @@ namespace CelestialShadows
 
                     //shadowMaterial.ApplyMaterialProperties(shadowMat);
                     shadowMat.SetFloat("_SunRadius", (float)(ScaledSpace.InverseScaleFactor * Sun.Instance.sun.Radius));
+                    foreach (Transform child in celestialBody.scaledBody.transform)
+                    {
+                        MeshRenderer cmr = child.GetComponent<MeshRenderer>();
+                        if (cmr != null)
+                        {
+                            cmr.material.SetFloat("_SunRadius", (float)(ScaledSpace.InverseScaleFactor * Sun.Instance.sun.Radius));
+                        }
+                    }
                     shadowMat.name = materialName;
                     List<Material> materials = new List<Material>(mr.materials);
                     materials.Add(shadowMat);
@@ -93,7 +116,7 @@ namespace CelestialShadows
                 }
                 ShadowComponent sc = ScaledCamera.Instance.galaxyCamera.gameObject.AddComponent<ShadowComponent>();
                 sc.name = materialName;
-                sc.Apply(shadowMat);
+                sc.Apply(shadowMat, celestialBody);
             }
            
         }

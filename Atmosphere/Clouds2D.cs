@@ -159,6 +159,7 @@ namespace Atmosphere
             this.scaledCelestialTransform = scaledCelestialTransform;
             HalfSphere hp = new HalfSphere(radius, ref CloudMaterial, CloudShader);
             CloudMesh = hp.GameObject;
+            CloudMaterial.name = "Clouds2D";
             this.radius = radius;
             macroCloudMaterial.Radius = radius;
             this.cloudsMat = cloudsMaterial;
@@ -211,7 +212,11 @@ namespace Atmosphere
 
             if(HighLogic.LoadedScene == GameScenes.MAINMENU)
             {
-                Sunlight = GameObject.FindObjectsOfType<Light>().Last(l => l.isActiveAndEnabled);
+                try
+                {
+                    Sunlight = GameObject.FindObjectsOfType<Light>().Last(l => l.isActiveAndEnabled);
+                }
+                catch { }
             }
 
             if (ShadowProjector != null)

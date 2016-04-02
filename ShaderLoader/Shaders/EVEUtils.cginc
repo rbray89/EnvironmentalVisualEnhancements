@@ -21,7 +21,14 @@
 
 	uniform float4x4 _MainRotation;
 	uniform float4x4 _DetailRotation;
+	uniform float4x4 _ShadowBodies = float4x4
+	(	0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0);
 
+	float _SunRadius = 1;
+	float3 _SunPos;
 
 	/*=========================================================================*
 	* R A N D _ R O T A T I O N Author: Jim Arvo, 1991 *
@@ -130,5 +137,35 @@
 		half termlerp = saturate(10*-NdotL);
 		half terminator = lerp(1,saturate(floor(1.01+NdotL)), termlerp);
 		return terminator;
+	}
+
+	inline half BodyShadow(float3 v, float R, float r, float3 P, float3 p)
+	{
+		
+		float3 D = P - v;
+
+		float a = PI*(r*r);
+		float3 d = p - v;
+
+		float tc = dot(d, normalize(D));
+		float tc2 = (tc*tc);
+		float L = sqrt(dot(d, d) - tc2);
+
+		float scale = tc / length(D); //Scaled Sun Area to match plane of intersecting body
+		float Rs = R * scale;
+		float A = PI*(Rs*Rs);
+
+		float s = saturate((r + Rs - L) / (2 * min(r, Rs)));
+		s = (INV_PI*asin((2 * s) - 1)) + .5;
+		return lerp(1, saturate((A - (s*a)) / A), step(r, tc)*saturate(a));
+	}
+
+	inline half MultiBodyShadow(float3 v, float R, float3 P, float4x4 m)
+	{
+		half a = BodyShadow(v, R, m[0].w, P, m[0].xyz);
+		half b = BodyShadow(v, R, m[1].w, P, m[1].xyz);
+		half c = BodyShadow(v, R, m[2].w, P, m[2].xyz);
+		half d = BodyShadow(v, R, m[3].w, P, m[3].xyz);
+		return min(min(a, b), min(c, d));
 	}
 #endif

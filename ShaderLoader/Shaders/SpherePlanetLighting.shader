@@ -41,10 +41,6 @@
 	fixed4 _Color;
 	float _SpecularPower;
 	half4 _SpecularColor;
-	float _SunRadius;
-	float3 _SunPos;
-	float _bRadius;
-	float3 _bPos;
 
 	struct appdata_t {
 		float4 vertex : POSITION;
@@ -71,27 +67,7 @@
 	{
 		half4 color = half4(1,1,1,1);
 
-		float R = _SunRadius;
-		float A = PI*(R*R);
-		float3 D = _SunPos - IN.worldPos;
-
-		//float r = _bRadius;// _ShadowBodies[0].w;
-		float r = _ShadowBodies[0].w;
-		float a = PI*(r*r);
-		//float3 bPos = _bPos;// _ShadowBodies[0].xyz;
-		float3 bPos = _ShadowBodies[0].xyz;
-		float3 d = bPos - IN.worldPos;
-
-		float tc = dot(d, normalize(D));
-		float tc2 = (tc*tc);
-		float L = sqrt(dot(d, d) - tc2);
-
-		float scale = tc2 / dot(D, D); //Scaled Sun Area to match plane of intersecting body
-		A *= scale;
-		R *= sqrt(scale);
-
-		float v = saturate((r + R - L) / (2 * min(r, R)));
-		color.a = saturate((A - (v*a)) / A);
+		color.a = MultiBodyShadow(IN.worldPos, _SunRadius, _SunPos, _ShadowBodies);
 
 		return color;
 	}

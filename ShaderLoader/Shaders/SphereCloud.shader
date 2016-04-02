@@ -91,7 +91,7 @@ Shader "EVE/Cloud" {
 				v2f vert(appdata_t v)
 				{
 					v2f o;
-
+					UNITY_INITIALIZE_OUTPUT(v2f, o);
 					o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 
 					float4 vertexPos = mul(_Object2World, v.vertex);
@@ -164,6 +164,7 @@ Shader "EVE/Cloud" {
 					float fade = saturate(_InvFade * (depth - partZ));
 					color.a *= fade;
 #endif
+					color.rgb *= MultiBodyShadow(IN.worldVert, _SunRadius, _SunPos, _ShadowBodies);
 					return color;
 				}
 				ENDCG

@@ -16,6 +16,7 @@ namespace CelestialShadows
     {
         public override ObjectType objectType { get { return ObjectType.BODY; } }
         public override String configName { get { return "EVE_SHADOWS"; } }
+        public override int LoadOrder { get { return 200; } }
         protected static ShadowProjector shadowProjector = null;
 
         public override void Setup()
