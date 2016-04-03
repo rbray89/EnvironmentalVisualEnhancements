@@ -15,6 +15,7 @@ Shader "EVE/Cloud" {
 		_InvFade("Soft Particles Factor", Range(0.01,3.0)) = .01
 		_OceanRadius("Ocean Radius", Float) = 63000
 		_PlanetOrigin("Sphere Center", Vector) = (0,0,0,1)
+		_DepthPull("Depth Augment", Float) = .99
 	}
 
 	Category{
@@ -68,6 +69,7 @@ Shader "EVE/Cloud" {
 				float _InvFade;
 				float3 _PlanetOrigin;
 				sampler2D _CameraDepthTexture;
+				float _DepthPull;
 
 				struct appdata_t {
 					float4 vertex : POSITION;
@@ -101,19 +103,24 @@ Shader "EVE/Cloud" {
 					o.objMain = mul(_MainRotation, v.vertex);
 					o.objDetail = mul(_DetailRotation, o.objMain);
 					o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
-#ifdef SOFT_DEPTH_ON
+
 					o.projPos = ComputeScreenPos(o.pos);
 					COMPUTE_EYEDEPTH(o.projPos.z);
 					TRANSFER_VERTEX_TO_FRAGMENT(o);
-#endif
 
 					o.L = _PlanetOrigin - _WorldSpaceCameraPos.xyz;
 
 					return o;
 				}
 
-				fixed4 frag(v2f IN) : COLOR
+				struct fout {
+					half4 color : COLOR;
+					float depth : DEPTH;
+				};
+
+				fout frag(v2f IN)
 				{
+					fout OUT;
 					half4 color;
 					half4 main;
 
@@ -165,7 +172,15 @@ Shader "EVE/Cloud" {
 					color.a *= fade;
 #endif
 					color.rgb *= MultiBodyShadow(IN.worldVert, _SunRadius, _SunPos, _ShadowBodies);
-					return color;
+					OUT.color = color;
+					
+					float depthWithOffset = IN.projPos.z;
+#ifndef WORLD_SPACE_ON
+					depthWithOffset *= _DepthPull;
+					OUT.color.a *= step(0, dot(IN.viewDir, IN.worldNormal));
+#endif
+					OUT.depth = (1.0 - depthWithOffset * _ZBufferParams.w) / (depthWithOffset * _ZBufferParams.z);
+					return OUT;
 				}
 				ENDCG
 

@@ -124,7 +124,12 @@ namespace Utils
 
         public static Transform GetScaledTransform(string body)
         {
-            return GetCelestialBody(body).scaledBody.transform;
+            CelestialBody cb = GetCelestialBody(body);
+            if(cb== null)
+            {
+                return null;
+            }
+            return cb.scaledBody.transform;
         }
 
         public static GameObject GetMainMenuObject(string name)
