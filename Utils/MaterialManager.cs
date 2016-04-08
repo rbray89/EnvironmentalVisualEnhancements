@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Utils
 {
@@ -48,70 +49,9 @@ namespace Utils
             }
         }
 
-        public void Log()
-        {
-            foreach (KeyValuePair<String, object> field in cache)
-            {
-                String name = field.Key;
-                object obj = field.Value;
-                float scaleValue = 1f;
-                if (obj != null && obj.GetType() == typeof(ScaledValue))
-                {
-                    obj = ((ScaledValue)obj).obj;
-                    scaleValue = 1 / Scale;
-                }
-                else if (obj != null && obj.GetType() == typeof(InverseScaledValue))
-                {
-                    obj = ((InverseScaledValue)obj).obj;
-                    scaleValue = Scale;
-                }
-
-                if (obj == null || obj.GetType() == typeof(Texture2D))
-                {
-                    Texture2D value = (Texture2D)obj;
-                    KSPLog.print(name+": "+ value);
-                }
-                else if (obj.GetType() == typeof(Texture))
-                {
-                    Texture value = (Texture)obj;
-                    KSPLog.print(name + ": " + value);
-                }
-                else if (obj.GetType() == typeof(Cubemap))
-                {
-                    Cubemap value = (Cubemap)obj;
-                    KSPLog.print(name + ": " + value);
-                }
-                //float
-                else if (obj.GetType() == typeof(float))
-                {
-                    float value = (float)obj;
-                    KSPLog.print(name + ": " + value * scaleValue);
-                }
-                //Color
-                else if (obj.GetType() == typeof(Color))
-                {
-                    Color value = (Color)obj;
-                    KSPLog.print(name + ": " + value);
-                }
-                //Color
-                else if (obj.GetType() == typeof(Color32))
-                {
-                    Color32 value = (Color32)obj;
-                    KSPLog.print(name + ": " + value);
-                }
-                //Vector3
-                else if (obj.GetType() == typeof(Vector3))
-                {
-                    Vector3 value = (Vector3)obj;
-                    KSPLog.print(name + ": " + value * scaleValue);
-                }
-
-            }
-        }
-
         bool cached = false;
         float Scale;
-        Dictionary<String, object> cache = new Dictionary<string, object>();
+        Dictionary<object, object> cache = new Dictionary<object, object>();
         public void ApplyMaterialProperties(Material material, float scale = 1.0f)
         {
             Scale = scale;
@@ -119,7 +59,14 @@ namespace Utils
             ApplyCache(material, scale);
             //Log();
         }
+        
+        public void UpdateCommandBuffer(Material mat, CommandBuffer buf)
+        {
+            Cache();
+            CloneToBuffer(mat, buf);
+        }
 
+        
         private void Cache()
         {
             if (!cached)
@@ -151,17 +98,18 @@ namespace Utils
                     {
                         bool isScaled = Attribute.IsDefined(field, typeof(Scaled));
                         bool isInvScaled = Attribute.IsDefined(field, typeof(InverseScaled));
+                        int id = Shader.PropertyToID(name);
                         if (isScaled)
                         {
-                            cache.Add(name, new ScaledValue(field.GetValue(this)));
+                            cache.Add(id, new ScaledValue(field.GetValue(this)));
                         }
                         else if (isInvScaled)
                         {
-                            cache.Add(name, new InverseScaledValue(field.GetValue(this)));
+                            cache.Add(id, new InverseScaledValue(field.GetValue(this)));
                         }
                         else
                         {
-                            cache.Add(name, field.GetValue(this));
+                            cache.Add(id, field.GetValue(this));
                         }
                     }
                 }
@@ -171,9 +119,8 @@ namespace Utils
 
         private void ApplyCache(Material material, float scale = 1.0f)
         {
-            foreach (KeyValuePair<String,object> field in cache)
+            foreach (KeyValuePair<object,object> field in cache)
             {
-                String name = field.Key;
                 object obj = field.Value;
                 float scaleValue = 1f;
                 if (obj != null && obj.GetType() == typeof(ScaledValue))
@@ -187,56 +134,51 @@ namespace Utils
                     scaleValue = scale;
                 }
 
-                if (obj == null || obj.GetType() == typeof(Texture2D))
-                {
-                    Texture2D value = (Texture2D)obj;
-                    material.SetTexture(name, value);
-                }
-                else if (obj.GetType() == typeof(TextureWrapper))
+                if (obj.GetType() == typeof(TextureWrapper))
                 {
                     TextureWrapper value = (TextureWrapper)obj;
-                    value.ApplyTexture(material, name);
+                    value.ApplyTexture(material, (String)field.Key);
                 }
                 //float
                 else if (obj.GetType() == typeof(float))
                 {
                     float value = (float)obj;
-                    material.SetFloat(name, value * scaleValue);
+                    material.SetFloat((int)field.Key, value * scaleValue);
                 }
                 //Color
                 else if (obj.GetType() == typeof(Color))
                 {
                     Color value = (Color)obj;
-                    material.SetColor(name, value/256f);
+                    material.SetColor((int)field.Key, value/256f);
                 }
                 //Color32
                 else if (obj.GetType() == typeof(Color32))
                 {
                     Color32 value = (Color32)obj;
-                    material.SetColor(name, value);
+                    material.SetColor((int)field.Key, value);
                 }//Vector2
                 else if (obj.GetType() == typeof(Vector2))
                 {
                     Vector2 value = (Vector2)obj;
-                    material.SetVector(name, value * scaleValue);
+                    material.SetVector((int)field.Key, value * scaleValue);
                 }
                 //Vector3
                 else if (obj.GetType() == typeof(Vector3))
                 {
                     Vector3 value = (Vector3)obj;
-                    material.SetVector(name, value * scaleValue);
+                    material.SetVector((int)field.Key, value * scaleValue);
                 }
                 //Vector4
                 else if (obj.GetType() == typeof(Vector4))
                 {
                     Vector4 value = (Vector4)obj;
-                    material.SetVector(name, value * scaleValue);
+                    material.SetVector((int)field.Key, value * scaleValue);
                 }
                 //Matrix
                 else if (obj.GetType() == typeof(Matrix4x4))
                 {
                     Matrix4x4 value = (Matrix4x4)obj;
-                    material.SetMatrix(name, value);
+                    material.SetMatrix((int)field.Key, value);
                 }
                 //bool
                 else if (obj.GetType() == typeof(bool))
@@ -244,11 +186,11 @@ namespace Utils
                     bool value = (bool)obj;
                     if (value)
                     {
-                        material.EnableKeyword(name);
+                        material.EnableKeyword((String)field.Key);
                     }
                     else
                     {
-                        material.DisableKeyword(name);
+                        material.DisableKeyword((String)field.Key);
                     }
                 }
                 //enum
@@ -261,10 +203,62 @@ namespace Utils
             }
         }
 
+        private void CloneToBuffer(Material mat, CommandBuffer buf)
+        {
+            foreach (KeyValuePair<object, object> field in cache)
+            {
+                object obj = field.Value;
+                //float
+                int id = (int)field.Key;
+                if (obj.GetType() == typeof(float))
+                {
+                    float value = mat.GetFloat(id);
+                    buf.SetGlobalFloat(id, value);
+                }
+                //Color
+                else if (obj.GetType() == typeof(Color))
+                {
+                    Color value = mat.GetColor(id);
+                    buf.SetGlobalColor(id, value);
+                }
+                //Color32
+                else if (obj.GetType() == typeof(Color32))
+                {
+                    Color value = mat.GetColor(id);
+                    buf.SetGlobalColor(id, value);
+                }//Vector2
+                else if (obj.GetType() == typeof(Vector2))
+                {
+                    Vector4 value = mat.GetVector(id);
+                    buf.SetGlobalVector(id, value);
+                }
+                //Vector3
+                else if (obj.GetType() == typeof(Vector3))
+                {
+                    Vector4 value = mat.GetVector(id);
+                    buf.SetGlobalVector(id, value);
+                }
+                //Vector4
+                else if (obj.GetType() == typeof(Vector4))
+                {
+                    Vector4 value = mat.GetVector(id);
+                    buf.SetGlobalVector(id, value);
+                }
+                //Matrix
+                else if (obj.GetType() == typeof(Matrix4x4))
+                {
+                    Matrix4x4 value = mat.GetMatrix(id);
+                    buf.SetGlobalMatrix(id, value);
+                }
+
+            }
+        }
+
+
         public void SaveTextures(Material material)
         {
             Cache();
-            List<String> keys = cache.Keys.ToList();
+            List<String> keys = cache.Keys.Select(x=>(string)x).ToList();
             foreach (String key in keys)
             {
                 String name = key;

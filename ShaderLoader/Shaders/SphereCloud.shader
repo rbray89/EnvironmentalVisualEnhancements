@@ -20,7 +20,7 @@ Shader "EVE/Cloud" {
 
 	Category{
 
-		Tags { "Queue" = "Transparent+1" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Tags { "Queue" = "Transparent+2" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 		Blend SrcAlpha OneMinusSrcAlpha
 		Fog { Mode Global}
 		AlphaTest Greater 0

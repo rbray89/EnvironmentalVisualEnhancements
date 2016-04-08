@@ -41,7 +41,6 @@ namespace CityLights
         String materialName = Guid.NewGuid().ToString();
         GameObject mainMenuBody = null;
         MaterialPQS materialPQS;
-        SceneChangeEvent onSceneChange;
 
         public void LoadConfigNode(ConfigNode node)
         {
@@ -56,7 +55,7 @@ namespace CityLights
             {
                 GameObject go = new GameObject();
                 materialPQS = go.AddComponent<MaterialPQS>();
-                materialPQS.Apply(celestialBody, cityLightsMaterial, ShaderLoaderClass.FindShader("EVE/TerrainCityLight"));
+                materialPQS.Apply(celestialBody, cityLightsMaterial, ShaderLoaderClass.FindShader("EVE/TerrainCityLight"), true, false);
             }
             Transform transform = Tools.GetScaledTransform(body);
             if (transform != null)
@@ -69,10 +68,10 @@ namespace CityLights
                     cityLightsMaterial.ApplyMaterialProperties(scaledMat);
                     scaledMat.SetTexture("_MainTex", mr.material.GetTexture("_MainTex"));
                     scaledMat.name = materialName;
-                    List<Material> materials = new List<Material>(mr.materials);
-                    materials.Add(scaledMat);
-                    mr.materials = materials.ToArray();
-                    
+                    DeferredRenderer dr = mr.gameObject.AddComponent<DeferredRenderer>();
+                    dr.Material = scaledMat;
+                    dr.name = materialName;
+
                 }
             }
             ApplyToMainMenu();

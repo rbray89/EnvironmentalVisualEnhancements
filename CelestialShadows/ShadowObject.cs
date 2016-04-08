@@ -11,12 +11,53 @@ using Utils;
 
 namespace CelestialShadows
 {
-
-    public class ShadowMaterial : MaterialManager
+    
+    public class ScaledShadowComponent : MonoBehaviour
     {
+        Material shadowMat;
+        CelestialBody body;
+        List<CelestialBody> shadowList;
+
+        internal void Apply(Material mat, CelestialBody cb, List<CelestialBody> list)
+        {
+            shadowMat = mat;
+            body = cb;
+            shadowList = list;
+        }
+
+        internal void OnWillRenderObject()
+        {
+            if (HighLogic.LoadedScene != GameScenes.MAINMENU)
+            {
+                Matrix4x4 bodies = new Matrix4x4();
+                int i = 0;
+                foreach (CelestialBody cb in shadowList)
+                {
+                    bodies.SetRow(i, cb.scaledBody.transform.position);
+                    bodies[i, 3] = (float)(ScaledSpace.InverseScaleFactor * cb.Radius);
+                    i++;
+                }
+                if (shadowMat != null)
+                {
+                    shadowMat.SetVector("_SunPos", Sun.Instance.sun.scaledBody.transform.position);
+                    shadowMat.SetMatrix("_ShadowBodies", bodies);
+                }
+
+                foreach (Transform child in body.scaledBody.transform)
+                {
+                    MeshRenderer cmr = child.GetComponent<MeshRenderer>();
+                    if (cmr != null)
+                    {
+                        cmr.material.SetFloat("_SunRadius", (float)(ScaledSpace.InverseScaleFactor * Sun.Instance.sun.Radius));
+                        cmr.material.SetVector("_SunPos", Sun.Instance.sun.scaledBody.transform.position);
+                        cmr.material.SetMatrix("_ShadowBodies", bodies);
+                    }
+                }
+            }
+        }
     }
 
-    public class ShadowComponent : MonoBehaviour
+    public class LocalShadowComponent : MonoBehaviour
     {
         Material shadowMat;
         CelestialBody body;
@@ -31,37 +72,42 @@ namespace CelestialShadows
 
         internal void OnPreCull()
         {
-            
-            Matrix4x4 bodies = new Matrix4x4();
-            int i = 0;
-            foreach (CelestialBody cb in shadowList)
+            if (HighLogic.LoadedScene != GameScenes.MAINMENU)
             {
-                bodies.SetRow(i, cb.scaledBody.transform.position);
-                bodies[i, 3] = (float)(ScaledSpace.InverseScaleFactor * cb.Radius);
-                i++;
-            }
-            if (shadowMat != null)
-            {
-                shadowMat.SetVector("_SunPos", Sun.Instance.sun.scaledBody.transform.position);
-                shadowMat.SetMatrix("_ShadowBodies", bodies);
-            }
-
-            foreach (Transform child in body.scaledBody.transform)
-            {
-                MeshRenderer cmr = child.GetComponent<MeshRenderer>();
-                if (cmr != null)
+                Matrix4x4 bodies = new Matrix4x4();
+                int i = 0;
+                foreach (CelestialBody cb in shadowList)
                 {
-                    cmr.material.SetVector("_SunPos", Sun.Instance.sun.scaledBody.transform.position);
-                    cmr.material.SetMatrix("_ShadowBodies", bodies);
+                    bodies.SetRow(i, cb.transform.position);
+                    bodies[i, 3] = (float)(cb.Radius);
+                    i++;
+                }
+                if (shadowMat != null)
+                {
+                    shadowMat.SetVector("_SunPos", Sun.Instance.sun.transform.position);
+                    shadowMat.SetMatrix("_ShadowBodies", bodies);
+                }
+
+                foreach (Transform child in body.transform)
+                {
+                    MeshRenderer cmr = child.GetComponent<MeshRenderer>();
+                    if (cmr != null)
+                    {
+                        cmr.material.SetFloat("_SunRadius", (float)(Sun.Instance.sun.Radius));
+                        cmr.material.SetVector("_SunPos", Sun.Instance.sun.transform.position);
+                        cmr.material.SetMatrix("_ShadowBodies", bodies);
+                    }
                 }
             }
-            /*
-            ShadowManager.Log("_SunPos: " + Sun.Instance.sun.scaledBody.transform.position);
-            ShadowManager.Log("_SunRadius: " + (float)(ScaledSpace.InverseScaleFactor * Sun.Instance.sun.Radius));
-            ShadowManager.Log("Mun: " + bodies.ToString());
-            */
         }
     }
+
+    internal class ShadowMat : MaterialManager
+    {
+        float _SunRadius = 0f;
+        Vector3 _SunPos = Vector3.zero;
+        Matrix4x4 _ShadowBodies = Matrix4x4.zero;
+    } 
 
     public class ShadowObject : IEVEObject
     {
@@ -78,6 +124,8 @@ namespace CelestialShadows
 
         String materialName = Guid.NewGuid().ToString();
         Material shadowMat;
+        MaterialPQS materialPQS;
+        Material localShadowMat;
 
         private static Shader shadowShader;
         private static Shader ShadowShader
@@ -110,25 +158,24 @@ namespace CelestialShadows
                 if (mr != null && hasSurface)
                 {
                     shadowMat = new Material(ShadowShader);
+                    GameObject go = new GameObject();
+                    materialPQS = go.AddComponent<MaterialPQS>();
+                    localShadowMat = materialPQS.Apply(celestialBody, new ShadowMat(), ShadowShader, false, true);
 
                     //shadowMaterial.ApplyMaterialProperties(shadowMat);
                     shadowMat.SetFloat("_SunRadius", (float)(ScaledSpace.InverseScaleFactor * Sun.Instance.sun.Radius));
-                    shadowMat.name = materialName;
-                    List<Material> materials = new List<Material>(mr.materials);
-                    materials.Add(shadowMat);
-                    mr.materials = materials.ToArray();
-                }
+                    localShadowMat.SetFloat("_SunRadius", (float)(Sun.Instance.sun.Radius));
 
-                foreach (Transform child in celestialBody.scaledBody.transform)
-                {
-                    MeshRenderer cmr = child.GetComponent<MeshRenderer>();
-                    if (cmr != null)
-                    {
-                        cmr.material.SetFloat("_SunRadius", (float)(ScaledSpace.InverseScaleFactor * Sun.Instance.sun.Radius));
-                    }
+                    shadowMat.name = materialName;
+                    DeferredRenderer dr = mr.gameObject.AddComponent<DeferredRenderer>();
+                    dr.Material = shadowMat;
+                    dr.name = materialName;
                 }
-                ShadowComponent sc = ScaledCamera.Instance.galaxyCamera.gameObject.AddComponent<ShadowComponent>();
+                
+                ScaledShadowComponent sc = transform.gameObject.AddComponent<ScaledShadowComponent>();
                 sc.name = materialName;
+                LocalShadowComponent lsc = FlightCamera.fetch.mainCamera.gameObject.AddComponent<LocalShadowComponent>();
+                lsc.name = materialName;
 
                 List<CelestialBody> casters = new List<CelestialBody>();
                 if (caster != null)
@@ -139,11 +186,47 @@ namespace CelestialShadows
                     }
                 }
                 sc.Apply(shadowMat, celestialBody, casters);
+                lsc.Apply(localShadowMat, celestialBody, casters);
             }
-           
+
+            ApplyToMainMenu();
+
+            GameEvents.onGameSceneLoadRequested.Add(SceneLoaded);
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU)
+            {
+                ApplyToMainMenu();
+            }
         }
 
-        
+        private void SceneLoaded(GameScenes scene)
+        {
+            if (scene == GameScenes.MAINMENU)
+            {
+                ApplyToMainMenu();
+            }
+        }
+
+        private void ApplyToMainMenu()
+        {
+            if (HighLogic.LoadedScene == GameScenes.MAINMENU)
+            {
+                GameObject go = Tools.GetMainMenuObject(body);
+                
+
+                if(go != null)
+                {
+                    foreach (Transform child in go.transform)
+                    {
+                        MeshRenderer cmr = child.GetComponent<MeshRenderer>();
+                        if (cmr != null)
+                        {
+                            cmr.material.SetMatrix("_ShadowBodies", Matrix4x4.zero);
+                        }
+                    }
+                }
+            }
+        }
+
 
         public void Remove()
         {
@@ -159,8 +242,10 @@ namespace CelestialShadows
                     materials.Remove(materials.Find(mat => mat.name.Contains(materialName)));
                     mr.materials = materials.ToArray();
                 }
-                GameObject.DestroyImmediate(ScaledCamera.Instance.galaxyCamera.gameObject.GetComponents<ShadowComponent>().First(sc => sc.name == materialName));
+                GameObject.DestroyImmediate(transform.gameObject.GetComponents<ScaledShadowComponent>().First(sc => sc.name == materialName));
+                GameObject.DestroyImmediate(FlightCamera.fetch.mainCamera.gameObject.GetComponents<ScaledShadowComponent>().First(sc => sc.name == materialName));
             }
+            GameEvents.onGameSceneLoadRequested.Add(SceneLoaded);
         }
     }
 }

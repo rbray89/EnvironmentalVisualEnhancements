@@ -12,8 +12,6 @@ namespace Atmosphere
 {
     public class CloudsPQS : PQSMod
     {
-        static bool camerasInitialized = false;
-
         private String body;
         private float altitude;
         CloudsVolume layerVolume = null;
@@ -361,7 +359,6 @@ namespace Atmosphere
                     if (cam.name == "Camera 01" || cam.name == "Camera 00")
                     {
                         cam.depthTextureMode = DepthTextureMode.Depth;
-                        camerasInitialized = true;
                     }
                 }
                 if (ScaledCamera.Instance != null && ScaledCamera.Instance.GetComponent<Camera>() != null)

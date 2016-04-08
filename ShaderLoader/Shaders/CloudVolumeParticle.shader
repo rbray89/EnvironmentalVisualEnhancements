@@ -18,7 +18,7 @@
 
 	Category {
 
-		Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "DisableBatching"="True" }
+		Tags { "Queue"="Transparent+2" "IgnoreProjector"="True" "RenderType"="Transparent" "DisableBatching"="True" }
 		Blend SrcAlpha OneMinusSrcAlpha
 		Fog { Mode Global}
 		AlphaTest Greater 0
