@@ -17,7 +17,7 @@ namespace Utils
             {
                 mat = value;
             } get { return mat; } }
-
+        
         public void OnDisable()
         {
             foreach (var cam in m_Cameras)
@@ -28,6 +28,7 @@ namespace Utils
                     cam.Key.RemoveCommandBuffer(CameraEvent.AfterForwardOpaque, cam.Value);
                 }
             }
+            m_Cameras.Clear();
         }
         
         public void OnWillRenderObject()

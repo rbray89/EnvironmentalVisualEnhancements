@@ -83,6 +83,8 @@ namespace CelestialShadows
                     bodies.SetRow(i, cb.transform.position);
                     bodies[i, 3] = (float)(cb.Radius);
                     i++;
+                    if (i == 4)
+                        break;
                 }
                 if (shadowMat != null)
                 {
@@ -156,7 +158,7 @@ namespace CelestialShadows
             Transform transform = Tools.GetScaledTransform(body);
             if (transform != null )
             {
-                MeshRenderer mr = transform.GetComponent<MeshRenderer>();
+                Renderer mr = transform.GetComponent<Renderer>();
                 if (mr != null && hasSurface)
                 {
                     shadowMat = new Material(ShadowShader);
