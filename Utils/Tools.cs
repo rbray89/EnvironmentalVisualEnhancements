@@ -28,6 +28,15 @@ namespace Utils
             ScaledSpaceSun = 23
         }
 
+        public enum Queue
+        {
+            Background = 1000,
+            Geometry = 2000,
+            AlphaTest = 2450,
+            Transparent = 3000,
+            Overlay = 4000
+        }
+
         public static void CalculateMeshTangents(Mesh mesh)
         {
             //speed up math by copying the mesh arrays

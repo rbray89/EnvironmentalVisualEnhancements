@@ -199,6 +199,7 @@ namespace Atmosphere
                 CloudMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius * scale);
                 CloudMaterial.EnableKeyword("WORLD_SPACE_ON");
                 CloudMaterial.EnableKeyword("SOFT_DEPTH_ON");
+                CloudMaterial.renderQueue = (int)Tools.Queue.Transparent + 2;
             }
             else
             {
@@ -208,6 +209,7 @@ namespace Atmosphere
                 Sunlight = (Light)field.GetValue(Sun.Instance);
                 CloudMaterial.DisableKeyword("WORLD_SPACE_ON");
                 CloudMaterial.DisableKeyword("SOFT_DEPTH_ON");
+                CloudMaterial.renderQueue = (int)Tools.Queue.Geometry + 2;
             }
 
             if(HighLogic.LoadedScene == GameScenes.MAINMENU)
