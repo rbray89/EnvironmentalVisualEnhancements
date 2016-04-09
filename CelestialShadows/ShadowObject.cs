@@ -17,6 +17,7 @@ namespace CelestialShadows
         Material shadowMat;
         CelestialBody body;
         List<CelestialBody> shadowList;
+        public String GUID { get { return shadowMat.name; } }
 
         internal void Apply(Material mat, CelestialBody cb, List<CelestialBody> list)
         {
@@ -62,6 +63,7 @@ namespace CelestialShadows
         Material shadowMat;
         CelestialBody body;
         List<CelestialBody> shadowList;
+        public String GUID { get { return shadowMat.name; } }
 
         internal void Apply(Material mat, CelestialBody cb, List<CelestialBody> list)
         {
@@ -167,15 +169,13 @@ namespace CelestialShadows
                     localShadowMat.SetFloat("_SunRadius", (float)(Sun.Instance.sun.Radius));
 
                     shadowMat.name = materialName;
+                    localShadowMat.name = materialName;
                     DeferredRenderer dr = mr.gameObject.AddComponent<DeferredRenderer>();
                     dr.Material = shadowMat;
-                    dr.name = materialName;
                 }
                 
                 ScaledShadowComponent sc = transform.gameObject.AddComponent<ScaledShadowComponent>();
-                sc.name = materialName;
                 LocalShadowComponent lsc = FlightCamera.fetch.mainCamera.gameObject.AddComponent<LocalShadowComponent>();
-                lsc.name = materialName;
 
                 List<CelestialBody> casters = new List<CelestialBody>();
                 if (caster != null)
@@ -212,7 +212,6 @@ namespace CelestialShadows
             {
                 GameObject go = Tools.GetMainMenuObject(body);
                 
-
                 if(go != null)
                 {
                     foreach (Transform child in go.transform)
@@ -235,17 +234,22 @@ namespace CelestialShadows
             Transform transform = Tools.GetScaledTransform(body);
             if (transform != null)
             {
-                MeshRenderer mr = transform.GetComponent<MeshRenderer>();
-                if (mr != null && hasSurface)
+                GameObject.DestroyImmediate(transform.gameObject.GetComponents<ScaledShadowComponent>().First(sc => sc.GUID == materialName));
+                
+                LocalShadowComponent lc = FlightCamera.fetch.mainCamera.gameObject.GetComponents<LocalShadowComponent>().FirstOrDefault(sc => sc.GUID == materialName);
+                if (lc != null)
                 {
-                    List<Material> materials = new List<Material>(mr.materials);
-                    materials.Remove(materials.Find(mat => mat.name.Contains(materialName)));
-                    mr.materials = materials.ToArray();
+                    GameObject.DestroyImmediate(lc);
                 }
-                GameObject.DestroyImmediate(transform.gameObject.GetComponents<ScaledShadowComponent>().First(sc => sc.name == materialName));
-                GameObject.DestroyImmediate(FlightCamera.fetch.mainCamera.gameObject.GetComponents<ScaledShadowComponent>().First(sc => sc.name == materialName));
+                
+                DeferredRenderer dr = transform.GetComponents<DeferredRenderer>().FirstOrDefault(r => r.Material == shadowMat);
+                if(dr != null)
+                {
+                    GameObject.DestroyImmediate(dr);
+                }
+
             }
-            GameEvents.onGameSceneLoadRequested.Add(SceneLoaded);
+            GameEvents.onGameSceneLoadRequested.Remove(SceneLoaded);
         }
     }
 }

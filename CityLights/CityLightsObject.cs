@@ -70,7 +70,6 @@ namespace CityLights
                     scaledMat.name = materialName;
                     DeferredRenderer dr = mr.gameObject.AddComponent<DeferredRenderer>();
                     dr.Material = scaledMat;
-                    dr.name = materialName;
 
                 }
             }
@@ -130,12 +129,10 @@ namespace CityLights
             Transform transform = Tools.GetScaledTransform(body);
             if (transform != null)
             {
-                MeshRenderer mr = transform.GetComponent<MeshRenderer>();
-                if (mr != null)
+                DeferredRenderer dr = transform.GetComponents<DeferredRenderer>().FirstOrDefault(r => r.Material.name == materialName);
+                if (dr != null)
                 {
-                    List<Material> materials = new List<Material>(mr.materials);
-                    materials.Remove(materials.Find(mat => mat.name.Contains(materialName)));
-                    mr.materials = materials.ToArray();
+                    GameObject.DestroyImmediate(dr);
                 }
             }
             if(mainMenuBody != null)
@@ -150,7 +147,7 @@ namespace CityLights
             }
             materialPQS.Remove();
 
-            GameEvents.onGameSceneLoadRequested.Add(SceneLoaded);
+            GameEvents.onGameSceneLoadRequested.Remove(SceneLoaded);
             GameObject.DestroyImmediate(materialPQS);
         }
     }
