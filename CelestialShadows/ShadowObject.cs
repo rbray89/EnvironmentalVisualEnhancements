@@ -172,8 +172,7 @@ namespace CelestialShadows
 
                     shadowMat.name = materialName;
                     localShadowMat.name = materialName;
-                    DeferredRenderer dr = mr.gameObject.AddComponent<DeferredRenderer>();
-                    dr.Material = shadowMat;
+                    DeferredRenderer.Add(mr.gameObject, shadowMat);
                 }
                 
                 ScaledShadowComponent sc = transform.gameObject.AddComponent<ScaledShadowComponent>();
@@ -243,12 +242,8 @@ namespace CelestialShadows
                 {
                     GameObject.DestroyImmediate(lc);
                 }
-                
-                DeferredRenderer dr = transform.GetComponents<DeferredRenderer>().FirstOrDefault(r => r.Material == shadowMat);
-                if(dr != null)
-                {
-                    GameObject.DestroyImmediate(dr);
-                }
+
+                DeferredRenderer.Remove(transform.gameObject, shadowMat);
 
             }
             GameEvents.onGameSceneLoadRequested.Remove(SceneLoaded);

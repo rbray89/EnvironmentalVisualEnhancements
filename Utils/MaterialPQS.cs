@@ -39,7 +39,7 @@ namespace Utils
                 OnDisable();
                 return;
             }
-
+            
             Camera cam = Camera.current;
             if (cam != null)
             {
@@ -68,6 +68,26 @@ namespace Utils
                 
             }
 
+        }
+
+        public static void Add(GameObject go, Material material)
+        {
+            DeferredRenderer dr = go.GetComponent<DeferredRenderer>();
+            if (dr == null || dr.Material != material)
+            {
+                Debug.Log("r: " + go.name);
+                dr = go.AddComponent<DeferredRenderer>();
+                dr.Material = material;
+            }
+        }
+
+        public static void Remove(GameObject go, Material material )
+        {
+            DeferredRenderer dr = go.GetComponents<DeferredRenderer>().FirstOrDefault(r => r.Material == material);
+            if (dr != null)
+            {
+                GameObject.DestroyImmediate(dr);
+            }
         }
     }
 
@@ -242,10 +262,10 @@ namespace Utils
         public override void OnSphereActive()
         {
             base.OnSphereActive();
-            FixPQSCities();
+            ApplyToPQSCities();
         }
 
-        public void FixPQSCities()
+        public void ApplyToPQSCities()
         {
             if (subPQS)
             {
@@ -256,16 +276,24 @@ namespace Utils
                     Debug.Log("city: " + city.name);
                     foreach (Renderer r in city.GetComponentsInChildren<Renderer>(true))
                     {
-                        DeferredRenderer dr = r.gameObject.GetComponent<DeferredRenderer>();
-                        if (dr == null)
-                        {
-                            Debug.Log("r: " + r.name);
-                            dr = r.gameObject.AddComponent<DeferredRenderer>();
-                            dr.Material = material;
-                        }
-
+                        DeferredRenderer.Add(r.gameObject, material);
                     }
+                }
+            }
+        }
 
+        public void RemoveFromPQSCities()
+        {
+            if (subPQS)
+            {
+                PQSCity[] pqsCitys = this.sphere.GetComponentsInChildren<PQSCity>();
+
+                foreach (PQSCity city in pqsCitys)
+                {
+                    foreach (Renderer r in city.GetComponentsInChildren<Renderer>(true))
+                    {
+                        DeferredRenderer.Remove(r.gameObject, material);
+                    }
                 }
             }
         }
@@ -281,6 +309,7 @@ namespace Utils
             this.sphere = null;
             this.enabled = false;
             this.transform.parent = null;
+            RemoveFromPQSCities();
         }
 
 

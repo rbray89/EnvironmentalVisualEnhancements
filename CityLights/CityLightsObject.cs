@@ -68,8 +68,7 @@ namespace CityLights
                     cityLightsMaterial.ApplyMaterialProperties(scaledMat);
                     scaledMat.SetTexture("_MainTex", mr.material.GetTexture("_MainTex"));
                     scaledMat.name = materialName;
-                    DeferredRenderer dr = mr.gameObject.AddComponent<DeferredRenderer>();
-                    dr.Material = scaledMat;
+                    DeferredRenderer.Add(mr.gameObject, scaledMat);
 
                 }
             }
@@ -129,11 +128,7 @@ namespace CityLights
             Transform transform = Tools.GetScaledTransform(body);
             if (transform != null)
             {
-                DeferredRenderer dr = transform.GetComponents<DeferredRenderer>().FirstOrDefault(r => r.Material.name == materialName);
-                if (dr != null)
-                {
-                    GameObject.DestroyImmediate(dr);
-                }
+                DeferredRenderer.Remove(transform.gameObject, scaledMat);
             }
             if(mainMenuBody != null)
             {
