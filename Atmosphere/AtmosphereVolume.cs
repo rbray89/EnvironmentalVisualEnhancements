@@ -77,7 +77,7 @@ namespace Atmosphere
                 if (value)
                 {
                     float scale = (float)(radius / celestialBody.Radius);
-                    atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial, ScaledSpace.ScaleFactor);
+                    atmosphereMaterial.ApplyMaterialProperties(AtmosphereMaterial, ScaledSpace.InverseScaleFactor);
                     AtmosphereMaterial.DisableKeyword("WORLD_SPACE_OFF");
                     Reassign(Tools.Layer.Scaled, scaledCelestialTransform, scale);
                 }

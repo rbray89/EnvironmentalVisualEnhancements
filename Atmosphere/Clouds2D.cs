@@ -65,32 +65,16 @@ namespace Atmosphere
                 {
                     if (value)
                     {
-                        macroCloudMaterial.ApplyMaterialProperties(CloudMaterial, ScaledSpace.ScaleFactor);
-                        cloudsMat.ApplyMaterialProperties(CloudMaterial, ScaledSpace.ScaleFactor);
-
-                        if (ShadowProjector != null)
+                        float scale = ScaledSpace.InverseScaleFactor;
+                        
+                        if (isMainMenu)
                         {
-                            macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material, ScaledSpace.ScaleFactor);
-                            cloudsMat.ApplyMaterialProperties(ShadowProjector.material, ScaledSpace.ScaleFactor);
-                        }
-                        float scale = (float)(1000f / celestialBody.Radius);
-                        if (HighLogic.LoadedScene == GameScenes.MAINMENU)
-                        {
-                            scale *= 1.008f;
+                            scale *= 15f;
                         }
                         Reassign(scaledLayer, scaledCelestialTransform, scale);
                     }
                     else
-                    {
-                        macroCloudMaterial.ApplyMaterialProperties(CloudMaterial);
-                        cloudsMat.ApplyMaterialProperties(CloudMaterial);
-
-                        if (ShadowProjector != null)
-                        {
-                            macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material);
-                            cloudsMat.ApplyMaterialProperties(ShadowProjector.material);
-                        }
-                                                
+                    {                                                
                         Reassign(Tools.Layer.Local, celestialBody.transform, 1);
                     }
                     isScaled = value;
@@ -99,9 +83,10 @@ namespace Atmosphere
         }
         CelestialBody celestialBody = null;
         Transform scaledCelestialTransform = null;
-        float radius;     
-        float radiusScale;
-        
+        float radius;
+        float radiusScaleLocal;
+        private bool isMainMenu = false;
+
         private static Shader cloudShader = null;
 
         internal Clouds2D CloneForMainMenu(GameObject mainMenuBody)
@@ -109,7 +94,9 @@ namespace Atmosphere
             Clouds2D mainMenu = new Clouds2D();
             mainMenu.macroCloudMaterial = this.macroCloudMaterial;
             mainMenu.shadowMaterial = this.shadowMaterial;
+            mainMenu.isMainMenu = true;
             mainMenu.Apply(this.celestialBody, mainMenuBody.transform, this.cloudsMat, this.radius, (Tools.Layer)mainMenuBody.layer);
+            
             return mainMenu;
         }
 
@@ -137,6 +124,7 @@ namespace Atmosphere
         }
 
         private bool _enabled = true;
+
         public bool enabled { get {return _enabled; }
             set
             {
@@ -183,20 +171,25 @@ namespace Atmosphere
             Scaled = true;
         }
 
-        public void Reassign(Tools.Layer layer, Transform parent, float scale)
+        public void Reassign(Tools.Layer layer, Transform parent, float worldScale)
         {
             CloudMesh.transform.parent = parent;
             CloudMesh.transform.localPosition = Vector3.zero;
-            CloudMesh.transform.localScale = scale * Vector3.one;
+            float localScale = (worldScale / parent.lossyScale.x);
+            CloudMesh.transform.localScale = (Vector3.one)*localScale;
             CloudMesh.layer = (int)layer;
 
-            radiusScale = radius * scale;
-            float worldRadiusScale = Vector3.Distance(parent.transform.TransformPoint(Vector3.up * radiusScale), parent.transform.TransformPoint(Vector3.zero));
+            float radiusScaleWorld = radius * worldScale;
+            radiusScaleLocal = radius * localScale;
+
+
+            macroCloudMaterial.ApplyMaterialProperties(CloudMaterial, worldScale);
+            cloudsMat.ApplyMaterialProperties(CloudMaterial, worldScale);
 
             if (layer == Tools.Layer.Local)
             {
                 Sunlight = Sun.Instance.GetComponent<Light>();
-                CloudMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius * scale);
+                CloudMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius * worldScale);
                 CloudMaterial.EnableKeyword("WORLD_SPACE_ON");
                 CloudMaterial.EnableKeyword("SOFT_DEPTH_ON");
                 CloudMaterial.renderQueue = (int)Tools.Queue.Transparent + 2;
@@ -209,10 +202,10 @@ namespace Atmosphere
                 Sunlight = (Light)field.GetValue(Sun.Instance);
                 CloudMaterial.DisableKeyword("WORLD_SPACE_ON");
                 CloudMaterial.DisableKeyword("SOFT_DEPTH_ON");
-                CloudMaterial.renderQueue = (int)Tools.Queue.Geometry + 2;
+                CloudMaterial.renderQueue = (int)Tools.Queue.Transparent -1;
             }
 
-            if(HighLogic.LoadedScene == GameScenes.MAINMENU)
+            if(isMainMenu)
             {
                 try
                 {
@@ -224,12 +217,15 @@ namespace Atmosphere
             if (ShadowProjector != null)
             {
 
-                float dist = (float)(2 * worldRadiusScale);
+                float dist = (float)(2 * radiusScaleWorld);
                 ShadowProjector.farClipPlane = dist;
-                ShadowProjector.orthographicSize = worldRadiusScale;
+                ShadowProjector.orthographicSize = radiusScaleWorld;
 
-                ShadowProjector.material.SetFloat("_Radius", (float)radiusScale);
-                ShadowProjector.material.SetFloat("_PlanetRadius", (float)celestialBody.Radius*scale);
+                macroCloudMaterial.ApplyMaterialProperties(ShadowProjector.material, worldScale);
+                cloudsMat.ApplyMaterialProperties(ShadowProjector.material, worldScale);
+
+                ShadowProjector.material.SetFloat("_Radius", (float)radiusScaleLocal);
+                ShadowProjector.material.SetFloat("_PlanetRadius", (float)celestialBody.Radius*worldScale);
                 ShadowProjector.transform.parent = parent;
 
                 ShadowProjectorGO.layer = (int)layer;
@@ -285,7 +281,7 @@ namespace Atmosphere
                     worldSunDir = Vector3.Normalize(Sunlight.transform.forward);
                     sunDirection = Vector3.Normalize(ShadowProjector.transform.parent.InverseTransformDirection(worldSunDir));
 
-                    ShadowProjector.transform.localPosition = radiusScale * -sunDirection;
+                    ShadowProjector.transform.localPosition = radiusScaleLocal * -sunDirection;
                     ShadowProjector.transform.forward = worldSunDir;
 
                     if (Scaled)

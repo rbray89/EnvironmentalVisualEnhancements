@@ -126,12 +126,12 @@ namespace Utils
                 if (obj != null && obj.GetType() == typeof(ScaledValue))
                 {
                     obj = ((ScaledValue)obj).obj;
-                    scaleValue = 1 / scale;
+                    scaleValue = scale;
                 }
                 else if (obj != null && obj.GetType() == typeof(InverseScaledValue))
                 {
                     obj = ((InverseScaledValue)obj).obj;
-                    scaleValue = scale;
+                    scaleValue = 1 / scale;
                 }
 
                 if (obj.GetType() == typeof(TextureWrapper))

@@ -20,11 +20,11 @@ namespace Utils
         
         public void OnDisable()
         {
+            Debug.Log("CB Removed from " + this.gameObject.name);
             foreach (var cam in m_Cameras)
             {
                 if (cam.Key)
                 {
-                    Debug.Log("CB Removed from " + this.gameObject.name);
                     cam.Key.RemoveCommandBuffer(CameraEvent.AfterForwardOpaque, cam.Value);
                 }
             }
@@ -33,7 +33,7 @@ namespace Utils
         
         public void OnWillRenderObject()
         {
-            var act = gameObject.activeInHierarchy && enabled;
+            var act = gameObject.activeInHierarchy;
             if (!act)
             {
                 OnDisable();
@@ -72,8 +72,9 @@ namespace Utils
 
         public static void Add(GameObject go, Material material)
         {
-            DeferredRenderer dr = go.GetComponent<DeferredRenderer>();
-            if (dr == null || dr.Material != material)
+
+            DeferredRenderer dr = go.GetComponents<DeferredRenderer>().FirstOrDefault(r => r.Material == material);
+            if (dr == null )
             {
                 Debug.Log("r: " + go.name);
                 dr = go.AddComponent<DeferredRenderer>();
@@ -91,7 +92,28 @@ namespace Utils
         }
     }
 
-        public class MaterialPQS : PQSMod
+    public class ChildUpdater : MonoBehaviour
+    {
+        Material mat;
+        public Material Material
+        {
+            set
+            {
+                mat = value;
+            }
+            get { return mat; }
+        }
+
+        public void OnTransformChildrenChanged()
+        {
+            foreach(Renderer child in this.transform.gameObject.GetComponentsInChildren<Renderer>())
+            {
+                DeferredRenderer.Add(child.gameObject, mat);
+            }
+        }
+    }
+
+    public class MaterialPQS : PQSMod
     {
         Material material;
         MaterialManager manager;
@@ -101,6 +123,7 @@ namespace Utils
 
         public void Update()
         {
+            
             if (updateOrigin)
             {
                 material.SetVector(ShaderProperties.PLANET_ORIGIN_PROPERTY, this.transform.parent.position);
@@ -177,11 +200,18 @@ namespace Utils
                         ApplyToQuadMaterials(pq);
                     }
             }
-            
+            GameEvents.OnPQSCityLoaded.Add(PQSLoaded);
+
             return material;
         }
-        
-        
+
+        private void PQSLoaded(CelestialBody body, String s)
+        {
+            if (this.sphere != null && this.sphere.isActive)
+            {
+                ApplyToPQSCities();
+            }
+        }
 
         private void AddMaterial(MeshRenderer meshRenderer)
         {
@@ -262,7 +292,25 @@ namespace Utils
         public override void OnSphereActive()
         {
             base.OnSphereActive();
-            ApplyToPQSCities();
+            //ApplyToPQSCities();
+
+            if (subPQS)
+            {
+                PQSLandControl landControl = transform.parent.GetComponentInChildren<PQSLandControl>();
+                PQSLandControl.LandClassScatter[] scatters = landControl.scatters;
+                foreach (PQSLandControl.LandClassScatter scatter in scatters)
+                {
+                    GameObject s = (GameObject) scatter.GetType().GetField("scatterParent", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(scatter);
+                    ChildUpdater cu = s.AddComponent<ChildUpdater>();
+                    cu.Material = material;
+                    cu.OnTransformChildrenChanged();
+                }
+            }
+        }
+
+        public override void OnQuadUpdate(PQ quad)
+        {
+            base.OnQuadUpdate(quad);
         }
 
         public void ApplyToPQSCities()
@@ -310,6 +358,7 @@ namespace Utils
             this.enabled = false;
             this.transform.parent = null;
             RemoveFromPQSCities();
+            GameEvents.OnPQSCityLoaded.Remove(PQSLoaded);
         }
 
 

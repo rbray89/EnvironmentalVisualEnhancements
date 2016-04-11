@@ -164,7 +164,7 @@ namespace CelestialShadows
                     shadowMat = new Material(ShadowShader);
                     GameObject go = new GameObject();
                     materialPQS = go.AddComponent<MaterialPQS>();
-                    localShadowMat = materialPQS.Apply(celestialBody, new ShadowMat(), ShadowShader, false, true);
+                    localShadowMat = materialPQS.Apply(celestialBody, null, ShadowShader, false, true);
 
                     //shadowMaterial.ApplyMaterialProperties(shadowMat);
                     shadowMat.SetFloat("_SunRadius", (float)(ScaledSpace.InverseScaleFactor * Sun.Instance.sun.Radius));
