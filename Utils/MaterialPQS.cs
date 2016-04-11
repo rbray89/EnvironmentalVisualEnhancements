@@ -297,13 +297,22 @@ namespace Utils
             if (subPQS)
             {
                 PQSLandControl landControl = transform.parent.GetComponentInChildren<PQSLandControl>();
-                PQSLandControl.LandClassScatter[] scatters = landControl.scatters;
-                foreach (PQSLandControl.LandClassScatter scatter in scatters)
+                if (landControl != null)
                 {
-                    GameObject s = (GameObject) scatter.GetType().GetField("scatterParent", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(scatter);
-                    ChildUpdater cu = s.AddComponent<ChildUpdater>();
-                    cu.Material = material;
-                    cu.OnTransformChildrenChanged();
+                    PQSLandControl.LandClassScatter[] scatters = landControl.scatters;
+                    if (scatters != null)
+                    {
+                        foreach (PQSLandControl.LandClassScatter scatter in scatters)
+                        {
+                            GameObject s = (GameObject)scatter.GetType().GetField("scatterParent", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(scatter);
+                            if (s != null)
+                            {
+                                ChildUpdater cu = s.AddComponent<ChildUpdater>();
+                                cu.Material = material;
+                                cu.OnTransformChildrenChanged();
+                            }
+                        }
+                    }
                 }
             }
         }
