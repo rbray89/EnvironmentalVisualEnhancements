@@ -152,7 +152,9 @@ namespace Atmosphere
             macroCloudMaterial.Radius = radius;
             this.cloudsMat = cloudsMaterial;
             this.scaledLayer = layer;
-            
+
+            CloudMaterial.SetMatrix("_ShadowBodies", Matrix4x4.zero);
+
             if (shadowMaterial != null)
             {
                 ShadowProjectorGO = new GameObject();
