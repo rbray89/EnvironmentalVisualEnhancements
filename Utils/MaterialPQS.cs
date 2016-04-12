@@ -244,7 +244,7 @@ namespace Utils
         {
             //DeferredRenderer.Add(r.gameObject, material);
             List<Material> materials = new List<Material>(r.sharedMaterials);
-            if (!materials.Exists(mat => mat == (r)))
+            if (!materials.Exists(mat => mat == material))
             {
                 materials.Add(material);
                 r.sharedMaterials = materials.ToArray();
@@ -255,7 +255,7 @@ namespace Utils
         {
             //DeferredRenderer.Remove(r.gameObject, material);
             List<Material> materials = new List<Material>(r.sharedMaterials);
-            if (!materials.Exists(mat => mat == (r)))
+            if (materials.Exists(mat => mat == material))
             {
                 materials.Remove(material);
                 r.sharedMaterials = materials.ToArray();
