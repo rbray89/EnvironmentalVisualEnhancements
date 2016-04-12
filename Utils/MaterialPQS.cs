@@ -8,62 +8,91 @@ using UnityEngine.Rendering;
 
 namespace Utils
 {
+    internal class DeferredCameraBuffer: MonoBehaviour
+    {
+        SortedDictionary<int, CommandBuffer> buffers = new SortedDictionary<int, CommandBuffer>();
+
+        Camera camera;
+
+        void Start()
+        {
+            camera = GetComponent<Camera>();
+        }
+
+        private void OnPreCull()
+        {
+            foreach(KeyValuePair<int, CommandBuffer> k in buffers)
+            {
+                k.Value.Clear();
+            }
+        }
+
+        private void OnPreRender()
+        {
+            foreach (KeyValuePair<int, CommandBuffer> k in buffers)
+            {
+                camera.AddCommandBuffer(CameraEvent.AfterForwardOpaque, k.Value);
+            }
+        }
+
+        void OnPostRender()
+        {
+            foreach (KeyValuePair<int, CommandBuffer> k in buffers)
+            {
+                camera.RemoveCommandBuffer(CameraEvent.AfterForwardOpaque, k.Value);
+            }
+        }
+
+        internal void AddRenderDraw(Renderer renderer, Material mat, int i, int renderQueue)
+        {
+            if (!buffers.ContainsKey(renderQueue))
+            {
+                buffers.Add(renderQueue, new CommandBuffer());
+            }
+            CommandBuffer cb = buffers[renderQueue];
+            cb.DrawRenderer(renderer, mat, i);
+        }
+    }
+
     public class DeferredRenderer : MonoBehaviour
     {
-        private Dictionary<Camera, CommandBuffer> m_Cameras = new Dictionary<Camera, CommandBuffer>();
+        private static Dictionary<Camera, DeferredCameraBuffer> m_Cameras = new Dictionary<Camera, DeferredCameraBuffer>();
+
         Material mat;
         public Material Material {
             set
             {
                 mat = value;
             } get { return mat; } }
-        
-        public void OnDisable()
-        {
-            Debug.Log("CB Removed from " + this.gameObject.name);
-            foreach (var cam in m_Cameras)
-            {
-                if (cam.Key)
-                {
-                    cam.Key.RemoveCommandBuffer(CameraEvent.AfterForwardOpaque, cam.Value);
-                }
-            }
-            m_Cameras.Clear();
-        }
+
+
         
         public void OnWillRenderObject()
         {
             var act = gameObject.activeInHierarchy;
             if (!act)
             {
-                OnDisable();
                 return;
             }
             
             Camera cam = Camera.current;
+            DeferredCameraBuffer cb = null;
             if (cam != null)
             {
-                CommandBuffer buf = null;
                 if (m_Cameras.ContainsKey(cam))
                 {
-                    buf = m_Cameras[cam];
-                    buf.Clear();
+                    cb = m_Cameras[cam];
                 }
                 else
                 {
-                    buf = new CommandBuffer();
-                    buf.name = "Deferred Render";
-                    m_Cameras[cam] = buf;
-
-                    cam.AddCommandBuffer(CameraEvent.AfterForwardOpaque, buf);
-                    
+                    cb = m_Cameras[cam] = cam.gameObject.AddComponent< DeferredCameraBuffer>();
                 }
 
                 Renderer renderer = this.gameObject.GetComponent<Renderer>();
                 
                 for (int i = 0; i < renderer.materials.Length; i++)
                 {
-                    buf.DrawRenderer(renderer, mat, i);
+                    cb.AddRenderDraw(renderer, mat, i, mat.renderQueue);
                 }
                 
             }
@@ -117,7 +146,6 @@ namespace Utils
     {
         Material material;
         MaterialManager manager;
-        String materialName = Guid.NewGuid().ToString();
         bool updateOrigin = false;
         bool subPQS = false;
 
@@ -134,7 +162,6 @@ namespace Utils
         {
             KSPLog.print("Applying PQS Material Manager!");
             material = new Material( shader);
-            material.name = materialName;
             if (mat != null)
             {
                 mat.ApplyMaterialProperties(material);
@@ -207,56 +234,40 @@ namespace Utils
 
         private void PQSLoaded(CelestialBody body, String s)
         {
-            if (this.sphere != null && this.sphere.isActive)
+            if (this.sphere != null && this.sphere == body.pqsController)
             {
                 ApplyToPQSCities();
             }
         }
 
-        private void AddMaterial(MeshRenderer meshRenderer)
+        private void AddMaterial(Renderer r)
         {
-            if (this.sphere.useSharedMaterial)
+            //DeferredRenderer.Add(r.gameObject, material);
+            List<Material> materials = new List<Material>(r.sharedMaterials);
+            if (!materials.Exists(mat => mat == (r)))
             {
-                List<Material> materials = new List<Material>(meshRenderer.sharedMaterials);
-                if (!materials.Exists(mat => mat.name.Contains(materialName)))
-                {
-                    materials.Add(material);
-                    meshRenderer.sharedMaterials = materials.ToArray();
-                }
-            }
-            else
-            {
-                List<Material> materials = new List<Material>(meshRenderer.materials);
-                if (!materials.Exists(mat => mat.name.Contains(materialName)))
-                {
-                    materials.Add(material);
-                    meshRenderer.materials = materials.ToArray();
-                }
+                materials.Add(material);
+                r.sharedMaterials = materials.ToArray();
             }
         }
 
-        private void RemoveMaterial(MeshRenderer mr)
+        private void RemoveMaterial(Renderer r)
         {
-            if (this.sphere.useSharedMaterial)
+            //DeferredRenderer.Remove(r.gameObject, material);
+            List<Material> materials = new List<Material>(r.sharedMaterials);
+            if (!materials.Exists(mat => mat == (r)))
             {
-                List<Material> materials = new List<Material>(mr.sharedMaterials);
-                materials.Remove(materials.Find(mat => mat.name.Contains(materialName)));
-                mr.sharedMaterials = materials.ToArray();
-            }
-            else
-            {
-                List<Material> materials = new List<Material>(mr.materials);
-                materials.Remove(materials.Find(mat => mat.name.Contains(materialName)));
-                mr.materials = materials.ToArray();
+                materials.Remove(material);
+                r.sharedMaterials = materials.ToArray();
             }
         }
 
         private void ApplyToQuadMaterials(PQ pq)
         {
-            MeshRenderer[] renderers = pq.GetComponentsInChildren<MeshRenderer>();
-            foreach (MeshRenderer mr in renderers)
+            Renderer[] renderers = pq.GetComponentsInChildren<Renderer>();
+            foreach (Renderer r in renderers)
             {
-                AddMaterial(mr);
+                AddMaterial(r);
             }
         }
 
@@ -286,13 +297,11 @@ namespace Utils
             {
                 AddMaterial(quad.meshRenderer);
             }
-        //    FixPQSCities();
         }
 
         public override void OnSphereActive()
         {
             base.OnSphereActive();
-            //ApplyToPQSCities();
 
             if (subPQS)
             {

@@ -60,15 +60,15 @@ namespace CityLights
             Transform transform = Tools.GetScaledTransform(body);
             if (transform != null)
             {
-                MeshRenderer mr = transform.GetComponent<MeshRenderer>();
-                if (mr != null)
+                Renderer r = transform.GetComponent<Renderer>();
+                if (r != null)
                 {
                     scaledMat = new Material(ShaderLoaderClass.FindShader("EVE/PlanetCityLight"));
                    
                     cityLightsMaterial.ApplyMaterialProperties(scaledMat);
-                    scaledMat.SetTexture("_MainTex", mr.material.GetTexture("_MainTex"));
+                    scaledMat.SetTexture("_MainTex", r.material.GetTexture("_MainTex"));
                     scaledMat.name = materialName;
-                    DeferredRenderer.Add(mr.gameObject, scaledMat);
+                    DeferredRenderer.Add(r.gameObject, scaledMat);
 
                 }
             }
@@ -98,14 +98,11 @@ namespace CityLights
                 if (go != mainMenuBody && go != null)
                 {
                     mainMenuBody = go;
-                    MeshRenderer mr = mainMenuBody.GetComponent<MeshRenderer>();
-                    if (mr != null)
+                    Renderer r = mainMenuBody.GetComponent<Renderer>();
+                    if (r != null)
                     {
-                        scaledMat.SetTexture("_MainTex", mr.material.GetTexture("_MainTex"));
-                        scaledMat.name = materialName;
-                        List<Material> materials = new List<Material>(mr.materials);
-                        materials.Add(scaledMat);
-                        mr.materials = materials.ToArray();
+                        scaledMat.SetTexture("_MainTex", r.material.GetTexture("_MainTex"));
+                        DeferredRenderer.Add(r.gameObject, scaledMat);
 
                         CityLightsManager.Log("Applied to main Menu");
                     }
@@ -132,12 +129,12 @@ namespace CityLights
             }
             if(mainMenuBody != null)
             {
-                MeshRenderer mr = mainMenuBody.GetComponent<MeshRenderer>();
-                if (mr != null)
+                Renderer r = mainMenuBody.GetComponent<Renderer>();
+                if (r != null)
                 {
-                    List<Material> materials = new List<Material>(mr.materials);
+                    List<Material> materials = new List<Material>(r.materials);
                     materials.Remove(materials.Find(mat => mat.name.Contains(materialName)));
-                    mr.materials = materials.ToArray();
+                    r.materials = materials.ToArray();
                 }
             }
             materialPQS.Remove();

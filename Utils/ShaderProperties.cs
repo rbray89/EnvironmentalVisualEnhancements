@@ -35,10 +35,14 @@ namespace Utils
         private static int _BumpMap;
         public static int _Emissive_PROPERTY { get { return _Emissive; } }
         private static int _Emissive;
-        public static int _IVATex_PROPERTY { get { return _IVATex; } }
-        private static int _IVATex;
+        public static int _SunRadius_PROPERTY { get { return _SunRadius; } }
+        private static int _SunRadius;
+        public static int _SunPos_PROPERTY { get { return _SunPos; } }
+        private static int _SunPos;
+        public static int _ShadowBodies_PROPERTY { get { return _ShadowBodies; } }
+        private static int _ShadowBodies;
 
- 
+
 
         private void Awake()
         {
@@ -54,7 +58,11 @@ namespace Utils
             _MainTex = Shader.PropertyToID("_MainTex");
             _BumpMap = Shader.PropertyToID("_BumpMap");
             _Emissive = Shader.PropertyToID("_Emissive");
-            _IVATex = Shader.PropertyToID("_IVATex");
+
+
+            _SunRadius = Shader.PropertyToID("_SunRadius");
+            _SunPos = Shader.PropertyToID("_SunPos");
+            _ShadowBodies = Shader.PropertyToID("_ShadowBodies");
         }
     }
 }

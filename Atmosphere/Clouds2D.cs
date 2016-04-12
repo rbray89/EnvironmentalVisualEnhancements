@@ -65,13 +65,7 @@ namespace Atmosphere
                 {
                     if (value)
                     {
-                        float scale = ScaledSpace.InverseScaleFactor;
-                        
-                        if (isMainMenu)
-                        {
-                            scale *= 15f;
-                        }
-                        Reassign(scaledLayer, scaledCelestialTransform, scale);
+                        Reassign(scaledLayer, scaledCelestialTransform, ScaledSpace.InverseScaleFactor);
                     }
                     else
                     {                                                
@@ -177,7 +171,17 @@ namespace Atmosphere
         {
             CloudMesh.transform.parent = parent;
             CloudMesh.transform.localPosition = Vector3.zero;
-            float localScale = (worldScale / parent.lossyScale.x);
+
+            float localScale;
+            if (isMainMenu)
+            {
+                localScale = worldScale * 10f;
+            }
+            else
+            {
+                localScale = (worldScale / parent.lossyScale.x);
+            }
+
             CloudMesh.transform.localScale = (Vector3.one)*localScale;
             CloudMesh.layer = (int)layer;
 

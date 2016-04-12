@@ -40,18 +40,18 @@ namespace CelestialShadows
                 }
                 if (shadowMat != null)
                 {
-                    shadowMat.SetVector("_SunPos", Sun.Instance.sun.scaledBody.transform.position);
-                    shadowMat.SetMatrix("_ShadowBodies", bodies);
+                    shadowMat.SetVector(ShaderProperties._SunPos_PROPERTY, Sun.Instance.sun.scaledBody.transform.position);
+                    shadowMat.SetMatrix(ShaderProperties._ShadowBodies_PROPERTY, bodies);
                 }
 
                 foreach (Transform child in body.scaledBody.transform)
                 {
-                    MeshRenderer cmr = child.GetComponent<MeshRenderer>();
-                    if (cmr != null)
+                    Renderer cr = child.GetComponent<Renderer>();
+                    if (cr != null && cr.sharedMaterial != null)
                     {
-                        cmr.material.SetFloat("_SunRadius", (float)(ScaledSpace.InverseScaleFactor * Sun.Instance.sun.Radius));
-                        cmr.material.SetVector("_SunPos", Sun.Instance.sun.scaledBody.transform.position);
-                        cmr.material.SetMatrix("_ShadowBodies", bodies);
+                        cr.sharedMaterial.SetFloat(ShaderProperties._SunRadius_PROPERTY, (float)(ScaledSpace.InverseScaleFactor * Sun.Instance.sun.Radius));
+                        cr.sharedMaterial.SetVector(ShaderProperties._SunPos_PROPERTY, Sun.Instance.sun.scaledBody.transform.position);
+                        cr.sharedMaterial.SetMatrix(ShaderProperties._ShadowBodies_PROPERTY, bodies);
                     }
                 }
             }
@@ -88,18 +88,18 @@ namespace CelestialShadows
                 }
                 if (shadowMat != null)
                 {
-                    shadowMat.SetVector("_SunPos", Sun.Instance.sun.transform.position);
-                    shadowMat.SetMatrix("_ShadowBodies", bodies);
+                    shadowMat.SetVector(ShaderProperties._SunPos_PROPERTY, Sun.Instance.sun.transform.position);
+                    shadowMat.SetMatrix(ShaderProperties._ShadowBodies_PROPERTY, bodies);
                 }
 
                 foreach (Transform child in body.transform)
                 {
-                    MeshRenderer cmr = child.GetComponent<MeshRenderer>();
-                    if (cmr != null)
+                    Renderer cr = child.GetComponent<Renderer>();
+                    if (cr != null)
                     {
-                        cmr.material.SetFloat("_SunRadius", (float)(Sun.Instance.sun.Radius));
-                        cmr.material.SetVector("_SunPos", Sun.Instance.sun.transform.position);
-                        cmr.material.SetMatrix("_ShadowBodies", bodies);
+                        cr.sharedMaterial.SetFloat(ShaderProperties._SunRadius_PROPERTY, (float)(Sun.Instance.sun.Radius));
+                        cr.sharedMaterial.SetVector(ShaderProperties.SUNDIR_PROPERTY, Sun.Instance.sun.transform.position);
+                        cr.sharedMaterial.SetMatrix(ShaderProperties._ShadowBodies_PROPERTY, bodies);
                     }
                 }
             }
@@ -217,10 +217,10 @@ namespace CelestialShadows
                 {
                     foreach (Transform child in go.transform)
                     {
-                        MeshRenderer cmr = child.GetComponent<MeshRenderer>();
-                        if (cmr != null)
+                        Renderer cr = child.GetComponent<Renderer>();
+                        if (cr != null)
                         {
-                            cmr.material.SetMatrix("_ShadowBodies", Matrix4x4.zero);
+                            cr.sharedMaterial.SetMatrix("_ShadowBodies", Matrix4x4.zero);
                         }
                     }
                 }

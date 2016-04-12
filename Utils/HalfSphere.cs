@@ -107,11 +107,11 @@ namespace Utils
             mesh.RecalculateBounds();
             mesh.Optimize();
 
-            var mr = meshContainer.AddComponent<MeshRenderer>();
+            MeshRenderer mr = meshContainer.AddComponent<MeshRenderer>();
             material = mr.material;
             material.shader = shader;
 
-            mr.castShadows = false;
+            mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             mr.receiveShadows = false;
             mr.enabled = true;
         }

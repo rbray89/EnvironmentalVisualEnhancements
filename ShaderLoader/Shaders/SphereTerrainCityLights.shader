@@ -16,8 +16,8 @@
 		Offset 0, 0
 		Blend SrcAlpha OneMinusSrcAlpha
 		Tags {
-			"Queue"="Geometry+2"
-			"RenderMode"="Transparent"
+			"Queue"="Geometry+1"
+			"RenderType"="Transparent"
 			"IgnoreProjector"="True"
 		}
 		SubShader {

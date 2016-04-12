@@ -29,11 +29,11 @@ namespace Utils
             mf.mesh.RecalculateBounds();
             mf.mesh.RecalculateNormals();
 
-            var mr = cube.GetComponent<MeshRenderer>();
+            MeshRenderer mr = cube.GetComponent<MeshRenderer>();
             material = mr.material;
             material.shader = shader;
 
-            mr.castShadows = false;
+            mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             mr.receiveShadows = false;
             mr.enabled = true;
         }

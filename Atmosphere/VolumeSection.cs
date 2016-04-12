@@ -37,10 +37,10 @@ namespace Atmosphere
             Vector3 up = particle.transform.InverseTransformDirection(worldUp);
             Quad.Create(particle, (int)size.x, Color.white, up, size.y);
 
-            var mr = particle.AddComponent<MeshRenderer>();
+            MeshRenderer mr = particle.AddComponent<MeshRenderer>();
             mr.sharedMaterial = cloudParticleMaterial;
 
-            mr.castShadows = false;
+            mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             mr.receiveShadows = false;
             mr.enabled = true;
         }

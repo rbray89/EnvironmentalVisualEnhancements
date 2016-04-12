@@ -84,15 +84,15 @@ namespace Terrain
                 this.transform.localScale = Vector3.one;
 
                 //Scaled space
-                MeshRenderer mr = (MeshRenderer)transform.GetComponent(typeof(MeshRenderer));
-                if (mr != null)
+                Renderer r = (Renderer)transform.GetComponent(typeof(Renderer));
+                if (r != null)
                 {
-                    terrainMaterial.SaveTextures(mr.material);
-                    originalPlanetShader = mr.material.shader;
+                    terrainMaterial.SaveTextures(r.material);
+                    originalPlanetShader = r.material.shader;
 
-                    TerrainManager.Log("planet shader: " + mr.material.shader);
-                    mr.material.shader = TerrainManager.PlanetShader;
-                    terrainMaterial.ApplyMaterialProperties(mr.material);
+                    TerrainManager.Log("planet shader: " + r.material.shader);
+                    r.sharedMaterial.shader = TerrainManager.PlanetShader;
+                    terrainMaterial.ApplyMaterialProperties(r.sharedMaterial);
 
                 }
 
@@ -114,7 +114,7 @@ namespace Terrain
                     OceanSurfaceMaterial = ocean.surfaceMaterial;
 
                     pqs.surfaceMaterial.EnableKeyword("OCEAN_ON");
-                    mr.material.EnableKeyword("OCEAN_ON");
+                    r.sharedMaterial.EnableKeyword("OCEAN_ON");
 
                     keywords = OceanSurfaceMaterial.shaderKeywords;
                     originalOceanShader = OceanSurfaceMaterial.shader;
@@ -171,7 +171,7 @@ namespace Terrain
                 else
                 {
                     pqs.surfaceMaterial.DisableKeyword("OCEAN_ON");
-                    mr.material.DisableKeyword("OCEAN_ON");
+                    r.sharedMaterial.DisableKeyword("OCEAN_ON");
                 }
 
                 PQSMod_CelestialBodyTransform cbt = (PQSMod_CelestialBodyTransform)pqs.transform.GetComponentInChildren(typeof(PQSMod_CelestialBodyTransform));
