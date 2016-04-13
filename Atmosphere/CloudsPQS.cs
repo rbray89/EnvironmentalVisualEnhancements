@@ -182,7 +182,7 @@ namespace Atmosphere
                     QuaternionD.AngleAxis(mainRotation.z, (Vector3)rotationAxis.GetRow(2));
                 Matrix4x4 mainRotationMatrix = Matrix4x4.TRS(Vector3.zero, mainRotationQ, Vector3.one).inverse;
 
-                QuaternionD detailRotationQ = //Quaternion.Euler(detailRotation);
+                QuaternionD detailRotationQ = 
                     QuaternionD.AngleAxis(detailRotation.x, Vector3.right) *
                     QuaternionD.AngleAxis(detailRotation.y, Vector3.up) *
                     QuaternionD.AngleAxis(detailRotation.z, Vector3.forward);
@@ -232,6 +232,7 @@ namespace Atmosphere
                             layerVolume.UpdatePos(FlightCamera.fetch.mainCamera.transform.position,
                                                    world2SphereMatrix,
                                                    mainRotationQ,
+                                                   detailRotationQ,
                                                    mainRotationMatrix,
                                                    detailRotationMatrix);
                         }
@@ -240,6 +241,7 @@ namespace Atmosphere
                             layerVolume.UpdatePos(this.sphere.target.position,
                                                    world2SphereMatrix,
                                                    mainRotationQ,
+                                                   detailRotationQ,
                                                    mainRotationMatrix,
                                                    detailRotationMatrix);
                         }

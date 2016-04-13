@@ -221,8 +221,6 @@ pip-log.txt
 *.pdb
 *.mdb
 
-#Certain Shaders
-ShaderReplacer/Shaders/*
-ShaderLoader/CompiledShaders/*
+#Shaders
 ContentEVE/GameData/EnvironmentalVisualEnhancements/Shaders/*
 

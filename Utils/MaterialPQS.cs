@@ -12,34 +12,56 @@ namespace Utils
     {
         SortedDictionary<int, CommandBuffer> buffers = new SortedDictionary<int, CommandBuffer>();
 
-        Camera camera;
+        Camera camera = null;
 
         void Start()
         {
-            camera = GetComponent<Camera>();
+            if (camera == null)
+            {
+                camera = GetComponent<Camera>();
+            }
         }
 
         private void OnPreCull()
         {
-            foreach(KeyValuePair<int, CommandBuffer> k in buffers)
+            Start();
+            foreach (KeyValuePair<int, CommandBuffer> k in buffers)
             {
                 k.Value.Clear();
+                if(FlightGlobals.currentMainBody != null)
+                k.Value.SetGlobalVector(ShaderProperties.PLANET_ORIGIN_PROPERTY, FlightGlobals.currentMainBody.bodyTransform.position);
             }
         }
 
         private void OnPreRender()
         {
+            Start();
             foreach (KeyValuePair<int, CommandBuffer> k in buffers)
             {
-                camera.AddCommandBuffer(CameraEvent.AfterForwardOpaque, k.Value);
+                if (k.Key > 3000)
+                {
+                    camera.AddCommandBuffer(CameraEvent.AfterForwardAlpha, k.Value);
+                }
+                else
+                {
+                    camera.AddCommandBuffer(CameraEvent.AfterForwardOpaque, k.Value);
+                }
             }
         }
 
         void OnPostRender()
         {
+            Start();
             foreach (KeyValuePair<int, CommandBuffer> k in buffers)
             {
-                camera.RemoveCommandBuffer(CameraEvent.AfterForwardOpaque, k.Value);
+                if(k.Key > 3000)
+                {
+                    camera.RemoveCommandBuffer(CameraEvent.AfterForwardAlpha, k.Value);
+                }
+                else
+                {
+                    camera.RemoveCommandBuffer(CameraEvent.AfterForwardOpaque, k.Value);
+                }
             }
         }
 
@@ -105,7 +127,7 @@ namespace Utils
             DeferredRenderer dr = go.GetComponents<DeferredRenderer>().FirstOrDefault(r => r.Material == material);
             if (dr == null )
             {
-                Debug.Log("r: " + go.name);
+                //Debug.Log("r: " + go.name);
                 dr = go.AddComponent<DeferredRenderer>();
                 dr.Material = material;
             }
@@ -151,7 +173,6 @@ namespace Utils
 
         public void Update()
         {
-            
             if (updateOrigin)
             {
                 material.SetVector(ShaderProperties.PLANET_ORIGIN_PROPERTY, this.transform.parent.position);
@@ -165,8 +186,8 @@ namespace Utils
             if (mat != null)
             {
                 mat.ApplyMaterialProperties(material);
-                manager = mat;
             }
+
 
             this.updateOrigin = updateOrigin;
             this.subPQS = subPQS;
@@ -203,7 +224,7 @@ namespace Utils
             {
                 GameObject go = new GameObject();
                 MaterialPQS ChildPQS = go.AddComponent<MaterialPQS>();
-                ChildPQS.updateOrigin = updateOrigin;
+                ChildPQS.updateOrigin = false;
                 ChildPQS.subPQS = false;
                 
                 pqs = this.sphere.ChildSpheres[0];

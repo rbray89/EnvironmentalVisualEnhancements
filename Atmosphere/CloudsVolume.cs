@@ -43,6 +43,8 @@ namespace Atmosphere
         [ConfigItem]
         float rotationSpeed = 0.002f;
         [ConfigItem]
+        bool followDetail = false;
+        [ConfigItem]
         particleVolumeMaterial particleMaterial = null;
         [ConfigItem]
         Vector3 noiseScale = new Vector3(1.5f, 2.5f, 60);
@@ -106,21 +108,26 @@ namespace Atmosphere
             }
         }
 
-        internal void UpdatePos(Vector3 WorldPos, Matrix4x4 World2Planet, QuaternionD rotation,  Matrix4x4 mainRotationMatrix, Matrix4x4 detailRotationMatrix)
+        internal void UpdatePos(Vector3 WorldPos, Matrix4x4 World2Planet, QuaternionD rotation, QuaternionD detailRotation, Matrix4x4 mainRotationMatrix, Matrix4x4 detailRotationMatrix)
         {
             if (HighLogic.LoadedScene == GameScenes.FLIGHT || HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
-
-
-                Matrix4x4 rotationMatrix = mainRotationMatrix* World2Planet;
+                Matrix4x4 rotationMatrix = mainRotationMatrix * World2Planet;
                 ParticleMaterial.SetMatrix(ShaderProperties.MAIN_ROTATION_PROPERTY, rotationMatrix);
                 ParticleMaterial.SetMatrix(ShaderProperties.DETAIL_ROTATION_PROPERTY, detailRotationMatrix);
 
-                volumeHolder.transform.localRotation = rotation;
+                if (followDetail)
+                {
+                    volumeHolder.transform.localRotation = rotation * detailRotation;
+                }
+                else
+                {
+                    volumeHolder.transform.localRotation = rotation;
+                }
+
                 Vector3 intendedPoint = volumeHolder.transform.InverseTransformPoint(WorldPos);
                 intendedPoint.Normalize();
                 volumeManager.Update(intendedPoint);
-
 
                 double ut = Planetarium.GetUniversalTime();
                 double particleRotation = (ut * rotationSpeed);
