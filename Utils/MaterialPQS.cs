@@ -8,6 +8,55 @@ using UnityEngine.Rendering;
 
 namespace Utils
 {
+    public class OverlayRenderer: MonoBehaviour
+    {
+        private Material material;
+        public Material Material { get { return material; } set {
+                material = value;
+                Renderer r = this.gameObject.GetComponent<Renderer>();
+                if (r != null)
+                {
+                    if (material != null)
+                    {
+                        List<Material> materials = new List<Material>(r.sharedMaterials);
+                        materials.Add(material);
+                        r.sharedMaterials = materials.ToArray();
+                    }
+                    else
+                    {
+                        List<Material> materials = new List<Material>(r.sharedMaterials);
+                        materials.Remove(material);
+                        r.sharedMaterials = materials.ToArray();
+                    }
+                }
+            } }
+
+        public static void Add(GameObject go, Material material)
+        {
+            OverlayRenderer dr = go.GetComponents<OverlayRenderer>().FirstOrDefault(r => r.Material == material);
+            if (dr == null)
+            {
+                //Debug.Log("r: " + go.name);
+                Renderer r = go.GetComponent<Renderer>();
+                if (r != null && r.GetType() != typeof(ParticleSystemRenderer))
+                {
+                    dr = go.AddComponent<OverlayRenderer>();
+                    dr.Material = material;
+                }
+            }
+        }
+
+        public static void Remove(GameObject go, Material material)
+        {
+            OverlayRenderer dr = go.GetComponents<OverlayRenderer>().FirstOrDefault(r => r.Material == material);
+            if (dr != null)
+            {
+                dr.Material = null;
+                GameObject.DestroyImmediate(dr);
+            }
+        }
+    }
+
     internal class DeferredCameraBuffer: MonoBehaviour
     {
         SortedDictionary<int, CommandBuffer> buffers = new SortedDictionary<int, CommandBuffer>();
@@ -79,8 +128,7 @@ namespace Utils
     public class DeferredRenderer : MonoBehaviour
     {
         private static Dictionary<Camera, DeferredCameraBuffer> m_Cameras = new Dictionary<Camera, DeferredCameraBuffer>();
-
-
+        
         Renderer renderer;
         Material mat;
         public Material Material {

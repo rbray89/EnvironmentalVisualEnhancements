@@ -94,6 +94,8 @@ namespace CityLights
                 GameObject go = new GameObject();
                 materialPQS = go.AddComponent<MaterialPQS>();
                 macroMat = materialPQS.Apply(celestialBody, cityLightsMaterial, ShaderLoaderClass.FindShader("EVE/TerrainCityLight"), true, false);
+                macroMat.name = materialName;
+                macroMat.renderQueue = (int)Tools.Queue.Geometry + 1;
             }
             Transform transform = Tools.GetScaledTransform(body);
             if (transform != null)
@@ -106,7 +108,8 @@ namespace CityLights
                     cityLightsMaterial.ApplyMaterialProperties(scaledMat);
                     scaledMat.SetTexture("_MainTex", r.material.GetTexture("_MainTex"));
                     scaledMat.name = materialName;
-                    DeferredRenderer.Add(r.gameObject, scaledMat);
+                    scaledMat.renderQueue = (int)Tools.Queue.Geometry + 1;
+                    OverlayRenderer.Add(r.gameObject, scaledMat);
 
                     ScaledCityComponent sc = transform.gameObject.AddComponent<ScaledCityComponent>();
                     FieldInfo field = typeof(Sun).GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(
@@ -179,7 +182,8 @@ namespace CityLights
             Transform transform = Tools.GetScaledTransform(body);
             if (transform != null)
             {
-                DeferredRenderer.Remove(transform.gameObject, scaledMat);
+                OverlayRenderer.Remove(transform.gameObject, scaledMat);
+                
                 GameObject.DestroyImmediate(transform.gameObject.GetComponents<ScaledCityComponent>().First(sc => sc.GUID == materialName));
 
                 LocalCityComponent lc = FlightCamera.fetch.mainCamera.gameObject.GetComponents<LocalCityComponent>().FirstOrDefault(sc => sc.GUID == materialName);

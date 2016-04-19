@@ -27,8 +27,7 @@
 		SubShader {
 			Pass {
 
-				Lighting On
-				Tags { "LightMode"="ForwardBase"}
+				Lighting Off
 
 				CGPROGRAM
 
