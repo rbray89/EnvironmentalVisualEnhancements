@@ -11,6 +11,7 @@
 		_CityDarkOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
 		_CityLightOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
 		_PlanetOpacity ("PlanetOpacity", Float) = 1
+		_SunDir("SunDir", Vector) = (0,0,0,1)
 	}
 	Category {
 		Lighting On
@@ -20,7 +21,7 @@
 		Blend SrcAlpha OneMinusSrcAlpha
 		Tags {
 			"Queue"="Geometry+1"
-			"RenderType"="Transparent"
+			"RenderMode"="Transparent"
 			"IgnoreProjector"="True"
 		}
 		SubShader {
@@ -53,6 +54,7 @@
 				sampler2D _MainTex;
 				sampler2D _BumpMap;
 				float _DetailDist;
+				float3 _SunDir;
 
 				float _CityOverlayDetailScale;
 				sampler2D _CityDarkOverlayDetailTex;
@@ -88,10 +90,11 @@
 					o.sphereNormal = -normalize(v.vertex);
 
 					o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
+					float3 objLight = mul(_World2Object, _SunDir);
 
 					TANGENT_SPACE_ROTATION;
-					o.lightDirT = normalize(mul(rotation, ObjSpaceLightDir(v.vertex)));
-					o.viewDirT = normalize(mul(rotation, ObjSpaceViewDir(v.vertex)));
+					o.lightDirT = normalize(mul(rotation, objLight));
+					o.viewDirT = normalize(mul(rotation, objLight));
 					TRANSFER_VERTEX_TO_FRAGMENT(o);
 
 					return o;
@@ -123,7 +126,7 @@
 					half4 specColor = _SpecularColor;
 
 					color = SpecularColorLight( IN.lightDirT, IN.viewDirT, normT, color, specColor, _SpecularPower, LIGHT_ATTENUATION(IN) );
-					color *= Terminator( normalize(_WorldSpaceLightPos0), IN.worldNormal);
+					color *= Terminator( normalize(_SunDir), IN.worldNormal);
 
 
 					//half lightIntensity = saturate(_LightColor0.a * (NdotL - 0.01) / 0.99 * 4 * atten);

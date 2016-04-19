@@ -18,7 +18,7 @@
 
 	Category {
 
-		Tags { "Queue"="Transparent+2" "IgnoreProjector"="True" "RenderType"="Transparent" "DisableBatching"="True" }
+		Tags { "Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent" "DisableBatching"="True" }
 		Blend SrcAlpha OneMinusSrcAlpha
 		Fog { Mode Global}
 		AlphaTest Greater 0
@@ -56,8 +56,10 @@
 				sampler2D _TopTex;
 				sampler2D _LeftTex;
 				sampler2D _FrontTex;
-
 				sampler2D _DetailTex;
+
+				float4x4 _PosRotation;
+
 				float _DetailScale;
 				fixed4 _Color;
 				float _DistFade;
@@ -100,7 +102,7 @@
 
 					float4 origin = mul(_Object2World, float4(0,0,0,1));
 
-					float4 planet_pos = mul(_MainRotation, origin);
+					float4 planet_pos = mul(_PosRotation, origin);
 					float3 normalized = _NoiseScale.z*(planet_pos.xyz);
 					float3 hashVect =  .5*(float3(snoise(normalized), snoise(_NoiseScale.x*normalized), snoise(_NoiseScale.y*normalized))+1);
 

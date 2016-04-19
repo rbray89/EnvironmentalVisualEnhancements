@@ -13,6 +13,8 @@ namespace Utils
 
         public static int ROTATION_PROPERTY { get { return _Rotation; } }
         private static int _Rotation;
+        public static int _PosRotation_Property { get { return _PosRotation; } }
+        private static int _PosRotation;
         public static int INVROTATION_PROPERTY { get { return _InvRotation; } }
         private static int _InvRotation;
         public static int MAIN_ROTATION_PROPERTY { get { return _MainRotation; } }
@@ -46,6 +48,7 @@ namespace Utils
 
         private void Awake()
         {
+            _PosRotation = Shader.PropertyToID("_PosRotation");
             _Rotation = Shader.PropertyToID("_Rotation");
             _InvRotation = Shader.PropertyToID("_InvRotation");
             _MainRotation = Shader.PropertyToID("_MainRotation");

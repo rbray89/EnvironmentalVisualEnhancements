@@ -118,11 +118,14 @@ namespace Atmosphere
 
                 if (followDetail)
                 {
+                    rotationMatrix = detailRotationMatrix * mainRotationMatrix * World2Planet;
                     volumeHolder.transform.localRotation = rotation * detailRotation;
+                    ParticleMaterial.SetMatrix(ShaderProperties._PosRotation_Property, rotationMatrix);
                 }
                 else
                 {
                     volumeHolder.transform.localRotation = rotation;
+                    ParticleMaterial.SetMatrix(ShaderProperties._PosRotation_Property, rotationMatrix);
                 }
 
                 Vector3 intendedPoint = volumeHolder.transform.InverseTransformPoint(WorldPos);

@@ -8,6 +8,7 @@
 	_CityLightOverlayDetailTex ("Overlay Detail (RGB) (A)", 2D) = "white" {}
 	_PlanetOpacity ("PlanetOpacity", Float) = 1
 	_PlanetOrigin("Sphere Center", Vector) = (0,0,0,1)
+	_SunDir("SunDir", Vector) = (0,0,0,1)
 	}
 	Category {
 		Lighting On
@@ -16,8 +17,8 @@
 		Offset 0, 0
 		Blend SrcAlpha OneMinusSrcAlpha
 		Tags {
-			"Queue"="Geometry+1"
-			"RenderType"="Transparent"
+			"Queue"="Geometry+2"
+			"RenderMode"="Transparent"
 			"IgnoreProjector"="True"
 		}
 		SubShader {
@@ -52,6 +53,7 @@
 
 				float _PlanetOpacity;
 				float3 _PlanetOrigin;
+				float3 _SunDir;
 
 
 				float _CityOverlayDetailScale;
@@ -91,7 +93,7 @@
 					o.color = v.color;
 					o.objnormal.xyz = v.normal;
 
-					float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
+					float3 lightDirection = normalize(_SunDir.xyz);
 					half NdotL = dot (o.sphereNormal, lightDirection);
 					half termlerp = saturate(10*-NdotL);
 					o.terminator = lerp(1,saturate(floor(1.01+NdotL)), termlerp);
@@ -122,8 +124,8 @@
 					half4 specColor = _SpecularColor;
 
 					//world
-					color = SpecularColorLight( _WorldSpaceLightPos0, IN.viewDir, IN.worldNormal, color, specColor, _SpecularPower, LIGHT_ATTENUATION(IN) );
-					color *= Terminator( normalize(_WorldSpaceLightPos0), IN.worldNormal);
+					color = SpecularColorLight( _SunDir, IN.viewDir, IN.worldNormal, color, specColor, _SpecularPower, LIGHT_ATTENUATION(IN) );
+					color *= Terminator( normalize(_SunDir), IN.worldNormal);
 
 
 					//lightIntensity = saturate(_LightColor0.a * (SNdotL - 0.01) / 0.99 * 4 * atten);

@@ -80,11 +80,15 @@ namespace Utils
     {
         private static Dictionary<Camera, DeferredCameraBuffer> m_Cameras = new Dictionary<Camera, DeferredCameraBuffer>();
 
+
+        Renderer renderer;
         Material mat;
         public Material Material {
             set
             {
                 mat = value;
+                renderer = this.gameObject.GetComponent<Renderer>();
+                
             } get { return mat; } }
 
 
@@ -110,12 +114,12 @@ namespace Utils
                     cb = m_Cameras[cam] = cam.gameObject.AddComponent< DeferredCameraBuffer>();
                 }
 
-                Renderer renderer = this.gameObject.GetComponent<Renderer>();
                 
                 for (int i = 0; i < renderer.materials.Length; i++)
                 {
                     cb.AddRenderDraw(renderer, mat, i, mat.renderQueue);
                 }
+
                 
             }
 
@@ -128,8 +132,12 @@ namespace Utils
             if (dr == null )
             {
                 //Debug.Log("r: " + go.name);
-                dr = go.AddComponent<DeferredRenderer>();
-                dr.Material = material;
+                Renderer r = go.GetComponent<Renderer>();
+                if (r != null && r.GetType() != typeof(ParticleSystemRenderer))
+                {
+                    dr = go.AddComponent<DeferredRenderer>();
+                    dr.Material = material;
+                }
             }
         }
 
@@ -154,12 +162,14 @@ namespace Utils
             }
             get { return mat; }
         }
+        
+        
 
         public void OnTransformChildrenChanged()
         {
-            foreach(Renderer child in this.transform.gameObject.GetComponentsInChildren<Renderer>())
+            foreach(Renderer r in this.gameObject.GetComponentsInChildren<Renderer>())
             {
-                DeferredRenderer.Add(child.gameObject, mat);
+                DeferredRenderer.Add(r.gameObject, mat);
             }
         }
     }
@@ -167,7 +177,6 @@ namespace Utils
     public class MaterialPQS : PQSMod
     {
         Material material;
-        MaterialManager manager;
         bool updateOrigin = false;
         bool subPQS = false;
 
@@ -257,30 +266,18 @@ namespace Utils
         {
             if (this.sphere != null && this.sphere == body.pqsController)
             {
-                ApplyToPQSCities();
+                //ApplyToPQSCities(s);
             }
         }
 
         private void AddMaterial(Renderer r)
         {
-            //DeferredRenderer.Add(r.gameObject, material);
-            List<Material> materials = new List<Material>(r.sharedMaterials);
-            if (!materials.Exists(mat => mat == material))
-            {
-                materials.Add(material);
-                r.sharedMaterials = materials.ToArray();
-            }
+            DeferredRenderer.Add(r.gameObject, material);
         }
 
         private void RemoveMaterial(Renderer r)
         {
-            //DeferredRenderer.Remove(r.gameObject, material);
-            List<Material> materials = new List<Material>(r.sharedMaterials);
-            if (materials.Exists(mat => mat == material))
-            {
-                materials.Remove(material);
-                r.sharedMaterials = materials.ToArray();
-            }
+            DeferredRenderer.Remove(r.gameObject, material);
         }
 
         private void ApplyToQuadMaterials(PQ pq)
@@ -320,9 +317,9 @@ namespace Utils
             }
         }
 
-        public override void OnSphereActive()
+        public override void OnSphereStarted()
         {
-            base.OnSphereActive();
+            base.OnSphereStarted();
 
             if (subPQS)
             {
@@ -344,6 +341,20 @@ namespace Utils
                         }
                     }
                 }
+
+                PQSCity[] cities = sphere.GetComponentsInChildren<PQSCity>(true);
+                foreach (PQSCity city in cities)
+                {
+                    foreach (Transform child in city.transform)
+                    {
+                        if (child != null)
+                        {
+                            ChildUpdater cu = child.gameObject.AddComponent<ChildUpdater>();
+                            cu.Material = material;
+                            cu.OnTransformChildrenChanged();
+                        }
+                    }
+                }
             }
         }
 
@@ -351,24 +362,7 @@ namespace Utils
         {
             base.OnQuadUpdate(quad);
         }
-
-        public void ApplyToPQSCities()
-        {
-            if (subPQS)
-            {
-                PQSCity[] pqsCitys = this.sphere.GetComponentsInChildren<PQSCity>();
-
-                foreach (PQSCity city in pqsCitys)
-                {
-                    Debug.Log("city: " + city.name);
-                    foreach (Renderer r in city.GetComponentsInChildren<Renderer>(true))
-                    {
-                        DeferredRenderer.Add(r.gameObject, material);
-                    }
-                }
-            }
-        }
-
+        
         public void RemoveFromPQSCities()
         {
             if (subPQS)
@@ -388,15 +382,17 @@ namespace Utils
         public void Remove()
         {
             KSPLog.print("Removing PQS Material Manager!");
-            if(this.sphere != null && this.sphere.quads != null)
+
+            RemoveFromPQSCities();
+            if (this.sphere != null && this.sphere.quads != null)
                 foreach (PQ pq in this.sphere.quads)
                 {
                     RemoveFromQuads(pq);
                 }
+            ChildUpdater[] cuArray = (ChildUpdater[])this.sphere.transform.GetComponentsInChildren<ChildUpdater>().Where(cu => cu.Material == material);
             this.sphere = null;
             this.enabled = false;
             this.transform.parent = null;
-            RemoveFromPQSCities();
             GameEvents.OnPQSCityLoaded.Remove(PQSLoaded);
         }
 
