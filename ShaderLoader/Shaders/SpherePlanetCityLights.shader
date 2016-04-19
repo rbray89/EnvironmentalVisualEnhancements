@@ -90,7 +90,7 @@
 					o.sphereNormal = -normalize(v.vertex);
 
 					o.worldNormal = normalize(mul( _Object2World, float4( v.normal, 0.0 ) ).xyz);
-					float3 objLight = mul(_World2Object, _SunDir);
+					float3 objLight = mul(_World2Object, float4(_SunDir.xyz,0));
 
 					TANGENT_SPACE_ROTATION;
 					o.lightDirT = normalize(mul(rotation, objLight));

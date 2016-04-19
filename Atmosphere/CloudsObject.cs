@@ -93,8 +93,6 @@ namespace Atmosphere
         {
             cloudsPQS.Remove();
             GameObject go = cloudsPQS.gameObject;
-            
-
             GameObject.DestroyImmediate(cloudsPQS);
             GameObject.DestroyImmediate(go);
 

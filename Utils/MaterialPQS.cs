@@ -38,7 +38,7 @@ namespace Utils
             Start();
             foreach (KeyValuePair<int, CommandBuffer> k in buffers)
             {
-                if (k.Key > 3000)
+                if (k.Key > (int)Tools.Queue.Transparent)
                 {
                     camera.AddCommandBuffer(CameraEvent.AfterForwardAlpha, k.Value);
                 }
@@ -54,7 +54,7 @@ namespace Utils
             Start();
             foreach (KeyValuePair<int, CommandBuffer> k in buffers)
             {
-                if(k.Key > 3000)
+                if(k.Key > (int)Tools.Queue.Transparent)
                 {
                     camera.RemoveCommandBuffer(CameraEvent.AfterForwardAlpha, k.Value);
                 }
@@ -114,10 +114,13 @@ namespace Utils
                     cb = m_Cameras[cam] = cam.gameObject.AddComponent< DeferredCameraBuffer>();
                 }
 
-                
-                for (int i = 0; i < renderer.materials.Length; i++)
+                Material[] mats = renderer.sharedMaterials;
+                for (int i = 0; i < mats.Length; i++)
                 {
-                    cb.AddRenderDraw(renderer, mat, i, mat.renderQueue);
+                    if (mats[i].renderQueue < (int)Tools.Queue.Transparent)
+                    {
+                        cb.AddRenderDraw(renderer, mat, i, mat.renderQueue);
+                    }
                 }
 
                 
@@ -167,7 +170,7 @@ namespace Utils
 
         public void OnTransformChildrenChanged()
         {
-            foreach(Renderer r in this.gameObject.GetComponentsInChildren<Renderer>())
+            foreach(Renderer r in this.gameObject.GetComponentsInChildren<Renderer>(true))
             {
                 DeferredRenderer.Add(r.gameObject, mat);
             }
@@ -385,11 +388,22 @@ namespace Utils
 
             RemoveFromPQSCities();
             if (this.sphere != null && this.sphere.quads != null)
+            {
                 foreach (PQ pq in this.sphere.quads)
                 {
                     RemoveFromQuads(pq);
                 }
-            ChildUpdater[] cuArray = (ChildUpdater[])this.sphere.transform.GetComponentsInChildren<ChildUpdater>().Where(cu => cu.Material == material);
+                ChildUpdater[] cuArray = this.sphere.transform.GetComponentsInChildren<ChildUpdater>(true).Where(cu => cu.Material == material).ToArray();
+                foreach(ChildUpdater cu in cuArray)
+                {
+                    GameObject.DestroyImmediate(cu);
+                }
+                DeferredRenderer[] drArray = (DeferredRenderer[])this.sphere.transform.GetComponentsInChildren<DeferredRenderer>(true).Where(cu => cu.Material == material).ToArray();
+                foreach (DeferredRenderer dr in drArray)
+                {
+                    GameObject.DestroyImmediate(dr);
+                }
+            }
             this.sphere = null;
             this.enabled = false;
             this.transform.parent = null;
