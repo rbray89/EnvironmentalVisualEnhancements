@@ -128,7 +128,8 @@ namespace Utils
     public class DeferredRenderer : MonoBehaviour
     {
         private static Dictionary<Camera, DeferredCameraBuffer> m_Cameras = new Dictionary<Camera, DeferredCameraBuffer>();
-        
+
+
         Renderer renderer;
         Material mat;
         public Material Material {
@@ -139,7 +140,11 @@ namespace Utils
                 
             } get { return mat; } }
 
-
+        bool includeTransparent = false;
+        public bool IncludeTransparent
+        {
+            set { includeTransparent = value; }
+        }
         
         public void OnWillRenderObject()
         {
@@ -165,18 +170,16 @@ namespace Utils
                 Material[] mats = renderer.sharedMaterials;
                 for (int i = 0; i < mats.Length; i++)
                 {
-                    if (mats[i] != null && mats[i].renderQueue == (int)Tools.Queue.Geometry)
+                    if (mats[i] != null && (includeTransparent || mats[i].renderQueue == (int)Tools.Queue.Geometry))
                     {
                         cb.AddRenderDraw(renderer, mat, i, mat.renderQueue);
                     }
                 }
-
-                
             }
 
         }
 
-        public static void Add(GameObject go, Material material)
+        public static void Add(GameObject go, Material material, bool includeTransparent = false)
         {
 
             DeferredRenderer dr = go.GetComponents<DeferredRenderer>().FirstOrDefault(r => r.Material == material);
@@ -188,11 +191,12 @@ namespace Utils
                 {
                     dr = go.AddComponent<DeferredRenderer>();
                     dr.Material = material;
+                    dr.IncludeTransparent = includeTransparent;
                 }
             }
         }
 
-        public static void Remove(GameObject go, Material material )
+        public static void Remove(GameObject go, Material material)
         {
             DeferredRenderer dr = go.GetComponents<DeferredRenderer>().FirstOrDefault(r => r.Material == material);
             if (dr != null)
@@ -230,6 +234,7 @@ namespace Utils
         Material material;
         bool updateOrigin = false;
         bool subPQS = false;
+        bool isOcean = false;
 
         public void Update()
         {
@@ -286,7 +291,8 @@ namespace Utils
                 MaterialPQS ChildPQS = go.AddComponent<MaterialPQS>();
                 ChildPQS.updateOrigin = false;
                 ChildPQS.subPQS = false;
-                
+                ChildPQS.isOcean = true;
+
                 pqs = this.sphere.ChildSpheres[0];
                 if (pqs != null)
                 {
@@ -323,7 +329,7 @@ namespace Utils
 
         private void AddMaterial(Renderer r)
         {
-            DeferredRenderer.Add(r.gameObject, material);
+            DeferredRenderer.Add(r.gameObject, material, isOcean);
         }
 
         private void RemoveMaterial(Renderer r)
