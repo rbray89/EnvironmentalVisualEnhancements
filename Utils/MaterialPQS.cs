@@ -165,6 +165,7 @@ namespace Utils
                 Material[] mats = renderer.sharedMaterials;
                 for (int i = 0; i < mats.Length; i++)
                 {
+                    if (mats[i] != null && mats[i].renderQueue == (int)Tools.Queue.Geometry)
                     {
                         cb.AddRenderDraw(renderer, mat, i, mat.renderQueue);
                     }
