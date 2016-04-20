@@ -165,7 +165,6 @@ namespace Utils
                 Material[] mats = renderer.sharedMaterials;
                 for (int i = 0; i < mats.Length; i++)
                 {
-                    if (mats[i].renderQueue < (int)Tools.Queue.Transparent)
                     {
                         cb.AddRenderDraw(renderer, mat, i, mat.renderQueue);
                     }
