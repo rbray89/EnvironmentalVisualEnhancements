@@ -40,12 +40,12 @@
 				#pragma multi_compile_fwdbase
 #pragma multi_compile MAP_TYPE_1 MAP_TYPE_CUBE_1 MAP_TYPE_CUBE2_1 MAP_TYPE_CUBE6_1
 #ifndef MAP_TYPE_CUBE2_1
-#pragma multi_compile ALPHAMAP_N_1 ALPHAMAP_R_1 ALPHAMAP_G_1 ALPHAMAP_B_1 ALPHAMAP_A_1
+#pragma multi_compile ALPHAMAP_N_1 ALPHAMAP_1
 #endif
 #include "alphaMap.cginc"
 #include "cubeMap.cginc"
 
-				CUBEMAP_DEF(_CityOverlayTex)
+				CUBEMAP_DEF_1(_CityOverlayTex)
 
 				fixed4 _Color;
 				float _SpecularPower;
@@ -93,7 +93,7 @@
 
 					TANGENT_SPACE_ROTATION;
 					o.lightDirT = normalize(mul(rotation, objLight));
-					o.viewDirT = normalize(mul(rotation, objLight));
+					o.viewDirT = normalize(mul(rotation, ObjSpaceViewDir(v.vertex)));
 					TRANSFER_VERTEX_TO_FRAGMENT(o);
 
 					return o;

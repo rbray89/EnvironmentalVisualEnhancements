@@ -16,13 +16,15 @@ namespace Atmosphere
 #pragma warning disable 0169
 #pragma warning disable 0414
         [ConfigItem, Clamped]
-        TextureWrapper _TopTex;
-        [ConfigItem, Clamped]
-        TextureWrapper _LeftTex;
-	    [ConfigItem, Clamped]
-        TextureWrapper _FrontTex;
+        TextureWrapper _Tex;
+        [ConfigItem, Clamped, BumpMap]
+        TextureWrapper _BumpMap;
         [ConfigItem]
         float _InvFade = .008f;
+        [ConfigItem]
+        float _MinScatter = 1.05f;
+        [ConfigItem]
+        float _Opacity = 1.05f;
 
         float _MaxScale;
         public float MaxScale { set { _MaxScale = value; } }
@@ -30,6 +32,7 @@ namespace Atmosphere
         public Vector3 MaxTrans { set { _MaxTrans = value; } }
         Vector3 _NoiseScale;
         public Vector3 NoiseScale { set { _NoiseScale = value; } }
+        
     }
 
     class CloudsVolume
@@ -87,6 +90,14 @@ namespace Atmosphere
             ParticleMaterial.EnableKeyword("SOFT_DEPTH_ON");
 
             volumeHolder = new GameObject();
+            //Add the renderer here so othe rentities (shadows)
+            //can easily access it.
+            Renderer r = volumeHolder.AddComponent<MeshRenderer>();
+            r.material = ParticleMaterial;
+            ParticleMaterial.SetMatrix(ShaderProperties._ShadowBodies_PROPERTY, Matrix4x4.zero);
+            ParticleMaterial.renderQueue = (int)Tools.Queue.Transparent + 2;
+
+            r.enabled = false;
             volumeHolder.transform.parent = parent;
             volumeHolder.transform.localPosition = Vector3.zero;
             volumeHolder.transform.localScale = Vector3.one;

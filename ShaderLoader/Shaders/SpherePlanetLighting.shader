@@ -18,7 +18,7 @@
 		Blend Zero SrcAlpha
 		Tags{
 		"Queue" = "Geometry+2"
-		"RenderType" = "Transparent"
+		"RenderMode" = "Transparent"
 		"IgnoreProjector" = "True"
 	}
 		SubShader{

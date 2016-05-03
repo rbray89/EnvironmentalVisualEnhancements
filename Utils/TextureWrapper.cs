@@ -6,6 +6,8 @@ using UnityEngine;
 
 namespace Utils
 {
+
+
     [Flags]
     public enum TextureTypeEnum
     {
@@ -63,7 +65,6 @@ namespace Utils
         Texture2D texPositive;
         Texture2D texNegative;
         Texture2D[] texList;
-        Cubemap cubeTex;
 
         public CubemapWrapper(string value, Texture2D[] textures, TextureTypeEnum cubeType, bool mipmaps, bool readable)
         {
@@ -213,6 +214,13 @@ namespace Utils
             if ((type & TextureTypeEnum.AlphaMapMask) > 0)
             {
                 mat.EnableKeyword(alphaMask+"_"+ index);
+                mat.EnableKeyword("ALPHAMAP_" + index);
+                Vector4 alphaMaskVector;
+                alphaMaskVector.x = alphaMask == AlphaMaskEnum.ALPHAMAP_R ? 1 : 0;
+                alphaMaskVector.y = alphaMask == AlphaMaskEnum.ALPHAMAP_G ? 1 : 0;
+                alphaMaskVector.z = alphaMask == AlphaMaskEnum.ALPHAMAP_B ? 1 : 0;
+                alphaMaskVector.w = alphaMask == AlphaMaskEnum.ALPHAMAP_A ? 1 : 0;
+                mat.SetVector("alphaMask" + index, alphaMaskVector);
             }
         }
 

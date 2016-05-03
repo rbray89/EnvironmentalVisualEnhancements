@@ -147,7 +147,7 @@ namespace Atmosphere
             this.cloudsMat = cloudsMaterial;
             this.scaledLayer = layer;
 
-            CloudMaterial.SetMatrix("_ShadowBodies", Matrix4x4.zero);
+            CloudMaterial.SetMatrix(ShaderProperties._ShadowBodies_PROPERTY, Matrix4x4.zero);
 
             if (shadowMaterial != null)
             {
@@ -195,6 +195,7 @@ namespace Atmosphere
             if (layer == Tools.Layer.Local)
             {
                 Sunlight = Sun.Instance.GetComponent<Light>();
+                
                 CloudMaterial.SetFloat("_OceanRadius", (float)celestialBody.Radius * worldScale);
                 CloudMaterial.EnableKeyword("WORLD_SPACE_ON");
                 CloudMaterial.EnableKeyword("SOFT_DEPTH_ON");
@@ -283,6 +284,8 @@ namespace Atmosphere
                 {
                     Vector3 worldSunDir;
                     Vector3 sunDirection;
+                    //AtmosphereManager.Log("light: " + Sunlight.intensity);
+                    //AtmosphereManager.Log("light: " + Sunlight.color);
 
                     worldSunDir = Vector3.Normalize(Sunlight.transform.forward);
                     sunDirection = Vector3.Normalize(ShadowProjector.transform.parent.InverseTransformDirection(worldSunDir));

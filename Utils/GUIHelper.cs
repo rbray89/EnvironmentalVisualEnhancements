@@ -512,124 +512,137 @@ namespace Utils
                     GUI.Label(titleRect, gc);
 
                     bool removeable = node == null ? false : true;
-                    if (isOptional || isValueNode)
+                    bool conditionsMet = ConfigHelper.ConditionsMet(field, objInfo, configNode);
+                    if (conditionsMet)
                     {
-                        String value = null;
-                        String defaultValue = ConfigHelper.GetConfigValue(obj, field);
-                        String valueField = "";
-                        if (isValueNode)
+                        if (isOptional || isValueNode)
                         {
-                            valueField = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(
-                                f => Attribute.IsDefined(f, typeof(NodeValue))).Name;
-                        }
-                        String newValue = "";
-                        if (isValueNode)
-                        {
-                            if (configNode.HasValue(field.Name))
+                            String value = null;
+                            String defaultValue = ConfigHelper.GetConfigValue(obj, field);
+                            String valueField = "";
+                            if (isValueNode)
                             {
-                                value = configNode.GetValue(field.Name);
+                                valueField = field.FieldType.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).First(
+                                    f => Attribute.IsDefined(f, typeof(NodeValue))).Name;
                             }
-                            else if (node != null && node.HasValue(valueField))
+                            String newValue = "";
+                            if (isValueNode)
                             {
-                                value = node.GetValue(valueField);
-                            }
-                            
-                            if (value == null)
-                            {
-                                if (defaultValue == null)
-                                {
-                                    defaultValue = "";
-                                }
-                                value = defaultValue;
-                            }
-
-                            GUIStyle fieldStyle = new GUIStyle(GUI.skin.textField);
-                            if (value != "" && !ConfigHelper.CanParse(field, value, node))
-                            {
-                                fieldStyle.normal.textColor = Color.red;
-                                fieldStyle.active.textColor = Color.red;
-                                fieldStyle.focused.textColor = Color.red;
-                                fieldStyle.hover.textColor = Color.red;
-                            }
-                            newValue = GUI.TextField(fieldRect, value, fieldStyle);
-
-                        }
-                        bool toggle = removeable != GUI.Toggle(toggleRect, removeable, "");
-                        if (toggle)
-                        {
-                            if (removeable)
-                            {
-                                configNode.RemoveNode(field.Name);
-                                node = null;
-                            }
-                            else
-                            {
-                                node = configNode.AddNode(new ConfigNode(field.Name));
                                 if (configNode.HasValue(field.Name))
                                 {
-                                    configNode.RemoveValue(field.Name);
+                                    value = configNode.GetValue(field.Name);
                                 }
-                            }
-                        }
+                                else if (node != null && node.HasValue(valueField))
+                                {
+                                    value = node.GetValue(valueField);
+                                }
 
-                        if (isValueNode)
-                        {
-                            if ((newValue != defaultValue && value != newValue) || toggle)
+                                if (value == null)
+                                {
+                                    if (defaultValue == null)
+                                    {
+                                        defaultValue = "";
+                                    }
+                                    value = defaultValue;
+                                }
+
+                                GUIStyle fieldStyle = new GUIStyle(GUI.skin.textField);
+                                if (value != "" && !ConfigHelper.CanParse(field, value, node))
+                                {
+                                    fieldStyle.normal.textColor = Color.red;
+                                    fieldStyle.active.textColor = Color.red;
+                                    fieldStyle.focused.textColor = Color.red;
+                                    fieldStyle.hover.textColor = Color.red;
+                                }
+                                newValue = GUI.TextField(fieldRect, value, fieldStyle);
+
+                            }
+                            bool toggle = removeable != GUI.Toggle(toggleRect, removeable, "");
+                            if (toggle)
                             {
-                                if (newValue != defaultValue)
+                                if (removeable)
                                 {
-                                    if (node != null)
+                                    configNode.RemoveNode(field.Name);
+                                    node = null;
+                                }
+                                else
+                                {
+                                    node = configNode.AddNode(new ConfigNode(field.Name));
+                                    if (configNode.HasValue(field.Name))
                                     {
-                                        node.SetValue(valueField, newValue, true);
-                                        
-                                    }
-                                    else
-                                    {
-                                        configNode.SetValue(field.Name, newValue,true);
+                                        configNode.RemoveValue(field.Name);
                                     }
                                 }
-                                if (newValue == defaultValue)
+                            }
+
+                            if (isValueNode)
+                            {
+                                if ((newValue != defaultValue && value != newValue) || toggle)
                                 {
-                                    if (node != null)
+                                    if (newValue != defaultValue)
                                     {
-                                        if (node.HasValue(valueField))
+                                        if (node != null)
                                         {
-                                            node.RemoveValue(valueField);
+                                            node.SetValue(valueField, newValue, true);
+                                        }
+                                        else
+                                        {
+                                            configNode.SetValue(field.Name, newValue, true);
                                         }
                                     }
-                                    else
+                                    if (newValue == defaultValue)
                                     {
-                                        if (configNode.HasValue(field.Name))
+                                        if (node != null)
                                         {
-                                            configNode.RemoveValue(field.Name);
+                                            if (node.HasValue(valueField))
+                                            {
+                                                node.RemoveValue(valueField);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (configNode.HasValue(field.Name))
+                                            {
+                                                configNode.RemoveValue(field.Name);
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                    else if (node == null)
-                    {
-                        node = configNode.AddNode(new ConfigNode(field.Name));
-                    }
-                    boxPlacement.y += 1f;
-                    if (node != null)
-                    {
-                        object subObj = field.GetValue(obj);
-                        if (subObj == null)
+                        else if (node == null)
                         {
-                            ConstructorInfo ctor = field.FieldType.GetConstructor(System.Type.EmptyTypes);
-                            subObj = ctor.Invoke(null);
+                            node = configNode.AddNode(new ConfigNode(field.Name));
                         }
+                        boxPlacement.y += 1f;
+                        if (node != null)
+                        {
+                            object subObj = field.GetValue(obj);
+                            if (subObj == null)
+                            {
+                                ConstructorInfo ctor = field.FieldType.GetConstructor(System.Type.EmptyTypes);
+                                subObj = ctor.Invoke(null);
+                            }
 
-                        HandleGUI(subObj, field, node, boxPlacementBase, ref boxPlacement);
+                            HandleGUI(subObj, field, node, boxPlacementBase, ref boxPlacement);
 
+                        }
+                        boxPlacement.y += spacingOffset;
+
+                        placement.y = boxPlacement.y;
+                        placement.x = boxPlacement.x;
                     }
-                    boxPlacement.y += spacingOffset;
-
-                    placement.y = boxPlacement.y;
-                    placement.x = boxPlacement.x;
-
+                    else
+                    {
+                        if(configNode.HasNode(field.Name))
+                        {
+                            configNode.RemoveNode(field.Name);
+                        }
+                        if (configNode.HasValue(field.Name))
+                        {
+                            configNode.RemoveValue(field.Name);
+                        }
+                    }
                 }
                 else
                 {

@@ -25,13 +25,13 @@
 			#pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
 #pragma multi_compile MAP_TYPE_1 MAP_TYPE_CUBE_1 MAP_TYPE_CUBE2_1 MAP_TYPE_CUBE6_1
 #ifndef MAP_TYPE_CUBE2_1
-#pragma multi_compile ALPHAMAP_N_1 ALPHAMAP_R_1 ALPHAMAP_G_1 ALPHAMAP_B_1 ALPHAMAP_A_1
+#pragma multi_compile ALPHAMAP_N_1 ALPHAMAP_1
 #endif
 
 #include "alphaMap.cginc"
 #include "cubeMap.cginc"
 
-			CUBEMAP_DEF(_MainTex)
+			CUBEMAP_DEF_1(_MainTex)
 
 			fixed4 _Color;
 			uniform sampler2D _DetailTex;

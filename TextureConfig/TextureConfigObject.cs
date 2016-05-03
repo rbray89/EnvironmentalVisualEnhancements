@@ -11,7 +11,12 @@ namespace TextureConfig
     [ConfigName("name")]
     public class TextureConfigObject : IEVEObject 
     {
-        
+        enum TexTypeEnum
+        {
+            REGULAR,
+            TEX_CUBE_6,
+            TEX_CUBE_2
+        }
 
 #pragma warning disable 0649
         [ConfigItem, GUIHidden]
@@ -22,10 +27,10 @@ namespace TextureConfig
         bool isNormalMap = false;
         [ConfigItem]
         bool isReadable = false;
-        [ConfigItem, Conditional("formatEval")]
+        [ConfigItem]
         bool isCompressed = false;
         [ConfigItem]
-        bool isCubeMap = false;
+        TexTypeEnum type = TexTypeEnum.REGULAR;
 
         [ConfigItem, Conditional("cubeMapEval")]
         String texXn;
@@ -40,6 +45,11 @@ namespace TextureConfig
         [ConfigItem, Conditional("cubeMapEval")]
         String texZp;
 
+        [ConfigItem, Conditional("dualMapEval")]
+        String texP;
+        [ConfigItem, Conditional("dualMapEval")]
+        String texN;
+
         public override String ToString() { return name; }
 
         public void LoadConfigNode(ConfigNode node)
@@ -50,7 +60,7 @@ namespace TextureConfig
         public void Apply() 
         {
 
-            if(isCubeMap)
+            if(type == TexTypeEnum.TEX_CUBE_6)
             {
                 
                 ReplaceIfNecessary(texXn, isNormalMap, mipmaps, isReadable, isCompressed);
@@ -74,6 +84,16 @@ namespace TextureConfig
                     GameObject.DestroyImmediate(tex);
                 }
                 */
+            }
+            else if(type == TexTypeEnum.TEX_CUBE_2)
+            {
+                ReplaceIfNecessary(texP, isNormalMap, mipmaps, isReadable, isCompressed);
+                ReplaceIfNecessary(texN, isNormalMap, mipmaps, isReadable, isCompressed);
+
+                Texture2D[] textures = new Texture2D[2];
+                textures[0] = GameDatabase.Instance.GetTexture(texP, isNormalMap);
+                textures[1] = GameDatabase.Instance.GetTexture(texN, isNormalMap);
+                CubemapWrapper.GenerateCubemapWrapper(name, textures, TextureTypeEnum.RGB2_CubeMap, mipmaps, isReadable);
             }
             else
             {
@@ -123,8 +143,15 @@ namespace TextureConfig
             TextureConfigObject test = new TextureConfigObject();
             ConfigHelper.LoadObjectFromConfig(test, node);
 
-            return test.isCubeMap;
+            return test.type== TexTypeEnum.TEX_CUBE_6;
         }
-        
+
+        public static bool dualMapEval(ConfigNode node)
+        {
+            TextureConfigObject test = new TextureConfigObject();
+            ConfigHelper.LoadObjectFromConfig(test, node);
+
+            return test.type == TexTypeEnum.TEX_CUBE_2;
+        }
     }
 }

@@ -19,6 +19,9 @@
 #define DIRLIGHTMAP_OFF 1
 #endif
 
+#pragma skip_variants DIRLIGHTMAP_COMBINED DIRLIGHTMAP_SEPARATE DYNAMICLIGHTMAP_ON LIGHTMAP_ON VERTEXLIGHT_ON
+
+
 	uniform float4x4 _MainRotation;
 	uniform float4x4 _DetailRotation;
 	uniform float4x4 _ShadowBodies = float4x4
@@ -126,9 +129,29 @@
 	    float spec = pow( nh, specK ) * specColor.a;
 	    
 	    half4 c;
-	    c.rgb = (color.rgb * _LightColor0.rgb * diffuse + _LightColor0.rgb * specColor.rgb * spec) * (atten * 4);
-	    c.a = diffuse*(atten * 4);//_LightColor0.a * specColor.a * spec * atten; // specular passes by default put highlights to overbright
+	    c.rgb = _LightColor0.rgb*((color.rgb * diffuse )+ (specColor.rgb * spec)) * (atten * 2);
+	    c.a = diffuse*(atten * 2);//_LightColor0.a * specColor.a * spec * atten; // specular passes by default put highlights to overbright
 	    return c;
+	}
+
+	inline half4 ScatterColorLight(half3 lightDir, half3 viewDir, half3 normal, half4 color, float min, float opacity, half atten)
+	{
+
+		lightDir = normalize(lightDir);
+		viewDir = normalize(viewDir);
+		normal = normalize(normal);
+
+
+		half diffuse = max( dot(normal, lightDir),0);
+
+		float h = .5+(.5*dot(viewDir, lightDir));
+		float scatter = (min-(opacity*color.a))*(1-(dot(normal,viewDir)))*h;
+		scatter = saturate(scatter);
+
+		half4 c;
+		c.rgb = _LightColor0*((color.rgb * diffuse) + scatter) * (atten * 2);
+		c.a = diffuse*(atten * 2);//_LightColor0.a * specColor.a * spec * atten; // specular passes by default put highlights to overbright
+		return c;
 	}
 	
 	inline half Terminator(half3 lightDir, half3 normal)

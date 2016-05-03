@@ -16,11 +16,13 @@ Shader "EVE/Cloud" {
 		_OceanRadius("Ocean Radius", Float) = 63000
 		_PlanetOrigin("Sphere Center", Vector) = (0,0,0,1)
 		_DepthPull("Depth Augment", Float) = .99
+		_SunPos("_SunPos", Vector) = (0,0,0)
+		_SunRadius("_SunRadius", Float) = 1
 	}
 
 	Category{
 
-		Tags { "Queue" = "Transparent+2" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Tags { "Queue" = "Transparent+1" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 		Blend SrcAlpha OneMinusSrcAlpha
 		Fog { Mode Global}
 		AlphaTest Greater 0
@@ -47,12 +49,12 @@ Shader "EVE/Cloud" {
 				#pragma multi_compile WORLD_SPACE_OFF WORLD_SPACE_ON
 				#pragma multi_compile MAP_TYPE_1 MAP_TYPE_CUBE_1 MAP_TYPE_CUBE2_1 MAP_TYPE_CUBE6_1
 #ifndef MAP_TYPE_CUBE2_1
-				#pragma multi_compile ALPHAMAP_N_1 ALPHAMAP_R_1 ALPHAMAP_G_1 ALPHAMAP_B_1 ALPHAMAP_A_1
+#pragma multi_compile ALPHAMAP_N_1 ALPHAMAP_1
 #endif
 				#include "alphaMap.cginc"
 				#include "cubeMap.cginc"
 
-				CUBEMAP_DEF(_MainTex)
+				CUBEMAP_DEF_1(_MainTex)
 
 				sampler2D _DetailTex;
 				fixed4 _Color;

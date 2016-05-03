@@ -98,7 +98,7 @@ namespace CelestialShadows
                     if (cr != null)
                     {
                         cr.sharedMaterial.SetFloat(ShaderProperties._SunRadius_PROPERTY, (float)(Sun.Instance.sun.Radius));
-                        cr.sharedMaterial.SetVector(ShaderProperties.SUNDIR_PROPERTY, Sun.Instance.sun.transform.position);
+                        cr.sharedMaterial.SetVector(ShaderProperties._SunPos_PROPERTY, Sun.Instance.sun.transform.position);
                         cr.sharedMaterial.SetMatrix(ShaderProperties._ShadowBodies_PROPERTY, bodies);
                     }
                 }
@@ -167,11 +167,13 @@ namespace CelestialShadows
                     localShadowMat = materialPQS.Apply(celestialBody, null, ShadowShader, false, true);
 
                     //shadowMaterial.ApplyMaterialProperties(shadowMat);
-                    shadowMat.SetFloat("_SunRadius", (float)(ScaledSpace.InverseScaleFactor * Sun.Instance.sun.Radius));
-                    localShadowMat.SetFloat("_SunRadius", (float)(Sun.Instance.sun.Radius));
+                    shadowMat.SetFloat(ShaderProperties._SunRadius_PROPERTY, (float)(ScaledSpace.InverseScaleFactor * Sun.Instance.sun.Radius));
+                    localShadowMat.SetFloat(ShaderProperties._SunRadius_PROPERTY, (float)(Sun.Instance.sun.Radius));
 
                     shadowMat.name = materialName;
                     localShadowMat.name = materialName;
+                    shadowMat.renderQueue = (int)Tools.Queue.Geometry + 3;
+                    localShadowMat.renderQueue = (int)Tools.Queue.Geometry + 3;
                     DeferredRenderer.Add(mr.gameObject, shadowMat);
                 }
                 
