@@ -17,8 +17,6 @@ namespace Atmosphere
 #pragma warning disable 0414
         [ConfigItem, Clamped]
         TextureWrapper _Tex;
-        [ConfigItem, Clamped, BumpMap]
-        TextureWrapper _BumpMap;
         [ConfigItem]
         float _InvFade = .008f;
         [ConfigItem]
