@@ -182,6 +182,8 @@ namespace CityLights
             Transform transform = Tools.GetScaledTransform(body);
             if (transform != null)
             {
+
+                CityLightsManager.Log("Removing scaled obj");
                 OverlayRenderer.Remove(transform.gameObject, scaledMat);
                 
                 GameObject.DestroyImmediate(transform.gameObject.GetComponents<ScaledCityComponent>().First(sc => sc.GUID == materialName));

@@ -12,14 +12,14 @@ namespace Utils
     {
         private Material material;
         public Material Material { get { return material; } set {
-                material = value;
+                
                 Renderer r = this.gameObject.GetComponent<Renderer>();
                 if (r != null)
                 {
-                    if (material != null)
+                    if (value != null)
                     {
                         List<Material> materials = new List<Material>(r.sharedMaterials);
-                        materials.Add(material);
+                        materials.Add(value);
                         r.sharedMaterials = materials.ToArray();
                     }
                     else
@@ -29,6 +29,7 @@ namespace Utils
                         r.sharedMaterials = materials.ToArray();
                     }
                 }
+                material = value;
             } }
 
         public static void Add(GameObject go, Material material)
