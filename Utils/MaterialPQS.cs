@@ -129,7 +129,7 @@ namespace Utils
     {
         private static Dictionary<Camera, DeferredCameraBuffer> m_Cameras = new Dictionary<Camera, DeferredCameraBuffer>();
 
-
+        
         Renderer renderer;
         Material mat;
         public Material Material {
@@ -139,6 +139,8 @@ namespace Utils
                 renderer = this.gameObject.GetComponent<Renderer>();
                 
             } get { return mat; } }
+
+        public CelestialBody body = null;
 
         bool includeTransparent = false;
         public bool IncludeTransparent
@@ -152,6 +154,11 @@ namespace Utils
             if (!act)
             {
                 return;
+            }
+            
+            if(body != null && FlightGlobals.currentMainBody != body)
+            {
+                GameObject.DestroyImmediate(this);
             }
             
             Camera cam = Camera.current;
@@ -179,7 +186,7 @@ namespace Utils
 
         }
 
-        public static void Add(GameObject go, Material material, bool includeTransparent = false)
+        public static void Add(GameObject go, Material material, bool includeTransparent = false, CelestialBody body = null)
         {
 
             DeferredRenderer dr = go.GetComponents<DeferredRenderer>().FirstOrDefault(r => r.Material == material);
@@ -235,6 +242,7 @@ namespace Utils
         bool updateOrigin = false;
         bool subPQS = false;
         bool isOcean = false;
+        CelestialBody body;
 
         public void Update()
         {
@@ -257,6 +265,7 @@ namespace Utils
             this.updateOrigin = updateOrigin;
             this.subPQS = subPQS;
             PQS pqs = null;
+            body = cb;
             if (cb != null && cb.pqsController != null)
             {
                 pqs = cb.pqsController;
@@ -329,7 +338,7 @@ namespace Utils
 
         private void AddMaterial(Renderer r)
         {
-            DeferredRenderer.Add(r.gameObject, material, isOcean);
+            DeferredRenderer.Add(r.gameObject, material, isOcean, body);
         }
 
         private void RemoveMaterial(Renderer r)

@@ -246,8 +246,9 @@ namespace CelestialShadows
                 }
 
                 DeferredRenderer.Remove(transform.gameObject, shadowMat);
-
             }
+            materialPQS.Remove();
+            GameObject.DestroyImmediate(materialPQS);
             GameEvents.onGameSceneLoadRequested.Remove(SceneLoaded);
         }
     }
