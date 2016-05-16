@@ -225,3 +225,4 @@ pip-log.txt
 ContentEVE/GameData/EnvironmentalVisualEnhancements/Shaders/*
 
 #ZIP Distributions
+*.zip
