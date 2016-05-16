@@ -3,6 +3,7 @@
 
 #ifdef MAP_TYPE_CUBE_1
 #define GET_CUBE_MAP_1(name, vect) GetCubeMap(cube ## name, vect)
+#define GET_CUBE_MAP_P(name, vect, n, nsc, nst, na) GetCubeMapPerturbed(cube ## name, vect, n, nsc, nst, na)
 #define GET_NO_LOD_CUBE_MAP_1(name, vect) GetCubeMapNoLOD(cube ## name, vect)
 #define FRAG_GET_NO_LOD_CUBE_MAP_1(name, vect) half4(1,1,1,1)
 #define VERT_GET_NO_LOD_CUBE_MAP_1(name, vect) GetCubeMapNoLOD(cube ## name, vect)
@@ -11,7 +12,10 @@
 #elif defined (MAP_TYPE_CUBE6_1)
 #define GET_CUBE_MAP_1(name, vect) GetCubeMap(cube ## name ## xn, cube ## name ## xp, \
 											cube ## name ## yn, cube ## name ## yp, \
-											cube ## name ## zn, cube ## name ## zp, vect)
+											cube ## name ## zn, cube ## name ## zp)
+#define GET_CUBE_MAP_P(name, vect, n, nsc, nst, na) GetCubeMapPerturbed(cube ## name ## xn, cube ## name ## xp, \
+											cube ## name ## yn, cube ## name ## yp, \
+											cube ## name ## zn, cube ## name ## zp, vect, n, nsc, nst, na)
 #define GET_NO_LOD_CUBE_MAP_1(name, vect) GetCubeMapNoLOD(cube ## name ## xn, cube ## name ## xp, \
 														cube ## name ## yn, cube ## name ## yp, \
 														cube ## name ## zn, cube ## name ## zp, vect)
@@ -26,6 +30,7 @@
 
 #elif defined (MAP_TYPE_CUBE2_1)
 #define GET_CUBE_MAP_1(name, vect) GetCubeMap(cube ## name ## POS, cube ## name ## NEG, vect)
+#define GET_CUBE_MAP_P(name, vect, n, nsc, nst, na) GetCubeMapPerturbed(cube ## name ## POS, cube ## name ## NEG, vect, n, nsc, nst, na)
 #define GET_NO_LOD_CUBE_MAP_1(name, vect) GetCubeMapNoLOD(cube ## name ## POS, cube ## name ## NEG, vect)
 #define FRAG_GET_NO_LOD_CUBE_MAP_1(name, vect) half4(1,1,1,1)
 #define VERT_GET_NO_LOD_CUBE_MAP_1(name, vect) GetCubeMapNoLOD(cube ## name ## POS, cube ## name ## NEG, vect)
@@ -35,6 +40,7 @@
 
 #else
 #define GET_CUBE_MAP_1(name, vect) GetCubeMap(name, vect)
+#define GET_CUBE_MAP_P(name, vect, n, nsc, nst, na) GetCubeMapPerturbed(name, vect, n, nsc, nst, na)
 #define GET_NO_LOD_CUBE_MAP_1(name, vect) GetCubeMapNoLOD(name, vect)
 #define FRAG_GET_NO_LOD_CUBE_MAP_1(name, vect)  half4(1,1,1,1)
 #define VERT_GET_NO_LOD_CUBE_MAP_1(name, vect) GetCubeMapNoLOD(name, vect)
@@ -101,7 +107,17 @@ inline half4 GetCubeMap(sampler2D texSampler, float3 cubeVect)
 {
 	float3 cubeVectNorm = normalize(cubeVect);
 	float2 uv = GetCubeUV(cubeVectNorm, float2(0, 0));
+	float4 uvdd = Derivatives(uv);
+	half4 tex = tex2D(texSampler, uv, uvdd.xy, uvdd.zw);
+	return tex;
+}
 
+inline half4 GetCubeMapPerturbed(sampler2D texSampler, float3 cubeVect, sampler2D uvNoiseSampler, float uvNoiseScale, float uvNoiseStrength, float2 uvNoiseAnimation)
+{
+	float3 cubeVectNorm = normalize(cubeVect);
+	float2 uv = GetCubeUV(cubeVectNorm, float2(0, 0));
+	float2 uvd = fmod(uv, uvNoiseScale) / uvNoiseScale + uvNoiseAnimation*float2(_Time.x,_Time.x);
+	uv += (tex2D(uvNoiseSampler, uvd) - float2(0.5, 0.5))*uvNoiseStrength;
 	float4 uvdd = Derivatives(uv);
 	half4 tex = tex2D(texSampler, uv, uvdd.xy, uvdd.zw);
 	return tex;
@@ -122,6 +138,17 @@ inline half4 GetCubeMap(samplerCUBE texSampler, float3 cubeVect)
 	return tex;
 }
 
+inline half4 GetCubeMapPerturbed(samplerCUBE texSampler, float3 cubeVect, sampler2D uvNoiseSampler, float uvNoiseScale, float uvNoiseStrength, float2 uvNoiseAnimation)
+{
+	cubeVect = normalize(cubeVect);
+	float2 uv;
+	uv.x = .5 + (INV_2PI*atan2(cubeVect.x, cubeVect.z));
+	uv.y = INV_PI*acos(cubeVect.y);
+	float2 uvd = fmod(cubeVect, uvNoiseScale) / uvNoiseScale + uvNoiseAnimation*float2(_Time.x, _Time.x);
+	cubeVect.xy += (tex2D(uvNoiseSampler, uvd) - float2(0.5, 0.5))*uvNoiseStrength;
+	half4 tex = texCUBE(texSampler, cubeVect);
+	return tex;
+}
 
 inline half4 GetCubeMapNoLOD(sampler2D texXn, sampler2D texXp, sampler2D texYn, sampler2D texYp, sampler2D texZn, sampler2D texZp, float3 cubeVect)
 {
@@ -174,6 +201,33 @@ inline half4 GetCubeMap(sampler2D texXn, sampler2D texXp, sampler2D texYn, sampl
 	return samp;
 }
 
+inline half4 GetCubeMapPerturbed(sampler2D texXn, sampler2D texXp, sampler2D texYn, sampler2D texYp, sampler2D texZn, sampler2D texZp, float3 cubeVect, sampler2D uvNoiseSampler, float uvNoiseScale, float uvNoiseStrength, float2 uvNoiseAnimation)
+{
+	GetCubeCubeUV(cubeVect);
+
+	float2 uvd = fmod(uv, uvNoiseScale) / uvNoiseScale + uvNoiseAnimation*float2(_Time.x, _Time.x);
+	uv += (tex2D(uvNoiseSampler, uvd) - float2(0.5, 0.5))*uvNoiseStrength;
+
+	//this fixes UV discontinuity on Y-X seam by swapping uv coords in derivative calcs when in the X quadrants.
+	float4 uvdd = CubeDerivatives(uv, 1);
+
+
+	half4 sampxn = tex2D(texXn, uv, uvdd.xy, uvdd.zw);
+	half4 sampxp = tex2D(texXp, uv, uvdd.xy, uvdd.zw);
+	half4 sampyn = tex2D(texYn, uv, uvdd.xy, uvdd.zw);
+	half4 sampyp = tex2D(texYp, uv, uvdd.xy, uvdd.zw);
+	half4 sampzn = tex2D(texZn, uv, uvdd.xy, uvdd.zw);
+	half4 sampzp = tex2D(texZp, uv, uvdd.xy, uvdd.zw);
+
+	half4 sampx = lerp(sampxn, sampxp, step(0, s));
+	half4 sampy = lerp(sampyn, sampyp, step(0, s));
+	half4 sampz = lerp(sampzn, sampzp, step(0, s));
+
+	half4 samp = lerp(sampx, sampz, zxlerp);
+	samp = lerp(sampy, samp, nylerp);
+	return samp;
+}
+
 inline half4 GetCubeMapNoLOD(sampler2D texSamplerPos, sampler2D texSamplerNeg, float3 cubeVect)
 {
 
@@ -196,7 +250,6 @@ inline half4 GetCubeMapNoLOD(sampler2D texSamplerPos, sampler2D texSamplerNeg, f
 
 inline half4 GetCubeMap(sampler2D texSamplerPos, sampler2D texSamplerNeg, float3 cubeVect)
 {
-
 	GetCubeCubeUV(cubeVect);
 
 	float4 uvdd = CubeDerivatives(uv, 1);
@@ -211,6 +264,27 @@ inline half4 GetCubeMap(sampler2D texSamplerPos, sampler2D texSamplerNeg, float3
 	return half4(tex.a, tex.a, tex.a, alpha);
 
 }
+
+inline half4 GetCubeMapPerturbed(sampler2D texSamplerPos, sampler2D texSamplerNeg, float3 cubeVect, sampler2D uvNoiseSampler, float uvNoiseScale, float uvNoiseStrength, float2 uvNoiseAnimation)
+{
+	GetCubeCubeUV(cubeVect);
+
+	float2 uvd = fmod(uv, uvNoiseScale) / uvNoiseScale + uvNoiseAnimation*float2(_Time.x, _Time.x);
+	uv += (tex2D(uvNoiseSampler, uvd) - float2(0.5, 0.5))*uvNoiseStrength;
+
+	float4 uvdd = CubeDerivatives(uv, 1);
+
+	half4 texPos = tex2D(texSamplerPos, uv, uvdd.xy, uvdd.zw);
+	half4 texNeg = tex2D(texSamplerNeg, uv, uvdd.xy, uvdd.zw);
+
+	half4 tex = lerp(texNeg, texPos, step(0, s));
+
+	half alpha = lerp(tex.x, tex.z, zxlerp);
+	alpha = lerp(tex.y, alpha, nylerp);
+	return half4(tex.a, tex.a, tex.a, alpha);
+}
+
+
 
 inline half4 GetCubeDetailMapNoLOD(sampler2D texSampler, float3 cubeVect, float detailScale)
 {

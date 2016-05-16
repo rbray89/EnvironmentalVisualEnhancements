@@ -20,6 +20,8 @@ namespace Atmosphere
         [ConfigItem]
         TextureWrapper _DetailTex;
         [ConfigItem]
+        TextureWrapper _UVNoiseTex;
+        [ConfigItem]
         float _DetailScale = 200f;
         [ConfigItem, InverseScaled]
         float _DetailDist = 0.000002f;
@@ -27,6 +29,12 @@ namespace Atmosphere
         float _DistFade = 1.0f;
         [ConfigItem, InverseScaled]
         float _DistFadeVert = 0.00004f;
+        [ConfigItem]
+        float _UVNoiseScale = 0.01f;
+        [ConfigItem]
+        float _UVNoiseStrength = 0.002f;
+        [ConfigItem]
+        Vector2 _UVNoiseAnimation = new Vector2(0.4f, 0.2f);
     }
 
     [ConfigName("name")]

@@ -3,10 +3,14 @@ Shader "EVE/Cloud" {
 		_Color("Color Tint", Color) = (1,1,1,1)
 		_MainTex("Main (RGB)", 2D) = "white" {}
 		_DetailTex("Detail (RGB)", 2D) = "white" {}
+		_UVNoiseTex("UV Noise (RG)", 2D) = "black" {}
 		_FalloffPow("Falloff Power", Range(0,3)) = 2
 		_FalloffScale("Falloff Scale", Range(0,20)) = 3
 		_DetailScale("Detail Scale", Range(0,100)) = 100
 		_DetailDist("Detail Distance", Range(0,1)) = 0.00875
+		_UVNoiseScale("UV Noise Scale", Range(0,0.1)) = 0.01
+		_UVNoiseStrength("UV Noise Strength", Range(0,0.1)) = 0.002
+		_UVNoiseAnimation("UV Noise Animation", Vector) = (0.002,0.001,0)
 		_MinLight("Minimum Light", Range(0,1)) = .5
 		_DistFade("Fade Distance", Range(0,100)) = 10
 		_DistFadeVert("Fade Scale", Range(0,1)) = .002
@@ -57,11 +61,17 @@ Shader "EVE/Cloud" {
 				CUBEMAP_DEF_1(_MainTex)
 
 				sampler2D _DetailTex;
+				sampler2D _UVNoiseTex;
 				fixed4 _Color;
 				float _FalloffPow;
 				float _FalloffScale;
 				float _DetailScale;
 				float _DetailDist;
+
+				float _UVNoiseScale;
+				float _UVNoiseStrength;
+				float2 _UVNoiseAnimation;
+
 				float _MinLight;
 				float _DistFade;
 				float _DistFadeVert;
@@ -126,7 +136,7 @@ Shader "EVE/Cloud" {
 					half4 color;
 					half4 main;
 
-					main = GET_CUBE_MAP_1(_MainTex, IN.objMain);
+					main = GET_CUBE_MAP_P(_MainTex, IN.objMain, _UVNoiseTex, _UVNoiseScale, _UVNoiseStrength, _UVNoiseAnimation);
 					main = ALPHA_COLOR_1(main);
 
 					half4 detail = GetCubeDetailMap(_DetailTex, IN.objDetail, _DetailScale);
